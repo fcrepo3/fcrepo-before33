@@ -86,6 +86,20 @@
 		</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>ListMethodsServlet</servlet-name>
+		<display-name>Fedora Object Methods Provider</display-name>
+		<servlet-class>
+			fedora.server.access.ListMethodsServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ListDatastreamsServlet</servlet-name>
+		<display-name>Fedora Object Datastreams Provider</display-name>
+		<servlet-class>
+			fedora.server.access.ListDatastreamsServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>GetNextPIDServlet</servlet-name>
 		<display-name>Fedora Next PID Provider</display-name>
 		<servlet-class>
@@ -129,6 +143,14 @@
 	<servlet-mapping>
 		<servlet-name>GetObjectHistoryServlet</servlet-name>
 		<url-pattern>/getObjectHistory/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ListMethodsServlet</servlet-name>
+		<url-pattern>/listMethods/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ListDatastreamsServlet</servlet-name>
+		<url-pattern>/listDatastreams/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>FedoraAccessServlet</servlet-name>
