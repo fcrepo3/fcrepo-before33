@@ -35,6 +35,13 @@
 	</servlet>
 	<!-- end test -->
 	<servlet>
+		<servlet-name>FedoraFieldSearchServlet</servlet-name>
+		<display-name>Fedora FieldSearch Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.FieldSearchServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>FedoraAccessServlet</servlet-name>
 		<display-name>Fedora Access Servlet</display-name>
 		<servlet-class>
@@ -76,6 +83,10 @@
 		<url-pattern>/access/soapservlet</url-pattern>
 	</servlet-mapping>
 	<!-- end test -->
+	<servlet-mapping>
+		<servlet-name>FedoraFieldSearchServlet</servlet-name>
+		<url-pattern>/search</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>FedoraAccessServlet</servlet-name>
 		<url-pattern>/get/*</url-pattern>
