@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR DEFINITION OBJECT ENCODED USING METS -->
+<!-- Creator: Ross Wayland -->
+<!-- Custodian: University of Virginia Library -->
+<!-- Note: Behavior Definition Object for EAD-encoded Finding Aid, created as a sample object. -->
 <!---********************************************************************************************-->
 <METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:15" TYPE="FedoraBDefObject" LABEL="Behavior Definition Object for UVA Standard EAD Finding Aid Contract" PROFILE="fedora:BDEF">
-	<!---*******************************************************************************************************************************************-->
-	<!--  FEDORA SYSTEM METADATA: -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
-		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
-			<METS:name> Ross Wayland </METS:name>
-			<METS:note> Behavior Definition Object for EAD-encoded Finding Aid, created as a sample object </METS:note>
-		</METS:agent>
-		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
-			<METS:name> University of Virginia Library </METS:name>
-			<METS:note> Object owned by UVA </METS:note>
-		</METS:agent>
-	</METS:metsHdr>
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!-- ****************************************************************************************************************************************** -->

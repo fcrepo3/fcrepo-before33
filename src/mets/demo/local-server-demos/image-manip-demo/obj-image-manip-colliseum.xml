@@ -1,26 +1,15 @@
-<?xml version="1.0"?>
-<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by Ross Wayland (University of Virginia) -->
+<?xml version="1.0" encoding="UTF-8"?>
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
+<!-- Creator: Ross Wayland -->
+<!-- Custodian: University of Virginia Library -->
+<!-- Note: Demonstration Digital Object.  This Fedora data object demonstrates the UVA Simple Image -->
+<!--behaviors being fulfilled via the Fedora HTTP Image Getter service.  There are 4 datastreams in the -->
+<!-- object, one for each image resolution specified in the behavior definition.  The fulfillment of the behavior -->
+<!-- contract entails the Fedora HTTP Image Getter resolving the URL of the appropriate datastream for each -->
+<!-- of the UVA Simple Image behaviors.  There are no transformations performed on the datastreams.-->
 <!---************************************************************************-->
 <METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:29" TYPE="FedoraObject" LABEL="Image of Coliseum in Rome" PROFILE="UVA_STD_IMAGE">
-	<!---*******************************************************************************************************************************************-->
-	<!--  FEDORA SYSTEM METADATA: -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-20T06:32:00" RECORDSTATUS="A">
-		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
-			<METS:name>Ross Wayland</METS:name>
-			<METS:note> Demonstration Digital Object.  This Fedora data object demonstrates the UVA Simple Image behaviors being fulfilled via the Fedora HTTP Image Getter service.  There are 4 datastreams in the object, one for each image resolution specified in the behavior definition.  The fulfillment of the behavior contract entails the Fedora HTTP Image Getter resolving the URL of the appropriate datastream for each of the UVA Simple Image behaviors.  There are no transformations performed on the datastreams. </METS:note>
-		</METS:agent>
-		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
-			<METS:name> University of Virginia Library </METS:name>
-			<METS:note> Digital Object owned by UVA </METS:note>
-		</METS:agent>
-		<METS:agent ID="A3" ROLE="CUSTODIAN" TYPE="OTHER">
-			<METS:name> UVA Fedora Repository System</METS:name>
-			<METS:note> Digital Object is under the custodianship of the Fedora repository system</METS:note>
-		</METS:agent>
-	</METS:metsHdr>
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->

@@ -1,25 +1,18 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS    -->
+<!-- Creator: Ross Wayland -->
+<!-- Custodian: University of Virginia Library -->
+<!-- Note: Demonstration Digital Object.  This Fedora data object demonstrates the UVA Userinput Image -->
+<!-- behaviors being fulfilled via the UVA MrSID service.  There is 1 image datastream in the object which is -->
+<!-- a MrSID wavelet encoded image file.  The fulfillment of the behavior contract entails obtaining two input -->
+<!-- parameters from the user (the desired image size and yes/no for zoom). The MrSID service uses these -->
+<!-- input parms to derive an appropriate image from the MrSID file (a JPEG image of the requested size) -->
+<!-- and to optionally wrap the image in a Java applet that provides zoom capability.  It should also be noted -->
+<!-- that this object demonstrates how various kinds of XML metadata datastreams can be put in the object.  -->
+<!-- These are located in the METS dmdSecFedora and amdSec sections. -->
 <!---************************************************************************-->
 <METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:10" TYPE="FedoraObject" LABEL="Column Detail, Pavillion III, IVA Image Collection - University of Virginia" PROFILE="UVA_MRSID_IMAGE">
-	<!---*******************************************************************************************************************************************-->
-	<!--  FEDORA SYSTEM METADATA: -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-22T06:32:00" RECORDSTATUS="A">
-		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
-			<METS:name> Ross Wayland </METS:name>
-			<METS:note>Demonstration Digital Object.  This Fedora data object demonstrates the UVA Userinput Image behaviors being fulfilled via the UVA MrSID service.  There is 1 image datastream in the object which is a MrSID wavelet encoded image file.  The fulfillment of the behavior contract entails obtaining two input parameters from the user (the desired image size and yes/no for zoom). The MrSID service uses these input parms to derive an appropriate image from the MrSID file (a JPEG image of the requested size) and to optionally wrap the image in a Java applet that provides zoom capability.  It should also be noted that this object demonstrates how various kinds of XML metadata datastreams can be put in the object.  These are located in the METS dmdSecFedora and amdSec sections.</METS:note>
-		</METS:agent>
-		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
-			<METS:name> University of Virginia Library </METS:name>
-			<METS:note> Object owned by UVA </METS:note>
-		</METS:agent>
-		<METS:agent ID="A3" ROLE="CUSTODIAN" TYPE="OTHER">
-			<METS:name> UVA Fedora Repository System</METS:name>
-			<METS:note> Digital Object is under the custodianship of the Fedora repository system at UVA </METS:note>
-		</METS:agent>
-	</METS:metsHdr>
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->

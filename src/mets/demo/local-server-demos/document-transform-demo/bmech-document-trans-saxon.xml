@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Sandy Payette (Cornell University) -->
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR MECHANISM OBJECT ENCODED USING METS -->
+<!-- Creator: Sandy Payette -->
+<!-- Custodian: NSDL -->
 <!---********************************************************************************************-->
 <METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:13" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object implementing the Document Transform BDEF contract using the Fedora Local Saxon Transformation Service" PROFILE="fedora:BMECH">
-	<!---*******************************************************************************************************************************************-->
-	<!--  FEDORA SYSTEM METADATA: -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
-		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
-			<METS:name> Sandy Payette </METS:name>
-			<METS:note/>
-		</METS:agent>
-		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
-			<METS:name>NSDL </METS:name>
-			<METS:note> Object owned by NSDL </METS:note>
-		</METS:agent>
-	</METS:metsHdr>
 	<!---*******************************************************************************************************************************************-->
 	<!--  INLINE METADATA DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT: -->
 	<!---*******************************************************************************************************************************************-->

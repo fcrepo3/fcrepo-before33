@@ -1,20 +1,11 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS    -->
+<!-- Creator: Chris Wilper -->
+<!-- Custodian: Cornell -->
+<!-- Note: Demonstration digital object containing SVG demos from the Batik 1.5 distribution. -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" 
-    xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:xlink="http://www.w3.org/TR/xlink" 
-    xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" 
-    OBJID="demo:31" TYPE="FedoraObject" LABEL="Apache Batik 1.5 Demo Directory" PROFILE="SIMPLE_DOC">
-	<!---*******************************************************************************************************************************************-->
-	<!--  FEDORA SYSTEM METADATA: -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-22T06:32:00" RECORDSTATUS="A">
-		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
-			<METS:name>Chris Wilper</METS:name>
-			<METS:note>Demonstration digital object containing SVG demos from the Batik 1.5 distribution</METS:note>
-		</METS:agent>
-	</METS:metsHdr>
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:31" TYPE="FedoraObject" LABEL="Apache Batik 1.5 Demo Directory" PROFILE="SIMPLE_DOC">
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
@@ -49,20 +40,17 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="">
 				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/svg+xml" OWNERID="M" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.fedora.info/demo/misc/batikBatik.svg" 
-					             xlink:title="Local copy of batikBatik.svg"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.fedora.info/demo/misc/batikBatik.svg" xlink:title="Local copy of batikBatik.svg"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS2" STATUS="">
 				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/svg+xml" OWNERID="M" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.fedora.info/demo/misc/sizeOfSun.svg" 
-					             xlink:title="Local copy of sizeOfSun.svg"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.fedora.info/demo/misc/sizeOfSun.svg" xlink:title="Local copy of sizeOfSun.svg"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS3" STATUS="">
 				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/html" OWNERID="R" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://xml.apache.org/batik/" 
-					             xlink:title="Homepage for Batik, the software that the demos came with."/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://xml.apache.org/batik/" xlink:title="Homepage for Batik, the software that the demos came with."/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>

@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Sandy Payette (Cornell University) -->
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR DEFINITION OBJECT ENCODED USING METS -->
+<!-- Creator: Theodore Serbinski -->
+<!-- Custodian: Cornell -->
+<!-- Note: Image Manipulation Servlet - abstract method definitions -->
 <!---********************************************************************************************-->
 <METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:27" TYPE="FedoraBDefObject" LABEL="Behavior Definition Object for Image Manipulation Servlet" PROFILE="fedora:BDEF">
-	<!---*******************************************************************************************************************************************-->
-	<!--  FEDORA SYSTEM METADATA: -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
-		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
-			<METS:name>Theodore Serbinski</METS:name>
-			<METS:note>Image Manipulation Servlet - abstract method definitions</METS:note>
-		</METS:agent>
-		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
-			<METS:name>Cornell University</METS:name>
-			<METS:note>Object owned by Cornell University</METS:note>
-		</METS:agent>
-	</METS:metsHdr>
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!-- ****************************************************************************************************************************************** -->
@@ -97,4 +86,3 @@
 		</METS:serviceBinding>
 	</METS:behaviorSec>
 </METS:mets>
-

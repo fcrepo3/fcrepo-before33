@@ -1,18 +1,17 @@
-<?xml version="1.0"?>
-<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Sandy Payette (Cornell University) -->
+<?xml version="1.0" encoding="UTF-8"?>
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS    -->
+<!-- Creator: Sandy Payette -->
+<!-- Custodian: Cornell -->
+<!-- Note: Demonstration digital object.  This Fedora data object demonstrates the simplest Fedora digital -->
+<!-- object scenario.  It is the case where we aggregate content in the Fedora object, and let Fedora's default -->
+<!-- object behaviors provide access to the content.  This is an example of a Fedora digital object that has NO -->
+<!-- DISSEMINATORS.  In this case, we aggregate different formats of a particular document (i.e.g, the -->
+<!-- ECDL2002 Fedora paper).   When the object is viewed via the Fedora Access Service, the user can -->
+<!-- view the a list of the contents of the object, and get any particular content item. This access is achieved -->
+<!-- via the "Default Disseminator" which is dynamically associated with every Fedora object by the system. -->
 <!---************************************************************************-->
 <METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:18" TYPE="FedoraObject" LABEL="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services" PROFILE="SIMPLE_DOC">
-	<!---*******************************************************************************************************************************************-->
-	<!--  FEDORA SYSTEM METADATA: -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-22T06:32:00" RECORDSTATUS="A">
-		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
-			<METS:name>Sandy Payette</METS:name>
-			<METS:note>Demonstration digital object.  This Fedora data object demonstrates the simplest Fedora digital object scenario.  It is the case where we aggregate content in the Fedora object, and let Fedora's default object behaviors provide access to the content.  This is an example of a Fedora digital object that has NO DISSEMINATORS.  In this case, we aggregate different formats of a particular document (i.e.g, the ECDL2002 Fedora paper).   When the object is viewed via the Fedora Access Service, the user can view the a list of the contents of the object, and get any particular content item. This access is achieved via the "Default Disseminator" which is dynamically associated with every Fedora object by the system.  </METS:note>
-		</METS:agent>
-	</METS:metsHdr>
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->

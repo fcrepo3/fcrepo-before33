@@ -1,24 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS    -->
+<!-- Creator: Chris Wilper -->
+<!-- Custodian: Cornell -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" 
-           xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:xlink="http://www.w3.org/TR/xlink" 
-           xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" 
-           OBJID="demo:26" TYPE="FedoraObject" LABEL="Sample Document Object (TEI to PDF)" PROFILE="TEI_TO_PDFDOC">
-	<!---*******************************************************************************************************************************************-->
-	<!--  FEDORA SYSTEM METADATA: -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-22T06:32:00" RECORDSTATUS="A">
-		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
-			<METS:name>Chris Wilper</METS:name>
-			<METS:note/>
-		</METS:agent>
-		<METS:agent ID="A3" ROLE="CUSTODIAN" TYPE="OTHER">
-			<METS:name>Cornell</METS:name>
-			<METS:note>Owned by Cornell</METS:note>
-		</METS:agent>
-	</METS:metsHdr>
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:26" TYPE="FedoraObject" LABEL="Sample Document Object (TEI to PDF)" PROFILE="TEI_TO_PDFDOC">
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
@@ -45,36 +31,36 @@
 		<METS:descMD ID="TEISOURCE1.0" CREATED="2002-05-20T06:32:00">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="TEI Source">
 				<METS:xmlData>
-<TEI.2>
-<teiHeader>
-<fileDesc>
-   <titleStmt>
-     <title>The Purple Cow</title>
-     <author>Frank Gelett Burgess</author>
-   </titleStmt>
-   <publicationStmt>
-     <p>Text entry by <name>Walter Underwood</name>(wunder@infoseek.com) on
+					<TEI.2>
+						<teiHeader>
+							<fileDesc>
+								<titleStmt>
+									<title>The Purple Cow</title>
+									<author>Frank Gelett Burgess</author>
+								</titleStmt>
+								<publicationStmt>
+									<p>Text entry by <name>Walter Underwood</name>(wunder@infoseek.com) on
       <date>1999-02-01</date>. This transcription is in the public domain.</p>
-   </publicationStmt>
-   <sourceDesc>
-     <p>From the <title>The Lark</title>, San Fransicsco, <date>1896</date>.</p>
-   </sourceDesc>
-</fileDesc>
-</teiHeader>
-<text>
-<body>
-<div1 type="poem">
-<head>The Purple Cow</head>
-<lg>
-<l>I never saw a purple cow,</l>
-<l>I never hope to see one;</l>
-<l>But I can tell you, anyhow,</l>
-<l>I'd rather see than be one.</l>
-</lg>
-</div1>
-</body>
-</text>
-</TEI.2>
+								</publicationStmt>
+								<sourceDesc>
+									<p>From the <title>The Lark</title>, San Fransicsco, <date>1896</date>.</p>
+								</sourceDesc>
+							</fileDesc>
+						</teiHeader>
+						<text>
+							<body>
+								<div1 type="poem">
+									<head>The Purple Cow</head>
+									<lg>
+										<l>I never saw a purple cow,</l>
+										<l>I never hope to see one;</l>
+										<l>But I can tell you, anyhow,</l>
+										<l>I'd rather see than be one.</l>
+									</lg>
+								</div1>
+							</body>
+						</text>
+					</TEI.2>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:descMD>
@@ -88,7 +74,7 @@
 			</METS:fileGrp>
 		</METS:fileGrp>
 	</METS:fileSec>
-<!--http://localhost:8080/saxon/SaxonServlet?source=http%3a//localhost%3a8080/fedora/get/demo%3a22/fedora-system%3a3/getItem%3fitemID=DOCBOOKSOURCE&style=http%3a//www.altova.com/stylesheets/docbook/fo/docbook.xsl -->
+	<!--http://localhost:8080/saxon/SaxonServlet?source=http%3a//localhost%3a8080/fedora/get/demo%3a22/fedora-system%3a3/getItem%3fitemID=DOCBOOKSOURCE&style=http%3a//www.altova.com/stylesheets/docbook/fo/docbook.xsl -->
 	<!---*******************************************************************************************************************************************-->
 	<!--- FEDORA DATASTREAM BINDING MAPS  -->
 	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->

@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR MECHANISM OBJECT ENCODED USING METS -->
+<!-- Creator: Sandy Payette -->
+<!-- Custodian: University of Virginia Library -->
+<!-- Note: Demonstration Behavior Mechanism Object.  This Behavior Mechanism Object defines service -->
+<!-- metadata for the UVA MrSID service which takes a wavelet encoded image file as input, and returns a -->
+<!-- JPEG image of a specified resolution.  This Behavior Mechanism Object is a surrogate for a service that -->
+<!-- fulfills the behavior contract defined in the UVA Simple Image Behavior Definition Object (see the Fedora -->
+<!-- object with PID=demo:1) -->
 <!---********************************************************************************************-->
 <METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:4" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object implementing the UVA Simple Image BDEF contract using the UVA MrSID Service." PROFILE="fedora:BMECH">
-	<!---*******************************************************************************************************************************************-->
-	<!--  FEDORA SYSTEM METADATA: -->
-	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
-		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
-			<METS:name> Sandy Payette </METS:name>
-			<METS:note>Demonstration Behavior Mechanism Object.  This Behavior Mechanism Object defines service metadata for the UVA MrSID service which takes a wavelet encoded image file as input, and returns a JPEG image of a specified resolution.  This Behavior Mechanism Object is a surrogate for a service that fulfills the behavior contract defined in the UVA Simple Image Behavior Definition Object (see the Fedora object with PID=demo:1)</METS:note>
-		</METS:agent>
-		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
-			<METS:name> University of Virginia Library </METS:name>
-			<METS:note> Object owned by UVA </METS:note>
-		</METS:agent>
-	</METS:metsHdr>
 	<!---*******************************************************************************************************************************************-->
 	<!--  INLINE METADATA DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT: -->
 	<!---*******************************************************************************************************************************************-->
