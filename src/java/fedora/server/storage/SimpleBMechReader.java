@@ -41,7 +41,7 @@ public class SimpleBMechReader
         super(context, repoReader, translator, shortExportFormat,
                 longExportFormat, currentFormat, encoding, serializedObject,
                 logTarget);
-        serviceMapper = new ServiceMapper();
+        serviceMapper = new ServiceMapper(GetObjectPID());
     }
 
     public MethodDef[] getServiceMethods(Date versDateTime)

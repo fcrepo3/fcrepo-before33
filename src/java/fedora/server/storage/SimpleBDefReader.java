@@ -37,7 +37,7 @@ public class SimpleBDefReader
         super(context, repoReader, translator, shortExportFormat,
                 longExportFormat, currentFormat, encoding, serializedObject,
                 logTarget);
-        serviceMapper = new ServiceMapper();
+        serviceMapper = new ServiceMapper(GetObjectPID());
     }
 
     public MethodDef[] getAbstractMethods(Date versDateTime)
