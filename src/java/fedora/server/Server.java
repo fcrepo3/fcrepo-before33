@@ -147,7 +147,8 @@ import org.w3c.dom.NodeList;
  * @author cwilper@cs.cornell.edu
  */
 public abstract class Server 
-        extends Pluggable {
+        extends Pluggable
+        implements Logging {
  
     /** 
      * The ResourceBundle that provides access to constants from
@@ -928,6 +929,14 @@ public abstract class Server
         log(new LogRecord(Level.SEVERE, message));
     }
     
+    public final boolean loggingSevere() {
+        if (m_logger==null) { 
+            return true; 
+        } else { 
+            return m_logger.isLoggable(Level.SEVERE);
+        }
+    }
+    
     /**
      * Logs a WARNING message, indicating that an undesired (but non-fatal)
      * condition occured.
@@ -936,6 +945,14 @@ public abstract class Server
      */
     public final void logWarning(String message) {
         log(new LogRecord(Level.WARNING, message));
+    }
+    
+    public final boolean loggingWarning() {
+        if (m_logger==null) { 
+            return true; 
+        } else { 
+            return m_logger.isLoggable(Level.WARNING);
+        }
     }
     
     /**
@@ -949,6 +966,14 @@ public abstract class Server
         log(new LogRecord(Level.INFO, message));
     }
     
+    public final boolean loggingInfo() {
+        if (m_logger==null) { 
+            return true; 
+        } else { 
+            return m_logger.isLoggable(Level.INFO);
+        }
+    }
+    
     /**
      * Logs a CONFIG message, indicating what occurred during the server's
      * (or a module's) configuration phase.
@@ -959,6 +984,14 @@ public abstract class Server
         log(new LogRecord(Level.CONFIG, message));
     }
     
+    public final boolean loggingConfig() {
+        if (m_logger==null) { 
+            return true; 
+        } else { 
+            return m_logger.isLoggable(Level.CONFIG);
+        }
+    }
+    
     /**
      * Logs a FINE message, indicating basic information about a request to
      * the server (like hostname, operation name, and success or failure).
@@ -967,6 +1000,14 @@ public abstract class Server
      */
     public final void logFine(String message) {
         log(new LogRecord(Level.FINE, message));
+    }
+    
+    public final boolean loggingFine() {
+        if (m_logger==null) { 
+            return true; 
+        } else { 
+            return m_logger.isLoggable(Level.FINE);
+        }
     }
     
     /**
@@ -980,6 +1021,14 @@ public abstract class Server
         log(new LogRecord(Level.FINER, message));
     }
     
+    public final boolean loggingFiner() {
+        if (m_logger==null) { 
+            return true; 
+        } else { 
+            return m_logger.isLoggable(Level.FINER);
+        }
+    }
+    
     /**
      * Logs a FINEST message, indicating method entry/exit or extremely
      * verbose information intended to aid in debugging.
@@ -988,6 +1037,14 @@ public abstract class Server
      */
     public final void logFinest(String message) {
         log(new LogRecord(Level.FINEST, message));
+    }
+    
+    public final boolean loggingFinest() {
+        if (m_logger==null) { 
+            return true; 
+        } else { 
+            return m_logger.isLoggable(Level.FINEST);
+        }
     }
     
     /**
