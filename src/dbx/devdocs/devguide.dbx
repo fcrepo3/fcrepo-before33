@@ -226,7 +226,8 @@
 		<para>In weak locking, the repository provides several functions that aid in developer communication
 		so we can see what people are working on.</para>
 		<section><title>edit</title><para><userinput>cvs edit MyFile.java</userinput></para><para>Signals that you intend to edit this file.
-		This creates what is called a "temporary watch" on 
+		This creates what is called a "temporary watch" on </para>
+      </section>
 
 
 	</section>
@@ -246,6 +247,9 @@
 	<para>Here is the revision history of this guide:</para>
 	<literallayout>
     $Log$
+    Revision 1.4  2002/05/08 00:47:09  cwilper
+    fixed minor prob (unclosed tag) at end of in-progress locking section under cvs section
+
     Revision 1.3  2002/05/08 00:44:34  cwilper
     - changed emphasis tags to userinput tags where appropriate
     - changed note sections to use the note tag
