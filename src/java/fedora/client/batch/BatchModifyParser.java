@@ -384,7 +384,7 @@ public class BatchModifyParser extends DefaultHandler
                 if ( attrs.getValue("dsID") != null && !attrs.getValue("dsID").equals("")) {
                     m_ds.dsID = attrs.getValue("dsID");                
                 } else {
-                	m_ds.dsID = null;
+                	  m_ds.dsID = null;
                 }
                 if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equals(""))
                     m_ds.dsLocation = attrs.getValue("dsLocation");
@@ -678,20 +678,13 @@ public class BatchModifyParser extends DefaultHandler
                 m_diss.bMechID = attrs.getValue("bMechPid");
                 m_diss.dissLabel = attrs.getValue("dissLabel");
                 m_diss.logMessage = attrs.getValue("logMessage");
+                m_diss.dissState  = attrs.getValue("dissState");
 
                 // Get original labels for bDef and bMech object for this disseminator
                 Map m_bDefLabels = new HashMap();
                 Map m_bMechLabels = new HashMap();
                 m_bDefLabels = getBDefLabelMap();
                 m_bMechLabels = getBMechLabelMap(m_diss.bDefID);
-
-                // Get optional attrributes. Missing or empty attributes indicate
-                // that default values are to be used.
-                if ( attrs.getValue("dissState") != null && !attrs.getValue("dissState").equals("")) {
-                    m_diss.dissState = attrs.getValue("dissState");
-                } else {
-                    m_diss.dissState = "A";
-                }
 
                 addDisseminator = true;
 

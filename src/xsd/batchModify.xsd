@@ -156,7 +156,7 @@
 			<xsd:attribute name="bDefPid" type="xsd:string" use="required"/>
 			<xsd:attribute name="bMechPid" type="xsd:string" use="required"/>
 			<xsd:attribute name="dissLabel" type="xsd:string" use="required"/>
-			<xsd:attribute name="dissState" use="optional">
+			<xsd:attribute name="dissState" use="required">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
 						<xsd:enumeration value="A"/>
