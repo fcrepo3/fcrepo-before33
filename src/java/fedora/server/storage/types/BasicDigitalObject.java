@@ -41,6 +41,7 @@ public class BasicDigitalObject
     private boolean m_isNew;
     private int m_fedoraObjectType;
     private String m_pid;
+    private String m_uri;
     private String m_state;
     private String m_ownerId;
     private String m_label;
@@ -51,11 +52,13 @@ public class BasicDigitalObject
     private HashMap m_datastreams;
     private HashMap m_disseminators;
     private Map m_prefixes;
+	private Map m_extProperties;
 
     public BasicDigitalObject() {
         m_auditRecords=new ArrayList();
         m_datastreams=new HashMap();
         m_disseminators=new HashMap();
+        m_extProperties=new HashMap();
 		setNew(false);
     }
 
@@ -83,6 +86,14 @@ public class BasicDigitalObject
         m_pid=pid;
     }
 
+	public String getURI() {
+		return m_uri;
+	}
+
+	public void setURI(String uri) {
+		m_uri=uri;
+	}
+	
     public String getState() {
         return m_state;
     }
@@ -239,6 +250,37 @@ public class BasicDigitalObject
         }
         return newID(auditIDs.iterator(), "AUDIT");
     }
+    
+	/**
+	 * Sets an extended property on the object.
+	 *
+	 * @param propName The extende property name, either a string, or URI as string.
+	 */
+	public void setProperty(String propName, String propValue) {
+		m_extProperties.put(propName, propValue);
+		
+	}
+
+	/**
+	 * Gets an extended property value, given the property name.
+	 *
+	 * @return The property value.
+	 */
+	public String getProperty(String propName) {
+		return (String) m_extProperties.get(propName);
+		
+	}
+
+	/**
+	 * Gets a Map containing all of the extended properties
+	 * on the object.  Map key is property name.
+	 *
+	 * @return The property Map.
+	 */	
+	public Map getProperties() {
+		return m_extProperties;
+		
+	}
 
     /**
      * Given an iterator of existing ids, return a new id that
