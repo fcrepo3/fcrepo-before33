@@ -48,7 +48,7 @@
 		<xsd:attribute name="FEDORA_URI" type="xsd:anyURI" use="optional"/>
 		<xsd:attribute name="STATE" type="stateType" use="optional"/>
 		<xsd:attribute name="FORMAT_URI" type="xsd:anyURI" use="optional"/>
-		<xsd:attribute name="VERSIONABLE" type="versionableType" use="optional" default="YES"/>
+		<xsd:attribute name="VERSIONABLE" type="xsd:boolean" use="optional" default="true"/>
 		<xsd:attribute name="ALT_IDS" type="uriListType" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="datastreamVersionType">
@@ -122,7 +122,7 @@
 			</xsd:simpleType>
 		</xsd:attribute>
 		<xsd:attribute name="STATE" type="stateType" use="optional"/>
-		<xsd:attribute name="VERSIONABLE" type="versionableType" use="optional" default="YES"/>
+		<xsd:attribute name="VERSIONABLE" type="xsd:boolean" use="optional" default="true"/>
 	</xsd:complexType>
 	<xsd:complexType name="disseminatorVersionType">
 		<xsd:sequence>
@@ -175,12 +175,6 @@
 		<xsd:attribute name="NAME" type="xsd:string" use="required"/>
 		<xsd:attribute name="VALUE" type="xsd:string" use="required"/>
 	</xsd:complexType>
-	<xsd:simpleType name="versionableType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="NO"/>
-			<xsd:enumeration value="YES"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 	<xsd:simpleType name="stateType">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="A"/>
