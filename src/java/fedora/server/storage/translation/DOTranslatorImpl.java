@@ -78,8 +78,8 @@ public class DOTranslatorImpl
 			System.out.println("Grabbing serializer for: " + format);
             DOSerializer ser=(DOSerializer) m_serializers.get(format);
             if (ser==null) {
-                throw new UnsupportedTranslationException("No serializer exists "
-                        + "for format: " + format);
+                throw new UnsupportedTranslationException(
+					"No serializer exists for format: " + format);
             }
             DOSerializer newSer=ser.getInstance();
             newSer.serialize(in, out, encoding, encodeForExport);
