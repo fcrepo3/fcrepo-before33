@@ -82,6 +82,21 @@ public class DOValidatorModule extends Module implements DOValidator
           e.getMessage(),"fedora.server.validation.DOValidatorModule");
     }
   }
+  
+  public void postInitModule() throws ModuleInitializationException
+  {
+    try
+    {
+        dov.connectionPool=((ConnectionPoolManager) getServer().getModule(
+            "fedora.server.storage.ConnectionPoolManager")).getPool();
+    }
+    catch(Exception e)
+    {
+      System.out.println("Unable to postInitialize validation module: " + e.getMessage());
+      throw new ModuleInitializationException(
+          e.getMessage(),"fedora.server.validation.DOValidatorModule");
+    }
+  }
 
   /**
    * <p>Validates a digital object.</p>
