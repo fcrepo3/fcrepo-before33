@@ -75,6 +75,8 @@ public class METSLikeDOSerializer
     private static Pattern s_localhostUrlStartWithPort; // "http://localhost:8080/"
     private static Pattern s_localhostUrlStartWithoutPort; // "http://localhost/"
 
+    private boolean m_onPort80=false;
+
     public METSLikeDOSerializer() {
     }
 
@@ -101,6 +103,9 @@ public class METSLikeDOSerializer
                     Server s=Server.getInstance(new File(fedoraHome));
                     fedoraServerHost=s.getParameter("fedoraServerHost");
                     fedoraServerPort=s.getParameter("fedoraServerPort");
+					if (fedoraServerPort.equals("80")) {
+					    m_onPort80=true;
+					}
                 } catch (InitializationException ie) {
                     // can only possibly happen during failed testing, in which 
                     // case it's ok to do a System.exit
@@ -297,12 +302,14 @@ public class METSLikeDOSerializer
                     String xml=new String(ds.xmlContent, "UTF-8");
                     xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
                             "http://local.fedora.server/");
-                    xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
-                            "http://local.fedora.server/");
                     xml=s_localhostUrlStartWithPort.matcher(xml).replaceAll(
                             "http://local.fedora.server/");
-                    xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
-                            "http://local.fedora.server/");
+					if (m_onPort80) {
+                        xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
+                                "http://local.fedora.server/");
+                        xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
+                                "http://local.fedora.server/");
+				    }
                     buf.append(xml);
                 } catch (UnsupportedEncodingException uee) {
                     // wont happen, java always supports UTF-8
