@@ -10,7 +10,7 @@
            xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" 
            OBJID="demo:23" 
            TYPE="FedoraBMechObject" 
-           LABEL="Behavior Mechanism Object implementing the FO contract using the Fedora Local Saxon Service with Norm Walsh&amp;s Docbook-FO stylesheet" 
+           LABEL="Behavior Mechanism Object implementing the FO contract using the Fedora Local Saxon Service with Norm Walsh&apos;s Docbook-FO stylesheet" 
            PROFILE="fedora:BMECH">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
