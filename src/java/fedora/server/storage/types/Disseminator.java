@@ -64,11 +64,5 @@ public class Disseminator
 
   public Disseminator()
   {
-    //m_auditRecordIdList=new ArrayList();
   }
-
-  //public List auditRecordIdList()
-  //{
-  //  return m_auditRecordIdList;
-  //}
 }
