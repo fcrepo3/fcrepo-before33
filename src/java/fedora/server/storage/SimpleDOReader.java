@@ -69,6 +69,24 @@ public class SimpleDOReader
         m_translator.deserialize(serializedObject, m_obj, currentFormat, encoding);
     }
 
+    /**
+     * Alternate constructor for when a DigitalObject is already available
+     * for some reason.
+     */
+    public SimpleDOReader(Context context, RepositoryReader repoReader,
+            DOTranslator translator, String shortExportFormat,
+            String longExportFormat, String encoding, DigitalObject obj,
+            Logging logTarget) {
+        super(logTarget);
+        m_context=context;
+        m_repoReader=repoReader;
+        m_translator=translator;
+        m_shortExportFormat=shortExportFormat;
+        m_longExportFormat=longExportFormat;
+        m_encoding=encoding;        
+        m_obj=obj;
+    }
+
     public String getFedoraObjectType() {
         int t=m_obj.getFedoraObjectType();
         if (t==DigitalObject.FEDORA_OBJECT) {
