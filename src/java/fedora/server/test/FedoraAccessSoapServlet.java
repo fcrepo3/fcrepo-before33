@@ -1086,7 +1086,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         out.println("<title>FedoraServlet</title>");
         out.println("</head>");
         out.println("<body>");
-        out.println("<p>><font size='+1' color='red'>"+
+        out.println("<p><font size='+1' color='red'>"+
                     "Required parameter missing in Behavior "+
                     "Methods Request:</font></p>");
         out.println("<table cellpadding='5'>");
