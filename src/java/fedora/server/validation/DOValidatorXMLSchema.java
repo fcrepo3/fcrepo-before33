@@ -151,15 +151,7 @@ public class DOValidatorXMLSchema
 	 * cause the server to hang for a long time if they can't be resolved...and they're 
 	 * not even needed.
 	 */
-	// SDP:  Commented out since it is fragile.  For some reason, validation with
-	// the fake attribute xsi:schemaNoitacol does not always work.  For example,
-	// using a FOXML instance with foxml1-0.xsd causes a SAX exception that
-	// rejects xsi:schemaNoitacol as an invalid attribute on root element.  
-	// There are no setting in the METS vs. FOXML schemas that should cause
-	// validation to perform differently in one context vs. the other.  
-	// In general, this seems dangerous since there is no such attribute
-	// (xsi:schemaNoitacol) in the xsi namespace.  I'd expect it to fail, as
-	// it does in the FOXML case.  For now, schemaLocation attributes within
+	// SDP:  Commented out. For now, schemaLocation attributes within
 	// inline XML will be forbidden via Schematron validation check.
 	/*
 	private InputStream getInputStreamWithoutSchemaLocations(InputStream in) 
