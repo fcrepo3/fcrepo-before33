@@ -17,6 +17,8 @@ public class MethodDefOperationBind extends MethodDef
     public String operationLocation;
     public String operationURL;
 
+    public String[] dsBindingKeys;
+
     public MethodDefOperationBind()
     {
     }
