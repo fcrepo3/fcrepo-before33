@@ -50,9 +50,13 @@ public class DynamicAccessModule extends Module implements Access
   /** Current DOManager of the Fedora server. */
   private DOManager m_manager;
 
+  /** Main Access module of the Fedora server. */
+  private Access m_access;
+
   /** IP Restriction for the Access subsystem. */
   private IPRestriction m_ipRestriction;
 
+  private Hashtable dynamicBDefToMech = null;
   private String reposBaseURL = null;
   private File reposHomeDir = null;
 
@@ -98,6 +102,13 @@ public class DynamicAccessModule extends Module implements Access
         throw new ModuleInitializationException("Can't get a DOManager "
             + "from Server.getModule", getRole());
       }
+      m_access = (Access)
+          getServer().getModule("fedora.server.access.Access");
+      if (m_access == null)
+      {
+        throw new ModuleInitializationException("Can't get a ref to Access "
+            + "from Server.getModule", getRole());
+      }
       // Get the repository Base URL
       InetAddress hostIP = null;
       try
@@ -115,12 +126,10 @@ public class DynamicAccessModule extends Module implements Access
       reposBaseURL = "http://" + hostIP.getHostAddress() + ":" + fedoraServerPort;
       reposHomeDir = getServer().getHomeDir();
 
-      // get ref to the Dynamic Access implementation class
-      da = new DynamicAccessImpl(reposBaseURL, reposHomeDir);
-      da.dynamicBDefToMech = new Hashtable();
+      dynamicBDefToMech = new Hashtable();
       try
       {
-        da.dynamicBDefToMech.put("fedora-system:3",
+        dynamicBDefToMech.put("fedora-system:3",
           Class.forName(getParameter("fedora-system:4")));
       }
       catch(Exception e)
@@ -129,6 +138,9 @@ public class DynamicAccessModule extends Module implements Access
         throw new ModuleInitializationException(
             e.getMessage(),"fedora.server.validation.DOValidatorModule");
       }
+
+      // get ref to the Dynamic Access implementation class
+      da = new DynamicAccessImpl(m_access, reposBaseURL, reposHomeDir, dynamicBDefToMech);
   }
 
   public String[] getBehaviorDefinitions(Context context, String PID,
@@ -191,6 +203,12 @@ public class DynamicAccessModule extends Module implements Access
   {
     //m_ipRestriction.enforce(context);
     return da.getObjectMethods(context, PID, asOfDateTime);
+  }
+
+  public ObjectProfile getObjectProfile(Context context, String PID,
+    Calendar asOfDateTime) throws ServerException
+  {
+    return null;
   }
 
   // FIXIT! What do these serach methods mean in dynamic access context???
