@@ -27,7 +27,8 @@ public interface Rebuilder {
      * @returns a map of option names to plaintext descriptions.
      */
     public Map init(File serverBaseDir,
-                    ServerConfiguration serverConfig) throws Exception;
+                    ServerConfiguration serverConfig,
+                    ManagedContentFinder finder) throws Exception;
 
     /**
      * Validate the provided options and perform any necessary startup tasks.

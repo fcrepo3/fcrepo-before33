@@ -16,7 +16,7 @@ public class Rebuild {
      * Rebuilders that the rebuild utility knows about.
      */
     public static String[] REBUILDERS = new String[] {
-            "fedora.server.utilities.rebuild.NoOpRebuilder" };
+            "fedora.server.resourceIndex.ResourceIndexRebuilder" };
 
     public Rebuild(File serverDir, String profile) throws Exception {
         ServerConfiguration serverConfig = getServerConfig(serverDir,
@@ -43,12 +43,22 @@ public class Rebuild {
             System.out.println();
             System.out.println(rebuilder.getAction());
             System.out.println();
-            Map options = getOptions(rebuilder.init(serverDir, serverConfig));
+
+//            ManagedContentFinder FileSystemManagedContentFinder(serverConfig.getParameter());
+            //
+            //
+            //
+            ManagedContentFinder finder = null; //
+            //
+            //
+            //
+            Map options = getOptions(rebuilder.init(serverDir, serverConfig, finder));
             if (options != null) {
                 System.out.println();
                 System.out.println("Rebuilding...");
                 try {
                     rebuilder.start(options);
+                    addAllObjects(rebuilder, serverDir, serverConfig);
                     // TODO: Get all the objects from the filesystem
                     //       and call rebuilder.addObject()
                 } finally {
@@ -60,19 +70,33 @@ public class Rebuild {
         }
     }
 
+    public void addAllObjects(Rebuilder rebuilder,
+                              File serverDir,
+                              ServerConfiguration serverConfig) {
+        // Determine which deserializers are supported, and get an
+        // instance of each
+    }
+
     private Map getOptions(Map descs) throws IOException {
         Map options = new HashMap();
         Iterator iter = descs.keySet().iterator();
+        boolean hasAtLeastOneOption = false;
         while (iter.hasNext()) {
+            hasAtLeastOneOption = true;
             String name = (String) iter.next();
             String desc = (String) descs.get(name);
             options.put(name, getOptionValue(name, desc));
         }
-        int c = getChoice("Start rebuilding with the above options?", new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
-        if (c == 0) return options;
-        if (c == 1) {
-            System.out.println();
-            return getOptions(descs);
+        if (hasAtLeastOneOption) {
+            int c = getChoice("Start rebuilding with the above options?", new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
+            if (c == 0) return options;
+            if (c == 1) {
+                System.out.println();
+                return getOptions(descs);
+            }
+        } else {
+            int c = getChoice("Start rebuilding?", new String[] {"Yes", "No, exit."});
+            if (c == 0) return options;
         }
         return null;
     }
