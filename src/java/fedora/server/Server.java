@@ -1199,6 +1199,10 @@ public abstract class Server
         return (DatastoreConfig) m_datastoreConfigs.get(id);
     }
     
+    public Iterator datastoreConfigIds() {
+        return m_datastoreConfigs.keySet().iterator();
+    }
+    
     /**
      * Gets an <code>Iterator</code> over the roles that have been loaded.
      *
@@ -1380,9 +1384,9 @@ public abstract class Server
             out.append("Parameters    : ");
             padding="                ";
             i=0;
-            iter=module.parameterNames();
-            while (iter.hasNext()) {
-                String name=(String) iter.next();
+            Iterator iter2=module.parameterNames();
+            while (iter2.hasNext()) {
+                String name=(String) iter2.next();
                 String value=module.getParameter(name);
                 if (i>0) {
                     out.append(padding);
@@ -1393,7 +1397,28 @@ public abstract class Server
             if (i==0) {
                 out.append("<none>\n");
             }
-            
+        }
+        
+        iter=datastoreConfigIds();
+        while (iter.hasNext()) {
+            String id=(String) iter.next();
+            out.append("\nDatastore Cfg : " + id + "\n");
+            out.append("Parameters    : ");
+            padding="                ";
+            i=0;
+            Iterator iter2=((DatastoreConfig) getDatastoreConfig(id)).parameterNames();
+            while (iter2.hasNext()) {
+                String name=(String) iter2.next();
+                String value=((DatastoreConfig) getDatastoreConfig(id)).getParameter(name);
+                if (i>0) {
+                    out.append(padding);
+                }
+                out.append(name + "=" + value + "\n");
+                i++;
+            }
+            if (i==0) {
+                out.append("<none>\n");
+            }
         }
         
         return out.toString();
