@@ -17,6 +17,7 @@ public class DSBindingMap
 
   public String dsBindMapLabel;
 
+  // TODO: Does binding map really have state, by design?
   public String state;
 
   public DSBinding[] dsBindings;

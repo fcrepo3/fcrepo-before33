@@ -9,6 +9,8 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.DSBinding;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
@@ -446,6 +448,82 @@ public class METSDOSerializer
                 buf.append("   </fileGrp>\n");
                 buf.append("  </fileSec>\n");
             }
+            // Now do structmap...one for each disseminator
+            Iterator dissIdIter=obj.disseminatorIdIterator();
+            while (dissIdIter.hasNext()) {
+                String did=(String) dissIdIter.next();
+                Iterator dissIter=obj.disseminators(did).iterator();
+                while (dissIter.hasNext()) {
+                    Disseminator diss=(Disseminator) dissIter.next();
+                    buf.append("  <structMap ID=\"");
+                    buf.append(diss.dsBindMapID);
+                    buf.append("\" TYPE=\"fedora:dsBindingMap\">\n");
+                    buf.append("    <div TYPE=\"");
+                    buf.append(diss.bMechID);
+                    buf.append("\" LABEL=\"");
+                    buf.append(diss.dsBindMap.dsBindMapLabel);
+                    buf.append("\">\n");
+                    // iterate through diss.dsBindMap.dsBindings[]
+                    DSBinding[] bindings=diss.dsBindMap.dsBindings;
+                    for (int i=0; i<bindings.length; i++) {
+                        buf.append("      <div TYPE=\"");
+                        buf.append(bindings[i].bindKeyName);
+                        buf.append("\" LABEL=\"");
+                        buf.append(bindings[i].bindLabel);
+                        buf.append("\" ORDER=\"");
+                        buf.append(bindings[i].seqNo);
+                        buf.append("\">\n");
+                        buf.append("        <fptr FILEID=\"");
+                        buf.append(bindings[i].datastreamID);
+                        buf.append("\"/>\n");
+                        buf.append("      </div>\n");
+                    }
+                    buf.append("    </div>\n");
+                    buf.append("  </structMap>\n");
+                }
+            }
+            // Last, do disseminators
+            dissIdIter=obj.disseminatorIdIterator();
+            while (dissIdIter.hasNext()) {
+                String did=(String) dissIdIter.next();
+                Iterator dissIter=obj.disseminators(did).iterator();
+                while (dissIter.hasNext()) {
+                    Disseminator diss=(Disseminator) dissIter.next();
+                    buf.append("  <behaviorSec ID=\"");
+                    buf.append(diss.dissVersionID);
+                    buf.append("\" STRUCTID=\"");
+                    buf.append(diss.dsBindMapID);
+                    buf.append("\" BTYPE=\"");
+                    buf.append(diss.bDefID);
+                    buf.append("\" CREATED=\"");
+                    String strDate=DateUtility.convertDateToString(diss.dissCreateDT);
+                    buf.append(strDate);
+                    buf.append("\" LABEL=\"");
+                    buf.append(diss.dissLabel);
+                    buf.append("\" GROUPID=\"");
+                    buf.append(diss.dissID);
+                    buf.append("\" STATUS=\"");
+                    buf.append(diss.dissState);
+                    buf.append("\">\n");
+                    buf.append("    <interfaceDef LABEL=\"");
+                    buf.append(diss.bDefLabel);
+                    buf.append("\" LOCTYPE=\"URN\" xlink:href=\"");
+                    buf.append(diss.bDefID);
+                    buf.append("\"/>\n");
+                    buf.append("    <mechanism LABEL=\"");
+                    buf.append(diss.bMechLabel);
+                    buf.append("\" LOCTYPE=\"URN\" xlink:href=\"");
+                    buf.append(diss.bMechID);
+                    buf.append("\"/>\n");
+                    buf.append("  </behaviorSec>\n");
+                }
+            }
+/*
+<behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors" GROUPID="DISS1" STATUS="">
+  <interfaceDef LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
+  <mechanism LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
+</behaviorSec>
+*/
             //
             // Serialization Complete
             //
