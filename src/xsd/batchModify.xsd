@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://www.fedora.info/definitions/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.fedora.info/definitions/" elementFormDefault="qualified">
+<xsd:schema targetNamespace="http://www.fedora.info/definitions/" xmlns="http://www.fedora.info/definitions/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
 	<xsd:element name="batchModify">
 		<xsd:complexType>
 			<xsd:sequence>
@@ -26,7 +26,7 @@
 			<xsd:attribute name="dsLabel" type="xsd:string" use="required"/>
 			<xsd:attribute name="dsMIME" type="xsd:string" use="required"/>
 			<xsd:attribute name="formatURI" type="xsd:anyURI" use="required"/>
-			<xsd:attribute name="dsLocation" type="xsd:anyURI" use="required"/>
+			<xsd:attribute name="dsLocation" type="xsd:anyURI"/>
 			<xsd:attribute name="dsControlGroupType" use="required">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
