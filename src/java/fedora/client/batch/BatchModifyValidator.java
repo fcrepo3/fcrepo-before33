@@ -9,10 +9,8 @@ import java.io.PrintStream;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 
@@ -46,15 +44,14 @@ import org.xml.sax.XMLReader;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version $Id $
+ * @version $Id$
  */
 public class BatchModifyValidator extends DefaultHandler
 {
     private InputStream in;
     private static PrintStream out;
-    public boolean isValid = false;
+    private boolean isValid = false;
     private static int errorCount = 0;
-    //private static int errorCount = 0;
 
     /**
      * <p>Constructor allows this class to initiate the parsing.</p>
@@ -69,8 +66,8 @@ public class BatchModifyValidator extends DefaultHandler
     public BatchModifyValidator(InputStream in, PrintStream out) throws Exception
     {
         this.in = in;
-        this.out = out;
-        this.errorCount = 0;
+        BatchModifyValidator.out = out;
+        BatchModifyValidator.errorCount = 0;
         XMLReader xmlReader = null;
 
 
@@ -92,36 +89,31 @@ public class BatchModifyValidator extends DefaultHandler
         }
         catch (Exception e)
         {
-            System.out.println("ERROR: "+e.getClass().getName()
+            System.err.println("ERROR: "+e.getClass().getName()
                                + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
             logError(e, "(no detail provided.)");
-            errorCount = errorHandler.errorCount;
+            errorCount = BatchModifyValidatorErrorHandler.errorCount;
             if (errorCount==0)
                 errorCount++;
             isValid = false;
-            //System.out.println("\nModify Directives File is not valid!"
-            //                + "\nErrors Encountered: "+errorCount);
-            //            out.println("  Modify Directives File is not valid!"
-            //    + "\n  Errors Encountered: "+errorCount);
         }
 
         // Parse the file.
         try
         {
             xmlReader.parse(new InputSource(in));
-            isValid = true;
+            errorCount = BatchModifyValidatorErrorHandler.errorCount;
+            if (BatchModifyValidatorErrorHandler.errorCount == 0) {
+            	isValid = true;
+            }
         }
         catch (Exception e)
         {
-            System.out.println("ERROR: "+e.getClass().getName()
+            System.err.println("ERROR: "+e.getClass().getName()
                                + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
             logError(e, "(no detail provided.)");
-            errorCount = errorHandler.errorCount;
+            errorCount = BatchModifyValidatorErrorHandler.errorCount;
             isValid = false;
-            //System.out.println("\nModify Directives File is not valid!"
-            //    + "\nErrors Encountered: "+errorCount);
-            //out.println("  Modify Directives File is not valid!"
-            //    + "\n  Errors Encountered: "+errorCount);
 
         }
     }

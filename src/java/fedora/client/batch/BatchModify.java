@@ -45,7 +45,7 @@ import fedora.client.Uploader;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version $Id $
+ * @version $Id$
  */
 
 public class BatchModify
@@ -99,7 +99,7 @@ public class BatchModify
             try {
                 if (in != null)
                     in.close();
-                if (s_log!=null) {
+                if (s_log!=null && bmp!=null) {
                     et=System.currentTimeMillis();
                     if (bmp.getFailedCount()==-1) {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),

@@ -16,9 +16,9 @@ import javax.swing.text.JTextComponent;
 
 import fedora.client.Administrator;
 import fedora.client.batch.BatchModifyParser;
-import fedora.server.utilities.StreamUtility;
-import fedora.server.management.FedoraAPIM;
 import fedora.client.Uploader;
+import fedora.server.utilities.StreamUtility;
+
 
 /**
  *
@@ -47,7 +47,7 @@ import fedora.client.Uploader;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version $Id $
+ * @version $Id$
  */
 
 public class BatchModifyValidate
@@ -56,7 +56,6 @@ public class BatchModifyValidate
     private static String s_rootName = null;
     private static String s_logPath = null;
     private static PrintStream s_log = null;
-    private static FedoraAPIM APIM = null;
     private static Uploader UPLOADER = null;
     private static Administrator s_admin;
 
@@ -66,8 +65,8 @@ public class BatchModifyValidate
      * @param s_admin - An instance of FedoraAPIM.
      */
     public BatchModifyValidate(Administrator s_admin) {
-        this.APIM = APIM;
-        this.s_admin = s_admin;
+        //this.APIM = APIM;
+        BatchModifyValidate.s_admin = s_admin;
         InputStream in = null;
         BatchModifyParser bmp = null;
         BatchModifyValidator bmv = null;
@@ -102,7 +101,7 @@ public class BatchModifyValidate
             try {
                 if (in != null)
                     in.close();
-                if (s_log!=null) {
+                if (s_log!=null && bmv!=null) {
                     et=System.currentTimeMillis();
                     if (bmv.isValid()) {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
@@ -153,6 +152,7 @@ public class BatchModifyValidate
                     }
                 }
             } catch (Exception e) {
+            	e.printStackTrace();
                 JOptionPane.showMessageDialog(Administrator.getDesktop(),
                     e.getClass().getName()
                     + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()),

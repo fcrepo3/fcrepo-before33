@@ -1,6 +1,5 @@
 package fedora.client.batch;
 
-import fedora.server.utilities.StreamUtility;
 import java.io.PrintStream;
 
 import org.xml.sax.ErrorHandler;
@@ -30,7 +29,7 @@ import org.xml.sax.SAXParseException;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version $Id $
+ * @version $Id$
  */
 public class BatchModifyValidatorErrorHandler implements ErrorHandler {
 
@@ -39,8 +38,8 @@ public class BatchModifyValidatorErrorHandler implements ErrorHandler {
 
   public BatchModifyValidatorErrorHandler(PrintStream out)
   {
-      this.out = out;
-      this.errorCount = 0;
+      BatchModifyValidatorErrorHandler.out = out;
+      BatchModifyValidatorErrorHandler.errorCount = 0;
   }
 
   public void warning(SAXParseException e) throws SAXException {

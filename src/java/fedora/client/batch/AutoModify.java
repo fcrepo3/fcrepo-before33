@@ -55,7 +55,7 @@ import fedora.server.utilities.StreamUtility;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version $Id
+ * @version $Id$
  */
 public class AutoModify
 {
