@@ -25,26 +25,73 @@
 
     <div class="tocbox">
       <ol>
-        <li><a href="#intro">Introduction</a></li>
-        <li><a href="#user">User Interface</a></li>
-        <li><a href="#service">Service Interface</a></li>
+        <li> <a href="#intro">Introduction</a></li>
+        <li> <a href="#user">User Interface</a>
+          <ol type="A">
+            <li> <a href="#user.tuples">Find Tuples</a></li>
+            <li> <a href="#user.triples">Find Triples</a></li>
+            <li> <a href="#user.aliases">Show Aliases</a></li>
+          </ol>
+        </li>
+        <li> <a href="#app">Application Interface</a></li>
       </ol>
     </div>
   </div>
 
   <div id="introduction" class="sect">
-    <h2>1. Introduction</h2>
-    <p>Blah</p>
+    <h2><a name="intro">1. Introduction</a></h2>
+    <p>
+      The Resource Index Search Service (RISearch) is a web service that exposes the contents
+      of a repository's <a href="../../resourceIndex/index.html">Resource Index</a>
+      for outside use.
+      This document introduces the use of this service through a web browser interface, 
+      then describes how to access it programmatically.
+    </p>
   </div>
 
   <div class="sect">
-    <h2>2. User Interface</h2>
-    <p>Blah</p>
+    <h2><a name="user">2. User Interface</a></h2>
+    <p>
+       When your Fedora server is running, the RISearch service will be available
+       under <code>/fedora/risearch</code>.  For example:</p>
+    <div class="code"><pre>http://localhost:8080/fedora/risearch</pre></div>
+    <p>
+      The user interface consists of three tabs:
+    </p>
+    <div class="subsect">
+      <h3><a name="user.tuples">A. Find Tuples</a></h3>
+      <img src="images/findTuples.png"/>
+      <p>
+        This tab is used to perform <em>tuple queries</em> against the 
+        resource index.
+      </p>
+    </div>
+    <div class="subsect">
+      <h3><a name="user.triples">B. Find Triples</a></h3>
+      <img src="images/findTriples.png"/>
+      <p>
+        This tab is used to perform <em>triple queries</em> against the 
+        resource index.
+      </p>
+    </div>
+    <div class="subsect">
+      <h3><a name="user.aliases">C. Show Aliases</a></h3>
+      <img src="images/showAliases.png"/>
+      <p>
+        This tab shows the aliases that can be used in queries
+        and what URI prefixes they map to.
+      </p>
+      <p>
+        Aliases are just shortcuts that help make queries easier to write.
+        For example, in a query you can write <code>&lt;fedora-model:state&gt;</code> 
+        instead of <code>&lt;info:fedora/fedora-system:def/model#state&gt;</code>.
+      </p>
+    </div>
   </div>
 
   <div class="sect">
-    <h2>3. Service Interface</h2>
-    <p>Blah</p>
+    <h2><a name="service">3. Application Interface</a></h2>
+    <p>The RISearch service can be programmatically accessed via HTTP.</p>
   </div>
 
   <div id="footer">
