@@ -3,10 +3,6 @@ package fedora.server.storage.types;
 import fedora.server.errors.StreamIOException;
 
 import java.io.InputStream;
-//import java.io.IOException;
-//import java.net.URL;
-//import java.net.URLConnection;
-//import java.net.HttpURLConnection;
 
 import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 import fedora.server.errors.LowlevelStorageException;
@@ -38,7 +34,7 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
  * @version $Id$
  */
 public class DatastreamManagedContent
-        extends DatastreamContent {
+        extends Datastream {
 
     public DatastreamManagedContent() {
     }

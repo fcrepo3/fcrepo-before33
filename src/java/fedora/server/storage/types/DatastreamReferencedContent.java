@@ -34,7 +34,7 @@ import java.net.HttpURLConnection;
  * @version $Id$
  */
 public class DatastreamReferencedContent
-        extends DatastreamContent {
+        extends Datastream {
 
     public DatastreamReferencedContent() {
     }
