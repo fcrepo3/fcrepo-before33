@@ -13,7 +13,7 @@ public class MultiValueMap {
     /**
      * Creates and initializes the <code>WritableContext</code>.
      * <p></p>
-     * @param parameters A pre-loaded Map of name-value pairs
+     * A pre-loaded Map of name-value pairs
      *        comprising the context.
      */
     public MultiValueMap() {

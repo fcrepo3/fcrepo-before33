@@ -128,7 +128,7 @@ public class DefaultExternalContentManager extends Module
    * A method that reads the contents of the specified URL and returns the
    * result as a MIMETypedStream
    *
-   * @param URL The URL of the external content.
+   * @param url The URL of the external content.
    * @return A MIME-typed stream.
    * @throws HttpServiceNotFoundException If the URL connection could not
    *         be established.
