@@ -359,7 +359,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // Delete all statements where doURI is the subject
         String doURI = getDOURI(digitalObject);
         try {
-            m_writer.delete(m_reader.findTriples(TripleMaker.createResource(doURI), null, null, 0), true);
+            m_writer.delete(m_reader.findTriples(TripleMaker.createResource(doURI), null, null, 0), false);
         } catch (IOException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } catch (TrippiException e) {
@@ -383,7 +383,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
         // DELETE statements where datastreamURI is subject
         try {
-            m_writer.delete(m_reader.findTriples(TripleMaker.createResource(datastreamURI), null, null, 0), true);
+            m_writer.delete(m_reader.findTriples(TripleMaker.createResource(datastreamURI), null, null, 0), false);
         } catch (IOException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } catch (TrippiException e) {
@@ -423,7 +423,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                                  TripleMaker.createResource(FEDORA_USES_BMECH), 
                                                  TripleMaker.createResource(getDOURI(bMechPID)), 
                                                  0), 
-                            true);
+                            false);
         } catch (IOException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } catch (TrippiException e) {
