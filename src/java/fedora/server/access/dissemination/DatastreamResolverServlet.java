@@ -27,8 +27,8 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
 
 /**
- * <p>Title: DatastreamResolverServlet.java</p>
- * <p>Description: This servlet acts as a proxy to resolve the physical location
+ * <p><b>Title: </b>DatastreamResolverServlet.java</p>
+ * <p><b>Description: </b>This servlet acts as a proxy to resolve the physical location
  * of datastreams. It requires a single parameter named <code>id</code> that
  * denotes the temporary id of the requested datastresm. This id is in the form
  * of a DateTime stamp. The servlet will perform an in-memory hashtable lookup
@@ -43,9 +43,24 @@ import fedora.server.storage.types.DatastreamMediation;
  * datastreamMediationLimit and is specified in milliseconds. If this parameter
  * is not supplied it defaults to 5000 miliseconds.</p>
  *
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Ross Wayland
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author rlw@virginia.edu
  * @version 1.0
  */
 public class DatastreamResolverServlet extends HttpServlet implements Logging

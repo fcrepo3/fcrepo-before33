@@ -33,8 +33,8 @@ import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.Property;
 
 /**
- * <p>Title: DynamicAccessImpl.java</p>
- * <p>Description:  The implementation of the Dynamic Access module.
+ * <p><b>Title: </b>DynamicAccessImpl.java</p>
+ * <p><b>Description: </b>The implementation of the Dynamic Access module.
  * The Dynamic Access module will associate dynamic disseminators with
  * the a digital object.  It will look to the Fedora repository configuration
  * file to obtain a list of dynamic disseminators.  Currently, the system
@@ -51,9 +51,24 @@ import fedora.server.storage.types.Property;
  * datastreams out of them, and some other methods.  (NOTE: The Bootstrap
  * Disseminator functionality is NOT YET IMPLEMENTED.</p>
  *
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Sandy Payette
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author payette@cs.cornell.edu
  * @version 1.0
  */
 public class DynamicAccessImpl

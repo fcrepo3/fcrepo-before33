@@ -44,8 +44,8 @@ import javax.xml.transform.stream.StreamSource;
 import com.icl.saxon.expr.StringValue;
 
 /**
- * <p>Title: DefaultBehaviorImpl.java</p>
- * <p>Description: Implements the methods defined in the DefaultBehavior interface.
+ * <p><b>Title: </b>DefaultBehaviorImpl.java</p>
+ * <p><b>Description: </b>Implements the methods defined in the DefaultBehavior interface.
  * This is the default behavior mechanism that implements the "contract" of
  * the default behavior definition that is dynamically associated with every
  * digital object in the repository.
@@ -58,9 +58,24 @@ import com.icl.saxon.expr.StringValue;
  * Unlike other behavior definitions and mechanisms, there is no Behavior
  * Definition Object or Behavior Mechanism Object stored in the repository. </p>
  *
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Sandy Payette
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author payette@cs.cornell.edu
  * @version 1.0
  */
 public class DefaultBehaviorImpl extends InternalService implements DefaultBehavior
