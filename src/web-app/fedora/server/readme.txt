@@ -1,8 +1,8 @@
 notes on tomcat web.xml security-constraints
-this is hard-to-find into, either on web or in books
+this is hard-to-find info, either on web or in books
 
 no <auth-constraint/> at all
-	doesn't care about credentials if present
+	doesn't care about credentials if they are present
 	no challenge if credentials absent
 	no container authn or authz
 
@@ -48,3 +48,40 @@ presence of the 2nd and 3rd <role-name>s doesn't change effect; 2nd doesn't incr
 </auth-constraint>
 
 
+The following was taken from
+http://www.roguewave.com/support/docs/leif/leif/html/bobcatug/7-3.html
+does bobcat handle url-patterns like tomcat?
+
+url-patterns
+1. URL patterns use an extremely simple syntax. 
+2. Every character in a pattern must match the corresponding character in the URL path exactly, 
+with two exceptions. 
+3. At the end of a pattern, /* matches any sequence of characters from that point forward. 
+4. The pattern *.extension matches any file name ending with extension. 
+5. No other wildcards are supported.
+6. An asterisk at any other position in the pattern is not a wildcard.
+
+filters
+1. Different filters in a single context often use the same url-pattern. 
+2. In this case, each filter that matches the request may process the request.
+
+servlet-mappings
+1. No two servlet-mapping elements in the same application may use the same url-pattern. 
+2. If the web.xml file contains two identical mappings to different servlets, the container 
+makes no guarantees about which servlet the container calls for a given request. 
+3. Two servlets may use overlapping url-pattern elements.  The matching procedure determines 
+which servlet the container calls.
+
+servlet matching procedure
+1. A request may match more than one servlet-mapping in a given context. 
+2. The container uses a straightforward matching procedure to determine the best match. 
+3. The matching procedure has four simple rules. 
+
+servlet matching rules
+1. The container prefers an exact path match over a wildcard path match. 
+2. The container prefers to match the longest pattern. 
+3. The container prefers path matches over filetype matches.
+4. The pattern <url-pattern>/</url-pattern> always matches any request that no other pattern matches.
+
+
+http://e-docs.bea.com/wls/docs61/webapp/web_xml.html

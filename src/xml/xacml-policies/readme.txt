@@ -99,19 +99,22 @@ a server restart to effect this.
 
 Tomcat container security is, of course, still a first barrier to authentication/authorization;
 i.e., Fedora's web.xml specifies access protection earlier than xacml.  Tomcat container security 
-is in place regardless of the setting for parameter ENFORCE-MODE.
+is always in place regardless of the setting for parameter ENFORCE-MODE.
 
-For now, the Fedora-specific identifiers to use in policies can be found 
-in fedora.server.security.Authorization.java 
-or derived from fedora.common.Constants and the classes under fedora.common.rdf
-We are working to collect this in a single place.
-
-to-do:  provide this list
+The Fedora-specific identifiers to use in policies can be found in 
+dist/server/config/xacml-policies/vocabulary.txt
 
 To activate policies, 
-copy them from example-repository-policies into repository-policies
-or from example-object-policies into object-policies, renaming appropriately.
-There are example repository policies to duplicate the protection hardcoded into Fedora 2.0
+copy selected policies appropriate to your site, 
+from subdirectories of dist/server/config/xml-policies/examples 
+into subdirectories of dist/server/config/xml-policies/active; specifically:
+ 
+from examples/repository-policies-approximating-2.0 into active/repository-policies;
+or from examples/other-repository-policies into active/repository-policies;
+or from examples/object-policies into active/object-policies, renaming files if appropriate;
+or from examples/surrogate-policies into active/surrogate-policies.
+The example repository policies in examples/repository-policies-approximating-2.0 approximate
+the protection hardcoded into Fedora 2.0
 
 An object policy named demo-5.xml in that directory will be included in 
 evaluating authz for Fedora object demo:5  Or put the object policy in 
@@ -170,9 +173,9 @@ and that the single-effect approach to writing policies is used, for a request t
 
 Otherwise, the request fails authz.
 
-to do:  we need to discuss valueless attributes as roles, e.g., administrator
-
-to do:  we need to discuss attribute finder always returning a value 
+to do:  document how to deal with "valueless" attributes as roles, e.g., administrator
+http://lists.oasis-open.org/archives/xacml/200211/msg00193.html
+MustBePresent
 
 sunxacml returns a single result from its evaluation of the created PolicySet,
 at least with the currently configured combining algorithm, but does so by returning a -set- 
@@ -203,9 +206,6 @@ hasn't been explicitly coded, so can provide arbitrary attributes, e.g., from ld
 login module.  [There are a few attributes which it explicitly doesn't serve, to prevent stack overflow
 on improper recursion, or because the attributes are known to be provided in the xacml request itself.]
 
-http://lists.oasis-open.org/archives/xacml/200211/msg00193.html
-MustBePresent
-
 best practices:
 1. policy-id and filename (- .xml) should match, for repository policies
 2. policy-id and filename (- .xml) should match, for object policies in files, with concession to 
@@ -219,4 +219,13 @@ best practices:
 7. it's better to fulfill expectations than to simplify a policy and break an expectation
 (if most policies are single-effect, try to have all of them be single-effect, paid for by small policy
 complication)
+
+
+surrogate representing end-user
+
+web front ends can authenticate as such to fedora, but give an end-user identity in the http
+From header.  If fedora authenticates the front end -and- there are policies allowing the
+front end to actAsSurrogateFor the subjectRepresented, then the request is treated as if the
+end-user had been authenticated by fedora.   active/repository-policies and active/object-policies
+are then used to authorize the end-user as usual.
  
