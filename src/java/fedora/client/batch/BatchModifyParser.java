@@ -288,7 +288,7 @@ public class BatchModifyParser extends DefaultHandler
                         	"Object Label must be non-empty.");
                     return;
                 }
-                if ( !m_obj.pid.equalsIgnoreCase("") ) {
+                if ( !m_obj.pid.equals("") ) {
                     if (m_obj.pid.indexOf(":")<1) {
                         failedCount++;
                         logFailedDirective(m_obj.pid, localName, null,
@@ -311,7 +311,7 @@ public class BatchModifyParser extends DefaultHandler
             m_obj.logMessage = attrs.getValue("logMessage");            
             
             try {       
-                if ( !m_obj.pid.equalsIgnoreCase("") ) {
+                if ( !m_obj.pid.equals("") ) {
                     if (m_obj.pid.indexOf(":")<1) {
                         failedCount++;
                         logFailedDirective(m_obj.pid, localName, null,
@@ -321,12 +321,12 @@ public class BatchModifyParser extends DefaultHandler
                 }
                 
                 // Get optional attributes
-                if ( attrs.getValue("label") != null && !attrs.getValue("label").equalsIgnoreCase(""))
+                if ( attrs.getValue("label") != null && !attrs.getValue("label").equals(""))
                     m_obj.label = attrs.getValue("label");
                 else {
                     m_obj.label = null;
                 }
-                if ( attrs.getValue("state") != null && !attrs.getValue("state").equalsIgnoreCase(""))
+                if ( attrs.getValue("state") != null && !attrs.getValue("state").equals(""))
                     m_obj.state = attrs.getValue("state");
                 else {
                     m_obj.state = null;
@@ -346,7 +346,7 @@ public class BatchModifyParser extends DefaultHandler
             m_obj.logMessage = attrs.getValue("logMessage");            
 
             try {
-                if ( !m_obj.pid.equalsIgnoreCase("") ) {
+                if ( !m_obj.pid.equals("") ) {
                     if (m_obj.pid.indexOf(":")<1) {
                         failedCount++;
                         logFailedDirective(m_obj.pid, localName, null,
@@ -356,7 +356,7 @@ public class BatchModifyParser extends DefaultHandler
                 }
                 
                 // Get optional attributes
-                if ( attrs.getValue("force") != null && !attrs.getValue("force").equalsIgnoreCase(""))
+                if ( attrs.getValue("force") != null && !attrs.getValue("force").equals(""))
                     m_obj.force = new Boolean(attrs.getValue("force")).booleanValue();
                 else {
                     m_obj.force = false;
@@ -381,18 +381,18 @@ public class BatchModifyParser extends DefaultHandler
                 m_ds.logMessage = attrs.getValue("logMessage");                
 
                 // Check for optional attributes
-                if ( attrs.getValue("dsID") != null && !attrs.getValue("dsID").equalsIgnoreCase("")) {
+                if ( attrs.getValue("dsID") != null && !attrs.getValue("dsID").equals("")) {
                     m_ds.dsID = attrs.getValue("dsID");                
                 } else {
                 	m_ds.dsID = null;
                 }
-                if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equalsIgnoreCase(""))
+                if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equals(""))
                     m_ds.dsLocation = attrs.getValue("dsLocation");
-                if ( attrs.getValue("formatURI") != null && !attrs.getValue("formatURI").equalsIgnoreCase(""))
+                if ( attrs.getValue("formatURI") != null && !attrs.getValue("formatURI").equals(""))
                     m_ds.formatURI = attrs.getValue("formatURI");
-                if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equalsIgnoreCase(""))
+                if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equals(""))
                     m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
-                if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equalsIgnoreCase(""))
+                if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equals(""))
                     m_ds.altIDs = attrs.getValue("altIDs").split(" ");             
                 // Check that MIME type is text/xml if datastream is XMLMetadata datastream
                 if (m_ds.dsControlGrp.equalsIgnoreCase("X") &&
@@ -427,9 +427,9 @@ public class BatchModifyParser extends DefaultHandler
                 // Get optional attributes. If asOfDate attribute is missing
                 // or empty its value is null and indicates that all versions
                 // of the datastream are to be purged.
-                if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equalsIgnoreCase(""))
+                if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equals(""))
                     m_ds.asOfDate = attrs.getValue("asOfDate");
-                if ( attrs.getValue("force") != null && !attrs.getValue("force").equalsIgnoreCase(""))
+                if ( attrs.getValue("force") != null && !attrs.getValue("force").equals(""))
                     m_ds.force = new Boolean(attrs.getValue("force")).booleanValue();
 
                 purgeDatastream = true;
@@ -471,42 +471,42 @@ public class BatchModifyParser extends DefaultHandler
                     // Check for optional atributes. Missing or empty optional
                     // attributes indicate that those fields remain unchanged so
                     // get values from original datastream.
-                    if (attrs.getValue("dsLabel") != null && !attrs.getValue("dsLabel").equalsIgnoreCase("")) {
+                    if (attrs.getValue("dsLabel") != null && !attrs.getValue("dsLabel").equals("")) {
                         m_ds.dsLabel = attrs.getValue("dsLabel");
                     } else {
                         m_ds.dsLabel = dsOrig.getLabel();
                     }
-                    if ( attrs.getValue("dsState") != null && !attrs.getValue("dsState").equalsIgnoreCase("")) {
+                    if ( attrs.getValue("dsState") != null && !attrs.getValue("dsState").equals("")) {
                         m_ds.dsState = attrs.getValue("dsState");
                     } else {
                         m_ds.dsState = dsOrig.getState();
                     }
-                    if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equalsIgnoreCase("")) {
+                    if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equals("")) {
                         m_ds.dsLocation = attrs.getValue("dsLocation");
                     } else {
                         m_ds.dsLocation = dsOrig.getLocation();
                     }
-                    if ( attrs.getValue("dsMIME") != null && !attrs.getValue("dsMIME").equalsIgnoreCase("")) {
+                    if ( attrs.getValue("dsMIME") != null && !attrs.getValue("dsMIME").equals("")) {
                         m_ds.dsMIME = attrs.getValue("dsMIME");
                     } else {
                         m_ds.dsMIME = dsOrig.getMIMEType();
                     }
-                    if ( attrs.getValue("force") != null && !attrs.getValue("force").equalsIgnoreCase("")) {
+                    if ( attrs.getValue("force") != null && !attrs.getValue("force").equals("")) {
                         m_ds.force = new Boolean(attrs.getValue("force")).booleanValue();
                     } else {
                         m_ds.force = false;
                     }                    
-                    if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equalsIgnoreCase("")) {
+                    if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equals("")) {
                         m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
                     } else {
                         m_ds.versionable = dsOrig.isVersionable();
                     }     
-                    if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equalsIgnoreCase("")) {
+                    if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equals("")) {
                         m_ds.altIDs = attrs.getValue("altIDs").split(" ");
                     } else {
                         m_ds.altIDs = dsOrig.getAltIDs();
                     }
-                    if ( attrs.getValue("formatURI") != null && !attrs.getValue("formatURI").equalsIgnoreCase("")) {
+                    if ( attrs.getValue("formatURI") != null && !attrs.getValue("formatURI").equals("")) {
                         m_ds.formatURI = attrs.getValue("formatURI");
                     } else {
                         m_ds.formatURI = dsOrig.getFormatURI();
@@ -565,7 +565,7 @@ public class BatchModifyParser extends DefaultHandler
                 // based on the label for the datastream. Missing or empty
                 // attribute for sequence number sets sequence number to
                 // deault value of zero.
-                if (attrs.getValue("dsBindLabel") != null && !attrs.getValue("dsBindLabel").equalsIgnoreCase("")) {
+                if (attrs.getValue("dsBindLabel") != null && !attrs.getValue("dsBindLabel").equals("")) {
                     m_dsBinding.setBindLabel(attrs.getValue("dsBindLabel"));
                 } else {
                     try {
@@ -591,7 +591,7 @@ public class BatchModifyParser extends DefaultHandler
                         return;
                     }
                 }
-                if (attrs.getValue("seqNo") != null && !attrs.getValue("seqNo").equalsIgnoreCase("")) {
+                if (attrs.getValue("seqNo") != null && !attrs.getValue("seqNo").equals("")) {
                     m_dsBinding.setSeqNo(attrs.getValue("seqNo"));
                 } else {
                     m_dsBinding.setSeqNo("0");
@@ -685,17 +685,17 @@ public class BatchModifyParser extends DefaultHandler
 
                 // Get optional attrributes. Missing or empty attributes indicate
                 // that default values are to be used.
-                if ( attrs.getValue("dissState") != null && !attrs.getValue("dissState").equalsIgnoreCase("")) {
+                if ( attrs.getValue("dissState") != null && !attrs.getValue("dissState").equals("")) {
                     m_diss.dissState = attrs.getValue("dissState");
                 } else {
                     m_diss.dissState = "A";
                 }
-                if ( attrs.getValue("bDefLabel") != null && !attrs.getValue("bDefLabel").equalsIgnoreCase("")) {
+                if ( attrs.getValue("bDefLabel") != null && !attrs.getValue("bDefLabel").equals("")) {
                     m_diss.bDefLabel = attrs.getValue("bDefLabel");
                 } else {
                     m_diss.bDefLabel =  (String) m_bDefLabels.get(m_diss.bDefID);
                 }
-                if ( attrs.getValue("bMechLabel") != null && !attrs.getValue("bMechLabel").equalsIgnoreCase("")) {
+                if ( attrs.getValue("bMechLabel") != null && !attrs.getValue("bMechLabel").equals("")) {
                     m_diss.bMechLabel = attrs.getValue("bMechLabel");
                 } else {
                     m_diss.bMechLabel =  (String) m_bMechLabels.get(m_diss.bMechID);
@@ -743,27 +743,27 @@ public class BatchModifyParser extends DefaultHandler
                 // Get optional attributes. Missing or empty attributes indicate
                 // that these values are to remain unchanged so retrieve original
                 // values from disseminator.
-                if (attrs.getValue("dissLabel") != null && !attrs.getValue("dissLabel").equalsIgnoreCase("")) {
+                if (attrs.getValue("dissLabel") != null && !attrs.getValue("dissLabel").equals("")) {
                     m_diss.dissLabel = attrs.getValue("dissLabel");
                 } else {
                     m_diss.dissLabel = origDiss.getLabel();
                 }
-                if ( attrs.getValue("dissState") != null && !attrs.getValue("dissState").equalsIgnoreCase("")) {
+                if ( attrs.getValue("dissState") != null && !attrs.getValue("dissState").equals("")) {
                     m_diss.dissState = attrs.getValue("dissState");
                 } else {
                     m_diss.dissState = origDiss.getState();
                 }
-                if ( attrs.getValue("bDefLabel") != null && !attrs.getValue("bDefLabel").equalsIgnoreCase("")) {
+                if ( attrs.getValue("bDefLabel") != null && !attrs.getValue("bDefLabel").equals("")) {
                     m_diss.bDefLabel = attrs.getValue("bDefLabel");
                 } else {
                     m_diss.bDefLabel =  origDiss.getBDefLabel();
                 }
-                if ( attrs.getValue("bMechLabel") != null && !attrs.getValue("bMechLabel").equalsIgnoreCase("")) {
+                if ( attrs.getValue("bMechLabel") != null && !attrs.getValue("bMechLabel").equals("")) {
                     m_diss.bMechLabel = attrs.getValue("bMechLabel");
                 } else {
                     m_diss.bMechLabel =  origDiss.getBMechLabel();
                 }
-                if ( attrs.getValue("force") != null && !attrs.getValue("force").equalsIgnoreCase("")) {
+                if ( attrs.getValue("force") != null && !attrs.getValue("force").equals("")) {
                     m_diss.force = new Boolean(attrs.getValue("force")).booleanValue();
                 } else {
                     m_diss.force = false;
@@ -789,9 +789,9 @@ public class BatchModifyParser extends DefaultHandler
                 // Get optional attributes. If asOfDate attribute ismissing
                 // or empty its value will be null indicates that all versions
                 // of the disseminator are to be removed.
-                if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equalsIgnoreCase(""))
+                if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equals(""))
                     m_diss.asOfDate = attrs.getValue("asOfDate");
-                if ( attrs.getValue("force") != null && !attrs.getValue("force").equalsIgnoreCase("")) {
+                if ( attrs.getValue("force") != null && !attrs.getValue("force").equals("")) {
                     m_diss.force = new Boolean(attrs.getValue("force")).booleanValue();
                 } else {
                     m_diss.force = false;
@@ -928,19 +928,16 @@ public class BatchModifyParser extends DefaultHandler
                 if(addObject) {
 				    				StringBuffer xml=new StringBuffer();
 				    				xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-				    				xml.append("<foxml:digitalObject xmlns:METS=\"http://www.loc.gov/METS/\"");
-				                    xml.append("    xmlns:audit=\"info:fedora/fedora-system:def/audit#\""); 
-				                    xml.append("    xmlns:fedoraAudit=\"http://www.fedora.info/definitions/audit\"");
-				                    xml.append("    xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\"");
-				                    xml.append("    xmlns:xlink=\"http://www.w3.org/TR/xlink\"");
-				                    xml.append("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-				                    xml.append("    xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
-				                    xml.append("    http://www.fedora.info/definitions/1/0/foxml1-0.xsd\"");
-				                    xml.append("    PID=\"" + StreamUtility.enc(m_obj.pid) + "\""); 
-				                    xml.append("    FEDORA_URI=\"info:fedora/" + StreamUtility.enc(m_obj.pid) + "\">\n");
+				    				xml.append("<foxml:digitalObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+				    				xml.append("           xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\"\n");
+				    				xml.append("           xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd\"\n");
+				    				if (!m_obj.pid.equals("")) {
+				    				    xml.append("           PID=\"" + StreamUtility.enc(m_obj.pid) + "\">\n");
+				    				} else {
+				    				    xml.append(">\n");
+				    				}
 				    				xml.append("  <foxml:objectProperties>\n");
 				    				xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"DataObject\"/>\n");
-				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"Active\"/>");
 				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"" + StreamUtility.enc(m_obj.label) + "\"/>\n");
 				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"" + StreamUtility.enc(m_obj.cModel) + "\"/>\n");			
 				    				xml.append("  </foxml:objectProperties>\n");
