@@ -103,8 +103,12 @@
               solely by the allowHosts parameter.
             </comment>
     </module>
+    <module role="fedora.server.search.FieldSearch"
+           class="fedora.server.search.FieldSearchExistModule">
+        <comment>Supports the API-A simpleSearch and advancedSearch methods.</comment>
+    </module>
 	<module role="fedora.server.storage.translation.DOTranslator"
-               class="fedora.server.storage.translation.DOTranslatorModule">
+           class="fedora.server.storage.translation.DOTranslatorModule">
 		<comment>Supports translation from DigitalObject to a stream of 
         some format, and vice-versa.  The parameters below specify 
         serializer/deserializer classes to be used for a given format.
