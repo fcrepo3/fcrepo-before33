@@ -1,5 +1,16 @@
 package fedora.server.access.localservices;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.errors.HttpServiceNotFoundException;
+
 /**
  * <p>Title: HttpService.java</p>
  * <p>Description: Provides a local Http Behavior Mechanism service that</p>
@@ -11,34 +22,8 @@ package fedora.server.access.localservices;
  * @author Ross Wayland
  * @version 1.0
  */
-
-// fedora imports
-import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.errors.HttpServiceNotFoundException;
-
-// java imports
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 public class HttpService
 {
-
-  private String url = null;
-
-  public HttpService()
-  {
-  }
-
-  public HttpService(String url)
-  {
-    this.url = url;
-  }
-
   /**
    * A method that reads the contents of the specified URL and returns the
    * result as a MIMETypedStream
@@ -47,12 +32,13 @@ public class HttpService
    * @return MIMETypedStream
    * @throws HttpServiceNotFoundException
    */
-  public MIMETypedStream getHttpContent(String urlString) throws HttpServiceNotFoundException
+  public MIMETypedStream getHttpContent(String urlString)
+      throws HttpServiceNotFoundException
   {
-    MIMETypedStream httpContent = null;
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
     try
     {
+      MIMETypedStream httpContent = null;
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
       URL url = new URL(urlString);
       HttpURLConnection connection = (HttpURLConnection)url.openConnection();
       String contentType = connection.getContentType();
@@ -63,17 +49,13 @@ public class HttpService
         baos.write(byteStream);
       }
       httpContent = new MIMETypedStream(contentType, baos.toByteArray());
-    } catch (MalformedURLException murle)
-    {
-      System.out.println(murle);
-      throw new HttpServiceNotFoundException(murle.getMessage());
-    } catch (IOException ioe)
-    {
-      System.out.println(ioe);
-      throw new HttpServiceNotFoundException(ioe.getMessage());
-    }
+      return(httpContent);
 
-    return(httpContent);
+    } catch (Throwable th)
+    {
+      throw new HttpServiceNotFoundException("HTTPService ERROR: "
+          + th.getClass().getName() + th.getMessage());
+    }
   }
 
   public static void main(String[] args)
@@ -85,12 +67,9 @@ public class HttpService
       MIMETypedStream content = hs.getHttpContent(url);
       System.out.println("MIME: "+content.MIMEType);
       System.out.write(content.stream);
-    } catch (IOException ioe)
+    } catch (Exception e)
     {
-      System.out.println(ioe.getMessage());
-    } catch (HttpServiceNotFoundException lsnf)
-    {
-      System.out.println(lsnf.getMessage());
+      System.err.println(e.getMessage());
     }
   }
 }

@@ -19,8 +19,8 @@ import fedora.server.storage.types.Property;
 
 /**
  * <p>Title: DisseminationService.java</p>
- * <p>Description: Provides a mechanism for constructing a dissemination
- * given its binding information.</p>
+ * <p>Description: A service for executing a dissemination given its
+ * binding information.</p>
  *
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
@@ -34,26 +34,21 @@ public class DisseminationService
 
   /** The exception indicating that initialization failed. */
   private static InitializationException s_initException;
-  private static final String CONTENT_TYPE_XML = "text/xml";
   private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
-  private static boolean debug = true;
   private Hashtable h_userParms = new Hashtable();
 
   static
   {
     try
     {
-      String fedoraHome=System.getProperty("fedora.home");
+      String fedoraHome = System.getProperty("fedora.home");
       if (fedoraHome == null) {
           throw new ServerInitializationException(
               "Server failed to initialize: The 'fedora.home' "
               + "system property was not set.");
       } else {
-          s_server=Server.getInstance(new File(fedoraHome));
-          Boolean B1 = new Boolean(s_server.getParameter("debug"));
-          debug = B1.booleanValue();
+          s_server = Server.getInstance(new File(fedoraHome));
       }
-      s_server.logFinest("successful instance of server");
     } catch (InitializationException ie) {
         System.err.println(ie.getMessage());
     }
@@ -66,7 +61,6 @@ public class DisseminationService
    * Mechanism object.</p>
    *
    * @param userParms An array of user-supplied method parameters.
-   * @param asOfDate The versioning datetime stamp.
    * @param dissBindInfoArray The associated dissemination binding information.
    * @return A MIME-typed stream containing the result of the dissemination.
    * @throws ServerException If unable to assemble the dissemination for any
@@ -83,15 +77,14 @@ public class DisseminationService
     MIMETypedStream dissemination = null;
     if (userParms != null && userParms.length > 0)
     {
-      s_server.logFinest("assemble" + userParms.length+ "parms: "+userParms);
       for (int i=0; i<userParms.length; i++)
       {
         h_userParms.put(userParms[i].name, userParms[i].value);
       }
     }
-      if (dissBindInfoArray != null)
-      {
-        String replaceString = null;
+    if (dissBindInfoArray != null && dissBindInfoArray.length > 0)
+    {
+      String replaceString = null;
       int numElements = dissBindInfoArray.length;
 
       // Get row(s) of WSDL results and perform string substitution
@@ -108,29 +101,31 @@ public class DisseminationService
         // indicate the associated OperationLocation requires no
         // AddressLocation. i.e., the OperationLocation contains all
         // information necessary to perform the dissemination request.
-        if (dissBindInfo.AddressLocation.equalsIgnoreCase(LOCAL_ADDRESS_LOCATION))
+        if (dissBindInfo.AddressLocation.
+            equalsIgnoreCase(LOCAL_ADDRESS_LOCATION))
         {
           dissBindInfo.AddressLocation = "";
         }
 
         // Match DSBindingKey pattern in WSDL
-        String bindingKeyPattern = "\\("+dissBindInfo.DSBindKey+"\\)";
+        String bindingKeyPattern = "\\(" + dissBindInfo.DSBindKey + "\\)";
         if (i == 0)
         {
           operationLocation = dissBindInfo.OperationLocation;
           dissURL = dissBindInfo.AddressLocation+dissBindInfo.OperationLocation;
           protocolType = dissBindInfo.ProtocolType;
         }
-        if (debug) s_server.logFinest("counter: "+i+" numelem: "+numElements);
+        s_server.logFinest("DissBindingInfo index: " + i
+                           + " DissBindingInfo length: " + numElements);
         String currentKey = dissBindInfo.DSBindKey;
         String nextKey = "";
         if (i != numElements-1)
         {
           // Except for last row, get the value of the next binding key
           // to compare with the value of the current binding key.
-          if (debug) s_server.logFinest("currentKey: '"+currentKey+"'");
+          s_server.logFinest("currentKey: '" + currentKey + "'");
           nextKey = dissBindInfoArray[i+1].DSBindKey;
-          if (debug) s_server.logFinest("' nextKey: '"+nextKey+"'");
+          s_server.logFinest("nextKey: '" + nextKey + "'");
         }
 
         // In most cases, there is only a single datastream that matches a
@@ -163,16 +158,17 @@ public class DisseminationService
         // image=dslocation1+dslocation2&watermark=dslocation3
         if (nextKey.equalsIgnoreCase(currentKey) & i != numElements)
         {
-          replaceString = dissBindInfo.DSLocation+"+("+dissBindInfo.DSBindKey+")";
+          replaceString = dissBindInfo.DSLocation
+                        + "+(" + dissBindInfo.DSBindKey + ")";
         } else
         {
           replaceString = dissBindInfo.DSLocation;
         }
-        if (debug) s_server.logFinest("replaceString: "+replaceString);
+        s_server.logFinest("replaceString: " + replaceString);
         dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
-        if (debug) s_server.logFinest("replaced dissURL = "+
-                                     dissURL.toString()+
-                                     " counter = "+i);
+        s_server.logFinest("replaced dissURL: "
+                           + dissURL.toString()
+                           + " DissBindingInfo index: " + i);
       }
 
       // User-supplied parameters have already been validated.
@@ -182,49 +178,50 @@ public class DisseminationService
       {
         String name = (String)e.nextElement();
         String value = (String)h_userParms.get(name);
-        String pattern = "\\("+name+"\\)";
+        String pattern = "\\(" + name + "\\)";
         dissURL = substituteString(dissURL, pattern, value);
-        if (debug) s_server.logFinest("UserParmSubstitution dissURL: "+
-                                      dissURL);
+        s_server.logFinest("User parm substituted in URL: " + dissURL);
       }
 
       // Resolve content referenced by dissemination result
-      if (debug) s_server.logFinest("ProtocolType = "+protocolType);
+      s_server.logFinest("ProtocolType: " + protocolType);
       if (protocolType.equalsIgnoreCase("http"))
       {
         // FIXME!! need to implement Access Policy control.
         // If access is based on restrictions to content,
         // this is the last chance to apply those restrictions
         // before returnign dissemination result to client.
-        HttpService httpService = new HttpService(dissURL);
+        HttpService httpService = new HttpService();
         try
         {
-          if (debug) s_server.logFinest("initiating httpservice call");
           dissemination = httpService.getHttpContent(dissURL);
-          if (debug) s_server.logFinest("dissMIME: "+dissemination.MIMEType);
         } catch (HttpServiceNotFoundException hsnfe)
         {
-          s_server.logWarning(hsnfe.getMessage());
+          s_server.logWarning("Unable to establish HTTP service for URL: "
+                              + dissURL + hsnfe.getMessage());
           throw hsnfe;
         }
       } else if (protocolType.equalsIgnoreCase("soap"))
       {
         // FIXME!! future handling of soap bindings
-        s_server.logWarning("Protocol type specified: "+protocolType);
+        s_server.logInfo("Protocol type specified: " + protocolType);
+        s_server.logWarning("Soap protocol not currently supported for "
+                            + "disseminators");
         dissemination = null;
       } else
       {
-        s_server.logWarning("Unknown protocol type: "+protocolType);
+        s_server.logWarning("Protocol type: " + protocolType
+                            + "not supported");
         dissemination = null;
       }
     } else
     {
       // DisseminationBindingInfo was empty so there was no information
       // provided to construct a dissemination
-      s_server.logWarning("DisseminationService: Dissemination Binding "+
-                         "Info Not Found");
-      throw new DisseminationBindingInfoNotFoundException("Dissemination "+
-         "Binding Info Not Found");
+      String message = "DisseminationService: Dissemination Binding "+
+                         "Info contained no data";
+      s_server.logWarning(message);
+      throw new DisseminationBindingInfoNotFoundException(message);
     }
      return dissemination;
   }
