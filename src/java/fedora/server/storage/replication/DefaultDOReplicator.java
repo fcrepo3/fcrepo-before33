@@ -622,8 +622,8 @@ public class DefaultDOReplicator
             // READ
             //
             logFinest("Checking DigitalObject table for " + pid + "...");
-            results=logAndExecuteQuery(st, "SELECT BDEF_DBID FROM "
-                    + "BehaviorDefinition WHERE BDEF_PID='" + pid + "'");
+            results=logAndExecuteQuery(st, "SELECT DO_DBID FROM "
+                    + "DigitalObject WHERE DO_PID='" + pid + "'");
             if (!results.next()) {
                  // must not be a digitalobject...exit early
                  logFinest(pid + " wasn't found in DigitalObject table..."
@@ -649,7 +649,7 @@ public class DefaultDOReplicator
             logFinest("Getting BindingMap_DBID(s) from DataStreamBinding "
                     + "table...");
             HashSet bmapIds=new HashSet();
-            results=logAndExecuteQuery(st, "SELECT BindingMap_BID FROM "
+            results=logAndExecuteQuery(st, "SELECT BindingMap_DBID FROM "
                     + "DataStreamBinding WHERE DO_DBID=" + dbid);
             while (results.next()) {
                 bmapIds.add(new Integer(results.getInt("BindingMap_DBID")));
