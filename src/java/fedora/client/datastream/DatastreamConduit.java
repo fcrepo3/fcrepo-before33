@@ -170,23 +170,20 @@ public class DatastreamConduit {
                 DatastreamConduit c=new DatastreamConduit(hostName, portNum, username, password);
                 String[] ids=c.listDatastreamIDs(pid, "A");
                 for (int i=0; i<ids.length; i++) {
-                    System.out.println("Datastream : " + ids[i]);
+                    System.out.println("   Datastream : " + ids[i]);
                     Datastream ds=c.getDatastream(pid, ids[i], null);
-                    System.out.println("State : " + ds.getState());
+                    System.out.println("        State : " + ds.getState());
                     System.out.println("Control Group : " + ds.getControlGroup().toString());
-                    System.out.println("Info Type : " + ds.getInfoType());
-                    System.out.println("Mime Type : " + ds.getMIMEType());
-                    if ((!ds.getControlGroup().toString().equals("X"))
-                            && (!ds.getControlGroup().toString().equals("X"))) {
-                        System.out.println("Location : " + ds.getLocation());
-                    }
+                    System.out.println("    Info Type : " + ds.getInfoType());
+                    System.out.println("    Mime Type : " + ds.getMIMEType());
                     // print version id, create date, and label for each version
                     Calendar[] dates=c.getDatastreamHistory(pid, ids[i]);
                     for (int j=0; j<dates.length; j++) {
                         Datastream ver=c.getDatastream(pid, ids[i], dates[j]);
-                        System.out.println(" Version : " + ver.getVersionID());
-                        System.out.println("  Created : " + FORMATTER.format(ver.getCreateDate().getTime()));
-                        System.out.println("  Label : " + ver.getLabel());
+                        System.out.println("      Version : " + ver.getVersionID());
+                        System.out.println("        Created : " + FORMATTER.format(ver.getCreateDate().getTime()));
+                        System.out.println("          Label : " + ver.getLabel());
+                        System.out.println("       Location : " + ver.getLocation());
                     }
                     System.out.println("");
                 }

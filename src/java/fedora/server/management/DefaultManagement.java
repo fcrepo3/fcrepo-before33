@@ -647,7 +647,25 @@ public class DefaultManagement
         if (asOfDateTime!=null) {
             d=asOfDateTime.getTime();
         }
-        return r.GetDatastream(datastreamID, d);
+		Datastream ds=r.GetDatastream(datastreamID, d);
+		// in the case of managed content OR xml, change the location to the 
+		// getItem request instead of using the internal identifier or null/blank,
+		// so that clients can easily retrieve the content
+        if (ds.DSControlGrp.equalsIgnoreCase("M") || ds.DSControlGrp.equalsIgnoreCase("X")) {
+		    StringBuffer buf=new StringBuffer();
+			buf.append("http://" + m_fedoraServerHost);
+			if (!m_fedoraServerPort.equals("80")) {
+			    buf.append(":" + m_fedoraServerPort);
+			}
+			buf.append("/fedora/get/" + pid + "/fedora-system:3/getItem");
+			if (d!=null) {
+                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+				buf.append("/" + formatter.format(d));
+			}
+			buf.append("?itemID=" + ds.DatastreamID);
+			ds.DSLocation=buf.toString();
+		}
+		return ds;
     }
 /*
     public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime) { return null; }

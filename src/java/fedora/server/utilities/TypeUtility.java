@@ -49,9 +49,8 @@ public abstract class TypeUtility
             fedora.server.storage.types.DatastreamXMLMetadata mdDS=
                     (fedora.server.storage.types.DatastreamXMLMetadata) in;
             out.setContentStream(mdDS.xmlContent);
-        } else {
-            out.setLocation(in.DSLocation);
         }
+        out.setLocation(in.DSLocation);
         java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
         cal.setTime(in.DSCreateDT);
         out.setCreateDate(cal);
