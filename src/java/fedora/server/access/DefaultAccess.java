@@ -395,7 +395,7 @@ public class DefaultAccess extends Module implements Access
     // Assemble and execute the dissemination request from the binding info.
     DisseminationService dissService = new DisseminationService();
     dissemination =
-        dissService.assembleDissemination(PID, h_userParms, dissBindInfo, asOfDateTime.getTime());
+        dissService.assembleDissemination(PID, h_userParms, dissBindInfo);
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;

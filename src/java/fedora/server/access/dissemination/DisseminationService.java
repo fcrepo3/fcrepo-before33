@@ -13,7 +13,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.text.SimpleDateFormat;
 
 import fedora.server.Server;
 import fedora.server.errors.DisseminationException;
@@ -201,8 +200,7 @@ public class DisseminationService
    *         reason.
    */
   public MIMETypedStream assembleDissemination(String PID,
-      Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray,
-      Date asOfDateTime)
+      Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray)
       throws ServerException
   {
     String protocolType = null;
