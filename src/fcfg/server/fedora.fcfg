@@ -87,14 +87,14 @@
 	<param name="fedoraServerHost" value="localhost"/>
 	<comment>Defines the host name for the Fedora server, as seen from the outside world.</comment>
 	
-	<!-- module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
+	<module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
 		<comment>Builds and manages Fedora's authorization structure.
         </comment>
-        <param name="REPOSITORY-POLICIES-DIRECTORY" value="/fedora-repository-policies"/>
-        <param name="OBJECT-POLICIES-DIRECTORY" value="/fedora-object-policies"/>
+        <param name="REPOSITORY-POLICIES-DIRECTORY" value="config/xacml-policies/repository-policies"/>
+        <param name="OBJECT-POLICIES-DIRECTORY" value="config/xacml-policies/object-policies"/>
         <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
         <param name="ENFORCE-MODE" value="permit-all-requests"/>      
-	</module -->
+	</module>
 	
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
 		<comment>

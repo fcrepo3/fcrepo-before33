@@ -689,6 +689,17 @@
 		<replace file="dist/server/config/deployAPI-A.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
 		<replace file="dist/server/config/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management/soap"/>
 		<replace file="dist/server/config/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access/soap"/>
+		<!-- xacml:  set up policy directories -->
+		<mkdir dir="dist/server/config/xacml-policies"/>
+		<mkdir dir="dist/server/config/xacml-policies/repository-policies"/>
+		<mkdir dir="dist/server/config/xacml-policies/object-policies"/>
+		<copy todir="dist/server/config/xacml-policies/example-repository-policies">
+			<fileset dir="src/xml/xacml-policies/example-repository-policies"/>
+		</copy>
+		<copy todir="dist/server/config/xacml-policies/example-object-policies">
+			<fileset dir="src/xml/xacml-policies/example-object-policies"/>
+		</copy>
+
 		<copy file="src/web-app/fedora/server/web.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes"/>
