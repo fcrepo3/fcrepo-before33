@@ -253,10 +253,12 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       {
         try
         {
-          response.setContentType(CONTENT_TYPE_HTML);
-          String[] bDefs = GetBehaviorDefinitions(PID, asOfDate);
+          String[] bDefs = null;
+          bDefs = GetBehaviorDefinitions(PID, asOfDate);
           if (bDefs != null)
           {
+            response.setContentType(CONTENT_TYPE_HTML);
+
             // Return HTML table containing results; include links to digital
             // object PID to further explore object.
             out.println("<html>");
@@ -552,17 +554,19 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    */
   public String[] GetBehaviorDefinitions(String PID, Calendar asOfDate)
   {
+    String[] behaviorDefs = null;
     try
     {
       FastDOReader fastReader = new FastDOReader(PID);
       Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
-      return fastReader.GetBehaviorDefs(versDateTime);
+      behaviorDefs = fastReader.GetBehaviorDefs(versDateTime);
+      return behaviorDefs;
     } catch (Exception e)
     {
       // FIXME!! - need to decide on exception handling
       System.err.println("GetBehaviorDefinitions: Object Not Found");
       System.err.println("GetBehaviorDefinitions: "+e.getMessage());
-      return null;
+      return behaviorDefs;
     }
   }
 
@@ -592,7 +596,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       // FIXME!! - need to decide on exception handling
       System.err.println("GetBehaviorMethods: Object Not Found");
       System.err.println(e.getMessage());
-      return null;
+      return methodDefs;
     }
     return methodDefs;
   }
@@ -634,7 +638,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       // FIXME!! - need to decide on exception handling
       System.err.println("GetBehaviorMethodsAsWSDL: Object Not Found");
       System.err.println("GetBehaviorMethodsAsWSDL: "+e.getMessage());
-      return null;
+      return methodDefs;
     }
     methodDefs = new MIMETypedStream(CONTENT_TYPE_XML,baos.toByteArray());
     return methodDefs;
@@ -801,7 +805,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
        System.out.println("GetDissemination: Object Not Found");
        System.err.println("GetDissemination: "+e.getMessage());
        //this.getServletContext().log(onfe.getMessage(), onfe.getCause());
-       return null;
+       return dissemination;
      }
      return dissemination;
    }
