@@ -157,16 +157,17 @@
 		<copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/lib"/>
 
-		<!-- all batch tool build is here, except for demo-content (under target "servermostly") -->
+		<!-- vvvvv start batchtool build.  it's all here, -->
+		<!-- except for demo-content (under target "servermostly") -->
+		<!-- and batchtool.doc (under target "userdocs") -->
 		<copy file="src/xsl/batchtool/merge.xsl" todir="dist/client/lib"/>
 		<mkdir dir="dist/client/demo/batch-demo"/>
 		<copy file="src/mets/demo/batch-demo/mets-template.xml" todir="dist/client/demo/batch-demo"/>
 		<copy todir="dist/client/demo/batch-demo/object-specifics">
 			<fileset dir="src/xml/batch-demo/object-specifics"/>
 		</copy>
-		<mkdir dir="dist/client/demo/batch-demo/objects"/><!-- pop'ed on demo build -->
-		<!-- copy file="src/doc/batch/batch.doc" todir="dist/batch"/ -->
-		<!-- end batch tool build -->		
+		<mkdir dir="dist/client/demo/batch-demo/objects"/><!-- pop'ed on running demo in fedora-admin as build or build-ingest -->
+		<!-- ^^^^^ end batch tool build -->		
 
 		<echo message="Finished building client distribution in dist/client"/>
 	</target>
@@ -315,7 +316,7 @@
 		<copy todir="dist/server/tomcat41/webapps/userdocs/server">
 			<fileset dir="dist/userdocs"/>
 		</copy>
-		<copy file="src/doc/batch/batch.doc" todir="dist/server/tomcat41/webapps/userdocs/batch"/>
+		<copy file="src/doc/userdocs/batchtool.doc" todir="dist/server/tomcat41/webapps/userdocs/batch"/><!-- whether/where to put this? -->
 		<echo message="Translating apialite.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -839,6 +840,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.117  2003/05/11 18:04:53  wdn5e
+  batchtool.doc placement corrected
+
   Revision 1.116  2003/05/11 16:23:34  wdn5e
   change merge.xslt placement in dist...
 
