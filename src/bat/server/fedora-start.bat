@@ -11,10 +11,10 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 start /B %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %TC%\bin\bootstrap.jar -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\bin -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp org.apache.catalina.startup.Bootstrap start
 set JAVA_HOME=%OLD_JAVA_HOME%
 
-			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
-			<arg value="org.apache.axis.client.AdminClient"/>
-			<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
-			<arg value="dist/server/config/deployAPI-A.wsdd"/>
+rem	<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
+rem	<arg value="org.apache.axis.client.AdminClient"/>
+rem	<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
+rem	<arg value="dist/server/config/deployAPI-A.wsdd"/>
    
 echo FIXME: insert deployment here
 
