@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> -->
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
@@ -42,7 +42,8 @@
 			<itemizedlist>
 				<listitem>
 					<para>
-						<emphasis>Sun's Java Software Development Kit, v1.4.</emphasis>  Whether you are installing a binary or source distribution, you must have the J2SDK v1.4 or above. It should be installed on the machine you intend to use as the Fedora server.  You can download it at <ulink url="http://java.sun.com/">http://java.sun.com/</ulink></para>
+						<emphasis>Sun's Java Software Development Kit, v1.4.</emphasis>  Whether you are installing a binary or source distribution, you must have the J2SDK v1.4 or above. It should be installed on the machine you intend to use as the Fedora server.  You can download it at <ulink url="http://java.sun.com/">http://java.sun.com/</ulink>
+					</para>
 				</listitem>
 			</itemizedlist>
 			<para>Optional:</para>
@@ -62,7 +63,8 @@
 		</section>
 		<section>
 			<title>Download Fedora</title>
-			<para>The latest version of the software can always be found at <ulink url="http://www.fedora.info/release/">http://www.fedora.info/release/</ulink></para>
+			<para>The latest version of the software can always be found at <ulink url="http://www.fedora.info/release/">http://www.fedora.info/release/</ulink>
+			</para>
 			<para>	There are multiple distribution packages in a release.  The server binaries, the client binaries, and the entire source code.  Each of these packages is distributed in .tar.gz (for Unix) and .zip (for Windows) archives.</para>
 		</section>
 		<section>
@@ -530,6 +532,70 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 			</para>
 			<para>Other databases will have their own shutdown scripts or commands.</para>
 		</section>
+	</section>
+	<section>
+		<title>Configuring Fedora to Run on a Different Host or Port</title>
+		<para>The Fedora server now has internal support for avoiding breakage of self-referential URLs (i.e., URLs that contain the hostname and port of the Fedora server itself).  This change allows the Fedora server host and port to be re-configured without breaking digital objects that contained URLs that referred to a previous host and port configuration. </para>
+		<para>The host name and port number on which the Fedora server runs is controlled by the <emphasis>fedoraServerHost</emphasis> and <emphasis>fedoraServerPort</emphasis> parameters in the fedora.fcfg configuration file. By default, these are set to the host name of <emphasis>localhost</emphasis> and port number of <emphasis>8080</emphasis>. The steps you need to take in order to change host name and/or port number vary slightly depending on whether you are making the change for the first time or making the change on a pre-existing Fedora server.</para>
+		<para>If you are installling Fedora 1.1 for the first time and want to run using a host  or port other than the defaults, you need to do the following:
+				<itemizedlist>
+				<listitem>
+					<para>Change the values of <emphasis>fedoraServerHost</emphasis> and <emphasis>fedoraServerPort</emphasis> to the values you want to use in the fedora.fcfg file.</para>
+				</listitem>
+				<listitem>
+					<para>Run the demo object converter utility script  to change the host  and/or port  in the demo objects from localhost and 8080 to the values you specified in the fedora.fcfg file. Refer to  the <ulink url="../client/cmd-line/index.html">Command-line Utilities documentation</ulink> for additional details on running the demo object converter. </para>
+				</listitem>
+				<listitem>
+					<para>If you plan to use the Soap Client which provides a sample interface to API-A, you will also need to update the parameter <emphasis>fedoraEndpoint</emphasis> with the new host name and/or port number in the soapclient.properties file. On Windows, this file is located in the distribution in:</para>
+					<para>
+						<emphasis>%fedora_home%\server\tomcat41\webapps\soapclient\WEB-INF\soapclient.properties</emphasis>
+					</para>
+					<para>On unix, this file is located in the distribution in:</para>
+					<para>
+						<emphasis>$FEDORA_HOME/server/tomcat41/webapps/soapclient/WEB-INF/soapclient.properties</emphasis>
+					</para>
+					<para>Refer to the <ulink url="../client/servlet/soapclient/index.html">Soap Client documentation</ulink> for additional information regarding configuration of the Soap Client.</para>
+				</listitem>
+				<listitem>
+					<para>Start the Fedora server.</para>
+				</listitem>
+				<listitem>
+					<para>Ingest the demo objects.</para>
+				</listitem>
+				<listitem>
+					<para>When invoking the Fedora admin-client, remember to specify the new host name and/or port number when invoking the client. e.g.,   fedora-admin  hostname port  fedora-username fedora-password</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para>If you have an existing Fedora 1.1 server already running and you need to change the host name and/or port number on which the server runs, you need to do the following:
+				<itemizedlist>
+				<listitem>
+					<para>Stop the Fedora server.</para>
+				</listitem>
+				<listitem>
+					<para>Change the values of <emphasis>fedoraServerHost</emphasis> and <emphasis>fedoraServerPort</emphasis> to the values you want to use in the fedora.fcfg file.</para>
+				</listitem>
+				<listitem>
+					<para>If you plan to use the Soap Client which provides an example interface to API-A, you will also need to update the parameter <emphasis>fedoraEndpoint</emphasis> with the new host name and/or port number in the soapclient.properties file. On Windows, this file is located in the distribution in:</para>
+					<para>
+						<emphasis>%fedora_home%\server\tomcat41\webapps\soapclient\WEB-INF\soapclient.properties</emphasis>
+					</para>
+					<para>On unix, this file is located in the distribution in:</para>
+					<para>
+						<emphasis>$FEDORA_HOME/server/tomcat41/webapps/soapclient/WEB-INF/soapclient.properties</emphasis>
+					</para>
+					<para> Refer to the <ulink url="../client/servlet/soapclient/index.html">Soap Client documentation</ulink> for additional information regarding configuration of the Soap Client.</para>
+				</listitem>
+				<listitem>
+					<para>Restart the Fedora server.</para>
+				</listitem>
+				<listitem>
+					<para>When invoking the Fedora Admin Client, remember to specify the new host name and/or port number when invoking the client. e.g.,   fedora-admin  hostname port  fedora-username fedora-password. </para>
+				</listitem>
+			</itemizedlist>
+		</para>
+		<para>There are some minor backward compatibility issues related to the host/port changes in Fedora 1.1. Please note that if you have an existing Fedora 1.0 server and  want to upgrade to version 1.1 of the software, <emphasis role="bold">but</emphasis> leave your existing objects as they were ingested under the Fedora 1.0 server (i.e., choose not to purge and then re-ingest the objects), this is possible with the following caveats. Any demo objects ingested under Fedora 1.0 will have the host and port of localhost and 8080 embedded in the demo objects as well as any user-defined objects created using Fedora 1.0 that reference the default host and port of the Fedora 1.0 server. Provided the host and port do not change for the Fedora server, these objects will continue to function correctly under the Fedora 1.1 server. However, if the host and/or port changes in the future, these <emphasis role="bold">pre-existing objects</emphasis> will no longer function correctly. The only way to fix them after a host/port change is to purge and then re-ingest the objects.
+		</para>
 	</section>
 	<section>
 		<title>Server logs</title>
