@@ -36,20 +36,13 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-// FIXMEs:
-// 1.  Implement binaryContent.  Now we flag it but do not process it. (See m_readingContent) Also in METS.
-// 3.  AUDIT: (in METS ds backrefs via the ADMID)?  Ignore in FOXML or put in inner rels ds?
-// 4.  ADMID and DMDID pointers in METS.  How preserve in FOXML serialization?  Inner relationship datastream?
-// 7.  Commented out stuff on query behavior to gets the datastream content as inputstream.  What's up?
-// 9.  m_objPropertyName: how propogate these into default indexing?
-// 11. Add content digest parse;  also to DigitalObject.  What do we do with it now?
-
 /**
  *
  * <p><b>Title:</b> FOXMLDODeserializer.java</p>
  * <p><b>Description:</b> 
- *       Deserializes XML encoded in accordance with the FOXML XML Schema 
- *       defined at: http://www.fedora.info/definitions/1/0/foxml1-0.xsd.
+ *       Deserializes XML digital object encoded in accordance with 
+ * 		 the Fedora Object XML (FOXML) schema defined at: 
+ * 		 http://www.fedora.info/definitions/1/0/foxml1-0.xsd.
  * 
  *       The FOXML XML is parsed using SAX and is instantiated into a Fedora
  *       digital object in memory (see fedora.server.types.DigitalObject). </p>
@@ -72,6 +65,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
+ * @version $Id$
  */
 public class FOXMLDODeserializer
         extends DefaultHandler
