@@ -250,7 +250,7 @@ public class DisseminationService
       Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray)
       throws ServerException
   {
-    if (1==1) { //fedora.server.Debug.DEBUG) {
+    if (fedora.server.Debug.DEBUG) {
         printBindingInfo(dissBindInfoArray);
     }
     long initStartTime = new Date().getTime();
