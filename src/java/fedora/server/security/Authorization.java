@@ -12,10 +12,10 @@ public interface Authorization {
 	//"info:fedora/fedora-system:def/fType"
 	//"info:fedora/fedora-system:def/cModel"
 	//"info:fedora/fedora-system:def/label"
-	//"info:fedora/fedora-system:def/state"
 	//"info:fedora/fedora-system:def/owner"
 	//"info:fedora/fedora-system:def/cDate"
 	//"info:fedora/fedora-system:def/mDate"
+	//info:fedora/fedora-system:def/model#state
 
 
 	/*
@@ -68,11 +68,11 @@ public interface Authorization {
 	public static final String ACTION_ID_VALUE_LIST_OBJECT_IN_FIELD_SEARCH_RESULTS = "listObjectInFieldSearchResults";
 	public static final String ACTION_ID_VALUE_LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS = "listObjectInResourceIndexResults";
 	
-	public static final String ACTION_API_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-api";
+	public static final String ACTION_API_URI_STRING = "info:fedora/fedora-system:def/policy#action-api";
 	public static final String ACTION_API_VALUE_APIM = "apim";
 	public static final String ACTION_API_VALUE_APIA = "apia";
 	
-	public static final String ACTION_CONTEXT_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:context";
+	public static final String ACTION_CONTEXT_URI_STRING = "info:fedora/fedora-system:def/policy#action-context-id";
 
 
 	public static final String ACTION_NEW_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-newState";	
@@ -83,14 +83,15 @@ public interface Authorization {
 	public static final String RESOURCE_CATEGORY = "urn:oasis:names:tc:xacml:1.0:resource";
 	public static final String RESOURCE_CATEGORY_ACCESS = "urn:oasis:names:tc:xacml:1.0:resource-category:access-resource";
 	public static final String RESOURCE_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
-	//public static final String RESOURCE_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-pid";
+	
+	//pid is given as resource-id
 	public static final String RESOURCE_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-namespace";
 	public static final String RESOURCE_AS_OF_DATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-asOfDate";
 	
-	public static final String RESOURCE_OBJECT_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-object-state";
+	public static final String RESOURCE_OBJECT_STATE_URI_STRING = "info:fedora/fedora-system:def/model#state";
 	public static final String RESOURCE_DATASTREAM_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastream-id";	
-	//public static final String RESOURCE_DATASTREAM_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastreamNamespace";	
-	public static final String RESOURCE_DATASTREAM_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastream-state";	
+	// no namespace for datastream id, which is not a pid	
+	public static final String RESOURCE_DATASTREAM_STATE_URI_STRING = "info:fedora/fedora-system:def/model:datastream-state"; // <<feed back	
 	public static final String RESOURCE_DATASTREAM_LOCATION_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastreamLocation";
 	public static final String RESOURCE_DATASTREAM_CONTROL_GROUP_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastreamControlGroup";
 	public static final String RESOURCE_BDEF_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bdefPid";
@@ -122,7 +123,7 @@ public interface Authorization {
 	public static final String ENVIRONMENT_REQUEST_CONTENT_TYPE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:request-content-type";
 	public static final String ENVIRONMENT_REQUEST_SOAP_OR_REST_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:request-soap-or-rest";
 	public static final String ENVIRONMENT_CLIENT_FQDN_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:client-fqdn";
-	public static final String ENVIRONMENT_CLIENT_IP_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:client-ip";	
+	public static final String ENVIRONMENT_CLIENT_IP_URI_STRING = "info:fedora/fedora-system:def/policy#environment-client-ip";	
 	public static final String ENVIRONMENT_SERVER_FQDN_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:server-fqdn";
 	public static final String ENVIRONMENT_SERVER_IP_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:server-ip";	
 	public static final String ENVIRONMENT_SERVER_PORT_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:server-port";	
