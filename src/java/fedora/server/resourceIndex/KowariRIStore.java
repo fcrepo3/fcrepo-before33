@@ -200,11 +200,9 @@ public class KowariRIStore extends StdoutLogging implements RIStore {
 	}
 	
 	private void flushAtThreshold() {
-        logFinest("Checking if need to flush statements...");
 	    if (m_statements.size() >= FLUSH_THRESHOLD) {
 	        flush();
 	    }
-        logFinest("Done flushing statements if needed.");
 	}
 	
 	private void flush() {
