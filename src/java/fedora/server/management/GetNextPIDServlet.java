@@ -28,6 +28,7 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
+import fedora.server.security.Authorization;
 
 /**
  * <p><b>Title: </b>DescribeRepositoryServlet.java</p>
@@ -123,7 +124,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     int numPIDs = 1;
     String namespace = null;
 
-    Context context = ReadOnlyContext.getContext(ReadOnlyContext.REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
 
     // Get optional supplied parameters.
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)

@@ -22,7 +22,8 @@ import fedora.server.storage.*;
 import fedora.server.storage.types.*;
 import fedora.server.utilities.*;
 import fedora.server.validation.*;
-
+import fedora.server.security.Authorization;
+import fedora.server.security.DefaultAuthorization;
 /**
  * Implements API-M without regard to the transport/messaging protocol.
  *
@@ -50,7 +51,6 @@ public class DefaultManagement
         extends Module implements Management {
 
     private DOManager m_manager;
-    private IPRestriction m_ipRestriction;
     private String m_fedoraServerHost;
     private String m_fedoraServerPort;
     private int m_uploadStorageMinutes;
@@ -58,6 +58,7 @@ public class DefaultManagement
     private File m_tempDir;
     private Hashtable m_uploadStartTime;
     private ExternalContentManager m_contentManager;
+    private Authorization m_fedoraXACMLModule;
 
     /**
      * Creates and initializes the Management Module.
@@ -81,15 +82,7 @@ public class DefaultManagement
 
     public void initModule() 
             throws ModuleInitializationException {
-        String allowHosts=getParameter("allowHosts");
-        String denyHosts=getParameter("denyHosts");
-        try {
-            m_ipRestriction=new IPRestriction(allowHosts, denyHosts);
-        } catch (ServerException se) {
-            throw new ModuleInitializationException("Error setting IP restriction "
-                    + "for Access subsystem: " + se.getClass().getName() + ": "
-                    + se.getMessage(), getRole());
-        }
+
         // how many minutes should we hold on to uploaded files? default=5
 		String min=getParameter("uploadStorageMinutes");
 		if (min==null) min="5";
@@ -149,6 +142,12 @@ public class DefaultManagement
         }
         m_fedoraServerHost=getServer().getParameter("fedoraServerHost");
         m_fedoraServerPort=getServer().getParameter("fedoraServerPort");
+        
+        m_fedoraXACMLModule = (Authorization) getServer().getModule("fedora.server.security.Authorization");
+        if (m_fedoraXACMLModule == null) {
+            throw new ModuleInitializationException("Can't get Authorization module (in default management) from Server.getModule", getRole());
+        }
+
     }
 
     public String ingestObject(Context context, 
@@ -161,9 +160,11 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             getServer().logFinest("Entered DefaultManagement.ingestObject");
-            m_ipRestriction.enforce(context);
             w=m_manager.getIngestWriter(context, serialization, format, encoding, newPid);
             String pid=w.GetObjectPID();
+            
+            m_fedoraXACMLModule.enforceIngestObject(context, pid);
+
             w.commit(logMessage);
             return pid;
         } finally {
@@ -185,7 +186,9 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             logFinest("Entered DefaultManagement.modifyObject");
-            m_ipRestriction.enforce(context);
+
+            m_fedoraXACMLModule.enforceModifyObject(context, pid, state); 
+
             w=m_manager.getWriter(context, pid);
             if (state!=null && !state.equals("")) {
                 if (!state.equals("A") && !state.equals("D") && !state.equals("I")) {
@@ -214,7 +217,9 @@ public class DefaultManagement
 		throws ServerException {		
 		try {
 			logFinest("Entered DefaultManagement.getObjectProperties");
-			m_ipRestriction.enforce(context);			
+
+            m_fedoraXACMLModule.enforceGetObjectProperties(context, pid);
+            
 			ArrayList props = new ArrayList();
 			DOReader reader=m_manager.getReader(context, pid);
 			
@@ -261,7 +266,9 @@ public class DefaultManagement
     		throws ServerException {
         try {
             logFinest("Entered DefaultManagement.getObjectXML");
-            m_ipRestriction.enforce(context);
+            
+            m_fedoraXACMLModule.enforceGetObjectXML(context, pid);
+
             DOReader reader=m_manager.getReader(context, pid);
             InputStream instream=reader.GetObjectXML();
             return instream;
@@ -278,7 +285,9 @@ public class DefaultManagement
     		throws ServerException {
         try {
             logFinest("Entered DefaultManagement.exportObject");
-            m_ipRestriction.enforce(context);
+            
+            m_fedoraXACMLModule.enforceExportObject(context, pid);
+                        
             DOReader reader=m_manager.getReader(context, pid);
             InputStream instream=reader.ExportObject(format,exportContext);
             return instream;
@@ -299,7 +308,9 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             logFinest("Entered DefaultManagement.purgeObject");
-            m_ipRestriction.enforce(context);
+
+            m_fedoraXACMLModule.enforcePurgeObject(context, pid);
+            
             w=m_manager.getWriter(context, pid);
             w.remove();
             w.commit(logMessage);
@@ -330,7 +341,7 @@ public class DefaultManagement
         DOWriter w=null;
         try {
             getServer().logFinest("Entered DefaultManagement.addDatastream");
-            m_ipRestriction.enforce(context);
+			m_fedoraXACMLModule.enforceAddDatastream(context, pid, dsID,  dsLocation, controlGroup, dsState);
             w=m_manager.getWriter(context, pid);
             Datastream ds;
             if (controlGroup.equals("X")) {
@@ -439,7 +450,9 @@ public class DefaultManagement
 			DOWriter w=null;
 			try {
                 getServer().logFinest("Entered DefaultManagement.addDisseminator");
-    			m_ipRestriction.enforce(context);
+    			
+    			m_fedoraXACMLModule.enforceAddDisseminator(context, pid);
+    			
 				w=m_manager.getWriter(context, pid);
 				Disseminator diss = new Disseminator();
 				diss.isNew=true;
@@ -504,7 +517,7 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByReference");
-            m_ipRestriction.enforce(context);
+			m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, dsLocation, dsState);
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
 			Date nowUTC; // variable for ds modified date
@@ -645,7 +658,7 @@ public class DefaultManagement
                                         String logMessage,
                                         boolean force)
             throws ServerException {
-            	
+
 		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
 			throw new GeneralException("Modification of the system-controlled AUDIT"
 				+ " datastream is not permitted.");
@@ -654,7 +667,9 @@ public class DefaultManagement
         boolean mimeChanged = false;
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByValue");
-            m_ipRestriction.enforce(context);
+            
+			m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, dsState);
+
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
             
@@ -752,7 +767,7 @@ public class DefaultManagement
 			if (orig.DSVersionable != newds.DSVersionable) {
 				w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
 			}
-			
+						
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -796,8 +811,8 @@ public class DefaultManagement
         DOReader r=null;
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDisseminator");
-            m_ipRestriction.enforce(context);
-            w = m_manager.getWriter(context, pid);
+			m_fedoraXACMLModule.enforceModifyDisseminator(context, pid, disseminatorId, bMechPid, dissState);
+            w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Disseminator orig=w.GetDisseminator(disseminatorId, null);
             
             String oldValidationReport = null;
@@ -871,7 +886,7 @@ public class DefaultManagement
             // just add the disseminator
             w.addDisseminator(newdiss);
             if (!orig.dissState.equals(newdiss.dissState)) {
-                w.setDisseminatorState(disseminatorId, newdiss.dissState); }
+                w.setDisseminatorState(disseminatorId, newdiss.dissState); }            
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -917,7 +932,9 @@ public class DefaultManagement
         DOWriter w=null;
         try {
             getServer().logFinest("Entered DefaultManagement.purgeDatastream");
-            m_ipRestriction.enforce(context);
+            
+			m_fedoraXACMLModule.enforcePurgeDatastream(context, pid, datastreamID);
+
             w=m_manager.getWriter(context, pid);
             Date start=null;
             Date[] deletedDates=w.removeDatastream(datastreamID, start, endDT);
@@ -1043,7 +1060,10 @@ public class DefaultManagement
             throws ServerException {
         try {
             getServer().logFinest("Entered DefaultManagement.getDatastream");
-            m_ipRestriction.enforce(context);
+            
+			m_fedoraXACMLModule.enforceGetDatastream(context, pid, datastreamID);
+
+            
             DOReader r=m_manager.getReader(context, pid);
     		return r.GetDatastream(datastreamID, asOfDateTime);
         } finally {
@@ -1058,7 +1078,9 @@ public class DefaultManagement
             throws ServerException {
         try {
             getServer().logFinest("Entered DefaultManagement.getDatastreams");
-            m_ipRestriction.enforce(context);
+
+			m_fedoraXACMLModule.enforceGetDatastreams(context, pid, asOfDateTime, state);
+           
             DOReader r=m_manager.getReader(context, pid);
     		return r.GetDatastreams(asOfDateTime, state);
         } finally {
@@ -1072,7 +1094,9 @@ public class DefaultManagement
             throws ServerException {
         try {
             getServer().logFinest("Entered DefaultManagement.getDatastreamHistory");
-            m_ipRestriction.enforce(context);
+            
+			m_fedoraXACMLModule.enforceGetDatastreamHistory(context, pid, datastreamID);
+
             DOReader r=m_manager.getReader(context, pid);
             Date[] versionDates=r.getDatastreamVersions(datastreamID);
             Datastream[] versions=new Datastream[versionDates.length];
@@ -1113,7 +1137,9 @@ public class DefaultManagement
         DOWriter w=null;
         try {
             getServer().logFinest("Entered DefaultManagement.purgeDisseminator");
-            m_ipRestriction.enforce(context);
+            
+			m_fedoraXACMLModule.enforcePurgeDisseminator(context, pid, disseminatorID);
+            
             w=m_manager.getWriter(context, pid);
             Date start=null;
             Date[] deletedDates=w.removeDisseminator(disseminatorID, start, endDT);
@@ -1161,7 +1187,9 @@ public class DefaultManagement
             throws ServerException {
         try {
             getServer().logFinest("Entered DefaultManagement.getDisseminator");
-            m_ipRestriction.enforce(context);
+            
+			m_fedoraXACMLModule.enforceGetDisseminator(context, pid, disseminatorId, asOfDateTime);
+            
             DOReader r=m_manager.getReader(context, pid);
             return r.GetDisseminator(disseminatorId, asOfDateTime);
         } finally {
@@ -1176,7 +1204,9 @@ public class DefaultManagement
             throws ServerException {
         try {
             getServer().logFinest("Entered DefaultManagement.getDisseminators");
-            m_ipRestriction.enforce(context);
+            
+			m_fedoraXACMLModule.enforceGetDisseminators(context, pid, asOfDateTime, dissState);
+            
             DOReader r=m_manager.getReader(context, pid);
             return r.GetDisseminators(asOfDateTime, dissState);
         } finally {
@@ -1189,8 +1219,10 @@ public class DefaultManagement
                                                  String disseminatorID)
             throws ServerException {
         try {
-            getServer().logFinest("Entered DefaultManagement.getDisseminatorHistory");
-            m_ipRestriction.enforce(context);
+            
+			m_fedoraXACMLModule.enforceGetDisseminatorHistory(context, 
+					pid, disseminatorID); 
+
             DOReader r=m_manager.getReader(context, pid);
             Date[] versionDates=r.getDisseminatorVersions(disseminatorID);
             Disseminator[] versions=new Disseminator[versionDates.length];
@@ -1215,8 +1247,8 @@ public class DefaultManagement
                                String namespace)
             throws ServerException {
         try {
-            getServer().logFinest("Entered DefaultManagement.getNextPID");
-            m_ipRestriction.enforce(context);
+            getServer().logFinest("Entered DefaultManagement.getNextPID");           
+            m_fedoraXACMLModule.enforceGetNextPid(context, namespace, numPIDs);
             return m_manager.getNextPID(numPIDs, namespace);
         } finally {
             getServer().logFinest("Exiting DefaultManagement.getNextPID");
@@ -1311,7 +1343,9 @@ public class DefaultManagement
       DOWriter w=null;
       try {
           getServer().logFinest("Entered DefaultManagement.setDatastreamState");
-          m_ipRestriction.enforce(context);
+          
+          m_fedoraXACMLModule.enforceSetDatastreamState(context, pid, datastreamID, dsState); 
+          
           w=m_manager.getWriter(context, pid);
           if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
               throw new InvalidStateException("The datastream state of \"" + dsState
@@ -1353,7 +1387,8 @@ public class DefaultManagement
       DOWriter w=null;
       try {
           getServer().logFinest("Entered DefaultManagement.setDisseminatorState");
-          m_ipRestriction.enforce(context);
+          m_fedoraXACMLModule.enforceSetDisseminatorState(context, pid, disseminatorID, dissState);  
+
           w=m_manager.getWriter(context, pid);
           if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
               throw new InvalidStateException("The disseminator state of \"" + dissState
