@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by Sandy Payette (Cornell University) -->
+<!---********************************************************************************************-->
+<!-- SAMPLE FEDORA BEHAVIOR MECHANISM OBJECT ENCODED USING METS -->
+<!---********************************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="test:51" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object for implementing BDEF contract for NSDL Exhibit (Style 1)." PROFILE="fedora:BMECH">
+	<!---*******************************************************************************************************************************************-->
+	<!--  FEDORA SYSTEM METADATA: -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
+		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
+			<METS:name> Sandy Payette </METS:name>
+			<METS:note> Behavior Mechanism Object for NSDL Exhibit (Style 1) behaviors using XML input and XSLT transformations </METS:note>
+		</METS:agent>
+		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
+			<METS:name>NSDL </METS:name>
+			<METS:note> Object owned by NSDL </METS:note>
+		</METS:agent>
+	</METS:metsHdr>
+	<!---*******************************************************************************************************************************************-->
+	<!--  INLINE METADATA DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT: -->
+	<!---*******************************************************************************************************************************************-->
+	<!---********************************************************************************************-->
+	<!-- SERVICE PROFILE: -->
+	<!-- This is a Fedora metadata format for describing an external service. The intent is to have some basic "preservation-significant"  -->
+	<!-- metadata that can be helpful in diagnosing potential vulnerabilities with the service over time. -->
+	<!-- NOTE!! The Fedora Service Profile Schema is still a work in progress!!  This is a preliminary metadata format which requires more analysis.-->
+	<!--********************************************************************************************-->
+	<METS:amdSec ID="SERVICE-PROFILE">
+		<METS:techMD ID="SERVICE-PROFILE1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
+				<METS:xmlData>
+					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
+					<!-- bMechPID is the PID of THIS Behavior Mechanism Object (self-referential) which is a surrogate for an external service-->
+					<fsvp:serviceProfile bDefPID="test:50" bMechPID="test:51" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+						<!-- The URI for the namespace that Fedora will use to refer to the service.  Fedora convention is to use the value of behaviorMechPID. -->
+						<fsvp:serviceNamespaceURI>test:51</fsvp:serviceNamespaceURI>
+						<fsvp:serviceName>NSDL Exhibit Mapping to the Fedora Local Saxon Service</fsvp:serviceName>
+						<fsvp:serviceLabel>XSLT service for providing transformation of an xml file using one of two stylesheets, or a user-supplied stylesheet</fsvp:serviceLabel>
+						<fsvp:serviceImplementation>
+							<fsvp:serviceTransportProtocol>HTTP</fsvp:serviceTransportProtocol>
+							<fsvp:serviceMessagingtProtocol>HTTP GET</fsvp:serviceMessagingtProtocol>
+							<fsvp:serviceInputFormats>
+								<fsvp:MIMEType>text/xml</fsvp:MIMEType>
+							</fsvp:serviceInputFormats>
+							<fsvp:serviceOutputFormats>
+								<fsvp:MIMEType>text/html</fsvp:MIMEType>
+							</fsvp:serviceOutputFormats>
+							<fsvp:serviceImplDependencies>
+								<fsvp:tool name="saxon" version="6.5" type="software application"/>
+								<fsvp:tool name="tomcat" version="4.1" type="software application"/>
+								<fsvp:tool name="fedora" version="0.9" type="software application"/>
+							</fsvp:serviceImplDependencies>
+							<fsvp:serviceLiveTestURL>http://localhost:8080/saxon/</fsvp:serviceLiveTestURL>
+						</fsvp:serviceImplementation>
+					</fsvp:serviceProfile>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!-- SERVICE DATASTREAM INPUT SPECIFICATION: -->
+	<!-- THIS IS  METADATA DESCRIBING A DATASTREAM CONTRACT BETWEEN A FEDORA DATA OBJECT and the SERVICE. -->
+	<!-- This specifies the what kind of Datastream(s) must be in a Fedora Data Object to serve as runtime input to the external service -->
+	<!-- represented by this Behavior Mechanism Object.  In this example, we see that a single MrSID image file must be -->
+	<!-- present as a Datastream  in a Fedora Data Object to enable that object to play nicely with the MrSID service.  -->
+	<!-- That Datastream will serve as an input to one for more MrSID service operations. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="DSINPUTSPEC">
+		<METS:techMD ID="DSINPUTSPEC1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Input Specification for NSDL Exhibit Mapping to the Fedora Local Saxon Service">
+				<METS:xmlData>
+					<fbs:DSInputSpec label="NSDL Exhibit Mapping to the Fedora Local Saxon Service" bDefPID="test:50" bMechPID="test:51" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+						<fbs:DSInput wsdlMsgPartName="XML_SOURCE" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>XML source file</fbs:DSInputLabel>
+							<fbs:DSMIME>text/xml</fbs:DSMIME>
+							<fbs:DSInputInstruction>XML source file to be transformed</fbs:DSInputInstruction>
+						</fbs:DSInput>
+						<fbs:DSInput wsdlMsgPartName="XSL_STYLESHEET1" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>XSLT Stylesheet 1</fbs:DSInputLabel>
+							<fbs:DSMIME>text/xml</fbs:DSMIME>
+							<fbs:DSInputInstruction>Stylesheet to produce the transformation option 1</fbs:DSInputInstruction>
+						</fbs:DSInput>
+						<fbs:DSInput wsdlMsgPartName="XSL_STYLESHEET2" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>XSLT Stylesheet 2</fbs:DSInputLabel>
+							<fbs:DSMIME>text/xml</fbs:DSMIME>
+							<fbs:DSInputInstruction>Stylesheet to produce the transformation option 2</fbs:DSInputInstruction>
+						</fbs:DSInput>
+					</fbs:DSInputSpec>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!-- FEDORA-TO-WSDL METHOD MAP: -->
+	<!-- THIS IS  METADATA DESCRIBING HOW THE SERVICE WSDL MAPS TO FEDORA METHOD DEFINITIONS -->
+	<!-- This is how we make a service definition expressed in WSDL play nicely with Fedora. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="METHODMAP">
+		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
+				<METS:xmlData>
+					<fmm:MethodMap name="MethodMap - NSDL Exhibit (Style 1) Methods" bDefPID="test:50" bMechPID="test:51" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+						<!-- NOTE: The operationName attribute correlates to WSDL operation in terms of mapping to WSDL definitions -->
+						<fmm:Method operationName="getExhibitStyle1" wsdlMsgName="getExhibitStyle1Request" wsdlMsgOutput="xslt_response">
+							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+							<fmm:DatastreamInputParm parmName="XSL_STYLESHEET1" passBy="URL_REF"/>
+							<fmm:DefaultInputParm parmName="CLEAR_CACHE" defaultValue="yes" passBy="VALUE"/>
+							<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+						</fmm:Method>
+						<fmm:Method operationName="getExhibitStyle2" wsdlMsgName="getExhibitStyle2Request" wsdlMsgOutput="xslt_response">
+							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+							<fmm:DatastreamInputParm parmName="XSL_STYLESHEET2" passBy="URL_REF"/>
+							<fmm:DefaultInputParm parmName="CLEAR_CACHE" defaultValue="yes" passBy="VALUE"/>
+							<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+						</fmm:Method>
+						<fmm:Method operationName="getExhibitMyStyle" wsdlMsgName="getExhibitMyStyleRequest" wsdlMsgOutput="xslt_response">
+							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="XSL_MYSTYLESHEET_URL" defaultValue="" passBy="VALUE"/>
+							<fmm:DefaultInputParm parmName="CLEAR_CACHE" defaultValue="yes" passBy="VALUE"/>
+							<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+						</fmm:Method>
+					</fmm:MethodMap>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!-- ****************************************************************************************************************************************** -->
+	<!--  WSDL SERVICE DEFINITION -->
+	<!--  Here we store WSDL as a form of metadata about the external service that is represented by this  -->
+	<!--  Fedora Behavior Definition Object. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="WSDL">
+		<METS:techMD ID="WSDL1.0" CREATED="2002-02-17T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL definition for NSDL Exhibit Mapping to the Fedora Local Saxon Service">
+				<METS:xmlData>
+					<!-- ******************************************************************************************************************************** -->
+					<!-- SERVICE WSDL THAT IS NOT FEDORA-AWARE -->
+					<!-- ******************************************************************************************************************************** -->
+					<wsdl:definitions name="Fedora Local Saxon Service" targetNamespace="saxon" xmlns:this="saxon" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: Schema Type Definitions used in this WSDL -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:types>
+							<xsd:schema targetNamespace="saxon">
+								<xsd:simpleType name="URLType">
+									<xsd:restriction base="xsd:string"/>
+								</xsd:simpleType>
+								<xsd:simpleType name="CLEAR_CACHEType">
+									<xsd:restriction base="xsd:string">
+										<xsd:enumeration value="yes"/>
+										<xsd:enumeration value="no"/>
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:schema>
+						</wsdl:types>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: MESSAGE DEFINITIONS -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:message name="getExhibitStyle1Request">
+							<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+							<wsdl:part name="XSL_STYLESHEET1" type="this:URLType"/>
+							<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+						</wsdl:message>
+						<wsdl:message name="getExhibitStyle2Request">
+							<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+							<wsdl:part name="XSL_STYLESHEET2" type="this:URLType"/>
+							<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+						</wsdl:message>
+						<wsdl:message name="getExhibitMyStyleRequest">
+							<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+							<wsdl:part name="XSL_MYSTYLESHEET_URL" type="this:URLType"/>
+							<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+						</wsdl:message>
+						<wsdl:message name="xslt_response">
+							<wsdl:part name="exhibit" type="xsd:base64Binary"/>
+						</wsdl:message>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: ABSTRACT OPERATION  DEFINITIONS (Fedora Behavior Definitions) -->
+						<!-- Here we define the operations the service implements -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:portType name="FedoraSaxonPortType">
+							<wsdl:operation name="getExhibitStyle1">
+								<wsdl:input message="this:getExhibitStyle1Request"/>
+								<wsdl:output message="this:xslt_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="getExhibitStyle2">
+								<wsdl:input message="this:getExhibitStyle2Request"/>
+								<wsdl:output message="this:xslt_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="getExhibitMyStyle">
+								<wsdl:input message="this:getExhibitMyStyleRequest"/>
+								<wsdl:output message="this:xslt_response"/>
+							</wsdl:operation>
+						</wsdl:portType>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: THE SERVICE DEFINITION -->
+						<!-- Here we define how to bind to operations to run the Service -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:service name="FedoraSaxon">
+							<!-- THIS IS THE HTTP PORT -->
+							<wsdl:port name="FedoraSaxon_port" binding="this:FedoraSaxon_http">
+								<http:address location="http://localhost:8080/saxon/"/>
+							</wsdl:port>
+						</wsdl:service>
+						<!-- ******************************************************************************************************************** -->
+						<!-- The HTTP Bindings for Service: -->
+						<!-- NOTE: the http:operation location attribute is subject to a URL replacement algorithm.  -->
+						<!-- See the W3C Specification for WSDL Bindings at: http://www.w3.org/TR/2002/WD-wsdl12-bindings-20020709 -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:binding name="FedoraSaxon_http" type="this:FedoraSaxonPortType">
+							<http:binding verb="GET"/>
+							<wsdl:operation name="getExhibitStyle1">
+								<http:operation location="SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_STYLESHEET1)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="text/html"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="getExhibitStyle2">
+								<http:operation location="SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_STYLESHEET2)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="text/html"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="getExhibitMyStyle">
+								<http:operation location="SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_MYSTYLESHEET_URL)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="text/html"/>
+								</wsdl:output>
+							</wsdl:operation>
+						</wsdl:binding>
+					</wsdl:definitions>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- OTHER DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT -->
+	<!--  This is content that is relevant to describing the external service that this Behavior Mechanism Object represents. -->
+	<!--  These can be schema definitions, debugging tools, documentation, or other resources.  -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="">
+				<METS:file ID="DS1.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/html" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/saxon/" xlink:title="Programmer documentation"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--  DATASTREAM BINDING MAP FOR FOR THIS BEHAVIOR MECHANISM OBJECT-->
+	<!-- Since THIS Behavior Mechanism Object is, itself, a Fedora Digital Object, we can disseminate its contents. -->
+	<!-- The Fedora system provides a bootstrap service (built-in to the repository system) that will enable the -->
+	<!-- dissemination of content from a Behavior Mechanism Objects.  What follows is the Datastream Binding Map for that -->
+	<!-- is used by the bootstrap service.  -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="fedora-system:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
+			<METS:div TYPE="SERVICE-PROFILE" LABEL="Service profile metadata">
+				<METS:fptr FILEID="SERVICE-PROFILE"/>
+			</METS:div>
+			<METS:div TYPE="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service">
+				<METS:fptr FILEID="DSINPUTSPEC"/>
+			</METS:div>
+			<METS:div TYPE="FEDORA-TO-WSDL-METHODMAP" LABEL="XML data that enables FEDORA to understand how to use the service WSDL">
+				<METS:fptr FILEID="METHODMAP"/>
+			</METS:div>
+			<METS:div TYPE="WSDL" LABEL="Service definitions in WSDL format">
+				<METS:fptr FILEID="WSDL"/>
+			</METS:div>
+			<METS:div TYPE="PROGGUIDE" LABEL="The Programmer's user guide for using the service">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- BOOTSTRAP  DISSEMINATOR FOR THIS BEHAVIOR MECHANISM OBJECT: -->
+	<!--  This is a disseminator for THIS Behavior Definition Object that lets a client be able to treat it like any other Fedora Object.  -->
+	<!--  Thus, clients can disseminate all this great metadata about the external service that is represented by this -->
+	<!--  Behavior Mechanism Object. -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior -->
+	<!--   Mechanism to run the behaviors. -->
+	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Mechanism Object.   -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" CREATED="2000-08-22T06:32:00" LABEL="Bootstrap Behaviors">
+			<METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="fedora-system:1"/>
+			<METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="fedora-system:2"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
+</METS:mets>
