@@ -646,9 +646,9 @@ public class Ingest {
 		System.err.println("  any file that looks like a behavior mechanism object (M). ");
 		System.err.println("  It assumes all files will be in the XML format 'foxml1.0'");
 		System.err.println("  and will fail on ingests of files that are not of this format.");
-		System.err.println("  All log messages will be empty.");
+		System.err.println("  All log messages will be the quoted string.");
 		System.err.println();
-		System.err.println("fedora-ingest d c:\\archive foxml1.0 ODM myrepo.com:80 jane janepw \"\"");
+		System.err.println("fedora-ingest d c:\\archive foxml1.0 ODM myrepo.com:80 jane janepw \"for jane\"");
 		System.err.println();
 		System.err.println("  Same as above, but ingests all three types of objects (O,D,M).");
 		System.err.println();
