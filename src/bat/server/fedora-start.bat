@@ -1,4 +1,4 @@
-@echo on
+@echo off
 
 goto checkEnv
 :envOk
