@@ -36,7 +36,7 @@ public class DisseminationService
   private static InitializationException s_initException;
   private static final String CONTENT_TYPE_XML = "text/xml";
   private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
-  private static boolean debug = false;
+  private static boolean debug = true;
   private Hashtable h_userParms = new Hashtable();
 
   static
@@ -81,13 +81,17 @@ public class DisseminationService
     String dissURL = null;
     String operationLocation = null;
     MIMETypedStream dissemination = null;
-    for (int i=0; i<userParms.length; i++)
+    if (userParms != null && userParms.length > 0)
     {
-      h_userParms.put(userParms[i].name, userParms[i].value);
+      s_server.logFinest("assemble" + userParms.length+ "parms: "+userParms);
+      for (int i=0; i<userParms.length; i++)
+      {
+        h_userParms.put(userParms[i].name, userParms[i].value);
+      }
     }
-    if (dissBindInfoArray != null)
-    {
-      String replaceString = null;
+      if (dissBindInfoArray != null)
+      {
+        String replaceString = null;
       int numElements = dissBindInfoArray.length;
 
       // Get row(s) of WSDL results and perform string substitution
