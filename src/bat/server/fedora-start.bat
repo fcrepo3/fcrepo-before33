@@ -1,5 +1,5 @@
 @echo off
-@rem usage is fedora-start profile http(s) port adminuser adminpasswd
+@rem usage is fedora-start adminuser adminpasswd profile 
 
 goto checkEnv
 :envOk
@@ -18,10 +18,10 @@ mkdir %FEDORA_HOME%\server\logs > NUL
 if "%OS%" == "" goto runMinimized
 
 :runInBackground
-if "%1" == "" goto bgNoProfile
+if "%3" == "" goto bgNoProfile
 echo [DEBUG] running in background
 "%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR% fedora.server.BasicServer
-start "fedoraBG" /B "%JAVA_HOME%\bin\java" -server -Xmn32m -Xms128m -Xmx128m -cp %TC%\bin\bootstrap.jar -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dfedora.serverProfile=%1 -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp -Djava.security.auth.login.config=%TC%/conf/jaas.config org.apache.catalina.startup.Bootstrap start
+start "fedoraBG" /B "%JAVA_HOME%\bin\java" -server -Xmn32m -Xms128m -Xmx128m -cp %TC%\bin\bootstrap.jar -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dfedora.serverProfile=%3 -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp -Djava.security.auth.login.config=%TC%/conf/jaas.config org.apache.catalina.startup.Bootstrap start
 goto deploy
 
 :bgNoProfile
@@ -30,9 +30,9 @@ start "fedoraBGNP" /B "%JAVA_HOME%\bin\java" -server -Xmn32m -Xms128m -Xmx128m -
 goto deploy
 
 :runMinimized
-if "%1" == "" goto minNoProfile
+if "%3" == "" goto minNoProfile
 "%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR% fedora.server.BasicServer
-start "fedoraMinimized" /m "%JAVA_HOME%\bin\java" -server -Xmn32m -Xms128m -Xmx128m -cp %TC%\bin\bootstrap.jar -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dfedora.serverProfile=%1 -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp -Djava.security.auth.login.config=%TC%/conf/jaas.config org.apache.catalina.startup.Bootstrap start
+start "fedoraMinimized" /m "%JAVA_HOME%\bin\java" -server -Xmn32m -Xms128m -Xmx128m -cp %TC%\bin\bootstrap.jar -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dfedora.serverProfile=%3 -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp -Djava.security.auth.login.config=%TC%/conf/jaas.config org.apache.catalina.startup.Bootstrap start
 goto deploy
 
 :minNoProfile
@@ -45,14 +45,14 @@ set AXIS_UTILITY_LIBS=@AxisUtility.windows.libs@
 set SERVER_CONTROLLER_LIBS=@ServerController.windows.libs@
 
 echo Deploying API-M and API-A...
-"%JAVA_HOME%\bin\java" -cp %AXIS_UTILITY_LIBS%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\server\config\deployAPI-A.wsdd 15 "" %2 %3 
+"%JAVA_HOME%\bin\java" -cp %AXIS_UTILITY_LIBS%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\server\config\deployAPI-A.wsdd 15 "" %3 %2 
 if errorlevel 1 goto deployError
 
-"%JAVA_HOME%\bin\java" -cp %AXIS_UTILITY_LIBS%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\server\config\deploy.wsdd 15 "" %2 %3 
+"%JAVA_HOME%\bin\java" -cp %AXIS_UTILITY_LIBS%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\server\config\deploy.wsdd 15 "" %1 %2 
 if errorlevel 1 goto deployError
 
 echo Initializing Fedora Server instance...
-"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;%TC%\webapps\fedora\WEB-INF\lib\commons-httpclient-2.0.1.jar;%TC%\webapps\fedora\WEB-INF\lib\commons-logging.jar;%SERVER_CONTROLLER_LIBS% -Dfedora.home=%FEDORA_HOME% fedora.server.ServerController startup http localhost 8080 %2 %3
+"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;%TC%\webapps\fedora\WEB-INF\lib\commons-httpclient-2.0.1.jar;%TC%\webapps\fedora\WEB-INF\lib\commons-logging.jar;%SERVER_CONTROLLER_LIBS% -Dfedora.home=%FEDORA_HOME% fedora.server.ServerController startup http localhost 8080 %1 %2
 
 echo Finished.  To stop the server, use fedora-stop.
 goto finish

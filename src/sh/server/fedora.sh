@@ -36,7 +36,7 @@ SERVER_CONTROLLER_LIBS=@ServerController.unix.libs@
 # Functions
 
 start() {
-	SERVER_PROFILE="$1"
+	SERVER_PROFILE="$3"
 
 	echo "Starting the Fedora server..."
 	if [ ! -d "$FEDORA_HOME/server/logs/" ]; then
@@ -79,24 +79,24 @@ start() {
 	            -Dfedora.home="$FEDORA_HOME" \
 	            -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
 	            -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deployAPI-A.wsdd 15 "" $2 $3)
+	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deployAPI-A.wsdd 15 "" $1 $2)
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	(exec "$JAVA" -cp "$AXIS_UTILITY_LIBS":"$TC"/webapps/fedora/WEB-INF/classes \
 	            -Dfedora.home="$FEDORA_HOME" \
 	            -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deploy.wsdd 15 "" $2 $3)
+	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deploy.wsdd 15 "" $1 $2)
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	echo "Initializing Fedora Server instance..."
 	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_CONTROLLER_LIBS" \
 				-Dfedora.home="$FEDORA_HOME" \
-				fedora.server.ServerController startup http localhost 8080 $2 $3)
+				fedora.server.ServerController startup http localhost 8080 $1 $2)
 	restoreJavaHome
 }
 
 debug() {
-	SERVER_PROFILE="$1"
+	SERVER_PROFILE="$3"
 
 	echo "Starting the Fedora server..."
 	if [ ! -d "$FEDORA_HOME/server/logs/" ]; then
@@ -141,19 +141,19 @@ debug() {
 	            -Dfedora.home="$FEDORA_HOME" \
 	            -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
 	            -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deployAPI-A.wsdd 15)
+	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deployAPI-A.wsdd 15 "" $1 $2)
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	(exec "$JAVA" -cp "$AXIS_UTILITY_LIBS":"$TC"/webapps/fedora/WEB-INF/classes \
 	            -Dfedora.home="$FEDORA_HOME" \
 	            -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deploy.wsdd 15)
+	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deploy.wsdd 15 "" $1 $2)
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	echo "Initializing Fedora Server instance..."
 	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_CONTROLLER_LIBS" \
 				-Dfedora.home="$FEDORA_HOME" \
-				fedora.server.ServerController startup)
+				fedora.server.ServerController startup http localhost 8080 $1 $2)
     echo "Starting jdb..."
     (exec "$JAVA_HOME/bin/jdb" -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8000)
 	restoreJavaHome
@@ -163,7 +163,7 @@ stop() {
 	echo "Stopping the Fedora Server..."
 	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_CONTROLLER_LIBS" \
 	                          -Dfedora.home="$FEDORA_HOME" \
-	                          fedora.server.ServerController shutdown $1 localhost $2 $3 $4)
+	                          fedora.server.ServerController shutdown http localhost 8080 $1 $2)
 
 	# Stop Tomcat
     (exec "$JAVA" -cp "$TC"/bin/bootstrap.jar \
