@@ -156,8 +156,6 @@
 			<xsd:attribute name="bDefPid" type="xsd:string" use="required"/>
 			<xsd:attribute name="bMechPid" type="xsd:string" use="required"/>
 			<xsd:attribute name="dissLabel" type="xsd:string" use="required"/>
-			<xsd:attribute name="bDefLabel" type="xsd:string" use="optional"/>
-			<xsd:attribute name="bMechLabel" type="xsd:string" use="optional"/>
 			<xsd:attribute name="dissState" use="optional">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
@@ -188,8 +186,6 @@
 			<xsd:attribute name="dissID" type="xsd:string" use="required"/>
 			<xsd:attribute name="bMechPid" type="xsd:string" use="required"/>
 			<xsd:attribute name="dissLabel" type="xsd:string" use="optional"/>
-			<xsd:attribute name="bDefLabel" type="xsd:string" use="optional"/>
-			<xsd:attribute name="bMechLabel" type="xsd:string" use="optional"/>
 			<xsd:attribute name="dissState" use="optional">
 				<xsd:simpleType>
 					<xsd:restriction base="xsd:string">
