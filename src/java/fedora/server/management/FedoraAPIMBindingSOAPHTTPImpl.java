@@ -267,15 +267,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return null;
     }
 
-    public void modifyDatastreamExternal(String PID, String datastreamID, String dsLabel, String dsLocation) throws java.rmi.RemoteException {
+    public void modifyDatastreamByReference(String PID, String datastreamID, String dsLabel, String logMessage, String dsLocation, boolean managed) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public void modifyDatastreamManagedContent(String PID, String datastreamID, String dsLabel, String MIMEType, byte[] dsContent) throws java.rmi.RemoteException {
-        assertInitialized();
-    }
-
-    public void modifyDatastreamXMLMetadata(String PID, String datastreamID, String dsLabel, String MDType, byte[] dsInlineMetadata) throws java.rmi.RemoteException {
+    public void modifyDatastreamByValue(String PID, String datastreamID, String dsLabel, String logMessage, byte[] dsContent) throws java.rmi.RemoteException {
         assertInitialized();
     }
 

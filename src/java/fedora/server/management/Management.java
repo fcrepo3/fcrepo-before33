@@ -52,11 +52,9 @@ public interface Management {
 
     public String addDatastreamXMLMetadata(Context context, String pid, String dsLabel, String MdType, InputStream dsInlineMetadata) throws ServerException;
 
-    public void modifyDatastreamExternal(Context context, String pid, String datastreamId, String dsLabel, String dsLocation) throws ServerException;
+    public void modifyDatastreamByReference(Context context, String pid, String datastreamId, String dsLabel, String logMessage, String dsLocation, boolean managed) throws ServerException;
 
-    public void modifyDatastreamManagedContent(Context context, String pid, String datastreamId, String dsLabel, String MimeType, InputStream dsContent) throws ServerException;
-
-    public void modifyDatastreamXMLMetadata(Context context, String pid, String datastreamId, String dsLabel, String MdType, InputStream dsInlineMetadata) throws ServerException;
+    public void modifyDatastreamByValue(Context context, String pid, String datastreamId, String dsLabel, String logMessage, InputStream dsContent) throws ServerException;
 
     public void withdrawDatastream(Context context, String pid, String datastreamId) throws ServerException;
 

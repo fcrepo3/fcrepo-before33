@@ -205,11 +205,9 @@ public class DefaultManagement
 
     public String addDatastreamXMLMetadata(Context context, String pid, String dsLabel, String MdType, InputStream dsInlineMetadata) { return null; }
 
-    public void modifyDatastreamExternal(Context context, String pid, String datastreamId, String dsLabel, String dsLocation) { }
+    public void modifyDatastreamByReference(Context context, String pid, String datastreamId, String dsLabel, String logMessage, String dsLocation, boolean managed) { }
 
-    public void modifyDatastreamManagedContent(Context context, String pid, String datastreamId, String dsLabel, String MimeType, InputStream dsContent) { }
-
-    public void modifyDatastreamXMLMetadata(Context context, String pid, String datastreamId, String dsLabel, String MdType, InputStream dsInlineMetadata) { }
+    public void modifyDatastreamByValue(Context context, String pid, String datastreamId, String dsLabel, String logMessage, InputStream dsContent) { }
 
     public void withdrawDatastream(Context context, String pid, String datastreamId) { }
 
