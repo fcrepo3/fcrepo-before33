@@ -77,7 +77,18 @@ public class DefaultManagement
         getServer().logFinest("Entered DefaultManagement.ingestObject");
         DOWriter w=m_manager.newWriter(context, serialization, format, encoding, newPid);
         String pid=w.GetObjectPID();
-        w.commit("First import.");
+        // FIXME: this logic should go in clients,
+        // but it happens that it's convenient to put here for now.
+        // the below does a purgeObject if commit fails... kind of an auto-cleanup
+        // in the future this "initial state" stuff will be reconsidered anyway,
+        // applying the ideas of workflow, etc..
+        try {
+            w.commit("First import.");
+        } catch (ServerException se) {
+            logFinest("Auto-purging as a result of a failed auto-commit in ingestObject.");
+            purgeObject(context, pid, "Purging because auto-commit (which is temporarily taken care of by the server's ingestObject operation) failed: " + se.getMessage());
+            throw se;
+        }
         m_manager.releaseWriter(w);
         getServer().logFinest("Exiting DefaultManagement.ingestObject");
         return pid;
