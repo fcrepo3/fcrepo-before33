@@ -10,17 +10,12 @@ import java.io.InputStream;
  */
 public class METSDODeserializer 
         implements DODeserializer {
-        
-    private METSDODeserializer m_instance=new METSDODeserializer();
 
-    private METSDODeserializer() { }
-    
-    public METSDODeserializer getInstance() {
-        return m_instance;
+    public METSDODeserializer() { 
     }
     
-    public void deserialize(InputStream in, DigitalObject obj) 
-            throws StorageDeviceException {
+    public void deserialize(InputStream in, DigitalObject obj)  {
+    //add appropriate throws clause, and
         // see sandy's code in definitivedoreader
     }
 

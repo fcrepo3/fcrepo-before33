@@ -48,8 +48,7 @@ public interface DOWriter
      * @throws StorageDeviceException If an underlying storage device
      *         failed for any reason.
      */
-    public void set(InputStream content, String validationType, 
-            boolean shouldExist) 
+    public void set(InputStream content)
             throws ValidationException, StorageDeviceException, 
             ObjectExistsException, ObjectNotFoundException;
 
@@ -163,8 +162,6 @@ public interface DOWriter
     public void validate(String validationType)
             throws ServerException;
             
-    public boolean isDirty();
-    
-    public void save()
+    public boolean save()
             throws ServerException;
 }

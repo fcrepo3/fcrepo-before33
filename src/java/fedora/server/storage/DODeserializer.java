@@ -1,6 +1,8 @@
 package fedora.server.storage;
 
-import fedora.server.errors.StorageException;
+import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.StreamIOException;
+import fedora.server.errors.StreamReadException;
 import fedora.server.storage.types.DigitalObject;
 
 import java.io.InputStream;
@@ -11,6 +13,7 @@ import java.io.InputStream;
 public interface DODeserializer {
 
     public void deserialize(InputStream in, DigitalObject obj)
-            throws StorageException;
+            throws ObjectIntegrityException, StreamIOException, 
+            StreamReadException;
 
 }
