@@ -1,5 +1,6 @@
 package fedora.server.access;
 
+import java.io.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
@@ -309,7 +310,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       HttpServletResponse response) throws ServerException
   {
 
-    ServletOutputStream out = null;
+    //ServletOutputStream out = null;
+    OutputStreamWriter out = null;
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectProfile objProfile = null;
     PipedWriter pw = null;
@@ -329,17 +331,29 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         {
           // Return results as raw XML
           response.setContentType(CONTENT_TYPE_XML);
-          out = response.getOutputStream();
-          int bytestream = 0;
-          while ( (bytestream = pr.read()) >= 0)
-          {
-            out.write(bytestream);
+          //out = response.getOutputStream();
+
+          // Insures stream read from PipedReader correctly translates utf-8
+          // encoded characters to OutputStreamWriter.
+          out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
+          int bufSize = 4096;
+          char[] buf=new char[bufSize];
+          int len=0;
+          while ( (len = pr.read(buf, 0, bufSize)) != -1) {
+              out.write(buf, 0, len);
           }
+          out.flush();
+          //int bytestream = 0;
+          //while ( (bytestream = pr.read()) >= 0)
+          //{
+          //  out.write(bytestream);
+          //}
         } else
         {
           // Transform results into an html table
           response.setContentType(CONTENT_TYPE_HTML);
-          out = response.getOutputStream();
+          //out = response.getOutputStream();
+          out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
           File xslFile = new File(s_server.getHomeDir(), "access/viewObjectProfile.xslt");
           TransformerFactory factory = TransformerFactory.newInstance();
           Templates template = factory.newTemplates(new StreamSource(xslFile));
@@ -347,7 +361,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           Properties details = template.getOutputProperties();
           transformer.transform(new StreamSource(pr), new StreamResult(out));
         }
-        pr.close();
+        out.flush();
 
       } else
       {
@@ -370,6 +384,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       try
       {
         if (pr != null) pr.close();
+        if (out != null) out.close();
       } catch (Throwable th)
       {
         String message = "[FedoraAccessServlet] An error has occured. "
