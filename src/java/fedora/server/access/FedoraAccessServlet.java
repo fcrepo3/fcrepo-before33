@@ -112,7 +112,10 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     String clearCache = null;
     Property[] userParms = null;
 
-    requestURL = request.getRequestURL().toString()+"?";
+    // getRequestURL() not available in all releases of servlet API
+    //requestURL = request.getRequestURL().toString()+"?";
+    requestURL = "http://"+request.getServerName()+":"+request.getServerPort()+
+                 request.getRequestURI()+"?";
     requestURI = requestURL+request.getQueryString();
     session = request.getSession(true);
     PrintWriter out = response.getWriter();
@@ -145,16 +148,28 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         clearCache = request.getParameter(parm);
       } else
       {
-        // get any user-supplied parameters and place in hashtable
-        Property UserParm = new Property();
-        UserParm.Name = parm;
-        UserParm.Value =request.getParameter(parm);
-        h_userParms.put(parm, UserParm);
+        // Any remaining parameters are assumed to be user-supplied parameters.
+        // Place user-supplied parameters in hashtable for easy access.
+        h_userParms.put(parm, request.getParameter(parm));
       }
     }
+    // API-A interface requires user-supplied paramters to be of type
+    // Property[] so create Property[] from hashtable of user parameters.
+    int userParmCounter = 0;
+    userParms = new Property[h_userParms.size()];
+    for ( Enumeration e = h_userParms.keys(); e.hasMoreElements();)
+    {
+      Property userParm = new Property();
+      userParm.Name = (String)e.nextElement();
+      userParm.Value = (String)h_userParms.get(userParm.Name);
+      userParms[userParmCounter] = userParm;
+      userParmCounter++;
+    }
 
-    // Check for required URL parameters
-    // Perform requested acton if required parameters are present
+    // Check URL parameters to verify that all parameters required
+    // by the interface are present and to verify that any other
+    // user-supplied parameters are valid for the request.
+    // Proceed if check succeeeds.
     if (checkURLParams(action, PID, bDefPID, methodName, versDateTime,
                       h_userParms, clearCache, response))
     {
@@ -258,7 +273,8 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
           this.getServletContext().log(ioe.getMessage(), ioe.getCause());
         }
             */
-            out.println("<table border='1' cellpadding='2' cellspacing='5'>");
+            response.setContentType(CONTENT_TYPE_HTML);
+            out.println("<table border='1' cellpadding='5' cellspacing='2'>");
             out.println("<tr>");
             out.println("<th><font color=\"blue\"> Object PID " + " </font></th>"+
                         "<th><font color=\"green\"> BDEF PID" + " </font></th>"+
@@ -274,8 +290,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
               out.println("<tr>");
               if (i == 0)
               {
-              out.println(//"<td><font color=\"blue\"> " + PID + " </font></td>"+
-                          "<tr><td><font color=\"blue\"> " + "<a href=\""+
+              out.println("<tr><td><font color=\"blue\"> " + "<a href=\""+
                           requestURL + "action_=ViewObject&PID_=" +
                           PID + "\"> " + PID + " </a></font></td>"+
                           "<td><font color=\"green\"> " + bDefPID + " </font></td>"+
@@ -311,9 +326,14 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       } else if (action.equals(VIEW_OBJECT))
       {
         response.setContentType(CONTENT_TYPE_HTML);
-        //out.println("<html><body>");
         viewObject(PID, bDefPID, methodName, asOfDate, request, out);
       }
+    } else
+    {
+      // URL parameters failed validation check
+      // Output from checkURLParams method should provide enough information
+      // to discern the cause of the failure.
+      System.out.println("URLParametersInvalid");
     }
   }
 
@@ -834,7 +854,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * @throws IOException
    */
   private boolean checkURLParams(String action, String PID, String bDefPID,
-                          String methodName, Date versDateTime, Hashtable userParms,
+                          String methodName, Date versDateTime, Hashtable h_userParms,
                           String clearCache, HttpServletResponse response)
       throws IOException
   {
@@ -871,10 +891,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                     "(OPTIONAL)</font></td></tr></font>");
         out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td>"+
                     "</tr><tr></tr>");
-        for (Enumeration e = userParms.elements() ; e.hasMoreElements(); )
+        for (Enumeration e = h_userParms.keys() ; e.hasMoreElements(); )
         {
-          out.println("<tr><td><font color='red'>"+e.nextElement()+
-          " </td><td>= </td><td>"+e.nextElement()+"</td></tr>");
+          String name = (String)e.nextElement();
+          out.println("<tr><td><font color='red'>"+name+
+          " </td><td>= </td><td>"+h_userParms.get(name)+"</td></tr>");
         }
         out.println("</table>></font>");
         out.println("</body></html>");
@@ -922,10 +943,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                     "</font></td></tr></font>");
         out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td>"+
                     "</tr><tr></tr>");
-        for (Enumeration e = userParms.elements() ; e.hasMoreElements(); )
+        for (Enumeration e = h_userParms.keys() ; e.hasMoreElements(); )
         {
-          out.println("<tr><td><font color='red'>"+e.nextElement()+
-          " </td><td>= </td><td>"+e.nextElement()+"</td></tr></font>");
+          String name = (String)e.nextElement();
+          out.println("<tr><td><font color='red'>"+name+
+          " </td><td>= </td><td>"+h_userParms.get(name)+"</td></tr></font>");
         }
         out.println("</table>></font>");
         out.println("</body></html>");
@@ -961,10 +983,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                     "(OPTIONAL)</font></td></tr></font>");
         out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td></tr>"+
                     "<tr></tr>");
-        for (Enumeration e = userParms.elements() ; e.hasMoreElements(); )
+        for (Enumeration e = h_userParms.keys() ; e.hasMoreElements(); )
         {
-          out.println("<tr><td><font color='red'>"+e.nextElement()+
-          " <td>= <td>"+e.nextElement()+"<td><font color='green'>"+
+          String name = (String)e.nextElement();
+          out.println("<tr><td><font color='red'>"+name+
+          " <td>= <td>"+h_userParms.get(name)+"<td><font color='green'>"+
           "(OPTIONAL)</font></tr></font>");
         }
         out.println("</table>></font>");
@@ -1003,10 +1026,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                     "</font></td></tr></font>");
         out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td>"+
                     "</tr><tr></tr>");
-        for (Enumeration e = userParms.elements() ; e.hasMoreElements(); )
+        for ( Enumeration e = h_userParms.keys(); e.hasMoreElements(); )
         {
-          out.println("<tr><td><font color='red'>"+e.nextElement()+
-          " </td><td>= </td><td>"+e.nextElement()+"</td></tr></font>");
+          String name = (String)e.nextElement();
+          out.println("<tr><td><font color='red'>"+name+
+          " </td><td>= </td><td>"+h_userParms.get(name)+"</td></tr></font>");
         }
         out.println("</table>></font>");
         out.println("</body></html>");
@@ -1036,10 +1060,12 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                     "<td> = </td><td>"+clearCache+"</td></tr></font>");
       out.println("<tr></tr><tr><td colspan='5'><font color='blue'>"+
                   "Other-Parameters:</font></td></tr><tr></tr>");
-      for (Enumeration e = userParms.elements() ; e.hasMoreElements(); )
+
+      for ( Enumeration e = h_userParms.keys(); e.hasMoreElements(); )
       {
-        out.println("<tr><td><font color='red'>"+e.nextElement()+" </td>"+
-        "<td>= </td><td>"+e.nextElement()+"</td></tr></font>");
+        String name = (String)e.nextElement();
+        out.println("<tr><td><font color='red'>"+name+" </td>"+
+        "<td>= </td><td>"+h_userParms.get(name)+"</td></tr></font>");
       }
       out.println("</table></font>");
       out.println("</body></html>");
@@ -1050,10 +1076,12 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     {
       System.out.println("PID: "+PID+"bDEF: "+bDefPID+"methodName: "+methodName+
                          "action: "+action);
-      for (Enumeration e = userParms.elements() ; e.hasMoreElements(); )
+
+      for ( Enumeration e = h_userParms.keys(); e.hasMoreElements(); )
       {
-        System.out.println("<p>userParm: "+e.nextElement()+
-        " userValue: "+e.nextElement());
+        String name = (String)e.nextElement();
+        System.out.println("<p>userParm: "+name+
+        " userValue: "+h_userParms.get(name));
       }
     }
 
