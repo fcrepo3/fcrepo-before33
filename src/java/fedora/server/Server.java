@@ -8,14 +8,21 @@ import fedora.server.storage.DOManager;
 
 import java.io.IOException;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.LogRecord;
+import java.util.logging.SimpleFormatter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -136,7 +143,8 @@ import org.w3c.dom.NodeList;
  * config               Significant Server or Module configuration steps.
  * fine                 Request hosts and operations, success or fail.
  * finer                Full request, response, and timing information.
- * finest               Method entry and exit, and extremely verbose messages.
+ * finest               Method entry and exit, and extremely verbose messages,
+ *                      for debugging.
  * </pre>
  *
  * @author cwilper@cs.cornell.edu
@@ -162,6 +170,19 @@ public abstract class Server
 
     /** The directory where server configuration is stored, relative to home. */
     public static String CONFIG_DIR=s_const.getString("config.dir");
+
+    /** 
+     * The default directory where the server logs are stored.  This directory
+     * should always exist because the startup log is written here, even
+     * if logs are written elsewhere by a <code>Server</code> subclass.
+     */
+    public static String LOG_DIR=s_const.getString("log.dir");
+
+    /** 
+     * The startup log file.  This file will include all log messages 
+     * regardless of their <code>Level</code>.
+     */
+    public static String LOG_STARTUP_FILE=s_const.getString("log.startup.file");
 
     /** The configuration filename. */
     public static String CONFIG_FILE=s_const.getString("config.file");
@@ -318,6 +339,14 @@ public abstract class Server
             s_const.getString("init.server.severe.isabstract");
 
     /**
+     * Indicates that the startup log could not be written to its usual
+     * place for some reason, and that we're falling back to stderr.
+     * 0=usual place, 1=exception message
+     */
+    public static String INIT_LOG_WARNING_CANTWRITESTARTUPLOG=
+            s_const.getString("init.log.warning.cantwritestartuplog");
+
+    /**
      * Holds an instance of a <code>Server</code> for each distinct 
      * <code>File</code> given as a parameter to <code>getInstance(...)</code>
      */
@@ -332,6 +361,16 @@ public abstract class Server
      * Modules that have been loaded.
      */
     private HashMap m_loadedModules;
+    
+    /**
+     * <code>LogRecords</code> queued at startup.
+     */
+    private ArrayList m_startupLogRecords;
+    
+    /**
+     * The <code>Logger</code> where messages go.
+     */
+    private Logger m_logger;
 
     /**
      * Initializes the Server based on configuration.
@@ -354,6 +393,8 @@ public abstract class Server
     protected Server(NodeList configNodes, File homeDir) 
             throws ServerInitializationException,
                    ModuleInitializationException {
+        m_startupLogRecords=new ArrayList(); // prepare for startup log queueing
+        m_loadedModules=new HashMap();
         m_homeDir=homeDir;
         File configFile=new File(homeDir + File.separator + CONFIG_DIR 
                 + File.separator + CONFIG_FILE);
@@ -402,7 +443,7 @@ public abstract class Server
                 } else if (!n.getLocalName().equals(CONFIG_ELEMENT_COMMENT)) {
                     // warning, unrec element, ignored
                 }
-                System.out.println("found element: " + n.getLocalName());
+                logFinest("found element: " + n.getLocalName());
             } else {
                 // warning, unrec non-element, ignored
             }
@@ -414,7 +455,7 @@ public abstract class Server
         Iterator i=parameterNames();
         while (i.hasNext()) {
             String n=(String) i.next();
-            System.out.println("name=\"" + n + "\", value=\"" + getParameter(n) + "\"");
+            logFinest("name=\"" + n + "\", value=\"" + getParameter(n) + "\"");
         }
         
         
@@ -424,9 +465,131 @@ public abstract class Server
         
     }
 
-    public Logger getLogger() {
-        return null;
+    public void logSevere(String message) {
+        log(new LogRecord(Level.SEVERE, message));
     }
+    
+    public void logWarning(String message) {
+        log(new LogRecord(Level.WARNING, message));
+    }
+    
+    public void logInfo(String message) {
+        log(new LogRecord(Level.INFO, message));
+    }
+    
+    public void logConfig(String message) {
+        log(new LogRecord(Level.CONFIG, message));
+    }
+    
+    public void logFine(String message) {
+        log(new LogRecord(Level.FINE, message));
+    }
+    
+    public void logFiner(String message) {
+        log(new LogRecord(Level.FINER, message));
+    }
+    
+    public void logFinest(String message) {
+        log(new LogRecord(Level.FINEST, message));
+    }
+    
+      // if m_logger!=null, send to m_logger
+      // otherwise, queue it in memory
+    private void log(LogRecord record) {
+        record.setLoggerName("");
+        if (m_logger==null) {
+            m_startupLogRecords.add(record);
+        } else {
+            m_logger.log(record);
+        }
+    }
+
+    /**
+     * Sets the <code>Logger</code> to which log messages are sent.
+     * <p></p>
+     * This method flushes and closes the <code>Handler</code>s for the 
+     * previously used <code>Logger</code>.  If there was no prior 
+     * <code>Logger</code>, the <code>LogRecord</code> buffer is flushed to
+     * the new <code>Logger</code> <i>and</i> to disk at 
+     * LOG_DIR/LOG_STARTUP_FILE.
+     * <p></p>
+     * This method is intended for use by subclasses of <code>Server</code>,
+     * during initialization.
+     */
+    protected void setLogger(Logger newLogger) {
+        if (m_logger==null) {
+            Iterator recs=m_startupLogRecords.iterator();
+            while (recs.hasNext()) {
+                newLogger.log((LogRecord) recs.next());
+            }
+            flushLogger();  // send the queue to disk and empty it
+        } else {
+            closeLogger();  // flush + close the old Logger
+        }
+        m_logger=newLogger; // start using the new Logger
+    }
+
+    /**
+     * Flushes any buffered log messages in the <code>Logger</code>'s 
+     * <code>Handler</code>(s).
+     * <p></p>
+     * If no <code>Logger</code> has been set, this method flushes the
+     * <code>LogRecord</code> queue to LOG_DIR/LOG_STARTUP_FILE, and if
+     * that can't be written to, flushes it to stderr.
+     */
+    public final void flushLogger() {
+        if (m_logger==null) {
+            // send to disk, then empty queue
+            PrintStream p=null;
+            File logDir=new File(m_homeDir, LOG_DIR);
+            if (!logDir.exists()) {
+                logDir.mkdir(); // try to create dir if doesn't exist
+            }
+            File startupLogFile=new File(logDir, LOG_STARTUP_FILE);
+            try {
+                p=new PrintStream(new FileOutputStream(startupLogFile));
+            } catch (Exception e) {
+                if (p!=null) {
+                    p.close();
+                }
+                p=System.err;
+                p.println(MessageFormat.format(
+                        INIT_LOG_WARNING_CANTWRITESTARTUPLOG, new Object[] 
+                        {startupLogFile, e.getMessage()}));
+            }
+            SimpleFormatter sf=new SimpleFormatter();
+            Iterator recs=m_startupLogRecords.iterator();
+            while (recs.hasNext()) {
+                p.println(sf.format((LogRecord) recs.next()));
+            }
+            
+            m_startupLogRecords.clear();
+        } else {
+            Handler[] h=m_logger.getHandlers();
+            for (int i=0; i<h.length; i++) {
+                h[i].flush();
+            }
+        }
+    }
+    
+    /**
+     * Flushes, then closes any resources tied up by the <code>Handler</code>(s)
+     * associated with the <code>Logger</code>.  If there is no 
+     * <code>Logger</code>, the <code>LogRecord</code> queue is flushed to 
+     * LOG_DIR/LOG_STARTUP_FILE, and if that can't be written to, flushes
+     * it to stderr.
+     */
+    public final void closeLogger() {
+        if (m_logger==null) {
+            flushLogger();
+        } else {
+            Handler[] h=m_logger.getHandlers();
+            for (int i=0; i<h.length; i++) {
+                h[i].close();
+            }
+        }
+    }
+    
     
     /**
      * Provides an instance of the server specified in the configuration
@@ -658,8 +821,9 @@ public abstract class Server
     /**
      * Performs shutdown tasks for the server itself.
      * <p></p>
-     * The default implementation does nothing - it should be overridden
-     * in <code>Server</code> implementations that tie up system resources.
+     * The default implementation simply calls closeLogger() - it should be 
+     * overridden in <code>Server</code> implementations that tie up 
+     * additional system resources.
      * <p></p>
      * This should be written so that system resources are always freed,
      * regardless of whether there is an error.  If an error occurs,
@@ -671,6 +835,7 @@ public abstract class Server
      */
     protected void shutdownServer()
             throws ServerShutdownException {
+        closeLogger();
         if (1==2)
             throw new ServerShutdownException(null);
     }
@@ -704,6 +869,17 @@ public abstract class Server
         }
         try {
             Server server=Server.getInstance(new File(serverHome));
+            try {
+                server.shutdown();
+            } catch (ServerShutdownException sse) {
+                System.err.println("Error: Server had trouble shutting down: "
+                        + sse.getMessage());
+            } catch (ModuleShutdownException mse) {
+                Module m=mse.getModule();
+                System.err.println("Error: Module '" + m.getClass().getName()
+                        + "' (role='" + m.getRole() + "') had trouble "
+                        + "shutting down: " + mse.getMessage());
+            }
         } catch (ServerInitializationException sie) {
             System.err.println("Error: Server could not initialize: "
                     + sie.getMessage());
