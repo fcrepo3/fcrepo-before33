@@ -43,6 +43,8 @@ public class Datastream
 
   public boolean isNew=false;
 
+  public boolean isHarvestable=false;
+
   public String DatastreamID;
 
   public String DSVersionID;
@@ -91,6 +93,8 @@ public class Datastream
   public String DSInfoType;
 
   public String DSState;
+
+  public String DSFormatURI;
 
   public String DSLocation;
 

@@ -254,8 +254,10 @@ public class METSLikeDOSerializer
         if (first.DSState==null) {
             throw new ObjectIntegrityException("Datastream must have a state.");
         }
+        String harvestableString="" + first.isHarvestable;
         buf.append("  <" + METS_PREFIX + ":" + outerName + " ID=\""
-                + first.DatastreamID + "\" STATUS=\"" + first.DSState + "\">\n");
+                + first.DatastreamID + "\" STATUS=\"" + first.DSState 
+                + "\" HARVESTABLE=\"" + harvestableString + "\">\n");
         for (int i=0; i<XMLMetadata.size(); i++) {
             DatastreamXMLMetadata ds=(DatastreamXMLMetadata) XMLMetadata.get(i);
             if (ds.DSVersionID==null) {
@@ -289,7 +291,11 @@ public class METSLikeDOSerializer
             if ( ds.DSLabel!=null && !ds.DSLabel.equals("") ) {
                 labelString=" LABEL=\"" + StreamUtility.enc(ds.DSLabel) + "\"";
             }
-            buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + ds.DSMIME
+            String formatString="";
+            if (ds.DSFormatURI!=null) {
+                formatString="FORMATURI=\"" + ds.DSFormatURI + "\" ";
+            }
+            buf.append("      <" + METS_PREFIX + ":mdWrap " + formatString + "MIMETYPE=\"" + ds.DSMIME
                     + "\" MDTYPE=\"" + mdType + "\"" + otherString
                     + labelString + ">\n");
             buf.append("        <" + METS_PREFIX + ":xmlData>\n");
@@ -459,8 +465,10 @@ public class METSLikeDOSerializer
                     throw new ObjectIntegrityException("Object's content datastream must have an id.");
                 }
                 if (ds.DSState==null) ds.DSState="";
+                String harvestableString="" + ds.isHarvestable;
                 buf.append("      <" + METS_PREFIX + ":fileGrp ID=\""
-                        + ds.DatastreamID + "\" STATUS=\"" + ds.DSState + "\">\n");
+                        + ds.DatastreamID + "\" STATUS=\"" + ds.DSState 
+                        + "\" HARVESTABLE=\"" + harvestableString + "\">\n");
                 Iterator contentIter=obj.datastreams(ds.DatastreamID).iterator();
                 while (contentIter.hasNext()) {
                     DatastreamContent dsc=(DatastreamContent) contentIter.next();
@@ -495,9 +503,13 @@ public class METSLikeDOSerializer
                     if (dsc.DSControlGrp==null || dsc.DSControlGrp.equals("")) {
                         throw new ObjectIntegrityException("Object's content datastream must have a control group.");
                     }
+                    String formatString="";
+                    if (dsc.DSFormatURI!=null) {
+                        formatString="FORMATURI=\"" + dsc.DSFormatURI + "\" ";
+                    }
                     buf.append("        <" + METS_PREFIX + ":file ID=\""
                             + dsc.DSVersionID + "\" CREATED=\"" + m_formatter.format(dsc.DSCreateDT)
-                            + "\" MIMETYPE=\"" + dsc.DSMIME + "\"" + sizeString
+                            + "\" " + formatString + "MIMETYPE=\"" + dsc.DSMIME + "\"" + sizeString
                             + admIDString + dmdIDString + " OWNERID=\"" + dsc.DSControlGrp + "\">\n");
                     buf.append("          <" + METS_PREFIX + ":FLocat" + labelString
                             + " LOCTYPE=\"URL\" " + m_XLinkPrefix

@@ -92,6 +92,7 @@ public class METSLikeDODeserializer
     private boolean m_rootElementFound;
     private String m_dsId;
     private String m_dsVersId;
+    private boolean m_dsHarvestable;
     private Date m_dsCreateDate;
     private String m_dissemId;
     private String m_dissemState;
@@ -102,6 +103,7 @@ public class METSLikeDODeserializer
     private long m_dsSize;
     private URL m_dsLocation;
     private String m_dsMimeType;
+    private String m_dsFormatURI;
     private String m_dsControlGrp;
 
     // key=dsId, value=List of datastream ids (strings)
@@ -421,9 +423,24 @@ public class METSLikeDODeserializer
             } else if (localName.equals("amdSec")) {
                 m_dsId=grab(a, M, "ID");
                 m_dsState=grab(a, M, "STATUS");
+                m_dsHarvestable=false;
+                String harvestable=grab(a, M, "HARVESTABLE");
+                if ((harvestable!=null) && (harvestable.equals("true") || harvestable.equals("1"))) {
+                    m_dsHarvestable=true;
+                }
             } else if (localName.equals("dmdSecFedora")) {
                 m_dsId=grab(a, M, "ID");
                 m_dsState=grab(a, M, "STATUS");
+                m_dsHarvestable=false;
+                String harvestable=grab(a, M, "HARVESTABLE");
+                if ((harvestable!=null) && (harvestable.equals("true") || harvestable.equals("1"))) {
+                    m_dsHarvestable=true;
+                } else {
+                    if (harvestable==null && m_dsId.equals("DC")) {
+                        m_dsHarvestable=true; // When HARVESTABLE isn't specified for DC, assume true.
+                                              // For all other datastreams, assume false.
+                    }
+                }
             } else if (localName.equals("techMD") || localName.equals("descMD")
                     || localName.equals("sourceMD")
                     || localName.equals("rightsMD")
@@ -449,6 +466,12 @@ public class METSLikeDODeserializer
             } else if (localName.equals("mdWrap")) {
                 m_dsInfoType=grab(a, M, "MDTYPE");
                 m_dsLabel=grab(a, M, "LABEL");
+                m_dsMimeType=grab(a, M, "MIMETYPE");
+                m_dsFormatURI=grab(a, M, "FORMATURI");
+                if (m_dsId.equals("DC")) {
+                    // DC datastreams must always use this -- regardless of what they specify
+                    m_dsFormatURI="http://www.openarchives.org/OAI/2.0/oai_dc/";
+                }
             } else if (localName.equals("xmlData")) {
                 m_dsXMLBuffer=new StringBuffer();
                 m_dsFirstElementBuffer=new StringBuffer();
@@ -465,6 +488,11 @@ public class METSLikeDODeserializer
                 m_dsControlGrp=null;
                 m_dsDmdIds=null;
                 m_dsState=grab(a,M,"STATUS");
+                m_dsHarvestable=false;
+                String harvestable=grab(a, M, "HARVESTABLE");
+                if ((harvestable!=null) && (harvestable.equals("true") || harvestable.equals("1"))) {
+                    m_dsHarvestable=true;
+                }
                 m_dsSize=-1;
             } else if (localName.equals("file")) {
                 // ID="DS3.0"
@@ -478,6 +506,7 @@ public class METSLikeDODeserializer
                 m_dsCreateDate=DateUtility.convertStringToDate(
                         grab(a,M,"CREATED"));
                 m_dsMimeType=grab(a,M,"MIMETYPE");
+                m_dsFormatURI=grab(a,M,"FORMATURI");
                 m_dsControlGrp=grab(a,M,"OWNERID");
                 String ADMID=grab(a,M,"ADMID");
                 if ((ADMID!=null) && (!"".equals(ADMID))) {
@@ -541,10 +570,12 @@ public class METSLikeDODeserializer
                   drc.DSLabel=m_dsLabel;
                   drc.DSCreateDT=m_dsCreateDate;
                   drc.DSMIME=m_dsMimeType;
+                  drc.DSFormatURI=m_dsFormatURI;
                   drc.DSControlGrp=m_dsControlGrp;
                   //d.DSControlGrp=Datastream.EXTERNAL_REF;
                   drc.DSInfoType="DATA";
                   drc.DSState=m_dsState;
+                  drc.isHarvestable=m_dsHarvestable;
                   drc.DSLocation=dsLocation;
                   if (m_queryBehavior!=QUERY_NEVER) {
                     if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null)
@@ -583,9 +614,11 @@ public class METSLikeDODeserializer
                   dmc.DSLabel=m_dsLabel;
                   dmc.DSCreateDT=m_dsCreateDate;
                   dmc.DSMIME=m_dsMimeType;
+                  dmc.DSFormatURI=m_dsFormatURI;
                   dmc.DSControlGrp=m_dsControlGrp;
                   dmc.DSInfoType="DATA";
                   dmc.DSState=m_dsState;
+                  dmc.isHarvestable=m_dsHarvestable;
                   dmc.DSLocation=dsLocation;
                   if (m_queryBehavior!=QUERY_NEVER) {
                     if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null)
@@ -845,7 +878,12 @@ public class METSLikeDODeserializer
                     ds.DatastreamID=m_dsId;
                     ds.DSVersionID=m_dsVersId;
                     ds.DSLabel=m_dsLabel;
-                    ds.DSMIME="text/xml"; // FIXME: read this, don't assume it
+                    if (m_dsMimeType==null) {
+                        ds.DSMIME="text/xml";
+                    } else {
+                        ds.DSMIME=m_dsMimeType;
+                    }
+                    ds.DSFormatURI=m_dsFormatURI;
                     ds.DSCreateDT=m_dsCreateDate;
                     ds.DSSize=ds.xmlContent.length; // bytes, not chars, but
                                                     // probably N/A anyway
@@ -854,6 +892,7 @@ public class METSLikeDODeserializer
                     ds.DSInfoType=m_dsInfoType;
                     ds.DSMDClass=m_dsMDClass;
                     ds.DSState=m_dsState;
+                    ds.isHarvestable=m_dsHarvestable;
                     ds.DSLocation=m_obj.getPid() + "+" + m_dsId + "+"
                         + m_dsVersId;
                     // add it to the digitalObject

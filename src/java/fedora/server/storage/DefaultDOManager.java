@@ -907,7 +907,7 @@ public class DefaultDOManager
 
 
                 // if there's no DC record, add one using PID for identifier.
-                // and Label for dc:title.
+                // and Label for dc:title, and make it harvestable by default
                 //
                 // if there IS a DC record, make sure one of the dc:identifiers
                 // is the pid
@@ -921,6 +921,8 @@ public class DefaultDOManager
                     dc.DSControlGrp="X";
                     dc.DSCreateDT=nowUTC;
                     dc.DSLabel="Dublin Core Metadata";
+                    dc.DSFormatURI="http://www.openarchives.org/OAI/2.0/oai_dc/";
+                    dc.isHarvestable=true;
                     dc.DSMIME="text/xml";
                     dc.DSSize=0;
                     dc.DSState="A";
