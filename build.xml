@@ -173,6 +173,20 @@
 	<target name="prep" description="Prepare a temporary build area for targets">
 		<mkdir dir="temp"/>
 	</target>
+    <target name="utilclasses" depends="prep">
+		<mkdir dir="temp/util"/>
+		<javac srcdir="${javaSourceDir}" 
+		       destdir="temp/util" 
+		       classpath="lib/server/md5.jar" 
+		       includes="fedora/utilities/**" 
+		       optimize="${javaClassOptimize}" 
+		       debug="${javaClassDebug}"/>
+		<jar jarfile="temp/fedora-utilities.jar" basedir="temp/util"/>
+    </target>
+    <target name="makepatch" depends="utilclasses">
+		<java classpath="lib/server/md5.jar;temp/fedora-utilities.jar"
+              classname="fedora.utilities.MakePatch"/>
+    </target>
 	<target name="clientprep" depends="prep" description="Prepare a temporary build area for client-related targets">
 		<mkdir dir="temp/client"/>
 	</target>
@@ -965,6 +979,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.148  2003/09/03 11:18:02  cwilper
+  added makepatch target
+
   Revision 1.147  2003/09/02 20:48:17  cwilper
   okay, back to most recent copy now...
 
