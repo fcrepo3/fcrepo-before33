@@ -7,29 +7,28 @@
 <article>
 	<articleinfo>
 		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
-		<title>
-			<inlinemediaobject>
+		<title><inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
+			</inlinemediaobject></title>
 		<title>ImageManipulation webapp</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
 		<publisher>
-			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
 		</publisher>
 		<edition>$Revision$</edition>
-        <date>$Date$</date>
-        <releaseinfo>
+		<date>$Date$</date>
+		<releaseinfo>
             $Id$ 
         </releaseinfo>
 	</articleinfo>
 	<sect1>
-		<title>Welcome to the ImageManipulation Local Service</title>
+		<title>Welcome to the ImageManipulation<footnoteref linkend="fnrex11"/> Local Service</title>
 		<para>ImageManipulation is a Java servlet that takes a URL of an image as a param and based on other given parameters, can perform a variety of image related manipulations on the object. After the image is manipulated, it is then sent back as an image/type object to the calling parent, most often a browser or an HTML img tag.</para>
 		<blockquote>
 			<para><emphasis role="bold">http://&lsqb;hostname&rsqb;:&lsqb;port-number&rsqb;/imagemanip/ImageManipulation?url=&lsqb;url-of-image&rsqb;&lsqb;parameters&rsqb;</emphasis></para>
@@ -48,8 +47,8 @@
 			<listitem>
 				<para>&lsqb;parameters&rsqb; - Optional parameters that can be used to manipulate the image:</para>
 			</listitem>
-			</itemizedlist>
-			<blockquote>
+		</itemizedlist>
+		<blockquote>
 			<itemizedlist mark="opencircle">
 				<listitem>
 					<para><emphasis role="bold">Resize:    op&equals;resize&amp;newWidth&equals;&lsqb;width-in-pixels&rsqb;</emphasis> This resizes an image to a specified width in pixels, automatically scaling the height in proportion to the width.</para>
@@ -76,12 +75,12 @@ Crops an image, starting from (crop-x,crop-y) coordinate, and crops to the optio
 TConverts an image to another format. Currently supported formats are: gif, jpg, tiff, png, and bmp.</para>
 				</listitem>
 			</itemizedlist>
-			</blockquote>
+		</blockquote>
 		<para>Examples:</para>
 		<blockquote>
 			<para>/imagemanip/ImageManipulation?url&equals;http://www.explore.cornell.edu/tour_landmarks/img/frosty_tower02.jpg&amp;op&equals;zoom&amp;zoomAmt&amp;equals;2.5</para>
 			<para>/imagemanip/ImageManipulation?url&equals;http://www.explore.cornell.edu/tour_landmarks/img/frosty_tower02.jpg&amp;op&equals;convert&amp;convertTo&equals;gif</para>
 		</blockquote>
-		<para><emphasis>* This service uses the ImageJ API from Wayne Rasband which is free to use in the public domain. For additonal information regarding the ImageJ API, please refer to the ImageJ project web site at: <ulink url="http://rsb.info.nih.gov/ij/">http://rsb.info.nih.gov/ij/</ulink>.</emphasis></para>
+		<para><emphasis><footnote id="fnrex11"><para>This service uses the ImageJ API from Wayne Rasband which is free to use in the public domain. For additonal information regarding the ImageJ API, please refer to the ImageJ project web site at: <ulink url="http://rsb.info.nih.gov/ij/">http://rsb.info.nih.gov/ij/</ulink>.</para></footnote></emphasis></para>
 	</sect1>
 </article>

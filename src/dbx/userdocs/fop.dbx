@@ -7,29 +7,28 @@
 <article>
 	<articleinfo>
 		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
-		<title>
-			<inlinemediaobject>
+		<title><inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
+			</inlinemediaobject></title>
 		<title>FOP webapp</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
 		<publisher>
-			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
 		</publisher>
 		<edition>$Revision$</edition>
-        <date>$Date$</date>
-        <releaseinfo>
+		<date>$Date$</date>
+		<releaseinfo>
             $Id$ 
         </releaseinfo>
 	</articleinfo>
 	<sect1>
-		<title>Welcome to the FOP* Local Service</title>
+		<title>Welcome to the FOP<footnoteref linkend="fnrex11"/> Local Service</title>
 		<para>This local service provides transformations from <ulink url="http://www.zvon.org/xxl/xslfoReference/Output/">XSL-FO</ulink> format to PDF. The service functions as a java servlet and can be invoked using the following syntax:</para>
 		<blockquote>
 			<para><emphasis role="bold">http://&lsqb;hostname&rsqb;:&lsqb;port-number&rsqb;/fop/FOPServlet?source=&lsqb;xml-fo-source&rsqb;</emphasis></para>
@@ -50,6 +49,6 @@
 		<blockquote>
 			<para>http://localhost:8080/fop/FOPServlet?source=http://www.fedora.info/services/fop/sample_fo.xml</para>
 		</blockquote>
-		<para><emphasis>* This service uses the FOP formatter from Apache which is licensed under the Apache Software License v1.1 <ulink url="http://xml.apache.org/fop/license.html">(ASL)</ulink>. For additonal information regarding FOP formatter, please refer to the FOP project web site at: <ulink url="http://xml.apache.org/fop/">http://xml.apache.org/fop/</ulink>.</emphasis></para>
+		<para><emphasis><footnote id="fnrex11"><para>This service uses the FOP formatter from Apache which is licensed under the Apache Software License v1.1 <ulink url="http://xml.apache.org/fop/license.html">(ASL)</ulink>. For additonal information regarding FOP formatter, please refer to the FOP project web site at: <ulink url="http://xml.apache.org/fop/">http://xml.apache.org/fop/</ulink>.</para></footnote></emphasis></para>
 	</sect1>
 </article>

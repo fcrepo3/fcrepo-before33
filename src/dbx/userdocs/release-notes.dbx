@@ -6,17 +6,22 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
-		<title>
-			<inlinemediaobject>
+		<title><inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
+			</inlinemediaobject></title>
 		<title>Fedora Release Notes</title>
 		<author>
 			<othername>Fedora Development Team</othername>
 		</author>
+		<copyright>
+			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
+		</copyright>
+		<publisher>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
+		</publisher>		
 		<edition>$Revision$</edition>
 		<date>$Date$</date>
 		<releaseinfo>
@@ -165,20 +170,16 @@ This includes new demonstration objects. These objects can be loaded into the re
 There are two categories of demonstrations:
                 <itemizedlist>
 					<listitem>
-						<para>
-							<emphasis>Local Server Demos -</emphasis> These demos can be run under any conditions. They are intended to work when the Fedora repository server is in a stand-alone condition, for example, if the repository is running without a network connection, or if the repository is behind a firewall and not set up to received outside connections.</para>
+						<para><emphasis>Local Server Demos -</emphasis> These demos can be run under any conditions. They are intended to work when the Fedora repository server is in a stand-alone condition, for example, if the repository is running without a network connection, or if the repository is behind a firewall and not set up to received outside connections.</para>
 					</listitem>
 					<listitem>
-						<para>
-							<emphasis>Open Server Demos -</emphasis> These demos can only be run if the Fedora repository server is running as a network accessible server, meaning that it can make outgoing connections AND accept incoming connections. If the repository server is running behind a firewall, the firewall must be configured to allow incoming connections on the port that the repository server is running. The Open Server Demos use distributed content and services that are remote to the repository server.</para>
+						<para><emphasis>Open Server Demos -</emphasis> These demos can only be run if the Fedora repository server is running as a network accessible server, meaning that it can make outgoing connections AND accept incoming connections. If the repository server is running behind a firewall, the firewall must be configured to allow incoming connections on the port that the repository server is running. The Open Server Demos use distributed content and services that are remote to the repository server.</para>
 					</listitem>
-				</itemizedlist>
-			</para>
+				</itemizedlist></para>
 			<para>
             Once demo objects are ingested into the repository, they can be viewed via a web browser using API-A-LITE or API-A. Remember the URL syntax to get the object profile via API-A-LITE is: http://{hostname}:{port}/fedora/get/{objectPID}
             </para>
-			<para>
-				<emphasis>Example:</emphasis> http://localhost:8080/fedora/get/demo:5
+			<para><emphasis>Example:</emphasis> http://localhost:8080/fedora/get/demo:5
             </para>
 			<para>
 For additional information refer to the demos.html file in the userdocs directory.
@@ -218,16 +219,14 @@ For additional information refer to the demos.html file in the userdocs director
 		</section>
 		<section>
 			<title>PID Generation</title>
-			<para>
-				<emphasis>PID generation has been activated.</emphasis> 
+			<para><emphasis>PID generation has been activated.</emphasis> 
            Upon ingestion, Fedora objects that
            pass validation are automatically assigned a unique persistent 
            identifer or PID. The namespace prefix on the PID is determined
            by the namespace parameter in the fedora.cfg configuration
            file. 
 		</para>
-			<para>
-				<emphasis>Special default PID namespace.</emphasis>
+			<para><emphasis>Special default PID namespace.</emphasis>
           To simplify initial setup and use 
            of the repository, the default namespace of "test:" enables 
            special handling of Fedora object PIDs. If the PID namespace is
@@ -260,8 +259,7 @@ For additional information refer to the demos.html file in the userdocs director
 		</section>
 		<section>
 			<title>Parameters</title>
-			<para>
-				<emphasis>Method Parameters enabled</emphasis> Method parameters can now be defined in
+			<para><emphasis>Method Parameters enabled</emphasis> Method parameters can now be defined in
            Behavior Mechanism objects using WSDL providing a way to pass
            parameters to methods from the end user. For example, an image
            mechanism might have a method named getImage with parameters X
@@ -269,14 +267,12 @@ For additional information refer to the demos.html file in the userdocs director
            Method parameters may be supplied by the end user on a dissemination
            request to affect the result of the dissemination.
 		</para>
-			<para>
-				<emphasis>Default Method Parameters enabled</emphasis> Mechanism designers can now
+			<para><emphasis>Default Method Parameters enabled</emphasis> Mechanism designers can now
            create method parameters that are known only to the mechanism.
            Default method parameters cannot be altered by the end user and
            their values must be specified in the Behavior Mechanism object.
 		 </para>
-			<para>
-				<emphasis>Enhancements to the example soap client (FedoraAccessSoapServlet)</emphasis>
+			<para><emphasis>Enhancements to the example soap client (FedoraAccessSoapServlet)</emphasis>
            In the alpha1 release, the soap client enabled one to reflect on
            an object using GetBehaviorDefinitions and GetObjectMethods to
            display a list of all methods for a given object and to disseminate
@@ -284,8 +280,7 @@ For additional information refer to the demos.html file in the userdocs director
            for user input of method parameters for those methods that define
            parameters.
 		 </para>
-			<para>
-				<emphasis>DB Schema updated</emphasis> A new table named MechDefaultParameter has been
+			<para><emphasis>DB Schema updated</emphasis> A new table named MechDefaultParameter has been
            added and the datatype and length of some column names have changed.
           </para>
 		</section>
@@ -356,8 +351,7 @@ For additional information refer to the demos.html file in the userdocs director
 					<listitem>
 						<para>exportObject</para>
 					</listitem>
-				</itemizedlist>
-			</para>
+				</itemizedlist></para>
 		</section>
 		<section>
 			<title>Management Client</title>
@@ -387,8 +381,7 @@ For additional information refer to the demos.html file in the userdocs director
 					<listitem>
 						<para>getDissemination</para>
 					</listitem>
-				</itemizedlist>
-			</para>
+				</itemizedlist></para>
 		</section>
 		<section>
 			<title>Access Client</title>

@@ -7,25 +7,24 @@
 <article>
 	<articleinfo>
 		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
-		<title>
-			<inlinemediaobject>
+		<title><inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
+			</inlinemediaobject></title>
 		<title>Fedora Installation and Configuration Guide</title>
 		<subtitle>Software Release 1.0</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
 		<publisher>
-			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
 		</publisher>
 		<edition>$Revision$</edition>
-        <date>$Date$</date>
-        <releaseinfo>
+		<date>$Date$</date>
+		<releaseinfo>
             $Id$ 
         </releaseinfo>
 	</articleinfo>
@@ -40,15 +39,13 @@
 			<para>Required:</para>
 			<itemizedlist>
 				<listitem>
-					<para>
-						<emphasis>Sun's Java Software Development Kit, v1.4.</emphasis>  Whether you are installing a binary or source distribution, you must have the J2SDK v1.4 or above. It should be installed on the machine you intend to use as the Fedora server.  You can download it at http://java.sun.com/</para>
+					<para><emphasis>Sun's Java Software Development Kit, v1.4.</emphasis>  Whether you are installing a binary or source distribution, you must have the J2SDK v1.4 or above. It should be installed on the machine you intend to use as the Fedora server.  You can download it at http://java.sun.com/</para>
 				</listitem>
 			</itemizedlist>
 			<para>Optional:</para>
 			<itemizedlist>
 				<listitem>
-					<para>
-						<emphasis>MySQL, v3.2.3.</emphasis>  The Fedora server is backed in part by a relational database.  If you decide not to use the included pure java database, McKoi v0.94 (more about that later), you should download and install MySQL v3.2.3 for your platform (or see the "Other Databases" section below).  You can download MySQL at http://www.mysql.com/.  Note that later releases of MySQL might work, but they have not been tested. </para>
+					<para><emphasis>MySQL, v3.2.3.</emphasis>  The Fedora server is backed in part by a relational database.  If you decide not to use the included pure java database, McKoi v0.94 (more about that later), you should download and install MySQL v3.2.3 for your platform (or see the "Other Databases" section below).  You can download MySQL at http://www.mysql.com/.  Note that later releases of MySQL might work, but they have not been tested. </para>
 				</listitem>
 			</itemizedlist>
 		</section>
@@ -68,8 +65,7 @@
 					<para>Unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.0.  This will be the home directory of Fedora.</para>
 				</listitem>
 				<listitem>
-					<para>If you're in Unix, you must change the permissions of the files in the server/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.0/server/bin/&ast;</emphasis>
-					</para>
+					<para>If you're in Unix, you must change the permissions of the files in the server/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.0/server/bin/&ast;</emphasis></para>
 				</listitem>
 			</itemizedlist>
 			<para>Client binary distribution:</para>
@@ -81,8 +77,7 @@
 					<para>If the machine you're installing on doesn't have a server, decide where you want the client to reside.  For example, C:\ or /usr/local.  Then unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.0.  This will be the home directory of Fedora.</para>
 				</listitem>
 				<listitem>
-					<para>If you're in Unix, you must change the permissions of the files in the client/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.0/server/bin/&ast;</emphasis>
-					</para>
+					<para>If you're in Unix, you must change the permissions of the files in the client/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.0/server/bin/&ast;</emphasis></para>
 				</listitem>
 			</itemizedlist>
 			<para>Source Code:</para>
@@ -99,9 +94,7 @@
 				<listitem>
 					<para>JAVA_HOME must point to the base directory of your J2SDK installation.  On Windows, this will usually be something like C:\j2sdk1.4.x\.  On Unix, it could be in several places.  The /usr and /usr/local directory are commonly used for Java installations.</para>
 					<blockquote>
-						<para>
-							<emphasis>Note: If you would rather not set your JAVA_HOME to point to the version required by Fedora (for instance, if you run other applications using java1.3) you can instead set the FEDORA_JAVA_HOME environment variable.  This way, Fedora's java installation won't conflict with your other java applications.</emphasis>
-						</para>
+						<para><emphasis>Note: If you would rather not set your JAVA_HOME to point to the version required by Fedora (for instance, if you run other applications using java1.3) you can instead set the FEDORA_JAVA_HOME environment variable.  This way, Fedora's java installation won't conflict with your other java applications.</emphasis></para>
 					</blockquote>
 				</listitem>
 				<listitem>
@@ -132,8 +125,7 @@
 					<para>FEDORA_DEV should contain the directory under which the source was unpacked, including the version part of the path.  For instance, if you installed the source in C:\ and it unpacked into C:\fedora-src-1.0\, FEDORA_DEV should be C:\fedora-src-1.0</para>
 				</listitem>
 				<listitem>
-					<para>•	PATH should contain the bin directory of Ant.  If you don't already have ant installed, a version comes with the Fedora source distribution in under %FEDORA_DEV%\res\ant\bin (in Windows) or $FEDORA_DEV/res/ant/bin (in Unix).  Note: If you opt to use the ant binaries included with the source, and you're in Unix, be sure to change the permissions on the files in the bin directory so that you can execute ant.  This can be done with the command: <emphasis>EDORA_DEV/res/ant/bin/&ast;</emphasis>
-					</para>
+					<para>•	PATH should contain the bin directory of Ant.  If you don't already have ant installed, a version comes with the Fedora source distribution in under %FEDORA_DEV%\res\ant\bin (in Windows) or $FEDORA_DEV/res/ant/bin (in Unix).  Note: If you opt to use the ant binaries included with the source, and you're in Unix, be sure to change the permissions on the files in the bin directory so that you can execute ant.  This can be done with the command: <emphasis>EDORA_DEV/res/ant/bin/&ast;</emphasis></para>
 				</listitem>
 			</itemizedlist>
 		</section>
@@ -144,9 +136,7 @@
 			<title>It's Easy</title>
 			<para>Provided that you've followed all the appropriate instructions above, you can now go to the $FEDORA_DEV directory and type:</para>
 			<blockquote>
-				<para>
-					<emphasis>ant serverdist</emphasis>
-				</para>
+				<para><emphasis>ant serverdist</emphasis></para>
 			</blockquote>
 			<para>and everything necessary for a server and client distribution will be put in $FEDORA_DEV/dist</para>
 			<para>If you want to run the server and client straight from where it was compiled, be sure to set your FEDORA_HOME to $FEDORA_DEV/dist, and add $FEDORA_HOME/server/bin and $FEDORA_HOME/client/bin to your PATH environment variable.</para>
@@ -164,8 +154,7 @@
 				<title>McKoi</title>
 				<para>Execute the command:</para>
 				<blockquote>
-					<para>mckoi-init <emphasis>fedoraDBUser fedoraDBUser</emphasis>
-					</para>
+					<para>mckoi-init <emphasis>fedoraDBUser fedoraDBUser</emphasis></para>
 				</blockquote>
 				<para>...where the first parameter is the username you'd like to use for the database, and the second parameter is the password you'd like to use.  Remember this information, as it will be needed later when configuring Fedora.</para>
 				<para>Note: This command resolves to a batch file (mckoi-init.bat) in Windows, and a shell script (mckoi-init.sh) in Unix.  These reside in the server's bin directory.</para>
@@ -174,34 +163,27 @@
 				<title>MySQL</title>
 				<para>Execute the command:</para>
 				<blockquote>
-					<para>mysql-config <emphasis>installDir dbaUser dbaPass fedoraDBUser fedoraDBPass dbName</emphasis>
-					</para>
+					<para>mysql-config <emphasis>installDir dbaUser dbaPass fedoraDBUser fedoraDBPass dbName</emphasis></para>
 				</blockquote>
 				<para>Where:</para>
 				<itemizedlist>
 					<listitem>
-						<para>
-							<emphasis>installDir</emphasis> is the location where MySQL is installed.  In Unix, this might be /usr/local/mysql.  In Windows, it might be C:\mysql</para>
+						<para><emphasis>installDir</emphasis> is the location where MySQL is installed.  In Unix, this might be /usr/local/mysql.  In Windows, it might be C:\mysql</para>
 					</listitem>
 					<listitem>
-						<para>
-							<emphasis>dbaUser</emphasis> is the name of the MySQL user with dba privileges.  In a default MySQL installation, this will be root.</para>
+						<para><emphasis>dbaUser</emphasis> is the name of the MySQL user with dba privileges.  In a default MySQL installation, this will be root.</para>
 					</listitem>
 					<listitem>
-						<para>
-							<emphasis>dbaPass</emphasis> is the password of the MySQL user with dba privileges.  In a default MySQL installation,  if you're running MySQL on the same machine as Fedora, you can usually pass "" for this argument.</para>
+						<para><emphasis>dbaPass</emphasis> is the password of the MySQL user with dba privileges.  In a default MySQL installation,  if you're running MySQL on the same machine as Fedora, you can usually pass "" for this argument.</para>
 					</listitem>
 					<listitem>
-						<para>
-							<emphasis>fedoraDBUser</emphasis> is the username you'd like to use for the Fedora software's database access. (e.g., fedoraAdmin)</para>
+						<para><emphasis>fedoraDBUser</emphasis> is the username you'd like to use for the Fedora software's database access. (e.g., fedoraAdmin)</para>
 					</listitem>
 					<listitem>
-						<para>
-							<emphasis>fedoraDBPass</emphasis> is the password you'd like to use for the above user.  (e.g., fedoraAdmin)</para>
+						<para><emphasis>fedoraDBPass</emphasis> is the password you'd like to use for the above user.  (e.g., fedoraAdmin)</para>
 					</listitem>
 					<listitem>
-						<para>
-							<emphasis>dbName</emphasis> is the name you'd like to use for the Fedora database.  (e.g., FedoraObjects) </para>
+						<para><emphasis>dbName</emphasis> is the name you'd like to use for the Fedora database.  (e.g., FedoraObjects) </para>
 					</listitem>
 				</itemizedlist>
 				<para>Note: This command resolves to a batch file (mysql-config.bat) in Windows, and a shell script (mysql-config.sh) in Unix.  These reside in the server's bin directory.</para>

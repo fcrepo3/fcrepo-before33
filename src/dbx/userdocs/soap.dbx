@@ -7,21 +7,20 @@
 <article>
 	<articleinfo>
 		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
-		<title>
-			<inlinemediaobject>
+		<title><inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
+			</inlinemediaobject></title>
 		<title>Fedora API-A Sample SOAP Client</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
 		<publisher>
-			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
-		</publisher>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
+		</publisher>	
 		<edition>$Revision$</edition>
 		<date>$Date$</date>
 		<releaseinfo>
@@ -166,27 +165,39 @@
 		<orderedlist>
 			<listitem>
 				<para>Get the BehaviorDefinitions for a data object with a PID of test:3</para>
-				<blockquote><para>http://localhost:8080/soapclient/apia?action_&equals;GetBehaviorDefinitions&amp;PID_&equals;test:3</para></blockquote>
+				<blockquote>
+					<para>http://localhost:8080/soapclient/apia?action_&equals;GetBehaviorDefinitions&amp;PID_&equals;test:3</para>
+				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get the BehaviorMethods for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1</para>
-				<blockquote><para>http://localhost:8080/soapclient/apia?action_&equals;GetBehaviorMethods&amp;PID_&equals;test:3&amp;bDefPID_&equals;test:1</para></blockquote>
+				<blockquote>
+					<para>http://localhost:8080/soapclient/apia?action_&equals;GetBehaviorMethods&amp;PID_&equals;test:3&amp;bDefPID_&equals;test:1</para>
+				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get the BehaviorMethodsXML for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1</para>
-				<blockquote><para>http://localhost:8080/soapclient/apia?action_&equals;GetBehaviorMethodsXML&amp;PID_&equals;test:3&amp;bDefPID_&equals;test:1</para></blockquote>
+				<blockquote>
+					<para>http://localhost:8080/soapclient/apia?action_&equals;GetBehaviorMethodsXML&amp;PID_&equals;test:3&amp;bDefPID_&equals;test:1</para>
+				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get the Dissemination for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1 and methodName of getThumbnail</para>
-				<blockquote><para>http://localhost:8080/soapclient/apia?action_&equals;GetDissemination&amp;PID_&equals;test:3&amp;bDefPID_&equals;test:1&amp;methodName_&equals;getThumbnail </para></blockquote>
+				<blockquote>
+					<para>http://localhost:8080/soapclient/apia?action_&equals;GetDissemination&amp;PID_&equals;test:3&amp;bDefPID_&equals;test:1&amp;methodName_&equals;getThumbnail </para>
+				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get the ObjectMethods for a data object with a PID of test:3: </para>
-				<blockquote><para>http://localhost:8080/soapclient/apia?action_&equals;GetObjectMethods&amp;PID_&equals;test:3</para></blockquote>
+				<blockquote>
+					<para>http://localhost:8080/soapclient/apia?action_&equals;GetObjectMethods&amp;PID_&equals;test:3</para>
+				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get the ObjectProfile for a data object with a PID of test:3:</para>
-				<blockquote><para>http://localhost:8080/soapclient/apia?action_&equals;GetObjectProfile&amp;PID_&equals;test:3</para></blockquote>
+				<blockquote>
+					<para>http://localhost:8080/soapclient/apia?action_&equals;GetObjectProfile&amp;PID_&equals;test:3</para>
+				</blockquote>
 			</listitem>
 		</orderedlist>
 	</sect1>

@@ -7,21 +7,23 @@
 <book>
 	<bookinfo>
 		<graphic fileref="http://www/fedora.info/assets/newlogo2.jpg" format="JPEG"/>
-		<title>
-			<inlinemediaobject>
+		<title><inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
+			</inlinemediaobject></title>
 		<title>The Fedora Manual</title>
 		<subtitle>for Software Release 1.0</subtitle>
 		<copyright>
-			<year>2003, Cornell University and The Rector and Visitors of The University of Virginia</year>
+			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
+		<publisher>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
+		</publisher>		
 		<edition>$Revision$</edition>
-        <date>$Date$</date>
-        <releaseinfo>
+		<date>$Date$</date>
+		<releaseinfo>
             $Id$ 
         </releaseinfo>
 	</bookinfo>
@@ -29,30 +31,25 @@
 		<title>About This Manual</title>
 		<para>This is the official manual for Fedora, an open-source digital
     repository management system available at <ulink url="http://www.fedora.info/">http://www.fedora.info/</ulink>.</para>
-		<para>
-			<itemizedlist>
+		<para><itemizedlist>
 				<title>There are three parts:</title>
 				<listitem>
-					<para>
-						<emphasis>User&#39;s
+					<para><emphasis>User&#39;s
     Guide - </emphasis>Provides basic information about the software and
     demonstrates how an end-user interacts with it.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>Administrator&#39;s
+					<para><emphasis>Administrator&#39;s
     Guide - </emphasis>Explains how to install and configure the server, how
     to use the GUI and command-line clients, and how to create your own
     digital objects for use within the repository.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>Developer&#39;s
+					<para><emphasis>Developer&#39;s
     Guide - </emphasis>Gives API documentation, and tips on modifying the
     server&#39;s source code.</para>
 				</listitem>
-			</itemizedlist>
-		</para>
+			</itemizedlist></para>
 		<para>In this manual, <emphasis>end-user</emphasis> refers to a person
     using a web browser or custom client to interact with an existing
     repository, <emphasis>administrator</emphasis> refers to a person
@@ -126,18 +123,15 @@
 			<itemizedlist>
 				<title>Major features:</title>
 				<listitem>
-					<para>
-						<emphasis>Open Source</emphasis> - The Fedora repository system is open source software licensed under the GNU General Public License.	
+					<para><emphasis>Open Source</emphasis> - The Fedora repository system is open source software licensed under the GNU General Public License.	
 					</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>Web Services</emphasis> - The interface to the Fedora repository system consists of three open APIs that are exposed as web services: Management API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apim">API-M</ulink>, Access API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apia">API-A</ulink>, and Access-Lite API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apialite">API-A-Lite</ulink>.	
+					<para><emphasis>Web Services</emphasis> - The interface to the Fedora repository system consists of three open APIs that are exposed as web services: Management API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apim">API-M</ulink>, Access API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apia">API-A</ulink>, and Access-Lite API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apialite">API-A-Lite</ulink>.	
 					</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>Datastreams</emphasis>
+					<para><emphasis>Datastreams</emphasis>
       					 - Objects in a repository may consist of content and metadata (datastreams) that physically reside inside the repository or outside the repository. The Fedora repository system supports content of any MIME type. Four datastream types are currently supported</para>
 				</listitem>
 			</itemizedlist>
@@ -166,48 +160,40 @@
 			</blockquote>
 			<itemizedlist>
 				<listitem>
-					<para>
-						<emphasis>XML submission and storage</emphasis> 
+					<para><emphasis>XML submission and storage</emphasis> 
 							- Digital objects are stored as XML-encoded files that conform to an extension of the Metadata Encoding and Transmission Standard (<ulink url="http://www.loc.gov/mets/">METS</ulink>) schema. The schema for the extended version of METS used by Fedora can be found at <ulink url="http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd">http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd</ulink>.
 							</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>Parameterized behaviors</emphasis>
+					<para><emphasis>Parameterized behaviors</emphasis>
 							 - Behaviors defined for an object support user-supplied options that are handled at dissemination time. 
 							</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>Versioning</emphasis>
+					<para><emphasis>Versioning</emphasis>
 							 - Although not fully implemented in release 1.0, the Fedora repository system includes the infrastructure to support versioning of digital objects and their components.										</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>Access Control and Authentication</emphasis>
+					<para><emphasis>Access Control and Authentication</emphasis>
 							 - Release 1.0 includes a simple form of access control to provide access restrictions based on IP address. IP range restriction is supported in both the Management and Access APIs. In addition, the Management API is protected by HTTP Basic Authentication. Access Policy and Authentication will be a major focus in Phase II of the Fedora project.
 							</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>Default Disseminator</emphasis>
+					<para><emphasis>Default Disseminator</emphasis>
 							 - The Default Disseminator is a built-in internal disseminator on every object that provides a system-defined behavior mechanism for disseminating the basic contents of an object.									</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>Searching</emphasis>
+					<para><emphasis>Searching</emphasis>
       - Selected system metadata fields are indexed along with the primary Dublin Core record for each object. The Fedora repository system provides a search interface for both full text and field-specific queries across these metadata fields.
 						</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>OAI Metadata Harvesting Provider </emphasis> 
+					<para><emphasis>OAI Metadata Harvesting Provider </emphasis> 
 							- The <ulink url="http://www.openarchives.org/">OAI Protocol for Metadata Harvesting</ulink> is a standard for sharing metadata across repositories. Every Fedora digital object has a primary Dublin Core record that conforms to the schema at: <ulink url="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</ulink>.  This metadata is accessible using the OAI Protocol for Metadata Harvesting, v2.0.
 						</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>Batch Utility</emphasis>
+					<para><emphasis>Batch Utility</emphasis>
       - The Fedora repository system includes a Batch Utility as part of the Management client that enables the mass creation and loading of data objects.
 						</para>
 				</listitem>
@@ -230,8 +216,7 @@
 				<variablelist>
 					<title>getDissemination syntax:</title>
 					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID/bDefPID/methodName<emphasis>[/dateTime][?parmArray]</emphasis>
-						</term>
+						<term>http://hostname:port/fedora/get/PID/bDefPID/methodName<emphasis>[/dateTime][?parmArray]</emphasis></term>
 						<listitem>
 							<para>This syntax requests a dissemination of the specified object using the specified method of the associated behavior definition object. The result is returned as a MIME-typed stream. </para>
 						</listitem>
@@ -261,12 +246,10 @@
 							<para>methodName - required name of the method to be executed. dateTime - optional.</para>
 						</listitem>
 						<listitem>
-							<para>
-								<emphasis>dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
+							<para><emphasis>dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
 						</listitem>
 						<listitem>
-							<para>
-								<emphasis>parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1&equals;value1&amp;parm2&equals;value2...</para>
+							<para><emphasis>parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1&equals;value1&amp;parm2&equals;value2...</para>
 						</listitem>
 					</itemizedlist>
 				</blockquote>
@@ -287,8 +270,7 @@
 				<variablelist>
 					<title>GetObjectProfile syntax:</title>
 					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID<emphasis>[/dateTime][?xml=BOOLEAN]</emphasis>
-						</term>
+						<term>http://hostname:port/fedora/get/PID<emphasis>[/dateTime][?xml=BOOLEAN]</emphasis></term>
 						<listitem>
 							<para>This syntax requests an object profile for the specified digital object. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of "no", a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is "yes", then a MIME-typed stream consisting of XML is returned.</para>
 						</listitem>
@@ -312,12 +294,10 @@
 							<para>PID - a required parameter specifying the persistent identifier of the digital object. </para>
 						</listitem>
 						<listitem>
-							<para>
-								<emphasis>dateTime</emphasis> - an optional dateTime parameter indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.).</para>
+							<para><emphasis>dateTime</emphasis> - an optional dateTime parameter indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.).</para>
 						</listitem>
 						<listitem>
-							<para>
-								<emphasis>xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;true&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;false&quot; indicates format is to be text/html.</para>
+							<para><emphasis>xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;true&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;false&quot; indicates format is to be text/html.</para>
 						</listitem>
 					</itemizedlist>
 				</blockquote>
@@ -607,9 +587,7 @@
 			<sect1>
 				<title>Search/Browse</title>
 				<para>The Fedora repository system also includes a search interface that enables searching across both System Metadata and user-defined Dublin Core metadata.Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using the search interface. The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the "Datastream ID" is DC, and the XML conforms to the schema at: http://www.openarchives.org/OAI/2.0/oai_dc.xsd. If such a datastream is not provided, Fedora will construct a default Dublin Core record using the label of the object as the dc:title value and the PID of the object as the dc:identifier value. The search interface provides both simple and advanced searching via a web page included with the repository software. All queries are case insensitive. Simple search enables queries of words and phrases occurring anywhere in an object s indexed metadata fields. Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (= and ~) for string fields, and value comparison operators (&equals;, &gt;, &ge;, &lt;, &le;) for date fields (dc:date fields may be treated as both). The wildcards, * and ? may be used in any string-based query.  The search interface can be accessed using the syntax:</para>
-				<para>
-					<emphasis role="bold">http://hostname:port/fedora/search</emphasis>
-				</para>
+				<para><emphasis role="bold">http://hostname:port/fedora/search</emphasis></para>
 				<blockquote>
 					<itemizedlist>
 						<listitem>
@@ -641,87 +619,72 @@
           you should be aware of.<itemizedlist>
 							<title>Key directories:</title>
 							<listitem>
-								<para>
-									<emphasis>bin/</emphasis>
+								<para><emphasis>bin/</emphasis>
           - Contains executables for the server and client tools (.bat files
           for Windows and shell scripts for unix)</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>config/</emphasis>
+								<para><emphasis>config/</emphasis>
           - Contains the server configuration file, fedora.fcfg.</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>demo/</emphasis>
+								<para><emphasis>demo/</emphasis>
           - Contains sample digital objects that can be used as examples.</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>doc/</emphasis>
+								<para><emphasis>doc/</emphasis>
           - Contains the software documentation.</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>logs/</emphasis>
+								<para><emphasis>logs/</emphasis>
           - Contains the logfiles that the server writes to while it&#39;s
           running.</para>
 							</listitem>
-						</itemizedlist>
-					</para>
+						</itemizedlist></para>
 					<para>Besides these key directories, you will notice several others.
           These are important to the server&#39;s operation, but their
           contents don&#39;t need to be understood in order to administer the
           server.<itemizedlist>
 							<title>Other directories:</title>
 							<listitem>
-								<para>
-									<emphasis>access/</emphasis>
+								<para><emphasis>access/</emphasis>
           - Stylesheets for the default disseminator. All objects in the
           repository automatically subscribe to this disseminator, which
           provides methods for listing and retrieving the components of the
           object.</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>client/</emphasis>
+								<para><emphasis>client/</emphasis>
           - The java classes necessary to run the client applications.</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>mckoi094/</emphasis>
+								<para><emphasis>mckoi094/</emphasis>
           - A bundled java-based database that can be used as the underlying
           RDBMS for the server.</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>pidgen/</emphasis>
+								<para><emphasis>pidgen/</emphasis>
           - Files supporting the PID generator, the component of the server
           that provides unique ids for new objects.</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>schematron/</emphasis>
+								<para><emphasis>schematron/</emphasis>
           - Files supporting the validation of serialized digital objects.</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>tomcat41/</emphasis>
+								<para><emphasis>tomcat41/</emphasis>
           - The bundled web server, which makes the repository web-accessible.</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>work/</emphasis>
+								<para><emphasis>work/</emphasis>
           - A temporary directory used by to support various server
           activities.</para>
 							</listitem>
 							<listitem>
-								<para>
-									<emphasis>xsd/</emphasis>
+								<para><emphasis>xsd/</emphasis>
           - W3 XML schemas, for reference and validation support.</para>
 							</listitem>
-						</itemizedlist>
-					</para>
+						</itemizedlist></para>
 				</sect2>
 			</sect1>
 			<sect1>

@@ -7,24 +7,23 @@
 <article>
 	<articleinfo>
 		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
-		<title>
-			<inlinemediaobject>
+		<title><inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
+			</inlinemediaobject></title>
 		<title>Fedora Server User Documentation</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
 		<publisher>
-			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
-		</publisher>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
+		</publisher>	
 		<edition>$Revision$</edition>
-        <date>$Date$</date>
-        <releaseinfo>
+		<date>$Date$</date>
+		<releaseinfo>
             $Id$ 
         </releaseinfo>
 	</articleinfo>
@@ -34,9 +33,7 @@
 	</sect1>
 	<sect1>
 		<title>Code Documentation</title>
-		<para>
-			<ulink url="/userdocs/server/serverdocs">Javadocs</ulink>
-		</para>
+		<para><ulink url="/userdocs/server/serverdocs">Javadocs</ulink></para>
 	</sect1>
 	<sect1>
 		<title>Access Control and Authentication</title>

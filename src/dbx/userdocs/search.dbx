@@ -14,11 +14,18 @@
 			</inlinemediaobject></title>
 		<title>Fedora Search Interface User Documentation</title>
 		<corpauthor>Fedora Development Team</corpauthor>
+		<copyright>
+			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
+		</copyright>
+		<publisher>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
+		</publisher>			
 		<edition>$Revision$</edition>
 		<date>$Date$</date>
 		<releaseinfo>
             $Id$ 
-        </releaseinfo>		
+        </releaseinfo>
 		<copyright>
 			<year>2003</year>
 		</copyright>
@@ -72,17 +79,17 @@
 			<imageobject>
 				<imagedata fileref="/userdocs/search/images/imagesearchresult.jpg" format="JPEG"/>
 			</imageobject>
-		</mediaobject>		
+		</mediaobject>
 	</sect1>
 	<sect1>
 		<title>Simple Search Query Help</title>
 		<para>The Simple Search query searches both the Dublin Core metadata and the Fedora System Metadata fields. Clicking on the the <emphasis role="italics">help</emphasis> hyperlink next to the <emphasis role="italics">Search all fields for phrase</emphasis>text box will display additional help about Simple Search as displayed below.
-		</para>	
+		</para>
 		<mediaobject>
 			<imageobject>
 				<imagedata fileref="/userdocs/search/images/simplesearchhelp.jpg" format="JPEG"/>
 			</imageobject>
-		</mediaobject>	
+		</mediaobject>
 	</sect1>
 	<sect1>
 		<title>Fielded Search Query Help</title>
@@ -92,7 +99,7 @@
 			<imageobject>
 				<imagedata fileref="/userdocs/search/images/advsearchhelp.jpg" format="JPEG"/>
 			</imageobject>
-		</mediaobject>			
+		</mediaobject>
 	</sect1>
 	<sect1>
 		<title>Search Field Name Help</title>
@@ -102,6 +109,6 @@
 			<imageobject>
 				<imagedata fileref="/userdocs/search/images/fieldhelp.jpg" format="JPEG"/>
 			</imageobject>
-		</mediaobject>			
-	</sect1>	
+		</mediaobject>
+	</sect1>
 </article>

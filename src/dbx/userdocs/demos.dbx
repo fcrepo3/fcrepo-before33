@@ -6,18 +6,25 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <book>
 	<bookinfo>
-		<title>
-			<inlinemediaobject>
-    				<imageobject>
-      				<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
-    				</imageobject>
-    			</inlinemediaobject>
-		</title>	
+		<title><inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+				</imageobject>
+			</inlinemediaobject></title>
 		<title>The Demo Manual - Description of Demonstration Objects</title>
 		<subtitle>for Software Release 1.0</subtitle>
 		<copyright>
-			<year>2003, Cornell University and The University of Virginia</year>
+			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
+		<publisher>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
+		</publisher>
+		<edition>$Revision$</edition>
+		<date>$Date$</date>
+		<releaseinfo>
+            $Id$ 
+        </releaseinfo>		
 	</bookinfo>
 	<preface>
 		<title>About This Manual</title>
