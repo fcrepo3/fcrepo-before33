@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import fedora.client.bmech.data.*;
+import fedora.client.bmech.xml.*;
 
 public class BMechBuilder extends JInternalFrame
 {
@@ -40,6 +41,8 @@ public class BMechBuilder extends JInternalFrame
     public BMechBuilder()
     {
         super("BMechBuilder");
+        setClosable(true);
+        setMaximizable(true);
         setSize(700, 500);
         getContentPane().setLayout(new BorderLayout());
         setBackground(Color.WHITE);
@@ -124,9 +127,12 @@ public class BMechBuilder extends JInternalFrame
           newBMech.setHasBaseURL(mp.hasBaseURL());
           newBMech.setServiceBaseURL(mp.getBaseURL());
           newBMech.setBMechMethodMap(mp.getBMechMethodMap());
+          newBMech.setBMechMethods(mp.getBMechMethods());
         }
       }
       printBMech();
+      MethodMapGenerator mmg = new MethodMapGenerator(newBMech);
+      mmg.printMethodMap();
       return;
     }
 
