@@ -749,10 +749,19 @@ public class MethodPropertiesDialog extends JDialog
       //System.out.println("parmTable rowcount=" + rowcount);
       for (int i=0; i<rowcount; i++)
       {
-        if (parmTable.getValueAt(i,0) != null && parmTable.getValueAt(i,0) != "")
+        String parmName = (String)parmTable.getValueAt(i,0);
+        //System.out.println("unload parm: " + i + " >>" + parmName);
+        if (parmName != null)
         {
+          //System.out.println("trim since parm not null at row " + i);
+          parmName = parmName.trim();
+        }
+        if (parmName != null && !parmName.equalsIgnoreCase("")
+          && !parmName.equalsIgnoreCase(" "))
+        {
+          //System.out.println("parm not null or spaces at row" + i);
           MethodParm parm = new MethodParm();
-          parm.parmName = ((String)parmTable.getValueAt(i,0));
+          parm.parmName = ((String)parmName);
           parm.parmType = ((String)parmTypeTbl.get(parmTable.getValueAt(i,1)));
           parm.parmRequired = ((String)parmReqTbl.get(parmTable.getValueAt(i,2)));
           parm.parmPassBy = ((String)passByTbl.get(parmTable.getValueAt(i,3)));
@@ -809,6 +818,92 @@ public class MethodPropertiesDialog extends JDialog
       {
         return;
       }
+      if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
+      {
+        renderBindingProperties(properties);
+        renderReturnProperties(properties);
+        renderParmProperties(properties);
+      }
+      else
+      {
+        renderParmProperties(properties);
+      }
+    }
+
+    private void renderParmProperties(MethodProperties properties)
+    {
+      // render the existing method parms
+      MethodParm[] parms = properties.methodParms;
+      for (int i=0; i<parms.length; i++)
+      {
+        // make sure we have enough rows for the parms.
+        int freeRows = parmTable.getRowCount();
+        if (parms.length > freeRows)
+        {
+          int newRows = parms.length - freeRows;
+          for (int j=0; j<newRows; j++)
+          {
+            ((DefaultTableModel)parmTable.getModel()).addRow(
+              new Object[]{"", "", "", "", ""});
+          }
+        }
+
+        TableCellEditor ce;
+        // load existing parms into table
+        parmTable.setValueAt(parms[i].parmName, i, 0);
+
+        ce = parmTable.getCellEditor(i, 1);
+        ce.getTableCellEditorComponent(
+          parmTable, parmTypeToDisplayTbl.get(parms[i].parmType), true, i, 1);
+        parmTable.setValueAt(ce.getCellEditorValue(), i, 1);
+
+        ce = parmTable.getCellEditor(i, 2);
+        ce.getTableCellEditorComponent(
+          parmTable, parmReqToDisplayTbl.get(parms[i].parmRequired), true, i, 2);
+        parmTable.setValueAt(ce.getCellEditorValue(), i, 2);
+
+        ce = parmTable.getCellEditor(i, 3);
+        ce.getTableCellEditorComponent(
+          parmTable, passByToDisplayTbl.get(parms[i].parmPassBy), true, i, 3);
+        parmTable.setValueAt(ce.getCellEditorValue(), i, 3);
+
+        parmTable.setValueAt(parms[i].parmDefaultValue, i, 4);
+        parmTable.setValueAt(parms[i].parmLabel, i, 5);
+
+        // render the existing domain values
+        StringBuffer sb2 = new StringBuffer();
+        //System.out.println("count values: " + parms[i].parmDomainValues.length);
+        for (int i2=0; i2<parms[i].parmDomainValues.length; i2++)
+        {
+          sb2.append(parms[i].parmDomainValues[i2]);
+          int j = i+1;
+          if (!(j == parms[i].parmDomainValues.length))
+          {
+            sb2.append(",");
+          }
+        }
+        parmTable.setValueAt(sb2.toString(), i, 6);
+      }
+    }
+
+    private void renderReturnProperties(MethodProperties properties)
+    {
+      // render the existing return MIME types
+      StringBuffer sb = new StringBuffer();
+      for (int i=0; i<properties.returnMIMETypes.length; i++)
+      {
+        sb.append(properties.returnMIMETypes[i]);
+        int j = i+1;
+        if (!(j == properties.returnMIMETypes.length))
+        {
+          sb.append(",");
+        }
+      }
+      returnMIMES.setText(sb.toString());
+    }
+
+    private void renderBindingProperties(MethodProperties properties)
+    {
       if (properties.protocolType.equalsIgnoreCase(Method.HTTP_MESSAGE_PROTOCOL))
       {
         //rb_http.setSelected(true);
@@ -862,73 +957,6 @@ public class MethodPropertiesDialog extends JDialog
         URL_textRelative.setEnabled(false);
 
         rb_soap.setSelected(true);
-      }
-
-      // render the existing return MIME types
-      StringBuffer sb = new StringBuffer();
-      //System.out.println("count mime: " + properties.returnMIMETypes.length);
-      for (int i=0; i<properties.returnMIMETypes.length; i++)
-      {
-        sb.append(properties.returnMIMETypes[i]);
-        int j = i+1;
-        if (!(j == properties.returnMIMETypes.length))
-        {
-          sb.append(",");
-        }
-      }
-      returnMIMES.setText(sb.toString());
-
-      // render the existing method parms
-      MethodParm[] parms = properties.methodParms;
-      for (int i=0; i<parms.length; i++)
-      {
-        // make sure we have enough rows for the parms.
-        int freeRows = parmTable.getRowCount();
-        if (parms.length > freeRows)
-        {
-          int newRows = parms.length - freeRows;
-          for (int j=0; j<newRows; j++)
-          {
-            ((DefaultTableModel)parmTable.getModel()).addRow(
-              new Object[]{"", "", "", "", ""});
-          }
-        }
-
-        TableCellEditor ce;
-        // load existing parms into table
-        parmTable.setValueAt(parms[i].parmName, i, 0);
-
-        ce = parmTable.getCellEditor(i, 1);
-        ce.getTableCellEditorComponent(
-          parmTable, parmTypeToDisplayTbl.get(parms[i].parmType), true, i, 1);
-        parmTable.setValueAt(ce.getCellEditorValue(), i, 1);
-
-        ce = parmTable.getCellEditor(i, 2);
-        ce.getTableCellEditorComponent(
-          parmTable, parmReqToDisplayTbl.get(parms[i].parmRequired), true, i, 2);
-        parmTable.setValueAt(ce.getCellEditorValue(), i, 2);
-
-        ce = parmTable.getCellEditor(i, 3);
-        ce.getTableCellEditorComponent(
-          parmTable, passByToDisplayTbl.get(parms[i].parmPassBy), true, i, 3);
-        parmTable.setValueAt(ce.getCellEditorValue(), i, 3);
-
-        parmTable.setValueAt(parms[i].parmDefaultValue, i, 4);
-        parmTable.setValueAt(parms[i].parmLabel, i, 5);
-
-        // render the existing domain values
-        StringBuffer sb2 = new StringBuffer();
-        //System.out.println("count values: " + parms[i].parmDomainValues.length);
-        for (int i2=0; i2<parms[i].parmDomainValues.length; i2++)
-        {
-          sb2.append(parms[i].parmDomainValues[i2]);
-          int j = i+1;
-          if (!(j == parms[i].parmDomainValues.length))
-          {
-            sb2.append(",");
-          }
-        }
-        parmTable.setValueAt(sb2.toString(), i, 6);
       }
     }
 
