@@ -448,7 +448,10 @@ public class FastDOReader implements DisseminatingDOReader
   }
 
   /**
-   * <p>Gets method parameters associated with the specified method name.</p>
+   * <p>Gets default method parameters associated with the specified
+   * method name. Default method parameters are defined by the Behavior
+   * Mechanism object as mechanism default parameters and cannot be altered
+   * by the user.</p>
    *
    * @param bDefPID The persistent identifer of Behavior Definition object.
    * @param methodName The name of the method.
@@ -457,8 +460,8 @@ public class FastDOReader implements DisseminatingDOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID, String methodName,
-      Date versDateTime) throws GeneralException
+  public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID,
+      String methodName, Date versDateTime) throws GeneralException
   {
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
@@ -523,14 +526,14 @@ public class FastDOReader implements DisseminatingDOReader
           methodParm.parmRequired = B.booleanValue();
           methodParm.parmLabel = results[4];
           methodParm.parmType = results[5];
-            System.out.println("methodParms: " + methodParm.parmName
-                + "label: " + methodParm.parmLabel
-                + "default: " + methodParm.parmDefaultValue
-                + "required: " + methodParm.parmRequired
-                + "type: " + methodParm.parmType);
+            System.out.println("FastDOReader:methodParms: " + methodParm.parmName
+                + "\nlabel: " + methodParm.parmLabel
+                + "\ndefault: " + methodParm.parmDefaultValue
+                + "\nrequired: " + methodParm.parmRequired
+                + "\ntype: " + methodParm.parmType);
             for (int j=0; j<methodParm.parmDomainValues.length; j++)
             {
-              System.out.println("domain: " + methodParm.parmDomainValues[j]);
+              System.out.println("FastDOReader:domainValues: " + methodParm.parmDomainValues[j]);
             }
           queryResults.addElement(methodParm);
         }
@@ -574,7 +577,7 @@ public class FastDOReader implements DisseminatingDOReader
         {
           doReader = m_manager.getReader(m_context, PID);
         }
-        methodParms = doReader.GetBMechMethodParms(bDefPID, methodName,
+        methodParms = doReader.GetBMechDefaultMethodParms(bDefPID, methodName,
             versDateTime);
       } catch (Throwable th)
       {
@@ -1490,6 +1493,9 @@ public class FastDOReader implements DisseminatingDOReader
           objectMethodsDef.PID = results[0];
           objectMethodsDef.bDefPID = results[1];
           objectMethodsDef.methodName = results[2];
+          MethodParmDef[] methodParms = GetBMechMethodParms(results[1],
+              results[2], versDateTime);
+          objectMethodsDef.methodParmDefs = methodParms;
           queryResults.add(objectMethodsDef);
         }
         objectMethodsDefArray = new ObjectMethodsDef[queryResults.size()];
@@ -1544,6 +1550,7 @@ public class FastDOReader implements DisseminatingDOReader
             objectMethodsDef.PID = PID;
             objectMethodsDef.bDefPID = behaviorDefs[i];
             objectMethodsDef.methodName = methodDefs[j].methodName;
+            objectMethodsDef.methodParmDefs = doReader.GetBMechMethodParms(behaviorDefs[i], methodDefs[i].methodName, versDateTime);
             objectMethodsDef.asOfDate = versDateTime;
             results.addElement(objectMethodsDef);
           }
