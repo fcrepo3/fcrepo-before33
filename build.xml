@@ -1164,5 +1164,6 @@
 	<target name="clean" description="Clean up all targets and temp files">
 		<delete dir="temp"/>
 		<delete dir="${dist.dir}"/>
+        <delete dir="${build.dir}"/>   
 	</target>
 </project>
