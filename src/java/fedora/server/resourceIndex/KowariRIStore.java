@@ -76,14 +76,10 @@ public class KowariRIStore implements RIStore {
     public RIResultIterator executeQuery(RIQuery query) throws ResourceIndexException {
         String queryLanguage = query.getQueryLanguage();
         if (m_supportedQueryLanguages.contains(queryLanguage) && queryLanguage.equals("rdql")) {
-            if (query.getRequiresCommitBeforeQuery()) {
-                flush();
-            }
+            flush();
             return executeQuery((RDQLQuery)query);
         } else if (m_supportedQueryLanguages.contains(queryLanguage) && queryLanguage.equals("itql")) {
-            if (query.getRequiresCommitBeforeQuery()) {
-                flush();
-            }
+            flush();
             return executeQuery((ITQLQuery)query);
         } else {
             throw new UnsupportedQueryLanguageException(queryLanguage + " is not supported.");

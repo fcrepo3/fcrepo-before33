@@ -33,14 +33,6 @@ public abstract class RIQuery {
         return queryLanguage;
     }
     
-    public void setRequiresCommitBeforeQuery(boolean b) {
-        requiresCommitBeforeQuery = b;
-    }
-    
-    public boolean getRequiresCommitBeforeQuery() {
-        return requiresCommitBeforeQuery;
-    }
-    
     /**
      * @param queryLanguage The queryLanguage to set.
      */
