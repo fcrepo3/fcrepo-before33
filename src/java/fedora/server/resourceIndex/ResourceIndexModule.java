@@ -33,12 +33,12 @@ public class ResourceIndexModule extends Module
         } else {
         	try {
                 m_level = Integer.parseInt(getParameter("level"));
-                if (m_level < 0 || m_level > 3) {
+                if (m_level < 0 || m_level > 2) {
                 	throw new NumberFormatException();
                 }
     		} catch (NumberFormatException nfe) {
     			throw new ModuleInitializationException(
-                        "level parameter must have value 0, 1, 2, or 3.", getRole());
+                        "level parameter must have value 0, 1, or 2", getRole());
     		}
             // If level == 0, we don't want to proceed further.
             if (m_level == 0) {
@@ -72,7 +72,6 @@ public class ResourceIndexModule extends Module
                     + "connectionPool.", getRole());
         }
 
-        //
         // Get anything starting with alias: and put the following name
         // and its value in the alias map.
         //
