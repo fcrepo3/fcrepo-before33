@@ -121,6 +121,18 @@ public class OAIResponder {
                 respondToListIdentifiers(args, m_provider.getBaseURL(), 
                         headers, resumptionToken, out);
             } else if (verb.equals("ListMetadataFormats")) {
+                String identifier=(String) args.get("identifier");
+                if (identifier==null) {
+                    if (args.size()>1) {
+                        throw new BadArgumentException("ListMetadataFormats request specified illegal argument(s).");
+                    }
+                } else {
+                    if (args.size()>2) {
+                        throw new BadArgumentException("ListMetadataFormats request specified illegal argument(s).");
+                    }
+                }
+                respondToListMetadataFormats(args, m_provider.getBaseURL(),
+                        m_provider.getMetadataFormats(identifier), out);
             } else if (verb.equals("ListRecords")) {
             } else if (verb.equals("ListSets")) {
             } else {
@@ -202,6 +214,15 @@ public class OAIResponder {
         appendTop(out);
         appendRequest(args, baseURL, out);
         out.println("  <ListMetadataFormats>");
+        Iterator iter=metadataFormats.iterator();
+        while (iter.hasNext()) {
+            MetadataFormat f=(MetadataFormat) iter.next();
+            out.println("    <metadataFormat>");
+            out.println("      <metadataPrefix>" + f.getPrefix() + "</metadataPrefix>");
+            out.println("      <schema>" + f.getSchemaLocation() + "</schema>");
+            out.println("      <metadataNamespace>" + f.getNamespaceURI() + "</metadataNamespace>");
+            out.println("    </metadataFormat>");
+        }
         out.println("  </ListMetadataFormats>");
         appendBottom(out);
     }
