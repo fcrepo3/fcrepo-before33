@@ -155,7 +155,7 @@ debug() {
 				-Dfedora.home="$FEDORA_HOME" \
 				fedora.server.ServerController startup)
     echo "Starting jdb..."
-    (exec "%JAVA_HOME%\bin\jdb" -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8000)
+    (exec "$JAVA_HOME/bin/jdb" -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8000)
 	restoreJavaHome
 }
 
