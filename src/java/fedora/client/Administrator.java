@@ -60,6 +60,12 @@ public class Administrator extends JFrame {
 
     public Administrator(String host, int port) {
         super("Fedora Administrator - Server at " + host + ":" + port);
+        if (System.getProperty("fedora.home")!=null) {
+            File f=new File(System.getProperty("fedora.home"));
+            if (f.exists() && f.isDirectory()) {
+                s_lastDir=f;
+            }
+        }
         m_host=host;
         m_port=port;
         

@@ -28,7 +28,12 @@ public class ByteArrayInputPanel
         
     public ByteArrayInputPanel(boolean primitive) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        
+        if (System.getProperty("fedora.home")!=null) {
+            File f=new File(System.getProperty("fedora.home"));
+            if (f.exists() && f.isDirectory()) {
+                s_lastDir=f;
+            }
+        }
         JPanel fromText=new JPanel();
         fromText.setLayout(new BoxLayout(fromText, BoxLayout.X_AXIS));
         m_fromTextRadioButton=new JRadioButton("Text: ");
