@@ -415,6 +415,7 @@
 			<fileset dir="temp/localservices/classes"/>
 		</copy>
 		<copy file="src/web-app/fedora/localservices/saxon/web.xml" todir="dist/server/tomcat41/webapps/saxon/WEB-INF"/>
+		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/saxon/WEB-INF/lib"/>
 		<copy file="src/web-app/fedora/localservices/saxon/index.html" todir="dist/server/tomcat41/webapps/saxon"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
@@ -501,6 +502,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.82  2003/02/26 20:51:35  rlw
+  saxon6.5.jar libraries are needed by saxon local service.
+  I've copied the saxon6.5.jar separately to the lib directory under the saxon webapp so it's always present when running the saxon service
+
   Revision 1.81  2003/02/26 11:42:38  cwilper
   removed traces of rms.jar
 
