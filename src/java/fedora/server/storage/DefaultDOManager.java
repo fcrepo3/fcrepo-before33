@@ -53,10 +53,12 @@ import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.DCFields;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableCreatingConnection;
 import fedora.server.utilities.TableSpec;
@@ -848,13 +850,44 @@ public class DefaultDOManager
                 DOWriter w=new SimpleDOWriter(context, this, m_translator,
                         m_storageFormat, m_storageFormat,
                         m_storageCharacterEncoding, obj, this);
-
+                        
+                Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                 // ...set the create and last modified dates as the current
                 // server date/time... in UTC (considering the local timezone
                 // and whether it's in daylight savings)
-                Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                 obj.setCreateDate(nowUTC);
                 obj.setLastModDate(nowUTC);
+
+                
+                // if there's no DC record, add one using PID for identifier.
+                // and Label for dc:title.
+                //
+                // if there IS a DC record, make sure one of the dc:identifiers
+                // is the pid
+                DatastreamXMLMetadata dc=(DatastreamXMLMetadata) w.GetDatastream("DC", null);
+                boolean hadDC=true;
+                if (dc==null) {
+                    hadDC=false;
+                    dc=new DatastreamXMLMetadata("UTF-8");
+                    dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
+                    dc.DatastreamID="DC";
+                    dc.DSVersionID="DC1.0";
+                //    dc.DSControlGRP="X";
+                    dc.DSCreateDT=nowUTC;
+                    dc.DSLabel="Dublin Core Metadata";
+                    dc.DSMIME="text/xml";
+                    dc.DSSize=0;
+                    dc.DSState="A";
+                    StringBuffer buf=new StringBuffer();
+                    
+                }
+                //DCFields dcFields=new DCFields(dcDatastream.stream......);
+                if (!hadDC) {
+                    // give it a dc:title.  base it on object label.
+                }
+                // ensure one of the dc:identifiers is the pid
+                // here...
+                
 
                 // add to internal list...somehow..think...
 
