@@ -42,6 +42,12 @@ public class Datastream
   }
 
   public boolean isNew=false;
+  
+  public String isVersionable;
+  
+  public String DatastreamURI;
+  
+  public String FormatURI;
 
   public String DatastreamID;
 
@@ -88,6 +94,7 @@ public class Datastream
   public String DSControlGrp;
 
   /** Info Type: DATA or one of the METS MDType values */
+  /** Used to maintain backwards compatibility with METS-Fedora */
   public String DSInfoType;
 
   public String DSState;
