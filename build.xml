@@ -247,6 +247,86 @@
 			<fileset dir="dist/userdocs"/>
 		</copy>
 		<copy file="src/doc/batch/batch.doc" todir="dist/server/tomcat41/webapps/userdocs/batch"/>
+		<echo message="Translating apialite.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/userdocs/apialite/index.html"/>
+			<arg path="src/dbx/userdocs/apialite.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>		
+		<echo message="Translating apimadmingui.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/userdocs/apim/index.html"/>
+			<arg path="src/dbx/userdocs/apimadmingui.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>			
+		<echo message="Translating batchclient.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/userdocs/batch/index.html"/>
+			<arg path="src/dbx/userdocs/batchclient.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>			
+		<echo message="Translating documentation.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/userdocs/index.html"/>
+			<arg path="src/dbx/userdocs/documentation.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>			
+		<echo message="Translating license.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/userdocs/server/license.html"/>
+			<arg path="src/dbx/userdocs/license.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>			
+		<echo message="Translating oaiprovider.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/userdocs/oai/index.html"/>
+			<arg path="src/dbx/userdocs/oaiprovider.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>			
+		<echo message="Translating search.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/userdocs/search/index.html"/>
+			<arg path="src/dbx/userdocs/search.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>		
+		<echo message="Translating server.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/userdocs/server/index.html"/>
+			<arg path="src/dbx/userdocs/server.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>				
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
@@ -475,7 +555,6 @@
 		<copy file="lib/server/avalon-framework.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
 		<copy file="lib/server/batik.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
 		<copy file="lib/server/fop.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
-
 		<!-- imagemanip service -->
 		<copy todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF/classes/fedora/localservices/imagemanip">
 			<fileset dir="temp/localservices/classes/fedora/localservices/imagemanip"/>
@@ -484,10 +563,9 @@
 		<copy file="src/web-app/fedora/localservices/imagemanip/index.html" todir="dist/server/tomcat41/webapps/imagemanip"/>
 		<copy file="lib/server/ij.jar" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF/lib"/>
 		<copy file="lib/server/commons-httpclient.jar" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF/lib"/>
-                <!-- the next two need to go in common cuz sealed -->
+		<!-- the next two need to go in common cuz sealed -->
 		<copy file="lib/server/jai_core.jar" todir="dist/server/tomcat41/common/lib"/>
 		<copy file="lib/server/jai_codec.jar" todir="dist/server/tomcat41/common/lib"/>
-
 		<!-- soap client -->
 		<copy todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/classes">
 			<fileset dir="temp/soapclient/classes"/>
@@ -502,9 +580,10 @@
 		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
 		<copy file="src/web-app/fedora/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient"/>
 		<!-- userdocs -->
-		<copy todir="dist/server/tomcat41/webapps/userdocs">
+		<!--<copy todir="dist/server/tomcat41/webapps/userdocs">
 			<fileset dir="src/web-app/userdocs"/>
-		</copy>
+		</copy>-->
+		<copy file="src/web-app/userdocs/WEB-INF/web.xml" todir="dist/server/toomcat41/webapps/userdocs/WEB-INF"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
 		<exec executable="java">
@@ -611,6 +690,15 @@
 </project>
 <!--
   $Log$
+  Revision 1.105  2003/05/07 20:56:13  rlw
+  first cut at adding conversion code that transforms *.dbx files into html and
+  placing in the appropriate place in webapps/userdocs.
+
+  Still need to convert html files for local services(saxon,fop, imagemanip, and soapclient).
+
+  May also want to consider creating a hierarchy under src/dbx/userdocs
+  that mirrors directory structure in dist/server/tomcat41/webapps/userdocs
+
   Revision 1.104  2003/05/05 15:07:39  rlw
   replaced old name for mm.mysql jar file with current name
 
