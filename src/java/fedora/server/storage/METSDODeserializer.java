@@ -250,7 +250,8 @@ public class METSDODeserializer
     
     public void endElement(String uri, String localName, String qName) {
         if (m_inXMLMetadata) {
-            if (uri.equals(M) && localName.equals("xmlData") && m_xmlDataLevel==0) {
+            if (uri.equals(M) && localName.equals("xmlData") 
+                    && m_xmlDataLevel==0) {
                 // finished all xml metadata for this datastream
                 if (m_dsId.equals("FEDORA-AUDITTRAIL")) {
                     // we've been looking at an audit trail...
@@ -287,7 +288,8 @@ public class METSDODeserializer
                     ds.DSLabel=m_dsLabel;
                     ds.DSMIME="text/xml";
                     ds.DSCreateDT=m_dsCreateDate;
-                    ds.DSSize="" + ds.xmlContent.length; // bytes, not chars, but probably N/A anyway
+                    ds.DSSize="" + ds.xmlContent.length; // bytes, not chars, but
+                                                         // probably N/A anyway
                     ds.DSControlGrp=Datastream.XML_METADATA;
                     ds.DSInfoType=m_dsInfoType;
                     ds.DSMDClass=m_dsMDClass;
@@ -297,7 +299,8 @@ public class METSDODeserializer
                     m_obj.datastreams(m_dsId).add(ds);
                 }
                 m_inXMLMetadata=false; // other stuff is re-initted upon 
-                                       // startElement for next xml metadata element
+                                       // startElement for next xml metadata 
+                                       // element
                                        
             } else {
                 // finished an element in xml metadata... print end tag,

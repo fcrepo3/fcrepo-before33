@@ -15,6 +15,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * A DigitalObject serializer that outputs METS XML.
+ */
 public class METSDOSerializer 
         implements DOSerializer {
 
@@ -23,7 +26,14 @@ public class METSDOSerializer
     
     private String m_characterEncoding;
 
-    // java always supports UTF-8 and UTF-16 btw.
+    /**
+     * Constructs a METS serializer.
+     *
+     * @param characterEncoding The character encoding to use when sending
+     *        the objects to OutputStreams.
+     * @throw UnsupportedEncodingException If the provided encoding is
+     *        not supported or recognized.
+     */
     public METSDOSerializer(String characterEncoding) 
             throws UnsupportedEncodingException {
         m_characterEncoding=characterEncoding;
@@ -40,12 +50,18 @@ public class METSDOSerializer
     public static String getVersion() {
         return "1.0";
     }
-    
+
+    /**
+     * Serializes the given Fedora object to an OutputStream.
+     */
     public void serialize(DigitalObject obj, OutputStream out) 
             throws ObjectIntegrityException, StreamIOException, 
             StreamWriteException {
         try {
             StringBuffer buf=new StringBuffer();
+	    //
+	    // Serialize root element and header
+	    //
             buf.append("<?xml version=\"1.0\" ");
             buf.append("encoding=\"");
             buf.append(m_characterEncoding);
@@ -77,7 +93,9 @@ public class METSDOSerializer
             buf.append(obj.getState());
             buf.append("\">\n    <!-- This info can't be set via API-M -- if it existed, it was ignored during import -->\n");
             buf.append("  </metsHdr>\n");
-
+            //
+	    // Serialize Audit Records
+	    //
             if (obj.getAuditRecords().size()>0) {
                 buf.append("  <amdSec ID=\"FEDORA-AUDITTRAIL\">\n");
                 String auditPrefix=(String) obj.getNamespaceMapping().get(FEDORA_AUDIT_NAMESPACE_URI);
@@ -141,22 +159,118 @@ public class METSDOSerializer
                     buf.append("    </digiprovMD>\n");
                 }
                 buf.append("  </amdSec>\n");
-                Iterator idIter=obj.datastreamIdIterator();
-                while (idIter.hasNext()) {
-                    String id=(String) idIter.next();
-                    // from the first one with this id, 
-                    // decide if it needs an amdSec or dmdSec
-                    Datastream ds=(Datastream) obj.datastreams(id).get(0);
-                    String mdClass="N/A";
-                    if (ds.DSControlGrp==Datastream.XML_METADATA) {
-                        DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
-                        mdClass="" + mds.DSMDClass;
-                    }
-                    // FIXME: this isn't mets-valid... it's just a test to see if we got what's expected
-                    buf.append("<datastream class=\"" + mdClass + "\" id=\"" + id + "\" ctrlGroup=\"" + ds.DSControlGrp + "\" infoType=\"" + ds.DSInfoType + "\"/>");
+            }
+	    //
+	    // Serialize Datastreams
+	    //
+            Iterator idIter=obj.datastreamIdIterator();
+            while (idIter.hasNext()) {
+                String id=(String) idIter.next();
+                // from the first one with this id, 
+                // first decide if it needs an amdSec or dmdSec
+                Datastream ds=(Datastream) obj.datastreams(id).get(0);
+                if (ds.DSControlGrp==Datastream.XML_METADATA) {
+		    //
+		    // Serialize inline XML datastream
+		    //
+                    DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
+                    if (mds.DSMDClass==DatastreamXMLMetadata.DESCRIPTIVE) {
+		        //
+			// Descriptive inline XML Metadata
+			//
+			// <!-- For each version with this dsId -->
+			// <dmdSec GROUPID=dsId
+			//              ID=dsVersionId
+			//         CREATED=dsCreateDate
+			//          STATUS=dsState>
+			//   <mdWrap....>
+			//     ...
+			//   </mdWrap>
+			// </dmdSec>
+			Iterator dmdIter=obj.datastreams(id).iterator();
+			while (dmdIter.hasNext()) {
+			    mds=(DatastreamXMLMetadata) dmdIter.next();
+                            buf.append("  <dmdSec ID=\"");
+                            buf.append(mds.DSVersionID);
+                            buf.append("\" GROUPID=\"");
+                            buf.append(mds.DatastreamID);
+                            buf.append("\" CREATED=\"");
+                            buf.append(DateUtility.convertDateToString(
+		                    mds.DSCreateDT));
+                            buf.append("\" STATUS=\"");
+                            buf.append(mds.DSState);
+                            buf.append("\">\n");
+			    mdWrap(mds, buf);
+                            // do the inner stuff
+                            buf.append("  </dmdsec>\n");
+			}
+                    } else {
+		        //
+		        // Administrative inline XML Metadata
+			//
+			// Technical          ($mdClass$=techMD)
+			// Source             ($mdClass$=sourceMD)
+			// Rights             ($mdClass$=rightsMD)
+			// Digital Provenance ($mdClass$=digiprovMD)
+			// 
+			// <amdSec ID=dsId>
+			//   <!-- For each version with this dsId -->
+			//   <$mdClass$      ID=dsVersionId
+			//              CREATED=dsCreateDate
+			//               STATUS=dsState>
+			//     <mdWrap....>
+			//       ...
+			//     </mdWrap>
+			//   </techMd>
+			// </dmdSec>
+			//
+			String mdClass;
+                        if (mds.DSMDClass==DatastreamXMLMetadata.TECHNICAL) {
+                            mdClass="techMD";
+		        } else if (mds.DSMDClass==DatastreamXMLMetadata.SOURCE) {
+		            mdClass="sourceMD";
+		        } else if (mds.DSMDClass==DatastreamXMLMetadata.RIGHTS) {
+		            mdClass="rightsMD";
+	                } else if (mds.DSMDClass==DatastreamXMLMetadata.DIGIPROV) {
+		            mdClass="digiprovMD";
+		        } else {
+			    throw new ObjectIntegrityException(
+  			        "Datastreams must have a class");
+			}
+		        buf.append("  <amdSec ID=\"");
+			buf.append(mds.DatastreamID);
+                        buf.append("\" CREATED=\"");
+                        buf.append(DateUtility.convertDateToString(
+		                mds.DSCreateDT));
+                        buf.append("\" STATUS=\"");
+                        buf.append(mds.DSState);
+                        buf.append("\">\n");
+			Iterator amdIter=obj.datastreams(id).iterator();
+			while (amdIter.hasNext()) {
+			    mds=(DatastreamXMLMetadata) amdIter.next();
+                            buf.append("    <");
+                            buf.append(mdClass);
+                            buf.append(" ID=\"");
+			    buf.append(mds.DSVersionID);
+                            buf.append("\" CREATED=\"");
+                            buf.append(DateUtility.convertDateToString(
+		                    mds.DSCreateDT));
+                            buf.append("\" STATUS=\"");
+                            buf.append(mds.DSState);
+                            buf.append("\">\n");
+                            mdWrap(mds, buf);
+                            buf.append("    </");
+                            buf.append(mdClass);
+			    buf.append(">\n");
+			}
+                        buf.append("  </amdsec>\n");
+		    }
                 }
             }
-            
+
+            //
+	    // Serialization Complete
+	    //
             buf.append("</mets>");
 
             out.write(buf.toString().getBytes(m_characterEncoding));
@@ -173,6 +287,19 @@ public class METSDOSerializer
             }
         }
         if (1==2) throw new ObjectIntegrityException("bad object");
+    }
+
+    private static void mdWrap(DatastreamXMLMetadata mds, StringBuffer buf) {
+        buf.append("    <mdWrap MIMETYPE=\"");
+	buf.append(mds.DSMIME);
+	buf.append("\" MDTYPE=\"");
+	buf.append(mds.DSInfoType);
+	buf.append("\" LABEL=\"");
+	buf.append(mds.DSLabel);
+	buf.append("\">\n");
+        buf.append("      <xmlData>\n");
+        buf.append("      </xmlData>\n");
+        buf.append("    </mdWrap>\n");
     }
     
     public boolean equals(Object o) {
