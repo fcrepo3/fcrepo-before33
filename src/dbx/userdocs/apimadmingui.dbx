@@ -17,7 +17,7 @@
 		</title>
 		<title>
 			<trademark class="trade">Fedora</trademark> Administrator Documentation</title>
-		<subtitle>Software Release 1.2</subtitle>
+		<subtitle>Software Release 1.2.1</subtitle>
 		<corpauthor>
 			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
@@ -52,7 +52,7 @@
 				<imagedata fileref="images/login.jpg"/>
 			</imageobject>
 		</mediaobject>
-		<para>New to the 1.2 release of Fedora is the authentication dialog. When you start Fedora Administrator, you will be asked to choose the server to which you wish to connect, your username and password. The server and username fields are pre-populated and the password is validated using values from fedora.fcfg</para>
+		<para>Added in the 1.2 release of Fedora is the authentication dialog. When you start Fedora Administrator, you will be asked to choose the server to which you wish to connect, your username and password. The server and username fields are pre-populated and the password is validated using values from fedora.fcfg</para>
 	</sect1>
 	<sect1>
 		<title>Menus</title>

@@ -14,9 +14,11 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title><trademark class="trade">Fedora</trademark> Features</title>
-		<subtitle>Software Release 1.2</subtitle>
-		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<title>
+			<trademark class="trade">Fedora</trademark> Features</title>
+		<subtitle>Software Release 1.2.1</subtitle>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -111,7 +113,7 @@
 			<listitem>
 				<para>
 					<emphasis role="bold">Access Control and Authentication</emphasis>
-							 - Release 1.2 includes a simple form of access control to provide access restrictions based on IP address. IP range restriction is supported in both the Management and Access APIs. In addition, the Management API is protected by HTTP Basic Authentication. Access Policy and Authentication will be a major focus in Phase II of the Fedora project.
+							 - Release 1.2.1 includes a simple form of access control to provide access restrictions based on IP address. IP range restriction is supported in both the Management and Access APIs. In addition, the Management API is protected by HTTP Basic Authentication. Access Policy and Authentication will be a major focus in Phase II of the Fedora project.
 				</para>
 			</listitem>
 			<listitem>

@@ -17,7 +17,7 @@
 		<title>
 			Versioning in <trademark class="trade">Fedora</trademark>
 		</title>
-		<subtitle>Software Release 1.2</subtitle>
+		<subtitle>Software Release 1.2.1</subtitle>
 		<corpauthor>
 			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
@@ -35,7 +35,7 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
-		<para>Fedora v1.2 for the first time includes content versioning functionality.  Content versioning is one of the preservation-oriented features of Fedora.   Using this new capability, Fedora repositories can maintain a record of how digital objects have changed over time.  This is achieved by the Fedora repository storing former versions of content, and by creating audit trail records about changes.    Also,  with the advent of content versioning, the Fedora Access interfaces now support date-time stamped requests, so that a client can "go back in time" and see a digital object as it looked in the past.  </para>
+		<para>As of v1.2, Fedora for the first time included content versioning functionality.  Content versioning is one of the preservation-oriented features of Fedora.   Using this new capability, Fedora repositories can maintain a record of how digital objects have changed over time.  This is achieved by the Fedora repository storing former versions of content, and by creating audit trail records about changes.  Also, with the advent of content versioning, the Fedora Access interfaces now support date-time stamped requests, so that a client can "go back in time" and see a digital object as it looked in the past.  </para>
 	</sect1>
 	<sect1>
 		<title>Preservation</title>
@@ -45,7 +45,7 @@
 		<title>How It Works</title>
 		<para>In the Fedora versioning system, any modifications made to a Datastream or Disseminator through the Fedora management interface (API-M) will automatically result in a new version of that Datastream or Disseminator being created by Fedora.  Fedora will not create a new version of the whole digital object, instead it will version these specific components <emphasis>within</emphasis> the digital object container.  This has the benefit of the digital object PID remaining constant, and not having to keep track of multiple distinct versions of a digital object. </para>
 		<para>The Fedora repository maintains all versions of all Datastreams and Disseminators, thereby creating a history of how objects change over time.  Additionally, Fedora maintains an audit trail record of the nature of the object change events (e.g., who, what, when, why). </para>
-		<para>While the components of data objects are versioned in Fedora v1.2, versioning of behavior objects (Behavior Definitions and Behavior Mechanisms) is in scope for future releases of the software.</para>
+		<para>While the components of data objects are versioned in Fedora v1.2.1, versioning of behavior objects (Behavior Definitions and Behavior Mechanisms) is in scope for future releases of the software.</para>
 	</sect1>
 	<sect1>
 		<title>Fedora Administrator</title>

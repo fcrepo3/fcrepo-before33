@@ -11,7 +11,7 @@
 		</title>
 		<title>
 			<trademark class="trade">Fedora</trademark> Digital Object Construction Guide</title>
-		<subtitle>Software Release 1.2</subtitle>
+		<subtitle>Software Release 1.2.1</subtitle>
 		<corpauthor>
 			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
@@ -278,7 +278,7 @@
 							<para>b.   Datastreams that are encoded in the METS:fileSec must follow the following pattern to establish proper version groups and datastream IDs.  Each datastream has its own 	METS:fileGrp whose ID attribute is the official datastream ID.  The recommended convention is ID=”DSn” where n is a number (for example ID=”DS1” or ID=”DS2).” </para>
 						</listitem>
 						<listitem>
-							<para>c.  Within a METS:fileGrp, there can be one or more METS:file elements to represent different versions of a datastream.  In Fedora 1.2, versioning of data objects is supported.  The METS:file element for the datastream must have and ID attribute that represent the version number relative to the datastream ID set in the METS:fileGrp.  The recommended convention is ID=”DSn.v”  where n is the 	number of the datastream and v is the version number (for example ID=DS1.0 or ID=DS1.1). </para>
+							<para>c.  Within a METS:fileGrp, there can be one or more METS:file elements to represent different versions of a datastream.  As of Fedora 1.2, versioning of data objects is supported.  The METS:file element for the datastream must have and ID attribute that represent the version number relative to the datastream ID set in the METS:fileGrp.  The recommended convention is ID=”DSn.v”  where n is the 	number of the datastream and v is the version number (for example ID=DS1.0 or ID=DS1.1). </para>
 						</listitem>
 						<listitem>
 							<para>d. The METS:file element for a datastream must have a CREATED attribute whose value is populated with a date in the following format:        “YYYY-MM-DDThh:mm:ss”.  </para>
@@ -334,10 +334,10 @@
 					<para>Disseminators</para>
 					<itemizedlist>
 						<listitem>
-							<para>a.  Each Disseminator is encoded in its own METS:behaviorSec element.  The METS:behaviorSec element acts as a version container for different versions of the Disseminator.  In Fedora 1.2, only one version is supported.  Each Disseminator must have a disseminator ID which is encode in the ID attribute of the METS:behaviorSec.  The recommended convention is ID=”DISSn” where n is a 	number (for example ID=”DISS1” or ID=”DISS2).”  </para>
+							<para>a.  Each Disseminator is encoded in its own METS:behaviorSec element.  The METS:behaviorSec element acts as a version container for different versions of the Disseminator.  As of Fedora 1.2.1, only one version is supported.  Each Disseminator must have a disseminator ID which is encode in the ID attribute of the METS:behaviorSec.  The recommended convention is ID=”DISSn” where n is a 	number (for example ID=”DISS1” or ID=”DISS2).”  </para>
 						</listitem>
 						<listitem>
-							<para>b.  The METS:serviceBinding element represents a particular version of the disseminator.  Again, in Fedora 1.2 only one version is supported.  The element must have and ID attribute that represent the version number relative to the Disseminator ID that is set in the METS:behaviorSec.  The recommended convention is ID=”DISSn.v”  where n is the number of the Disseminator and v is the version number (for example ID=DISS1.0 or ID=DISS1.1). </para>
+							<para>b.  The METS:serviceBinding element represents a particular version of the disseminator.  Again, in Fedora 1.2.1 only one version is supported.  The element must have and ID attribute that represent the version number relative to the Disseminator ID that is set in the METS:behaviorSec.  The recommended convention is ID=”DISSn.v”  where n is the number of the Disseminator and v is the version number (for example ID=DISS1.0 or ID=DISS1.1). </para>
 						</listitem>
 						<listitem>
 							<para>c.  The METS:serviceBinding element must have a CREATED attribute whose value is populated with a date in the following format: “YYYY-MM-DDThh:mm:ss”. </para>

@@ -14,9 +14,11 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title><trademark class="trade">Fedora</trademark> Client Command-Line Utilities</title>
-		<subtitle>Software Release 1.2</subtitle>
-		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<title>
+			<trademark class="trade">Fedora</trademark> Client Command-Line Utilities</title>
+		<subtitle>Software Release 1.2.1</subtitle>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -176,7 +178,7 @@
 				<para>SPRT/TPRT - the source or target repository's port number.</para>
 			</listitem>
 			<listitem>
-				<para>SUSR/TUSR - the id of the source or target repository user.</para>			
+				<para>SUSR/TUSR - the id of the source or target repository user.</para>
 			</listitem>
 			<listitem>
 				<para>SPSS/TPSS - the password of the source or target repository user.</para>
@@ -256,7 +258,7 @@
 		</itemizedlist>
 		<para>Example:</para>
 		<blockquote>
-			<para>fedora-convert-demos localhost 8080 www.fedora.info 80 c:\fedora-1.2</para>
+			<para>fedora-convert-demos localhost 8080 www.fedora.info 80 c:\fedora-1.2.1</para>
 		</blockquote>
 		<para>
            Converts URLs in the demo objects from one host/port combination to another.

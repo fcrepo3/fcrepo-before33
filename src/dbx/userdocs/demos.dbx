@@ -14,8 +14,9 @@
 			</inlinemediaobject>
 		</title>
 		<title>The <trademark class="trade">Fedora</trademark> Demo Manual - Description of Demonstration Objects</title>
-		<subtitle>for Software Release 1.2</subtitle>
-		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<subtitle>for Software Release 1.2.1</subtitle>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
