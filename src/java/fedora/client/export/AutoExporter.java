@@ -79,6 +79,9 @@ public class AutoExporter {
             ser.serialize(doc);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + " : " + e.getMessage());
+        } finally
+        {
+          outStream.close();
         }
     }
 
