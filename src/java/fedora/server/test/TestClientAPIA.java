@@ -58,7 +58,7 @@ public class TestClientAPIA
       Service service = new Service();
       Call call = (Call) service.createCall();
       call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-
+/*
       // Test GetbehaviorDefinitions
       call.setOperationName(new javax.xml.namespace.QName(qName1,
           "GetBehaviorDefinitions") );
@@ -140,10 +140,10 @@ public class TestClientAPIA
        {
          System.out.write(c);
       }
-
+*/
       // Test GetDissemination
       PID = "1007.lib.dl.test/text_ead/viu00003";
-      bDefPID = "web_ead";
+      String bDefPID = "web_ead";
       String method = "get_admin";
       call.setOperationName(new javax.xml.namespace.QName(qName1,
           "GetDissemination") );
@@ -152,7 +152,7 @@ public class TestClientAPIA
           call.invoke( new Object[] { PID, bDefPID, method, asOfDate} );
       if (dissemination != null)
       {
-        mime = dissemination.getMIMEType();
+        String mime = dissemination.getMIMEType();
         System.out.println("\n\n****DISSEMINATION RESULTS*****\n"+
                            "Dissemination MIME: "+mime);
         BufferedReader br = new BufferedReader(
@@ -170,7 +170,7 @@ public class TestClientAPIA
     call.setOperationName(new javax.xml.namespace.QName(qName1,
         "GetObjectMethods") );
     fedora.server.types.gen.ObjectMethodsDef[] objectView = null;
-    qn = new QName("http://www.fedora.info/definitions/1/0/types/",
+    QName qn = new QName("http://www.fedora.info/definitions/1/0/types/",
                             "ObjectMethodsDef");
     call.registerTypeMapping(fedora.server.types.gen.ObjectMethodsDef.class,
         qn,
