@@ -80,7 +80,9 @@ public class Ingest {
                 if (sdlg.getAPIA()!=null) {
                     String pid=JOptionPane.showInputDialog("Enter the PID of the object to ingest.");
                     if (pid!=null && !pid.equals("")) {
-                       pid=oneFromRepository(sdlg.getAPIM(), 
+                       pid=oneFromRepository(sdlg.getHost(),
+                                             sdlg.getPort(),
+                                             sdlg.getAPIM(), 
                                              pid, 
                                              Administrator.APIM,
                                              null);
@@ -161,7 +163,7 @@ public class Ingest {
     private static String fileAsString(String path) 
             throws Exception {
         StringBuffer buffer = new StringBuffer();
-        FileInputStream fis = new FileInputStream(path);
+        InputStream fis=new FileInputStream(path);
         InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
         Reader in = new BufferedReader(isr);
         int ch;
@@ -331,24 +333,48 @@ public class Ingest {
     }
     
     // if logMessage is null, will make informative one up
-    public static String oneFromRepository(FedoraAPIM sourceRepository, 
+    public static String oneFromRepository(String sourceHost,
+                                           int sourcePort,
+                                           FedoraAPIM sourceRepository, 
                                            String pid,
                                            FedoraAPIM targetRepository,
                                            String logMessage)
             throws Exception {
         System.out.println("Ingesting " + pid + " from source repository.");
+        
+        // export it first
         ByteArrayOutputStream out=new ByteArrayOutputStream();
         AutoExporter.export(sourceRepository, 
                             pid, 
                             out, 
                             false);
-        ByteArrayInputStream in=new ByteArrayInputStream(out.toByteArray());
+                            
+        // fix the host-specific references before ingesting (except "M" datastreams)
+        StringBuffer fixed=new StringBuffer();
+        BufferedReader in=new BufferedReader(new InputStreamReader(new ByteArrayInputStream(out.toByteArray())));
+        String line;
+        while ( (line=in.readLine()) != null ) {  
+            if (line.indexOf("fedora-system:3")==-1) { 
+                // if the line doesn't have a managed datastream reference,
+                // replace all occurances of sourceHost:sourcePort with
+                // local.fedora.server
+                fixed.append(line.replaceAll(
+                        sourceHost + ":" + sourcePort, "local.fedora.server"));
+            } else {
+                fixed.append(line);
+            }
+            fixed.append("\n");
+        }
+        in.close();
+
+        // finally, ingest the fixed xml
         String realLogMessage=logMessage;
         if (realLogMessage==null) {
             realLogMessage="Ingested from source repository with pid " + pid;
         }
         return AutoIngestor.ingestAndCommit(targetRepository,
-                                            in,
+                                            new ByteArrayInputStream(
+                                             fixed.toString().getBytes("UTF-8")),
                                             realLogMessage);
     }
     
@@ -423,36 +449,6 @@ public class Ingest {
         HashSet set=new HashSet();
         String[] res=AutoFinder.getPIDs(sourceHost, sourcePort, "fType=" + fType); 
         for (int i=0; i<res.length; i++) set.add(res[i]);
-/*
-        Condition cond=new Condition();
-        cond.setProperty("fType");
-        cond.setOperator(ComparisonOperator.fromValue("eq"));
-        cond.setValue(fType);
-        Condition[] conds=new Condition[1];
-        conds[0]=cond;
-        FieldSearchQuery query=new FieldSearchQuery();
-        query.setConditions(conds);
-        query.setTerms(null);
-        String[] fields=new String[1];
-        fields[0]="pid";
-        FieldSearchResult res=AutoFinder.findObjects(sourceAccess,
-                                                     fields,
-                                                     1000,
-                                                     query);
-        boolean exhausted=false;
-        while (res!=null && !exhausted) {
-            ObjectFields[] ofs=res.getResultList();
-            for (int i=0; i<ofs.length; i++) {
-                set.add(ofs[i].getPid());
-            }
-            if (res.getListSession()!=null && res.getListSession().getToken()!=null) {
-                res=AutoFinder.resumeFindObjects(sourceAccess, 
-                                                 res.getListSession().getToken());
-            } else {
-                exhausted=true;
-            }
-        }
-*/
         String friendlyName="data objects";
         if (fType.equals("D"))
             friendlyName="behavior definitions";
@@ -464,10 +460,12 @@ public class Ingest {
         while (iter.hasNext()) {
             String pid=(String) iter.next();
             try {
-                String newPID=oneFromRepository(sourceRepos,
-                                  pid,
-                                  targetRepos,
-                                  logMessage);
+                String newPID=oneFromRepository(sourceHost,
+                                                sourcePort,
+                                                sourceRepos,
+                                                pid,
+                                                targetRepos,
+                                                logMessage);
                 successSet.add(newPID);
                 logFromRepos(pid, fType, newPID);
             } catch (Exception e) {
@@ -622,7 +620,9 @@ public class Ingest {
                 if (args[4].indexOf(":")!=-1) {
                     // single object
                     System.out.println("Ingested PID: "
-                            + Ingest.oneFromRepository(sourceRepos,
+                            + Ingest.oneFromRepository(hp[0],
+                                                       Integer.parseInt(hp[1]),
+                                                       sourceRepos,
                                                        args[4],
                                                        targetRepos,
                                                        logMessage));
