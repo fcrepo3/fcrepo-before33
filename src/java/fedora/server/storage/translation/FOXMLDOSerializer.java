@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import fedora.common.Constants;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StreamWriteException;
@@ -56,7 +57,8 @@ import fedora.server.utilities.StreamUtility;
  * @version $Id$
  */
 public class FOXMLDOSerializer
-        implements DOSerializer {
+        implements DOSerializer,
+                   Constants {
 
 	public static final String FOXML_NS="info:fedora/fedora-system:def/foxml#";
     public static final String FEDORA_AUDIT_NS="info:fedora/fedora-system:def/audit#";
@@ -146,7 +148,7 @@ public class FOXMLDOSerializer
 			throws ObjectIntegrityException {
 		
 		String ftype = getTypeAttribute(obj);
-		String state = obj.getState();
+		String state = getStateAttribute(obj);
 		String label = obj.getLabel();
 		Date cdate = obj.getCreateDate();
 		Date mdate = obj.getLastModDate();
@@ -155,27 +157,27 @@ public class FOXMLDOSerializer
 		buf.append("    <" + FOXML_PREFIX + ":objectProperties>\n");
 			
 		if (ftype!=null && !ftype.equals("")) {
-			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/fedora-system:def/fType" + "\"" 
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + RDF.TYPE.uri + "\"" 
 			+ " VALUE=\"" + ftype + "\"/>\n");
 		}
 		if (state!=null && !state.equals("")) {
-			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/fedora-system:def/state" + "\"" 
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + MODEL.STATE.uri + "\"" 
 			+ " VALUE=\"" + state + "\"/>\n");
 		}
 		if (label!=null && !label.equals("")) {
-			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/fedora-system:def/label" + "\""
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + MODEL.LABEL.uri + "\""
 			+ " VALUE=\"" + StreamUtility.enc(label) + "\"/>\n"); 
 		}
 		if (cdate!=null) {
-			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/fedora-system:def/cDate" + "\""
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + MODEL.CREATED_DATE.uri + "\""
 			+ " VALUE=\"" + DateUtility.convertDateToString(cdate) + "\"/>\n"); 
 		}
 		if (mdate!=null) {
-			buf.append("        <" + FOXML_PREFIX  + ":property NAME=\"" + "info:fedora/fedora-system:def/mDate" + "\""
+			buf.append("        <" + FOXML_PREFIX  + ":property NAME=\"" + VIEW.LAST_MODIFIED_DATE.uri + "\""
 			+ " VALUE=\"" + DateUtility.convertDateToString(mdate) + "\"/>\n"); 
 		}
 		if (cmodel!=null && !cmodel.equals("")) {
-			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/fedora-system:def/cModel" + "\"" 
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + MODEL.CONTENT_MODEL.uri + "\"" 
 			+ " VALUE=\"" + StreamUtility.enc(cmodel) + "\"/>\n");	
 		}
 		Iterator iter = obj.getExtProperties().keySet().iterator();
@@ -479,15 +481,30 @@ public class FOXMLDOSerializer
 			throws ObjectIntegrityException {
 		int t=obj.getFedoraObjectType();
 		if (t==DigitalObject.FEDORA_BDEF_OBJECT) {
-			return "FedoraBDefObject";
+            return MODEL.BDEF_OBJECT.localName;
 		} else if (t==DigitalObject.FEDORA_BMECH_OBJECT) {
-			return "FedoraBMechObject";
+            return MODEL.BMECH_OBJECT.localName;
 		} else if (t==DigitalObject.FEDORA_OBJECT) {
-			return "FedoraObject";
+            return MODEL.DATA_OBJECT.localName;
 		} else {
 			throw new ObjectIntegrityException("Object must have a FedoraObjectType.");
 		}
 	}
+	
+    private String getStateAttribute(DigitalObject obj) {
+        try {
+            char s = obj.getState().toUpperCase().charAt(0);
+            if (s == 'D') {
+                return MODEL.DELETED.localName;
+            } else if (s == 'I') {
+                return MODEL.INACTIVE.localName;
+            } else {
+                return MODEL.ACTIVE.localName;
+            }
+        } catch (Throwable th) {
+            return null;
+        }
+    }
 	
 	private String oneString(String[] idList){
 		StringBuffer out=new StringBuffer();
