@@ -391,7 +391,7 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
           (FOXML)</b>
 
           <p>A new XML schema has been developed that provides a
-          simple and unambiguous expression the Fedora digital
+          simple and unambiguous expression of the Fedora digital
           object model. Previously, Fedora digital objects could
           only be expressed in XML using an extension of the METS
           schema. FOXML is the new internal storage format for
@@ -431,7 +431,7 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
           Export with Different XML Formats</b>
 
           <p>The Fedora project is committed to providing
-          repository ingest and export functions are compatible
+          repository ingest and export functions that are compatible
           with community developed standards for digital object XML
           encoding. This is motivated by both interoperability and
           digital preservation concerns, where flexibility in the
@@ -464,7 +464,7 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
           description of another object, or even equivalent to
           another object. Relationship metadata of this sort can
           now be encoded in Fedora digital objects in a special
-          reserved datastream reserved (identified as "RELS-EXT").
+          reserved datastream (identified as "RELS-EXT").
           Relationships are expressed as RDF/XML. Fedora provides a
           default relationship ontology that defines a set of
           common relationships (see:
@@ -512,7 +512,7 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
           directives file is included in the distribution in the
           batch-demo directory. Refer to the Batch Modify Utility
           user documentation for additional information regarding
-          the batch Modify Utility.</p>
+          the Batch Modify Utility.</p>
         </li>
 
         <li>
@@ -541,7 +541,7 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
         add datastreams, modify datastreams, export the object, and 
         several other useful examples.  It is intended as a quick and 
         easy starting point for Java programmers who want to write
-        their own clients to the Fedora SOAP interfacse. The demo
+        their own clients to the Fedora SOAP interface. The demo
         client is found in the Fedora 2.0 distribution at: 
         {FEDORA_HOME}/client/demo/soapclient.  Programmers should examine the file DemoSOAPClient.java.  
         To compile the demo, run the script named &quot;compile-demo-soapclient.bat&quot;
@@ -859,7 +859,7 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
           on to the nested dissemination requests. Prior to Fedora
           2.0, the only way to accomplish this was to add a formal
           User Parameter to the disseminator method and use it to
-          pass the value of the PID. This syntax is ackward since
+          pass the value of the PID. This syntax is awkward since
           the PID of the data object is already contained in the
           dissemination request. For example:</p>
 
@@ -1027,7 +1027,10 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
           fedora.server.storage.replication.DefaultDOReplicator.
           Managed datastreams are stored internally using an
           identifier that consists of objPID + dsID + dsVerID. An
-          errant regular expression was matching</p>
+          errant regular expression was being greedy in matching
+          which could result in similarly PIDed objects being
+          deleted. The regular expression is fixed to prevent
+          this from occuring.</p>
         </li>
 
         <li>
@@ -1035,7 +1038,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
           There is an erroneous space preceding the SchemaLocation
           in output for getNextPID. (Bugzilla #54)</b>
 
-          <p>The SchemaLoaction in the xml header output when
+          <p>The SchemaLocation in the xml header output when
           running the getNextPID method of API-M and API-M-LITE
           contains an errant blank. This bug will only cause
           problems if trying to validate the xml output from the
@@ -1089,7 +1092,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         <li>
           <b>Object Label updates not reflected in ObjectProfile -
           Changing an object's label in the admin GUI is not
-          reflected when disseminationg objectProfile. (Bugzilla
+          reflected when disseminating objectProfile. (Bugzilla
           #58)</b>
 
           <p>This was a bug in the replicator where the object
