@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -513,7 +514,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       Property[] userParms, Calendar asOfDateTime, String clearCache,
       HttpServletResponse response) throws IOException, ServerException
   {
-    PrintWriter out = response.getWriter();
+    //PrintWriter out = response.getWriter();
+    ServletOutputStream out = response.getOutputStream();
     // See if dissemination request is in local cache
     MIMETypedStream dissemination = null;
     dissemination = getDisseminationFromCache(context, PID, bDefPID,
@@ -550,7 +552,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       } else
       {
         response.setContentType(dissemination.MIMEType);
-        System.out.println("mime2: "+dissemination.MIMEType);
+        long startTime = new Date().getTime();
         int byteStream = 0;
         // RLW: change required by conversion fom byte[] to InputStream
         //ByteArrayInputStream dissemResult =
@@ -563,6 +565,12 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         }
         dissemResult.close();
         dissemResult = null;
+        long stopTime = new Date().getTime();
+        long interval = stopTime - startTime;
+        System.out.println("[FedoraAccessServlet] Read InputStream: "
+                           + interval + " milliseconds.");
+        logFiner("[FedoraAccessServlet] Read InputStream "
+            + interval + " milliseconds.");
       }
     } else
     {
@@ -666,13 +674,26 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     {
       clearDisseminationCache();
     }
+
+    long startTime = new Date().getTime();
     MIMETypedStream disseminationResult = null;
     // See if dissemination request is in local cache
     // RLW: change required by conversion fom byte[] to InputStream
     //dissemination Result = disseminationCache.get(requestURI);
-    disseminationResult = TypeUtility.convertGenMIMETypedStreamToMIMETypedStream(
-        (fedora.server.types.gen.MIMETypedStream) disseminationCache.get(requestURI));
+    //disseminationResult = TypeUtility.convertGenMIMETypedStreamToMIMETypedStream(
+    //    (fedora.server.types.gen.MIMETypedStream) disseminationCache.get(requestURI));
+    //disseminationResult = (MIMETypedStream) disseminationCache.get(requestURI);
     // RLW: change required by conversion fom byte[] to InputStream
+
+    long stopTime = new Date().getTime();
+    long interval = stopTime - startTime;
+    System.out.println("[FedoraAccessServlet] Roundtrip Getting from Cache: "
+        + interval + " milliseconds.");
+    logFiner("[FedoraAccessServlet] Roundtrip Getting from Cache: "
+      + interval + " milliseconds.");
+      logFinest("CACHE SIZE: "+disseminationCache.size());
+
+    startTime = new Date().getTime();
     if (disseminationResult == null)
     {
       // Dissemination request NOT in local cache.
@@ -680,6 +701,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       disseminationResult =
           s_access.getDissemination(context, PID, bDefPID, methodName,
               userParms, asOfDateTime);
+/*
       if (disseminationResult != null)
       {
         // Dissemination request succeeded, so add to local cache
@@ -687,14 +709,23 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         // to achieve optimum performance as the number of requests gets large.
 
         // RLW: change required by conversion fom byte[] to InputStream
-        fedora.server.types.gen.MIMETypedStream stream =
-            TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(disseminationResult);
+        //fedora.server.types.gen.MIMETypedStream stream =
+        //    TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(disseminationResult);
         // RLW: change required by conversion fom byte[] to InputStream
-        disseminationCache.put(requestURI, stream);
+        //disseminationCache.put(requestURI, stream);
+        disseminationCache.put(requestURI, disseminationResult);
         logFinest("ADDED to CACHE: "+requestURI);
       }
+      stopTime = new Date().getTime();
+      interval = stopTime - startTime;
+      System.out.println("[FedoraAccessServlet] Roundtrip Adding to Cache: "
+          + interval + " milliseconds.");
+      logFiner("[FedoraAccessServlet] Roundtrip Adding to Cache: "
+        + interval + " milliseconds.");
       logFinest("CACHE SIZE: "+disseminationCache.size());
+      */
     }
+
     return disseminationResult;
   }
 
