@@ -35,6 +35,27 @@ public interface DOManager {
             throws ServerException;
 
     /**
+     * Relinquishes control of a DOWriter back to the DOManager.
+     * <p></p>
+     * This is not the same as releasing the lock on a digital object.
+     * To do that, use DOWriter.cancel() or DOWriter.commit(...).
+     * <p></p>
+     * When a DOManager provides a DOWriter, it creates two kinds of
+     * locks.  One, the object lock, is created permanently.  This
+     * is the lock that guarantees no other user can make a modification
+     * to the object until the locking user is done making a change.  This is
+     * a persistent lock in that it remains even after the system is
+     * shutdown or the DOWriter object is garbage collected.
+     * <p></p>
+     * The other kind of lock is more temporary.  It's called a session lock.  
+     * This is used to guarantee that the same user can't get more than one 
+     * handle (DOWriter) on the same underlying object.  To release the 
+     * session lock, a DOWriter user calls this method.
+     */
+    public abstract void releaseWriter(DOWriter writer)
+            throws ServerException;
+
+    /**
      * Gets a DOWriter for an existing digital object.
      *
      * @param context The context of this request.
