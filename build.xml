@@ -5,7 +5,6 @@
 	<property name="javaClassOptimize" value="off"/>
 	<property name="javaSourceDir" value="src/java"/>
 	<property name="docDir" value="apidoc"/>
-
 	<target name="copyclient" depends="client" description="copies client to server dist area">
 		<copy todir="dist/server">
 			<fileset dir="dist/client"/>
@@ -19,41 +18,41 @@
 		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
 		<copy file="dist/userdocs/demos.html" todir="dist/server/doc"/>
 	</target>
-        <target name="clientunixstuff" depends="clientmostly" if="buildingOnUnix">
-		 <!-- add symlinks for shell scripts in unix -->
-                <exec dir="./dist/client/bin" executable="/bin/ln">
-                   <arg line="-s fedora-admin.sh fedora-admin"/>
-                </exec> 
-                <exec dir="./dist/client/bin" executable="/bin/ln">
-                   <arg line="-s fedora-ingest.sh fedora-ingest"/>
-                </exec> 
-                <exec dir="./dist/client/bin" executable="/bin/ln">
-                   <arg line="-s fedora-ingest-demos.sh fedora-ingest-demos"/>
-                </exec> 
-                <exec dir="./dist/client/bin" executable="/bin/ln">
-                   <arg line="-s fedora-purge-demos.sh fedora-purge-demos"/>
-                </exec> 
-                <exec dir="./dist/client/bin" executable="/bin/ln">
-                   <arg line="-s fedora-export.sh fedora-export"/>
-                </exec> 
-                <exec dir="./dist/client/bin" executable="/bin/ln">
-                   <arg line="-s fedora-list.sh fedora-list"/>
-                </exec> 
-                <exec dir="./dist/client/bin" executable="/bin/ln">
-                   <arg line="-s fedora-purge.sh fedora-purge"/>
-                </exec> 
-                <exec dir="./dist/client/bin" executable="/bin/ln">
-                   <arg line="-s fedora-massingest.sh fedora-massingest"/>
-                </exec> 
+	<target name="clientunixstuff" depends="clientmostly" if="buildingOnUnix">
+		<!-- add symlinks for shell scripts in unix -->
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-admin.sh fedora-admin"/>
+		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-ingest.sh fedora-ingest"/>
+		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-ingest-demos.sh fedora-ingest-demos"/>
+		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-purge-demos.sh fedora-purge-demos"/>
+		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-export.sh fedora-export"/>
+		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-list.sh fedora-list"/>
+		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-purge.sh fedora-purge"/>
+		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-massingest.sh fedora-massingest"/>
+		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="u+x" includes="**/*"/>
-        </target>
+	</target>
 	<target name="client" depends="clientunixstuff,clientmostly" description="Client distribution">
         </target>
 	<target name="clientmostly" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
-                <condition property="buildingOnUnix">
-                    <os family="unix"/>
-                </condition>
+		<condition property="buildingOnUnix">
+			<os family="unix"/>
+		</condition>
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/client"/>
 		<mkdir dir="dist/client/bin"/>
@@ -68,7 +67,6 @@
 		<copy todir="dist/client/demo">
 			<fileset dir="src/mets/demo"/>
 		</copy>
-
 		<jar jarfile="dist/client/client.jar" basedir="temp/client" manifest="src/mfs/client.mfs"/>
 		<mkdir dir="dist/client/lib"/>
 		<copy file="lib/client/jhbasic.jar" todir="dist/client/lib"/>
@@ -82,7 +80,7 @@
 		<copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/lib"/>
 		<!-- begin additions -->
-<!--
+		<!--
 Commented out... I'm not sure the command-line batch stuff is
 current anymore... I think it's just in the gui.  Delete this
 if you can confirm.
@@ -274,7 +272,7 @@ if you can confirm.
 			<arg path="dist/server/tomcat41/webapps/userdocs/apialite/index.html"/>
 			<arg path="src/dbx/userdocs/apialite.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>		
+		</exec>
 		<echo message="Translating apimadmingui.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -284,7 +282,7 @@ if you can confirm.
 			<arg path="dist/server/tomcat41/webapps/userdocs/apim/index.html"/>
 			<arg path="src/dbx/userdocs/apimadmingui.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>			
+		</exec>
 		<echo message="Translating batchclient.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -294,7 +292,7 @@ if you can confirm.
 			<arg path="dist/server/tomcat41/webapps/userdocs/batch/index.html"/>
 			<arg path="src/dbx/userdocs/batchclient.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>			
+		</exec>
 		<echo message="Translating documentation.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -304,7 +302,7 @@ if you can confirm.
 			<arg path="dist/server/tomcat41/webapps/userdocs/index.html"/>
 			<arg path="src/dbx/userdocs/documentation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>			
+		</exec>
 		<echo message="Translating license.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -314,7 +312,7 @@ if you can confirm.
 			<arg path="dist/server/tomcat41/webapps/userdocs/server/license.html"/>
 			<arg path="src/dbx/userdocs/license.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>			
+		</exec>
 		<echo message="Translating oaiprovider.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -324,7 +322,7 @@ if you can confirm.
 			<arg path="dist/server/tomcat41/webapps/userdocs/oai/index.html"/>
 			<arg path="src/dbx/userdocs/oaiprovider.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>			
+		</exec>
 		<echo message="Translating search.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -334,7 +332,10 @@ if you can confirm.
 			<arg path="dist/server/tomcat41/webapps/userdocs/search/index.html"/>
 			<arg path="src/dbx/userdocs/search.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>		
+		</exec>
+		<copy todir="dist/server/tomcat41/webapps/userdocs/search/images">
+			<fileset dir="src/jpg/search"/>
+		</copy>
 		<echo message="Translating server.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -344,7 +345,7 @@ if you can confirm.
 			<arg path="dist/server/tomcat41/webapps/userdocs/server/index.html"/>
 			<arg path="src/dbx/userdocs/server.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>				
+		</exec>
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
@@ -490,37 +491,37 @@ if you can confirm.
 		</exec>
 	</target>
 	<target name="serverunixstuff" if="buildingOnUnix" depends="servermostly">
-                <!-- add symlinks for shell scripts in unix -->
-                <exec dir="./dist/server/bin" executable="/bin/ln">
-                   <arg line="-s mckoi-init.sh mckoi-init"/>
-                </exec> 
-                <exec dir="./dist/server/bin" executable="/bin/ln">
-                   <arg line="-s mckoi-start.sh mckoi-start"/>
-                </exec> 
-                <exec dir="./dist/server/bin" executable="/bin/ln">
-                   <arg line="-s mckoi-stop.sh mckoi-stop"/>
-                </exec> 
-                <exec dir="./dist/server/bin" executable="/bin/ln">
-                   <arg line="-s mysql-config.sh mysql-config"/>
-                </exec> 
-                <exec dir="./dist/server/bin" executable="/bin/ln">
-                   <arg line="-s mysql-drop-db.sh mysql-drop-db"/>
-                </exec> 
-                <exec dir="./dist/server/bin" executable="/bin/ln">
-                   <arg line="-s fedora-start.sh fedora-start"/>
-                </exec> 
-                <exec dir="./dist/server/bin" executable="/bin/ln">
-                   <arg line="-s fedora-stop.sh fedora-stop"/>
-                </exec> 
-		 <!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
+		<!-- add symlinks for shell scripts in unix -->
+		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s mckoi-init.sh mckoi-init"/>
+		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s mckoi-start.sh mckoi-start"/>
+		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s mckoi-stop.sh mckoi-stop"/>
+		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s mysql-config.sh mysql-config"/>
+		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s mysql-drop-db.sh mysql-drop-db"/>
+		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s fedora-start.sh fedora-start"/>
+		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s fedora-stop.sh fedora-stop"/>
+		</exec>
+		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/server/bin" perm="u+x" includes="**/*"/>
-        </target>
+	</target>
 	<target name="server" depends="serverunixstuff,servermostly">
         </target>
 	<target name="servermostly" depends="serverclasses" description="Server distribution">
-                <condition property="buildingOnUnix">
-                    <os family="unix"/>
-                </condition>
+		<condition property="buildingOnUnix">
+			<os family="unix"/>
+		</condition>
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/server"/>
 		<copy todir="dist/server">
@@ -558,7 +559,7 @@ if you can confirm.
 		<copy todir="dist/server/tomcat41/webapps/ROOT">
 			<fileset dir="src/xsd"/>
 		</copy>
-   		<!-- setup for demo object datastream content (put in localhost staging area) -->
+		<!-- setup for demo object datastream content (put in localhost staging area) -->
 		<mkdir dir="dist/server/tomcat41/webapps/ROOT/demo"/>
 		<copy todir="dist/server/tomcat41/webapps/ROOT/demo">
 			<fileset dir="src/demo-content"/>
@@ -745,6 +746,9 @@ if you can confirm.
 </project>
 <!--
   $Log$
+  Revision 1.110  2003/05/09 16:20:46  rlw
+  added screenshots for search interface doc
+
   Revision 1.109  2003/05/09 04:55:10  cwilper
   missed fedora-ingest-demos.sh symlink before...got it now
 
