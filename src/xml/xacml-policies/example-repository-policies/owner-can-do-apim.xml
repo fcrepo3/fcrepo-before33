@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        PolicyId="apim-restricted-to-localhost"
+        PolicyId="owner-can-do-apim"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
   <Description> </Description>
   <Target>
@@ -21,14 +21,10 @@
       <AnyResource/>
     </Resources>
   </Target>
-  <Rule RuleId="1" Effect="Deny">
-    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
-      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
-        <EnvironmentAttributeDesignator AttributeId="info:fedora/fedora-system:def/policy-environment#client-ip" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">127.0.0.1</AttributeValue>
-        </Apply>
-      </Apply>
+  <Rule RuleId="1" Effect="Permit">
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+      <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#owner" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+	  <SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:subject:subject-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
     </Condition>
   </Rule>
 </Policy>

@@ -209,6 +209,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		//RESOURCE_STATE_URI = new URI(RESOURCE_STATE);
 
 	} catch (URISyntaxException e) {
+    	System.err.println("ERROR ON MAKING URIs");
 		throw new ModuleInitializationException("couldn't make URIs", getRole(), e);
 	}
   }

@@ -7,6 +7,7 @@ import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.types.NonNegativeInteger;
 
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.ReadOnlyContext;
@@ -97,14 +98,14 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       HttpServletRequest req=(HttpServletRequest) MessageContext.
               getCurrentContext().getProperty(
               HTTPConstants.MC_HTTP_SERVLETREQUEST);
-    return ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_SOAP, req, true);
+    return ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.SOAP.uri, req, true);
   }
 
   private Context getUncachedContext() {
       HttpServletRequest req=(HttpServletRequest) MessageContext.
               getCurrentContext().getProperty(
               HTTPConstants.MC_HTTP_SERVLETREQUEST);
-      return ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_SOAP, req, false);
+      return ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.SOAP.uri, req, false);
   }
 
   public java.lang.String[] getObjectHistory(java.lang.String PID)

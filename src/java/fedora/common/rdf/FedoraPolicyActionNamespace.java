@@ -26,6 +26,7 @@ public class FedoraPolicyActionNamespace extends RDFNamespace {
 
 	// Properties
 	public final RDFName API;
+	public final RDFName CONTEXT_ID;
 	public final RDFName NEW_OBJECT_STATE;
 
     // Values of API
@@ -73,6 +74,7 @@ public class FedoraPolicyActionNamespace extends RDFNamespace {
 
         // Properties
     	this.API = new RDFName(this, "api");
+    	this.CONTEXT_ID = new RDFName(this, "context-id");
     	this.NEW_OBJECT_STATE = new RDFName(this, "newObjectState");
 
     	// Values of CONTEXT_ID are sequential numerals, hence not enumerated here.

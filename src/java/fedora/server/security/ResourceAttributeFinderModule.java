@@ -31,7 +31,6 @@ import fedora.server.storage.types.Datastream;
 			registerAttribute(Constants.MODEL.DATASTREAM_STATE.uri, StringAttribute.identifier);			
 			registerAttribute(Constants.MODEL.OWNER.uri, StringAttribute.identifier);
 			registerAttribute(Constants.MODEL.CONTENT_MODEL.uri, StringAttribute.identifier);			
-			registerAttribute(Authorization.RESOURCE_DATASTREAM_STATE_URI_STRING, StringAttribute.identifier);
 			registerSupportedDesignatorType(AttributeDesignator.RESOURCE_TARGET);
 			setInstantiatedOk(true);
 		} catch (URISyntaxException e1) {

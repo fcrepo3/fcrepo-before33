@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
@@ -116,7 +117,7 @@ public class ReportServlet
 
 		Report report;
 		try {
-		    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, ReadOnlyContext.USE_CACHED_OBJECT);
+		    Context context = ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);
 			report = Report.getInstance(context, remoteAddr, sessionToken, reportName, fieldsArray, query, xslt, maxResults, newBase,
 					prefix, dateRange);
 		} catch (QueryParseException e1) {

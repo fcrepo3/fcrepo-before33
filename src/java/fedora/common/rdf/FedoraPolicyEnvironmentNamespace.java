@@ -25,7 +25,6 @@ import fedora.common.Constants;
 public class FedoraPolicyEnvironmentNamespace extends RDFNamespace {
 
 	// Properties
-	public final RDFName CONTEXT_ID;
 	public final RDFName REQUEST_MESSAGE_PROTOCOL;
 	
 	public final RDFName CURRENT_DATE_TIME;
@@ -56,7 +55,6 @@ public class FedoraPolicyEnvironmentNamespace extends RDFNamespace {
         this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/policy-environment#";
 
         // Properties
-    	this.CONTEXT_ID = new RDFName(this, "context-id");
     	this.REQUEST_MESSAGE_PROTOCOL = new RDFName(this, "request-message-protocol");
     	
     	this.CURRENT_DATE_TIME = new RDFName(this, "current-date-time");

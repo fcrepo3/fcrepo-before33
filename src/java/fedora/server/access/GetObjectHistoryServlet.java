@@ -22,6 +22,7 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -148,7 +149,7 @@ public class GetObjectHistoryServlet extends HttpServlet
         h_userParms.put(name,value);
     }
 
-    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, ReadOnlyContext.USE_CACHED_OBJECT);
+    Context context = ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);
     try {
         getObjectHistory(context, PID, xml, response);
     } catch (Throwable th)

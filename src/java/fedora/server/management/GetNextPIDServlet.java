@@ -20,6 +20,7 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
@@ -124,7 +125,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     int numPIDs = 1;
     String namespace = null;
 
-    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+    Context context = ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
 
     // Get optional supplied parameters.
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)

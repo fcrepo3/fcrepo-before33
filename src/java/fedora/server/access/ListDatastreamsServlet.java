@@ -23,6 +23,7 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -205,7 +206,7 @@ public class ListDatastreamsServlet extends HttpServlet
 
       try {
           if (isListDatastreamsRequest) {    
-              Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+              Context context = ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
               listDatastreams(context, PID, asOfDateTime, xml, request, response);
               long stopTime = new Date().getTime();
               long interval = stopTime - servletStartTime;

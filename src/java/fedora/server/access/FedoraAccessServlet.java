@@ -26,6 +26,7 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -353,7 +354,7 @@ public class FedoraAccessServlet extends HttpServlet
         logger.logFinest("PID: " + PID + " asOfDate: " + versDateTime);
         
         boolean useCachedObject = (asOfDateTime == null);
-        Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, useCachedObject);
+        Context context = ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.REST.uri, request, useCachedObject);
         getObjectProfile(context, PID, asOfDateTime, xml, request, response);
         
         long stopTime = new Date().getTime();
@@ -370,7 +371,7 @@ public class FedoraAccessServlet extends HttpServlet
             + " methodName: " + methodName + " asOfDate: " + versDateTime);
         
         boolean useCachedObject = (asOfDateTime == null);
-        Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, useCachedObject);
+        Context context = ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.REST.uri, request, useCachedObject);
         getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime, response, request);
         
         long stopTime = new Date().getTime();
@@ -385,7 +386,7 @@ public class FedoraAccessServlet extends HttpServlet
           logger.logFinest("PID: " + PID + " dsID: " + dsID
               + " asOfDate: " + versDateTime);
 
-          Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+          Context context = ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
           getDatastreamDissemination(context, PID, dsID, asOfDateTime, response, request);
           
           long stopTime = new Date().getTime();
