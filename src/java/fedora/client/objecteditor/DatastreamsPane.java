@@ -276,6 +276,7 @@ public class DatastreamsPane
             extends JPanel implements ActionListener {
 
         JTextField m_labelTextField;
+        JTextField m_idTextField;
         JTextField m_referenceTextField;
         JTextArea m_controlGroupTextArea;
         JComboBox m_mimeComboBox;
@@ -319,6 +320,7 @@ public class DatastreamsPane
         public NewDatastreamPane(String[] dropdownMimeTypes) {
 
             JComponent[] left=new JComponent[] { new JLabel("State"),
+                                                 new JLabel("ID"),
                                                  new JLabel("Label"),
                                                  new JLabel("MIME Type"),
                                                  new JLabel("Control Group") };
@@ -343,6 +345,9 @@ public class DatastreamsPane
             });
 
             m_labelTextField=new JTextField("Enter a label here.");
+
+            m_idTextField=new JTextField("");
+
             m_mimeComboBox=new JComboBox(dropdownMimeTypes);
             Administrator.constrainHeight(m_mimeComboBox);
             m_mimeComboBox.setEditable(true);
@@ -378,7 +383,7 @@ public class DatastreamsPane
 
             controlGroupOuterPanel.add(m_controlGroupTextArea, BorderLayout.CENTER);
 
-            JComponent[] right=new JComponent[] { m_stateComboBox, m_labelTextField, m_mimeComboBox, controlGroupOuterPanel };
+            JComponent[] right=new JComponent[] { m_stateComboBox, m_idTextField, m_labelTextField, m_mimeComboBox, controlGroupOuterPanel };
 
             JPanel commonPane=new JPanel();
             GridBagLayout grid=new GridBagLayout();
@@ -386,8 +391,8 @@ public class DatastreamsPane
             addRows(left, right, grid, commonPane);
 
             // XPANE: need metadata class and mdType
-            left=new JComponent[] { new JLabel("METS Classification (optional)"),
-                                    new JLabel("METS Metadata Type (optional)") };
+            left=new JComponent[] { new JLabel("METS Classification (FIXME: remove this for v2.0?)"),
+                                    new JLabel("METS Metadata Type (FIXME: remove this for v2.0?)") };
             m_mdClassComboBox=new JComboBox(new String[] { "UNSPECIFIED",
 														   "technical",
                                                            "digital provenance",
@@ -622,6 +627,7 @@ public class DatastreamsPane
                 try {
                     // try to save... first set common values for call
                     String pid=m_pid;
+                    String dsID=m_idTextField.getText();
                     String label=m_labelTextField.getText();
                     String mimeType=(String) m_mimeComboBox.getSelectedItem();
                     String location=null;
@@ -646,8 +652,10 @@ public class DatastreamsPane
                     } else { // must be E/R
                         location=m_referenceTextField.getText();
                     }
-                    String newID=Administrator.APIM.addDatastream(pid, label,
-                            mimeType, location, m_controlGroup, mdClass, mdType, m_initialState);
+                    String newID=Administrator.APIM.createDatastream(pid, dsID, label,
+                            true/** FIXME: make 'versionable' enterable in the UI */, mimeType, 
+                            null/** FIXME: make 'formatURI' enterable in the UIR */, 
+                            location, m_controlGroup, m_initialState);
                     addDatastreamTab(newID);
                 } catch (Exception e) {
                     String msg = e.getMessage();
