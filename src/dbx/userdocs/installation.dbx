@@ -4,161 +4,372 @@
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
-  <article>
-		<title>Fedora Installation Guide</title>
-		<subtitle>Release 1.0</subtitle>
-		<articleinfo>
-			<author>
-				<othername>Fedora Development Team</othername>
-			</author>
-			<edition>$Revision$</edition>
-			<date>$Date$</date>
-			<releaseinfo>
-            $Id$
-        </releaseinfo>
-		</articleinfo>
+<article>
+	<articleinfo>
+		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<title>Fedora Installation and Configuration Guide</title>
+		<subtitle>Software Release 1.0</subtitle>
+		<corpauthor>Fedora Development Team</corpauthor>
+		<copyright>
+			<year>2003</year>
+		</copyright>
+		<publisher>
+			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
+		</publisher>
+	</articleinfo>
+	<section>
+		<title>Getting Started</title>
 		<section>
-			<title>Migrating From Pre-Releases</title>
-			<para>
-     Release 1.0 includes some final changes to the relational database DBSchema and has additional functionality than available in earlier releases. Because of these changes, there is no direct migration path from earlier pre-releases to release 1.0. If you have sample data loaded in earlier releases, you will need to delete the objects and re-ingest them with release 1.0.
-		</para>
-			<para>
-     You will need to complete the following two tasks prior to installing the 1.0 release:        
-     			 <itemizedlist>
-					<listitem>
-						<para>Remove any existing objects from the pre-release Fedora repository.</para>
-					</listitem>
-					<listitem>
-						<para>Drop and recreate an empty Fedora relational database. 
-          The default name in the fedora.fcfg config file for this database 
-          is FedoraObjects. When you install and start the 1.0 release,
-          it will create the new tables in the empty database.</para>
-					</listitem>
-				</itemizedlist>
-			</para>
-			<para>The recommended manner in which to accomplish these tasks is as follows:
-        <itemizedlist>
-					<listitem>
-						<para>Start existing pre-release Fedora server if not already running; dist\server\bin\fedora-start</para>
-					</listitem>
-					<listitem>
-						<para>Start Fedora GUI admin client; dist\server\bin\fedora-admin</para>
-					</listitem>
-					<listitem>
-						<para>Open Management Console and use listObjectPIDs method to obtain a list of all object PIDs</para>
-					</listitem>
-					<listitem>
-						<para>Use purgeObject method to delete all objects</para>
-					</listitem>
-					<listitem>
-						<para>Exit Fedora Admin GUI</para>
-					</listitem>
-					<listitem>
-						<para>Shutdown the Fedora alpha1 server; dist\server\bin\fedora-stop {password}
-At this point, the objects have been physically removed from the filesystem and from the
-relational database. The remaining step is to remove the tables from the Fedora database.
-The manner in which you accomplish this will vary depending on which database you are using.
-						</para>
-					</listitem>
-					<listitem>
-						<para>If using MySQL.
-Drop and then recreate the MySQL database being used by Fedora. The default database name
-   used in the fedora.fcfg config file is "FedoraObjects". e.g.,
-   <literallayout>
-   {mysql-install}\bin\mysqladmin -u {mysql-dba-user} -p drop FedoraObjects
-
-   {mysql-install}\bin\mysqladmin -u {mysql-dba-user} -p create FedoraObjects
-
-   where
-
-     {mysql-install} - directory where mysql is installed (e.g., c:\mysql)
-     {mysql-dba-admin} - username of the mysql user with dba privileges (e.g., root);
-                         you will be prompted for the password.
-</literallayout>
-						</para>
-					</listitem>
-					<listitem>
-						<para>If using McKoi.
-Stop the McKoi database if it is running; dist\server\bin\mckoi-stop username password
-</para>
-					</listitem>
-					<listitem>
-						<para>Delete or remove the pre-release installation directory tree.</para>
-					</listitem>
-					<listitem>
-						<para>You are now ready to install the Fedora 1.0 release.</para>
-					</listitem>
-				</itemizedlist>
-			</para>
+			<title>About This Guide</title>
+			<para>This is the installation guide for Fedora.  It includes instructions for installing the server and client distributions, as well as instructions for installing and compiling the complete source code distribution.</para>
 		</section>
 		<section>
-			<title>Installing From Scratch</title>
-			<section>
-				<title>Prepare</title>
-				<para>Make sure you have a jdk1.4 installed and
-        in your PATH before you attempt to compile.
-        </para>
+			<title>Install Prerequisite Software</title>
+			<para>Required:</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						<emphasis>Sun's Java Software Development Kit, v1.4.</emphasis>  Whether you are installing a binary or source distribution, you must have the J2SDK v1.4 or above. It should be installed on the machine you intend to use as the Fedora server.  You can download it at http://java.sun.com/</para>
+				</listitem>
+			</itemizedlist>
+			<para>Optional:</para>
+			<itemizedlist>
+				<listitem>
+					<para>
+						<emphasis>MySQL, v3.2.3.</emphasis>  The Fedora server is backed in part by a relational database.  If you decide not to use the included pure java database, McKoi v0.94 (more about that later), you should download and install MySQL v3.2.3 for your platform (or see the "Other Databases" section below).  You can download MySQL at http://www.mysql.com/.  Note that later releases of MySQL might work, but they have not been tested. </para>
+				</listitem>
+			</itemizedlist>
+		</section>
+		<section>
+			<title>Download Fedora</title>
+			<para>The latest version of the software can always be found at http://www.fedora.info/release/</para>
+			<para>	There are multiple distribution packages in a release.  The server binaries, the client binaries, and the entire source code.  Each of these packages is distributed in .tar.gz (for Unix) and .zip (for Windows) archives.</para>
+		</section>
+		<section>
+			<title>Unpack Fedora</title>
+			<para>Server binary distribution:</para>
+			<itemizedlist>
+				<listitem>
+					<para>Decide where you want the Fedora software to reside.  For example, C:\ or /usr/local.</para>
+				</listitem>
+				<listitem>
+					<para>Unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.0.  This will be the home directory of Fedora.</para>
+				</listitem>
+				<listitem>
+					<para>If you're in Unix, you must change the permissions of the files in the server/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.0/server/bin/&ast;</emphasis>
+					</para>
+				</listitem>
+			</itemizedlist>
+			<para>Client binary distribution:</para>
+			<itemizedlist>
+				<listitem>
+					<para>If a server is already unpacked on the machine, put the client in the same place.  That is, if your server is unpacked into C:\fedora-1.0\server\, go to C:\ and unpack the client from there.  It will go into C:\fedora-1.0\client, so that now both the client and server are under one common directory.</para>
+				</listitem>
+				<listitem>
+					<para>If the machine you're installing on doesn't have a server, decide where you want the client to reside.  For example, C:\ or /usr/local.  Then unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.0.  This will be the home directory of Fedora.</para>
+				</listitem>
+				<listitem>
+					<para>If you're in Unix, you must change the permissions of the files in the client/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.0/server/bin/&ast;</emphasis>
+					</para>
+				</listitem>
+			</itemizedlist>
+			<para>Source Code:</para>
+			<itemizedlist>
+				<listitem>
+					<para>Decide where you want to work with the source code and unpack it there.  It will create its own directory, named according to the version... like fedora-1.0-src.  This will be your Fedora development directory.</para>
+				</listitem>
+			</itemizedlist>
+		</section>
+		<section>
+			<title>Prepare Environment Variables</title>
+			<para>For server, client, and source code installations:</para>
+			<itemizedlist>
+				<listitem>
+					<para>JAVA_HOME must point to the base directory of your J2SDK installation.  On Windows, this will usually be something like C:\j2sdk1.4.x\.  On Unix, it could be in several places.  The /usr and /usr/local directory are commonly used for Java installations.</para>
+					<blockquote>
+						<para>
+							<emphasis>Note: If you would rather not set your JAVA_HOME to point to the version required by Fedora (for instance, if you run other applications using java1.3) you can instead set the FEDORA_JAVA_HOME environment variable.  This way, Fedora's java installation won't conflict with your other java applications.</emphasis>
+						</para>
+					</blockquote>
+				</listitem>
+				<listitem>
+					<para>PATH must contain the executable (bin) directory of the J2SDK installation.  This is usally just under JAVA_HOME.</para>
+				</listitem>
+			</itemizedlist>
+			<para>For server and client installations:</para>
+			<itemizedlist>
+				<listitem>
+					<para>FEDORA_HOME must point to the base directory of your Fedora installation.  You will choose this directory when you unpack a binary distribution.</para>
+				</listitem>
+			</itemizedlist>
+			<para>For server installations:</para>
+			<itemizedlist>
+				<listitem>
+					<para>PATH must contain the executable directory of the Fedora server software installation.  This will be $FEDORA_HOME/server/bin on Unix, or %FEDORA_HOME%\server\bin in Windows.</para>
+				</listitem>
+			</itemizedlist>
+			<para>For client installations:</para>
+			<itemizedlist>
+				<listitem>
+					<para>PATH must contain the executable directory of the Fedora client software installation.  This will be $FEDORA_HOME/client/bin on Unix, or %FEDORA_HOME%\client\bin in Windows. </para>
+				</listitem>
+			</itemizedlist>
+			<para>For source code installations:</para>
+			<itemizedlist>
+				<listitem>
+					<para>FEDORA_DEV should contain the directory under which the source was unpacked, including the version part of the path.  For instance, if you installed the source in C:\ and it unpacked into C:\fedora-src-1.0\, FEDORA_DEV should be C:\fedora-src-1.0</para>
+				</listitem>
+				<listitem>
+					<para>•	PATH should contain the bin directory of Ant.  If you don't already have ant installed, a version comes with the Fedora source distribution in under %FEDORA_DEV%\res\ant\bin (in Windows) or $FEDORA_DEV/res/ant/bin (in Unix).  Note: If you opt to use the ant binaries included with the source, and you're in Unix, be sure to change the permissions on the files in the bin directory so that you can execute ant.  This can be done with the command: <emphasis>EDORA_DEV/res/ant/bin/&ast;</emphasis>
+					</para>
+				</listitem>
+			</itemizedlist>
+		</section>
+	</section>
+	<section>
+		<title>Compiling a Source Distribution</title>
+		<section>
+			<title>It's Easy</title>
+			<para>Provided that you've followed all the appropriate instructions above, you can now go to the $FEDORA_DEV directory and type:</para>
+			<blockquote>
 				<para>
-  Unjar in C:\mellon (jar -xvf filename.jar)
-    If you choose a different directory, be sure to change
-    the FEDORA_DEV value in initenv.bat appropriately.
-    </para>
-				<para>
-  Run C:\mellon\initenv
-    This sets your environment up for running/compiling the server.
-    If you're using a Unix variant, look at initenv.bat and set your
-    environment variables similarly.
-        </para>
-			</section>
-			<section>
-				<title>Compile</title>
-				<para>
-Compiling:
-</para>
-				<para>
-  Go to C:\mellon and type "ant serverdist"
-    This builds everything in C:\mellon\dist\server
-    For other targets, see build.xml
-        </para>
-			</section>
-			<section>
-				<title>Initial Setup</title>
-				<para>
-Initial setup:
-</para>
-				<para>
-					<literallayout>
-  1) Install the database (if using mysql, run the installer at C:\mellon\res\)
-  2) Start the database
-  3) Run mySQLConfig (with no params to see usage)
-  4) Change fedora.fcfg if needed (db host, user, pass)
-     See comments therein for more configuration options.
-</literallayout>
+					<emphasis>ant serverdist</emphasis>
 				</para>
-			</section>
-			<section>
-				<title>Start The Server</title>
-				<para>
-  Type fedora-start
-  </para>
-				<para>
-    This starts the server.  It will take a few seconds to initialize.
-    If it fails, type "fedora-stop".  Logs are kept at dist/server/logs/
-      </para>
-			</section>
-			<section>
-				<title>Ingest Sample Objects</title>
-				<para>
-        Type fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin
-        </para>
-				<para>
-        ...where localhost and 8080 are your server hostname and port, and fedoraAdmin and fedoraAdmin are the super user name and password.  (The superuser name is always fedoraAdmin; the superuser password is configured in fedora.fcfg, and defaults to the value, "fedoraAdmin")
-</para>
-				<para>
-This installs all the demo objects from the
-        demo/ directory.  
-        </para>
-			</section>
+			</blockquote>
+			<para>and everything necessary for a server and client distribution will be put in $FEDORA_DEV/dist</para>
+			<para>If you want to run the server and client straight from where it was compiled, be sure to set your FEDORA_HOME to $FEDORA_DEV/dist, and add $FEDORA_HOME/server/bin and $FEDORA_HOME/client/bin to your PATH environment variable.</para>
+			<para>For other targets, see the build.xml file or type ant -projecthelp for a brief description of each.</para>
+			<para>To erase all temporary and compiled files created by a build, first ensure that your database and Fedora server are stopped, and type ant clean.  If you're not using McKoi, you should also drop the FedoraObjects (or whatever you named it) database from your RDBMS if you want to start fresh.</para>
 		</section>
+	</section>
+	<section>
+		<title>Setting up the Server</title>
+		<section>
+			<title>Initialize the Database</title>
+			<para>Fedora is designed to be RDBMS-independent, but comes with a pure java database called McKoi.  It has been tested and works with both McKoi and MySQL.  If you choose to use MySQL, we assume here that it is already installed.</para>
+			<para>Follow the below instructions for the RDBMS of your choice in order to create the user and tablespace so that the Fedora software can use the database.</para>
+				<section>
+					<title>McKoi</title>
+					<para>Execute the command:</para>
+					<blockquote>
+						<para>mckoi-init <emphasis>fedoraDBUser fedoraDBUser</emphasis></para>
+					</blockquote>
+					<para>...where the first parameter is the username you'd like to use for the database, and the second parameter is the password you'd like to use.  Remember this information, as it will be needed later when configuring Fedora.</para>
+					<para>Note: This command resolves to a batch file (mckoi-init.bat) in Windows, and a shell script (mckoi-init.sh) in Unix.  These reside in the server's bin directory.</para>
+				</section>
+				<section>
+					<title>MySQL</title>
+					<para>Execute the command:</para>
+					<blockquote>
+						<para>mysql-config <emphasis>installDir dbaUser dbaPass fedoraDBUser fedoraDBPass dbName</emphasis></para>
+					</blockquote>
+					<para>Where:</para>
+					<itemizedlist>
+						<listitem>
+							<para><emphasis>installDir</emphasis> is the location where MySQL is installed.  In Unix, this might be /usr/local/mysql.  In Windows, it might be C:\mysql</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>dbaUser</emphasis> is the name of the MySQL user with dba privileges.  In a default MySQL installation, this will be root.</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>dbaPass</emphasis> is the password of the MySQL user with dba privileges.  In a default MySQL installation,  if you're running MySQL on the same machine as Fedora, you can usually pass "" for this argument.</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>fedoraDBUser</emphasis> is the username you'd like to use for the Fedora software's database access. (e.g., fedoraAdmin)</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>fedoraDBPass</emphasis> is the password you'd like to use for the above user.  (e.g., fedoraAdmin)</para>
+						</listitem>
+						<listitem>
+							<para><emphasis>dbName</emphasis> is the name you'd like to use for the Fedora database.  (e.g., FedoraObjects) </para>
+						</listitem>
+					</itemizedlist>
+					<para>Note: This command resolves to a batch file (mysql-config.bat) in Windows, and a shell script (mysql-config.sh) in Unix.  These reside in the server's bin directory.</para>
+				</section>
+				<section>
+					<title>Other Databases</title>
+					<para>If you want to use a different database, it's an option, but it will take some extra work.  Here's how it can be done:</para>
+					<itemizedlist>
+						<listitem>
+							<para>The database needs to be JDBC-compliant and must support common SQL-92 syntax.  The driver will need to be put in the server's tomcat41/common/lib directory so that Fedora picks it up, and the JDBC url will need to be configured appropriately in the server's config/fedora.fcfg file.</para>
+						</listitem>
+					</itemizedlist>
+					<para>	Upon startup, Fedora checks the database for all required tables.  If they don't exist, it creates them.  Creation of tables is a much less standardized task across RDBMSs than regular SQL queries.  Thus, you must either</para> 
+					<orderedlist>
+						<listitem>
+							<para>create the tables and indexes and auto-increments yourself in your own database (see the file: src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec in the source distribution for the RDBMS-neutral table specifications),</para>
+						</listitem>
+						<listitem>
+							<para>write your own subclass of fedora.utilities.DDLConverter for your database software, include it in a jar file in server/tomcat41/common/lib, and associate it with the JDBC driver inside the server/config/fedora.fcfg file (see how it's done by looking at the MySQLDDLConverter and McKoiDDLConverter associations with their respective drivers in the fedora.fcfg file, and the classes' implementations in the source distribution).</para>
+						</listitem>
+					</orderedlist> 
+					<para>If you choose option #2, please tell us about it, as it will be useful for other users of Fedora!  Option 2 is harder, but it will make future installations of new versions of Fedora (where the db schema will likely change) much easier for you if you plan on using that database later.</para>
+				</section>
+		</section>
+		<section>
+			<title>Modify Fedora’s Configuration</title>
+			<para>Before starting for the first time, you will want to make some changes in Fedora’s main configuration file, server/config/fedora.cfg.</para>
+				<section>
+					<title>Introducing fedora.fcfg</title>
+					<para>The configuration file has a simple schema.  It starts with a server element, under which a series of param elements occur, followed by a series of module elements, followed by a series of datastore elements.</para>
+					<para>The param elements directly following the root server element are used to control what are considered generic server functionality.  Examples include the level of logging to do, the port on which the server should be exposed, and the superuser password.</para>
+					<para>The module elements are used to configure specific parts of Fedora.  For instance, the module with the role attribute, “fedora.server.search.FieldSearch”  is used to configure the field-searching component of the server.  Inside the module element, several param elements are included.  These are specific to that module’s implementation.  Descriptions of each parameter can currently be found in the configuration file itself.  Important ones will be listed below.</para>
+					<para>The datastore elements are used to configure various databases that might be used by the system.  Although the sample configuration file holds several, you will typically only need one.  The datastore elements are associated with the modules by means of a parameter inside the associated module.  In the sample configuration file, for example, the poolNames param of the fedora.server.storage.ConnectionPoolManager module refers to one of the datastore elements in it’s value.</para>
+				</section>
+				<section>
+					<title>Important Parameters</title>
+					<para>You will probably want to change the values of the following parameters for you own installation.</para>
+					<variablelist>
+						<varlistentry>
+							<term>adminPassword</term>
+							<listitem>
+								<para>This is where you set the value of the administrative user, “fedoraAdmin”’s password.  This is used when authenticating remote requests for performing administrative functions.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>object_store_base</term>
+							<listitem>
+								<para>A directory where XML serializations of the digital objects will be stored.  This will be created if it doesn’t already exist.  This parameter must be given as an absolute path.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>fedora_temp</term>
+							<listitem>
+								<para>A temporary directory.  This will be created if it doesn’t already exist.  This parameter must be given as an absolute path.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>fedora_datastreams</term>
+							<listitem>
+								<para>A directory where datastreams of digital objects will be stored.  This will be created if it doesn’t already exist.  This parameter must be given as an absolute path.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>fedoraServerPort</term>
+							<listitem>
+								<para>The port on which the server should run.  8080 is often used, but this can be anything your OS / user privleges will allow.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>fedoraServerHost</term>
+							<listitem>
+								<para>The host name of the machine on which Fedora runs.  If the machine has aliases, use the alias that will be used by people connecting to the server (be it via a web browser or one of the SOAP API exposures).</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>DOManager/pidNamespace</term>
+							<listitem>
+								<para>This is the namespace id part of newly generated PIDs for objects.  This should be a short string consisting of the characters [a-z][0-9].  When objects are first ingested or created in the repository, this will be the first part of the identifier used for them.  (Note: the pid namespace won’t be used for objects that are ingested with a “demo:” pid)</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>DOManager/storagePool</term>
+							<listitem>
+								<para>This specifies the database connection pool to be used for the storage subsystem.  Normally this will just identify ConnectionPoolManager’s default connection pool.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Management/allowHosts </term>
+							<listitem>
+								<para>A comma-separated list of IP ranges (for example, “200.200.0.0-255.255.0.0,100.0.0.0-180.0.0.0”) that the client’s address is compared to for Management API access.  If this is specified, the remote address must match for any Management request in order to be accepted.  If this is not specified, all requests will be accepted unless the remote address matches a deny pattern (see below).</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Management/denyHosts</term>
+							<listitem>
+								<para>IP Ranges to deny.  If specified, the remote address must not match for any Management request in order to be accepted.  If this is not specified, request acceptance is governed solely by the allowHosts parameter.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Access/allowHosts</term>
+							<listitem>
+								<para>Same as Management/allowHosts, except this controls access to the Access API.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Access/denyHosts</term>
+							<listitem>
+								<para>Same as Management/denyHosts, except this controls access to the Access API.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>Access/doMediateDatastreams</term>
+							<listitem>
+								<para>This is for additional repository security.  If true, all datastreams (even those that are referenced) will be piped through Fedora when they are sent to behavior services.  See the description of this parameter inside fedora.fcfg for more detail on this option.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>FieldSearch/connectionPool</term>
+							<listitem>
+								<para>Specifies the database connection pool to be used for the fielded search functionality.  Normally this will be ConnectionPoolManager’s default pool.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>OAIProvider/repositoryName</term>
+							<listitem>
+								<para>How you want your repository to be named in the OAI-PMH interface’s Identify request.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>OAIProvider/adminEmails</term>
+							<listitem>
+								<para>Who the OAI-PMH interface identifies as administrators to harvesters.  This is a space-separated list.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>OAIProvider/friends</term>
+							<listitem>
+								<para>A space separated list of OAI-PMH provider endpoints identifying other providers that you associate with.  OAI harvesters use this for discovery purposes.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>fedoraServerPort</term>
+							<listitem>
+								<para>The port on which the server should run.  8080 is often used, but this can be anything your OS / user privleges will allow.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>ConnectionPoolManager/defaultPoolName</term>
+							<listitem>
+								<para>The pool to be provided to modules that request the default connection pool.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>ConnectionPoolManager/poolNames</term>
+							<listitem>
+								<para>A comma delimited list of pools to make available.  These should be identified by the id attribute of one of the datastore elements.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>datastore/dbUsername</term>
+							<listitem>
+								<para>The username for database access.  This should match the username used previously when setting up the database for Fedora.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>datastore/dbPassword</term>
+							<listitem>
+								<para>The password for the database user.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>datastore/jdbcURL</term>
+							<listitem>
+								<para>A JDBC URL that can be used to connect to your database.  The syntax must match that required by the driver.  Working examples for MySQL and McKoi are included.</para>
+							</listitem>
+						</varlistentry>
+						<varlistentry>
+							<term>datastore/jdbcDriverClass</term>
+							<listitem>
+								<para>Identifies the driver to use for connecting to the database.  This is RDBMS-specific.  If you need to use a driver that isn’t already included, put the .jar file in server/tomcat41/common/lib./</para>
+							</listitem>
+						</varlistentry>
+					</variablelist>
+				</section>
+				<section>
+					<title>Other Settings</title>
+					<para>There are many other parameters you can configure with Fedora.  See the fedora.fcfg file for documentation on all the parameters.</para>
+				</section>
+		</section>
+	</section>
 </article>
-
