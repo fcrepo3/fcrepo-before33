@@ -99,9 +99,9 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       {
         fedora.server.types.gen.MethodDef mdef =
                  new fedora.server.types.gen.MethodDef();
-        mdef.setHttpBindingOperationLocation(
-            methodResults[i].httpBindingOperationLocation);
-        mdef.setHttpBindingURL(methodResults[i].httpBindingURL);
+        //mdef.setHttpBindingOperationLocation(
+        //    methodResults[i].httpBindingOperationLocation);
+        //mdef.setHttpBindingURL(methodResults[i].httpBindingURL);
         mdef.setMethodLabel(methodResults[i].methodLabel);
         mdef.setMethodName(methodResults[i].methodName);
         MethodParmDef[] parmResults = methodResults[i].methodParms;
