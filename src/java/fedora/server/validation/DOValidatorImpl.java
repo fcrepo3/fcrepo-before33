@@ -83,10 +83,6 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
 {
     protected static boolean debug = true;
 
-   // FOR TESTING: The configuration variables are normally set via
-   // DOValidatorModule initialization, but they are set with some default
-   // values so that this class can be tested stand-alone via main().
-
    /** Configuration variable: tempdir is a working area for validation */
     protected static String tempDir = "temp/";
 
@@ -94,14 +90,14 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
      * Configuration variable: xmlSchemaPath is the location of the
      * METS XML Schema.
      */
-    protected static String xmlSchemaPath = "xsd/mets-fedora-ext.xsd";
+    protected static String xmlSchemaPath = null;
 
     /**
      *  Configuration variable: schematronPreprocessorPath is the Schematron
      *  stylesheet that is used to transform a Schematron schema into a
      *  validating stylesheet based on the rules in the schema.
      */
-    protected static String schematronPreprocessorPath = "schematron/preprocessor.xslt";
+    protected static String schematronPreprocessorPath = null;
 
     /**
      *  Configuration variable: schematronSchemaPath is the Schematron
@@ -109,22 +105,13 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
      *  It is transformed into a validating stylesheet by the Schematron
      *  preprocessing stylesheet.
      */
-    protected static String schematronSchemaPath = "schematron/fedoraRulesExt.xml";
+    protected static String schematronSchemaPath = null;
 
     /**
      * Configuration variable: connectionPool is a database connection
      *  pool to be used by the validation module for miscellaneous lookups.
      */
     protected static ConnectionPool connectionPool = null;
-
-    // FOR TESTING: Class variables to get a database ConnectionPool
-    // during unit testing when Server is not instantiated.
-    private static int minConnections = 10;
-    private static int maxConnections = 100;
-    private static String jdbcDriverClass = "org.gjt.mm.mysql.Driver";
-    private static String dbUsername = null;
-    private static String dbPassword = null;
-    private static String jdbcURL = "jdbc:mysql://localhost/FedoraObjects";
 
     /**
      *  Digital object variables that are required to support
@@ -134,60 +121,6 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
      *  variables are needed.
      */
     private DOIntegrityVariables iVars = null;
-
-    public static void main(String[] args)
-    {
-      if (args.length < 2)
-      {
-        System.err.println("usage: java DOValidatorImpl objectLocation " +
-          "validationLevel workFlowPhase dbUsername dbPassword" + "\n" +
-          "  objectLocation: the file path of the object to be validated" + "\n" +
-          "  validationLevel: {0|1|2|3} where" + "\n" +
-          "      0=all validation, 1=xmlSchema only, 2=schematron only, " +
-          "3=referential integrity only" + "\n" +
-          "  workFlowPhase: {ingest|store} the phase of the object lifecycle " +
-          "to which validation pertains" + "\n" +
-          "  dbUsername: userName for the FedoraObjects database" + "\n" +
-          "  dbPassword: password for the FedoraObjects database");
-        System.exit(1);
-      }
-
-      try
-      {
-        // Get a database connection in the absence of a Server instance
-        // which would be available in DOValidatorModule.
-        dbUsername = args[3];
-        dbPassword = args[4];
-        connectionPool = new ConnectionPool(
-                          jdbcDriverClass, jdbcURL, dbUsername,
-                          dbPassword, minConnections, maxConnections, true);
-
-        File objectAsFile = new File((String)args[0]);
-        DOValidatorImpl dov = new DOValidatorImpl();
-        dov.validate(new FileInputStream(objectAsFile),
-            new Integer(args[1]).intValue(), args[2]);
-      }
-      catch (ObjectValidityException e)
-      {
-        System.out.println("DOValidatorImpl caught ObjectValidityException.");
-        System.out.println("Suppressing message since not attached to Server.");
-      }
-      catch (ServerException e)
-      {
-        System.out.println("DOValidatorImpl caught ServerException.");
-        System.out.println("Suppressing message since not attached to Server.");
-      }
-      catch (Throwable th)
-      {
-        System.out.println("DOValidatorImpl returned error in main(). "
-                  + "The underlying error was a "
-                  + th.getClass().getName() + ".  "
-                  + "The message was "  + "\""
-                  + th.getMessage() + "\"");
-      }
-      System.exit(1);
-
-    }
 
   /**
    * <p>Constructs a new DOValidatorImpl to support all forms of
