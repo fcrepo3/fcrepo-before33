@@ -153,6 +153,7 @@ public class KowariRIStore extends StdoutLogging implements RIStore {
 	 * @see fedora.server.resourceIndex.RIStore#write(java.io.OutputStream)
 	 */
 	public void write(OutputStream rdfxml) {
+        flush();
 		m_model.write(rdfxml);
 	}
     
