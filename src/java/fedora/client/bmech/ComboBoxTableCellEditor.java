@@ -7,14 +7,14 @@ import javax.swing.event.*;
 import java.util.*;
 import javax.swing.table.TableCellEditor;
 
-
+/*
     public class ComboBoxTableCellEditor extends DefaultCellEditor
     {
         public ComboBoxTableCellEditor(String[] items) {
             super(new JComboBox(items));
         }
     }
-/*
+  */
     public class ComboBoxTableCellEditor extends AbstractCellEditor implements TableCellEditor {
         // This is the component that will handle the editing of the
         // cell value
@@ -25,22 +25,20 @@ import javax.swing.table.TableCellEditor;
         {
           super();
           component = new JComboBox(items);
-          ((JComboBox)component).setSelectedItem("User");
 
         }
 
         // This method is called when a cell value is edited by the user.
         public Component getTableCellEditorComponent(JTable table, Object value,
                 boolean isSelected, int rowIndex, int vColIndex) {
-            // 'value' is value contained in the cell located at
-            // (rowIndex, vColIndex)
 
-            if (isSelected) {
+            if (isSelected)
+            {
                 // cell (and perhaps other cells) are selected
             }
 
             // Configure the component with the specified value
-            //((JComboBox)component).setSelectedItem((String)value);
+            ((JComboBox)component).setSelectedItem((String)value);
 
             // Return the configured component
             return component;
@@ -53,4 +51,3 @@ import javax.swing.table.TableCellEditor;
         }
 
     }
-    */
