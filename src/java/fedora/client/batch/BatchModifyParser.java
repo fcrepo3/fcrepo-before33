@@ -391,7 +391,6 @@ public class BatchModifyParser extends DefaultHandler
                     m_ds.formatURI = attrs.getValue("formatURI");
                 if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equalsIgnoreCase(""))
                     m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
-                //System.out.println("add-vers: "+m_ds.versionable);
                 if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equalsIgnoreCase(""))
                     m_ds.altIDs = attrs.getValue("altIDs").split(" ");             
                 // Check that MIME type is text/xml if datastream is XMLMetadata datastream
@@ -497,13 +496,10 @@ public class BatchModifyParser extends DefaultHandler
                         m_ds.force = false;
                     }                    
                     if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equalsIgnoreCase("")) {
-                        //System.out.println("mod-vers-in: "+attrs.getValue("versionable"));
                         m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
                     } else {
-                        //System.out.println("mod-vers-out: "+dsOrig.isVersionable());
                         m_ds.versionable = dsOrig.isVersionable();
                     }     
-                    //System.out.println("mod-vers: "+m_ds.versionable);
                     if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equalsIgnoreCase("")) {
                         m_ds.altIDs = attrs.getValue("altIDs").split(" ");
                     } else {
