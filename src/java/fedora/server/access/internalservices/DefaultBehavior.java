@@ -35,7 +35,7 @@ public interface DefaultBehavior
    * is returned as HTML in a presentation-oriented format.</p>
    *
    */
-  public MIMETypedStream viewObjectInfo() throws ServerException;
+  public MIMETypedStream viewObjectProfile() throws ServerException;
 
   /**
    * <p>Returns the list of items (datastreams) in the object.
