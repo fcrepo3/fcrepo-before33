@@ -489,6 +489,9 @@ public class DefaultManagement
         try {
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
+            if (orig.DSState.equals("D")) {
+                throw new GeneralException("Can only change state on deleted datastreams.");
+            }
             if (orig.DSControlGrp.equals("M")) {
                     // copy the original datastream, replacing its DSLocation with
                     // the new location (or the old datastream's default dissemination location, if empty or null),
@@ -590,6 +593,9 @@ public class DefaultManagement
         try {
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
+            if (orig.DSState.equals("D")) {
+                throw new GeneralException("Can only change state on deleted datastreams.");
+            }
             if (!orig.DSControlGrp.equals("X")) {
                 throw new GeneralException("Only inline XML datastreams may be modified by value.");
             }
@@ -983,6 +989,7 @@ public class DefaultManagement
     	    throws StreamWriteException {
 		// first clean up after old stuff
 		long minStartTime=System.currentTimeMillis()-(60*1000*m_uploadStorageMinutes);
+                ArrayList removeList=new ArrayList();
 		Iterator iter=m_uploadStartTime.keySet().iterator();
         while (iter.hasNext()) {
 		    String id=(String) iter.next();
@@ -996,9 +1003,13 @@ public class DefaultManagement
 				    logWarning("Could not remove expired uploaded file '" + id
 				            + "'.  Check existence/permissions in management/upload/ directory.");
 				}
-  				m_uploadStartTime.remove(id);
+                                removeList.add(id);
 			}
 		}
+                for (int i=0; i<removeList.size(); i++) {
+                    String id=(String) removeList.get(i);
+                    m_uploadStartTime.remove(id);
+                }
         // then generate an id
 		int id=getNextTempId();
 		// and attempt to save the stream
