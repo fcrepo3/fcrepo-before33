@@ -230,7 +230,7 @@
 	<!-- the original values are to remain unchanged so in this example the -->
 	<!-- datastream state attribute is not modified.                        -->
 	<!-- ****************************************************************** -->
-	<fbm:modifyDatastream pid="demo:32" dsID="SCREEN" dsControlGroupType="E" dsLabel="Changed label for datastream SCREEN" dsLocation="http://l:8080/fedora/get/demo:5/DS4" logMessage="BatchModify - modifyDatastream"/>
+	<fbm:modifyDatastream pid="demo:32" dsID="SCREEN" dsControlGroupType="E" dsLabel="Changed label for datastream SCREEN" dsLocation="http://localhost:8080/fedora/get/demo:5/DS4" logMessage="BatchModify - modifyDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Modify datastream DC of demo:32 object by changing its label and   -->
