@@ -54,7 +54,7 @@
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
         <param name="pidNamespace" value="changeme"/>
-        <param name="storagePool" value="localMcKoiPool"/>
+        <param name="storagePool" value="localMySQLPool"/>
         <param name="storageFormat" value="mets11fedora1"/>
         <param name="storageCharacterEncoding" value="UTF-8"/>
     </module>
@@ -93,7 +93,7 @@
     </module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
-		<param name="defaultPoolName" value="localMcKoiPool"/>
+		<param name="defaultPoolName" value="localMySQLPool"/>
 		<param name="poolNames" value="localMySQLPool,localMcKoiPool,remoteMySQLPool"/>
 	</module>
 	<datastore id="remoteMySQLPool">
