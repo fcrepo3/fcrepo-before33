@@ -149,7 +149,8 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>
 	
-	 <!-- substitute per-disseminator labels; prefer datastream-specific over disseminator-general -->
+	<!-- substitute per-disseminator labels; prefer datastream-specific over disseminator-general -->
+	<!-- THIS FEATURE IS DEPRECATED AS OF fEDORA 2.1
 	<xsl:template match="/METS:mets/METS:structMap/METS:div/METS:div" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
@@ -166,6 +167,7 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 			<xsl:apply-templates select="node()"/>			
     		</xsl:copy>
 	</xsl:template>	
+	-->
 	
 </xsl:transform>
 
