@@ -321,8 +321,21 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         }
     } else if (URIArray.length > 7) {
       // Request is either dissemination request or timestamped get datastream request
-      PID = decoder.decode(URIArray[5],"UTF-8");
-      bDefPID = decoder.decode(URIArray[6],"UTF-8");
+        try {
+            PID = Server.getPID(URIArray[5]).toString();  // normalize the PID
+            bDefPID = Server.getPID(URIArray[6]).toString();  // this one too
+        } catch (Throwable th) {
+            String message = "[FedoraAccessServlet] An error has occured in "
+                    + "accessing the Fedora Access Subsystem. The error was \" "
+                    + th.getClass().getName()
+                    + " \". Reason: "  + th.getMessage()
+                    + "  Input Request was: \"" + request.getRequestURL().toString();
+            logWarning(message);
+            response.setContentType(CONTENT_TYPE_HTML);
+            ServletOutputStream out = response.getOutputStream();
+            out.println("<html><body><h3>" + message + "</h3></body></html>");
+            return;
+      }
       methodName = decoder.decode(URIArray[7], "UTF-8");
       if (URIArray.length == 8) {
         if (URIArray[6].indexOf(":")==-1) {
