@@ -304,7 +304,7 @@ set       toc
 <xsl:param name="tex.math.delims" select="'1'"/>
 
 <xsl:param name="toc.list.type">dl</xsl:param>
-<xsl:param name="toc.section.depth">2</xsl:param>
+<xsl:param name="toc.section.depth">0</xsl:param>
 <xsl:param name="ulink.target" select="'_top'"/>
 <xsl:param name="use.extensions" select="'0'"/>
 <xsl:param name="use.id.as.filename" select="'0'"/>
