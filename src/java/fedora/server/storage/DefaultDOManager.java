@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,6 +45,7 @@ import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableCreatingConnection;
 import fedora.server.utilities.TableSpec;
@@ -444,7 +446,9 @@ public class DefaultDOManager
             // at time of ingest, then again, here, at time of storage.
             // We'll just be conservative for now and call all levels both times.
             // First, serialize the digital object into an Inputstream to be passed to validator.
-
+            
+            // set last mod date, in UTC
+            obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
             // Set useSerializer to false to disable the serializer (for debugging/testing).
             boolean useSerializer=true;
             if (useSerializer) {
@@ -715,10 +719,13 @@ public class DefaultDOManager
 
                 // then get the writer
                 DOWriter w=new DefinitiveDOWriter(context, this, obj);
-                // ...set the create and last modified dates
-                Date now=new Date();
-                obj.setCreateDate(now);
-                obj.setLastModDate(now);
+                
+                // ...set the create and last modified dates as the current
+                // server date/time... in UTC (considering the local timezone 
+                // and whether it's in daylight savings)
+                Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+                obj.setCreateDate(nowUTC);
+                obj.setLastModDate(nowUTC);
 
                 // add to internal list...somehow..think...
 

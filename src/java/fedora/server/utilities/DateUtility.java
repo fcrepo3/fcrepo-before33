@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.text.ParsePosition;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * <p>Title: DateUtility.java</p>
@@ -142,6 +143,24 @@ public abstract class DateUtility
       calendar.setTime(date);
     }
     return(calendar);
+  }
+  
+  public static Date convertLocalDateToUTCDate(Date localDate) 
+  {
+    // figure out the time zone offset of this machine (in millisecs)
+    Calendar cal=Calendar.getInstance();
+    int tzOffset=cal.get(Calendar.ZONE_OFFSET);
+    // ...and account for daylight savings time, if applicable
+    TimeZone tz = cal.getTimeZone();
+    if (tz.inDaylightTime(localDate)) 
+    {
+      tzOffset+=cal.get(Calendar.DST_OFFSET);
+    }
+    // now we have UTF offset in millisecs... so add it to localDate.millisecs
+    // and return a new Date object.
+    Date UTCDate=new Date();
+    UTCDate.setTime(localDate.getTime() + tzOffset);
+    return UTCDate;
   }
 
   public static void main(String[] args)
