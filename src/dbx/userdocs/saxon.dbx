@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+<article>
+	<articleinfo>
+		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<title>
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+		<title>Saxon webapp</title>
+		<corpauthor>Fedora Development Team</corpauthor>
+		<copyright>
+			<year>2003</year>
+		</copyright>
+		<publisher>
+			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
+		</publisher>
+		<edition>$Revision$</edition>
+		<date>$Date$</date>
+		<releaseinfo>
+            $Id$ 
+        </releaseinfo>
+	</articleinfo>
+	<sect1>
+		<title>Welcome to the Saxon XSLT Processor*</title>
+		<para>This local service provides an XSLT Transformation Engine for transforming XML-encoded source documents using a supplied XSLT stylesheet. The service functions as a java servlet and can be invoked usingthe following syntax:</para>
+		<blockquote>
+			<para>
+				<emphasis role="bold">http://&lsqb;hostname&rsqb;:&lsqb;port-number&rsqb;/saxon/SaxonServlet?source&equals;&lsqb;xml-source&rsqb;&amp;style&equals;&lsqb;xsl-stylesheet&rsqb;&amp;clear-stylesheet-cache&equals;yes</emphasis>
+			</para>
+		</blockquote>
+		<para>Where:</para>
+		<itemizedlist>
+			<listitem>
+				<para>&lsqb;hostname&rsqb; - The hostname of the Fedora server; default is localhost.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;port-number&rsqb; - The port number on which the Fedora server is running; default 8080.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;xml-source&rsqb; - The URL of the XML source file.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;xsl-stylesheet&rsqb; - The URL of the XSLT stylesheet file.</para>
+			</listitem>
+			<listitem>
+				<para>clear-stylesheet-cache - An optional parameter indicating if the stylesheet cache is to be cleared. A value of of "yes" signals to clear the stylesheet cache. If the parameter is omitted or has any other value, the stylesheet cache remains untouched.</para>
+			</listitem>
+		</itemizedlist>
+		<para>Example:</para>
+		<blockquote>
+			<para>http://localhost:8080/saxon/SaxonServlet?source&equals;http://dl.lib.virginia.edu/data/xmltext/ead/viu03270&amp;style&equals;http://dl.lib.virginia.edu/bin/ead/xsl/document.xsl</para>
+		</blockquote>
+		<para>
+			<emphasis>* This service uses the SAXON XSLT Processor from Michael Kay which is licensed under the Mozilla Public License (<ulink url="http://www.mozilla.org/MPL/">MPL</ulink>). For additonal information regarding the SAXON XSLT Processor, please refer to the Saxon project web site on SourceForge at: <ulink url="http://saxon.sourceforge.net/">http://saxon.sourceforge.net/</ulink>.</emphasis>
+		</para>
+	</sect1>
+</article>
