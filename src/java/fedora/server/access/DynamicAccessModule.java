@@ -288,11 +288,12 @@ public class DynamicAccessModule extends Module implements Access
    * @return an array of object method definitions
    * @throws ServerException
    */
-  public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
+  public ObjectMethodsDef[] listMethods(Context context, String PID,
       Date asOfDateTime) throws ServerException
   {
     //m_ipRestriction.enforce(context);
-    return da.getObjectMethods(context, PID, asOfDateTime);
+    //return da.getObjectMethods(context, PID, asOfDateTime);
+      return da.listMethods(context, PID, asOfDateTime);
   }
 
   /**
@@ -348,12 +349,6 @@ public class DynamicAccessModule extends Module implements Access
   {
     //m_ipRestriction.enforce(context);
     return da.isDynamicBehaviorDefinition(context, PID, bDefPID);
-  }
-
-  public ObjectMethodsDef[] listMethods(Context context, String PID,
-          Date asOfDateTime) throws ServerException
-  {
-      return da.listMethods(context, PID, asOfDateTime);
   }
 
   public DatastreamDef[] listDatastreams(Context context, String PID,

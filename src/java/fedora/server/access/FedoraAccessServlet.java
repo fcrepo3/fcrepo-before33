@@ -300,9 +300,8 @@ public class FedoraAccessServlet extends HttpServlet
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
                     return;
-                } else {
-                    asOfDateTime=versDateTime;
                 }
+                asOfDateTime=versDateTime;
                 isGetObjectProfileRequest = true;
             }
         } else {
@@ -332,9 +331,8 @@ public class FedoraAccessServlet extends HttpServlet
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
                 return;
-            } else {
-                asOfDateTime=versDateTime;
             }
+            asOfDateTime=versDateTime;
             isGetDatastreamDisseminationRequest = true;
         } else {
             isGetDisseminationRequest = true;
@@ -355,10 +353,9 @@ public class FedoraAccessServlet extends HttpServlet
               response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
               response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
               return;
-          } else {
-              asOfDateTime=versDateTime;
           }
-              isGetDisseminationRequest = true;
+          asOfDateTime=versDateTime;
+          isGetDisseminationRequest = true;
       }
       if (URIArray.length > 9) {
         String message = "Dissemination Request Syntax Error: The expected "
@@ -580,7 +577,6 @@ public class FedoraAccessServlet extends HttpServlet
     MIMETypedStream dissemination = null;
     dissemination =
         s_access.getDatastreamDissemination(context, PID, dsID, asOfDateTime);
-    System.out.println("disseminationResult: "+dissemination);
     if (dissemination != null)
     {
 

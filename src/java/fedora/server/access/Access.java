@@ -89,8 +89,10 @@ public interface Access
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
+  /*
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
       Date asOfDateTime) throws ServerException;
+  */
 
   public ObjectMethodsDef[] listMethods(Context context, String PID,
       Date asOfDateTime) throws ServerException;

@@ -49,24 +49,6 @@
 			</documentation>
 		</part>
 	</message>
-	<message name="getObjectMethodsRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-			      object.  If null, the current view of the object (the most recent time) 
-			      is assumed.
-			</documentation>
-		</part>
-	</message>
-	<message name="getObjectMethodsResponse">
-		<part name="response" type="fedora-types:ArrayOfObjectMethodsDef">
-			<documentation>A set of method definitions that represent 
-				all possible disseminations that can be run on the object.
-			</documentation>
-		</part>
-	</message>	
 	<message name="listMethodsRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -219,14 +201,6 @@
 			<input message="fedora-api:getObjectProfileRequest"/>
 			<output message="fedora-api:getObjectProfileResponse"/>
 		</operation>
-		<operation name="getObjectMethods">
-			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition pids,
-				and methodNames supported by a digital object.  This returns a set of method definitions
-				that represent all possible disseminations that can be run on the object.
-			</documentation>
-			<input message="fedora-api:getObjectMethodsRequest"/>
-			<output message="fedora-api:getObjectMethodsResponse"/>
-		</operation>
 		<operation name="listMethods">
 			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition pids,
 				and methodNames supported by a digital object.  This returns a set of method definitions
@@ -311,15 +285,6 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
-		<operation name="getObjectMethods">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectMethods"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>		
 		<operation name="listMethods">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listMethods"/>
 			<input>

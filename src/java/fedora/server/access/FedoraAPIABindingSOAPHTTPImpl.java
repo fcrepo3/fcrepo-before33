@@ -296,6 +296,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
    * @return An array of object method definitions.
    * @throws java.rmi.RemoteException
    */
+  /*
   public fedora.server.types.gen.ObjectMethodsDef[] getObjectMethods(String PID,
                                                                      String asOfDateTime)
       throws java.rmi.RemoteException
@@ -323,6 +324,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     }
     return null;
   }
+  */
 
 
   public fedora.server.types.gen.ObjectMethodsDef[] listMethods(String PID,

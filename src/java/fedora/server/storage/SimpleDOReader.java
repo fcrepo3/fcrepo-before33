@@ -18,7 +18,6 @@ import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.DSBindingAugmented;
-import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.DSBindingMapAugmented;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodDefOperationBind;
@@ -71,7 +70,7 @@ public class SimpleDOReader
     private RepositoryReader m_repoReader;
     private DOTranslator m_translator;
     private String m_exportFormat;
-	private String m_storageFormat;
+    private String m_storageFormat;
     private String m_encoding;
 
     private SimpleDateFormat m_formatter=
@@ -464,7 +463,7 @@ public class SimpleDOReader
         return (String[])modDates.toArray(new String[0]);
     }
 
-    public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime)
+    public MethodDef[] listMethods(String bDefPID, Date versDateTime)
             throws MethodNotFoundException, ServerException {
 
         if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
@@ -488,25 +487,6 @@ public class SimpleDOReader
           methods[i].methodParms = filterParms(methods[i]);
         }
         return methods;
-    }
-
-    public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime)
-            throws MethodNotFoundException, ServerException {
-
-        if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
-             bDefPID.equalsIgnoreCase("fedora-system:3"))
-        {
-          throw new MethodNotFoundException("[getObjectMethodsXML] The object, "
-            + m_obj.getPid()
-            + ", will not report on dynamic method definitions "
-            + "at this time (fedora-system:1 and fedora-system:3.");
-        }
-        String mechPid=getBMechPid(bDefPID, versDateTime);
-        if (mechPid==null) {
-            return null;
-        }
-        return m_repoReader.getBMechReader(m_context, mechPid).
-                getServiceMethodsXML(versDateTime);
     }
 
     /**
@@ -657,7 +637,6 @@ public class SimpleDOReader
     private String getDisseminatorID(String bDefPID)
             throws DisseminatorNotFoundException {
         String[] ids=ListDisseminatorIDs(null);
-        ArrayList al=new ArrayList();
         for (int i=0; i<ids.length; i++) {
             Disseminator diss=GetDisseminator(ids[i], null);
             if (diss.bDefID.equals(bDefPID)) {
@@ -737,7 +716,7 @@ public class SimpleDOReader
         return bindingInfo;
     }
 
-    public ObjectMethodsDef[] getObjectMethods(Date versDateTime)
+    public ObjectMethodsDef[] listMethods(Date versDateTime)
             throws ServerException {
         String[] ids=ListDisseminatorIDs("A");
         ArrayList methodList=new ArrayList();
@@ -745,7 +724,7 @@ public class SimpleDOReader
         for (int i=0; i<ids.length; i++) {
             Disseminator diss=GetDisseminator(ids[i], versDateTime);
             if (diss!=null) {
-                MethodDef[] methods=getObjectMethods(diss.bDefID,
+                MethodDef[] methods=listMethods(diss.bDefID,
                         versDateTime);
                 if (methods!=null) {
                     for (int j=0; j<methods.length; j++) {

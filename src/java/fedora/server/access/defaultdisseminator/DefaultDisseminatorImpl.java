@@ -157,7 +157,7 @@ public class DefaultDisseminatorImpl extends InternalService implements DefaultD
 
 	// get xml expression of method definitions
 	ObjectMethodsDef[] methods =
-	  m_access.getObjectMethods(context, reader.GetObjectPID(), asOfDateTime);
+	    m_access.listMethods(context, reader.GetObjectPID(), asOfDateTime);
 	InputStream in = null;
 	try
 	{

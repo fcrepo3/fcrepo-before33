@@ -227,7 +227,7 @@ public class DynamicAccessImpl
    * @return an array of object method definitions
    * @throws ServerException
    */
-  public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
+  public ObjectMethodsDef[] listMethods(Context context, String PID,
       Date asOfDateTime) throws ServerException
   {
     String[] bDefPIDs = getBehaviorDefinitions(context, PID, asOfDateTime);
@@ -313,11 +313,12 @@ public class DynamicAccessImpl
       return null;
   }
 
+  /*
   public ObjectMethodsDef[] listMethods(Context context, String PID,
           Date asOfDateTime) throws ServerException {
       return null;
   }
-
+*/
   public DatastreamDef[] listDatastreams(Context context, String PID,
           Date asOfDateTime) throws ServerException {
       return null;

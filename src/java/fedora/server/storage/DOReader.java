@@ -301,7 +301,7 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime) throws ServerException;
+    public MethodDef[] listMethods(String bDefPID, Date versDateTime) throws ServerException;
 
     /**
      * Gets list of ALL method definitions that are available on a particular
@@ -317,23 +317,8 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public ObjectMethodsDef[] getObjectMethods(Date versDateTime)
+    public ObjectMethodsDef[] listMethods(Date versDateTime)
           throws ServerException;
-
-    /**
-     * Same as getObjectMethods (filtered with bDefPID as argument), except that the method
-     * definitions are returned as an Inputstream which contains XML encoded
-     * to the Fedora Method Map schema.
-     *
-     * @param bDefPID The PID of a Behavior Definition to which the object
-     *        subscribes.  If this is the special bootstrap bdef,
-     *        this method returns null.
-     * @param versDateTime The date-time stamp to get appropriate version
-     * @return a particular method definition (filtered using bDefPID) as XML.
-     * @throws ServerException If any type of error occurred fulfilling the
-     *         request.
-     */
-    public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime) throws ServerException;
 
     /**
      * Gets list of method parameter definitions that are available on a

@@ -517,7 +517,7 @@ public class FastDOReader implements DOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime)
+  public MethodDef[] listMethods(String bDefPID, Date versDateTime)
       throws GeneralException
   {
     MethodDef[] methodDefs = null;
@@ -626,7 +626,7 @@ public class FastDOReader implements DOReader
         {
           doReader = m_manager.getReader(m_context, PID);
         }
-        methodDefs = doReader.getObjectMethods(bDefPID, versDateTime);
+        methodDefs = doReader.listMethods(bDefPID, versDateTime);
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -635,44 +635,6 @@ public class FastDOReader implements DOReader
       }
     }
     return methodDefs;
-  }
-
-  /**
-   * <p>Gets XML containing method definitions. Since the XML representation
-   * of digital objects is not stored in the Fast storage area, this method
-   * uses a <code>DOReader</code> to query the Definitive
-   * storage area.</p>
-   *
-   * @param bDefPID The persistent identifier of Behavior Definition object.
-   * @param versDateTime The versioning datetime stamp.
-   * @return A stream of bytes containing XML-encoded representation of
-   *         method definitions from XML in assocaited Behavior Mechanism
-   *         object.
-   * @throws GeneralException If there was any misc exception that we want to
-   *         catch and re-throw as a Fedora exception. Extends ServerException.
-   * @throws ServerException If any type of error occurred fulfilling the
-   *         request.
-   */
-  public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime)
-      throws GeneralException, ServerException
-  {
-    try
-    {
-      if (doReader == null)
-      {
-        doReader = m_manager.getReader(m_context, PID);
-      }
-      return doReader.getObjectMethodsXML(bDefPID, versDateTime);
-    } catch (ServerException se)
-    {
-      throw se;
-
-    } catch (Throwable th)
-    {
-      throw new GeneralException("[FastDOReader] Definitive doReader returned "
-          + "error. The underlying error was a  \"" + th.getClass().getName()
-          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
-    }
   }
 
   /**
@@ -1401,7 +1363,7 @@ public class FastDOReader implements DOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public ObjectMethodsDef[] getObjectMethods(Date versDateTime)
+  public ObjectMethodsDef[] listMethods(Date versDateTime)
       throws GeneralException
   {
     ObjectMethodsDef[] objectMethodsDefArray = null;
@@ -1502,7 +1464,7 @@ public class FastDOReader implements DOReader
         {
           doReader = m_manager.getReader(m_context, GetObjectPID());
         }
-        objectMethodsDefArray=doReader.getObjectMethods(versDateTime);
+        objectMethodsDefArray=doReader.listMethods(versDateTime);
       } catch (Throwable th)
       {
         th.printStackTrace();

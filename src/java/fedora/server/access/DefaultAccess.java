@@ -1,15 +1,10 @@
 package fedora.server.access;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TreeSet;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -42,7 +37,6 @@ import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.Disseminator;
-import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.ObjectMethodsDef;
@@ -78,8 +72,6 @@ import fedora.server.utilities.DateUtility;
  */
 public class DefaultAccess extends Module implements Access
 {
-  /** Constant holding value of xml MIME type. */
-  private final static String CONTENT_TYPE_XML = "text/xml; charset=UTF-8";
 
   /** Current DOManager of the Fedora server. */
   private DOManager m_manager;
@@ -348,53 +340,6 @@ public class DefaultAccess extends Module implements Access
     return dissemination;
   }
 
-  /**
-   * <p>Gets a list of all Behavior Definition object PIDs and method names
-   * associated with the specified digital object.</p>
-   *
-   * @param context The context of this request.
-   * @param PID The persistent identifier of the digital object
-   * @param asOfDateTime The versioning datetime stamp
-   * @return An array of all methods associated with the specified
-   *         digital object.
-   * @throws ServerException If any type of error occurred fulfilling the
-   *         request.
-   */
-  public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
-      Date asOfDateTime) throws ServerException
-  {
-    long startTime = new Date().getTime();
-    m_ipRestriction.enforce(context);
-    Date versDateTime = asOfDateTime;
-    DOReader reader =
-        m_manager.getReader(context, PID);
-
-    // Check data object state
-    checkState(context, "Data", reader.GetObjectState(), PID);
-
-    ObjectMethodsDef[] methodDefs =
-        reader.getObjectMethods(versDateTime);
-    long stopTime = new Date().getTime();
-    long interval = stopTime - startTime;
-    logFiner("[DefaultAccess] Roundtrip GetObjectMethods: "
-              + interval + " milliseconds.");
-
-    // DYNAMIC!! Grab any dynamic method definitions and merge them with
-    // the statically bound method definitions
-    ObjectMethodsDef[] dynamicMethodDefs =
-        m_dynamicAccess.getObjectMethods(context, PID, asOfDateTime);
-    ArrayList methodList = new ArrayList();
-    for (int i=0; i < methodDefs.length; i++)
-    {
-      methodList.add(methodDefs[i]);
-    }
-    for (int j=0; j < dynamicMethodDefs.length; j++)
-    {
-      methodList.add(dynamicMethodDefs[j]);
-    }
-    return (ObjectMethodsDef[])methodList.toArray(new ObjectMethodsDef[0]);
-  }
-
   public ObjectMethodsDef[] listMethods(Context context, String PID,
       Date asOfDateTime) throws ServerException
   {
@@ -407,16 +352,17 @@ public class DefaultAccess extends Module implements Access
     checkState(context, "Data", reader.GetObjectState(), PID);
 
     ObjectMethodsDef[] methodDefs =
-        reader.getObjectMethods(asOfDateTime);
+        reader.listMethods(asOfDateTime);
     long stopTime = new Date().getTime();
     long interval = stopTime - startTime;
-    logFiner("[DefaultAccess] Roundtrip GetObjectMethods: "
+    logFiner("[DefaultAccess] Roundtrip listMethods: "
               + interval + " milliseconds.");
 
     // DYNAMIC!! Grab any dynamic method definitions and merge them with
     // the statically bound method definitions
     ObjectMethodsDef[] dynamicMethodDefs =
-        m_dynamicAccess.getObjectMethods(context, PID, asOfDateTime);
+        //m_dynamicAccess.getObjectMethods(context, PID, asOfDateTime);
+        m_dynamicAccess.listMethods(context, PID, asOfDateTime);
     ArrayList methodList = new ArrayList();
     for (int i=0; i < methodDefs.length; i++)
     {
@@ -434,7 +380,6 @@ public class DefaultAccess extends Module implements Access
   {
     long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
-    Date versDateTime = asOfDateTime;
     DOReader reader =
         m_manager.getReader(context, PID);
 
@@ -450,7 +395,11 @@ public class DefaultAccess extends Module implements Access
         dsDef.dsMIME = datastreams[i].DSMIME;
         dsDefs[i] = dsDef;
     }
-
+    
+    long stopTime = new Date().getTime();
+    long interval = stopTime - startTime;
+    logFiner("[DefaultAccess] Roundtrip listDatastreams: "
+            + interval + " milliseconds.");
     return dsDefs;
   }
 
@@ -632,7 +581,6 @@ public class DefaultAccess extends Module implements Access
       throws ServerException
   {
     m_ipRestriction.enforce(context);
-    DOReader fdor = null;
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
     StringBuffer sb = new StringBuffer();
@@ -738,10 +686,6 @@ public class DefaultAccess extends Module implements Access
                 }
                 if (!isValidValue)
                 {
-                  // This is a fatal error. The value supplied for this method
-                  // parameter does not match any of the values specified by
-                  // this method.
-                  StringBuffer values = new StringBuffer();
                   for (int i=0; i<parmDomainValues.length; i++)
                   {
                     if (i == parmDomainValues.length-1)
@@ -868,7 +812,6 @@ public class DefaultAccess extends Module implements Access
   public MIMETypedStream getDatastreamDissemination(Context context, String PID,
           String dsID, Date asOfDateTime) throws ServerException {
       m_ipRestriction.enforce(context);
-      long initStartTime = new Date().getTime();
       long startTime = new Date().getTime();
       DOReader reader = m_manager.getReader(context, PID);
 
@@ -876,19 +819,7 @@ public class DefaultAccess extends Module implements Access
       checkState(context, "Data", reader.GetObjectState(), PID);
       Datastream ds = (Datastream) reader.GetDatastream(dsID, asOfDateTime);
       InputStream inStream = null;
-      if (ds != null) {
-          if (ds.DSControlGrp.equalsIgnoreCase("E") || ds.DSControlGrp.equalsIgnoreCase("R")) {
-              DatastreamReferencedContent drc = (DatastreamReferencedContent) reader.GetDatastream(dsID, asOfDateTime);
-              inStream = drc.getContentStream();
-          } else if(ds.DSControlGrp.equalsIgnoreCase("M")) {
-              DatastreamManagedContent dmc = (DatastreamManagedContent) reader.GetDatastream(dsID, asOfDateTime);
-              inStream = dmc.getContentStream();
-          } else if(ds.DSControlGrp.equalsIgnoreCase("X")) {
-              DatastreamXMLMetadata dxm =  (DatastreamXMLMetadata) reader.GetDatastream(dsID, asOfDateTime);
-              inStream = dxm.getContentStream();
-          }
-          return new MIMETypedStream(ds.DSMIME, inStream, null);
-      } else {
+      if (ds == null) {
           String message = "[DefaulAccess] No datastream could be returned. "
               + "Either there is no datastream for the digital "
               + "object \"" + PID + "\" with datastream ID of \"" + dsID
@@ -897,6 +828,20 @@ public class DefaultAccess extends Module implements Access
               + " \"  .";
           throw new DatastreamNotFoundException(message);
       }
-
+      if (ds.DSControlGrp.equalsIgnoreCase("E") || ds.DSControlGrp.equalsIgnoreCase("R")) {
+          DatastreamReferencedContent drc = (DatastreamReferencedContent) reader.GetDatastream(dsID, asOfDateTime);
+          inStream = drc.getContentStream();
+      } else if(ds.DSControlGrp.equalsIgnoreCase("M")) {
+          DatastreamManagedContent dmc = (DatastreamManagedContent) reader.GetDatastream(dsID, asOfDateTime);
+          inStream = dmc.getContentStream();
+      } else if(ds.DSControlGrp.equalsIgnoreCase("X")) {
+          DatastreamXMLMetadata dxm =  (DatastreamXMLMetadata) reader.GetDatastream(dsID, asOfDateTime);
+          inStream = dxm.getContentStream();
+      }
+      long stopTime = new Date().getTime();
+      long interval = stopTime - startTime;
+      logFiner("[DefaultAccess] Roundtrip getDatastreamDissemination: "
+              + interval + " milliseconds.");      
+      return new MIMETypedStream(ds.DSMIME, inStream, null);
   }
 }

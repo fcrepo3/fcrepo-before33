@@ -57,24 +57,6 @@
 			</documentation>
 		</part>
 	</message>
-	<message name="getObjectMethodsRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-			      object.  If null, the current view of the object (the most recent time) 
-			      is assumed.
-			</documentation>
-		</part>
-	</message>
-	<message name="getObjectMethodsResponse">
-		<part name="response" type="fedora-types:ArrayOfObjectMethodsDef">
-			<documentation>A set of method definitions that represent 
-				all possible disseminations that can be run on the object.
-			</documentation>
-		</part>
-	</message>	
 	<message name="listMethodsRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -336,14 +318,6 @@
 			<input message="fedora-api:getObjectProfileRequest"/>
 			<output message="fedora-api:getObjectProfileResponse"/>
 		</operation>
-		<operation name="getObjectMethods">
-			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition pids,
-				and methodNames supported by a digital object.  This returns a set of method definitions
-				that represent all possible disseminations that can be run on the object.
-			</documentation>
-			<input message="fedora-api:getObjectMethodsRequest"/>
-			<output message="fedora-api:getObjectMethodsResponse"/>
-		</operation>		
 		<operation name="listMethods">
 			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition pids,
 				and methodNames supported by a digital object.  This returns a set of method definitions
@@ -524,32 +498,6 @@ It asks for up to 50 results at a time from the server, and requests that the re
 				<mime:content type="text/html"/>
 			</output>
 		</operation>
-		<operation name="getObjectMethods">
-			<http:operation location="get/(pid)/fedora-system:3/getMethodIndex[/(asOfDateTime)][?xml=(boolean)]"/>
-			<input>
-				<documentation>  This URL replacement syntax is used to request the object profile.
-					When putting together a proper URL, the client should replace parenthesized
-					parts of the operation location URL with actual values.  For example, "(pid)" 
-					should be replaced with an actual pid of an object for which the client wants 
-					to get information about (e.g. uva-lib:10).	Parts of the operation location URL that
-					are surrounded by brackets ("[ ]") are optional.  To construct a proper URL the
-					client must replace the following variables with real information:
-						- pid : a required parameter. Client must provide the persistent identifier of the object.
-					 	- asOfDateTime : an optional parameter.  Client can specifiy a dateTime value 
-					 	  indicating that the client wants the object profile to reflect how the object looked 
-					 	  as of a particular date and time.
-					 	- boolean : an optional parameter.  Client can specify that the output of 
-					 	  the operation be HTML or XML.   A value of "true" indicates a return type of 
-					 	  text/xml; the absence of the boolean parameter or a value of "false" indicates 
-					 	  format is to be text/html.
-				</documentation>
-				<http:urlReplacement/>
-			</input>
-			<output>
-				<mime:content type="text/xml"/>
-				<mime:content type="text/html"/>
-			</output>
-		</operation>	
 		<operation name="listMethods">
 			<http:operation location="listMethods/(pid)[/(asOfDateTime)][?xml=(boolean)]"/>
 			<input>
