@@ -49,10 +49,10 @@ import fedora.server.utilities.StreamUtility;
  * these methods:
  * <ol>
  * <li>GetDissemination URL syntax:
- * http://hostname:port/fedora/get/PID/bDefPID/methodName[/dateTime][?parmArray]
- * This syntax requests a dissemination of the specified object using the
+ * <p>http://hostname:port/fedora/get/PID/bDefPID/methodName[/dateTime][?parmArray]</p>
+ * <p>This syntax requests a dissemination of the specified object using the
  * specified method of the associated behavior definition object. The result
- * is returned as a MIME-typed stream.</li>
+ * is returned as a MIME-typed stream.</p></li>
  * <ul>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
@@ -64,18 +64,17 @@ import fedora.server.utilities.StreamUtility;
  * <li>methodName - required name of the method to be executed.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a
  *                version of the digital object at the specified point in time.
- *                (NOT currently implemented.)
  * <li>parmArray - optional array of method parameters consisting of name/value
  *                 pairs in the form parm1=value1&parm2=value2...</li>
  * </ul>
  * <li>GetObjectProfile URL syntax:
- * http://hostname:port/fedora/get/PID[/dateTime][?xml=BOOLEAN]
- * This syntax requests an object profile for the specified digital object.
+ * <p>http://hostname:port/fedora/get/PID[/dateTime][?xml=BOOLEAN]</p>
+ * <p>This syntax requests an object profile for the specified digital object.
  * The xml parameter determines the type of output returned.
  * If the parameter is omitted or has a value of "false", a MIME-typed stream
  * consisting of an html table is returned providing a browser-savvy means
  * of viewing the object profile. If the value specified is "true", then
- * a MIME-typed stream consisting of XML is returned.</li>
+ * a MIME-typed stream consisting of XML is returned.</p></li>
  * <ul>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
@@ -84,15 +83,15 @@ import fedora.server.utilities.StreamUtility;
  * <li>PID - required persistent identifier of the digital object.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a
  *                version of the digital object at the specified point in time.
- *                (NOT currently implemented.)
  * <li>xml - an optional parameter indicating the requested output format.
  *           A value of "true" indicates a return type of text/xml; the
  *           absence of the xml parameter or a value of "false"
  *           indicates format is to be text/html.</li>
+ * </ul>
  * <li>GetDatastreamDissemination URL syntax:
- * http://hostname:port/fedora/get/PID/DSID[/dateTime]
+ * <p>http://hostname:port/fedora/get/PID/DSID[/dateTime]</p>
  * This syntax requests a datastream dissemination for the specified digital
- * object. It is used to return the contents of a datastream.
+ * object. It is used to return the contents of a datastream.<p></li>
  * <ul>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
@@ -103,6 +102,7 @@ import fedora.server.utilities.StreamUtility;
  * <li>dateTime - optional dateTime value indicating dissemination of a
  *                version of the digital object at the specified point in time.
  * </ul>
+ * </ol>
  *
  * -----------------------------------------------------------------------------
  *

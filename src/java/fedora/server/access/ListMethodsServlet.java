@@ -40,37 +40,17 @@ import fedora.server.utilities.StreamUtility;
 
 /**
  * <p><b>Title: </b>ListMethodsServlet.java</p>
- * <p><b>Description: </b>Implements Fedora Access LITE (API-A-LITE) interface using a
- * java servlet front end. The syntax defined by API-A-LITE has two bindings:
+ * <p><b>Description: </b>Implements listMethods method of Fedora Access
+ * LITE (API-A-LITE) interface using a java servlet front end.
  * <ol>
- * <li>GetDissemination URL syntax:
- * http://hostname:port/fedora/get/PID/bDefPID/methodName[/dateTime][?parmArray]
- * This syntax requests a dissemination of the specified object using the
- * specified method of the associated behavior definition object. The result
- * is returned as a MIME-typed stream.</li>
- * <ul>
- * <li>hostname - required hostname of the Fedora server.</li>
- * <li>port - required port number on which the Fedora server is running.</li>
- * <li>fedora - required path name for the Fedora access service.</li>
- * <li>get - required path name for the Fedora service.</li>
- * <li>PID - required persistent idenitifer of the digital object.</li>
- * <li>bDefPID - required persistent identifier of the behavior definition
- *               object to which the digital object subscribes.</li>
- * <li>methodName - required name of the method to be executed.</li>
- * <li>dateTime - optional dateTime value indicating dissemination of a
- *                version of the digital object at the specified point in time.
- *                (NOT currently implemented.)
- * <li>parmArray - optional array of method parameters consisting of name/value
- *                 pairs in the form parm1=value1&parm2=value2...</li>
- * </ul>
- * <li>GetObjectProfile URL syntax:
- * http://hostname:port/fedora/get/PID[/dateTime][?xml=BOOLEAN]
- * This syntax requests an object profile for the specified digital object.
+ * <li>ListMethods URL syntax:
+ * <p>http://hostname:port/fedora/listMethods/PID[/dateTime][?xml=BOOLEAN]</p>
+ * <p>This syntax requests a list of methods for the specified digital object.
  * The xml parameter determines the type of output returned.
  * If the parameter is omitted or has a value of "false", a MIME-typed stream
  * consisting of an html table is returned providing a browser-savvy means
  * of viewing the object profile. If the value specified is "true", then
- * a MIME-typed stream consisting of XML is returned.</li>
+ * a MIME-typed stream consisting of XML is returned.</p></li>
  * <ul>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
@@ -85,6 +65,7 @@ import fedora.server.utilities.StreamUtility;
  *           absence of the xml parameter or a value of "false"
  *           indicates format is to be text/html.</li>
  * </ul>
+ * </ol>
  *
  * -----------------------------------------------------------------------------
  *
