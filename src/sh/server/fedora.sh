@@ -91,7 +91,7 @@ start() {
 	echo "Initializing Fedora Server instance..."
 	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_CONTROLLER_LIBS" \
 				-Dfedora.home="$FEDORA_HOME" \
-				fedora.server.ServerController startup)
+				fedora.server.ServerController startup $2 localhost $3 $4 $5)
 	restoreJavaHome
 }
 
@@ -163,7 +163,7 @@ stop() {
 	echo "Stopping the Fedora Server..."
 	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_CONTROLLER_LIBS" \
 	                          -Dfedora.home="$FEDORA_HOME" \
-	                          fedora.server.ServerController shutdown)
+	                          fedora.server.ServerController shutdown $1 localhost $2 $3 $4)
 
 	# Stop Tomcat
     (exec "$JAVA" -cp "$TC"/bin/bootstrap.jar \
