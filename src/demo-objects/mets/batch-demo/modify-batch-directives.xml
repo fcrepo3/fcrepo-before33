@@ -94,7 +94,13 @@
 	<!-- pid - PID of the object                                            -->
 	<!-- dsLabel - label fo the datastream                                  -->
 	<!-- dsMIME - MIME type of the datastream                               -->
-	<!-- logMessage - message to be written in audit trail record           -->		
+	<!-- logMessage - message to be written in audit trail record           -->
+	<!-- dsState - state of the object                                      -->
+	<!-- dsControlGroupType - control group type of the datastream          -->
+	<!-- dsLocation - location of the datastream; for XMLMetadataDatastreams-->
+	<!--              dsLocation omit dsLocation or leave as blank. For all -->
+	<!--              other datastream types, it is required and must       -->
+	<!--              denote the remote location of the datastream.         -->
 	<!--                                                                    -->
 	<!-- Optional attributes on directive:                                  -->
 	<!-- dsID - ID of the datastream; omit or leave as blank if you want    -->
@@ -104,9 +110,6 @@
 	<!-- altIDs - space delimited string of alternated identifiers for the  -->
 	<!--          datastream. This info is currently maintained in the      -->
 	<!--          object, but not acted on.                                 -->
-	<!-- dsLocation - location of the datastream                            -->
-	<!-- dsControlGroupType - control group type of the datastream          -->
-	<!-- dsState - state of the object                                      -->
 	<!-- ****************************************************************** -->
 	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum thumbnail jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
 	
@@ -311,10 +314,9 @@
 	<!-- bDefPid - PID of the associated behavior definition object         -->
 	<!-- bMechPid - PID of the associated behavior mechanism object         -->
 	<!-- dissLabel - label of the disseminator                              -->
-	<!-- logMessage - message to be written in audit trail record           -->		
+	<!-- logMessage - message to be written in audit trail record           -->
+	<!-- dissState - state of the disseminator                              -->			
 	<!--                                                                    -->
-	<!-- Optional attributes on directive:                                  -->
-	<!-- dissState - state of the disseminator                              -->
 	<!--                                                                    -->
 	<!-- Sub-elements on directive:                                         -->
 	<!-- addDatastreamBinding - specifies datastream binding for the        -->
