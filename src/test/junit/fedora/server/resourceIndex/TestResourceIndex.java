@@ -68,15 +68,27 @@ public abstract class TestResourceIndex extends TestCase implements Constants {
         String cpURL = (String)cpP.get("jdbcURL");
         String cpDriver = (String)cpP.get("jdbcDriverClass");
         String cpDDLConverter = (String)cpP.get("ddlConverter");
-        int cpIConn = Integer.parseInt((String)cpP.get("minPoolSize"));
-        int cpMaxConn = Integer.parseInt((String)cpP.get("maxPoolSize"));
+        int cpMaxActive = Integer.parseInt(cpDC.getParameter("maxActive").getValue());
+        int cpMaxIdle = Integer.parseInt(cpDC.getParameter("maxIdle").getValue());
+        long cpMaxWait = Long.parseLong(cpDC.getParameter("maxWait").getValue()); 
+        int cpMinIdle = Integer.parseInt(cpDC.getParameter("minIdle").getValue());
+        long cpMinEvictableIdleTimeMillis = Long.parseLong(cpDC.getParameter("minEvictableIdleTimeMillis").getValue());
+        int cpNumTestsPerEvictionRun = Integer.parseInt(cpDC.getParameter("numTestsPerEvictionRun").getValue());
+        long cpTimeBetweenEvictionRunsMillis = Long.parseLong(cpDC.getParameter("timeBetweenEvictionRunsMillis").getValue());
+        boolean cpTestOnBorrow = Boolean.getBoolean(cpDC.getParameter("testOnBorrow").getValue());
+        boolean cpTestOnReturn = Boolean.getBoolean(cpDC.getParameter("testOnReturn").getValue());
+        boolean cpTestWhileIdle = Boolean.getBoolean(cpDC.getParameter("testWhileIdle").getValue());
+        byte cpWhenExhaustedAction = Byte.parseByte(cpDC.getParameter("whenExhaustedAction").getValue());        
         DDLConverter ddlConverter=null;
         if (cpDDLConverter != null) {
             ddlConverter=(DDLConverter) Class.forName(cpDDLConverter).newInstance();
         }
         
-        m_cPool = new ConnectionPool(cpDriver, cpURL, cpUserName, 
-                                     cpPassword, cpIConn, cpMaxConn, true, ddlConverter);
+        m_cPool = new ConnectionPool(cpDriver, cpURL, cpUsername, 
+                cpPassword, ddlConverter, cpMaxActive, cpMaxIdle, 
+                cpMaxWait, cpMinIdle, cpMinEvictableIdleTimeMillis, 
+                cpNumTestsPerEvictionRun, cpTimeBetweenEvictionRunsMillis, 
+                cpTestOnBorrow, cpTestOnReturn, cpTestWhileIdle, cpWhenExhaustedAction);
         
         String dbSpec="src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec";
         InputStream specIn = new FileInputStream(dbSpec);

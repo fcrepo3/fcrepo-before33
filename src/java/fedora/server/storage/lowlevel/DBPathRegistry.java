@@ -52,8 +52,8 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		if (Configuration.getTestConfig()) {
 			try {
 				commonConnectionPool = new ConnectionPool("com.mysql.jdbc.Driver",
-					"jdbc:mysql://localhost/FedoraObjects",
-					"fedoraAdmin", "fedoraAdmin", 10, 100, true);
+					"jdbc:mysql://localhost/fedora20",
+					"fedoraAdmin", "fedoraAdmin", 100, 10, -1, 0, 1800000, 3, -1, true, true, true, new Byte("1").byteValue() );
 			} catch (SQLException sqlException) {
 				System.out.println("\n*****didn't make connectionPool*****[[[[[");
 				System.out.println(sqlException.getMessage() + "\n]]]]]*****");

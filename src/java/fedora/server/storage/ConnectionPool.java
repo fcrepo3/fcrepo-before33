@@ -1,57 +1,48 @@
 package fedora.server.storage;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import java.util.Vector;
 
+import org.apache.commons.dbcp.ConnectionFactory;
+import org.apache.commons.dbcp.DriverManagerConnectionFactory;
+import org.apache.commons.dbcp.PoolableConnectionFactory;
+import org.apache.commons.dbcp.PoolingDataSource;
+import org.apache.commons.pool.impl.GenericObjectPool;
+
+import fedora.server.Debug;
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.TableCreatingConnection;
 
 /**
  * <p>Title: ConnectionPool.java</p>
- * <p>Description: A class for preallocating, recycling, and managing
- * JDBC connections.</p>
+ * <p>Description: Provides a dispenser for database Connection Pools.</p>
  *
- * <p>Taken/adapted from Core Servlets and JavaServer Pages
- * from Prentice Hall and Sun Microsystems Press,
- * <a href="http://www.coreservlets.com/">http://www.coreservlets.com/</a>
- * &copy; 2000 Marty Hall; may be freely used or adapted</p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The original code is Copyright &copy; 2000 Marty Hall. All rights
- * reserved. The current project homepage for the original code may be found at:
- * <a href="http://www.coreservlets.com/">http://www.coreservlets.com/</a>.</p>
- *
- * <p>Portions created for the Fedora Repository System are Copyright &copy; 2002-2004
- * by The Rector and Visitors of the University of Virginia and Cornell
- * University. All rights reserved."</p>
- *
- * -----------------------------------------------------------------------------
- *
- * @author Marty Hall, rlw@virginia.edu, cwilper@cs.cornell.edu
+ * @author rlw@virginia.edu, cwilper@cs.cornell.edu
  * @version $Id$
  */
-public class ConnectionPool implements Runnable
+public class ConnectionPool
 {
-  private String driver, url, username, password;
-  private int maxConnections;
-  private boolean waitIfBusy;
-  private Vector availableConnections, busyConnections;
-  private boolean connectionPending = false;
+  private String driver;
+  private String url;
+  private String username;
+  private String password;
+  private int maxActive = 0;
+  private int maxIdle = 0;
+  private long maxWait = 0;
+  private long minEvictableIdleTimeMillis =0;
+  private int minIdle = 0;
+  private int numTestsPerEvictionRun = 0;
+  private boolean testOnBorrow = false;
+  private boolean testOnReturn = false;
+  private boolean testWhileIdle = false;
+  private long timeBetweenEvictionRunsMillis = 0;
+  private byte whenExhaustedAction = 0;
   private DDLConverter ddlConverter;
+  
+  private PoolingDataSource dataSource;
+  private GenericObjectPool connectionPool;
+
 
   /**
    * <p>Constructs a ConnectionPool based on the calling arguments.</p>
@@ -60,39 +51,119 @@ public class ConnectionPool implements Runnable
    * @param url The JDBC connection URL.
    * @param username The database user name.
    * @param password The database password.
-   * @param initialConnections The minimum number of connections possible.
-   * @param maxConnections The maximum number of connections possible.
-   * @param waitIfBusy Boolean flag that determines whether to wait if there
-   * are no more available connections. If set to true, it will wait until a
-   * connection becomes available. If set to false, it will throw
-   * <code>SQLException</code> when a connection is requested and there are no
-   * more available connections.
+   * @param maxActive Maximum number of active instances in pool.
+   * @param maxIdle Maximum number of idle instances in pool.
+   * @param maxWait Maximum amount of time in milliseconds the borrowObject()
+   *                method should wait when whenExhaustedAction is set to
+   *                WHEN_EXHAUSTED_BLOCK.
+   * @param minIdle Minimum of idle instances in pool.
+   * @param minEvictableIdleTimeMillis Minimum amount of time in milliseconds
+   *                                   an object can be idle in pool before
+   *                                   eligible for eviction (if applicable).
+   * @param numTestsPerEvictionRun Number of objects to be examined on each run of
+   *                               idle evictor thread (if applicable).
+   * @param timeBetweenEvictionRunsMillis Time in milliseconds to sleep between runs
+   *                                      of the idle object evictor thread.
+   * @param testOnBorrow When true objects are validated before borrowed from the pool.
+   * @param testOnReturn When true, objects are validated before returned to hte pool.
+   * @param testWhileIdle When true, objects are validated by the idle object evictor thread.
+   * @param whenExhaustedAction Action to take when a new object is requested and the
+   *                            the pool has reached maximum number of active objects.
    * @throws SQLException If the connection pool cannot be established for
    * any reason.
    */
-  public ConnectionPool(String driver, String url,
-                        String username, String password,
-                        int initialConnections,
-                        int maxConnections,
-                        boolean waitIfBusy)
+  public ConnectionPool(String driver, 
+          							String url,
+                        String username, 
+                        String password,
+                        int maxActive, 
+                        int maxIdle,
+                        long maxWait, 
+                        int minIdle,
+                        long minEvictableIdleTimeMillis,
+                        int numTestsPerEvictionRun,
+                        long timeBetweenEvictionRunsMillis,
+                        boolean testOnBorrow,
+                        boolean testOnReturn,
+                        boolean testWhileIdle,
+                        byte whenExhaustedAction)
       throws SQLException
   {
     this.driver = driver;
     this.url = url;
     this.username = username;
     this.password = password;
-    this.maxConnections = maxConnections;
-    this.waitIfBusy = waitIfBusy;
-    if (initialConnections > maxConnections)
-    {
-      initialConnections = maxConnections;
+    this.maxActive = maxActive;
+    this.maxIdle = maxIdle;
+    this.maxWait = maxWait;
+    this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
+    this.minIdle = minIdle;
+    this.numTestsPerEvictionRun = numTestsPerEvictionRun;
+    this.testOnBorrow = testOnBorrow;
+    this.testOnReturn = testOnReturn;
+    this.testWhileIdle = testWhileIdle;
+    this.timeBetweenEvictionRunsMillis = timeBetweenEvictionRunsMillis;
+    this.whenExhaustedAction = whenExhaustedAction;
+        
+    connectionPool = new GenericObjectPool(null);
+    if (Debug.DEBUG) {
+        System.out.println("default_max_active: "+GenericObjectPool.DEFAULT_MAX_ACTIVE);
+        System.out.println("default_max_idle: "+GenericObjectPool.DEFAULT_MAX_IDLE);
+        System.out.println("default_max_wait_time: "+GenericObjectPool.DEFAULT_MAX_WAIT);
+        System.out.println("default_min_evict_idle_time: "+GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS);
+        System.out.println("default_min_idle: "+GenericObjectPool.DEFAULT_MIN_IDLE);
+        System.out.println("default_num_tests_per_evict_run: "+GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN);
+        System.out.println("default_time_between_evict_runs: "+GenericObjectPool.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS);
+        System.out.println("default_when_exhausted_action: "+GenericObjectPool.DEFAULT_WHEN_EXHAUSTED_ACTION);
+        System.out.println("default_when_exhausted_block: "+GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
+        System.out.println("default_when_exhausted_fail: "+GenericObjectPool.WHEN_EXHAUSTED_FAIL);
+        System.out.println("default_when_exhausted_grow: "+GenericObjectPool.WHEN_EXHAUSTED_GROW);
+        System.out.println("default_test_on_borrow: "+GenericObjectPool.DEFAULT_TEST_ON_BORROW);
+        System.out.println("default_test_on_return: "+GenericObjectPool.DEFAULT_TEST_ON_RETURN);
+        System.out.println("default_test_while_idle: "+GenericObjectPool.DEFAULT_TEST_WHILE_IDLE);
     }
-    availableConnections = new Vector(initialConnections);
-    busyConnections = new Vector();
-    for(int i=0; i<initialConnections; i++)
-    {
-      availableConnections.addElement(makeNewConnection());
+        
+    connectionPool.setMaxActive(maxActive);
+    connectionPool.setMaxIdle(maxIdle);
+    connectionPool.setMaxWait(maxWait);
+    connectionPool.setMinEvictableIdleTimeMillis(minEvictableIdleTimeMillis);
+    connectionPool.setMinIdle(minIdle);
+    connectionPool.setNumTestsPerEvictionRun(numTestsPerEvictionRun);
+    connectionPool.setTestOnBorrow(testOnBorrow);
+    connectionPool.setTestOnReturn(testOnReturn);
+    connectionPool.setTestWhileIdle(testWhileIdle);
+    connectionPool.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
+    connectionPool.setWhenExhaustedAction(whenExhaustedAction);
+    if (Debug.DEBUG) {
+        System.out.println("set_max_active: "+connectionPool.getMaxActive());
+        System.out.println("set_max_idle: "+connectionPool.getMaxIdle());
+        System.out.println("set_max_wait_time: "+connectionPool.getMaxWait());
+        System.out.println("set_min_evict_idle_time: "+connectionPool.getMinEvictableIdleTimeMillis());
+        System.out.println("set_min_idle: "+connectionPool.getMinIdle());
+        System.out.println("set_num_tests_per_evict_run: "+connectionPool.getNumTestsPerEvictionRun());
+        System.out.println("set_time_between_evict_runs: "+connectionPool.getTimeBetweenEvictionRunsMillis());
+        System.out.println("set_num_active: "+connectionPool.getNumActive());
+        System.out.println("set_num_idle: "+connectionPool.getNumIdle());
+        System.out.println("set_test_on_borrow: "+connectionPool.getTestOnBorrow());
+        System.out.println("set_test_on_return: "+connectionPool.getTestOnReturn());
+        System.out.println("set_test_while_idle: "+connectionPool.getTestWhileIdle());
+        System.out.println("set_when_exhausted_action: "+connectionPool.getWhenExhaustedAction());
     }
+    
+    // Load class for jdbc driver
+    try {
+        Class.forName(driver);
+    } catch(ClassNotFoundException cnfe)
+    {
+        cnfe.printStackTrace();
+        throw new SQLException("Can't find class for driver: " + driver);
+    }                
+    
+
+    ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(url, username, password);
+    PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory, connectionPool, null, null, false, true);
+    dataSource = new PoolingDataSource(connectionPool);
+
   }
 
   /**
@@ -102,28 +173,63 @@ public class ConnectionPool implements Runnable
    * @param url The JDBC connection URL.
    * @param username The database user name.
    * @param password The he database password.
-   * @param initialConnections The minimum number of connections possible.
-   * @param maxConnections The maximum number of connections possible.
-   * @param waitIfBusy Boolean flag that determines whether to wait if there
-   *        are no more available connections. If set to true, it will wait
-   *        until a connection becomes available. If set to false, it will throw
-   *        <code>SQLException</code> when a connection is requested and there
-   *        are no more available connections.
    * @param ddlConverter The DDLConverter that the TableCreatingConnections
-   *        should use when createTable(TableSpec) is called.
+   *                     should use when createTable(TableSpec) is called.
+   * @param maxActive Maximum number of active instances in pool.
+   * @param maxIdle Maximum number of idle instances in pool.
+   * @param maxWait Maximum amount of time in milliseconds the borrowObject()
+   *                method should wait when whenExhaustedAction is set to
+   *                WHEN_EXHAUSTED_BLOCK.
+   * @param minIdle Minimum of idle instances in pool.
+   * @param minEvictableIdleTimeMillis Minimum amount of time in milliseconds
+   *                                   an object can be idle in pool before
+   *                                   eligible for eviction (if applicable).
+   * @param numTestsPerEvictionRun Number of objects to be examined on each run of
+   *                               idle evictor thread (if applicable).
+   * @param timeBetweenEvictionRunsMillis Time in milliseconds to sleep between runs
+   *                                      of the idle object evictor thread.
+   * @param testOnBorrow When true objects are validated before borrowed from the pool.
+   * @param testOnReturn When true, objects are validated before returned to hte pool.
+   * @param testWhileIdle When true, objects are validated by the idle object evictor thread.
+   * @param whenExhaustedAction Action to take when a new object is requested and the
+   *                            the pool has reached maximum number of active objects.
    * @throws SQLException If the connection pool cannot be established for
    *         any reason.
    */
-  public ConnectionPool(String driver, String url,
-                        String username, String password,
-                        int initialConnections,
-                        int maxConnections,
-                        boolean waitIfBusy,
-                        DDLConverter ddlConverter)
+  public ConnectionPool(String driver, 
+          							String url,
+                        String username, 
+                        String password,
+                        DDLConverter ddlConverter,
+                        int maxActive, 
+                        int maxIdle,
+                        long maxWait, 
+                        int minIdle,
+                        long minEvictableIdleTimeMillis,
+                        int numTestsPerEvictionRun,
+                        long timeBetweenEvictionRunsMillis,
+                        boolean testOnBorrow,
+                        boolean testOnReturn,
+                        boolean testWhileIdle,
+                        byte whenExhaustedAction)
       throws SQLException
   {
-    this(driver, url, username, password, initialConnections, maxConnections,
-      waitIfBusy);
+    this(driver, 
+         url, 
+         username, 
+         password,
+         maxActive, 
+         maxIdle,
+         maxWait, 
+         minIdle,
+         minEvictableIdleTimeMillis,
+         numTestsPerEvictionRun,
+         timeBetweenEvictionRunsMillis,
+         testOnBorrow,
+         testOnReturn,
+         testWhileIdle,
+         whenExhaustedAction);
+    
     this.ddlConverter=ddlConverter;
   }
 
@@ -158,220 +264,43 @@ public class ConnectionPool implements Runnable
    * @throws SQLException If the maximum number of connections has been reached
    *         or there is some other problem in obtaining the connection.
    */
-  public synchronized Connection getConnection()
+  public Connection getConnection()
       throws SQLException
   {
-    if (!availableConnections.isEmpty())
-    {
-      Connection existingConnection =
-        (Connection)availableConnections.lastElement();
-      int lastIndex = availableConnections.size() - 1;
-      availableConnections.removeElementAt(lastIndex);
-      // Try executing a simple query to ascertain if
-      // the connection is still valid. Some databases
-      // will time out idle connections so this checks
-      // to be sure that the connection is still valid.
-      // Also wake up threads that were waiting for a
-      // connection because maxConnection limit was reached.
-      Statement s = null;
-      ResultSet rs = null;
-      try {
-          s = existingConnection.createStatement();
-          rs = s.executeQuery("SELECT 1");
-      } catch (SQLException sqle) {
-          String msg = sqle.getMessage();
-          if (msg == null || !msg.startsWith("ORA-00923")) {
-              // if it's not an oracle syntax problem ("no FROM", which will always happen
-              // here when using oracle), assume the error can be rectified by 
-              // simply getting another connection.
-              notifyAll(); // Freed up a spot for anybody waiting
-              return(getConnection());
-          }
-      } finally {
-          if (s != null)   s.close();
-          if (rs != null) rs.close();
-      }
-      busyConnections.addElement(existingConnection);
-      return(existingConnection);
-    } else {
-
-      // Three possible cases:
-      // 1) You haven't reached maxConnections limit. So
-      //    establish one in the background if there isn't
-      //    already one pending, then wait for
-      //    the next available connection (whether or not
-      //    it was the newly established one).
-      // 2) You reached maxConnections limit and waitIfBusy
-      //    flag is false. Throw SQLException in such a case.
-      // 3) You reached maxConnections limit and waitIfBusy
-      //    flag is true. Then do the same thing as in second
-      //    part of step 1: wait for next available connection.
-
-      if ((totalConnections() < maxConnections) && !connectionPending)
-      {
-        makeBackgroundConnection();
-      } else if (!waitIfBusy)
-      {
-        throw new SQLException("Connection limit reached");
-      }
-      // Wait for either a new connection to be established
-      // (if you called makeBackgroundConnection) or for
-      // an existing connection to be freed up.
-      try
-      {
-        wait();
-      } catch(InterruptedException ie) {}
-      // Someone freed up a connection, so try again.
-      return(getConnection());
-    }
+      if (Debug.DEBUG) 
+          System.out.println("connectionPool: "+this.toString());
+      return dataSource.getConnection();
   }
 
   /**
-   * <p>Makes a background connection. You can't just make a new connection
-   * in the foreground when none are available, since this can take several
-   * seconds with a slow network connection. Instead, start a thread that
-   * establishes a new connection, then wait. You get woken up either when
-   * the new connection is established or if someone finishes with an existing
-   * connection.
-   */
-  private void makeBackgroundConnection()
-  {
-    connectionPending = true;
-    try
-    {
-      Thread connectThread = new Thread(this);
-      connectThread.start();
-    } catch(OutOfMemoryError oome)
-    {
-      // Give up on new connection
-    }
-  }
-
-  public void run()
-  {
-    try
-    {
-      Connection connection = makeNewConnection();
-      synchronized(this)
-      {
-        availableConnections.addElement(connection);
-        connectionPending = false;
-        notifyAll();
-      }
-    } catch(Exception e)
-    { // SQLException or OutOfMemory
-      // Give up on new connection and wait for existing one
-      // to free up.
-    }
-  }
-
-
-  /**
-   * <p>Explicitly makes a new connection. Called in
-   * the foreground when initializing the ConnectionPool,
-   * and called in the background when running.</p>
-   *
-   * @return A JDBC connection.
-   * @throws SQLException If the connection cannot be established.
-   */
-  private Connection makeNewConnection()
-      throws SQLException
-  {
-    try
-    {
-      // Load database driver if not already loaded
-      Class.forName(driver);
-      // Establish network connection to database
-      Connection connection =
-        DriverManager.getConnection(url, username, password);
-      return(connection);
-    } catch(ClassNotFoundException cnfe)
-    {
-      // Simplify try/catch blocks of people using this by
-      // throwing only one exception type.
-      throw new SQLException("Can't find class for driver: " +
-                             driver);
-    }
-  }
-
-  /**
-   * <p>Releases the specified connection and returns it to the active pool.</p>
+   * <p>Releases the specified connection and returns it to the pool.</p>
    *
    * @param connection A JDBC connection.
    */
-  public synchronized void free(Connection connection)
+  public void free(Connection connection)
   {
-    busyConnections.removeElement(connection);
-    availableConnections.addElement(connection);
-    // Wake up threads that are waiting for a connection
-    notifyAll();
-  }
-
-  /**
-   * <p>Provides the total number of connections present including those that
-   * are busy and those that are available.</p>
-   *
-   * @return The number of total connections present.
-   */
-  public synchronized int totalConnections()
-  {
-    return(availableConnections.size() +
-           busyConnections.size());
-  }
-
-  /**
-   * <p>Closes all the connections. Use with caution:
-   *  be sure no connections are in use before
-   *  calling. Note that you are not <i>required</i> to
-   *  call this when done with a ConnectionPool, since
-   *  connections are guaranteed to be closed when
-   *  garbage collected. But this method gives more control
-   *  regarding when the connections are closed.
-   */
-  public synchronized void closeAllConnections()
-  {
-    closeConnections(availableConnections);
-    availableConnections = new Vector();
-    closeConnections(busyConnections);
-    busyConnections = new Vector();
-  }
-
-  /**
-   * <p>Closes connections in the specified list.</p>
-   *
-   * @param connections A list of connections to be closed.
-   */
-  private void closeConnections(Vector connections)
-  {
-    try
-    {
-      for(int i=0; i<connections.size(); i++)
-      {
-        Connection connection =
-          (Connection)connections.elementAt(i);
-        if (!connection.isClosed())
-        {
-          connection.close();
-        }
-      }
-    } catch(SQLException sqle)
-    {
-      // Ignore errors; garbage collect anyhow
+    try {
+        connection.close();
+    } catch (SQLException sqle) {
+        System.out.println("Unable to close connection");
+        sqle.printStackTrace();
     }
   }
+
 
   /**
    * <p>Converts this class object into a meaningful string.</p>
    *
    * @return A string describing the connection pool.
    */
-  public synchronized String toString()
+  public String toString()
   {
     String info =
-      "ConnectionPool(" + url + "," + username + ")" +
-      ", available=" + availableConnections.size() +
-      ", busy=" + busyConnections.size() +
-      ", max=" + maxConnections;
+      "ConnectionPool(" + url + "," + username + "," + password + ")" +
+      ", numIdle=" + connectionPool.getNumIdle() +
+      ", numActive=" + connectionPool.getNumActive() +
+      ", maxIdle=" + connectionPool.getMaxIdle() +
+      ", maxActive=" + connectionPool.getMaxActive();
     return(info);
   }
 }

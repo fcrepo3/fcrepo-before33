@@ -10,6 +10,8 @@ import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.utilities.DDLConverter;
 
+import org.apache.commons.pool.impl.GenericObjectPool;
+
 /**
  *
  * <p><b>Title:</b> ConnectionPoolManagerImpl.java</p>
@@ -45,12 +47,22 @@ public class ConnectionPoolManagerImpl extends Module
 
   private static Hashtable h_ConnectionPools = new Hashtable();
   private static String defaultPoolName = null;
-  private int minConnections = 0;
-  private int maxConnections = 0;
   private String jdbcDriverClass = null;
   private String dbUsername = null;
   private String dbPassword = null;
   private String jdbcURL = null;
+  private int maxActive = 0;
+  private int maxIdle = 0;
+  private long maxWait = 0;
+  private long minEvictableIdleTimeMillis =0;
+  private int minIdle = 0;
+  private int numTestsPerEvictionRun = 0;
+  private long softMinEvictableIdleTimeMillis = 0;
+  private boolean testOnBorrow = false;
+  private boolean testOnReturn = false;
+  private boolean testWhileIdle = false;
+  private long timeBetweenEvictionRunsMillis = 0;
+  private byte whenExhaustedAction = 0;
 
   /**
    * <p>Constructs a new ConnectionPoolManagerImpl</p>
@@ -110,14 +122,59 @@ public class ConnectionPoolManagerImpl extends Module
         jdbcURL = s_server.getDatastoreConfig(poolNames[i]).
                   getParameter("jdbcURL");
         s_server.logInfo("JDBC connection URL: "+jdbcURL);
-        Integer i1 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
-                  getParameter("minPoolSize"));
-        int minConnections = i1.intValue();
-        s_server.logInfo("Minimum connections: "+minConnections);
-        Integer i2 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
-                  getParameter("maxPoolSize"));
-        int maxConnections = i2.intValue();
-        s_server.logInfo("Maximum connections: "+maxConnections);
+        Integer i3 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("maxActive"));
+        maxActive = i3.intValue();
+        s_server.logInfo("Maximum active connections: "+maxActive);        
+        Integer i4 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("maxIdle"));
+        maxIdle = i4.intValue();
+        s_server.logInfo("Maximum idle connections: "+maxActive);
+        Integer i5 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("maxWait"));
+        maxWait = i5.intValue();
+        s_server.logInfo("Maximum wait time: "+maxWait);
+        Integer i6 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("minIdle"));
+        minIdle = i6.intValue();
+        s_server.logInfo("Minimum idle time: "+minIdle);
+        Integer i7 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("numTestsPerEvictionRun"));
+        numTestsPerEvictionRun = i7.intValue();
+        s_server.logInfo("Number of tests per eviction run: "+numTestsPerEvictionRun);        
+        Long l1 = new Long(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("minEvictableIdleTimeMillis"));
+        minEvictableIdleTimeMillis = l1.longValue();
+        s_server.logInfo("Minimum Evictable Idle time: "+minEvictableIdleTimeMillis);  
+        Long l2 = new Long(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("timeBetweenEvictionRunsMillis"));
+        timeBetweenEvictionRunsMillis = l2.longValue();
+        s_server.logInfo("Minimum Evictable Idle time: "+timeBetweenEvictionRunsMillis);
+        Boolean b1 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("testOnBorrow"));
+        testOnBorrow = b1.booleanValue();
+        s_server.logInfo("Test on borrow: "+testOnBorrow);        
+        Boolean b2 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("testOnReturn"));
+        testOnReturn = b2.booleanValue();
+        s_server.logInfo("Test on return: "+testOnReturn);
+        Boolean b3 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("testWhileIdle"));
+        testWhileIdle = b3.booleanValue();
+        s_server.logInfo("Test while idle: "+testWhileIdle);
+        Byte b4 = new Byte(s_server.getDatastoreConfig(poolNames[i]).
+                getParameter("whenExhaustedAction"));
+        whenExhaustedAction = b4.byteValue();
+        if (whenExhaustedAction != 0 && whenExhaustedAction != 1 && whenExhaustedAction != 2) {
+          s_server.logInfo("Valid values for whenExhaustedAction are: 0 - (fail), 1 - (block), or 2 - (grow)");
+          throw new ModuleInitializationException("A connection pool could "
+                  + "not be instantiated. The underlying error was an "
+                  + "invalid value for the whenExhaustedAction parameter."
+                  + "Valid values are 0 - (fail), 1 - (block), or 2 - (grow). Value specified"
+                  + "was \"" + whenExhaustedAction + "\".", getRole());          
+        }
+        s_server.logInfo("whenExhaustedAction: "+whenExhaustedAction);        
+        
 
         // If a ddlConverter has been specified for the pool,
         // try to instantiate it so the ConnectionPool can use
@@ -149,8 +206,21 @@ public class ConnectionPoolManagerImpl extends Module
         try
         {
           ConnectionPool connectionPool = new ConnectionPool(jdbcDriverClass,
-              jdbcURL, dbUsername, dbPassword, minConnections,
-              maxConnections, true, ddlConverter);
+              jdbcURL, 
+              dbUsername, 
+              dbPassword, 
+              ddlConverter,
+              maxActive, 
+              maxIdle,
+              maxWait, 
+              minIdle,
+              minEvictableIdleTimeMillis,
+              numTestsPerEvictionRun,
+              timeBetweenEvictionRunsMillis,
+              testOnBorrow,
+              testOnReturn,
+              testWhileIdle,
+              whenExhaustedAction);
           s_server.logInfo("Initialized Pool: "+connectionPool);
           h_ConnectionPools.put(poolNames[i],connectionPool);
           s_server.logInfo("putPoolInHash: "+h_ConnectionPools.size());
@@ -163,6 +233,7 @@ public class ConnectionPoolManagerImpl extends Module
 
     } catch (Throwable th)
     {
+        th.printStackTrace();
       throw new ModuleInitializationException("A connection pool could "
           + "not be instantiated. The underlying error was a "
           + th.getClass().getName() + "The message was \""

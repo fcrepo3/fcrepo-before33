@@ -85,8 +85,7 @@ public class FieldSearchTest
             m_repoReader.setLogLevel(0);
             //m_fieldSearch=new FieldSearchExistImpl(m_existDir.toString(), null);
             m_cPool=new ConnectionPool( "com.mckoi.JDBCDriver",
-                    "jdbc:mckoi://localhost/", "fedoraAdmin", "fedoraAdmin", 5,
-                    10, true);
+                    "jdbc:mckoi://localhost/", "fedoraAdmin", "fedoraAdmin", 100, 10, -1, 0, 1800000, 3, -1, true, true, true, new Byte("1").byteValue());
             m_fieldSearch=new FieldSearchSQLImpl(m_cPool, m_repoReader, 50, 50, null);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
@@ -329,7 +328,7 @@ public class FieldSearchTest
 
     private void shutdown() {
         //m_fieldSearch.shutdown();
-        m_cPool.closeAllConnections();
+        //m_cPool.closeAllConnections();
     }
 
     public static void main(String[] args) {
@@ -369,7 +368,7 @@ public class FieldSearchTest
             test.testUpdateAll();
             test.testSimpleSearch();
         }
-        test.shutdown();
+        //test.shutdown();
     }
 
 }

@@ -190,8 +190,19 @@ public class ResourceIndexRebuilder implements Rebuilder {
         String cpURL = cpDC.getParameter("jdbcURL").getValue();
         String cpDriver = cpDC.getParameter("jdbcDriverClass").getValue();
         String cpDDLConverter = cpDC.getParameter("ddlConverter").getValue();
-        int cpMin = Integer.parseInt(cpDC.getParameter("minPoolSize").getValue());
-        int cpMax = Integer.parseInt(cpDC.getParameter("maxPoolSize").getValue());
+        //int cpMin = Integer.parseInt(cpDC.getParameter("minPoolSize").getValue());
+        //int cpMax = Integer.parseInt(cpDC.getParameter("maxPoolSize").getValue());
+        int cpMaxActive = Integer.parseInt(cpDC.getParameter("maxActive").getValue());
+        int cpMaxIdle = Integer.parseInt(cpDC.getParameter("maxIdle").getValue());
+        long cpMaxWait = Long.parseLong(cpDC.getParameter("maxWait").getValue()); 
+        int cpMinIdle = Integer.parseInt(cpDC.getParameter("minIdle").getValue());
+        long cpMinEvictableIdleTimeMillis = Long.parseLong(cpDC.getParameter("minEvictableIdleTimeMillis").getValue());
+        int cpNumTestsPerEvictionRun = Integer.parseInt(cpDC.getParameter("numTestsPerEvictionRun").getValue());
+        long cpTimeBetweenEvictionRunsMillis = Long.parseLong(cpDC.getParameter("timeBetweenEvictionRunsMillis").getValue());
+        boolean cpTestOnBorrow = Boolean.getBoolean(cpDC.getParameter("testOnBorrow").getValue());
+        boolean cpTestOnReturn = Boolean.getBoolean(cpDC.getParameter("testOnReturn").getValue());
+        boolean cpTestWhileIdle = Boolean.getBoolean(cpDC.getParameter("testWhileIdle").getValue());
+        byte cpWhenExhaustedAction = Byte.parseByte(cpDC.getParameter("whenExhaustedAction").getValue());
         
         DDLConverter ddlConverter = null;
         if (cpDDLConverter != null) {
@@ -206,7 +217,10 @@ public class ResourceIndexRebuilder implements Rebuilder {
             }
         }
         return new ConnectionPool(cpDriver, cpURL, cpUsername, 
-                cpPassword, cpMin, cpMax, true, ddlConverter);
+                cpPassword, ddlConverter, cpMaxActive, cpMaxIdle, 
+                cpMaxWait, cpMinIdle, cpMinEvictableIdleTimeMillis, 
+                cpNumTestsPerEvictionRun, cpTimeBetweenEvictionRunsMillis, 
+                cpTestOnBorrow, cpTestOnReturn, cpTestWhileIdle, cpWhenExhaustedAction);
     }
     
     private void createDBTables() {
