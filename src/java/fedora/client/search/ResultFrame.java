@@ -52,70 +52,72 @@ import fedora.client.list.AutoLister;
 import fedora.server.management.FedoraAPIMServiceLocator;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.ObjectInfo;
+import fedora.server.types.gen.FieldSearchQuery;
+import fedora.server.types.gen.FieldSearchResult;
 
 public class ResultFrame
         extends JInternalFrame {
         
     private JSortTable m_table;
     
-    public ResultFrame(String frameTitle, String pidPattern, String foType, 
+    public ResultFrame(String frameTitle, String[] resultFields, int maxResults, FieldSearchQuery query, 
+            // remove below parms
+            String pidPattern, String foType, 
             String lockedByPattern, String state, String labelPattern, 
             String contentModelIdPattern, Calendar createDateMin, 
             Calendar createDateMax, Calendar lastModDateMin, 
             Calendar lastModDateMax) {
+
+//String[] resultFields, int maxResults, FieldSearchQuery query)
+
+
         super(frameTitle,
               true, //resizable
               true, //closable
               true, //maximizable
               true);//iconifiable
        
-        String[] columnNames = {"PID", 
-                                "Label",
-                                "Type",
-                                "Content Model",
-                                "State",
-                                "Locked By",
-                                "Created",
-                                "Last Modified"};
+        String[] columnNames = resultFields;
 
         try {
-        AutoLister a=new AutoLister(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
-        Map m=a.list(pidPattern, foType, lockedByPattern, state,
-                labelPattern, contentModelIdPattern, createDateMin,
-                createDateMax, lastModDateMin, lastModDateMax);
-        Object[][] data=new Object[m.size()][8];
-        Iterator pidIter=m.keySet().iterator();   
-        int i=0;
-        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-        while (pidIter.hasNext()) {
-            String pid=(String) pidIter.next();
-            ObjectInfo inf=(ObjectInfo) m.get(pid);
-            data[i][0]=pid;
-            data[i][1]=inf.getLabel();
-            data[i][2]=inf.getFoType();
-            data[i][3]=inf.getContentModelId();
-            data[i][4]=inf.getState();
-            data[i][5]=inf.getLockedBy();
-            data[i][6]=df.format(inf.getCreateDate().getTime());
-            data[i][7]=df.format(inf.getLastModDate().getTime());
-            i++;
-        }
-
-        DefaultSortTableModel model=new DefaultSortTableModel(data, columnNames);
-        m_table=new JSortTable(model);
-        m_table.setPreferredScrollableViewportSize(new Dimension(400, 400));
-        m_table.setShowVerticalLines(false);
-        m_table.setCellSelectionEnabled(false);
-        m_table.setRowSelectionAllowed(true);
-        m_table.setUI(new ResultFrame.BrowserTableUI());
-
-        JScrollPane browsePanel = new JScrollPane(m_table);
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(browsePanel, BorderLayout.CENTER);
-
-        setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Zoom16.gif")));
-
-        setSize(400,400);
+//            AutoFinder a=new AutoFinder(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
+            AutoLister a=new AutoLister(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
+            Map m=a.list(pidPattern, foType, lockedByPattern, state,
+                    labelPattern, contentModelIdPattern, createDateMin,
+                    createDateMax, lastModDateMin, lastModDateMax);
+            Object[][] data=new Object[m.size()][8];
+            Iterator pidIter=m.keySet().iterator();   
+            int i=0;
+            SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+            while (pidIter.hasNext()) {
+                String pid=(String) pidIter.next();
+                ObjectInfo inf=(ObjectInfo) m.get(pid);
+                data[i][0]=pid;
+                data[i][1]=inf.getLabel();
+                data[i][2]=inf.getFoType();
+                data[i][3]=inf.getContentModelId();
+                data[i][4]=inf.getState();
+                data[i][5]=inf.getLockedBy();
+                data[i][6]=df.format(inf.getCreateDate().getTime());
+                data[i][7]=df.format(inf.getLastModDate().getTime());
+                i++;
+            }
+    
+            DefaultSortTableModel model=new DefaultSortTableModel(data, columnNames);
+            m_table=new JSortTable(model);
+            m_table.setPreferredScrollableViewportSize(new Dimension(400, 400));
+            m_table.setShowVerticalLines(false);
+            m_table.setCellSelectionEnabled(false);
+            m_table.setRowSelectionAllowed(true);
+            m_table.setUI(new ResultFrame.BrowserTableUI());
+    
+            JScrollPane browsePanel = new JScrollPane(m_table);
+            getContentPane().setLayout(new BorderLayout());
+            getContentPane().add(browsePanel, BorderLayout.CENTER);
+    
+            setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Zoom16.gif")));
+    
+            setSize(400,400);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ":" + e.getMessage());
         }
