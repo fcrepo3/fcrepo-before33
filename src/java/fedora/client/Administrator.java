@@ -23,6 +23,7 @@ import fedora.client.bmech.BMechBuilder;
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
 import fedora.client.export.AutoExporter;
+import fedora.client.export.Export;
 import fedora.client.ingest.AutoIngestor;
 import fedora.client.ingest.Ingest;
 import fedora.client.objecteditor.ObjectEditorFrame;
@@ -350,14 +351,25 @@ public class Administrator extends JFrame {
         JMenu fileExport=new JMenu("Export");
         fileExport.setMnemonic(KeyEvent.VK_E);
         
-        JMenuItem fileExportObject=new JMenuItem(new ExportObject());
+        JMenuItem fileExportObject=new JMenuItem("One Object...");
         fileExportObject.setMnemonic(KeyEvent.VK_O);
         fileExportObject.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
                 ActionEvent.CTRL_MASK));
         fileExportObject.setToolTipText("Exports a serialized Digitial Object to disk.");
+        fileExportObject.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Export(Export.ONE);
+            }
+        });
         
         JMenuItem fileExportMultiple=new JMenuItem("Multiple Objects...");
         fileExportMultiple.setMnemonic(KeyEvent.VK_M);
+        fileExportMultiple.setToolTipText("Exports multiple serialized Digitial Objects to disk.");
+        fileExportMultiple.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Export(Export.MULTI);
+            }
+        });
         fileExport.add(fileExportObject);
         fileExport.add(fileExportMultiple);
 
