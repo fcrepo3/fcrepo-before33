@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.io.ByteArrayInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.IOException;
+//import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
@@ -42,6 +42,8 @@ public class TestClientAPIA
       Service service = new Service();
       Call call = (Call) service.createCall();
       call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+
+      // Test GetbehaviorDefinitions
       call.setOperationName(new javax.xml.namespace.QName(qName1,
           "GetBehaviorDefinitions") );
 
@@ -148,9 +150,7 @@ public class TestClientAPIA
         }
       }
 
-
     //Test View Objecct
-
     call.setOperationName(new javax.xml.namespace.QName(qName1,
         "GetObjectMethods") );
     fedora.server.types.gen.ObjectMethodsDef[] objectView = null;
@@ -164,23 +164,21 @@ public class TestClientAPIA
         fedora.server.types.gen.ObjectMethodsDef.class, qn));
     objectView = (fedora.server.types.gen.ObjectMethodsDef[])
       call.invoke( new Object[] { PID, asOfDate} );
-    //Object[] o = objectView;
     for (int i=0; i<objectView.length; i++)
     {
       fedora.server.types.gen.ObjectMethodsDef ov =
                new fedora.server.types.gen.ObjectMethodsDef();
       ov = objectView[i];
       System.out.println("objDef["+i+"] "+
-                         "\np1"+ov.getPID()+
-                         "\np2"+ov.getBDefPID()+
-                         "\np3"+ov.getMethodName()+
-                         "\np4"+ov.getAsOfDate());
+                         "\n"+ov.getPID()+
+                         "\n"+ov.getBDefPID()+
+                         "\n"+ov.getMethodName()+
+                         "\n"+ov.getAsOfDate());
     }
     } catch (Exception e)
     {
       e.printStackTrace();
       System.out.println(e.getStackTrace());
     }
-
   }
 }
