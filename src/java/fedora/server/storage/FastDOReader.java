@@ -202,14 +202,14 @@ public class FastDOReader implements DOReader
     }
 
   }
-  
+
   public String getContentModelId() throws ServerException {
       if (doReader==null) {
           doReader=m_manager.getReader(m_context, PID);
       }
       return doReader.getContentModelId();
   }
-  
+
   public String getFedoraObjectType() throws ServerException {
       if (doReader==null) {
           doReader=m_manager.getReader(m_context, PID);
@@ -1027,7 +1027,7 @@ public class FastDOReader implements DOReader
    * dissemination.
    */
   public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
-          String methodName, Date versDateTime) 
+          String methodName, Date versDateTime)
           throws GeneralException {
     DisseminationBindingInfo dissBindInfo = null;
     DisseminationBindingInfo[] dissBindInfoArray = null;
@@ -1491,7 +1491,8 @@ public class FastDOReader implements DOReader
           + "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND "
           + "BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND "
           + "Method.METH_DBID = MechanismImpl.METH_DBID AND "
-          + "DigitalObject.DO_PID=\'" + GetObjectPID() + "\';";
+          + "DigitalObject.DO_PID=\'" + GetObjectPID() + "\' "
+          + "ORDER BY BehaviorDefinition.BDEF_PID, Method.METH_Name;";
 
       if (debug) s_server.logFinest("getObjectMethodsQuery: " + query);
       String[] results = null;
@@ -1646,7 +1647,7 @@ public class FastDOReader implements DOReader
                                  + "was \"" + th.getMessage() + "\"");
     }
   }
-  
+
   public String getLockingUser()
           throws ServerException, StorageDeviceException, ObjectNotFoundException {
       if (doReader==null) {
