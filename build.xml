@@ -431,8 +431,6 @@
 		<mkdir dir="dist/server/access"/>
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/access/objectmethods.xslt" todir="dist/server/access"/>
-		<!-- the next copy is temporary and may change -->
-		<!--<copy file="src/xsl/access/objectmethods2.xslt" todir="dist/server/access"/>-->
 		<!--ObjectProfile xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/access"/>
 		<!--ItemIndex xsl stylesheet used by Default Disseminator (DefaultBehaviorImpl) -->
@@ -456,7 +454,7 @@
 		<copy file="temp/soapclient/lib/fedoragentypes.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
 		<copy file="temp/soapclient/lib/fedorautilities.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
 		<copy file="src/xsl/soapclient/objectmethods.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
-		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
+		<copy file="src/xsl/soapclient/viewObjectProfile.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/behaviordefs.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
 		<copy file="src/web-app/fedora/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient"/>
@@ -566,6 +564,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.91  2003/03/06 00:38:45  rlw
+  added copy for viewObjectProfile in soap client webapp
+
   Revision 1.90  2003/03/06 00:03:30  payette
   added dist setup for new demo objects and content
 
