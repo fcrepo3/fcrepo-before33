@@ -39,4 +39,5 @@ public class DisseminationBindingInfo
   public String AddressLocation = null;
   public String OperationLocation = null;
   public String ProtocolType = null;
+  public String dsState = null;
 }
