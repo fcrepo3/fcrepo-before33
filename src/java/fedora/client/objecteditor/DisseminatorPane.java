@@ -443,6 +443,9 @@ public class DisseminatorPane
                     String bMechPID=(String) m_bMechComboBox.getSelectedItem();
                     m_bindingsCard.show(m_stackedBindingPane, bMechPID);
                     m_bMechLabelTextField.setText((String) m_bMechLabels.get(bMechPID));
+                    // tell it to update the buttons appropriately
+                    DatastreamBindingPane pane=(DatastreamBindingPane) m_bindingPanes.get(bMechPID);
+                    pane.fireDataChanged();
                     // then remember the selected value for next time
                     m_lastSelectedBMech=bMechPID;
                 }

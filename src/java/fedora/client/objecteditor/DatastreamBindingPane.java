@@ -1,6 +1,7 @@
 package fedora.client.objecteditor;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
@@ -17,8 +18,7 @@ import fedora.server.types.gen.Disseminator;
 public class DatastreamBindingPane
         extends JPanel
         implements DatastreamListener, 
-                   PotentiallyDirty,
-                   TableModelListener {
+                   PotentiallyDirty {
 
     private Datastream[] m_datastreams;
     private DatastreamInputSpec m_spec;
@@ -30,6 +30,7 @@ public class DatastreamBindingPane
 
     static ImageIcon notFulfilledIcon=new ImageIcon(Administrator.cl.getResource("images/fedora/exclaim16.gif"));
     static ImageIcon fulfilledIcon=new ImageIcon(Administrator.cl.getResource("images/fedora/checkmark16.gif"));
+    private JTabbedPane m_bindingTabbedPane;
 
     public DatastreamBindingPane(Datastream[] currentVersions,
                                  DatastreamBinding[] initialBindings,
@@ -51,7 +52,7 @@ public class DatastreamBindingPane
         SortedMap dsBindingMap=getSortedBindingMap(initialBindings);
 
         // construct the tabbedpane, one tab per binding key
-        JTabbedPane bindingTabbedPane=new JTabbedPane();
+        m_bindingTabbedPane=new JTabbedPane();
         Iterator keys=m_ruleForKey.keySet().iterator();
         int tabNum=-1;
         while (keys.hasNext()) {
@@ -65,19 +66,18 @@ public class DatastreamBindingPane
                     bMechPID,
                     key, 
                     values, 
-                    (DatastreamBindingRule) m_ruleForKey.get(key),
-                    this);
+                    (DatastreamBindingRule) m_ruleForKey.get(key));
             m_perkyPanels.put(key, p);
-            bindingTabbedPane.add(key, p);
-            bindingTabbedPane.setBackgroundAt(tabNum, Administrator.DEFAULT_COLOR);
-            if (tabNum==0) {
-                bindingTabbedPane.setIconAt(tabNum, notFulfilledIcon);
+            m_bindingTabbedPane.add(key, p);
+            m_bindingTabbedPane.setBackgroundAt(tabNum, Administrator.DEFAULT_COLOR);
+            if (p.doValidityCheck()) {
+                m_bindingTabbedPane.setIconAt(tabNum, fulfilledIcon);
             } else {
-                bindingTabbedPane.setIconAt(tabNum, fulfilledIcon);
+                m_bindingTabbedPane.setIconAt(tabNum, notFulfilledIcon);
             }
         }
         setLayout(new BorderLayout());
-        add(bindingTabbedPane, BorderLayout.CENTER);
+        add(m_bindingTabbedPane, BorderLayout.CENTER);
 
     }
 
@@ -122,11 +122,40 @@ public class DatastreamBindingPane
         return result;
     }
 
-    // called when one of the tab's table models changed
-    public void tableChanged(TableModelEvent e) {
-        DatastreamBindingTableModel model=(DatastreamBindingTableModel) e.getSource();
-        String key=model.getBindingKey();
-		// TODO: all we really need to do here is update fulfilled indicator on tabs
+    // checks for validity of the bindings according to the rules,
+    // updates the fulfilled indicators on the tabs, and returns
+    // whether it's valid.
+    public boolean doValidityCheck() {
+        // if valid or invalid
+        //     set the icon appropriately in the tabbedpane
+        // if ALL VALID return true
+        // else return false
+        boolean panelsValid=true;
+        Iterator iter=m_perkyPanels.keySet().iterator();
+        while (iter.hasNext()) {
+            String key=(String) iter.next();
+            SingleKeyBindingPanel panel=
+                    (SingleKeyBindingPanel) m_perkyPanels.get(key);
+            int tabNum=m_bindingTabbedPane.indexOfTab(key);
+            if (panel.doValidityCheck()) {
+                // put the valid thingy on it
+                m_bindingTabbedPane.setIconAt(tabNum, fulfilledIcon);
+
+            } else {
+                // put the invalid thingy on it, and make sure we
+                // eventually return false.
+                m_bindingTabbedPane.setIconAt(tabNum, notFulfilledIcon);
+                panelsValid=false;
+            }
+        }
+        return panelsValid;
+    }
+
+    public void fireDataChanged() {
+        if (m_owner!=null) {
+            m_owner.setValid(doValidityCheck());
+            m_owner.dataChangeListener.dataChanged();
+        }
     }
 
     public void datastreamAdded(Datastream ds) {
@@ -146,6 +175,29 @@ public class DatastreamBindingPane
                 m_datastreams[i]=ds;
             }
         }
+    }
+
+    // each string will be ID - mime/type - Label
+    public String[] getCandidates(DatastreamBindingRule rule, String[] usedIDs) {
+        ArrayList possible=new ArrayList();
+        for (int i=0; i<m_datastreams.length; i++) {
+            boolean alreadyUsed=false;
+            for (int j=0; j<usedIDs.length; j++) {
+                if (m_datastreams[i].getID().equals(usedIDs[j])) {
+                    alreadyUsed=true;
+                }
+            }
+            if (!alreadyUsed && rule.accepts(m_datastreams[i].getMIMEType())) {
+                possible.add(m_datastreams[i].getID()
+                        + " - " + m_datastreams[i].getMIMEType()
+                        + " - " + m_datastreams[i].getLabel());
+            }
+        }
+        String[] out=new String[possible.size()];
+        for (int i=0; i<possible.size(); i++) {
+            out[i]=(String) possible.get(i);
+        }
+        return out;
     }
 
     public void datastreamPurged(String dsID) {
@@ -199,16 +251,18 @@ public class DatastreamBindingPane
         private JButton m_upButton;
         private JButton m_downButton;
         private boolean m_dirty;
-        private TableModelListener m_listener;
+        private boolean m_wasValid;
+        private DatastreamBindingRule m_rule;
+        private JEditorPane m_instructionPane;
+        private NonCancelingCellEditor m_cellEditor;
 
         public SingleKeyBindingPanel(String bMechPID,
                                      String bindingKey, 
                                      Set dsBindings, 
-                                     DatastreamBindingRule rule,
-                                     TableModelListener listener) {
-            m_listener=listener;
-            JEditorPane instructionPane=createInstructionPane(bMechPID, rule);
-            instructionPane.setBackground(getBackground());
+                                     DatastreamBindingRule rule) {
+            m_rule=rule;
+            m_instructionPane=createInstructionPane(bMechPID, rule);
+            m_instructionPane.setBackground(getBackground());
 
             JPanel statusPane=new JPanel(new BorderLayout());
             m_statusLabel=new JLabel(" Binding is incomplete.");
@@ -216,9 +270,10 @@ public class DatastreamBindingPane
             leftify.add(m_statusLabel, BorderLayout.WEST);
             statusPane.add(leftify, BorderLayout.NORTH);
 
-            m_tableModel=new DatastreamBindingTableModel(dsBindings, bindingKey);
+            m_tableModel=new DatastreamBindingTableModel(dsBindings, bindingKey, m_rule);
             m_table=new JTable(m_tableModel);
-            m_table.setDefaultEditor(String.class, new NonCancelingCellEditor(new JTextField(), m_tableModel));
+            m_cellEditor=new NonCancelingCellEditor(new JTextField(), m_tableModel);
+            m_table.setDefaultEditor(Object.class, m_cellEditor);
             m_table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
             m_table.setRowSelectionAllowed(true);
             m_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -226,7 +281,10 @@ public class DatastreamBindingPane
             m_table.getColumnModel().getColumn(0).setMinWidth(90);
             m_table.getColumnModel().getColumn(0).setMaxWidth(90);            
 			m_tableModel.addTableModelListener(this);
-			if (listener!=null) m_tableModel.addTableModelListener(listener);
+            System.out.println("Rowcount for the table is " + m_table.getRowCount());
+            if (m_table.getRowCount()>0) {
+                m_table.addRowSelectionInterval(0, 0);
+            }
 
             JPanel middlePane=new JPanel(new BorderLayout());
             middlePane.add(new JScrollPane(m_table), BorderLayout.CENTER);
@@ -240,35 +298,61 @@ public class DatastreamBindingPane
             c.anchor=GridBagConstraints.NORTH;
             c.weightx=1.0;
             c.weighty=0.0;
+            c.insets=new Insets(0,0,3,0);
 
             m_addButton=new JButton("Add...");
             gridbag.setConstraints(m_addButton, c);
             Administrator.constrainHeight(m_addButton);
             buttonPane.add(m_addButton);
+            m_addButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    m_cellEditor.stopCellEditing();
+                    // first bring up a dialog with candidates to
+                    // choose from.
+                    String selected=getCandidateSelection();
+                    if (selected!=null) {
+                        // if that succeeds, we need to tell the model
+                        // to update itself and fire change events
+                        String[] parts=selected.split(" - ");
+                        m_tableModel.addRow(parts[0], "Binding to " + parts[2]);
+                    }
+                }
+            });
 
-            m_insertButton=new JButton("Insert...");
-            gridbag.setConstraints(m_insertButton, c);
-            Administrator.constrainHeight(m_insertButton);
-            buttonPane.add(m_insertButton);
+            if (rule.orderMatters()) {
+                m_insertButton=new JButton("Insert...");
+                gridbag.setConstraints(m_insertButton, c);
+                Administrator.constrainHeight(m_insertButton);
+                buttonPane.add(m_insertButton);
+            }
 
             m_removeButton=new JButton("Remove");
             gridbag.setConstraints(m_removeButton, c);
             Administrator.constrainHeight(m_removeButton);
             buttonPane.add(m_removeButton);
+            m_removeButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    m_cellEditor.stopCellEditing();
+                    // tell the model to update itself and fire change events
+                    m_tableModel.removeRow(m_table.getSelectedRow());
+                }
+            });
 
-            Component strut=Box.createVerticalStrut(8);
-            gridbag.setConstraints(strut, c);
-            buttonPane.add(strut);
+            if (rule.orderMatters()) {
+                Component strut=Box.createVerticalStrut(6);
+                gridbag.setConstraints(strut, c);
+                buttonPane.add(strut);
 
-            m_upButton=new JButton("Up");
-            gridbag.setConstraints(m_upButton, c);
-            Administrator.constrainHeight(m_upButton);
-            buttonPane.add(m_upButton);
+                m_upButton=new JButton("Up");
+                gridbag.setConstraints(m_upButton, c);
+                Administrator.constrainHeight(m_upButton);
+                buttonPane.add(m_upButton);
 
-            m_downButton=new JButton("Down");
-            gridbag.setConstraints(m_downButton, c);
-            Administrator.constrainHeight(m_downButton);
-            buttonPane.add(m_downButton);
+                m_downButton=new JButton("Down");
+                gridbag.setConstraints(m_downButton, c);
+                Administrator.constrainHeight(m_downButton);
+                buttonPane.add(m_downButton);
+            }
 
             c.weighty=1.0;
             c.fill=GridBagConstraints.VERTICAL;
@@ -283,32 +367,131 @@ public class DatastreamBindingPane
 
             setLayout(new BorderLayout());
             setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-            add(instructionPane, BorderLayout.NORTH);
+            add(m_instructionPane, BorderLayout.NORTH);
             add(bottomPane, BorderLayout.CENTER);
-//            add(instructionPane, BorderLayout.SOUTH);
+        }
+
+        private String getCandidateSelection() {
+            String[] usedIDs=m_tableModel.getUsedDatastreamIDs();
+            String[] options=getCandidates(m_rule, usedIDs);
+            if (options.length==0) {
+                // bring up a dialog telling them there are no candidates
+                // to add, so they need to add one to the object
+                String more="";
+                if (usedIDs.length>0) more=" more";
+                JOptionPane.showInternalMessageDialog(Administrator.getDesktop(), 
+                        "There are no" + more + " datastreams of the required type\n"
+                        + "for this binding.  Add one to the object first.",
+                        "No candidates found",
+                        JOptionPane.INFORMATION_MESSAGE);
+                return null;
+            } else {
+                String instr="";
+                if (m_rule.getInputInstruction()!=null) {
+                    instr=" " + m_rule.getInputInstruction();
+                }
+                String bLabel="";
+                if (m_rule.getInputLabel()!=null) {
+                    bLabel=" (" + m_rule.getInputLabel() + ")";
+                }
+                return (String) JOptionPane.showInputDialog(
+                        Administrator.getDesktop(),
+                        "Choose one." + instr + bLabel, 
+                        "Candidate Datastreams",
+                        JOptionPane.QUESTION_MESSAGE, null,
+                        options, options[0]);
+            }
+        }
+
+        private void selectRowLater(final int rowNum) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    m_table.getSelectionModel().setSelectionInterval(rowNum, rowNum);
+                }
+            });
         }
 
         public void tableChanged(TableModelEvent e) {
 		    DatastreamBindingTableModel model=(DatastreamBindingTableModel) e.getSource();
-			// update button visibility and status label based on the state of 
-			// the table and send a message to the owner.
+            // update the shown selection of the table
+            if (e.getType()==e.INSERT) {
+                selectRowLater(e.getFirstRow());
+            } else if (e.getType()==e.DELETE) {
+                if (m_tableModel.getRowCount()>0) {
+                    if (m_tableModel.getRowCount()==e.getFirstRow()) {
+                        // if the row that was deleted was the last one,
+                        // select the one just above it
+                        selectRowLater(e.getFirstRow()-1);
+                    } else {
+                        // otherwise, select the one that's now in its place
+                        selectRowLater(e.getFirstRow());
+                    }
+                }
+            }
+			// update the dirty flag, then send the event up to datastreambindingpane
 			if (model.isDirty()) {
                 m_dirty=true;
-                
 			} else {
                 m_dirty=false;
 			}
-            fireDataChanged();
+            fireDataChanged();  // this will indirectly result in a call to 
+                                // doValidityCheck below
 		}
+
+        public boolean doValidityCheck() {
+            // check whether the model in its current state is valid
+            // if so or not, update the status text and button visibility
+            // appropriately, then return whether it's valid or not
+
+            boolean isValid=updateButtonsAndReturnValidity();
+            // do the appropriate completeness text updates
+            if (isValid && !m_wasValid) {
+                m_instructionPane.setText(m_instructionPane.getText().replaceAll("Binding is incomplete", "Binding is complete")); 
+            } else if (!isValid && m_wasValid) {
+                m_instructionPane.setText(m_instructionPane.getText().replaceAll("Binding is complete", "Binding is incomplete")); 
+            }
+           
+            // remember this for next time so we don't have to do too much work
+            m_wasValid=isValid;
+            return isValid;
+        }
+
+        // check if it's valid, update buttons appropriately, and return
+        // if it's valid
+        private boolean updateButtonsAndReturnValidity() {
+            Set bindingSet=getBindings();
+            boolean couldUseMore=(m_rule.getMax()==-1) || (bindingSet.size()<m_rule.getMax());
+
+            // Add : always exists; enabled if couldUseMore
+            m_addButton.setEnabled(couldUseMore);
+            // Insert: exists if orderMatters; enabled if couldUseMore and there's at least one binding
+            if (m_rule.orderMatters()) {
+                m_insertButton.setEnabled(couldUseMore && bindingSet.size()>0);
+            }
+            // Remove : always exists; enabled if there's at least one binding
+            m_removeButton.setEnabled(bindingSet.size()>0);
+            // Up and Down : exist if orderMatters; enabled if > 1 binding 
+            if (m_rule.orderMatters()) {
+                int row=m_table.getSelectedRow();
+                // Up : enabled if there's more than one binding and 
+                //      the current selection is below row 0
+                m_upButton.setEnabled(bindingSet.size()>1 && row>0);
+                // Down : enabled if there's more than one binding and 
+                //        the current selection is above the last row
+                m_downButton.setEnabled(bindingSet.size()>1 && row<(bindingSet.size()-1));
+            }
+            // now for returning the validity.
+            // we already know the types are valid and there aren't too many
+            // datastreams in the binding, because the widget doesn't allow
+            // that.  the only thing that can possibly happen that's invalid
+            // is not enough datastreams.
+            return (bindingSet.size()>=m_rule.getMin());
+        }
 
         // get a set of DatastreamBinding objects reflecting the current state
         // of the model
         public Set getBindings() {
             return m_tableModel.getBindings();
-        }
-
-        public void fireDataChanged() {
-            if (m_owner!=null) m_owner.dataChangeListener.dataChanged();
         }
 
         public boolean isDirty() {
@@ -321,10 +504,13 @@ public class DatastreamBindingPane
             m_tableModel=m_tableModel.getOriginal();
             m_table.setModel(m_tableModel);
 			m_tableModel.addTableModelListener(this);
-			if (m_listener!=null) m_tableModel.addTableModelListener(m_listener);
             m_table.getColumnModel().getColumn(0).setMinWidth(90);
             m_table.getColumnModel().getColumn(0).setMaxWidth(90);            
+            if (m_table.getRowCount()>0) {
+                m_table.addRowSelectionInterval(0, 0);
+            }
             m_dirty=false;
+            // then make sure the view is updated
             fireDataChanged();
         }
 
@@ -430,7 +616,7 @@ public class DatastreamBindingPane
      * instead of waiting for the textField to lose focus.
      */
     class NonCancelingCellEditor
-            implements TableCellEditor {
+            extends DefaultCellEditor {
 
         private int m_row;
         private int m_column;
@@ -438,7 +624,7 @@ public class DatastreamBindingPane
         private JTextField m_textField;
 
         NonCancelingCellEditor(JTextField f, TableModel model) {
-        System.out.println("Constructed");
+            super(f);
             m_textField=f;
             m_model=model;
             f.getDocument().addDocumentListener(new DocumentListener() {
@@ -456,7 +642,6 @@ public class DatastreamBindingPane
 
                 public void dataChanged() {
                     // update the model for each change
-                    System.out.println("textField changed to " + m_textField.getText());
                     m_model.setValueAt(m_textField.getText(), m_row, m_column);
                 }
             });
@@ -469,44 +654,15 @@ public class DatastreamBindingPane
                                                      int column) {
             m_row=row;
             m_column=column;
-            System.out.println("Getting editor component for " + m_row + ", " + m_column);
             m_textField.setText((String) value);
             return m_textField;
         }
 
-        //  Add a listener to the list that's notified when the editor starts, stops, or cancels editing. 
-        public void addCellEditorListener(CellEditorListener l) {
-        }
-
-        //  Tell the editor to cancel editing and not accept any partially edited value. 
+        // Overridden to ignore cancels due to focus loss
         public void cancelCellEditing() {
             stopCellEditing();
         }
 
-        //  Returns the value contained in the editor 
-        public Object getCellEditorValue() {
-            return m_textField.getText();
-        }
-
-        //  Ask the editor if it can start editing using anEvent. 
-        public boolean isCellEditable(EventObject anEvent) {
-            return true;
-        }
-
-        //  Remove a listener from the list that's notified 
-        public void removeCellEditorListener(CellEditorListener l) {
-        }
-
-        //  The return value of shouldSelectCell() is a boolean indicating whether the editing cell should be selected or not. 
-        public boolean shouldSelectCell(EventObject anEvent) {
-            return true;
-        }
-
-        // Tell the editor to stop editing and accept any partially edited value as the value of the editor.
-        public boolean stopCellEditing() {
-            return true;
-        }
-        
     }
 
     class DatastreamBindingTableModel
@@ -516,9 +672,11 @@ public class DatastreamBindingPane
         public DatastreamBinding[] m_bindings;        
         public DatastreamBinding[] m_originalBindings;        
         public String m_bindingKey;
+        public DatastreamBindingRule m_rule;
 
-        public DatastreamBindingTableModel(Set values, String bindingKey) {
+        public DatastreamBindingTableModel(Set values, String bindingKey, DatastreamBindingRule rule) {
 		    m_bindingKey=bindingKey;
+            m_rule=rule;
             m_bindings=new DatastreamBinding[values.size()];
             m_originalBindings=new DatastreamBinding[values.size()];
             Iterator iter=values.iterator();
@@ -547,14 +705,63 @@ public class DatastreamBindingPane
             return set;
         }
 
+        public String[] getUsedDatastreamIDs() {
+            String[] out=new String[m_bindings.length];
+            for (int i=0; i<out.length; i++) {
+                out[i]=m_bindings[i].getDatastreamID();
+            }
+            return out;
+        }
+
 
 // TODO: add methods for adding, inserting, and moving rows, which
 //       set all the attributes (including SeqNo) appropriately
 //       and fire the appropriate table change events
 
+        /**
+         * Remove a row from the model and fire an event.
+         */
+        public void removeRow(int rowNum) {
+            DatastreamBinding[] n=new DatastreamBinding[m_bindings.length-1];
+            int newRowNum=0;
+            for (int i=0; i<m_bindings.length; i++) {
+                if (i!=rowNum) {
+                    n[newRowNum]=m_bindings[i];
+                    newRowNum++;
+                }
+            }
+            m_bindings=n;
+            fireTableRowsDeleted(rowNum, rowNum);
+        }
 
+        /**
+         * Append a row to the model and fire an event.
+         */
+        public void addRow(String dsID, String bindingLabel) {
+            DatastreamBinding newBinding=new DatastreamBinding();
+            newBinding.setBindKeyName(m_bindingKey);
+            newBinding.setDatastreamID(dsID);
+            newBinding.setBindLabel(bindingLabel);
+            if (m_rule.orderMatters()) {
+                newBinding.setSeqNo("" + m_bindings.length);
+            } else {
+                newBinding.setSeqNo("0");
+            }
+            // add it to the array
+            DatastreamBinding[] n=new DatastreamBinding[m_bindings.length+1];
+            for (int i=0; i<m_bindings.length; i++) {
+                n[i]=m_bindings[i];
+            }
+            n[m_bindings.length]=newBinding;
+            m_bindings=n;
+            fireTableRowsInserted(m_bindings.length-1, m_bindings.length-1);
+        }
 
-
+        /**
+         * Insert a row into the model and fire an event.
+         */
+        public void insertRow(int rowNum, String dsID, String bindingLabel) {
+        }
 
 
 
@@ -575,7 +782,7 @@ public class DatastreamBindingPane
 			for (int i=0; i<m_originalBindings.length; i++) {
 			    origSet.add(m_originalBindings[i]);
 			}
-			return new DatastreamBindingTableModel(origSet, getBindingKey());
+			return new DatastreamBindingTableModel(origSet, getBindingKey(), m_rule);
 		}
 
         /**

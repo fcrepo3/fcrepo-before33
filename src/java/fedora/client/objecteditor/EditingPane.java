@@ -54,6 +54,7 @@ public abstract class EditingPane
     private TabDrawer m_td;
     private String m_itemId;
     private ObjectEditorFrame m_owner;
+    private boolean m_isValid;
 
     /**
      * Build the pane.
@@ -64,6 +65,7 @@ public abstract class EditingPane
         m_owner=owner;
         m_td=td;
         m_itemId=itemId;
+        m_isValid=true;
 
         dataChangeListener=new DataChangeListener(this);
 
@@ -134,7 +136,7 @@ public abstract class EditingPane
      */
     public void updateButtonVisibility() {
         if (isDirty()) {
-            m_saveButton.setEnabled(true);
+            if (m_isValid) m_saveButton.setEnabled(true);
             m_undoButton.setEnabled(true);
             if (m_td!=null) m_td.setDirty(m_itemId, true);
             m_owner.indicateDirtiness();
@@ -144,6 +146,17 @@ public abstract class EditingPane
             if (m_td!=null) m_td.setDirty(m_itemId, false);
             m_owner.indicateDirtiness();
         }
+        if (!m_isValid) m_saveButton.setEnabled(false);
+    }
+
+    /**
+     * Tell whether the content being edited is valid or invalid.
+     * During future change events, the save button will never be shown while it is set to invalid.
+     * Before this is ever called on an EditingPane, the content is assumed
+     * to be valid.
+     */
+    public void setValid(boolean isValid) {
+        m_isValid=isValid;
     }
 
     /**
