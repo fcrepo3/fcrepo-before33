@@ -437,12 +437,10 @@ public class DefaultManagement
         try {
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Disseminator orig=w.GetDisseminator(disseminatorId, null);
-                    // copy the original datastream, replacing its DSLocation with
-                    // the new location (or the old datastream's default dissemination location, if empty or null),
-                    // triggering to doCommit that it needs to
-                    // be loaded from a new remote location
+                    // copy the original disseminator, replacing any modified fields
+                    // Note: still need to decide what is editable for a disseminator....
+                    //
                     Disseminator newdiss=new Disseminator();
-                    //newdiss.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
                     newdiss.dissID=orig.dissID;
                     // make sure it has a different id
                     newdiss.dissVersionID=getNextID(orig.dissVersionID);
@@ -451,7 +449,6 @@ public class DefaultManagement
                     newdiss.dsBindMap=orig.dsBindMap;
                     Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                     newdiss.dissCreateDT=nowUTC;
-                    //newds.DSSize will be computed later
                     newdiss.bDefID=orig.bDefID;
                     newdiss.bDefLabel=orig.bDefLabel;
                     newdiss.bMechID=orig.bMechID;
@@ -459,7 +456,7 @@ public class DefaultManagement
                     newdiss.dissState=dissState;
                     newdiss.parentPID=orig.parentPID;
                     newdiss.auditRecordIdList().addAll(orig.auditRecordIdList());
-                    // just add the datastream
+                    // just add the disseminator
                     w.addDisseminator(newdiss);
                     // add the audit record
                     fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
