@@ -19,5 +19,7 @@ public interface DOTranslator {
             String format, String encoding)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException;
+            
+    public abstract String getDefaultFormat();
 
 }
