@@ -17,7 +17,6 @@ import fedora.server.utilities.TableCreatingConnection;
  * <p>Title: ConnectionPool.java</p>
  * <p>Description: Provides a dispenser for database Connection Pools.</p>
  *
- *
  * @author rlw@virginia.edu, cwilper@cs.cornell.edu
  * @version $Id$
  */
