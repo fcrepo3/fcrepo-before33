@@ -204,8 +204,8 @@ public class MethodsPane extends JPanel {
         methodsPanel.add(t_buttonPanel, BorderLayout.EAST);
         return methodsPanel;
     }
-    
-	public JTable renderContractMethods(String bDefPID) 
+
+	public JTable renderContractMethods(String bDefPID)
 	{
 	  List methodDefs = getBDefMethods(bDefPID);
 	  for (int i=0; i<methodDefs.size(); i++)
@@ -243,11 +243,11 @@ public class MethodsPane extends JPanel {
 		catch (BMechBuilderException e)
 		{
 			assertMethodLoadErrorMsg("Problem loading bdef contract methods");
-		}   
+		}
 	  }
 	  return methodTable;
 	}
-	
+
     // Action Listener for button group
     class BaseURLActionListener implements ActionListener
     {
@@ -274,7 +274,7 @@ public class MethodsPane extends JPanel {
     }
 
 	private void cleanupMethodURLs()
-	{	
+	{
 		Method[] methods = getMethods();
 		for (int i=0; i<methods.length; i++)
 		{
@@ -283,7 +283,7 @@ public class MethodsPane extends JPanel {
 			methodMap.put(methods[i].methodName, methods[i]);
 		}
 	}
-	
+
     public boolean hasBaseURL()
     {
       if (rb_chosen.equalsIgnoreCase("baseURL"))
@@ -417,7 +417,7 @@ public class MethodsPane extends JPanel {
         assertNoMethodMsg("You must select a method row before entering properties");
         return;
       }
-	  else if (rb_baseURL.isSelected() && baseURL.getText().trim().equalsIgnoreCase(""))
+	  else if ((rb_baseURL != null && baseURL != null) && rb_baseURL.isSelected() && baseURL.getText().trim().equalsIgnoreCase(""))
 	  {
 		assertNoMethodMsg("You must enter the Base URL for the service before entering method properties");
 		return;
@@ -459,16 +459,16 @@ public class MethodsPane extends JPanel {
         this, new String(msg), "Method Exists Message",
         JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
 	protected void assertMethodLoadErrorMsg(String msg)
 	{
 	  JOptionPane.showMessageDialog(
 		this, new String(msg), "Method Loading Problem",
 		JOptionPane.INFORMATION_MESSAGE);
 	}
-    
+
 	private List getBDefMethods(String bDefPID)
-	{	
+	{
 		List methodDefs = null;
 		try
 		{
