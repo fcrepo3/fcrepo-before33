@@ -102,12 +102,16 @@
 	</path>
 	<path id="serverclasses-lib.path">
 		<pathelement location="${lib.axis}"/>
+		<pathelement location="${lib.batik}"/>	
 		<pathelement location="${lib.catalina}"/>
 		<pathelement location="${lib.catalina-optional}"/>
+		<pathelement location="${lib.commons-httpclient}"/>		
 		<pathelement location="${lib.commons-logging}"/>
 		<pathelement location="${lib.cos}"/>
+		<pathelement location="${lib.jai_core}"/>
 		<pathelement location="${lib.jaxrpc}"/>
-		<pathelement location="${lib.jena}"/>
+		<pathelement location="${lib.jena}"/>			
+		<pathelement location="${lib.jhbasic}"/>
 		<pathelement location="${lib.jmx}"/>		
 		<pathelement location="${lib.junit}"/>
 		<pathelement location="${lib.kowari-driver}"/>
@@ -782,7 +786,8 @@
 		<copy file="${lib.mysql-connector}" todir="${tomcat.dir}/common/lib"/>
 		<copy file="${lib.avalon-framework}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
 		<copy file="${lib.batik}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-		<copy file="${lib.cos}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.commons-httpclient}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.cos}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>		
 		<copy file="${lib.fop}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
 		<copy file="${lib.ij}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
 		<copy file="${lib.jai_codec}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
