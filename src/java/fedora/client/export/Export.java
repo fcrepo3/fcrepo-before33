@@ -43,7 +43,7 @@ public class Export {
                     if (pid!=null && !pid.equals("")) {
                         one(Administrator.APIM, pid, file);
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            "Ingest succeeded.  PID='" + pid + "'.");
+                            "Export succeeded.  PID='" + pid + "'.");
                     }
                 } else {
                     FTypeDialog dlg=new FTypeDialog();
