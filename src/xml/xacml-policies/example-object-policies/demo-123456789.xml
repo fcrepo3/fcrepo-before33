@@ -8,7 +8,7 @@
     <Subjects>
       <Subject> 
         <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:regexp-string-match">
-		  <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">It-.+</AttributeValue>
+		  <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">^It-.+$</AttributeValue>
           <SubjectAttributeDesignator AttributeId="ou" DataType="http://www.w3.org/2001/XMLSchema#string"/>
         </SubjectMatch>
       </Subject>
