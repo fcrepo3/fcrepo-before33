@@ -163,7 +163,7 @@
 						<fedoraAudit:process type="api-M"/>
 						<fedoraAudit:action>ingestObject</fedoraAudit:action>
 						<fedoraAudit:responsibility>payette</fedoraAudit:responsibility>
-						<fedoraAudit:date>2002-05-20TO6:32:00</fedoraAudit:date>
+						<fedoraAudit:date>2002-05-20T06:32:00</fedoraAudit:date>
 						<fedoraAudit:justification>add digital object to repository</fedoraAudit:justification>
 					</fedoraAudit:record>
 				</METS:xmlData>
@@ -176,7 +176,7 @@
 						<fedoraAudit:process type="api-M"/>
 						<fedoraAudit:action>modifyDatastream</fedoraAudit:action>
 						<fedoraAudit:responsibility>payette</fedoraAudit:responsibility>
-						<fedoraAudit:date>2002-05-22TO6:32:00</fedoraAudit:date>
+						<fedoraAudit:date>2002-05-22T06:32:00</fedoraAudit:date>
 						<fedoraAudit:justification>add new version of datastream (DS2.1) for better resolution</fedoraAudit:justification>
 					</fedoraAudit:record>
 				</METS:xmlData>
@@ -189,7 +189,7 @@
 						<fedoraAudit:process type="api-M"/>
 						<fedoraAudit:action>addDatastream</fedoraAudit:action>
 						<fedoraAudit:responsibility>payette</fedoraAudit:responsibility>
-						<fedoraAudit:date>2002-05-25TO8:32:00</fedoraAudit:date>
+						<fedoraAudit:date>2002-05-25T08:32:00</fedoraAudit:date>
 						<fedoraAudit:justification>add datastream (DS5) to support watermarking disseminator</fedoraAudit:justification>
 					</fedoraAudit:record>
 				</METS:xmlData>
@@ -202,7 +202,7 @@
 						<fedoraAudit:process type="api-M"/>
 						<fedoraAudit:action>addDisseminator</fedoraAudit:action>
 						<fedoraAudit:responsibility>payette</fedoraAudit:responsibility>
-						<fedoraAudit:date>2002-05-25TO8:32:00</fedoraAudit:date>
+						<fedoraAudit:date>2002-05-25T08:32:00</fedoraAudit:date>
 						<fedoraAudit:justification>add disseminator(DISS4) to provide image watermarking</fedoraAudit:justification>
 					</fedoraAudit:record>
 				</METS:xmlData>
@@ -215,7 +215,7 @@
 						<fedoraAudit:process type="api-M"/>
 						<fedoraAudit:action>modifyDisseminator</fedoraAudit:action>
 						<fedoraAudit:responsibility>payette</fedoraAudit:responsibility>
-						<fedoraAudit:date>2002-08-31TO8:32:00</fedoraAudit:date>
+						<fedoraAudit:date>2002-08-31T08:32:00</fedoraAudit:date>
 						<fedoraAudit:justification>modify disseminator(DISS3) to use a different behavior mechanism</fedoraAudit:justification>
 					</fedoraAudit:record>
 				</METS:xmlData>

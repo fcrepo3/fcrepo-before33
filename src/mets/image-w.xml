@@ -80,7 +80,7 @@
 						<fedoraAudit:process type="api-M"/>
 						<fedoraAudit:action>ingestObject</fedoraAudit:action>
 						<fedoraAudit:responsibility>payette</fedoraAudit:responsibility>
-						<fedoraAudit:date>2002-05-20TO6:32:00</fedoraAudit:date>
+						<fedoraAudit:date>2002-05-20T06:32:00</fedoraAudit:date>
 						<fedoraAudit:justification>add digital object to repository</fedoraAudit:justification>
 					</fedoraAudit:record>
 				</METS:xmlData>
