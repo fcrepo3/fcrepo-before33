@@ -10,3 +10,4 @@ Contents:
   level0-tasks.doc - A 4-week plan to get the server to do basic things with 
                      test objects and sample service(s)
   devguide.html    - Developer's Guide
+  namespaces.html  - Namespace Specification & Design Rationale
