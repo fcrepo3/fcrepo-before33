@@ -27,6 +27,26 @@ public class RDFName implements URIReference {
         }
     }
 
+    /**
+     * Does the given string loosely match this name?
+     *
+     * Either: 1) It matches localName (case insensitive)
+     *         2) It matches uri (case sensitive)
+     * if (firstLocalNameChar == true):
+     *         3) It is one character long, and that character
+     *            matches the first character of localName (case insensitive)
+     */
+    public boolean looselyMatches(String in, boolean tryFirstLocalNameChar) {
+        if (in == null || in.length() == 0) return false;
+        if (in.equalsIgnoreCase(this.localName)) return true;
+        if (in.equals(uri)) return true;
+        if (tryFirstLocalNameChar
+                && in.length() == 1 
+                && in.toUpperCase().charAt(0) == 
+                        localName.toUpperCase().charAt(0)) return true;
+        return false;
+    }
+
     //
     // Implementation of the URIReference interface
     //
