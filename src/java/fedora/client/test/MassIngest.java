@@ -40,7 +40,7 @@ public class MassIngest {
     private ArrayList m_wordList;
 
     public MassIngest(AutoIngestor ingestor, File templateFile,
-            File dictFile, int numTimes) throws Exception {
+            File dictFile, String format, int numTimes) throws Exception {
         // load the template file into two parts... with splitter=##SPLITTER##
         BufferedReader in=new BufferedReader(new FileReader(templateFile));
         String nextLine="";
@@ -68,7 +68,7 @@ public class MassIngest {
         for (int i=0; i<numTimes; i++) {
             String xml=start + dcFactory.get(2, 13) + end;
             String pid=ingestor.ingestAndCommit(new ByteArrayInputStream(
-                xml.getBytes("UTF-8")), "part of massingest of " + numTimes
+                xml.getBytes("UTF-8")), format, "part of massingest of " + numTimes
                 + " auto-generated objects.");
             int t=i+1;
             System.out.println(pid + " " + t + "/" + numTimes);
@@ -80,7 +80,8 @@ public class MassIngest {
 
     public static void showUsage(String message) {
         System.out.println("ERROR: " + message);
-        System.out.println("Usage: MassIngest host port username password templateFile dictionaryFile numTimes");
+        System.out.println(
+			"Usage: MassIngest host port username password templateFile dictionaryFile format numTimes");
     }
 
     public static void main(String[] args) throws Exception {
@@ -93,10 +94,11 @@ public class MassIngest {
                 String username=args[2];
                 String password=args[3];
                 File dictFile=new File(args[5]);
+                String format=args[6];
                 // third arg==file... must exist
                 File f=new File(args[4]);
                 AutoIngestor a=new AutoIngestor(hostName, portNum, username, password);
-                MassIngest m=new MassIngest(a, f, dictFile, Integer.parseInt(args[6]));
+                MassIngest m=new MassIngest(a, f, dictFile, format, Integer.parseInt(args[7]));
             }
         } catch (Exception e) {
             MassIngest.showUsage(e.getClass().getName() + " - "

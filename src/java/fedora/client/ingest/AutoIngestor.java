@@ -51,41 +51,57 @@ public class AutoIngestor {
             throws RemoteException, IOException {
         return ingestAndCommit(m_apim, in, logMessage);
     }
+    
+	public String ingestAndCommit(InputStream in, String format, String logMessage)
+			throws RemoteException, IOException {
+		return ingestAndCommit(m_apim, in, format, logMessage);
+	}
 
     public static String ingestAndCommit(FedoraAPIM skeleton, InputStream in, String logMessage)
-            throws RemoteException, IOException {
+            	throws RemoteException, IOException {
         ByteArrayOutputStream out=new ByteArrayOutputStream();
         StreamUtility.pipeStream(in, out, 4096);
         String pid=skeleton.ingestObject(out.toByteArray(), logMessage);
         return pid;
     }
+    
+	public static String ingestAndCommit(FedoraAPIM skeleton, InputStream in, String format, 
+		String logMessage)
+			throws RemoteException, IOException {
+		ByteArrayOutputStream out=new ByteArrayOutputStream();
+		StreamUtility.pipeStream(in, out, 4096);
+		String pid=skeleton.ingest(out.toByteArray(), format, logMessage);
+		return pid;
+	}
 
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");
-        System.out.println("Usage: AutoIngestor host port username password filename \"log message\"");
+        System.out.println(
+			"Usage: AutoIngestor host port username password filename format \"log message\"");
     }
 
     public static void main(String[] args) {
         try {
-            if (args.length!=6) {
-                AutoIngestor.showUsage("You must provide six arguments.");
+            if (args.length!=7) {
+                AutoIngestor.showUsage("You must provide seven arguments.");
             } else {
                 String hostName=args[0];
                 int portNum=Integer.parseInt(args[1]);
                 String username=args[2];
                 String password=args[3];
-                String logMessage=args[5];
-                // third arg==file... must exist
+				String logMessage=args[6];
+				String format=args[5];
+                // arg==file... must exist
                 File f=new File(args[4]);
                 if (!f.exists()) {
-                    AutoIngestor.showUsage("Third argument must be the path to an existing file.");
+                    AutoIngestor.showUsage("Fifth argument must be the path to an existing file.");
                 } else {
                     if (f.isDirectory()) {
-                        AutoIngestor.showUsage("Third argument must be a file path -- not a directory path.");
+                        AutoIngestor.showUsage("Fifth argument must be a file path -- not a directory path.");
                     } else {
                         AutoIngestor a=new AutoIngestor(hostName, portNum, username, password);
-                        System.out.println(a.ingestAndCommit(new FileInputStream(f), logMessage));
+                        System.out.println(a.ingestAndCommit(new FileInputStream(f), format, logMessage));
                     }
                 }
             }
