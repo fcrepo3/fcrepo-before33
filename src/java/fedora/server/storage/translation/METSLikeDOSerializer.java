@@ -371,6 +371,10 @@ public class METSLikeDOSerializer
                 if (audit.action==null) {
                     throw new ObjectIntegrityException("Audit record must have action.");
                 }
+				if (audit.componentID==null) {
+					audit.componentID = ""; // for backwards compatibility, no error on null
+					// throw new ObjectIntegrityException("Audit record must have componentID.");
+				}
                 if (audit.responsibility==null) {
                     throw new ObjectIntegrityException("Audit record must have responsibility.");
                 }
@@ -393,6 +397,9 @@ public class METSLikeDOSerializer
                 buf.append("            <" + m_fedoraAuditPrefix + ":action>"
                         + StreamUtility.enc(audit.action)
                         + "</" + m_fedoraAuditPrefix + ":action>\n");
+				buf.append("            <" + m_fedoraAuditPrefix + ":componentID>"
+										+ StreamUtility.enc(audit.componentID)
+										+ "</" + m_fedoraAuditPrefix + ":componentID>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":responsibility>"
                         + StreamUtility.enc(audit.responsibility)
                         + "</" + m_fedoraAuditPrefix + ":responsibility>\n");

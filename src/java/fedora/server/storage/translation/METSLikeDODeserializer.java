@@ -134,6 +134,7 @@ public class METSLikeDODeserializer
     private StringBuffer m_auditBuffer;
     private String m_auditProcessType;
     private String m_auditAction;
+	private String m_auditComponentID;
     private String m_auditResponsibility;
     private String m_auditDate;
     private String m_auditJustification;
@@ -773,6 +774,7 @@ public class METSLikeDODeserializer
                     if (localName.equals("process")) {
                         m_auditProcessType=grab(a, uri, "type");
                     } else if ( (localName.equals("action"))
+							|| (localName.equals("componentID"))
                             || (localName.equals("responsibility"))
                             || (localName.equals("date"))
                             || (localName.equals("justification")) ) {
@@ -808,7 +810,7 @@ public class METSLikeDODeserializer
                 // finished all xml metadata for this datastream
                 if (m_dsId.equals("FEDORA-AUDITTRAIL")) {
                     // we've been looking at an audit trail...
-                    // m_auditProcessType, m_auditAction,
+                    // m_auditProcessType, m_auditAction, m_auditComponentID, 
                     // m_auditResponsibility, m_auditDate, m_auditJustification
                     // should all be set
                     AuditRecord a=new AuditRecord();
@@ -816,6 +818,7 @@ public class METSLikeDODeserializer
                                      // datastream and the records are versions
                     a.processType=m_auditProcessType;
                     a.action=m_auditAction;
+                    a.componentID=m_auditComponentID;
                     a.responsibility=m_auditResponsibility;
                     a.date=DateUtility.convertStringToDate(m_auditDate);
                     a.justification=m_auditJustification;
@@ -890,6 +893,9 @@ public class METSLikeDODeserializer
                     if (localName.equals("action")) {
                         m_auditAction=m_auditBuffer.toString();
                         m_auditBuffer=null;
+					} else if (localName.equals("componentID")) {
+						m_auditComponentID=m_auditBuffer.toString();
+						m_auditBuffer=null;
                     } else if (localName.equals("responsibility")) {
                         m_auditResponsibility=m_auditBuffer.toString();
                         m_auditBuffer=null;
