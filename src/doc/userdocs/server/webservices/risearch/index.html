@@ -240,16 +240,26 @@ $b &lt;urn:example:isRelatedTo&gt; $a</pre></div>
   <div class="sect">
     <h2><a name="service">3. Application Interface</a></h2>
     <p>The RISearch service can be programmatically accessed via HTTP GET.  As with the
-    user interface, it can be invoked to retrieve tuples or triples.</p>
+    user interface, it can be invoked to retrieve tuples or triples.  The syntax is described below while
+    the meaning of each parameter is described in the above section.</p>
+    </p>
+    <p>Note:</p>
+    <ul>
+      <li> Square brackets ( "[" and "]" ) indicate that the parameter is optional.</li>
+      <li> As with all HTTP parameters, unsafe URI characters should be URI-escaped.
+    For reability purposes, URI escaping is not shown below.</li>
+      <li> The query and template parameters optionally take the value by <em>reference</em> -- that is,
+           a URL to a query or template can be given instead of the actual text.</li>
+    </ul>
     <div class="subsect">
       <h3><a name="app.tuples">Syntax for Requesting Tuples</a></h3>
       <div class="code"><pre>
 http://localhost:8080/fedora/risearch?type=tuples
                                      &amp;lang=<strong>iTQL|RDQL</strong>
                                      &amp;format=<strong>CSV|Simple|Sparql|TSV</strong>
-                                     &amp;limit=[<strong>1</strong> or more]
-                                     &amp;distinct=[<strong>on</strong>]
-                                     &amp;stream=[<strong>on</strong>]
+                                     &amp;limit=[<strong>1</strong> (default is no limit)]
+                                     &amp;distinct=[<strong>on</strong> (default is off)]
+                                     &amp;stream=[<strong>on</strong> (default is off)]
                                      &amp;query=<strong>QUERY_TEXT_OR_URL</strong></pre></div>
     </div>
     <div class="subsect">
@@ -258,11 +268,11 @@ http://localhost:8080/fedora/risearch?type=tuples
 http://localhost:8080/fedora/risearch?type=triples
                                      &amp;lang=<strong>SPO|iTQL|RDQL</strong>
                                      &amp;format=<strong>N-Triples|Notation 3|RDF/XML|Turtle</strong>
-                                     &amp;limit=[<strong>1</strong> or more]
-                                     &amp;distinct=[<strong>on</strong>]
-                                     &amp;stream=[<strong>on</strong>]
+                                     &amp;limit=[<strong>1</strong> or more (default is no limit)]
+                                     &amp;distinct=[<strong>on</strong> (default is off)]
+                                     &amp;stream=[<strong>on</strong> (default is off)]
                                      &amp;query=<strong>QUERY_TEXT_OR_URL</strong>
-                                     &amp;template=[<strong>TEMPLATE_TEXT_OR_URL</strong>]</pre></div>
+                                     &amp;template=[<strong>TEMPLATE_TEXT_OR_URL</strong> (if applicable)]</pre></div>
     </div>
   </div>
 
