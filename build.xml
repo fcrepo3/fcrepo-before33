@@ -156,42 +156,18 @@
 		<copy file="inc/server/tomcat41/common/lib/commons-discovery.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/lib"/>
-		<!-- begin additions -->
-		<!--
-Commented out... I'm not sure the command-line batch stuff is
-current anymore... I think it's just in the gui.  Delete this
-if you can confirm.
-		<mkdir dir="dist/batch"/>
-		<copy file="src/doc/batch/batch.doc" todir="dist/batch"/>
-		<copy file="src/properties/batch/default.properties" todir="dist/batch"/>
-		<copy file="src/xsl/batch/merge.xsl" todir="dist/batch"/>
-		<copy file="src/xml/batch/example.xml" todir="dist/batch"/>
-		<mkdir dir="dist/batch/bin"/>
-		<copy file="src/bat/batch/fedora-batch.bat" todir="dist/batch/bin"/>
-		<mkdir dir="dist/batch/beta1-demo1"/>
-		<copy file="src/mets/batch/beta1-demo1/beta1-demo1.xml" todir="dist/batch/beta1-demo1"/>
-		<mkdir dir="dist/batch/beta1-demo2"/>
-		<copy file="src/mets/batch/beta1-demo2/beta1-demo2.xml" todir="dist/batch/beta1-demo2"/>
-		<copy file="src/mets/batch/beta1-demo2/beta1-demo2-extended.xml" todir="dist/batch/beta1-demo2"/>
-		<copy todir="dist/batch/beta1-demo1">
-			<fileset dir="src/properties/batch/beta1-demo1"/>
+
+		<!-- all batch tool build is here, except for demo-content (under target "servermostly") -->
+		<copy file="src/xsl/batch/merge.xsl" todir="dist/client/lib"/>
+		<mkdir dir="dist/client/demo/batch-demo"/>
+		<copy file="src/mets/demo/batch-demo/mets-template.xml" todir="dist/client/demo/batch-demo"/>
+		<copy todir="dist/client/demo/batch-demo/object-specifics">
+			<fileset dir="src/xml/batch-demo/object-specifics"/>
 		</copy>
-		<copy todir="dist/batch/beta1-demo2">
-			<fileset dir="src/properties/batch/beta1-demo2"/>
-		</copy>
-		<copy todir="dist/batch/beta1-demo1/objects">
-			<fileset dir="src/mets/batch/beta1-demo1/objects"/>
-		</copy>
-		<copy todir="dist/batch/beta1-demo2/object-specifics">
-			<fileset dir="src/xml/batch/beta1-demo2/object-specifics"/>
-		</copy>
-		<mkdir dir="dist/batch/beta1-demo2/objects"/>
-		<copy todir="dist/server/tomcat41/webapps/ROOT/beta1-demo">
-			<fileset dir="src/jpg/batch/beta1-demo"/>
-		</copy>
--->
-		<!-- data demos to dist -->
-		<!-- end additions -->
+		<mkdir dir="dist/client/demo/batch-demo/objects"/><!-- pop'ed on demo build -->
+		<!-- copy file="src/doc/batch/batch.doc" todir="dist/batch"/ -->
+		<!-- end batch tool build -->		
+
 		<echo message="Finished building client distribution in dist/client"/>
 	</target>
 	<target name="prep" description="Prepare a temporary build area for targets">
@@ -863,6 +839,9 @@ if you can confirm.
 </project>
 <!--
   $Log$
+  Revision 1.114  2003/05/11 04:31:33  wdn5e
+  batchtool build changed
+
   Revision 1.113  2003/05/11 01:26:38  cwilper
   added release target.  tar.gz's and zips of
   - server binaries
