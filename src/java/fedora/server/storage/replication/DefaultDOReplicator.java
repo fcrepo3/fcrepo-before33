@@ -103,30 +103,33 @@ public class DefaultDOReplicator
                   MethodParmDef[] methodParmDefs =
                       new MethodParmDef[behaviorDefs[i].methodParms.length];
                   methodParmDefs = behaviorDefs[i].methodParms;
-                  for (int k=0; k<methodParmDefs.length; k++)
+                  parmRequired =
+                           methodParmDefs[j].parmRequired ? "true" : "false";
+                  parmDomainValues = methodParmDefs[j].parmDomainValues;
+                  StringBuffer sb = new StringBuffer();
+                  if (parmDomainValues != null)
                   {
-                    parmRequired =
-                             methodParmDefs[k].parmRequired ? "true" : "false";
-                    parmDomainValues = methodParmDefs[k].parmDomainValues;
-                    StringBuffer sb = new StringBuffer();
-                    for (int m=0; m<parmDomainValues.length; m++)
+                    for (int k=0; k<parmDomainValues.length; k++)
                     {
-                      if (m < parmDomainValues.length-1)
+                      if (k < parmDomainValues.length-1)
                       {
-                        sb.append(parmDomainValues[m]+",");
+                        sb.append(parmDomainValues[k]+",");
                       } else
                       {
-                        sb.append(parmDomainValues[m]);
+                        sb.append(parmDomainValues[k]);
                       }
-                    }
-                    m_ri.insertMethodParmRow(connection, methDBID, bDefDBID,
-                            methodParmDefs[k].parmName,
-                            methodParmDefs[k].parmDefaultValue,
-                            sb.toString(),
-                            parmRequired,
-                            methodParmDefs[k].parmLabel,
-                            methodParmDefs[k].parmType);
                   }
+                  } else
+                  {
+                    sb.append("null");
+                  }
+                  m_ri.insertMethodParmRow(connection, methDBID, bDefDBID,
+                          methodParmDefs[j].parmName,
+                          methodParmDefs[j].parmDefaultValue,
+                          sb.toString(),
+                          parmRequired,
+                          methodParmDefs[j].parmLabel,
+                          methodParmDefs[j].parmType);
                 }
             }
             connection.commit();
@@ -232,7 +235,6 @@ public class DefaultDOReplicator
 
             behaviorBindings = bMechReader.GetBehaviorMethods(null);
 
-
             // Insert MechanismImpl rows
             for (int i=0; i<behaviorBindings.length; ++i) {
                 behaviorBindingsEntry =
@@ -241,6 +243,7 @@ public class DefaultDOReplicator
                     // For the time being, ignore bindings other than HTTP.
                     continue;
                 }
+
                 // Insert MechDefaultParameter rows
                 methodDBID = m_dl.lookupMethodDBID(connection, bDefDBID,
                         behaviorBindingsEntry.methodName);
@@ -254,32 +257,35 @@ public class DefaultDOReplicator
                   MethodParmDef[] methodParmDefs =
                       new MethodParmDef[behaviorBindings[i].methodParms.length];
                   methodParmDefs = behaviorBindings[i].methodParms;
-                  for (int k=0; k<methodParmDefs.length; k++)
+                  if (methodParmDefs[j].parmType.equalsIgnoreCase("fedora:defaultInputType"))
                   {
-                    if (methodParmDefs[k].parmType.equalsIgnoreCase("fedora:defaultInputType"))
+                  parmRequired =
+                           methodParmDefs[j].parmRequired ? "true" : "false";
+                  parmDomainValues = methodParmDefs[j].parmDomainValues;
+                  StringBuffer sb = new StringBuffer();
+                  if (parmDomainValues != null)
+                  {
+                    for (int k=0; k<parmDomainValues.length; k++)
                     {
-                    parmRequired =
-                             methodParmDefs[k].parmRequired ? "true" : "false";
-                    parmDomainValues = methodParmDefs[k].parmDomainValues;
-                    StringBuffer sb = new StringBuffer();
-                    for (int m=0; m<parmDomainValues.length; m++)
-                    {
-                      if (m < parmDomainValues.length-1)
+                      if (k < parmDomainValues.length-1)
                       {
-                        sb.append(parmDomainValues[m]+",");
+                        sb.append(parmDomainValues[k]+",");
                       } else
                       {
-                        sb.append(parmDomainValues[m]);
+                        sb.append(parmDomainValues[k]);
                       }
-                    }
-                    m_ri.insertMechDefaultMethodParmRow(connection, methodDBID, bMechDBID,
-                            methodParmDefs[k].parmName,
-                            methodParmDefs[k].parmDefaultValue,
-                            sb.toString(),
-                            parmRequired,
-                            methodParmDefs[k].parmLabel,
-                            methodParmDefs[k].parmType);
                   }
+                  } else
+                  {
+                    if (sb.length() == 0) sb.append("null");
+                  }
+                  m_ri.insertMechDefaultMethodParmRow(connection, methodDBID, bMechDBID,
+                          methodParmDefs[j].parmName,
+                          methodParmDefs[j].parmDefaultValue,
+                          sb.toString(),
+                          parmRequired,
+                          methodParmDefs[j].parmLabel,
+                            methodParmDefs[j].parmType);
                   }
                 }
                 for (int j=0; j<dsBindSpec.dsBindRules.length; ++j) {
