@@ -14,11 +14,11 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 if "%OS%" == "" goto runMinimized
 
 :runInBackground
-start /B %JAVA_HOME%\bin\java -Xms32m -Xmx64m -cp %FEDORA_HOME%\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\mckoi094\db.conf
+start /B %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\mckoi094\db.conf
 goto :doneRunning
 
 :runMinimized
-start /m %JAVA_HOME%\bin\java -Xms32m -Xmx64m -cp %FEDORA_HOME%\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\mckoi094\db.conf
+start /m %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\mckoi094\db.conf
 
 :doneRunning
 set JAVA_HOME=%OLD_JAVA_HOME%

@@ -44,7 +44,7 @@ OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
 export JAVA_HOME
 
-(exec $JAVA_HOME/bin/java -Xms32m -Xmx64m -cp $FEDORA_HOME/mckoi094/gnu-regexp-1.1.4.jar -jar $FEDORA_HOME/mckoi094/mckoidb.jar -conf $FEDORA_HOME/mckoi094/db.conf &)
+(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/mckoi094/gnu-regexp-1.1.4.jar -jar $FEDORA_HOME/mckoi094/mckoidb.jar -conf $FEDORA_HOME/mckoi094/db.conf &)
 
 JAVA_HOME=$OLD_JAVA_HOME
 export JAVA_HOME
