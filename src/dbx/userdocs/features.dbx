@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
@@ -46,7 +46,7 @@
 		<title>Major features:</title>
 		<itemizedlist>
 			<listitem>
-				<para><emphasis role="bold">Open Source</emphasis> - The Fedora repository system is open source software licensed under the GNU General Public License.	
+				<para><emphasis role="bold">Open Source</emphasis> - The Fedora repository system is open source software licensed under the Mozilla Public License.	
 					</para>
 			</listitem>
 			<listitem>
