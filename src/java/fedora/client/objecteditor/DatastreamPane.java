@@ -61,10 +61,10 @@ public class DatastreamPane
 
     private Datastream m_mostRecent;
     private JComboBox m_stateComboBox;
-    private JTextField m_labelTextField;
     private JSlider m_versionSlider;
     private JPanel m_valuePane;
     private CardLayout m_versionCardLayout;
+    private CurrentVersionPane m_currentVersionPane;
 
     /**
      * Build the pane.
@@ -154,23 +154,16 @@ public class DatastreamPane
 
                     // CARD: valuePanes[0](versionValuePane, versionActionPane)
 
-                    valuePanes[0]=new JPanel();
-                    valuePanes[0].add(new JButton(mostRecent.getVersionID()));
+                    m_currentVersionPane=new CurrentVersionPane(mostRecent);
+                    valuePanes[0]=m_currentVersionPane;
 
-                        // CENTER: pane(version value grid)
-                        // EAST: pane(vertical button grid)
-            
                 m_valuePane.add(valuePanes[0], "0");
 
                     // CARD: valuePanes[1 to i](versionValuePane, versionActionPane)
 
                     for (int i=1; i<versions.length; i++) {
-                        valuePanes[i]=new JPanel();
-                        valuePanes[i].add(new JButton(versions[i].getVersionID()));
+                        valuePanes[i]=new PriorVersionPane(versions[i]);
     
-                            // CENTER: pane(version value grid)
-                            // EAST: pane(vertical button grid)
-
                         m_valuePane.add(valuePanes[i], "" + i);
                     }
 
@@ -215,13 +208,9 @@ public class DatastreamPane
         if (stateIndex!=m_stateComboBox.getSelectedIndex()) {
             return true;
         }
-        if (!m_mostRecent.getLabel().equals(m_labelTextField.getText())) {
+        if (m_currentVersionPane.isDirty()) {
             return true;
         }
-        return contentIsDirty();
-    }
-
-    private boolean contentIsDirty() {
         return false;
     }
 
@@ -259,7 +248,7 @@ public class DatastreamPane
            m_mostRecent.setState("I");
         if (i==2)
            m_mostRecent.setState("D");
-        m_mostRecent.setLabel(m_labelTextField.getText());
+        m_currentVersionPane.changesSaved();
     }
 
     public void undoChanges() {
@@ -269,7 +258,7 @@ public class DatastreamPane
             m_stateComboBox.setSelectedIndex(1);
         if (m_mostRecent.getState().equals("D"))
             m_stateComboBox.setSelectedIndex(2);
-        m_labelTextField.setText(m_mostRecent.getLabel());
+        m_currentVersionPane.undoChanges();
     }
 
 
@@ -285,4 +274,43 @@ public class DatastreamPane
         }
     }
 
+    public class CurrentVersionPane
+            extends JPanel
+            implements PotentiallyDirty {
+
+        private Datastream m_ds;
+        private JTextField m_labelTextField;
+
+        public CurrentVersionPane(Datastream ds) {
+            m_ds=ds;
+            m_labelTextField=new JTextField(ds.getLabel());
+            add(m_labelTextField);
+        }
+
+        public boolean isDirty() {
+            if (!m_ds.getLabel().equals(m_labelTextField.getText())) {
+                return true;
+            }
+            return false;
+        }
+
+        public void changesSaved() {
+            m_ds.setLabel(m_labelTextField.getText());
+        }
+
+        public void undoChanges() {
+            m_labelTextField.setText(m_ds.getLabel());
+        }
+    }
+
+    public class PriorVersionPane
+            extends JPanel {
+
+        private Datastream m_ds;
+
+        public PriorVersionPane(Datastream ds) {
+            m_ds=ds;
+            add(new JButton(ds.getVersionID()));
+        }
+    }
 }
