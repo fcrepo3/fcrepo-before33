@@ -5,5 +5,6 @@
 -->
 <tomcat-users>
   <user name="fedoraAdmin" password="#" roles="administrator" />
+  <user name="surrogate64" password="surrogate64" roles="webfrontend" />  
   <user name="guest" password="" roles="" />
 </tomcat-users>
