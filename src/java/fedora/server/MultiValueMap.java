@@ -20,8 +20,20 @@ public class MultiValueMap {
     }
 
     public void set(String name, Object value) throws Exception {
+    	if (name == null) {
+    		String msg = here + ": set() has null name, value=" + value;
+    		log(msg);
+    		throw new Exception(msg);
+    	}
+    	if (name == null) {
+    		String msg = here + ": set() has null value, name=" + name;
+    		log(msg);
+    		throw new Exception(msg);
+    	}
     	if (locked) {
-    		throw new Exception("object locked");    		
+    		String msg = here + ": set() has object locked";
+    		log(msg);
+    		throw new Exception(msg);    		
     	}
     	if (value instanceof String) {
     	} else if (value instanceof String[]) {
@@ -29,7 +41,9 @@ public class MultiValueMap {
         		value = ((String[])value)[0];
     		}
     	} else {
-    		throw new Exception("unhandled type");
+    		String msg = here + ": set() has unhandled type";
+    		log(msg);
+    		throw new Exception(msg);    		
     	}
     	attributes.put(name, value);
     }
@@ -48,7 +62,7 @@ public class MultiValueMap {
     	} else if (attributes.get(name) instanceof String[]) {
     		return ((String[])attributes.get(name)).length;
     	} else {
-    		return -1;
+    		return 0;
     	}
     }
     
@@ -70,5 +84,17 @@ public class MultiValueMap {
         }
         return buffer.toString();
     }
+    
+    protected static final String here;
+	static {
+    	here = "MultiValueMap";
+    }
+    
+	public static boolean log = false; 
+	
+	protected static final void log(String msg) {
+		if (! log) return;
+		System.err.println(here + msg);
+	}
 
 }
