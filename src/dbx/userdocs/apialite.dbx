@@ -15,7 +15,7 @@
 			</inlinemediaobject>
 		</title>
 		<title><trademark class="trade">Fedora</trademark> API-A-Lite Interface Client User Documentation</title>
-		<subtitle>Software Release 1.1.1</subtitle>
+		<subtitle>Software Release 1.2</subtitle>
 		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -91,7 +91,7 @@
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.1.1.)</para>
+						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time.</para>
 				</listitem>
 				<listitem>
 					<para>
@@ -128,7 +128,7 @@
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.1.1.)</para>
+						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time.</para>
 				</listitem>
 				<listitem>
 					<para>

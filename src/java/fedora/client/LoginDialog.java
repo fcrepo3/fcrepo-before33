@@ -256,10 +256,10 @@ public class LoginDialog
             Administrator.APIA=APIAStubFactory.getStub(host, port, user, pass);
             Administrator.APIM=APIMStubFactory.getStub(host, port, user, pass);
             RepositoryInfo info=Administrator.APIA.describeRepository();
-            if (!info.getRepositoryVersion().equals("1.1.1")) {
+            if (!info.getRepositoryVersion().equals("1.2")) {
                 throw new IOException("Server is version "
                         + info.getRepositoryVersion() + ", but this"
-                        + " client only works with version 1.1.1");
+                        + " client only works with version 1.2");
             }
             // do a simple API-M call, and if it doesn't come back
             // unauthorized, assume all is ok.

@@ -15,7 +15,7 @@
 			</inlinemediaobject>
 		</title>
 		<title><trademark class="trade">Fedora</trademark> Installation and Configuration Guide</title>
-		<subtitle>Software Release 1.1.1</subtitle>
+		<subtitle>Software Release 1.2</subtitle>
 		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -75,30 +75,30 @@
 					<para>Decide where you want the Fedora software to reside.  For example, C:\ or /usr/local.</para>
 				</listitem>
 				<listitem>
-					<para>Unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.1.1.  This will be the home directory of Fedora.</para>
+					<para>Unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.2.  This will be the home directory of Fedora.</para>
 				</listitem>
 				<listitem>
-					<para>If you're in Unix, you must change the permissions of the files in the server/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.1.1/server/bin/*</emphasis>
+					<para>If you're in Unix, you must change the permissions of the files in the server/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.2/server/bin/*</emphasis>
 					</para>
 				</listitem>
 			</itemizedlist>
 			<para>Client binary distribution:</para>
 			<itemizedlist>
 				<listitem>
-					<para>If a server is already unpacked on the machine, put the client in the same place.  That is, if your server is unpacked into C:\fedora-1.1.1\server\, go to C:\ and unpack the client from there.  It will go into C:\fedora-1.1.1\client, so that now both the client and server are under one common directory.</para>
+					<para>If a server is already unpacked on the machine, put the client in the same place.  That is, if your server is unpacked into C:\fedora-1.2\server\, go to C:\ and unpack the client from there.  It will go into C:\fedora-1.2\client, so that now both the client and server are under one common directory.</para>
 				</listitem>
 				<listitem>
-					<para>If the machine you're installing on doesn't have a server, decide where you want the client to reside.  For example, C:\ or /usr/local.  Then unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.1.1.  This will be the home directory of Fedora.</para>
+					<para>If the machine you're installing on doesn't have a server, decide where you want the client to reside.  For example, C:\ or /usr/local.  Then unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.2.  This will be the home directory of Fedora.</para>
 				</listitem>
 				<listitem>
-					<para>If you're in Unix, you must change the permissions of the files in the client/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.1.1/client/bin/*</emphasis>
+					<para>If you're in Unix, you must change the permissions of the files in the client/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.2/client/bin/*</emphasis>
 					</para>
 				</listitem>
 			</itemizedlist>
 			<para>Source Code:</para>
 			<itemizedlist>
 				<listitem>
-					<para>Decide where you want to work with the source code and unpack it there.  It will create its own directory, named according to the version... like fedora-1.1.1-src.  This will be your Fedora development directory.</para>
+					<para>Decide where you want to work with the source code and unpack it there.  It will create its own directory, named according to the version... like fedora-1.2-src.  This will be your Fedora development directory.</para>
 				</listitem>
 			</itemizedlist>
 		</section>
@@ -139,7 +139,7 @@
 			<para>For source code installations:</para>
 			<itemizedlist>
 				<listitem>
-					<para>FEDORA_DEV should contain the directory under which the source was unpacked, including the version part of the path.  For instance, if you installed the source in C:\ and it unpacked into C:\fedora-src-1.1.1\, FEDORA_DEV should be C:\fedora-src-1.1.1</para>
+					<para>FEDORA_DEV should contain the directory under which the source was unpacked, including the version part of the path.  For instance, if you installed the source in C:\ and it unpacked into C:\fedora-src-1.2\, FEDORA_DEV should be C:\fedora-src-1.2</para>
 				</listitem>
 				<listitem>
 					<para>PATH should contain the bin directory of Ant.  If you don't already have Ant installed, or you have a version before v1.4.1, you can use the version that comes with the Fedora source distribution in under %FEDORA_DEV%\res\ant\bin (in Windows) or $FEDORA_DEV/res/ant/bin (in Unix).  IMPORTANT: If you use your own version of Ant, be sure it's v1.4.1+ or the build may not work. You can verify this by typing "ant -version" at the command prompt.  Note: If you opt to use the ant binaries included with the source, and you're in Unix, be sure to change the permissions on the files in the bin directory so that you can execute ant.  This can be done with the command: <emphasis>FEDORA_DEV/res/ant/bin/*</emphasis>
@@ -558,7 +558,7 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 		<title>Configuring Fedora to Run on a Different Host or Port</title>
 		<para>The Fedora server now has internal support for avoiding breakage of self-referential URLs (i.e., URLs that contain the hostname and port of the Fedora server itself).  This change allows the Fedora server host and port to be re-configured without breaking digital objects that contained URLs that referred to a previous host and port configuration. </para>
 		<para>The host name and port number on which the Fedora server runs is controlled by the <emphasis>fedoraServerHost</emphasis> and <emphasis>fedoraServerPort</emphasis> parameters in the fedora.fcfg configuration file. By default, these are set to the host name of <emphasis>localhost</emphasis> and port number of <emphasis>8080</emphasis>. The steps you need to take in order to change host name and/or port number vary slightly depending on whether you are making the change for the first time or making the change on a pre-existing Fedora server.</para>
-		<para>If you are installling Fedora 1.1.1 for the first time and want to run using a host  or port other than the defaults, you need to do the following:
+		<para>If you are installling Fedora for the first time and want to run using a host  or port other than the defaults, you need to do the following:
 				<itemizedlist>
 				<listitem>
 					<para>Change the values of <emphasis>fedoraServerHost</emphasis> and <emphasis>fedoraServerPort</emphasis> to the values you want to use in the fedora.fcfg file.</para>
@@ -588,7 +588,7 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 				</listitem>
 			</itemizedlist>
 		</para>
-		<para>If you have an existing Fedora 1.1.1 server already running and you need to change the host name and/or port number on which the server runs, you need to do the following:
+		<para>If you have an existing Fedora server already running and you need to change the host name and/or port number on which the server runs, you need to do the following:
 				<itemizedlist>
 				<listitem>
 					<para>Stop the Fedora server.</para>
@@ -615,8 +615,8 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 				</listitem>
 			</itemizedlist>
 		</para>
-		<para>There are some minor backward compatibility issues related to the host/port changes in Fedora 1.1.1. Please note that if you have an existing Fedora 1.0 server and  want to upgrade to version 1.1.1 of the software, <emphasis role="bold">but</emphasis> leave your existing objects as they were ingested under the Fedora 1.0 server (i.e., choose not to purge and then re-ingest the objects), this is possible with the following caveats. Any demo objects ingested under Fedora 1.0 will have the host and port of localhost and 8080 embedded in the demo objects as well as any user-defined objects created using Fedora 1.0 that reference the default host and port of the Fedora 1.0 server. Provided the host and port do not change for the Fedora server, these objects will continue to function correctly under the Fedora 1.1.1 server. However, if the host and/or port changes in the future, these <emphasis role="bold">pre-existing objects</emphasis> will no longer function correctly. The only way to fix them after a host/port change is to purge and then re-ingest the objects.
-		</para>
+<!--		<para>There are some minor backward compatibility issues related to the host/port changes in Fedora 1.1.1. Please note that if you have an existing Fedora 1.0 server and  want to upgrade to version 1.1.1 of the software, <emphasis role="bold">but</emphasis> leave your existing objects as they were ingested under the Fedora 1.0 server (i.e., choose not to purge and then re-ingest the objects), this is possible with the following caveats. Any demo objects ingested under Fedora 1.0 will have the host and port of localhost and 8080 embedded in the demo objects as well as any user-defined objects created using Fedora 1.0 that reference the default host and port of the Fedora 1.0 server. Provided the host and port do not change for the Fedora server, these objects will continue to function correctly under the Fedora 1.1.1 server. However, if the host and/or port changes in the future, these <emphasis role="bold">pre-existing objects</emphasis> will no longer function correctly. The only way to fix them after a host/port change is to purge and then re-ingest the objects.
+		</para>  ######## I don't think the above applies anymore ########### -->
 	</section>
 	<section>
 		<title>Server logs</title>

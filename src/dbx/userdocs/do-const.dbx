@@ -10,7 +10,7 @@
 			</inlinemediaobject>
 		</title>
 		<title><trademark class="trade">Fedora</trademark> Digital Object Construction Guide</title>
-		<subtitle>Software Release 1.1.1</subtitle>
+		<subtitle>Software Release 1.2</subtitle>
 		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -118,18 +118,18 @@
 		</sect2>
 		<sect2>
 			<title>
-				<emphasis> Interactive Building  (not available in Release 1.1.1 of Fedora)</emphasis>
+				<emphasis>Interactive Building</emphasis>
 			</title>
 			<itemizedlist>
 				<listitem>
-					<para>a. Process summary:  A user can create a digital object through a visual metaphor using the Admin GUI java application.  The Admin GUI will provide a Data Object Builder which acts as a “wizard” for creating objects in a one-up manner. </para>
+					<para>a. Process summary:  A user can create a digital object through a visual metaphor using the Admin GUI java application.  The Admin GUI provides a New Object command and an Object Editor that can be used to edit objects.</para>
 				</listitem>
 				<listitem>
 					<para>b. Clients for interactive building</para>
 					<itemizedlist>
 						<listitem>
 							<para>
-								<emphasis>Admin GUI</emphasis>  - From the menu, select Builders/DataObjectBuilder.  This will open up a wizard for creating new data objects. </para>
+								<emphasis>Admin GUI</emphasis>  - From the File menu, select New, then Object.</para>
 						</listitem>
 					</itemizedlist>
 				</listitem>
