@@ -311,7 +311,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         JMenu toolsMenu=new JMenu("Tools");
         toolsMenu.setMnemonic(KeyEvent.VK_T);
 
-        JMenuItem toolsSearch=new JMenuItem("Search/Browse Repository",KeyEvent.VK_B);
+        JMenuItem toolsSearch=new JMenuItem("Search/Browse Repository",KeyEvent.VK_S);
         toolsSearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 createSearchRepository();
@@ -319,13 +319,16 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         });
         toolsMenu.add(toolsSearch);
 
+        JMenuItem toolsAdvanced=new JMenuItem("Advanced",KeyEvent.VK_A);
+
+
         JMenuItem toolsManagement=new JMenuItem("Management Console",KeyEvent.VK_M);
         toolsManagement.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 createManagementConsole();
             }
         });
-        toolsMenu.add(toolsManagement);
+        toolsAdvanced.add(toolsManagement);
 
         JMenuItem toolsAccess=new JMenuItem("Access Console",KeyEvent.VK_A);
         toolsAccess.addActionListener(new ActionListener() {
@@ -333,16 +336,19 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                 createAccessConsole();
             }
         });
-        toolsMenu.add(toolsAccess);
+        toolsAdvanced.add(toolsAccess);
+        toolsMenu.add(toolsAdvanced);
 
 	//wdn >
+        JMenuItem toolsBatchSubMenu=new JMenuItem("Batch", KeyEvent.VK_B);
+
         JMenuItem toolsBatchBuild=new JMenuItem("Build Batch"/*, KeyEvent.VK_A*/);
         toolsBatchBuild.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 createBatchBuildConsole();
             }
         });
-        toolsMenu.add(toolsBatchBuild);
+        toolsBatchSubMenu.add(toolsBatchBuild);
 
         JMenuItem toolsBatchBuildIngest=new JMenuItem("Build and Ingest Batch"/*, KeyEvent.VK_A*/);
         toolsBatchBuildIngest.addActionListener(new ActionListener() {
@@ -350,7 +356,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                 createBatchBuildIngestConsole();
             }
         });
-        toolsMenu.add(toolsBatchBuildIngest);
+        toolsBatchSubMenu.add(toolsBatchBuildIngest);
 
         JMenuItem toolsBatchIngest=new JMenuItem("Ingest Batch"/*, KeyEvent.VK_A*/);
         toolsBatchIngest.addActionListener(new ActionListener() {
@@ -358,7 +364,8 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                 createBatchIngestConsole();
             }
         });
-        toolsMenu.add(toolsBatchIngest);
+        toolsBatchSubMenu.add(toolsBatchIngest);
+        toolsMenu.add(toolsBatchSubMenu);
 
         // < wdn
 
