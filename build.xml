@@ -19,6 +19,8 @@
 		<mkdir dir="dist/client/lib"/>
 		<copy file="lib/client/jhbasic.jar" todir="dist/client/lib"/>
 		<copy file="lib/client/rms.jar" todir="dist/client/lib"/>
+                <copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/lib"/>
+                <copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/lib"/>
 		<!--<copy todir="temp/client">
       <fileset dir="inc/client/dist"/>
     </copy>-->
@@ -88,7 +90,7 @@
     </target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar" destdir="dist/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar" destdir="dist/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
 	</target>
 	<target name="devdocs" depends="prep" description="Assemble development/system documentation into dist/devdocs">
 		<mkdir dir="dist"/>
@@ -294,14 +296,14 @@
 			<arg value="test"/>
 		</exec>
 	</target>
-	<target name="metstest" description="run fedora.server.test.METSInOutTest on dist/server/tomcat41/image-w.xml">
+	<target name="metstest" description="run fedora.server.test.METSInOutTest on dist/server/tomcat41/image-test.xml">
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
 			<arg value="-classpath"/>
 			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
 			<arg value="fedora.server.test.METSInOutTest"/>
-			<arg value="dist/server/tomcat41/image-w.xml"/>
+			<arg value="dist/server/tomcat41/image-test.xml"/>
 		</exec>
 	</target>
 	<target name="serverclasses" depends="serverprep,wsdl2java" description="Compile server java code into temp/server/classes">
@@ -320,6 +322,14 @@
 </project>
 <!--
   $Log$
+  Revision 1.34  2002/09/23 03:03:34  cwilper
+  added:
+     - javadoccing of fedora.server.utilities package
+  modified:
+     - metstest target uses image-test.xml instead of image-w.xml,
+       for more wide-range testing of ser/deser
+     - client target copies axis.jar and wsdl4j.jar in dist dir
+
   Revision 1.33  2002/09/19 10:23:18  cwilper
   updated to copy *.pdf and *.gif devdocs files for the devdocs target
 
