@@ -1,3 +1,12 @@
+// FIXME: this is going to change so that 1) it takes a storageType on
+// construction, 2) the config stuff needs to be smoothed out given new
+// config thoughts, 3) it provides readers and writers based on the
+// storageType order given in the constructor... or something? hmm.
+// 4) the createObject and deleteObject things can be taken care of
+// in terms of the PID generator and DORegistry.  The DORegistry is
+// going to be reader/writer pair-specific, and won't live at this
+// level, btw.
+
 package fedora.server.storage;
 
 import fedora.server.errors.ModuleInitializationException;
