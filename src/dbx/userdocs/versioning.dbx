@@ -39,6 +39,10 @@
 		<para>All components of data objects can be versioned in Fedora v1.2. Versioning of behavior objects (Behavior Definitions and Behavior Mechanisms) is in scope for future releases of the software.</para>
 	</sect1>
 	<sect1>
+		<title>Preservation</title>
+		<para>The ability to version content of Fedora data objects provides repositories with the ability to preserve not only the data for any given data object over time, but also to preserve the look and feel of the dissemination of that data object, since the original content is linked to the original delivery mechanisms used to disseminate that content.</para>
+	</sect1>
+	<sect1>
 		<title>How It Works in the XML</title>
 		<para>In a Fedora data object, datastreams are represented in fedora:mets by &lt;filegrp&gt; elements. When a modification is made to a datastream, a new &lt;file&gt; element is added to the &lt;filegrp&gt;. Disseminators are defined in the &lt;mets:behaviorSec&gt; element. As disseminators in the object are modified, new &lt;mets:serviceBinding&gt; elements are added to the &lt;mets:behaviorSec&gt;.</para>
 	</sect1>
@@ -49,20 +53,20 @@
 		<para>The following screen shots show a versioned image datastream:</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="images/dsversion1.jpg"/>
+				<imagedata fileref="images/version1.jpg"/>
 			</imageobject>
 		</mediaobject>
 		<para/>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="images/dsversion2.jpg"/>
+				<imagedata fileref="images/version2.jpg"/>
 			</imageobject>
 		</mediaobject>
 	</sect1>
 	<sect1>
 		<title>Search and Retrieval in Fedora Administrator</title>
-		<para>Retrieval of a specific version of a datastream requires using the Advanced Search tab on the Search Repository dialog and entering a specific date/time stamp as a search criteria.</para>
-		<para>All components are given a created date (cDate) value at ingest. Whenever the component is modified, the modified date (mDate) value is updated. By searching on the modified date, it is possible to retrieve a previous version of a datastream. Wild card values are allowed in the date/time search criteria. For example</para>
+		<para>Retrieval of a modified data object requires using the Advanced Search tab on the Search Repository dialog and entering a specific date/time stamp as a search criteria.</para>
+		<para>All components are given a created date (cDate) value at ingest. Whenever the component is modified, the modified date (mDate) value is updated. By searching on the modified date, it is possible to retrieve a result set of modified data objects. Wild card values are allowed in the date/time search criteria. For example</para>
 		<blockquote>
 			<para>mDate&lt;=2003-08-28T*</para>
 		</blockquote>
@@ -71,8 +75,7 @@
 			<para>mDate&lt;=2003-08-28T23:59:59</para>
 		</blockquote>
 		<para>are both valid search criteria.</para>
-		<para>In the case of Dublin Core Metadata datastreams, the modified date is stored in the dcmDate element. To retrieve a version of Dublin Core metadata, the user must search using this element.</para>
-		<para>If no date/time stamp is entered as a search criteria, the most current version of a data object is always returned as the result of a search.</para>
+		<para>In the case of Dublin Core Metadata datastreams, the modified date is stored in the dcmDate parameter. To retrieve data objects with modified Dublin Core metadata datastreams, the user must search using this parameter name.</para>
 	</sect1>
 	<sect1>
 		<title>API-A-Lite Web Interface</title>
@@ -124,7 +127,7 @@ where HH is 24-hour clock.</para>
 		</blockquote>
 		<para>For example</para>
 		<blockquote>
-			<para>http://localhost:8080/fedora/get/ronda:2/demo:1/getDissemination/2003-08-28T00:01:01</para>
+			<para>http://localhost:8080/fedora/get/ronda:2/demo:1/getItem/2003-08-28T00:01:01</para>
 		</blockquote>
 		<variablelist>
 			<title>getObjectProfile syntax:</title>
