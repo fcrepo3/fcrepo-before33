@@ -404,18 +404,30 @@ public class METSDODeserializer
                 // signal that we want to suck it in
                 m_readingContent=true;
             } else if (localName.equals("structMap")) {
-                // we don't know what disseminator this belongs to yet... just save the id for later
-                // the TYPE must be fedora:dsBindingMap -- no others allowed
+                // this is a component of a disseminator.  here we assume the rest
+                // of the disseminator's information will be seen later, so we
+                // construct a new Disseminator object to hold the structMap...
+                // and later, the other info
+/*
                 if (grab(a,M,"TYPE").equals("fedora:dsBindingMap")) {
                     m_bindingMapId=grab(a,M,"ID");
                     if ( (m_bindingMapId==null) || (m_bindingMapId.equals("")) ) {
                         throw new SAXException("structMap with TYPE fedora:dsBindingMap must specify a non-empty ID attribute.");
+                    } else {
+                        Disseminator diss=new Disseminator();
+                        m_dissems.add(diss);
+                        m_diss=diss;
                     }
                 } else {
                     throw new SAXException("StructMap must have TYPE fedora:dsBindingMap");
                 }
+*/
             } else if (localName.equals("div")) {
+/*                if (m_inDiv) {
+                  // already should have the label and 
+                }
                 // todo:need to remember level
+*/
             }
         } else {
             if (m_inXMLMetadata) {
