@@ -1,49 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<article>
-	<title>Fedora Installation Guide</title>
-	<subtitle>Release 1.0</subtitle>
-	<articleinfo>
-		<author>
-			<othername>Fedora Development Team</othername>
-		</author>
-		<edition>$Revision$</edition>
-		<date>$Date$</date>
-		<releaseinfo>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+  <article>
+		<title>Fedora Installation Guide</title>
+		<subtitle>Release 1.0</subtitle>
+		<articleinfo>
+			<author>
+				<othername>Fedora Development Team</othername>
+			</author>
+			<edition>$Revision$</edition>
+			<date>$Date$</date>
+			<releaseinfo>
             $Id$
         </releaseinfo>
-	</articleinfo>
-	<section>
-		<title>Migrating From Pre-Releases</title>
-		<para>
+		</articleinfo>
+		<section>
+			<title>Migrating From Pre-Releases</title>
+			<para>
      Release 1.0 includes some final changes to the relational database DBSchema and has additional functionality than available in earlier releases. Because of these changes, there is no direct migration path from earlier pre-releases to release 1.0. If you have sample data loaded in earlier releases, you will need to delete the objects and re-ingest them with release 1.0.
 		</para>
-		<para>
+			<para>
      You will need to complete the following two tasks prior to installing the 1.0 release:        
      			 <itemizedlist>
-				<listitem>Remove any existing objects from the pre-release Fedora repository.</listitem>
-				<listitem>Drop and recreate an empty Fedora relational database. 
+					<listitem>
+						<para>Remove any existing objects from the pre-release Fedora repository.</para>
+					</listitem>
+					<listitem>
+						<para>Drop and recreate an empty Fedora relational database. 
           The default name in the fedora.fcfg config file for this database 
           is FedoraObjects. When you install and start the 1.0 release,
-          it will create the new tables in the empty database.</listitem>
-			</itemizedlist>
-		</para>
-		<para>The recommended manner in which to accomplish these tasks is as follows:
+          it will create the new tables in the empty database.</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>The recommended manner in which to accomplish these tasks is as follows:
         <itemizedlist>
-				<listitem>Start existing pre-release Fedora server if not already running; dist\server\bin\fedora-start</listitem>
-				<listitem>Start Fedora GUI admin client; dist\server\bin\fedora-admin</listitem>
-				<listitem>Open Management Console and use listObjectPIDs method to obtain a list of all object PIDs</listitem>
-				<listitem>Use purgeObject method to delete all objects</listitem>
-				<listitem>Exit Fedora Admin GUI</listitem>
-				<listitem>Shutdown the Fedora alpha1 server; dist\server\bin\fedora-stop {password}
-<para>
+					<listitem>
+						<para>Start existing pre-release Fedora server if not already running; dist\server\bin\fedora-start</para>
+					</listitem>
+					<listitem>
+						<para>Start Fedora GUI admin client; dist\server\bin\fedora-admin</para>
+					</listitem>
+					<listitem>
+						<para>Open Management Console and use listObjectPIDs method to obtain a list of all object PIDs</para>
+					</listitem>
+					<listitem>
+						<para>Use purgeObject method to delete all objects</para>
+					</listitem>
+					<listitem>
+						<para>Exit Fedora Admin GUI</para>
+					</listitem>
+					<listitem>
+						<para>Shutdown the Fedora alpha1 server; dist\server\bin\fedora-stop {password}
 At this point, the objects have been physically removed from the filesystem and from the
 relational database. The remaining step is to remove the tables from the Fedora database.
 The manner in which you accomplish this will vary depending on which database you are using.
-</para>
-				</listitem>
-				<listitem>If using MySQL.
+						</para>
+					</listitem>
+					<listitem>
+						<para>If using MySQL.
 Drop and then recreate the MySQL database being used by Fedora. The default database name
-   used in the fedora.fcfg config file is "FedoraObjects". e.g.,<literallayout>
+   used in the fedora.fcfg config file is "FedoraObjects". e.g.,
+   <literallayout>
    {mysql-install}\bin\mysqladmin -u {mysql-dba-user} -p drop FedoraObjects
 
    {mysql-install}\bin\mysqladmin -u {mysql-dba-user} -p create FedoraObjects
@@ -54,82 +75,90 @@ Drop and then recreate the MySQL database being used by Fedora. The default data
      {mysql-dba-admin} - username of the mysql user with dba privileges (e.g., root);
                          you will be prompted for the password.
 </literallayout>
-				</listitem>
-				<listitem>If using McKoi.
+						</para>
+					</listitem>
+					<listitem>
+						<para>If using McKoi.
 Stop the McKoi database if it is running; dist\server\bin\mckoi-stop username password
-</listitem>
-				<listitem>Delete or remove the pre-release installation directory tree.</listitem>
-				<listitem>You are now ready to install the Fedora 1.0 release.</listitem>
-			</itemizedlist>
-		</para>
-	</section>
-	<section>
-		<title>Installing From Scratch</title>
+</para>
+					</listitem>
+					<listitem>
+						<para>Delete or remove the pre-release installation directory tree.</para>
+					</listitem>
+					<listitem>
+						<para>You are now ready to install the Fedora 1.0 release.</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
 		<section>
-			<title>Prepare</title>
-			<para>Make sure you have a jdk1.4 installed and
+			<title>Installing From Scratch</title>
+			<section>
+				<title>Prepare</title>
+				<para>Make sure you have a jdk1.4 installed and
         in your PATH before you attempt to compile.
         </para>
-			<para>
+				<para>
   Unjar in C:\mellon (jar -xvf filename.jar)
     If you choose a different directory, be sure to change
     the FEDORA_DEV value in initenv.bat appropriately.
     </para>
-			<para>
+				<para>
   Run C:\mellon\initenv
     This sets your environment up for running/compiling the server.
     If you're using a Unix variant, look at initenv.bat and set your
     environment variables similarly.
         </para>
-		</section>
-		<section>
-			<title>Compile</title>
-			<para>
+			</section>
+			<section>
+				<title>Compile</title>
+				<para>
 Compiling:
 </para>
-			<para>
+				<para>
   Go to C:\mellon and type "ant serverdist"
     This builds everything in C:\mellon\dist\server
     For other targets, see build.xml
         </para>
-		</section>
-		<section>
-			<title>Initial Setup</title>
-			<para>
+			</section>
+			<section>
+				<title>Initial Setup</title>
+				<para>
 Initial setup:
 </para>
-			<para>
-				<literallayout>
+				<para>
+					<literallayout>
   1) Install the database (if using mysql, run the installer at C:\mellon\res\)
   2) Start the database
   3) Run mySQLConfig (with no params to see usage)
   4) Change fedora.fcfg if needed (db host, user, pass)
      See comments therein for more configuration options.
 </literallayout>
-			</para>
-		</section>
-		<section>
-			<title>Start The Server</title>
-			<para>
+				</para>
+			</section>
+			<section>
+				<title>Start The Server</title>
+				<para>
   Type fedora-start
   </para>
-			<para>
+				<para>
     This starts the server.  It will take a few seconds to initialize.
     If it fails, type "fedora-stop".  Logs are kept at dist/server/logs/
       </para>
-		</section>
-		<section>
-			<title>Ingest Sample Objects</title>
-			<para>
+			</section>
+			<section>
+				<title>Ingest Sample Objects</title>
+				<para>
         Type fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin
         </para>
-			<para>
+				<para>
         ...where localhost and 8080 are your server hostname and port, and fedoraAdmin and fedoraAdmin are the super user name and password.  (The superuser name is always fedoraAdmin; the superuser password is configured in fedora.fcfg, and defaults to the value, "fedoraAdmin")
 </para>
-			<para>
+				<para>
 This installs all the demo objects from the
         demo/ directory.  
         </para>
+			</section>
 		</section>
-	</section>
 </article>
+

@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<title>Fedora Release Notes</title>
 	<articleinfo>
@@ -55,7 +60,7 @@
 		</section>
 		<section>
 			<title>Documentation</title>
-				<para>The Fedora documentation now includes revised and enhanced Installation Guide, Release Notes, Manual, and Demos Guide. The Fedora manual includes a general introduction to the architecture, Installation Guide, User’s Guide, and Developer’s Guide. Upon successful installation, all documentation is also available through the userdocs webapp and can be access using the syntax:</para>
+			<para>The Fedora documentation now includes revised and enhanced Installation Guide, Release Notes, Manual, and Demos Guide. The Fedora manual includes a general introduction to the architecture, Installation Guide, User’s Guide, and Developer’s Guide. Upon successful installation, all documentation is also available through the userdocs webapp and can be access using the syntax:</para>
 			<para>http://hostname:port/userdocs</para>
 			<itemizedlist>
 				<listitem>
@@ -70,7 +75,7 @@
 			</itemizedlist>
 			<para>In-line documentation in the source code has also been updated.</para>
 		</section>
-	</section>	
+	</section>
 	<section>
 		<title>Release 0.9 - March 7, 2003</title>
 		<para>
@@ -153,11 +158,13 @@ This includes new demonstration objects. These objects can be loaded into the re
 There are two categories of demonstrations:
                 <itemizedlist>
 					<listitem>
-						<emphasis>Local Server Demos -</emphasis> These demos can be run under any conditions. They are intended to work when the Fedora repository server is in a stand-alone condition, for example, if the repository is running without a network connection, or if the repository is behind a firewall and not set up to received outside connections.
-                    </listitem>
+						<para>
+							<emphasis>Local Server Demos -</emphasis> These demos can be run under any conditions. They are intended to work when the Fedora repository server is in a stand-alone condition, for example, if the repository is running without a network connection, or if the repository is behind a firewall and not set up to received outside connections.</para>
+					</listitem>
 					<listitem>
-						<emphasis>Open Server Demos -</emphasis> These demos can only be run if the Fedora repository server is running as a network accessible server, meaning that it can make outgoing connections AND accept incoming connections. If the repository server is running behind a firewall, the firewall must be configured to allow incoming connections on the port that the repository server is running. The Open Server Demos use distributed content and services that are remote to the repository server.
-                    </listitem>
+						<para>
+							<emphasis>Open Server Demos -</emphasis> These demos can only be run if the Fedora repository server is running as a network accessible server, meaning that it can make outgoing connections AND accept incoming connections. If the repository server is running behind a firewall, the firewall must be configured to allow incoming connections on the port that the repository server is running. The Open Server Demos use distributed content and services that are remote to the repository server.</para>
+					</listitem>
 				</itemizedlist>
 			</para>
 			<para>
@@ -330,10 +337,18 @@ For additional information refer to the demos.html file in the userdocs director
 			<para>The management API is exposed via SOAP over HTTP and 
                  has the following methods implemented:
             <itemizedlist>
-					<listitem>ingestObject</listitem>
-					<listitem>purgeObject</listitem>
-					<listitem>listObjectPIDs</listitem>
-					<listitem>exportObject</listitem>
+					<listitem>
+						<para>ingestObject</para>
+					</listitem>
+					<listitem>
+						<para>purgeObject</para>
+					</listitem>
+					<listitem>
+						<para>listObjectPIDs</para>
+					</listitem>
+					<listitem>
+						<para>exportObject</para>
+					</listitem>
 				</itemizedlist>
 			</para>
 		</section>
@@ -350,11 +365,21 @@ For additional information refer to the demos.html file in the userdocs director
 			<para>The access API is exposed via SOAP over HTTP and
                  has the following methods implemented:
              <itemizedlist>
-					<listitem>getBehaviorDefinitions</listitem>
-					<listitem>getBehaviorMethods</listitem>
-					<listitem>getBehaviorMethodsAsWSDL</listitem>
-					<listitem>getObjectMethods</listitem>
-					<listitem>getDissemination</listitem>
+					<listitem>
+						<para>getBehaviorDefinitions</para>
+					</listitem>
+					<listitem>
+						<para>getBehaviorMethods</para>
+					</listitem>
+					<listitem>
+						<para>getBehaviorMethodsAsWSDL</para>
+					</listitem>
+					<listitem>
+						<para>getObjectMethods</para>
+					</listitem>
+					<listitem>
+						<para>getDissemination</para>
+					</listitem>
 				</itemizedlist>
 			</para>
 		</section>
