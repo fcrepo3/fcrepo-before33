@@ -66,7 +66,7 @@ public class MethodParameterResolverServlet
   {
     try
     {
-      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
       logger = new Logger();
     } catch (InitializationException ie)
     {

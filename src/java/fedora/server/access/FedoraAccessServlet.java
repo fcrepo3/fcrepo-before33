@@ -869,7 +869,7 @@ public class FedoraAccessServlet extends HttpServlet
   {
     try
     {
-      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
       fedoraServerHost = s_server.getParameter("fedoraServerHost");
       fedoraServerPort = s_server.getParameter("fedoraServerPort");
       m_manager=(DOManager) s_server.getModule("fedora.server.storage.DOManager");

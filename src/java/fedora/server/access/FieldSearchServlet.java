@@ -447,7 +447,7 @@ public class FieldSearchServlet
     /** Gets the Fedora Server instance. */
     public void init() throws ServletException {
         try {
-            s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+            s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
             s_access=(Access) s_server.getModule("fedora.server.access.Access");
         } catch (InitializationException ie) {
             throw new ServletException("Error getting Fedora Server instance: "

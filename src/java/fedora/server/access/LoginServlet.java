@@ -136,7 +136,7 @@ public class LoginServlet
      */
     public void init() throws ServletException {
         try {
-            s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+            s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
         } catch (InitializationException ie) {
             throw new ServletException("Unable to get Fedora Server instance."
                 + ie.getMessage());
