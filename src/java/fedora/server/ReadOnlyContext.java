@@ -261,6 +261,9 @@ System.err.println("in context, handling roles parm =" + roles);
 if (roles != null) {
 	System.err.println("in context, role parm length=" + roles.length);	
 }	
+if (request != null) {
+	System.err.println(request.getMethod() + request.getRequestURI());
+}
       
   	MultiValueMap environmentMap = new MultiValueMap();
   	//h.put(Authorization.ENVIRONMENT_CURRENT_DATETIME_URI_STRING, "2005-01-26T16:42:00Z");  //does xacml engine provide this?
@@ -324,9 +327,7 @@ System.err.println("in context, no principal to grok roles from!!");
 				System.err.println("in context, principal is GenericPrincipal, so I can grok roles from it!!");
 			} else {
 				System.err.println("in context, principal is -not- GenericPrincipal, so I'm not groking roles from it!!");
-  	}
-  		
-  	
+			}
   	}
   	
   	if ((request.getUserPrincipal() != null) && (request.getUserPrincipal() instanceof GenericPrincipal)) {		
