@@ -10,3 +10,7 @@ dist
 Tomcat
 *.DS_Store
 server-config.wsdd
+.project
+.classpath
+nohup.out
+perf
