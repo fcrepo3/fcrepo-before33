@@ -284,7 +284,8 @@ public class DefaultManagement
                                 String dsLocation,
                                 String controlGroup,
                                 String mdClass,
-                                String mdType) throws ServerException {
+                                String mdType,
+                                String dsState) throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
@@ -358,7 +359,7 @@ public class DefaultManagement
             ds.DSLabel=dsLabel;
             ds.DSLocation=dsLocation;
             ds.DSMIME=mimeType;
-            ds.DSState="I";
+            ds.DSState= dsState;
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             ds.DSCreateDT=nowUTC;
             ds.DatastreamID=w.newDatastreamID();
@@ -388,7 +389,8 @@ public class DefaultManagement
 									String dissLabel, 
 									String bDefLabel, 
 									String bMechLabel,
-									DSBindingMap bindingMap) throws ServerException {
+									DSBindingMap bindingMap,
+									String dissState) throws ServerException {
 
 			m_ipRestriction.enforce(context);
 			DOWriter w=null;
@@ -397,7 +399,7 @@ public class DefaultManagement
 				Disseminator diss = new Disseminator();
 				diss.isNew=true;
 				diss.parentPID = pid;
-				diss.dissState="I";
+				diss.dissState= dissState;
 				diss.dissLabel = dissLabel;
 				diss.bMechID = bMechPid;
 				diss.bDefID = bDefPid;

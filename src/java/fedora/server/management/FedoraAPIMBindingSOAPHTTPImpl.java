@@ -255,11 +255,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                 String location,
                                 String controlGroup,
                                 String MDClass,
-                                String MDType) throws RemoteException {
+                                String MDType,
+                                String dsState) throws RemoteException {
         assertInitialized();
         try {
             return s_management.addDatastream(getContext(), PID, label, MIMEType,
-                    location, controlGroup, MDClass, MDType);
+                    location, controlGroup, MDClass, MDType, dsState);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -394,11 +395,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-	public String addDisseminator(String PID, String bDefPID, String bMechPID, String dissLabel, String bDefLabel, String bMechLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
+	public String addDisseminator(String PID, String bDefPID, String bMechPID, String dissLabel, String bDefLabel, String bMechLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap, String dissState) throws java.rmi.RemoteException {
 		assertInitialized();
 		try {
 			return s_management.addDisseminator(getContext(), PID, bDefPID, bMechPID, dissLabel, bDefLabel, bMechLabel,
-					TypeUtility.convertGenDatastreamBindingMapToDSBindingMap(bindingMap));
+					TypeUtility.convertGenDatastreamBindingMapToDSBindingMap(bindingMap), dissState);
 		} catch (ServerException se) {
 			logStackTrace(se);
 			throw AxisUtility.getFault(se);

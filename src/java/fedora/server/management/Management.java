@@ -65,7 +65,8 @@ public interface Management {
                                 String dsLocation,
                                 String controlGroup,
                                 String mdClass,
-                                String mdType) throws ServerException;
+                                String mdType,
+								String dsState) throws ServerException;
 
     public void modifyDatastreamByReference(Context context, String pid, String datastreamID, String dsLabel, String logMessage, String dsLocation, String dsState) throws ServerException;
 
@@ -79,7 +80,15 @@ public interface Management {
 
     public Datastream[] getDatastreamHistory(Context context, String pid, String datastreamID) throws ServerException;
 
-	public String addDisseminator(Context context, String pid, String bDefPID, String bMechPid, String dissLabel, String bDefLabel, String bMechLabel, DSBindingMap bindingMap) throws ServerException;
+	public String addDisseminator(Context context, 
+								  String pid, 
+								  String bDefPID, 
+								  String bMechPid, 
+								  String dissLabel, 
+								  String bDefLabel, 
+								  String bMechLabel, 
+								  DSBindingMap bindingMap, 
+								  String dissState) throws ServerException;
 
     public void modifyDisseminator(Context context, String pid, String disseminatorID, String bMechPid, String dissLabel, String bDefLabel, String bMechLabel, DSBindingMap bindingMap, String logMessage, String dissState) throws ServerException;
 
