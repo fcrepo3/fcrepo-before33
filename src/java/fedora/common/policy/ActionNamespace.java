@@ -59,6 +59,8 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS;
 	public final XacmlName SURROGATE_PING;
 	public final XacmlName USER_REPRESENTED;
+	public final XacmlName SERVER_SHUTDOWN;
+	public final XacmlName SERVER_STATUS;
 
     private ActionNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
@@ -125,6 +127,8 @@ public class ActionNamespace extends XacmlNamespace {
     	LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS               = addName(new XacmlName(this, "listObjectInResourceIndexResults"));
     	SURROGATE_PING = addName(new XacmlName(this, "actAsSurrogateFor"));
     	USER_REPRESENTED = addName(new XacmlName(this, "subjectRepresented"));    	
+    	SERVER_SHUTDOWN = addName(new XacmlName(this, "serverShutdown")); 
+    	SERVER_STATUS = addName(new XacmlName(this, "serverStatus"));       	
     }
 
 	public static ActionNamespace onlyInstance = new ActionNamespace(Release2_1Namespace.getInstance(), "action");
