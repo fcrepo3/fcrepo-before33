@@ -31,17 +31,19 @@ import fedora.server.types.gen.Disseminator;
  */
 public class DisseminatorsPane
         extends JPanel
-        implements PotentiallyDirty {
+        implements PotentiallyDirty, TabDrawer {
 
     private String m_pid;
     private JTabbedPane m_tabbedPane;
+    private ObjectEditorFrame m_owner;
 
     /**
      * Build the pane.
      */
-    public DisseminatorsPane(String pid)
+    public DisseminatorsPane(ObjectEditorFrame owner, String pid)
             throws Exception {
         m_pid=pid;
+        m_owner=owner;
 
         m_tabbedPane=new JTabbedPane(SwingConstants.LEFT);
         Disseminator[] currentVersions=Administrator.APIM.
@@ -59,6 +61,12 @@ public class DisseminatorsPane
 
     public boolean isDirty() {
         return false;
+    }
+
+    public void setDirty(String id, boolean isDirty) {
+    }
+
+    public void colorTabForState(String id, String state) {
     }
 
 }

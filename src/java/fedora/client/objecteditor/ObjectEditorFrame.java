@@ -87,7 +87,7 @@ public class ObjectEditorFrame
             m_objectPane=new ObjectPane(this, pid, state, label, cModel, cDate,
                     mDate, ownerId);
             m_datastreamsPane=new DatastreamsPane(this, pid);
-            m_disseminatorsPane=new DisseminatorsPane(pid);
+            m_disseminatorsPane=new DisseminatorsPane(this, pid);
         
             m_tabbedPane=new JTabbedPane();
             m_tabbedPane.addTab("Properties", m_objectPane);
