@@ -86,7 +86,7 @@
 			<input type="submit" name="Submit" value="Run"></input>
 		</td>
 		<xsl:choose>
-			<xsl:when test="./parm/@parmName">
+			<xsl:when test="./methodParm/@parmName">
 				<xsl:call-template name="parmTemplate"/>
 			</xsl:when>
 			<xsl:otherwise>
@@ -101,7 +101,7 @@
 </xsl:template>
 
 <xsl:template   name="parmTemplate" >
-<xsl:for-each select="parm">
+<xsl:for-each select="methodParm">
 	<xsl:choose>
 		<xsl:when test="position()=1">
 			<xsl:choose>
