@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import fedora.server.utilities.DDLConverter;
+import fedora.server.utilities.TableCreatingConnection;
+
 /**
  * <p>Title: ConnectionPool.java</p>
  * <p>Description: A class for preallocating, recycling, and managing</p>
@@ -24,6 +27,7 @@ public class ConnectionPool implements Runnable
   private boolean waitIfBusy;
   private Vector availableConnections, busyConnections;
   private boolean connectionPending = false;
+  private DDLConverter ddlConverter;
 
   /**
    * <p>Constructs a ConnectionPool based on the calling arguments.</p>
@@ -66,6 +70,60 @@ public class ConnectionPool implements Runnable
       availableConnections.addElement(makeNewConnection());
     }
   }
+
+  /**
+   * Constructs a ConnectionPool that can provide TableCreatingConnections.
+   *
+   * @param driver The JDBC driver class name.
+   * @param url The JDBC connection URL.
+   * @param username The database user name.
+   * @param password The he database password.
+   * @param initialConnections The minimum number of connections possible.
+   * @param maxConnections The maximum number of connections possible.
+   * @param waitIfBusy Boolean flag that determines whether to wait if there
+   * are no more available connections. If set to true, it will wait until a
+   * connection becomes available. If set to false, it will throw
+   * <code>SQLException</code> when a connection is requested and there are no
+   * more available connections.
+   * @param ddlConverter The DDLConverter that the TableCreatingConnections
+   *        should use when createTable(TableSpec) is called.
+   * @throws SQLException If the connection pool cannot be established for
+   * any reason.
+   */
+  public ConnectionPool(String driver, String url,
+                        String username, String password,
+                        int initialConnections,
+                        int maxConnections,
+                        boolean waitIfBusy,
+                        DDLConverter ddlConverter)
+      throws SQLException
+  {
+    this(driver, url, username, password, initialConnections, maxConnections,
+      waitIfBusy);
+    this.ddlConverter=ddlConverter;
+  }
+
+  /**
+   * Gets a TableCreatingConnection.
+   * <p></p>
+   * This derives from the same pool, but wraps the Connection in
+   * an appropriate TableCreatingConnection before returning it.
+   *
+   * @return The next available Connection from the pool, wrapped as
+   *         a TableCreatingException, or null if this ConnectionPool
+   *         hasn't been configured with a DDLConverter (see constructor).
+   */
+  public TableCreatingConnection getTableCreatingConnection() 
+      throws SQLException 
+  {
+    if (ddlConverter==null)
+    {
+      return null;
+    } else {
+      Connection c=getConnection();
+      return new TableCreatingConnection(c, ddlConverter);
+    }
+  }  
 
   /**
    * <p>Gets the next available connection.</p>
