@@ -21,6 +21,10 @@
 		<copy file="lib/client/rms.jar" todir="dist/client/lib"/>
                 <copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/lib"/>
                 <copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/lib"/>
+                <copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/lib"/>
+                <copy file="inc/server/tomcat41/common/lib/commons-discovery.jar" todir="dist/client/lib"/>
+                <copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/lib"/>
+                <copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/lib"/>
 		<!--<copy todir="temp/client">
       <fileset dir="inc/client/dist"/>
     </copy>-->
@@ -37,8 +41,8 @@
 	<target name="clientprep" depends="prep" description="Prepare a temporary build area for client-related targets">
 		<mkdir dir="temp/client"/>
 	</target>
-	<target name="clientclasses" depends="clientprep" description="Compile client java code into temp/client">
-		<javac srcdir="${javaSourceDir}" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/rms.jar" includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+	<target name="clientclasses" depends="clientprep,wsdl2java" description="Compile client java code into temp/client">
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/rms.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
 		<mkdir dir="temp/client/help"/>
@@ -322,6 +326,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.35  2002/09/23 07:07:19  cwilper
+  added more jar includes for the client distribution
+
   Revision 1.34  2002/09/23 03:03:34  cwilper
   added:
      - javadoccing of fedora.server.utilities package
