@@ -6,6 +6,7 @@ import fedora.server.errors.StreamReadException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
@@ -13,6 +14,8 @@ import fedora.server.utilities.StreamUtility;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +44,12 @@ public class METSDODeserializer
     /** The namespace for METS */
     private final static String M="http://www.loc.gov/METS/";
 
+    /** The namespace for XLINK */
+    private final static String XLINK_NAMESPACE="http://www.w3.org/TR/xlink";
+    // Mets says the above, but the spec at http://www.w3.org/TR/xlink/ 
+    // says it's http://www.w3.org/1999/xlink
+
+
     private SAXParser m_parser;
     private String m_characterEncoding;
 
@@ -61,12 +70,13 @@ public class METSDODeserializer
     private String m_dsLabel;
     private int m_dsMDClass;
     private int m_dsSize;
+    private URL m_dsLocation;
     private String m_dsMimeType;
     private String[] m_dsAdmIds;
     private String[] m_dsDmdIds;
     private StringBuffer m_dsXMLBuffer;
     
-    // are we reading binary? (base64-encoded) 
+    // are we reading binary in an FContent element? (base64-encoded) 
     private boolean m_readingContent;
     
     /** Namespace prefixes used in the currently scanned datastream */
@@ -218,7 +228,7 @@ public class METSDODeserializer
                 // CREATED="2002-05-20T06:32:00" 
                 // MIMETYPE="image/jpg" 
                 // ADMID="TECH3"
-                // OWNERID="E"
+                // OWNERID="E" // ignored this is determinable otherwise
                 // STATUS=""
                 // SIZE="bytes"
                 m_dsVersId=grab(a, M, "ID");
@@ -246,12 +256,43 @@ public class METSDODeserializer
                         throw new SAXException("Size must be a number.");
                     }
                 }
-            } else if (localName.equals("FLocat")) {
                 // inside a "file" element, it's either going to be
                 // FLocat (a reference) or FContent (inline)
-                // LOCTYPE="URL" 
+            } else if (localName.equals("FLocat")) {
                 // xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" 
                 // xlink:title="Saskia high jpg image"/>
+                m_dsLabel=grab(a,XLINK_NAMESPACE,"title");
+                String dsLocation=grab(a,XLINK_NAMESPACE,"href");
+                if (dsLocation==null || dsLocation.equals("")) {
+                    throw new SAXException("xlink:href must be specified in FLocat element");
+                }
+                try {
+                    m_dsLocation=new URL(dsLocation);
+                } catch (MalformedURLException murle) {
+                    throw new SAXException("xlink:href specifies malformed url: " + dsLocation);
+                }
+                // grab the inputstream to ensure 1) it's a valid URL (in both
+                // syntax and resolvability), and that 2) the mime-type is
+                // set (check how it's returned by the server, and if that's
+                // the same as how it was given in the METS file, ok ... if
+                // it wasn't given in the mets file, take the server's word
+                // for it)
+                // 1) the mime type and 
+                // 2) the content-length.
+                // 1 is required, 2 isn't because it's not always returned.
+                // these are set by getContentStream() automagically if it succeeds
+                // so all we have to do here is request it and close it
+                // after we've created an instance
+                DatastreamReferencedContent d=new DatastreamReferencedContent();
+                d.DatastreamID=m_dsId;
+                d.DSVersionID=m_dsVersId;
+                d.DSLabel=m_dsLabel;
+                d.DSLocation=m_dsLocation;
+                
+                if (d.DSSize==null) {
+                    d.DSSize="" + m_dsSize; // fixme...i think, maybe
+                }
+                
             } else if (localName.equals("FContent")) {
                 // signal that we want to suck it in
                 m_readingContent=true;
