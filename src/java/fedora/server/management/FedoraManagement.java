@@ -39,21 +39,21 @@ public interface FedoraManagement
     public void ReleaseObjectLock(String pid);
 
     /** External Datastream:  Referenced Content */
-    public boolean AddDatastreamERC(String pid, String url);
+    public String AddDatastreamERC(String pid, String url);
 
     /** Internal Datastream: Fedora Content */
-    public boolean AddDatastreamFC(String pid, String dsLabel, byte[] content);
+    public String AddDatastreamFC(String pid, String dsLabel, byte[] content);
 
     /** Internal Datastream: Fedora Content */
-    public boolean AddDatastreamFCURL(String pid, String dsLabel, String url);
+    public String AddDatastreamFCURL(String pid, String dsLabel, String url);
 
     /** Internal Datastream : Fedora User Metadata */
-    public boolean AddDatastreamFUM(String pid, String dsLabel, String mdType, byte[] xmlMD);
+    public String AddDatastreamFUM(String pid, String dsLabel, String mdType, byte[] xmlMD);
 
     /** Internal Datastream : Fedora User Metadata */
-    public boolean AddDatastreamFUMURL(String pid, String dsLabel, String mdType, String xmlurl);
+    public String AddDatastreamFUMURL(String pid, String dsLabel, String mdType, String xmlurl);
 
-    public boolean AddDisseminator(String pid, String bDefID, String bMechID, String dissLabel, DSBindingMap dsBindMap);
+    public String AddDisseminator(String pid, String bDefID, String bMechID, String dissLabel, DSBindingMap dsBindMap);
 
     // API-M Modify Methods
 
