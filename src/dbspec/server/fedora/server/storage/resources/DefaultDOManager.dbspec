@@ -4,14 +4,14 @@
 		<column name="bDefDbID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="bDefPID" type="varchar(64)" notNull="true" default="" binary="true" unique="true"/>
 		<column name="bDefLabel" type="varchar(255)" notNull="false" default=""/>
-		<column name="bDefState" type="char(1)" notNull="true" default="I"/>
+		<column name="bDefState" type="varchar(1)" notNull="true" default="I"/>
 	</table>
 	<table name="bMech" primaryKey="bMechDbID">
 		<column name="bMechDbID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="bDefDbID" type="int(11)" notNull="true" default="0" index="bDefDbID"/>
 		<column name="bMechPID" type="varchar(64)" notNull="true" binary="true" default="" unique="true"/>
 		<column name="bMechLabel" type="varchar(255)" notNull="false" default=""/>
-		<column name="bMechState" type="char(1)" notNull="true" default="I"/>
+		<column name="bMechState" type="varchar(1)" notNull="true" default="I"/>
 	</table>
 	<table name="dsBind">
 		<column name="doDbID" type="int(11)" notNull="true" default="0" index="doDbID"/>
@@ -22,10 +22,10 @@
 		<column name="dsLabel" type="varchar(255)" notNull="false" default=""/>
 		<column name="dsMIME" type="varchar(64)" notNull="true" default=""/>
 		<column name="dsLocation" type="text" notNull="false" default=""/>
-		<column name="dsControlGroupType" type="char(1)" notNull="true"/>
+		<column name="dsControlGroupType" type="varchar(1)" notNull="true"/>
 		<column name="dsCurrentVersionID" type="varchar(64)" notNull="true"/>
 		<column name="policyDbID" type="int(11)" notNull="true" default="0" index="policyID"/>
-		<column name="dsState" type="char(1)" notNull="true" default="I"/>
+		<column name="dsState" type="varchar(1)" notNull="true" default="I"/>
 	</table>
 	<table name="dsBindMap">
 		<column name="dsBindMapDbID" type="int(11)" notNull="true" autoIncrement="true" unique="true"/>
@@ -49,7 +49,7 @@
 		<column name="doDbID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="doPID" type="varchar(64)" notNull="true" default="" binary="true" unique="true"/>
 		<column name="doLabel" type="varchar(255)" notNull="false" default=""/>
-		<column name="doState" type="char(1)" notNull="true" default="I"/>
+		<column name="doState" type="varchar(1)" notNull="true" default="I"/>
 	</table>
 	<table name="doDissAssoc" primaryKey="doDbID,dissDbID">
 		<column name="doDbID" type="int(11)" notNull="true" default="0"/>
@@ -129,7 +129,7 @@
 		<column name="doPID" type="varchar(64)" notNull="true" binary="true">
 			<comment>The PID of the object</comment>
 		</column>
-		<column name="foType" type="char(1)" notNull="true" default="O">
+		<column name="foType" type="varchar(1)" notNull="true" default="O">
 			<comment>The Fedora Object Type of the object.  This indicates
                whether it's a regular object (O), behavior definition object 
                (D), or behavior mechanism object (M).</comment>
@@ -143,7 +143,7 @@
 		<column name="ownerId" type="varchar(64)" notNull="false">
 			<comment>The userId of the user who owns the object.</comment>
 		</column>
-		<column name="objectState" type="char(1)" notNull="true" default="A">
+		<column name="objectState" type="varchar(1)" notNull="true" default="A">
 			<comment>The state of the object (currently unused)</comment>
 		</column>
 		<column name="label" type="varchar(255)" notNull="false" default="">
@@ -168,7 +168,7 @@
 		<column name="label" type="varchar(255)" notNull="false">
 			<comment>The label of the object</comment>
 		</column>
-		<column name="fType" type="char(1)" notNull="true" default="O">
+		<column name="fType" type="varchar(1)" notNull="true" default="O">
 			<comment>The Fedora Object Type of the object.  This indicates
                whether it's a regular object (O), behavior definition object 
                (D), or behavior mechanism object (M).
@@ -177,7 +177,7 @@
 		<column name="cModel" type="varchar(255)" notNull="false" default="">
 			<comment>The content model of the object.</comment>
         </column>
-		<column name="state" type="char(1)" notNull="true" default="A">
+		<column name="state" type="varchar(1)" notNull="true" default="A">
 			<comment>The state of the object.</comment>
 		</column>
 		<column name="ownerId" type="varchar(64)" notNull="false">
@@ -265,7 +265,7 @@
 		<column name="doPID" type="varchar(64)" notNull="true" binary="true">
 			<comment>The object pid</comment>
 		</column>
-		<column name="action" type="char(1)" notNull="true">
+		<column name="action" type="varchar(1)" notNull="true">
 			<comment>M or D, meaning "modified" or "deleted"</comment>
 		</column>
 	</table>
