@@ -13,7 +13,7 @@ import fedora.server.Logging;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.UnknownSessionTokenException;
-import fedora.server.search.DCFields;
+import fedora.server.utilities.DCFields;
 import fedora.server.search.ObjectFields;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;

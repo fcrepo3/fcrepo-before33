@@ -29,6 +29,7 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
+import fedora.server.utilities.DCFields;
 
 /**
  *

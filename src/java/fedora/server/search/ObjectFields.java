@@ -16,6 +16,7 @@ import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnrecognizedFieldException;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.DCFields;
 
 /**
  *
