@@ -375,6 +375,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         buildersMenu.setToolTipText("Tools to build objects");
 
         JMenuItem buildersBDef=new JMenuItem("BDef Builder",KeyEvent.VK_D);
+        buildersBDef.setToolTipText("Create a new Behavior Definition Object");
         buildersBDef.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 createBDefBuilder();
@@ -383,6 +384,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         buildersMenu.add(buildersBDef);
 
         JMenuItem buildersBMech=new JMenuItem("BMech Builder",KeyEvent.VK_M);
+        buildersBMech.setToolTipText("Create a new Behavior Mechanism Object");
         buildersBMech.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 createBMechBuilder();
