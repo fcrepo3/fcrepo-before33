@@ -143,7 +143,6 @@ class MmapParser extends DefaultHandler
   public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
     throws SAXException
   {
-    //System.out.println("MmapParser: START ELEMENT " + qName);
     if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("MethodMap"))
     {
       methodMap = new Mmap();

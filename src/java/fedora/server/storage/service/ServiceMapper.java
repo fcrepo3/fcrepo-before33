@@ -187,6 +187,7 @@ public class ServiceMapper
                   + "The underlying error was a " + e.getClass().getName() + ".  "
                   + "The message was "  + "\"" + e.getMessage() + "\"";
         System.out.println(msg);
+        e.printStackTrace();
         throw new GeneralException(msg);
       }
   }
