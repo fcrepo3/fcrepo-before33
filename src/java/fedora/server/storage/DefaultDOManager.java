@@ -83,9 +83,11 @@ public class DefaultDOManager
     
     public void postInitModule() 
             throws ModuleInitializationException {
-        ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().getModule("fedora.server.storage.ConnectionPoolManager");
+        ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().
+                getModule("fedora.server.storage.ConnectionPoolManager");
         if (cpm==null) {
-            throw new ModuleInitializationException("ConnectionPoolManager not loaded.", getRole());
+            throw new ModuleInitializationException(
+                    "ConnectionPoolManager not loaded.", getRole());
         }
         try {
             if (m_storagePool==null) {
@@ -94,11 +96,12 @@ public class DefaultDOManager
                 m_connectionPool=cpm.getPool(m_storagePool);
             }
         } catch (ConnectionPoolNotFoundException cpnfe) {
-            throw new ModuleInitializationException("Couldn't get required connection pool...wasn't found", getRole());
+            throw new ModuleInitializationException("Couldn't get required "
+                    + "connection pool...wasn't found", getRole());
         }
         String dbSpec="fedora/server/storage/resources/DefaultDOManager.dbspec";
-        InputStream specIn=this.getClass().getClassLoader().getResourceAsStream(
-                dbSpec);
+        InputStream specIn=this.getClass().getClassLoader().
+                getResourceAsStream(dbSpec);
         if (specIn==null) {
             throw new ModuleInitializationException("Cannot find required "
                     + "resource: " + dbSpec, getRole());
@@ -126,12 +129,12 @@ public class DefaultDOManager
             ResultSet r=dbMeta.getTables(null, null, "%", null);
             HashSet existingTableSet=new HashSet();
             while (r.next()) {
-                existingTableSet.add(r.getString("TABLE_NAME"));
+                existingTableSet.add(r.getString("TABLE_NAME").toLowerCase());
             }
             r.close();
             while (tSpecIter.hasNext()) {
                 TableSpec spec=(TableSpec) tSpecIter.next();
-                if (!existingTableSet.contains(spec.getName())) {
+                if (!existingTableSet.contains(spec.getName().toLowerCase())) {
                     nonExisting.add(spec);
                 }
             }
@@ -149,7 +152,7 @@ public class DefaultDOManager
             Iterator nii=nonExisting.iterator();
             int i=0;
             StringBuffer msg=new StringBuffer();
-            msg.append("One or more required tables did not exist (");
+            msg.append(" required table(s) did not exist (");
             while (nii.hasNext()) {
                 if (i>0) {
                     msg.append(", ");
@@ -158,7 +161,7 @@ public class DefaultDOManager
                 i++;
             }
             msg.append(")");
-            System.out.println(msg.toString());
+            getServer().logConfig(i + msg.toString());
             TableCreatingConnection tcConn=null;
             try {
                 tcConn=m_connectionPool.getTableCreatingConnection();
@@ -166,6 +169,15 @@ public class DefaultDOManager
                     throw new SQLException("Unable to construct CREATE TABLE "
                         + "statement(s) because there is no DDLConverter "
                         + "registered for this connection type.");
+                }
+                nii=nonExisting.iterator();
+                while (nii.hasNext()) {
+                    TableSpec spec=(TableSpec) nii.next();
+                    String sqlCmd=tcConn.getDDLConverter().getDDL(spec);
+                    getServer().logConfig("Attempting to creating nonexisting "
+                            + "table '" + spec.getName() + "' with command: "
+                            + sqlCmd);
+                    tcConn.createTable(spec);
                 }
             } catch (SQLException sqle) {
                 throw new ModuleInitializationException("Error while attempting"
