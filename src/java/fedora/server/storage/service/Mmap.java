@@ -14,8 +14,11 @@ import fedora.server.storage.types.MethodDef;
 public class Mmap
 {
     public String mmapName = null;
-    public MethodDef[] fedoraMethodDefs = new MethodDef[0];
-    //public MmapMethod[] mmapMethods = new MmapMethod[0];
-    public Hashtable wsdlMsgToMethodDef;
+    //public MethodDef[] fedoraMethodDefs = new MethodDef[0];
+    public MmapMethodDef[] mmapMethods = new MmapMethodDef[0];
     public Hashtable wsdlOperationToMethodDef;
+
+    //public Hashtable wsdlOperationToDSInputKeys;
+    //public MmapMethod[] mmapMethods = new MmapMethod[0];
+    //public Hashtable wsdlMsgToMethodDef;
 }
