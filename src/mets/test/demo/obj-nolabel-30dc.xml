@@ -5,7 +5,7 @@
         xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" 
         xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" 
         xmlns:xlink="http://www.w3.org/TR/xlink" 
-        xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" 
+        xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" 
         OBJID="test:433" 
         TYPE="FedoraObject" 
         PROFILE="UVA_STD_IMAGE">

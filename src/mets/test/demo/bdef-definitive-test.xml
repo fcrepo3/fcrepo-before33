@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by Christopher Wilper (Cornell University, CS) -->
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR DEFINITION OBJECT ENCODED USING METS -->
 <!---********************************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora-ext.xsd" OBJID="test:113" TYPE="FedoraBDefObject" LABEL="Behavior Definition Object for PickSize Image" PROFILE="fedora:BDEF">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="test:113" TYPE="FedoraBDefObject" LABEL="Behavior Definition Object for PickSize Image" PROFILE="fedora:BDEF">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
@@ -34,8 +35,7 @@
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Method Map for Fedora Behavior Definition for UVA PickSize Image">
 				<METS:xmlData>
 					<fmm:MethodMap name="Fedora MethodMap for PickSize Image BDef" bDefPID="test:13" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
-						<fmm:Method operationName="getThumbnail">
-						</fmm:Method>
+						<fmm:Method operationName="getThumbnail"/>
 						<fmm:Method operationName="getImage">
 							<fmm:UserInputParm parmName="ZOOM" defaultValue="yes" passBy="VALUE">
 								<fmm:ValidParmValues>
