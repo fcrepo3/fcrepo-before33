@@ -19,9 +19,13 @@ public class ServerConfigurationParser
 
     private Parameter m_lastParam;
     private String m_moduleOrDatastoreComment;
-    private String m_paramComment;
 
-    private List m_currentParameters;  // module/datastore
+    private String m_paramName;
+    private String m_paramValue;
+    private String m_paramComment;
+    private Map m_profileValues;
+
+    private List m_moduleOrDatastoreParameters;  // module/datastore
     private StringBuffer m_commentBuffer;
     private boolean m_inParam;
     private boolean m_inModuleOrDatastore;
@@ -58,21 +62,38 @@ public class ServerConfigurationParser
                              String qName,
                              Attributes a) throws SAXException {
         if (localName.equals("module")) {
+            m_inModuleOrDatastore = true;
+            m_moduleOrDatastoreParameters = new ArrayList();
             String moduleRole = a.getValue("role");
             System.out.println(moduleRole);
+        } else if (localName.equals("datastore")) {
+            m_inModuleOrDatastore = true;
+            m_moduleOrDatastoreParameters = new ArrayList();
         } else if (localName.equals("comment")) {
             m_commentBuffer = new StringBuffer();
         } else if (localName.equals("param")) {
             m_inParam = true;
+            m_paramName = a.getValue("name");
+            m_paramValue = a.getValue("value");
             m_paramComment = null;
+            m_profileValues = new HashMap();
+            for (int i = 0; i < a.getLength(); i++) {
+                String name = a.getLocalName(i);
+                if (name.length() > 5 && name.endsWith("value")) {
+                    String value = a.getValue(i);
+                    m_profileValues.put(name.substring(0, name.length() - 5), value);
+                }
+            }
         }
     }
 
-    public void endElement(String uri, String localName, String qName) {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
         if (localName.equals("module")) {
             // add a new ModuleConfiguration to m_moduleConfigurations
+            m_inModuleOrDatastore = false;
         } else if (localName.equals("datastore")) {
             // add a new DatastoreConfiguration to m_datastoreConfigurations
+            m_inModuleOrDatastore = false;
         } else if (localName.equals("comment")) {
             // figure out what kind of thing this is a comment for
             // if we're in a param, it's for the param.
@@ -88,11 +109,17 @@ public class ServerConfigurationParser
             }
         } else if (localName.equals("param")) {
             m_inParam = false;
+            m_lastParam = new Parameter(m_paramName, m_paramValue, m_paramComment, m_profileValues);
+            if (m_inModuleOrDatastore) {
+                m_moduleOrDatastoreParameters.add(m_lastParam);
+            } else {
+                m_serverParameters.add(m_lastParam);
+            }
         }
     }
 
     public void characters(char[] ch, int start, int length) {
-        m_commentBuffer.append(ch, start, length);
+        if (m_commentBuffer != null) m_commentBuffer.append(ch, start, length);
     }
 
 }

@@ -27,6 +27,10 @@ public class Parameter {
         return m_profileValues;
     }
 
+    public String getComment() {
+        return m_comment;
+    }
+
     public void setComment(String comment) {
         m_comment = comment;
     }
