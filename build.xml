@@ -153,7 +153,7 @@
 	<!-- targets -->
 	<target name="serverandclient" depends="server,client,localservices" description="builds both client and server in dist/server">
 	</target>
-	<target name="release" depends="srcrelease,binrelease" description="puts all source and binary distributable packages in dist/release">
+	<target name="release" depends="srcrelease,binrelease,checksumrelease" description="puts all source and binary distributable packages in dist/release">
 	</target>
 	<target name="srcrelease" depends="clean" description="puts source distributable packages in dist/release">
 		<mkdir dir="${dist.dir}"/>
@@ -219,6 +219,14 @@
 			</fileset>
 		</copy>
 	</target>
+    <target name="checksumrelease" description="Creates MD5 checksums for release">
+        <checksum fileext=".md5">
+            <fileset dir="${release.dir}">
+                <include name="*.tar.gz"/>
+                <include name="*.zip"/>
+            </fileset>
+        </checksum>
+    </target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
 		<copy todir="dist/server/license">
             <fileset dir="${license.dir}"/>
