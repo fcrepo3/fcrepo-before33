@@ -104,12 +104,9 @@ public class MethodParameterResolverServlet extends HttpServlet
       {
         servletPath.append(s[i]+"/");
       }
-      System.out.println("ServletPath: "+servletPath.toString());
       URLDecoder decode = new URLDecoder();
-      System.out.println("BEFORE:\nPID: "+PID+"\nBDEFPID: "+bDefPID);
       PID = decode.decode(PID, "UTF-8");
       bDefPID = decode.decode(bDefPID,"UTF-8");
-      System.out.println("BEFORE:\nPID: "+PID+"\nBDEFPID: "+bDefPID);
       url.append(servletPath
           + PID + "/"
           + bDefPID + "/"
@@ -133,10 +130,8 @@ public class MethodParameterResolverServlet extends HttpServlet
           url.append("/"+versDateTime+"/");
         }
       }
-      System.out.println("URL: "+url.toString());
 
-      // remove any dangling ampersands and redirect request.
-      //url.replace(url.lastIndexOf("&"),url.lastIndexOf("&")+1,"");
+      // redirect request.
       response.sendRedirect(url.toString());
     }
   }
