@@ -137,18 +137,26 @@ public class Downloader {
             client.setConnectionTimeout(20000); // wait 20 seconds max
             client.getState().setCredentials(null, m_host, m_creds);
             client.getState().setAuthenticationPreemptive(true); // don't bother with challenges
-            get=new GetMethod(url);
-            get.setDoAuthentication(true);
-            get.setFollowRedirects(true);
+            int redirectCount=0; // how many redirects did we follow
+            int resultCode=300; // not really, but enter the loop that way
             Dimension d=null;
-            if (Administrator.INSTANCE!=null) {
-                d=Administrator.PROGRESS.getSize();
-                // if they're using Administrator, tell them we're downloading...
-                Administrator.PROGRESS.setString("Dowloading " + url + " . . .");
-                Administrator.PROGRESS.setValue(100);
-                Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+            while (resultCode>299 && resultCode<400 && redirectCount<25) {
+                get=new GetMethod(url);
+                get.setDoAuthentication(true);
+                get.setFollowRedirects(true);
+                if (Administrator.INSTANCE!=null) {
+                    d=Administrator.PROGRESS.getSize();
+                    // if they're using Administrator, tell them we're downloading...
+                    Administrator.PROGRESS.setString("Dowloading " + url + " . . .");
+                    Administrator.PROGRESS.setValue(100);
+                    Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+                }
+                resultCode=client.executeMethod(get);
+                if (resultCode>299 && resultCode<400) {
+                    redirectCount++;
+                    url=get.getResponseHeader("Location").getValue();
+                }
             }
-            int resultCode=client.executeMethod(get);
             if (resultCode!=200) {
                 System.err.println(get.getResponseBodyAsString());
                 throw new IOException("Server returned error: " 
