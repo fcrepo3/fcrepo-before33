@@ -398,14 +398,17 @@
 		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/lib">
 			<fileset dir="lib/server"/>
 		</copy>
-		<!-- ObjectMethods xsl stylesheet used by API-A-LITE: local copy packaged with repository distribution -->
 		<mkdir dir="dist/server/access"/>
+		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/access/objectmethods.xslt" todir="dist/server/access"/>
 		<!-- the next copy is temporary and may change -->
 		<copy file="src/xsl/access/objectmethods2.xslt" todir="dist/server/access"/>
-		<!--Default Disseminator (DefaultBehaviorImpl) XSLT Stylesheets : local copy packaged with the repository distribution -->
-		<copy file="src/xsl/access/viewItemList.xslt" todir="dist/server/access"/>
+		<!--ObjectProfile xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/access"/>
+		<!--ItemIndex xsl stylesheet used by Default Disseminator (DefaultBehaviorImpl) -->
+		<copy file="src/xsl/access/viewItemIndex.xslt" todir="dist/server/access"/>
+		<!--DublinCore xsl stylesheet used by Default Disseminator (DefaultBehaviorImpl) -->
+		<copy file="src/xsl/access/viewDublinCore.xslt" todir="dist/server/access"/>
 		<echo message="Finished building server distribution in dist/server"/>
 	</target>
 	<target name="localservices" depends="server, localservicesclasses">
@@ -499,6 +502,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.80  2003/02/25 20:49:51  payette
+  added copy of new stylesheets to dist area
+
   Revision 1.79  2003/02/24 18:48:20  rlw
   added fix to set file permissions for scripts in dist/server/bin to executable in unix environments.
 
