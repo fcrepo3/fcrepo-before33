@@ -77,7 +77,8 @@ public class DirectoryBasedRepositoryReader
      */
     public DirectoryBasedRepositoryReader(File directory, DOTranslator translator,
             String exportFormat, String storageFormat,
-            String encoding, Logging logTarget)
+            String encoding,
+            Logging logTarget)
             throws StorageDeviceException, ObjectIntegrityException,
             StreamIOException, UnsupportedTranslationException,
             ServerException {
@@ -96,9 +97,11 @@ public class DirectoryBasedRepositoryReader
                 File thisFile=files[i];
                 try {
                     FileInputStream in=new FileInputStream(thisFile);
-                    SimpleDOReader reader=new SimpleDOReader(null, this, m_translator,
+                    SimpleDOReader reader=
+                    	new SimpleDOReader(null, this, m_translator,
 							m_exportFormat, m_storageFormat,
-                            m_encoding, in, this);
+                            m_encoding,
+                            in, this);
                     String pid=reader.GetObjectPID();
                     if (reader.GetObjectPID().length()==0) {
                         logWarning("File " + files[i] + " has no pid...skipping");
@@ -129,7 +132,8 @@ public class DirectoryBasedRepositoryReader
             StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleDOReader(null, this, m_translator,
                 m_exportFormat, m_storageFormat,
-                m_encoding, getStoredObjectInputStream(pid), this);
+                m_encoding,
+                getStoredObjectInputStream(pid), this);
     }
 
     public BMechReader getBMechReader(Context context, String pid)
@@ -137,7 +141,8 @@ public class DirectoryBasedRepositoryReader
             StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleBMechReader(null, this, m_translator,
                 m_exportFormat, m_storageFormat,
-                m_encoding, getStoredObjectInputStream(pid), this);
+                m_encoding,
+                getStoredObjectInputStream(pid), this);
     }
 
     public BDefReader getBDefReader(Context context, String pid)
@@ -145,7 +150,8 @@ public class DirectoryBasedRepositoryReader
             StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleBDefReader(null, this, m_translator,
                 m_exportFormat, m_storageFormat,
-                m_encoding, getStoredObjectInputStream(pid), this);
+                m_encoding,
+                getStoredObjectInputStream(pid), this);
     }
 
     public String[] listObjectPIDs(Context context) {
