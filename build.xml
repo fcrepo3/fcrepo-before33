@@ -286,11 +286,11 @@
 		<mkdir dir="dist/client/bin"/>
 		<copy todir="dist/client/bin">
 			<fileset dir="src/bat/client"/> 
-            <fileset file="src/bat/set-env.bat"/>        
+            <fileset file="src/bat/client/set-env.bat"/>        
 		</copy>
 		<copy todir="dist/client/bin">
 			<fileset dir="src/sh/client"/>
-            <fileset file="src/sh/set-env.sh"/>      
+            <fileset file="src/sh/client/set-env.sh"/>      
 		</copy>
 		<!-- Prepare demo objects (see datastream content for demos in target "servermostly") -->
 		<mkdir dir="dist/client/demo"/>
@@ -984,7 +984,7 @@
 				<filter token="ServerController.unix.libs" value="${ServerController.unix.libs}"/>
 				<filter token="ServerController.windows.libs" value="${ServerController.windows.libs}"/>
 			</filterset>
-            <fileset file="src/sh/set-env.sh"/>      
+            <fileset file="src/sh/server/set-env.sh"/>      
 		</copy>
 		<copy file="${lib.junit}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
 		<!-- testing new tomcat -->
