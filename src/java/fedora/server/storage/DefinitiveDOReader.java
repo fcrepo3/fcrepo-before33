@@ -535,7 +535,7 @@ public class DefinitiveDOReader implements DOReader
       // bootstrap mechanism which is not stored as digital object!  The bootstrap
       // mechanism enables a client to get disseminations of the actual contents
       // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
-      if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
+      if (bDefPID.equalsIgnoreCase("fedora-system:1"))
       {
         System.out.println("GetBMechMethods: Suppressing report of methods for bootstrap mechanism!");
         return null;
@@ -564,7 +564,7 @@ public class DefinitiveDOReader implements DOReader
     public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime)
       throws GeneralException, ServerException
     {
-      if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
+      if (bDefPID.equalsIgnoreCase("fedora-system:1"))
       {
         System.out.println("GetBMechMethodsXML: Suppressing report of methods for bootstrap mechanism!");
         return null;
@@ -599,7 +599,7 @@ public class DefinitiveDOReader implements DOReader
       // bootstrap mechanism which is not stored as digital object!  The bootstrap
       // mechanism enables a client to get disseminations of the actual contents
       // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
-      if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
+      if (bDefPID.equalsIgnoreCase("fedora-system:1"))
       {
         System.out.println("GetBMechMethodParms: Suppressing report of methods for bootstrap mechanism!");
         return null;
@@ -646,7 +646,7 @@ public class DefinitiveDOReader implements DOReader
       // bootstrap mechanism which is not stored as digital object!  The bootstrap
       // mechanism enables a client to get disseminations of the actual contents
       // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
-      if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
+      if (bDefPID.equalsIgnoreCase("fedora-system:1"))
       {
         System.out.println("GetBMechMethodParms: Suppressing report of methods for bootstrap mechanism!");
         return null;

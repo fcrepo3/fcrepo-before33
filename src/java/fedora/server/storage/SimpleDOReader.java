@@ -335,7 +335,7 @@ public class SimpleDOReader
      */
     private String getBMechPid(String bDefPID, Date versDateTime)
             throws DisseminatorNotFoundException {
-        if (bDefPID.equals("uva-bdef-bootstrap:1")) {
+        if (bDefPID.equals("fedora-system:1")) {
             return null;
         }
         Disseminator[] disses=GetDisseminators(versDateTime);

@@ -117,7 +117,7 @@ import fedora.server.errors.InitializationException;
       try
       {
         BDefPID = objectInfo.bDefPIDs[i];
-        if (BDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
+        if (BDefPID.equalsIgnoreCase("fedora-system:1"))
         {
           continue;
         }
@@ -174,7 +174,7 @@ import fedora.server.errors.InitializationException;
       try
       {
         BMechPID = objectInfo.bMechPIDs[i];
-        if (BMechPID.equalsIgnoreCase("uva-bmech-bootstrap:2"))
+        if (BMechPID.equalsIgnoreCase("fedora-system:2"))
         {
           continue;
         }
