@@ -374,7 +374,7 @@ public class DefaultAccess extends Module implements Access
     defaultMethodParms = bmechreader.getServiceMethodParms(methodName, versDateTime);
     for (int i=0; i<defaultMethodParms.length; i++)
     {
-      if (!defaultMethodParms[i].parmType.equals(MethodParmDef.DATASTREAM_INPUT)) {
+      if (defaultMethodParms[i].parmType.equals(MethodParmDef.DEFAULT_INPUT)) {
           this.getServer().logFinest("addedDefaultName: "+defaultMethodParms[i].parmName);
           this.getServer().logFinest("addedDefaultValue: "+defaultMethodParms[i].parmDefaultValue);
           h_userParms.put(defaultMethodParms[i].parmName,
@@ -654,7 +654,7 @@ public class DefaultAccess extends Module implements Access
           // Method has one or more parameters defined
           // Check for default value if user-supplied value is null or empty
           String value = (String)h_userParms.get(methodParm.parmName);
-          if (value == null && value.equalsIgnoreCase(""))
+          if (value == null || value.equalsIgnoreCase(""))
           {
             // Value of user-supplied parameter is  null or empty
             if(methodParm.parmDefaultValue != null)
