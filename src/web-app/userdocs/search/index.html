@@ -3,10 +3,36 @@
 <title>Untitled Document</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
+<body bgcolor="#DADADA" text="#000000" leftmargin="10" topmargin="10" marginwidth="10" marginheight="10">
+<table width="784" border="0" cellpadding="0" cellspacing="0">
+  <tr> 
+    <td width="141" height="134" valign="top"><img src="http://www.fedora.info/assets/newlogo2.jpg" width="141" height="134"></td>
+    <td width="643" valign="top"> 
+      <h2>&nbsp;</h2>
+      <h2>&nbsp;Fedora Search Interface</h2>
+      <h3>&nbsp;User Documentation</h3>
+    </td>
+    </tr>
+</table>
 
-<body bgcolor="#DADADA" text="#000000">
-<h3><b>Welcome to the Fedora Search Client Documentation Page</b></h3>
-
-<p>Info about search client.......</p>
+<p><b>Introduction</b></p>
+<p>The Search Interface provides a mechanism for searching and browsing the Fedora 
+  repository. Upon ingestion, metadata from the Fedora System Metadata section 
+  and the Dublin Core Metadata section of the object are indexed in a relational 
+  database . System Metadata contains metadata maintained by the Fedora repository 
+  that consists of items such as object PID, object label, object creation date, 
+  etc. Dublin Core Metadata is an optional Implementor-Defined XML Metadata datastream 
+  in the object that contains Dublin Core elements describing the object.. If 
+  no Dublin Core record is provided, the system will attempt to construct a minimal 
+  Dublin Core record based on information in the System Metadata consisting of 
+  dc:title corresponding to the object's label and dc:identifier corresponding 
+  to the object's persistent identifier (PID). This bare minimum Dublin Core record 
+  is required for the OAI Provider service to disseminate metadata about each 
+  object in the repository.</p>
+<p> The search tool interface provides both simple and advanced searching. Simple 
+  search enables searching across all metadata files. Advanced Search enables 
+  fielded searching across any combination of metadata elements using Boolean 
+  operators. Wildcard features are supported in both search types. </p>
+<p>More info coming soon...</p>
 </body>
 </html>
