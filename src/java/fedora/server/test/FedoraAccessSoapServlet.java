@@ -528,7 +528,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               // Dissemination request returned nothing.
               String message = "FedoraSoapServlet: No Dissemination result "
-                  + "returned.";
+                  + "returned. <br> See server logs for additional info";
               System.err.println(message);
               showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                            userParms, clearCache, response, message);
@@ -536,6 +536,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
           } catch (Exception e)
           {
             // FIXME!! Needs more refined Exception handling.
+            e.printStackTrace();
             String message = "FedoraSoapServlet: No Dissemination result "
                            + "returned. <br> Exception: "
                            + e.getClass().getName()
