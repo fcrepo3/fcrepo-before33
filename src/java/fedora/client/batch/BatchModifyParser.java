@@ -1,14 +1,11 @@
 package fedora.client.batch;
 
-import fedora.client.Administrator;
 import fedora.client.Uploader;
 import fedora.client.batch.types.Datastream;
 import fedora.client.batch.types.DigitalObject;
-import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.access.FedoraAPIA;
 import fedora.client.batch.types.Disseminator;
-import fedora.client.objecteditor.Util;
 import fedora.client.utility.ingest.AutoIngestor;
 import fedora.server.types.gen.DatastreamBinding;
 import fedora.server.types.gen.DatastreamBindingMap;
@@ -25,8 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
-import java.text.SimpleDateFormat;
-
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -63,7 +58,7 @@ import fedora.server.types.gen.ObjectFields;
  * <p><b>License and Copyright: </b>The contents of this file are subject to the
  * Mozilla Public License Version 1.1 (the "License"); you may not use this file
  * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ * at <a href="http:www.mozilla.org/MPL">http:www.mozilla.org/MPL/.</a></p>
  *
  * <p>Software distributed under the License is distributed on an "AS IS" basis,
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
@@ -95,10 +90,6 @@ public class BatchModifyParser extends DefaultHandler
     /** The namespaces we know we will encounter */
     private final static String FBM = "http://www.fedora.info/definitions/";
 
-    /** Date formatter. */
-    private static SimpleDateFormat s_formatter=
-            new SimpleDateFormat("yyyy-MM-dd' at 'HH:mm:ss");
-
     /** Count of directives that succeeded. */
     private int succeededCount = 0;
 
@@ -115,11 +106,9 @@ public class BatchModifyParser extends DefaultHandler
     private StringBuffer m_dsXMLBuffer;
     private StringBuffer m_dsFirstElementBuffer;
     private ArrayList m_dsPrefixes;
-    private int m_xmlDataLevel;
-    private int m_dsBindingCount;
     private boolean m_inXMLMetadata;
     private boolean m_firstInlineXMLElement;
-    private boolean addObject = true;
+    private boolean addObject = false;
     private boolean addDatastream = false;
     private boolean modifyDatastream = false;
     private boolean purgeDatastream = false;
@@ -143,8 +132,6 @@ public class BatchModifyParser extends DefaultHandler
      * @param APIM - An instance of FedoraAPIM.
      * @param in - An input stream containing the xml to be parsed.
      * @param out - A print stream used for writing log info.
-     * @throws RepositoryConfigurationException - If an error occurs in configuring
-     *                                            the SAX parser.
      */
     public BatchModifyParser(Uploader UPLOADER, FedoraAPIM APIM, FedoraAPIA APIA, InputStream in, PrintStream out)
     {
@@ -282,7 +269,7 @@ public class BatchModifyParser extends DefaultHandler
             throws SAXException {
 
         if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addObject")) {
-
+            addObject = false;
             m_obj = new DigitalObject();
 
             // Get required attributes
@@ -291,34 +278,31 @@ public class BatchModifyParser extends DefaultHandler
             m_obj.cModel = attrs.getValue("contentModel");
 
             try {
-                boolean ok=true;
                 if ( m_obj.label.equals("") ) {
                     failedCount++;
                     logFailedDirective(m_obj.pid, localName, null,
-                        "Object Label must be non-empty.");
-                    addObject = false;
+                        	"Object Label must be non-empty.");
                     return;
                 }
                 if ( !m_obj.pid.equalsIgnoreCase("") ) {
                     if (m_obj.pid.indexOf(":")<1) {
                         failedCount++;
-                        addObject = false;
                         logFailedDirective(m_obj.pid, localName, null,
-                             "Custom PID should be of the form \"namespace:1234\"");
+                                "Custom PID should be of the form \"namespace:1234\"");
                         return;
                     }
                 }
+                addObject = true;
 
             } catch (Exception e) {
                 failedCount++;
-                addObject = false;
                 logFailedDirective(m_obj.pid, localName, e, "");
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
 
             try {
-                m_ds = new Datastream();
                 addDatastream = false;
+                m_ds = new Datastream();
 
                 // Get required attributes
                 m_ds.objectPID = attrs.getValue("pid");
@@ -337,10 +321,9 @@ public class BatchModifyParser extends DefaultHandler
                     // Check that mdClass attribute is specified for XMLMetadata datastreams
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
                         failedCount++;
-                        addDatastream = false;
                         logFailedDirective(m_ds.objectPID, localName, null,
-                        "Datastream MDClass attribute must be specified when"
-                        + " adding datastreams of type \"X\".");
+                                "Datastream MDClass attribute must be specified when"
+                                + " adding datastreams of type \"X\".");
                         return;
                     }
                 }
@@ -351,11 +334,10 @@ public class BatchModifyParser extends DefaultHandler
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")
                             && !m_ds.mdClass.equalsIgnoreCase("descriptive")) {
                         failedCount++;
-                        addDatastream = false;
                         logFailedDirective(m_ds.objectPID, localName, null,
-                        "Datastream MDType attribute must be specified when"
-                        + " adding datastreams of type \"X\" and MDClass is"
-                        + " \""+m_ds.mdClass+"\".");
+                                "Datastream MDType attribute must be specified when"
+                                + " adding datastreams of type \"X\" and MDClass is"
+                                + " \""+m_ds.mdClass+"\".");
                         return;
                     }
                 }
@@ -363,11 +345,10 @@ public class BatchModifyParser extends DefaultHandler
                 if (m_ds.dsControlGrp.equalsIgnoreCase("X") &&
                         !m_ds.dsMIME.equalsIgnoreCase("text/xml") ) {
                     failedCount++;
-                    addDatastream = false;
                     logFailedDirective(m_ds.objectPID, localName, null,
-                    "Datastream dsMIME attribute must be \"text/xml\" when"
-                    + " adding datastreams of type \"X\". dsMIME type is: "
-                    + " \""+m_ds.dsMIME+"\".");
+                            "Datastream dsMIME attribute must be \"text/xml\" when"
+                            + " adding datastreams of type \"X\". dsMIME type is: "
+                            + " \""+m_ds.dsMIME+"\".");
                     return;
                 }
 
@@ -375,14 +356,13 @@ public class BatchModifyParser extends DefaultHandler
 
             } catch (Exception e) {
                 failedCount++;
-                addDatastream = false;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("createDatastream")) {
 
             try {
-                m_ds = new Datastream();
                 addDatastream = false;
+                m_ds = new Datastream();
 
                 // Get required attributes
                 m_ds.objectPID = attrs.getValue("pid");
@@ -411,11 +391,10 @@ public class BatchModifyParser extends DefaultHandler
                 if (m_ds.dsControlGrp.equalsIgnoreCase("X") &&
                         !m_ds.dsMIME.equalsIgnoreCase("text/xml") ) {
                     failedCount++;
-                    addDatastream = false;
                     logFailedDirective(m_ds.objectPID, localName, null,
-                    "Datastream dsMIME attribute must be \"text/xml\" when"
-                    + " adding datastreams of type \"X\". dsMIME type is: "
-                    + " \""+m_ds.dsMIME+"\".");
+                            "Datastream dsMIME attribute must be \"text/xml\" when"
+                            + " adding datastreams of type \"X\". dsMIME type is: "
+                            + " \""+m_ds.dsMIME+"\".");
                     return;
                 }
 
@@ -423,15 +402,14 @@ public class BatchModifyParser extends DefaultHandler
 
             } catch (Exception e) {
                 failedCount++;
-                addDatastream = false;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
                 return;
             }            
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeDatastream")) {
 
             try {
-                m_ds = new Datastream();
                 purgeDatastream = false;
+                m_ds = new Datastream();
 
                 // Get required attributes
                 m_ds.objectPID = attrs.getValue("pid");
@@ -447,7 +425,6 @@ public class BatchModifyParser extends DefaultHandler
 
             } catch (Exception e) {
                 failedCount++;
-                purgeDatastream = false;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyDatastream")) {
@@ -466,11 +443,10 @@ public class BatchModifyParser extends DefaultHandler
                     dsOrig = APIM.getDatastream(m_ds.objectPID, m_ds.dsID, null);
                 } catch (Exception e) {
                     failedCount++;
-                    modifyDatastream = false;
-                    logFailedDirective(m_ds.objectPID, "addDisseminator", null,
-                        "Datastream ID: "+m_ds.dsID+" does not exist"
-                        + " in the object: "+m_ds.objectPID+" .\n    Unable to modify"
-                        + "datastream.");
+                    logFailedDirective(m_ds.objectPID, localName, null,
+                            "Datastream ID: "+m_ds.dsID+" does not exist"
+                            + " in the object: "+m_ds.objectPID+" .\n    Unable to modify"
+                            + "datastream.");
                     return;
                 }
 
@@ -504,17 +480,15 @@ public class BatchModifyParser extends DefaultHandler
 
                 } else {
                     failedCount++;
-                    modifyDatastream = false;
                     logFailedDirective(m_ds.objectPID, localName, null,
-                        " Datastream Control Group Type of: "
-                        + m_ds.dsControlGrp
-                        + " in directives file does not match control group"
-                        + " type in original datastream: "
-                        + dsOrig.getControlGroup().getValue());
+                            " Datastream Control Group Type of: "
+                            + m_ds.dsControlGrp
+                            + " in directives file does not match control group"
+                            + " type in original datastream: "
+                            + dsOrig.getControlGroup().getValue());
                 }
             } catch (Exception e) {
                 failedCount++;
-                modifyDatastream = false;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDatastreamState")) {
@@ -531,7 +505,6 @@ public class BatchModifyParser extends DefaultHandler
 
             } catch (Exception e) {
                 failedCount++;
-                setDatastreamState = false;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("xmlData")) {
@@ -539,7 +512,6 @@ public class BatchModifyParser extends DefaultHandler
             m_dsXMLBuffer=new StringBuffer();
             m_dsFirstElementBuffer=new StringBuffer();
             m_dsPrefixes=new ArrayList();
-            m_xmlDataLevel=0;
             m_firstInlineXMLElement=true;
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastreamBinding")) {
 
@@ -565,14 +537,20 @@ public class BatchModifyParser extends DefaultHandler
                         m_dsBinding.setBindLabel("Binding for "+ds.getLabel());
                     } catch (Exception e) {
                         failedCount++;
-                        if (addDisseminator)
+                        if (addDisseminator) {
                             addDisseminator = false;
-                        if (modifyDisseminator)
+                        		logFailedDirective(m_diss.parentPID, "addDisseminator", null,
+                        		        "Datastream ID: "+m_dsBinding.getDatastreamID()
+                        		        + " does not exist in the object: "+m_diss.parentPID
+                        		        + " .\n    Unable to add Datastream Binding for this datastream");
+                        }
+                        if (modifyDisseminator) {
                             modifyDisseminator = false;
-                        logFailedDirective(m_diss.parentPID, "addDisseminator", null,
-                            "Datastream ID: "+m_dsBinding.getDatastreamID()
-                            + " does not exist in the object: "+m_diss.parentPID
-                            + " .\n    Unable to add Datastream Binding for this datastream");
+                        		logFailedDirective(m_diss.parentPID, "modifyDisseminator", null,
+                        		        "Datastream ID: "+m_dsBinding.getDatastreamID()
+                        		        + " does not exist in the object: "+m_diss.parentPID
+                        		        + " .\n    Unable to add Datastream Binding for this datastream");
+                        }
                         return;
                     }
                 }
@@ -583,39 +561,29 @@ public class BatchModifyParser extends DefaultHandler
                 }
 
                 if(!addDisseminator) {
-
-                // Check that specified binding key name matches that in original disseminator
-                boolean bindKeyExists = false;
-                for (int i=0; i<m_origBinding.length; i++) {
-                    if (m_origBinding[i].getBindKeyName().equalsIgnoreCase(m_dsBinding.getBindKeyName())) {
-                        bindKeyExists = true;
+                    
+                    // If modifying disseminator, check that specified binding key name matches that in original disseminator
+                    boolean bindKeyExists = false;
+                    for (int i=0; i<m_origBinding.length; i++) {
+                        if (m_origBinding[i].getBindKeyName().equalsIgnoreCase(m_dsBinding.getBindKeyName())) {
+                            bindKeyExists = true;
+                        }
                     }
-                }
-                // Add datastream binding to hash of bindings
-                if (bindKeyExists) {
-                    m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
-                } else {
-                    failedCount++;
-                    if(addDisseminator) {
-                        addDisseminator = false;
-                        logFailedDirective(m_diss.parentPID, "addDisseminator",
-                            null, "Specified datastream Binding Key Name: "
-                            + m_dsBinding.getBindKeyName()
-                            +" does not exist in disseminator: "+m_diss.dissID
-                            +"/n    Unable to add datastream binding for datastream: "
-                            +m_dsBinding.getDatastreamID()+" .");
-                    }
-                    if(modifyDisseminator) {
+                    // Add datastream binding to hash of bindings
+                    if (bindKeyExists) {
+                        m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
+                    } else {
+                        failedCount++;
                         modifyDisseminator = false;
                         logFailedDirective(m_diss.parentPID, "modifyDisseminator",
                                 null, "Specified datastream Binding Key Name: "
                                 + m_dsBinding.getBindKeyName()
                                 +" does not exist in disseminator: "+m_diss.dissID
                                 +"/n    Unable to add datastream binding for datastream: "
-                            +m_dsBinding.getDatastreamID()+" .");
+                                +m_dsBinding.getDatastreamID()+" .");
                     }
-                }
                 } else {
+                    // If adding new disseminator, just go ahead and add binding
                     m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
                 }
 
@@ -646,9 +614,9 @@ public class BatchModifyParser extends DefaultHandler
                     failedCount++;
                     modifyDisseminator = false;
                     logFailedDirective(m_diss.parentPID, "modifyDisseminator", null, "No binding found "
-                        + "for datastreamID: "+m_dsBinding.getDatastreamID()
-                        +" .\n    Datastream "
-                        + "binding left unchanged.");
+                            + "for datastreamID: "+m_dsBinding.getDatastreamID()
+                            +" .\n    Datastream "
+                            + "binding left unchanged.");
                 }
             } catch (Exception e) {
                 failedCount++;
@@ -658,9 +626,9 @@ public class BatchModifyParser extends DefaultHandler
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDisseminator")) {
 
             try {
+                addDisseminator = false;
                 m_dsBindings = new HashMap();
                 m_diss = new Disseminator();
-                addDisseminator = false;
 
                 // Get required attributes
                 m_diss.parentPID = attrs.getValue("pid");
@@ -696,18 +664,15 @@ public class BatchModifyParser extends DefaultHandler
 
             } catch (Exception e) {
                 failedCount++;
-                addDisseminator = false;
                 logFailedDirective(m_diss.parentPID, localName, e, "");
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyDisseminator")) {
 
             try {
+                modifyDisseminator = false;
                 m_dsBindings = new HashMap();
                 m_diss = new Disseminator();
-                //DatastreamBindingMap dsBindingMap = new DatastreamBindingMap();
                 fedora.server.types.gen.Disseminator origDiss = new fedora.server.types.gen.Disseminator();
-                //DatastreamBindingMap origBindingMap = new DatastreamBindingMap();
-                modifyDisseminator = false;
 
                 // Get require attributes
                 m_diss.parentPID = attrs.getValue("pid");
@@ -718,11 +683,10 @@ public class BatchModifyParser extends DefaultHandler
                     origDiss = APIM.getDisseminator(m_diss.parentPID, m_diss.dissID, null);
                 } catch (Exception e) {
                     failedCount++;
-                    modifyDisseminator = false;
-                    logFailedDirective(m_diss.parentPID, "addDisseminator", null,
-                        "Disseminator ID: "+m_diss.dissID+" does not exist in"
-                        + " the object: "+m_diss.parentPID+" .\n    Unable to modify"
-                        + " this disseminator.");
+                    logFailedDirective(m_diss.parentPID, localName, null,
+                            "Disseminator ID: "+m_diss.dissID+" does not exist in"
+                            + " the object: "+m_diss.parentPID+" .\n    Unable to modify"
+                            + " this disseminator.");
                     return;
 
                 }
@@ -762,14 +726,13 @@ public class BatchModifyParser extends DefaultHandler
 
             } catch (Exception e) {
                 failedCount++;
-                modifyDisseminator = false;
                 logFailedDirective(m_diss.parentPID, localName, e, "");
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeDisseminator")) {
 
             try {
-                m_diss = new Disseminator();
                 purgeDisseminator = false;
+                m_diss = new Disseminator();
 
                 // Get require attributes
                 m_diss.parentPID = attrs.getValue("pid");
@@ -785,14 +748,13 @@ public class BatchModifyParser extends DefaultHandler
 
             } catch (Exception e) {
                 failedCount++;
-                purgeDisseminator = false;
                 logFailedDirective(m_diss.parentPID, localName, e, "");
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDisseminatorState")) {
 
             try {
-                m_diss = new Disseminator();
                 setDisseminatorState = false;
+                m_diss = new Disseminator();
 
                 // Get required attributes
                 m_diss.parentPID = attrs.getValue("pid");
@@ -802,7 +764,6 @@ public class BatchModifyParser extends DefaultHandler
 
             } catch (Exception e) {
                 failedCount++;
-                setDisseminatorState = false;
                 logFailedDirective(m_diss.parentPID, localName, e, "");
             }
         } else {
@@ -891,7 +852,7 @@ public class BatchModifyParser extends DefaultHandler
                     if(m_ds!=null && combined !=null)
                         m_ds.xmlContent = combined.getBytes("UTF-8");
                 } catch (UnsupportedEncodingException uee) {
-                    uee.printStackTrace();
+                    // ignore
                 }
 
             } else {
@@ -912,52 +873,34 @@ public class BatchModifyParser extends DefaultHandler
             try {
 
                 if(addObject) {
-                	/*
-                	// FIXME -- Remove when foxml fully implemented
-                	StringBuffer xml=new StringBuffer();
-                	xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-                	xml.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-                	xml.append("           xmlns:METS=\"http://www.loc.gov/METS/\"\n");
-                	xml.append("           xmlns:fedoraAudit=\"http://www.fedora.info/definitions/audit\"\n");
-                	xml.append("           xmlns:xlink=\"http://www.w3.org/TR/xlink\"\n");
-                	xml.append("           xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
-                	xml.append("           TYPE=\"FedoraObject\"\n");
-                	xml.append("           OBJID=\"" + StreamUtility.enc(m_obj.pid) + "\"\n");
-                	xml.append("           LABEL=\"" + StreamUtility.enc(m_obj.label) + "\"\n");
-                	xml.append("           PROFILE=\"" + StreamUtility.enc(m_obj.cModel) + "\">\n");
-                	xml.append("</METS:mets>");
-                	String objXML=xml.toString();*/ 
+				    				StringBuffer xml=new StringBuffer();
+				    				xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+				    				xml.append("<foxml:digitalObject xmlns:METS=\"http://www.loc.gov/METS/\"");
+				                    xml.append("    xmlns:audit=\"info:fedora/fedora-system:def/audit#\""); 
+				                    xml.append("    xmlns:fedoraAudit=\"http://www.fedora.info/definitions/audit\"");
+				                    xml.append("    xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\"");
+				                    xml.append("    xmlns:xlink=\"http://www.w3.org/TR/xlink\"");
+				                    xml.append("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+				                    xml.append("    xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
+				                    xml.append("    http://www.fedora.info/definitions/1/0/foxml1-0.xsd\"");
+				                    xml.append("    PID=\"" + StreamUtility.enc(m_obj.pid) + "\""); 
+				                    xml.append("    URI=\"info:fedora/" + StreamUtility.enc(m_obj.pid) + "\">\n");
+				    				xml.append("  <foxml:objectProperties>\n");
+				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/fType\" VALUE=\"FedoraObject\"/>\n");
+				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/state\" VALUE=\"A\"/>");
+				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/label\" VALUE=\"" + StreamUtility.enc(m_obj.label) + "\"/>\n");
+				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/cModel\" VALUE=\"" + StreamUtility.enc(m_obj.cModel) + "\"/>\n");			
+				    				xml.append("  </foxml:objectProperties>\n");
+				    				xml.append("</foxml:digitalObject>");
+				    				String objXML=xml.toString();
                 	
-    				StringBuffer xml=new StringBuffer();
-    				xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-    				xml.append("<foxml:digitalObject xmlns:METS=\"http://www.loc.gov/METS/\"");
-                    xml.append("    xmlns:audit=\"info:fedora/fedora-system:def/audit#\""); 
-                    xml.append("    xmlns:fedoraAudit=\"http://www.fedora.info/definitions/audit\"");
-                    xml.append("    xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\"");
-                    xml.append("    xmlns:xlink=\"http://www.w3.org/TR/xlink\"");
-                    xml.append("    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-                    xml.append("    xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
-                    xml.append("    http://www.fedora.info/definitions/1/0/foxml1-0.xsd\"");
-                    xml.append("    PID=\"" + StreamUtility.enc(m_obj.pid) + "\""); 
-                    xml.append("    URI=\"info:fedora/" + StreamUtility.enc(m_obj.pid) + "\">\n");
-    				xml.append("  <foxml:objectProperties>\n");
-    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/fType\" VALUE=\"FedoraObject\"/>\n");
-    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/state\" VALUE=\"A\"/>");
-    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/label\" VALUE=\"" + StreamUtility.enc(m_obj.label) + "\"/>\n");
-    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/cModel\" VALUE=\"" + StreamUtility.enc(m_obj.cModel) + "\"/>\n");
-				    xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/cModel\" VALUE=\"Object\"/>\n");    				
-    				xml.append("  </foxml:objectProperties>\n");
-    				xml.append("</foxml:digitalObject>");
-    				String objXML=xml.toString();
-                	
-
                     ByteArrayInputStream in=new ByteArrayInputStream(
                             objXML.getBytes("UTF-8"));
                     String newPID=AutoIngestor.ingestAndCommit(
-                    		Administrator.APIA,
-                            Administrator.APIM,
+                            APIA,
+                            APIM,
                             in,
-							"foxml1.0",
+                            "foxml1.0",
                             "Created with BatchModify Utility \"addObject\" directive");
                     succeededCount++;
                     logSucceededDirective(newPID, localName,
@@ -968,6 +911,8 @@ public class BatchModifyParser extends DefaultHandler
                     failedCount++;
                     logFailedDirective(m_obj.pid, localName, e, "");
                 }
+            } finally {
+                addObject = false;
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
 
@@ -979,44 +924,37 @@ public class BatchModifyParser extends DefaultHandler
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
                         InputStream xmlMetadata = new ByteArrayInputStream(m_ds.xmlContent);
                         m_ds.dsLocation=UPLOADER.upload(xmlMetadata);
-                        /*datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsLabel,
-                                m_ds.dsMIME, m_ds.dsLocation,
-                                m_ds.dsControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.dsState);*/
                         datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsLabel,
                                 m_ds.dsMIME, m_ds.dsLocation,
                                 m_ds.dsControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.dsState);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("M")) {
-                        /*datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsLabel,
-                                m_ds.dsMIME, m_ds.dsLocation,
-                                m_ds.dsControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.dsState);*/
                         datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsLabel,
                                 m_ds.dsMIME,  m_ds.dsLocation,
+                                	m_ds.dsControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.dsState);
+                    } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
+                            m_ds.dsControlGrp.equalsIgnoreCase("R")) {
+                        datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsLabel,
+                                m_ds.dsMIME, m_ds.dsLocation,
                                 m_ds.dsControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.dsState);
-                        } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
-                                   m_ds.dsControlGrp.equalsIgnoreCase("R")) {
-                            /*datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsLabel,
-                                    m_ds.dsMIME, m_ds.dsLocation,
-                                    m_ds.dsControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.dsState);*/
-                            datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsLabel,
-                                    m_ds.dsMIME, m_ds.dsLocation,
-                                    m_ds.dsControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.dsState);
-                        }
-                        if (datastreamID!=null) {
-                            succeededCount++;
-                            logSucceededDirective(m_ds.objectPID, localName,
+                    }
+                    if (datastreamID!=null) {
+                        succeededCount++;
+                        logSucceededDirective(m_ds.objectPID, localName,
                                 "datastreamID: " + datastreamID + " added");
-                        } else {
-                            failedCount++;
-                            addDatastream = false;
-                            logFailedDirective(m_ds.objectPID, localName, null,
-                                "Unable to add datastream");
-                        }
+                    } else {
+                        failedCount++;
+                        //addDatastream = false;
+                        logFailedDirective(m_ds.objectPID, localName, null,
+                        "Unable to add datastream");
+                    }
                 }
             } catch (Exception e) {
                 if(addDatastream) {
                     failedCount++;
                     logFailedDirective(m_ds.objectPID, localName, e, "");
                 }
+            } finally {
+                addDatastream = false;
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("createDatastream")) {
 
@@ -1030,40 +968,42 @@ public class BatchModifyParser extends DefaultHandler
                         m_ds.dsLocation=UPLOADER.upload(xmlMetadata);
                         datastreamID = APIM.createDatastream(m_ds.objectPID, m_ds.dsID,
                         		m_ds.dsLabel,m_ds.versionable,
-								m_ds.dsMIME, m_ds.formatURI,
-								m_ds.dsLocation, m_ds.dsControlGrp, 
-								m_ds.dsState);
+                        		m_ds.dsMIME, m_ds.formatURI,
+                        		m_ds.dsLocation, m_ds.dsControlGrp, 
+                        		m_ds.dsState);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("M")) {
                         datastreamID = APIM.createDatastream(m_ds.objectPID, m_ds.dsID,
-                        		m_ds.dsLabel,m_ds.versionable,
-								m_ds.dsMIME, m_ds.formatURI,
-								m_ds.dsLocation, m_ds.dsControlGrp, 
-								m_ds.dsState);
-                        } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
-                                   m_ds.dsControlGrp.equalsIgnoreCase("R")) {
-                            datastreamID = APIM.createDatastream(m_ds.objectPID, m_ds.dsID,
-                            		m_ds.dsLabel,m_ds.versionable,
-									m_ds.dsMIME, m_ds.formatURI,
-									m_ds.dsLocation, m_ds.dsControlGrp, 
-									m_ds.dsState);
-                        }
-                        if (datastreamID!=null) {
-                            succeededCount++;
-                            logSucceededDirective(m_ds.objectPID, localName,
+                                m_ds.dsLabel,m_ds.versionable,
+                                m_ds.dsMIME, m_ds.formatURI,
+                                m_ds.dsLocation, m_ds.dsControlGrp, 
+                                m_ds.dsState);
+                    } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
+                            m_ds.dsControlGrp.equalsIgnoreCase("R")) {
+                        datastreamID = APIM.createDatastream(m_ds.objectPID, m_ds.dsID,
+                                m_ds.dsLabel,m_ds.versionable,
+                                m_ds.dsMIME, m_ds.formatURI,
+                                m_ds.dsLocation, m_ds.dsControlGrp, 
+                                m_ds.dsState);
+                    }
+                    if (datastreamID!=null) {
+                        succeededCount++;
+                        logSucceededDirective(m_ds.objectPID, localName,
                                 "datastreamID: " + datastreamID + " added");
-                        } else {
-                            failedCount++;
-                            addDatastream = false;
-                            logFailedDirective(m_ds.objectPID, localName, null,
-                                "Unable to add datastream");
-                        }
+                    } else {
+                        failedCount++;
+                        //addDatastream = false;
+                        logFailedDirective(m_ds.objectPID, localName, null,
+                        "Unable to add datastream");
+                    }
                 }
             } catch (Exception e) {
                 if(addDatastream) {
                     failedCount++;
                     logFailedDirective(m_ds.objectPID, localName, e, "");
                 }
-            }            
+            } finally {
+                addDatastream = false;
+            }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeDatastream")) {
 
             try {
@@ -1091,16 +1031,19 @@ public class BatchModifyParser extends DefaultHandler
                         }
                     } else {
                         failedCount++;
-                        purgeDatastream = false;
+                        //purgeDatastream = false;
                         logFailedDirective(m_ds.objectPID, localName, null,
                             "Unable to purge datastream; verify datastream ID and/or asOfDate");
                     }
+                    purgeDatastream = false;
                 }
             } catch (Exception e) {
                 if(purgeDatastream) {
                     failedCount++;
                     logFailedDirective(m_ds.objectPID, localName, e, "");
                 }
+            } finally {
+                purgeDatastream = false;
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyDatastream")) {
 
@@ -1109,19 +1052,13 @@ public class BatchModifyParser extends DefaultHandler
                 // Process modifyDatastream only if no previous errors encountered
                 if(modifyDatastream) {
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
-                        /*APIM.modifyDatastreamByValue(m_ds.objectPID, m_ds.dsID, m_ds.dsLabel,
-                                "ModifyDatastreamByValue", m_ds.xmlContent, m_ds.dsState);*/
                         APIM.modifyDatastreamByValue(m_ds.objectPID, m_ds.dsID, m_ds.dsLabel,
                                 "ModifyDatastreamByValue", m_ds.xmlContent, m_ds.dsState);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("M")) {
-                        /*APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, m_ds.dsLabel,
-                                "ModifyDatastreamByReference", m_ds.dsLocation, m_ds.dsState);*/
                         APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, m_ds.dsLabel,
                                 "ModifyDatastreamByReference", m_ds.dsLocation, m_ds.dsState);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
                                m_ds.dsControlGrp.equalsIgnoreCase("R")) {
-                        /*APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, m_ds.dsLabel,
-                                "ModifyDatastreamByReference", m_ds.dsLocation, m_ds.dsState);*/
                         APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, m_ds.dsLabel,
                                 "ModifyDatastreamByReference", m_ds.dsLocation, m_ds.dsState);
                     }
@@ -1135,6 +1072,8 @@ public class BatchModifyParser extends DefaultHandler
                     failedCount++;
                     logFailedDirective(m_ds.objectPID, localName, e, null);
                 }
+            } finally {
+                modifyDatastream = false;
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDatastreamState")) {
 
@@ -1155,6 +1094,8 @@ public class BatchModifyParser extends DefaultHandler
                     failedCount++;
                     logFailedDirective(m_ds.objectPID, localName, e, null);
                 }
+            } finally {
+                setDatastreamState = false;
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastreamBinding")) {
 
@@ -1190,7 +1131,7 @@ public class BatchModifyParser extends DefaultHandler
                             "disseminatorID: " + dissID + " Created.");
                     } else {
                         failedCount++;
-                        addDisseminator = false;
+                        //addDisseminator = false;
                         logFailedDirective(m_diss.parentPID, localName, null,
                             "Unable to create disseminator...");
                     }
@@ -1200,7 +1141,10 @@ public class BatchModifyParser extends DefaultHandler
                 if(addDisseminator) {
                     failedCount++;
                     logFailedDirective(m_diss.parentPID, localName, e, "");
+                    addDisseminator = false;
                 }
+            } finally {
+                addDisseminator = false;
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyDisseminator")) {
 
@@ -1238,6 +1182,8 @@ public class BatchModifyParser extends DefaultHandler
                     failedCount++;
                     logFailedDirective(m_diss.parentPID, localName, e, "");
                 }
+            } finally {
+                modifyDisseminator = false;
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeDisseminator")) {
 
@@ -1264,17 +1210,17 @@ public class BatchModifyParser extends DefaultHandler
                         }
                     } else {
                         failedCount++;
-                        purgeDisseminator = false;
                         logFailedDirective(m_diss.parentPID, localName, null,
                             "Unable to purge disseminator; verify disseminator ID and/or asOfDate");
                     }
                 }
-
             } catch (Exception e) {
                 if(purgeDisseminator) {
                     failedCount++;
                     logFailedDirective(m_diss.parentPID, localName, e, "");
                 }
+            } finally {
+                purgeDisseminator = false;
             }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDisseminatorState")) {
 
@@ -1295,6 +1241,8 @@ public class BatchModifyParser extends DefaultHandler
                     failedCount++;
                     logFailedDirective(m_diss.parentPID, localName, e, null);
                 }
+            } finally {
+                setDisseminatorState = false;
             }
         }
     }
