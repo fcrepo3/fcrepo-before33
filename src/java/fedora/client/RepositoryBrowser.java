@@ -12,6 +12,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.event.MouseInputListener;
+import javax.swing.plaf.basic.BasicTableUI;
 import javax.xml.rpc.ServiceException;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -19,6 +22,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.awt.Font;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -85,6 +89,10 @@ public class RepositoryBrowser
 
         JSortTable table=new JSortTable(new DefaultSortTableModel(data, columnNames));
         table.setPreferredScrollableViewportSize(new Dimension(400, 400));
+        table.setShowVerticalLines(false);
+        table.setCellSelectionEnabled(false);
+        table.setRowSelectionAllowed(true);
+        table.setUI(new RepositoryBrowser.BrowserTableUI());
 
         JScrollPane browsePanel = new JScrollPane(table);
         getContentPane().setLayout(new BorderLayout());
@@ -95,6 +103,23 @@ public class RepositoryBrowser
         setSize(400,400);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ":" + e.getMessage());
+        }
+    }
+    
+    public class BrowserTableUI 
+            extends BasicTableUI {
+        protected MouseInputListener createMouseInputListener() {
+            return new BasicTableUI.MouseInputHandler() {
+                public void mousePressed(MouseEvent e) {
+                    if (SwingUtilities.isRightMouseButton(e) ) {
+                        //do your stuff here...    
+                        System.out.println("Right click");
+                    } else {
+                        // not a right click
+                        super.mousePressed(e);    
+                    }  
+                } 
+            };
         }
     }
     
