@@ -230,16 +230,6 @@ public class BasicDigitalObject
         return newID(mapIDs.iterator(), "S");
     }
 
-    public String newDatastreamBindingMapID(String id) {
-        ArrayList versionIDs=new ArrayList();
-        Iterator iter=((ArrayList) m_disseminators.get(id)).iterator();
-        while (iter.hasNext()) {
-            Disseminator diss=(Disseminator) iter.next();
-            versionIDs.add(diss.dsBindMapID);
-        }
-        return newID(versionIDs.iterator(), "S");
-    }
-
     public String newAuditRecordID() {
         ArrayList auditIDs=new ArrayList();
         Iterator iter=m_auditRecords.iterator();
