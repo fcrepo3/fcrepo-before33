@@ -8,6 +8,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBindingMap;
+import fedora.server.storage.types.Property;
 
 /**
  *
@@ -49,13 +50,18 @@ public interface Management {
                              String label, 
                              String logMessage) throws ServerException;
 
+    
+	public Property[] getObjectProperties(Context context, 
+										  String pid) throws ServerException;
+			
     public InputStream getObjectXML(Context context, 
                                     String pid, 
                                     String encoding) throws ServerException;
 
     public InputStream exportObject(Context context, 
                                     String pid, 
-                                    String format, 
+                                    String format,
+                                    String exportContext, 
                                     String encoding) throws ServerException;
 
     public Date purgeObject(Context context, 
