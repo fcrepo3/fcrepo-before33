@@ -174,10 +174,10 @@ public abstract class DateUtility
     {
       tzOffset+=cal.get(Calendar.DST_OFFSET);
     }
-    // now we have UTF offset in millisecs... so add it to localDate.millisecs
+    // now we have UTF offset in millisecs... so subtract it from localDate.millisecs
     // and return a new Date object.
     Date UTCDate=new Date();
-    UTCDate.setTime(localDate.getTime() + tzOffset);
+    UTCDate.setTime(localDate.getTime() - tzOffset);
     return UTCDate;
   }
 
