@@ -59,8 +59,8 @@
 		<para>To avoid name collision, and to expose only those names necessary 
 		to converse and/or develop around a particular logical part of Fedora, 
 		we have grouped the names into the following namespaces:</para>
-        <para><emphasis>actions/</emphasis> - SOAPAction header names for API-A
-        or API-M operations.</para>
+        <para><emphasis>api/</emphasis> - WSDL definitions and SOAPAction 
+        header names for API-A or API-M operations.</para>
         <para><emphasis>auditing/</emphasis> - The types/elements defined in 
         the XML Schema for audit records.  This is based on the UVA digiprov 
         schema.</para>
@@ -73,7 +73,7 @@
       <title>Implicit Namespaces and Versioning</title>
 	  <para>In accord with the specifications above, we explicitly define the 
 	  following namespaces for the first release of Fedora:</para>
-      <para><emphasis>http://www.fedora.info/definitions/1/0/actions/</emphasis> 
+      <para><emphasis>http://www.fedora.info/definitions/1/0/api/</emphasis> 
       - The SOAPAction header names defined by version 1.0 of Fedora.</para>
       <para><emphasis>http://www.fedora.info/definitions/1/0/auditing/</emphasis>
       - The audit trail XML Schema types/elements as defined by version 1.0 
@@ -87,7 +87,7 @@
       <para>For convenience, we say that the following namespaces are implied by 
       the above:
 	  <itemizedlist><title/>
-      <listitem><para>http://www.fedora.info/definitions/1/actions/</para></listitem>
+      <listitem><para>http://www.fedora.info/definitions/1/api/</para></listitem>
       <listitem><para>http://www.fedora.info/definitions/1/auditing/</para></listitem>
       <listitem><para>http://www.fedora.info/definitions/1/binding/</para></listitem>
       <listitem><para>http://www.fedora.info/definitions/1/types/</para></listitem>
@@ -96,7 +96,7 @@
       version 1 release of Fedora&quot;.</para>
       <para>
 	  <itemizedlist><title/>
-      <listitem><para>http://www.fedora.info/definitions/actions/</para></listitem>
+      <listitem><para>http://www.fedora.info/definitions/api/</para></listitem>
       <listitem><para>http://www.fedora.info/definitions/auditing/</para></listitem>
       <listitem><para>http://www.fedora.info/definitions/binding/</para></listitem>
       <listitem><para>http://www.fedora.info/definitions/types/</para></listitem>
@@ -128,9 +128,12 @@
 	  <para>The history of this document follows.</para>
 	  <literallayout>
 	  $Log$
+	  Revision 1.2  2002/07/18 20:07:00  cwilper
+	  changed 'actions' namespace to 'api' because it's more sensible
+
 	  Revision 1.1  2002/07/16 16:26:14  cwilper
 	  First import of namespaces spec/design doc, converted to docbook from txt
-
+	
 	  </literallayout>
     </appendix>
 </article>
