@@ -291,7 +291,7 @@
             2 = basic + method permutations
             WARNING: changing the level (except to 0) requires a full dump-and-load 
             of the repository.
-          - datastoreId (required)
+          - datastore (required)
             Name of the triplestore to use.
             WARNING: changing the triplestore requires a full dump-and-load
             of the repository.
