@@ -226,7 +226,7 @@ public class BatchIngestGUI
 	    properties.setProperty("server-port",port);
 	    properties.setProperty("username",user);
 	    properties.setProperty("password",pass);
-	    properties.setProperty("template-format",m_foxmlMap.isSelected()? "foxml1.0" : "metslikefedora1");
+	    properties.setProperty("object-format",m_foxmlMap.isSelected()? "foxml1.0" : "metslikefedora1");
 	    
 	    batchOutput.setDirectoryPath(properties.getProperty("ingested-pids")); //2003.12.03 niebel -- duplicate output to file
 	    

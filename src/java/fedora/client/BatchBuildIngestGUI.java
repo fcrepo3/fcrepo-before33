@@ -5,6 +5,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JRadioButton;
@@ -15,9 +16,14 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import fedora.client.Administrator;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+
 import javax.swing.JFileChooser;
 import java.util.Properties;
+import java.util.HashMap;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.FontMetrics;
@@ -78,6 +84,7 @@ public class BatchBuildIngestGUI
 	private Dimension okMin = null;
 	private Dimension okPref = null;
 	private Dimension okMax = null;
+	private static HashMap formatMap = new HashMap();
 
 	private MDIDesktopPane mdiDesktopPane = null;
 	BatchOutput batchOutput = new BatchOutput("Batch Build and Ingest Output");
@@ -98,6 +105,8 @@ public class BatchBuildIngestGUI
 	this.port = Integer.toString(port);
 	this.user = user;
 	this.pass = pass;
+	formatMap.put("foxml1.0","FOXML");
+	formatMap.put("metslikefedora1","METS");
 
 	this.mdiDesktopPane = mdiDesktopPane;
 
@@ -137,8 +146,8 @@ public class BatchBuildIngestGUI
 	okMax = new Dimension((new Float(1.5 * okMin.width)).intValue() , (new Float(1.5 * okMin.height)).intValue());
 	okPref = okMax;
 
-/*
-        labelPanel.add(new JLabel("METS template (input file)"));
+
+        labelPanel.add(new JLabel("Object template (input file)"));
 	labelPanel.add(sized (m_templateField, textMin, textPref, textMax));
 
         JButton templateBtn=new JButton("browse...");
@@ -148,8 +157,8 @@ public class BatchBuildIngestGUI
             }
         });
 	labelPanel.add(sized (templateBtn, browseMin, browsePref, browseMax));
-*/
-	
+
+/*	
 	templateButtonGroup.add(m_foxmlMap);
 	m_foxmlMap.setSelected(true);
 	templateButtonGroup.add(m_metsMap);
@@ -168,8 +177,9 @@ public class BatchBuildIngestGUI
                 templateAction();
             }
         });
-        
+      
 	labelPanel.add(sized (templateBtn, browseMin, browsePref, browseMax));	
+	*/
         labelPanel.add(new JLabel("XML specs (input directory)"));
 	labelPanel.add(sized (m_specsField, textMin, textPref, textMax));
 
@@ -271,33 +281,56 @@ public class BatchBuildIngestGUI
 	    properties.setProperty("objects",m_objectsField.getText());
 	    properties.setProperty("ingested-pids",m_pidsField.getText());
 	    properties.setProperty("pids-format",m_xmlMap.isSelected()? "xml" : "text");
-	    properties.setProperty("template-format",m_foxmlMap.isSelected()? "foxml1.0" : "metslikefedora1");
 	    properties.setProperty("server-fqdn",host);
 	    properties.setProperty("server-port",port);
 	    properties.setProperty("username",user);
 	    properties.setProperty("password",pass);
+	    //properties.setProperty("object-format",m_foxmlMap.isSelected()? "foxml1.0" : "metslikefedora1");
 	    
-	    batchOutput.setDirectoryPath(properties.getProperty("ingested-pids")); //2003.12.03 niebel -- duplicate output to file
-
-	    try {
-		    mdiDesktopPane.add(batchOutput);
-	    } catch (Exception eee) {  //illegal component position occurs ~ every other time ?!?
-		    mdiDesktopPane.add(batchOutput);
+	    // Verify format of template file to see if it is a METS or FOXML template
+	    BufferedReader br = new BufferedReader(new FileReader(m_templateField.getText()));
+	    String line;
+	    String templateFormat = "metslikefedora1";
+	    while ((line=br.readLine()) != null) {
+	        System.out.println(line);
+	        if(line.indexOf("<foxml")!=-1) {
+	            templateFormat = "foxml1.0";
+	        		break;
+	        }
 	    }
-        	try {
-			batchOutput.setSelected(true);
-		} catch (java.beans.PropertyVetoException e) {
-			System.err.println("BatchBuildIngestGUI" + " frame select vetoed " + e.getMessage());
-		}
-		BatchThread batchThread = null;
-		try {
-			batchThread = new BatchThread(batchOutput, batchOutput.getJTextArea(), "Building and Ingesting Batch . . .");
-		} catch (Exception e) {
-			System.err.println("BatchBuildIngestGUI" + " couldn't instantiate BatchThread " + e.getMessage());
-		}
-	    batchThread.setProperties(properties);
-	    batchThread.start();
-        }
+	    br.close();
+	    br=null;
+      
+	    // Set template format property based on template file format.
+	    // Query user to be sure they have selected the correct template file.
+	    properties.setProperty("object-format",templateFormat);
+	    int n = JOptionPane.showConfirmDialog(Administrator.getDesktop(), "Based on template, "
+	            + "generated objects will be in "+formatMap.get(templateFormat)+" format. Is this correct?","Generated Object Format",
+	            JOptionPane.YES_NO_CANCEL_OPTION);
+	    if (n == JOptionPane.YES_OPTION) {	    
+	    
+				    batchOutput.setDirectoryPath(properties.getProperty("ingested-pids")); //2003.12.03 niebel -- duplicate output to file
+			
+				    try {
+					    mdiDesktopPane.add(batchOutput);
+				    } catch (Exception eee) {  //illegal component position occurs ~ every other time ?!?
+					    mdiDesktopPane.add(batchOutput);
+				    }
+			        	try {
+						batchOutput.setSelected(true);
+					} catch (java.beans.PropertyVetoException e) {
+						System.err.println("BatchBuildIngestGUI" + " frame select vetoed " + e.getMessage());
+					}
+					BatchThread batchThread = null;
+					try {
+						batchThread = new BatchThread(batchOutput, batchOutput.getJTextArea(), "Building and Ingesting Batch . . .");
+					} catch (Exception e) {
+						System.err.println("BatchBuildIngestGUI" + " couldn't instantiate BatchThread " + e.getMessage());
+					}
+				    batchThread.setProperties(properties);
+				    batchThread.start();
+			        }
+     }
 	} catch (Exception e) {
 		System.err.println("BatchBuildIngestGUI" + " general error " + e.getMessage());
 	}
