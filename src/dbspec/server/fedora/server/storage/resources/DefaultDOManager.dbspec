@@ -285,28 +285,28 @@
 		<column name="defParmType" type="varchar(64)" notNull="false" default=""/>
 	</table>
 	
-	<table name="riMethod">
+	<table name="riMethod" primaryKey="methodId">
 		<comment>
 		</comment>
 		<column name="methodId" type="varchar(255)" notNull="true" default="" index="methodID"/>
 		<column name="bDefPid" type="varchar(255)" notNull="true" default="" index="bDefPid"/>
 		<column name="methodName" type="varchar(255)" notNull="true" default=""/>
 	</table>
-	<table name="riMethodImpl">
+	<table name="riMethodImpl" primaryKey="methodImplId">
 		<comment>
 		</comment>
 		<column name="methodImplId" type="varchar(255)" notNull="true" default="" index="methodImplID"/>
 		<column name="bMechPid" type="varchar(255)" notNull="true" default="" index="bMechPid"/>
 		<column name="methodId" type="varchar(255)" notNull="true" default="" index="methodId"/>
 	</table>
-	<table name="riMethodPermutation">
+	<table name="riMethodPermutation" primaryKey="permutationId">
 		<comment>
 		</comment>
 		<column name="permutationId" type="int(11)" notNull="true" index="permutationId" autoIncrement="true"/>
 		<column name="methodId" type="varchar(255)" notNull="true" default="" index="methodID"/>
 		<column name="permutation" type="text" notNull="true" default=""/>
 	</table>
-	<table name="riMethodMimeType">
+	<table name="riMethodMimeType" primaryKey="mimeTypeId">
 		<comment>
 		</comment>
 		<column name="mimeTypeId" type="int(11)" notNull="true" index="mimeTypeId" autoIncrement="true"/>
