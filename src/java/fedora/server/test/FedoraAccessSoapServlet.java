@@ -1434,10 +1434,18 @@ public class FedoraAccessSoapServlet extends HttpServlet
         {
           for (int j=0; j<parmValues.length; j++)
           {
-            sb.append("<td>" + parmValues[j] + "</td>"
-            + "<td>"
-            + "<input type=\"radio\" name=\""
-            + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
+            if (parmValues[j].equalsIgnoreCase("null"))
+            {
+              sb.append("<td>"
+                  + "<input type=\"text\"  size=\"10\" maxlength=\"32\" "
+                  + "name=\"" + parmName + "\" value=\"\" </td>");
+            } else
+            {
+              sb.append("<td>" + parmValues[j] + "</td>"
+                  + "<td>"
+                  + "<input type=\"radio\" name=\""
+                  + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
+            }
           }
           sb.append("<td>"
               + "<input type=\"hidden\" name=\"PID\" value=\""
@@ -1457,10 +1465,18 @@ public class FedoraAccessSoapServlet extends HttpServlet
         {
           for (int j=0; j<parmValues.length; j++)
           {
-            sb.append("<td>" + parmValues[j] + "</td>"
-                + "<td>"
-                + "<input type=\"radio\" name=\""
-                + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
+            if (parmValues[j].equalsIgnoreCase("null"))
+            {
+              sb.append("<td>"
+                  + "<input type=\"text\"  size=\"10\" maxlength=\"32\" "
+                  + "name=\"" + parmName + "\" value=\"\" </td>");
+            } else
+            {
+              sb.append("<td>" + parmValues[j] + "</td>"
+                  + "<td>"
+                  + "<input type=\"radio\" name=\""
+                  + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
+            }
           }
         }
       } else
@@ -1471,10 +1487,18 @@ public class FedoraAccessSoapServlet extends HttpServlet
         {
           for (int j=0; j<parmValues.length; j++)
           {
-            sb.append("<td>" + parmValues[j] + "</td>"
-                + "<td>"
-                + "<input type=\"radio\" name=\""
-                + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
+            if (parmValues[j].equalsIgnoreCase("null"))
+            {
+              sb.append("<td>"
+                  + "<input type=\"text\"  size=\"10\" maxlength=\"32\" "
+                  + "name=\"" + parmName + "\" value=\"\" </td>");
+            } else
+            {
+              sb.append("<td>" + parmValues[j] + "</td>"
+                  + "<td>"
+                  + "<input type=\"radio\" name=\""
+                  + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
+            }
           }
         }
       }
