@@ -32,6 +32,8 @@ public interface DOReader
 
     public String GetObjectLabel();
 
+    public String GetObjectState();
+
     public String[] ListDatastreamIDs(String state);
 
     public Datastream[] GetDatastreams(Date versDateTime);
@@ -58,7 +60,5 @@ public interface DOReader
 
     // Overloaded method: returns InputStream as alternative
     public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime);
-
-    public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime);
 
 }
