@@ -115,7 +115,7 @@
 	<xsl:choose>
 		<xsl:when test="position()=1">
 			<xsl:choose>
-				<xsl:when test="parmDomainValues">
+				<xsl:when test="methodParmDomain">
 					<td><b><font color="purple">
 						<xsl:value-of select="@parmName"/>
 						</font></b>
@@ -133,7 +133,7 @@
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:choose>
-				<xsl:when test="parmDomainValues">
+				<xsl:when test="methodParmDomain">
 					<tr>
 						<td colspan="3" rowspan="1"></td>
 						<td>
@@ -162,11 +162,11 @@
 <xsl:apply-templates/>
 </xsl:template>
 
-<xsl:template match="value">
+<xsl:template match="methodParmValue">
 </xsl:template>
 
 <xsl:template name="valueTemplate">
-<xsl:for-each select="parmDomainValues/value">
+<xsl:for-each select="methodParmDomain/methodParmValue">
 	<td><xsl:value-of select="."/></td>
 	<td>
 		<input>
