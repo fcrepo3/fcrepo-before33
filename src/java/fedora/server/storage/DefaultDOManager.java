@@ -17,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 import fedora.server.Context;
 import fedora.server.Module;
@@ -68,6 +69,7 @@ public class DefaultDOManager
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
+    private SimpleDateFormat m_formatter=new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
 
     public static String DEFAULT_STATE="L";
 
@@ -459,8 +461,10 @@ public class DefaultDOManager
                 }
                 int systemVersion=results.getInt("SystemVersion");
                 systemVersion++;
+                Date now=new Date();
+                String formattedLastModDate=m_formatter.format(now);
                 s.executeUpdate("UPDATE ObjectRegistry SET SystemVersion="
-                        + systemVersion + ", LockingUser=NULL "
+                        + systemVersion + ", LockingUser=NULL, CreateDate=CreateDate, LastModifiedDate='" + formattedLastModDate + "' "
                         + "WHERE DO_PID='" + obj.getPid() + "'");
             } catch (SQLException sqle) {
                 throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
@@ -572,7 +576,7 @@ public class DefaultDOManager
             if (lockingUser==null) {
                 // get the lock
                 s.executeUpdate("UPDATE ObjectRegistry SET LockingUser='"
-                    + getUserId(context) + "' WHERE DO_PID='" + pid + "'");
+                    + getUserId(context) + "', CreateDate=CreateDate, LastModifiedDate=LastModifiedDate WHERE DO_PID='" + pid + "'");
             }
             if (!lockingUser.equals(getUserId(context))) {
                 throw new ObjectLockedException("The object is locked by " + lockingUser);
@@ -698,6 +702,10 @@ public class DefaultDOManager
 
                 // then get the writer
                 DOWriter w=new DefinitiveDOWriter(context, this, obj);
+                // ...set the create and last modified dates 
+                Date now=new Date(); 
+                obj.setCreateDate(now);
+                obj.setLastModDate(now);
 
                 // add to internal list...somehow..think...
 
@@ -949,13 +957,17 @@ public class DefaultDOManager
             foType="M";
         }
         try {
+            String formattedCreateDate=m_formatter.format(createDate);
+            String formattedLastModDate=m_formatter.format(lastModDate);
             String query="INSERT INTO ObjectRegistry (DO_PID, FO_TYPE, "
                                                    + "LockingUser, Label, "
                                                    + "ContentModelId, CreateDate, "
-                                                   + "LastModDate) "
+                                                   + "LastModifiedDate) "
                        + "VALUES ('" + pid + "', '" + foType +"', '"
                                      + userId +"', '" + label + "', '" 
-                                     + contentModelId + "', )";
+                                     + contentModelId + "', '" 
+                                     + formattedCreateDate + "', '"
+                                     + formattedLastModDate + "')";
             conn=m_connectionPool.getConnection();
             st=conn.createStatement();
             st.executeUpdate(query);
