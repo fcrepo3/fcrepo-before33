@@ -145,7 +145,7 @@ public class SimpleDOReader
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-        m_translator.serialize(m_obj, bytes, m_storageFormat, "UTF-8");
+        m_translator.serialize(m_obj, bytes, m_storageFormat, "UTF-8", false);
         return new ByteArrayInputStream(bytes.toByteArray());
     }
 
@@ -154,10 +154,10 @@ public class SimpleDOReader
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
 		if (format==null || format.equals("")) {
-			m_translator.serialize(m_obj, bytes, m_exportFormat, "UTF-8");       	
+			m_translator.serialize(m_obj, bytes, m_exportFormat, "UTF-8", true);       	
 		}
 		else {
-			m_translator.serialize(m_obj, bytes, format, "UTF-8"); 
+			m_translator.serialize(m_obj, bytes, format, "UTF-8", true); 
 		}
 
         return new ByteArrayInputStream(bytes.toByteArray());
