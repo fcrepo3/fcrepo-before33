@@ -13,8 +13,8 @@
         <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-16T14:32:25Z"/>
         <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BDEF"/>
     </foxml:objectProperties>
-    <foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-        <foxml:datastreamVersion ID="DC1.0" CREATED="2000-08-22T06:32:00Z" LABEL="Dublin Core Metadata">
+    <foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+        <foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" CREATED="2000-08-22T06:32:00Z" LABEL="Dublin Core Metadata">
             <foxml:xmlContent>
                 <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
                     <dc:title>Behavior Definition Object for UserInput Image Contract</dc:title>
@@ -23,8 +23,8 @@
             </foxml:xmlContent>
         </foxml:datastreamVersion>
     </foxml:datastream>
-    <foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-        <foxml:datastreamVersion ID="METHODMAP1.0" CREATED="2000-08-22T06:32:00Z" LABEL="Method Map of the Fedora Behavior Definition for UserInput Image">
+    <foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" STATE="A">
+        <foxml:datastreamVersion ID="METHODMAP1.0" MIMETYPE="text/xml" CREATED="2000-08-22T06:32:00Z" LABEL="Method Map of the Fedora Behavior Definition for UserInput Image">
             <foxml:xmlContent>
                 <fmm:MethodMap name="Fedora MethodMap for UserInput Image BDef" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
                     <fmm:Method operationName="getThumbnail"/>
@@ -47,8 +47,8 @@
             </foxml:xmlContent>
         </foxml:datastreamVersion>
     </foxml:datastream>
-    <foxml:datastream ID="DS1" CONTROL_GROUP="E" MIMETYPE="text/html" STATE="A">
-        <foxml:datastreamVersion ID="DS1.0" CREATED="2000-08-22T06:32:00Z" LABEL="Behavior Def Guide">
+    <foxml:datastream ID="DS1" CONTROL_GROUP="E" STATE="A">
+        <foxml:datastreamVersion ID="DS1.0" MIMETYPE="text/html" CREATED="2000-08-22T06:32:00Z" LABEL="Behavior Def Guide">
             <foxml:contentLocation REF=" http://uva.lib.edu/bdef/image/doc/userInputImage.html" TYPE="URL"/>
         </foxml:datastreamVersion>
     </foxml:datastream>

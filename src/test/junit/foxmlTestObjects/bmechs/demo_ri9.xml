@@ -13,8 +13,8 @@
         <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-16T14:32:28Z"/>
         <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
     </foxml:objectProperties>
-    <foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-        <foxml:datastreamVersion ID="DC1.0" CREATED="2000-08-22T06:32:00Z" LABEL="Dublin Core Metadata">
+    <foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+        <foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" CREATED="2000-08-22T06:32:00Z" LABEL="Dublin Core Metadata">
             <foxml:xmlContent>
                 <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
                     <dc:title>Behavior Mechanism Object implementing the UserInput Image BDEF contract using the UVA
@@ -24,8 +24,8 @@
             </foxml:xmlContent>
         </foxml:datastreamVersion>
     </foxml:datastream>
-    <foxml:datastream ID="WSDL" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-        <foxml:datastreamVersion ID="WSDL1.0" CREATED="2000-08-22T06:32:00Z" LABEL="WSDL definition for UVA's MrSid service">
+    <foxml:datastream ID="WSDL" CONTROL_GROUP="X" STATE="A">
+        <foxml:datastreamVersion ID="WSDL1.0" MIMETYPE="text/xml" CREATED="2000-08-22T06:32:00Z" LABEL="WSDL definition for UVA's MrSid service">
             <foxml:xmlContent>
                 <wsdl:definitions name="MrSID Service" targetNamespace="mrsid"
                     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
@@ -104,8 +104,8 @@
             </foxml:xmlContent>
         </foxml:datastreamVersion>
     </foxml:datastream>
-    <foxml:datastream ID="SERVICE-PROFILE" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-        <foxml:datastreamVersion ID="SERVICE-PROFILE1.0" CREATED="2000-08-22T06:32:00Z" LABEL="Service Profile - Technical description of the service">
+    <foxml:datastream ID="SERVICE-PROFILE" CONTROL_GROUP="X" STATE="A">
+        <foxml:datastreamVersion ID="SERVICE-PROFILE1.0" MIMETYPE="text/xml" CREATED="2000-08-22T06:32:00Z" LABEL="Service Profile - Technical description of the service">
             <foxml:xmlContent>
                 <fsvp:serviceProfile bDefPID="demo:ri8" name="MrSID Service" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
                     <fsvp:serviceDescription>MrSID service for providing different image resolutions from a wavelet
@@ -132,8 +132,8 @@
             </foxml:xmlContent>
         </foxml:datastreamVersion>
     </foxml:datastream>
-    <foxml:datastream ID="DSINPUTSPEC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-        <foxml:datastreamVersion ID="DSINPUTSPEC1.0" CREATED="2000-08-22T06:32:00Z" LABEL="Datastream Input Specification for UVA MrSID service">
+    <foxml:datastream ID="DSINPUTSPEC" CONTROL_GROUP="X" STATE="A">
+        <foxml:datastreamVersion ID="DSINPUTSPEC1.0" MIMETYPE="text/xml" CREATED="2000-08-22T06:32:00Z" LABEL="Datastream Input Specification for UVA MrSID service">
             <foxml:xmlContent>
                 <fbs:DSInputSpec bDefPID="demo:ri8" label="MrSID Service Datastream Input Specification" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
                     <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="MRSID">
@@ -145,8 +145,8 @@
             </foxml:xmlContent>
         </foxml:datastreamVersion>
     </foxml:datastream>
-    <foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-        <foxml:datastreamVersion ID="METHODMAP1.0" CREATED="2000-08-22T06:32:00Z" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
+    <foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" STATE="A">
+        <foxml:datastreamVersion ID="METHODMAP1.0" MIMETYPE="text/xml" CREATED="2000-08-22T06:32:00Z" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
             <foxml:xmlContent>
                 <fmm:MethodMap bDefPID="demo:ri8" name="MethodMap - MrSID BMech for UserInput Image BDEF" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
                     <fmm:Method operationName="getThumbnail" wsdlMsgName="getThumbRequest" wsdlMsgOutput="mrsid_response">
@@ -174,8 +174,8 @@
             </foxml:xmlContent>
         </foxml:datastreamVersion>
     </foxml:datastream>
-    <foxml:datastream ID="DS1" CONTROL_GROUP="E" MIMETYPE="text/html" STATE="A">
-        <foxml:datastreamVersion ID="DS1.0" CREATED="2000-08-22T06:32:00Z" LABEL="Programmer documentation">
+    <foxml:datastream ID="DS1" CONTROL_GROUP="E" STATE="A">
+        <foxml:datastreamVersion ID="DS1.0" MIMETYPE="text/html" CREATED="2000-08-22T06:32:00Z" LABEL="Programmer documentation">
             <foxml:contentLocation REF=" http://uva.lib.edu/mech/mrsid/doc/mrsid.html" TYPE="URL"/>
         </foxml:datastreamVersion>
     </foxml:datastream>

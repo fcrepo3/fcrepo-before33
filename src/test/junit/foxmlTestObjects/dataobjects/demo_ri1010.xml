@@ -9,8 +9,8 @@
         <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-05-05T11:22:33Z"/>
         <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
     </foxml:objectProperties>
-    <foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A" VERSIONABLE="YES">
-        <foxml:datastreamVersion ID="RELS-EXT1.0" CREATED="2004-12-07T19:32:00Z" LABEL="Relationships">
+    <foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X" STATE="A" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="RELS-EXT1.0" MIMETYPE="text/xml" CREATED="2004-12-07T19:32:00Z" LABEL="Relationships">
             <foxml:xmlContent>
                 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
                          xmlns:nsdl="http://www.nsdl.org/ontologies/relationships#" 
