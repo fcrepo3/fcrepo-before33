@@ -668,6 +668,7 @@ public class DefaultDOManager
                     m_storageFormat, m_storageCharacterEncoding);
             DOWriter w=new DefinitiveDOWriter(context, this, obj);
             // add to internal list...somehow..think...
+            System.gc();
             return w;
         }
     }
@@ -808,6 +809,7 @@ public class DefaultDOManager
                     // remove this in any case
                     getTempStore().remove("temp-ingest");
                 }
+                System.gc();
             }
         }
     }
