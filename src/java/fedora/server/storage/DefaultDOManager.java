@@ -298,7 +298,8 @@ public class DefaultDOManager
     public BMechReader getBMechReader(Context context, String pid)
             throws ServerException {
         if (cachedObjectRequired(context)) {
-            throw new InvalidContextException("A BMechReader is unavailable in a cached context.");
+            return new FastBmechReader(context, pid);
+            //throw new InvalidContextException("A BMechReader is unavailable in a cached context.");
         } else {
             return new SimpleBMechReader(context, this, m_translator,
                     m_storageFormat, m_storageFormat, m_storageFormat,
