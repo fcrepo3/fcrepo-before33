@@ -1161,6 +1161,11 @@ public class FedoraAccessSoapServlet extends HttpServlet
             + "</PID-namespaceIdentifier>");
           pw.write("    <PID-delimiter>" + ":"+ "</PID-delimiter>");
           pw.write("    <PID-sample>" + repositoryInfo.getSamplePID() + "</PID-sample>");
+          String[] retainPIDs = repositoryInfo.getRetainPIDs();
+          for (int i=0; i<retainPIDs.length; i++)
+          {
+            pw.write("    <retainPID>"+retainPIDs[i]+"</retainPID>");
+          }
           pw.write("</repositoryPID>");
           pw.write("<repositoryOAI-identifier>");
           pw.write("    <OAI-namespaceIdentifier>"

@@ -787,6 +787,7 @@ public abstract class TypeUtility
       genRepositoryInfo.setSampleSearchURL(repositoryInfo.sampleSearchURL);
       genRepositoryInfo.setSampleAccessURL(repositoryInfo.sampleAccessURL);
       genRepositoryInfo.setSampleOAIURL(repositoryInfo.sampleOAIURL);
+      genRepositoryInfo.setRetainPIDs(repositoryInfo.retainPIDs);
       return genRepositoryInfo;
     } else
     {
