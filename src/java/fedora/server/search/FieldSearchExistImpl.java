@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.exist.storage.BrokerPool;
 import org.exist.xmldb.DatabaseImpl;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
@@ -74,6 +75,12 @@ public class FieldSearchExistImpl
         m_queryService.setProperty("pretty", "true");
         m_queryService.setProperty("encoding", "ISO-8859-1");
         logFinest("Exiting constructor");
+    }
+    
+    public void shutdown() {
+        logFinest("Entering shutdown");
+        BrokerPool.stopAll();
+        logFinest("Exiting shutdown");
     }
 
     public void update(DOReader reader) 

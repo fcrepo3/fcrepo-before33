@@ -10,6 +10,7 @@ import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOReader;
 
@@ -34,6 +35,15 @@ public class FieldSearchExistModule
                     "Couldn't initialize embedded eXist (xml database) "
                     + "instance: org.xmldb.api.base.XMLDBException: "
                     + xmldbe.getMessage(), getRole());
+        }
+    }
+    
+    public void shutdownModule()
+            throws ModuleShutdownException {
+        try {
+            m_wrappedFieldSearch.shutdown();
+        } catch (Throwable th) {
+            throw new ModuleShutdownException("Error shutting down eXist: " + th.getClass().getName() + ": " + th.getMessage(), getRole());
         }
     }
     
