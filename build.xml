@@ -993,8 +993,8 @@
 		<copy todir="${tomcat.deploy.dir}/ROOT">
 			<fileset dir="src/xsd"/>
 		</copy>
-        <!-- stylesheets for the resource index query interface at fedora/risearch -->
-        <mkdir dir="${tomcat.deploy.dir}/ROOT/ri">
+    <!-- stylesheets for the resource index query interface at fedora/risearch -->
+    <mkdir dir="${tomcat.deploy.dir}/ROOT/ri"/>
 		<copy todir="${tomcat.deploy.dir}/ROOT/ri">
 			<fileset dir="src/xsl/ri"/>
 		</copy>
