@@ -1,3 +1,2 @@
 Main-Class: fedora.client.Administrator
-Class-Path: lib/xerces2-2.0.2.jar lib/jhbasic.jar lib/rms.jar lib/gnu-getopt-1.0.9.jar lib/axis.jar lib/wsdl4j.jar lib/jaxrpc.jar lib/commons-discovery.jar lib/commons-logging.jar lib/saaj.jar lib/saxon6.5.jar lib/commons-httpclient.jar lib/jai_core.jar lib/jai_codec.jar lib/batik-1.5.jar
-
+Class-Path: @client.mfs.classpath@
