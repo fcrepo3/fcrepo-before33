@@ -2,14 +2,6 @@ package fedora.client.bmech;
 
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
-/**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2003</p>
- * <p>Company: </p>
- * @author unascribed
- * @version 1.0
- */
 
 /**
  *
