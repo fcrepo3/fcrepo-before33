@@ -36,9 +36,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * The starting point for working with a Fedora repository. This class 
- * provides access to an appropriate <code>DOManager</code> for working with 
- * digital objects, handles loading, starting, and stopping modules (the module 
+ * The starting point for working with a Fedora repository.This class
+ * handles loading, starting, and stopping modules (the module 
  * lifecycle), and provides access to core constants.
  * <p></p>
  * The <code>Server</code> class itself is abstract - it may not be 
@@ -51,21 +50,16 @@ import org.w3c.dom.NodeList;
  * The following program illustrates use of the <code>Server</code> class.
  * <pre>
  * import fedora.server.Server;
- * import fedora.server.storage.DOManager;
- * import fedora.server.storage.DOReader;
  *
  * /**
- *  * Prints the label of the objects whose PIDs are passed at the command line.
+ *  * Starts, then shuts down the server.
  *  *&#47;
- * public class PrintLabel {
+ * public class ServerTest {
  *
  *     public static void main(String[] args) {
  *         try {
  *             Server s=Server.getInstance(System.getProperty(
  *                     Server.HOME_PROPERTY));
- *             DOManager m=s.getManager("fast");
- *             for (int i=0; i&lt;args.length; i++) 
- *                 System.out.println(m.getReader(args[i]).getObjectLabel());
  *             s.shutdown();
  *         } catch (Exception e) {
  *             System.out.println("Error: " + e.getMessage());
@@ -272,9 +266,6 @@ public abstract class Server
     /** The required module constructor's third parameter's class. */
     public static String MODULE_CONSTRUCTOR_PARAM3_CLASS=
             s_const.getString("module.constructor.param3.class");
-
-    /** The name of the DOManager class (a Fedora server module "role"). */
-    public static String DOMANAGER_CLASS=s_const.getString("domanager.class");
 
     /** The name of the default Server implementation class */
     public static String DEFAULT_SERVER_CLASS=
@@ -1169,15 +1160,6 @@ public abstract class Server
     public final File getHomeDir() {
         return m_homeDir;
     }
-    
-    /**
-     * Gets the names of the roles that are required by this <code>Server</code>.
-     *
-     * @return The roles.
-     */
-    public String[] getRequiredModuleRoles() {
-        return new String[] {DOMANAGER_CLASS};
-    }
 
     /**
      * Gets a loaded <code>Module</code>.
@@ -1225,27 +1207,6 @@ public abstract class Server
         if (1==2)
             throw new ServerInitializationException(null);
     }
-
-    /**
-     * Gets the <code>DOManager</code> instance appropriate for this 
-     * <code>Server</code> instance, given the the interface (client program) 
-     * profile.
-     * <p></p>
-     * <h3>About The Interface Profile</h3>
-     * <p></p>
-     * The <code>Server</code> subclass implementing this method is responsible
-     * for defining the syntax and meaning of the interfaceProfile.
-     * Generally, an interface profile identifies aspect(s) of the client 
-     * program so that the <code>Server</code> can decide which DOManager 
-     * instance is appropriate to return.
-     * <p></p>
-     * The interface profile concept is intentionally generic so that this
-     * method may be overridden to encapsulate virtually any 
-     * <code>DOManager</code> selection logic.
-     *
-     * @param profile The interface profile. (see above discussion)
-     */
-    public abstract DOManager getManager(String interfaceProfile);
     
     /**
      * Performs shutdown tasks for the modules and the server.

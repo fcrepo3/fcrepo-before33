@@ -4,7 +4,6 @@ import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ServerShutdownException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
-import fedora.server.storage.DOManager;
 
 import edu.cornell.dlrg.logging.DatingFileHandler;
 import edu.cornell.dlrg.logging.SimpleXMLFormatter;
@@ -143,11 +142,8 @@ public class BasicServer
      * @returns String[] The roles.
      */
     public String[] getRequiredModuleRoles() {
-        return new String[] {Server.DOMANAGER_CLASS};
+        return new String[] {"fedora.server.storage.DOManager"};
     }
-    
-    public DOManager getManager(String name) {
-        return null;
-    }
+
     
 }

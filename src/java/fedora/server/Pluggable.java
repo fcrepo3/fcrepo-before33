@@ -69,4 +69,15 @@ public abstract class Pluggable
         return "";
     }
 
+    /**
+     * Gets the names of the roles that are required by this <code>Pluggable</code>.
+     * <p></p>
+     * By default, no roles need to be fulfilled.
+     *
+     * @return The roles.
+     */
+    public String[] getRequiredModuleRoles() {
+        return new String[0];
+    }
+
 }
