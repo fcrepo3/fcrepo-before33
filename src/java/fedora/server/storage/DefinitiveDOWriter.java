@@ -1,8 +1,13 @@
 package fedora.server.storage;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 import fedora.server.errors.ObjectExistsException;
 import fedora.server.errors.ObjectIntegrityException;
@@ -12,6 +17,7 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StreamReadException;
 import fedora.server.errors.StreamWriteException;
 import fedora.server.errors.ValidationException;
+import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.BasicDigitalObject;
@@ -285,6 +291,17 @@ public class DefinitiveDOWriter
             throws ObjectIntegrityException {
         assertNotRemoved();
         if (save()) {
+            AuditRecord a=new AuditRecord();
+            a.id="REC1024";
+            a.processType="API-M"; 
+            a.action="Don't know"; 
+            a.responsibility="You"; 
+            a.date=new Date();
+            a.responsibility=logMessage; 
+            m_obj.getAuditRecords().add(a);
+            
+            // replicate
+            
             // reflect changes from temp copy to perm copy
             m_pendingCommit=false;
         }
@@ -305,10 +322,16 @@ public class DefinitiveDOWriter
     }
     
     public String GetObjectXML()
-            throws ObjectIntegrityException {
+            throws ObjectIntegrityException, StreamIOException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+        m_exportSerializer.serialize(m_obj, bytes);
+        try {
+            return bytes.toString("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            throw new ObjectIntegrityException("unsupported encoding: UTF-8... couldn't convert serialization to string");
+        }
     }
 
     public String GetObjectState()
@@ -342,42 +365,69 @@ public class DefinitiveDOWriter
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        Iterator iter=m_obj.datastreamIdIterator();
+        ArrayList al=new ArrayList();
+        while (iter.hasNext()) {
+            al.add((String) iter.next());
+        }
+        iter=al.iterator();
+        String[] out=new String[al.size()];
+        int i=0;
+        while (iter.hasNext()) {
+            out[i]=(String) iter.next();
+            i++;
+        }
+        return out;
     }
 
     public Datastream[] GetDatastreams(Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        return new Datastream[0]; 
     }
 
     public Datastream GetDatastream(String datastreamID, Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        return new Datastream();
     }
 
     public Disseminator[] GetDisseminators(Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        return new Disseminator[0];
     }
 
     public String[] ListDisseminatorIDs(String state)
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        
+        assertNotRemoved();
+        assertNotPendingRemoval();
+        Iterator iter=m_obj.disseminatorIdIterator();
+        ArrayList al=new ArrayList();
+        while (iter.hasNext()) {
+            al.add((String) iter.next());
+        }
+        iter=al.iterator();
+        String[] out=new String[al.size()];
+        int i=0;
+        while (iter.hasNext()) {
+            out[i]=(String) iter.next();
+            i++;
+        }
+        return out;
     }
 
     public Disseminator GetDisseminator(String disseminatorID, Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        return new Disseminator();
     }
 
     // Returns PIDs of Behavior Definitions to which object subscribes
@@ -385,7 +435,7 @@ public class DefinitiveDOWriter
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        return new String[0];
     }
 
     // Returns list of methods that Behavior Mechanism implements for a BDef
@@ -393,7 +443,7 @@ public class DefinitiveDOWriter
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        return new MethodDef[0];
     }
 
     // Overloaded method: returns InputStream as alternative
@@ -401,14 +451,14 @@ public class DefinitiveDOWriter
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        return new ByteArrayInputStream(new byte[0]);
     }
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
             throws ObjectIntegrityException { 
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        return new DSBindingMapAugmented[0];
     }
 
     /** this should go in DOReader, methinks */
@@ -440,6 +490,7 @@ public class DefinitiveDOWriter
                // flag that removal is needed by removing the temp copy
                // and creating a 0000-pendingRemoval item
            } else {
+               
                // serialize to temp copy as 0000-pendingCommit
            }
            m_pendingSave=false;

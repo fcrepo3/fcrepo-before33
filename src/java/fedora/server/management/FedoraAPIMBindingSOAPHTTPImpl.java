@@ -5,6 +5,10 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.storage.METSDOSerializer;
+import fedora.server.storage.DefinitiveDOWriter;
+import fedora.server.storage.METSDODeserializer;
+import fedora.server.storage.METSDOSerializer;
 import fedora.server.storage.TestFileStreamStorage;
 import fedora.server.utilities.AxisUtility;
 
@@ -25,6 +29,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     /** The exception indicating that initialization failed. */
     private static InitializationException s_initException;
+
+    /** This is a temporary hack -- normally DOManager provides these */
+    private static DefinitiveDOWriter w;
 
     /** Before fulfilling any requests, make sure we have a server instance. */
     static {
@@ -60,9 +67,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             String pid="1234";
             TestFileStreamStorage st=new TestFileStreamStorage(new File(s_server.getHomeDir(), "data"), 4096);
-            
-            // DefinitiveDOWriter w=new DefinitiveDOWriter(pid, st, st, null, );
-            return pid;
+            METSDOSerializer ser=new METSDOSerializer("UTF-8");
+            METSDODeserializer deser=new METSDODeserializer("UTF-8", false); // don't check if it's well-formed xml
+            w=new DefinitiveDOWriter(pid, st, st, null, 
+                    deser, ser, deser, ser, new ByteArrayInputStream(METSXML),
+                    true);
+            return w.GetObjectPID();
         } catch (ServerException se) {
             AxisUtility.throwFault(se);
         } catch (Exception e) {
@@ -83,11 +93,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public byte[] getObjectXML(java.lang.String PID) throws java.rmi.RemoteException {
         assertInitialized();
-        if (1==1) {
-            AxisUtility.throwFault(new ObjectIntegrityException(null, 
-                    "Method not implemented", null, new String[] {
-                    "testing detail line one", "this is line two", 
-                    "guess which line this is?  right.  three."}, null));
+        try {
+            return w.GetObjectXML().getBytes("UTF-8");
+        } catch (ServerException se) {
+            AxisUtility.throwFault(se);
+        } catch (Exception e) {
+            AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
         return null;
     }
@@ -115,6 +126,17 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public void releaseLock(java.lang.String PID, java.lang.String logMessage, boolean commit) throws java.rmi.RemoteException {
         assertInitialized();
+        try {
+            if (commit=false) {
+                w.rollBack();
+            } else {
+                w.commit(logMessage);
+            }
+        } catch (ServerException se) {
+            AxisUtility.throwFault(se);
+        } catch (Exception e) {
+            AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
     }
 
     public java.lang.String getLockingUser(java.lang.String PID) throws java.rmi.RemoteException {
@@ -214,6 +236,13 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public java.lang.String[] listDatastreamIDs(java.lang.String PID, java.lang.String state) throws java.rmi.RemoteException {
         assertInitialized();
+        try {
+            return w.ListDatastreamIDs(state);
+        } catch (ServerException se) {
+            AxisUtility.throwFault(se);
+        } catch (Exception e) {
+            AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
         return null;
     }
 
