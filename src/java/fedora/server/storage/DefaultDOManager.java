@@ -33,6 +33,7 @@ import fedora.server.errors.InvalidContextException;
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.ObjectDependencyException;
 import fedora.server.errors.ObjectExistsException;
 import fedora.server.errors.ObjectLockedException;
 import fedora.server.errors.ObjectNotFoundException;
@@ -41,6 +42,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.management.PIDGenerator;
+import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.search.FieldSearchQuery;
@@ -354,6 +356,32 @@ public class DefaultDOManager
         obj.getAuditRecords().add(a);
 
         if (remove) {
+            // Before removing an object, verify that there are no other objects
+            // in the repository that depend on the object being deleted.
+            FieldSearchResult result = listObjectFields(context,
+                new String[] {"pid"}, 10,
+                new FieldSearchQuery(Condition.getConditions("bDef~"+obj.getPid())));
+            if (result.objectFieldsList().size() > 0)
+            {
+                throw new ObjectDependencyException("The digital object \""
+                    + obj.getPid() + "\" is used by one or more other objects "
+                    + "in the repository. All related objects must be removed "
+                    + "before this object may be deleted. Use the search "
+                    + "interface with the query \"bDef~" + obj.getPid()
+                    + "\" to obtain a list of dependent objects.");
+            }
+            result = listObjectFields(context,
+                new String[] {"pid"}, 10,
+                new FieldSearchQuery(Condition.getConditions("bMech~"+obj.getPid())));
+            if (result.objectFieldsList().size() > 0)
+            {
+              throw new ObjectDependencyException("The digital object \""
+                  + obj.getPid() + "\" is used by one or more other objects "
+                  + "in the repository. All related objects must be removed "
+                  + "before this object may be deleted. Use the search "
+                  + "interface with the query \"bMech~" + obj.getPid()
+                  + "\" to obtain a list of dependent objects.");
+            }
             // remove any managed content datastreams associated with object
             // from permanent store.
             Iterator dsIDIter = obj.datastreamIdIterator();
