@@ -150,7 +150,7 @@ public class PID {
         if (outString.length() < 3) throw new MalformedPIDException("PID object-id cannot be empty.");
 
         // If we got here, it's well-formed, so return it.
-        return out.toString();
+        return outString;
     }
 
     private static boolean isAlphaNum(char c) {
