@@ -87,8 +87,6 @@ public class Datastream
   
   public String DSVersionable;
   
-  public String DSCurrent;
-  
   // Version-level attributes:
   public String DSVersionID;
   public String DSLabel;

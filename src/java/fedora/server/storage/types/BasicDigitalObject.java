@@ -248,7 +248,7 @@ public class BasicDigitalObject
             AuditRecord record=(AuditRecord) iter.next();
             auditIDs.add(record.id);
         }
-        return newID(auditIDs.iterator(), "AUDIT");
+        return newID(auditIDs.iterator(), "AU");
     }
     
 	/**
@@ -256,7 +256,7 @@ public class BasicDigitalObject
 	 *
 	 * @param propName The extende property name, either a string, or URI as string.
 	 */
-	public void setProperty(String propName, String propValue) {
+	public void setExtProperty(String propName, String propValue) {
 		m_extProperties.put(propName, propValue);
 		
 	}
@@ -266,7 +266,7 @@ public class BasicDigitalObject
 	 *
 	 * @return The property value.
 	 */
-	public String getProperty(String propName) {
+	public String getExtProperty(String propName) {
 		return (String) m_extProperties.get(propName);
 		
 	}
@@ -277,7 +277,7 @@ public class BasicDigitalObject
 	 *
 	 * @return The property Map.
 	 */	
-	public Map getProperties() {
+	public Map getExtProperties() {
 		return m_extProperties;
 		
 	}

@@ -265,16 +265,17 @@ public interface DigitalObject {
 	/**
 	 * Sets an extended property on the object.
 	 *
-	 * @param propName The extende property name, either a string, or URI as string.
+	 * @param propName The property name, either a string, or URI as string.
 	 */
-	public void setProperty(String propName, String propValue);
+	public void setExtProperty(String propName, String propValue);
 
 	/**
 	 * Gets an extended property value, given the property name.
 	 *
 	 * @return The property value.
 	 */
-	public String getProperty(String propName);
+	public String getExtProperty(String propName);
+	
 
 	/**
 	 * Gets a Map containing all of the extended properties
@@ -282,5 +283,5 @@ public interface DigitalObject {
 	 *
 	 * @return The property Map.
 	 */	
-	public Map getProperties();
+	public Map getExtProperties();
 }

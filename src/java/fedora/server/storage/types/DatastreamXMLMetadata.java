@@ -61,7 +61,7 @@ public class DatastreamXMLMetadata extends Datastream
    * The class of XML metadata (TECHNICAL, SOURCE, RIGHTS,
    * DIGIPROV, or DESCRIPTIVE)
    */
-  public int DSMDClass;
+  public int DSMDClass = 0;
 
   private String m_encoding;
 
