@@ -330,7 +330,7 @@ public class AutoModify
                 if (args.length == 5) {
                     isValidateOnly = false;
                 } else {
-                    isValidateOnly = new Boolean(args[5]).booleanValue();
+                    isValidateOnly = true;
                 }
                 if (new File(directivesFilePath).exists()) {
                     System.out.println("\nCONNECTING to Fedora server....");
