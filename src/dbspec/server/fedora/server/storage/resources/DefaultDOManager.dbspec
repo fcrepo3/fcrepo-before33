@@ -167,10 +167,12 @@
     <table name="doFields">
 		<comment>Used for searching key object metadata, including repository
                  fields and dublin core fields.  There is one row per digital
-                 object in this table.  Dublin core fields contain all unique
-                 word from all corresponding elements in the most recent DC
+                 object in this table.  Dublin core fields contain all characters
+                 from all corresponding elements in the most recent DC
                  datastream for the object, if any.  Otherwise, they are null.
-                 All dublin core fields start and end with a space.</comment>
+                 All dublin core fields start and end with a space, and are
+                 in a normalized form (all lowercase letters) so that case
+                 insensitive searching may be done.</comment>
 		<column name="pid" type="varchar(32)" notNull="true">
 			<comment>The PID of the object</comment>
 		</column>
@@ -184,8 +186,7 @@
 		    </comment>
         </column>
 		<column name="cModel" type="varchar(255)" notNull="false" default="">
-			<comment>The content model of the object. 
-			</comment>
+			<comment>The content model of the object.</comment>
         </column>
 		<column name="state" type="char(1)" notNull="true" default="A">
 			<comment>The state of the object.</comment>
@@ -203,49 +204,49 @@
 			<comment>The date the primary dublin core record was last modified.</comment>
 		</column>
 		<column name="dcTitle" type="text" notNull="false">
-			<comment>All unique words from the dc:title values, delimited by space.</comment>
+			<comment>All dc:title values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcCreator" type="text" notNull="false">
-			<comment>All unique words from the dc:creator values, delimited by space.</comment>
+			<comment>All dc:creator values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcSubject" type="text" notNull="false">
-			<comment>All unique words from the dc:subject values, delimited by space.</comment>
+			<comment>All dc:subject values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcDescription" type="text" notNull="false">
-			<comment>All unique words from the dc:description values, delimited by space.</comment>
+			<comment>All dc:description values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcPublisher" type="text" notNull="false">
-			<comment>All unique words from the dc:publisher values, delimited by space.</comment>
+			<comment>All dc:publisher values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcContributor" type="text" notNull="false">
-			<comment>All unique words from the dc:contributor values, delimited by space.</comment>
+			<comment>All dc:contributor values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcDate" type="text" notNull="false">
-			<comment>All unique words from the dc:date values, delimited by space.</comment>
+			<comment>All dc:date values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcType" type="text" notNull="false">
-			<comment>All unique words from the dc:type values, delimited by space.</comment>
+			<comment>All dc:type values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcFormat" type="text" notNull="false">
-			<comment>All unique words from the dc:format values, delimited by space.</comment>
+			<comment>All dc:format values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcIdentifier" type="text" notNull="false">
-			<comment>All unique words from the dc:identifier values, delimited by space.</comment>
+			<comment>All dc:identifier values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcSource" type="text" notNull="false">
-			<comment>All unique words from the dc:source values, delimited by space.</comment>
+			<comment>All dc:source values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcLanguage" type="text" notNull="false">
-			<comment>All unique words from the dc:language values, delimited by space.</comment>
+			<comment>All dc:language values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcRelation" type="text" notNull="false">
-			<comment>All unique words from the dc:relation values, delimited by space.</comment>
+			<comment>All dc:relation values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcCoverage" type="text" notNull="false">
-			<comment>All unique words from the dc:coverage values, delimited by space.</comment>
+			<comment>All dc:coverage values, lowercase and delimited by space.</comment>
 		</column>
 		<column name="dcRights" type="text" notNull="false">
-			<comment>All unique words from the dc:rights values, delimited by space.</comment>
+			<comment>All dc:rights values, lowercase and delimited by space.</comment>
 		</column>
     </table>
 	<table name="dcDates">
