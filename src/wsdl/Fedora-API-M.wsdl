@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+<definitions targetNamespace="http://www.fedora.info/definitions/1/0/actions/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/" 
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/"
     xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
     xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
     xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
-    xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" 
+    xmlns:fedora-actions="http://www.fedora.info/definitions/1/0/actions/" 
     xmlns:fedora-auditing="http://www.fedora.info/definitions/1/0/auditing/" 
+    xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" 
     name="Fedora-API-M-WSDL">
   <import namespace="http://www.fedora.info/definitions/1/0/types/"
       location="fedora-types.xsd"/>
@@ -744,7 +746,7 @@
       <output message="GetDisseminatorHistoryResponse"/>
     </operation>
   </portType>
-  <binding name="Fedora-API-M-Binding-HTTPGET" type="Fedora-API-M">
+  <binding name="Fedora-API-M-Binding-HTTPGET" type="fedora-actions:Fedora-API-M">
     <http:binding verb="GET"/>
     <operation name="AddDatastreamExternal">
       <http:operation location="AddDatastreamExternal"/>
@@ -1032,7 +1034,7 @@
       </input>
     </operation>
   </binding>
-  <binding name="Fedora-API-M-Binding-SOAPHTTP" type="Fedora-API-M">
+  <binding name="Fedora-API-M-Binding-SOAPHTTP" type="fedora-actions:Fedora-API-M">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="CreateObject">
       <soap:operation style="rpc" 
@@ -1475,10 +1477,10 @@
     </operation>
   </binding>
   <service name="Fedora-API-M-Service">
-    <port name="Fedora-API-M-Port-HTTPGET" binding="Fedora-API-M-Binding-HTTPGET">
+    <port name="Fedora-API-M-Port-HTTPGET" binding="fedora-actions:Fedora-API-M-Binding-HTTPGET">
       <http:address location="http://$$HOSTNAME$$:$$PORT$$/$$MOUNTPOINT$$management/"/>
     </port>
-    <port name="Fedora-API-M-Port-SOAPHTTP" binding="Fedora-API-M-Binding-SOAPHTTP">
+    <port name="Fedora-API-M-Port-SOAPHTTP" binding="fedora-actions:Fedora-API-M-Binding-SOAPHTTP">
       <soap:address location="http://$$HOSTNAME$$:$$PORT$$/$$MOUNTPOINT$$management/"/>
     </port>
   </service>

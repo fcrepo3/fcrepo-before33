@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+<definitions targetNamespace="http://www.fedora.info/definitions/1/0/actions/"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/"
   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
   xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
   xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:fedora-actions="http://www.fedora.info/definitions/1/0/actions/"
   xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/"
   name="Fedora-API-A-WSDL">
   <import namespace="http://www.fedora.info/definitions/1/0/types/"
@@ -126,7 +128,7 @@
       <output message="GetDisseminationResponse"/>
     </operation>
   </portType>
-  <binding name="Fedora-API-A-Binding-HTTPGET" type="Fedora-API-A">
+  <binding name="Fedora-API-A-Binding-HTTPGET" type="fedora-actions:Fedora-API-A">
     <http:binding verb="GET"/>
     <operation name="GetBehaviorDefinitions">
       <http:operation location="GetBehaviorDefinitions"/>
@@ -164,7 +166,7 @@
       </output>
     </operation>
   </binding>
-  <binding name="Fedora-API-A-Binding-SOAPHTTP" type="Fedora-API-A">
+  <binding name="Fedora-API-A-Binding-SOAPHTTP" type="fedora-actions:Fedora-API-A">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="GetBehaviorDefinitions">
       <soap:operation style="rpc"
@@ -210,10 +212,10 @@
     </operation>
   </binding>
   <service name="Fedora-API-A-Service">
-    <port name="Fedora-API-A-Port-HTTPGET" binding="Fedora-API-A-Binding-HTTPGET">
+    <port name="Fedora-API-A-Port-HTTPGET" binding="fedora-actions:Fedora-API-A-Binding-HTTPGET">
       <http:address location="http://$$HOSTNAME$$:$$PORT$$/$$MOUNTPOINT$$access/"/>
     </port>
-    <port name="Fedora-API-A-Port-SOAPHTTP" binding="Fedora-API-A-Binding-SOAPHTTP">
+    <port name="Fedora-API-A-Port-SOAPHTTP" binding="fedora-actions:Fedora-API-A-Binding-SOAPHTTP">
       <soap:address location="http://$$HOSTNAME$$:$$PORT$$/$$MOUNTPOINT$$access/"/>
     </port>
   </service>
