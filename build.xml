@@ -246,7 +246,7 @@
   <target name="testdeploy">
     <exec executable="java">
       <arg value="-classpath"/>
-      <arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar"/>
+      <arg path="inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar"/>
       <arg value="org.apache.axis.client.AdminClient"/>
       <arg value="-lhttp://localhost:8080/fedora/AdminService"/>
       <arg value="dist/server/config/deploy.wsdd"/>
@@ -328,6 +328,9 @@
 
 <!--
   $Log$
+  Revision 1.20  2002/08/05 18:58:18  payette
+  fixed prob introd by axisb3 upgrade..need saaj.jar (common/lib) for testdeploy target
+
   Revision 1.19  2002/08/05 18:16:47  cwilper
   added fedora shell script copy to server target
 
