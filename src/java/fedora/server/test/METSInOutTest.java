@@ -87,7 +87,7 @@ public class METSInOutTest {
                 DOValidatorImpl v=new DOValidatorImpl(
                         null, xmlSchemaMap,
                         "dist/server/schematron/preprocessor.xslt",
-                        ruleSchemaMap, null, null);
+                        ruleSchemaMap, null);
                 if (args[1].equals("1")) {
                     v.validate(newIn, "metslikefedora1", 1, "ingest");
                     System.out.println("Level 1 validation: PASSED!");
