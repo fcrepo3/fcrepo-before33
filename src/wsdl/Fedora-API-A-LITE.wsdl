@@ -57,6 +57,19 @@
 			</documentation>
 		</part>
 	</message>
+    <message name="getDatastreamRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the persistent identifier of the object.</documentation>
+		</part>
+		<part name="DS_ID" type="xsd:string">
+			<documentation>the identifier of the datastream to get.</documentation>
+		</part>
+    </message>
+	<message name="getDatastreamResponse">
+		<part name="response" type="fedora-types:MIMETypedStream">
+			<documentation>the datastream as a mime-typed stream.</documentation>
+		</part>
+	</message>
 	<message name="getDisseminationRequest">
 		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
 		<part name="PID" type="xsd:string">
@@ -259,6 +272,18 @@
 			<input message="fedora-api:getDisseminationRequest"/>
 			<output message="fedora-api:getDisseminationResponse"/>
 		</operation>
+        <operation name="getDatastream">
+            <documentation>Gets a datastream in the digital object.  This is
+            a shorter, convenience method for getDissemination 
+            http://hostname:port/fedora/get/PID/fedora-system:3/getItem?itemID=DS_ID.
+            Note that if a particular date/timestamped view of a datastream is
+            needed, getDissemination still must be used.  When making direct 
+            links to datastreams within web pages or applications, this
+            syntax is recommended.
+            </documentation>
+			<input message="fedora-api:getDatastreamRequest"/>
+			<output message="fedora-api:getDatastreamResponse"/>
+        </operation>
 		<operation name="findObjects">
 			<documentation>
 				<p>Gets the requested ObjectFields on all objects in the 
@@ -393,6 +418,19 @@ It asks for up to 50 results at a time from the server, and requests that the re
 				<mime:content type="text/html"/>
 			</output>
 		</operation>
+        <operation name="getDatastream">
+			<http:operation location="get/(PID)/(DSID)"/>
+            <input>
+                <documentation>
+                  - PID : a required parameter.  The PID of the digital object.
+                  - DSID : a required parameter.  The ID of the datastream in the object.
+                </documentation>
+				<http:urlReplacement/>
+            </input>
+			<output>
+				<mime:content type="*/*"/>
+            </output>
+        </operation>
 		<operation name="getDissemination">
 			<http:operation location="get/(PID)/(BDEF_PID)/(METHODNAME)[/(DATETIME)][?(PARMS)]"/>
 			<input>

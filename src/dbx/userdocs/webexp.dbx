@@ -97,6 +97,29 @@ where HH is 24-hour clock.</para>
 			</varlistentry>
 		</variablelist>
 	</sect1>
+    <sect1>
+        <title>Getting Datastreams (API-A-LITE getDatastream)</title>
+        <para>There are actually two ways to get datastream content.
+        You can use the default disseminator's <emphasis>getItem</emphasis> 
+        (see &quot;Running Disseminations using the Default Disseminator&quot;),
+        or you can use the following, shorter syntax.</para>
+        <variablelist>
+            <title>URL syntax for the getDatastream request:</title>
+            <varlistentry>
+				<term>http://hostname:port/fedora/get/<emphasis>PID/DSID</emphasis>
+				</term>
+                <listitem>
+                  <para>This syntax requests a particular datastream (identified by DSID) from an object (identified by PID).</para>
+                </listitem>
+            </varlistentry>
+        </variablelist>
+        <para>
+        This syntax is useful for making hyperlinks directly to datastreams
+        from web pages/applications, but it does not allow the specification
+        of a particular version of the datastream like the getDissemination
+        request does.
+        </para>
+    </sect1>
 	<sect1>
 		<title>Getting an Object Profile (API-A-LITE getObjectProfile)</title>
 		<variablelist>
