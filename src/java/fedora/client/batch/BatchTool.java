@@ -1,3 +1,5 @@
+package fedora.client.batch;
+
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import com.icl.saxon.StyleSheet;
@@ -6,7 +8,7 @@ import gnu.getopt.LongOpt;
 import java.util.Properties;
 import java.io.FileInputStream;
 
-class BatchTool {
+public class BatchTool {
 	private final Properties miscProperties;
 	private final Properties datastreamProperties;
 	private final Properties metadataProperties;	
@@ -14,7 +16,7 @@ class BatchTool {
 	private final Properties batchXformsValues;
 	private final Properties batchIngestValues;	
 	
-	BatchTool(Properties miscProperties, Properties datastreamProperties, Properties metadataProperties) throws Exception {
+	public BatchTool(Properties miscProperties, Properties datastreamProperties, Properties metadataProperties) throws Exception {
 		this.miscProperties = miscProperties;
 		this.metadataProperties = metadataProperties;
 		this.datastreamProperties = datastreamProperties;
@@ -26,11 +28,11 @@ class BatchTool {
 	
  	private boolean good2go = false;
 	
-	final void prep() {
+	public final void prep() {
 		good2go = true;
 	}
 	
-	final void process() throws Exception {
+	public final void process() throws Exception {
 		if (good2go) {
 			BatchAdditions batchAdditions = null;
 			BatchXforms batchXforms = null;

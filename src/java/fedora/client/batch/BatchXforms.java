@@ -1,3 +1,5 @@
+package fedora.client.batch;
+
 import java.io.FileOutputStream;
 
 import java.io.PrintStream;

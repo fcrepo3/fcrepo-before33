@@ -1,3 +1,5 @@
+package fedora.client.batch;
+
 import java.util.Hashtable;
 import java.io.File;
 import java.io.FileInputStream;
