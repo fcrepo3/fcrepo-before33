@@ -59,9 +59,9 @@
 			<member><ulink url="client/browser/search/index.html">Repository Search Interface</ulink></member>
 			<member><ulink url="client/admin-gui/apim/index.html">API-M Admin GUI Client</ulink></member>
 			<member><ulink url="client/browser/oai/index.html">OAI Provider Interface</ulink></member>
-			<member><ulink url="client/admin-gui/apim/index.html">Java Application: Admin GUI -- Object Creation and Repository Management via API-M</ulink></member>
+			<member><ulink url="client/admin-gui/apim/do-const.html">Java Application: Admin GUI -- Object Creation and Repository Management via API-M</ulink></member>
 			<member><ulink url="client/admin-gui/batch/index.html">Java Application: Admin GUI -- Batch Utility for Object Creation</ulink></member>
-			<member><ulink url="client/admin-gui/builder/index.html">Java Application: Admin GUI -- Behavior Definition and Mechanism Builders</ulink></member>
+			<!--<member><ulink url="client/admin-gui/builder/index.html">Java Application: Admin GUI - Behavior Definition and Mechanism Builders</ulink></member>-->
 			<member><ulink url="client/servlet/soapclient/index.html">Java Servlet: SOAP Access via API-A</ulink></member>
 			<member><ulink url="client/cmd-line/index.html">Command-Line Utilities</ulink></member>
 		</simplelist>
