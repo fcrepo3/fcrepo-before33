@@ -7,7 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fedora.server.Server;
-import fedora.server.access.localservices.HttpService;
 import fedora.server.errors.DisseminationBindingInfoNotFoundException;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.InitializationException;
