@@ -400,7 +400,7 @@ public class DefaultDOManager
      * This happens as the result of a writer.commit() call.
      *
      * FIXME: passing the logMessage in here (and writer.commit) probably
-     * isn't necessary... the audit record will already have been added by this 
+     * isn't necessary... the audit record will already have been added by this
      * time.
      */
     public void doCommit(Context context, DigitalObject obj, String logMessage, boolean remove)
@@ -842,7 +842,7 @@ public class DefaultDOManager
                         && ( obj.getPid().indexOf(":")!=-1 )
                         && ( ( m_retainPIDs==null )
                                 || ( m_retainPIDs.contains(obj.getPid().split(":")[0]) )
-                                ) 
+                                )
                         ) {
                     getServer().logFinest("Stream contained PID with retainable namespace-id... will use PID from stream.");
                     try {
@@ -1536,4 +1536,26 @@ public class DefaultDOManager
         return m_fieldSearch.resumeFindObjects(sessionToken);
     }
 
+    public String[] getNextPID(int numPIDs, String namespace) throws ServerException {
+
+      if (numPIDs < 1) {
+        numPIDs = 1;
+      }
+      String[] pidList = new String[numPIDs];
+      if (namespace==null || namespace.equals("")) {
+        namespace = m_pidNamespace;
+      }
+      try {
+        for (int i=0; i<numPIDs; i++)
+        {
+          pidList[i] = m_pidGenerator.generatePID(namespace);
+        }
+        return pidList;
+        } catch (IOException ioe)
+        {
+          throw new GeneralException("DefaultDOManager.getNextPID: Error "
+              + "generating PID, PIDGenerator returned unexpected error: ("
+              + ioe.getClass().getName() + ") - " + ioe.getMessage());
+        }
+    }
 }

@@ -44,7 +44,7 @@ public interface DOManager
      * <p></p>
      * When a DOManager provides a DOWriter, it creates a session lock.
      * This is used to guarantee that there will never be concurrent changes
-     * to the same object. To release the session lock, a DOWriter user 
+     * to the same object. To release the session lock, a DOWriter user
      * calls this method.
      *
      * @param writer an instance of a digital object writer.
@@ -124,5 +124,7 @@ public interface DOManager
     public FieldSearchResult resumeFindObjects(Context context,
             String sessionToken)
             throws ServerException;
+
+    public String[] getNextPID(int numPIDs, String namespace) throws ServerException;
 
 }
