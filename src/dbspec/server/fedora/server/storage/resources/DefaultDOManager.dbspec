@@ -156,41 +156,6 @@
 			<comment>M or D, meaning "modified" or "deleted"</comment>
 		</column>
 	</table>
-	<table name="DatastreamLocation" primaryKey="DS_Temp_ID">
-		<comment>This table is used to implement the datastream mediation service.
-			It serves as a lookup table that maps the real physical location of
-			a datastream with a generated temporary ID. The temporary ID is 
-			passed to a Fedora system servlet that performs the lookup, grabs
-                  the content from the physical datastream location, and
-			returns the resulting mime-typed stream. i.e., a simple proxy for
-			resolving datastreams.
-		</comment>
-		<column name="DS_Temp_ID" type="varchar(32)" notNull="true" default="">
-			<comment>Generated temporary ID which will be of the form
-				PID : bDefPID : DSID : DSVersionID
-			</comment>
-		</column>
-		<column name="DS_Physical_Location" type="varchar(255)" notNull="true" default="" index="DS_Physical_Location">
-			<comment>Real physical location of the datastream.</comment>
-		</column>
-		<column name="DS_Control_Group_Type" type="char(1)" notNull="true" default="" index="DS_Control_Group_Type">
-			<comment>The type of datastream: 
-				E - Referenced External Content
-				P - Protected Referenced External Content
-				M - Repository Managed Content
-				X - Repository-Defined XML Metadata
-			</comment>
-		</column>
-		<column name="DS_ID" type="varchar(32)" notNull="true" default="" index="DS_ID">
-			<comment>The datastream ID.</comment>
-		</column>
-		<column name="DS_Version_ID" type="varchar(32)" notNull="true" default="" index="DS_Version_ID">
-			<comment>The datastream version ID</comment>
-		</column>
-		<column name="DS_Date_Time" type="timestamp" notNull="false" default="" index="DS_DATE_Time">
-			<comment>A timestamp indicating the age of the table entry</comment>
-		</column>
-	</table>
 	<table name="MechDefaultParameter">
 		<comment>A table containing system default method parameters. Default method
 			parameters are those parameters defined in the mechanism object as
