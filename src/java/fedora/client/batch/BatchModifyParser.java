@@ -129,7 +129,6 @@ public class BatchModifyParser extends DefaultHandler
     private boolean modifyDatastream = false;
     private boolean purgeDatastream = false;
     private boolean setDatastreamState = false;
-    private boolean setDatastreamHarvestable = false;
     private boolean addDisseminator = false;
     private boolean purgeDisseminator = false;
     private boolean modifyDisseminator = false;
@@ -335,8 +334,6 @@ public class BatchModifyParser extends DefaultHandler
                 m_ds.DSLabel = attrs.getValue("dsLabel");
                 m_ds.DSState = attrs.getValue("dsState");
                 m_ds.DSMIME = attrs.getValue("dsMIME");
-                m_ds.isHarvestable = new Boolean(attrs.getValue("harvestable")).booleanValue();
-                m_ds.DSFormatURI = attrs.getValue("formatURI");
 
                 // Check for optional attributes
                 if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equalsIgnoreCase(""))
@@ -460,11 +457,6 @@ public class BatchModifyParser extends DefaultHandler
                     } else {
                         m_ds.DSLocation = dsOrig.getLocation();
                     }
-                    /*if (attrs.getValue("harvestable") != null && !attrs.getValue("harvestable").equalsIgnoreCase("")) {
-                        m_ds.isHarvestable = new Boolean(attrs.getValue("harvestable")).booleanValue();
-                    } else {
-                        m_ds.isHarvestable = dsOrig.isHarvestable();
-                    }*/
 
                     modifyDatastream = true;
 
@@ -500,25 +492,6 @@ public class BatchModifyParser extends DefaultHandler
                 setDatastreamState = false;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
-
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDatastreamHarvestable")) {
-
-            try {
-                m_ds = new Datastream();
-                setDatastreamHarvestable = false;
-
-                // Get require attributes
-                m_ds.objectPID = attrs.getValue("pid");
-                m_ds.DatastreamID = attrs.getValue("dsID");
-                m_ds.isHarvestable = new Boolean(attrs.getValue("harvestable")).booleanValue();
-                setDatastreamHarvestable = true;
-
-            } catch (Exception e) {
-                failedCount++;
-                setDatastreamHarvestable = false;
-                logFailedDirective(m_ds.objectPID, localName, e, "");
-            }
-
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("xmlData")) {
             m_inXMLMetadata = true;
             m_dsXMLBuffer=new StringBuffer();
@@ -944,26 +917,23 @@ public class BatchModifyParser extends DefaultHandler
                         InputStream xmlMetadata = new ByteArrayInputStream(m_ds.xmlContent);
                         m_ds.DSLocation=UPLOADER.upload(xmlMetadata);
                         /*datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.DSLabel,
-                                m_ds.DSMIME, m_ds.DSFormatURI, m_ds.DSLocation,
-                                m_ds.DSControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.DSState,
-                                m_ds.isHarvestable);*/
+                                m_ds.DSMIME, m_ds.DSLocation,
+                                m_ds.DSControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.DSState);*/
                         datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.DSLabel,
                                 m_ds.DSMIME, m_ds.DSLocation,
                                 m_ds.DSControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.DSState);
                     } else if (m_ds.DSControlGrp.equalsIgnoreCase("M")) {
                         /*datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.DSLabel,
-                                m_ds.DSMIME, m_ds.DSFormatURI,  m_ds.DSLocation,
-                                m_ds.DSControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.DSState,
-                                m_ds.isHarvestable);*/
+                                m_ds.DSMIME, m_ds.DSLocation,
+                                m_ds.DSControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.DSState);*/
                         datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.DSLabel,
                                 m_ds.DSMIME,  m_ds.DSLocation,
                                 m_ds.DSControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.DSState);
                         } else if (m_ds.DSControlGrp.equalsIgnoreCase("E") ||
                                    m_ds.DSControlGrp.equalsIgnoreCase("R")) {
                             /*datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.DSLabel,
-                                    m_ds.DSMIME, m_ds.DSFormatURI, m_ds.DSLocation,
-                                    m_ds.DSControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.DSState,
-                                    m_ds.isHarvestable);*/
+                                    m_ds.DSMIME, m_ds.DSLocation,
+                                    m_ds.DSControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.DSState);*/
                             datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.DSLabel,
                                     m_ds.DSMIME, m_ds.DSLocation,
                                     m_ds.DSControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.DSState);
@@ -1032,18 +1002,18 @@ public class BatchModifyParser extends DefaultHandler
                 if(modifyDatastream) {
                     if (m_ds.DSControlGrp.equalsIgnoreCase("X")) {
                         /*APIM.modifyDatastreamByValue(m_ds.objectPID, m_ds.DatastreamID, m_ds.DSLabel,
-                                "ModifyDatastreamByValue", m_ds.xmlContent, m_ds.DSState, m_ds.isHarvestable);*/
+                                "ModifyDatastreamByValue", m_ds.xmlContent, m_ds.DSState);*/
                         APIM.modifyDatastreamByValue(m_ds.objectPID, m_ds.DatastreamID, m_ds.DSLabel,
                                 "ModifyDatastreamByValue", m_ds.xmlContent, m_ds.DSState);
                     } else if (m_ds.DSControlGrp.equalsIgnoreCase("M")) {
                         /*APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.DatastreamID, m_ds.DSLabel,
-                                "ModifyDatastreamByReference", m_ds.DSLocation, m_ds.DSState, m_ds.isHarvestable);*/
+                                "ModifyDatastreamByReference", m_ds.DSLocation, m_ds.DSState);*/
                         APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.DatastreamID, m_ds.DSLabel,
                                 "ModifyDatastreamByReference", m_ds.DSLocation, m_ds.DSState);
                     } else if (m_ds.DSControlGrp.equalsIgnoreCase("E") ||
                                m_ds.DSControlGrp.equalsIgnoreCase("R")) {
                         /*APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.DatastreamID, m_ds.DSLabel,
-                                "ModifyDatastreamByReference", m_ds.DSLocation, m_ds.DSState, m_ds.isHarvestable);*/
+                                "ModifyDatastreamByReference", m_ds.DSLocation, m_ds.DSState);*/
                         APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.DatastreamID, m_ds.DSLabel,
                                 "ModifyDatastreamByReference", m_ds.DSLocation, m_ds.DSState);
                     }
@@ -1074,26 +1044,6 @@ public class BatchModifyParser extends DefaultHandler
 
             } catch (Exception e) {
                 if (setDatastreamState) {
-                    failedCount++;
-                    logFailedDirective(m_ds.objectPID, localName, e, null);
-                }
-            }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDatastreamHarvestable")) {
-
-            try {
-
-                // Process setDatastreamHarvestable only if no previous errors encountered
-                if(setDatastreamHarvestable) {
-                    /*APIM.setDatastreamHarvestable(m_ds.objectPID, m_ds.DatastreamID,
-                        m_ds.isHarvestable, "SetDatastreamHarvestable");*/
-                    succeededCount++;
-                    logSucceededDirective(m_ds.objectPID, localName,
-                        "datastream: " + m_ds.DatastreamID
-                            + "\n    Set isHarvestable: " + m_ds.isHarvestable);
-                }
-
-            } catch (Exception e) {
-                if(setDatastreamHarvestable) {
                     failedCount++;
                     logFailedDirective(m_ds.objectPID, localName, e, null);
                 }

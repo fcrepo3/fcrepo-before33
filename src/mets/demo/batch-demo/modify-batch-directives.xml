@@ -23,35 +23,35 @@
 	<!-- Add a new datastream to demo:32 object. Since this is the first datastream for this object, it      -->
 	<!-- will be assigned datastreamID of DS1. The new datastream will be a thumbnail image.              -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum thumbnail jpg image" dsMIME="image/jpeg" formatURI="http://www.fedora.info" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="E" dsState="A" harvestable="false"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum thumbnail jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="E" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the second datastream for this object,   -->
 	<!-- it will be assigned datastreamID of DS2. The new datastream will be a medium resolution          -->
 	<!-- image.                                                                                                                                                       -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum medium jpg image" dsMIME="image/jpeg" formatURI="http://www.fedora.info" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg" dsControlGroupType="E" dsState="A" harvestable="false"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum medium jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg" dsControlGroupType="E" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the third datastream for this object, it     -->
 	<!-- will be assigned datastreamID of DS3. The new datastream will be a high resolution image.      -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum high jpg image" dsMIME="image/jpeg" formatURI="http://www.fedora.info" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="M" dsState="A" harvestable="false"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum high jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="M" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the fourth datastream for this object, it   -->
 	<!-- will be assigned datastreamID of DS4. The new datastream will be a very high resolution           -->
 	<!--  image.                                                                                                                                                      -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum veryhigh jpg image" dsMIME="image/jpeg" formatURI="http://www.fedora.info" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg" dsControlGroupType="M" dsState="A" harvestable="false"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum veryhigh jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg" dsControlGroupType="M" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the fifth datastream for this object, it      -->
 	<!-- will be assigned datastreamID of DS5. The new datastream will be a screen size image.           -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" formatURI="http://www.fedora.info" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="E" dsState="A" harvestable="false"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="E" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the sixth datastream for this object, it     -->
 	<!-- will be assigned datastreamID of DS6. The new datastream will be a user-defined descriptive   -->
 	<!-- metadata datastream.                                                                                                                             -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Descriptive metadata for Thorny's Coliseum screen size jpg image" dsMIME="text/xml" formatURI="http://www.fedora.info" dsControlGroupType="X" dsMdClass="descriptive" dsState="A" harvestable="false">
+	<fbm:addDatastream pid="demo:32" dsLabel="Descriptive metadata for Thorny's Coliseum screen size jpg image" dsMIME="text/xml" dsControlGroupType="X" dsMdClass="descriptive" dsState="A">
 		<fbm:xmlData>
 			<uvalibdesc:desc xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
 				<uvalibdesc:time>
@@ -93,12 +93,12 @@
 	<!-- it will be assigned datastreamID of DS7. The new datastream will be duplicate of the screen     -->
 	<!-- size image that will be deleted later in this set of directives.                                                              -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" formatURI="http://www.fedora.info" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="R" dsState="A" harvestable="false"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="R" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Modify datastream DS1 of demo:5 object by changing its label.                                                       -->
 	<!--                                                                                                                                                                   -->
 	<!-- NOTE: Optional attributes that are omitted or set to "" imply that the original values are to           -->
-	<!-- remain unchanged so in this example the datastream location, state, and isHarvestable             -->
+	<!-- remain unchanged so in this example the datastream location, and state             -->
 	<!-- attributes are not modified.                                                                                                                    -->
 	<!-- ************************************************************************************************************ -->
 	<fbm:modifyDatastream pid="demo:32" dsID="DS1" dsControlGroupType="E" dsLabel="New label for datastream DS1"/>
@@ -107,8 +107,7 @@
 	<!-- that it points to the same content as that of datastream DS3 which is a high-res image.               -->
 	<!--                                                                                                                                                                   -->
 	<!-- NOTE: Optional attributes that are omitted or set to "" imply that the original values are to           -->
-	<!-- remain unchanged so in this example the datastream state and isHarvestable                              -->
-	<!-- attributes are not modified.                                                                                                                    -->
+	<!-- remain unchanged so in this example the datastream state attribute is not modified.                                                                                                                    -->
 	<!-- ************************************************************************************************************ -->
 	<fbm:modifyDatastream pid="demo:32" dsID="DS5" dsControlGroupType="E" dsLabel="Changed label for datastream DS5" dsLocation="http://localhost:8080/fedora/get/demo:5/fedora-system:3/getItem?itemID=DS4"/>
 	<!-- ************************************************************************************************************ -->
@@ -116,8 +115,7 @@
 	<!-- its content is replaced byt he block of xml below.                                                                                -->
 	<!--                                                                                                                                                                   -->
 	<!-- NOTE: Optional attributes that are omitted or set to "" imply that the original values are to           -->
-	<!-- remain unchanged so in this example the datastream state, and isHarvestable                             -->
-	<!-- attributes are not modified.                                                                                                                    -->
+	<!-- remain unchanged so in this example the datastream state attribute is not modified.                                                                                                                    -->
 	<!-- ************************************************************************************************************ -->
 	<fbm:modifyDatastream pid="demo:32" dsID="DC" dsControlGroupType="X" dsLabel="New label for DC datastream">
 		<fbm:xmlData>
@@ -147,9 +145,6 @@
 	<!-- Change the state of datastream DS7 to inactive                                                                                 -->
 	<!-- ************************************************************************************************************ -->
 	<fbm:setDatastreamState pid="demo:32" dsID="DS6" dsState="I"/>
-	<!-- Make the contents of the DS6 datastream of object demo:32 harvestable                                      -->
-	<!-- ************************************************************************************************************ -->
-	<fbm:setDatastreamHarvestable pid="demo:32" dsID="DS6" harvestable="true"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new disseminator for object demo:32 using the UVA Simple Image Behavior Definition  -->
 	<!-- (demo:1) and Fedora HTTP Getter Service (demo:2). Binding Key names defined for this         -->

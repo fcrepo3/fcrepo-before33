@@ -8,7 +8,6 @@
 				<xsd:element ref="modifyDatastream" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="purgeDatastream" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="setDatastreamState" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="setDatastreamHarvestable" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="addDisseminator" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="modifyDisseminator" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="purgeDisseminator" minOccurs="0" maxOccurs="unbounded"/>
@@ -31,7 +30,6 @@
 			<xsd:attribute name="pid" type="xsd:string" use="required"/>
 			<xsd:attribute name="dsLabel" type="xsd:string" use="required"/>
 			<xsd:attribute name="dsMIME" type="xsd:string" use="required"/>
-			<xsd:attribute name="formatURI" type="xsd:anyURI" use="required"/>
 			<xsd:attribute name="dsLocation" type="xsd:anyURI"/>
 			<xsd:attribute name="dsControlGroupType" use="required">
 				<xsd:simpleType>
@@ -56,7 +54,6 @@
 			</xsd:attribute>
 			<xsd:attribute name="dsMdType" type="xsd:string"/>
 			<xsd:attribute name="dsState" type="xsd:string" use="required"/>
-			<xsd:attribute name="harvestable" type="xsd:string" use="required"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="purgeDatastream">
@@ -86,7 +83,6 @@
 			<xsd:attribute name="dsLabel" type="xsd:string"/>
 			<xsd:attribute name="dsState" type="xsd:string"/>
 			<xsd:attribute name="dsLocation" type="xsd:anyURI"/>
-			<xsd:attribute name="harvestable" type="xsd:boolean"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="setDatastreamState">
@@ -94,13 +90,6 @@
 			<xsd:attribute name="pid" type="xsd:string" use="required"/>
 			<xsd:attribute name="dsID" type="xsd:string" use="required"/>
 			<xsd:attribute name="dsState" type="xsd:string" use="required"/>
-		</xsd:complexType>
-	</xsd:element>
-	<xsd:element name="setDatastreamHarvestable">
-		<xsd:complexType>
-			<xsd:attribute name="pid" type="xsd:string" use="required"/>
-			<xsd:attribute name="dsID" type="xsd:string" use="required"/>
-			<xsd:attribute name="harvestable" type="xsd:boolean" use="required"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="xmlData">
