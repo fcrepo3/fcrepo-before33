@@ -136,8 +136,7 @@ public class DefinitiveDOReader implements DOReader
     }
     catch (Exception e)
     {
-      System.err.println("Error: " + e.toString());
-      System.exit(1);
+      System.err.println("Error: (FIXME: throw an appropriate exception here)" + e.toString());
     }
   }
 
@@ -153,8 +152,7 @@ public class DefinitiveDOReader implements DOReader
       }
       catch (Exception e)
       {
-        System.err.println("Error: " + e.toString());
-        System.exit(1);
+        System.err.println("Error: (FIXME: throw an appropriate exception here)" + e.toString());
       }
       return(doIn);
     }
