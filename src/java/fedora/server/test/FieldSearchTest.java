@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 import fedora.oai.sample.RandomDCMetadataFactory; 
 import fedora.server.StdoutLogging;
 import fedora.server.search.Condition;
-import fedora.server.search.FieldSearchExistImpl;
+//import fedora.server.search.FieldSearchExistImpl;
 import fedora.server.search.FieldSearchSQLImpl;
 import fedora.server.search.ObjectFields;
 import fedora.server.storage.ConnectionPool;
