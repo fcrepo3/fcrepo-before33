@@ -2,7 +2,18 @@
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvadesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/" xmlns:uvadigiprov="http://dl.lib.virginia.edu/bin/admin/digiprov/" xmlns:uvasource="http://dl.lib.virginia.edu/bin/admin/source/" xmlns:uvarights="http://dl.lib.virginia.edu/bin/admin/rights/" xmlns:uvatech="http://dl.lib.virginia.edu/bin/admin/tech/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="uva-lib:3" TYPE="FedoraObject" LABEL="AICT Image Collection - Mycenae" PROFILE="UVA_STD_IMAGE">
+<METS:mets 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:METS="http://www.loc.gov/METS/" 
+	xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" 
+	xmlns:uvadesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/" 
+	xmlns:uvadigiprov="http://dl.lib.virginia.edu/bin/admin/digiprov/" 
+	xmlns:uvasource="http://dl.lib.virginia.edu/bin/admin/source/" 
+	xmlns:uvarights="http://dl.lib.virginia.edu/bin/admin/rights/" 
+	xmlns:uvatech="http://dl.lib.virginia.edu/bin/admin/tech/" 
+	xmlns:xlink="http://www.w3.org/TR/xlink" 
+	xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" 
+	OBJID="uva-lib:1" TYPE="FedoraObject" LABEL="AICT Image Collection - Mycenae" PROFILE="UVA_STD_IMAGE">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
@@ -112,10 +123,10 @@
 					<uvatech:tech>
 						<uvatech:format>image/jpg</uvatech:format>
 						<uvatech:compression>none</uvatech:compression>
-						<uvatech:bitDepth BITS="64"/>
+						<uvatech:bitDepth BITS="32"/>
 						<uvatech:colorSpace>RBG</uvatech:colorSpace>
 						<uvatech:colorProfile CPLOCAT="FILE" CPFILE="UNKNOWN"/>
-						<uvatech:resolution>260000000</uvatech:resolution>
+						<uvatech:resolution>3200</uvatech:resolution>
 					</uvatech:tech>
 				</METS:xmlData>
 			</METS:mdWrap>
@@ -125,12 +136,12 @@
 		<METS:techMD ID="SOURCE1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for THUMBNAIL res image">
 				<METS:xmlData>	
-					<uvalib:source>
-					   <uvalib:identifier>006-007</uvalib:identifier>
-						<uvalib:mediatype type="image">
-							<uvalib:form>slide</uvalib:form>
-						</uvalib:mediatype>
-					</uvalib:source>
+					<uvasource:source>
+					   <uvasource:identifier>006-007</uvasource:identifier>
+						<uvasource:mediatype type="image">
+							<uvasource:form>slide</uvasource:form>
+						</uvasource:mediatype>
+					</uvasource:source>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -139,12 +150,12 @@
 		<METS:techMD ID="SOURCE2.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for MEDRES res image">
 				<METS:xmlData>	
-					<uvalib:source>
-					   <uvalib:identifier>006-007</uvalib:identifier>
-						<uvalib:mediatype type="image">
-							<uvalib:form>slide</uvalib:form>
-						</uvalib:mediatype>
-					</uvalib:source>
+					<uvasource:source>
+					   <uvasource:identifier>006-007</uvasource:identifier>
+						<uvasource:mediatype type="image">
+							<uvasource:form>slide</uvasource:form>
+						</uvasource:mediatype>
+					</uvasource:source>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -153,12 +164,12 @@
 		<METS:techMD ID="SOURCE3.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for HIGH res image">
 				<METS:xmlData>	
-					<uvalib:source>
-					   <uvalib:identifier>006-007</uvalib:identifier>
-						<uvalib:mediatype type="image">
-							<uvalib:form>slide</uvalib:form>
-						</uvalib:mediatype>
-					</uvalib:source>
+					<uvasource:source>
+					   <uvasource:identifier>006-007</uvasource:identifier>
+						<uvasource:mediatype type="image">
+							<uvasource:form>slide</uvasource:form>
+						</uvasource:mediatype>
+					</uvasource:source>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -167,12 +178,12 @@
 		<METS:techMD ID="SOURCE4.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for VERYHIGH res image">
 				<METS:xmlData>	
-					<uvalib:source>
-					   <uvalib:identifier>006-007</uvalib:identifier>
-						<uvalib:mediatype type="image">
-							<uvalib:form>slide</uvalib:form>
-						</uvalib:mediatype>
-					</uvalib:source>
+					<uvasource:source>
+					   <uvasource:identifier>006-007</uvasource:identifier>
+						<uvasource:mediatype type="image">
+							<uvasource:form>slide</uvasource:form>
+						</uvasource:mediatype>
+					</uvasource:source>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -181,11 +192,11 @@
 		<METS:techMD ID="DIGIPROV1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for THUMBNAIL res image">
 				<METS:xmlData>	
-					<uvalib:digiprov>
-						<uvalib:date>2001-09-01:06:32:00</uvalib:date>
-						<uvalib:agent type="corpname">Art Images for College Teaching</uvalib:agent>
-						<uvalib:description>creation</uvalib:description>
-					</uvalib:digiprov>					
+					<uvadigiprov:digiprov>
+						<uvadigiprov:date>2001-09-01:06:32:00</uvadigiprov:date>
+						<uvadigiprov:agent type="corpname">Art Images for College Teaching</uvadigiprov:agent>
+						<uvadigiprov:description>creation</uvadigiprov:description>
+					</uvadigiprov:digiprov>					
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -194,11 +205,11 @@
 		<METS:techMD ID="DIGIPROV2.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for MEDRES res image">
 				<METS:xmlData>	
-					<uvalib:digiprov>
-						<uvalib:date>2001-09-01:06:32:00</uvalib:date>
-						<uvalib:agent type="corpname">Art Images for College Teaching</uvalib:agent>
-						<uvalib:description>creation</uvalib:description>
-					</uvalib:digiprov>					
+					<uvadigiprov:digiprov>
+						<uvadigiprov:date>2001-09-01:06:32:00</uvadigiprov:date>
+						<uvadigiprov:agent type="corpname">Art Images for College Teaching</uvadigiprov:agent>
+						<uvadigiprov:description>creation</uvadigiprov:description>
+					</uvadigiprov:digiprov>					
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -207,11 +218,11 @@
 		<METS:techMD ID="DIGIPROV3.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for HIGH res image">
 				<METS:xmlData>	
-					<uvalib:digiprov>
-						<uvalib:date>2001-09-01:06:32:00</uvalib:date>
-						<uvalib:agent type="corpname">Art Images for College Teaching</uvalib:agent>
-						<uvalib:description>creation</uvalib:description>
-					</uvalib:digiprov>					
+					<uvadigiprov:digiprov>
+						<uvadigiprov:date>2001-09-01:06:32:00</uvadigiprov:date>
+						<uvadigiprov:agent type="corpname">Art Images for College Teaching</uvadigiprov:agent>
+						<uvadigiprov:description>creation</uvadigiprov:description>
+					</uvadigiprov:digiprov>					
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -220,11 +231,11 @@
 		<METS:techMD ID="DIGIPROV4.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for VERYHIGH res image">
 				<METS:xmlData>	
-					<uvalib:digiprov>
-						<uvalib:date>2001-09-01:06:32:00</uvalib:date>
-						<uvalib:agent type="corpname">Art Images for College Teaching</uvalib:agent>
-						<uvalib:description>creation</uvalib:description>
-					</uvalib:digiprov>					
+					<uvadigiprov:digiprov>
+						<uvadigiprov:date>2001-09-01:06:32:00</uvadigiprov:date>
+						<uvadigiprov:agent type="corpname">Art Images for College Teaching</uvadigiprov:agent>
+						<uvadigiprov:description>creation</uvadigiprov:description>
+					</uvadigiprov:digiprov>					
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -233,12 +244,12 @@
 		<METS:rightsMD ID="RIGHTS1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for THUMBNAIL res image">
 				<METS:xmlData>
-					<uvalib:adminrights>
-					   <uvalib:policy>
-					      <uvalib:access>unrestricted</uvalib:access>
-					      <uvalib:use>educational</uvalib:use>
-					   </uvalib:policy>
-					</uvalib:adminrights>
+					<uvarights:adminrights>
+					   <uvarights:policy>
+					      <uvarights:access>unrestricted</uvarights:access>
+					      <uvarights:use>educational</uvarights:use>
+					   </uvarights:policy>
+					</uvarights:adminrights>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:rightsMD>
@@ -247,12 +258,12 @@
 		<METS:rightsMD ID="RIGHTS2.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for MEDRES res image">
 				<METS:xmlData>
-					<uvalib:adminrights>
-					   <uvalib:policy>
-					      <uvalib:access>unrestricted</uvalib:access>
-					      <uvalib:use>educational</uvalib:use>
-					   </uvalib:policy>
-					</uvalib:adminrights>
+					<uvarights:adminrights>
+					   <uvarights:policy>
+					      <uvarights:access>unrestricted</uvarights:access>
+					      <uvarights:use>educational</uvarights:use>
+					   </uvarights:policy>
+					</uvarights:adminrights>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:rightsMD>
@@ -261,12 +272,12 @@
 		<METS:rightsMD ID="RIGHTS3.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for HIGHRES res image">
 				<METS:xmlData>
-					<uvalib:adminrights>
-					   <uvalib:policy>
-					      <uvalib:access>unrestricted</uvalib:access>
-					      <uvalib:use>educational</uvalib:use>
-					   </uvalib:policy>
-					</uvalib:adminrights>
+					<uvarights:adminrights>
+					   <uvarights:policy>
+					      <uvarights:access>unrestricted</uvarights:access>
+					      <uvarights:use>educational</uvarights:use>
+					   </uvarights:policy>
+					</uvarights:adminrights>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:rightsMD>
@@ -275,12 +286,12 @@
 		<METS:rightsMD ID="RIGHTS4.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for VERYHIGH res image">
 				<METS:xmlData>
-					<uvalib:adminrights>
-					   <uvalib:policy>
-					      <uvalib:access>unrestricted</uvalib:access>
-					      <uvalib:use>educational</uvalib:use>
-					   </uvalib:policy>
-					</uvalib:adminrights>
+					<uvarights:adminrights>
+					   <uvarights:policy>
+					      <uvarights:access>unrestricted</uvarights:access>
+					      <uvarights:use>educational</uvarights:use>
+					   </uvarights:policy>
+					</uvarights:adminrights>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:rightsMD>
@@ -297,6 +308,7 @@
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS2" STATUS="">
+				<!-- This is the medium sized image -->
 				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="AICT medium jpg image"/>
 				</METS:file>
@@ -304,13 +316,13 @@
 			<METS:fileGrp ID="DS3">
 				<!--This is the high resolution image -->
 				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="AICT high jpg image"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/high/006-007.jpg" xlink:title="AICT high jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS4">
 				<!--This is the very high resolution image -->
 				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="AICT vhigh jpg image"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/vhigh/006-007.jpg" xlink:title="AICT veryhigh jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>
@@ -321,7 +333,7 @@
 	<!---*******************************************************************************************************************************************-->
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
 		<METS:div TYPE="uva-bmech-stdimg:10" LABEL="DS Binding Map for UVA Standard Image mechanism">
-			<METS:div TYPE="THUMBRES_IMG" LABEL="current thumbnail photo of Mycenae" ORDER="0">
+			<METS:div TYPE="THUMBRES_IMG" LABEL="thumbnail photo of Mycenae" ORDER="0">
 				<METS:fptr FILEID="DS1"/>
 			</METS:div>
 			<METS:div TYPE="MEDRES_IMG" LABEL="medium resolution photo of Mycenae" ORDER="0">
