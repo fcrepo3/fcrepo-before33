@@ -1031,6 +1031,11 @@ public class DefaultDOManager
             }
         }
     }
+    
+    public String[] listObjectPIDs(Context context) 
+            throws StorageDeviceException {
+        return getPIDs("WHERE SystemVersion > 0");
+    }
 
     public String[] listObjectPIDs(Context context, String pidPattern, 
             String foType, String lockedByPattern, String state, 
