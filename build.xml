@@ -436,6 +436,17 @@
 			<arg path="src/dbx/userdocs/localservices.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<echo message="Translating soap.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/userdocs/soapclient/index.html"/>
+			<arg path="src/dbx/userdocs/soap.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>		
+		<copy file="dist/server/tomcat41/webapps/userdocs/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/server/tomcat41/webapps/userdocs/images/"/>
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
@@ -831,6 +842,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.122  2003/05/15 00:10:53  rlw
+  added transform for soapclient docs
+
   Revision 1.121  2003/05/14 17:59:41  rlw
   puts a copy of newlogo2.jpg  in
 
