@@ -16,11 +16,13 @@ public class DatingFileHandler
         
     private File m_logDir;
     private int m_maxSize;
+    private int m_flushThreshold;
     private String m_ext;
     private long m_maxMillis;
     private int m_maxFiles;
     private int m_initialSize;
     private int m_currentSize;
+    private int m_recordsSinceFlush;
     private long m_startMillis;
     private String m_fnStart;
     private Formatter m_formatter;
@@ -31,8 +33,10 @@ public class DatingFileHandler
     private boolean m_settingOutputStream;
         
     public DatingFileHandler(File logDir, int maxSize, int maxDays, 
-            int maxFiles, String ext, Formatter formatter) 
+            int maxFiles, String ext, Formatter formatter,
+            int flushThreshold) 
             throws IOException, FileNotFoundException, IllegalArgumentException {
+        m_flushThreshold=flushThreshold;
         setFormatter(formatter);
         if (maxSize<0 || maxDays<0 || maxFiles<0) {
             throw new IllegalArgumentException();
@@ -52,6 +56,7 @@ public class DatingFileHandler
         
         setOutputStream(new FileOutputStream(new File(m_logDir, m_fnStart 
                 + m_ext)));
+        m_recordsSinceFlush=0;
     }
     
     public void setFormatter(Formatter formatter) {
@@ -92,8 +97,14 @@ public class DatingFileHandler
                     m_startMillis=System.currentTimeMillis(); 
                 } catch (FileNotFoundException fnfe) {
                 }
+                m_recordsSinceFlush=0;
             }
             super.publish(record);
+            m_recordsSinceFlush++;
+            if (m_recordsSinceFlush==m_flushThreshold) {
+                flush();
+                m_recordsSinceFlush=0;
+            }
         }
     }
     
@@ -114,29 +125,27 @@ public class DatingFileHandler
     private String getFormatted(GregorianCalendar cal) {
         StringBuffer b=new StringBuffer();
         b.append(cal.get(Calendar.YEAR));
-        int month=cal.get(Calendar.MONTH)-cal.getMinimum(Calendar.MONTH)+1;
+        int month=cal.get(Calendar.MONTH)+1; 
         if (month<10) {
             b.append("0");
         }
         b.append(month);
-        int day=cal.get(Calendar.DAY_OF_MONTH)
-                - cal.getMinimum(Calendar.DAY_OF_MONTH)+1;
+        int day=cal.get(Calendar.DAY_OF_MONTH);
         if (day<10) {
             b.append("0");
         }
         b.append(day);
-        int hour=cal.get(Calendar.HOUR_OF_DAY)
-                - cal.getMinimum(Calendar.HOUR_OF_DAY)+1;
+        int hour=cal.get(Calendar.HOUR_OF_DAY);
         if (hour<10) {
             b.append("0");
         }
         b.append(hour);
-        int minute=cal.get(Calendar.MINUTE)-cal.getMinimum(Calendar.MINUTE)+1;
+        int minute=cal.get(Calendar.MINUTE);
         if (minute<10) {
             b.append("0");
         }
         b.append(minute);
-        int second=cal.get(Calendar.SECOND)-cal.getMinimum(Calendar.SECOND)+1;
+        int second=cal.get(Calendar.SECOND);
         if (second<10) {
             b.append("0");
         }

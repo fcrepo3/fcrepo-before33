@@ -67,6 +67,7 @@ public class BasicServer
         int maxSize=getLoggerIntParam("log_max_size");
         int maxFiles=getLoggerIntParam("log_max_files");
         int maxDays=getLoggerIntParam("log_max_days");
+        int flushThreshold=getLoggerIntParam("log_flush_threshold");
         String levelParam=getParameter("log_level");
         Level logLevel;
         if (levelParam==null) {
@@ -119,7 +120,7 @@ public class BasicServer
         DatingFileHandler fh=null;
         try {
             fh=new DatingFileHandler(logDir, maxSize, maxDays, maxFiles, ext, 
-                    new SimpleXMLFormatter(true, "UTF-8"));
+                    new SimpleXMLFormatter(true, "UTF-8"), flushThreshold);
             fh.setLevel(Level.FINEST);
         } catch (IOException ioe) {
             throw new ServerInitializationException("Could not initialize "
