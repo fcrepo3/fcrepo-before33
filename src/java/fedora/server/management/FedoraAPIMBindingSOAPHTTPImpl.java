@@ -9,7 +9,6 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.management.Management;
-import fedora.server.storage.DefinitiveDOWriter;
 import fedora.server.storage.translation.METSDOSerializer;
 import fedora.server.storage.translation.METSDODeserializer;
 import fedora.server.storage.TestFileStreamStorage;
@@ -46,9 +45,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     private static InitializationException s_initException;
 
     private static Management s_management;
-
-    /** This is a temporary hack -- normally DOManager provides these */
-    private static DefinitiveDOWriter w;
 
     private static ILowlevelStorage s_st;
 
@@ -201,21 +197,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public void releaseLock(String PID, String logMessage, boolean commit) throws java.rmi.RemoteException {
         assertInitialized();
-/* needs rewrite to work with new "Management" instance
-        try {
-            if (commit=false) {
-                w.rollBack();
-            } else {
-                w.commit(logMessage);
-            }
-        } catch (ServerException se) {
-            logStackTrace(se);
-            AxisUtility.throwFault(se);
-        } catch (Exception e) {
-            logStackTrace(e);
-            AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
-        }
-*/
     }
 
     public ObjectInfo getObjectInfo(String pid)
@@ -303,16 +284,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
     public String[] listDatastreamIDs(String PID, String state) throws java.rmi.RemoteException {
-        assertInitialized();
-        try {
-            return w.ListDatastreamIDs(state);
-        } catch (ServerException se) {
-            logStackTrace(se);
-            AxisUtility.throwFault(se);
-        } catch (Exception e) {
-            logStackTrace(e);
-            AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
-        }
         return null;
     }
 
