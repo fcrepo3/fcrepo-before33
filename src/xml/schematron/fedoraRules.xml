@@ -19,7 +19,9 @@
 	<!-- These rules are to be applied after all processing has been done by the repository, and before it is submitted to low level storage.-->
 	<sch:phase id="store">
 		<sch:active pattern="preliminary"/>
-		<sch:active pattern="completed"/>
+		<!-- TEMPORARY COMMENT OUT OF THE COMPLETED PHASE UNTIL INGEST PROCESS -->
+		<!-- IMPLEMENTS THE ASSIGNMENT OF DATES AND STATUS CODES TO THE OBJECT -->
+		<!-- <sch:active pattern="completed"/> -->
 	</sch:phase>
 	<!-- PRELIMINARY PATTERN: -->
 	<!-- These rules are to be applied to objects no matter what phase of the object lifecycle they are in.-->
