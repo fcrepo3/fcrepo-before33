@@ -225,34 +225,34 @@ public class FOXMLDOSerializer
 		buf.append("  <" + FOXML_PREFIX + ":objectProperties>\n");
 			
 		if (ftype!=null) {
-			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:type" + "\">" 
-			+ ftype + "</" + FOXML_PREFIX + ":property>\n");
+			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:fType" + "\"" 
+			+ " VALUE=\"" + ftype + "\"/>\n");
 		}
 		if (state!=null) {
-			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:state" + "\">" 
-			+ state + "</" + FOXML_PREFIX + ":property>\n");
+			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:state" + "\"" 
+			+ " VALUE=\"" + state + "\"/>\n");
 		}
 		if (label!=null) {
-			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:label" + "\">" 
-			+ label + "</" + FOXML_PREFIX + ":property>\n");
+			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:label" + "\""
+			+ " VALUE=\"" + label + "\"/>\n"); 
 		}
 		if (cdate!=null) {
-			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:created" + "\">" 
-			+ m_formatter.format(cdate) + "</" + FOXML_PREFIX + ":property>\n");
+			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cDate" + "\""
+			+ " VALUE=\"" + m_formatter.format(cdate) + "\"/>\n"); 
 		}
 		if (mdate!=null) {
-			buf.append("    <" + FOXML_PREFIX  + ":property NAME=\"" + "info:fedora/def:dobj:modified" + "\">" 
-			+ m_formatter.format(mdate) + "</" + FOXML_PREFIX + ":property>\n");
+			buf.append("    <" + FOXML_PREFIX  + ":property NAME=\"" + "info:fedora/def:dobj:mDate" + "\""
+			+ " VALUE=\"" + m_formatter.format(mdate) + "\"/>\n"); 
 		}
 		if (cmodel!=null) {
-			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cmodel" + "\">" 
-			+ cmodel + "</" + FOXML_PREFIX + ":property>\n");	
+			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cModel" + "\"" 
+			+ " VALUE=\"" + cmodel + "\"/>\n");	
 		}
 		Iterator iter = obj.getExtProperties().keySet().iterator();
 		while (iter.hasNext()){
 			String name = (String)iter.next();
-			buf.append("    <" + FOXML_PREFIX + ":extproperty NAME=\"" + name 
-				+ "\">" + obj.getExtProperty(name) + "</" + FOXML_PREFIX + ":extproperty>\n");
+			buf.append("    <" + FOXML_PREFIX + ":extproperty NAME=\"" + name + "\""
+			+ " VALUE=\"" + obj.getExtProperty(name) + "\"/>\n"); 
 		}
 		buf.append("  </" + FOXML_PREFIX + ":objectProperties>\n");
 	}
@@ -317,9 +317,8 @@ public class FOXMLDOSerializer
 				}					
 				// FUTURE: Add digest of datastream content 
 				//(to be calculated in DefaultManagement).
-				buf.append("      <" + FOXML_PREFIX + ":contentDigest TYPE=\"MD5\">"
-					+ "future: hash of content goes here" 
-					+ "</" + FOXML_PREFIX + ":contentDigest>\n");
+				buf.append("      <" + FOXML_PREFIX + ":contentDigest TYPE=\"MD5\""
+					+ " DIGEST=\"future: hash of content goes here\"/>\n"); 
 				buf.append("    </" + FOXML_PREFIX + ":datastreamVersion>\n");
 				// if it's the last version, wrap-up with closing datastream element.	
 				if (i==(dsList.size() - 1)) {
