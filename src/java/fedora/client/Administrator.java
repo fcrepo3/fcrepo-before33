@@ -282,10 +282,17 @@ public class Administrator extends JFrame {
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
         //   [N]ew
-        JMenuItem fileNew=new JMenuItem("New", KeyEvent.VK_N);
+        JMenu fileNew=new JMenu("New");
+        fileNew.setMnemonic(KeyEvent.VK_N);
         JMenuItem fileNewObject=new JMenuItem("Object", KeyEvent.VK_O);
+        fileNewObject.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new NewObjectDialog();
+            }
+        });
         JMenuItem fileNewBMech=new JMenuItem("Behavior Mechanism", KeyEvent.VK_M);
         JMenuItem fileNewBDef=new JMenuItem("Behavior Definition", KeyEvent.VK_D);
+        fileNew.add(fileNewObject);
 
         //   [O]pen
         JMenuItem fileOpen=new JMenuItem(new ViewObject());
