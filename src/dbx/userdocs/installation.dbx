@@ -42,27 +42,27 @@
 			<itemizedlist>
 				<listitem>
 					<para>
-						<emphasis>Sun's Java Software Development Kit, v1.4.</emphasis>  Whether you are installing a binary or source distribution, you must have the J2SDK v1.4 or above. It should be installed on the machine you intend to use as the Fedora server.  You can download it at http://java.sun.com/</para>
+						<emphasis>Sun's Java Software Development Kit, v1.4.</emphasis>  Whether you are installing a binary or source distribution, you must have the J2SDK v1.4 or above. It should be installed on the machine you intend to use as the Fedora server.  You can download it at <ulink url="http://java.sun.com/">http://java.sun.com/</ulink></para>
 				</listitem>
 			</itemizedlist>
 			<para>Optional:</para>
 			<itemizedlist>
 				<listitem>
 					<para>
-						<emphasis>MySQL, v3.2.3., MySQL 4.x, or Oracle 9i</emphasis>  
+						<emphasis>MySQL, v3.23.x, MySQL 4.x, or Oracle 9i</emphasis>  
 						The Fedora server is backed in part by a relational database.  
 						If you decide not to use the included pure java database, McKoi v0.94 
 						(more about that later), you should download and install 
 						one of the known, working databases for your platform 
 						(or see the "Other Databases" section below).  
-						You can download MySQL at http://www.mysql.com/.  
+						You can download MySQL at <ulink url="http://www.mysql.com/">http://www.mysql.com/</ulink>.  (Please note that MySQL v3.23.56 will not work with Fedora in a Windows implementation.  For more information please see <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/PoolWasntFoundMessage">http://www.fedora.info/wiki/bin/view/Fedora/PoolWasntFoundMessage</ulink>)
 						</para>
 				</listitem>
 			</itemizedlist>
 		</section>
 		<section>
 			<title>Download Fedora</title>
-			<para>The latest version of the software can always be found at http://www.fedora.info/release/</para>
+			<para>The latest version of the software can always be found at <ulink url="http://www.fedora.info/release/">http://www.fedora.info/release/</ulink></para>
 			<para>	There are multiple distribution packages in a release.  The server binaries, the client binaries, and the entire source code.  Each of these packages is distributed in .tar.gz (for Unix) and .zip (for Windows) archives.</para>
 		</section>
 		<section>
@@ -214,7 +214,8 @@
 					</listitem>
 				</itemizedlist>
 				<para>Note: This command resolves to a batch file (mysql-config.bat) in Windows, and a shell script (mysql-config.sh) in Unix.  These reside in the server's bin directory.</para>
-				<para><emphasis>Important:</emphasis> Fedora comes installed with a JDBC driver that works with MySQL v3.2.3. 
+				<para>
+					<emphasis>Important:</emphasis> Fedora comes installed with a JDBC driver that works with MySQL v3.23.x. 
 				If you wish to use MySQL 4.*, you must replace that driver.  Detailed instructions
 				can be found <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/MySQLVersion4">on this page of the Fedora wiki</ulink>.
 				</para>
@@ -242,7 +243,7 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 				<para>When you start fedora, be sure to use the parameter "oracle", as in
 				<emphasis>fedora-start oracle</emphasis>.  Starting the server is more
 				fully explained later.</para>
-</section>
+			</section>
 			<section>
 				<title>Other Databases</title>
 				<para>If you want to use a different database, it's an option, but it will take some extra work.  Here's how it can be done:</para>
@@ -275,7 +276,8 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 			</section>
 			<section>
 				<title>Important Parameters</title>
-				<para>You will probably want to change the values of the following parameters for you own installation.  Items in <emphasis role="bold">bold</emphasis> <emphasis>must</emphasis> be changed prior to running the server for the first time.  Other items may require changes depending on your environment.  
+				<para>You will probably want to change the values of the following parameters for you own installation.  Items in <emphasis role="bold">bold</emphasis>
+					<emphasis>must</emphasis> be changed prior to running the server for the first time.  Other items may require changes depending on your environment.  
 				For instance, object_store_base should be changed if you're running the server in Unix, as the default value is windows-specific.  All configurable items are described in detail in the fedora.fcfg file.</para>
 				<variablelist>
 					<varlistentry>
@@ -309,7 +311,9 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 						</listitem>
 					</varlistentry>
 					<varlistentry>
-						<term><emphasis role="bold">fedoraServerHost</emphasis></term>
+						<term>
+							<emphasis role="bold">fedoraServerHost</emphasis>
+						</term>
 						<listitem>
 							<para>The <emphasis>fully qualified</emphasis> host name of the machine on which Fedora runs.  If the machine has aliases, use the alias that will be used by people connecting to the server (be it via a web browser or one of the SOAP API exposures).</para>
 							<para>Since you will be changing this value before running Fedora for the first time, you must also change the hostname (and possibly the port) in the URLs inside the demo objects, if you want to use them.
@@ -317,7 +321,9 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 						</listitem>
 					</varlistentry>
 					<varlistentry>
-						<term><emphasis role="bold">DOManager/pidNamespace</emphasis></term>
+						<term>
+							<emphasis role="bold">DOManager/pidNamespace</emphasis>
+						</term>
 						<listitem>
 							<para>This is the namespace id part of newly generated PIDs for objects.  This should be a short string consisting of the characters [a-z][0-9].  When objects are first ingested or created in the repository, this will be the first part of the identifier used for them.  (Note: the pid namespace won’t be used for objects that are ingested with a “demo:” pid)</para>
 						</listitem>
@@ -329,7 +335,9 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 						</listitem>
 					</varlistentry>
 					<varlistentry>
-						<term><emphasis role="bold">Management/allowHosts</emphasis></term>
+						<term>
+							<emphasis role="bold">Management/allowHosts</emphasis>
+						</term>
 						<listitem>
 							<para>A comma-separated list of IP ranges (for example, “200.200.0.0-255.255.0.0,100.0.0.0-180.0.0.0”) that the client’s address is compared to for Management API access.  If this is specified, the remote address must match for any Management request in order to be accepted.  If this is not specified, all requests will be accepted unless the remote address matches a deny pattern (see below).
 							<emphasis>Important: </emphasis> The fedora.fcfg file that comes with Fedora allows access to 127.0.0.1 (this is the loopback IP, meaning that the only host that can connect for write operations is the server).
@@ -374,7 +382,9 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 						</listitem>
 					</varlistentry>
 					<varlistentry>
-						<term><emphasis role="bold">OAIProvider/repositoryDomainName</emphasis></term>
+						<term>
+							<emphasis role="bold">OAIProvider/repositoryDomainName</emphasis>
+						</term>
 						<listitem>
 							<para>This will be used in conjunction with the pidNamespace to uniquely identify the items in your repository to OAI harvesters.  The default value is example.org, but you'll want to change it to the domain name where the repository is hosted.</para>
 						</listitem>
