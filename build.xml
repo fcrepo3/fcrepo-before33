@@ -47,6 +47,15 @@
             <pathelement location="${lib.jai_codec}"/>
             <pathelement location="${lib.jai_core}"/>
             <pathelement location="${lib.md5}"/>
+            
+            <pathelement location="${lib.jena}"/>
+            <pathelement location="${lib.kowari-driver}"/>
+            <pathelement location="${lib.activation}"/>
+            <pathelement location="${lib.castor}"/>
+            <pathelement location="${lib.lucene}"/>
+            <pathelement location="${lib.log4j}"/>
+            <pathelement location="${lib.oro}"/>
+            <pathelement location="${lib.trove}"/>
         </path>
         <map from="${lib.dir}${file.separator}" to=""/>
     </pathconvert>
@@ -90,7 +99,9 @@
         <pathelement location="${lib.commons-logging}"/>
         <pathelement location="${lib.cos}"/>
         <pathelement location="${lib.jaxrpc}"/>
+        <pathelement location="${lib.jena}"/>
         <pathelement location="${lib.junit}"/>
+        <pathelement location="${lib.kowari-driver}"/>
         <pathelement location="${lib.md5}"/>
         <pathelement location="${lib.saxon}"/>
         <pathelement location="${lib.servlet}"/>
@@ -1196,6 +1207,7 @@
 				<exclude name="**/FedoraAPIMBindingSOAPHTTPImpl.java"/>
 				<exclude name="**/FedoraAPIMServiceLocator.java"/>
 			</fileset>
+            <fileset dir="src/properties/server"/>     
 		</copy>
 	</target>
 	<target name="clean" description="Clean up all targets and temp files">
