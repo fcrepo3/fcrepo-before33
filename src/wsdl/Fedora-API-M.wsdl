@@ -482,8 +482,8 @@
 			<documentation>Creates a new digital object in the repository, given the 
       data in the provided XML document, and a format indentifier for the XML document format.  
       The valid formats are currently: "foxml1.0" and "metslikefedora1".  The object's initial 
-      state will be A (active).   If the XML document does not specify a pid in the 
-      OBJID attribute of the  root element, the repository will generate and return a new pid 
+      state will be A (active).   If the XML document does not specify the
+      OBJID attribute of the root element, the repository will generate and return a new pid 
       for the object resulting from this request.  That pid will have the namespace of 
       the repository.  If the XML document specifies a pid, it will be assigned 
       to the digital object provided that 1) it conforms to the Fedora pid 

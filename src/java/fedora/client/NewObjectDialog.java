@@ -185,7 +185,9 @@ public class NewObjectDialog
 	              xml.append("           xmlns:xlink=\"http://www.w3.org/TR/xlink\"\n");
 	              xml.append("           xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
 	              xml.append("           TYPE=\"FedoraObject\"\n");
-	              xml.append("           OBJID=\"" + StreamUtility.enc(pid) + "\"\n");
+	              if (!pid.equals("")) {
+	                  xml.append("           OBJID=\"" + StreamUtility.enc(pid) + "\"\n");
+                  }
 	              xml.append("           LABEL=\"" + StreamUtility.enc(label) + "\"\n");
 	              xml.append("           PROFILE=\"" + StreamUtility.enc(cModel) + "\">\n");
 	              xml.append("</METS:mets>");
