@@ -1,12 +1,9 @@
 package fedora.server;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URL;
-import java.net.HttpURLConnection;
+import java.util.Properties;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,24 +11,14 @@ import javax.servlet.ServletException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import fedora.common.HttpClient;
-import org.apache.commons.httpclient.Header;
-//import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
-
 import fedora.common.Constants;
-import fedora.server.errors.HttpServiceNotFoundException;
-import fedora.server.errors.InitializationException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerInitializationException;
-import fedora.server.errors.StreamIOException;
-import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.storage.types.Property;
+import fedora.server.utilities.ServerUtility;
 import fedora.server.Server;
 
 /**
@@ -147,156 +134,92 @@ public class ServerController
     }
 
     /*
-    public static GetMethod doGetMethod(String url, String username, String password,
-    		HttpClient client, int millisecondsWait, int redirectDepth) throws Exception {
-    	System.err.println("doing get for " + url + "for " + username + " (" + password );
-	  	GetMethod get = null;
-	  	try {
-	  		client.setConnectionTimeout(millisecondsWait);
-	  		client.getState().setCredentials(null, null, new UsernamePasswordCredentials(username, password));
-	  		client.getState().setAuthenticationPreemptive(true);
-	  		System.err.println("in getExternalContent(), after setup");
-	  		int resultCode = -1;
-	  		for (int loops = 0; (url != null) && (loops < redirectDepth); loops++) {
-	  			System.err.println("in getExternalContent(), new loop, url=" + url);
-	  			get = new GetMethod(url);
-	  			url = null;
-	  			System.err.println("in getExternalContent(), got GetMethod object=" + get);
-	  			get.setDoAuthentication(true);
-	  			get.setFollowRedirects(true);
-	  			resultCode=client.executeMethod(get);
-	  			if (300 <= resultCode && resultCode <= 399) {
-	  				url=get.getResponseHeader("Location").getValue();
-	  				System.err.println("in getExternalContent(), got redirect, new url=" + url);
-	  			}
-	  		}
-	  	} catch (Throwable th) {
-	  		if (get != null) {
-	  			get.releaseConnection();
-	  		}
-	  		System.err.println("x " + th.getMessage());
-	  		if (th.getCause() != null) {
-		  		System.err.println("x " + th.getCause().getMessage());	  			
-	  		}
-	  		throw new Exception("failed connection");
-	    }
-	  	return get;
-    }
-    
-    public static String getLineResponse(String url, String username, String password) {
-    	String textResponse = "";
-    	GetMethod getMethod = null;
-        try {
-        	HttpClient httpClient = new HttpClient(new MultiThreadedHttpConnectionManager());
-        	getMethod = doGetMethod(url, username, password, httpClient, 20000, 25);
-            if (getMethod.getStatusCode() != 200) {
-            	textResponse = "ERROR: Request to control servlet failed, response code was " + getMethod.getStatusCode();
-            } else {
-                BufferedReader in = new BufferedReader(new InputStreamReader(getMethod.getResponseBodyAsStream()));
-                textResponse = in.readLine();
-                if (textResponse == null) {
-                	textResponse = "ERROR: control servlet response was empty.";
-                }            	
-            }
-        } catch (Exception e) {
-        	textResponse =  "ERROR: can't connect to control servlet.";
-	  		System.err.println("y " + e.getMessage());
-	  		if (e.getCause() != null) {
-		  		System.err.println("y " + e.getCause().getMessage());	  			
-	  		}
-        } finally {
-  			if (getMethod != null) {
-  				getMethod.releaseConnection();
-  			}
-        }
-        return textResponse;
-    }
- */
-
-    public static void main(String[] args) {
-    	/*
+    public static final String FEDORA_SERVER_HOST = "fedoraServerHost";
+    public static final String FEDORA_SERVER_PORT = "fedoraServerPort";
+    public static final String FEDORA_REDIRECT_PORT = "fedoraRedirectPort";
+    public static final String ADMIN_USER = "adminUser";
+    public static final String ADMIN_PASSWORD = "adminPassword";
+    public static final Properties getServerProperties(String protocol) 
+    	throws Exception {
+       	Properties properties = new Properties();    	
         String fedoraHome=System.getProperty("fedora.home");
         if (fedoraHome==null) {
-            System.err.println("ERROR: fedora.home system property not set.");
-            System.exit(1);
+        	throw new Exception("ERROR: fedora.home system property not set.");            	
+        }        	
+        File fedoraHomeDir=new File(fedoraHome);
+        File fcfgFile=new File(fedoraHomeDir, "server/config/fedora.fcfg");
+        DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder=factory.newDocumentBuilder();
+        Element rootElement=builder.parse(fcfgFile).getDocumentElement();
+        NodeList params=rootElement.getElementsByTagName("param");
+        for (int i=0; i<params.getLength(); i++) {
+            Node nameNode=params.item(i).getAttributes().getNamedItem("name");
+            Node valueNode=params.item(i).getAttributes().getNamedItem("value");
+    		if (("http".equals(protocol) && FEDORA_SERVER_PORT.equals(nameNode.getNodeValue()))
+            ||  ("https".equals(protocol) && FEDORA_REDIRECT_PORT.equals(nameNode.getNodeValue()))
+            ||  FEDORA_SERVER_HOST.equals(nameNode.getNodeValue())
+            ||  ADMIN_USER.equals(nameNode.getNodeValue())
+            ||  ADMIN_PASSWORD.equals(nameNode.getNodeValue())) {
+        		properties.put(nameNode.getNodeValue(),valueNode.getNodeValue());            			
+    		}
         }
-        */
-        if (args.length < 1) {
-            System.err.println("ERROR: Need one argument: 'startup', 'shutdown', or 'status'");
-            System.exit(1);
+        if ((! properties.containsKey(FEDORA_SERVER_HOST))) {
+        	throw new Exception("fedora.fcfg missing " + "http host");            	
+        }                
+        if ((! properties.containsKey(FEDORA_SERVER_PORT)) 
+        &&  (! properties.containsKey(FEDORA_REDIRECT_PORT))) {
+        	throw new Exception("fedora.fcfg missing " + "http port");            	
         }
-        String action = args[0];
-        /*        
-        String protocol = args.length > 1 ? args[1] : "http"; //fixup for xacml
-        String host = args.length > 2 ? args[2] : "localhost";
-        String port = args.length > 3 ? args[3] : null;        
-        String username = args.length > 4 ? args[4] : null;        
-        String password = args.length > 5 ? args[5] : null; //fixup for xacml        
-        try {
-            File fedoraHomeDir=new File(fedoraHome);
-            File fcfgFile=new File(fedoraHomeDir, "server/config/fedora.fcfg");
-            DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder=factory.newDocumentBuilder();
-            Element rootElement=builder.parse(fcfgFile).getDocumentElement();
-            NodeList params=rootElement.getElementsByTagName("param");
-            for (int i=0; i<params.getLength(); i++) {
-                Node nameNode=params.item(i).getAttributes().getNamedItem("name");
-                Node valueNode=params.item(i).getAttributes().getNamedItem("value");
-            	if (port == null) {
-            		if ("http".equals(protocol)) {
-                		if (nameNode.getNodeValue().equals("fedoraServerPort")) {
-                    		port = valueNode.getNodeValue();
-                    	} else {
-                    		port = "8080";
-                    	}            			
-            		} else if ("https".equals(protocol)) {
-                		if (nameNode.getNodeValue().equals("fedoraRedirectPort")) {
-                    		port = valueNode.getNodeValue();
-                    	} else {
-                    		port = "8443";
-                    	}  
-            		}
-                }
-            	if (username == null) {
-            		if (nameNode.getNodeValue().equals("adminUser")) {
-            			username = valueNode.getNodeValue();
-            		} else {
-            			username = "fedoraAdmin";
-            		}
-            	}
-            	if (password == null) {
-            		if (nameNode.getNodeValue().equals("adminPassword")) {
-            			password = valueNode.getNodeValue();
-            		} else {
-            			password = "fedoraAdmin";
-            		}
-            	}
+        if ((! properties.containsKey(ADMIN_USER))) {
+        	throw new Exception("fedora.fcfg missing " + "admin user");            	
+        }
+        if ((! properties.containsKey(ADMIN_PASSWORD))) {
+        	throw new Exception("fedora.fcfg missing " + "admin passwd");            	
+        }            
+    	return properties;
+    }
+    */
+
+    //private static final String USAGE = "ERROR: Need one argument: 'startup', 'shutdown', or 'status'";
+    private static final String USAGE = "USAGE for ServerController.main(): startup|shutdown|status [http|https] [username] [passwd]";
+    
+    public static void main(String[] args) {
+    	try {
+            if (args.length < 1) {
+            	throw new Exception(USAGE);
             }
-        } catch (Exception e) {
-            System.err.println("ERROR: Cannot determine server port: " + e.getMessage());
-        }
-        */
-        if (! "startup".equals(action)
-        &&  ! "shutdown".equals(action)
-        &&  ! "status".equals(action)) {
-            System.err.println("ERROR: Argument must be: 'startup', 'shutdown', or 'status'");        	
-        } else {
-            //fixup for xacml
-        	/*
-            String url = protocol + "://" + host 
-			+ (((port != null) && ! "".equals(port)) ? (":" + port) : "") 
-			+ "/fedora/management/control?action=" + action;
-            String response = getLineResponse(url, username, password);
-            */
+            String action = args[0];
+            if (! "startup".equals(action)
+            &&  ! "shutdown".equals(action)
+            &&  ! "status".equals(action)) {
+            	throw new Exception(USAGE);
+            }
+            String protocol = args.length > 1 ? args[1] : "http";        
+            if (! "http".equals(protocol) && ! "https".equals(protocol)) {
+            	throw new Exception(USAGE);
+            }
+            String optionalUsername = null;
+            String optionalPassword = null;            
+            if (args.length > 2) {
+            	if (args.length == 3) {
+                	throw new Exception(USAGE);
+            	}
+            	optionalUsername = args[2];
+            	optionalPassword = args[3];
+            }
+            Properties serverProperties = ServerUtility.getServerProperties(protocol);            
         	String response = HttpClient.getLineResponse(
-        			args.length > 1 ? args[1] : null,
-          			args.length > 2 ? args[2] : null,
-          			args.length > 3 ? args[3] : null,
-                    args.length > 4 ? args[4] : null,
-                    args.length > 5 ? args[5] : null,
+        			protocol,
+          			serverProperties.getProperty(ServerUtility.FEDORA_SERVER_HOST),
+          			serverProperties.getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT),								
+          			(optionalUsername == null) ? serverProperties.getProperty(ServerUtility.ADMIN_USER) : optionalUsername,
+          			(optionalPassword == null) ? serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD) : optionalPassword,
                   	"/management/control?action=" + action);        	
             System.out.println(response);        	
-        }
+    	} catch (Exception e) {
+    	    System.err.println(e.getMessage());
+            System.exit(1);
+    	}
     }
 }

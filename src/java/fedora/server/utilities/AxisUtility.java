@@ -6,6 +6,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.util.Date;
+import java.util.Properties;
+
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -110,7 +112,7 @@ public abstract class AxisUtility {
         System.out.println("    AxisUtility deploy wsdd_file timeout_seconds [finished_url] [username] [passwd]");
     }
 
-    public static boolean serverActive(URL url, int timeoutSeconds) {
+    private static boolean serverActive(URL url, int timeoutSeconds) {
         long startms=new Date().getTime();
         long timeoutms=startms+(1000*timeoutSeconds);
         long endms=0;
@@ -140,7 +142,7 @@ public abstract class AxisUtility {
     public static void main(String args[]) {
         if (args.length>0) {
            if (args[0].equals("deploy")) {
-               if ((args.length < 3) || (args.length == 5)) {
+               if (args.length < 3) {
                    showDeployUsage();
                } else {
                    File wsddFile=new File(args[1]);
@@ -149,6 +151,8 @@ public abstract class AxisUtility {
                        showDeployUsage();
                    } else {
                        try {
+                       		Properties serverProperties = ServerUtility.getServerProperties("http");
+                       		/*
                            // figure out port from fedora.fcfg... and use it here
                            String fedoraHome=System.getProperty("fedora.home");
                            if ((fedoraHome==null) || (fedoraHome.equals(""))) {
@@ -169,18 +173,24 @@ public abstract class AxisUtility {
                                    port=valueNode.getNodeValue();
                                }
                            }
-//fixup for xacml
-                           StringBuffer url=new StringBuffer("http://localhost:" + port + "/fedora/AdminService");
+//fixup for xacml  */
+
+                       	   StringBuffer url=new StringBuffer("http://localhost:" 
+                       	   		+ serverProperties.getProperty(ServerUtility.FEDORA_SERVER_PORT) 
+								+ "/fedora/AdminService");
                            URL adminUrl=new URL(url.toString());
-                           URL mainUrl=new URL("http://localhost:" + port + "/");
-                           String[] parms = null;
+                           URL mainUrl=new URL("http://localhost:" 
+                           		+ serverProperties.getProperty(ServerUtility.FEDORA_SERVER_PORT) + "/");
+                           //String[] parms = null;
+                           /*
                            if (args.length < 5) {
                            		parms=new String[] {"-l" + adminUrl, wsddFile.toString()};
-                           } else { // != 5 from conditional above
-                           		parms=new String[] {"-l" + adminUrl, wsddFile.toString(), 
-                               		"-u" + args[4], "-w" + args[5]}; 
+                           } else { // != 5 from conditional above */
+                           String[] parms=new String[] {"-l" + adminUrl, wsddFile.toString(), 
+                               		"-u" + serverProperties.getProperty(ServerUtility.ADMIN_USER), 
+									"-w" + serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD)}; 
                            	
-                           }
+                           //}
                            //http://ws.apache.org/axis/java/install.html#RunTheAdminClient
                            int timeoutSeconds=Integer.parseInt(args[2]);
                            if (serverActive(mainUrl, timeoutSeconds)) {
@@ -188,7 +198,7 @@ public abstract class AxisUtility {
                                for (int i=0; i<args.length; i++) {
                                	System.err.println("audit parms " + args[i]);
                                }
-                               if ((args.length > 3) && (args[3] != null) && ! "".equals(args[3])) {
+                               if ((3 < args.length) && (args[3] != null) && ! "".equals(args[3])) {
                                    try {
                                        serverActive(new URL(args[3]), 2);
                                    } catch (MalformedURLException murle) {
