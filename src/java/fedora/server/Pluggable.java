@@ -65,6 +65,8 @@ public abstract class Pluggable
      * but is more intended as an overall explanation or an explanation of
      * those parameters whose names might be dynamic.
      */
-    public abstract String getHelp();
+    public String getHelp() {
+        return "";
+    }
 
 }
