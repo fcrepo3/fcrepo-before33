@@ -162,7 +162,8 @@ public class ObjectInfoAsXML
             if (i != 0) out.append("</bdef>");
             out.append("<bdef pid=\"" + methods[i].bDefPID + "\" >");
           }
-          out.append("<method name=\"" + methods[i].methodName + "\" >");
+		  String versDate = DateUtility.convertDateToString(methods[i].asOfDate);
+          out.append("<method name=\"" + methods[i].methodName + "\" asOfDateTime=\"" + versDate + "\" >");
           MethodParmDef[] methodParms = methods[i].methodParmDefs;
           for (int j=0; j<methodParms.length; j++)
           {
