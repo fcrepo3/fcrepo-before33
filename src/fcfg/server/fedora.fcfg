@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server xmlns="http://www.fedora.info/definitions/1/0/config/" xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" class="fedora.server.BasicServer">
+	<param name="repositoryName" value="Fedora Repository 1"/>
+	<comment>Defines a human readable name for the Fedora server; default is Fedora Repository.</comment>
+	<param name="adminEmailList" value="bob@somewhere.com sally@somewhere.com"/>
+	<comment>Defines one or more email addresses for server administrators; list is space delimited.</comment>
 	<param name="adminPassword" value="fedoraAdmin"/>
 	<comment>Defines the password for the Fedora server; default is fedoraAdmin.</comment>
 	<param name="log_max_size" value="5242880"/>
