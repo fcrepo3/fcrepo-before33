@@ -20,6 +20,7 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.ConnectionPool;
+import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -445,6 +446,13 @@ public class FieldSearchResultSQLImpl
                 }
                 for (int i2=0; i2<disses.length; i2++) {
                     f.bDefs().add(disses[i2].bDefID);
+                }
+                // also, if the object is a bMech, add the bDefs
+                // it implements!
+                if (r.getFedoraObjectType().equals("M")) {
+                    BMechReader mechReader=m_repoReader.getBMechReader(
+                            s_nonCachedContext, pid);
+                    f.bDefs().add(mechReader.getServiceDSInputSpec(null).bDefPID);
                 }
             }
             if (n.equals("bMech")) {
