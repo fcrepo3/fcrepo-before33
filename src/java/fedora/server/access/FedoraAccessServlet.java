@@ -21,10 +21,12 @@ import java.util.regex.Pattern;
 //import java.util.Vector;
 
 import fedora.server.access.localservices.HttpService;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
+import fedora.server.errors.ServerException;
 //import fedora.server.errors.MethodParmNotFoundException;
 import fedora.server.Server;
 //import fedora.server.storage.DefinitiveBMechReader;
@@ -245,7 +247,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         // FIXME!! Decide on exception handling
         } catch (Exception e)
         {
-          System.out.println(e.getMessage());
+          System.err.println(e.getMessage());
         }
       } else if (action.equals(GET_BEHAVIOR_DEFINITIONS))
       {
@@ -547,10 +549,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       FastDOReader fastReader = new FastDOReader(PID);
       Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
       return fastReader.GetBehaviorDefs(versDateTime);
-    } catch (ObjectNotFoundException onfe)
+    } catch (Exception e)
     {
       // FIXME!! - need to decide on exception handling
-      System.out.println("GetBehaviorDefinitions: Object Not Found");
+      System.err.println("GetBehaviorDefinitions: Object Not Found");
+      System.err.println("GetBehaviorDefinitions: "+e.getMessage());
       return null;
     }
   }
@@ -576,12 +579,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     {
       FastDOReader fastReader = new FastDOReader(PID);
       methodDefs = fastReader.GetBMechMethods(bDefPID, versDateTime);
-    } catch (ObjectNotFoundException onfe)
+    } catch (Exception e)
     {
       // FIXME!! - need to decide on exception handling
-      System.out.println("GetBehaviorMethods: Object Not Found");
-      System.out.println(onfe.getMessage());
-      System.out.flush();
+      System.err.println("GetBehaviorMethods: Object Not Found");
+      System.err.println(e.getMessage());
       return null;
     }
     return methodDefs;
@@ -614,15 +616,16 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       {
         baos.write(byteStream);
       }
-    } catch (IOException ioe)
-    {
-      System.out.println(ioe);
-      System.out.println("GetBehaviorMethodsAsWSDL: Object Not Found");
-      this.getServletContext().log(ioe.getMessage(), ioe.getCause());
+    //} catch (IOException ioe)
+    //{
+    //  System.err.println(ioe);
+    //  System.err.println("GetBehaviorMethodsAsWSDL: Object Not Found");
+    //  this.getServletContext().log(ioe.getMessage(), ioe.getCause());
     } catch (Exception e)
     {
       // FIXME!! - need to decide on exception handling
-      System.out.println("GetBehaviorMethodsAsWSDL: Object Not Found");
+      System.err.println("GetBehaviorMethodsAsWSDL: Object Not Found");
+      System.err.println("GetBehaviorMethodsAsWSDL: "+e.getMessage());
       return null;
     }
     methodDefs = new MIMETypedStream(CONTENT_TYPE_XML,baos.toByteArray());
@@ -783,12 +786,13 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
          System.out.println("Unknown protocol type: "+protocolType);
          dissemination = null;
        }
-     } catch (ObjectNotFoundException onfe)
+     } catch (Exception e)
      {
        // FIXME!! Decide on Exception handling
        // Object was not found in SQL database or in XML storage area
        System.out.println("GetDissemination: Object Not Found");
-       this.getServletContext().log(onfe.getMessage(), onfe.getCause());
+       System.err.println("GetDissemination: "+e.getMessage());
+       //this.getServletContext().log(onfe.getMessage(), onfe.getCause());
        return null;
      }
      return dissemination;
@@ -811,11 +815,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     {
       fastReader = new FastDOReader(PID);
       objMethDefArray = fastReader.getObjectMethods(PID, versDateTime);
-    } catch (ObjectNotFoundException onfe)
+    } catch (Exception e)
     {
       // FIXME!! Decide on Exception handling
-      System.out.println(onfe.getMessage());
-      this.getServletContext().log(onfe.getMessage(), onfe.getCause());
+      System.out.println(e.getMessage());
+      //this.getServletContext().log(onfe.getMessage(), onfe.getCause());
     }
     return objMethDefArray;
   }
@@ -1286,14 +1290,16 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       methodParms = fdor.GetBMechMethodParm(bDefPID, methodName, versDateTime);
 
       // FIXME!! Decide on Exception handling
-    } catch(MethodNotFoundException mpnfe)
+    //} catch(MethodNotFoundException mpnfe)
+    } catch (Exception e)
     {
-      System.out.println(mpnfe.getMessage());
-      this.getServletContext().log(mpnfe.getMessage(), mpnfe.getCause());
-    } catch (ObjectNotFoundException onfe)
-    {
-      System.out.println(onfe.getMessage());
-      this.getServletContext().log(onfe.getMessage(), onfe.getCause());
+      //System.out.println(mpnfe.getMessage());
+      System.err.println(e.getMessage());
+      //this.getServletContext().log(mpnfe.getMessage(), mpnfe.getCause());
+    //} catch (ObjectNotFoundException onfe)
+    //{
+    //  System.out.println(onfe.getMessage());
+    //  this.getServletContext().log(onfe.getMessage(), onfe.getCause());
     }
 
     // Put valid method parameters and their attributes into hashtable
