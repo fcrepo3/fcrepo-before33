@@ -1,11 +1,14 @@
 /**
- *	All image manipulations are handled by ImageJ, a Java API written for image
- *	processing:
+ * Image manipulations are handled by ImageJ, a Java API written for image
+ * processing.
+ *
+ * Image encoding and decoding is handled by JAI, the Java Advanced Imaging
+ * API, with the exception of GIF encoding, which is handled by ImageJ.
+ *
+ *  ImageJ Information:
  *
  *  Rasband, W.S., ImageJ, National Institutes of Health, Bethesda,
  *  Maryland, USA, http://rsb.info.nih.gov/ij/, 1997-2003.
- *
- *
  *
  *	The GifEncoder portion of ImageJ is copyrighted below:
  *
@@ -36,6 +39,7 @@
  *
  *  Visit the ACME Labs Java page for up-to-date versions of this and other
  *  fine Java utilities: http://www.acme.com/java/
+ *
  */
  
 package fedora.localservices.imagemanip;
@@ -44,11 +48,26 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 
+import javax.media.jai.JAI;
+import javax.media.jai.RenderedOp;
+import com.sun.media.jai.codec.FileSeekableStream;
+import com.sun.media.jai.codec.MemoryCacheSeekableStream;
+import com.sun.media.jai.codec.BMPEncodeParam;
+import com.sun.media.jai.codec.ImageEncodeParam;
+import com.sun.media.jai.codec.ImageCodec;
+import com.sun.media.jai.codec.ImageEncoder;
+import com.sun.media.jai.codec.JPEGEncodeParam;
+import com.sun.media.jai.codec.PNGEncodeParam;
+import com.sun.media.jai.codec.TIFFEncodeParam;
+
 import ij.*;
 import ij.io.*;
 import ij.process.*;
 import java.awt.*;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
  *	ImageManipulation is a Java servlet that takes a URL of an image as a param
@@ -63,16 +82,10 @@ import java.awt.*;
  */
 public class ImageManipulation extends HttpServlet {
 
-	// set extensions that are supported for writing back images, see outputImg()
-	private String ext= "gif|jpg|jpeg";
-
-	// set extensions that are supported for opening and converting to above formats
-	private String convertFromExt= "gif|jpg|jpeg|tif|tiff";
-
-	private int jpgQuality= 90;
-	private String imgName= "";
-	private String imgExt= "";
-
+    private String inputMimeType;
+    private boolean alreadyConvertedToRGB=false;
+    private MultiThreadedHttpConnectionManager cManager=
+            new MultiThreadedHttpConnectionManager();
 
 	/**
 	 *	Method automatically called by browser to handle image manipulations.
@@ -82,7 +95,8 @@ public class ImageManipulation extends HttpServlet {
 	 *	@throws	IOException	If an input or output exception occurred
 	 *					ServletException	If a servlet exception occurred
 	 */
-	public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+	public void doGet(HttpServletRequest req, HttpServletResponse res) 
+            throws ServletException, IOException {
 
 		// collect all possible parameters for servlet
 		String url= req.getParameter("url");
@@ -96,138 +110,149 @@ public class ImageManipulation extends HttpServlet {
 		String cropWidth= req.getParameter("cropWidth");
 		String cropHeight= req.getParameter("cropHeight");
 		String convertTo= req.getParameter("convertTo");
-
-		// if there is a valid URL specifying an image with a valid extension
-		if (checkImg(url,convertTo)) {
-
-			// tell browser what type of image is being sent back
-			res.setContentType("image/" + imgExt.toLowerCase());
-
-			ServletOutputStream out= res.getOutputStream();
-			BufferedOutputStream bout= new BufferedOutputStream(out);
-
-			Opener o= new Opener();
-
-			// some URLs may timeout, so see following web site for possible fixes:
-			// http://forum.java.sun.com/thread.jsp?thread=327305&forum=4&message=1332329
-			ImagePlus imp= o.openURL(url);
-
-			// if the image was able to be opened
-			if (imp != null) {
-				ImageProcessor ip= imp.getProcessor();
-
-				// causes scale() and resize() to do bilinear interpolation
-				ip.setInterpolate(true);
-
-				// if an operation was specified in the URL, call its respective function
-				if (op != null) {
-					if (op.equals("resize")) ip= resize(ip,newWidth);
-					else if (op.equals("zoom")) ip= zoom(ip, zoomAmt);
-					else if (op.equals("brightness")) ip= brightness(ip, brightAmt);
-					else if (op.equals("watermark")) ip= watermark(ip,wmText);
-					else if (op.equals("grayscale")) ip= grayscale(ip);
-					else if (op.equals("crop")) ip= crop(ip,cropX,cropY,cropWidth,cropHeight);
-				}
-
-				// otherwise if we are converting an image to a GIF, we need to
-				// reduce the colors in the original image to 256 to fit the GIF format
-				else if (imgExt.equals("gif") && convertTo != null) {
-					ip= ip.convertToRGB();
-					ip= reduceColors(ip,256);
-				}
-
-				outputImg(ip,bout);
-			}
-
-			bout.close();
-			out.close();
-		}
+        if (convertTo!=null) convertTo=convertTo.toLowerCase();
+        try {
+            if (op==null) throw new ServletException("op parameter not specified.");
+            String outputMimeType;
+            // get the image via url and put it into the ImagePlus processor.
+            ImageProcessor ip=new ImagePlus("temp", getImage(url)).getProcessor();
+            // if the inputMimeType is image/gif, need to convert to RGB in any case
+            if (inputMimeType.equals("image/gif")) {
+                ip=ip.convertToRGB();
+                alreadyConvertedToRGB=true;
+            }
+            // causes scale() and resize() to do bilinear interpolation
+    		ip.setInterpolate(true);
+            if (!op.equals("convert")) {
+                if (op.equals("resize")) ip=resize(ip,newWidth);
+                else if (op.equals("zoom")) ip=zoom(ip, zoomAmt);
+                else if (op.equals("brightness")) ip=brightness(ip, brightAmt);
+                else if (op.equals("watermark")) ip=watermark(ip,wmText);
+                else if (op.equals("grayscale")) ip=grayscale(ip);
+                else if (op.equals("crop")) ip=crop(ip,cropX,cropY,cropWidth,cropHeight);
+                else {
+                    throw new ServletException("Invalid operation: " + op);
+                }
+                outputMimeType=inputMimeType;
+            } else {
+                if (convertTo==null) {
+                    throw new ServletException("Neither op nor convertTo was specified.");
+                }
+                if (convertTo.equals("jpg") || convertTo.equals("jpeg")) {
+                    outputMimeType="image/jpeg";
+                } else if (convertTo.equals("gif")) {
+                    outputMimeType="image/gif";
+                } else if (convertTo.equals("tiff")) {
+                    outputMimeType="image/tiff";
+                } else if (convertTo.equals("bmp")) {
+                    outputMimeType="image/bmp";
+                } else if (convertTo.equals("png")) {
+                    outputMimeType="image/png";
+                } else {
+                    throw new ServletException("Invalid format: " + convertTo);
+                }
+            }
+            res.setContentType(outputMimeType);
+            BufferedOutputStream out=new BufferedOutputStream(res.getOutputStream());
+            outputImage(ip, out, outputMimeType);
+            out.flush(); out.close();
+        } catch (Exception e) {
+            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
 	}
 
-
-	/**
-	 *	Verifies that a given URL and convertTo format are valid, with valid
-	 *	extensions matching the ones defined at the top of the class.
-	 *
-	 *	@param	url The URL to validate
-	 *					convertTo The extension to convert the image to
-	 *	@return Boolean depending on if the URL and convertTo validate
-	 */
-	private boolean checkImg(String url, String convertTo) {
-		boolean img= false;
-
-		if (url != null) {
-
-			// see if there is an image name given
-			int nIndex= url.lastIndexOf("/");
-			if (nIndex > 0)
-				imgName= url.substring(nIndex+1);
-
-			if (!imgName.equals("")) {
-
-				// get extension to image name
-				int eIndex= imgName.lastIndexOf(".");
-				if (eIndex > 0) {
-					imgExt= imgName.substring(eIndex+1);
-
-					if (convertTo != null) {
-						// if the extension is valid and the convertTo format is valid
-						if (ext.indexOf(convertTo.toLowerCase()) > -1 && convertFromExt.indexOf(imgExt.toLowerCase()) > -1) {
-							img= true;
-							imgExt= convertTo;
-						}
-					}
-
-					// if the extension is valid
-					if (ext.indexOf(imgExt.toLowerCase()) > -1)
-					  img= true;
-				}
-			}
-		}
-
-		return img;
-	}
-
-
-	/**
-	 *	Writes out the image in the correct format.
-	 *
-	 *	@param	ip The image to write out
-	 *					bout The buffered stream to write the image to
-	 */
-	private void outputImg(ImageProcessor ip, BufferedOutputStream bout) throws IOException {
-		if (imgExt.equals("jpg") || imgExt.equals("jpeg")) {
-			JpegEncoder je= new JpegEncoder(ip.createImage(), jpgQuality, bout);
-			je.WriteHeaders(bout);
-			je.WriteCompressedData(bout);
-			je.WriteEOI(bout);
-		}
-
-		else if (imgExt.equals("gif")) {
-			ImagePlus imp= new ImagePlus("temp",ip);
-			FileInfo fi= imp.getFileInfo();
-			byte pixels[]= (byte[])imp.getProcessor().getPixels();
-			GifEncoder ge= new GifEncoder(fi.width,fi.height,pixels,fi.reds,fi.greens,fi.blues);
-			ge.write(bout);
-		}
-	}
-
-
-	/**
-	 *	Reduces the amount of colors in a RGB image to a supplied number
-	 *
-	 *	@param	ip The image to reduce colors in
-	 *					numColors Reduce the number of colors in an image to this amount
-	 *	@return The image with reduced colors
-	 */
-	private ImageProcessor reduceColors(ImageProcessor ip, int numColors) {
-		MedianCut mc= new MedianCut((int[])ip.getPixels(), ip.getWidth(), ip.getHeight());
-		ip= mc.convertToByte(numColors);
-
-		return ip;
-	}
-
-
+    /**
+     * Gets and deserializes the image at the given URL into an Image object.
+     *
+     * This method also sets the inputMimeType based on the HTTP Content-Type
+     * header so that, if the image needs to be returned in it's original
+     * format, the correct mime type can be sent in the response header.
+     *
+     * If the input image is not a gif, jpg, tiff, bmp, or png (according to
+     * the http response header), or some other kind of error occurs while
+     * reading the stream from the remote host, a ServletException is
+     * thrown.
+     *
+     * @param url The location of the input image.
+     * @return Image The image object, if successful.
+     * @throws Exception If any of the aforementioned problems occurs.
+     */
+    private Image getImage(String url) 
+            throws Exception {
+        GetMethod get=null;
+        try {
+            HttpClient client=new HttpClient(cManager);
+            client.setConnectionTimeout(20000); // wait 20 seconds max
+            get=new GetMethod(url);
+            get.setFollowRedirects(true);
+            int resultCode=client.executeMethod(get);
+            if (resultCode!=200) {
+                throw new ServletException("Could not load image: " + url 
+                        + ".  Errorcode " + resultCode + " from remote server.");
+            }
+            inputMimeType=get.getResponseHeader("Content-Type").getValue();
+            if ( inputMimeType.equals("image/gif") ||
+                    inputMimeType.equals("image/jpeg") ||
+                    inputMimeType.equals("image/tiff") ||
+                    inputMimeType.equals("image/bmp") ||
+                    inputMimeType.equals("image/x-ms-bmp") ||
+                    inputMimeType.equals("image/x-bitmap") ||
+                    inputMimeType.equals("image/png") ) {
+               if (inputMimeType.endsWith("p"))
+                   inputMimeType="image/bmp"; // windows bitmaps are most
+                                              // commonly supported with this
+                                              // mime type, even though it's not
+                                              // an IANA-registered image type
+               return JAI.create("stream", new MemoryCacheSeekableStream(
+                        get.getResponseBodyAsStream())).getAsBufferedImage();
+            } else {
+                throw new ServletException("Source image was not a gif, png, "
+                        + "bmp, tiff, or jpg.");
+            }
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (get!=null) get.releaseConnection();
+        }
+        
+    }
+    
+    private void outputImage(ImageProcessor ip, OutputStream out, 
+            String outputMimeType)
+            throws Exception {
+        if (outputMimeType.equals("image/gif")) {
+            if (!alreadyConvertedToRGB) {
+                ip=ip.convertToRGB();
+            }
+            MedianCut mc=new MedianCut((int[])ip.getPixels(), ip.getWidth(), ip.getHeight());
+            ip=mc.convertToByte(256);
+            ImagePlus imp=new ImagePlus("temp",ip);
+            FileInfo fi=imp.getFileInfo();
+            byte pixels[]=(byte[])imp.getProcessor().getPixels();
+            GifEncoder ge=new GifEncoder(fi.width,fi.height,pixels,fi.reds,fi.greens,fi.blues);
+            ge.write(out);  
+        } else {
+            ImageEncodeParam param=null;
+            String format=null;
+            if (outputMimeType.equals("image/jpeg")) {
+                param = (ImageEncodeParam) new JPEGEncodeParam();
+                format="JPEG";
+            } else if (outputMimeType.equals("image/tiff")) {
+                param = (ImageEncodeParam) new TIFFEncodeParam();
+                format="TIFF";
+            } else if (outputMimeType.equals("image/bmp")) {
+                param = (ImageEncodeParam) new BMPEncodeParam();
+                format="BMP";
+            } else if (outputMimeType.equals("image/png")) {
+                param = (ImageEncodeParam) new PNGEncodeParam.RGB();
+                format="PNG";
+            }
+            ImageCodec.createImageEncoder(format, out, param).encode(
+                    JAI.create("AWTImage", ip.createImage()));
+        }
+    }
+    
 	/**
 	 *	Resizes an image to the supplied new width in pixels. The height is
 	 *	reduced proportionally to the new width.
@@ -247,17 +272,8 @@ public class ImageManipulation extends HttpServlet {
 				int imgWidth= ip.getWidth();
 				int imgHeight= ip.getHeight();
 
-				// if the image is GIF need to convert it to RGB so colors aren't lost
-				if (imgExt.equals("gif"))
-					ip= ip.convertToRGB();
-
 				ip= ip.resize(width, width*imgHeight/imgWidth);
-
-				// if the image is GIF need to reduce colors down to 256 to write it out
-				if (imgExt.equals("gif"))
-					ip= reduceColors(ip, 256);
-			}
-
+            }
 			// no need to do anything with number format exception since the servlet
 			// returns only images; just return the original image
 			catch (NumberFormatException e) {}
@@ -286,10 +302,6 @@ public class ImageManipulation extends HttpServlet {
 				if (zoom < 0)
 					return ip;
 
-				// if the image is GIF need to convert it to RGB so colors aren't lost
-				if (imgExt.equals("gif"))
-					ip= ip.convertToRGB();
-
 				ip.scale(zoom,zoom);
 
 				// if the image is being zoomed out, trim the extra whitespace around the image
@@ -302,9 +314,6 @@ public class ImageManipulation extends HttpServlet {
 					ip= ip.crop();
 				}
 
-				// if the image is GIF need to reduce colors down to 256 to write it out
-				if (imgExt.equals("gif"))
-					ip= reduceColors(ip, 256);
 			}
 
 			// no need to do anything with number format exception since the servlet
@@ -334,15 +343,8 @@ public class ImageManipulation extends HttpServlet {
 				if (bright < 0)
 					return ip;
 
-				// if the image is GIF need to convert it to RGB so colors aren't lost
-				if (imgExt.equals("gif"))
-					ip= ip.convertToRGB();
-
 				ip.multiply(bright);
 
-				// if the image is GIF need to reduce colors down to 256 to write it out
-				if (imgExt.equals("gif"))
-					ip= reduceColors(ip, 256);
 			}
 
 			// no need to do anything with number format exception since the servlet
@@ -364,10 +366,6 @@ public class ImageManipulation extends HttpServlet {
 	private ImageProcessor watermark(ImageProcessor ip, String watermarkText) {
 		if (watermarkText != null) {
 			try {
-				// if the image is GIF need to convert it to RGB so colors aren't lost
-				if (imgExt.equals("gif"))
-					ip= ip.convertToRGB();
-
 				// set the font size to 3% of the image width or a minimum size of 10
 				int fontSize= ip.getWidth()*3/100;
 				if (fontSize < 10) fontSize= 10;
@@ -388,9 +386,6 @@ public class ImageManipulation extends HttpServlet {
 				ip.setColor(c);
 				ip.drawString(watermarkText, x, y);
 
-				// if the image is GIF need to reduce colors down to 256 to write it out
-				if (imgExt.equals("gif"))
-					ip= reduceColors(ip,256);
 			}
 
 			// no need to do anything with number format exception since the servlet
@@ -409,7 +404,6 @@ public class ImageManipulation extends HttpServlet {
 	 *	@return The image converted to grayscale
 	 */
 	private ImageProcessor grayscale(ImageProcessor ip) {
-		ip= ip.convertToRGB();
 		ip= ip.convertToByte(true);
 
 		return ip;
