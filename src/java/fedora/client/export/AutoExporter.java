@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.StringTokenizer;
+import java.util.HashMap;
 
 import javax.xml.rpc.ServiceException;
 import javax.xml.parsers.DocumentBuilder;
@@ -57,6 +58,7 @@ public class AutoExporter {
 
     private FedoraAPIM m_apim;
 	private FedoraAPIA m_apia;
+    private static HashMap s_repoInfo=new HashMap();
 
     public AutoExporter(String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
@@ -69,12 +71,19 @@ public class AutoExporter {
 			throws RemoteException, IOException {
 		export(m_apia, m_apim, pid, format, outStream, internal);
 	}
+
 	
     public static void export(FedoraAPIA apia, FedoraAPIM apim, String pid, String format,
             OutputStream outStream, boolean internal)
             throws RemoteException, IOException {
-            	
-		RepositoryInfo repoinfo=apia.describeRepository();
+
+        // Get the repository info from the hash for the repository that APIA is using,
+        // unless it isn't in the hash yet... in which case, ask the server.
+		RepositoryInfo repoinfo=(RepositoryInfo) s_repoInfo.get(apia);
+        if (repoinfo == null) {
+            repoinfo=apia.describeRepository();
+            s_repoInfo.put(apia, repoinfo);
+        }
 				
         byte[] bytes;
         if (internal) {
