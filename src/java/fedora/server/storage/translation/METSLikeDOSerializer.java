@@ -56,7 +56,7 @@ import fedora.server.utilities.StreamUtility;
 public class METSLikeDOSerializer
         implements DOSerializer {
 
-    public static final String FEDORA_AUDIT_NS="http://fedora.comm.nsdlib.org/audit";
+    public static final String FEDORA_AUDIT_NS="http://www.fedora.info/definitions/audit";
     public static final String METS_PREFIX="METS";
     public static final String METS_NS="http://www.loc.gov/METS/";
     public static final String METS_XSD_LOCATION="http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd";

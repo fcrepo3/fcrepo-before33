@@ -56,17 +56,16 @@ import fedora.server.utilities.StreamUtility;
 public class FOXMLDOSerializer
         implements DOSerializer {
 
-	public static final String FOXML_NS="http://www.fedora.info/definitions/foxml";
-    public static final String FEDORA_AUDIT_NS="http://www.fedora.info/definitions/audit";
-	public static final String FEDORA_SYSMETA_NS="http://www.fedora.info/definitions/sysmeta";
-	public static final String FEDORA_RELSOUT_NS="http://www.fedora.info/definitions/relation/outer";
+	public static final String FOXML_NS="info:fedora/def:foxml";
+    public static final String FEDORA_AUDIT_NS="info:fedora/def:audit";
+	public static final String FEDORA_DC_NS="http://www.openarchives.org/OAI/2.0/oai_dc/";
+	public static final String FEDORA_RELSOUT_NS="info:fedora/def:relation:outer";
     public static final String FOXML_PREFIX="foxml";
 
     public static final String FOXML_XSD_LOCATION="http://www.fedora.info/definitions/1/0/foxml.xsd";
     public static final String XSI_NS="http://www.w3.org/2001/XMLSchema-instance";
 
     private String m_fedoraAuditPrefix="audit";
-	private String m_fedoraSysmetaPrefix="sysmeta";
 	private String m_fedoraRelsoutPrefix="fro";
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -125,8 +124,9 @@ public class FOXMLDOSerializer
         StringBuffer buf=new StringBuffer();
         appendXMLDeclaration(obj, encoding, buf);
         appendRootElementStart(obj, buf);
-        appendAudit(obj, buf);
-        appendDatastreams(obj, buf);
+        appendProperties(obj, buf, encoding);
+        appendAudit(obj, buf, encoding);
+        appendDatastreams(obj, buf, encoding);
         appendDisseminators(obj, buf);
         appendRootElementEnd(buf);
         writeToStream(buf, out, encoding, true);
@@ -134,7 +134,7 @@ public class FOXMLDOSerializer
 
     private void appendXMLDeclaration(DigitalObject obj, String encoding,
             StringBuffer buf) {
-        buf.append("<?xml version=\"1.0\" encoding=\"" + encoding + "\" ?>\n");
+        buf.append("<?xml version=\"1.0\" encoding=\"" + encoding + "\"?>\n");
     }
 
     private void appendRootElementStart(DigitalObject obj, StringBuffer buf)
@@ -156,9 +156,14 @@ public class FOXMLDOSerializer
         if (obj.getPid()==null) {
             throw new ObjectIntegrityException("Object must have a pid.");
         }
-        buf.append(indent + "PID=\"" + obj.getPid());
+        buf.append(indent + "PID=\"" + obj.getPid() + "\" ");
+		buf.append(indent + "URI=\"" + obj.getURI()+ "\"");
+		/*
+		buf.append(indent + "STATE=\"" + obj.getState());
 		buf.append(indent + "TYPE=\"" + getTypeAttribute(obj));
-		buf.append(indent + "CREATEDATE=\"" + m_formatter.format(obj.getCreateDate()));
+		buf.append(indent + "CREATED=\"" + m_formatter.format(obj.getCreateDate()));
+		buf.append(indent + "MODIFIED=\"" + m_formatter.format(obj.getLastModDate()));
+		*/
         buf.append(">\n");
     }
 
@@ -171,8 +176,6 @@ public class FOXMLDOSerializer
             if (!prefix.equals("")) {
                 if (URI.equals(FEDORA_AUDIT_NS)) {
                     m_fedoraAuditPrefix=prefix;
-                } else if (URI.equals(FEDORA_SYSMETA_NS)) {
-						m_fedoraSysmetaPrefix=prefix;
 				} else if (URI.equals(FEDORA_RELSOUT_NS)) {
 						m_fedoraRelsoutPrefix=prefix;
                 } else if (!URI.equals(FOXML_NS)) {
@@ -183,205 +186,197 @@ public class FOXMLDOSerializer
         }
         buf.append(prepend + "xmlns:" + m_fedoraAuditPrefix + "=\""
                 + FEDORA_AUDIT_NS + "\"\n");
-		buf.append(prepend + "xmlns:" + m_fedoraSysmetaPrefix + "=\""
-				+ FEDORA_SYSMETA_NS + "\"\n");
 		buf.append(prepend + "xmlns:" + m_fedoraRelsoutPrefix + "=\""
 				+ FEDORA_RELSOUT_NS + "\"\n");
     }
-	private void appendDatastreams(DigitalObject obj, StringBuffer buf)
+    
+	private void appendProperties(DigitalObject obj, StringBuffer buf, String encoding) 
+			throws ObjectIntegrityException {
+		buf.append("  <" + FOXML_PREFIX + ":objectProperties>\n");
+		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:type" + "\">" 
+			+ obj.getFedoraObjectType() + "</" + FOXML_PREFIX + ":property>\n");
+		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:state" + "\">" 
+			+ obj.getState() + "</" + FOXML_PREFIX + ":property>\n");
+		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:label" + "\">" 
+			+ obj.getLabel() + "</" + FOXML_PREFIX + ":property>\n");
+		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:created" + "\">" 
+			+ m_formatter.format(obj.getCreateDate()) + "</" + FOXML_PREFIX + ":property>\n");
+		buf.append("    <" + FOXML_PREFIX  + ":property NAME=\"" + "info:fedora/def:dobj:modified" + "\">" 
+		+ m_formatter.format(obj.getLastModDate()) + "</" + FOXML_PREFIX + ":property>\n");
+		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cmodel" + "\">" 
+			+ obj.getContentModelId() + "</" + FOXML_PREFIX + ":property>\n");	
+		Iterator iter = obj.getExtProperties().keySet().iterator();
+		while (iter.hasNext()){
+			String name = (String)iter.next();
+			buf.append("    <" + FOXML_PREFIX + ":extproperty NAME=\"" + name 
+				+ "\">" + obj.getExtProperty(name) + "</" + FOXML_PREFIX + ":extproperty>\n");
+		}
+		buf.append("  </" + FOXML_PREFIX + ":objectProperties>\n");
+	}
+	
+	private void appendDatastreams(DigitalObject obj, StringBuffer buf, String encoding)
 			throws ObjectIntegrityException, UnsupportedEncodingException, 
 			StreamIOException {
 		Iterator iter=obj.datastreamIdIterator();
-		//boolean didDatastreams=false;
 		while (iter.hasNext()) {
-			// Given a datastream ID, get all the version entities.
-			// Then, get the first version in the List and pick up attributes
-			// shared by all versions.
-			List dsList = obj.datastreams((String) iter.next());
+			String dsid = (String) iter.next();
+			// AUDIT datastream is rebuilt from the latest in-memory audit trail
+			// which is a separate array list in the DigitalObject class.
+			// So, ignore it here.
+			if (dsid.equalsIgnoreCase("AUDIT")) {
+				continue;
+			}
+			// Given a datastream ID, get all the datastream versions.
+			// Use the first version to pick up the attributes common to all versions.
+			List dsList = obj.datastreams(dsid);
 			for (int i=0; i<dsList.size(); i++) {
-				Datastream ds = (Datastream) dsList.get(i);
-				// AUDIT datastream is rebuilt from latest values in Digital Object
-				if (ds.DatastreamID.equalsIgnoreCase("AUDIT")) {
-					appendAudit(obj, buf);
-				} else {
-					validateDatastream(ds);
-					// insert the ds group-level element
-					if (i==0) {
-						buf.append("  <" + FOXML_PREFIX 
-							+ ":datastream ID=\"" + ds.DatastreamID + "\"" 
-							+ "URI=\"" + ds.DatastreamURI + "\""
-							+ "STATE=\"" + ds.DSState + "\""
-							+ "MIMETYPE=\"" + ds.DSMIME + "\""
-							+ "FORMAT_URI=\"" + ds.DSFormatURI + "\""
-							+ "CONTROL_GROUP=\"" + ds.DSControlGrp + "\""
-							+ "VERSIONABLE=\"" + ds.DSVersionable + "\">\n");
-					}
-					// insert the ds version-level element(s)
+				Datastream vds = validateDatastream((Datastream) dsList.get(i));
+				// insert the ds elements common to all versions.
+				if (i==0) {
 					buf.append("  <" + FOXML_PREFIX 
-						+ ":datastreamVersion ID=\"" + ds.DSVersionID + "\"" 
-						+ "LABEL=\"" + StreamUtility.enc(ds.DSLabel) + "\""
-						+ "CREATED=\"" + m_formatter.format(ds.DSCreateDT) + "\""
-						+ "SIZE=\"" + ds.DSSize + "\""
-						+ "CURRENT=\"" + ds.DSCurrent +  "\">\n");
-				
-					// if E or R insert content location as URL
-					if (ds.DSControlGrp.equalsIgnoreCase("E") ||
-						ds.DSControlGrp.equalsIgnoreCase("R") ) {
-							buf.append("  <" + FOXML_PREFIX 
-								+ ":contentLocation TYPE=\"" + "URL\""
-								+ "REF=\"" + StreamUtility.enc(normalizeDSLocation(ds.DSLocation)) 
-								+ "\"/>\n");	
-					// if M insert content location as internal identifier				
-					} else if (ds.DSControlGrp.equalsIgnoreCase("M")) {
-						buf.append("  <" + FOXML_PREFIX 
-							+ ":contentLocation TYPE=\"" + "INTERNAL_ID\""
-							+ "REF=\"" + StreamUtility.enc(normalizeDSLocation(ds.DSLocation)) 
+						+ ":datastream ID=\"" + vds.DatastreamID + "\"" 
+						+ " URI=\"" + vds.DatastreamURI + "\""
+						+ " STATE=\"" + vds.DSState + "\""
+						+ " MIMETYPE=\"" + vds.DSMIME + "\""
+						+ " FORMAT_URI=\"" + vds.DSFormatURI + "\""
+						+ " CONTROL_GROUP=\"" + vds.DSControlGrp + "\""
+						+ " VERSIONABLE=\"" + vds.DSVersionable + "\">\n");
+				}
+				// insert the ds version-level elements
+				buf.append("    <" + FOXML_PREFIX 
+					+ ":datastreamVersion ID=\"" + vds.DSVersionID + "\"" 
+					+ " LABEL=\"" + StreamUtility.enc(vds.DSLabel) + "\""
+					+ " CREATED=\"" + m_formatter.format(vds.DSCreateDT) + "\""
+					+ " SIZE=\"" + vds.DSSize +  "\">\n");
+			
+				// if E or R insert content location as URL
+				if (vds.DSControlGrp.equalsIgnoreCase("E") ||
+					vds.DSControlGrp.equalsIgnoreCase("R") ) {
+						buf.append("      <" + FOXML_PREFIX 
+							+ ":contentLocation TYPE=\"" + "URL\""
+							+ " REF=\"" + StreamUtility.enc(normalizeDSLocation(vds.DSLocation)) 
 							+ "\"/>\n");	
-					// if X insert inline XML
-					} else if (ds.DSControlGrp.equalsIgnoreCase("X")) {
-						appendInlineXML(ds, buf);
-					}					
-					// FUTURE: Add digest of datastream content 
-					//(to be calculated in DefaultManagement).
-					buf.append("    <" + FOXML_PREFIX + ":contentDigest TYPE=\"MD5\">"
-						+ "future: hash of content goes here" 
-						+ "</" + FOXML_PREFIX + ":contentDigest>\n");
-					buf.append("  </" + FOXML_PREFIX + ":datastreamVersion>\n");				
-				}
-				buf.append("</" + FOXML_PREFIX + ":datastream>\n");
-				}
-
+				// if M insert content location as internal identifier				
+				} else if (vds.DSControlGrp.equalsIgnoreCase("M")) {
+					buf.append("      <" + FOXML_PREFIX 
+						+ ":contentLocation TYPE=\"" + "INTERNAL_ID\""
+						+ " REF=\"" + StreamUtility.enc(normalizeDSLocation(vds.DSLocation)) 
+						+ "\"/>\n");	
+				// if X insert inline XML
+				} else if (vds.DSControlGrp.equalsIgnoreCase("X")) {
+					appendInlineXML(obj.getFedoraObjectType(), 
+						(DatastreamXMLMetadata)vds, buf, encoding);
+				}					
+				// FUTURE: Add digest of datastream content 
+				//(to be calculated in DefaultManagement).
+				buf.append("      <" + FOXML_PREFIX + ":contentDigest TYPE=\"MD5\">"
+					+ "future: hash of content goes here" 
+					+ "</" + FOXML_PREFIX + ":contentDigest>\n");
+				buf.append("    </" + FOXML_PREFIX + ":datastreamVersion>\n");
+				// if it's the last version, wrap-up with closing datastream element.	
+				if (i==(dsList.size() - 1)) {
+					buf.append("  </" + FOXML_PREFIX + ":datastream>\n");
+				}			
+			}
 		}
 	}
 
-	private void appendAudit(DigitalObject obj, StringBuffer buf) 
+	private void appendAudit(DigitalObject obj, StringBuffer buf, String encoding) 
 			throws ObjectIntegrityException {
 		if (obj.getAuditRecords().size()>0) {
+			// Audit trail datastream re-created from audit records.
+			// There is only ONE version of the audit trail datastream!
+			buf.append("  <" + FOXML_PREFIX 
+				+ ":datastream ID=\"" + "AUDIT" + "\"" 
+				+ " URI=\"" + "info:fedora/" + obj.getPid() + "AUDIT" + "\""
+				+ " STATE=\"" + "A" + "\""
+				+ " MIMETYPE=\"" + "text/xml" + "\""
+				+ " FORMAT_URI=\"" + "info:fedora/format:xml:audit" + "\""
+				+ " CONTROL_GROUP=\"" + "X" + "\""
+				+ " VERSIONABLE=\"" + "NO" + "\">\n");
+			// insert the ds version-level elements
+			buf.append("    <" + FOXML_PREFIX 
+				+ ":datastreamVersion ID=\"" + "AUDIT.0" + "\"" 
+				+ " LABEL=\"" + "Fedora Object Audit Trail" + "\""
+				+ " CREATED=\"" + m_formatter.format(obj.getCreateDate()) +  "\">\n");
+			buf.append("      <" + m_fedoraAuditPrefix + ":auditTrail" + ">\n");
 			for (int i=0; i<obj.getAuditRecords().size(); i++) {
 				AuditRecord audit=(AuditRecord) obj.getAuditRecords().get(i);
 				validateAudit(audit);
-				buf.append("  <" + m_fedoraAuditPrefix + ":auditTrail" + ">\n");
-				buf.append("    <" + m_fedoraAuditPrefix + ":record>\n");
-				buf.append("      <" + m_fedoraAuditPrefix + ":process type=\""
+				buf.append("        <" + m_fedoraAuditPrefix + ":record>\n");
+				buf.append("          <" + m_fedoraAuditPrefix + ":recordID>"
+						+ StreamUtility.enc(audit.id)
+						+ "</" + m_fedoraAuditPrefix + ":recordID>\n");
+				buf.append("          <" + m_fedoraAuditPrefix + ":process type=\""
 						+ StreamUtility.enc(audit.processType) + "\"/>\n");
-				buf.append("      <" + m_fedoraAuditPrefix + ":action>"
+				buf.append("          <" + m_fedoraAuditPrefix + ":action>"
 						+ StreamUtility.enc(audit.action)
 						+ "</" + m_fedoraAuditPrefix + ":action>\n");
-				buf.append("      <" + m_fedoraAuditPrefix + ":componentID>"
+				buf.append("          <" + m_fedoraAuditPrefix + ":componentID>"
 						+ StreamUtility.enc(audit.componentID)
 						+ "</" + m_fedoraAuditPrefix + ":componentID>\n");
-				buf.append("      <" + m_fedoraAuditPrefix + ":responsibility>"
+				buf.append("          <" + m_fedoraAuditPrefix + ":responsibility>"
 						+ StreamUtility.enc(audit.responsibility)
 						+ "</" + m_fedoraAuditPrefix + ":responsibility>\n");
-				buf.append("      <" + m_fedoraAuditPrefix + ":date>"
+				buf.append("          <" + m_fedoraAuditPrefix + ":date>"
 						+ m_formatter.format(audit.date)
 						+ "</" + m_fedoraAuditPrefix + ":date>\n");
-				buf.append("      <" + m_fedoraAuditPrefix + ":justification>"
+				buf.append("          <" + m_fedoraAuditPrefix + ":justification>"
 						+ StreamUtility.enc(audit.justification)
 						+ "</" + m_fedoraAuditPrefix + ":justification>\n");
-				buf.append("  </" + m_fedoraAuditPrefix + ":record>\n");
+				buf.append("        </" + m_fedoraAuditPrefix + ":record>\n");
 			}
-			buf.append("/>" + m_fedoraSysmetaPrefix + ":auditTrail" + ">\n");
+			buf.append("      </" + m_fedoraAuditPrefix + ":auditTrail" + ">\n");
+			// FUTURE: Add digest of datastream content (calc in DefaultManagement).
+			buf.append("      <" + FOXML_PREFIX + ":contentDigest TYPE=\"MD5\">"
+				+ "future: hash of content goes here" 
+				+ "</" + FOXML_PREFIX + ":contentDigest>\n");
+			buf.append("    </" + FOXML_PREFIX + ":datastreamVersion>\n");				
+			buf.append("  </" + FOXML_PREFIX + ":datastream>\n");
 		}
 	}
 
-	//private void appendInlineXML(DigitalObject obj, String outerName,
-	//         String innerName, List XMLMetadata, StringBuffer buf, String encoding)
-	//         throws ObjectIntegrityException, UnsupportedEncodingException,
-	//         StreamIOException {
-	private void appendInlineXML(Datastream ds, StringBuffer buf)
-		throws ObjectIntegrityException, UnsupportedEncodingException,
-		StreamIOException {
-		buf.append("  <" + FOXML_PREFIX + ":xmlContent>\n");
-		// do not use the xml for the AUDIT datastream.  It will be re-created
-		// from the audit information in the digital object.
-		if (!ds.DatastreamID.equalsIgnoreCase("AUDIT")) {
-			// do any global changes required for the stream (e.g., normalize host:port)
-		
-			// append the stream
-		}
-
-		
-		
-		/*
-        buf.append("  <" + FOXML_PREFIX + ":" + outerName + " ID=\""
-                + first.DatastreamID + "\" STATUS=\"" + first.DSState 
-                + "\">\n");
-        for (int i=0; i<XMLMetadata.size(); i++) {
-            DatastreamXMLMetadata ds=(DatastreamXMLMetadata) XMLMetadata.get(i);
-            if (ds.DSVersionID==null) {
-                throw new ObjectIntegrityException("Datastream must have a version id.");
-            }
-            if (ds.DSCreateDT==null) {
-                throw new ObjectIntegrityException("Datastream must have a creation date.");
-            }
-            buf.append("    <" + FOXML_PREFIX + ":" + innerName + " ID=\""
-                    + ds.DSVersionID + "\" CREATED=\"" + m_formatter.format(
-                    ds.DSCreateDT) + "\">\n");
-            if (ds.DSMIME==null) {
-                ds.DSMIME="text/html";
-            }
-            if (ds.DSInfoType==null || ds.DSInfoType.equals("")
-                    || ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
-                ds.DSInfoType="UNSPECIFIED";
-            }
-            String mdType=ds.DSInfoType;
-            String otherString="";
-            if ( !mdType.equals("MARC") && !mdType.equals("EAD")
-                    && !mdType.equals("DC") && !mdType.equals("NISOIMG")
-                    && !mdType.equals("LC-AV") && !mdType.equals("VRA")
-                    && !mdType.equals("TEIHDR") && !mdType.equals("DDI")
-                    && !mdType.equals("FGDC") ) {
-                mdType="OTHER";
-                otherString=" OTHERMDTYPE=\"" + StreamUtility.enc(ds.DSInfoType)
-                        + "\" ";
-            }
-            String labelString="";
-            if ( ds.DSLabel!=null && !ds.DSLabel.equals("") ) {
-                labelString=" LABEL=\"" + StreamUtility.enc(ds.DSLabel) + "\"";
-            }
-            buf.append("      <" + FOXML_PREFIX + ":mdWrap MIMETYPE=\"" + ds.DSMIME
-                    + "\" MDTYPE=\"" + mdType + "\"" + otherString
-                    + labelString + ">\n");
-            buf.append("        <" + FOXML_PREFIX + ":xmlData>\n");
-            if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT
-                    && (ds.DatastreamID.equals("SERVICE-PROFILE")) || (ds.DatastreamID.equals("WSDL")) ) {
-                // If it's the WSDL or SERVICE-PROFILE datastream in a bMech and it contains a
-                // service URL that's local, replace it with a machine-neutral
-                // host identifier.
-                try {
-                    String xml=new String(ds.xmlContent, "UTF-8");
-                    xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
-                            "http://local.fedora.server/");
-                    xml=s_localhostUrlStartWithPort.matcher(xml).replaceAll(
-                            "http://local.fedora.server/");
+	private void appendInlineXML(int fedoraObjectType, DatastreamXMLMetadata ds, 
+		StringBuffer buf, String encoding)
+		throws ObjectIntegrityException, UnsupportedEncodingException, StreamIOException {
+			
+		buf.append("        <" + FOXML_PREFIX + ":xmlContent>\n");
+        if (fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT) {
+        	if (ds.DatastreamID.equals("SERVICE-PROFILE") || 
+				ds.DatastreamID.equals("WSDL")) {
+	            // If WSDL or SERVICE-PROFILE datastream (in BMech) 
+	            // and it contains a service URL that's local, 
+	            // then modify the URL with a machine-neutral
+	            // host identifier.
+	            try {
+	                String xml=new String(ds.xmlContent, "UTF-8");
+	                xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
+	                        "http://local.fedora.server/");
+	                xml=s_localhostUrlStartWithPort.matcher(xml).replaceAll(
+	                        "http://local.fedora.server/");
 					if (m_onPort80) {
-                        xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
-                                "http://local.fedora.server/");
-                        xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
-                                "http://local.fedora.server/");
+	                    xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
+	                            "http://local.fedora.server/");
+	                    xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
+	                            "http://local.fedora.server/");
 				    }
-                    buf.append(xml);
-                } catch (UnsupportedEncodingException uee) {
-                    // wont happen, java always supports UTF-8
-                }
-            } else {
-                appendStream(ds.getContentStream(), buf, encoding);
-            }
-            buf.append("        </" + FOXML_PREFIX + ":xmlData>");
-            buf.append("      </" + FOXML_PREFIX + ":mdWrap>\n");
-            buf.append("    </" + FOXML_PREFIX + ":" + innerName + ">\n");
+	                buf.append(xml);
+	            } catch (UnsupportedEncodingException uee) {
+	                // wont happen, java always supports UTF-8
+	            }
+			}
+        } else {
+            appendXMLStream(ds.getContentStream(), buf, encoding);
         }
-        buf.append("  </" + FOXML_PREFIX + ":" + outerName + ">\n");
-        */
+        buf.append("        </" + FOXML_PREFIX + ":xmlContent>\n");
     }
 
-    private void appendStream(InputStream in, StringBuffer buf, String encoding)
+    private void appendXMLStream(InputStream in, StringBuffer buf, String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
         if (in==null) {
-            throw new ObjectIntegrityException("Object's inline descriptive "
-                    + "metadata stream cannot be null.");
+            throw new ObjectIntegrityException("Object's inline xml "
+                    + "stream cannot be null.");
         }
         try {
             byte[] byteBuf = new byte[4096];
@@ -392,7 +387,7 @@ public class FOXMLDOSerializer
         } catch (UnsupportedEncodingException uee) {
             throw uee;
         } catch (IOException ioe) {
-            throw new StreamIOException("Error reading from inline datastream.");
+            throw new StreamIOException("Error reading from inline xml datastream.");
         } finally {
             try {
                 in.close();
@@ -400,92 +395,6 @@ public class FOXMLDOSerializer
                 throw new StreamIOException("Error closing read stream.");
             }
         }
-    }
-
-    // append the admin md, while replacing occurances of
-    // s_localServerUrlStartWithPort and s_localServerUrlStartWithoutPort and
-    // s_localhostUrlStartWithPort and s_localhostUrlStartWithoutPort
-    // with "http://local.fedora.server/" in the SERVICE-PROFILE and WSDL id'd admin datastreams
-    // bMech objects.
-    private void appendOtherAdminMD(DigitalObject obj, StringBuffer buf,
-            String encoding)
-            throws ObjectIntegrityException, UnsupportedEncodingException,
-            StreamIOException {
-         /*
-        Iterator iter=obj.datastreamIdIterator();
-        while (iter.hasNext()) {
-            String id=(String) iter.next();
-            Datastream firstDS=(Datastream) obj.datastreams(id).get(0);
-            if ((firstDS.DSControlGrp.equals("X"))
-                    && (((DatastreamXMLMetadata) firstDS).DSMDClass!=
-                    DatastreamXMLMetadata.DESCRIPTIVE)) {
-                DatastreamXMLMetadata md=(DatastreamXMLMetadata) firstDS;
-                String mdClass=null;
-                if (md.DSMDClass==DatastreamXMLMetadata.TECHNICAL) {
-                    mdClass="techMD";
-                } else if (md.DSMDClass==DatastreamXMLMetadata.SOURCE) {
-                    mdClass="sourceMD";
-                } else if (md.DSMDClass==DatastreamXMLMetadata.RIGHTS) {
-                    mdClass="rightsMD";
-                } else if (md.DSMDClass==DatastreamXMLMetadata.DIGIPROV) {
-                    mdClass="digiprovMD";
-                } else {
-                    throw new ObjectIntegrityException(
-					"Object's inline XML datastream must have a class (md.DSMDClass=" 
-					+ md.DSMDClass + ").");
-                }
-                appendMDSec(obj, "amdSec", mdClass, obj.datastreams(id),
-                        buf, encoding);
-            }
-        }
-        */
-    }
-
-    private String getIdString(DigitalObject obj, DatastreamContent content,
-            boolean adm)
-            throws ObjectIntegrityException {
-        ArrayList ret;
-        if (adm) {
-            ret=new ArrayList(content.auditRecordIdList());
-        } else {
-            ret=new ArrayList();
-        }
-        Iterator mdIdIter=content.metadataIdList().iterator();
-        while (mdIdIter.hasNext()) {
-            String mdId=(String) mdIdIter.next();
-            List datastreams=obj.datastreams(mdId);
-            if (datastreams.size()==0) {
-                throw new ObjectIntegrityException("Object's content datastream"
-                        + " points to an invalid inline metadata datastream id.");
-            }
-            Datastream ds=(Datastream) datastreams.get(0);
-            if (ds.DSControlGrp.equalsIgnoreCase("X")) {
-                DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
-                if (mds.DSMDClass == DatastreamXMLMetadata.DESCRIPTIVE) {
-                    if (!adm) ret.add(mdId);
-                }
-                else {
-                    if (adm) ret.add(mdId);
-                }
-            }
-        }
-        StringBuffer out=new StringBuffer();
-        for (int i=0; i<ret.size(); i++) {
-            if (i>0) {
-                out.append(' ');
-            } else {
-                if (adm) {
-                    out.append(" ADMID=\"");
-                } else {
-                    out.append(" DMDID=\"");
-                }
-            }
-            out.append((String) ret.get(i));
-            if (i==ret.size()-1) {
-                out.append("\"");
-            }
-        }
-        return out.toString();
     }
 
     private void appendStructMaps(DigitalObject obj, StringBuffer buf)
@@ -606,10 +515,10 @@ public class FOXMLDOSerializer
     }
 
     private void appendRootElementEnd(StringBuffer buf) {
-        buf.append("</" + FOXML_PREFIX + ":mets>");
+        buf.append("</" + FOXML_PREFIX + ":digitalObject>");
     }
 
-	private void validateDatastream(Datastream ds) throws ObjectIntegrityException {
+	private Datastream validateDatastream(Datastream ds) throws ObjectIntegrityException {
 		// check on some essentials
 		if (ds.DSVersionID==null || ds.DSVersionID.equals("")) {
 			throw new ObjectIntegrityException("Datastream must have a version id.");
@@ -627,6 +536,42 @@ public class FOXMLDOSerializer
 			(ds.DSLocation==null || ds.DSLocation.equals(""))) {
 			throw new ObjectIntegrityException("Content datastream must have a location.");
 		}
+		if (ds.DSMIME==null && ds.DSControlGrp.equalsIgnoreCase("X")) {
+			ds.DSMIME="text/xml";
+		}
+		if (ds.DSInfoType==null || ds.DSInfoType.equals("")
+				|| ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
+			ds.DSInfoType="UNSPECIFIED";
+		}
+		if ( ds.DSLabel==null && ds.DSLabel.equals("") ) {
+			ds.DSLabel = "Datastream known as: " + ds.DatastreamURI;
+		}
+		// For METS backward compatibility:
+		// If we have a METS MDClass value, preserve MDClass and MDType in a format URI
+		if (ds.DSControlGrp.equalsIgnoreCase("X")) {
+			if ( ((DatastreamXMLMetadata)ds).DSMDClass !=0 ) {
+				String mdClassName = "";
+				String mdType=ds.DSInfoType;
+				String otherType="";
+				if (((DatastreamXMLMetadata)ds).DSMDClass==1) {mdClassName = "techMD";
+				} else if (((DatastreamXMLMetadata)ds).DSMDClass==2) {mdClassName = "sourceMD";
+				} else if (((DatastreamXMLMetadata)ds).DSMDClass==3) {mdClassName = "rightsMD";
+				} else if (((DatastreamXMLMetadata)ds).DSMDClass==4) {mdClassName = "digiprovMD";
+				} else if (((DatastreamXMLMetadata)ds).DSMDClass==5) {mdClassName = "descMD";}			
+				if ( !mdType.equals("MARC") && !mdType.equals("EAD")
+						&& !mdType.equals("DC") && !mdType.equals("NISOIMG")
+						&& !mdType.equals("LC-AV") && !mdType.equals("VRA")
+						&& !mdType.equals("TEIHDR") && !mdType.equals("DDI")
+						&& !mdType.equals("FGDC") ) {
+					mdType="OTHER";
+					otherType=ds.DSInfoType;
+				}
+				ds.DSFormatURI = 
+					"info:fedora/format:xml:mets:" 
+					+ mdClassName + ":" + mdType + ":" + otherType;
+			}
+		}
+		return ds;
 	}
 	
 	private void validateAudit(AuditRecord audit) throws ObjectIntegrityException {
@@ -702,59 +647,4 @@ public class FOXMLDOSerializer
             }
         }
     }
-    
-	private void appendSysmeta(DigitalObject obj, StringBuffer buf) 
-			throws ObjectIntegrityException {
-		buf.append("  <" + m_fedoraSysmetaPrefix + ":objectProperties" + ">\n");
-		String uri = obj.getURI();
-		if (uri!=null){
-			buf.append("    <" + m_fedoraSysmetaPrefix + ":URI" + ">" 
-			+ uri + "</" + m_fedoraSysmetaPrefix + ":URI" + ">\n");
-		}
-		String state = obj.getState();
-		if (state!=null){
-			buf.append("    <" + m_fedoraSysmetaPrefix + ":objectState" + ">" 
-			+ state + "</" + m_fedoraSysmetaPrefix + ":objectState" + ">\n");
-		}
-		String label = obj.getLabel();
-		if (label!=null){
-			buf.append("    <" + m_fedoraSysmetaPrefix + ":label" + ">" 
-			+ label + "</" + m_fedoraSysmetaPrefix + ":label" + ">\n");
-		}
-		String cModelID = obj.getContentModelId();
-		if (cModelID!=null){
-			buf.append("    <" + m_fedoraSysmetaPrefix + ":contentModelID" + ">" 
-			+ cModelID + "</" + m_fedoraSysmetaPrefix + ":contentModelID" + ">\n");
-		}
-		Date mDate=obj.getLastModDate();
-		if (mDate!=null) {
-			buf.append("    <" + m_fedoraSysmetaPrefix + ":modifiedDate" + ">" 
-			+ m_formatter.format(mDate) + "</" + m_fedoraSysmetaPrefix + ":modifiedDate" + ">\n");
-		}
-		// append extensible object properties
-		Map propMap = obj.getProperties();
-		Iterator iter=propMap.keySet().iterator();
-		while (iter.hasNext()) {
-			String propName=(String) iter.next();
-			String propValue =(String) propMap.get(propName);
-			if (propValue!=null){
-				buf.append("    <" + m_fedoraSysmetaPrefix + 
-				":ext" + " propertyName=" + "\"" + propName + "\">" +
-				propValue + "</" + m_fedoraSysmetaPrefix + ":ext" + ">\n");
-			}
-		}
-		/*
-		String fedoraType = getTypeAttribute(obj);
-		if (fedoraType!=null){
-			buf.append("    <" + m_fedoraSysmetaPrefix + ":objectType" + ">" 
-			+ fedoraType + "</" + m_fedoraSysmetaPrefix + ":objectType" + ">\n");
-		}
-		Date cDate=obj.getCreateDate();
-		if (cDate!=null) {
-			buf.append("    <" + m_fedoraSysmetaPrefix + ":createdDate" + ">" 
-			+ m_formatter.format(cDate) + "</" + m_fedoraSysmetaPrefix + ":createdDate" + ">\n");
-		}
-		*/
-		buf.append("/>" + m_fedoraSysmetaPrefix + ":objectProperties" + ">\n");
-	}
-}
+ }
