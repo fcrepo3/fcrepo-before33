@@ -1,5 +1,6 @@
 package fedora.server;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -21,6 +22,7 @@ public abstract class Parameterized {
      * Creates a Parameterized with no parameters.
      */
     public Parameterized() {
+        setParameters(null);
     }
     
     /** 
@@ -43,8 +45,11 @@ public abstract class Parameterized {
      */
     protected final void setParameters(Map parameters) {
         m_parameters=parameters;
+        if (m_parameters==null) {
+            m_parameters=new HashMap();
+        }
     }
-
+    
     /**
      * Gets the value of a named configuration parameter.
      *
@@ -55,10 +60,14 @@ public abstract class Parameterized {
         return (String) m_parameters.get(name);
     }
     
+    protected final void setParameter(String name, String value) {
+        m_parameters.put(name, value);
+    }
+    
     /**
      * Gets an Iterator over the names of parameters for this component.
      *
-     * @returns Iterator The names
+     * @returns Iterator The names.
      */
     public final Iterator parameterNames() {
         return m_parameters.keySet().iterator();
