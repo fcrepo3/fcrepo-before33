@@ -2,7 +2,10 @@ package fedora.server.storage.service;
 
 /**
  * <p>Title: ServiceMapper.java</p>
- * <p>Description: </p>
+ * <p>Description: Controller class for parsing the various kinds of
+ * inline metadata datastreams found in behavior objects.  The intent of this
+ * class is to initiate parsing of these datastreams so that information about
+ * a behavior service can be instantiated in Fedora.</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
  * @author Sandy Payette  payette@cs.cornell.edu
@@ -28,6 +31,7 @@ public class ServiceMapper
   private WSDLParser wsdlHandler;
   private MmapParser methodMapHandler;
   private DSInputSpecParser dsInputSpecHandler;
+  private String parentPID;
 
   public static void main(String[] args)
   {
@@ -36,12 +40,13 @@ public class ServiceMapper
       System.err.println("usage: java ServiceMapper wsdlLocation methodMapLocation " + "\n" +
         "  wsdlLocation: the file path of the wsdl to be parsed" + "\n" +
         "  methodMapLocation: the file path of the method map to be parsed." + "\n" +
-        "  dsInputSpecLocation: the file path of the datastream input spec to be parsed.");
+        "  dsInputSpecLocation: the file path of the datastream input spec to be parsed." +
+        "  pid: the PID of the bdef or bmech object for the above files.");
       System.exit(1);
     }
     try
     {
-      ServiceMapper mapper = new ServiceMapper();
+      ServiceMapper mapper = new ServiceMapper(args[3]);
       InputSource wsdl =  new InputSource(new FileInputStream(new File((String)args[0])));
       InputSource mmap =  new InputSource(new FileInputStream(new File((String)args[1])));
       InputSource dsSpec = new InputSource(new FileInputStream(new File((String)args[2])));
@@ -65,8 +70,9 @@ public class ServiceMapper
 
   }
 
-  public ServiceMapper()
+  public ServiceMapper(String behaviorObjectPID)
   {
+    parentPID = behaviorObjectPID;
   }
 
   /**
@@ -115,7 +121,7 @@ public class ServiceMapper
     if (dsInputSpecHandler == null)
     {
       dsInputSpecHandler = (DSInputSpecParser)
-        parse(dsInputSpecSource, new DSInputSpecParser());
+        parse(dsInputSpecSource, new DSInputSpecParser(parentPID));
     }
     return dsInputSpecHandler.getServiceDSInputSpec();
   }
@@ -126,7 +132,7 @@ public class ServiceMapper
   {
     if (methodMapHandler == null)
     {
-      methodMapHandler = (MmapParser)parse(methodMapSource, new MmapParser());
+      methodMapHandler = (MmapParser)parse(methodMapSource, new MmapParser(parentPID));
     }
     return methodMapHandler.getMethodMap();
   }
