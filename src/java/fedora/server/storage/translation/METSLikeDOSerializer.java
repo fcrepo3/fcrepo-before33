@@ -525,6 +525,7 @@ public class METSLikeDOSerializer
                 if (diss.dissLabel!=null && !diss.dissLabel.equals("")) {
                     dissLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.dissLabel) + "\"";
                 }
+                /*
                 String bDefLabelAttr="";
                 if (diss.bDefLabel!=null && !diss.bDefLabel.equals("")) {
                     bDefLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.bDefLabel) + "\"";
@@ -533,16 +534,19 @@ public class METSLikeDOSerializer
                 if (diss.bMechLabel!=null && !diss.bMechLabel.equals("")) {
                     bMechLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.bMechLabel) + "\"";
                 }
+                */
                 buf.append("    <" + METS_PREFIX + ":serviceBinding ID=\""
                         + diss.dissVersionID + "\" STRUCTID=\"" + diss.dsBindMapID
                         + "\" BTYPE=\"" + diss.bDefID + "\" CREATED=\""
                         + DateUtility.convertDateToString(diss.dissCreateDT) + "\""
                         + dissLabelAttr + ">\n");
-                buf.append("      <" + METS_PREFIX + ":interfaceMD" + bDefLabelAttr
-                        + " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
+                //buf.append("      <" + METS_PREFIX + ":interfaceMD" + bDefLabelAttr
+				buf.append("      <" + METS_PREFIX + ":interfaceMD"
+						+ " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
                         + diss.bDefID + "\"/>\n");
-                buf.append("      <" + METS_PREFIX + ":serviceBindMD" + bMechLabelAttr
-                        + " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
+                //buf.append("      <" + METS_PREFIX + ":serviceBindMD" + bMechLabelAttr
+				buf.append("      <" + METS_PREFIX + ":serviceBindMD"
+						+ " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
                         + diss.bMechID + "\"/>\n");
 
                 buf.append("    </" + METS_PREFIX + ":serviceBinding>\n");

@@ -570,10 +570,10 @@ public class METSLikeDODeserializer
             } else if (localName.equals("interfaceMD")) {
                 Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
                 // already have the id from containing element, just need label
-                dissem.bDefLabel=grab(a,M,"LABEL");
+                //dissem.bDefLabel=grab(a,M,"LABEL");
             } else if (localName.equals("serviceBindMD")) {
                 Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
-                dissem.bMechLabel=grab(a,M,"LABEL");
+                //dissem.bMechLabel=grab(a,M,"LABEL");
                 dissem.bMechID=grab(a,XLINK_NAMESPACE,"href");
             }
         } else {
