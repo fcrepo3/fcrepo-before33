@@ -893,13 +893,13 @@ public class BatchModifyParser extends DefaultHandler
                     StringBuffer xml=new StringBuffer();
                     xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
                     xml.append("<foxml:digitalObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-                    xml.append("           xmlns:foxml=\"info:fedora/def:foxml1.0\"\n");
-                    xml.append("           xsi:schemaLocation=\"info:fedora/def:foxml1.0 http://www.fedora.info/definitions/1/0/foxml1.0.xsd\"\n");
+                    xml.append("           xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\"\n");
+                    xml.append("           xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1.0.xsd\"\n");
                     xml.append("           PID=\"" + StreamUtility.enc(m_obj.pid) + "\">\n");
                     xml.append("  <foxml:objectProperties>\n");
-                    xml.append("    <foxml:property NAME=\"info:fedora/def:dobj:type\">FedoraObject</foxml:property>\n");
-                    xml.append("    <foxml:property NAME=\"info:fedora/def:dobj:label\">" + m_obj.label + "</foxml:property>\n");
-                    xml.append("    <foxml:property NAME=\"info:fedora/def:dobj:cmodel\">" + m_obj.contentModel + "</foxml:property>\n");
+                    xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/fType\">FedoraObject</foxml:property>\n");
+                    xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/label\">" + m_obj.label + "</foxml:property>\n");
+                    xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/cModel\">" + m_obj.contentModel + "</foxml:property>\n");
                     xml.append("  </foxml:objectProperties>\n");
                     xml.append("</foxml:digitalObject>");
                     String objXML=xml.toString();
