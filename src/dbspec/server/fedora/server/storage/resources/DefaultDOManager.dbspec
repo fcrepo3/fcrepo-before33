@@ -75,15 +75,20 @@
 		<column name="methodName" type="varchar(32)" notNull="true" default="" index="methodName"/>
 		<column name="methodLabel" type="varchar(255)" notNull="true" default="" index="methodLabel"/>
 	</table>
-	<table name="PIDRegistry" primaryKey="PIDDbID">
-		<column name="PIDDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="PID" type="varchar(32)" notNull="true" default="" unique="true"/>
-		<column name="location" type="varchar(255)" notNull="true" default="" index="location"/>
+	<table name="objectPaths" primaryKey="tokenDbID">
+		<column name="tokenDbID" type="int(11)" notNull="true" autoIncrement="true"/>
+		<column name="token" type="varchar(32)" notNull="true" default="" unique="true"/>
+		<column name="path" type="varchar(255)" notNull="true" default="" index="path"/>
 	</table>
-	<table name="tempRegistry" primaryKey="PIDDbID">
-		<column name="PIDDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="PID" type="varchar(32)" notNull="true" default="" unique="true"/>
-		<column name="location" type="varchar(255)" notNull="true" default="" index="location"/>
+	<table name="tempPaths" primaryKey="tokenDbID">
+		<column name="tokenDbID" type="int(11)" notNull="true" autoIncrement="true"/>
+		<column name="token" type="varchar(32)" notNull="true" default="" unique="true"/>
+		<column name="path" type="varchar(255)" notNull="true" default="" index="path"/>
+	</table>
+	<table name="datastreamPaths" primaryKey="tokenDbID">
+		<column name="tokenDbID" type="int(11)" notNull="true" autoIncrement="true"/>
+		<column name="token" type="varchar(32)" notNull="true" default="" unique="true"/>
+		<column name="path" type="varchar(255)" notNull="true" default="" index="path"/>
 	</table>
 	<table name="parm">
 		<column name="methodDbID" type="int(11)" notNull="true" default="0" index="methodDbID"/>

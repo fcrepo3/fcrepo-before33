@@ -35,7 +35,7 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 	static {
 		ILowlevelStorage temp = null;
 		try {
-			temp = new FileSystemLowlevelStorage("PIDRegistry",conf.getPermanentStoreRegistryClass(),conf.getPermanentStoreBase(), conf.getPermanentStoreBases());
+			temp = new FileSystemLowlevelStorage("objectPaths",conf.getPermanentStoreRegistryClass(),conf.getPermanentStoreBase(), conf.getPermanentStoreBases());
 		} catch (Exception e) {
 			System.err.println("exception making FileSystemLowlevelStorage: " + e.getMessage());
 		} finally {
@@ -48,7 +48,7 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 	static {
 		ILowlevelStorage temp = null;
 		try {
-			temp = new FileSystemLowlevelStorage("tempRegistry",conf.getTempStoreRegistryClass(),conf.getTempStoreBase(), conf.getTempStoreBases());
+			temp = new FileSystemLowlevelStorage("tempPaths",conf.getTempStoreRegistryClass(),conf.getTempStoreBase(), conf.getTempStoreBases());
 		} catch (Exception e) {
 			System.err.println("exception making FileSystemLowlevelStorage: " + e.getMessage());
 		} finally {

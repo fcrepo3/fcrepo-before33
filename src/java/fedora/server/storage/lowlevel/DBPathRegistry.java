@@ -9,7 +9,7 @@ import java.sql.Statement;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.Server;
-import fedora.server.errors.ConnectionPoolNotFoundException; 
+import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
@@ -17,9 +17,9 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.utilities.SQLUtility;
 class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	//private static final IPathAlgorithm pathAlgorithm = new CNullPathAlgorithm();
-	
+
 	private static final Configuration conf = Configuration.getInstance();
-	
+
 	private static Server s_server;
 	static {
 		 try {
@@ -29,32 +29,32 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		 }
 	}
 	private ConnectionPool connectionPool = null;
-//"PIDRegistry"
+//"objectRegistry"
 	public DBPathRegistry(String registryName, String[] storeBases) throws LowlevelStorageException{
 		super(registryName,storeBases);
 
 
-        ConnectionPoolManager cpmgr=(ConnectionPoolManager) s_server.getModule(    
+        ConnectionPoolManager cpmgr=(ConnectionPoolManager) s_server.getModule(
                 "fedora.server.storage.ConnectionPoolManager");
         if (cpmgr==null) {
             throw new LowlevelStorageException(true,
-                    "Server module not loaded: " 
+                    "Server module not loaded: "
                     + "fedora.server.storage.ConnectionPoolManager");
         } else {
             try {
-                connectionPool=cpmgr.getPool();         
-            } catch (ConnectionPoolNotFoundException cpnfe) { 
-                throw new LowlevelStorageException(true,     
+                connectionPool=cpmgr.getPool();
+            } catch (ConnectionPoolNotFoundException cpnfe) {
+                throw new LowlevelStorageException(true,
                         "Lowlevel storage can't get default pool.", cpnfe);
             }
-        }  
+        }
 
 
 
 
 
 
-/*		
+/*
 		String username = s_server.getParameter("dbuser");
 		if (username == null) {
 			throw new LowlevelStorageException(true,"must configure dbuser");
@@ -91,7 +91,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		}
 */
 	}
-	
+
 	public String get(String pid) throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException {
 		String path = null;
 		Connection connection = null;
@@ -101,7 +101,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			int paths = 0;
 			connection = connectionPool.getConnection();
 			statement = connection.createStatement();
-			rs = statement.executeQuery("SELECT Location FROM " + getRegistryName() + " WHERE PID='" + pid + "'");
+			rs = statement.executeQuery("SELECT path FROM " + getRegistryName() + " WHERE token='" + pid + "'");
 			for (; rs.next(); paths++) {
 				path = rs.getString(1);
 			}
@@ -172,9 +172,9 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			path = buffer.toString();
 		}
 		try {
-            SQLUtility.replaceInto(connectionPool.getConnection(), 
-                    getRegistryName(), new String[] {"PID", "Location"},
-                    new String[] {pid, path}, "PID");
+            SQLUtility.replaceInto(connectionPool.getConnection(),
+                    getRegistryName(), new String[] {"token", "path"},
+                    new String[] {pid, path}, "token");
 		} catch (SQLException e1) {
 			throw new ObjectNotInLowlevelStorageException("put into db registry failed for [" + pid + "]", e1);
 		}
@@ -182,7 +182,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 
 	public void remove (String pid) throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException {
 		try {
-			executeSql("DELETE FROM " + getRegistryName() + " WHERE " + getRegistryName() + ".PID='" + pid + "'");
+			executeSql("DELETE FROM " + getRegistryName() + " WHERE " + getRegistryName() + ".token='" + pid + "'");
 		} catch (ObjectNotInLowlevelStorageException e1) {
 			throw new ObjectNotInLowlevelStorageException("[" + pid + "] not in db registry to delete", e1);
 		} catch (LowlevelStorageInconsistencyException e2) {
@@ -204,7 +204,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			try {
 				connection = connectionPool.getConnection();
 				statement = connection.createStatement();
-				rs = statement.executeQuery("SELECT PID FROM " + getRegistryName());
+				rs = statement.executeQuery("SELECT token FROM " + getRegistryName());
 				while (rs.next()) {
 					String pid = rs.getString(1);
 					if ((null == pid) || (0 == pid.length())) {
