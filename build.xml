@@ -378,7 +378,7 @@
 		<javac srcdir="${src.java.dir}:temp/server/java:temp/clientgen" 
 			   destdir="temp/client" 
 			   classpath="${lib.xerces};${lib.jhbasic};${lib.getopt};${lib.saxon};${lib.axis};${lib.wsdl4j};${lib.jaxrpc};${lib.commons-discovery};${lib.commons-logging};${lib.saaj};${lib.commons-httpclient};${lib.jai_core};${lib.jai_codec};${lib.batik}" 
-			   includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java" 
+			   includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java,fedora/common/**" 
 			   optimize="${build.optimize}" 
 			   debug="${build.debug}"/>
 	</target>
@@ -432,7 +432,7 @@
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/userdocs/server/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon" 
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common" 
 			     sourcepath="${src.java.dir};temp/server/java;src/html/server/javadoc" 
 			     classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5}" 
 			     destdir="dist/userdocs/server/serverdocs" 
@@ -1128,7 +1128,7 @@
 		<javac srcdir="${src.java.dir}:temp/server/java" 
 			   destdir="temp/server/classes" 
 			   classpathref="serverclasses-lib.path" 
-			   includes="fedora/server/**,fedora/logging/**,fedora/oai/**" 
+			   includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**" 
 			   optimize="${build.optimize}" 
 			   debug="${build.debug}"/>
 	</target>
