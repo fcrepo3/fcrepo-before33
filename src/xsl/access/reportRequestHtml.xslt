@@ -33,7 +33,7 @@
 									<td valign="top">
 										Report on
 										<font>
-											<select name="report" size="1" multiple="false">
+											<select name="report" size="1">
 												<option value="all objects" selected="selected">all objects</option>
 												<option value="active objects">active objects</option>
 												<option value="inactive objects">inactive objects</option>
@@ -46,7 +46,7 @@
 											</select>
 										</font>
 										<font>
-											<select name="dateRange" size="1" multiple="false">
+											<select name="dateRange" size="1">
 												<option value="none" selected="selected">(regardless of when created or last modified)</option>
 												<option value="mltd">last modified within past 24 hours</option>
 												<option value="mgtd">last modified more than 24 hours ago</option>
