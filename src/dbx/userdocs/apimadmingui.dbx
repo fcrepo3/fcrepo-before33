@@ -9,11 +9,11 @@
 		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
 		<title>
 			<inlinemediaobject>
-    				<imageobject>
-      				<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
-    				</imageobject>
-    			</inlinemediaobject>
-		</title>		
+				<imageobject>
+					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+				</imageobject>
+			</inlinemediaobject>
+		</title>
 		<title>Fedora API-M Admin GUI Client User Documentation</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -22,6 +22,11 @@
 		<publisher>
 			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
 		</publisher>
+		<edition>$Revision$</edition>
+        <date>$Date$</date>
+        <releaseinfo>
+            $Id$ 
+        </releaseinfo>
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
