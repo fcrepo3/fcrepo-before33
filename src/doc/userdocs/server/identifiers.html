@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+
+<head>
+  <title>Fedora Identifiers</title>
+  <meta name="robots" content="all"/>
+  <link href="../docstyle.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+  <div class="title">
+    <h1>Fedora Identifiers</h1>
+    <p>$Id$</p>
+    <p>Copyright &#xa9;2005 The Rector and Visitors of The University of Virginia and Cornell University</p>
+  </div>
+
+  <div class="abstract">
+    <h2>Abstract</h2>
+    <p>
+      This document blah, etc, blah, blah.
+    </p>
+  </div>
+
+  <div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+      <ol>
+        <li> <a href="#PIDs">PIDs</a></li>
+        <ol type="A">
+          <li> <a href="#PIDs.Syntax">Syntax</a></li>
+          <li> <a href="#PIDs.Examples">Examples</a></li>
+          <li> <a href="#PIDs.Normalization">Normalization</a></li>
+        </ol>
+        <li> <a href="#URIsForObjects">URIs for Objects</a></li>
+        <ol type="A">
+          <li> <a href="#URIsForObjects.Syntax">Syntax</a></li>
+          <li> <a href="#URIsForObjects.Examples">Examples</a></li>
+          <li> <a href="#URIsForObjects.Normalization">Normalization</a></li>
+        </ol>
+        <li> <a href="#URIsForDisseminations">URIs for Disseminations</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="sec1">
+    <h2><a name="PIDs">1. PIDs</a></h2>
+    <p>
+      A PID is a unique, persistent identifier for a Fedora digital object.
+      PIDs may be user-defined or automatically assigned by a repository.
+      In this section we describe the syntactic and normalization considerations
+      for PIDs.
+    </p>
+    <div class="sec2">
+      <h3><a name="PIDs.Syntax">A. Syntax</a></h3>
+      <p>
+        PIDs are case-sensitive and consist of a namespace prefix and a simple
+        string identifier.  The syntax is 
+        described below using <a href="http://www.ietf.org/rfc/rfc2234.txt">augmented BNF</a>:
+      </p>
+      <div class="code">
+object-pid    = namespace-id ":" object-id
+namespace-id  = ( [A-Z] / [a-z] / [0-9] / "-" / "." ) 1+
+object-id     = ( [A-Z] / [a-z] / [0-9] / "-" / "." / "~" / "_" / escaped-octet ) 1+
+escaped-octet = "%" hex-digit hex-digit
+hex-digit     = [0-9] / [A-F]
+      </div>
+      <p>
+        <strong>The maximum length of a PID is 64 characters</strong>
+      </p>
+      <p>
+        For convenience, we provide the following single regular expression, 
+        which can be used to validate a normalized PID string:
+      </p>
+      <div class="code">
+^([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+$
+      </div>
+    </div>
+    <div class="sec2">
+      <h3><a name="PIDs.Examples">B. Examples</a></h3>
+      <ul>
+        <li> <code>demo:1</code></li>
+        <li> <code>demo:A-B.C_D%3AE</code></li>
+        <li> <code>demo:MyFedoraDigitalObject</code></li>
+      </ul>
+    </div>
+    <div class="sec2">
+      <h3><a name="PIDs.Normalization">C. Normalization</a></h3>
+      <p>
+        Hex-digits may occur in lowercase, but should be capitalized for 
+        normalization purposes. The separator character may occur as "%3A" 
+        or "%3a", but should be changed to a colon ":" for normalization purposes. 
+      </p>
+    </div>
+  </div>
+  <div class="sec1">
+    <h2><a name="URIsForObjects">2. URIs for Objects</a></h2>
+    <p>
+      It is often useful to have Uniform Resource Identifiers ("URIs")
+      that refer to Fedora Objects.  For instance, semantic web
+      technologies require the use of a URI to identify a subject.
+      Other benefits of exposing and using URIs are described in
+      <a href="http://www.w3.org/TR/webarch/#identification">section 2 
+      of the W3C's <em>Architecture of the World Wide Web</em></a>.
+    </p>
+    <p>
+      Every Fedora object has an implicit URI associated with it.
+      These identifiers exist within the "fedora" namespace of the 
+      <a href="http://info-uri.info/">info URI scheme</a>.
+      We chose this URI scheme due to it's resolution protocol
+      independence and syntactic freedom.
+    </p>
+    <div class="sec2">
+      <h3><a name="URIsForObjects.Syntax">A. Syntax</a></h3>
+      <p>
+        The URI for a Fedora object is obtained simply by appending the
+        PID to the string <code>"info:fedora/"</code>.
+      </p>
+    </div>
+    <div class="sec2">
+      <h3><a name="URIsForObjects.Examples">B. Examples</a></h3>
+      <ul>
+        <li> <code>info:fedora/demo:1</code></li>
+        <li> <code>info:fedora/demo:A-B.C_D%3AE</code></li>
+        <li> <code>info:fedora/demo:MyFedoraDigitalObject</code></li>
+      </ul>
+    </div>
+    <div class="sec2">
+      <h3><a name="URIsForObjects.Normalization">C. Normalization</a></h3>
+      <p>To normalize a Fedora URI, normalize the PID part as described above.</p>
+    </div>
+  </div>
+  <div class="sec1">
+    <h2><a name="URIsForDisseminations">3. URIs for Disseminations</a></h2>
+    <p>
+    </p>
+  </div>
+</body>
+</html>
