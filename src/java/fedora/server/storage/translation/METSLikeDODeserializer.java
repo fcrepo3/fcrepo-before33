@@ -85,10 +85,19 @@ public class METSLikeDODeserializer
     private DigitalObject m_obj;
 
     /**
-     * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
+     * Namespace prefix and URI mapping for METS root element.
+     * Populated via SAX2 startPrefixMapping events.
      */
-    private HashMap m_prefixes;
-    private HashMap m_prefixUris;
+    private HashMap m_URIToPrefix;
+    private HashMap m_prefixToURI;
+    
+	/** 
+	 *  Namespace Prefix and URI mapping for inline XML Datastreams. 
+	 *  Populated via SAX2 startPrefixMapping events.
+	 */
+	private HashMap m_inlinePrefixToURI;
+	private HashMap m_inlineURIToPrefix;
+	private ArrayList m_inlinePrefixList;
 
     private boolean m_rootElementFound;
     private String m_dsId;
@@ -121,8 +130,7 @@ public class METSLikeDODeserializer
 
     private boolean m_firstInlineXMLElement;
 
-    /** Namespace prefixes used in the currently scanned datastream */
-    private ArrayList m_dsPrefixes;
+
 
     /** While parsing, are we inside XML metadata? */
     private boolean m_inXMLMetadata;
@@ -241,7 +249,7 @@ public class METSLikeDODeserializer
 
     public void deserialize(InputStream in, DigitalObject obj, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
-		System.out.println("Deserializing using METSLike...");
+		System.out.println("Deserializing METS (Fedora extension)...");
         m_obj=obj;
 		m_transContext=transContext;
 		initialize();       
@@ -256,7 +264,7 @@ public class METSLikeDODeserializer
         if (!m_rootElementFound) {
             throw new ObjectIntegrityException("METS root element not found -- must have 'mets' element in namespace " + M + " as root element.");
         }
-        obj.setNamespaceMapping(m_prefixes);
+        obj.setNamespaceMapping(m_URIToPrefix);
         
         // Deal with METS way of having datastreams point to other metadata about them
         // (via ADMID attribute).  We want to figure out which of these IDREFs point
@@ -324,21 +332,21 @@ public class METSLikeDODeserializer
 		// FIXME: this should somehow be gathered from the serialization, ideally.
 		obj.setOwnerId("fedoraAdmin");
     }
+   
+	public void startPrefixMapping(String prefix, String uri) {
 
-    public void startPrefixMapping(String prefix, String uri) {
-        // save a forward and backward hash of namespace prefix-to-uri
-        // mapping ... for the entire object.
-        m_prefixes.put(uri, prefix);
-        m_prefixUris.put(prefix, uri);
-        // if we're looking at inline metadata, be sure to save the prefix
-        // so we know it's used in that datastream
-
-        if (m_inXMLMetadata) {
-            if (!m_dsPrefixes.contains(prefix)) {
-                    m_dsPrefixes.add(prefix);
-            }
-        }
-    }
+		// save a forward and backward hash of namespace prefix-to-uri mapping
+		// for namespaces declared in a block of inline XML.
+		if (m_inXMLMetadata) {
+			m_inlineURIToPrefix.put(uri, prefix);
+			m_inlinePrefixToURI.put(prefix, uri);
+		} else {
+			// save a forward and backward hash of namespace prefix-to-uri
+			// mapping for namespaces declared on the root element
+			m_URIToPrefix.put(uri, prefix);
+			m_prefixToURI.put(prefix, uri);        	
+		}
+	}
 
     public void startElement(String uri, String localName, String qName,
             Attributes a) throws SAXException {
@@ -403,7 +411,9 @@ public class METSLikeDODeserializer
             } else if (localName.equals("xmlData")) {
                 m_dsXMLBuffer=new StringBuffer();
                 m_dsFirstElementBuffer=new StringBuffer();
-                m_dsPrefixes=new ArrayList();
+                m_inlinePrefixList=new ArrayList();
+				m_inlineURIToPrefix=new HashMap();
+				m_inlinePrefixToURI=new HashMap();
                 m_xmlDataLevel=0;
                 m_inXMLMetadata=true;
                 m_firstInlineXMLElement=true;
@@ -629,44 +639,55 @@ public class METSLikeDODeserializer
             if (m_inXMLMetadata) {
                 // must be in xmlData... just output it, remembering the number
                 // of METS:xmlData elements we see
-                String prefix=(String) m_prefixes.get(uri);
+              
+				// First, use the element URI to get the namespace prefix
+				// given that it was declared locally within the inline XML...
+				String prefix=(String) m_inlineURIToPrefix.get(uri);
+				if (prefix==null || prefix.equals("")) {
+					// if not declared locally, try to get the prefix
+					// from declarations on the FOXML root element
+					prefix=(String) m_URIToPrefix.get(uri);
+				}
                 if (m_firstInlineXMLElement) {
-                // deal with root element... buffer it separately so we can 
-                // add namespace stuff after it's known
+					// write first element with appropriate prefix... 
+					// buffer it separately so we can ddd namespace 
+					// declarations later.
                     m_firstInlineXMLElement=false;
                     m_dsFirstElementBuffer.append('<');
                     if (prefix!=null && !prefix.equals("")) {
-                        if (!m_dsPrefixes.contains(prefix)) {
-                            m_dsPrefixes.add(prefix);
-                        }
+						// hold on to prefixes used in this inline XML
+						if (!m_inlinePrefixList.contains(prefix)) {
+							m_inlinePrefixList.add(prefix);
+						}
+						// write the prefix
                         m_dsFirstElementBuffer.append(prefix);
                         m_dsFirstElementBuffer.append(':');
                     }
                     m_dsFirstElementBuffer.append(localName);
                 } else {
-                // deal with non-root elements
+					// write non-root elements with appropriate prefix
                     m_dsXMLBuffer.append('<');
                     if (prefix!=null && !prefix.equals("")) {
-                        if (!m_dsPrefixes.contains(prefix)) {
-                            if (!"".equals(prefix)) {
-                                m_dsPrefixes.add(prefix);
-                            }
-                        }
+						// hold on to prefixes used in this inline XML
+						if (!m_inlinePrefixList.contains(prefix)) {
+								m_inlinePrefixList.add(prefix);
+						}
+						// write the prefix
                         m_dsXMLBuffer.append(prefix);
                         m_dsXMLBuffer.append(':');
                     }
                     m_dsXMLBuffer.append(localName);
                 }
-                // deal with attributes
+				// write attributes with appropriate prefix
                 for (int i=0; i<a.getLength(); i++) {
                     m_dsXMLBuffer.append(' ');
-                    String aPrefix=(String) m_prefixes.get(a.getURI(i));
+                    String aPrefix=(String) m_URIToPrefix.get(a.getURI(i));
                     if (aPrefix!=null && !aPrefix.equals("")) {
-                        if (!m_dsPrefixes.contains(aPrefix)) {
-                            if (!"".equals(aPrefix)) {
-                                m_dsPrefixes.add(aPrefix);
-                            }
-                        }
+						// hold on to prefixes used in this inline XML
+						if (!m_inlinePrefixList.contains(aPrefix)) {
+								m_inlinePrefixList.add(aPrefix);
+						}
+						// write the prefix
                         m_dsXMLBuffer.append(aPrefix);
                         m_dsXMLBuffer.append(':');
                     }
@@ -739,29 +760,62 @@ public class METSLikeDODeserializer
                     a.responsibility=m_auditResponsibility;
                     a.date=DateUtility.convertStringToDate(m_auditDate);
                     a.justification=m_auditJustification;
-                    System.out.println("Adding Audit records to object in METS deserializer...");
-                    System.out.println("Audit id = " + a.id);
                     m_obj.getAuditRecords().add(a);
 					m_inXMLMetadata=false; // other stuff is re-initted upon
 										   // startElement for next xml metadata
 										   // element
-                } else {
-                    // create the right kind of datastream and add it to m_obj
-                    for (int i=0; i<m_dsPrefixes.size(); i++) {
-                        // now finish writing to m_dsFirstElementBuffer, a series of strings like
-                        // ' xmlns:PREFIX="URI"'
-                        String pfx=(String) m_dsPrefixes.get(i);
-                        String pfxUri=(String) m_prefixUris.get(pfx);
-                        if (!pfx.equals("")) {
-                            m_dsFirstElementBuffer.append(" xmlns:");
-                            m_dsFirstElementBuffer.append(pfx);
-                        } else {
-                            m_dsFirstElementBuffer.append(" xmlns");
-                        }
-                        m_dsFirstElementBuffer.append("=\"");
-                        m_dsFirstElementBuffer.append(pfxUri);
-                        m_dsFirstElementBuffer.append("\"");
-                    }
+                } else {  
+					// Append namespace declarations for the inline XML...
+
+					// First, write all the namespaces that were already 
+					// declared on the root element of the inline XML					
+					Iterator iter = m_inlineURIToPrefix.keySet().iterator();
+					while (iter.hasNext()) {
+						String URI =(String) iter.next();
+						String prefix=(String) m_inlineURIToPrefix.get(URI);
+						if (!prefix.equals("") && prefix!=null) {
+							m_dsFirstElementBuffer.append(" xmlns:");
+							m_dsFirstElementBuffer.append(prefix);
+						} else {
+							m_dsFirstElementBuffer.append(" xmlns");
+						}
+						m_dsFirstElementBuffer.append("=\"");
+						m_dsFirstElementBuffer.append(URI);
+						m_dsFirstElementBuffer.append("\"");
+						// remove the prefix from the list of prefixes
+						// that we actually encountered within this inline XML block.
+						System.out.println("prefix=" + prefix);
+						if (m_inlinePrefixList.contains(prefix)){
+							System.out.println("inlinePrefixList contains prefix: " + prefix);
+							m_inlinePrefixList.remove(prefix);
+							System.out.println("inlinePrefixList removed prefix: " + prefix);
+						}
+					}					
+					// Then, see if there are any prefixes left over in the list
+					// for which local namespace declarations were not made.
+					// Look to the root FOXML element to find declaration
+					// and put it on the inline XML root element too.
+					// (This ensures that the inline XML can stand alone 
+					// outside the context of the FOXML object.
+					for (int i=0; i<m_inlinePrefixList.size(); i++) {
+						// get a prefix from the list
+						String prefix=(String) m_inlinePrefixList.get(i);
+						System.out.println("left in inlinePrefixList: " + prefix);
+						// get URI for prefix by inquiring into set of
+						// prefixes defined within this block of inline XML
+						String URI=(String) m_prefixToURI.get(prefix);
+						if (!prefix.equals("") && prefix!=null) {
+							m_dsFirstElementBuffer.append(" xmlns:");
+							m_dsFirstElementBuffer.append(prefix);
+						} else {
+							m_dsFirstElementBuffer.append(" xmlns");
+						}
+						m_dsFirstElementBuffer.append("=\"");
+						m_dsFirstElementBuffer.append(URI);
+						m_dsFirstElementBuffer.append("\"");
+					}					
+                    
+					// create the right kind of datastream and add it to m_obj
 					DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
 					instantiateXMLDatastream(ds);
 					m_inXMLMetadata=false; // other stuff is re-initted upon
@@ -773,7 +827,15 @@ public class METSLikeDODeserializer
                 // subtracting the level of METS:xmlData elements we're at
                 // if needed
                 m_dsXMLBuffer.append("</");
-                String prefix=(String) m_prefixes.get(uri);
+                
+                // Put prefix on end element tag.
+                // First, see if the namespace prefix was declared locally
+                // in the inline XML.
+				String prefix=(String) m_inlineURIToPrefix.get(uri);
+				if (prefix==null || prefix.equals("")) {
+					// if not, try the declarations on the root element
+					prefix=(String) m_URIToPrefix.get(uri);
+				}
                 if (prefix!=null && !prefix.equals("")) {
                     m_dsXMLBuffer.append(prefix);
                     m_dsXMLBuffer.append(':');
@@ -936,10 +998,12 @@ public class METSLikeDODeserializer
 		
 		// temporary variables and state variables
 		m_rootElementFound=false;
-		//m_objPropertyName=null;
+		//m_objPropertyName="";
 		//m_readingBinaryContent=false; // indicates reading base64-encoded content
 		m_firstInlineXMLElement=false;
 		m_inXMLMetadata=false;
+		m_URIToPrefix=new HashMap();
+		m_prefixToURI=new HashMap();
 
 		// temporary variables for processing datastreams		
 		m_dsId="";
@@ -960,8 +1024,8 @@ public class METSLikeDODeserializer
 		m_dsMDClass=0;
 		m_dsLabel="";
 		m_dsXMLBuffer=null;
-		m_prefixes=new HashMap();
-		m_prefixUris=new HashMap();
+		m_inlineURIToPrefix=new HashMap();
+		m_inlinePrefixToURI=new HashMap();
 		m_dsAdmIds=new HashMap();
 		m_dsDmdIds=null;
 		
@@ -979,54 +1043,4 @@ public class METSLikeDODeserializer
 		m_auditJustification="";
 		m_auditIdToComponentId=new HashMap();
 	}
-/*   
-	private void initialize(){		
-		//NOTE: variables that are commented out exist in FOXML but not METS
-		
-		// temporary variables and state variables
-		m_rootElementFound=false;
-		//m_objPropertyName=null;
-		//m_readingBinaryContent=false; // indicates reading base64-encoded content
-		m_firstInlineXMLElement=false;
-		m_inXMLMetadata=false;
-
-		// temporary variables for processing datastreams		
-		m_dsId=null;
-		//m_dsURI=null;
-		//m_dsVersionable=null;
-		m_dsVersId=null;
-		m_dsCreateDate=null;
-		m_dsState=null;
-		//m_dsFormatURI=null;
-		m_dsSize=-1;
-		m_dsLocationType=null;
-		m_dsLocationURL=null;
-		m_dsLocation=null;
-		m_dsMimeType=null;
-		m_dsControlGrp=null;
-		m_dsInfoType=null;
-		m_dsOtherInfoType=null;
-		m_dsMDClass=0;
-		m_dsLabel=null;
-		m_dsXMLBuffer=null;
-		m_prefixes=new HashMap();
-		m_prefixUris=new HashMap();
-		m_dsAdmIds=new HashMap();
-		m_dsDmdIds=null;
-		
-		// temporary variables for processing disseminators
-		m_diss=null;
-		m_dissems=new HashMap();
-	
-		// temporary variables for processing audit records
-		m_auditBuffer=null;
-		m_auditComponentID=null;
-		m_auditProcessType=null;
-		m_auditAction=null;
-		m_auditResponsibility=null;
-		m_auditDate=null;
-		m_auditJustification=null;
-		m_auditIdToComponentId=new HashMap();
-	}
-	*/
 }
