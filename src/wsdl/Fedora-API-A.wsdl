@@ -11,6 +11,8 @@
 			<wsdldoc:type name="fedora-types:ArrayOfObjectFields" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfObjectFields"/>
 			<wsdldoc:type name="fedora-types:ArrayOfProperty" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfProperty"/>
 			<wsdldoc:type name="fedora-types:MIMETypedStream" url="http://www.fedora.info/definitions/1/0/types/#MIMETypedStream"/>
+			<wsdldoc:type name="fedora-types:ArrayOfMethodDef" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfMethodDef"/>
+			<wsdldoc:type name="fedora-types:ObjectProfile" url="http://www.fedora.info/definitions/1/0/types/#ObjectProfile"/>
 		</documentation>
 	</types>
 	<message name="advancedFieldSearchRequest">
@@ -31,63 +33,40 @@
             object that matched all conditions of the query.</documentation>
 		</part>
 	</message>
-	<message name="getBehaviorDefinitionsRequest">
+	<message name="getObjectProfileRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:dateTime">
 			<documentation>the date/time stamp specifying the desired view of the 
-			object.  If null, the current view of the object (the most recent time) 
-			is assumed.
-		</documentation>
+				object.  If null, the current view of the object (the most recent time) 
+				is assumed.
+			</documentation>
 		</part>
 	</message>
-	<message name="getBehaviorDefinitionsResponse">
-		<part name="response" type="fedora-types:ArrayOfString">
-			<documentation>the PIDs of the behavior definitions, in no particular order.</documentation>
+	<message name="getObjectProfileResponse">
+		<part name="response" type="fedora-types:ObjectProfile">
+			<documentation>A data structure that contains key metadata
+				about the object, including URLs to view the Dissemination
+				Index and the Item Index for the object.
+			</documentation>
 		</part>
 	</message>
-	<message name="getBehaviorMethodsRequest">
+	<message name="getObjectMethodsRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
-		<part name="bDefPID" type="xsd:string">
-			<documentation>the PID of the behavior definition.</documentation>
-		</part>
 		<part name="asOfDateTime" type="xsd:dateTime">
 			<documentation>the date/time stamp specifying the desired view of the 
-			object.  If null, the current view of the object (the most recent time) 
-			is assumed.
-		</documentation>
+			      object.  If null, the current view of the object (the most recent time) 
+			      is assumed.
+			</documentation>
 		</part>
 	</message>
-	<message name="getBehaviorMethodsResponse">
-		<part name="response" type="fedora-types:ArrayOfMethodDef">
-			<documentation>pre-bound WSDL that the client may use to formulate 
-			dissemination requests for the given digital object and behavior 
-			definition.
-		</documentation>
-		</part>
-	</message>
-	<message name="getBehaviorMethodsXMLRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
-		</part>
-		<part name="bDefPID" type="xsd:string">
-			<documentation>the PID of the behavior definition.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
-			<documentation>the date/time stamp specifying the desired view of the 
-			object.  If null, the current view of the object (the most recent time) 
-			is assumed.
-		</documentation>
-		</part>
-	</message>
-	<message name="getBehaviorMethodsXMLResponse">
-		<part name="response" type="fedora-types:MIMETypedStream">
-			<documentation>pre-bound WSDL that the client may use to formulate 
-				dissemination requests for the given digital object and behavior 
-				definition.
+	<message name="getObjectMethodsResponse">
+		<part name="response" type="fedora-types:ArrayOfObjectMethodsDef">
+			<documentation>A set of method definitions that represent 
+				all possible disseminations that can be run on the object.
 			</documentation>
 		</part>
 	</message>
@@ -116,23 +95,63 @@
 			<documentation>the desired view of the object as a mime-typed stream.</documentation>
 		</part>
 	</message>
-	<message name="getObjectMethodsRequest">
+	<message name="getBehaviorDefinitionsRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:dateTime">
 			<documentation>the date/time stamp specifying the desired view of the 
-			      object.  If null, the current view of the object (the most recent time) 
-			      is assumed.
+				object.  If null, the current view of the object (the most recent time)
+				is assumed.
 			</documentation>
 		</part>
 	</message>
-	<message name="getObjectMethodsResponse">
-		<part name="response" type="fedora-types:ArrayOfObjectMethodsDef">
-			<documentation>A list of object components that includes: IDs of Disseminators, 
-				PIDs of Behavior Definitons, PIDs of Behavior Mechanisms, and methodNames
-				of each method implemented by the mechanism. This information provides a
-				"view" of the object and what behaviors it can perform.
+	<message name="getBehaviorDefinitionsResponse">
+		<part name="response" type="fedora-types:ArrayOfString">
+			<documentation>the PIDs of the behavior definitions, in no particular order.</documentation>
+		</part>
+	</message>
+	<message name="getBehaviorMethodsRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="bDefPID" type="xsd:string">
+			<documentation>the PID of the behavior definition.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:dateTime">
+			<documentation>the date/time stamp specifying the desired view of the 
+			object.  If null, the current view of the object (the most recent time) 
+			is assumed.
+			</documentation>
+		</part>
+	</message>
+	<message name="getBehaviorMethodsResponse">
+		<part name="response" type="fedora-types:ArrayOfMethodDef">
+			<documentation>pre-bound WSDL that the client may use to formulate 
+			dissemination requests for the given digital object and behavior 
+			definition.
+			</documentation>
+		</part>
+	</message>
+	<message name="getBehaviorMethodsXMLRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="bDefPID" type="xsd:string">
+			<documentation>the PID of the behavior definition.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:dateTime">
+			<documentation>the date/time stamp specifying the desired view of the 
+			object.  If null, the current view of the object (the most recent time) 
+			is assumed.
+		</documentation>
+		</part>
+	</message>
+	<message name="getBehaviorMethodsXMLResponse">
+		<part name="response" type="fedora-types:MIMETypedStream">
+			<documentation>pre-bound WSDL that the client may use to formulate 
+				dissemination requests for the given digital object and behavior 
+				definition.
 			</documentation>
 		</part>
 	</message>
@@ -176,6 +195,38 @@
 			<input message="fedora-api:advancedFieldSearchRequest"/>
 			<output message="fedora-api:advancedFieldSearchResponse"/>
 		</operation>
+		<operation name="getObjectProfile">
+			<documentation>Gets a profile of the object which includes key
+				metadata fields and URLs for the object Dissemination 
+				Index and the object Item Index.  Can be thought of as a
+				default view of the object.
+			</documentation>
+			<input message="fedora-api:getObjectProfileRequest"/>
+			<output message="fedora-api:getObjectProfileResponse"/>
+		</operation>
+		<operation name="getObjectMethods">
+			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition PIDs,
+				and methodNames supported by a digital object.  This returns a set of method definitions
+				that represent all possible disseminations that can be run on the object.
+			</documentation>
+			<input message="fedora-api:getObjectMethodsRequest"/>
+			<output message="fedora-api:getObjectMethodsResponse"/>
+		</operation>
+		<operation name="getDissemination">
+			<documentation>Gets a MIME-typed view of a digital object,
+				given the behavior definition id, a behavior method name, and any behavior 
+				method parameters.	Information about behavior method names and parameters is
+				obtained via other APA-A operations	(see getObjectMethods,	getBehaviorMethods,
+				and getBehaviorMethodsXML). The getDissemination operation essentially
+				encapsulates another operation (a behavior method on the Fedora object). 
+				The getDissemination operation hides from the client the details of
+				how a behavior method is fulfilled (i.e., what behavior mechanism 
+				performs the work, and how the request is invoked upon the behavior
+				mechanism).
+			</documentation>
+			<input message="fedora-api:getDisseminationRequest"/>
+			<output message="fedora-api:getDisseminationResponse"/>
+		</operation>
 		<operation name="getBehaviorDefinitions">
 			<documentation>Gets a list of behavior definitions supported by a
 				digital object.  This is a set of PIDs, one for each behavior
@@ -198,27 +249,6 @@
 			<input message="fedora-api:getBehaviorMethodsXMLRequest"/>
 			<output message="fedora-api:getBehaviorMethodsXMLResponse"/>
 		</operation>
-		<operation name="getDissemination">
-			<documentation>Gets a MIME-typed view of the digital
-				object, given the behavior definition id and any parameters
-				that might be optional/required for the dissemination. This
-				hides from the client the details of how a behavior method
-				is fulfilled (i.e., what behavior mechanism performs the
-				work, and how the request is invoked upon the behavior
-				mechanism).
-			</documentation>
-			<input message="fedora-api:getDisseminationRequest"/>
-			<output message="fedora-api:getDisseminationResponse"/>
-		</operation>
-		<operation name="getObjectMethods">
-			<documentation>Gets a list of Disseminator IDs, Behavior Definition PIDs,
-				and methodNames supported by a digital object. This is a set of methodNames, 
-				one for each behavior mechanism type associated with each of the object's 
-				disseminator(s).
-			</documentation>
-			<input message="fedora-api:getObjectMethodsRequest"/>
-			<output message="fedora-api:getObjectMethodsResponse"/>
-		</operation>
 		<operation name="simpleFieldSearch">
 			<documentation>Gets the requested ObjectFields on all objects in the
                 repository having all search terms present somewhere in their
@@ -237,6 +267,42 @@
 			</input>
 			<output>
 				<mime:mimeXml part="response"/>
+			</output>
+		</operation>
+		<operation name="getObjectProfile">
+			<http:operation location="getObjectProfile"/>
+			<input>
+				<http:urlEncoded/>
+			</input>
+			<output>
+				<mime:mimeXml part="response"/>
+			</output>
+		</operation>
+		<operation name="getObjectMethods">
+			<http:operation location="getObjectMethods"/>
+			<input>
+				<http:urlEncoded/>
+			</input>
+			<output>
+				<mime:mimeXml part="response"/>
+			</output>
+		</operation>
+		<operation name="getDissemination">
+			<http:operation location="getDissemination"/>
+			<input>
+				<http:urlEncoded>
+					<documentation>Inside the 'parameters' input message, 
+				          mechanism-specific parameters may be given.  When given as an HTTP 
+				          GET API-A request to Fedora, the mechanism-specific parameters are to 
+				          be further encoded in the HTTP GET request in the value of the 
+				          'parameters' message.  When demarshaling the request, the Fedora 
+				          server will un-URL-encode the the value of 'parameters', and pass the 
+				          provided value(s) to the underlying service.
+					</documentation>
+				</http:urlEncoded>
+			</input>
+			<output>
+				<mime:content type="*/*"/>
 			</output>
 		</operation>
 		<operation name="getBehaviorDefinitions">
@@ -266,33 +332,6 @@
 				<mime:mimeXml part="response"/>
 			</output>
 		</operation>
-		<operation name="getDissemination">
-			<http:operation location="getDissemination"/>
-			<input>
-				<http:urlEncoded>
-					<documentation>Inside the 'parameters' input message, 
-				          mechanism-specific parameters may be given.  When given as an HTTP 
-				          GET API-A request to Fedora, the mechanism-specific parameters are to 
-				          be further encoded in the HTTP GET request in the value of the 
-				          'parameters' message.  When demarshaling the request, the Fedora 
-				          server will un-URL-encode the the value of 'parameters', and pass the 
-				          provided value(s) to the underlying service.
-					</documentation>
-				</http:urlEncoded>
-			</input>
-			<output>
-				<mime:content type="*/*"/>
-			</output>
-		</operation>
-		<operation name="getObjectMethods">
-			<http:operation location="getObjectMethods"/>
-			<input>
-				<http:urlEncoded/>
-			</input>
-			<output>
-				<mime:mimeXml part="response"/>
-			</output>
-		</operation>
 		<operation name="simpleFieldSearch">
 			<http:operation location="simpleFieldSearch"/>
 			<input>
@@ -307,6 +346,33 @@
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
 		<operation name="advancedFieldSearch">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#advancedFieldSearch"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="getObjectProfile">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectProfile"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="getObjectMethods">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectMethods"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="getDissemination">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDissemination"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -334,24 +400,6 @@
 		</operation>
 		<operation name="getBehaviorMethodsXML">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getBehaviorMethodsXML"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="getDissemination">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDissemination"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="getObjectMethods">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectMethods"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
