@@ -14,6 +14,9 @@
 	<target name="serverdist" depends="server,client,userdocs" description="builds both client and server in dist\server, in a package suitable for distribution">
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
+ 		<copy todir="dist/server">
+ 			<fileset dir="dist/client"/>
+ 		</copy>
 	</target>
 	<target name="client" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
 		<mkdir dir="dist"/>
@@ -395,6 +398,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.55  2002/12/19 21:29:17  cwilper
+  oops.. re-inserted copy of client dist to server dist dir in 'serverdist'
+  target.
+
   Revision 1.54  2002/12/19 21:26:53  cwilper
   added "userdocs" target, can run standalone but is also
   a dependency of "serverdist".... puts docs in dist/server/doc
