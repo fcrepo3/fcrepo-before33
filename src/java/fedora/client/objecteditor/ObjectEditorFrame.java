@@ -65,7 +65,14 @@ public class ObjectEditorFrame
         super(pid, true, true, true, true);
         m_pid=pid;
         // query the server for key object fields
-        ObjectFields o=getObjectFields(pid);
+        ObjectFields o=Util.getObjectFields(pid, 
+                                       new String[] {"state", 
+                                                     "label", 
+                                                     "cModel", 
+                                                     "cDate", 
+                                                     "mDate", 
+                                                     "ownerId", 
+                                                     "fType"});
         String state=o.getState();
         String label=o.getLabel();
         String cModel=o.getCModel();
@@ -178,26 +185,6 @@ public class ObjectEditorFrame
         } else {
             doTitle(false);
         }
-    }
-
-    private ObjectFields getObjectFields(String pid)
-            throws Exception {
-        FieldSearchQuery query=new FieldSearchQuery();
-        Condition[] conditions=new Condition[1];
-        conditions[0]=new Condition();
-        conditions[0].setProperty("pid");
-        conditions[0].setOperator(ComparisonOperator.fromValue("eq"));
-        conditions[0].setValue(pid);
-        query.setConditions(conditions);
-        String[] fields=new String[] {"state", "label", "cModel", "cDate", 
-                "mDate", "ownerId", "fType"};
-        FieldSearchResult result=Administrator.APIA.findObjects(
-                    fields, new NonNegativeInteger("1"), query);
-        ObjectFields[] resultList=result.getResultList();
-        if (resultList==null || resultList.length==0) {
-            throw new IOException("Object not found in repository");
-        }
-        return resultList[0];
     }
 
     /**

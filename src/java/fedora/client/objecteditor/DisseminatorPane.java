@@ -9,15 +9,15 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 
+import fedora.server.types.gen.Datastream;
+import fedora.server.types.gen.DatastreamBinding;
+import fedora.server.types.gen.Disseminator;
+
 import fedora.client.Administrator;
 import fedora.client.actions.ViewObject;
 import fedora.client.objecteditor.types.DatastreamInputSpec;
 import fedora.client.objecteditor.types.MethodDefinition;
 import fedora.client.objecteditor.types.ParameterDefinition;
-
-import fedora.server.types.gen.Datastream;
-import fedora.server.types.gen.DatastreamBinding;
-import fedora.server.types.gen.Disseminator;
 
 public class DisseminatorPane
         extends EditingPane 
@@ -371,8 +371,18 @@ public class DisseminatorPane
         private Disseminator m_diss;
         private JTextField m_labelTextField;
         private JTextField m_bMechLabelTextField;
+        private Map m_bMechLabels;
+        private Map m_inputSpecs;
+        private String m_lastSelectedBMech;
+
         public CurrentVersionPane(Disseminator diss) throws IOException {
             m_diss=diss;
+
+            // prepare by getting bmech labels and binding specs
+            m_bMechLabels=Util.getBMechLabelMap(m_diss.getBDefPID());
+            m_bMechLabels.put(m_diss.getBMechPID(), m_diss.getBMechLabel());
+            m_inputSpecs=Util.getInputSpecMap(m_bMechLabels.keySet());
+
             // top panel is for labels and such
             JLabel label1=new JLabel("Label");
             label1.setPreferredSize(m_labelDims);
@@ -391,20 +401,42 @@ public class DisseminatorPane
             m_labelTextField.setEditable(true);
             m_labelTextField.setEnabled(!m_diss.getState().equals("D"));
 
-// FIXME: replace this with a combo box populated with all
-//        possible bMechs, and attach it to a smart event handler
-//        that lazily instantiates a new DatastreamBindingPane or
-//        switches to one... in the pre-existing cardlayout panel,
-//        and updates the label from the hash of values.
-
-            m_bMechComboBox=new JComboBox(new String[] {m_diss.getBMechPID()});
+            // make the list of bmech pids for the dropdown,
+            // ensuring that the first one listed is the one that
+            // the disseminator currently uses.
+            String[] bMechPIDs=new String[m_bMechLabels.keySet().size()];
+            Iterator bMechIter=m_bMechLabels.keySet().iterator();
+            int bMechNum=0;
+            bMechPIDs[bMechNum]=m_diss.getBMechPID();
+            while (bMechIter.hasNext()) {
+                String mechPID=(String) bMechIter.next();
+                if (!mechPID.equals(m_diss.getBMechPID())) {
+                    bMechNum++;
+                    bMechPIDs[bMechNum]=mechPID;
+                }
+            }
+            m_bMechComboBox=new JComboBox(bMechPIDs);
             Administrator.constrainHeight(m_bMechComboBox);
+            m_lastSelectedBMech=m_diss.getBMechPID();
+            m_bMechComboBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    // put the currently-entered label into m_bMechLabels,
+                    m_bMechLabels.put(m_lastSelectedBMech, m_bMechLabelTextField.getText());
+                    // then switch to the appropriate panel and set the 
+                    // label text
+                    String bMechPID=(String) m_bMechComboBox.getSelectedItem();
+                    m_bindingsCard.show(m_stackedBindingPane, bMechPID);
+                    m_bMechLabelTextField.setText((String) m_bMechLabels.get(bMechPID));
+                    // then remember the selected value for next time
+                    m_lastSelectedBMech=bMechPID;
+                }
+            });
 
             JButton bMechButton=new JButton("Open as Object");
             Administrator.constrainHeight(bMechButton);
             bMechButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
-                    new ViewObject(m_diss.getBMechPID()).launch();
+                    new ViewObject((String) m_bMechComboBox.getSelectedItem()).launch();
                 }
             });
 
@@ -441,35 +473,33 @@ public class DisseminatorPane
             JPanel middlePanel=new JPanel(new BorderLayout());
             middlePanel.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
 
-// initialize one of these panels for each bmech implementing the bdef...
-// later, undoChanges will undo each... similarly, isDirty() will use
-// the list of them to check whether the currently displayed one is dirty
+            m_bindingsCard=new CardLayout();
+            m_stackedBindingPane=new JPanel(m_bindingsCard);
 
-            CardLayout m_bindingsCard=new CardLayout();
-            JPanel m_stackedBindingPane=new JPanel(m_bindingsCard);
-            
-            // do a search, finding pids and labels of bmechs implementing
-            // the bdef this disseminator uses.
+            // add a binding pane for each possible bmech to the card,
+            // then make sure the disseminator's initial bmech's binding pane is
+            // the first selected one.
+            Iterator specMapIter=m_inputSpecs.keySet().iterator();
+            while (specMapIter.hasNext()) {
+                String bMechPID=(String) specMapIter.next();
+                DatastreamInputSpec spec=
+                        (DatastreamInputSpec) m_inputSpecs.get(bMechPID);
+                DatastreamBinding[] bindings;
+                if (bMechPID.equals(m_diss.getBMechPID())) {
+                    bindings=m_diss.getDsBindMap().getDsBindings();
+                } else {
+                    bindings=new DatastreamBinding[0];
+                }
+                DatastreamBindingPane dsBindingPane=new DatastreamBindingPane(
+                        m_gramps.getInitialCurrentDatastreamVersions(),
+                        bindings, 
+                        m_diss.getBMechPID(), spec);
+                m_gramps.addDatastreamListener(dsBindingPane);
+                m_stackedBindingPane.add(dsBindingPane, bMechPID);
+            }
+            m_bindingsCard.show(m_stackedBindingPane, m_diss.getBMechPID());
 
-            HashMap hash=new HashMap();
-            hash.put("itemID", "DSINPUTSPEC");
-            DatastreamInputSpec spec=DatastreamInputSpec.parse(
-                    Administrator.DOWNLOADER.getDissemination(
-                            m_diss.getBMechPID(),
-                            "fedora-system:3",
-                            "getItem",
-                            hash,
-                            null)
-                    );
-            DatastreamBindingPane dsBindingPane=new DatastreamBindingPane(
-                    m_gramps.getInitialCurrentDatastreamVersions(),
-                    m_diss.getDsBindMap().getDsBindings(), 
-                    m_diss.getBMechPID(), spec);
-            m_gramps.addDatastreamListener(dsBindingPane);
-
-
-            middlePanel.add(dsBindingPane, BorderLayout.CENTER);
-
+            middlePanel.add(m_stackedBindingPane, BorderLayout.CENTER);
 
             JLabel bindingsLabel=new JLabel("Bindings");
             bindingsLabel.setPreferredSize(m_labelDims);

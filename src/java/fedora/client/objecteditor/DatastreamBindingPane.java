@@ -47,12 +47,15 @@ public class DatastreamBindingPane
 
         // construct the tabbedpane, one tab per binding key
         JTabbedPane bindingTabbedPane=new JTabbedPane();
-        Iterator keys=dsBindingMap.keySet().iterator();
+        Iterator keys=m_ruleForKey.keySet().iterator();
         int tabNum=-1;
         while (keys.hasNext()) {
             tabNum++;
             String key=(String) keys.next();
             Set values=(Set) dsBindingMap.get(key);
+            if (values==null) {
+                values=new HashSet();
+            }
             SingleKeyBindingPanel p=new SingleKeyBindingPanel(
                     bMechPID,
                     key, 
