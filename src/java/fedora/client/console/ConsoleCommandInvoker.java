@@ -12,9 +12,34 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-public class ConsoleCommandInvoker 
+/**
+ *
+ * <p><b>Title:</b> ConsoleCommandInvoker.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
+public class ConsoleCommandInvoker
         extends JPanel {
-        
+
     private ConsoleCommand m_command;
     private Console m_console;
     private InputPanel[] m_inputPanels;
@@ -34,21 +59,21 @@ public class ConsoleCommandInvoker
         for (int i=0; i<types.length; i++) {
             JPanel typeNameInputPanel=new JPanel();
             typeNameInputPanel.setLayout(new BorderLayout());
-            typeNameInputPanel.add(new JLabel(names[i] + " (" 
-                    + command.getUnqualifiedName(types[i]) + ") : "), 
+            typeNameInputPanel.add(new JLabel(names[i] + " ("
+                    + command.getUnqualifiedName(types[i]) + ") : "),
                     BorderLayout.WEST);
             m_inputPanels[i]=InputPanelFactory.getPanel(types[i]);
             typeNameInputPanel.add(m_inputPanels[i]);
             add(typeNameInputPanel);
         }
-        JLabel returnTypeLabel=new JLabel("Returns: " + 
+        JLabel returnTypeLabel=new JLabel("Returns: " +
                 m_command.getUnqualifiedName(m_command.getReturnType()));
         JPanel jeez2=new JPanel();
         jeez2.setLayout(new BorderLayout());
         jeez2.add(returnTypeLabel, BorderLayout.WEST);
         add(jeez2);
     }
-    
+
     /**
      * Invokes the console command with whatever parameters have been
      * set thus far, sending any errors to the console.
@@ -97,10 +122,10 @@ public class ConsoleCommandInvoker
             m_console.print(duration);
             m_console.print("\n");
         } catch (InvocationTargetException ite) {
-            m_console.print("ERROR (" + ite.getTargetException().getClass().getName() + ") : " 
+            m_console.print("ERROR (" + ite.getTargetException().getClass().getName() + ") : "
                     + ite.getTargetException().getMessage() + "\n");
         } catch (Throwable th) {
-            m_console.print("ERROR (" + th.getClass().getName() + ") : " 
+            m_console.print("ERROR (" + th.getClass().getName() + ") : "
                     + th.getMessage() + "\n");
             StringWriter sw=new StringWriter();
             th.printStackTrace(new PrintWriter(sw));
@@ -109,7 +134,7 @@ public class ConsoleCommandInvoker
             m_console.setBusy(false);
         }
     }
-    
+
     private String stringify(Object obj) {
         if (obj==null) { return "<null>"; }
         String nm=obj.getClass().getName();
@@ -128,5 +153,5 @@ public class ConsoleCommandInvoker
         }
         return obj.toString();
     }
-    
+
 }

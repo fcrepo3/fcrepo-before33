@@ -7,11 +7,37 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.Properties;
+
+/**
+ *
+ * <p><b>Title:</b> BatchAdditions.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author wdn5e@virginia.edu
+ * @version 1.0
+ */
 class BatchAdditions {
 	static final String FS = File.separator;
 	private Properties dataProperties;
 	private Properties metadataProperties;
-	//set by arguments to constructor 
+	//set by arguments to constructor
 	private boolean mediaFileContainsUrl = false;
 	private String mediaPath = null;
 	private String keyPath = null;
@@ -21,7 +47,7 @@ class BatchAdditions {
 	private String objectNameSpace = null;
 	private String namespaceDeclarations = null;
 	private int startObject = 0;
-	
+
 	//map METS elements names to directory names used in staging tree
 	private static final Hashtable metadataCategories = new Hashtable();
 
@@ -29,7 +55,7 @@ class BatchAdditions {
 	String[] datastreams = null;
 	String[] objectnames = null;
 
-	
+
 	private static final String getPath(File file) { //<===================
 		String temp;
 		try {
@@ -81,7 +107,7 @@ class BatchAdditions {
 		}
 		return contents;
 	}
-	
+
 	private static final void packageMetadata(PrintStream out, Properties metadataProperties, String context, String objectname, int indents) {
 		Enumeration elementNames = metadataProperties.propertyNames(); //metadataCategories.keys();
 		String tabs = "STRING NOT ASSIGNED TO"; {
@@ -110,12 +136,12 @@ class BatchAdditions {
 			out.println(tabs + "</metadata>");
 		}
 	}
-	
+
 	//batch builders can subclass, overloading this method
-	protected String getHref(String webPrefix, String path) { 
+	protected String getHref(String webPrefix, String path) {
 		return webPrefix + "/" + path;
 	}
-	
+
 	static String getFilename(String parentPath, String objectName) {
 		String filename = null; {
 			File temp = new File(parentPath);
@@ -139,21 +165,21 @@ class BatchAdditions {
 			}
 		} return filename;
 	}
-	
+
 	/*package*/ BatchAdditions(Properties optValues, Properties dataProperties, Properties metadataProperties) throws Exception {
-		
+
 		this.dataProperties = dataProperties;
 		this.metadataProperties = metadataProperties;
 		String temp = optValues.getProperty(BatchTool.STARTOBJECT);
 		String[] parts = temp.split(":");
 		objectNameSpace = parts[0];
 		String startObjectAsString = parts[1];
-		
+
 		String urlPath = optValues.getProperty(BatchTool.URLPATH);
 		String dataPath = optValues.getProperty(BatchTool.DATAPATH);
-		
+
 		stringPrefix = optValues.getProperty(BatchTool.STRINGPREFIX);
-		
+
 		keyPath = optValues.getProperty(BatchTool.KEYPATH);
 
 		namespaceDeclarations = optValues.getProperty(BatchTool.DECLARATIONS);
@@ -161,39 +187,39 @@ class BatchAdditions {
 		additionsPath = optValues.getProperty(BatchTool.ADDITIONSPATH);
 
 		if (! BatchTool.argOK(namespaceDeclarations)) {
-			System.err.println("namespaceDeclarations required");			
+			System.err.println("namespaceDeclarations required");
 			throw new Exception();
 		}
-	
+
 		if (! BatchTool.argOK(objectNameSpace)) {
-			System.err.println("objectNameSpace required");			
+			System.err.println("objectNameSpace required");
 			throw new Exception();
 		}
 
 		if (! BatchTool.argOK(startObjectAsString)) {
-			System.err.println("startObject required");			
+			System.err.println("startObject required");
 			throw new Exception();
 		} else {
 			try {
 				startObject = Integer.parseInt(startObjectAsString);
 			} catch (Exception e) {
-				System.err.println("startObject must be integer");			
+				System.err.println("startObject must be integer");
 				throw new Exception();
-			} 
+			}
 		}
 
 		if (! BatchTool.argOK(keyPath)) {
-			System.err.println("keyPath required");			
+			System.err.println("keyPath required");
 			throw new Exception();
 		}
 
 		if (! BatchTool.argOK(metadataPath)) {
-			System.err.println("metadataPath required");			
+			System.err.println("metadataPath required");
 			throw new Exception();
 		}
 
 		if (! BatchTool.argOK(additionsPath)) {
-			System.err.println("additionsPath required");			
+			System.err.println("additionsPath required");
 			throw new Exception();
 		}
 
@@ -209,18 +235,18 @@ class BatchAdditions {
 			mediaPath = dataPath;
 			mediaFileContainsUrl = false;
 		} else {
-			System.err.println("use either data or url path -- neither provided");			
+			System.err.println("use either data or url path -- neither provided");
 			throw new Exception();
 		}
-		
+
 		if (! BatchTool.argOK(stringPrefix)) {
-			System.err.println("stringprefix required");			
+			System.err.println("stringprefix required");
 			throw new Exception();
-		}		
+		}
 	}
-	
+
 	private boolean good2go = false;
-	
+
 	final void prep() throws Exception {
 		//get datastream labels from mediaDirectory
 		File mediaDirectory = new File(mediaPath);
@@ -235,12 +261,12 @@ class BatchAdditions {
 				datastreams[i] = datastreamDirectories[i].getName();
 			}
 		}
-		
+
 		//get objectnames from keyDirectory
 		File[] files = null; {
 			File keyDirectory = new File(keyPath);
 			files = keyDirectory.listFiles();
-		}	
+		}
 		objectnames = new String[files.length];
 
 		for (int i = 0; i < files.length; i++) {
@@ -250,9 +276,9 @@ class BatchAdditions {
 				objectname = (j >= 0) ? filename.substring(0,j) : filename;
 			}
 			objectnames[i] = objectname;
-		}		
+		}
 		good2go = true;
-	}	
+	}
 
 	final void process() throws Exception {
 		if (good2go) {
@@ -268,7 +294,7 @@ class BatchAdditions {
 				out.println("\t<datastreams>");
 				Enumeration ddatastreams = dataProperties.propertyNames();
 				while (ddatastreams.hasMoreElements()) {
-					String ndatastream = (String) ddatastreams.nextElement();					
+					String ndatastream = (String) ddatastreams.nextElement();
 					String datastream = dataProperties.getProperty(ndatastream);
 					String href = mediaFileContainsUrl ? getContents(mediaPath+FS+datastream+FS+objectname) : getHref(stringPrefix, datastream + "/" + getFilename(mediaPath + "/" + datastream,objectname));
 					out.println("\t\t<datastream id=\"" + ndatastream /*fixup(datastream)*/ + "\" href=\"" + href + "\">");
@@ -277,7 +303,7 @@ class BatchAdditions {
 				out.println("\t</datastreams>");
 				out.println("</input>");
 				out.close();
-			}		
+			}
 		}
 	}
 
@@ -286,10 +312,10 @@ class BatchAdditions {
 		try {
 			Properties miscProperties = new Properties();
 			Properties datastreamProperties = new Properties();
-			Properties metadataProperties = new Properties();		
+			Properties metadataProperties = new Properties();
 			miscProperties.load(new FileInputStream("c:\\batchdemo\\batchtool.properties"));
 			datastreamProperties.load(new FileInputStream("c:\\batchdemo\\datastream.properties"));
-			metadataProperties.load(new FileInputStream("c:\\batchdemo\\metadata.properties"));			
+			metadataProperties.load(new FileInputStream("c:\\batchdemo\\metadata.properties"));
 			BatchAdditions batchAdditions = new BatchAdditions(miscProperties,datastreamProperties,metadataProperties);
 			batchAdditions.prep();
 			batchAdditions.process();

@@ -57,20 +57,45 @@ import fedora.client.BatchBuildGUI;
 import fedora.client.BatchIngestGUI;
 // < wdn
 
+/**
+ *
+ * <p><b>Title:</b> Administrator.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class Administrator extends JFrame {
 
     private static MDIDesktopPane s_desktop;
-    
+
     private JDialog m_aboutDialog;
-    
+
     private ID m_homeID;
     private SimpleHelpBroker m_helpBroker;
-    
+
     private static File s_lastDir;
     /*package*/ static File batchtoolLastDir;
-   
+
     ClassLoader cl;
-    
+
     private static Administrator s_instance;
     private JLabel m_aboutPic;
     private JLabel m_aboutText;
@@ -91,7 +116,7 @@ public class Administrator extends JFrame {
         s_port=port;
         s_user=user;
         s_pass=pass;
-        
+
         cl=this.getClass().getClassLoader();
 
         m_aboutPic=new JLabel(new ImageIcon(cl.getResource("images/fedora/aboutadmin.gif")));
@@ -117,7 +142,7 @@ public class Administrator extends JFrame {
         int yLoc=(screenSize.height/2) - (ySize/2);
         splashScreen.setBounds(xLoc, yLoc, xSize, ySize);
         splashScreen.setVisible(true);
-        
+
         setIconImage(new ImageIcon(cl.getResource("images/fedora/fedora-icon16.gif")).getImage());
         JPanel mainPanel=new JPanel();
         mainPanel.setLayout(new BorderLayout());
@@ -135,26 +160,26 @@ public class Administrator extends JFrame {
 
         getContentPane().add(mainPanel);
         setJMenuBar(createMenuBar());
-        
+
 
         //Make dragging faster:
         //s_desktop.putClientProperty("JDesktopPane.dragMode", "outline");
-        
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                     dispose();
                     System.exit(0);
             }
         });
-        
+
         splashScreen.setVisible(false);
         s_instance=this;
     }
-    
+
     public static JDesktopPane getDesktop() {
         return s_desktop;
     }
-    
+
     public static Administrator getInstance() {
         return s_instance;
     }
@@ -173,7 +198,7 @@ public class Administrator extends JFrame {
         fileMenu.setMnemonic(KeyEvent.VK_F);
         fileMenu.setToolTipText("Contains commands for creating, opening, closing, and saving Digital Objects");
         JMenuItem fileNew=new JMenuItem("New...",KeyEvent.VK_N);
-        fileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 
+        fileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
                 ActionEvent.CTRL_MASK));
         fileNew.setToolTipText("Creates a new, empty Digital Object and opens it for editing");
         fileNew.addActionListener(new ActionListener() {
@@ -190,7 +215,7 @@ public class Administrator extends JFrame {
                 fileIngestAction();
             }
         });
-        
+
 /*
 
 Google example:
@@ -204,14 +229,14 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         JMenuItem fileView=new JMenuItem(new ViewObjectXML());
         fileView.setMnemonic(KeyEvent.VK_V);
         fileView.setToolTipText("Launches an XML viewer for an object.");
-        fileView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, 
+        fileView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
                 ActionEvent.CTRL_MASK));
-                
+
 //        JMenuItem fileClose=new JMenuItem("Close",KeyEvent.VK_C);
 //        fileClose.setToolTipText("Closes the current Digital Object");
-//        fileClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, 
+//        fileClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
 //                ActionEvent.CTRL_MASK));
-                
+
 //        ImageIcon BLANK_16x16_ICON=new ImageIcon("blank16x16.gif");
         JMenuItem fileExport=new JMenuItem(new ExportObject());
         fileExport.setMnemonic(KeyEvent.VK_E);
@@ -223,10 +248,10 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         filePurge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
                 ActionEvent.CTRL_MASK));
         filePurge.setToolTipText("Permanently removes a Digitial Object from the repository.");
-        
+
         JMenuItem fileSave=new JMenuItem("Save",KeyEvent.VK_S);
         fileSave.setToolTipText("Saves the current Digital Object to the Repository it was opened from");
-        fileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, 
+        fileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
                 ActionEvent.CTRL_MASK));
         JMenuItem fileSaveTo=new JMenuItem("Save To...",KeyEvent.VK_T);
         fileSaveTo.setToolTipText("Saves the current Digital Object to a Repository other than the one it was opened from");
@@ -234,37 +259,37 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         fileSaveAll.setToolTipText("Saves all opened Digital Objects to the Repository(s) they were opened from");
         JMenuItem fileExit=new JMenuItem("Exit",KeyEvent.VK_X);
         fileExit.setToolTipText("Quits the FEDORA Administrator application");
-        
+
         fileExit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
                 System.exit(0);
             }
         });
-        
-//        fileMenu.add(fileNew); 
-        fileMenu.add(fileIngest); 
-        fileMenu.add(fileView); 
-//        fileMenu.add(fileClose); 
+
+//        fileMenu.add(fileNew);
+        fileMenu.add(fileIngest);
+        fileMenu.add(fileView);
+//        fileMenu.add(fileClose);
 //        fileMenu.addSeparator();
-        fileMenu.add(fileExport); 
-        fileMenu.add(filePurge); 
-//        fileMenu.add(fileSave); 
-//        fileMenu.add(fileSaveTo); 
-//        fileMenu.add(fileSaveAll); 
+        fileMenu.add(fileExport);
+        fileMenu.add(filePurge);
+//        fileMenu.add(fileSave);
+//        fileMenu.add(fileSaveTo);
+//        fileMenu.add(fileSaveAll);
         fileMenu.addSeparator();
 //        fileMenu.add(filePreferences);
 //        fileMenu.addSeparator();
-        fileMenu.add(fileExit); 
+        fileMenu.add(fileExit);
 
         menuBar.add(fileMenu);
-        
+
 //        JMenu editMenu=new JMenu("Edit");
 //        editMenu.setMnemonic(KeyEvent.VK_E);
 //        JMenuItem editDelete=new JMenuItem("Delete",KeyEvent.VK_D);
 //        editMenu.add(editDelete);
 //        menuBar.add(editMenu);
-        
+
 //        JMenu viewMenu=new JMenu("View");
 //        viewMenu.setMnemonic(KeyEvent.VK_V);
 //        JMenuItem viewToolbar=new JMenuItem("Toolbar",KeyEvent.VK_T);
@@ -272,10 +297,10 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
 //        JMenuItem viewTooltips=new JMenuItem("Tooltips",KeyEvent.VK_I);
 //        viewMenu.add(viewTooltips);
 //        menuBar.add(viewMenu);
-        
+
         JMenu toolsMenu=new JMenu("Tools");
         toolsMenu.setMnemonic(KeyEvent.VK_T);
-        
+
         JMenuItem toolsSearch=new JMenuItem("Search/Browse Repository",KeyEvent.VK_B);
         toolsSearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -283,7 +308,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             }
         });
         toolsMenu.add(toolsSearch);
-        
+
         JMenuItem toolsManagement=new JMenuItem("Management Console",KeyEvent.VK_M);
         toolsManagement.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -291,7 +316,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             }
         });
         toolsMenu.add(toolsManagement);
-        
+
         JMenuItem toolsAccess=new JMenuItem("Access Console",KeyEvent.VK_A);
         toolsAccess.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -299,7 +324,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             }
         });
         toolsMenu.add(toolsAccess);
-	
+
 	//wdn >
         JMenuItem toolsBatchBuild=new JMenuItem("Build Batch"/*, KeyEvent.VK_A*/);
         toolsBatchBuild.addActionListener(new ActionListener() {
@@ -308,7 +333,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             }
         });
         toolsMenu.add(toolsBatchBuild);
-	
+
         JMenuItem toolsBatchBuildIngest=new JMenuItem("Build and Ingest Batch"/*, KeyEvent.VK_A*/);
         toolsBatchBuildIngest.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -316,7 +341,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             }
         });
         toolsMenu.add(toolsBatchBuildIngest);
-	
+
         JMenuItem toolsBatchIngest=new JMenuItem("Ingest Batch"/*, KeyEvent.VK_A*/);
         toolsBatchIngest.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -324,23 +349,23 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             }
         });
         toolsMenu.add(toolsBatchIngest);
-	
+
         // < wdn
-	
+
         menuBar.add(toolsMenu);
-        
-        
+
+
         WindowMenu windowMenu=new WindowMenu(s_desktop, "Window");
         windowMenu.setMnemonic(KeyEvent.VK_W);
         menuBar.add(windowMenu);
-       
+
         // [H]elp
         JMenu helpMenu=new JMenu("Help");
         helpMenu.setMnemonic(KeyEvent.VK_H);
         JMenuItem helpContents=new JMenuItem("Fedora Manual",KeyEvent.VK_M);
         helpContents.setToolTipText("Shows the Fedora Manual");
-        
-        
+
+
    HelpSet hs;
    try {
       URL hsu = cl.getResource("help/jhelpset.hs");
@@ -353,7 +378,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
       helpContents.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
              m_helpBroker.setLocation(getCenteredPos(m_helpBroker.getSize().width, m_helpBroker.getSize().height));
-		     m_helpBroker.setDisplayed(true); 
+		     m_helpBroker.setDisplayed(true);
              try {
              m_helpBroker.setCurrentID(m_homeID);
              m_helpBroker.ensureContentPanelDrawn(m_homeID);
@@ -366,17 +391,17 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
 
         JFrame dummy=new JFrame();
         dummy.setIconImage(new ImageIcon(cl.getResource("images/standard/general/About16.gif")).getImage());
-        m_aboutDialog=new JDialog(dummy, "About Fedora Administrator", true); 
-        
+        m_aboutDialog=new JDialog(dummy, "About Fedora Administrator", true);
+
         m_aboutDialog.getContentPane().add(m_aboutPic, BorderLayout.CENTER);
         JButton aboutClose=new JButton("Close");
-        
+
         JPanel infoAndButton=new JPanel();
         infoAndButton.setLayout(new BorderLayout());
         infoAndButton.setBorder(BorderFactory.createEmptyBorder(0, 15, 0, 0));
         infoAndButton.add(m_aboutText);
-       
-       
+
+
         JPanel buttonPane=new JPanel();
         buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.X_AXIS));
         buttonPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -392,8 +417,8 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         });
         m_aboutDialog.pack();
 
-        
-        
+
+
         JMenuItem helpAbout=new JMenuItem("About Fedora Administrator",KeyEvent.VK_A);
         helpAbout.setToolTipText("Gives brief information this application");
         helpAbout.addActionListener(new ActionListener() {
@@ -402,11 +427,11 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                 m_aboutDialog.show();
             }
         });
-        
+
         helpMenu.add(helpContents);
         helpMenu.addSeparator();
         helpMenu.add(helpAbout);
-        
+
         menuBar.add(helpMenu);
 
         return menuBar;
@@ -423,15 +448,15 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         } catch (java.beans.PropertyVetoException e) {}
         */
     }
-    
+
     public static File getLastDir() {
         return s_lastDir;
     }
-    
+
     public static void setLastDir(File f) {
         s_lastDir=f;
     }
-    
+
     protected void fileIngestAction() {
         try {
             JFileChooser browse;
@@ -463,10 +488,10 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     protected void fileExportAction() {
         try {
-            String pid=JOptionPane.showInputDialog("Enter the PID."); 
+            String pid=JOptionPane.showInputDialog("Enter the PID.");
             JFileChooser browse;
             if (s_lastDir==null) {
                 browse=new JFileChooser();
@@ -497,7 +522,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     protected void createSearchRepository() {
         Search frame=new Search();
 /*        FieldSearchQuery query=new FieldSearchQuery();
@@ -515,7 +540,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
     }
-    
+
     protected void createManagementConsole() {
         ManagementConsole frame=new ManagementConsole(this);
         frame.setVisible(true);
@@ -524,7 +549,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
     }
-    
+
     protected void createAccessConsole() {
         AccessConsole frame=new AccessConsole(this);
         frame.setVisible(true);
@@ -533,7 +558,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
     }
-    
+
     // wdn >
     protected void createBatchBuildConsole() {
         BatchBuildGUI frame=new BatchBuildGUI(this, s_desktop);
@@ -542,7 +567,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
-    }    
+    }
     protected void createBatchBuildIngestConsole() {
         BatchBuildIngestGUI frame=new BatchBuildIngestGUI(this, s_desktop, s_host, s_port, s_user, s_pass);
         frame.setVisible(true);
@@ -550,7 +575,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
-    }    
+    }
     protected void createBatchIngestConsole() {
         BatchIngestGUI frame=new BatchIngestGUI(this, s_desktop, s_host, s_port, s_user, s_pass);
         frame.setVisible(true);
@@ -558,9 +583,9 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
-    }        
+    }
     // < wdn
-    
+
     public Point getCenteredPos(int xSize, int ySize) {
         Dimension screenSize=getToolkit().getScreenSize();
         int maxXPos=screenSize.width-xSize;
@@ -575,7 +600,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         if (prefYPos>maxYPos) prefYPos=maxYPos;
         return new Point(prefXPos, prefYPos);
     }
-    
+
     public static String getHost() {
         return s_host;
     }
@@ -607,7 +632,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
 		    System.out.println("InstantiateException Error:" + exc);
 		}
         */
-        
+
         // turn off obnoxious Axis stdout/err messages
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
         String host="localhost";
@@ -623,7 +648,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                     System.out.println("Warning: " + args[1] + " is not a valid port number.  Using default.");
                 }
                 if (args.length>2) {
-                    user=args[2]; 
+                    user=args[2];
                     if (args.length>3) {
                         pass=args[3];
                     }

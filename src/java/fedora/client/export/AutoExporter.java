@@ -15,11 +15,36 @@ import fedora.client.APIMStubFactory;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.StreamUtility;
 
+/**
+ *
+ * <p><b>Title:</b> AutoExporter.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class AutoExporter {
 
-    private FedoraAPIM m_apim;    
+    private FedoraAPIM m_apim;
 
-    public AutoExporter(String host, int port, String user, String pass) 
+    public AutoExporter(String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
         m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
@@ -28,9 +53,9 @@ public class AutoExporter {
         export(m_apim, pid, outStream);
     }
 
-    public static void export(FedoraAPIM skeleton, String pid, OutputStream outStream) 
+    public static void export(FedoraAPIM skeleton, String pid, OutputStream outStream)
             throws RemoteException, IOException {
-        byte[] bytes=skeleton.getObjectXML(pid); 
+        byte[] bytes=skeleton.getObjectXML(pid);
         for (int i=0; i<bytes.length; i++) {
             outStream.write(bytes[i]);
         }
@@ -63,7 +88,7 @@ public class AutoExporter {
                 }
             }
         } catch (Exception e) {
-            AutoExporter.showUsage(e.getClass().getName() + " - " 
+            AutoExporter.showUsage(e.getClass().getName() + " - "
                 + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
         }
     }

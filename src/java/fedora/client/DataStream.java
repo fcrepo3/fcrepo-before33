@@ -8,20 +8,43 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * The model of a datastream as it exists inside the editor.
- * 
- * This class has getters and setters for the fields and bytes
- * of a datastream while it is being edited.
+ *
+ * <p><b>Title:</b> DataStream.java</p>
+ * <p><b>Description:</b> </p>
+ * <p>The model of a datastream as it exists inside the editor.</p>
+ *
+ * <p>This class has getters and setters for the fields and bytes
+ * of a datastream while it is being edited.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
 public abstract class DataStream {
 
     /** Empty stream */
-    public final static ByteArrayInputStream 
+    public final static ByteArrayInputStream
             EMPTY=new ByteArrayInputStream(new byte[0]);
 
     /** Identifier for INLINE datastreams */
     public final static int INLINE = 0;
-    
+
     /** Identifier for BASIS datastreams */
     public final static int BASIS = 1;
 
@@ -36,7 +59,7 @@ public abstract class DataStream {
 
     /** The size of the datastream, in bytes */
     private long m_size;
-    
+
     /** Whether this datastream is dirty */
     protected boolean m_dirty=true;
 
@@ -87,18 +110,18 @@ public abstract class DataStream {
     /**
      * Gets an <code>InputStream</code> to the local copy of the datastream.
      */
-    public InputStream getData() 
+    public InputStream getData()
             throws IOException {
         if (m_size==0) { return EMPTY; }
         return new FileInputStream(m_dataFile);
     }
-    
+
     /**
      * Reads the bytes from the given <code>InputStream</code> as the data
      * for this digital object.  When finished, the <code>InputStream</code>
      * is closed.
      */
-    public void setData(InputStream in) 
+    public void setData(InputStream in)
             throws IOException {
         m_dirty=true;
         FileOutputStream out=new FileOutputStream(m_dataFile);
@@ -112,19 +135,19 @@ public abstract class DataStream {
         in.close();
         out.close();
     }
-    
+
     public boolean isDirty() {
         return m_dirty;
     }
-    
+
     public void setClean() {
         m_dirty=false;
     }
-    
+
     public void clearData() {
         m_size=0;
         m_dirty=true;
         m_dataFile.delete();
     }
-    
+
 }

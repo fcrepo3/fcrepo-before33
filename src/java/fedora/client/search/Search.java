@@ -31,42 +31,67 @@ import fedora.server.types.gen.Condition;
 import fedora.server.types.gen.ComparisonOperator;
 import fedora.server.types.gen.FieldSearchQuery;
 
+/**
+ *
+ * <p><b>Title:</b> Search.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class Search
         extends JInternalFrame {
-        
+
     private List m_displayFields;
     private JTextField m_simpleQueryField;
     private ConditionsTableModel m_model;
     private JTabbedPane m_tabbedPane;
-        
+
     protected static String[] s_fieldArray = {"pid", "label", "fType", "bDef",
-            "bMech", "cModel", "state", "locker", "cDate", "mDate", 
+            "bMech", "cModel", "state", "locker", "cDate", "mDate",
             "dcmDate", "title", "creator", "subject", "description",
             "publisher", "contributor", "date", "type", "format",
             "identifier", "source", "language", "relation", "coverage",
             "rights"};
-    protected static String[] s_operatorArray = {"contains", "equals", 
-            "is less than", "is less than or equal to", "is greater than", 
+    protected static String[] s_operatorArray = {"contains", "equals",
+            "is less than", "is less than or equal to", "is greater than",
             "is greater than or equal to"};
-    protected static String[] s_operatorActuals = {"has", "eq", "lt", "le", 
+    protected static String[] s_operatorActuals = {"has", "eq", "lt", "le",
             "gt", "ge"};
-        
+
     public Search() {
         super("Search Repository",
               true, //resizable
               true, //closable
               true, //maximizable
               true);//iconifiable
-              
+
         m_displayFields=new ArrayList();
         m_displayFields.add("pid");
         m_displayFields.add("cDate");
         m_displayFields.add("title");
-              
+
         // outerPane(fieldsPanel, tabbedPaneContainer, finishButtonsPanel)
-        
+
             // NORTH: fieldsPanel(selectedFieldsLabel, modifySelectedFieldsButtonPanel)
-        
+
                 // CENTER: selectedFieldsLabel
                 JLabel selectedFieldsLabel=new JLabel();
                 StringBuffer text=new StringBuffer();
@@ -77,14 +102,14 @@ public class Search
                 }
                 text.append("</i></html>");
                 selectedFieldsLabel.setText(text.toString());
-                
+
                 // EAST: modifySelectedFieldsButton
                 JButton modifySelectedFieldsButton=new JButton("Change..");
                 ChangeFieldsButtonListener cfbl=
-                        new ChangeFieldsButtonListener(selectedFieldsLabel, 
+                        new ChangeFieldsButtonListener(selectedFieldsLabel,
                         m_displayFields);
                 modifySelectedFieldsButton.addActionListener(cfbl);
-                
+
             JPanel fieldsPanel=new JPanel();
             fieldsPanel.setLayout(new BorderLayout());
             fieldsPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -95,69 +120,69 @@ public class Search
             fieldsPanel.add(modifySelectedFieldsButton, BorderLayout.EAST);
 
             // CENTER: tabbedPaneContainer(m_tabbedPane)
-            
+
                 // CENTER: m_tabbedPane(simpleSearchPanel, advancedSearchPanel)
 
                     // PANE 1: simpleSearchPanel(simplePromptPanel, simpleInstructionsLabel)
-                    
+
                         // NORTH: simplePromptPanel(promptLabel, m_simpleQueryField)
-                        
+
                             // FLOW: promptLabel
 
                             JLabel promptLabel=new JLabel("Search all fields for ");
-                            
+
                             // FLOW: m_simpleQueryField
-                            
+
                             m_simpleQueryField=new JTextField("*", 15);
-                            
+
                         JPanel simplePromptPanel=new JPanel();
                         simplePromptPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
                         simplePromptPanel.add(promptLabel);
                         simplePromptPanel.add(m_simpleQueryField);
-                            
+
                         // SOUTH: simpleInstructionsLabel
-                        
+
                         JLabel simpleInstructionsLabel=new JLabel("<html>Note: You may use the ? and * wildcards.  '?' means <i>any one</i> character, and '*' means <i>any number of any characters</i>. Searches are case-insensitive.");
-                    
+
                     JPanel simpleSearchPanel=new JPanel();
                     simpleSearchPanel.setLayout(new BorderLayout());
                     simpleSearchPanel.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
                     simpleSearchPanel.add(simplePromptPanel, BorderLayout.NORTH);
                     simpleSearchPanel.add(simpleInstructionsLabel, BorderLayout.CENTER);
-                    
+
                     // PANE 2: advancedSearchPanel(innerConditionsPanel, modifyConditionsOuterPanel)
-                
+
                         // CENTER: innerConditionsPanel(conditionsScrollPane)
-                        
+
                             // CENTER: conditionsScrollPane(conditionsTable)
-                        
-                                // WRAPS: conditionsTable 
+
+                                // WRAPS: conditionsTable
                                 m_model=new ConditionsTableModel();
                                 JTable conditionsTable=new JTable(m_model);
-                        
+
                             JScrollPane conditionsScrollPane=
                                     new JScrollPane(conditionsTable);
                             conditionsScrollPane.setBorder(
                                     BorderFactory.createEmptyBorder(0,0,6,6));
-                    
+
                         JPanel innerConditionsPanel=new JPanel();
                         innerConditionsPanel.setLayout(new BorderLayout());
                         innerConditionsPanel.add(conditionsScrollPane, BorderLayout.CENTER);
-                        
+
                         // EAST: modifyConditionsOuterPanel(modifyConditionsInnerPanel)
-                        
+
                             // NORTH: modifyConditionsInnerPanel
-                    
+
                                 // GRID: addConditionButton
                                 JButton addConditionButton=new JButton("Add..");
-                            
+
                                 // GRID: modifyConditionButton
                                 JButton modifyConditionButton=new JButton("Change..");
-                            
+
                                 // GRID: deleteConditionButton
                                 JButton deleteConditionButton=new JButton("Delete");
-             
-                            // Now that buttons are available, register the 
+
+                            // Now that buttons are available, register the
                             // list selection listener that sets their enabled state.
                             conditionsTable.setSelectionMode(
                                     ListSelectionModel.SINGLE_SELECTION);
@@ -165,37 +190,37 @@ public class Search
                                     new ConditionSelectionListener(modifyConditionButton,
                                             deleteConditionButton, -1);
                             conditionsTable.getSelectionModel().
-                                    addListSelectionListener(sListener);  
+                                    addListSelectionListener(sListener);
                             // ..and add listeners to the buttons
-                            
+
                             addConditionButton.addActionListener(
                                     new AddConditionButtonListener(m_model));
                             modifyConditionButton.addActionListener(
                                     new ChangeConditionButtonListener(m_model, sListener));
                             deleteConditionButton.addActionListener(
                                     new DeleteConditionButtonListener(m_model, sListener));
-                                
+
                             JPanel modifyConditionsInnerPanel=new JPanel();
                             modifyConditionsInnerPanel.setLayout(new GridLayout(3, 1));
                             modifyConditionsInnerPanel.add(addConditionButton);
                             modifyConditionsInnerPanel.add(modifyConditionButton);
                             modifyConditionsInnerPanel.add(deleteConditionButton);
-                            
+
                         JPanel modifyConditionsOuterPanel=new JPanel();
                         modifyConditionsOuterPanel.setLayout(new BorderLayout());
                         modifyConditionsOuterPanel.add(modifyConditionsInnerPanel, BorderLayout.NORTH);
-                        
+
                     JPanel advancedSearchPanel=new JPanel();
                     advancedSearchPanel.setLayout(new BorderLayout());
                     advancedSearchPanel.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
                     advancedSearchPanel.add(innerConditionsPanel, BorderLayout.CENTER);
                     advancedSearchPanel.add(modifyConditionsOuterPanel, BorderLayout.EAST);
-                    
+
                 m_tabbedPane=new JTabbedPane();
                 m_tabbedPane.addTab("Simple", simpleSearchPanel);
                 m_tabbedPane.setSelectedIndex(0);
                 m_tabbedPane.addTab("Advanced", advancedSearchPanel);
-                    
+
             JPanel tabbedPaneContainer=new JPanel();
             tabbedPaneContainer.setLayout(new BorderLayout());
             tabbedPaneContainer.setBorder(BorderFactory.createCompoundBorder(
@@ -205,14 +230,14 @@ public class Search
                     BorderFactory.createEtchedBorder(), "Query"),
                     BorderFactory.createEmptyBorder(0,6,6,6))));
             tabbedPaneContainer.add(m_tabbedPane, BorderLayout.CENTER);
-            
+
             // SOUTH: finishButtonsPanel
-            
+
                 // FLOW: searchButton
                 JButton searchButton=new JButton("Search");
                 searchButton.addActionListener(new SearchButtonListener(
                         cfbl, m_model));
-                        
+
                 // FLOW: cancelButton
                 JButton cancelButton=new JButton("Cancel");
                 cancelButton.addActionListener(new ActionListener() {
@@ -220,7 +245,7 @@ public class Search
                         doDefaultCloseAction();
                     }
                 });
-                
+
             JPanel finishButtonsPanel=new JPanel();
             finishButtonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
             finishButtonsPanel.add(searchButton);
@@ -232,7 +257,7 @@ public class Search
         outerPane.add(fieldsPanel, BorderLayout.NORTH);
         outerPane.add(tabbedPaneContainer, BorderLayout.CENTER);
         outerPane.add(finishButtonsPanel, BorderLayout.SOUTH);
-        
+
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(outerPane, BorderLayout.CENTER);
 
@@ -240,26 +265,26 @@ public class Search
 
         setSize(400,400);
     }
-    
-    public class ConditionSelectionListener 
+
+    public class ConditionSelectionListener
             implements ListSelectionListener {
-            
+
         private int m_selectedRow;
         private JButton m_modifyButton;
         private JButton m_deleteButton;
-            
-        public ConditionSelectionListener(JButton modifyButton, 
+
+        public ConditionSelectionListener(JButton modifyButton,
                 JButton deleteButton, int selectedRow) {
             m_selectedRow=selectedRow;
             m_modifyButton=modifyButton;
             m_deleteButton=deleteButton;
             updateButtons();
         }
-            
+
         public void valueChanged(ListSelectionEvent e) {
             //Ignore extra messages.
             if (e.getValueIsAdjusting()) return;
-            
+
             ListSelectionModel lsm = (ListSelectionModel)e.getSource();
             if (lsm.isSelectionEmpty()) {
                 m_selectedRow=-1;
@@ -268,11 +293,11 @@ public class Search
             }
             updateButtons();
         }
-        
+
         public int getSelectedRow() {
             return m_selectedRow;
         }
-        
+
         private void updateButtons() {
             if (getSelectedRow()==-1) {
                 m_modifyButton.setEnabled(false);
@@ -282,13 +307,13 @@ public class Search
                 m_deleteButton.setEnabled(true);
             }
         }
-    }    
-    
+    }
+
     public class SelectFieldsDialog
             extends JDialog {
 
         private List m_selectedFields;
-        
+
         private JCheckBox pidBox, bDefBox, typeBox, labelBox, bMechBox,
                           formatBox, fTypeBox, titleBox, identifierBox,
                           cModelBox, creatorBox, sourceBox, stateBox,
@@ -296,10 +321,10 @@ public class Search
                           relationBox, cDateBox, publisherBox, coverageBox,
                           mDateBox, contributorBox, rightsBox, dcmDateBox,
                           dateBox;
-        
+
         public SelectFieldsDialog(List fieldList) {
             super(Administrator.getInstance(), "Select Fields to Display", true);
-            
+
             // mainPanel(northPanel, noteLabel, southPanel)
 
                 // NORTH: northPanel(bunch of JCheckBoxes)
@@ -388,9 +413,9 @@ public class Search
                 northPanel.add(dateBox);
 
                 // CENTER: noteLabel
-                
+
                 JLabel noteLabel=new JLabel("<html><i> Note: Hold your mouse over a field's name to see a brief description.</i></html>");
-                
+
                 // SOUTH: southPanel(cancelButton, okButton)
 
                     JButton okButton=new JButton("Ok");
@@ -400,14 +425,14 @@ public class Search
                             setVisible(false);
                         }
                     });
-                
+
                     JButton cancelButton=new JButton("Cancel");
                     cancelButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             setVisible(false);
                         }
                     });
-                    
+
                 JPanel southPanel=new JPanel();
                 southPanel.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
                 southPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -421,7 +446,7 @@ public class Search
             pack();
             setLocation(Administrator.getInstance().getCenteredPos(getSize().width, getSize().height));
         }
-        
+
         public void updateSelectedFields() {
             m_selectedFields=new ArrayList();
             if (pidBox.isSelected()) m_selectedFields.add("pid");
@@ -455,82 +480,82 @@ public class Search
         public List getSelectedFields() {
             return m_selectedFields;
         }
-        
+
     }
-    
+
     public class AddConditionButtonListener
             implements ActionListener {
-            
+
         private ConditionsTableModel m_model;
-        
+
         public AddConditionButtonListener(ConditionsTableModel model) {
             m_model=model;
         }
-        
+
         public void actionPerformed(ActionEvent e) {
             ModConditionDialog dialog=new ModConditionDialog(m_model, -1);
             dialog.setVisible(true);
         }
     }
-    
+
     public class ChangeConditionButtonListener
             implements ActionListener {
-            
+
         private ConditionsTableModel m_model;
         private ConditionSelectionListener m_sListener;
-        
-        public ChangeConditionButtonListener(ConditionsTableModel model, 
+
+        public ChangeConditionButtonListener(ConditionsTableModel model,
                 ConditionSelectionListener sListener) {
             m_model=model;
             m_sListener=sListener;
         }
-        
+
         public void actionPerformed(ActionEvent e) {
             // will only be invoked if an existing row is selected
-            ModConditionDialog dialog=new ModConditionDialog(m_model, 
+            ModConditionDialog dialog=new ModConditionDialog(m_model,
                     m_sListener.getSelectedRow());
             dialog.setVisible(true);
         }
     }
-    
+
     public class DeleteConditionButtonListener
             implements ActionListener {
-            
+
         private ConditionsTableModel m_model;
         private ConditionSelectionListener m_sListener;
-        
-        public DeleteConditionButtonListener(ConditionsTableModel model, 
+
+        public DeleteConditionButtonListener(ConditionsTableModel model,
                 ConditionSelectionListener sListener) {
             m_model=model;
             m_sListener=sListener;
         }
-        
+
         public void actionPerformed(ActionEvent e) {
             // will only be invoked if an existing row is selected
             int r=m_sListener.getSelectedRow();
             m_model.getConditions().remove(r);
             m_model.fireTableRowsDeleted(r,r);
-        }              
+        }
     }
-    
+
     public class ModConditionDialog
             extends JDialog {
-            
+
         private ConditionsTableModel m_model;
         private int m_rowNum;
         private JComboBox m_fieldBox;
         private JComboBox m_operatorBox;
         private JTextField m_valueField;
-        
+
         public ModConditionDialog(ConditionsTableModel model, int rowNum) {
             super(Administrator.getInstance(), "Enter Condition", true);
             m_model=model;
             m_rowNum=rowNum;
-            
+
             // mainPanel(northPanel, southPanel)
 
                 // NORTH: northPanel(fieldBox,operatorBox,valueField)
-                
+
                     m_fieldBox=new JComboBox(s_fieldArray);
                     m_operatorBox=new JComboBox(s_operatorArray);
                     m_valueField=new JTextField(10);
@@ -540,14 +565,14 @@ public class Search
                         m_operatorBox.setSelectedIndex(indexOf((String) m_model.getValueAt(rowNum, 1)));
                         m_valueField.setText((String) m_model.getValueAt(rowNum, 2));
                     }
-                    
+
                 JPanel northPanel=new JPanel();
                 northPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
                 northPanel.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
                 northPanel.add(m_fieldBox);
                 northPanel.add(m_operatorBox);
                 northPanel.add(m_valueField);
-                
+
                 // SOUTH: southPanel(cancelButton, okButton)
 
                     JButton okButton=new JButton("Ok");
@@ -557,14 +582,14 @@ public class Search
                             setVisible(false);
                         }
                     });
-                
+
                     JButton cancelButton=new JButton("Cancel");
                     cancelButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             setVisible(false);
                         }
                     });
-                    
+
                 JPanel southPanel=new JPanel();
                 southPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
                 southPanel.add(okButton);
@@ -576,7 +601,7 @@ public class Search
             pack();
             setLocation(Administrator.getInstance().getCenteredPos(getSize().width, getSize().height));
         }
-        
+
         private int indexOf(String s) {
             for (int i=0; i<s_fieldArray.length; i++) {
                 if (s_fieldArray[i].equals(s)) return i;
@@ -586,7 +611,7 @@ public class Search
             }
             return -1;
         }
-        
+
         public void updateModelAndNotify() {
             // create a Condition given the current values
             Condition cond=new Condition();
@@ -604,22 +629,22 @@ public class Search
             }
             m_model.fireTableDataChanged();
         }
-        
-        
+
+
     }
-            
-            
+
+
     public class SearchButtonListener
             implements ActionListener {
-        
+
         private ChangeFieldsButtonListener m_fieldSelector;
         private ConditionsTableModel m_model;
-        
+
         public SearchButtonListener(ChangeFieldsButtonListener fieldSelector, ConditionsTableModel model) {
             m_fieldSelector=fieldSelector;
             m_model=model;
         }
-        
+
         public void actionPerformed(ActionEvent e) {
             List fields=m_fieldSelector.getFieldList();
             String[] displayFields=new String[fields.size()];
@@ -646,29 +671,29 @@ public class Search
             } catch (java.beans.PropertyVetoException pve) {}
         }
     }
-    
+
     public class ChangeFieldsButtonListener
             implements ActionListener {
-            
+
         private JLabel m_fieldLabel;
         private List m_fieldList;
-        
+
         public ChangeFieldsButtonListener(JLabel fieldLabel, List fieldList) {
             m_fieldLabel=fieldLabel;
             m_fieldList=fieldList;
         }
-        
+
         public void actionPerformed(ActionEvent e) {
             // launch an editor for the fields to search on,
-            // and put the values in 
+            // and put the values in
             // - the label (with html and italics)
             // - the fieldList
-            
+
             // first, construct the dialog with the values from fieldList
             SelectFieldsDialog dialog=new SelectFieldsDialog(m_fieldList);
             dialog.setVisible(true);
             if (dialog.getSelectedFields()!=null) {
-                m_fieldList=dialog.getSelectedFields(); 
+                m_fieldList=dialog.getSelectedFields();
                 // if they clicked cancel, just exit.
                 // otherwise, set the values in m_fieldList,
                 // then set the text of m_fieldLabel based on those.
@@ -682,30 +707,30 @@ public class Search
                 m_fieldLabel.setText(text.toString());
             }
         }
-        
+
         public List getFieldList() {
             return m_fieldList;
         }
     }
-    
+
     public class ConditionsTableModel
             extends AbstractTableModel {
-            
+
         List m_conditions;
-        
+
         public ConditionsTableModel() {
             m_conditions=new ArrayList();
         }
-        
+
         public ConditionsTableModel(List conditions) {
             m_conditions=conditions;
         }
-        
+
         public List getConditions() {
             return m_conditions;
         }
-        
-        public String getColumnName(int col) { 
+
+        public String getColumnName(int col) {
             if (col==0) {
                 return "Field";
             } else if (col==1) {
@@ -714,20 +739,20 @@ public class Search
                 return "Value";
             }
         }
-        
-        public int getRowCount() { 
+
+        public int getRowCount() {
             return m_conditions.size();
         }
-        
-        public int getColumnCount() { 
+
+        public int getColumnCount() {
             return 3;
         }
-        
+
         public Class getColumnClass(int c) {
             return getValueAt(0, c).getClass();
         }
-        
-        public Object getValueAt(int row, int col) { 
+
+        public Object getValueAt(int row, int col) {
             Condition cond=(Condition) m_conditions.get(row);
             if (col==0) {
                 return cond.getProperty();
@@ -737,7 +762,7 @@ public class Search
                 return cond.getValue();
             }
         }
-        
+
         private String getNiceName(String operString) {
             if (operString.equals("has")) return "contains";
             if (operString.equals("eq")) return "equals";
@@ -748,5 +773,5 @@ public class Search
         }
 
     }
-    
+
 }

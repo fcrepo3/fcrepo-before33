@@ -11,50 +11,73 @@ import java.io.FileInputStream;
 import java.util.Hashtable;
 import java.util.Vector;
 
+/**
+ *
+ * <p><b>Title:</b> BatchTool.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author wdn5e@virginia.edu
+ * @version 1.0
+ */
 public class BatchTool {
 	private final Properties miscProperties;
 	private final Properties datastreamProperties;
-	private final Properties metadataProperties;	
+	private final Properties metadataProperties;
 	private final Properties batchAdditionsValues;
 	private final Properties batchXformsValues;
-	private final Properties batchIngestValues;	
-	
+	private final Properties batchIngestValues;
+
 	public BatchTool(Properties miscProperties, Properties datastreamProperties, Properties metadataProperties) throws Exception {
 		this.miscProperties = miscProperties;
 		this.metadataProperties = metadataProperties;
 		this.datastreamProperties = datastreamProperties;
-		
+
 		batchAdditionsValues = (Properties) miscProperties.clone();
 		batchXformsValues = (Properties) miscProperties.clone();
 		batchIngestValues = (Properties) miscProperties.clone();
 	}
-	
+
  	private boolean good2go = false;
-	
+
 	public final void prep() {
 		good2go = true;
 	}
-	
+
 	public final void process() throws Exception {
-		String separator = "/"; //File.separator would mix "\" with "/" running under Windows/DOS
-		
 		if (good2go) {
 			BatchAdditions batchAdditions = null;
 			BatchXforms batchXforms = null;
 			BatchIngest batchIngest = null;
-			
-			//make each phase		
-			
+
+			//make each phase
+
 			if ( (miscProperties.getProperty(AGGREGATE) != null) && miscProperties.getProperty(AGGREGATE).equals("yes") ) {
 				batchAdditions = new BatchAdditions(batchAdditionsValues, datastreamProperties, metadataProperties);
 			}
 			if ( (miscProperties.getProperty(DISCRETE) != null) && miscProperties.getProperty(DISCRETE).equals("yes") ) {
-				batchXforms = new BatchXforms(batchXformsValues);				
+				batchXforms = new BatchXforms(batchXformsValues);
 			}
 			if ( (miscProperties.getProperty(EAT) != null) && miscProperties.getProperty(EAT).equals("yes") ) {
-				batchIngest = new BatchIngest(batchIngestValues);				
+				batchIngest = new BatchIngest(batchIngestValues);
 			}
-						
+
 			//check in with each phase
 			if ( (miscProperties.getProperty(AGGREGATE) != null) && miscProperties.getProperty(AGGREGATE).equals("yes") ) {
 				batchAdditions.prep();
@@ -65,20 +88,20 @@ public class BatchTool {
 			if ( (miscProperties.getProperty(EAT) != null) && miscProperties.getProperty(EAT).equals("yes") ) {
 				batchIngest.prep();
 			}
-			
+
 			//perform each phase
 			if ( (miscProperties.getProperty(AGGREGATE) != null) && miscProperties.getProperty(AGGREGATE).equals("yes") ) {
 				batchAdditions.process();
 			}
-			
-			Vector buildKeys = null;			
+
+			Vector buildKeys = null;
 			if ( (miscProperties.getProperty(DISCRETE) == null) || ! miscProperties.getProperty(DISCRETE).equals("yes") ) {
-				buildKeys = new Vector();				
+				buildKeys = new Vector();
 			} else {
 				batchXforms.process();
-				buildKeys = batchXforms.getKeys();				
+				buildKeys = batchXforms.getKeys();
 			}
-			
+
 			Hashtable ingestMaps = null;
 			Vector ingestKeys = null;
 			if ( (miscProperties.getProperty(EAT) == null) || ! miscProperties.getProperty(EAT).equals("yes") ) {
@@ -91,23 +114,23 @@ public class BatchTool {
 			}
 
 			String buildPath2directory = batchXformsValues.getProperty(BatchTool.ADDITIONSPATH);
-			String ingestPath2directory = batchIngestValues.getProperty(BatchTool.OBJECTSPATH);			
+			String ingestPath2directory = batchIngestValues.getProperty(BatchTool.OBJECTSPATH);
 			String pidsPath = batchIngestValues.getProperty(BatchTool.PIDSPATH);
-			
+
 			String pidsFormat = miscProperties.getProperty(BatchTool.PIDSFORMAT);
-			PrintStream out = new PrintStream(new FileOutputStream(pidsPath)); //= System.err; 			
-			
+			PrintStream out = new PrintStream(new FileOutputStream(pidsPath)); //= System.err;
+
 //System.out.println("pidsFormat = [" + pidsFormat + "]");
 			if (pidsFormat.equals("xml")) {
 				out.println("<" + XMLREPORTROOT + ">");
 			}
 			for (int i = 0, j = 0; i < buildKeys.size() || j < ingestKeys.size(); ) {
-//System.out.println("it = [" + i + "] [" + j + "]");				
+//System.out.println("it = [" + i + "] [" + j + "]");
 				String buildPath2file = "";
 				String ingestPath2file = "";
 				String pid = "";
 				try {
-					String buildFilename = "";				
+					String buildFilename = "";
 					String ingestFilename = "";
 					int compared = 0;
 					if (i < buildKeys.size()) {
@@ -117,21 +140,21 @@ public class BatchTool {
 					if (j < ingestKeys.size()) {
 						ingestFilename = (String) ingestKeys.get(j);
 						compared = 1;
-					}		
+					}
 					if (i < buildKeys.size() & j < ingestKeys.size()) {
 						compared =  buildFilename.compareTo(ingestFilename);
 					}
 					if (compared <= 0) {
-						buildPath2file = buildPath2directory + separator + buildFilename;
-						ingestPath2file = ingestPath2directory + separator + buildFilename;						
+						buildPath2file = buildPath2directory + File.separator + buildFilename;
+						ingestPath2file = ingestPath2directory + File.separator + buildFilename;
 						i++;
 					}
 					if (compared >= 0) {
-						ingestPath2file = ingestPath2directory + separator + ingestFilename;					
+						ingestPath2file = ingestPath2directory + File.separator + ingestFilename;
 						pid = (String) ingestMaps.get(ingestFilename);
 						j++;
 					}
-//System.out.println("no exceptions");					
+//System.out.println("no exceptions");
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 //System.out.println("exception = [" + e.getMessage() + "]");
@@ -140,7 +163,7 @@ public class BatchTool {
 				}
 
 				if (pidsFormat.equals("xml")) {
-//System.out.println("in loop, think it's xml i'm after]");					
+//System.out.println("in loop, think it's xml i'm after]");
 					out.print("\t<map ");
 					if (buildPath2file != null && ! buildPath2file.equals("")) {
 						out.print("path2spec=\"" + buildPath2file + "\" ");
@@ -151,7 +174,7 @@ public class BatchTool {
 					if (pid != null && ! pid.equals("")) {
 						out.print("pid=\"" + pid + "\" ");
 					}
-					//out.print("\t<map path2spec=\"" + buildPath2file + "\" path2object=\"" + ingestPath2file + "\" pid=\"" + pid + "\" />");					
+					//out.print("\t<map path2spec=\"" + buildPath2file + "\" path2object=\"" + ingestPath2file + "\" pid=\"" + pid + "\" />");
 					out.println("/>");
 				} else if (pidsFormat.equals("text")) {
 					out.println(buildPath2file + "\t" + ingestPath2file + "\t" + pid);
@@ -160,7 +183,7 @@ public class BatchTool {
 			if (pidsFormat.equals("xml")) {
 				out.println("</" + XMLREPORTROOT + ">");
 			}
-			out.close();				
+			out.close();
 		}
 	}
 
@@ -171,7 +194,7 @@ public class BatchTool {
 	static final String URLPATH = "url";
 	static final String DATAPATH = "data";
 	static final String STRINGPREFIX = "url-prefix";
-	static final String DECLARATIONS = "namespace-declarations";		
+	static final String DECLARATIONS = "namespace-declarations";
 
 	private static final String AGGREGATE = "process-tree";
 
@@ -184,22 +207,27 @@ public class BatchTool {
 	static final String OBJECTSPATH = "objects";
 
 	static final String SERVERFQDN = "server-fqdn";
-	static final String SERVERPORT = "server-port";	
+	static final String SERVERPORT = "server-port";
 	static final String USERNAME = "username";
-	static final String PASSWORD = "password";	
+	static final String PASSWORD = "password";
 	private static final String EAT = "ingest";
 	static final String PIDSPATH = "ingested-pids";
-	static final String PIDSFORMAT = "pids-format";	
+	static final String PIDSFORMAT = "pids-format";
 
 	static final boolean argOK(String value) {
 		return (value != null) && ! value.equals("");
-	}	
+	}
 
 	public static final void main(String[] args) throws Exception {
-		Properties miscProperties = new Properties();
+		Properties defaults = new Properties();
+		String defaultsPath = System.getProperty("fedora.home") + "\\..\\batch\\default.properties";
+//System.err.println("defaultsPath=[" + defaultsPath + "]");
+		defaults.load(new FileInputStream(defaultsPath)); //"dist/batch/default.properties"));
+//System.err.println("after loading defaults");
+		Properties miscProperties = new Properties(defaults);
 		Properties datastreamProperties = new Properties();
 		Properties metadataProperties = new Properties();
-		
+
 		/*
 		Getopt getopt = new Getopt("thispgm",args,"g:d:m:");
 		int c;
@@ -215,17 +243,17 @@ public class BatchTool {
 				case 'm':
 					metadataProperties.load(new FileInputStream(getopt.getOptarg())); //"c:\\batchdemo\\batchtool.properties"));
 					break;
-			}			
+			}
 		}
 		*/
-		miscProperties.load(new FileInputStream(args[0]));		
+		miscProperties.load(new FileInputStream(args[0]));
 		BatchTool batchTool = new BatchTool(miscProperties,datastreamProperties,metadataProperties);
 		batchTool.prep();
 		batchTool.process();
 	}
-	
-	
-	
-	
+
+
+
+
 }
 

@@ -10,12 +10,37 @@ import javax.swing.JOptionPane;
 import fedora.client.Administrator;
 import fedora.client.purge.AutoPurger;
 
+/**
+ *
+ * <p><b>Title:</b> PurgeObject.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class PurgeObject
         extends AbstractAction {
 
     private Set m_pids;
     private boolean m_prompt;
-    
+
     public PurgeObject() {
         super("Purge Object...");
         m_prompt=true;
@@ -31,7 +56,7 @@ public class PurgeObject
         super("Purge Objects");
         m_pids=pids;
     }
-    
+
     public void actionPerformed(ActionEvent ae) {
         boolean failed=false;
         if (m_prompt) {
@@ -56,7 +81,7 @@ public class PurgeObject
             if (m_pids.size()==1) {
                 String pid=(String) pidIter.next();
                 // just purge one
-                String reason=JOptionPane.showInputDialog("Why are you permanently removing " + pid + "?"); 
+                String reason=JOptionPane.showInputDialog("Why are you permanently removing " + pid + "?");
                 if (reason!=null) {
                     try {
                         purger.purge(pid, reason);
@@ -77,7 +102,7 @@ public class PurgeObject
                 while (pidIter.hasNext()) {
                     try {
                         String pid=(String) pidIter.next();
-                        String reason=JOptionPane.showInputDialog("Why are you permanently removing " + pid + "?"); 
+                        String reason=JOptionPane.showInputDialog("Why are you permanently removing " + pid + "?");
                         if (reason!=null) {
                                 purger.purge(pid, reason);
                         }

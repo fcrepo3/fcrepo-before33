@@ -16,8 +16,33 @@ import javax.swing.JTextField;
 
 import fedora.server.utilities.StreamUtility;
 
+/**
+ *
+ * <p><b>Title:</b> ByteArrayInputPanel.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class ByteArrayInputPanel
-        extends InputPanel 
+        extends InputPanel
         implements ActionListener {
 
     private JTextField m_textField;
@@ -25,7 +50,7 @@ public class ByteArrayInputPanel
     private JFileChooser m_browse;
     private JRadioButton m_fromTextRadioButton;
     private static File s_lastDir;
-        
+
     public ByteArrayInputPanel(boolean primitive) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         if (System.getProperty("fedora.home")!=null) {
@@ -52,7 +77,7 @@ public class ByteArrayInputPanel
         JButton browseButton=new JButton("Browse...");
         browseButton.addActionListener(this);
         fromFile.add(browseButton);
-        
+
         ButtonGroup g=new ButtonGroup();
         g.add(m_fromTextRadioButton);
         g.add(fromFileRadioButton);
@@ -64,7 +89,7 @@ public class ByteArrayInputPanel
             m_browse=new JFileChooser(s_lastDir);
         }
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         int returnVal = m_browse.showOpenDialog(this);
 
@@ -74,7 +99,7 @@ public class ByteArrayInputPanel
             m_fileField.setText(file.getAbsolutePath());
         }
     }
-    
+
     public Object getValue() {
         if (m_fromTextRadioButton.isSelected()) {
             return m_textField.getText().getBytes();

@@ -10,11 +10,36 @@ import java.util.ArrayList;
 import fedora.client.ingest.AutoIngestor;
 import fedora.oai.sample.RandomDCMetadataFactory;
 
+/**
+ *
+ * <p><b>Title:</b> MassIngest.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class MassIngest {
 
     private ArrayList m_wordList;
 
-    public MassIngest(AutoIngestor ingestor, File templateFile, 
+    public MassIngest(AutoIngestor ingestor, File templateFile,
             File dictFile, int numTimes) throws Exception {
         // load the template file into two parts... with splitter=##SPLITTER##
         BufferedReader in=new BufferedReader(new FileReader(templateFile));
@@ -37,20 +62,20 @@ public class MassIngest {
             }
         }
         in.close();
-        String start=startBuffer.toString(); 
+        String start=startBuffer.toString();
         String end=endBuffer.toString();
         RandomDCMetadataFactory dcFactory=new RandomDCMetadataFactory(dictFile);
         for (int i=0; i<numTimes; i++) {
             String xml=start + dcFactory.get(2, 13) + end;
             String pid=ingestor.ingestAndCommit(new ByteArrayInputStream(
-                xml.getBytes("UTF-8")), "part of massingest of " + numTimes 
+                xml.getBytes("UTF-8")), "part of massingest of " + numTimes
                 + " auto-generated objects.");
             int t=i+1;
             System.out.println(pid + " " + t + "/" + numTimes);
         }
-        
+
     }
-    
+
 
 
     public static void showUsage(String message) {
@@ -74,7 +99,7 @@ public class MassIngest {
                 MassIngest m=new MassIngest(a, f, dictFile, Integer.parseInt(args[6]));
             }
         } catch (Exception e) {
-            MassIngest.showUsage(e.getClass().getName() + " - " 
+            MassIngest.showUsage(e.getClass().getName() + " - "
                 + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
         }
     }

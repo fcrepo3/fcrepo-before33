@@ -29,7 +29,31 @@ import java.io.BufferedReader;
 
 import java.util.Vector;
 
-
+/**
+ *
+ * <p><b>Title:</b> BatchXforms.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author wdn5e@virginia.edu
+ * @version 1.0
+ */
 class BatchXforms {
 	/** Constants used for JAXP 1.2 */
     private static final String JAXP_SCHEMA_LANGUAGE =
@@ -43,78 +67,78 @@ class BatchXforms {
       private String additionsPath = null;
       private String objectsPath = null;
       private String xformPath = null;
-      private String modelPath = null;      
+      private String modelPath = null;
       private Transformer transformer = null;
-		
+
       BatchXforms(Properties optValues) throws Exception {
 		xformPath = System.getProperty("fedora.home") + "/client/lib/merge.xsl";
 		additionsPath = optValues.getProperty(BatchTool.ADDITIONSPATH);
 		objectsPath = optValues.getProperty(BatchTool.OBJECTSPATH);
-		modelPath = optValues.getProperty(BatchTool.CMODEL);		
-			
+		modelPath = optValues.getProperty(BatchTool.CMODEL);
+
 		if (! BatchTool.argOK(additionsPath)) {
-			System.err.println("additionsPath required");			
+			System.err.println("additionsPath required");
 			throw new Exception();
-		}	
+		}
 		if (! BatchTool.argOK(objectsPath)) {
-			System.err.println("objectsPath required");			
+			System.err.println("objectsPath required");
 			throw new Exception();
 		}
 		if (! BatchTool.argOK(xformPath)) {
-			System.err.println("xformPath required");			
+			System.err.println("xformPath required");
 			throw new Exception();
 		}
 
       }
-	
+
 	private static final String[] padding = {"", "0", "00", "000"};
 	private static final String leftPadded (int i, int n) throws Exception {
-		if ((n > 3) || (n < 0) || (i < 0) || (i > 999)) {			
-			throw new Exception();			
+		if ((n > 3) || (n < 0) || (i < 0) || (i > 999)) {
+			throw new Exception();
 		}
 	        int m = (i > 99) ? 3 : (i > 9) ? 2 : 1;
 		int p = n - m;
 		return padding[p] + Integer.toString(i);
 	}
 
-	
+
 	private boolean good2go = false;
-	
-	final void prep() throws Exception {		
+
+	final void prep() throws Exception {
 		good2go = true;
 	}
-	
+
 	private Vector keys = null;
-		
+
 	/* package */ Vector getKeys() {
 		return keys;
-	}	
-	
+	}
+
 	final void process() throws TransformerConfigurationException, Exception {
-    		//System.err.println("before TransformerFactory.newInstance()"); //<<==		
-    		//System.err.println("xformPath=[" + xformPath + "]"); //<<==		
-		//SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();		
-		TransformerFactory tfactory = TransformerFactory.newInstance(); //try this from RunXSLT		
+    		//System.err.println("before TransformerFactory.newInstance()"); //<<==
+    		//System.err.println("xformPath=[" + xformPath + "]"); //<<==
+		//SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+		TransformerFactory tfactory = TransformerFactory.newInstance(); //try this from RunXSLT
     		//System.err.println("after TransformerFactory.newInstance(); tf is null?=" + (tfactory == null)); //<<==
-		keys = new Vector();		
+		keys = new Vector();
 		if (good2go) {
 			int count = 0;
 			File file4catch = null;
 			int files4catch = 0;
 			int badFileCount = 0;
 			int succeededBuildCount = 0;
-			int failedBuildCount = 0;			
+			int failedBuildCount = 0;
 			try {
 				File[] files = null; {
 // System.err.println("additions path " + additionsPath);
 					File additionsDirectory = new File(additionsPath);
 					files = additionsDirectory.listFiles();
-				}			
+				}
 				//int badFileCount = 0;
 				files4catch = files.length;
 				for (int i = 0; i < files.length; i++) {
 //System.err.println("another it");
-					file4catch = files[i]; 
+					file4catch = files[i];
 					if (! files[i].isFile()) {
 						badFileCount++;
 						System.err.println("additions directory contains unexpected directory or file: " + files[i].getName());
@@ -122,8 +146,8 @@ class BatchXforms {
     		//System.err.println("before tfactory.newTransformer()"); //<<==
 
 		File f = new File(xformPath);
-		//System.err.println("File " + xformPath + " exists=[" + (f.exists()) + "]");	
-		
+		//System.err.println("File " + xformPath + " exists=[" + (f.exists()) + "]");
+
 		StreamSource ss = new StreamSource(f);
 		//System.err.println("ss null=[" + (ss == null) + "]");
 /*
@@ -132,26 +156,26 @@ class BatchXforms {
 		BufferedReader br = new BufferedReader(r);
 		System.err.println("br null=[" + (br == null) + "]");
 		String st = br.readLine();
-		System.err.println("st null=[" + (st == null) + "]");		
+		System.err.println("st null=[" + (st == null) + "]");
 		System.err.println("first line[" +  st + "]");
-    		System.err.println("after dummy SS"); //<<==	
+    		System.err.println("after dummy SS"); //<<==
     		System.err.println("support?=[" + tfactory.getFeature(StreamSource.FEATURE) + "]"); //<<==
 		*/
-		
-	
+
+
 		transformer = tfactory.newTransformer(ss); //xformPath
-		
-		//System.err.println("after tfactory.newTransformer(); is transformer null? " + (transformer == null));	
-	
+
+		//System.err.println("after tfactory.newTransformer(); is transformer null? " + (transformer == null));
+
 						GregorianCalendar calendar = new GregorianCalendar();
-						String year = Integer.toString(calendar.get(Calendar.YEAR)); 
-						String month = leftPadded(1+ calendar.get(Calendar.MONTH),2); 
+						String year = Integer.toString(calendar.get(Calendar.YEAR));
+						String month = leftPadded(1+ calendar.get(Calendar.MONTH),2);
 						String dayOfMonth = leftPadded(calendar.get(Calendar.DAY_OF_MONTH),2);
 						String hourOfDay = leftPadded(calendar.get(Calendar.HOUR_OF_DAY),2);
 						String minute = leftPadded(calendar.get(Calendar.MINUTE),2);
 						String second = leftPadded(calendar.get(Calendar.SECOND),2);
 						transformer.setParameter("date",
-						year + "-" + month + "-" + dayOfMonth + 
+						year + "-" + month + "-" + dayOfMonth +
 						"T" + hourOfDay + ":" + minute + ":" + second);
 						//"2002-05-20T06:32:00"
 						//System.err.println("about to xform " + count++);
@@ -167,22 +191,22 @@ for (int bb=0; bb<objectsPath.length(); bb++) {
 */
 //System.err.println("File.separator " + File.separator);
 //System.err.println("files[i].getName() " + files[i].getName());
-		//System.err.println("before calling xform");	
+		//System.err.println("before calling xform");
 
 						String temp = "file:///" + files[i].getPath(); //(files[i].getPath()).replaceFirst("C:", "file:///C:");
-				//System.err.println("path is [" + temp); //files[i].getPath());							
+				//System.err.println("path is [" + temp); //files[i].getPath());
 						transformer.setParameter("subfilepath",temp); //files[i].getPath());
-						
+
 //System.out.println("fis");
 						FileInputStream fis = new FileInputStream(modelPath);
 //System.out.println("fos");
 						FileOutputStream fos = new FileOutputStream(objectsPath + File.separator + files[i].getName());
-//System.out.println("fos");						
+//System.out.println("fos");
 						try {
 							//transform(new FileInputStream(files[i]), new FileOutputStream (objectsPath + File.separator + files[i].getName()));
 							transform(fis, fos);
 //System.out.println("Fedora METS XML created at " + files[i].getName());
-							succeededBuildCount++;	
+							succeededBuildCount++;
 //System.out.println("before keys.add()");
 							keys.add(files[i].getName());
 //System.out.println("after keys.add()");
@@ -204,19 +228,19 @@ for (int bb=0; bb<objectsPath.length(); bb++) {
 				failedBuildCount++;
 			} finally {
 			}
-			System.err.println("\n" + "Batch Build Summary");		
+			System.err.println("\n" + "Batch Build Summary");
 			System.err.println("\n" + (succeededBuildCount + failedBuildCount + badFileCount) + " files processed in this batch");
 			System.err.println("\t" + succeededBuildCount + " Fedora METS XML documents successfully created");
 			System.err.println("\t" + failedBuildCount + " Fedora METS XML documents failed");
 			System.err.println("\t" + badFileCount + " unexpected files in directory");
-			System.err.println("\t" + (files4catch - (succeededBuildCount + failedBuildCount + badFileCount)) + " files ignored after error");				
+			System.err.println("\t" + (files4catch - (succeededBuildCount + failedBuildCount + badFileCount)) + " files ignored after error");
 		}
-	}	
-	
+	}
+
 	public static final void main(String[] args) {
 		try {
-			Properties miscProperties = new Properties();		
-			miscProperties.load(new FileInputStream("c:\\batchdemo\\batchtool.properties"));			
+			Properties miscProperties = new Properties();
+			miscProperties.load(new FileInputStream("c:\\batchdemo\\batchtool.properties"));
 			BatchXforms batchXforms = new BatchXforms(miscProperties);
 			batchXforms.prep();
 			batchXforms.process();
@@ -229,7 +253,7 @@ for (int bb=0; bb<objectsPath.length(); bb++) {
 	transformer.transform(new StreamSource(sourceStream), new StreamResult(destStream));
     	//System.err.println("after transformer.transform()");
     }
-	
+
 }
 
 

@@ -18,14 +18,39 @@ import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ListSession;
 import fedora.server.types.gen.ObjectFields;
 
+/**
+ *
+ * <p><b>Title:</b> AutoFinder.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class AutoFinder {
 
     private FedoraAPIA m_apia;
-    
+
     public static SimpleDateFormat DATE_FORMATTER=
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    public AutoFinder(String host, int port, String user, String pass) 
+    public AutoFinder(String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
         m_apia=APIAStubFactory.getStub(host, port, user, pass);
     }
@@ -41,19 +66,19 @@ public class AutoFinder {
         return resumeFindObjects(m_apia, sessionToken);
     }
 
-    public static FieldSearchResult findObjects(FedoraAPIA skeleton, 
+    public static FieldSearchResult findObjects(FedoraAPIA skeleton,
             String[] resultFields, int maxResults, FieldSearchQuery query)
             throws RemoteException {
-        return skeleton.findObjects(resultFields, 
+        return skeleton.findObjects(resultFields,
                 new NonNegativeInteger("" + maxResults), query);
     }
 
-    public FieldSearchResult resumeFindObjects(FedoraAPIA skeleton, 
+    public FieldSearchResult resumeFindObjects(FedoraAPIA skeleton,
             String sessionToken)
             throws RemoteException {
         return skeleton.resumeFindObjects(sessionToken);
     }
-    
+
     public static void showUsage(String message) {
         System.err.println(message);
         System.err.println("Usage: fedora-find host port fields phrase");
@@ -63,11 +88,11 @@ public class AutoFinder {
         System.err.println("      fields - Space-delimited list of fields.");
         System.err.println("      phrase - Phrase to search for in any field (with ? and * wildcards)");
     }
-    
+
     public static void printValue(String name, String value) {
         if (value!=null) System.out.println("   " + name + "  " + value);
     }
-    
+
     public static void printValue(String name, String[] value) {
         if (value!=null) {
             for (int i=0; i<value.length; i++) {
@@ -75,7 +100,7 @@ public class AutoFinder {
             }
         }
     }
-    
+
     public static void printValue(String name, Calendar value) {
         if (value!=null) {
             AutoFinder.printValue(name, AutoFinder.DATE_FORMATTER.format(value.getTime()));
@@ -91,7 +116,7 @@ public class AutoFinder {
                     null, null);
             FieldSearchQuery query=new FieldSearchQuery();
             query.setTerms(args[3]);
-            FieldSearchResult result=finder.findObjects(args[2].split(" "), 
+            FieldSearchResult result=finder.findObjects(args[2].split(" "),
                     20, query);
             int matchNum=0;
             while (result!=null) {

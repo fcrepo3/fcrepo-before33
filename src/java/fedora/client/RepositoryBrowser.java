@@ -53,23 +53,48 @@ import fedora.server.management.FedoraAPIMServiceLocator;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.ObjectInfo;
 
+/**
+ *
+ * <p><b>Title:</b> RepositoryBrowser.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class RepositoryBrowser
         extends JInternalFrame {
-        
+
     private JSortTable m_table;
-    
-    public RepositoryBrowser(String pidPattern, String foType, 
-            String lockedByPattern, String state, String labelPattern, 
-            String contentModelIdPattern, Calendar createDateMin, 
-            Calendar createDateMax, Calendar lastModDateMin, 
+
+    public RepositoryBrowser(String pidPattern, String foType,
+            String lockedByPattern, String state, String labelPattern,
+            String contentModelIdPattern, Calendar createDateMin,
+            Calendar createDateMax, Calendar lastModDateMin,
             Calendar lastModDateMax) {
         super("Repository Browser",
               true, //resizable
               true, //closable
               true, //maximizable
               true);//iconifiable
-       
-        String[] columnNames = {"PID", 
+
+        String[] columnNames = {"PID",
                                 "Label",
                                 "Type",
                                 "Content Model",
@@ -84,7 +109,7 @@ public class RepositoryBrowser
                 labelPattern, contentModelIdPattern, createDateMin,
                 createDateMax, lastModDateMin, lastModDateMax);
         Object[][] data=new Object[m.size()][8];
-        Iterator pidIter=m.keySet().iterator();   
+        Iterator pidIter=m.keySet().iterator();
         int i=0;
         SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         while (pidIter.hasNext()) {
@@ -120,8 +145,8 @@ public class RepositoryBrowser
             System.out.println("ERROR: " + e.getClass().getName() + ":" + e.getMessage());
         }
     }
-    
-    public class BrowserTableUI 
+
+    public class BrowserTableUI
             extends BasicTableUI {
         protected MouseInputListener createMouseInputListener() {
             return new BasicTableUI.MouseInputHandler() {
@@ -148,28 +173,28 @@ public class RepositoryBrowser
                                 Iterator pidIter=pids.iterator();
                                 new RepositoryBrowser.SingleSelectionPopup(
                                         (String) pidIter.next())
-                                        .show(e.getComponent(), 
+                                        .show(e.getComponent(),
                                         e.getX(), e.getY());
                             } else {
                                 new RepositoryBrowser.MultiSelectionPopup(pids)
-                                        .show(e.getComponent(), 
+                                        .show(e.getComponent(),
                                         e.getX(), e.getY());
                             }
                         }
                     } else {
                         // not a right click
-                        super.mousePressed(e);    
-                    }  
-                } 
+                        super.mousePressed(e);
+                    }
+                }
             };
         }
     }
-    
+
     public class SingleSelectionPopup
             extends JPopupMenu {
-            
+
         private String m_pid;
-        
+
         public SingleSelectionPopup(String pid) {
             super();
             m_pid=pid;
@@ -187,12 +212,12 @@ public class RepositoryBrowser
             add(i3);
         }
     }
-    
+
     public class MultiSelectionPopup
             extends JPopupMenu {
-            
+
         private Set m_pids;
-        
+
         public MultiSelectionPopup(Set pids) {
             super();
             m_pids=pids;

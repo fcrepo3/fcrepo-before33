@@ -53,38 +53,63 @@ import fedora.server.types.gen.ObjectFields;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 
+/**
+ *
+ * <p><b>Title:</b> ResultFrame.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class ResultFrame
         extends JInternalFrame {
-        
+
     private JSortTable m_table;
     private String[] m_rowPids;
     private JButton m_moreButton;
     public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-    
+
     private static AutoFinder s_finder=null;
 
     public ResultFrame(String frameTitle, String[] displayFields, String sessionToken) {
         super(frameTitle, true, true, true, true);
         try {
-            if (s_finder==null) s_finder=new AutoFinder(Administrator.getHost(), 
-                    Administrator.getPort(), Administrator.getUser(), 
+            if (s_finder==null) s_finder=new AutoFinder(Administrator.getHost(),
+                    Administrator.getPort(), Administrator.getUser(),
                     Administrator.getPass());
-            searchAndDisplay(s_finder.resumeFindObjects(sessionToken), 
+            searchAndDisplay(s_finder.resumeFindObjects(sessionToken),
                     displayFields);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("ERROR: " + e.getClass().getName() + ":" + e.getMessage());
         }
     }
-    
+
     public ResultFrame(String frameTitle, String[] displayFields, int maxResults, FieldSearchQuery query) {
         super(frameTitle,
               true, //resizable
               true, //closable
               true, //maximizable
               true);//iconifiable
-       
-        // Make sure resultFields has pid, even though they may not 
+
+        // Make sure resultFields has pid, even though they may not
         // want to display it. Also, signal that the pid should or
         // should not be displayed.
         boolean displayPid=false;
@@ -104,18 +129,18 @@ public class ResultFrame
             }
         }
         try {
-            if (s_finder==null) s_finder=new AutoFinder(Administrator.getHost(), 
-                Administrator.getPort(), Administrator.getUser(), 
+            if (s_finder==null) s_finder=new AutoFinder(Administrator.getHost(),
+                Administrator.getPort(), Administrator.getUser(),
                 Administrator.getPass());
-            searchAndDisplay(s_finder.findObjects(resultFields, maxResults, 
+            searchAndDisplay(s_finder.findObjects(resultFields, maxResults,
                     query), displayFields);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("ERROR: " + e.getClass().getName() + ":" + e.getMessage());
         }
     }
-    
-    private void searchAndDisplay(FieldSearchResult fsr, String[] displayFields) 
+
+    private void searchAndDisplay(FieldSearchResult fsr, String[] displayFields)
             throws Exception {
         // put the resulting data into a structure suitable for display
         ObjectFields[] ofs=fsr.getResultList();
@@ -129,7 +154,7 @@ public class ResultFrame
                 data[i][j]=getValue(o, displayFields[j]);
             }
         }
-        
+
         DefaultSortTableModel model=new DefaultSortTableModel(data, displayFields);
         m_table=new JSortTable(model);
         m_table.setPreferredScrollableViewportSize(new Dimension(400, 400));
@@ -151,13 +176,13 @@ public class ResultFrame
         setSize(400,400);
         pack();
     }
-    
+
     protected void removeMoreResultsButton() {
         if (m_moreButton!=null) {
             getContentPane().remove(m_moreButton);
         }
     }
-    
+
     public String getValue(ObjectFields o, String name) {
         if (name.equals("pid")) return o.getPid();
         if (name.equals("label")) return o.getLabel();
@@ -187,7 +212,7 @@ public class ResultFrame
         if (name.equals("rights")) return getList(o.getRights());
         return null;
     }
-    
+
     public String getList(String[] s) {
         if (s==null) return "";
         StringBuffer out=new StringBuffer();
@@ -197,34 +222,34 @@ public class ResultFrame
         }
         return out.toString();
     }
-    
+
     public class MoreResultsListener
             implements ActionListener {
-            
+
         String[] m_displayFields;
         String m_sessionToken;
         ResultFrame m_parent;
-        
+
         public MoreResultsListener(String[] displayFields, String sessionToken,
                 ResultFrame parent) {
             m_displayFields=displayFields;
             m_sessionToken=sessionToken;
             m_parent=parent;
         }
-        
+
         public void actionPerformed(ActionEvent e) {
             m_parent.removeMoreResultsButton();
-            ResultFrame frame=new ResultFrame("More Search Results", 
+            ResultFrame frame=new ResultFrame("More Search Results",
                     m_displayFields, m_sessionToken);
             frame.setVisible(true);
             Administrator.getDesktop().add(frame);
             try {
                 frame.setSelected(true);
-            } catch (java.beans.PropertyVetoException pve) {}            
+            } catch (java.beans.PropertyVetoException pve) {}
             }
     }
-    
-    public class BrowserTableUI 
+
+    public class BrowserTableUI
             extends BasicTableUI {
         protected MouseInputListener createMouseInputListener() {
             return new BasicTableUI.MouseInputHandler() {
@@ -251,28 +276,28 @@ public class ResultFrame
                                 Iterator pidIter=pids.iterator();
                                 new ResultFrame.SingleSelectionPopup(
                                         (String) pidIter.next())
-                                        .show(e.getComponent(), 
+                                        .show(e.getComponent(),
                                         e.getX(), e.getY());
                             } else {
                                 new ResultFrame.MultiSelectionPopup(pids)
-                                        .show(e.getComponent(), 
+                                        .show(e.getComponent(),
                                         e.getX(), e.getY());
                             }
                         }
                     } else {
                         // not a right click
-                        super.mousePressed(e);    
-                    }  
-                } 
+                        super.mousePressed(e);
+                    }
+                }
             };
         }
     }
-    
+
     public class SingleSelectionPopup
             extends JPopupMenu {
-            
+
         private String m_pid;
-        
+
         public SingleSelectionPopup(String pid) {
             super();
             m_pid=pid;
@@ -290,12 +315,12 @@ public class ResultFrame
             add(i3);
         }
     }
-    
+
     public class MultiSelectionPopup
             extends JPopupMenu {
-            
+
         private Set m_pids;
-        
+
         public MultiSelectionPopup(Set pids) {
             super();
             m_pids=pids;
