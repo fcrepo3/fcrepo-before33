@@ -21,6 +21,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -178,6 +179,22 @@ public abstract class Server
     public static String CONFIG_ELEMENT_ROOT=
             s_const.getString("config.element.root");
 
+    /** The configuration file comment element's name. */
+    public static String CONFIG_ELEMENT_COMMENT=
+            s_const.getString("config.element.comment");
+
+    /** The configuration file datasource element's name. */
+    public static String CONFIG_ELEMENT_DATASOURCE=
+            s_const.getString("config.element.datasource");
+
+    /** The configuration file module element's name. */
+    public static String CONFIG_ELEMENT_MODULE=
+            s_const.getString("config.element.module");
+
+    /** The configuration file param element's name. */
+    public static String CONFIG_ELEMENT_PARAM=
+            s_const.getString("config.element.param");
+
     /** 
      * The configuration file's class-specifying attribute for server and module 
      * elements.
@@ -293,13 +310,31 @@ public abstract class Server
      * validating its required params, then verifies that the server's 
      * required module roles have been met.
      *
+     * @param configNode The children elements of the root element of the
+     *                   config file.
      * @param homeDir The home directory of the server, used to interpret 
      *                relative paths used in configuration.
+     * @throws ServerInitializationException If there was an error starting
+     *         the server.
+     * @throws ModuleInitializationException If there was an error starting
+     *         a module.
      */
     protected Server(NodeList configNodes, File homeDir) 
             throws ServerInitializationException,
                    ModuleInitializationException {
         m_homeDir=homeDir;
+        for (int i=0; i<configNodes.getLength(); i++) {
+            Node n=configNodes.item(i);
+            if (n.getNodeType()==Node.ELEMENT_NODE) {
+                if (n.getLocalName().equals(CONFIG_ELEMENT_PARAM)) {
+                } else if (n.getLocalName().equals(CONFIG_ELEMENT_DATASOURCE)) {
+                } else if (n.getLocalName().equals(CONFIG_ELEMENT_MODULE)) {
+                } else if (!n.getLocalName().equals(CONFIG_ELEMENT_COMMENT)) {
+                    // warning, unrec, ignored
+                }
+                System.out.println("found element: " + n.getLocalName());
+            }
+        }
         // call 
         // do what this was gonna do: loadConfiguration(serverParams);
         initServer();
