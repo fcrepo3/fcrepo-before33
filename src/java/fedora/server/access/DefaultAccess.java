@@ -179,12 +179,12 @@ public class DefaultAccess extends Module implements Access
 
     // Check Object State
     String state = reader.GetObjectState();
-    if(state.equalsIgnoreCase("D")) {
+    if(state.equalsIgnoreCase("D")  && !context.get("canUseDeletedObject").equalsIgnoreCase("true")) {
       throw new GeneralException("The requested digital object \""+PID+"\" is no "
           + "longer available for dissemination. It has been flagged for DELETION "
           + "by the repository administrator. ");
 
-    } else if(state.equalsIgnoreCase("I")) {
+    } else if(state.equalsIgnoreCase("I")  && !context.get("canUseInactiveObject").equalsIgnoreCase("true")) {
       throw new GeneralException("The requested digital object \""+PID+"\" is no "
           + "longer available for dissemination. It has been flagged as INACTIVE "
           + "by the repository administrator. ");
@@ -239,12 +239,12 @@ public class DefaultAccess extends Module implements Access
 
     // Check Object State
     String state = reader.GetObjectState();
-    if(state.equalsIgnoreCase("D")) {
+    if(state.equalsIgnoreCase("D")  && !context.get("canUseDeletedObject").equalsIgnoreCase("true")) {
       throw new GeneralException("The requested digital object \""+PID+"\" is no "
           + "longer available for dissemination. It has been flagged for DELETION "
           + "by the repository administrator. ");
 
-    } else if(state.equalsIgnoreCase("I")) {
+    } else if(state.equalsIgnoreCase("I")  && !context.get("canUseInactiveObject").equalsIgnoreCase("true")) {
       throw new GeneralException("The requested digital object \""+PID+"\" is no "
           + "longer available for dissemination. It has been flagged as INACTIVE "
           + "by the repository administrator. ");
@@ -284,12 +284,12 @@ public class DefaultAccess extends Module implements Access
 
       // Check Object State
       String state = reader.GetObjectState();
-      if(state.equalsIgnoreCase("D")) {
+      if(state.equalsIgnoreCase("D")  && !context.get("canUseDeletedObject").equalsIgnoreCase("true")) {
         throw new GeneralException("The requested digital object \""+PID+"\" is no "
             + "longer available for dissemination. It has been flagged for DELETION "
             + "by the repository administrator. ");
 
-      } else if(state.equalsIgnoreCase("I")) {
+      } else if(state.equalsIgnoreCase("I")  && !context.get("canUseInactiveObject").equalsIgnoreCase("true")) {
         throw new GeneralException("The requested digital object \""+PID+"\" is no "
             + "longer available for dissemination. It has been flagged as INACTIVE "
             + "by the repository administrator. ");
@@ -343,12 +343,12 @@ public class DefaultAccess extends Module implements Access
 
     // Check Object State
     String state = reader.GetObjectState();
-    if(state.equalsIgnoreCase("D")) {
+    if(state.equalsIgnoreCase("D") && !context.get("canUseDeletedObject").equalsIgnoreCase("true")) {
       throw new GeneralException("The requested digital object \""+PID+"\" is no "
           + "longer available for dissemination. It has been flagged for DELETION "
           + "by the repository administrator. ");
 
-    } else if(state.equalsIgnoreCase("I")) {
+    } else if(state.equalsIgnoreCase("I") && !context.get("canUseInactiveObject").equalsIgnoreCase("true")) {
       throw new GeneralException("The requested digital object \""+PID+"\" is no "
           + "longer available for dissemination. It has been flagged as INACTIVE "
           + "by the repository administrator. ");
@@ -479,12 +479,12 @@ public class DefaultAccess extends Module implements Access
 
     // Check Object State
     String state = reader.GetObjectState();
-    if(state.equalsIgnoreCase("D")) {
+    if(state.equalsIgnoreCase("D")  && !context.get("canUseDeletedObject").equalsIgnoreCase("true")) {
       throw new GeneralException("The requested digital object \""+PID+"\" is no "
           + "longer available for dissemination. It has been flagged for DELETION "
           + "by the repository administrator. ");
 
-    } else if(state.equalsIgnoreCase("I")) {
+    } else if(state.equalsIgnoreCase("I")  && !context.get("canUseInactiveObject").equalsIgnoreCase("true")) {
       throw new GeneralException("The requested digital object \""+PID+"\" is no "
           + "longer available for dissemination. It has been flagged as INACTIVE "
           + "by the repository administrator. ");
@@ -520,12 +520,12 @@ public class DefaultAccess extends Module implements Access
 
     // Check Object State
     String state = reader.GetObjectState();
-    if(state.equalsIgnoreCase("D")) {
+    if(state.equalsIgnoreCase("D")  && !context.get("canUseDeletedObject").equalsIgnoreCase("true")) {
       throw new GeneralException("The requested digital object \""+PID+"\" is no "
           + "longer available for dissemination. It has been flagged for DELETION "
           + "by the repository administrator. ");
 
-    } else if(state.equalsIgnoreCase("I")) {
+    } else if(state.equalsIgnoreCase("I")  && !context.get("canUseInactiveObject").equalsIgnoreCase("true")) {
       throw new GeneralException("The requested digital object \""+PID+"\" is no "
           + "longer available for dissemination. It has been flagged as INACTIVE "
           + "by the repository administrator. ");

@@ -221,6 +221,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 		if (authenticatedUser.equals("fedoraAdmin")) {
     		h.put("canUseInactiveDatastream", "true");
     		h.put("canUseDeletedDatastream", "true");
+                h.put("canUseDeletedObject", "true");
+                h.put("canUseInactiveObject", "true");
 		}
 	} else {
 	    h.put("userId", "guest");
