@@ -238,7 +238,7 @@ public class DOValidatorSchematron
       path = '/' + path;
     try {
       String url = new URL("file", null, path).toString();
-      System.out.println("file to URL for StreamSource: " + url);
+      //System.out.println("file to URL for StreamSource: " + url);
       return new StreamSource(url);
     }
     catch (java.net.MalformedURLException e) {
