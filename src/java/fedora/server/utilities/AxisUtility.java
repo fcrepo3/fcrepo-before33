@@ -173,7 +173,8 @@ public abstract class AxisUtility {
                            StringBuffer url=new StringBuffer("http://localhost:" + port + "/fedora/AdminService");
                            URL adminUrl=new URL(url.toString());
                            URL mainUrl=new URL("http://localhost:" + port + "/");
-                           String[] parms=new String[] {"-l" + adminUrl, wsddFile.toString(), "-ufedoraAdmin", "-wfedoraAdmin" };
+                           String[] parms=new String[] {"-l" + adminUrl, wsddFile.toString(), 
+                           		"-ufedoraAdmin", "-wfedoraAdmin"}; //2005-03-30 wdn5e added to un-40x POST/fedora/AdminService 
                            //http://ws.apache.org/axis/java/install.html#RunTheAdminClient
                            int timeoutSeconds=Integer.parseInt(args[2]);
                            if (serverActive(mainUrl, timeoutSeconds)) {
