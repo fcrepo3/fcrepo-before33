@@ -27,6 +27,7 @@ public interface ResourceIndex extends Constants, TriplestoreReader {
      *  object properties
      *  datastreams
      *  disseminators
+     *  intra-object dependencies
      */
     public static final int INDEX_LEVEL_ON              = 1;
     
@@ -48,12 +49,6 @@ public interface ResourceIndex extends Constants, TriplestoreReader {
      * none of the permutations.
      */
     public static final int INDEX_LEVEL_PERMUTATIONS    = 2;
-    
-    public static final int INDEX_LEVEL_DEPENDENCIES    = 3;
-    
-    //public static final int INDEX_LEVEL_TBD = 5;
-    
-    public static final int INDEX_LEVEL_PERM_DEP        = 6;
     
     /**
      * Returns the index level of the ResourceIndex.

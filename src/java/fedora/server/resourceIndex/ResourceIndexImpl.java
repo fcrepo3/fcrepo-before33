@@ -741,8 +741,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
      * @throws ResourceIndexException
      */
     private void addBMechMethodMapDatastream(DigitalObject digitalObject, Datastream ds) throws ResourceIndexException {
-        if ( (digitalObject.getFedoraObjectType() != DigitalObject.FEDORA_BMECH_OBJECT) || 
-             (m_indexLevel % INDEX_LEVEL_DEPENDENCIES != 0) ) {
+        if (digitalObject.getFedoraObjectType() != DigitalObject.FEDORA_BMECH_OBJECT) {
             return;
         }
         
