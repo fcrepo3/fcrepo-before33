@@ -43,8 +43,6 @@ OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
 export JAVA_HOME
 
-$JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/lib/xerces2-2.0.2.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -jar $FEDORA_HOME/client/client.jar $1 $2
-
 echo "Ingesting Demonstration Objects (18 total)..."
 
 echo "Ingesting local-server simple image demo (1 bdef, 1 bmech, 1 object)..."
