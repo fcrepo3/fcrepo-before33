@@ -111,7 +111,7 @@ public class NewObjectDialog
                 dispose();
             }
         });
-        cancelButton.setLabel("Cancel");
+        cancelButton.setText("Cancel");
         JPanel buttonPane=new JPanel();
         buttonPane.add(okButton);
         buttonPane.add(cancelButton);
@@ -180,30 +180,48 @@ public class NewObjectDialog
               }
 
               if (ok) {
-                  dispose();
-                  // now that things look ok, give it a try
-                  StringBuffer xml=new StringBuffer();
-                  xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-                  xml.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-                  xml.append("           xmlns:METS=\"http://www.loc.gov/METS/\"\n");
-                  xml.append("           xmlns:fedoraAudit=\"http://fedora.comm.nsdlib.org/audit\"\n");
-                  xml.append("           xmlns:xlink=\"http://www.w3.org/TR/xlink\"\n");
-                  xml.append("           xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
-                  xml.append("           TYPE=\"FedoraObject\"\n");
-                  xml.append("           OBJID=\"" + StreamUtility.enc(pid) + "\"\n");
-                  xml.append("           LABEL=\"" + StreamUtility.enc(label) + "\"\n");
-                  xml.append("           PROFILE=\"" + StreamUtility.enc(cModel) + "\">\n");
-                  xml.append("</METS:mets>");
-                  String objXML=xml.toString();
-                  System.out.println("Ingesting new object:");
-                  System.out.println(objXML);
-                  ByteArrayInputStream in=new ByteArrayInputStream(
-                          objXML.getBytes("UTF-8"));
-                  String newPID=AutoIngestor.ingestAndCommit(
-                          Administrator.APIM,
-                          in,
-                          "Created with Admin GUI \"New Object\" command");
-                  new ViewObject(newPID).launch();
+	          	dispose();
+	              // now that things look ok, give it a try
+	              /**
+	              StringBuffer xml=new StringBuffer();
+	              xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	              xml.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+	              xml.append("           xmlns:METS=\"http://www.loc.gov/METS/\"\n");
+	              xml.append("           xmlns:fedoraAudit=\"http://www.fedora.info/definitions/audit\"\n");
+	              xml.append("           xmlns:xlink=\"http://www.w3.org/TR/xlink\"\n");
+	              xml.append("           xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
+	              xml.append("           TYPE=\"FedoraObject\"\n");
+	              xml.append("           OBJID=\"" + StreamUtility.enc(pid) + "\"\n");
+	              xml.append("           LABEL=\"" + StreamUtility.enc(label) + "\"\n");
+	              xml.append("           PROFILE=\"" + StreamUtility.enc(cModel) + "\">\n");
+	              xml.append("</METS:mets>");
+	              String objXML=xml.toString();
+	              **/
+
+				StringBuffer xml=new StringBuffer();
+				xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+				xml.append("<foxml:digitalObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+				xml.append("           xmlns:foxml=\"info:fedora/def:foxml1.0\"\n");
+				xml.append("           xsi:schemaLocation=\"info:fedora/def:foxml1.0 http://www.fedora.info/definitions/1/0/foxml1.0.xsd\"\n");
+				xml.append("           PID=\"" + StreamUtility.enc(pid) + "\">\n");
+				xml.append("  <foxml:objectProperties>\n");
+				xml.append("    <foxml:property NAME=\"info:fedora/def:dobj:type\">FedoraObject</foxml:property>\n");
+				xml.append("    <foxml:property NAME=\"info:fedora/def:dobj:label\">" + label + "</foxml:property>\n");
+				xml.append("    <foxml:property NAME=\"info:fedora/def:dobj:cmodel\">" + cModel + "</foxml:property>\n");
+				xml.append("  </foxml:objectProperties>\n");
+				xml.append("</foxml:digitalObject>");
+				String objXML=xml.toString();
+	            System.out.println("Ingesting new object:");
+	            System.out.println(objXML);
+
+	            ByteArrayInputStream in=new ByteArrayInputStream(
+	                    objXML.getBytes("UTF-8"));
+	            String newPID=AutoIngestor.ingestAndCommit(
+	                    Administrator.APIM,
+	                    in,
+	                    "foxml1.0",
+	                    "Created with Admin GUI \"New Object\" command");
+	            new ViewObject(newPID).launch();
               }
           } catch (Exception e) {
               String msg=e.getMessage();
