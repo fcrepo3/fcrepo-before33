@@ -701,7 +701,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       {
         try
         {
-          pw.write("<?xml version=\"1.0\"?>");
+          pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
           if (versDateTime == null || DateUtility.
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
@@ -814,7 +814,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       {
         try
         {
-          pw.write("<?xml version=\"1.0\"?>");
+          pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
           if (versDateTime == null || DateUtility.
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
@@ -918,7 +918,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       {
         try
         {
-          pw.write("<?xml version=\"1.0\"?>");
+          pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
           if (versDateTime == null || DateUtility.
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
@@ -1031,7 +1031,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       {
         try
         {
-          pw.write("<?xml version=\"1.0\"?>");
+          pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
           if (versDateTime == null || DateUtility.
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {

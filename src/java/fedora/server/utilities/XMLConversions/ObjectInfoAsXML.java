@@ -45,7 +45,7 @@ public class ObjectInfoAsXML
     public String getObjectProfile(String reposBaseURL, ObjectProfile objProfile)
             throws ServerException {
         StringBuffer out = new StringBuffer();
-        out.append("<?xml version=\"1.0\"?>");
+        out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         out.append("<objectProfile "
               + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
@@ -86,7 +86,7 @@ public class ObjectInfoAsXML
         StringBuffer out=new StringBuffer();
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
 
-        out.append("<?xml version=\"1.0\"?>");
+        out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         out.append("<object "
             + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
             + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""

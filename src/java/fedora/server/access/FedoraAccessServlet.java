@@ -418,7 +418,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       {
         try
         {
-          pw.write("<?xml version=\"1.0\"?>");
+          pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
           if (versDateTime == null || DateUtility.
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
