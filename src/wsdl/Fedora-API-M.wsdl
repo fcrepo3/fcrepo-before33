@@ -789,6 +789,7 @@
       <http:operation location="CreateObject"/>
       <input>
         <http:urlEncoded/>
+      </input>
       <output>
         <mime:mimeXml part="response"/>
       </output>
