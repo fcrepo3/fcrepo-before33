@@ -218,6 +218,7 @@ public class DatastreamBindingPane
 
             m_tableModel=new DatastreamBindingTableModel(dsBindings, bindingKey);
             m_table=new JTable(m_tableModel);
+            m_table.setDefaultEditor(String.class, new NonCancelingCellEditor(new JTextField(), m_tableModel));
             m_table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
             m_table.setRowSelectionAllowed(true);
             m_table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -333,7 +334,7 @@ public class DatastreamBindingPane
             // requires x to y datastreams...
             buf.append("<b>Binding is incomplete.</b> ");
             buf.append("Requires ");
-            if (rule.orderMatters()) {
+            if (rule.orderMatters() && (rule.getMax()==-1) || (rule.getMax()>1)) {
                 buf.append("<i>an ordered list</i> of ");
             }
             if (rule.getMin()==0) {
@@ -420,6 +421,92 @@ public class DatastreamBindingPane
             return result;
         }
 
+    }
+
+    /**
+     * A TableCellEditor that bypasses swing's awkward "undo" behavior when 
+     * the table loses focus during editing, and sets the table model
+     * appropriately on each editing event inside the textField, 
+     * instead of waiting for the textField to lose focus.
+     */
+    class NonCancelingCellEditor
+            implements TableCellEditor {
+
+        private int m_row;
+        private int m_column;
+        private TableModel m_model;
+        private JTextField m_textField;
+
+        NonCancelingCellEditor(JTextField f, TableModel model) {
+        System.out.println("Constructed");
+            m_textField=f;
+            m_model=model;
+            f.getDocument().addDocumentListener(new DocumentListener() {
+                public void changedUpdate(DocumentEvent e) {
+                    dataChanged();
+                }
+
+                public void insertUpdate(DocumentEvent e) {
+                    dataChanged();
+                }
+
+                public void removeUpdate(DocumentEvent e) {
+                    dataChanged();
+                }
+
+                public void dataChanged() {
+                    // update the model for each change
+                    System.out.println("textField changed to " + m_textField.getText());
+                    m_model.setValueAt(m_textField.getText(), m_row, m_column);
+                }
+            });
+        }
+
+        public Component getTableCellEditorComponent(JTable table, 
+                                                     Object value, 
+                                                     boolean isSelected, 
+                                                     int row, 
+                                                     int column) {
+            m_row=row;
+            m_column=column;
+            System.out.println("Getting editor component for " + m_row + ", " + m_column);
+            m_textField.setText((String) value);
+            return m_textField;
+        }
+
+        //  Add a listener to the list that's notified when the editor starts, stops, or cancels editing. 
+        public void addCellEditorListener(CellEditorListener l) {
+        }
+
+        //  Tell the editor to cancel editing and not accept any partially edited value. 
+        public void cancelCellEditing() {
+            stopCellEditing();
+        }
+
+        //  Returns the value contained in the editor 
+        public Object getCellEditorValue() {
+            return m_textField.getText();
+        }
+
+        //  Ask the editor if it can start editing using anEvent. 
+        public boolean isCellEditable(EventObject anEvent) {
+            return true;
+        }
+
+        //  Remove a listener from the list that's notified 
+        public void removeCellEditorListener(CellEditorListener l) {
+        }
+
+        //  The return value of shouldSelectCell() is a boolean indicating whether the editing cell should be selected or not. 
+        public boolean shouldSelectCell(EventObject anEvent) {
+            return true;
+        }
+
+        // Tell the editor to stop editing and accept any partially edited value as the value of the editor.
+        public boolean stopCellEditing() {
+            return true;
+        }
+        
     }
 
     class DatastreamBindingTableModel

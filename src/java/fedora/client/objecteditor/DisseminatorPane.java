@@ -635,7 +635,7 @@ public class DisseminatorPane
             m_bMechLabelTextField=new JTextField(m_diss.getBMechLabel());
             m_bMechLabelTextField.setEditable(false);
             JPanel bMechInfo=new JPanel(new BorderLayout());
-            bMechInfo.add(new JLabel(m_diss.getBMechPID()), BorderLayout.EAST);
+            bMechInfo.add(new JLabel(m_diss.getBMechPID()), BorderLayout.WEST);
             JPanel bMechLabelPanel=new JPanel(new BorderLayout());
             bMechLabelPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
             bMechLabelPanel.add(m_bMechLabelTextField, BorderLayout.CENTER);
@@ -680,6 +680,12 @@ public class DisseminatorPane
                 bindingTabbedPane.add(key, bindingTab);
                 bindingTabbedPane.setBackgroundAt(tabNum, Administrator.DEFAULT_COLOR);
             }
+            JLabel bindingsLabel=new JLabel("Bindings");
+            bindingsLabel.setPreferredSize(m_labelDims);
+            JPanel bindingsLabelPane=new JPanel(new BorderLayout());
+            bindingsLabelPane.setBorder(BorderFactory.createEmptyBorder(0,0,0,8));
+            bindingsLabelPane.add(bindingsLabel, BorderLayout.NORTH);
+            middlePanel.add(bindingsLabelPane, BorderLayout.WEST);
             middlePanel.add(bindingTabbedPane, BorderLayout.CENTER);
             // bottom panel is for the purge button
             JPanel bottomPanel=new JPanel(new FlowLayout());
