@@ -20,6 +20,7 @@ import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.StreamUtility;
 
 // FIXIT!! This DCFields was copied from fedora.server.search into
 // fedora.server.utilties for more general purpose use.  Decide on one official copy
@@ -98,22 +99,22 @@ public class ObjectInfoAsXML
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + fedoraServerHost + ":" + fedoraServerPort
-                + "/objectProfile.xsd\"" + " pid=\"" + objProfile.PID + "\" >");
+                + " http://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(objProfile.PID) + "\" >");
         } else
         {
             out.append("<objectProfile "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + fedoraServerHost + ":" + fedoraServerPort
-                + "/objectProfile.xsd\"" + " pid=\"" + objProfile.PID + "\""
+                + " http://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(objProfile.PID) + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" >");
         }
 
         // PROFILE FIELDS SERIALIZATION
-        out.append("<objLabel>" + objProfile.objectLabel + "</objLabel>");
-        out.append("<objContentModel>" + objProfile.objectContentModel + "</objContentModel>");
+        out.append("<objLabel>" + StreamUtility.enc(objProfile.objectLabel) + "</objLabel>");
+        out.append("<objContentModel>" + StreamUtility.enc(objProfile.objectContentModel) + "</objContentModel>");
         String cDate = DateUtility.convertDateToString(objProfile.objectCreateDate);
         out.append("<objCreateDate>" + cDate + "</objCreateDate>");
         String mDate = DateUtility.convertDateToString(objProfile.objectLastModDate);
@@ -133,8 +134,8 @@ public class ObjectInfoAsXML
           out.append("Fedora Behavior Mechanism Object");
         }
         out.append("</objType>");
-        out.append("<objDissIndexViewURL>" + objProfile.dissIndexViewURL + "</objDissIndexViewURL>");
-        out.append("<objItemIndexViewURL>" + objProfile.itemIndexViewURL + "</objItemIndexViewURL>");
+        out.append("<objDissIndexViewURL>" + StreamUtility.enc(objProfile.dissIndexViewURL) + "</objDissIndexViewURL>");
+        out.append("<objItemIndexViewURL>" + StreamUtility.enc(objProfile.itemIndexViewURL) + "</objItemIndexViewURL>");
         out.append("</objectProfile>");
         return out.toString();
     }
@@ -152,14 +153,14 @@ public class ObjectInfoAsXML
             out.append("<objectMethods "
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + fedoraServerHost + ":" + fedoraServerPort
-                + "/objectMethods.xsd\"" + " pid=\"" + PID + "\">");
+                + " http://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + "/objectMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\">");
         } else {
             out.append("<objectMethods "
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + fedoraServerHost + ":" + fedoraServerPort
-                + "/objectMethods.xsd\"" + " pid=\"" + PID + "\""
+                + " http://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + "/objectMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\">");
         }
 
@@ -171,24 +172,24 @@ public class ObjectInfoAsXML
           if (!currentBdef.equalsIgnoreCase(nextBdef))
           {
             if (i != 0) out.append("</bdef>");
-            out.append("<bdef pid=\"" + methods[i].bDefPID + "\" >");
+            out.append("<bdef pid=\"" + StreamUtility.enc(methods[i].bDefPID) + "\" >");
           }
 		  String versDate = DateUtility.convertDateToString(methods[i].asOfDate);
-          out.append("<method name=\"" + methods[i].methodName + "\" asOfDateTime=\"" + versDate + "\" >");
+          out.append("<method name=\"" + StreamUtility.enc(methods[i].methodName) + "\" asOfDateTime=\"" + versDate + "\" >");
           MethodParmDef[] methodParms = methods[i].methodParmDefs;
           for (int j=0; j<methodParms.length; j++)
           {
-            out.append("<parm parmName=\"" + methodParms[j].parmName
-                + "\" parmDefaultValue=\"" + methodParms[j].parmDefaultValue
+            out.append("<parm parmName=\"" + StreamUtility.enc(methodParms[j].parmName)
+                + "\" parmDefaultValue=\"" + StreamUtility.enc(methodParms[j].parmDefaultValue)
                 + "\" parmRequired=\"" + methodParms[j].parmRequired
-                + "\" parmType=\"" + methodParms[j].parmType
-                + "\" parmLabel=\"" + methodParms[j].parmLabel + "\" >");
+                + "\" parmType=\"" + StreamUtility.enc(methodParms[j].parmType)
+                + "\" parmLabel=\"" + StreamUtility.enc(methodParms[j].parmLabel) + "\" >");
             if (methodParms[j].parmDomainValues.length > 0 )
             {
               out.append("<parmDomainValues>");
               for (int k=0; k<methodParms[j].parmDomainValues.length; k++)
               {
-                out.append("<value>" + methodParms[j].parmDomainValues[k]
+                out.append("<value>" + StreamUtility.enc(methodParms[j].parmDomainValues[k])
                     + "</value>");
               }
               out.append("</parmDomainValues>");
@@ -219,78 +220,78 @@ public class ObjectInfoAsXML
           DCFields dc=new DCFields(in);
           for (int i=0; i<dc.titles().size(); i++) {
               out.append("<dc:title>");
-              out.append((String) dc.titles().get(i));
+              out.append(StreamUtility.enc((String) dc.titles().get(i)));
               out.append("</dc:title>\n");
           }
           for (int i=0; i<dc.creators().size(); i++) {
               out.append("<dc:creator>");
-              out.append((String) dc.creators().get(i));
+              out.append(StreamUtility.enc((String) dc.creators().get(i)));
               out.append("</dc:creator>\n");
           }
           for (int i=0; i<dc.subjects().size(); i++) {
               out.append("<dc:subject>");
-              out.append((String) dc.subjects().get(i));
+              out.append(StreamUtility.enc((String) dc.subjects().get(i)));
               out.append("</dc:subject>\n");
           }
           for (int i=0; i<dc.descriptions().size(); i++) {
               out.append("<dc:description>");
-              out.append((String) dc.descriptions().get(i));
+              out.append(StreamUtility.enc((String) dc.descriptions().get(i)));
               out.append("</dc:description>\n");
           }
           for (int i=0; i<dc.publishers().size(); i++) {
               out.append("<dc:publisher>");
-              out.append((String) dc.publishers().get(i));
+              out.append(StreamUtility.enc((String) dc.publishers().get(i)));
               out.append("</dc:publisher>\n");
           }
           for (int i=0; i<dc.contributors().size(); i++) {
               out.append("<dc:contributor>");
-              out.append((String) dc.contributors().get(i));
+              out.append(StreamUtility.enc((String) dc.contributors().get(i)));
               out.append("</dc:contributor>\n");
           }
           for (int i=0; i<dc.dates().size(); i++) {
-              String dateString=(String) dc.dates().get(i);
+              String dateString=StreamUtility.enc((String) dc.dates().get(i));
               out.append("<dc:date>");
               out.append(dateString);
               out.append("</dc:date>\n");
           }
           for (int i=0; i<dc.types().size(); i++) {
               out.append("<dc:type>");
-              out.append((String) dc.types().get(i));
+              out.append(StreamUtility.enc((String) dc.types().get(i)));
               out.append("</dc:type>\n");
           }
           for (int i=0; i<dc.formats().size(); i++) {
               out.append("<dc:format>");
-              out.append((String) dc.formats().get(i));
+              out.append(StreamUtility.enc((String) dc.formats().get(i)));
               out.append("</dc:format>\n");
           }
           for (int i=0; i<dc.identifiers().size(); i++) {
               out.append("<dc:identifier>");
-              out.append((String) dc.identifiers().get(i));
+              out.append(StreamUtility.enc((String) dc.identifiers().get(i)));
               out.append("</dc:identifier>\n");
           }
           for (int i=0; i<dc.sources().size(); i++) {
               out.append("<dc:source>");
-              out.append((String) dc.sources().get(i));
+              out.append(StreamUtility.enc((String) dc.sources().get(i)));
               out.append("</dc:source>\n");
           }
           for (int i=0; i<dc.languages().size(); i++) {
               out.append("<dc:language>");
-              out.append((String) dc.languages().get(i));
+              out.append(StreamUtility.enc((String) dc.languages().get(i)));
               out.append("</dc:language>\n");
           }
           for (int i=0; i<dc.relations().size(); i++) {
               out.append("<dc:relation>");
-              out.append((String) dc.relations().get(i));
+              out.append(StreamUtility.enc((String) dc.relations().get(i)));
               out.append("</dc:relation>\n");
           }
           for (int i=0; i<dc.coverages().size(); i++) {
               out.append("<dc:coverage>");
-              out.append((String) dc.coverages().get(i));
+              out.append(StreamUtility.enc((String) dc.coverages().get(i)));
               out.append("</dc:coverage>\n");
           }
           for (int i=0; i<dc.rights().size(); i++) {
               out.append("<dc:rights>");
-              out.append((String) dc.rights().get(i));
+              out.append(StreamUtility.enc((String) dc.rights().get(i)));
               out.append("</dc:rights>\n");
           }
         }
@@ -303,18 +304,18 @@ public class ObjectInfoAsXML
         StringBuffer out=new StringBuffer();
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         out.append("<fields>\n");
-        out.append("<pid>" + reader.GetObjectPID() + "</pid>\n");
+        out.append("<pid>" + StreamUtility.enc(reader.GetObjectPID()) + "</pid>\n");
         String label=reader.GetObjectLabel();
         if (label==null) label="";
-        out.append("<label>" + label + "</label>\n");
-        out.append("<fType>" + reader.getFedoraObjectType() + "</fType>\n");
+        out.append("<label>" + StreamUtility.enc(label) + "</label>\n");
+        out.append("<fType>" + StreamUtility.enc(reader.getFedoraObjectType()) + "</fType>\n");
         String cModel=reader.getContentModelId();
         if (cModel==null) cModel="";
-        out.append("<cModel>" + cModel + "</cModel>\n");
-        out.append("<state>" + reader.GetObjectState() + "</state>\n");
+        out.append("<cModel>" + StreamUtility.enc(cModel) + "</cModel>\n");
+        out.append("<state>" + StreamUtility.enc(reader.GetObjectState()) + "</state>\n");
         String ownerId=reader.getOwnerId();
         if (ownerId==null) ownerId="";
-        out.append("<ownerId>" + ownerId + "</ownerId>\n");
+        out.append("<ownerId>" + StreamUtility.enc(ownerId) + "</ownerId>\n");
         out.append("<cDate>" + formatter.format(reader.getCreateDate()) + "</cDate>\n");
         out.append("<cDateAsNum>" + reader.getCreateDate().getTime() + "</cDateAsNum>\n");
         out.append("<mDate>" + formatter.format(reader.getLastModDate()) + "</mDate>\n");
@@ -343,36 +344,36 @@ public class ObjectInfoAsXML
           DCFields dc=new DCFields(in);
           for (int i=0; i<dc.titles().size(); i++) {
               out.append("<title>");
-              out.append((String) dc.titles().get(i));
+              out.append(StreamUtility.enc((String) dc.titles().get(i)));
               out.append("</title>\n");
           }
           for (int i=0; i<dc.creators().size(); i++) {
               out.append("<creator>");
-              out.append((String) dc.creators().get(i));
+              out.append(StreamUtility.enc((String) dc.creators().get(i)));
               out.append("</creator>\n");
           }
           for (int i=0; i<dc.subjects().size(); i++) {
               out.append("<subject>");
-              out.append((String) dc.subjects().get(i));
+              out.append(StreamUtility.enc((String) dc.subjects().get(i)));
               out.append("</subject>\n");
           }
           for (int i=0; i<dc.descriptions().size(); i++) {
               out.append("<description>");
-              out.append((String) dc.descriptions().get(i));
+              out.append(StreamUtility.enc((String) dc.descriptions().get(i)));
               out.append("</description>\n");
           }
           for (int i=0; i<dc.publishers().size(); i++) {
               out.append("<publisher>");
-              out.append((String) dc.publishers().get(i));
+              out.append(StreamUtility.enc((String) dc.publishers().get(i)));
               out.append("</publisher>\n");
           }
           for (int i=0; i<dc.contributors().size(); i++) {
               out.append("<contributor>");
-              out.append((String) dc.contributors().get(i));
+              out.append(StreamUtility.enc((String) dc.contributors().get(i)));
               out.append("</contributor>\n");
           }
           for (int i=0; i<dc.dates().size(); i++) {
-              String dateString=(String) dc.dates().get(i);
+              String dateString=StreamUtility.enc((String) dc.dates().get(i));
               out.append("<date>");
               out.append(dateString);
               out.append("</date>\n");
@@ -388,42 +389,42 @@ public class ObjectInfoAsXML
           }
           for (int i=0; i<dc.types().size(); i++) {
               out.append("<type>");
-              out.append((String) dc.types().get(i));
+              out.append(StreamUtility.enc((String) dc.types().get(i)));
               out.append("</type>\n");
           }
           for (int i=0; i<dc.formats().size(); i++) {
               out.append("<format>");
-              out.append((String) dc.formats().get(i));
+              out.append(StreamUtility.enc((String) dc.formats().get(i)));
               out.append("</format>\n");
           }
           for (int i=0; i<dc.identifiers().size(); i++) {
               out.append("<identifier>");
-              out.append((String) dc.identifiers().get(i));
+              out.append(StreamUtility.enc((String) dc.identifiers().get(i)));
               out.append("</identifier>\n");
           }
           for (int i=0; i<dc.sources().size(); i++) {
               out.append("<source>");
-              out.append((String) dc.sources().get(i));
+              out.append(StreamUtility.enc((String) dc.sources().get(i)));
               out.append("</source>\n");
           }
           for (int i=0; i<dc.languages().size(); i++) {
               out.append("<language>");
-              out.append((String) dc.languages().get(i));
+              out.append(StreamUtility.enc((String) dc.languages().get(i)));
               out.append("</language>\n");
           }
           for (int i=0; i<dc.relations().size(); i++) {
               out.append("<relation>");
-              out.append((String) dc.relations().get(i));
+              out.append(StreamUtility.enc((String) dc.relations().get(i)));
               out.append("</relation>\n");
           }
           for (int i=0; i<dc.coverages().size(); i++) {
               out.append("<coverage>");
-              out.append((String) dc.coverages().get(i));
+              out.append(StreamUtility.enc((String) dc.coverages().get(i)));
               out.append("</coverage>\n");
           }
           for (int i=0; i<dc.rights().size(); i++) {
               out.append("<rights>");
-              out.append((String) dc.rights().get(i));
+              out.append(StreamUtility.enc((String) dc.rights().get(i)));
               out.append("</rights>\n");
           }
           return out.toString();
