@@ -45,6 +45,10 @@ public class METSInOutTest {
 
     public static void main(String args[]) {
         FileInputStream in=null;
+        // set system properties for testing purposes      	
+		System.setProperty("fedoraServerHost", "localhost");
+		System.setProperty("fedoraServerPort", "80");
+		
         try {
             if (args.length<1) {
                 throw new IOException("At least one parameter needed.");
@@ -97,5 +101,5 @@ public class METSInOutTest {
             System.out.println("Error: (" + e.getClass().getName() + "):" + e.getMessage());
             e.printStackTrace();
         }
-    }
+    } 
 }
