@@ -46,8 +46,8 @@ import org.apache.axis.encoding.ser.BeanSerializerFactory;
 import org.apache.axis.encoding.ser.BeanDeserializerFactory;
 
 /**
- * <p>Title: FedoraAccessSoapServlet.java</p>
- * <p>Description: An example of a web-based client that provides a front end
+ * <p><b>Title: </b>FedoraAccessSoapServlet.java</p>
+ * <p><b>Description: </b>An example of a web-based client that provides a front end
  * to the Fedora Access SOAP service. This servlet is designed to provide a
  * "browser centric" view of the Fedora Access interface. Return types from
  * the Fedora Access SOAP service are translated into a form suitable for
@@ -81,16 +81,31 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  *                 parameters are entered as name/value pairs like the other
  *                 serlvet parameters.(optional)</li>
  * </ul>
- * <p><i><b>Note that all servlet parameter names that are implementation
+ * <p><i>Note that all servlet parameter names that are implementation
  * specific end with the underscore character ("_"). This is done to avoid
  * possible name clashes with user-supplied method parameter names. As a
  * general rule, user-supplied parameters should never contain names that end
- * with the underscore character to prevent possible name conflicts.</b></i>
+ * with the underscore character to prevent possible name conflicts.</i>
  * </ul>
  *
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Ross Wayland
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author rlw@virginia.edu
  * @version 1.0
  */
 public class FedoraAccessSoapServlet extends HttpServlet

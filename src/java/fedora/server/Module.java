@@ -5,21 +5,40 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 
 /**
- * The base class for Fedora server modules.
- * <p></p>
- * A <code>Module</code> is a singleton object of a Fedora <code>Server</code>
+ *
+ * <p><b>Title:</b> Module.java</p>
+ * <p><b>Description:</b> The base class for Fedora server modules.</p>
+ *
+ * <p>A <code>Module</code> is a singleton object of a Fedora <code>Server</code>
  * instance with a simple lifecycle, supported by the <code>initModule()</code>
  * and <code>shutdownModule()</code> methods, which are automatically called
- * during server startup and shutdown, respectively.
- * <p></p>
- * Modules are configured via "param" elements inside module elements
+ * during server startup and shutdown, respectively.</p>
+ *
+ * <p>Modules are configured via "param" elements inside module elements
  * in the configuration file.  An instance of each module specified in the
  * configuration file is automatically created at startup and is available
  * via the <code>getModule(String)</code> instance method of the
- * <code>Server</code> class.
+ * <code>Server</code> class.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @version 1.0
  */
 public abstract class Module
         extends Pluggable

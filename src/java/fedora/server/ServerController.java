@@ -15,15 +15,40 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;   
+import org.w3c.dom.Node;
 
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ShutdownException;
 import fedora.server.Server;
 
-public class ServerController 
+/**
+ *
+ * <p><b>Title:</b> ServerController.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
+public class ServerController
         extends HttpServlet {
-        
+
     private static Server s_server;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -41,7 +66,7 @@ public class ServerController
                 try {
                     s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
                     s_server.logInfo(requestInfo);
-                    if (request.getParameter("password")!=null 
+                    if (request.getParameter("password")!=null
                             && request.getParameter("password").equals(
                             s_server.getParameter("adminPassword"))) {
                         try {
@@ -84,13 +109,13 @@ public class ServerController
             out.write("ERROR");
         }
     }
-    
+
     public void init() {
     }
-    
+
     public void destroy() {
     }
-    
+
     public static String getResponse(URL url) {
         try {
             HttpURLConnection conn=(HttpURLConnection) url.openConnection();
@@ -107,7 +132,7 @@ public class ServerController
             return "ERROR: can't connect to control servlet.";
         }
     }
-    
+
     public static void main(String[] args) {
         String fedoraHome=System.getProperty("fedora.home");
         if (fedoraHome==null) {
