@@ -9,7 +9,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Properties;
 
 /**
@@ -74,7 +76,9 @@ public class MethodParameterResolverServlet extends HttpServlet
     String methodName = null;
     String serverURI = null;
     String versDateTime = null;
+    URLDecoder decoder = new URLDecoder();
     StringBuffer methodParms = new StringBuffer();
+    Hashtable h_methodParms = new Hashtable();
     response.setContentType(HTML_CONTENT_TYPE);
     PrintWriter out = response.getWriter();
 
@@ -86,13 +90,13 @@ public class MethodParameterResolverServlet extends HttpServlet
       String value = new String(request.getParameter(name));
       if (name.equals("PID"))
       {
-        PID = (String)request.getParameter(name);
+        PID = decoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("bDefPID"))
       {
-        bDefPID = (String)request.getParameter(name);
+        bDefPID = decoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("methodName"))
       {
-        methodName = (String)request.getParameter(name);
+        methodName = decoder.decode((String)request.getParameter(name), "UTF-8");
         } else if (name.equals("asOfDateTime"))
         {
         versDateTime = (String)request.getParameter(name);
@@ -100,8 +104,10 @@ public class MethodParameterResolverServlet extends HttpServlet
         // Submit parameter is ignored.
       } else
       {
-        // Any remaining parameters are method parameters.
-        methodParms.append(name+"="+(String)request.getParameter(name)+"&");
+        // Any remaining parameters are assumed to be method parameters so
+        // decode and place in hashtable.
+        h_methodParms.put(decoder.decode(name, "UTF-8"),
+            decoder.decode((String)request.getParameter(name), "UTF-8"));
       }
     }
 
@@ -123,15 +129,28 @@ public class MethodParameterResolverServlet extends HttpServlet
     {
       // Translate parameters into dissemination request.
       StringBuffer redirectURL = new StringBuffer();
-      URLDecoder decode = new URLDecoder();
-      PID = decode.decode(PID, "UTF-8");
-      bDefPID = decode.decode(bDefPID,"UTF-8");
       redirectURL.append(SERVLET_PATH
           + "?action_=GetDissemination&"
           + "PID_=" + PID + "&"
           + "bDefPID_=" + bDefPID + "&"
           + "methodName_=" + methodName);
-      if (methodParms.length() > 0)
+      // Add method parameters.
+      int i = 0;
+      for (Enumeration e = h_methodParms.keys() ; e.hasMoreElements(); )
+      {
+        String name = URLEncoder.encode((String) e.nextElement(), "UTF-8");
+        String value = URLEncoder.encode((String) h_methodParms.get(name), "UTF-8");
+        i++;
+        if (i == h_methodParms.size())
+        {
+          methodParms.append(name + "=" + value);
+        } else
+        {
+          methodParms.append(name + "=" + value + "&");
+        }
+
+      }
+      if (h_methodParms.size() > 0)
       {
         if (versDateTime == null || versDateTime.equalsIgnoreCase(""))
         {

@@ -6,9 +6,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.net.URL;
+import java.net.URLDecoder;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,10 +97,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
 {
 
   /** Content type for html. */
-  private static final String CONTENT_TYPE_HTML = "text/html";
+  private static final String CONTENT_TYPE_HTML = "text/html; charset=UTF-8";
 
   /** Content type for xml. */
-  private static final String CONTENT_TYPE_XML  = "text/xml";
+  private static final String CONTENT_TYPE_XML  = "text/xml; charset=UTF-8";
 
   /** URI of Fedora API definitions. */
   private static final String FEDORA_API_URI =
@@ -169,28 +171,29 @@ public class FedoraAccessSoapServlet extends HttpServlet
     String methodName = null;
     String PID = null;
     Property[] userParms = null;
+    URLDecoder decoder = new URLDecoder();
     boolean xml = false;
     long servletStartTime = new Date().getTime();
     h_userParms = new Hashtable();
-    ServletOutputStream out = response.getOutputStream();
+    //ServletOutputStream out = response.getOutputStream();
 
     // Get servlet input parameters.
     Enumeration URLParms = request.getParameterNames();
     while ( URLParms.hasMoreElements())
     {
-      String parm = (String) URLParms.nextElement();
+      String parm = decoder.decode((String) URLParms.nextElement(), "UTF-8");
       if (parm.equals("action_"))
       {
         action = request.getParameter(parm);
       } else if (parm.equals("PID_"))
       {
-        PID = request.getParameter(parm);
+        PID = decoder.decode(request.getParameter(parm), "UTF-8");
       } else if (parm.equals("bDefPID_"))
       {
-        bDefPID = request.getParameter(parm);
+        bDefPID = decoder.decode(request.getParameter(parm), "UTF-8");
       } else if (parm.equals("methodName_"))
       {
-        methodName = request.getParameter(parm);
+        methodName = decoder.decode(request.getParameter(parm), "UTF-8");
       } else if (parm.equals("asOfDateTime_"))
       {
         asOfDateTime = DateUtility.
@@ -203,7 +206,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         // Any remaining parameters are assumed to be user-supplied method
         // parameters. Place user-supplied parameters in hashtable for
         // easier access.
-        h_userParms.put(parm, request.getParameter(parm));
+        h_userParms.put(parm, decoder.decode(request.getParameter(parm), "UTF-8"));
       }
     }
 
@@ -236,14 +239,14 @@ public class FedoraAccessSoapServlet extends HttpServlet
         ObjectProfile objProfile = null;
         PipedWriter pw = null;
         PipedReader pr = null;
+        OutputStreamWriter out = null;
         try
         {
 
-          out = response.getOutputStream();
+          //out = response.getOutputStream();
           pw = new PipedWriter();
           pr = new PipedReader(pw);
           behaviorDefs = getBehaviorDefinitions(PID, asOfDateTime);
-          System.out.println("size: " + behaviorDefs.length);
           if (behaviorDefs != null)
           {
             // Object Methods found.
@@ -253,19 +256,26 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               // Return results as raw XML
               response.setContentType(CONTENT_TYPE_XML);
-              int bytestream = 0;
-              while ( (bytestream = pr.read()) >= 0)
-              {
-                out.write(bytestream);
+              out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
+              int bufSize = 4096;
+              char[] buf=new char[bufSize];
+              int len=0;
+              while ( (len = pr.read(buf, 0, bufSize)) != -1) {
+                  out.write(buf, 0, len);
               }
+              out.flush();
+              //int bytestream = 0;
+              //while ( (bytestream = pr.read()) >= 0)
+              //{
+              //  out.write(bytestream);
+              //}
+              //out.flush();
             } else
             {
               // Transform results into an html table
               response.setContentType(CONTENT_TYPE_HTML);
-              //File xslFile = new File("dist/server/access/objectmethods2.xslt");
-              //File xslFile = new File("dist/server/access/objectmethods.xslt");
+              out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
               TransformerFactory factory = TransformerFactory.newInstance();
-              //Templates template = factory.newTemplates(new StreamSource(xslFile));
               Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/behaviordefs.xslt")));
               Transformer transformer = template.newTransformer();
               Properties details = template.getOutputProperties();
@@ -275,12 +285,12 @@ public class FedoraAccessSoapServlet extends HttpServlet
               transformer.setParameter("soapMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
               transformer.transform(new StreamSource(pr), new StreamResult(out));
             }
-            pr.close();
+            out.flush();
 
           } else
           {
             // Behavior Definition request returned nothing.
-            String message = "[FedoraAccessSOAPServlet] No Behavior Definitons "
+            String message = "[FedoraAccessSoapServlet] No Behavior Definitons "
                 + "returned.";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
@@ -290,17 +300,30 @@ public class FedoraAccessSoapServlet extends HttpServlet
           // FIXME!! Needs more refined Exception handling.
         } catch (Exception e)
         {
-          String message = "[FedoraAccessSOAPServlet] Failed to get Behavior "
+          String message = "[FedoraAccessSoapServlet] Failed to get Behavior "
               + "Definitions <br > Exception: "
               + e.getClass().getName() + " <br> Reason: "
               + e.getMessage();
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, response, message);
+        } finally
+        {
+          try
+          {
+            if (pr != null) pr.close();
+            if (out != null) out.close();
+          } catch (Throwable th)
+          {
+            String message = "[FedoraAccessSoapServlet] An error has occured. "
+                + " The error was a \" " + th.getClass().getName()
+                + " \". Reason: "  + th.getMessage();
+            throw new ServletException(message);
+          }
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
             + "GetBehaviorDefinitions: " + interval + " milliseconds.");
       }
       else if (action.equals(GET_BEHAVIOR_METHODS))
@@ -309,10 +332,11 @@ public class FedoraAccessSoapServlet extends HttpServlet
         ObjectMethodsDef[] objMethDefArray = null;
         PipedWriter pw = null;
         PipedReader pr = null;
+        OutputStreamWriter out = null;
         try
         {
 
-          out = response.getOutputStream();
+          //out = response.getOutputStream();
           pw = new PipedWriter();
           pr = new PipedReader(pw);
           methodDefs = getBehaviorMethods(PID, bDefPID, asOfDateTime);
@@ -325,18 +349,26 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               // Return results as raw XML
               response.setContentType(CONTENT_TYPE_XML);
-              int bytestream = 0;
-              while ( (bytestream = pr.read()) >= 0)
-              {
-                out.write(bytestream);
+              out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
+              int bufSize = 4096;
+              char[] buf=new char[bufSize];
+              int len=0;
+              while ( (len = pr.read(buf, 0, bufSize)) != -1) {
+                  out.write(buf, 0, len);
               }
+              out.flush();
+              //int bytestream = 0;
+              //while ( (bytestream = pr.read()) >= 0)
+              //{
+              //  out.write(bytestream);
+              //}
+              //out.flush();
             } else
             {
               // Transform results into an html table
               response.setContentType(CONTENT_TYPE_HTML);
-              //File xslFile = new File("dist/server/access/objectmethods.xslt");
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
               TransformerFactory factory = TransformerFactory.newInstance();
-              //Templates template = factory.newTemplates(new StreamSource(xslFile));
               Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/objectmethods.xslt")));
               Transformer transformer = template.newTransformer();
               Properties details = template.getOutputProperties();
@@ -346,12 +378,12 @@ public class FedoraAccessSoapServlet extends HttpServlet
               transformer.setParameter("soapMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
               transformer.transform(new StreamSource(pr), new StreamResult(out));
             }
-            pr.close();
+            out.flush();
 
           } else
           {
             // Method Definitions request returned nothing.
-            String message = "[FedoraAccessSOAPServlet] No Behavior Methods "
+            String message = "[FedoraAccessSoapServlet] No Behavior Methods "
                 + "returned.";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
@@ -361,21 +393,36 @@ public class FedoraAccessSoapServlet extends HttpServlet
           // FIXME!! Needs more refined Exception handling.
         } catch (Exception e)
         {
-          String message = "[FedoraAccessSOAPServlet] No Behavior Methods "
+          String message = "[FedoraAccessSoapServlet] No Behavior Methods "
               + "returned. <br> Exception: " + e.getClass().getName()
               + " <br> Reason: "  + e.getMessage();
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, response, message);
+        } finally
+        {
+          try
+          {
+            if (pr != null) pr.close();
+            if (out != null) out.close();
+          } catch (Throwable th)
+          {
+            String message = "[FedoraAccessSoapServlet] An error has occured. "
+                + " The error was a \" " + th.getClass().getName()
+                + " \". Reason: "  + th.getMessage();
+            throw new ServletException(message);
+          }
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
             + "GetBehaviorDefinitions: " + interval + " milliseconds.");
       }
       else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML))
       {
         MIMETypedStream methodDefs = null;
+        ByteArrayInputStream methodResults = null;
+        ServletOutputStream out = response.getOutputStream();
         try
         {
           // Call Fedora Access SOAP service to request Method Definitions
@@ -392,8 +439,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
             // nonbrowser-based environment, one would use the returned data
             // structures directly and most likely forgo this transformation
             // step.
-            ByteArrayInputStream methodResults =
-                new ByteArrayInputStream(methodDefs.getStream());
+            methodResults = new ByteArrayInputStream(methodDefs.getStream());
             response.setContentType(methodDefs.getMIMEType());
             int byteStream = 0;
             byte[] buffer = new byte[255];
@@ -401,11 +447,12 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               out.write(buffer, 0, byteStream);
             }
+            out.flush();
             buffer = null;
           } else
           {
             // Method Definition request in XML form returned nothing.
-            String message = "[FedoraAccessSOAPServlet] No Behavior Methods "
+            String message = "[FedoraAccessSoapServlet] No Behavior Methods "
                 + "returned as XML.";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
@@ -414,20 +461,35 @@ public class FedoraAccessSoapServlet extends HttpServlet
         } catch (Exception e)
         {
           // FIXME!! Needs more refined Exception handling.
-          String message = "[FedoraAccessSOAPServlet] No Behavior Methods "
+          String message = "[FedoraAccessSoapServlet] No Behavior Methods "
               + "returned as XML. <br> Exception: " + e.getClass().getName()
               + " <br> Reason: "  + e.getMessage();
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, response, message);
+        } finally
+        {
+          try
+          {
+            if (out != null) out.close();
+            if (methodResults != null) methodResults.close();
+          } catch (Throwable th)
+          {
+            String message = "[FedoraAccessSoapServlet] An error has occured. "
+                + " The error was a \" " + th.getClass().getName()
+                + " \". Reason: "  + th.getMessage();
+            throw new ServletException(message);
+          }
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
             + "GetBehaviorMethodsAsWSDL: " + interval + " milliseconds.");
       }
       else if (action.equals(GET_DISSEMINATION))
       {
+        ServletOutputStream out = response.getOutputStream();
+        ByteArrayInputStream dissemResult = null;
         try
         {
           // Call Fedora Access SOAP service to request dissemination.
@@ -470,20 +532,19 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               response.setContentType(dissemination.getMIMEType());
               int byteStream = 0;
-              ByteArrayInputStream dissemResult =
-                  new ByteArrayInputStream(dissemination.getStream());
+              dissemResult = new ByteArrayInputStream(dissemination.getStream());
               byte[] buffer = new byte[255];
               while ((byteStream = dissemResult.read(buffer)) >= 0)
               {
                 out.write(buffer, 0, byteStream);
               }
+              out.flush();
               buffer = null;
-              dissemResult.close();
             }
           } else
           {
             // Dissemination request returned nothing.
-            String message = "[FedoraAccessSOAPServlet] No Dissemination "
+            String message = "[FedoraAccessSoapServlet] No Dissemination "
                 + "result returned. <br> See server logs for additional info";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
@@ -493,7 +554,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         {
           // FIXME!! Needs more refined Exception handling.
           e.printStackTrace();
-          String message = "[FedoraAccessSOAPServlet] No Dissemination "
+          String message = "[FedoraAccessSoapServlet] No Dissemination "
               + "result returned. <br> Exception: "
               + e.getClass().getName()
               + " <br> Reason: "  + e.getMessage()
@@ -501,10 +562,23 @@ public class FedoraAccessSoapServlet extends HttpServlet
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, response, message);
+        } finally
+        {
+          try
+          {
+            if (out != null) out.close();
+            if (dissemResult != null) dissemResult.close();
+          } catch (Throwable th)
+          {
+            String message = "[FedoraAccessSoapServlet] An error has occured. "
+                + " The error was a \" " + th.getClass().getName()
+                + " \". Reason: "  + th.getMessage();
+            throw new ServletException(message);
+          }
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
             + "GetDissemination: " + interval + " milliseconds.");
       }
       else if (action.equals(GET_OBJECT_METHODS))
@@ -512,10 +586,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
         ObjectMethodsDef[] objMethDefArray = null;
         PipedWriter pw = new PipedWriter();
         PipedReader pr = new PipedReader(pw);
+        OutputStreamWriter out = null;
 
         try
         {
-          out = response.getOutputStream();
           pw = new PipedWriter();
           pr = new PipedReader(pw);
           objMethDefArray = getObjectMethods(PID, asOfDateTime);
@@ -528,18 +602,26 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               // Return results as raw XML
               response.setContentType(CONTENT_TYPE_XML);
-              int bytestream = 0;
-              while ( (bytestream = pr.read()) >= 0)
-              {
-                out.write(bytestream);
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
+              int bufSize = 4096;
+              char[] buf=new char[bufSize];
+              int len=0;
+              while ( (len = pr.read(buf, 0, bufSize)) != -1) {
+                  out.write(buf, 0, len);
               }
+              out.flush();
+              //int bytestream = 0;
+              //while ( (bytestream = pr.read()) >= 0)
+              //{
+              //  out.write(bytestream);
+              //}
+              //out.flush();
             } else
             {
               // Transform results into an html table
               response.setContentType(CONTENT_TYPE_HTML);
-              //File xslFile = new File("dist/server/access/objectmethods.xslt");
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
               TransformerFactory factory = TransformerFactory.newInstance();
-              //Templates template = factory.newTemplates(new StreamSource(xslFile));
               Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/objectmethods.xslt")));
               Transformer transformer = template.newTransformer();
               Properties details = template.getOutputProperties();
@@ -549,11 +631,11 @@ public class FedoraAccessSoapServlet extends HttpServlet
               transformer.setParameter("soapMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
               transformer.transform(new StreamSource(pr), new StreamResult(out));
             }
-            pr.close();
+            out.flush();
           } else
           {
             // Object Methods Definition request returned nothing.
-            String message = "[FedoraAccessServlet] No Object Method "
+            String message = "[FedoraAccessSoapServlet] No Object Method "
                 + "Definitions returned.";
             System.out.println(message);
             showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
@@ -563,7 +645,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
           }
         } catch (Throwable th)
         {
-          String message = "[FedoraAccessServlet] An error has occured. "
+          String message = "[FedoraAccessSoapServlet] An error has occured. "
               + " The error was a \" "
               + th.getClass().getName()
               + " \". Reason: "  + th.getMessage();
@@ -573,11 +655,21 @@ public class FedoraAccessSoapServlet extends HttpServlet
           response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
         } finally
         {
+          try
+          {
             if (pr != null) pr.close();
+            if (out != null) out.close();
+          } catch (Throwable th)
+          {
+            String message = "[FedoraAccessSoapServlet] An error has occured. "
+                + " The error was a \" " + th.getClass().getName()
+                + " \". Reason: "  + th.getMessage();
+            throw new ServletException(message);
+          }
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
           + "GetObjectMethods: " + interval + " milliseconds.");
       }
       else if (action.equals(GET_OBJECT_PROFILE))
@@ -585,10 +677,11 @@ public class FedoraAccessSoapServlet extends HttpServlet
         ObjectProfile objProfile = null;
         PipedWriter pw = new PipedWriter();
         PipedReader pr = new PipedReader(pw);
+        OutputStreamWriter out = null;
 
         try
         {
-          out = response.getOutputStream();
+          //out = response.getOutputStream();
           pw = new PipedWriter();
           pr = new PipedReader(pw);
           objProfile = getObjectProfile(PID, asOfDateTime);
@@ -601,16 +694,25 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               // Return results as raw XML
               response.setContentType(CONTENT_TYPE_XML);
-              int bytestream = 0;
-              while ( (bytestream = pr.read()) >= 0)
-              {
-                out.write(bytestream);
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
+              int bufSize = 4096;
+              char[] buf=new char[bufSize];
+              int len=0;
+              while ( (len = pr.read(buf, 0, bufSize)) != -1) {
+                  out.write(buf, 0, len);
               }
+              out.flush();
+              //int bytestream = 0;
+              //while ( (bytestream = pr.read()) >= 0)
+              //{
+              //  out.write(bytestream);
+              //}
+              //out.flush();
             } else
             {
               // Transform results into an html table
               response.setContentType(CONTENT_TYPE_HTML);
-              //File xslFile = new File("dist/server/access/viewObjectProfile.xslt");
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
               File xslFile = new File(this.getServletContext().getRealPath("WEB-INF/xsl/viewObjectProfile.xslt"));
               TransformerFactory factory = TransformerFactory.newInstance();
               Templates template = factory.newTemplates(new StreamSource(xslFile));
@@ -622,19 +724,19 @@ public class FedoraAccessSoapServlet extends HttpServlet
               transformer.setParameter("soapMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
               transformer.transform(new StreamSource(pr), new StreamResult(out));
             }
-            pr.close();
+            out.flush();
 
           } else
           {
             // No Object Profile returned
-            String message = "[FedoraAccessServlet] No Object Profile returned.";
+            String message = "[FedoraAccessSoapServlet] No Object Profile returned.";
             System.out.println(message);
             showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
                          response, message);
           }
         } catch (Throwable th)
         {
-          String message = "[FedoraAccessServlet] An error has occured. "
+          String message = "[FedoraAccessSoapServlet] An error has occured. "
               + " The error was a \" "
               + th.getClass().getName()
               + " \". Reason: "  + th.getMessage();
@@ -644,19 +746,28 @@ public class FedoraAccessSoapServlet extends HttpServlet
           response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
         } finally
         {
+          try
+          {
             if (pr != null) pr.close();
+            if (out != null) out.close();
+          } catch (Throwable th)
+          {
+            String message = "[FedoraAccessSoapServlet] An error has occured. "
+                + " The error was a \" " + th.getClass().getName()
+                + " \". Reason: "  + th.getMessage();
+            throw new ServletException(message);
+          }
         }
-        out.close();
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
           + "GetObjectProfile: " + interval + " milliseconds.");
         // end Object Profile processing
       }
       else
       {
         // Action not recognized
-        String message = "[FedoraAccessServlet] Requested action not recognized.";
+        String message = "[FedoraAccessSoapServlet] Requested action not recognized.";
         System.out.println(message);
         showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
                      response, message);
