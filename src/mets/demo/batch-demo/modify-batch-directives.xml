@@ -23,35 +23,35 @@
 	<!-- Add a new datastream to demo:32 object. Since this is the first datastream for this object, it      -->
 	<!-- will be assigned datastreamID of DS1. The new datastream will be a thumbnail image.              -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum thumbnail jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="E" dsState="A"/>
+	<fbm:createDatastream pid="demo:32" dsLabel="Thorny's Coliseum thumbnail jpg image" dsMIME="image/jpeg" dsID="DS1" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="E" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the second datastream for this object,   -->
 	<!-- it will be assigned datastreamID of DS2. The new datastream will be a medium resolution          -->
 	<!-- image.                                                                                                                                                       -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum medium jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg" dsControlGroupType="E" dsState="A"/>
+	<fbm:createDatastream pid="demo:32" dsLabel="Thorny's Coliseum medium jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg" dsControlGroupType="E" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the third datastream for this object, it     -->
 	<!-- will be assigned datastreamID of DS3. The new datastream will be a high resolution image.      -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum high jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="M" dsState="A"/>
+	<fbm:createDatastream pid="demo:32" dsLabel="Thorny's Coliseum high jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="M" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the fourth datastream for this object, it   -->
 	<!-- will be assigned datastreamID of DS4. The new datastream will be a very high resolution           -->
 	<!--  image.                                                                                                                                                      -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum veryhigh jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg" dsControlGroupType="M" dsState="A"/>
+	<fbm:createDatastream pid="demo:32" dsLabel="Thorny's Coliseum veryhigh jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg" dsControlGroupType="M" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the fifth datastream for this object, it      -->
 	<!-- will be assigned datastreamID of DS5. The new datastream will be a screen size image.           -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="E" dsState="A"/>
+	<fbm:createDatastream pid="demo:32" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="E" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the sixth datastream for this object, it     -->
 	<!-- will be assigned datastreamID of DS6. The new datastream will be a user-defined descriptive   -->
 	<!-- metadata datastream.                                                                                                                             -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Descriptive metadata for Thorny's Coliseum screen size jpg image" dsMIME="text/xml" dsControlGroupType="X" dsMdClass="descriptive" dsState="A">
+	<fbm:createDatastream pid="demo:32" dsLabel="Descriptive metadata for Thorny's Coliseum screen size jpg image" dsMIME="text/xml" dsControlGroupType="X" dsState="A">
 		<fbm:xmlData>
 			<uvalibdesc:desc xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
 				<uvalibdesc:time>
@@ -87,13 +87,13 @@
 				</uvalibdesc:place>
 			</uvalibdesc:desc>
 		</fbm:xmlData>
-	</fbm:addDatastream>
+	</fbm:createDatastream>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new datastream to demo:32 object. Since this is the seventh datastream for this object,  -->
 	<!-- it will be assigned datastreamID of DS7. The new datastream will be duplicate of the screen     -->
 	<!-- size image that will be deleted later in this set of directives.                                                              -->
 	<!-- ************************************************************************************************************ -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="R" dsState="A"/>
+	<fbm:createDatastream pid="demo:32" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="R" dsState="A"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Modify datastream DS1 of demo:5 object by changing its label.                                                       -->
 	<!--                                                                                                                                                                   -->
@@ -189,5 +189,6 @@
 	<!-- ************************************************************************************************************ -->
 	<fbm:modifyDisseminator pid="demo:32" dissID="DISS2" bMechPid="demo:28" bMechLabel="new label for bmech" bDefLabel="" dissState="A">
 		<fbm:removeDatastreamBinding dsID="DS5"/>
+		<fbm:addDatastreamBinding dsBindKeyName="url" dsID="DS3" dsBindLabel="Label for New Binding"/>
 	</fbm:modifyDisseminator>
 </fbm:batchModify>
