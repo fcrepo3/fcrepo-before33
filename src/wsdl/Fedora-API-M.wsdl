@@ -535,7 +535,8 @@
       for the object resulting from this request.  That pid will have the namespace of 
       the repository.  If the XML document specifies a pid, it will be assigned 
       to the digital object provided that 1) it conforms to the Fedora pid 
-      Syntax, 2) it does not specify the namespace of the repository, and 3) 
+      Syntax, 2) it uses a namespace that matches the "retainPIDs" value
+      configured for the repository, and 3) 
       it does not collide with an existing pid of an object in the repository.
       </documentation>
 			<input message="fedora-api:ingestRequest"/>
@@ -550,8 +551,9 @@
 			generate and return a new pid for the object resulting from this request.  
 			That pid will have the namespace of the repository.  If the XML document 
 			specifies a pid, it will be assigned to the digital object provided that 
-			1) it conforms to the Fedora pid Syntax, 2) it does not specify the namespace 
-			of the repository, and 3) it does not collide with an existing pid of an object in 
+			1) it conforms to the Fedora pid Syntax, 2) it uses a namespace that matches
+            the "retainPIDs" value configured for the repository, and 3) it 
+            does not collide with an existing pid of an object in 
 			the repository. </documentation>
 			<input message="fedora-api:ingestObjectRequest"/>
 			<output message="fedora-api:ingestObjectResponse"/>
