@@ -20,8 +20,8 @@ import java.net.URI;
  *
  * <p><b>Title:</b> METSToFOXMLTest.java</p>
  * <p><b>Description:</b> Tests the METS deserializer and FOXML serializer 
- * by opening a METS file (supplied at command-line), deserializing it, 
- * re-serializing it as FOXML, and sending it to STDOUT.</p>
+ * by opening a METS file, deserializing it, re-serializing it as FOXML, 
+ * and sending it to STDOUT.</p>
  *
  * -----------------------------------------------------------------------------
  *
@@ -51,7 +51,7 @@ public class METSToFOXMLTest
 	protected DigitalObject obj = null;
 		
 	protected void setUp() {
-		//inFile=new File("TestIngestFiles/demo5withaudits.xml");
+		// Set the METS input file and FOXML output file
 		inFile=new File("TestIngestFiles/bmech-simple-image-4res.xml");
 		outFile=new File("TestExportFiles/OUT-foxml.xml");
 		System.setProperty("fedoraServerHost", "localhost");
