@@ -52,6 +52,8 @@ import fedora.client.purge.AutoPurger;
 import fedora.client.search.ResultFrame;
 import fedora.client.search.Search;
 import fedora.server.types.gen.FieldSearchQuery;
+import fedora.client.bmech.BDefBuilder;
+import fedora.client.bmech.BMechBuilder;
 
 // wdn >
 import fedora.client.BatchBuildGUI;
@@ -362,6 +364,28 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
 
         menuBar.add(toolsMenu);
 
+        // [B]uilders
+        JMenu buildersMenu=new JMenu("Builders");
+        buildersMenu.setMnemonic(KeyEvent.VK_B);
+        buildersMenu.setToolTipText("Tools to build objects");
+
+        JMenuItem buildersBDef=new JMenuItem("BDef Builder",KeyEvent.VK_D);
+        buildersBDef.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createBDefBuilder();
+            }
+        });
+        buildersMenu.add(buildersBDef);
+
+        JMenuItem buildersBMech=new JMenuItem("BMech Builder",KeyEvent.VK_M);
+        buildersBMech.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createBMechBuilder();
+            }
+        });
+        buildersMenu.add(buildersBMech);
+        menuBar.add(buildersMenu);
+
 
         WindowMenu windowMenu=new WindowMenu(s_desktop, "Window");
         windowMenu.setMnemonic(KeyEvent.VK_W);
@@ -529,6 +553,26 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                     "Export Failure",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    protected void createBDefBuilder() {
+        BDefBuilder frame = new BDefBuilder(
+          s_host, s_port, s_user, s_pass, s_lastDir);
+        frame.setVisible(true);
+        s_desktop.add(frame);
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {}
+    }
+
+    protected void createBMechBuilder() {
+        BMechBuilder frame = new BMechBuilder(
+          s_host, s_port, s_user, s_pass, s_lastDir);
+        frame.setVisible(true);
+        s_desktop.add(frame);
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {}
     }
 
     protected void createSearchRepository() {
