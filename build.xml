@@ -521,6 +521,7 @@
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/apim/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/batch/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/builder/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/apialite/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/oai/images/"/>
@@ -931,6 +932,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.134  2003/05/17 02:28:50  cwilper
+  added image copy of builder/ docs dir so the jpg shows up
+
   Revision 1.133  2003/05/17 02:12:44  payette
   added builder doc
 
