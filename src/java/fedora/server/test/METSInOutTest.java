@@ -59,8 +59,7 @@ public class METSInOutTest {
                 DOValidatorImpl v=new DOValidatorImpl(
                         null, "http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora-ext.xsd",
                         "dist/server/schematron/preprocessor.xslt",
-                        "dist/server/schematron/fedoraRules.xml",
-                        "dist/server/schematron/fedoraValidator.xslt", null);
+                        "dist/server/schematron/fedoraRules.xml", null);
                 if (args[1].equals("1")) {
                     v.validate(newIn, 1, "ingest");
                     System.out.println("Level 1 validation: PASSED!");
