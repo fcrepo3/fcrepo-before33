@@ -66,7 +66,8 @@ public class ObjectEditorFrame
         m_pid=pid;
         // query the server for key object fields
         ObjectFields o=Util.getObjectFields(pid, 
-                                       new String[] {"state", 
+                                       new String[] {"pid", 
+                                                     "state", 
                                                      "label", 
                                                      "cModel", 
                                                      "cDate", 
