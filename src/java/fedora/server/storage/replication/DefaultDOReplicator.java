@@ -132,6 +132,8 @@ public class DefaultDOReplicator
      *         ds=reader.getDatastream(id, null)
      *         update dsBind set dsLabel='mylabel', dsLocation='' where dsID='$id'
      *
+     * // currentVersionId?
+     *
      * @param reader a digital object reader.
      * @return true is successful update; false oterhwise.
      * @throws ReplicationException if replication fails for any reason.
@@ -155,24 +157,27 @@ public class DefaultDOReplicator
             }
             int doDbID=results.getInt("doDbID");
             results.close();
-            results=logAndExecuteQuery(st, "SELECT dsID, dsLabel, dsLocation "
+            results=logAndExecuteQuery(st, "SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID "
                     + "FROM dsBind WHERE doDbID=" + doDbID);
             ArrayList updates=new ArrayList();
             while (results.next()) {
                 String dsID=results.getString("dsID");
                 String dsLabel=results.getString("dsLabel");
+                String dsCurrentVersionID=results.getString("dsCurrentVersionID");
                 // sdp - local.fedora.server conversion
                 String dsLocation=unencodeLocalURL(results.getString("dsLocation"));
-                // compare the datastream to what's in the db...
+                // compare the latest version of the datastream to what's in the db...
                 // if different, add to update list
                 Datastream ds=reader.GetDatastream(dsID, null);
                 if (!ds.DSLabel.equals(dsLabel)
-                        || !ds.DSLocation.equals(dsLocation)) {
+                        || !ds.DSLocation.equals(dsLocation)
+                        || !ds.DSVersionID.equals(dsCurrentVersionID)) {
                     updates.add("UPDATE dsBind SET dsLabel='"
                             + SQLUtility.aposEscape(ds.DSLabel) + "', dsLocation='"
                             // sdp - local.fedora.server conversion
                             + SQLUtility.aposEscape(encodeLocalURL(ds.DSLocation))
-                            + "' WHERE dsID='" + dsID + "'");
+                            + "', dsCurrentVersionID='" + ds.DSVersionID + "'"
+                            + " WHERE dsID='" + dsID + "'");
                 }
             }
             results.close();
