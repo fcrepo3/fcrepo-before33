@@ -322,7 +322,7 @@ public class DefaultManagement
                                 String dsState,
                                 String logMessage) throws ServerException {
                                    	
-        if (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL")) {
+        if ( dsID!=null && (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL"))) {
 			throw new GeneralException("Creation of a datastream with an"
 				+ " identifier of 'AUDIT' or 'FEDORA-AUDITTRAIL' is not permitted.");
         }
