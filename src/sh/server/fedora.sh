@@ -43,8 +43,7 @@ start() {
 		mkdir "$FEDORA_HOME"/server/logs
 	fi
 	
-	(exec "$JAVA" -server \
-	            -classpath "$TC"/webapps/fedora/WEB-INF/classes \
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes \
 	            -Dfedora.home="$FEDORA_HOME" \
 	            -Dtomcat.dir="$TC_BASENAME" \
 	            fedora.server.BasicServer)
@@ -56,7 +55,7 @@ start() {
 		echo "Using server profile: $SERVER_PROFILE"
 	fi
 	
-  	(exec nohup "$JAVA" -Xms64m -Xmx96m \
+  	(exec nohup "$JAVA" -server -Xmn32m -Xms128m -Xmx128m \
   					  -classpath "$TC"/bin/bootstrap.jar \
   					  -Djava.awt.fonts="$JAVA_HOME"/jre/lib/fonts \
   					  -Djava2d.font.usePlatformFont=false \
