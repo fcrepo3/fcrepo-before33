@@ -30,6 +30,7 @@ import fedora.server.storage.types.DSBindingMapAugmented;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
+import fedora.server.utilities.SQLUtility;
 
 /**
  * <p><b>Title: </b>FastDOReader.java</p>
@@ -1009,7 +1010,11 @@ public class FastDOReader implements DOReader
           dissBindInfo = new DisseminationBindingInfo();
           for (int i=1; i<=cols; i++)
           {
-            results[i-1] = rs.getString(i);
+            if (i-1 == 4 || i-1 == 6) { // mechImpl.operationLocation and dsBind.dsLocation may be CLOBs
+                results[i-1] = SQLUtility.getLongString(rs, i);
+            } else {
+                results[i-1] = rs.getString(i);
+            }
           }
           dissBindInfo.AddressLocation = unencodeLocalURL(results[3]);
           dissBindInfo.OperationLocation = unencodeLocalURL(results[4]);
@@ -1041,6 +1046,7 @@ public class FastDOReader implements DOReader
         }
       } catch (Throwable th)
       {
+        th.printStackTrace();
         throw new GeneralException("[FastDOReader] An error has occured. The "
             + "underlying error was a  \"" + th.getClass().getName()
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
