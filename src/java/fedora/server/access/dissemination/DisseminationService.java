@@ -392,22 +392,7 @@ s_server.logFinest("nextKey: '" + nextKey + "'");
         }
       }
 
-      // Check if datastream is already registered.
-/*    for ( Enumeration e = dsRegistry.keys(); e.hasMoreElements(); )
-      {
-        String key = (String)e.nextElement();
-        DatastreamMediation dm = (DatastreamMediation)dsRegistry.get(key);
-        if (dm.dsLocation.equalsIgnoreCase(dsLocation))
-        {
-          timeStamp = timeStamp.valueOf(extractTimestamp(key).replaceAll("T"," "));
-          tempID = key;
-          System.out.println("DatastreamMediation already in Hash: "+tempID);
-          s_server.logFinest("DatastreamMediationValue already in Hash: "+tempID);
-        }
-      }
-*/
-
-      // Register datastream if not already registered.
+      // Register datastream.
       if (tempID == null)
       {
         timeStamp = new Timestamp(new Date().getTime());
