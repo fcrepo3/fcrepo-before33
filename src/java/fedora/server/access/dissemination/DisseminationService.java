@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.InetAddress;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.net.URLEncoder;
@@ -18,6 +19,7 @@ import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.DisseminationBindingInfoNotFoundException;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
@@ -226,18 +228,16 @@ public class DisseminationService
             dissURL = dissBindInfo.AddressLocation+dissBindInfo.OperationLocation;
           }
 
-          // If parameter substitution is to occur in a servlet parameter
-          // escape special characters of "?" and "="; otherwise leave
-          // substitution string untouched.
-          if (dissURL.indexOf("=(") != -1 )
-          {
-            datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
-                + ":" + fedoraServerPort + "/fedora/getDS%3Fid%3D";
-          } else
-          {
+          //if (dissURL.indexOf("=(") != -1 )
+          //{
+          //  datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
+          //      //+ ":" + fedoraServerPort + "/fedora/getDS%3Fid%3D";
+          //      + ":" + fedoraServerPort + "/fedora/getDS?id=";
+          //} else
+          //{
             datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
                 + ":" + fedoraServerPort + "/fedora/getDS?id=";
-          }
+          //}
           protocolType = dissBindInfo.ProtocolType;
         }
         String currentKey = dissBindInfo.DSBindKey;
@@ -327,7 +327,27 @@ public class DisseminationService
                     isRedirect = true;
           }
         }
-        dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
+        try
+        {
+          // If the operationLocation contains DatastreamInputParms
+          // URLEncode each parameter before substitution. Otherwise, the
+          // operationLocation has no parameters (i.e., it is a simple URL )
+          // so bypass URLencoding.
+          if (dissURL.indexOf("=(") != -1 )
+          {
+            dissURL = substituteString(dissURL, bindingKeyPattern, URLEncoder.encode(replaceString, "UTF-8"));
+          } else
+          {
+            dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
+          }
+        } catch (UnsupportedEncodingException uee)
+        {
+          String message = "[DisseminationService] An error occured. The error "
+              + "was \"" + uee.getClass().getName() + "\"  . The Reason was \""
+              + uee.getMessage() + "\"  . String value: " + replaceString + "  . ";
+          s_server.logFinest(message);
+          throw new GeneralException(message);
+        }
         s_server.logFinest("[DisseminationService] replaced dissURL: "
                            + dissURL.toString()
                            + " DissBindingInfo index: " + i);
@@ -338,7 +358,19 @@ public class DisseminationService
       while (e.hasMoreElements())
       {
         String name = (String)e.nextElement();
-        String value = (String)h_userParms.get(name);
+        String value = null;
+        try
+        {
+          value = URLEncoder.encode((String)h_userParms.get(name), "UTF-8");
+        } catch (UnsupportedEncodingException uee)
+        {
+          String message = "[DisseminationService] An error occured. The error "
+              + "was \"" + uee.getClass().getName() + "\"  . The Reason was \""
+              + uee.getMessage() + "\"  . Parameter name: " + name + "  . "
+              + "Parameter value: " + value + "  .";
+          s_server.logFinest(message);
+          throw new GeneralException(message);
+        }
         String pattern = "\\(" + name + "\\)";
         dissURL = substituteString(dissURL, pattern, value);
         s_server.logFinest("[DisseminationService] User parm substituted in "
@@ -363,7 +395,19 @@ public class DisseminationService
           // should be redirected.
 
           // RLW: change required by conversion fom byte[] to InputStream
-          InputStream is = new ByteArrayInputStream(dissURL.getBytes());
+          InputStream is = null;
+          try
+          {
+            is = new ByteArrayInputStream(dissURL.getBytes("UTF-8"));
+          } catch (UnsupportedEncodingException uee)
+          {
+            String message = "[DisseminationService] An error has occurred. "
+                + "The error was a \"" + uee.getClass().getName() + "\"  . The "
+                + "Reason was \"" + uee.getMessage() + "\"  . String value: "
+                + dissURL + "  . ";
+            s_server.logFinest(message);
+            throw new GeneralException(message);
+          }
           //dissemination = new MIMETypedStream("application/fedora-redirect",dissURL.getBytes());
           dissemination = new MIMETypedStream("application/fedora-redirect",is);
           // RLW: change required by conversion fom byte[] to InputStream
