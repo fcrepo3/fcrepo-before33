@@ -8,15 +8,16 @@ set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 
 :runMinimized
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% BatchTool %1 %2 %3
-
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\..\client\client\client.jar -Dfedora.home=%FEDORA_HOME% BatchTool %1 %2 %3
+rem %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% BatchTool %1 %2 %3
 set JAVA_HOME=%OLD_JAVA_HOME%
 
 goto end
 
 :checkEnv
 if "%FEDORA_HOME%" == "" goto noFedoraHome
-if not exist %FEDORA_HOME%\client\client.jar goto clientNotFound
+if not exist %FEDORA_HOME%\..\client\client\client.jar goto clientNotFound
+rem if not exist %FEDORA_HOME%\client\client.jar goto clientNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 :checkJava
