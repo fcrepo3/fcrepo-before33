@@ -4,6 +4,10 @@ import java.io.InputStream;
 import java.util.Date;
 
 import fedora.server.errors.ServerException;
+import fedora.server.errors.StorageDeviceException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ObjectExistsException;
+import fedora.server.errors.ValidationException;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
 
@@ -34,13 +38,20 @@ public interface DOWriter
      * Sets the content of the entire digital object.
      *
      * @param content A stream of encoded content of the digital object.
-     * @param newState The state to attempt to transition to, if null, 
-     *        no state transition is performed upon success.
-     * @throws ServerException If any type of error occurred fulfilling the 
-     *         request.
+     * @param validationType The type of validation that must occur as
+     *        a precondition to setting the content.
+     * @throws ValidationException If the stream couldn't be validated.
+     * @throws ObjectExistsException If shouldExist was false but the object
+     *         was found in storage.
+     * @throws ObjectNotFoundException If shouldExist was true but the object
+     *         wasn't found in storage.
+     * @throws StorageDeviceException If an underlying storage device
+     *         failed for any reason.
      */
-    public void set(InputStream content, String newState) 
-            throws ServerException;
+    public void set(InputStream content, String validationType, 
+            boolean shouldExist) 
+            throws ValidationException, StorageDeviceException, 
+            ObjectExistsException, ObjectNotFoundException;
 
     /**
      * Sets the state of the entire digital object.
@@ -50,6 +61,16 @@ public interface DOWriter
      *         request.
      */
     public void setState(String state) 
+            throws ServerException;
+
+    /**
+     * Sets the label of the digital object.
+     *
+     * @param label The label.
+     * @throws ServerException If any type of error occurred fulfilling the 
+     *         request.
+     */
+    public void setLabel(String label) 
             throws ServerException;
 
     /**
@@ -119,12 +140,10 @@ public interface DOWriter
      * Saves the changes thus far to the permanent copy of the digital object.
      *
      * @param logMessage An explanation of the change(s).
-     * @param newState The state to attempt to transition to, if null, 
-     *        no state transition is performed upon success.
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public void commit(String logMessage, String newState) 
+    public void commit(String logMessage) 
             throws ServerException;
 
     /**
@@ -137,5 +156,15 @@ public interface DOWriter
      *         request.
      */
     public void rollBack() 
+            throws ServerException;
+
+    /** This should probably go in the DOReader interface... it's intended
+        to be used to verify that the object is valid in some way. */
+    public void validate(String validationType)
+            throws ServerException;
+            
+    public boolean isDirty();
+    
+    public void save()
             throws ServerException;
 }
