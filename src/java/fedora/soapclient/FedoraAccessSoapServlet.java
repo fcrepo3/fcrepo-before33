@@ -402,8 +402,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                     sb.append((String) headerValues.nextElement());
                 }
                 String value = sb.toString();
-                System.out.println("FEDORASOAPSERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
-                response.setHeader(name,value);
+                //System.out.println("FEDORASOAPSERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
             }
             // Dissemination found. Output the mime-typed stream.
             //
@@ -443,7 +442,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 for(int i=0; i<headerArray.length; i++) {
                     if(headerArray[i].getName() != null && !(headerArray[i].getName().equalsIgnoreCase("content-type"))) {
                         response.addHeader(headerArray[i].getName(), headerArray[i].getValue());
-                        System.out.println("THIS WAS ADDED TO FEDORASOAPSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].getName()+" : "+headerArray[i].getValue());
+                        //System.out.println("THIS WAS ADDED TO FEDORASOAPSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].getName()+" : "+headerArray[i].getValue());
                   }
                 }
               }
@@ -515,8 +514,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                     sb.append((String) headerValues.nextElement());
                 }
                 String value = sb.toString();
-                System.out.println("FEDORASOAPSERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
-                response.setHeader(name,value);
+                //System.out.println("FEDORASOAPSERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
             }
             // Dissemination found. Output the mime-typed stream.
             //
@@ -534,7 +532,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 for(int i=0; i<headerArray.length; i++) {
                     if(headerArray[i].getName() != null && !(headerArray[i].getName().equalsIgnoreCase("content-type"))) {
                         response.addHeader(headerArray[i].getName(), headerArray[i].getValue());
-                        System.out.println("THIS WAS ADDED TO FEDORASOAPSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].getName()+" : "+headerArray[i].getValue());
+                        //System.out.println("THIS WAS ADDED TO FEDORASOAPSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].getName()+" : "+headerArray[i].getValue());
                     }
                 }
             }
