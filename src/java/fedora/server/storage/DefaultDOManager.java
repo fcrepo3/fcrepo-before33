@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,6 +26,7 @@ import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
+import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InvalidContextException;
@@ -47,6 +50,7 @@ import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableCreatingConnection;
@@ -72,6 +76,7 @@ public class DefaultDOManager
     private DOReplicator m_replicator;
     private DOValidator m_validator;
     private FieldSearch m_fieldSearch;
+    private ExternalContentManager m_contentManager;
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
@@ -143,6 +148,13 @@ public class DefaultDOManager
                 + "not given, using UTF-8");
             m_storageCharacterEncoding="UTF-8";
         }
+
+        m_contentManager = (ExternalContentManager)
+          getServer().getModule("fedora.server.storage.ExternalContentManager");
+        if (m_contentManager==null) {
+            throw new ModuleInitializationException(
+                    "ExternalContentManager not loaded.", getRole());
+        }
     }
 
     public void postInitModule()
@@ -203,6 +215,7 @@ public class DefaultDOManager
                     + "check for and create non-existing table(s): "
                     + e.getClass().getName() + ": " + e.getMessage(), getRole());
         }
+
 /*
         String dbSpec="fedora/server/storage/resources/DefaultDOManager.dbspec";
         InputStream specIn=this.getClass().getClassLoader().
@@ -334,6 +347,7 @@ public class DefaultDOManager
                 "fedora.server.management.PIDGenerator",
                 "fedora.server.search.FieldSearch",
                 "fedora.server.storage.ConnectionPoolManager",
+                "fedora.server.storage.ExternalContentManager",
                 "fedora.server.storage.translation.DOTranslator",
                 "fedora.server.storage.replication.DOReplicator",
                 "fedora.server.validation.DOValidator" };
@@ -418,7 +432,34 @@ public class DefaultDOManager
         a.date=new Date();
         a.justification=logMessage;
         obj.getAuditRecords().add(a);
+
         if (remove) {
+            // remove any managed content datastreams associated with object
+            // from permanent store.
+            Iterator dsIDIter = obj.datastreamIdIterator();
+            while (dsIDIter.hasNext())
+            {
+              String dsID=(String) dsIDIter.next();
+              String controlGroupType =
+                  ((Datastream) obj.datastreams(dsID).get(0)).DSControlGrp;
+              if ( controlGroupType.equalsIgnoreCase("M"))
+              {
+                List allVersions = obj.datastreams(dsID);
+                Iterator dsIter = allVersions.iterator();
+
+                // iterate over all versions of this dsID
+                while (dsIter.hasNext())
+                {
+                  Datastream dmc =
+                      (Datastream) dsIter.next();
+                  String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
+                      + dmc.DSVersionID;
+                  logInfo("Deleting ManagedContent datastream. " + "id: " + id);
+                  getPermanentStore().remove(id);
+                }
+              }
+            }
+
             // remove from temp *and* definitive store
             try {
                 getTempStore().remove(obj.getPid());
@@ -438,6 +479,56 @@ public class DefaultDOManager
             logInfo("Deleting from FieldSearch indexes...");
             m_fieldSearch.delete(obj.getPid());
         } else {
+            // copy and store any datastreams of type Managed Content
+            Iterator dsIDIter = obj.datastreamIdIterator();
+            while (dsIDIter.hasNext())
+            {
+              String dsID=(String) dsIDIter.next();
+              String controlGroupType =
+                  ((Datastream) obj.datastreams(dsID).get(0)).DSControlGrp;
+              if ( controlGroupType.equalsIgnoreCase("M") &&
+                   obj.getState().equalsIgnoreCase("I") )
+              {
+                List allVersions = obj.datastreams(dsID);
+                Iterator dsIter = allVersions.iterator();
+
+                // iterate over all versions of this dsID
+                while (dsIter.hasNext())
+                {
+                  Datastream dmc =
+                      (Datastream) dsIter.next();
+                  MIMETypedStream mimeTypedStream = m_contentManager.
+                      getExternalContent(dmc.DSLocation.toString());
+                  logInfo("Retrieving ManagedContent datastream from remote "
+                      + "location: " + dmc.DSLocation);
+                  ByteArrayInputStream bais =
+                      new ByteArrayInputStream(mimeTypedStream.stream);
+                  String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
+                            + dmc.DSVersionID;
+                  getPermanentStore().add(id, bais);
+
+                  // Make new audit record.
+                  a = new AuditRecord();
+                  a.id = "REC1025";  // FIXME: id should be auto-gen'd somehow
+                  a.processType = "API-M";
+                  a.action = "Added a ManagedContent datastream for the first "
+                      + "time. Copied remote content stored at \""
+                      + dmc.DSLocation + "\" and stored it in the Fedora "
+                      + "permanentStore under the id: " + id;
+                  a.responsibility = getUserId(context);
+                  a.date = new Date();
+                  a.justification = logMessage;
+                  obj.getAuditRecords().add(a);
+
+                  // Reset dsLocation in object to new internal location.
+                  dmc.DSLocation = id;
+                  logInfo("Replacing ManagedContent datastream with "
+                      + "internal id: " + id);
+                  bais = null;
+                }
+              }
+            }
+
             // save to definitive store, validating beforehand
             // update the system version (add one) and reflect that the object is no longer locked
 
@@ -448,7 +539,7 @@ public class DefaultDOManager
             // at time of ingest, then again, here, at time of storage.
             // We'll just be conservative for now and call all levels both times.
             // First, serialize the digital object into an Inputstream to be passed to validator.
-            
+
             // set object status to "A" if "I".  other status changes should occur elsewhere!
             if (obj.getState().equals("I")) {
                 obj.setState("A");
@@ -544,8 +635,10 @@ public class DefaultDOManager
                 // FIXME: also remove from temp storage if this is successful
                 removeReplicationJob(obj.getPid());
             } catch (ServerException se) {
+              se.printStackTrace();
                 throw se;
             } catch (Throwable th) {
+              th.printStackTrace();
                 throw new GeneralException("Replicator returned error: (" + th.getClass().getName() + ") - " + th.getMessage());
             }
         }
@@ -770,9 +863,9 @@ public class DefaultDOManager
 
                 // then get the writer
                 DOWriter w=new DefinitiveDOWriter(context, this, obj);
-                
+
                 // ...set the create and last modified dates as the current
-                // server date/time... in UTC (considering the local timezone 
+                // server date/time... in UTC (considering the local timezone
                 // and whether it's in daylight savings)
                 Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                 obj.setCreateDate(nowUTC);
@@ -1330,7 +1423,7 @@ public class DefaultDOManager
         }
     }
 
-    public List search(Context context, String[] resultFields, 
+    public List search(Context context, String[] resultFields,
             String terms)
             throws ServerException {
         return m_fieldSearch.search(resultFields, terms);

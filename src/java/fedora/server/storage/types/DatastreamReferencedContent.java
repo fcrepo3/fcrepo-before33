@@ -13,10 +13,10 @@ import java.net.HttpURLConnection;
  */
 public class DatastreamReferencedContent
         extends DatastreamContent {
- 
+
     public DatastreamReferencedContent() {
     }
-    
+
     /**
      * Gets an InputStream to the content of this externally-referenced
      * datastream.
@@ -32,15 +32,15 @@ public class DatastreamReferencedContent
      * If the content-length header is present in the response, DSSize
      * will be set accordingly.
      */
-    public InputStream getContentStream() 
+    public InputStream getContentStream()
             throws StreamIOException {
         try {
-            HttpURLConnection conn=(HttpURLConnection) 
+            HttpURLConnection conn=(HttpURLConnection)
                     new URL(DSLocation).openConnection();
             if (conn.getResponseCode()!=HttpURLConnection.HTTP_OK) {
                 throw new StreamIOException(
                         "Server returned a non-200 response code ("
-                        + conn.getResponseCode() + ") from GET request of URL: " 
+                        + conn.getResponseCode() + ") from GET request of URL: "
                         + DSLocation.toString());
             }
             // Ensure the stream is available before setting any fields.
@@ -58,7 +58,7 @@ public class DatastreamReferencedContent
             }
             return ret;
         } catch (IOException ioe) {
-            throw new StreamIOException("Can't get InputStream from URL: " 
+            throw new StreamIOException("Can't get InputStream from URL: "
                     + DSLocation.toString());
         } catch (ClassCastException cce) {
             throw new StreamIOException("Non-http URLs not supported.");

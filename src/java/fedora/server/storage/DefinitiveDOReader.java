@@ -35,6 +35,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.ext.LexicalHandler;
+import java.util.Enumeration;
 import java.util.regex.*;
 
 public class DefinitiveDOReader implements DOReader
@@ -175,6 +176,7 @@ public class DefinitiveDOReader implements DOReader
     }
     catch (Exception e)
     {
+      e.printStackTrace();
       throw new GeneralException("ERROR_MISC: " + e.getMessage());
     }
   }
@@ -772,6 +774,7 @@ public class DefinitiveDOReader implements DOReader
     {
       private boolean getAsStream = false;
       private boolean isXMLDatastream = false;
+      private boolean isManagedContent = false;
 
       private boolean inMETS = false;
       private boolean inMETSHDR = false;
@@ -811,9 +814,9 @@ public class DefinitiveDOReader implements DOReader
       private DSBindingMap h_dsBindMap;
       private String h_xmlData;
       private StringWriter h_xmlstream;
-      //rlw
+      private String h_datastreamID;
       private boolean isRootXMLDatastreamElement;
-      Hashtable h_namespaceTbl;
+      private Hashtable h_namespaceTbl;
 
       private final Pattern ampRegexp = Pattern.compile("&");
       private final Pattern ltRegexp = Pattern.compile("<");
@@ -828,7 +831,6 @@ public class DefinitiveDOReader implements DOReader
         h_vDatastream = new Vector();
         h_vDisseminator = new Vector();
         h_dsBindMapTbl = new Hashtable();
-        //rlw
         h_namespaceTbl = new Hashtable();
         //isRootXMLDatastreamElement = true;
       }
@@ -868,7 +870,7 @@ public class DefinitiveDOReader implements DOReader
           h_vDatastream = null;
           h_vDisseminator = null;
           h_dsBindMapTbl = null;
-          //rlw
+          h_datastreamID = null;
           h_namespaceTbl = null;
       }
 
@@ -904,7 +906,6 @@ public class DefinitiveDOReader implements DOReader
 
       public void startPrefixMapping(String prefix, String uri)
       {
-        //System.out.println("Mapping prefix: "+prefix+" mapping URI: "+uri);
         h_namespaceTbl.put(prefix,uri);
       }
 
@@ -1003,8 +1004,6 @@ public class DefinitiveDOReader implements DOReader
           h_datastream.DSVersionID = attrs.getValue("GROUPID");
           h_datastream.DSLocation = h_PID + "+" + attrs.getValue("ID")
               + "+" + attrs.getValue("GROUPID");
-          System.out.println("ControlGroupType: X dsLocation: "
-              + h_datastream.DSLocation);
         }
         else if (qName.equalsIgnoreCase("METS:amdSec"))
         {
@@ -1036,12 +1035,8 @@ public class DefinitiveDOReader implements DOReader
             h_datastream.DSVersionID = attrs.getValue("ID");
             h_datastream.DSCreateDT = convertDate(attrs.getValue("CREATED"));
             h_datastream.DSState = attrs.getValue("STATUS");
-
-            // added for inlineXMLMetadata
             h_datastream.DSLocation = h_PID + "+" + h_datastream.DatastreamID
                 + "+" + h_datastream.DSVersionID;
-            System.out.println("ControlGroupType: X dsLocation: "
-              + h_datastream.DSLocation);
           }
         }
         else if (qName.equalsIgnoreCase("METS:mdWrap"))
@@ -1079,8 +1074,7 @@ public class DefinitiveDOReader implements DOReader
           String dsid;
           if (!(dsid = attrs.getValue("ID")).equalsIgnoreCase("DATASTREAMS"))
           {
-            h_datastream = new Datastream();
-            h_datastream.DatastreamID = dsid;
+            h_datastreamID = dsid;
           }
         }
         else if (qName.equalsIgnoreCase("METS:file"))
@@ -1088,6 +1082,23 @@ public class DefinitiveDOReader implements DOReader
           inFile = true;
           if (inFileGrp)
           {
+            String owner = attrs.getValue("OWNERID");
+            if (owner != null && owner.equalsIgnoreCase("E"))
+            {
+              h_datastream = new DatastreamReferencedContent();
+              h_datastream.DSControlGrp = owner;
+            } else if (owner != null && owner.equalsIgnoreCase("M"))
+            {
+              h_datastream = new DatastreamManagedContent();
+              h_datastream.DSControlGrp = owner;
+            } else
+            {
+              // technically, this is an invalid fedora mets object and this
+              // should have been caught earlier during digital object validation.
+              throw new SAXException("Datastream must have a control group code."
+              + "(Missing OWNERID attribute on METS <file>.)");
+            }
+            h_datastream.DatastreamID = h_datastreamID;
             h_datastream.DSInfoType = "DATA";
             h_datastream.DSMIME = attrs.getValue("MIMETYPE");
             h_datastream.DSVersionID = attrs.getValue("ID");
@@ -1098,25 +1109,10 @@ public class DefinitiveDOReader implements DOReader
                 h_datastream.DSSize = Long.parseLong(attrs.getValue("SIZE"));
               }
             } catch (NumberFormatException nfe) {
-                throw new SAXException("If specified, a datastream's SIZE "
-                        + "attribute must be an xsd:long value.");
+              throw new SAXException("If specified, a datastream's SIZE "
+                   + "attribute must be an xsd:long value.");
             }
             h_datastream.DSState = attrs.getValue("STATUS");
-
-            String owner = attrs.getValue("OWNERID");
-            if (owner != null && owner.equalsIgnoreCase("E"))
-              h_datastream.DSControlGrp = "E";
-            else if (owner != null && owner.equalsIgnoreCase("P"))
-              h_datastream.DSControlGrp = "P";
-            else if (owner != null && owner.equalsIgnoreCase("M"))
-              h_datastream.DSControlGrp = "M";
-            else
-            {
-              // technically, this is an invalid fedora mets object and this
-              // should have been caught earlier during digital object validation.
-                throw new SAXException("Datastream must have a control group code."
-                        + "(Missing OWNERID attribute on METS <file>.)");
-            }
           }
         }
         else if (qName.equalsIgnoreCase("METS:FLocat"))
@@ -1275,6 +1271,7 @@ public class DefinitiveDOReader implements DOReader
           inFile = false;
           h_vDatastream.addElement(h_datastream);
           h_datastream = null;
+          h_datastreamID = null;
         }
         else if (qName.equalsIgnoreCase("METS:FLocat") && inFLocat)
         {

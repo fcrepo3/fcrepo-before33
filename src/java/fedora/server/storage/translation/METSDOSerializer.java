@@ -93,7 +93,7 @@ public class METSDOSerializer
     // Mets says the above, but the spec at http://www.w3.org/TR/xlink/
     // says it's http://www.w3.org/1999/xlink
     private final static String REAL_XLINK_NAMESPACE="http://www.w3.org/1999/xlink";
-    
+
     private final static String METS_NAMESPACE="http://www.loc.gov/METS/";
 
     private String m_xlinkPrefix;
@@ -127,7 +127,7 @@ public class METSDOSerializer
     public static String getVersion() {
         return "1.0";
     }
-    
+
     public DOSerializer getInstance() {
         return (DOSerializer) new METSDOSerializer();
     }
@@ -428,10 +428,10 @@ public class METSDOSerializer
                             buf.append(admId);
                             admNum++;
                         }
-                        if (admNum>0) { 
+                        if (admNum>0) {
                             buf.append("\"");
                         }
-                        
+
                         // DMDID attr:only printed if >0 dmdids exist
                         Iterator dmdIdIter=getIds(obj, dsc, false).iterator();
                         int dmdNum=0;
@@ -446,10 +446,10 @@ public class METSDOSerializer
                             buf.append(dmdId);
                             dmdNum++;
                         }
-                        if (dmdNum>0) { 
+                        if (dmdNum>0) {
                             buf.append("\"");
                         }
-                        
+
                         //
                         // DS Control Group ... "OWNERID"
                         //
@@ -457,10 +457,10 @@ public class METSDOSerializer
                         buf.append(dsc.DSControlGrp);
                         buf.append("\">\n");
                         //if (dsc.DSControlGrp==Datastream.EXTERNAL_REF) {
-                        // External (E) or External-Protected (P) Datastreams
+                        // External (E) or Managed (M) datastreams
                         if (dsc.DSControlGrp.equalsIgnoreCase("E") ||
-                            dsc.DSControlGrp.equalsIgnoreCase("P")) {
-                            DatastreamReferencedContent dsec=(DatastreamReferencedContent) dsc;
+                            dsc.DSControlGrp.equalsIgnoreCase("M")) {
+                            Datastream dsec=(Datastream) dsc;
                             // xlink:title, xlink:href
                             buf.append("        <METS:FLocat ");
                             buf.append(m_xlinkPrefix);
@@ -469,10 +469,10 @@ public class METSDOSerializer
                             buf.append("\" LOCTYPE=\"URL\" ");
                             buf.append(m_xlinkPrefix);
                             buf.append(":href=\"");
-                            if (dsec.DSLocation==null) {
+                            if (dsec.DSLocation.equalsIgnoreCase("")) {
                                 throw new ObjectIntegrityException("Externally referenced content (ID=" + dsc.DSVersionID + ") must have a URL defined.");
                             }
-                            buf.append(dsec.DSLocation.toString());
+                            buf.append(dsec.DSLocation);
                             buf.append("\"/>\n");
                         } else {
                             // FContent=base64 encoded

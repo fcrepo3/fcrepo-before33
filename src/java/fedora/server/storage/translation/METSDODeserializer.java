@@ -8,6 +8,7 @@ import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamContent;
+import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
@@ -78,7 +79,7 @@ public class METSDODeserializer
     private String m_dsLabel;
     private int m_dsMDClass;
     private long m_dsSize;
-    private String m_dsLocation;
+    private URL m_dsLocation;
     private String m_dsMimeType;
     private String m_dsControlGrp;
 
@@ -94,7 +95,7 @@ public class METSDODeserializer
     private boolean m_readingContent;
 
     private boolean m_firstInlineXMLElement;
-    
+
     /** Namespace prefixes used in the currently scanned datastream */
     private ArrayList m_dsPrefixes;
 
@@ -115,7 +116,7 @@ public class METSDODeserializer
     private String m_auditResponsibility;
     private String m_auditDate;
     private String m_auditJustification;
-    
+
     /** Hashmap for holding disseminators during parsing, keyed
      * by structMapId */
     private HashMap m_dissems;
@@ -124,7 +125,7 @@ public class METSDODeserializer
      * Currently-being-initialized disseminator, during structmap parsing.
      */
     private Disseminator m_diss;
-    
+
     /**
      * Whether, while in structmap, we've already seen a div
      */
@@ -132,7 +133,7 @@ public class METSDODeserializer
 
     /** The structMapId of the dissem currently being parsed. */
     private String m_structId;
-    
+
     /**
      * Never query the server and take it's values for Content-length and
      * Content-type
@@ -197,7 +198,7 @@ public class METSDODeserializer
         spf.setNamespaceAware(true);
         m_parser=spf.newSAXParser();
     }
-    
+
     public DODeserializer getInstance()
             throws RepositoryConfigurationException {
         try {
@@ -414,36 +415,89 @@ public class METSDODeserializer
                 m_dsLabel=grab(a,XLINK_NAMESPACE,"title");
                 String dsLocation=grab(a,XLINK_NAMESPACE,"href");
                 if (dsLocation==null || dsLocation.equals("")) {
-                    throw new SAXException("xlink:href must be specified in FLocat element");
+                  throw new SAXException("xlink:href must be specified in FLocat element");
                 }
-                m_dsLocation=dsLocation;
-                DatastreamReferencedContent d=new DatastreamReferencedContent();
-                d.DatastreamID=m_dsId;
-                d.DSVersionID=m_dsVersId;
-                d.DSLabel=m_dsLabel;
-                d.DSCreateDT=m_dsCreateDate;
-                d.DSMIME=m_dsMimeType;
-                d.DSControlGrp=m_dsControlGrp;
-                //d.DSControlGrp=Datastream.EXTERNAL_REF;
-                d.DSInfoType="DATA";
-                d.DSState=m_dsState;
-                d.DSLocation=m_dsLocation;
-                if (m_queryBehavior!=QUERY_NEVER) {
+
+                // rlw begin changes
+                // check if datastream is ExternalReferencedContent or
+                // ManagedContent
+                if (m_dsControlGrp.equalsIgnoreCase("E") )
+                {
+                  try {
+                    m_dsLocation=new URL(dsLocation);
+                  } catch (MalformedURLException murle) {
+                    throw new SAXException("xlink:href specifies malformed url: " + dsLocation);
+                  }
+                  DatastreamReferencedContent drc=new DatastreamReferencedContent();
+                  drc.DatastreamID=m_dsId;
+                  drc.DSVersionID=m_dsVersId;
+                  drc.DSLabel=m_dsLabel;
+                  drc.DSCreateDT=m_dsCreateDate;
+                  drc.DSMIME=m_dsMimeType;
+                  drc.DSControlGrp=m_dsControlGrp;
+                  //d.DSControlGrp=Datastream.EXTERNAL_REF;
+                  drc.DSInfoType="DATA";
+                  drc.DSState=m_dsState;
+                  drc.DSLocation=dsLocation;
+                  if (m_queryBehavior!=QUERY_NEVER) {
                     if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null)
-                            || (m_dsSize==-1)) {
-                        try {
-                            InputStream in=d.getContentStream();
-                        } catch (StreamIOException sioe) {
-                            throw new SAXException(sioe.getMessage());
-                        }
+                        || (m_dsSize==-1)) {
+                      try {
+                        InputStream in=drc.getContentStream();
+                      } catch (StreamIOException sioe) {
+                        throw new SAXException(sioe.getMessage());
+                      }
                     }
-                }
-                if (m_dsDmdIds!=null) {
+                  }
+                  if (m_dsDmdIds!=null) {
                     for (int idi=0; idi<m_dsDmdIds.length; idi++) {
-                        d.metadataIdList().add(m_dsDmdIds[idi]);
+                      drc.metadataIdList().add(m_dsDmdIds[idi]);
                     }
+                  }
+                  m_obj.datastreams(m_dsId).add(drc);
+                } else if (m_dsControlGrp.equalsIgnoreCase("M"))
+                {
+                  // Validate ManagedContent dsLocation URL only if this
+                  // is initial creation of this object; upon subsequent
+                  // invocations, initial URL will have been replaced with
+                  // internal reference to ManagedContent dsLocation and will
+                  // no longer be a URL.
+                  if (m_obj.getState().equalsIgnoreCase("I"))
+                  {
+                    try {
+                      m_dsLocation=new URL(dsLocation);
+                    } catch (MalformedURLException murle) {
+                      throw new SAXException("xlink:href specifies malformed url: " + dsLocation);
+                    }
+                  }
+                  DatastreamManagedContent dmc=new DatastreamManagedContent();
+                  dmc.DatastreamID=m_dsId;
+                  dmc.DSVersionID=m_dsVersId;
+                  dmc.DSLabel=m_dsLabel;
+                  dmc.DSCreateDT=m_dsCreateDate;
+                  dmc.DSMIME=m_dsMimeType;
+                  dmc.DSControlGrp=m_dsControlGrp;
+                  dmc.DSInfoType="DATA";
+                  dmc.DSState=m_dsState;
+                  dmc.DSLocation=dsLocation;
+                  if (m_queryBehavior!=QUERY_NEVER) {
+                    if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null)
+                        || (m_dsSize==-1)) {
+                      try {
+                        InputStream in=dmc.getContentStream();
+                      } catch (StreamIOException sioe) {
+                        throw new SAXException(sioe.getMessage());
+                      }
+                    }
+                  }
+                  if (m_dsDmdIds!=null) {
+                    for (int idi=0; idi<m_dsDmdIds.length; idi++) {
+                      dmc.metadataIdList().add(m_dsDmdIds[idi]);
+                    }
+                  }
+                  m_obj.datastreams(m_dsId).add(dmc);
                 }
-                m_obj.datastreams(m_dsId).add(d);
+                // rlw end changes
             } else if (localName.equals("FContent")) {
                 // signal that we want to suck it in
                 m_readingContent=true;
@@ -453,7 +507,7 @@ public class METSDODeserializer
                 // construct a new Disseminator object to hold the structMap...
                 // and later, the other info
                 //
-                // Building up a global map of Disseminators, m_dissems, 
+                // Building up a global map of Disseminators, m_dissems,
                 // keyed by bindingmap ID.
                 //
                 if (grab(a,M,"TYPE").equals("fedora:dsBindingMap")) {
@@ -520,7 +574,7 @@ public class METSDODeserializer
                 // so we can grab the right dissem when parsing children
                 m_structId=grab(a,M,"STRUCTID");
                 Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
-                // ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" 
+                // ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00"
                 // LABEL="UVA Std Image Behaviors" GROUPID="DISS1" STATUS=""
                 dissem.dissVersionID=grab(a,M,"ID");
                 dissem.bDefID=grab(a,M,"BTYPE");
@@ -529,7 +583,7 @@ public class METSDODeserializer
                 dissem.dissID=grab(a,M,"GROUPID");
                 dissem.dissState=grab(a,M,"STATUS");
             } else if (localName.equals("interfaceDef")) {
-                // interfaceDef LABEL="UVA Std Image Behavior Definition" 
+                // interfaceDef LABEL="UVA Std Image Behavior Definition"
                 // LOCTYPE="URN" xlink:href="test:1"/>
                 Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
                 // already have the id from containing element, just need label
@@ -585,7 +639,7 @@ public class METSDODeserializer
                     m_dsXMLBuffer.append(a.getLocalName(i));
                     m_dsXMLBuffer.append("=\"");
                     // re-encode decoded standard entities (&, <, >, ", ')
-                    m_dsXMLBuffer.append(StreamUtility.enc(a.getValue(i))); 
+                    m_dsXMLBuffer.append(StreamUtility.enc(a.getValue(i)));
                     m_dsXMLBuffer.append("\"");
                 }
                 m_dsXMLBuffer.append('>');
