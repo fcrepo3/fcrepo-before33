@@ -37,6 +37,11 @@
         marshalled/demarshalled over the wire.</comment>
         <param name="testName" value="testValue"/>
     </module>
+    <module role="fedora.server.management.PIDGenerator" 
+            class="fedora.server.management.BasicPIDGenerator">
+        <comment>The pid generator.</comment>
+        <param name="pidgen_log_dir" value="logs"/>
+    </module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
 		<param name="defaultPoolName" value="poolOne"/>
