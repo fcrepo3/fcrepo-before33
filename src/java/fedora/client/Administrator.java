@@ -44,21 +44,20 @@ import fedora.client.actions.ExportObject;
 import fedora.client.actions.PurgeObject;
 import fedora.client.actions.ViewObjectXML;
 import fedora.client.actions.ViewDatastreams;
+import fedora.client.actions.ViewObject;
+import fedora.client.bmech.BDefBuilder;
+import fedora.client.bmech.BMechBuilder;
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
 import fedora.client.export.AutoExporter;
 import fedora.client.ingest.AutoIngestor;
+import fedora.client.objecteditor.ObjectEditorFrame;
 import fedora.client.purge.AutoPurger;
 import fedora.client.search.ResultFrame;
 import fedora.client.search.Search;
-import fedora.server.types.gen.FieldSearchQuery;
-import fedora.client.bmech.BDefBuilder;
-import fedora.client.bmech.BMechBuilder;
 
-// wdn >
-import fedora.client.BatchBuildGUI;
-import fedora.client.BatchIngestGUI;
-// < wdn
+import fedora.server.access.FedoraAPIA;
+import fedora.server.management.FedoraAPIM;
 
 /**
  *
@@ -107,6 +106,9 @@ public class Administrator extends JFrame {
     private static String s_user;
     private static String s_pass;
 
+    public static FedoraAPIA APIA;
+    public static FedoraAPIM APIM;
+
     public Administrator(String host, int port, String user, String pass) {
         super("Fedora Administrator - " + user + " using server at " + host + ":" + port);
         if (System.getProperty("fedora.home")!=null) {
@@ -115,6 +117,14 @@ public class Administrator extends JFrame {
                 s_lastDir=f;
             }
         }
+        try {
+        APIA=APIAStubFactory.getStub(host, port, user, pass);
+        APIM=APIMStubFactory.getStub(host, port, user, pass);
+        } catch (Exception e) {
+            System.err.println("FATAL ERROR: " + e.getMessage());
+            System.exit(0);
+        }
+
         s_host=host;
         s_port=port;
         s_user=user;
@@ -195,6 +205,12 @@ public class Administrator extends JFrame {
         JMenu fileMenu=new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
         fileMenu.setToolTipText("Contains commands for creating, opening, closing, and saving Digital Objects");
+
+        JMenuItem fileViewObject=new JMenuItem(new ViewObject());
+        fileViewObject.setMnemonic(KeyEvent.VK_O);
+        fileViewObject.setToolTipText("Launches a viewer/editor for an object and it's components.");
+        fileViewObject.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+
         JMenuItem fileIngest=new JMenuItem("Ingest...",KeyEvent.VK_I);
         fileIngest.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
                 ActionEvent.CTRL_MASK));
@@ -246,9 +262,10 @@ public class Administrator extends JFrame {
             }
         });
 
-        fileMenu.add(fileIngest);
+        fileMenu.add(fileViewObject);
         fileMenu.add(fileView);
         fileMenu.add(fileViewDatastreams);
+        fileMenu.add(fileIngest);
         fileMenu.add(fileExport);
         fileMenu.add(filePurge);
         fileMenu.addSeparator();
@@ -536,15 +553,6 @@ public class Administrator extends JFrame {
 
     protected void createSearchRepository() {
         Search frame=new Search();
-/*        FieldSearchQuery query=new FieldSearchQuery();
-        query.setTerms("*");
-        String[] fields=new String[4];
-        fields[0]="pid";
-        fields[1]="mDate";
-        fields[2]="bDef";
-        fields[3]="title";
-        ResultFrame frame=new ResultFrame("Search Results", fields, 10, query);
-        */
         frame.setVisible(true);
         s_desktop.add(frame);
         try {
