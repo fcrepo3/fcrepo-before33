@@ -248,7 +248,7 @@ public class BasicDigitalObject
             AuditRecord record=(AuditRecord) iter.next();
             auditIDs.add(record.id);
         }
-        return newID(auditIDs.iterator(), "AU");
+        return newID(auditIDs.iterator(), "AUDREC");
     }
     
 	/**
