@@ -44,19 +44,13 @@ public interface Management {
             String label, String logMessage)
             throws ServerException;
 
-    public InputStream getObjectXML(Context context, String pid, String format, String encoding) throws ServerException;
+    public InputStream getObjectXML(Context context, String pid, String encoding) throws ServerException;
 
     public InputStream exportObject(Context context, String pid, String format, String encoding) throws ServerException;
 
     public void purgeObject(Context context, String pid, String logMessage) throws ServerException;
 
 //    public AuditRecord[] getObjectAuditTrail(Context context, String pid) throws ServerException;
-
-//    public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) throws ServerException;
-
-//    public String addDatastreamManagedContent(Context context, String pid, String dsLabel, String MimeType, InputStream dsContent) throws ServerException;
-
-//    public String addDatastreamXMLMetadata(Context context, String pid, String dsLabel, String MdType, InputStream dsInlineMetadata) throws ServerException;
 
     public String addDatastream(Context context,
                                 String pid,
