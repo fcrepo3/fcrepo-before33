@@ -1,15 +1,12 @@
 package fedora.server.access;
 
 import java.io.BufferedReader;
-//import java.io.ByteArrayInputStream;
-//import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-import java.io.PrintWriter;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +24,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
 import com.icl.saxon.expr.StringValue;
@@ -35,7 +31,6 @@ import com.icl.saxon.expr.StringValue;
 import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
-import fedora.server.utilities.TypeUtility;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
@@ -44,8 +39,6 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
-import fedora.server.storage.types.MethodParmDef;
-import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -91,9 +84,9 @@ import fedora.server.utilities.DateUtility;
  *                version of the digital object at the specified point in time.
  *                (NOT implemented in release 1.0.)
  * <li>xml - an optional parameter indicating the requested output format.
- *                 A value of "yes" indicates a return type of text/xml; the
- *                 absence of the xml parameter or a value of "no"
- *                 indicates format is to be text/html.</li>
+ *           A value of "true" indicates a return type of text/xml; the
+ *           absence of the xml parameter or a value of "false"
+ *           indicates format is to be text/html.</li>
  * </ul>
  *
  * <p>Copyright: Copyright (c) 2002</p>
@@ -115,8 +108,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
   /** Instance of the access subsystem. */
   private static Access s_access = null;
 
-  /** Constant indicating value of the string "yes". */
-  private static final String YES = "yes";
+  ///** Constant indicating value of the string "yes". */
+  //private static final String YES = "yes";
 
   /** Instance of DOManager. */
   private static DOManager m_manager = null;
@@ -151,6 +144,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     boolean isGetObjectMethodsRequest = false;
     boolean isGetObjectProfileRequest = false;
     boolean isGetDisseminationRequest = false;
+    boolean xml = false;
 
     HashMap h=new HashMap();
     h.put("application", "apia");
@@ -242,32 +236,17 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     } else
     {
       response.sendRedirect("/userdocs/apialite/index.html");
-        /*String message = "Request Syntax Error: The expected syntax "
-          + "for Dissemination requests is: \""
-          + URIArray[0] + "//" + URIArray[2] + "/"
-          + URIArray[3] + "/" + URIArray[4]
-          + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
-          + " ----- The expected syntax for ObjectProfile requests is: \""
-          + URIArray[0] + "//" + URIArray[2] + "/"
-          + URIArray[3] + "/" + URIArray[4]
-          + "/PID[/dateTime] \"  ."
-          + "Submitted request was: \"" + requestURI + "\"  .  ";
-      logWarning(message);
-      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-      */
       return;
     }
 
     // Separate out servlet parameters from method parameters
     Hashtable h_userParms = new Hashtable();
-    String xml = "no";
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
     {
       String name = (String)e.nextElement();
-      if (name.equalsIgnoreCase("xml"))
+      if (isGetObjectProfileRequest && name.equalsIgnoreCase("xml"))
       {
-        xml = request.getParameter(name);
+        xml = new Boolean(request.getParameter(name)).booleanValue();
       } else
       {
         String value = request.getParameter(name);
@@ -316,7 +295,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         String message = "[FedoraAccessServlet] An error has occured in "
             + "accessing the Fedora Access Subsystem. The error was \" "
             + th.getClass().getName()
-            + " \". Reason: "  + th.getMessage();
+            + " \". Reason: "  + th.getMessage()
+            + "  Input Request was: \"" + request.getRequestURL().toString();
         showURLParms(PID, bDefPID, methodName, asOfDateTime,
                      userParms, response, message);
         logWarning(message);
@@ -325,11 +305,11 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
   }
 
   public void getObjectProfile(Context context, String PID, Calendar asOfDateTime,
-      String xml, HttpServletRequest request,
+      boolean xml, HttpServletRequest request,
       HttpServletResponse response) throws ServerException
   {
 
-    PrintWriter out = null;
+    ServletOutputStream out = null;
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectProfile objProfile = null;
     PipedWriter pw = null;
@@ -337,7 +317,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 
     try
     {
-      //out = response.getWriter();
       pw = new PipedWriter();
       pr = new PipedReader(pw);
       objProfile = s_access.getObjectProfile(context, PID, asOfDateTime);
@@ -346,11 +325,11 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         // Object Profile found.
         // Serialize the ObjectProfile object into XML
         new ProfileSerializerThread(PID, objProfile, versDateTime, pw).start();
-        if (xml.equalsIgnoreCase(YES))
+        if (xml)
         {
           // Return results as raw XML
           response.setContentType(CONTENT_TYPE_XML);
-          out = response.getWriter();
+          out = response.getOutputStream();
           int bytestream = 0;
           while ( (bytestream = pr.read()) >= 0)
           {
@@ -360,7 +339,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         {
           // Transform results into an html table
           response.setContentType(CONTENT_TYPE_HTML);
-          out = response.getWriter();
+          out = response.getOutputStream();
           File xslFile = new File(s_server.getHomeDir(), "access/viewObjectProfile.xslt");
           TransformerFactory factory = TransformerFactory.newInstance();
           Templates template = factory.newTemplates(new StreamSource(xslFile));
@@ -536,10 +515,13 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       {
         // A MIME type of application/fedora-redirect signals that the
         // MIMETypedStream returned from the dissemination is a special
-        // Fedora-specific MIME type. In this case, teh Fedora server will
-        // not proxy the stream, but instead perform a simple redirect to
+        // Fedora-specific MIME type. In this case, the Fedora server will
+        // not proxy the datastream, but instead perform a simple redirect to
         // the URL contained within the body of the MIMETypedStream. This
-        // special MIME type is used primarily for streaming media.
+        // special MIME type is used primarily for streaming media where it
+        // is more efficient to stream the data directly between the streaming
+        // server and the browser client rather than proxy it through the
+        // Fedora server.
 
         // RLW: change required by conversion fom byte[] to InputStream
         BufferedReader br = new BufferedReader(
@@ -662,7 +644,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
   {
     String versDate = DateUtility.convertCalendarToString(asOfDateTime);
     response.setContentType(CONTENT_TYPE_HTML);
-    PrintWriter out = response.getWriter();
+    ServletOutputStream out = response.getOutputStream();
 
     // Display servlet input parameters
     StringBuffer html = new StringBuffer();
