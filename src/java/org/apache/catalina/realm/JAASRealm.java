@@ -320,7 +320,7 @@ public class JAASRealm
             		MultiValueMap actionAttributes = new MultiValueMap();
             		String name = "";
             		try {
-            			name = actionAttributes.setReturn("urn:fedora:names:fedora:2.1:action:subject-represented", represented);
+            			name = actionAttributes.setReturn("urn:fedora:names:fedora:2.1:action:subjectRepresented", represented);
                 		context.setActionAttributes(actionAttributes);            		
             		} catch (Exception e) {
             			context.setActionAttributes(null);		

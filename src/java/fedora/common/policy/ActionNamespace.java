@@ -124,7 +124,7 @@ public class ActionNamespace extends XacmlNamespace {
     	LIST_OBJECT_IN_FIELD_SEARCH_RESULTS               = addName(new XacmlName(this, "listObjectInFieldSearchResults"));
     	LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS               = addName(new XacmlName(this, "listObjectInResourceIndexResults"));
     	SURROGATE_PING = addName(new XacmlName(this, "actAsSurrogateFor"));
-    	USER_REPRESENTED = addName(new XacmlName(this, "subject-represented"));    	
+    	USER_REPRESENTED = addName(new XacmlName(this, "subjectRepresented"));    	
     }
 
 	public static ActionNamespace onlyInstance = new ActionNamespace(Release2_1Namespace.getInstance(), "action");
