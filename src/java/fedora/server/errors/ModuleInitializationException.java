@@ -1,7 +1,5 @@
 package fedora.server.errors;
 
-import fedora.server.Module;
-
 /**
  * Signifies that an error occurred during a module's initialization.
  *
@@ -10,26 +8,27 @@ import fedora.server.Module;
 public class ModuleInitializationException 
         extends InitializationException {
 
-    /** The module in which the error occurred */
-    private Module m_module;
+    /** The role of the module in which the error occurred */
+    private String m_role;
 
     /**
      * Creates a ModuleInitializationException.
      *
      * @param message An informative message explaining what happened and
      *                (possibly) how to fix it.
-     * @param module The module in which the error occurred.
+     * @param role The role of the module.
      */
-    public ModuleInitializationException(String message, Module module) {
+    public ModuleInitializationException(String message, String role) {
         super(message);
+        m_role=role;
     }
 
     /**
-     * Gets the module in which the error occurred.
+     * Gets the role of the module in which the error occurred.
      *
-     * @returns Module The module.
+     * @returns The role.
      */
-    public Module getModule() {
-        return m_module;
+    public String getRole() {
+        return m_role;
     }
 }
