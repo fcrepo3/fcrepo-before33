@@ -1,7 +1,7 @@
 package fedora.server.storage;
 
 import java.util.Vector;
-import fedora.server.access.MIMETypedStream;
+import fedora.server.storage.types.MIMETypedStream;
 
 /**
  * <p>Title: </p>
