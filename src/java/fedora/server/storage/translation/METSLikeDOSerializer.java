@@ -31,7 +31,8 @@ public class METSLikeDOSerializer
     public static final String METS_PREFIX="METS";
     public static final String METS_NS="http://www.loc.gov/METS/";
     public static final String METS_XLINK_NS="http://www.w3.org/TR/xlink";
-    public static final String REAL_XLINK_NS="http://www.w3.org/1999/xlink";
+    public static final String REAL_XLINK_NS="http://www.w3.org/TR/xlink";
+    //public static final String REAL_XLINK_NS="http://www.w3.org/1999/xlink";
 
     private String m_XLinkPrefix="xlink";
     private String m_fedoraAuditPrefix="fedora-auditing";
@@ -130,7 +131,7 @@ public class METSLikeDOSerializer
         if (cDate==null) {
             throw new ObjectIntegrityException("Object must have a create date.");
         }
-        buf.append(METS_PREFIX + ":metsHdr CREATEDATE=\"" 
+        buf.append("  <" + METS_PREFIX + ":metsHdr CREATEDATE=\"" 
                 + m_formatter.format(cDate) + "\" LASTMODDATE=\"");
         Date mDate=obj.getLastModDate();
         if (mDate==null) {
@@ -172,8 +173,8 @@ public class METSLikeDOSerializer
         if (first.DSState==null) {
             throw new ObjectIntegrityException("Datastream must have a state.");
         }
-        buf.append("<" + METS_PREFIX + ":" + outerName + " ID=\"" 
-                + first.DatastreamID + "\" STATUS=\"" + first.DSState + "\">\n");
+        buf.append("  <" + METS_PREFIX + ":" + outerName + " ID=\"" 
+                + first.DatastreamID + "\">\n");
         for (int i=0; i<XMLMetadata.size(); i++) {
             DatastreamXMLMetadata ds=(DatastreamXMLMetadata) XMLMetadata.get(i);
             if (ds.DSVersionID==null) {
@@ -182,9 +183,9 @@ public class METSLikeDOSerializer
             if (ds.DSCreateDT==null) {
                 throw new ObjectIntegrityException("Datastream must have a creation date.");
             }
-            buf.append("<" + METS_PREFIX + ":" + innerName + " ID=\"" 
+            buf.append("    <" + METS_PREFIX + ":" + innerName + " ID=\"" 
                     + ds.DSVersionID + "\" CREATED=\"" + m_formatter.format(
-                    ds.DSCreateDT) + "\">\n");
+                    ds.DSCreateDT) + "\" STATUS=\"" + first.DSState + "\">\n");
             if (ds.DSMIME==null) {
                 ds.DSMIME="text/html";
             }
@@ -207,15 +208,16 @@ public class METSLikeDOSerializer
             if ( ds.DSLabel!=null && !ds.DSLabel.equals("") ) {
                 labelString=" LABEL=\"" + StreamUtility.enc(ds.DSLabel) + "\"";
             }
-            buf.append("<" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + ds.DSMIME
+            buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + ds.DSMIME
                     + "\" MDTYPE=\"" + mdType + "\"" + otherString
                     + labelString + ">\n");
-            buf.append("<" + METS_PREFIX + ":xmlData>"); 
+            buf.append("        <" + METS_PREFIX + ":xmlData>\n"); 
             appendStream(ds.getContentStream(), buf, encoding);
-            buf.append("</" + METS_PREFIX + ":xmlData>"); 
-            buf.append("</" + METS_PREFIX + ":" + innerName + ">\n");
+            buf.append("        </" + METS_PREFIX + ":xmlData>"); 
+            buf.append("      </" + METS_PREFIX + ":mdWrap>\n");
+            buf.append("    </" + METS_PREFIX + ":" + innerName + ">\n");
         }
-        buf.append("</" + METS_PREFIX + ":" + outerName + ">\n");
+        buf.append("  </" + METS_PREFIX + ":" + outerName + ">\n");
     }
     
     private void appendStream(InputStream in, StringBuffer buf, String encoding)
@@ -247,7 +249,7 @@ public class METSLikeDOSerializer
     private void appendAuditRecordAdminMD(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
         if (obj.getAuditRecords().size()>0) {
-            buf.append("<" + METS_PREFIX + ":amdSec ID=\"FEDORA-AUDITTRAIL\">\n");
+            buf.append("  <" + METS_PREFIX + ":amdSec ID=\"FEDORA-AUDITTRAIL\">\n");
             for (int i=0; i<obj.getAuditRecords().size(); i++) {
                 AuditRecord audit=(AuditRecord) obj.getAuditRecords().get(i);
                 if (audit.id==null) {
@@ -268,36 +270,36 @@ public class METSLikeDOSerializer
                 if (audit.justification==null) {
                     throw new ObjectIntegrityException("Audit record must have justification.");
                 }
-                buf.append("<" + METS_PREFIX + ":digiprovMD ID=\"" + audit.id
+                buf.append("    <" + METS_PREFIX + ":digiprovMD ID=\"" + audit.id
                         + "\" CREATED=\"" + m_formatter.format(audit.date)
                         + "\" STATUS=\"A\">\n");
-                buf.append("<" + METS_PREFIX + ":mdWrap MIMETYPE=\"text/xml\" "
+                buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"text/xml\" "
                         + "MDTYPE=\"OTHER\" OTHERMDTYPE=\"FEDORA-AUDITTRAIL\""
                         + " LABEL=\"Audit record for '" 
                         + StreamUtility.enc(audit.action) + "' action by " 
                         + StreamUtility.enc(audit.responsibility) + " at " 
                         + m_formatter.format(audit.date) + "\">\n");
-                buf.append("<" + METS_PREFIX + ":xmlData>\n");
-                buf.append("<" + m_fedoraAuditPrefix + ":record>\n");
-                buf.append("<" + m_fedoraAuditPrefix + ":process type=\""
+                buf.append("        <" + METS_PREFIX + ":xmlData>\n");
+                buf.append("          <" + m_fedoraAuditPrefix + ":record>\n");
+                buf.append("          <" + m_fedoraAuditPrefix + ":process type=\""
                         + StreamUtility.enc(audit.processType) + "\"/>\n");
-                buf.append("<" + m_fedoraAuditPrefix + ":action>" 
+                buf.append("          <" + m_fedoraAuditPrefix + ":action>" 
                         + StreamUtility.enc(audit.action) 
-                        + "</" + m_fedoraAuditPrefix + ":action>\n");
-                buf.append("<" + m_fedoraAuditPrefix + ":responsibility>" 
+                        + "           </" + m_fedoraAuditPrefix + ":action>\n");
+                buf.append("          <" + m_fedoraAuditPrefix + ":responsibility>" 
                         + StreamUtility.enc(audit.responsibility) 
-                        + "</" + m_fedoraAuditPrefix + ":responsibility>\n");
-                buf.append("<" + m_fedoraAuditPrefix + ":date>" 
+                        + "           </" + m_fedoraAuditPrefix + ":responsibility>\n");
+                buf.append("          <" + m_fedoraAuditPrefix + ":date>" 
                         + m_formatter.format(audit.date) 
-                        + "</" + m_fedoraAuditPrefix + ":date>\n");
-                buf.append("<" + m_fedoraAuditPrefix + ":justification>" 
+                        + "           </" + m_fedoraAuditPrefix + ":date>\n");
+                buf.append("          <" + m_fedoraAuditPrefix + ":justification>" 
                         + StreamUtility.enc(audit.justification) 
-                        + "</" + m_fedoraAuditPrefix + ":justification>\n");
-                buf.append("</" + m_fedoraAuditPrefix + ":record>\n");
-                buf.append("</" + METS_PREFIX + ":xmlData>\n");
-                buf.append("</" + METS_PREFIX + ":digiprovMD>\n");
+                        + "           </" + m_fedoraAuditPrefix + ":justification>\n");
+                buf.append("        </" + m_fedoraAuditPrefix + ":record>\n");
+                buf.append("      </" + METS_PREFIX + ":xmlData>\n");
+                buf.append("    </" + METS_PREFIX + ":digiprovMD>\n");
             }
-            buf.append("</" + METS_PREFIX + ":amdSec>\n");
+            buf.append("  </" + METS_PREFIX + ":amdSec>\n");
         }
     }
     
@@ -340,13 +342,13 @@ public class METSLikeDOSerializer
             if (!ds.DSControlGrp.equals("X")) {
                 if (!didFileSec) {
                     didFileSec=true;
-                    buf.append("<" + METS_PREFIX + ":fileSec>\n");
-                    buf.append("<" + METS_PREFIX + ":fileGrp ID=\"DATASTREAMS\">\n");
+                    buf.append("  <" + METS_PREFIX + ":fileSec>\n");
+                    buf.append("    <" + METS_PREFIX + ":fileGrp ID=\"DATASTREAMS\">\n");
                 }
                 if (ds.DatastreamID==null || ds.DatastreamID.equals("")) {
                     throw new ObjectIntegrityException("Object's content datastream must have an id.");
                 }
-                buf.append("<" + METS_PREFIX + ":fileGrp ID=\"" 
+                buf.append("      <" + METS_PREFIX + ":fileGrp ID=\"" 
                         + ds.DatastreamID + "\">\n");
                 Iterator contentIter=obj.datastreams(ds.DatastreamID).iterator();
                 while (contentIter.hasNext()) {
@@ -377,21 +379,22 @@ public class METSLikeDOSerializer
                     if (dsc.DSControlGrp==null || dsc.DSControlGrp.equals("")) {
                         throw new ObjectIntegrityException("Object's content datastream must have a control group.");
                     }
-                    buf.append("<" + METS_PREFIX + ":file ID=\"" 
+                    buf.append("        <" + METS_PREFIX + ":file ID=\"" 
                             + dsc.DSVersionID + "\" MIMETYPE=\"" + dsc.DSMIME
                             + "\" STATUS=\"" + dsc.DSState + "\"" + sizeString 
                             + admIDString + dmdIDString + " OWNERID=\"" 
                             + dsc.DSControlGrp + "\">\n");
-                    buf.append("<" + METS_PREFIX + ":FLocat " + labelString
-                            + "\" LOCTYPE=\"URL\" " + m_XLinkPrefix 
+                    buf.append("          <" + METS_PREFIX + ":FLocat" + labelString
+                            + " LOCTYPE=\"URL\" " + m_XLinkPrefix 
                             + ":href=\"" + dsc.DSLocation + "\"/>\n");
+                    buf.append("        </" + METS_PREFIX + ":file>\n");
                 }
-                buf.append("</" + METS_PREFIX + ":fileGrp>\n");
+                buf.append("      </" + METS_PREFIX + ":fileGrp>\n");
             }
         }
         if (didFileSec) {
-            buf.append("</" + METS_PREFIX + ":fileGrp>\n");
-            buf.append("</" + METS_PREFIX + ":fileSec>\n");
+            buf.append("    </" + METS_PREFIX + ":fileGrp>\n");
+            buf.append("  </" + METS_PREFIX + ":fileSec>\n");
         }
     }
     
@@ -464,17 +467,17 @@ public class METSLikeDOSerializer
                         && !diss.dsBindMap.dsBindMapLabel.equals("") ) {
                     labelString=" LABEL=\"" + diss.dsBindMap.dsBindMapLabel + "\"";
                 }
-                buf.append("<" + METS_PREFIX + ":structMap ID=\"" 
+                buf.append("  <" + METS_PREFIX + ":structMap ID=\"" 
                         + diss.dsBindMapID + "\" TYPE=\"fedora:dsBindingMap\">\n");
-                buf.append("<" + METS_PREFIX + ":div TYPE=\"" + diss.bMechID
-                        + labelString + "\">\n");
+                buf.append("    <" + METS_PREFIX + ":div TYPE=\"" + diss.bMechID
+                        + "\"" + labelString + ">\n");
                 DSBinding[] bindings=diss.dsBindMap.dsBindings;
                 for (int i=0; i<bindings.length; i++) {
                     if (bindings[i].bindKeyName==null 
                             || bindings[i].bindKeyName.equals("")) {
                         throw new ObjectIntegrityException("Object's disseminator binding map binding must have a binding key name.");
                     }
-                    buf.append("<" + METS_PREFIX + ":div TYPE=\"");
+                    buf.append("      <" + METS_PREFIX + ":div TYPE=\"");
                     buf.append(bindings[i].bindKeyName);
                     if (bindings[i].bindLabel!=null 
                             && !bindings[i].bindLabel.equals("")) {
@@ -489,12 +492,12 @@ public class METSLikeDOSerializer
                             || bindings[i].datastreamID.equals("")) {
                         throw new ObjectIntegrityException("Object's disseminator binding map binding must point to a datastream.");
                     }
-                    buf.append("\">\n<" + METS_PREFIX + ":fptr FILEID=\""
-                            + bindings[i].datastreamID + "\"/>\n" + "</" 
+                    buf.append("\">\n        <" + METS_PREFIX + ":fptr FILEID=\""
+                            + bindings[i].datastreamID + "\"/>\n" + "      </" 
                             + METS_PREFIX + ":div>\n");
                 }
-                buf.append("</" + METS_PREFIX + ":div>\n");
-                buf.append("</" + METS_PREFIX + ":structMap>\n");
+                buf.append("    </" + METS_PREFIX + ":div>\n");
+                buf.append("  </" + METS_PREFIX + ":structMap>\n");
             }
         }
     }
@@ -509,40 +512,49 @@ public class METSLikeDOSerializer
             if (diss.dissState==null || diss.dissState.equals("")) {
                 throw new ObjectIntegrityException("Object's disseminator must have a state.");
             }
-            buf.append("<" + METS_PREFIX + ":behaviorSec ID=\"" + did 
+            buf.append("  <" + METS_PREFIX + ":behaviorSec ID=\"" + did 
                     + "\" STATUS=\"" + diss.dissState + "\">\n");
             for (int i=0; i<obj.disseminators(did).size(); i++) {
                 diss=(Disseminator) obj.disseminators(did).get(i);
-                buf.append("<" + METS_PREFIX + ":serviceBinding ID=\"");
-// TODO:Resume here
-                buf.append(diss.dissVersionID);
-                buf.append("\" STRUCTID=\"");
-                buf.append(diss.dsBindMapID);
-                buf.append("\" BTYPE=\"");
-                buf.append(diss.bDefID);
-                buf.append("\" CREATED=\"");
-                String strDate=m_formatter.format(diss.dissCreateDT);
-                buf.append(strDate);
-                buf.append("\" LABEL=\"");
-                buf.append(diss.dissLabel);
-                buf.append("\" GROUPID=\"");
-                buf.append(diss.dissID);
-                buf.append("\" STATUS=\"");
-                buf.append(diss.dissState);
-                buf.append("\">\n");
-                buf.append("<METS:interfaceDef LABEL=\"");
-                buf.append(diss.bDefLabel);
-                buf.append("\" LOCTYPE=\"URN\" xlink:href=\"");
-                buf.append(diss.bDefID);
-                buf.append("\"/>\n");
-                buf.append("<METS:mechanism LABEL=\"");
-                buf.append(diss.bMechLabel);
-                buf.append("\" LOCTYPE=\"URN\" xlink:href=\"");
-                buf.append(diss.bMechID);
-                buf.append("\"/>\n");
-                buf.append("</" + METS_PREFIX + ":serviceBinding>\n");
+                if (diss.dissVersionID==null || diss.dissVersionID.equals("")) {
+                    throw new ObjectIntegrityException("Object's disseminator must have a version id.");
+                }
+                if (diss.bDefID==null || diss.bDefID.equals("")) {
+                    throw new ObjectIntegrityException("Object's disseminator must have a bdef id.");
+                }
+                if (diss.dissCreateDT==null) {
+                    throw new ObjectIntegrityException("Object's disseminator must have a create date.");
+                }
+                if (diss.dissState==null || diss.dissState.equals("")) {
+                    throw new ObjectIntegrityException("Object's disseminator must have a state.");
+                }
+                String dissLabelString="";
+                if (diss.dissLabel!=null && !diss.dissLabel.equals("")) {
+                    dissLabelString=" LABEL=\"" + diss.dissLabel + "\"";
+                }
+                String bDefLabelString="";
+                if (diss.bDefLabel!=null && !diss.bDefLabel.equals("")) {
+                    bDefLabelString=" LABEL=\"" + diss.bDefLabel + "\"";
+                }
+                String bMechLabelString="";
+                if (diss.bMechLabel!=null && !diss.bMechLabel.equals("")) {
+                    bMechLabelString=" LABEL=\"" + diss.bMechLabel + "\"";
+                }
+                buf.append("    <" + METS_PREFIX + ":serviceBinding ID=\""
+                        + diss.dissVersionID + "\" STRUCTID=\"" + diss.dsBindMapID
+                        + "\" BTYPE=\"" + diss.bDefID + "\" CREATED=\""
+                        + m_formatter.format(diss.dissCreateDT) + "\""
+                        + dissLabelString + ">\n");
+                buf.append("      <" + METS_PREFIX + ":interfaceMD" + bDefLabelString
+                        + " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
+                        + diss.bDefID + "\"/>\n");
+                buf.append("      <" + METS_PREFIX + ":serviceBindMD" + bMechLabelString
+                        + " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
+                        + diss.bMechID + "\"/>\n");
+                
+                buf.append("    </" + METS_PREFIX + ":serviceBinding>\n");
             }
-            buf.append("</" + METS_PREFIX + ":behaviorSec>\n");
+            buf.append("  </" + METS_PREFIX + ":behaviorSec>\n");
         } 
     }
     

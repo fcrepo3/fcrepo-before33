@@ -5,6 +5,7 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSDOSerializer;
 import fedora.server.storage.translation.METSDODeserializer;
+import fedora.server.storage.translation.METSLikeDOSerializer;
 import fedora.server.validation.DOValidatorImpl;
 
 import java.io.ByteArrayInputStream;
@@ -37,7 +38,8 @@ public class METSInOutTest {
         }
         try {
             METSDODeserializer deser=new METSDODeserializer("UTF-8", false, METSDODeserializer.QUERY_NEVER);
-            METSDOSerializer ser=new METSDOSerializer("UTF-8");
+            //METSDOSerializer ser=new METSDOSerializer("UTF-8");
+            METSLikeDOSerializer ser=new METSLikeDOSerializer();
             HashMap desers=new HashMap();
             HashMap sers=new HashMap();
             desers.put("mets11fedora1", deser);
