@@ -163,15 +163,12 @@ public abstract class DOTranslationUtility {
     static {
 		// get the host info in a static var so search/replaces are quicker later
 			String fedoraHome=System.getProperty("fedora.home");
-			String fedoraServerHost=null;
-			String fedoraServerPort=null;
-			if (fedoraHome==null || fedoraHome.equals("")) {
-				// if fedora.home is undefined or empty, assume we're testing,
-				// in which case the host and port will be taken from system
-				// properties
-				fedoraServerHost=System.getProperty("fedoraServerHost");
-				fedoraServerPort=System.getProperty("fedoraServerPort");
-			} else {
+			String fedoraServerHost=System.getProperty("fedoraServerHost");
+			String fedoraServerPort=System.getProperty("fedoraServerPort");
+			if (fedoraServerHost == null || fedoraServerPort == null) {
+				// if fedoraServerHost or fedoraServerPort system properties
+                // are not defined, assume we need to get a Server instance
+                // to determine these values.
 				try {
 					Server s=Server.getInstance(new File(fedoraHome));
 					fedoraServerHost=s.getParameter("fedoraServerHost");

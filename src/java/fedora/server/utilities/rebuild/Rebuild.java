@@ -36,6 +36,10 @@ public class Rebuild {
     public Rebuild(File serverDir, String profile) throws Exception {
         ServerConfiguration serverConfig = getServerConfig(serverDir,
                                                            profile);
+        // set these here so DOTranslationUtility doesn't try to get a Server instance
+        System.setProperty("fedoraServerHost", serverConfig.getParameter("fedoraServerHost").getValue());
+        System.setProperty("fedoraServerPort", serverConfig.getParameter("fedoraServerPort").getValue());
+
         System.out.println();
         System.out.println("                       Fedora Rebuild Utility");
         System.out.println("                     ..........................");
@@ -64,11 +68,9 @@ public class Rebuild {
                 System.out.println("Rebuilding...");
                 try {
                     rebuilder.start(options);
-                    // TODO: Get all the objects from the filesystem
-                    //       and call rebuilder.addObject()
-                    /** encapsulates all configuration data for this package */
-                    fedora.server.storage.lowlevel.Configuration conf = fedora.server.storage.lowlevel.Configuration.getInstance();
-                    String objStoreBaseStr = conf.getObjectStoreBase();
+                    // fedora.server.storage.lowlevel.Configuration conf = fedora.server.storage.lowlevel.Configuration.getInstance();
+                    // String objStoreBaseStr = conf.getObjectStoreBase();
+                    String objStoreBaseStr = serverConfig.getParameter("object_store_base").getValue();
                     File dir = new File(objStoreBaseStr);
                     multiFromDirectory(dir, "DMO", rebuilder);
                     
@@ -303,7 +305,7 @@ new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
             Parameter param = (Parameter) iter.next();
             String profileValue = (String) param.getProfileValues().get(profile);
             if (profileValue != null) {
-                // System.out.println(param.getName() + " was '" + param.getValue() + "', now '" + profileValue + '.");
+                //System.out.println(param.getName() + " was '" + param.getValue() + "', now '" + profileValue + "'.");
                 param.setValue(profileValue);
                 c++;
             }
@@ -343,7 +345,6 @@ new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
         // log4j
 //        File log4jConfig = new File(new File(homeDir), "config/log4j.xml");
 //        DOMConfigurator.configure(log4jConfig.getPath());
-
         String profile = null;
         if (args.length == 1) {
             profile = args[0];
