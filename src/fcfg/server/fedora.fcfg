@@ -26,7 +26,10 @@
         context-appropriate DOReaders and DOWriters for reflecting on and 
         writing to the objects stored in the repository.  It also
         provides methods for reflecting on the contents of the repository 
-        as a whole.</comment>
+        as a whole.  This implementation uses DefinitiveDOReader/Writer
+        for an "application" of "apim" and a FastDOReader/Writer
+        for an "application" of "apia" (from the Context).  If neither
+        "apim" nor "apia", the getReader/Writer call will fail.</comment>
         <param name="object_state_registry" value="poolOne#State"/>
     </module>
     <module role="fedora.server.management.Management" 
