@@ -55,13 +55,9 @@ public class LoginServlet
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-		String notUser=request.getParameter("prevUser");
-		if (notUser==null) {
-		    notUser="guest";
-		}
-        String userId=getAuthenticatedUser(request.getHeader("Authorization"));
+        String userId=request.getRemoteUser();
         response.setHeader("Cache-control", "no-cache, must-revalidate");
-        if (userId==null || userId.equals(notUser)) {
+        if (userId==null) { // || userId.equals(notUser)) {
             // send challenge
 			response.setHeader("WWW-Authenticate", "Basic realm=\"" 
 			        + s_server.getParameter("repositoryName") + "\"");
@@ -77,10 +73,12 @@ public class LoginServlet
    			if (!s_server.getParameter("fedoraServerPort").equals("80")) {
    			    endOfUrl.append(":" + s_server.getParameter("fedoraServerPort"));
    			}
+   			/* 
    			endOfUrl.append("/fedora/login?prevUser=" + userId);
 			if (!userId.equals("guest")) {
                 w.println("Login <a href=\"http://guest:guest@" + endOfUrl.toString() + "\"/>as a guest</a>.<br/>");
 			}
+			*/
             w.println("Login <a href=\"http://" + endOfUrl.toString() + "\"/>as a different user</a>.");
             w.println("</body></html>");
         }
@@ -90,44 +88,6 @@ public class LoginServlet
             throws ServletException, IOException {
         doGet(request, response);
     }
-
-  /**
-   * Get the userId if the provided base64-encoded user:pass string
-   * provides a correct user-to-password match.  Otherwise, return null.
-   *
-   * @param basicAuthString base64-encoder user:pass string.
-   * @return the user id.
-   */
-  private String getAuthenticatedUser(String basicAuthString) {
-    String authUser=null;
-	if (basicAuthString!=null) {
-		String userAndPass=new String(StreamUtility.decodeBase64(basicAuthString.substring(6).trim()));
-		int i=userAndPass.indexOf(":");
-		if (i>0) {
-		    String user=userAndPass.substring(0, i);
-		    String pass=userAndPass.substring(i+1);
-			if (isUserPassword(user, pass)) {
-			    authUser=user;
-			}
-		}
-	}
-	return authUser;
-  }
-
-  /**
-   * Tell whether the password is the user's password.
-   * 
-   * @param user the userId.
-   * @param user the possible password.
-   * @return true if the password is correct, false otherwise.
-   */
-  private boolean isUserPassword(String user, String pass) {
-    // currently only recognizes fedoraAdmin with fedora.fcfg-configured pass, 
-    // and guest with any password
-    return ((user.equals("guest")) 
-            || (user.equals("fedoraAdmin") 
-                    && pass.equals(s_server.getParameter("adminPassword"))));
-  }
 
     /**
      * Initialize servlet.  Gets a reference to the fedora Server object.
