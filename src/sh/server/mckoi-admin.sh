@@ -19,7 +19,7 @@ fi
 
 echo "Launching McKoi SQL Interface... "
 
-(exec java -cp $FEDORA_HOME/server/mckoi094/mckoidb.jar com.mckoi.tools.JDBCQueryTool -u "$1" -p "$2")
+(exec java -cp $FEDORA_HOME/server/mckoi094/mckoidb.jar com.mckoi.tools.JDBCQueryTool -u "$1" -p "$2" -url "jdbc:mckoi://127.0.0.1:9158/")
 
 echo "Done."
 

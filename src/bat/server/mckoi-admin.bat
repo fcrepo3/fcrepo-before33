@@ -11,7 +11,7 @@ if "%2" == "" goto showUsage
 
 echo Launching McKoi SQL interface...
 
-java -cp %FEDORA_HOME%\server\mckoi094\mckoidb.jar com.mckoi.tools.JDBCQueryTool -u "%1" -p "%2"
+java -cp %FEDORA_HOME%\server\mckoi094\mckoidb.jar com.mckoi.tools.JDBCQueryTool -u "%1" -p "%2" -url "jdbc:mckoi://127.0.0.1:9158/"
 
 echo Finished.
 
