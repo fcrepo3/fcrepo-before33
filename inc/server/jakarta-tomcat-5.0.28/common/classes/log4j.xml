@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+       
+  <appender name="STDOUT" class="org.apache.log4j.ConsoleAppender">
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="TOMCAT:%p %d{mm:ss.SS} (%c{1}) %m%n"/>
+    </layout>
+  </appender>
+  
+  <category name="org.apache">
+    <priority value="WARN" />
+  </category>
+  
+  <category name="tomcat">
+    <priority value="WARN" />
+  </category>
+  
+  <category name="root">
+    <priority value="WARN" />
+    <appender-ref ref="STDOUT"/>
+  </category>
+  
+</log4j:configuration>
