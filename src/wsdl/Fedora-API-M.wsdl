@@ -4,7 +4,7 @@
   xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
   xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
   xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/"
-  xmlns:fedora-audit="http://www.fedora.info/definitions/1/0/audit/"
+  xmlns:fedora-audit="http://www.fedora.info/definitions/1/0/auditing/"
   name="Fedora-API-M">
   <message name="CreateObjectResponse">
     <part name="response" type="xsd:string">
@@ -698,6 +698,446 @@
 	</operation>
   </portType>
   <binding name="Fedora-API-M-Binding-SOAPHTTP" type="Fedora-API-M-PortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="CreateObject">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/CreateObject"/>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="IngestObject">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/IngestObject"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetObjectXML">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetObjectXML"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="ExportObject">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/ExportObject"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="WithdrawObject">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/WithdrawObject"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="DeleteObject">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/DeleteObject"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="PurgeObject">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/PurgeObject"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="ObtainLock">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/ObtainLock"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="ReleaseLock">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/ReleaseLock"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="GetLockingUser">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetLockingUser"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetObjectState">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetObjectState"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetObjectCreateDate">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetObjectCreateDate"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetObjectLastModDate">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetObjectLastModDate"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetObjectAuditTrail">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetObjectAuditTrail"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="ListObjectPIDs">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/ListObjectPIDs"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="AddDatastreamExternal">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/AddDatastreamExternal"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="AddDatastreamManagedContent">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/AddDatastreamManagedContent"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="AddDatastreamXMLMetadata">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/AddDatastreamXMLMetadata"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="ModifyDatastreamExternal">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/ModifyDatastreamExternal"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="ModifyDatastreamManagedContent">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/ModifyDatastreamManagedContent"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="ModifyDatastreamXMLMetadata">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/ModifyDatastreamXMLMetadata"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="WithdrawDatastream">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/WithdrawDatastream"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="DeleteDatastream">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/DeleteDatastream"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="PurgeDatastream">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/PurgeDatastream"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetDatastream">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetDatastream"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetDatastreams">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetDatastreams"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="ListDatastreamIDs">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/ListDatastreamIDs"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetDatastreamHistory">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetDatastreamHistory"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="AddDisseminator">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/AddDisseminator"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="ModifyDisseminator">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/ModifyDisseminator"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="DeleteDisseminator">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/DeleteDisseminator"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+    </operation>
+    <operation name="PurgeDisseminator">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/PurgeDisseminator"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetDisseminator">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetDisseminator"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetDisseminators">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetDisseminators"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="ListDisseminatorIDs">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/ListDisseminatorIDs"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
+    <operation name="GetDisseminatorHistory">
+      <soap:operation style="rpc"
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetDisseminatorHistory"/>
+      <input>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+          encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+      </output>
+    </operation>
   </binding>
   <service name="Fedora-API-M-Service">
     <port name="Fedora-API-M-Port-HTTPGET" binding="Fedora-API-M-Binding-HTTPGET">

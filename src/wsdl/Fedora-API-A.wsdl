@@ -87,7 +87,7 @@
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="GetBehaviorDefinitions">
       <soap:operation style="rpc"
-        soapAction="http://www.fedora.info/definitions/1/0/operations/GetBehaviorDefinitions"/>
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetBehaviorDefinitions"/>
       <input>
         <soap:body use="encoded" 
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
@@ -101,7 +101,7 @@
     </operation>
     <operation name="GetBehaviorMethods">
       <soap:operation style="rpc"
-        soapAction="http://www.fedora.info/definitions/1/0/operations/GetBehaviorMethods"/>
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetBehaviorMethods"/>
       <input>
         <soap:body use="encoded" 
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
@@ -115,7 +115,7 @@
     </operation>
     <operation name="GetDissemination">
       <soap:operation style="rpc"
-        soapAction="http://www.fedora.info/definitions/1/0/operations/GetDissemination"/>
+        soapAction="http://www.fedora.info/definitions/1/0/actions/GetDissemination"/>
       <input>
         <soap:body use="encoded" 
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
