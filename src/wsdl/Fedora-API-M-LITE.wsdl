@@ -1,0 +1,90 @@
+<wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:apachesoap="http://xml.apache.org/xml-soap/" xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" targetNamespace="http://www.fedora.info/definitions/1/0/api/" name="Fedora-API-M-LITE-WSDL">
+	<import namespace="http://www.fedora.info/definitions/1/0/types/" location="fedora-types.xsd"/>
+	<wsdl:types>
+		<documentation>
+			<wsdldoc:type name="xsd:string" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
+		</documentation>
+	</wsdl:types>
+	<message name="getNextPIDRequest">
+		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
+		<part name="numPIDs" type="xsd:string">
+			<documentation>a string value indicating the number of requested PID(s). Fedora will assume a default value of "1" if the numPIDs part is not specified.</documentation>
+		</part>
+		<part name="namespace" type="xsd:string">
+			<documentation>a string value indicating the namespace used for the requested PIDs. Fedora will assume the default value specified by
+				the pidNamespace parameter in the fedora.fcfg configuration file if the "namespace" part is not specified.</documentation>
+		</part>
+		<part name="encodeXML" type="xsd:string">
+		<documentation>a string value of "true" or "false" indicating that the repository should be XML encoded. Fedora will assume 
+			a default of "false" if the "encodeXML" part is not specified.</documentation>
+		</part>
+	</message>
+	<message name="getNextPIDResponse">
+		<part name="response" type="fedora-types:MIMETypedStream">
+			<documentation>The getNextPID response contains a list of the requested next available PIDs.</documentation>
+		</part>
+	</message>
+	<portType name="Fedora-API-M-LITE">
+		<documentation>  This is a simple URI-oriented service definition for the Management service 
+			of a Fedora repository.  It is intended to support a REST-like style of access to the 
+			Fedora Management web service (in contrast to a traditional SOAP web service definition).  
+			This means that we define a simple URL syntax that can be used to issue service requests.
+			API-M-LITE does not provide service bindings for all of the operations defined in Fedora's full
+			Management service (API-M).  API-M-LITE currently only provides bindings for getNextPID. 
+			The result of the getNextPID request is either HTML or XML, whichever the client requested. 
+			 When URL syntax is shown below, green indicates required parts and red indicates optional parts.
+		</documentation>
+		<operation name="getNextPID">
+			<documentation>
+				<p>Gets a list of the requested next available PID(s). The PID list can be returned as XML data 
+				or as an HTML presentation.</p>
+				<p>URL Syntax:</p>
+				<p>
+					<b>http://<font color="#22cc22">host:port</font>/fedora/mgmt/getNextPID?{<font color="#cc2222">numPIDs=NUMPIDS&amp;namespace=NAMESPACE&amp;xml=ENCODE_XML</font>}</b>
+				</p>
+				<p> A complete example URL conforming to this syntax is:</p>
+				<p>
+					<i>http://localhost:8080/fedora/mgmt/getNextPID?numPIDs=5&amp;namespace=my-namespace&amp;xml=true</i>
+				</p>
+			</documentation>
+			<input message="fedora-api:getNextPIDRequest"/>
+			<output message="fedora-api:getNextPIDResponse"/>
+		</operation>
+	</portType>
+	<binding name="Fedora-API-M-LITE-Binding" type="fedora-api:Fedora-API-M-LITE">
+		<http:binding verb="GET"/>
+		<operation name="getNextPID">
+			<http:operation location="getNextPID[?numPIDs=(NUMPIDS)&amp;namespace=(NAMESPACE)&amp;xml=(ENCODE_XML)]"/>
+			<input>
+				<http:urlReplacement/>
+				<documentation>  This URL replacement syntax is used to request a description
+					of the Fedora repository server.  The request will return key metadata elements
+					about the repository server including repository name, version, baseURL,
+					PID namespace, and sample request URLs.  When putting together a proper URL, 
+					the client should replace parenthesized parts of the operation location URL with actual values.  
+					For example, "(ENCODE_XML)" 	should be replaced with a "true" or "false" to indicate
+					whether the repository information should be returned as XML (alternative is HTML).
+					Parts of the operation location URL that are surrounded by brackets ("[ ]") are optional.  
+					To construct a proper URL the client must replace the following variables with real information:
+					      - numPIDs : an optional parameter. Client can specify the number of PIDs to request as a string
+					        representing a positive integer. If omitted, the value defaults to "1".
+					      - namespace : an optional parameter. Client can specifiy the namespace of the requested PIDs
+					        as a string. If omitted, the value defaults to the namespace defined in the fedora.fcfg file.
+					 	- encodeXML : an optional parameter.  Client can specify that the output of 
+					 	  the operation be HTML or XML.   A value of "true" indicates a return type of 
+					 	  text/xml; the absence of the encodeXML parameter or a value of "false" indicates 
+					 	  format is to be text/html.
+				</documentation>
+			</input>
+			<output>
+				<mime:content type="text/xml"/>
+				<mime:content type="text/html"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="Fedora-API-M-LITE">
+		<port name="Fedora-API-M-LITE-Port" binding="fedora-api:Fedora-API-M-LITE-Binding">
+			<http:address location="http://localhost:8080/fedora/management/"/>
+		</port>
+	</service>
+</wsdl:definitions>
