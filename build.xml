@@ -7,88 +7,74 @@
 	<property name="javaSourceDir" value="src/java"/>
 	<target name="serverandclient" depends="server,client,localservices" description="builds both client and server in dist\server">
 	</target>
-        <target name="release" depends="srcrelease,binrelease" description="puts all source and binary distributable packages in dist/release">
+	<target name="release" depends="srcrelease,binrelease" description="puts all source and binary distributable packages in dist/release">
         </target>
-        <target name="srcrelease" depends="clean" description="puts source distributable packages in dist/release">
-            <mkdir dir="dist"/>
-            <mkdir dir="dist/release"/>
-            <mkdir dir="dist/release/fedora-${fedoraVersion}-src"/>
-            <copy todir="dist/release/fedora-${fedoraVersion}-src">
-                <fileset dir=".">
-                    <exclude name="**/mysql-3.23.52/**"/>
-                </fileset>
-            </copy>
-            <tar longfile="gnu"
-                 tarfile="dist/release/fedora-${fedoraVersion}-src.tar">
-               <tarfileset dir="dist/release" mode="755">
-                 <include name="fedora-${fedoraVersion}-src/res/ant/bin/ant/**"/>
-               </tarfileset> 
-               <tarfileset dir="dist/release">
-                 <include name="fedora-${fedoraVersion}-src/**"/>
-                 <exclude name="fedora-${fedoraVersion}-src/res/ant/bin/ant/**"/>
-               </tarfileset> 
-            </tar>
-            <gzip zipfile="dist/release/fedora-${fedoraVersion}-src.tar.gz" 
-                  src="dist/release/fedora-${fedoraVersion}-src.tar"/> 
-            <delete file="dist/release/fedora-${fedoraVersion}-src.tar"/>
-            <zip zipfile="dist/release/fedora-${fedoraVersion}-src.zip"
-                 basedir="dist/release"
-                 includes="fedora-${fedoraVersion}-src/**"/>
-            <delete dir="dist/release/fedora-${fedoraVersion}-src"/>
-        </target>
-        <target name="binrelease" depends="binreleasewindows,binreleaseunix" description="puts binary distributable packages in dist/release">
-             <delete dir="dist/release/fedora-${fedoraVersion}"/>
-        </target>
-        <target name="binreleaseunix" depends="binreleaseprep">
-
-             <!-- server -->
-             <tar longfile="gnu"
-                  tarfile="dist/release/fedora-${fedoraVersion}-server.tar">
-               <tarfileset dir="dist/release" mode="755">
-                 <include name="fedora-${fedoraVersion}/server/bin/**"/>
-               </tarfileset> 
-               <tarfileset dir="dist/release">
-                 <include name="fedora-${fedoraVersion}/server/**"/>
-                 <exclude name="fedora-${fedoraVersion}/server/bin/**"/>
-               </tarfileset> 
-             </tar>
-             <gzip zipfile="dist/release/fedora-${fedoraVersion}-server.tar.gz" 
-                   src="dist/release/fedora-${fedoraVersion}-server.tar"/> 
-             <delete file="dist/release/fedora-${fedoraVersion}-server.tar"/>
-
-             <!-- client -->
-             <tar longfile="gnu"
-                  tarfile="dist/release/fedora-${fedoraVersion}-client.tar">
-               <tarfileset dir="dist/release" mode="755">
-                 <include name="fedora-${fedoraVersion}/client/bin/**"/>
-               </tarfileset> 
-               <tarfileset dir="dist/release">
-                 <include name="fedora-${fedoraVersion}/client/**"/>
-                 <exclude name="fedora-${fedoraVersion}/client/bin/**"/>
-               </tarfileset> 
-             </tar>
-             <gzip zipfile="dist/release/fedora-${fedoraVersion}-client.tar.gz" 
-                   src="dist/release/fedora-${fedoraVersion}-client.tar"/> 
-             <delete file="dist/release/fedora-${fedoraVersion}-client.tar"/>
-        </target>
-        <target name="binreleasewindows" depends="binreleaseprep">
-             <zip zipfile="dist/release/fedora-${fedoraVersion}-server.zip"
-                  basedir="dist/release"
-                  includes="fedora-${fedoraVersion}/server/**"/>
-             <zip zipfile="dist/release/fedora-${fedoraVersion}-client.zip"
-                  basedir="dist/release"
-                  includes="fedora-${fedoraVersion}/client/**"/>
-        </target>
-        <target name="binreleaseprep" depends="serverdist" description="puts binary distributable packages in dist/release">
-             <mkdir dir="dist/release"/>
-             <mkdir dir="dist/release/fedora-${fedoraVersion}"/>
-             <copy todir="dist/release/fedora-${fedoraVersion}">
-                 <fileset dir="dist">
-                     <include name="server/**"/>
-                     <include name="client/**"/>
-                 </fileset>
-             </copy>
-        </target>
+	<target name="srcrelease" depends="clean" description="puts source distributable packages in dist/release">
+		<mkdir dir="dist"/>
+		<mkdir dir="dist/release"/>
+		<mkdir dir="dist/release/fedora-${fedoraVersion}-src"/>
+		<copy todir="dist/release/fedora-${fedoraVersion}-src">
+			<fileset dir=".">
+				<exclude name="**/mysql-3.23.52/**"/>
+			</fileset>
+		</copy>
+		<tar longfile="gnu" tarfile="dist/release/fedora-${fedoraVersion}-src.tar">
+			<tarfileset dir="dist/release" mode="755">
+				<include name="fedora-${fedoraVersion}-src/res/ant/bin/ant/**"/>
+			</tarfileset>
+			<tarfileset dir="dist/release">
+				<include name="fedora-${fedoraVersion}-src/**"/>
+				<exclude name="fedora-${fedoraVersion}-src/res/ant/bin/ant/**"/>
+			</tarfileset>
+		</tar>
+		<gzip zipfile="dist/release/fedora-${fedoraVersion}-src.tar.gz" src="dist/release/fedora-${fedoraVersion}-src.tar"/>
+		<delete file="dist/release/fedora-${fedoraVersion}-src.tar"/>
+		<zip zipfile="dist/release/fedora-${fedoraVersion}-src.zip" basedir="dist/release" includes="fedora-${fedoraVersion}-src/**"/>
+		<delete dir="dist/release/fedora-${fedoraVersion}-src"/>
+	</target>
+	<target name="binrelease" depends="binreleasewindows,binreleaseunix" description="puts binary distributable packages in dist/release">
+		<delete dir="dist/release/fedora-${fedoraVersion}"/>
+	</target>
+	<target name="binreleaseunix" depends="binreleaseprep">
+		<!-- server -->
+		<tar longfile="gnu" tarfile="dist/release/fedora-${fedoraVersion}-server.tar">
+			<tarfileset dir="dist/release" mode="755">
+				<include name="fedora-${fedoraVersion}/server/bin/**"/>
+			</tarfileset>
+			<tarfileset dir="dist/release">
+				<include name="fedora-${fedoraVersion}/server/**"/>
+				<exclude name="fedora-${fedoraVersion}/server/bin/**"/>
+			</tarfileset>
+		</tar>
+		<gzip zipfile="dist/release/fedora-${fedoraVersion}-server.tar.gz" src="dist/release/fedora-${fedoraVersion}-server.tar"/>
+		<delete file="dist/release/fedora-${fedoraVersion}-server.tar"/>
+		<!-- client -->
+		<tar longfile="gnu" tarfile="dist/release/fedora-${fedoraVersion}-client.tar">
+			<tarfileset dir="dist/release" mode="755">
+				<include name="fedora-${fedoraVersion}/client/bin/**"/>
+			</tarfileset>
+			<tarfileset dir="dist/release">
+				<include name="fedora-${fedoraVersion}/client/**"/>
+				<exclude name="fedora-${fedoraVersion}/client/bin/**"/>
+			</tarfileset>
+		</tar>
+		<gzip zipfile="dist/release/fedora-${fedoraVersion}-client.tar.gz" src="dist/release/fedora-${fedoraVersion}-client.tar"/>
+		<delete file="dist/release/fedora-${fedoraVersion}-client.tar"/>
+	</target>
+	<target name="binreleasewindows" depends="binreleaseprep">
+		<zip zipfile="dist/release/fedora-${fedoraVersion}-server.zip" basedir="dist/release" includes="fedora-${fedoraVersion}/server/**"/>
+		<zip zipfile="dist/release/fedora-${fedoraVersion}-client.zip" basedir="dist/release" includes="fedora-${fedoraVersion}/client/**"/>
+	</target>
+	<target name="binreleaseprep" depends="serverdist" description="puts binary distributable packages in dist/release">
+		<mkdir dir="dist/release"/>
+		<mkdir dir="dist/release/fedora-${fedoraVersion}"/>
+		<copy todir="dist/release/fedora-${fedoraVersion}">
+			<fileset dir="dist">
+				<include name="server/**"/>
+				<include name="client/**"/>
+			</fileset>
+		</copy>
+	</target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
@@ -156,7 +142,6 @@
 		<copy file="inc/server/tomcat41/common/lib/commons-discovery.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/lib"/>
-
 		<!-- vvvvv start batchtool build.  it's all here, -->
 		<!-- except for demo-content (under target "servermostly") -->
 		<!-- and batchtool.doc (under target "userdocs") -->
@@ -166,9 +151,9 @@
 		<copy todir="dist/client/demo/batch-demo/object-specifics">
 			<fileset dir="src/xml/batch-demo/object-specifics"/>
 		</copy>
-		<mkdir dir="dist/client/demo/batch-demo/objects"/><!-- pop'ed on running demo in fedora-admin as build or build-ingest -->
-		<!-- ^^^^^ end batch tool build -->		
-
+		<mkdir dir="dist/client/demo/batch-demo/objects"/>
+		<!-- pop'ed on running demo in fedora-admin as build or build-ingest -->
+		<!-- ^^^^^ end batch tool build -->
 		<echo message="Finished building client distribution in dist/client"/>
 	</target>
 	<target name="prep" description="Prepare a temporary build area for targets">
@@ -313,10 +298,21 @@
 			<arg path="src/dbx/userdocs/manual.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<echo message="Translating known-issues.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/known-issues.html"/>
+			<arg path="src/dbx/userdocs/known-issues.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>			
 		<copy todir="dist/server/tomcat41/webapps/userdocs/server">
 			<fileset dir="dist/userdocs"/>
 		</copy>
-		<copy file="src/doc/userdocs/batchtool.doc" todir="dist/server/tomcat41/webapps/userdocs/batch"/><!-- whether/where to put this? -->
+		<copy file="src/doc/userdocs/batchtool.doc" todir="dist/server/tomcat41/webapps/userdocs/batch"/>
+		<!-- whether/where to put this? -->
 		<echo message="Translating apialite.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -439,7 +435,7 @@
 			<arg path="dist/server/tomcat41/webapps/userdocs/localservices/index.html"/>
 			<arg path="src/dbx/userdocs/localservices.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>		
+		</exec>	
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
@@ -840,6 +836,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.118  2003/05/11 20:11:17  rlw
+  added transformation for known-issues doc
+
   Revision 1.117  2003/05/11 18:04:53  wdn5e
   batchtool.doc placement corrected
 
