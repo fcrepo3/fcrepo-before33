@@ -260,6 +260,25 @@
 			<comment>A dc:date that was successfully parsed as a date.</comment>
 		</column>
 	</table>
+    <table name="format">
+        <column name="formatDbID" type="int(11)" autoIncrement="true"/>
+        <column name="formatURI" type="varchar(128)"/>
+    </table>
+    <table name="oItem">
+        <column name="itemDbID" type="int(11)" autoIncrement="true"/>
+        <column name="itemID" type="varchar(128)"/>
+        <column name="pid" type="varchar(32)"/>
+        <column name="status" type="tinyint"/>
+        <column name="vDate" type="bigint"/>
+    </table>
+    <table name="oRecord">
+        <column name="itemDbID" type="int(11)"/>
+        <column name="repID" type="varchar(32)"/>
+        <column name="formatDbID" type="int(11)"/>
+        <column name="cDate" type="bigint"/>
+        <column name="eDate" type="bigint"/>
+        <column name="iDate" type="bigint"/>
+    </table>
 	<table name="doRepJob">
 		<comment>Used as a queue for replication jobs.</comment>
 		<column name="doPID" type="varchar(32)" notNull="true">
