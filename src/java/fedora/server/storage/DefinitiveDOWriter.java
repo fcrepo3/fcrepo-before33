@@ -455,7 +455,7 @@ public class DefinitiveDOWriter
         assertNotRemoved();
         assertNotInvalidated();
         assertNotPendingRemoval();
-        return new Datastream();
+        return null;
     }
 
     public Disseminator[] GetDisseminators(Date versDateTime)
