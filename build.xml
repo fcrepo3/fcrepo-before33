@@ -483,6 +483,10 @@
 		<copy file="src/web-app/fedora/localservices/imagemanip/web.xml" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF"/>
 		<copy file="src/web-app/fedora/localservices/imagemanip/index.html" todir="dist/server/tomcat41/webapps/imagemanip"/>
 		<copy file="lib/server/ij.jar" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF/lib"/>
+		<copy file="lib/server/commons-httpclient.jar" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF/lib"/>
+                <!-- the next two need to go in common cuz sealed -->
+		<copy file="lib/server/jai_core.jar" todir="dist/server/tomcat41/common/lib"/>
+		<copy file="lib/server/jai_codec.jar" todir="dist/server/tomcat41/common/lib"/>
 
 		<!-- soap client -->
 		<copy todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/classes">
@@ -573,7 +577,7 @@
 		<mkdir dir="temp/localservices/classes"/>
 		<mkdir dir="temp/soapclient/classes"/>
 		<mkdir dir="temp/soapclient/lib"/>
-		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar;lib/server/avalon-framework.jar;lib/server/batik.jar;lib/server/fop.jar;lib/server/ij.jar" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar;lib/server/avalon-framework.jar;lib/server/batik.jar;lib/server/fop.jar;lib/server/ij.jar;lib/server/commons-httpclient.jar;lib/server/jai_core.jar;lib/server/jai_codec.jar" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 		<exec executable="jar">
 			<arg value="-cf"/>
 			<arg path="temp/soapclient/lib/fedorautilities.jar"/>
@@ -607,6 +611,11 @@
 </project>
 <!--
   $Log$
+  Revision 1.103  2003/05/04 00:35:13  cwilper
+  put imagemanip dependencies in (new jars).  put the jai stuff
+  in tomcat41/lib/common, because it's signed and needs to be
+  loaded by the main classloader as opposed to the per-servlet one.
+
   Revision 1.102  2003/05/02 20:22:07  cwilper
   changes for imagemanipulation localservice
 
