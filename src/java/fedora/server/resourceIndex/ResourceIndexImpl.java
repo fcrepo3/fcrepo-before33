@@ -859,34 +859,28 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
         
         String bDefPid = digitalObject.getPid();
-        String select = "SELECT riMethodPermutation.permutationId " +
-                        "FROM riMethod, riMethodPermutation " +
-                        "WHERE riMethod.methodId = riMethodPermutation.methodId " +
-                        "AND riMethod.bDefPid = '" + bDefPid + "'";
-        String delete = "DELETE FROM riMethod WHERE riMethod.bDefPid = '" + bDefPid + "'";
+        
+        // Between earlier versions of MySQL lacking sub-select support,
+        // other db's lacking MySQL's joined delete support,
+        // McKoi's JDBC driver lacking updateable ResultSets,
+        // and reluctant to issue a SELECT and then iteratively issue DELETEs,
+        // I am going to count on an implementation detail of the methodId field:
+        // namely that it is constructed bDefPid/methodName
+        String deleteMP = "DELETE FROM riMethodPermutation " +
+                          "WHERE methodId LIKE '" + bDefPid + "/%'";
+        String deleteM = "DELETE FROM riMethod WHERE riMethod.bDefPid = '" + bDefPid + "'";
         
         Statement stmt = null;
         try {
-            stmt = m_conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_UPDATABLE);
-            ResultSet rs = stmt.executeQuery(select);
-            int row;
-            while (rs.next()) {
-                row = rs.getRow();
-                rs.deleteRow();
-                // This is to catch odd behavior in MySQL:
-                // rs.deleteRow() followed by rs.next() skips a row!  
-                if (row == rs.getRow()) {
-                    rs.previous();
-                }
-            }
-            stmt.execute(delete);
+            stmt = m_conn.createStatement();
+            stmt.execute(deleteMP);
+            stmt.execute(deleteM);
         } catch (SQLException e) {
             try {
                 if (stmt != null) {
                     stmt.close();
                 }
-            m_cPool.free(m_conn);
+                m_cPool.free(m_conn);
             } catch(SQLException e2) {
                 throw new ResourceIndexException(e2.getMessage(), e2);
             } finally {
