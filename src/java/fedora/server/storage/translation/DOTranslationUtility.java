@@ -1,7 +1,6 @@
 package fedora.server.storage.translation;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.regex.Pattern;
 
 import fedora.server.Server;
@@ -10,6 +9,7 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
+import fedora.server.utilities.DateUtility;
 
 /**
  *
@@ -59,11 +59,6 @@ import fedora.server.storage.types.Disseminator;
  */
 public abstract class DOTranslationUtility {
 
-	// Date formatter for serializers
-	private static SimpleDateFormat date_formatter=
-		new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		//new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
-		
  	/**
  	 * 
  	 * 	DESERIALIZE_INSTANCE: Deserialize XML into a java object appropriate 
@@ -393,7 +388,7 @@ public abstract class DOTranslationUtility {
 					ds.DSLocation = s_localServerDissemUrlStart 
 						+ PID 
 						+ "/fedora-system:3/getItem/"
-						+ date_formatter.format(ds.DSCreateDT)
+						+ DateUtility.convertDateToString(ds.DSCreateDT)
 						+ "?itemID=" + ds.DatastreamID;
 				}
 			}
@@ -412,7 +407,7 @@ public abstract class DOTranslationUtility {
 					ds.DSLocation = s_localServerDissemUrlStart 
 						+ PID 
 						+ "/fedora-system:3/getItem/"
-						+ date_formatter.format(ds.DSCreateDT)
+						+ DateUtility.convertDateToString(ds.DSCreateDT)
 						+ "?itemID=" + ds.DatastreamID;
 				}
 			}

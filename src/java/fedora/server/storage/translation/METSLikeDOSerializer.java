@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -21,6 +20,7 @@ import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
+import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -71,8 +71,6 @@ public class METSLikeDOSerializer
 
     private String m_XLinkPrefix="xlink";
     private String m_fedoraAuditPrefix="audit";
-    private SimpleDateFormat m_formatter=
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     
     private int m_transContext;
 
@@ -179,13 +177,13 @@ public class METSLikeDOSerializer
         Date cDate=obj.getCreateDate();
         if (cDate!=null) {
             buf.append(" CREATEDATE=\"");
-            buf.append(m_formatter.format(cDate));
+            buf.append(DateUtility.convertDateToString(cDate));
             buf.append("\"");
         }
         Date mDate=obj.getLastModDate();
         if (mDate!=null) {
             buf.append(" LASTMODDATE=\"");
-            buf.append(m_formatter.format(mDate) + "\"");
+            buf.append(DateUtility.convertDateToString(mDate) + "\"");
         }
         String state=obj.getState();
         if (state!=null && !state.equals("")) {
@@ -228,7 +226,7 @@ public class METSLikeDOSerializer
 					(DatastreamXMLMetadata)XMLMetadata.get(i));
 			String dateAttr="";
 			if (ds.DSCreateDT!=null) {
-				dateAttr=" CREATED=\"" + m_formatter.format(ds.DSCreateDT) + "\"";
+				dateAttr=" CREATED=\"" + DateUtility.convertDateToString(ds.DSCreateDT) + "\"";
 			}
 			buf.append("    <" + METS_PREFIX + ":" + innerName 
 				+ " ID=\""	+ ds.DSVersionID + "\""
@@ -331,14 +329,14 @@ public class METSLikeDOSerializer
                     throw new ObjectIntegrityException("Audit record must have justification.");
                 }
                 buf.append("    <" + METS_PREFIX + ":digiprovMD ID=\"" + audit.id
-                        + "\" CREATED=\"" + m_formatter.format(audit.date)
+                        + "\" CREATED=\"" + DateUtility.convertDateToString(audit.date)
                         + "\" STATUS=\"A\">\n");
                 buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"text/xml\" "
                         + "MDTYPE=\"OTHER\" OTHERMDTYPE=\"FEDORA-AUDITTRAIL\""
                         + " LABEL=\"Audit record for '"
                         + StreamUtility.enc(audit.action) + "' action by "
                         + StreamUtility.enc(audit.responsibility) + " at "
-                        + m_formatter.format(audit.date) + "\">\n");
+                        + DateUtility.convertDateToString(audit.date) + "\">\n");
                 buf.append("        <" + METS_PREFIX + ":xmlData>\n");
 				buf.append("            <" + m_fedoraAuditPrefix + ":record>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":process type=\""
@@ -353,7 +351,7 @@ public class METSLikeDOSerializer
                         + StreamUtility.enc(audit.responsibility)
                         + "</" + m_fedoraAuditPrefix + ":responsibility>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":date>"
-                        + m_formatter.format(audit.date)
+                        + DateUtility.convertDateToString(audit.date)
                         + "</" + m_fedoraAuditPrefix + ":date>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":justification>"
                         + StreamUtility.enc(audit.justification)
@@ -429,7 +427,7 @@ public class METSLikeDOSerializer
                     }
 					String dateAttr="";
 					if (dsc.DSCreateDT!=null) {
-						dateAttr=" CREATED=\"" + m_formatter.format(dsc.DSCreateDT) + "\"";
+						dateAttr=" CREATED=\"" + DateUtility.convertDateToString(dsc.DSCreateDT) + "\"";
 					}
                     String sizeAttr=" SIZE=\"" + dsc.DSSize + "\"";
                     String admIDAttr=getIdString(obj, (DatastreamContent)dsc, true);
@@ -590,7 +588,7 @@ public class METSLikeDOSerializer
                 buf.append("    <" + METS_PREFIX + ":serviceBinding ID=\""
                         + diss.dissVersionID + "\" STRUCTID=\"" + diss.dsBindMapID
                         + "\" BTYPE=\"" + diss.bDefID + "\" CREATED=\""
-                        + m_formatter.format(diss.dissCreateDT) + "\""
+                        + DateUtility.convertDateToString(diss.dissCreateDT) + "\""
                         + dissLabelAttr + ">\n");
                 buf.append("      <" + METS_PREFIX + ":interfaceMD" + bDefLabelAttr
                         + " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""

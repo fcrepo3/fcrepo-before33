@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +18,7 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
+import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -66,8 +66,6 @@ public class FOXMLDOSerializer
     public static final String XSI_NS="http://www.w3.org/2001/XMLSchema-instance";
 
     private String m_fedoraAuditPrefix="audit";
-    private SimpleDateFormat m_formatter=
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     private int m_transContext;
 
@@ -170,11 +168,11 @@ public class FOXMLDOSerializer
 		}
 		if (cdate!=null) {
 			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cDate" + "\""
-			+ " VALUE=\"" + m_formatter.format(cdate) + "\"/>\n"); 
+			+ " VALUE=\"" + DateUtility.convertDateToString(cdate) + "\"/>\n"); 
 		}
 		if (mdate!=null) {
 			buf.append("        <" + FOXML_PREFIX  + ":property NAME=\"" + "info:fedora/def:dobj:mDate" + "\""
-			+ " VALUE=\"" + m_formatter.format(mdate) + "\"/>\n"); 
+			+ " VALUE=\"" + DateUtility.convertDateToString(mdate) + "\"/>\n"); 
 		}
 		if (cmodel!=null && !cmodel.equals("")) {
 			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cModel" + "\"" 
@@ -221,7 +219,7 @@ public class FOXMLDOSerializer
 				// insert the ds version-level elements
 				String dateAttr="";
 				if (vds.DSCreateDT!=null) {
-					dateAttr=" CREATED=\"" + m_formatter.format(vds.DSCreateDT) + "\"";
+					dateAttr=" CREATED=\"" + DateUtility.convertDateToString(vds.DSCreateDT) + "\"";
 				}
 				buf.append("        <" + FOXML_PREFIX 
 					+ ":datastreamVersion ID=\"" + vds.DSVersionID + "\"" 
@@ -283,7 +281,7 @@ public class FOXMLDOSerializer
 			buf.append("        <" + FOXML_PREFIX 
 				+ ":datastreamVersion ID=\"" + "AUDIT.0" + "\"" 
 				+ " LABEL=\"" + "Fedora Object Audit Trail" + "\""
-				+ " CREATED=\"" + m_formatter.format(obj.getCreateDate()) +  "\">\n");
+				+ " CREATED=\"" + DateUtility.convertDateToString(obj.getCreateDate()) +  "\">\n");
 			buf.append("            <" + FOXML_PREFIX + ":xmlContent>\n");
 			buf.append("            <" + m_fedoraAuditPrefix + ":auditTrail xmlns:" 
 						+ m_fedoraAuditPrefix + "=\"" + FEDORA_AUDIT_NS + "\">\n");
@@ -304,7 +302,7 @@ public class FOXMLDOSerializer
 						+ StreamUtility.enc(audit.responsibility)
 						+ "</" + m_fedoraAuditPrefix + ":responsibility>\n");
 				buf.append("                    <" + m_fedoraAuditPrefix + ":date>"
-						+ m_formatter.format(audit.date)
+						+ DateUtility.convertDateToString(audit.date)
 						+ "</" + m_fedoraAuditPrefix + ":date>\n");
 				buf.append("                    <" + m_fedoraAuditPrefix + ":justification>"
 						+ StreamUtility.enc(audit.justification)
@@ -398,7 +396,7 @@ public class FOXMLDOSerializer
 				}
 				String dateAttr="";
 				if (vdiss.dissCreateDT!=null) {
-					dateAttr=" CREATED=\"" + m_formatter.format(vdiss.dissCreateDT) + "\"";
+					dateAttr=" CREATED=\"" + DateUtility.convertDateToString(vdiss.dissCreateDT) + "\"";
 				}
 				buf.append("        <" + FOXML_PREFIX 
 					+ ":disseminatorVersion ID=\"" + vdiss.dissVersionID + "\"" 
