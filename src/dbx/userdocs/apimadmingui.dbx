@@ -370,7 +370,7 @@
 							<imagedata fileref="images/searchfields.jpg"/>
 						</imageobject>
 					</mediaobject>
-					<para>The Simple Search searches all indexed metadata fields for the text entered into the text box. All searches are case insensitive.  The wildcard character &ast; can be substituted for any string of characters. The wildcard character &quest; can be substituted for any single character. Clicking Search will retrieve a list of objects where the entered text string appears in an indexed metadata field.</para>
+					<para>The Simple Search searches all indexed metadata fields for the text entered into the text box. All searches are case insensitive.  The wildcard character '*'; can be substituted for any string of characters. The wildcard character '?'; can be substituted for any single character. Clicking Search will retrieve a list of objects where the entered text string appears in an indexed metadata field.</para>
 				</sect4>
 				<sect4>
 					<title>Advanced Search Tab</title>
@@ -573,7 +573,7 @@ object-specifics/vaticanlibrary.xml	objects/vaticanlibrary.xml	demo:3019
 					<para>Case matters in attribute and element names.</para>
 					<para>Fedora will retain as PIDs only <emphasis role="bold">OBJIDs</emphasis> prefixed &quot;test:&quot; or &quot;demo:&quot;.  Other <emphasis role="bold">OBJIDs</emphasis> will be replaced by Fedora-generated PIDs.</para>
 					<para>
-						<emphasis>object-specs</emphasis> in a given batch should meet the structural requirements of that batch’s template:  same number and tagging of datastreams, same number and tagging of metadata elements.  Since substitutions are optional, individual <emphasis>object-specs</emphasis> cannot have &quot;missing&quot; data:  the resulting object simply retains the template&apos;s value.  Neither can <emphasis>object-specs</emphasis> have &quot;extra&quot; data:  the resulting object simply lacks the <emphasis>object-spec&apos;s</emphasis> data -- because the template isn&apos;t designed to use it.  In either case, the batch goes on.</para>
+						<emphasis>object-specs</emphasis> in a given batch should meet the structural requirements of that batch’s template:  same number and tagging of datastreams, same number and tagging of metadata elements.  Since substitutions are optional, individual <emphasis>object-specs</emphasis> cannot have &quot;missing&quot; data:  the resulting object simply retains the template&apos;s value.  Neither can <emphasis>object-specs</emphasis> have &quot;extra&quot; data:  the resulting object simply lacks the <emphasis>object-spec's</emphasis> data -- because the template isn't designed to use it.  In either case, the batch goes on.</para>
 					<para>The following <emphasis>object-spec</emphasis> fragment illustrates some of this.</para>
 					<programlisting>
 &lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
