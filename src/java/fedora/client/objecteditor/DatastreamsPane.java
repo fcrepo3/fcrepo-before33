@@ -279,8 +279,6 @@ public class DatastreamsPane
         JTextField m_referenceTextField;
         JTextArea m_controlGroupTextArea;
         JComboBox m_mimeComboBox;
-        JComboBox m_mdClassComboBox;
-        JComboBox m_mdTypeComboBox;
         CardLayout m_contentCard;
         JPanel m_specificPane;
         TextContentEditor m_xEditor=null;
@@ -389,23 +387,6 @@ public class DatastreamsPane
             commonPane.setLayout(grid);
             addRows(left, right, grid, commonPane);
 
-            // XPANE: need metadata class and mdType:  DEFAULT_FIXME: Remove this... it's unused now!
-            left=new JComponent[] { new JLabel("METS Classification (FIXME: remove this for v2.0?)"),
-                                    new JLabel("METS Metadata Type (FIXME: remove this for v2.0?)") };
-            m_mdClassComboBox=new JComboBox(new String[] { "UNSPECIFIED",
-														   "technical",
-                                                           "digital provenance",
-                                                           "source", "rights",
-                                                           "descriptive" });
-			m_mdClassComboBox.setSelectedIndex(0);
-            Administrator.constrainHeight(m_mdClassComboBox);
-            m_mdTypeComboBox=new JComboBox(new String[] { "UNSPECIFIED", "DC", "DDI", "EAD",
-                                                          "FGDC", "LC_AV", "MARC",
-                                                          "NISOIMG", "TEIHDR",
-                                                          "VRA" });
-            m_mdTypeComboBox.setSelectedIndex(0);
-            Administrator.constrainHeight(m_mdTypeComboBox);
-            m_mdTypeComboBox.setEditable(true);
             m_lastSelectedMimeType=(String) m_mimeComboBox.getSelectedItem();
             m_mimeComboBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
@@ -429,11 +410,13 @@ public class DatastreamsPane
                     }
                 }
             });
-            right=new JComponent[] { m_mdClassComboBox, m_mdTypeComboBox };
+
+/*            right=new JComponent[] { m_mdClassComboBox, m_mdTypeComboBox };
             JPanel xTopPane=new JPanel();
             grid=new GridBagLayout();
             xTopPane.setLayout(grid);
             addRows(left, right, grid, xTopPane);
+*/
             try {
                 m_xEditor=new TextContentEditor();
                 m_xEditor.init("text/plain", new ByteArrayInputStream(
@@ -468,7 +451,7 @@ public class DatastreamsPane
             xBottomPane.add(xImportButton);
             JPanel xPane=new JPanel();
             xPane.setLayout(new BorderLayout());
-            xPane.add(xTopPane, BorderLayout.NORTH);
+//            xPane.add(xTopPane, BorderLayout.NORTH);
             xPane.add(m_xEditor.getComponent(), BorderLayout.CENTER);
             xPane.add(xBottomPane, BorderLayout.SOUTH);
 
@@ -630,16 +613,7 @@ public class DatastreamsPane
                     String label=m_labelTextField.getText();
                     String mimeType=(String) m_mimeComboBox.getSelectedItem();
                     String location=null;
-                    String mdClass=null;
-                    String mdType=null;
                     if (m_controlGroup.equals("X")) {
-                        // m_mdClassComboBox
-                        mdClass=(String) m_mdClassComboBox.getSelectedItem();
-                        // if mdClass is not specified, default it to technical for
-                        // METS legacy purposes.
-                        if (mdClass.equals("UNSPECIFIED")) {mdClass="technical";}
-                        // m_mdTypeComboBox
-                        mdType=(String) m_mdTypeComboBox.getSelectedItem();
                         // m_xEditor
                         location=Administrator.UPLOADER.upload(m_xEditor.getContent());
                     } else if (m_controlGroup.equals("M")) {
