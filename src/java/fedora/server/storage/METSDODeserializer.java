@@ -8,6 +8,7 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.StreamUtility;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -23,21 +24,33 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
- * Reads a METS-Fedora XML stream into a DigitalObject.
+ * Reads an XML stream that is similar to a METS v1_1 document into a 
+ * Fedora DigitalObject.
+ * <p></p>
+ * See <a href="METSDOSerializer.html">METSDOSerializer</a> for details on
+ * the differences between the XML encoding used here and the 
+ * METS schema.
+ * 
+ * @author cwilper@cs.cornell.edu
  */
 public class METSDODeserializer 
         extends DefaultHandler
         implements DODeserializer {
-        
+
+    /** The namespace for METS */
     private final static String M="http://www.loc.gov/METS/";
 
     private SAXParser m_parser;
     private String m_characterEncoding;
-    
+
+    /** The object to deserialize to. */
     private DigitalObject m_obj;
-    private HashMap m_prefixes; // uri-to-prefix mapping
+    
+    /** 
+     * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events. 
+     */
+    private HashMap m_prefixes;
     
     private boolean m_rootElementFound;
     private String m_dsId;
@@ -47,11 +60,30 @@ public class METSDODeserializer
     private String m_dsInfoType;
     private String m_dsLabel;
     private int m_dsMDClass;
+    private int m_dsSize;
+    private String m_dsMimeType;
+    private String[] m_dsAdmIds;
+    private String[] m_dsDmdIds;
     private StringBuffer m_dsXMLBuffer;
-    private ArrayList m_dsPrefixes;    // namespace prefixes used in the currently scanned datastream
+    
+    // are we reading binary? (base64-encoded) 
+    private boolean m_readingContent;
+    
+    /** Namespace prefixes used in the currently scanned datastream */
+    private ArrayList m_dsPrefixes;
+
+    /** While parsing, are we inside XML metadata? */
     private boolean m_inXMLMetadata;
+    
+    /** 
+     * Used to differentiate between a metadata section in this object
+     * and a metadata section in an inline XML datastream that happens
+     * to be a METS document. 
+     */
     private int m_xmlDataLevel;
-    private StringBuffer m_auditBuffer;  // char buffer for audit element contents
+    
+    /** String buffer for audit element contents */
+    private StringBuffer m_auditBuffer;
     private String m_auditProcessType;
     private String m_auditAction;
     private String m_auditResponsibility;
@@ -128,7 +160,7 @@ public class METSDODeserializer
     }
     
     public void startElement(String uri, String localName, String qName, 
-            Attributes a) {
+            Attributes a) throws SAXException {
         if (uri.equals(M) && !m_inXMLMetadata) {
             // a new mets element is starting
             if (localName.equals("mets")) {
@@ -179,6 +211,50 @@ public class METSDODeserializer
                 m_dsPrefixes=new ArrayList();
                 m_xmlDataLevel=0;
                 m_inXMLMetadata=true;
+            } else if (localName.equals("fileGrp")) {
+                m_dsId=grab(a, M, "ID");
+            } else if (localName.equals("file")) {
+                // ID="DS3.0" 
+                // CREATED="2002-05-20T06:32:00" 
+                // MIMETYPE="image/jpg" 
+                // ADMID="TECH3"
+                // OWNERID="E"
+                // STATUS=""
+                // SIZE="bytes"
+                m_dsVersId=grab(a, M, "ID");
+                m_dsCreateDate=DateUtility.convertStringToDate(
+                        grab(a,M,"CREATED"));
+                m_dsMimeType=grab(a,M,"MIMETYPE");
+                String ADMID=grab(a,M,"ADMID");
+                if ((ADMID!=null) && (!"".equals(ADMID))) {
+                    if (ADMID.indexOf(" ")!=-1) {
+                        m_dsAdmIds=ADMID.split(" ");
+                    }
+                }
+                String DMDID=grab(a,M,"DMDID");
+                if ((DMDID!=null) && (!"".equals(DMDID))) {
+                    if (DMDID.indexOf(" ")!=-1) {
+                        m_dsDmdIds=DMDID.split(" ");
+                    }
+                }
+                m_dsState=grab(a,M,"STATUS");
+                String sizeString=grab(a,M,"SIZE");
+                if (sizeString!=null && !sizeString.equals("")) {
+                    try {
+                        m_dsSize=Integer.parseInt(sizeString);
+                    } catch (NumberFormatException nfe) {
+                        throw new SAXException("Size must be a number.");
+                    }
+                }
+            } else if (localName.equals("FLocat")) {
+                // inside a "file" element, it's either going to be
+                // FLocat (a reference) or FContent (inline)
+                // LOCTYPE="URL" 
+                // xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" 
+                // xlink:title="Saskia high jpg image"/>
+            } else if (localName.equals("FContent")) {
+                // signal that we want to suck it in
+                m_readingContent=true;
             }
         } else {
             if (m_inXMLMetadata) {
@@ -241,14 +317,21 @@ public class METSDODeserializer
     
     public void characters(char[] ch, int start, int length) {
         if (m_inXMLMetadata) {
-            m_dsXMLBuffer.append(ch, start, length);
             if (m_auditBuffer!=null) {
                 m_auditBuffer.append(ch, start, length);
+            } else {
+                // since this data is encoded straight back to xml,
+                // we need to make sure special characters &, <, >, ", and '
+                // are re-converted to the xml-acceptable equivalents.
+                StreamUtility.enc(ch, start, length, m_dsXMLBuffer);
             }
+        } else if (m_readingContent) {
+            // append it to something...
         }
     }
     
     public void endElement(String uri, String localName, String qName) {
+        m_readingContent=false;
         if (m_inXMLMetadata) {
             if (uri.equals(M) && localName.equals("xmlData") 
                     && m_xmlDataLevel==0) {
