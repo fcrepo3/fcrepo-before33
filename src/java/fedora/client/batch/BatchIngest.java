@@ -93,12 +93,24 @@ class BatchIngest {
 					badFileCount++;
 					System.err.println("batch directory contains unexpected directory or file: " + files[i].getName());
 				} else {
-					String pid = autoIngestor.ingestAndCommit(new FileInputStream(files[i]), logMessage);
+					String pid = null;
+					try {
+						pid = autoIngestor.ingestAndCommit(new FileInputStream(files[i]), logMessage);
+					} catch (Exception e) {
+						System.err.println("ingest failed for: " + files[i].getName());
+						System.err.println("\t" + e.getClass().getName());						
+						System.err.println("\t" + e.getMessage());						
+						System.err.println("===BATCH HAS FAILED===");
+						System.err.println("consider manually backing out " +
+						"any objects which were already successfully ingested in this batch");
+						throw e;
+					}
 					if ((pid == null) || (pid.equals (""))) {
 						failedIngestCount++;
-						System.err.println("ingest failed for file: " + files[i].getName());
+						System.err.println("ingest failed for: " + files[i].getName());
 					} else {
 						succeededIngestCount++;
+						System.out.println("ingest succeeded for: " + files[i].getName());						
 						if (pidsFormat.equals("xml")) {
 							out.println("\t<map inputid=\"" + files[i].getName() + "\" pid=\"" + pid + "\" />");
 						} else if (pidsFormat.equals("text")) {
@@ -113,10 +125,12 @@ class BatchIngest {
 				out.println("</map-inputids-to-pids>");
 			}
 			out.close();
+			System.err.println("\n" + "Batch Ingest Summary");			
 			System.err.println("\n" + (succeededIngestCount + failedIngestCount + badFileCount) + " files processed in this batch");
 			System.err.println("\t" + succeededIngestCount + " objects successfully ingested into Fedora");
-			System.err.println("\t" + failedIngestCount + " objects unsuccessfully ingest into Fedora");
-			System.err.println("\t" + badFileCount + " unexpected files in batch directory");		
+			System.err.println("\t" + failedIngestCount + " objects failed");
+			System.err.println("\t" + badFileCount + " unexpected files in directory");
+			System.err.println("\t" + (files.length - (succeededIngestCount + failedIngestCount + badFileCount)) + " files ignored after error");			
 		}		
 	}
 	
