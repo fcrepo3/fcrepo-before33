@@ -130,8 +130,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
    *        configured with Fedora (see Fedora.fcfg).  Current 
    * 	    options are <i>schematron/foxmlRules1-0.xml</i>
    *        for FOXML or <i>schematron/metsExtRules1-0.xml</i> for METS
-   * @param connectionPool For Level 3 validation, a connection pool 
-   *        to the Fedora objects database. Default is null.
+   * @param logTarget Logging target
    * @throws ServerException If construction fails for any reason.
    */
 	public DOValidatorImpl(String tempDir, Map xmlSchemaMap, 

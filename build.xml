@@ -462,7 +462,7 @@
 		<mkdir dir="dist/userdocs/server/serverdocs"/>
 		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common,fedora.server.config" 
 			     sourcepath="${src.java.dir};temp/server/java;src/html/server/javadoc" 
-			     classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5};${lib.jena}" 
+			     classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5};${lib.jena};${lib.trippi}" 
 			     destdir="dist/userdocs/server/serverdocs" 
 			     author="true" 
 			     version="true" 
