@@ -166,16 +166,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public byte[] exportObject(String PID) throws java.rmi.RemoteException {
         assertInitialized();
-        try {
-            return new byte[0];
-        } catch (ServerException se) {
-            logStackTrace(se);
-            AxisUtility.throwFault(se);
-        } catch (Exception e) {
-            logStackTrace(e);
-            AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
-        }
-        return null;
+        return new byte[0];
     }
 
     public void withdrawObject(String PID, String logMessage) throws java.rmi.RemoteException {
