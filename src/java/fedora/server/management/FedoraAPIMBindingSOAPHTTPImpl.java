@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.types.NonNegativeInteger;
 
 /**
  *
@@ -406,8 +407,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 	}
 }
 
-    public java.util.Calendar[] purgeDisseminator(String PID, 
-            String disseminatorID, java.util.Calendar endDT) 
+    public java.util.Calendar[] purgeDisseminator(String PID,
+            String disseminatorID, java.util.Calendar endDT)
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
@@ -475,6 +476,22 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(se);
         }
     }
+
+    public java.lang.String[] getNextPID(NonNegativeInteger numPIDs,
+            String namespace)
+            throws java.rmi.RemoteException {
+        assertInitialized();
+        try {
+            if(numPIDs==null) numPIDs=new NonNegativeInteger("1");
+            return s_management.getNextPID(getContext(), numPIDs.intValue(), namespace);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
+    }
+
 
     private void assertInitialized()
             throws java.rmi.RemoteException {

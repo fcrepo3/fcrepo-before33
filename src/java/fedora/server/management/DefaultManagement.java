@@ -949,6 +949,14 @@ public class DefaultManagement
         return out;
     }
 
+    public String[] getNextPID(Context context, int numPIDs,
+            String namespace)
+            throws ServerException {
+        m_ipRestriction.enforce(context);
+        return m_manager.getNextPID(numPIDs, namespace);
+    }
+
+
     public class DisseminatorDateComparator
             implements Comparator {
 

@@ -80,14 +80,14 @@ public interface Management {
 
     public Datastream[] getDatastreamHistory(Context context, String pid, String datastreamID) throws ServerException;
 
-	public String addDisseminator(Context context, 
-								  String pid, 
-								  String bDefPID, 
-								  String bMechPid, 
-								  String dissLabel, 
-								  String bDefLabel, 
-								  String bMechLabel, 
-								  DSBindingMap bindingMap, 
+	public String addDisseminator(Context context,
+								  String pid,
+								  String bDefPID,
+								  String bMechPid,
+								  String dissLabel,
+								  String bDefLabel,
+								  String bMechLabel,
+								  DSBindingMap bindingMap,
 								  String dissState) throws ServerException;
 
     public void modifyDisseminator(Context context, String pid, String disseminatorID, String bMechPid, String dissLabel, String bDefLabel, String bMechLabel, DSBindingMap bindingMap, String logMessage, String dissState) throws ServerException;
@@ -109,5 +109,7 @@ public interface Management {
     public void setDatastreamState(Context context, String pid, String dsID, String dsState, String logMessage) throws ServerException;
 
     public void setDisseminatorState(Context context, String pid, String dsID, String dsState, String logMessage) throws ServerException;
+
+    public String[] getNextPID(Context context, int numPIDs, String namespace) throws ServerException;
 
 }
