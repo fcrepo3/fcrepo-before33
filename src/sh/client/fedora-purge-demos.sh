@@ -43,9 +43,9 @@ OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
 export JAVA_HOME
 
-echo "Purging Demonstration Objects (29 total)... "
+echo "Purging Demonstration Objects (27 total)... "
 
-echo "Purging data objects (12 data objects)
+echo "Purging data objects (11 data objects)
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:5  "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:6  "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:7  "Deleted by fedora-purge-demos script"
@@ -55,11 +55,10 @@ echo "Purging data objects (12 data objects)
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:17 "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:18 "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:21 "Deleted by fedora-purge-demos script"
-(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:24 "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:26 "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:29 "Deleted by fedora-purge-demos script"
 
-echo "Purging bMechs (10 bmech objects)"
+echo "Purging bMechs (9 bmech objects)"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:2  "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:3  "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:4  "Deleted by fedora-purge-demos script"
@@ -67,7 +66,6 @@ echo "Purging bMechs (10 bmech objects)"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:13 "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:16 "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:20 "Deleted by fedora-purge-demos script"
-(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:23 "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:25 "Deleted by fedora-purge-demos script"
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client;$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.purge.AutoPurger %1 %2 %3 %4 demo:28 "Deleted by fedora-purge-demos script"
 
