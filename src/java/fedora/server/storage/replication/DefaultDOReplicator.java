@@ -451,7 +451,7 @@ public class DefaultDOReplicator
 					+ " FROM dodissassoc, diss"
 					+ " WHERE dodissassoc.doDbID=" + doDbID + " AND diss.dissID='" + dissArray[j].dissID + "'" 
 					+ " AND dodissassoc.dissDbID=diss.dissDbID");
-				while (!results.next()) {
+				if (!results.next()) {
 					// the disseminator does NOT exist in the database; it is NEW.
 					newDisseminators.add(dissArray[j]);						
 				}

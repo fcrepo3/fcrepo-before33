@@ -404,12 +404,12 @@ public class DefaultManagement
 				diss.dissCreateDT=nowUTC;
 				diss.dissID = w.newDisseminatorID();
 				diss.dissVersionID = diss.dissID + ".0";
-				// TODO: Make sure it's correct to generate the binding map ID here.
-				// I assume we should ignore values passed in.
+				// Generate the binding map ID here - ignore the value passed in
+                                // and set the field on both the disseminator and the binding map,
+                                // then set the disseminator's binding map to the one passed in.
 				diss.dsBindMapID=w.newDatastreamBindingMapID();
-				diss.dsBindMap.dsBindMapID=w.newDatastreamBindingMapID();
-				//diss.dsBindMap = bindingMap;
-				//diss.dsBindMapID = bindingMap.dsBindMapID;
+                                bindingMap.dsBindMapID=diss.dsBindMapID;
+				diss.dsBindMap=bindingMap;
 				AuditRecord audit=new fedora.server.storage.types.AuditRecord();
 				audit.id=w.newAuditRecordID();
 				audit.processType="Fedora API-M";
