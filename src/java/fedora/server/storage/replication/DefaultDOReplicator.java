@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import fedora.server.errors.*;
 import fedora.server.storage.*;
+import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 import fedora.server.storage.types.*;
 import fedora.server.utilities.SQLUtility;
 
@@ -561,6 +562,46 @@ public class DefaultDOReplicator
                         }
                         int doDbID=results.getInt("doDbID");
                         results.close();
+
+                        // FIXME: this is a quick hack to fix the problem of versioned datastreams
+                        // not being properly removed from LLStore at time of purge.
+                        // Check for any Managed Content Datastreams that have been purged
+                        HashMap versions = new HashMap();
+                        Datastream[] ds = reader.GetDatastreams(null, null);
+                        for (int i=0; i<ds.length; i++) {
+                          if(ds[i].DSControlGrp.equalsIgnoreCase("M"))
+                          {
+                            java.util.Date[] dates = reader.getDatastreamVersions(ds[i].DatastreamID);
+                            for (int j=0; j<dates.length; j++)
+                            {
+                              Datastream d = reader.GetDatastream(ds[i].DatastreamID, dates[j]);
+                              versions.put(d.DSVersionID, d.DSLocation);
+                            }
+                          }
+                        }
+                        HashMap dsPaths = new HashMap();
+                        results=logAndExecuteQuery(st,"SELECT token FROM "
+                            + "datastreamPaths WHERE token LIKE '"
+                            + doPID+"%'");
+                        boolean isDeleted = false;
+                        while (results.next())
+                        {
+                          String token = results.getString("token");
+                          if(!versions.containsValue(token))
+                          {
+                            System.out.println("Deleting ManagedContent datastream. " + "id: " + token);
+                            logInfo("Deleting ManagedContent datastream. " + "id: " + token);
+                            isDeleted = true;
+                            try {
+                              FileSystemLowlevelStorage.getDatastreamStore().remove(token);
+                            } catch (LowlevelStorageException llse) {
+                              logWarning("While attempting removal of managed content datastream: " + llse.getClass().getName() + ": " + llse.getMessage());
+                            }
+                          }
+                        }
+                        results.close();
+                        if(isDeleted)
+                          return true;
 
                         // Get all disseminators that are in db for this object
                         HashSet dissDbIds = new HashSet();
