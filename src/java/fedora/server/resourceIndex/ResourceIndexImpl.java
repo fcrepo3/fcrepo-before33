@@ -96,7 +96,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         namespaces = new HashMap();
         namespaces.put("dc", NS_DC);
         namespaces.put("fedora", NS_FEDORA);
-        namespaces.put("fedora-ont", NS_FEDORA_ONT);
+        namespaces.put("fedora-ont", NS_FEDORA_MODEL);
         namespaces.put("rdf", NS_RDF);
         m_connector = connector;
         m_reader = m_connector.getReader();
@@ -139,15 +139,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		String doIdentifier = getDOURI(digitalObject);
 		
 		// Insert basic system metadata
-        queuePlainLiteralTriple(doIdentifier, FEDORA_LABEL, digitalObject.getLabel());
-        queuePlainLiteralTriple(doIdentifier, FEDORA_DATE_CREATED, getDate(digitalObject.getCreateDate()));
-        queueTypedLiteralTriple(doIdentifier, FEDORA_DATE_MODIFIED, getDate(digitalObject.getLastModDate()), "http://www.w3.org/2001/XMLSchema#date");
+        queuePlainLiteralTriple(doIdentifier, MODEL_LABEL, digitalObject.getLabel());
+        queuePlainLiteralTriple(doIdentifier, MODEL_DATE_CREATED, getDate(digitalObject.getCreateDate()));
+        queueTypedLiteralTriple(doIdentifier, MODEL_DATE_MODIFIED, getDate(digitalObject.getLastModDate()), "http://www.w3.org/2001/XMLSchema#date");
 		
 		if (digitalObject.getOwnerId() != null) {
-		    queuePlainLiteralTriple(doIdentifier, FEDORA_OWNER_ID, digitalObject.getOwnerId());
+		    queuePlainLiteralTriple(doIdentifier, MODEL_OWNER, digitalObject.getOwnerId());
 		}
-		queuePlainLiteralTriple(doIdentifier, FEDORA_CMODEL, digitalObject.getContentModelId());
-		queueTriple(doIdentifier, FEDORA_STATE, getStateURI(digitalObject.getState()));
+		queuePlainLiteralTriple(doIdentifier, MODEL_CMODEL, digitalObject.getContentModelId());
+		queueTriple(doIdentifier, MODEL_STATE, getStateURI(digitalObject.getState()));
 		
         // Insert ExtProperties
         Map extProps = digitalObject.getExtProperties();
@@ -207,17 +207,17 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // Alternate IDs
         String[] altIDs = ds.DatastreamAltIDs;
         for (int i = 0; i < altIDs.length; i++) {
-            queuePlainLiteralTriple(datastreamURI, FEDORA_DS_ALT_ID, altIDs[i]);
+            queuePlainLiteralTriple(datastreamURI, MODEL_ALT_ID, altIDs[i]);
         }
         
         // Volatile Datastreams: False for datastreams that are locally managed 
         // (have a control group "M" or "I").
-        String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
+        //String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
 
-        queueTriple(doURI, FEDORA_REPRESENTATION, datastreamURI);
-        queueTypedLiteralTriple(datastreamURI, FEDORA_DATE_MODIFIED, getDate(ds.DSCreateDT), "http://www.w3.org/2001/XMLSchema#date");
-        queuePlainLiteralTriple(datastreamURI, FEDORA_DIRECT, "true");
-        queuePlainLiteralTriple(datastreamURI, FEDORA_VOLATILE, isVolatile);
+        queueTriple(doURI, REP_REPRESENTATION, datastreamURI);
+        queueTypedLiteralTriple(datastreamURI, MODEL_DATE_MODIFIED, getDate(ds.DSCreateDT), "http://www.w3.org/2001/XMLSchema#date");
+        //queuePlainLiteralTriple(datastreamURI, REP_DIRECT, "true");
+        //queuePlainLiteralTriple(datastreamURI, REP_VOLATILE, isVolatile);
         addQueue(false);
         
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
@@ -245,7 +245,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    String doIdentifier = getDOURI(digitalObject);
         String bMechPID = diss.bMechID;
         
-        queueTriple(doIdentifier, FEDORA_USES_BMECH, getDOURI(bMechPID));
+        queueTriple(doIdentifier, MODEL_USES_BMECH, getDOURI(bMechPID));
 	    String bDefPID = diss.bDefID;
         String dissState = getStateURI(diss.dissState);
 	    String dissCreateDT = getDate(diss.dissCreateDT);
@@ -267,16 +267,16 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                      permutation = rs.getString("permutation");
                      mimeType = rs.getString("mimeType");
                      rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                     queueTriple(doIdentifier, FEDORA_REPRESENTATION, rep);
-                     queueTriple(rep, FEDORA_STATE, dissState);
+                     queueTriple(doIdentifier, REP_REPRESENTATION, rep);
+                     queueTriple(rep, MODEL_STATE, dissState);
                      queuePlainLiteralTriple(rep, 
-                                             FEDORA_MEDIATYPE, 
+                                             REP_MEDIATYPE, 
                                              mimeType);
-                     queuePlainLiteralTriple(rep, 
-                                             FEDORA_DIRECT, 
-                                             "false"); 
+                     //queuePlainLiteralTriple(rep, 
+                     //                        REP_DIRECT, 
+                     //                        "false"); 
                      queueTypedLiteralTriple(rep, 
-                                             FEDORA_DATE_MODIFIED, 
+                                             MODEL_DATE_MODIFIED, 
                                              dissCreateDT,
                                              "http://www.w3.org/2001/XMLSchema#date"); 
                  }
@@ -300,7 +300,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    }
 
 	    // TODO
-        //m_store.insert(disseminatorIdentifier, FEDORA_DISS_TYPE, diss.?);
+        //m_store.insert(disseminatorIdentifier, MODEL_DISS_TYPE, diss.?);
         //m_store.insert(disseminatorIdentifier, FEDORA_VOLATILE, diss.?); // redirect, external, based on diss that depends on red/ext (true/false)
         
         addQueue(false);
@@ -420,7 +420,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // delete bMech reference: 
         try {
             m_writer.delete(m_reader.findTriples(TripleMaker.createResource(doIdentifier), 
-                                                 TripleMaker.createResource(FEDORA_USES_BMECH), 
+                                                 TripleMaker.createResource(MODEL_USES_BMECH), 
                                                  TripleMaker.createResource(getDOURI(bMechPID)), 
                                                  0), 
                             false);
@@ -491,12 +491,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 
 	private void addBDef(DigitalObject bDef) throws ResourceIndexException {
 		String doURI = getDOURI(bDef);
-        queueTriple(doURI, RDF_TYPE, FEDORA_BDEF);
+        queueTriple(doURI, RDF_TYPE, MODEL_BDEF);
 		
 		Datastream ds = getLatestDatastream(bDef.datastreams("METHODMAP"));
 		MethodDef[] mdef = getMethodDefs(bDef.getPid(), ds);
 		for (int i = 0; i < mdef.length; i++) {
-            queuePlainLiteralTriple(doURI, FEDORA_DEFINES_METHOD, mdef[i].methodName);
+            queuePlainLiteralTriple(doURI, MODEL_DEFINES_METHOD, mdef[i].methodName);
 	        // m_store.insertLiteral(doIdentifier, "foo:methodLabel", mdef[i].methodLabel);
 	    }
         addQueue(false);
@@ -504,16 +504,16 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	
 	private void addBMech(DigitalObject bMech) throws ResourceIndexException {
 		String doURI = getDOURI(bMech);
-        queueTriple(doURI, RDF_TYPE, FEDORA_BMECH);
+        queueTriple(doURI, RDF_TYPE, MODEL_BMECH);
 	
 		String bDefPid = getBDefPid(bMech);
-		queueTriple(doURI, FEDORA_IMPLEMENTS, getDOURI(bDefPid));
+		queueTriple(doURI, MODEL_IMPLEMENTS, getDOURI(bDefPid));
 		addQueue(false);	
 	}
 	
 	private void addDataObject(DigitalObject digitalObject) throws ResourceIndexException {
 		String identifier = getDOURI(digitalObject);
-        queueTriple(identifier, RDF_TYPE, FEDORA_DATAOBJECT);	
+        queueTriple(identifier, RDF_TYPE, MODEL_DATAOBJECT);	
         addQueue(false);
 	}
 	
@@ -1004,7 +1004,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	}
     
     private String getStateURI(String state) {
-        return state.equalsIgnoreCase("A") ? FEDORA_STATE_ACTIVE : FEDORA_STATE_INACTIVE;
+        return state.equalsIgnoreCase("A") ? MODEL_ACTIVE : MODEL_INACTIVE;
     }
 
     private void queueTriple(String subject, 
