@@ -169,7 +169,7 @@ public interface DigitalObject {
 
     /**
      * Sets the preferred namespace uri-to-prefix map for XML renditions of
-     * this object or components.
+     * this object.
      *
      * @param mapping The uri-to-prefix mapping.
      */
@@ -177,7 +177,7 @@ public interface DigitalObject {
 
     /**
      * Gets the preferred namespace uri-to-prefix map for XML renditions of
-     * this object or components.
+     * this object.
      *
      * @return The uri-to-prefix mapping.
      */
