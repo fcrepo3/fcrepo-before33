@@ -42,15 +42,16 @@ OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
 export JAVA_HOME
 
-echo "Ingesting Demonstration Objects (27 total)..."
+echo "Ingesting Demonstration Objects..."
 
 echo "Ingesting local-server simple image demo (1 bdef, 1 bmech, 1 object)..."
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.ingest.AutoIngestor $1 $2 $3 $4 $FEDORA_HOME/client/demo/local-server-demos/simple-image-demo/bdef-simple-image.xml "Created by fedora-ingest-demos script")
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.ingest.AutoIngestor $1 $2 $3 $4 $FEDORA_HOME/client/demo/local-server-demos/simple-image-demo/bmech-simple-image-4res.xml "Created by fedora-ingest-demos script")
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.ingest.AutoIngestor $1 $2 $3 $4 $FEDORA_HOME/client/demo/local-server-demos/simple-image-demo/obj-image-4res-colliseum.xml "Created by fedora-ingest-demos script")
 
-echo "Ingesting local-server simple document demo (1 object)..."
+echo "Ingesting local-server simple document demos (2 objects)..."
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.ingest.AutoIngestor $1 $2 $3 $4 $FEDORA_HOME/client/demo/local-server-demos/simple-document-demo/obj-document-ECDLpaper.xml "Created by fedora-ingest-demos script")
+(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.ingest.AutoIngestor $1 $2 $3 $4 $FEDORA_HOME/client/demo/local-server-demos/simple-document-demo/obj-document-batik-demos.xml "Created by fedora-ingest-demos script")
 
 echo "Ingesting local-server image manipulation demo (1 bdef, 1 bmech, 1 object)..."
 (exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.ingest.AutoIngestor $1 $2 $3 $4 $FEDORA_HOME/client/demo/local-server-demos/image-manip-demo/bdef-image-manip.xml "Created by fedora-ingest-demos script")
