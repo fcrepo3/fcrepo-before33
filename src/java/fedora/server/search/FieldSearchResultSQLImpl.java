@@ -441,7 +441,7 @@ public class FieldSearchResultSQLImpl
             }
             if (n.equals("bDef")) {
                 if (disses==null) {
-                    disses=r.GetDisseminators(null);
+                    disses=r.GetDisseminators(null, null);
                 }
                 for (int i2=0; i2<disses.length; i2++) {
                     f.bDefs().add(disses[i2].bDefID);
@@ -449,7 +449,7 @@ public class FieldSearchResultSQLImpl
             }
             if (n.equals("bMech")) {
                 if (disses==null) {
-                    disses=r.GetDisseminators(null);
+                    disses=r.GetDisseminators(null, null);
                 }
                 for (int i2=0; i2<disses.length; i2++) {
                     f.bMechs().add(disses[i2].bMechID);

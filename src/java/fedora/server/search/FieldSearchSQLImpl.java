@@ -151,7 +151,7 @@ public class FieldSearchSQLImpl
                         + " has a DC datastream, but it's not inline XML.");
             }
             // add bdef and bmech ids for each active disseminator
-            Disseminator[] disses=reader.GetDisseminators(null);
+            Disseminator[] disses=reader.GetDisseminators(null, null);
             ArrayList bDefs=new ArrayList();
             ArrayList bMechs=new ArrayList();
             for (int i=0; i<disses.length; i++) {

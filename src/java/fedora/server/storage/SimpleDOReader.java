@@ -259,6 +259,15 @@ public class SimpleDOReader
         return versionDates;
     }
 
+    public Date[] getDisseminatorVersions(String dissID) {
+        List l=m_obj.disseminators(dissID);
+        Date[] versionDates=new Date[l.size()];
+        for (int i=0; i<l.size(); i++) {
+            versionDates[i]=((Disseminator) l.get(i)).dissCreateDT;
+        }
+        return versionDates;
+    }
+
     public Datastream[] GetDatastreams(Date versDateTime, String state) {
         String[] ids=ListDatastreamIDs(null);
         ArrayList al=new ArrayList();
@@ -343,12 +352,12 @@ public class SimpleDOReader
         }
     }
 
-    public Disseminator[] GetDisseminators(Date versDateTime) {
+    public Disseminator[] GetDisseminators(Date versDateTime, String state) {
         String[] ids=ListDisseminatorIDs(null);
         ArrayList al=new ArrayList();
         for (int i=0; i<ids.length; i++) {
            Disseminator diss=GetDisseminator(ids[i], versDateTime);
-           if (diss!=null) {
+           if (diss!=null && (state==null || diss.dissState.equals(state)) ) {
                al.add(diss);
            }
         }
@@ -363,7 +372,7 @@ public class SimpleDOReader
     }
 
     public String[] GetBehaviorDefs(Date versDateTime) {
-        Disseminator[] disses=GetDisseminators(versDateTime);
+        Disseminator[] disses=GetDisseminators(versDateTime, null);
         String[] bDefIds=new String[disses.length];
         for (int i=0; i<disses.length; i++) {
             bDefIds[i]=disses[i].bDefID;
@@ -495,7 +504,7 @@ public class SimpleDOReader
         if (bDefPID.equals("fedora-system:1")) {
             return null;
         }
-        Disseminator[] disses=GetDisseminators(versDateTime);
+        Disseminator[] disses=GetDisseminators(versDateTime, null);
         String bMechPid=null;
         for (int i=0; i<disses.length; i++) {
             if (disses[i].bDefID.equals(bDefPID)) {
@@ -521,7 +530,7 @@ public class SimpleDOReader
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
           throws ObjectIntegrityException, ServerException {
-        Disseminator[] disses=GetDisseminators(versDateTime);
+        Disseminator[] disses=GetDisseminators(versDateTime, null);
         DSBindingMapAugmented[] augMaps=new DSBindingMapAugmented[disses.length];
         for (int i=0; i<disses.length; i++) {
             DSBindingMapAugmented augMap=new DSBindingMapAugmented();

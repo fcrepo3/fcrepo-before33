@@ -744,7 +744,7 @@ public class DefaultDOReplicator
                             + "exist for PID: " + doPID);
                 }
 
-                disseminators = doReader.GetDisseminators(null);
+                disseminators = doReader.GetDisseminators(null, null);
                 for (int i=0; i<disseminators.length; ++i) {
                     bDefDBID = lookupBehaviorDefinitionDBID(connection,
                             disseminators[i].bDefID);

@@ -333,7 +333,7 @@ public class DefaultAccess extends Module implements Access
     // SDP: get a bmech reader to get information that is specific to
     // a mechanism.
     BMechReader bmechreader = null;
-    Disseminator[] dissSet = reader.GetDisseminators(versDateTime);
+    Disseminator[] dissSet = reader.GetDisseminators(versDateTime, null);
     startTime = new Date().getTime();
     for (int i=0; i<dissSet.length; i++)
     {

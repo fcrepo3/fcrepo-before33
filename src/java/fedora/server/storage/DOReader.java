@@ -178,6 +178,17 @@ public interface DOReader
     public Date[] getDatastreamVersions(String datastreamID) throws ServerException;
 
     /**
+     * Gets the creation dates of all versions of a particular disseminator,
+     * in no particular order.
+     *
+     * @param dissID The disseminator identifier
+     * @return the creation dates.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    public Date[] getDisseminatorVersions(String dissID) throws ServerException;
+
+    /**
      * Gets all datastreams as of a certain date and in a certain state.
 	 *
      * This iterates through all datastreams in the object and
@@ -234,7 +245,7 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public Disseminator[] GetDisseminators(Date versDateTime) throws ServerException;
+    public Disseminator[] GetDisseminators(Date versDateTime, String state) throws ServerException;
 
    /**
      * Same as listDatastreamIds, but for disseminators.

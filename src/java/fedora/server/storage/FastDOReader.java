@@ -900,6 +900,25 @@ public class FastDOReader implements DOReader
     return createDateArray;
   }
 
+  public Date[] getDisseminatorVersions(String dissID)
+      throws ServerException {
+    Date[] createDateArray;
+    try
+    {
+      if (doReader == null)
+      {
+        doReader = m_manager.getReader(m_context, PID);
+      }
+      createDateArray = doReader.getDisseminatorVersions(dissID);
+    } catch (Throwable th)
+    {
+      throw new GeneralException("[FastDOReader] Definitive doReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+    }
+    return createDateArray;
+  }
+
   /**
    * Gets the dissemination binding info necessary to perform a particular
    * dissemination.
@@ -1167,7 +1186,7 @@ public class FastDOReader implements DOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public Disseminator[] GetDisseminators(Date versDateTime)
+  public Disseminator[] GetDisseminators(Date versDateTime, String state)
       throws GeneralException
   {
     Disseminator[] disseminatorArray = null;
@@ -1180,6 +1199,10 @@ public class FastDOReader implements DOReader
     {
       // Requested object exists in the Fast storage area and is NOT versioned;
       // query relational database
+      String statePart="";
+      if (state!=null) {
+          statePart="diss.dissState = '" + state + "' AND ";
+      }
       String  query =
           "SELECT DISTINCT "
           + "diss.dissID,"
@@ -1194,6 +1217,7 @@ public class FastDOReader implements DOReader
           + "doDissAssoc,"
           + "bMech "
           + "WHERE "
+          + statePart
           + "do.doDbID = doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
           + "bDef.bDefDbID = diss.bDefDbID AND "
@@ -1259,7 +1283,7 @@ public class FastDOReader implements DOReader
         {
           doReader = m_manager.getReader(m_context, PID);
         }
-        disseminatorArray = doReader.GetDisseminators(versDateTime);
+        disseminatorArray = doReader.GetDisseminators(versDateTime, state);
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "

@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -27,6 +28,7 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOWriter;
 import fedora.server.storage.types.DSBindingMap;
+import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
@@ -503,16 +505,44 @@ public class DefaultManagement
             Date[] deletedDates=w.removeDatastream(datastreamID, start, end);
             // check if there's at least one version with this id...
             if (w.GetDatastream(datastreamID, null)==null) {
-                // Deleting all versions of a datastream is currently unsupported
-                // FIXME: In the future, this exception should be replaced with an
-                // integrity check.  If the datastream binding info for any version
-				// of a disseminator that uses this would leave a dangling REQUIRED
-				// reference, don't allow it.  If it would leave a dangling UNREQUIRED
-				// reference (in the case of a bucket binding map where the # of datastreams
-				// would still be ok), [[DO WHAT? Undecided]]
-                throw new GeneralException("Purge was aborted because it would"
-                        + " result in the permanent deletion of ALL versions "
-                        + "of the datastream.");
+                // if deleting would result in no versions remaining,
+                // only continue if there are no disseminators that use
+                // this datastream.
+                // to do this, we must look through all versions of every 
+                // disseminator, regardless of state
+                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                ArrayList usedList=new ArrayList();
+                if (datastreamID.equals("DC")) {
+                    usedList.add("The default disseminator");
+                }
+                // ...for each disseminator
+                Disseminator[] disses=w.GetDisseminators(null, null);
+                for (int i=0; i<disses.length; i++) {
+                    Date[] dates=w.getDisseminatorVersions(disses[i].dissID);
+                    // ...for each of its versions
+                    for (int j=0; j<dates.length; j++) {
+                        Disseminator diss=w.GetDisseminator(disses[i].dissID, dates[j]);
+                        DSBinding[] dsBindings=diss.dsBindMap.dsBindings;
+                        // ...for each of its datastream bindings
+                        for (int k=0; k<dsBindings.length; k++) {
+                            // ...is the datastream id referenced?
+                            if (dsBindings[k].datastreamID.equals(datastreamID)) {
+                                usedList.add(diss.dissID + " ("
+                                        + formatter.format(diss.dissCreateDT)
+                                        + ")");
+                            }
+                        }
+                    }
+                }
+                if (usedList.size()>0) {
+                    StringBuffer msg=new StringBuffer();
+                    msg.append("Cannot purge entire datastream because it\n");
+                    msg.append("is used by the following disseminators:");
+                    for (int i=0; i<usedList.size(); i++) {
+                        msg.append("\n - " + (String) usedList.get(i));
+                    }
+                    throw new GeneralException(msg.toString());
+                }
             }
             // make a log messsage explaining what happened
             String logMessage=getPurgeLogMessage("datastream", datastreamID,
