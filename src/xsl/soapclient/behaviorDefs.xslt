@@ -4,7 +4,7 @@
 	<xsl:param name="title_" >Fedora Digital Object</xsl:param>
      <xsl:param name="subtitle_">Behavior Definitions View</xsl:param>
      <xsl:param name="soapClientServletPath_">/soapclient/apia</xsl:param>
-	<xsl:param name="soapMethodParmResolverServletPath_">/soapclient/getAccessParmResolver</xsl:param>
+	<xsl:param name="soapClientMethodParmResolverServletPath_">/soapclient/getAccessParmResolver</xsl:param>
 <xsl:template match="behaviorDefs">
 	<html>
 		<head>

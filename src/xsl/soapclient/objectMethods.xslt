@@ -4,7 +4,7 @@
 <xsl:param name="title_" >Fedora Digital Object</xsl:param>
 <xsl:param name="subtitle_">Dissemination Index View</xsl:param>
 <xsl:param name="soapClientServletPath_">/soapclient/apia</xsl:param>
-<xsl:param name="soapMethodParmResolverServletPath_">/soapclient/getAccessParmResolver</xsl:param>
+<xsl:param name="soapClientMethodParmResolverServletPath_">/soapclient/getAccessParmResolver</xsl:param>
 <xsl:template match="/">
 	<html>
 		<head>
@@ -64,7 +64,7 @@
 	<xsl:element name="form">
 	<xsl:attribute name="name">parmResolverForm</xsl:attribute>
 	<xsl:attribute name="method">post</xsl:attribute>
-	<xsl:attribute name="action"><xsl:value-of select="$soapMethodParmResolverServletPath_"/>?</xsl:attribute>
+	<xsl:attribute name="action"><xsl:value-of select="$soapClientMethodParmResolverServletPath_"/>?</xsl:attribute>
 	<tr>
 		<td><font color="blue"><xsl:value-of select="../@pid"/></font></td>
 		<td><font size="+1"><xsl:value-of select="@name"/></font></td>
