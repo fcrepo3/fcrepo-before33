@@ -31,6 +31,7 @@ import javax.xml.transform.TransformerFactory;
 
 import com.icl.saxon.expr.StringValue;
 
+import fedora.server.types.gen.DatastreamDef;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 //import fedora.server.types.gen.MethodDef;
@@ -41,6 +42,7 @@ import fedora.server.types.gen.ObjectProfile;
 import fedora.server.types.gen.RepositoryInfo;
 import fedora.server.types.gen.Property;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.StreamUtility;
 
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
@@ -63,11 +65,10 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * <ul>
  * <li>action_ name of Fedora service which must be one of the following:
  * <ol>
- * <li>GetBehaviorDefinitions - Gets list of Behavior Defintions</li>
- * <li>GetBehaviorMethods - Gets list of Behavior Methods</li>
- * <li>GetBehaviorMethodsXML - Gets Behavior Methods as XML</li>
  * <li>GetDissemination - Gets a dissemination result</li>
- * <li>GetObjectmethods - Gets a list of all Behavior Methods of an object.</li>
+ * <li>GetDatastreamDissemination - Gets the contents of a datastream in an object.</li>
+ * <li>ListMethods - Gets a list of all methods of an object.</li>
+ * <li>ListDatastreams - Gets a list of all datastreams of an object.</li>
  * <li>GetObjectProfile - Gets object profile.</li>
  * <li>DescribeRepository - Gets information about the repository server.</li>
  * </ol>
@@ -129,25 +130,17 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private static final String FEDORA_TYPE_URI =
       "http://www.fedora.info/definitions/1/0/types/";
 
-  /** GetBehaviorDefinitions service name. */
-  private static final String GET_BEHAVIOR_DEFINITIONS =
-      "GetBehaviorDefinitions";
-
-  /** GetBehaviorMethods service name. */
-  private static final String GET_BEHAVIOR_METHODS =
-      "GetBehaviorMethods";
-
-  /** GetBehaviorMethodsXML service name. */
-  private static final String GET_BEHAVIOR_METHODS_XML =
-      "GetBehaviorMethodsXML";
-
   /** GetDissemination service name. */
   private static final String GET_DISSEMINATION =
       "GetDissemination";
 
-  /** GetObjectMethods service name. */
-  private static final String GET_OBJECT_METHODS =
-      "GetObjectMethods";
+  /** GetDatastreamDissemination service name. */
+  private static final String GET_DATASTREAM_DISSEMINATION =
+      "GetDatastreamDissemination";
+
+  /** ListMethods service name. */
+  private static final String LIST_METHODS =
+      "ListMethods";
 
   /** GetObjectProfile service name. */
   private static final String GET_OBJECT_PROFILE =
@@ -157,9 +150,13 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private static final String GET_OBJECT_HISTORY =
       "GetObjectHistory";
 
-  /** GetObjectProfile service name. */
+  /** DescribeRepository service name. */
   private static final String DESCRIBE_REPOSITORY =
       "DescribeRepository";
+
+  /** ListDatastreams service name. */
+  private static final String LIST_DATASTREAMS =
+      "ListDatastreams";
 
   /** Properties file for soap client */
   private static final String soapClientPropertiesFile =
@@ -197,18 +194,18 @@ public class FedoraAccessSoapServlet extends HttpServlet
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
-    Date asOfDateTime = null;
+    String asOfDateTime = null;
     Date versDateTime = null;
     String action = null;
     String bDefPID = null;
     String methodName = null;
     String PID = null;
+    String dsID = null;
     Property[] userParms = null;
     URLDecoder decoder = new URLDecoder();
     boolean xml = false;
     long servletStartTime = new Date().getTime();
     h_userParms = new Hashtable();
-    //ServletOutputStream out = response.getOutputStream();
 
     // Get servlet input parameters.
     Enumeration URLParms = request.getParameterNames();
@@ -224,13 +221,16 @@ public class FedoraAccessSoapServlet extends HttpServlet
       } else if (parm.equals("bDefPID_"))
       {
         bDefPID = decoder.decode(request.getParameter(parm), "UTF-8");
+      } else if (parm.equals("dsID_"))
+      {
+        dsID = decoder.decode(request.getParameter(parm), "UTF-8");
       } else if (parm.equals("methodName_"))
       {
         methodName = decoder.decode(request.getParameter(parm), "UTF-8");
       } else if (parm.equals("asOfDateTime_"))
       {
-        asOfDateTime = DateUtility.convertStringToDate(request.getParameter(parm));
-        versDateTime = asOfDateTime;
+        asOfDateTime = request.getParameter(parm);
+        versDateTime = DateUtility.convertStringToDate(asOfDateTime);
       } else if (parm.equals("xml_"))
       {
         xml = new Boolean(request.getParameter(parm)).booleanValue();
@@ -262,7 +262,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     // Validate servlet URL parameters to verify that all parameters required
     // by the servlet are present and to verify that any other user-supplied
     // parameters are valid for the request.
-    if (isValidURLParms(action, PID, bDefPID, methodName, versDateTime,
+    if (isValidURLParms(action, PID, bDefPID, dsID, methodName, versDateTime,
                       h_userParms, response))
     {
       // Have valid request.
@@ -654,8 +654,98 @@ public class FedoraAccessSoapServlet extends HttpServlet
         long interval = stopTime - servletStartTime;
         //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
         //    + "GetDissemination: " + interval + " milliseconds.");
+      } else if (action.equals(GET_DATASTREAM_DISSEMINATION))
+      {
+        ServletOutputStream out = response.getOutputStream();
+        ByteArrayInputStream dissemResult = null;
+        try
+        {
+          // Call Fedora Access SOAP service to request dissemination.
+          MIMETypedStream dsDissemination = null;
+          dsDissemination = getDatastreamDissemination(PID, dsID, asOfDateTime);
+          if (dsDissemination != null)
+          {
+            // testing to see what's in request header that might be of interest
+            for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
+                String name = (String)e.nextElement();
+                Enumeration headerValues =  request.getHeaders(name);
+                StringBuffer sb = new StringBuffer();
+                while (headerValues.hasMoreElements()) {
+                    sb.append((String) headerValues.nextElement());
+                }
+                String value = sb.toString();
+                System.out.println("FEDORASOAPSERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
+                response.setHeader(name,value);
+            }
+            // Dissemination found. Output the mime-typed stream.
+            //
+            // Note that what is returned by the Fedora Access SOAP service is
+            // a data structure. In a browser-based environment, it makes more
+            // sense to return something that is "browser-friendly" so the
+            // returned datastructure is written back to the serlvet response.
+            // In a nonbrowser-based environment, one would use the returned
+            // data structure directly and most likely forgo this
+            // transformation step.
+            //
+            response.setContentType(dsDissemination.getMIMEType());
+            Property[] headerArray = dsDissemination.getHeader();
+            if(headerArray != null) {
+                for(int i=0; i<headerArray.length; i++) {
+                    if(headerArray[i].getName() != null && !(headerArray[i].getName().equalsIgnoreCase("content-type"))) {
+                        response.addHeader(headerArray[i].getName(), headerArray[i].getValue());
+                        System.out.println("THIS WAS ADDED TO FEDORASOAPSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].getName()+" : "+headerArray[i].getValue());
+                    }
+                }
+            }
+            int byteStream = 0;
+            dissemResult = new ByteArrayInputStream(dsDissemination.getStream());
+            byte[] buffer = new byte[255];
+            while ((byteStream = dissemResult.read(buffer)) != -1)
+            {
+                out.write(buffer, 0, byteStream);
+            }
+            out.flush();
+            buffer = null;
+          } else
+          {
+            // Dissemination request returned nothing.
+            String message = "[FedoraAccessSoapServlet] No Datastream Dissemination "
+                + "result returned.  See server logs for additional info";
+            System.err.println(message);
+            showURLParms(action, PID, dsID, methodName, asOfDateTime,
+                         userParms, response, message);
+          }
+        } catch (Exception e)
+        {
+            String message = "[FedoraAccessSoapServlet] An error has occured in "
+                + "accessing the Fedora Access Subsystem. The error was \" "
+                + e.getClass().getName()
+                + " \". Reason: "  + e.getMessage()
+                + "  Input Request was: \"" + request.getRequestURL().toString();
+
+            //logger.logWarning(message);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+            e.printStackTrace();
+        } finally
+        {
+          try
+          {
+            if (dissemResult != null) dissemResult.close();
+          } catch (Throwable th)
+          {
+            String message = "[FedoraAccessSoapServlet] An error has occured. "
+                + " The error was a \" " + th.getClass().getName()
+                + " \". Reason: "  + th.getMessage();
+            throw new ServletException(message);
+          }
+        }
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
+        //    + "GetDissemination: " + interval + " milliseconds.");
       }
-      else if (action.equals(GET_OBJECT_METHODS))
+      else if (action.equals(LIST_METHODS))
       {
         ObjectMethodsDef[] objMethDefArray = null;
         PipedWriter pw = new PipedWriter();
@@ -666,12 +756,12 @@ public class FedoraAccessSoapServlet extends HttpServlet
         {
           pw = new PipedWriter();
           pr = new PipedReader(pw);
-          objMethDefArray = getObjectMethods(PID, asOfDateTime);
+          objMethDefArray = listMethods(PID, asOfDateTime);
           if (objMethDefArray != null)
           {
             // Object Methods found.
             // Deserialize ObjectmethodsDef datastructure into XML
-            new ObjectMethodsSerializerThread(PID, objMethDefArray, versDateTime, pw).start();
+            new ObjectMethodDefSerializerThread(PID, objMethDefArray, versDateTime, pw).start();
             if (xml)
             {
               // Return results as raw XML
@@ -696,7 +786,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               response.setContentType(CONTENT_TYPE_HTML);
               out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
               TransformerFactory factory = TransformerFactory.newInstance();
-              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/objectMethods.xslt")));
+              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/listMethods.xslt")));
               Transformer transformer = template.newTransformer();
               Properties details = template.getOutputProperties();
               transformer.setParameter("title_", new StringValue("Fedora Digital Object"));
@@ -748,6 +838,100 @@ public class FedoraAccessSoapServlet extends HttpServlet
         long interval = stopTime - servletStartTime;
         //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
         //  + "GetObjectMethods: " + interval + " milliseconds.");
+      }
+      else if (action.equals(LIST_DATASTREAMS))
+      {
+        DatastreamDef[] datastreamDefArray = null;
+        PipedWriter pw = new PipedWriter();
+        PipedReader pr = new PipedReader(pw);
+        OutputStreamWriter out = null;
+
+        try
+        {
+          pw = new PipedWriter();
+          pr = new PipedReader(pw);
+          datastreamDefArray = listDatastreams(PID, asOfDateTime);
+          if (datastreamDefArray != null)
+          {
+            // Object Methods found.
+            // Deserialize ObjectmethodsDef datastructure into XML
+            new DatastreamDefSerializerThread(PID, datastreamDefArray, versDateTime, pw).start();
+            if (xml)
+            {
+              // Return results as raw XML
+              response.setContentType(CONTENT_TYPE_XML);
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
+              int bufSize = 4096;
+              char[] buf=new char[bufSize];
+              int len=0;
+              while ( (len = pr.read(buf, 0, bufSize)) != -1) {
+                  out.write(buf, 0, len);
+              }
+              out.flush();
+              //int bytestream = 0;
+              //while ( (bytestream = pr.read()) >= 0)
+              //{
+              //  out.write(bytestream);
+              //}
+              //out.flush();
+            } else
+            {
+              // Transform results into an html table
+              response.setContentType(CONTENT_TYPE_HTML);
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
+              TransformerFactory factory = TransformerFactory.newInstance();
+              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/listDatastreams.xslt")));
+              Transformer transformer = template.newTransformer();
+              Properties details = template.getOutputProperties();
+              transformer.setParameter("title_", new StringValue("Fedora Digital Object"));
+              transformer.setParameter("subtitle_", new StringValue("List Methods"));
+              transformer.setParameter("soapClientServletPath", new StringValue(SOAP_CLIENT_SERVLET_PATH));
+              transformer.setParameter("soapClientMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+              transformer.transform(new StreamSource(pr), new StreamResult(out));
+            }
+            out.flush();
+          } else
+          {
+            // Datastream Definition request returned nothing.
+            String message = "[FedoraAccessSoapServlet] No Datastream "
+                + "Definitions returned.";
+            System.out.println(message);
+            showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
+                         response, message);
+            //response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            //response.sendError(response.SC_NO_CONTENT, message);
+          }
+        } catch (Throwable th)
+        {
+          String message = "[FedoraAccessSoapServlet] An error has occured. "
+              + " The error was a \" "
+              + th.getClass().getName()
+              + " \". Reason: "  + th.getMessage();
+          System.out.println(message);
+          th.printStackTrace();
+          System.out.println(message);
+          showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
+                         response, message);
+          //response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          //response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+        } finally
+        {
+          try
+          {
+            if (pr != null) pr.close();
+            if (out != null) out.close();
+          } catch (Throwable th)
+          {
+            String message = "[FedoraAccessSoapServlet] An error has occured. "
+                + " The error was a \" " + th.getClass().getName()
+                + " \". Reason: "  + th.getMessage();
+            throw new ServletException(message);
+          }
+        }
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
+        //  + "ListDatastreams: " + interval + " milliseconds.");
       }
       else if (action.equals(GET_OBJECT_PROFILE))
       {
@@ -1022,118 +1206,210 @@ public class FedoraAccessSoapServlet extends HttpServlet
   }
 
   /**
-   * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
+   * <p> A Thread to serialize a DatastreamDef object into XML.</p>
    *
    */
-  public class ObjectMethodsSerializerThread extends Thread
+  public class DatastreamDefSerializerThread extends Thread
   {
-    private PipedWriter pw = null;
-    private String PID = null;
-    private ObjectMethodsDef[] objMethDefArray = new ObjectMethodsDef[0];
-    private Date versDateTime = null;
+      private PipedWriter pw = null;
+      private String PID = null;
+      private DatastreamDef[] dsDefs = null;
+      private Date versDateTime = null;
 
-    /**
-     * <p> Constructor for SerializeThread.</p>
-     *
-     * @param PID The persistent identifier of the specified digital object.
-     * @param objMethDefArray An array of object mtehod definitions.
-     * @param versDateTime The version datetime stamp of the request.
-     * @param pw A PipedWriter to which the serialization info is written.
-     */
-    public ObjectMethodsSerializerThread(String PID, ObjectMethodsDef[] objMethDefArray,
-                        Date versDateTime, PipedWriter pw)
-    {
-      this.pw = pw;
-      this.PID = PID;
-      this.objMethDefArray = objMethDefArray;
-      this.versDateTime = versDateTime;
-    }
-
-    /**
-     * <p> This method executes the thread.</p>
-     */
-    public void run()
-    {
-      if (pw != null)
+      /**
+       * <p> Constructor for ProfileSerializeThread.</p>
+       *
+       * @param PID The persistent identifier of the specified digital object.
+       * @param dsDefs An array of DatastreamDefs.
+       * @param versDateTime The version datetime stamp of the request.
+       * @param pw A PipedWriter to which the serialization info is written.
+       */
+      public DatastreamDefSerializerThread(String PID, DatastreamDef[] dsDefs,
+              Date versDateTime, PipedWriter pw)
       {
-        try
-        {
-          pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-          if (versDateTime == null || DateUtility.
-              convertDateToString(versDateTime).equalsIgnoreCase(""))
-          {
-            pw.write("<objectMethods "
-                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + fedoraServerHost + ":" + fedoraServerPort
-                + "/objectMethods.xsd\""
-                + " pid=\"" + PID + "\" >");
-          } else
-          {
-            pw.write("<objectMethods "
-                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + fedoraServerHost + ":" + fedoraServerPort
-                + "/objectMethods.xsd\""
-                + " pid=\"" + PID + "\""
-                + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
-                + "\" >");
-          }
-          String nextBdef = "null";
-          String currentBdef = "";
-          for (int i=0; i<objMethDefArray.length; i++)
-          {
-            currentBdef = objMethDefArray[i].getBDefPID();
-            if (!currentBdef.equalsIgnoreCase(nextBdef))
-            {
-              if (i != 0) pw.write("</bdef>");
-              pw.write("<bdef pid=\"" + objMethDefArray[i].getBDefPID() + "\" >");
-            }
-            pw.write("<method name=\"" + objMethDefArray[i].getMethodName() + "\" >");
-            MethodParmDef[] methodParms = objMethDefArray[i].getMethodParmDefs();
-            for (int j=0; j<methodParms.length; j++)
-            {
-              pw.write("<parm parmName=\"" + methodParms[j].getParmName()
-                  + "\" parmDefaultValue=\"" + methodParms[j].getParmDefaultValue()
-                  + "\" parmRequired=\"" + methodParms[j].isParmRequired()
-                  + "\" parmType=\"" + methodParms[j].getParmType()
-                  + "\" parmLabel=\"" + methodParms[j].getParmLabel() + "\" >");
-              if (methodParms[j].getParmDomainValues().length > 0 )
-              {
-                pw.write("<parmDomainValues>");
-                for (int k=0; k<methodParms[j].getParmDomainValues().length; k++)
-                {
-                  pw.write("<value>" + methodParms[j].getParmDomainValues()[k]
-                      + "</value>");
-                }
-                pw.write("</parmDomainValues>");
-              }
-              pw.write("</parm>");
-            }
-
-            pw.write("</method>");
-            nextBdef = currentBdef;
-          }
-          pw.write("</bdef>");
-          pw.write("</objectMethods>");
-          pw.flush();
-          pw.close();
-        } catch (IOException ioe) {
-          System.err.println("WriteThread IOException: " + ioe.getMessage());
-        } finally
-        {
-          try
-          {
-            if (pw != null) pw.close();
-          } catch (IOException ioe)
-          {
-            System.err.println("WriteThread IOException: " + ioe.getMessage());
-          }
-        }
+          this.pw = pw;
+          this.PID = PID;
+          this.dsDefs = dsDefs;
+          this.versDateTime = versDateTime;
       }
-    }
+
+      /**
+       * <p> This method executes the thread.</p>
+       */
+      public void run()
+      {
+          if (pw != null)
+          {
+              try
+              {
+                  pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                  if (versDateTime == null || DateUtility.
+                      convertDateToString(versDateTime).equalsIgnoreCase(""))
+                  {
+                      pw.write("<objectDatastreams "
+                          + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+                          + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                          + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + "/listDatastreams.xsd\"" + " pid=\"" + PID + "\" "
+                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
+                          + ">");
+                  } else
+                  {
+                      pw.write("<objectDatastreams "
+                          + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+                          + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                          + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + "/listDatastreams.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" "
+                          + "asOfDateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" "
+                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
+                          + ">");
+                  }
+
+                  // DatastreamDef SERIALIZATION
+                  for (int i=0; i<dsDefs.length; i++) {
+                      pw.write("    <datastream "
+                          + "dsid=\"" + StreamUtility.enc(dsDefs[i].getID()) + "\" "
+                          + "label=\"" + StreamUtility.enc(dsDefs[i].getLabel()) + "\" "
+                          + "mimeType=\"" + StreamUtility.enc(dsDefs[i].getMIMEType())  + "\" />");
+                  }
+                  pw.write("</objectDatastreams>");
+                  pw.flush();
+                  pw.close();
+              } catch (IOException ioe) {
+                  System.err.println("WriteThread IOException: " + ioe.getMessage());
+              } finally
+              {
+                  try
+                  {
+                      if (pw != null) pw.close();
+                      } catch (IOException ioe)
+                      {
+                          System.err.println("WriteThread IOException: " + ioe.getMessage());
+                      }
+              }
+          }
+      }
+  }
+
+
+  /**
+   * <p> A Thread to serialize an ObjectMethodDef object into XML.</p>
+   *
+   */
+  public class ObjectMethodDefSerializerThread extends Thread
+  {
+      private PipedWriter pw = null;
+      private String PID = null;
+      private ObjectMethodsDef[] methodDefs = null;
+      private Date versDateTime = null;
+
+      /**
+       * <p> Constructor for ProfileSerializeThread.</p>
+       *
+       * @param PID The persistent identifier of the specified digital object.
+       * @param methodDefs An array of ObjectMethodsDefs.
+       * @param versDateTime The version datetime stamp of the request.
+       * @param pw A PipedWriter to which the serialization info is written.
+       */
+      public ObjectMethodDefSerializerThread(String PID, ObjectMethodsDef[] methodDefs,
+              Date versDateTime, PipedWriter pw)
+      {
+          this.pw = pw;
+          this.PID = PID;
+          this.methodDefs = methodDefs;
+          this.versDateTime = versDateTime;
+      }
+
+      /**
+       * <p> This method executes the thread.</p>
+       */
+      public void run()
+      {
+          if (pw != null)
+          {
+              try
+              {
+                  pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                  if (versDateTime == null || DateUtility.
+                      convertDateToString(versDateTime).equalsIgnoreCase(""))
+                  {
+                      pw.write("<objectMethods "
+                          + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+                          + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                          + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + "/listMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" "
+                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + "/fedora/\" >");
+                  } else
+                  {
+                      pw.write("<objectMethods "
+                          + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+                          + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+                          + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + "/listMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" "
+                          + "asOfDateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" "
+                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\""
+                          + " >");
+                  }
+
+                  // ObjectMethodsDef SERIALIZATION
+                  String nextBdef = "null";
+                  String currentBdef = "";
+                  for (int i=0; i<methodDefs.length; i++)
+                  {
+                      currentBdef = methodDefs[i].getBDefPID();
+                      if (!currentBdef.equalsIgnoreCase(nextBdef))
+                      {
+                          if (i != 0) pw.write("</bDef>");
+                          pw.write("<bDef pid=\"" + StreamUtility.enc(methodDefs[i].getBDefPID()) + "\" >");
+                      }
+                      pw.write("<method name=\"" + StreamUtility.enc(methodDefs[i].getMethodName()) + "\" >");
+                      MethodParmDef[] methodParms = methodDefs[i].getMethodParmDefs();
+                      for (int j=0; j<methodParms.length; j++)
+                      {
+                          pw.write("<methodParm parmName=\"" + StreamUtility.enc(methodParms[j].getParmName())
+                              + "\" parmDefaultValue=\"" + StreamUtility.enc(methodParms[j].getParmDefaultValue())
+                              + "\" parmRequired=\"" + methodParms[j].isParmRequired()
+                              + "\" parmLabel=\"" + StreamUtility.enc(methodParms[j].getParmLabel()) + "\" >");
+                          if (methodParms[j].getParmDomainValues().length > 0 )
+                          {
+                              pw.write("<methodParmDomain>");
+                              for (int k=0; k<methodParms[j].getParmDomainValues().length; k++)
+                              {
+                                  pw.write("<methodParmValue>" + StreamUtility.enc(methodParms[j].getParmDomainValues()[k])
+                                      + "</methodParmValue>");
+                              }
+                              pw.write("</methodParmDomain>");
+                          }
+                          pw.write("</methodParm>");
+                      }
+
+                      pw.write("</method>");
+                      nextBdef = currentBdef;
+                  }
+                  pw.write("</bDef>");
+                  pw.write("</objectMethods>");
+
+                  pw.flush();
+                  pw.close();
+              } catch (IOException ioe) {
+                  System.err.println("WriteThread IOException: " + ioe.getMessage());
+              } finally
+              {
+                  try
+                  {
+                      if (pw != null) pw.close();
+                      } catch (IOException ioe)
+                      {
+                          System.err.println("WriteThread IOException: " + ioe.getMessage());
+                      }
+              }
+          }
+      }
   }
 
   /**
@@ -1542,7 +1818,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
   }*/
 
   /**
-   * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
+   * <p> A Thread to serialize an ObjectHistory object into XML.</p>
    *
    */
   public class ObjectHistorySerializerThread extends Thread
@@ -1751,7 +2027,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
    *         Access SOAP service.
    */
   public MIMETypedStream getDissemination(String PID, String bDefPID,
-      String methodName, Property[] userParms, Date asOfDateTime)
+      String methodName, Property[] userParms, String asOfDateTime)
       throws Exception
    {
     // Generate a call to the Fedora SOAP service requesting the
@@ -1774,12 +2050,12 @@ public class FedoraAccessSoapServlet extends HttpServlet
         new BeanSerializerFactory(Property.class, qn2),
         new BeanDeserializerFactory(Property.class, qn2));
     dissemination = (MIMETypedStream) call.invoke( new Object[] { PID, bDefPID,
-        methodName, userParms, DateUtility.convertDateToString(asOfDateTime)} );
+        methodName, userParms, asOfDateTime} );
     return dissemination;
    }
 
    public MIMETypedStream getDatastreamDissemination(String PID, String dsID,
-       Date asOfDateTime) throws Exception
+       String asOfDateTime) throws Exception
     {
      // Generate a call to the Fedora SOAP service requesting the
      // GetDissemination method
@@ -1787,7 +2063,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
      Service service = new Service();
      Call call = (Call) service.createCall();
      call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
-     call.setOperationName(new QName(FEDORA_API_URI, GET_DISSEMINATION) );
+     call.setOperationName(new QName(FEDORA_API_URI, GET_DATASTREAM_DISSEMINATION) );
      QName qn =  new QName(FEDORA_TYPE_URI, "MIMETypedStream");
 
      // Any Fedora-defined types required by the SOAP service must be registered
@@ -1796,27 +2072,29 @@ public class FedoraAccessSoapServlet extends HttpServlet
      call.registerTypeMapping(MIMETypedStream.class, qn,
          new BeanSerializerFactory(MIMETypedStream.class, qn),
          new BeanDeserializerFactory(MIMETypedStream.class, qn));
-     dsDissemination = (MIMETypedStream) call.invoke( new Object[] { PID, dsID, DateUtility.convertDateToString(asOfDateTime)} );
+     dsDissemination = (MIMETypedStream) call.invoke( new Object[] { PID, dsID,
+         asOfDateTime} );
      return dsDissemination;
    }
 
-   /**
-    * <p>Gets a list of all method definitions for the specified object by
-    * invoking the appropriate Fedora Access SOAP service.</p>
-    *
-    * @param PID The persistent identifier for the digital object.
-    * @param asOfDateTime The versioning datetime stamp.
-    * @return An array of object method definitions.
-    * @throws Exception If an error occurs in communicating with the Fedora
-    *         Access SOAP service.
-    */
-  public ObjectMethodsDef[] getObjectMethods(String PID,
-      Date asOfDateTime) throws Exception
+
+ /**
+  * <p>Gets a list of all method definitions for the specified object by
+  * invoking the appropriate Fedora Access SOAP service.</p>
+  *
+  * @param PID The persistent identifier for the digital object.
+  * @param asOfDateTime The versioning datetime stamp.
+  * @return An array of object method definitions.
+  * @throws Exception If an error occurs in communicating with the Fedora
+  *         Access SOAP service.
+  */
+  public ObjectMethodsDef[] listMethods(String PID,
+      String asOfDateTime) throws Exception
   {
     ObjectMethodsDef[] objMethDefArray = null;
     Service service = new Service();
     Call call = (Call) service.createCall();
-    call.setOperationName(new QName(FEDORA_API_URI, GET_OBJECT_METHODS) );
+    call.setOperationName(new QName(FEDORA_API_URI, LIST_METHODS) );
     QName qn = new QName(FEDORA_TYPE_URI, "ObjectMethodsDef");
     QName qn2 = new QName(FEDORA_TYPE_URI, "MethodParmDef");
     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
@@ -1831,8 +2109,39 @@ public class FedoraAccessSoapServlet extends HttpServlet
         new BeanSerializerFactory(MethodParmDef.class, qn2),
         new BeanDeserializerFactory(MethodParmDef.class, qn2));
     objMethDefArray =
-        (ObjectMethodsDef[]) call.invoke( new Object[] { PID, DateUtility.convertDateToString(asOfDateTime)} );
+        (ObjectMethodsDef[]) call.invoke( new Object[] { PID, asOfDateTime } );
     return objMethDefArray;
+  }
+
+  /**
+   * <p>Gets a list of all datastream for the specified object by
+   * invoking the appropriate Fedora Access SOAP service.</p>
+   *
+   * @param PID The persistent identifier of the digital object.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return An array of datastream definitions.
+   * @throws Exception If an error occurs in communicating with the Fedora
+   *         Access SOAP service.
+   */
+  public DatastreamDef[] listDatastreams(String PID,
+      String asOfDateTime) throws Exception
+  {
+    DatastreamDef[] datastreamDefArray = null;
+    Service service = new Service();
+    Call call = (Call) service.createCall();
+    call.setOperationName(new QName(FEDORA_API_URI, LIST_DATASTREAMS) );
+    QName qn = new QName(FEDORA_TYPE_URI, "DatastreamDef");
+    call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
+
+    // Any Fedora-defined types required by the SOAP service must be registered
+    // prior to invocation so the SOAP service knows the appropriate
+    // serializer/deserializer to use for these types.
+    call.registerTypeMapping(DatastreamDef.class, qn,
+        new BeanSerializerFactory(DatastreamDef.class, qn),
+        new BeanDeserializerFactory(DatastreamDef.class, qn));
+    datastreamDefArray =
+        (DatastreamDef[]) call.invoke( new Object[] { PID, asOfDateTime } );
+    return datastreamDefArray;
   }
 
    /**
@@ -1846,7 +2155,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     *         Access SOAP service.
     */
   public ObjectProfile getObjectProfile(String PID,
-      Date asOfDateTime) throws Exception
+      String asOfDateTime) throws Exception
   {
     ObjectProfile objProfile = null;
     Service service = new Service();
@@ -1862,7 +2171,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         new BeanSerializerFactory(ObjectProfile.class, qn),
         new BeanDeserializerFactory(ObjectProfile.class, qn));
     objProfile =
-        (ObjectProfile) call.invoke( new Object[] { PID, DateUtility.convertDateToString(asOfDateTime)} );
+        (ObjectProfile) call.invoke( new Object[] { PID, asOfDateTime } );
     return objProfile;
   }
 
@@ -2021,7 +2330,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @return True if required parameters are valid; false otherwise.
    * @throws IOException If an error occurrs with an input or output operation.
    */
-  private boolean isValidURLParms(String action, String PID, String bDefPID,
+  private boolean isValidURLParms(String action, String PID, String bDefPID, String dsID,
                           String methodName, Date versDateTime,
                           Hashtable h_userParms,
                           HttpServletResponse response)
@@ -2103,8 +2412,73 @@ public class FedoraAccessSoapServlet extends HttpServlet
       }
       //FIXME!! Validation for any user-supplied parameters not implemented.
     } else if (action != null &&
-               (action.equals(GET_BEHAVIOR_DEFINITIONS) ||
-                action.equals(GET_OBJECT_METHODS) ||
+               (action.equals(GET_DATASTREAM_DISSEMINATION) ) )
+    {
+      if (PID == null || dsID == null)
+      {
+        // GetBehaviorDefinitions and GetObjectMethods require PID;
+        // asOfDateTime is optional.
+        response.setContentType(CONTENT_TYPE_HTML);
+        html.append("<html>");
+        html.append("<head>");
+        html.append("<title>FedoraAccessSOAPServlet</title>");
+        html.append("</head>");
+        html.append("<body>");
+        html.append("<p><font size='+1' color='red'>"
+                    + "Required parameter missing in "
+                    + action
+                    + " Request:</font></p>");
+        html.append("<table cellpadding='5'>");
+        html.append("<tr>");
+        html.append("<td><font color='red'>action_</td>");
+        html.append("<td> = </td>");
+        html.append("<td>" + action + "</td>");
+        html.append("<td><font color='blue'>(REQUIRED)</font></td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><font color='red'>PID_</td>");
+        html.append("<td> = </td>");
+        html.append("<td>" + PID + "</td>");
+        html.append("<td><font color='blue'>(REQUIRED)</font></td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><font color='red'>dsID_</td>");
+        html.append("<td> = </td>");
+        html.append("<td>" + PID + "</td>");
+        html.append("<td><font color='blue'>(REQUIRED)</font></td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><font color='red'>asOfDateTime_</td>");
+        html.append("<td> = </td>");
+        html.append("<td>" + versDate + "</td>");
+        html.append("<td><font color='green'>(OPTIONAL)</font></td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td colspan='5'><font size='+1' color='blue'>"
+                    + "Other Parameters Found:</font></td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("</tr>");
+        for (Enumeration e = h_userParms.keys() ; e.hasMoreElements(); )
+        {
+          String name = (String)e.nextElement();
+          html.append("<tr>");
+          html.append("<td><font color='red'>"+name+"</font></td>");
+          html.append("<td>= </td>");
+          html.append("<td>"+h_userParms.get(name)+"</td>");
+          html.append("</tr>");
+        }
+        html.append("</table>");
+        html.append("</body>");
+        html.append("</html>");
+        out.println(html.toString());
+        isValid = false;
+      }
+    } else if (action != null &&
+               (action.equals(LIST_DATASTREAMS) ||
+                action.equals(LIST_METHODS) ||
                 action.equals(GET_OBJECT_PROFILE)))
     {
       if (PID == null)
@@ -2222,73 +2596,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
         out.println(html.toString());
         isValid = false;
       }
-    } else if (action != null &&
-               (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS) ||
-               action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML)))
-    {
-      if (PID == null || bDefPID == null)
-      {
-        // GetBehaviorMethods and GetBehaviorMethodsXML require PID, bDefPID;
-        // asOfDateTime is optional.
-        response.setContentType(CONTENT_TYPE_HTML);
-        html.append("<html>");
-        html.append("<head>");
-        html.append("<title>FedoraAccessSOAPServlet</title>");
-        html.append("</head>");
-        html.append("<body>");
-        html.append("<p><font size='+1' color='red'>"
-                    + "Required parameter missing in "
-                    + action
-                    + " Request:</font></p>");
-        html.append("<table cellpadding='5'>");
-        html.append("<tr>");
-        html.append("<td><font color='red'>action_</td>");
-        html.append("<td> = </td>");
-        html.append("<td>" + action + "</td>");
-        html.append("<td><font color='blue'>(REQUIRED)</font></td>");
-        html.append("</tr>");
-        html.append("<tr>");
-        html.append("<td><font color='red'>PID_</td>");
-        html.append("<td> = </td>");
-        html.append("<td>" + PID + "</td>");
-        html.append("<td><font color='blue'>(REQUIRED)</font></td>");
-        html.append("</tr>");
-        html.append("<tr>");
-        html.append("<td><font color='red'>bDefPID_</td>");
-        html.append("<td> = </td>");
-        html.append("<td>" + bDefPID + "</td>");
-        html.append("<td><font color='blue'>(REQUIRED)</font></td>");
-        html.append("</tr>");
-        html.append("<tr>");
-        html.append("<tr>");
-        html.append("<td><font color='red'>asOfDateTime_</td>");
-        html.append("<td> = </td>");
-        html.append("<td>" + versDate + "</td>");
-        html.append("<td><font color='green'>(OPTIONAL)</font></td>");
-        html.append("</tr>");
-        html.append("<tr>");
-        html.append("</tr>");
-        html.append("<tr>");
-        html.append("<td colspan='5'><font size='+1' color='blue'>"
-                    + "Other Parameters Found:</font></td>");
-        html.append("</tr>");
-        html.append("<tr>");
-        html.append("</tr>");
-        for (Enumeration e = h_userParms.keys() ; e.hasMoreElements(); )
-        {
-          String name = (String)e.nextElement();
-          html.append("<tr>");
-          html.append("<td><font color='red'>"+name+"</font></td>");
-          html.append("<td>= </td>");
-          html.append("<td>" + h_userParms.get(name) + "</td>");
-          html.append("</tr>");
-        }
-        html.append("</table>");
-        html.append("</body>");
-        html.append("</html>");
-        out.println(html.toString());
-        isValid = false;
-      }
     } else if (action != null && (action.equalsIgnoreCase(DESCRIBE_REPOSITORY)))
     {
       System.out.println("Validated DESCRIBE_REPOSITORY as good request w/no parms");
@@ -2381,14 +2688,13 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @throws IOException If an error occurrs with an input or output operation.
    */
   private void showURLParms(String action, String PID, String bDefPID,
-                           String methodName, Date asOfDateTime,
+                           String methodName, String asOfDateTime,
                            Property[] userParms,
                            HttpServletResponse response,
                            String message)
       throws IOException
   {
 
-    String versDate = DateUtility.convertDateToString(asOfDateTime);
     ServletOutputStream out = response.getOutputStream();
     response.setContentType(CONTENT_TYPE_HTML);
 
@@ -2426,7 +2732,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     html.append("<tr>");
     html.append("<td><font color='red'>asOfDateTime_</font></td>");
     html.append("<td> = </td>");
-    html.append("<td>" + versDate + "</td>");
+    html.append("<td>" + asOfDateTime + "</td>");
     html.append("</tr>");
     html.append("<tr>");
     html.append("</tr>");

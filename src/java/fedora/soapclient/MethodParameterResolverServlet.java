@@ -172,13 +172,13 @@ public class MethodParameterResolverServlet extends HttpServlet
           redirectURL.append("&"+methodParms.toString());
         } else
         {
-          redirectURL.append("&asOfDate_="+versDateTime+"&"+methodParms.toString());
+          redirectURL.append("&asOfDateTime_="+versDateTime+"&"+methodParms.toString());
         }
       } else
       {
         if (versDateTime != null && !versDateTime.equalsIgnoreCase(""))
         {
-          redirectURL.append("&asOfDate_="+versDateTime);
+          redirectURL.append("&asOfDateTime_="+versDateTime);
         }
       }
 
