@@ -105,7 +105,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#addDigitalObject(fedora.server.storage.types.DigitalObject)
 	 */
 	public void addDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-	    String pid = digitalObject.getPid();
+	    if (m_indexLevel == 0) {
+	        return;
+        }
+        
+        String pid = digitalObject.getPid();
 		String doIdentifier = getDOURI(digitalObject);
 		
 		// Insert basic system metadata
@@ -155,7 +159,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#addDatastream(fedora.server.storage.types.Datastream)
 	 */
 	public void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
-	    Datastream ds = getLatestDatastream(digitalObject.datastreams(datastreamID));
+	    if (m_indexLevel == 0) {
+            return;
+        }
+        
+        Datastream ds = getLatestDatastream(digitalObject.datastreams(datastreamID));
 	    String doURI = getDOURI(digitalObject);
 	    String datastreamURI;
 	    if (ds.DatastreamURI != null && !ds.DatastreamURI.equals("")) {
@@ -199,7 +207,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#addDisseminator(fedora.server.storage.types.Dissemination)
 	 */
 	public void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
-	    Disseminator diss = getLatestDisseminator(digitalObject.disseminators(disseminatorID));
+	    if (m_indexLevel == 0) {
+            return;
+        }
+        
+        Disseminator diss = getLatestDisseminator(digitalObject.disseminators(disseminatorID));
 	    String doIdentifier = getDOURI(digitalObject);
         String bMechPID = diss.bMechID;
         
@@ -249,16 +261,24 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDigitalObject(fedora.server.storage.types.DigitalObject)
 	 */
 	public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-		// FIXME simple, dumb way to modify
+        if (m_indexLevel == 0) {
+            return;
+        }
+        
+        // FIXME simple, dumb way to modify
 		deleteDigitalObject(digitalObject);
-        addDigitalObject(digitalObject);        
+        addDigitalObject(digitalObject);
 	}
 
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDatastream(fedora.server.storage.types.Datastream)
 	 */
 	public void modifyDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
-		deleteDatastream(digitalObject, datastreamID);
+        if (m_indexLevel == 0) {
+            return;
+        }
+        
+        deleteDatastream(digitalObject, datastreamID);
         addDatastream(digitalObject, datastreamID);
 	}
 
@@ -266,7 +286,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDissemination(fedora.server.storage.types.Dissemination)
 	 */
 	public void modifyDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
-		deleteDisseminator(digitalObject, disseminatorID);
+        if (m_indexLevel == 0) {
+            return;
+        }
+        
+        deleteDisseminator(digitalObject, disseminatorID);
         addDisseminator(digitalObject, disseminatorID);
 	}
 
@@ -274,6 +298,10 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDigitalObject(java.lang.String)
 	 */
 	public void deleteDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
+        if (m_indexLevel == 0) {
+            return;
+        }
+        
         Iterator it;
         it = digitalObject.datastreamIdIterator();
         while (it.hasNext()) {
@@ -301,7 +329,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDatastream(fedora.server.storage.types.Datastream)
 	 */
 	public void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
-	    Datastream ds = getLatestDatastream(digitalObject.datastreams(datastreamID));
+	    if (m_indexLevel == 0) {
+            return;
+        }
+        
+        Datastream ds = getLatestDatastream(digitalObject.datastreams(datastreamID));
         String doURI = getDOURI(digitalObject);
         String datastreamURI;
         if (ds.DatastreamURI != null && !ds.DatastreamURI.equals("")) {
@@ -341,6 +373,10 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDissemination(fedora.server.storage.types.Dissemination)
 	 */
 	public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
+        if (m_indexLevel == 0) {
+            return;
+        }
+        
         Disseminator diss = getLatestDisseminator(digitalObject.disseminators(disseminatorID));
         String doIdentifier = getDOURI(digitalObject);
         
@@ -745,8 +781,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 "org.xml.sax.driver",
                 "org.apache.xerces.parsers.SAXParser");
         Parser parser = new RdfXmlParser();
-        TripleIterator it = new RIOTripleIterator(rels.getContentStream(), parser, null);
         try {
+            TripleIterator it = new RIOTripleIterator(rels.getContentStream(), parser, "http://www.example.org/");
             m_writer.delete(it, false);
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);

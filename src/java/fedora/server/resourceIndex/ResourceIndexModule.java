@@ -24,7 +24,7 @@ public class ResourceIndexModule extends Module
 	}
 
 	public void postInitModule() throws ModuleInitializationException {
-		logConfig("TResourceIndexModule: hello");
+		logConfig("TResourceIndexModule: loading...");
 		// Parameter validation
 		int level;
 		if (getParameter("level")==null) {
