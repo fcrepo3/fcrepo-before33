@@ -25,25 +25,37 @@ public abstract class Module
         extends Pluggable {
 
     private String m_role;
+    private Server m_server;
 
     /**
      * Creates and initializes the Module.
      * <p></p>
      * When the server is starting up, this is invoked as part of the
      * initialization process.
-     * <p></p>
+     * 
      * @param moduleParameters A pre-loaded Map of name-value pairs comprising
-     *                         the intended configuration of this Module.
+     *        the intended configuration of this Module.
+     * @param server The <code>Server</code> instance.
      * @param role The role this module fulfills, a java class name.
      * @throws ModuleInitializationException If initilization values are
-     *                                       invalid or initialization fails
-     *                                       for some other reason.
+     *         invalid or initialization fails for some other reason.
      */
-    public Module(Map moduleParameters, String role)
+    public Module(Map moduleParameters, Server server, String role)
             throws ModuleInitializationException {
         super(moduleParameters);
         m_role=role;
+        m_server=server;
         initModule();
+    }
+
+    /**
+     * Gets the <code>Server</code> instance to which this <code>Module</code>
+     * belongs.
+     *
+     * @returns The <code>Server</code> instance.
+     */
+    protected Server getServer() {
+        return m_server;
     }
 
     /**
@@ -62,8 +74,7 @@ public abstract class Module
      * Initializes the Module based on configuration parameters.
      *
      * @throws ModuleInitializationException If initialization values are
-     *                                       invalid or initialization fails
-     *                                       for some other reason.
+     *         invalid or initialization fails for some other reason.
      */
     public abstract void initModule()
             throws ModuleInitializationException;
@@ -72,12 +83,10 @@ public abstract class Module
      * Frees system resources allocated by this Module.
      *
      * @throws ModuleShutdownException If there is a problem freeing
-     *                                 system resources.  Note that if there
-     *                                 is a problem, it won't end up aborting
-     *                                 the shutdown process.  Therefore, this
-     *                                 method should do everything possible
-     *                                 to recover from exceptional situations
-     *                                 before throwing an exception.
+     *         system resources.  Note that if there is a problem, it won't end 
+     *         up aborting the shutdown process.  Therefore, this method should 
+     *         do everything possible to recover from exceptional situations
+     *         before throwing an exception.
      */
     public abstract void shutdownModule() 
             throws ModuleShutdownException;
