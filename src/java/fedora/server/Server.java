@@ -717,18 +717,6 @@ public abstract class Server
             }
             throw mie;
         }
-        try {
-            MethodInvokerThread shutdownHook=new MethodInvokerThread(this, 
-                    this.getClass().getMethod("shutdown", new Class[0]),
-                    new Object[0], "Fedora Shutdown Hook");
-            Runtime.getRuntime().addShutdownHook(shutdownHook);
-        } catch (Throwable th) {
-            String warn="Failed to register shutdown hook "
-                    + "for Fedora: " + th.getClass().getName() + ": "
-                    + th.getMessage();
-            System.err.println(warn);
-            logWarning(warn);
-        }
     }
 
     /**
