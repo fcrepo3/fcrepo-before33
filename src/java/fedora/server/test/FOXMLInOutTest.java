@@ -48,7 +48,8 @@ public class FOXMLInOutTest
 	protected DigitalObject obj = null;
 		
 	protected void setUp() {
-		inFile=new File("TestIngestFiles/foxml-ingest-example.xml");
+		//inFile=new File("TestIngestFiles/foxml-reference-example.xml");
+		inFile=new File("TestIngestFiles/foxml-simple-nodissem.xml");
 		outFile=new File("TestExportFiles/STORE-foxml.xml");
 		System.setProperty("fedoraServerHost", "localhost");
 		System.setProperty("fedoraServerPort", "8080");
