@@ -183,15 +183,21 @@ public class FieldSearchServlet
                                 html.append(f.getPid());
                                 html.append("</a>");
                             } else if (l.equalsIgnoreCase("label")) {
-                                html.append(f.getLabel());
+                                if (f.getLabel()!=null) {
+                                    html.append(f.getLabel());
+                                }
                             } else if (l.equalsIgnoreCase("fType")) {
                                 html.append(f.getFType());
                             } else if (l.equalsIgnoreCase("cModel")) {
-                                html.append(f.getCModel());
+                                if (f.getCModel()!=null) {
+                                    html.append(f.getCModel());
+                                }
                             } else if (l.equalsIgnoreCase("state")) {
                                 html.append(f.getState());
                             } else if (l.equalsIgnoreCase("locker")) {
-                                html.append(f.getLocker());
+                                if (f.getLocker()!=null) {
+                                    html.append(f.getLocker());
+                                }
                             } else if (l.equalsIgnoreCase("cDate")) {
                                 html.append(formatter.format(f.getCDate()));
                             } else if (l.equalsIgnoreCase("mDate")) {
@@ -269,7 +275,9 @@ public class FieldSearchServlet
     }
 
     private void appendXML(String name, String value, StringBuffer out) {
-        out.append("      <" + name + ">" + value + "</" + name + ">\n");
+        if (value!=null) {
+            out.append("      <" + name + ">" + value + "</" + name + ">\n");
+        }
     }
     
     private void appendXML(String name, List values, StringBuffer out) {
