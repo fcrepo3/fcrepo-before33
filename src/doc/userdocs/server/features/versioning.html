@@ -10,9 +10,7 @@
 
 <body>
 <div id="header">
-    <div id="logo">
-        <a href="../index.html"><img src="../../images/logo_44x60.gif" alt="Fedora logo" /></a>
-    </div>
+    <a href="../../index.html" id="logo"></a>>
     <div id="title">
         <h1>Fedora Content Versioning</h1>
         <h2>Fedora Release 2.0</h2>
@@ -27,4 +25,20 @@ where HH is 24-hour clock.</p></li><li><p>
 				</span></dt><dd><p>This syntax requests an object profile for the specified digital object. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of "false", a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is "true", then a MIME-typed stream consisting of XML is returned.</p></dd></dl></div><blockquote class="blockquote"><div class="itemizedlist"><ul type="disc"><li><p>hostname - required hostname of the Fedora server. </p></li><li><p>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </p></li><li><p>fedora - a required parameter specifying the Fedora servlet path.</p></li><li><p>get - a required parameter specifying the Fedora servlet path.</p></li><li><p>PID - required persistent identifier of the digital object.</p></li><li><p>
 						<span class="bold"><b>dateTime</b></span> - value indicating dissemination of a version of the digital object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS
 where HH is 24-hour clock.</p></li><li><p>
-						<span class="bold"><b>xml</b></span> - an optional parameter indicating the requested output format. A value of "true" indicates a return type of text/xml; the absence of the xml parameter or a value of "false" indicates format is to be text/html.</p></li></ul></div></blockquote><p>For example</p><blockquote class="blockquote"><p>http://localhost:8080/fedora/get/ronda:2/2003-08-28T00:01:01</p></blockquote></div></div></body></html>
+						<span class="bold"><b>xml</b></span> - an optional parameter indicating the requested output format. A value of "true" indicates a return type of text/xml; the absence of the xml parameter or a value of "false" indicates format is to be text/html.</p></li></ul></div></blockquote><p>For example</p><blockquote class="blockquote"><p>http://localhost:8080/fedora/get/ronda:2/2003-08-28T00:01:01</p></blockquote>
+</div></div>
+<div id="footer">
+    <div id="copyright">
+        Copyright &#xA9; 2005 Fedora Project
+    </div>
+    <div id="lastModified">
+        Last Modified
+        <script type="text/javascript">
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+        </script>
+    </div>
+</div>
+</body></html>
