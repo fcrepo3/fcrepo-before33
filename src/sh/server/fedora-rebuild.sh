@@ -32,7 +32,7 @@ SERVER_PROFILE="$1"
   			  -Dfedora.home="$FEDORA_HOME" \
   			  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
   			  -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-			  -Djava.endorsed.dirs="$TC_ENDORSED:$TC/webapps/fedora/WEB-INF/lib" \
+			  -Djava.endorsed.dirs="$TC_COMMON:$TC/webapps/fedora/WEB-INF/lib" \
 			  -Djava.io.tmpdir="$TC/temp" \
               fedora.server.utilities.rebuild.Rebuild $SERVER_PROFILE)
 restoreJavaHome

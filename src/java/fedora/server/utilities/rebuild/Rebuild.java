@@ -5,7 +5,8 @@ import java.util.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-
+import org.apache.log4j.*;
+import org.apache.log4j.xml.*;
 import org.xml.sax.SAXException;
 
 import fedora.server.config.*;
@@ -29,6 +30,7 @@ public class Rebuild {
      */
     public static String[] REBUILDERS = new String[] {
             "fedora.server.utilities.rebuild.NoOpRebuilder",
+            "fedora.server.resourceIndex.ResourceIndexRebuilder",
             "fedora.server.utilities.rebuild.SQLRebuilder" };
 
     public Rebuild(File serverDir, String profile) throws Exception {
@@ -335,6 +337,13 @@ new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
     }
 
     public static void main(String[] args) {
+        // tell commons-logging to use log4j
+        System.setProperty("org.apache.commons.logging.LogFactory", "org.apache.commons.logging.impl.Log4jFactory");
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.Log4JLogger");
+        // log4j
+//        File log4jConfig = new File(new File(homeDir), "config/log4j.xml");
+//        DOMConfigurator.configure(log4jConfig.getPath());
+
         String profile = null;
         if (args.length == 1) {
             profile = args[0];
