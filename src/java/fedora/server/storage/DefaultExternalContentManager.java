@@ -1,15 +1,15 @@
 package fedora.server.storage;
 
 import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
 import java.net.URL;
 import java.util.Map;
 
-import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.errors.HttpServiceNotFoundException;
@@ -65,7 +65,8 @@ public class DefaultExternalContentManager extends Module
 
     } catch (Throwable th)
     {
-      throw new ModuleInitializationException("An external content manager "
+      throw new ModuleInitializationException("[DefaultExternalContentManager] "
+          + "An external content manager "
           + "could not be instantiated. The underlying error was a "
           + th.getClass().getName() + "The message was \""
           + th.getMessage() + "\".", getRole());
@@ -76,42 +77,52 @@ public class DefaultExternalContentManager extends Module
    * A method that reads the contents of the specified URL and returns the
    * result as a MIMETypedStream
    *
-   * @param urlString The URL of the content.
+   * @param URL The URL of the external content.
    * @return A MIME-typed stream.
    * @throws HttpServiceNotFoundException If the URL connection could not
    *         be established.
    */
   public MIMETypedStream getExternalContent(String URL)
-      throws HttpServiceNotFoundException
+      throws GeneralException, HttpServiceNotFoundException
   {
+    InputStream inStream = null;
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    MIMETypedStream httpContent = null;
     try
     {
-      MIMETypedStream httpContent = null;
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
       URL url = new URL(URL);
       URLConnection connection = (URLConnection)url.openConnection();
       String contentType = connection.getContentType();
-      InputStream is = connection.getInputStream();
+      inStream = connection.getInputStream();
       int byteStream = 0;
-      while((byteStream = is.read()) >=0 )
+      while((byteStream = inStream.read()) >=0 )
       {
         baos.write(byteStream);
       }
-      System.err.println("beforeextContentManagerURL: "+URL);
-      System.err.println("beforeextContentManagerMIME: "+contentType);
-      if(contentType == null) contentType=connection.guessContentTypeFromStream(connection.getInputStream());
-      System.err.println("afterextContentManagerURL: "+URL);
-      System.err.println("afterextContentManagerMIME: "+contentType);
+      if(contentType == null) contentType =
+          connection.guessContentTypeFromStream(connection.getInputStream());
       httpContent = new MIMETypedStream(contentType, baos.toByteArray());
       return(httpContent);
 
     } catch (Throwable th)
     {
-      throw new HttpServiceNotFoundException("ExternalContentManager "
+      throw new HttpServiceNotFoundException("[DefaultExternalContentManager] "
           + "returned an error.\nThe underlying error was a "
           + th.getClass().getName() + "\nThe message "
           + "was \"" + th.getMessage() + "\" .");
+    } finally
+    {
+      try
+      {
+        if (inStream != null) inStream.close();
+        if (baos != null) baos.close();
+      } catch (IOException ioe)
+      {
+        throw new GeneralException("[DefaultExternalContentManager]"
+            + " unable to close IO stream.\nThe underlying error was a "
+            + ioe.getClass().getName() + "\nThe message "
+          + "was \"" + ioe.getMessage() + "\" .");
+      }
     }
   }
-
 }
