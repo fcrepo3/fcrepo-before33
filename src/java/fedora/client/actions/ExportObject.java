@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 
 import fedora.client.Administrator;
 import fedora.client.export.AutoExporter;
+import fedora.client.ObjectFormatDialog;
 
 /**
  *
@@ -96,9 +97,12 @@ public class ExportObject
                     if (dlg.getFile()!=null) {
                         File file = new File(new File(dlg.getDirectory()), dlg.getFile());
                         Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
-                        exporter.export(pid, new FileOutputStream(file), false);
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                "Exported " + pid);
+						ObjectFormatDialog fmtDialog = new ObjectFormatDialog();
+						if (fmtDialog.getSelection()!=null) {
+	                        exporter.export(pid, fmtDialog.getSelection(), new FileOutputStream(file), false);
+	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+	                                "Exported " + pid);
+						}
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(Administrator.getDesktop(),
@@ -124,22 +128,25 @@ public class ExportObject
                     int returnVal = browse.showOpenDialog(Administrator.getDesktop());
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         Administrator.setLastDir(browse.getSelectedFile()); // remember the dir for next time
-                        while (pidIter.hasNext()) {
-                            String pid=(String) pidIter.next();
-                            StringBuffer buf=new StringBuffer();
-                            for (int i=0; i<pid.length(); i++) {
-                                char c=pid.charAt(i);
-                                if (c==':') {
-                                    buf.append('_');
-                                } else {
-                                    buf.append(c);
-                                }
-                            }
-                            File outFile=new File(browse.getSelectedFile(), buf.toString() + ".xml");
-                            exporter.export(pid, new FileOutputStream(outFile),false);
-                        }
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                "Exported " + m_pids.size() + " objects.");
+						ObjectFormatDialog fmtDialog = new ObjectFormatDialog();
+						if (fmtDialog.getSelection()!=null) {
+	                        while (pidIter.hasNext()) {
+	                            String pid=(String) pidIter.next();
+	                            StringBuffer buf=new StringBuffer();
+	                            for (int i=0; i<pid.length(); i++) {
+	                                char c=pid.charAt(i);
+	                                if (c==':') {
+	                                    buf.append('_');
+	                                } else {
+	                                    buf.append(c);
+	                                }
+	                            }
+	                            File outFile=new File(browse.getSelectedFile(), buf.toString() + ".xml");
+	                            exporter.export(pid, fmtDialog.getSelection(), new FileOutputStream(outFile),false);
+	                        }
+	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+	                                "Exported " + m_pids.size() + " objects.");
+						}
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(Administrator.getDesktop(),

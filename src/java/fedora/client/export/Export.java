@@ -10,6 +10,7 @@ import fedora.client.Administrator;
 import fedora.client.APIAStubFactory;
 import fedora.client.APIMStubFactory;
 import fedora.client.FTypeDialog;
+import fedora.client.ObjectFormatDialog;
 import fedora.client.export.AutoExporter;
 import fedora.client.search.AutoFinder;
 
@@ -58,28 +59,32 @@ public class Export {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = browse.getSelectedFile();
                 Administrator.setLastDir(file.getParentFile());
-                if (kind==ONE) {
-                    String pid=JOptionPane.showInputDialog("Enter the PID of the object to export.");
-                    if (pid!=null && !pid.equals("")) {
-                        one(Administrator.APIM, pid, file);
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            "Export succeeded.  PID='" + pid + "'.");
-                    }
-                } else {
-                    FTypeDialog dlg=new FTypeDialog();
-                    if (dlg.getResult()!=null) {
-                        String fTypes=dlg.getResult();
-                        long st=System.currentTimeMillis();
-                        String[] pids=multi(Administrator.APIA, 
-                                            Administrator.APIM, 
-                                            fTypes, 
-                                            file);
-                        long et=System.currentTimeMillis();
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            "Export of " + pids.length + " objects finished.\n"
-                            + "Time elapsed: " + getDuration(et-st));  
-                    }
-                }
+				ObjectFormatDialog fmtDialog = new ObjectFormatDialog();
+				if (fmtDialog.getSelection()!=null) {
+	                if (kind==ONE) {
+	                    String pid=JOptionPane.showInputDialog("Enter the PID of the object to export.");
+	                    if (pid!=null && !pid.equals("")) {
+	                        one(Administrator.APIM, pid, file, fmtDialog.getSelection());
+	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+	                            "Export succeeded.  PID='" + pid + "'.");
+	                    }
+	                } else {
+	                    FTypeDialog dlg=new FTypeDialog();
+	                    if (dlg.getResult()!=null) {
+	                        String fTypes=dlg.getResult();
+	                        long st=System.currentTimeMillis();
+	                        String[] pids=multi(Administrator.APIA, 
+	                                            Administrator.APIM, 
+	                                            fTypes, 
+	                                            file,
+												fmtDialog.getSelection());
+	                        long et=System.currentTimeMillis();
+	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+	                            "Export of " + pids.length + " objects finished.\n"
+	                            + "Time elapsed: " + getDuration(et-st));  
+	                    }
+	                }
+				}
             }
         } catch (Exception e) {
             String msg=e.getMessage();
@@ -116,19 +121,22 @@ public class Export {
         return out.toString();
     }
 
-    public static void one(FedoraAPIM apim, String pid, File dir)
+    public static void one(FedoraAPIM apim, String pid, File dir, String format)
             throws Exception {
+        validateFormat(format);
         String fName=pid.replaceAll(":", "_") + ".xml";
         File file=new File(dir, fName);
         System.out.println("Exporting " + pid + " to " + file.getPath());
-        AutoExporter.export(apim, pid, new FileOutputStream(file), false);
+        AutoExporter.export(apim, pid, format, new FileOutputStream(file), false);
     }
     
     public static String[] multi(FedoraAPIA apia, 
                                  FedoraAPIM apim,
                                  String fTypes,
-                                 File dir)
+                                 File dir,
+                                 String format)
             throws Exception {
+		validateFormat(format);
         String tps=fTypes.toUpperCase();
         Set toExport=new HashSet();
         Set pidSet=new HashSet();
@@ -152,7 +160,7 @@ public class Export {
         int i=0;
         while (iter.hasNext()) {
             String pid=(String) iter.next();
-            one(apim, pid, dir);
+            one(apim, pid, dir, format);
             pids[i++]=pid;
         }
         return pids;
@@ -194,6 +202,13 @@ public class Export {
         }
         return set;
     }
+    
+    public static void validateFormat(String format)
+    	throws Exception {
+    		if (!format.equals("foxml1.0") && !format.equals("metsf1.0")) {
+    			throw new Exception("Invalid export format. Valid FORMAT values: foxml1.0' | metsf1.0");
+    		}
+    	}
 
     /**
      * Print error message and show usage for command-line interface.
@@ -206,7 +221,7 @@ public class Export {
         System.err.println("Summary: Exports one or more objects from a Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-export HST:PRT USR PSS PID|FTYPS PATH");
+        System.err.println("  fedora-export HST:PRT USR PSS PID|FTYPS PATH FORMAT");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  HST    is the repository's hostname.");
@@ -218,15 +233,16 @@ public class Export {
         System.err.println("         which Fedora object type(s) should be exported. O=data objects,");
         System.err.println("         D=behavior definitions, and M=behavior mechanisms.");
         System.err.println("  PATH   is the directory to export to.");
+		System.err.println("  FORMAT is the XML format to export (foxml1.0 or metsf1.0).");
         System.err.println();
         System.err.println("Examples:");
-        System.err.println("fedora-export example.com:80 fedoraAdmin fedoraAdmin changeme:1 .");
+        System.err.println("fedora-export example.com:80 fedoraAdmin fedoraAdmin changeme:1 . foxml1.0");
         System.err.println();
-        System.err.println("  Exports changeme:1 from example.com:80 to the current directory.");
+        System.err.println("  Exports changeme:1 in FOXML from example.com:80 to the current directory.");
         System.err.println();
-        System.err.println("fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO /tmp/fedoradump");
+        System.err.println("fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO /tmp/fedoradump metsf1.0");
         System.err.println();
-        System.err.println("  Exports all objects from example.cocm:80 to /tmp/fedoradump");
+        System.err.println("  Exports all objects in METS-Fedora format from example.com:80 to /tmp/fedoradump");
         System.err.println();
         System.exit(1);
     }
@@ -236,7 +252,8 @@ public class Export {
      */
     public static void main(String[] args) {
         try {
-            if (args.length!=5) {
+			// USAGE: fedora-export HST:PRT USR PSS PID|FTYPS PATH FORMAT
+            if (args.length!=6) {
                 Export.badArgs("Wrong number of arguments.");
             }
             String[] hp=args[0].split(":");
@@ -255,7 +272,8 @@ public class Export {
                                                 args[1],
                                                 args[2]),
                         args[3],
-                        new File(args[4]));
+                        new File(args[4]),
+                        args[5]);
                 System.out.print("Exported ");
                 for (int i=0; i<pids.length; i++) {
                     if (i>0) System.out.print(", ");
@@ -269,7 +287,8 @@ public class Export {
                                                    args[1],
                                                    args[2]),
                            args[3],
-                           new File(args[4]));
+                           new File(args[4]),
+						   args[5]);
                 System.out.println("Exported " + args[3]);
             }
         } catch (Exception e) {

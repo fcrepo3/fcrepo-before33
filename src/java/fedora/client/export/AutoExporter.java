@@ -57,20 +57,21 @@ public class AutoExporter {
             throws MalformedURLException, ServiceException {
         m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
-
-    public void export(String pid, OutputStream outStream, boolean internal) 
-            throws RemoteException, IOException {
-        export(m_apim, pid, outStream, internal);
-    }
-
-    public static void export(FedoraAPIM skeleton, String pid, 
+    
+	public void export(String pid, String format, 
+			OutputStream outStream, boolean internal) 
+			throws RemoteException, IOException {
+		export(m_apim, pid, format, outStream, internal);
+	}
+	
+    public static void export(FedoraAPIM skeleton, String pid, String format,
             OutputStream outStream, boolean internal)
             throws RemoteException, IOException {
         byte[] bytes;
         if (internal) {
             bytes=skeleton.getObjectXML(pid);
         } else {
-            bytes=skeleton.exportObject(pid);
+            bytes=skeleton.export(pid, format);
         }
         try {
             // use xerces to pretty print the xml, assuming it's well formed
@@ -95,26 +96,27 @@ public class AutoExporter {
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");
-        System.out.println("Usage: AutoExporter host port username password filename pid");
+        System.out.println("Usage: AutoExporter host port username password filename pid format");
     }
 
     public static void main(String[] args) {
         try {
-            if (args.length!=6) {
-                AutoExporter.showUsage("You must provide six arguments.");
+            if (args.length!=7) {
+                AutoExporter.showUsage("You must provide seven arguments.");
             } else {
                 String hostName=args[0];
                 int portNum=Integer.parseInt(args[1]);
                 String username=args[2];
                 String password=args[3];
                 String pid=args[5];
+                String format=args[6];
                 // third arg==file... must exist
                 File f=new File(args[4]);
                 if (f.exists()) {
                     AutoExporter.showUsage("Third argument must be the path to a non-existing file.");
                 } else {
                     AutoExporter a=new AutoExporter(hostName, portNum, username, password);
-                    a.export(pid, new FileOutputStream(f), false);
+                    a.export(pid, format, new FileOutputStream(f), false);
                 }
             }
         } catch (Exception e) {
