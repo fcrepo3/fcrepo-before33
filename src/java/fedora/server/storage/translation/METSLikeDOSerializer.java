@@ -379,7 +379,7 @@ public class METSLikeDOSerializer
                     String labelString="";
                     if (dsc.DSLabel!=null && !dsc.DSLabel.equals("")) {
                         labelString=" " + m_XLinkPrefix + ":title=\"" 
-                                + dsc.DSLabel + "\"";
+                                + StreamUtility.enc(dsc.DSLabel) + "\"";
                     }
                     if (dsc.DSLocation==null || dsc.DSLocation.equals("")) {
                         throw new ObjectIntegrityException("Object's content datastream must have a location.");
@@ -396,7 +396,7 @@ public class METSLikeDOSerializer
                             + admIDString + dmdIDString + " OWNERID=\"" + dsc.DSControlGrp + "\">\n");
                     buf.append("          <" + METS_PREFIX + ":FLocat" + labelString
                             + " LOCTYPE=\"URL\" " + m_XLinkPrefix 
-                            + ":href=\"" + dsc.DSLocation + "\"/>\n");
+                            + ":href=\"" + StreamUtility.enc(dsc.DSLocation) + "\"/>\n");
                     buf.append("        </" + METS_PREFIX + ":file>\n");
                 }
                 buf.append("      </" + METS_PREFIX + ":fileGrp>\n");
