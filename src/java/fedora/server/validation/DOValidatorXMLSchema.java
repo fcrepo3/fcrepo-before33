@@ -20,6 +20,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 
+import fedora.server.errors.GeneralException;
+import fedora.server.errors.ServerException;
+
 public class DOValidatorXMLSchema
 {
     /** Constants used for JAXP 1.2 */
@@ -47,6 +50,11 @@ public class DOValidatorXMLSchema
         DOValidatorXMLSchema dov = new DOValidatorXMLSchema(args[0]);
         dov.validate(new File(args[1]));
       }
+      catch (ServerException e)
+      {
+        System.out.println("DOValidatorXMLSchema caught ServerException in main().");
+        System.out.println("Suppressing message since not attached to Server.");
+      }
       catch (SAXException e)
       {
         System.err.println("DOValidatorXMLSchema says SAXException in main(): " + e.getMessage());
@@ -61,22 +69,32 @@ public class DOValidatorXMLSchema
       }
     }
 
-    public DOValidatorXMLSchema(String schemaID)
+    public DOValidatorXMLSchema(String schemaID) throws GeneralException
     {
       try
       {
+        System.out.println("XML Schema location: " + schemaID);
         schemaURI = new URI(schemaID);
       }
       catch (Exception e)
       {
         System.err.println("DOValidatorXMLSchema says caught ERROR in Constructor: " + e.getMessage());
+        throw new GeneralException(e.getMessage());
       }
     }
 
-    public DOValidatorXMLSchema(File schema)
+    public DOValidatorXMLSchema(File schema) throws GeneralException
     {
-      File schemaFile = schema;
-      schemaURI = schemaFile.toURI();
+      try
+      {
+        File schemaFile = schema;
+        schemaURI = schemaFile.toURI();
+      }
+      catch (Exception e)
+      {
+        System.err.println("DOValidatorXMLSchema says caught ERROR in Constructor: " + e.getMessage());
+        throw new GeneralException(e.getMessage());
+      }
     }
 
     public void validate(File objectAsFile)
