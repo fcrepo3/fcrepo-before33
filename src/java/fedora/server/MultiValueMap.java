@@ -19,14 +19,14 @@ public class MultiValueMap {
     public MultiValueMap() {
     }
 
+    public String setReturn(String name, Object value) throws Exception {
+    	set(name, value);
+    	return name;
+    }
+    
     public void set(String name, Object value) throws Exception {
     	if (name == null) {
     		String msg = here + ": set() has null name, value=" + value;
-    		log(msg);
-    		throw new Exception(msg);
-    	}
-    	if (name == null) {
-    		String msg = here + ": set() has null value, name=" + name;
     		log(msg);
     		throw new Exception(msg);
     	}
@@ -40,14 +40,16 @@ public class MultiValueMap {
     		if (((String[])value).length == 1) {
         		value = ((String[])value)[0];
     		}
+    	} else if (value == null) {
+        		value = "";
     	} else {
     		String msg = here + ": set() has unhandled type";
     		log(msg);
     		throw new Exception(msg);    		
     	}
-    	attributes.put(name, value);
+    	attributes.put(name, value);    	
     }
-
+    
     public void lock() {
     	locked = true;
     }
