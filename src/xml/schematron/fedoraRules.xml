@@ -27,11 +27,12 @@
 	<!-- These rules are to be applied to objects no matter what phase of the object lifecycle they are in.-->
 	<sch:pattern name="Preliminary Object Checks" id="preliminary">
 		<sch:rule context="METS:mets[@TYPE='FedoraBMechObject']">
-			<sch:assert test="child::METS:amdSec[@ID='DSBIND']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Binding Spec (element amdSec with ID="DSBIND" must exist when element mets has TYPE="FedoraBMechObject"</sch:assert>
+			<sch:assert test="child::METS:amdSec[@ID='DSINPUTSPEC']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Input Spec (element amdSec with ID="DSINPUTSPEC" must exist when element mets has TYPE="FedoraBMechObject"</sch:assert>
+			<sch:assert test="child::METS:amdSec[@ID='METHODMAP']">Behavior Mechanism Objects must have an inline Datastream representing a Fedora Method Map (element amdSec with ID="METHODMAP" must exist when element mets has TYPE="FedoraBMechObject"</sch:assert>
 			<sch:assert test="child::METS:amdSec[@ID='WSDL']">Behavior Mechanism Objects must have an inline Datastream representing WSDL service bindings (element amdSec with ID="WSDL" must exist when element mets has TYPE="FedoraBMechObject"</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:mets[@TYPE='FedoraBDefObject']">
-			<sch:assert test="child::METS:amdSec[@ID='WSDL']">Behavior Definition Objects must have an inline Datastream representing WSDL abstract method defs (element amdSec with ID="WSDL" must exist when element mets has TYPE="FedoraBDefObject"</sch:assert>
+			<sch:assert test="child::METS:amdSec[@ID='METHODMAP']">Behavior Definition Objects must have an inline Datastream representing a Fedora Method Map of abstract method defs (element amdSec with ID="METHODMAP" must exist when element mets has TYPE="FedoraBDefObject"</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:mets">
 			<sch:assert test="@TYPE = 'FedoraObject' or @TYPE = 'FedoraBDefObject' or @TYPE = 'FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (element mets: TYPE)</sch:assert>
