@@ -122,6 +122,12 @@ public class FastDOReader implements DOReader
   /** Context for uncached objects. */
   protected static Context m_context = null;
 
+  /** Host name of the Fedora server **/
+  protected static String fedoraServerHost = null;
+
+  /** Port number on which the Fedora server is running **/
+  protected static String fedoraServerPort = null;
+
   /** Make sure we have a server instance. */
   static
   {
@@ -129,6 +135,8 @@ public class FastDOReader implements DOReader
     {
       s_server =
           Server.getInstance(new File(System.getProperty("fedora.home")));
+      fedoraServerHost = s_server.getParameter("fedoraServerHost");
+      fedoraServerPort = s_server.getParameter("fedoraServerPort");
       m_manager = (DOManager) s_server.getModule(
           "fedora.server.storage.DOManager");
       HashMap h = new HashMap();
@@ -702,7 +710,7 @@ public class FastDOReader implements DOReader
           datastream = new Datastream();
           datastream.DSLabel = results[0];
           datastream.DSMIME = results[1];
-          datastream.DSLocation = results[2];
+          datastream.DSLocation = dereferenceToken(results[2]);
           queryResults.addElement(datastream);
         }
 
@@ -804,7 +812,7 @@ public class FastDOReader implements DOReader
           datastream = new Datastream();
           datastream.DSLabel = results[0];
           datastream.DSMIME = results[1];
-          datastream.DSLocation = results[2];
+          datastream.DSLocation = dereferenceToken(results[2]);
           queryResults.addElement(datastream);
         }
         datastreamArray = new Datastream[queryResults.size()];
@@ -942,10 +950,10 @@ public class FastDOReader implements DOReader
           {
             results[i-1] = rs.getString(i);
           }
-          dissBindInfo.AddressLocation = results[3];
-          dissBindInfo.OperationLocation = results[4];
+          dissBindInfo.AddressLocation = dereferenceToken(results[3]);
+          dissBindInfo.OperationLocation = dereferenceToken(results[4]);
           dissBindInfo.ProtocolType = results[5];
-          dissBindInfo.dsLocation = results[6];
+          dissBindInfo.dsLocation = dereferenceToken(results[6]);
           dissBindInfo.dsControlGroupType = results[7];
           dissBindInfo.dsID = results[8];
           dissBindInfo.dsVersionID = results[9];
@@ -1762,5 +1770,26 @@ public class FastDOReader implements DOReader
       s_server.logFinest("OBJECT FOUND IN FAST STORE: " + PID);
     }
     return doLabel;
+  }
+
+  /**
+   * <p> Dereferences the local Fedora token of "local.fedora.server"
+   * and replaces it with the current Fedora host name and port defined
+   * in the fedora.fcfg configuration file.
+   *
+   * @param str An input string to be searched for all occurrences of the token.
+   * @return A string with the dereferenced token.
+   */
+  private String dereferenceToken(String str)
+  {
+    if (fedoraServerPort.equalsIgnoreCase("80"))
+    {
+      // don't include port number for port 80
+      return str.replaceAll("local.fedora.server",fedoraServerHost);
+    } else
+    {
+      return str.replaceAll("local.fedora.server",fedoraServerHost+":"
+          +fedoraServerPort);
+    }
   }
 }
