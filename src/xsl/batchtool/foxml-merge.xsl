@@ -10,7 +10,6 @@ xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit"
 xmlns:xlink="http://www.w3.org/TR/xlink" 
 xmlns:foxml="info:fedora/fedora-system:def/foxml#"
 >
-	<xsl:param name="date">2005-03-20T00:00:00.000Z</xsl:param>
     <xsl:param name="date" select="NO-DATE-PARAM"/>
 	<xsl:param name="subfilepath" select="NO-SUBFILEPATH-PARAM"/>
 	<xsl:variable name="substitutions" select="document($subfilepath)"/>
