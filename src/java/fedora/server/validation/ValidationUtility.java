@@ -35,6 +35,7 @@ public abstract class ValidationUtility {
         try {
             URL goodURL = new URL(url);
         } catch (MalformedURLException murle) {
+            if (url.startsWith("copy://") || url.startsWith("uploaded://")) return;
             if (!canBeRelative) throw new ValidationException("Malformed URL: " + url, murle);
             if (!url.startsWith(
                   DOTranslationUtility.s_relativeGetPattern.pattern()) &&
