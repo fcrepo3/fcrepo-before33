@@ -50,12 +50,18 @@ public class DatastreamReferencedContent
             if (reportedLength>-1) {
                 DSSize=reportedLength;
             }
+
+            // SDP: removed because some web servers will reset the mime type
+            // to unpredictable things.  We'll keep the mime type originally
+            // recorded with the datastream.
+            /*
             // If Content-type available, set DSMIME.
             DSMIME=conn.getContentType();
             if (DSMIME==null) {
                 DSMIME=HttpURLConnection.guessContentTypeFromName(
                         DSLocation);
             }
+            */
             return ret;
         } catch (IOException ioe) {
             throw new StreamIOException("Can't get InputStream from URL: "
