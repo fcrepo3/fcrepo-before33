@@ -147,8 +147,9 @@
 			<arg path="res/wsdl-validator/validate.xsl"/>
 		</exec>
 	</target>
-	<target name="document-wsdl" depends="prep" description="Produce html documentation of the API-A and API-M wsdl in temp/wsdldoc/">
-		<mkdir dir="temp/wsdldoc"/>
+	<target name="document-wsdl" depends="prep" description="Produce html documentation of the API-A and API-M wsdl in dist/wsdldoc/">
+                <mkdir dir="dist"/>
+		<mkdir dir="dist/wsdldoc"/>
 		<echo message="Producing html reports on the validity of API-A and API-M..."/>
 		<echo message="Doing API-A..."/>
 		<exec executable="java">
@@ -156,7 +157,7 @@
 			<arg path="res/saxon-6.5/saxon.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="temp/wsdldoc/Fedora-API-A.html"/>
+			<arg path="dist/wsdldoc/Fedora-API-A.html"/>
 			<arg path="src/wsdl/Fedora-API-A.wsdl"/>
 			<arg path="res/wsdl-documentor/document.xsl"/>
 		</exec>
@@ -166,7 +167,7 @@
 			<arg path="res/saxon-6.5/saxon.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="temp/wsdldoc/Fedora-API-M.html"/>
+			<arg path="dist/wsdldoc/Fedora-API-M.html"/>
 			<arg path="src/wsdl/Fedora-API-M.wsdl"/>
 			<arg path="res/wsdl-documentor/document.xsl"/>
 		</exec>
@@ -317,6 +318,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.32  2002/09/16 02:49:52  cwilper
+  wsdldoc target outputs to dist/ instead of temp/
+
   Revision 1.31  2002/09/16 02:38:51  cwilper
   added definitions target
 
