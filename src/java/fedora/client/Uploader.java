@@ -29,7 +29,6 @@ public class Uploader {
 
     private String m_uploadURL;
     private UsernamePasswordCredentials m_creds;
-    private File m_tempDir;
 
     /**
      * Construct an uploader to a certain repository as a certain user.
@@ -87,7 +86,7 @@ public class Uploader {
                         + ": " 
                         + replaceNewlines(post.getResponseBodyAsString(), " "));
             }
-            return post.getResponseBodyAsString();
+            return replaceNewlines(post.getResponseBodyAsString(), "");
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         } finally {
