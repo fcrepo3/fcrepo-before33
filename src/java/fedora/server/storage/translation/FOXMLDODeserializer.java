@@ -269,6 +269,8 @@ public class FOXMLDODeserializer
 
     public void deserialize(InputStream in, DigitalObject obj, String encoding)
             throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
+            	
+        System.out.println("Deserializing using FOXMLDODeserializer...");
         m_obj=obj;
         m_rootElementFound=false;
         m_dsId=null;
@@ -307,18 +309,10 @@ public class FOXMLDODeserializer
         obj.setNamespaceMapping(m_prefixes);
         
 		//TEST:
-		Iterator i = obj.datastreamIdIterator();
-		while (i.hasNext()){
-			System.out.println("DSID=" + i.next());
-		}
-        // TEST:
-        List dsVersionList = obj.datastreams("FMETA");
-        Iterator i2 = dsVersionList.iterator();
-		while (i2.hasNext()){
-			Datastream ds = (Datastream) i2.next();
-			System.out.println("DSID=" + ds.DatastreamID);
-			System.out.println("DSVersionID=" + ds.DSVersionID);
-		}
+		//Iterator i = obj.datastreamIdIterator();
+		//while (i.hasNext()){
+		//	System.out.println("DSID=" + i.next());
+		//}
     }
 
     public void startPrefixMapping(String prefix, String uri) {
@@ -374,7 +368,8 @@ public class FOXMLDODeserializer
 			} else if (localName.equals("datastream")) {
 				// get datastream attributes...
 				m_dsId=grab(a, F, "ID");
-				m_dsURI=grab(a, F, "URI");
+				m_dsURI = m_obj.getURI() + "/" + m_dsId;
+				//m_dsURI=grab(a, F, "URI");
 				m_dsState=grab(a, F, "STATE");
 				m_dsFormatURI=grab(a, F, "FORMAT_URI");
 				m_dsMimeType=grab(a, F, "MIMETYPE");
@@ -388,10 +383,10 @@ public class FOXMLDODeserializer
 					m_dsVersionable="NO";
 				}
 				// initialize values for datastream version-level attributes				
-				m_dsVersId=null;
-				m_dsLabel=null;
-				m_dsCreateDate=null;
-				m_dsSize=-1;
+				//m_dsVersId=null;
+				//m_dsLabel=null;
+				//m_dsCreateDate=null;
+				//m_dsSize=-1;
 				//m_dsXMLBuffer=null;
 			} else if (localName.equals("datastreamVersion")) {
 				// get datastream version-level attributes...
@@ -437,7 +432,7 @@ public class FOXMLDODeserializer
                   }
                   m_dsLocationType="URL";
                   m_dsLocation=dsLocation;
-                  addDatastream(new DatastreamReferencedContent());
+                  populateDatastream(new DatastreamReferencedContent());
 				  // check if datastream is ManagedContent
                 } else if (m_dsControlGrp.equalsIgnoreCase("M")) {
                   // Validate ManagedContent dsLocation URL only if this
@@ -455,7 +450,7 @@ public class FOXMLDODeserializer
                   }                 
                   m_dsLocationType="INTERNAL_ID";
 				  m_dsLocation=dsLocation;
-				  addDatastream(new DatastreamManagedContent());
+				  populateDatastream(new DatastreamManagedContent());
                 }
             } else if (localName.equals("binaryContent")) {
                 // signal that we want to suck it in
@@ -554,36 +549,76 @@ public class FOXMLDODeserializer
 
     public void endElement(String uri, String localName, String qName) {
         if (m_inXMLMetadata) {
-            if (uri.equals(F) && localName.equals("xmlContent")) {
-			//if (uri.equals(F) && localName.equals("xmlContent") && m_xmlDataLevel==0) {
-                // create the right class of datastream and add it to m_obj
-                for (int i=0; i<m_dsPrefixes.size(); i++) {
-                    // now finish writing to m_dsFirstElementBuffer, a series of strings like
-                    // ' xmlns:PREFIX="URI"'
-                    String pfx=(String) m_dsPrefixes.get(i);
-                    String pfxUri=(String) m_prefixUris.get(pfx);
-                    if (!pfx.equals("")) {
-                        m_dsFirstElementBuffer.append(" xmlns:");
-                        m_dsFirstElementBuffer.append(pfx);
-                    } else {
-                        m_dsFirstElementBuffer.append(" xmlns");
-                    }
-                    m_dsFirstElementBuffer.append("=\"");
-                    m_dsFirstElementBuffer.append(pfxUri);
-                    m_dsFirstElementBuffer.append("\"");
-                }
-                DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
+			if (m_gotAudit) {
+				// AUDIT datastream... 
+				// Pick up audit records from the current ds version
+				// and populate audit records array in digital object.
+				if (localName.equals("action")) {
+					m_auditAction=m_elementContent.toString();
+				} else if (localName.equals("recordID")) {
+					m_auditRecordID=m_elementContent.toString();
+				} else if (localName.equals("componentID")) {
+					m_auditComponentID=m_elementContent.toString();
+				} else if (localName.equals("responsibility")) {
+					m_auditResponsibility=m_elementContent.toString();
+				} else if (localName.equals("date")) {
+					m_auditDate=m_elementContent.toString();
+				} else if (localName.equals("justification")) {
+					m_auditJustification=m_elementContent.toString();
+				} else if (localName.equals("record")) {
+					m_auditRec.id=m_auditRecordID;
+					m_auditRec.processType=m_auditProcessType;
+					m_auditRec.action=m_auditAction;
+					m_auditRec.componentID=m_auditComponentID;
+					m_auditRec.responsibility=m_auditResponsibility;
+					m_auditRec.date=DateUtility.convertStringToDate(m_auditDate);
+					m_auditRec.justification=m_auditJustification;
+					// add the audit records to the digital object
+					m_obj.getAuditRecords().add(m_auditRec);
+					// reinit variables for next audit record
+					m_auditProcessType=null;
+					m_auditAction=null;
+					m_auditComponentID=null;
+					m_auditResponsibility=null;
+					m_auditDate=null;
+					m_auditJustification=null;
+				} else if (localName.equals("auditTrail")) {
+					m_gotAudit=false;
+				}
+			} else if (uri.equals(F) && localName.equals("xmlContent")) {
+				if (m_dsId.equals("AUDIT")) {
+					System.out.println("found end of xmlContent within AUDIT ds");
+					m_inXMLMetadata=false;
+				} else {
+					// For ALL other inline xml datastreams...
+					// populate the right class of datastream and add it to m_obj
+					for (int i=0; i<m_dsPrefixes.size(); i++) {
+						// now finish writing to m_dsFirstElementBuffer, a series of strings like
+						// ' xmlns:PREFIX="URI"'
+						String pfx=(String) m_dsPrefixes.get(i);
+						String pfxUri=(String) m_prefixUris.get(pfx);
+						if (!pfx.equals("")) {
+							m_dsFirstElementBuffer.append(" xmlns:");
+							m_dsFirstElementBuffer.append(pfx);
+						} else {
+							m_dsFirstElementBuffer.append(" xmlns");
+						}
+						m_dsFirstElementBuffer.append("=\"");
+						m_dsFirstElementBuffer.append(pfxUri);
+						m_dsFirstElementBuffer.append("\"");
+					}
+					DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
 
-                try {
-                    String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
-                    ds.xmlContent=combined.getBytes(
-                            m_characterEncoding);
-                } catch (UnsupportedEncodingException uee) {
-                  System.out.println("oops..encoding not supported, this could have been caught earlier.");
-                }
-                addXMLDatastream(ds);
-                m_inXMLMetadata=false;
-				if (m_gotAudit) {m_gotAudit=false;} 
+					try {
+						String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
+						ds.xmlContent=combined.getBytes(
+								m_characterEncoding);
+					} catch (UnsupportedEncodingException uee) {
+					  System.out.println("oops..encoding not supported, this could have been caught earlier.");
+					}
+					populateXMLDatastream(ds);
+					m_inXMLMetadata=false; 
+				}
             } else {
                 // finish an element within the inline xml metadata... print end tag,
                 m_dsXMLBuffer.append("</");
@@ -596,42 +631,7 @@ public class FOXMLDODeserializer
                 m_dsXMLBuffer.append(">");
                 //if (uri.equals(F) && localName.equals("xmlContent")) {
                 //    m_xmlDataLevel--;
-                //}
-                
-				// AUDIT datastream: 
-				// pick up audit records from the current ds version
-				if (m_gotAudit) {
-					if (localName.equals("action")) {
-						m_auditAction=m_elementContent.toString();
-					} else if (localName.equals("recordID")) {
-						m_auditRecordID=m_elementContent.toString();
-					} else if (localName.equals("componentID")) {
-						m_auditComponentID=m_elementContent.toString();
-					} else if (localName.equals("responsibility")) {
-						m_auditResponsibility=m_elementContent.toString();
-					} else if (localName.equals("date")) {
-						m_auditDate=m_elementContent.toString();
-					} else if (localName.equals("justification")) {
-						m_auditJustification=m_elementContent.toString();
-					} else if (localName.equals("record")) {
-						m_auditRec.id=m_auditRecordID;
-						m_auditRec.processType=m_auditProcessType;
-						m_auditRec.action=m_auditAction;
-						m_auditRec.componentID=m_auditComponentID;
-						m_auditRec.responsibility=m_auditResponsibility;
-						m_auditRec.date=DateUtility.convertStringToDate(m_auditDate);
-						m_auditRec.justification=m_auditJustification;
-						// add the audit records to the digital object
-						m_obj.getAuditRecords().add(m_auditRec);
-						// reinit variables for next audit record
-						m_auditProcessType=null;
-						m_auditAction=null;
-						m_auditComponentID=null;
-						m_auditResponsibility=null;
-						m_auditDate=null;
-						m_auditJustification=null;
-					}
-				}					
+                //}					
             }
         // NOT m_inXMLMetadata ...
         } else if (uri.equals(F) && (localName.equals("property") || localName.equals("extproperty"))) {
@@ -669,6 +669,25 @@ public class FOXMLDODeserializer
         } else if (uri.equals(F) && localName.equals("binaryContent")) {
 			// FIXME: Implement for version 1.2?
 			m_readingBinaryContent=false;
+		} else if (uri.equals(F) && localName.equals("datastreamVersion")) {
+			// reinitialize datastream version-level attributes...
+			m_dsVersId=null;
+			m_dsLabel=null;
+			m_dsCreateDate=null;
+			m_dsSize=0;
+			//m_dsXMLBuffer=null;
+			//m_dsAdmIds=new HashMap();
+			//m_dsDmdIds=null;
+        } else if (uri.equals(F) && localName.equals("datastream")) {
+			// reinitialize datastream attributes ...
+			m_dsId=null;
+			m_dsURI=null;
+			m_dsVersionable=null;
+			m_dsState=null;
+			m_dsFormatURI=null;
+			m_dsInfoType=null;
+			m_dsOtherInfoType=null;
+			m_dsMDClass=0;
         }
     }
 
@@ -681,7 +700,7 @@ public class FOXMLDODeserializer
         return ret;
     }
     
-    private void addDatastream(Datastream ds) {
+    private void populateDatastream(Datastream ds) {
     	
 		ds.DatastreamID=m_dsId;
 		ds.DatastreamURI=m_dsURI;
@@ -717,10 +736,11 @@ public class FOXMLDODeserializer
 		  }
 		}
 		*/
-		m_obj.datastreams(m_dsId).add(ds);   	
+		m_obj.datastreams(m_dsId).add(ds);
+		//reinitDS(); 	
     }
     
-	private void addXMLDatastream(DatastreamXMLMetadata ds) {   	
+	private void populateXMLDatastream(DatastreamXMLMetadata ds) {   	
 		try {
 			String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
 			ds.xmlContent=combined.getBytes(
@@ -749,14 +769,14 @@ public class FOXMLDODeserializer
 		ds.DSInfoType=m_dsInfoType; // METS legacy
 		ds.DSMDClass=m_dsMDClass;   // METS legacy
 		// add it to the digitalObject
-		m_obj.datastreams(m_dsId).add(ds);   	
+		m_obj.datastreams(m_dsId).add(ds);
+		//reinitDS();   	
 	}
 	
+	
 	private void checkMETSFormat(String formatURI) {
-		System.out.println("checkMETSFormat: formatURI input=" + formatURI);
 		//"info:fedora/format:xml:mets:"
 		//Pattern p=Pattern.compile("info:fedora/format:xml:mets:");
-		System.out.println("checkMETSFormat: Pattern=" + metsPattern.pattern());
 		Matcher m = metsPattern.matcher(formatURI);
 		//Matcher m = metsURI.matcher(formatURI);
 		if (m.lookingAt()) {
@@ -770,9 +790,6 @@ public class FOXMLDODeserializer
 			if (st.hasMoreTokens()){
 				m_dsOtherInfoType = st.nextToken();
 			}
-			System.out.println("checkMETSFormat: dsmdClass=" + mdClass);
-			System.out.println("checkMETSFormat: dsInfoType=" + m_dsInfoType);
-			System.out.println("checkMETSFormat: dsOtherInfoType=" + m_dsOtherInfoType);
 			if (mdClass.equals("techMD")) { m_dsMDClass = 1;
 			} else if (mdClass.equals("sourceMD")) { m_dsMDClass = 2;
 			} else if (mdClass.equals("rightsMD")) { m_dsMDClass = 3;
