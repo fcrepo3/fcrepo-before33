@@ -262,7 +262,7 @@
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/userdocs/server/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="lib/server/cos.jar;inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/common/junit.jar;lib/common/saxon6.5.jar;lib/server/md5.jar" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="lib/common/xerces2-2.0.2.jar;lib/server/cos.jar;inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/common/junit.jar;lib/common/saxon6.5.jar;lib/server/md5.jar" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
 		<copy todir="dist/server/tomcat41/webapps/userdocs/server/serverdocs">
 			<fileset dir="dist/userdocs/server/serverdocs"/>
 		</copy>
@@ -365,6 +365,16 @@
 			<arg path="src/dbx/userdocs/apialite.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<echo message="Translating apimlite.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/client/browser/apimlite/index.html"/>
+			<arg path="src/dbx/userdocs/apimlite.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>		
 		<echo message="Translating apimadmingui.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -576,6 +586,7 @@
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/builder/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/apialite/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/apimlite/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/oai/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/search/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/servlet/images/"/>
@@ -632,7 +643,7 @@
 			<arg path="temp/debug/Fedora-API-M-LITE.html"/>
 			<arg path="src/wsdl/Fedora-API-M-LITE.wsdl"/>
 			<arg path="res/wsdl-validator/validate.xsl"/>
-		</exec>		
+		</exec>
 	</target>
 	<target name="document-wsdl" depends="prep" description="Produce html documentation of the API-A, API-A-LITE, API-M, and API-M-LITE wsdl in dist/wsdldoc/">
 		<mkdir dir="dist"/>
@@ -677,7 +688,7 @@
 			<arg path="dist/wsdldoc/Fedora-API-M-LITE.html"/>
 			<arg path="src/wsdl/Fedora-API-M-LITE.wsdl"/>
 			<arg path="res/wsdl-documentor/document.xsl"/>
-		</exec>		
+		</exec>
 	</target>
 	<target name="wsdl2java" depends="prep" description="Generate java classes for API-M and API-A in temp/server/java">
 		<echo message="Generating java classes for API-M and API-A in temp/server/java"/>
@@ -865,7 +876,7 @@
 		<echo message="Finished building server distribution in dist/server"/>
 		<mkdir dir="dist/server/management"/>
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
-		<copy file="src/xsl/management/getNextPIDInfo.xslt" todir="dist/server/management"/>		
+		<copy file="src/xsl/management/getNextPIDInfo.xslt" todir="dist/server/management"/>
 	</target>
 	<target name="localservices" depends="server, localservicesclasses">
 		<!-- saxon service -->
@@ -951,10 +962,7 @@
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMServiceLocator.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<mkdir dir="temp/server/classes"/>
-		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/server/classes" 
-		       classpath="lib/server/cos.jar;inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar;lib/common/junit.jar;lib/server/md5.jar;lib/common/xerces2-2.0.2.jar" 
-		       includes="fedora/server/**,fedora/logging/**,fedora/oai/**" 
-		       optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/server/classes" classpath="lib/server/cos.jar;inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar;lib/common/junit.jar;lib/server/md5.jar;lib/common/xerces2-2.0.2.jar" includes="fedora/server/**,fedora/logging/**,fedora/oai/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
