@@ -148,7 +148,7 @@ public class DefaultDOReplicator
             st=connection.createStatement();
 
             // Get db ID for the digital object
-            results=logAndExecuteQuery(st, "SELECT doDbID,doState FROM do WHERE "
+            results=logAndExecuteQuery(st, "SELECT doDbID,doState,doLabel FROM do WHERE "
                     + "doPID='" + reader.GetObjectPID() + "'");
             if (!results.next()) {
                 logFinest("DefaultDOReplication.updateComponents: Object is "
@@ -157,6 +157,7 @@ public class DefaultDOReplicator
             }
             int doDbID=results.getInt("doDbID");
             String doState=results.getString("doState");
+            String doLabel=results.getString("doLabel");
             results.close();
             results=null;
             ArrayList updates=new ArrayList();
@@ -166,6 +167,13 @@ public class DefaultDOReplicator
             if (!doState.equalsIgnoreCase(objState)) {
                 updates.add("UPDATE do SET doState='" + objState + "' WHERE doDbID=" + doDbID);
                 updates.add("UPDATE doRegistry SET objectState='" + objState + "' WHERE doPID='" + reader.GetObjectPID() + "'");
+            }
+
+            // Check if label has changed for the digital object.
+            String objLabel = reader.GetObjectLabel();
+            if (!doLabel.equalsIgnoreCase(objLabel)) {
+                updates.add("UPDATE do SET doLabel='" + objLabel + "' WHERE doDbID=" + doDbID);
+                updates.add("UPDATE doRegistry SET label='" + objLabel + "' WHERE doPID='" + reader.GetObjectPID() + "'");
             }
 
             // check if any mods to datastreams for this digital object
@@ -376,7 +384,7 @@ public class DefaultDOReplicator
                     String dissDBID;
                     String doDBID;
                     String doPID;
-                    String doLabel;
+                    //String doLabel;
                     String dsBindingKeyDBID;
                     allBindingMaps = reader.GetDSBindingMaps(null);
                     logFinest("DefaultDOReplicator.updateComponents: Bindings found: "+allBindingMaps.length);
