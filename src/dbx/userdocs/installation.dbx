@@ -164,7 +164,7 @@
 			<para>and everything necessary for a server and client distribution will be put in $FEDORA_DEV/dist</para>
 			<para>If you want to run the server and client straight from where it was compiled, be sure to set your FEDORA_HOME to $FEDORA_DEV/dist, and add $FEDORA_HOME/server/bin and $FEDORA_HOME/client/bin to your PATH environment variable.</para>
 			<para>For other targets, see the build.xml file or type ant -projecthelp for a brief description of each.</para>
-			<para>To erase all temporary and compiled files created by a build, first ensure that your database and Fedora server are stopped, and type ant clean.  If you're not using McKoi, you should also drop the FedoraObjects (or whatever you named it) database from your RDBMS if you want to start fresh.</para>
+			<para>To erase all temporary and compiled files created by a build, first ensure that your database and Fedora server are stopped, and type ant clean.  If you're not using McKoi, you should also drop the fedora12 (or whatever you named it) database from your RDBMS if you want to start fresh.</para>
 		</section>
 	</section>
 	<section>
@@ -218,7 +218,7 @@
 					</listitem>
 					<listitem>
 						<para>
-							<emphasis>dbName</emphasis> is the name you'd like to use for the Fedora database.  (e.g., FedoraObjects) Please note that the user name is case sensitive.</para>
+							<emphasis>dbName</emphasis> is the name you'd like to use for the Fedora database.  (e.g., fedora12) Please note that the user name is case sensitive.</para>
 					</listitem>
 				</itemizedlist>
 				<para>Note: This command resolves to a batch file (mysql-config.bat) in Windows, and a shell script (mysql-config.sh) in Unix.  These reside in the server's bin directory.</para>
@@ -228,7 +228,7 @@
 				can be found <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/MySQLVersion4">on this page of the Fedora wiki</ulink>.
 				</para>
 				<para>
-					<emphasis>Important:</emphasis> If you are installing Fedora under Windows and plan to use an earlier version of MYSQL (e.g., 3.23.53 thru 3.23.58), you should use all lower case characters when specifiying the Fedora database name when running the mysql-config.bat script (e.g., "fedoraobjects" instead of "FedoraObjects"). Additional information regarding the use of earlier versions of Windows MYSQL can be found <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/PoolWasntFoundMessage">on this page of the Fedora wiki</ulink>.
+					<emphasis>Important:</emphasis> If you are installing Fedora under Windows and plan to use an earlier version of MYSQL (e.g., 3.23.53 thru 3.23.58), you should use all lower case characters when specifiying the Fedora database name when running the mysql-config.bat script (e.g., "myfedoradb" instead of "MyFedoraDb"). Additional information regarding the use of earlier versions of Windows MYSQL can be found <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/PoolWasntFoundMessage">on this page of the Fedora wiki</ulink>.
 				</para>
 			</section>
 			<section>
@@ -249,7 +249,7 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 				and ensure that the datastore entry (near the bottom) for Oracle
 				points to the right host and database.  The fedora.fcfg file
 				that comes with the distribution uses a database on the local host
-				called "Fedora".
+				called "fedora12".
                 </para>
 				<para>When you start fedora, be sure to use the parameter "oracle", as in
 				<emphasis>fedora-start oracle</emphasis>.  Starting the server is more
