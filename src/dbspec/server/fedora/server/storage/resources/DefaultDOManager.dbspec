@@ -2,54 +2,54 @@
 <database>
 	<table name="bDef" primaryKey="bDefDbID">
 		<column name="bDefDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="bDefPID" type="varchar(32)" notNull="true" default="" unique="true"/>
-		<column name="bDefLabel" type="varchar(255)" notNull="false" default="" index="bDefLabel"/>
-		<column name="bDefState" type="char(1)" notNull="true" default="I" index="bDefState"/>
+		<column name="bDefPID" type="varchar(64)" notNull="true" default="" unique="true"/>
+		<column name="bDefLabel" type="varchar(255)" notNull="false" default=""/>
+		<column name="bDefState" type="char(1)" notNull="true" default="I"/>
 	</table>
 	<table name="bMech" primaryKey="bMechDbID">
 		<column name="bMechDbID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="bDefDbID" type="int(11)" notNull="true" default="0" index="bDefDbID"/>
-		<column name="bMechPID" type="varchar(32)" notNull="true" default="" unique="true"/>
-		<column name="bMechLabel" type="varchar(255)" notNull="false" default="" index="bMechLabel"/>
-		<column name="bMechState" type="char(1)" notNull="true" default="I" index="bMechState"/>
+		<column name="bMechPID" type="varchar(64)" notNull="true" default="" unique="true"/>
+		<column name="bMechLabel" type="varchar(255)" notNull="false" default=""/>
+		<column name="bMechState" type="char(1)" notNull="true" default="I"/>
 	</table>
 	<table name="dsBind">
 		<column name="doDbID" type="int(11)" notNull="true" default="0" index="doDbID"/>
 		<column name="dsBindKeyDbID" type="int(11)" notNull="true" default="0" index="dsBindKeyDbID"/>
 		<column name="dsBindMapDbID" type="int(11)" notNull="true" default="0" index="dsBindMapDbID"/>
-		<column name="dsBindKeySeq" type="int(11)" notNull="true" default="0" index="dsBindKeySeq"/>
-		<column name="dsID" type="varchar(32)" notNull="true" default="" index="dsID"/>
-		<column name="dsLabel" type="varchar(255)" notNull="false" default="" index="dsLabel"/>
-		<column name="dsMIME" type="varchar(32)" notNull="true" default="" index="dsMIME"/>
-		<column name="dsLocation" type="varchar(255)" notNull="false" default="" index="dsLocation"/>
-		<column name="dsControlGroupType" type="char(1)" notNull="true" index="dsControlGroupType"/>
-		<column name="dsCurrentVersionID" type="varchar(32)" notNull="true" index="dsCurrentVersionID"/>
+		<column name="dsBindKeySeq" type="int(11)" notNull="true" default="0"/>
+		<column name="dsID" type="varchar(64)" notNull="true" default="" index="dsID"/>
+		<column name="dsLabel" type="varchar(255)" notNull="false" default=""/>
+		<column name="dsMIME" type="varchar(64)" notNull="true" default=""/>
+		<column name="dsLocation" type="text" notNull="false" default=""/>
+		<column name="dsControlGroupType" type="char(1)" notNull="true"/>
+		<column name="dsCurrentVersionID" type="varchar(64)" notNull="true"/>
 		<column name="policyDbID" type="int(11)" notNull="true" default="0" index="policyID"/>
-		<column name="dsState" type="char(1)" notNull="true" default="I" index="dsState"/>
+		<column name="dsState" type="char(1)" notNull="true" default="I"/>
 	</table>
 	<table name="dsBindMap">
 		<column name="dsBindMapDbID" type="int(11)" notNull="true" autoIncrement="true" unique="true"/>
 		<column name="bMechDbID" type="int(11)" notNull="true" default="0"/>
-		<column name="dsBindMapID" type="varchar(32)" notNull="true" default=""/>
+		<column name="dsBindMapID" type="varchar(64)" notNull="true" default=""/>
 		<column name="dsBindMapLabel" type="varchar(255)" notNull="false" default=""/>
 	</table>
 	<table name="dsBindSpec" primaryKey="dsBindKeyDbID">
 		<column name="dsBindKeyDbID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="bMechDbID" type="int(11)" notNull="true" default="0" index="bMechDbID"/>
-		<column name="dsBindSpecName" type="varchar(32)" notNull="true" default="" index="dsBindSpecName"/>
-		<column name="dsBindSpecOrdinality" type="varchar(5)" notNull="true" default="N" index="dsBindSpecOrdinality"/>
-		<column name="dsBindSpecCardinality" type="smallint(6)" notNull="true" default="1" index="dsBindSpecCardinality"/>
-		<column name="dsBindSpecLabel" type="varchar(255)" notNull="false" default="" index="dsBindSpecLabel"/>
+		<column name="dsBindSpecName" type="varchar(64)" notNull="true" default="" index="dsBindSpecName"/>
+		<column name="dsBindSpecOrdinality" type="varchar(5)" notNull="true" default="N"/>
+		<column name="dsBindSpecCardinality" type="smallint(6)" notNull="true" default="1"/>
+		<column name="dsBindSpecLabel" type="varchar(255)" notNull="false" default=""/>
 	</table>
 	<table name="dsMIME">
 		<column name="dsBindKeyDbID" type="int(11)" notNull="true" default="0" index="dsBindKeyDbID"/>
-		<column name="dsMIMEName" type="varchar(32)" notNull="false" default="" index="dsMIMEName"/>
+		<column name="dsMIMEName" type="varchar(64)" notNull="false" default="" index="dsMIMEName"/>
 	</table>
 	<table name="do" primaryKey="doDbID">
 		<column name="doDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="doPID" type="varchar(32)" notNull="true" default="" unique="true"/>
-		<column name="doLabel" type="varchar(255)" notNull="false" default="" index="doLabel"/>
-		<column name="doState" type="char(1)" notNull="true" default="I" index="doState"/>
+		<column name="doPID" type="varchar(64)" notNull="true" default="" unique="true"/>
+		<column name="doLabel" type="varchar(255)" notNull="false" default=""/>
+		<column name="doState" type="char(1)" notNull="true" default="I"/>
 	</table>
 	<table name="doDissAssoc" primaryKey="doDbID,dissDbID">
 		<column name="doDbID" type="int(11)" notNull="true" default="0"/>
@@ -59,51 +59,51 @@
 		<column name="dissDbID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="bDefDbID" type="int(11)" notNull="true" default="0" index="bDefDbID"/>
 		<column name="bMechDbID" type="int(11)" notNull="true" default="0" index="bMechDbID"/>
-		<column name="dissID" type="varchar(32)" notNull="true" default="" index="dissID"/>
-		<column name="dissLabel" type="varchar(255)" notNull="false" default="" index="dissLabel"/>
-		<column name="dissState" type="varchar(1)" notNull="true" default="I" index="dissState"/>
+		<column name="dissID" type="varchar(64)" notNull="true" default="" index="dissID"/>
+		<column name="dissLabel" type="varchar(255)" notNull="false" default=""/>
+		<column name="dissState" type="varchar(1)" notNull="true" default="I"/>
 	</table>
 	<table name="mechImpl" primaryKey="bMechDbID,bDefDbID,methodDbID,dsBindKeyDbID">
 		<column name="bMechDbID" type="int(11)" notNull="true" default="0"/>
 		<column name="bDefDbID" type="int(11)" notNull="true" default="0"/>
 		<column name="methodDbID" type="int(11)" notNull="true" default="0"/>
 		<column name="dsBindKeyDbID" type="int(11)" notNull="true" default="0"/>
-		<column name="protocolType" type="varchar(32)" notNull="false" default="" index="protocolType"/>
-		<column name="returnType" type="varchar(32)" notNull="false" default="" index="returnType"/>
-		<column name="addressLocation" type="varchar(255)" notNull="false" default="" index="addressLocation"/>
-		<column name="operationLocation" type="varchar(255)" notNull="false" default="" index="operationLocation"/>
+		<column name="protocolType" type="varchar(64)" notNull="false" default=""/>
+		<column name="returnType" type="varchar(64)" notNull="false" default=""/>
+		<column name="addressLocation" type="varchar(255)" notNull="false" default=""/>
+		<column name="operationLocation" type="text" notNull="false" default=""/>
 		<column name="policyDbID" type="int(11)" notNull="true" default="0" index="policyID"/>
 	</table>
 	<table name="method" primaryKey="methodDbID,bDefDbID">
 		<column name="methodDbID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="bDefDbID" type="int(11)" notNull="true" default="0"/>
-		<column name="methodName" type="varchar(32)" notNull="false" default="" index="methodName"/>
-		<column name="methodLabel" type="varchar(255)" notNull="false" default="" index="methodLabel"/>
+		<column name="methodName" type="varchar(64)" notNull="false" default="" index="methodName"/>
+		<column name="methodLabel" type="varchar(255)" notNull="false" default=""/>
 	</table>
 	<table name="objectPaths" primaryKey="tokenDbID">
 		<column name="tokenDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="token" type="varchar(32)" notNull="true" default="" unique="true"/>
-		<column name="path" type="varchar(255)" notNull="true" default="" index="path"/>
+		<column name="token" type="varchar(64)" notNull="true" default="" unique="true"/>
+		<column name="path" type="varchar(255)" notNull="true" default=""/>
 	</table>
 	<table name="tempPaths" primaryKey="tokenDbID">
 		<column name="tokenDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="token" type="varchar(32)" notNull="true" default="" unique="true"/>
-		<column name="path" type="varchar(255)" notNull="true" default="" index="path"/>
+		<column name="token" type="varchar(64)" notNull="true" default="" unique="true"/>
+		<column name="path" type="varchar(255)" notNull="true" default=""/>
 	</table>
 	<table name="datastreamPaths" primaryKey="tokenDbID">
 		<column name="tokenDbID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="token" type="varchar(103)" notNull="true" default="" unique="true"/>
-		<column name="path" type="varchar(255)" notNull="true" default="" index="path"/>
+		<column name="path" type="varchar(255)" notNull="true" default=""/>
 	</table>
 	<table name="parm">
 		<column name="methodDbID" type="int(11)" notNull="true" default="0" index="methodDbID"/>
 		<column name="bDefDbID" type="int(11)" notNull="true" default="0" index="bDefDbID"/>
-		<column name="parmName" type="varchar(32)" notNull="true" default="" index="parmName"/>
-		<column name="parmDefaultValue" type="varchar(255)" notNull="false" default="" index="parmDefaultValue"/>
-		<column name="parmDomainValues" type="varchar(255)" notNull="false" default="" index="parmDomainValues"/>
-		<column name="parmRequiredFlag" type="varchar(5)" notNull="true" default="false" index="parmRequiredFlag"/>
-		<column name="parmLabel" type="varchar(255)" notNull="false" default="" index="parmLabel"/>
-		<column name="parmType" type="varchar(32)" notNull="false" default="" index="parmType"/>
+		<column name="parmName" type="varchar(64)" notNull="true" default="" index="parmName"/>
+		<column name="parmDefaultValue" type="varchar(255)" notNull="false" default=""/>
+		<column name="parmDomainValues" type="varchar(255)" notNull="false" default=""/>
+		<column name="parmRequiredFlag" type="varchar(5)" notNull="true" default="false"/>
+		<column name="parmLabel" type="varchar(255)" notNull="false" default=""/>
+		<column name="parmType" type="varchar(64)" notNull="false" default=""/>
 	</table>
 	<table name="pidGen">
         <comment>For each namespace the DBPIDGenerator keeps track of, 
@@ -116,17 +116,17 @@
     </table>
 	<table name="policy" primaryKey="policyID">
 		<column name="policyID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="policyName" type="varchar(32)" notNull="false" default="" index="policyName"/>
-		<column name="policyRule" type="varchar(255)" notNull="false" default="" index="policyRule"/>
-		<column name="policyLabel" type="varchar(255)" notNull="false" default="0" index="policyLabel"/>
+		<column name="policyName" type="varchar(64)" notNull="false" default="" index="policyName"/>
+		<column name="policyRule" type="text" notNull="false" default=""/>
+		<column name="policyLabel" type="varchar(255)" notNull="false" default="0"/>
 	</table>
-	<table name="doRegistry">
+	<table name="doRegistry" primaryKey="doPID">
 		<comment>This is used internally to keep track of objects in the definitive
              store.  When an object is ingested or newly created, a PID
              has been assigned, and the object is written to the definitive
              store, an entry is created here.
             </comment>
-		<column name="doPID" type="varchar(32)" notNull="true">
+		<column name="doPID" type="varchar(64)" notNull="true">
 			<comment>The PID of the object</comment>
 		</column>
 		<column name="foType" type="char(1)" notNull="true" default="O">
@@ -140,7 +140,7 @@
                one each time a change is committed to the definitive store.
       </comment>
 		</column>
-		<column name="ownerId" type="varchar(32)" notNull="false">
+		<column name="ownerId" type="varchar(64)" notNull="false">
 			<comment>The userId of the user who owns the object.</comment>
 		</column>
 		<column name="objectState" type="char(1)" notNull="true" default="A">
@@ -162,7 +162,7 @@
                  All dublin core fields start and end with a space, and are
                  in a normalized form (all lowercase letters) so that case
                  insensitive searching may be done.</comment>
-		<column name="pid" type="varchar(32)" notNull="true">
+		<column name="pid" type="varchar(64)" notNull="true">
 			<comment>The PID of the object</comment>
 		</column>
 		<column name="label" type="varchar(255)" notNull="false">
@@ -180,7 +180,7 @@
 		<column name="state" type="char(1)" notNull="true" default="A">
 			<comment>The state of the object.</comment>
 		</column>
-		<column name="ownerId" type="varchar(32)" notNull="false">
+		<column name="ownerId" type="varchar(64)" notNull="false">
 			<comment>The userId of the user who owns the object.</comment>
 		</column>
 		<column name="cDate" type="bigint" notNull="true">
@@ -253,7 +253,7 @@
 			When greater-than, greater-than or equal, less-than, less-than or equal,
 			or equals operators are used when querying of the dc:date, the values
 			here are checked.</comment>
-		<column name="pid" type="varchar(32)" notNull="true">
+		<column name="pid" type="varchar(64)" notNull="true">
 			<comment>The PID of the object</comment>
 		</column>
 		<column name="dcDate" type="bigint" notNull="true">
@@ -262,7 +262,7 @@
 	</table>
 	<table name="doRepJob">
 		<comment>Used as a queue for replication jobs.</comment>
-		<column name="doPID" type="varchar(32)" notNull="true">
+		<column name="doPID" type="varchar(64)" notNull="true">
 			<comment>The object pid</comment>
 		</column>
 		<column name="action" type="char(1)" notNull="true">
@@ -277,11 +277,13 @@
 		</comment>
 		<column name="methodDbID" type="int(11)" notNull="true" default="0" index="methodDbID"/>
 		<column name="bMechDbID" type="int(11)" notNull="true" default="0" index="bMechDbID"/>
-		<column name="defParmName" type="varchar(32)" notNull="false" default="" index="defParmName"/>
-		<column name="defParmDefaultValue" type="varchar(255)" notNull="false" default="" index="defParmDefaultValue"/>
-		<column name="defParmDomainValues" type="varchar(255)" notNull="false" default="" index="defParmDomainValues"/>
-		<column name="defParmRequiredFlag" type="varchar(5)" notNull="true" default="false" index="defParmRequiredFlag"/>
-		<column name="defParmLabel" type="varchar(255)" notNull="false" default="" index="defParmLabel"/>
-		<column name="defParmType" type="varchar(32)" notNull="false" default="" index="defParmType"/>
+		<column name="defParmName" type="varchar(64)" notNull="false" default="" index="defParmName"/>
+		<column name="defParmDefaultValue" type="varchar(255)" notNull="false" default=""/>
+		<column name="defParmDomainValues" type="varchar(255)" notNull="false" default=""/>
+		<column name="defParmRequiredFlag" type="varchar(5)" notNull="true" default="false"/>
+		<column name="defParmLabel" type="varchar(255)" notNull="false" default=""/>
+		<column name="defParmType" type="varchar(64)" notNull="false" default=""/>
 	</table>
 </database>
+
+
