@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -16,13 +15,11 @@ import java.util.regex.Pattern;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
-import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StreamWriteException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
@@ -432,121 +429,61 @@ public class FOXMLDOSerializer
         }
     }
 
-    private void appendStructMaps(DigitalObject obj, StringBuffer buf)
-            throws ObjectIntegrityException {
-        /*
-        Iterator dissIdIter=obj.disseminatorIdIterator();
-        while (dissIdIter.hasNext()) {
-            String did=(String) dissIdIter.next();
-            Iterator dissIter=obj.disseminators(did).iterator();
-            while (dissIter.hasNext()) {
-                Disseminator diss=(Disseminator) dissIter.next();
-                if (diss.dsBindMapID==null) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a binding map id.");
-                }
-                if (diss.bMechID==null) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a bmech id.");
-                }
-                if (diss.dsBindMap==null) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a binding map.");
-                }
-                String labelString="";
-                if ( diss.dsBindMap.dsBindMapLabel!=null
-                        && !diss.dsBindMap.dsBindMapLabel.equals("") ) {
-                    labelString=" LABEL=\"" + StreamUtility.enc(diss.dsBindMap.dsBindMapLabel) + "\"";
-                }
-                buf.append("  <" + FOXML_PREFIX + ":structMap ID=\""
-                        + diss.dsBindMapID + "\" TYPE=\"fedora:dsBindingMap\">\n");
-                buf.append("    <" + FOXML_PREFIX + ":div TYPE=\"" + diss.bMechID
-                        + "\"" + labelString + ">\n");
-                DSBinding[] bindings=diss.dsBindMap.dsBindings;
-                for (int i=0; i<bindings.length; i++) {
-                    if (bindings[i].bindKeyName==null
-                            || bindings[i].bindKeyName.equals("")) {
-                        throw new ObjectIntegrityException("Object's disseminator binding map binding must have a binding key name.");
-                    }
-                    buf.append("      <" + FOXML_PREFIX + ":div TYPE=\"");
-                    buf.append(bindings[i].bindKeyName);
-                    if (bindings[i].bindLabel!=null
-                            && !bindings[i].bindLabel.equals("")) {
-                        buf.append("\" LABEL=\"");
-                        buf.append(StreamUtility.enc(bindings[i].bindLabel));
-                    }
-                    if (bindings[i].seqNo!=null) {
-                        buf.append("\" ORDER=\"");
-                        buf.append(bindings[i].seqNo);
-                    }
-                    if (bindings[i].datastreamID==null
-                            || bindings[i].datastreamID.equals("")) {
-                        throw new ObjectIntegrityException("Object's disseminator binding map binding must point to a datastream.");
-                    }
-                    buf.append("\">\n        <" + FOXML_PREFIX + ":fptr FILEID=\""
-                            + bindings[i].datastreamID + "\"/>\n" + "      </"
-                            + FOXML_PREFIX + ":div>\n");
-                }
-                buf.append("    </" + FOXML_PREFIX + ":div>\n");
-                buf.append("  </" + FOXML_PREFIX + ":structMap>\n");
-            }
-        }
-        */
-    }
-
     private void appendDisseminators(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
-         /*
+
         Iterator dissIdIter=obj.disseminatorIdIterator();
         while (dissIdIter.hasNext()) {
             String did=(String) dissIdIter.next();
             Iterator dissIter=obj.disseminators(did).iterator();
-            Disseminator diss=(Disseminator) obj.disseminators(did).get(0);
-            if (diss.dissState==null || diss.dissState.equals("")) {
-                throw new ObjectIntegrityException("Object's disseminator must have a state.");
+            List dissList = obj.disseminators(did);
+            
+            for (int i=0; i<dissList.size(); i++) {
+                Disseminator vdiss = 
+                	validateDisseminator((Disseminator) obj.disseminators(did).get(i));
+                                
+				// If dissVersionable is null or missing, default to YES.
+				if (vdiss.dissVersionable==null || vdiss.dissVersionable.equals("")) {
+					vdiss.dissVersionable="YES";
+				}                
+				// insert the disseminator elements common to all versions.
+				if (i==0) {
+					buf.append("  <" + FOXML_PREFIX + ":disseminator ID=\"" + did
+							+ "\" BDEF_CONTRACT_PID=\"" + vdiss.bDefID 
+							+ "\" STATE=\"" + vdiss.dissState 
+							+ "\" VERSIONABLE=\"" + vdiss.dissVersionable +"\">\n");
+				}
+				// insert the disseminator version-level elements
+				String dissLabelString="";
+				if (vdiss.dissLabel!=null && !vdiss.dissLabel.equals("")) {
+					dissLabelString=" LABEL=\"" + StreamUtility.enc(vdiss.dissLabel) + "\"";
+				}
+				buf.append("    <" + FOXML_PREFIX 
+					+ ":disseminatorVersion ID=\"" + vdiss.dissVersionID + "\"" 
+					+ dissLabelString
+					+ " BMECH_SERVICE_PID=\"" + vdiss.bMechID + "\""
+					+ " CREATED=\"" + m_formatter.format(vdiss.dissCreateDT) +  "\">\n");
+				
+				// datastream bindings...	
+				DSBinding[] bindings = vdiss.dsBindMap.dsBindings;
+				buf.append("      <" + FOXML_PREFIX + ":serviceInputMap>\n");
+				for (int j=0; j<bindings.length; j++){
+					String bindLabelString="";
+					if (bindings[j].bindLabel!=null && !bindings[j].bindLabel.equals("")) {
+						bindLabelString=" LABEL=\"" 
+						+ StreamUtility.enc(bindings[j].bindLabel) + "\"";
+					}				
+	                buf.append("        <" + FOXML_PREFIX + ":datastreamBinding KEY=\""
+	                        + bindings[j].bindKeyName + "\""
+							+ bindLabelString
+	                        + " ORDER=\"" + bindings[j].seqNo + "\""
+							+ " DATASTREAM_ID=\"" + bindings[j].datastreamID + "\"/>\n");
+				}
+				buf.append("      </" + FOXML_PREFIX + ":serviceInputMap>\n");
+				buf.append("    </" + FOXML_PREFIX + ":disseminatorVersion>\n");
             }
-            buf.append("  <" + FOXML_PREFIX + ":behaviorSec ID=\"" + did
-                    + "\" STATUS=\"" + diss.dissState + "\">\n");
-            for (int i=0; i<obj.disseminators(did).size(); i++) {
-                diss=(Disseminator) obj.disseminators(did).get(i);
-                if (diss.dissVersionID==null || diss.dissVersionID.equals("")) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a version id.");
-                }
-                if (diss.bDefID==null || diss.bDefID.equals("")) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a bdef id.");
-                }
-                if (diss.dissCreateDT==null) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a create date.");
-                }
-                if (diss.dissState==null || diss.dissState.equals("")) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a state.");
-                }
-                String dissLabelString="";
-                if (diss.dissLabel!=null && !diss.dissLabel.equals("")) {
-                    dissLabelString=" LABEL=\"" + StreamUtility.enc(diss.dissLabel) + "\"";
-                }
-                String bDefLabelString="";
-                if (diss.bDefLabel!=null && !diss.bDefLabel.equals("")) {
-                    bDefLabelString=" LABEL=\"" + StreamUtility.enc(diss.bDefLabel) + "\"";
-                }
-                String bMechLabelString="";
-                if (diss.bMechLabel!=null && !diss.bMechLabel.equals("")) {
-                    bMechLabelString=" LABEL=\"" + StreamUtility.enc(diss.bMechLabel) + "\"";
-                }
-                buf.append("    <" + FOXML_PREFIX + ":serviceBinding ID=\""
-                        + diss.dissVersionID + "\" STRUCTID=\"" + diss.dsBindMapID
-                        + "\" BTYPE=\"" + diss.bDefID + "\" CREATED=\""
-                        + m_formatter.format(diss.dissCreateDT) + "\""
-                        + dissLabelString + ">\n");
-                buf.append("      <" + FOXML_PREFIX + ":interfaceMD" + bDefLabelString
-                        + " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
-                        + diss.bDefID + "\"/>\n");
-                buf.append("      <" + FOXML_PREFIX + ":serviceBindMD" + bMechLabelString
-                        + " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
-                        + diss.bMechID + "\"/>\n");
-
-                buf.append("    </" + FOXML_PREFIX + ":serviceBinding>\n");
-            }
-            buf.append("  </" + FOXML_PREFIX + ":behaviorSec>\n");
+			buf.append("  </" + FOXML_PREFIX + ":disseminator>\n");
         }
-        */
     }
 
     private void appendRootElementEnd(StringBuffer buf) {
@@ -589,8 +526,10 @@ public class FOXMLDOSerializer
 		}
 		if (ds.DSFormatURI==null) {
 			ds.DSFormatURI="";
-		}
-		if (ds.DSVersionable==null) {
+		}		
+		// Until future when we implement selective versioning,
+		// set default to YES.
+		if (ds.DSVersionable==null || ds.DSVersionable.equals("")) {
 			ds.DSVersionable="YES";
 		}
 		// For METS backward compatibility:
@@ -619,6 +558,30 @@ public class FOXMLDOSerializer
 			}
 		}
 		return ds;
+	}
+
+	private Disseminator validateDisseminator(Disseminator dissVersion) throws ObjectIntegrityException {
+		if (dissVersion.dissVersionID==null || dissVersion.dissVersionID.equals("")) {
+			throw new ObjectIntegrityException("Object's disseminator must have a version id.");
+		}
+		if (dissVersion.dissState==null || dissVersion.dissState.equals("")) {
+			throw new ObjectIntegrityException("Object's disseminator must have a state.");
+		}
+		if (dissVersion.bDefID==null || dissVersion.bDefID.equals("")) {
+			throw new ObjectIntegrityException("Object's disseminator must have a bdef id.");
+		}
+		if (dissVersion.bMechID==null || dissVersion.bMechID.equals("")) {
+			throw new ObjectIntegrityException("Object's disseminator must have a bdef id.");
+		}
+		if (dissVersion.dissCreateDT==null) {
+			throw new ObjectIntegrityException("Object's disseminator must have a create date.");
+		}
+		// Until future when we implement selective versioning,
+		// set default to YES.
+		if (dissVersion.dissVersionable==null || dissVersion.dissVersionable.equals("")) {
+			dissVersion.dissVersionable="YES";
+		}
+		return dissVersion;
 	}
 	
 	private void validateAudit(AuditRecord audit) throws ObjectIntegrityException {
