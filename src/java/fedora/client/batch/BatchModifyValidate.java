@@ -15,8 +15,6 @@ import javax.swing.*;
 import javax.swing.text.JTextComponent;
 
 import fedora.client.Administrator;
-import fedora.client.batch.BatchModifyParser;
-import fedora.client.Uploader;
 import fedora.server.utilities.StreamUtility;
 
 
@@ -56,19 +54,14 @@ public class BatchModifyValidate
     private static String s_rootName = null;
     private static String s_logPath = null;
     private static PrintStream s_log = null;
-    private static Uploader UPLOADER = null;
-    private static Administrator s_admin;
 
     /**
      * <p>Constructor for the class.</p>
      *
      * @param s_admin - An instance of FedoraAPIM.
      */
-    public BatchModifyValidate(Administrator s_admin) {
-        //this.APIM = APIM;
-        BatchModifyValidate.s_admin = s_admin;
+    public BatchModifyValidate() {
         InputStream in = null;
-        BatchModifyParser bmp = null;
         BatchModifyValidator bmv = null;
         File file = null;
         long st=System.currentTimeMillis();
@@ -112,18 +105,17 @@ public class BatchModifyValidate
                             JOptionPane.INFORMATION_MESSAGE);
                         closeLog();
                         return;
-                    } else {
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                    }
+                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
                             +bmv.getErrorCount()+" XML validation errors found in Modify Directives file.\n"
                             + "See log file for details.\n"
                             + "Time elapsed: " + getDuration(et-st));
-                        s_log.println("  <summary>");
-                        s_log.println("    "+StreamUtility.enc(bmv.getErrorCount()
+                    s_log.println("  <summary>");
+                    s_log.println("    "+StreamUtility.enc(bmv.getErrorCount()
                             + " XML validation errors found in Modify Directives file.\n"
                             + "    See log file for details.\n"
                             + "    Time elapsed: " + getDuration(et-st)));
-                        s_log.println("  </summary>");
-                    }
+                    s_log.println("  </summary>");
                     closeLog();
                     int n = JOptionPane.showConfirmDialog(Administrator.getDesktop(),
                         "A detailed log file was created at\n"
