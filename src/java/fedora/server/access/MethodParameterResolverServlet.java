@@ -1,25 +1,19 @@
 package fedora.server.access;
 
-import fedora.server.utilities.DateUtility;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.URLDecoder;
-import java.util.Date;
+import java.net.URLEncoder;
 import java.util.Enumeration;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import java.util.Hashtable;
 
 import fedora.server.Server;
 import fedora.server.Logging;
 import fedora.server.errors.InitializationException;
-import fedora.server.errors.ServerException;
-
 
 
 /**
@@ -42,7 +36,7 @@ public class MethodParameterResolverServlet
 {
 
   /** A string constant for the html MIME type */
-  private static final String HTML_CONTENT_TYPE = "text/html";
+  private static final String HTML_CONTENT_TYPE = "text/html; charset=UTF-8";
 
   /** The Fedora API-A-Lite servlet path. */
   private static final String API_A_LITE_SERVLET_PATH = "/fedora/get/";
@@ -95,7 +89,8 @@ public class MethodParameterResolverServlet
     String versDateTime = null;
     StringBuffer methodParms = new StringBuffer();
     response.setContentType(HTML_CONTENT_TYPE);
-    PrintWriter out = response.getWriter();
+    URLDecoder decoder = new URLDecoder();
+    Hashtable h_methodParms = new Hashtable();
 
     // Get parameters passed from web form.
     Enumeration parms = request.getParameterNames();
@@ -104,13 +99,13 @@ public class MethodParameterResolverServlet
       String name = new String((String)parms.nextElement());
       if (name.equals("PID"))
       {
-        PID = (String)request.getParameter(name);
+        PID = decoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("bDefPID"))
       {
-        bDefPID = (String)request.getParameter(name);
+        bDefPID = decoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("methodName"))
       {
-        methodName = (String)request.getParameter(name);
+        methodName = decoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("asOfDateTime"))
       {
         versDateTime = (String)request.getParameter(name);
@@ -118,8 +113,10 @@ public class MethodParameterResolverServlet
         // Submit parameter is ignored.
       } else
       {
-        // Any remaining parameters are assumed to be method parameters.
-        methodParms.append(name+"="+(String)request.getParameter(name)+"&");
+        // Any remaining parameters are assumed to be method parameters so
+        // decode and place in hashtable.
+        h_methodParms.put(decoder.decode(name, "UTF-8"),
+            decoder.decode((String)request.getParameter(name), "UTF-8"));
       }
     }
 
@@ -141,18 +138,33 @@ public class MethodParameterResolverServlet
     {
       // Translate web form parameters into dissemination request.
       StringBuffer redirectURL = new StringBuffer();
-      URLDecoder decode = new URLDecoder();
-      PID = decode.decode(PID, "UTF-8");
-      bDefPID = decode.decode(bDefPID,"UTF-8");
       redirectURL.append(API_A_LITE_SERVLET_PATH
           + PID + "/"
           + bDefPID + "/"
           + methodName);
-      if (methodParms.length() > 0)
+
+      // Add method parameters.
+      int i = 0;
+      for (Enumeration e = h_methodParms.keys() ; e.hasMoreElements(); )
+      {
+        String name = URLEncoder.encode((String) e.nextElement(), "UTF-8");
+        String value = URLEncoder.encode((String) h_methodParms.get(name), "UTF-8");
+        i++;
+        if (i == h_methodParms.size())
+        {
+          methodParms.append(name + "=" + value);
+        } else
+        {
+          methodParms.append(name + "=" + value + "&");
+        }
+
+      }
+      if (h_methodParms.size() > 0)
       {
         if (versDateTime == null || versDateTime.equalsIgnoreCase(""))
         {
           redirectURL.append("?"+methodParms.toString());
+
         } else
         {
           redirectURL.append("/"+versDateTime+"?"+methodParms.toString());
@@ -168,7 +180,7 @@ public class MethodParameterResolverServlet
         }
       }
 
-      // redirect request.
+      // Redirect request back to FedoraAccessServlet.
       response.sendRedirect(redirectURL.toString());
     }
   }
