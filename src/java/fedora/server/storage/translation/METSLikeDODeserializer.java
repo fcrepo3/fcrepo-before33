@@ -138,6 +138,7 @@ public class METSLikeDODeserializer
     private String m_auditResponsibility;
     private String m_auditDate;
     private String m_auditJustification;
+    private HashMap m_auditIdToComponentId;
 
     /** Hashmap for holding disseminators during parsing, keyed
      * by structMapId */
@@ -252,6 +253,8 @@ public class METSLikeDODeserializer
         m_dsAdmIds=new HashMap();
         m_dsDmdIds=null;
         m_dissems=new HashMap();
+        this.m_auditIdToComponentId=new HashMap();
+        
         try {
             m_parser.parse(in, this);
         } catch (IOException ioe) {
@@ -264,8 +267,10 @@ public class METSLikeDODeserializer
             throw new ObjectIntegrityException("METS root element not found -- must have 'mets' element in namespace " + M + " as root element.");
         }
         obj.setNamespaceMapping(m_prefixes);
-        // foreach datastream: ArrayList ids=(ArrayList) m_dsAdmIds.get(m_dsVersId);
-        // put the admids in the correct place (metadata or auditrecs) for each datastream
+        
+        // Deal with METS way of having datastreams point to other metadata about them
+        // (via ADMID attribute).  We want to figure out which of these IDREFs point
+        // to audit records about changes to datastreams.       
         Iterator dsIdIter=obj.datastreamIdIterator();
         while (dsIdIter.hasNext()) {
             List datastreams=obj.datastreams((String) dsIdIter.next());
@@ -280,7 +285,10 @@ public class METSLikeDODeserializer
                        String admId=(String) admIdIter.next();
                        List targetDatastreamSequence=obj.datastreams(admId);
                        if (targetDatastreamSequence.size()>0) {
-                           // it's definitely a datastream.. assume it's admin
+                           // the admId is a datastream in the object, meaning
+                           // it's a datastream that is metadata
+                           // for another datastream... so put the admId in the 
+                           // list of metadata about the current datastream.
                            try {
                                DatastreamContent dsc=(DatastreamContent) ds;
                                dsc.metadataIdList().add(admId);
@@ -291,19 +299,41 @@ public class METSLikeDODeserializer
                                        + "datastream(s).");
                            }
                        } else {
-                           // it's not a datastream..assume it's an audit record
-                           ds.auditRecordIdList().add(admId);
+                           	// the admId is an audit record for the current datastream,
+                           	// so put it in the audit records list on the datastream
+                           	ds.auditRecordIdList().add(admId);
+                           	// also capture the correlation of admId adn dsid.
+                           	// In v2.0 we can use this during migration from
+                           	// METS to FOXML, specifically we can obtain component ids
+                           	// for the audit records by grabbing the ADMIDs off
+                           	// of datastreams (METS file element).
+							m_auditIdToComponentId.put(admId, ds.DSVersionID);
                        }
                     }
                 }
             }
         }
+        
+		// update audit records to include the id of the component (datastream)
+		// that the audit record is about.  METS awkwardness about having files
+		// back-reference things that describe them makes this inversion necessary.
+		// We want self-standing audit records that identify the datastreams
+		// they apply to. 
+		Iterator iter=((ArrayList) m_obj.getAuditRecords()).iterator();
+		while (iter.hasNext()) {
+			AuditRecord au=(AuditRecord) iter.next();
+			au.componentID=(String)m_auditIdToComponentId.get(au.id);
+		}
+		
         // put dissems in obj
         Iterator dissemIter=m_dissems.values().iterator();
         while (dissemIter.hasNext()) {
             Disseminator diss=(Disseminator) dissemIter.next();
             obj.disseminators(diss.dissID).add(diss);
         }
+        
+
+        
 
         // Lastly, if any urls user fedora.local.server, change them
         // to the ACTUAL fedoraServerHost and fedoraServerPort
