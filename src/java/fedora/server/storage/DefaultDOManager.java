@@ -36,6 +36,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.management.PIDGenerator;
+import fedora.server.search.FieldSearch;
 import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.replication.DOReplicator;
@@ -66,6 +67,7 @@ public class DefaultDOManager
     private ILowlevelStorage m_tempStore;
     private DOReplicator m_replicator;
     private DOValidator m_validator;
+    private FieldSearch m_fieldSearch;
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
@@ -141,6 +143,9 @@ public class DefaultDOManager
 
     public void postInitModule()
             throws ModuleInitializationException {
+        // get ref to fieldsearch module
+        m_fieldSearch=(FieldSearch) getServer().
+                getModule("fedora.server.search.FieldSearch");
         // get ref to pidgenerator
         m_pidGenerator=(PIDGenerator) getServer().
                 getModule("fedora.server.management.PIDGenerator");
@@ -323,6 +328,7 @@ public class DefaultDOManager
     public String[] getRequiredModuleRoles() {
         return new String[] {
                 "fedora.server.management.PIDGenerator",
+                "fedora.server.search.FieldSearch",
                 "fedora.server.storage.ConnectionPoolManager",
                 "fedora.server.storage.translation.DOTranslator",
                 "fedora.server.storage.replication.DOReplicator",
@@ -1259,6 +1265,18 @@ public class DefaultDOManager
                 m_connectionPool.free(conn);
             }
         }
+    }
+
+    public List search(Context context, String[] resultFields, 
+            String terms)
+            throws ServerException {
+        return m_fieldSearch.search(resultFields, terms);
+    }
+
+    public List search(Context context, String[] resultFields,
+            List conditions)
+            throws ServerException {
+        return m_fieldSearch.search(resultFields, conditions);
     }
 
 }

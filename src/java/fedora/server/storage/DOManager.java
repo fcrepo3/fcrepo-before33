@@ -2,6 +2,7 @@ package fedora.server.storage;
 
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.List;
 
 import fedora.server.errors.ServerException;
 import fedora.server.Context;
@@ -84,6 +85,14 @@ public interface DOManager
             String labelPattern, String contentModelIdPattern, 
             Calendar createDateMin, Calendar createDateMax, 
             Calendar lastModDateMin, Calendar lastModDateMax) 
+            throws ServerException;
+            
+    public List search(Context context, String[] resultFields, 
+            String terms)
+            throws ServerException;
+
+    public List search(Context context, String[] resultFields,
+            List conditions)
             throws ServerException;
 
 }

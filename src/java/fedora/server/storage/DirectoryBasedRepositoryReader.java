@@ -71,6 +71,9 @@ public class DirectoryBasedRepositoryReader
         m_storageFormat=storageFormat;
         m_encoding=encoding;
         File[] files=directory.listFiles();
+        if (!directory.isDirectory()) {
+            throw new StorageDeviceException("Repository storage directory not found.");
+        }
         try {
             for (int i=0; i<files.length; i++) {
                 FileInputStream in=new FileInputStream(files[i]);
@@ -85,7 +88,7 @@ public class DirectoryBasedRepositoryReader
                 }
             }
         } catch (FileNotFoundException fnfe) {
-            // won't happen
+            // naw
         }
     }
     
