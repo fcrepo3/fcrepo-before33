@@ -192,6 +192,7 @@
 		</itemizedlist>
 		<para>The web.xml file for the soap client webapp uses these default settings. If the webapp is ported to another servlet engine and any of the serlvet mappings change, the web.xml and the soapclient.properties file must both be updated accordingly. The servlets will dynamically get the values in the soapclient.properties file so no changes should be needed in the source code.</para>
 		<para>When the Fedora server is built, it will automatically create the soapclient webapp module and place it in the Fedora distribution directory. The generated SOAP type libraries that are bundled with the client are tied to the WSDL type definitions defined for Fedora API-A. Any changes made to the WSDL for API-A will require rebuilding of the Fedora server and the soap client webapp module.</para>
+		<para>Note that if you change the host name or port number on which the Fedora server is running, you must also update the value for the fedoraEndpoint parameter in the soapclient.properties file to reflect the new values. Otherwise, the soap client will be unable to connect to the Fedora server running under the new host name or port number. If you are running the soap client bundled together with the Fedora server, you need to stop the Fedora server, update the soapclient.properties file, and then restart the Fedora server so the new property values will be recognized by the soapclient webapp.</para>
 	</sect1>
 	<sect1>
 		<title>Examples</title>
