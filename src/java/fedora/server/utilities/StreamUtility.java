@@ -122,4 +122,8 @@ public abstract class StreamUtility {
 	    return Base64.decode(data);
 	}
 
+    public static String encodeBase64(byte[] data) {
+        return Base64.encode(data);
+    }
+
 }

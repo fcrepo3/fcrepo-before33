@@ -19,11 +19,11 @@ import fedora.server.errors.ServerException;
 import fedora.server.utilities.StreamUtility;
 
 /**
- * Accepts and HTTP POST of a file from an authorized user, and if successful,
- * returns a text/plain response with a single line: OK {ID}
- * where {ID} is an opaque identifier that can be used to later submit to 
- * the appropriate API-M method. If it fails, it returns a single line: 
- * ERROR {WHY}.
+ * Accepts and HTTP Multipart POST of a file from an authorized user, and if 
+ * successful, returns a status of "201 Created" and a text/plain 
+ * response with a single line containing an opaque identifier that can be 
+ * used to later submit to the appropriate API-M method. If it fails it 
+ * will return a non-201 status code with a text/plain explanation.
  *
  * The submitted file must be named "file", must not be accompanied by any other
  * parameters, and cannot be over 2,047 MB in size (due to a trivially 
@@ -73,41 +73,55 @@ public class UploadServlet
 			Part part=parser.readNextPart();
 			if (part!=null && part.isFile()) {
 			    if (part.getName().equals("file")) {
-			        sendResponse("OK", saveAndGetId((FilePart) part), response);
+                    sendResponse(HttpServletResponse.SC_CREATED, 
+                            saveAndGetId((FilePart) part), response);
 				} else {
-			        sendResponse("ERROR", "Client sent a file, but it wasn't named 'file'.", response);
+                    sendResponse(HttpServletResponse.SC_BAD_REQUEST,
+                            "Content must be named \"file\"", response);
 				}
 			} else {
 			    if (part==null) {
-			        sendResponse("ERROR", "Client didn't send anything!", response);
+			        sendResponse(HttpServletResponse.SC_BAD_REQUEST, 
+			                "No data sent.", response);
 				} else {
-			        sendResponse("ERROR", "Client should only send a file, not "
-			                + "any parameters.", response);
+			        sendResponse(HttpServletResponse.SC_BAD_REQUEST, 
+			                "No extra parameters allowed", response);
 				}
 			}
 		} catch (Exception e) {
-		    e.printStackTrace();
-		    sendResponse("ERROR", e.getClass().getName() + ": " 
-		            + e.getMessage(), response);
+		    sendResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    e.getClass().getName() + ": " + e.getMessage(), response);
 		}
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-		sendResponse("FAILURE", "Client must use HTTP POST", response);
+		sendResponse(HttpServletResponse.SC_BAD_REQUEST, 
+		        "Client must use HTTP Multipart POST", response);
 	}
+
+    public void sendResponse(int status, String message, 
+            HttpServletResponse response) {
+        try {
+            if (status==HttpServletResponse.SC_CREATED) {
+                logInfo("Failed upload: " + message);
+            } else {
+                logFine("Successful upload, id=" + message);
+            }
+            response.setStatus(status);
+            response.setContentType(CONTENT_TYPE_TEXT);
+            PrintWriter w=response.getWriter();
+            w.println(message);
+        } catch (Exception e) {
+            logSevere("Could not send a response: " + e.getClass().getName()
+                    + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     private String saveAndGetId(FilePart filePart)
 	        throws ServerException, IOException {
 		return s_management.putTempStream(filePart.getInputStream());
-	}
-
-    private void sendResponse(String status, String info, 
-            HttpServletResponse response)
-            throws IOException {
-		response.setContentType(CONTENT_TYPE_TEXT);
-		PrintWriter w=response.getWriter();
-		w.println(status + " " + info);
 	}
 
     /**
