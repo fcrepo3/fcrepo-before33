@@ -69,16 +69,6 @@ public interface Management {
                             String logMessage) throws ServerException;
 
     public String addDatastream(Context context,
-                                String pid,
-                                String dsLabel,
-                                String mimeType,
-                                String dsLocation,
-                                String controlGroup,
-                                String mdClass,
-                                String mdType,
-								String dsState) throws ServerException;
-
-    public String createDatastream(Context context,
                                    String pid,
                                    String dsID,
                                    String dsLabel,

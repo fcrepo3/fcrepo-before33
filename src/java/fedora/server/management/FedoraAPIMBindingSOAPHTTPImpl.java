@@ -285,24 +285,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
     public String addDatastream(String PID,
-                                String label,
-                                String MIMEType,
-                                String location,
-                                String controlGroup,
-                                String MDClass,
-                                String MDType,
-                                String dsState) throws RemoteException {
-        assertInitialized();
-        try {
-            return s_management.addDatastream(getContext(), PID, label, MIMEType,
-                    location, controlGroup, MDClass, MDType, dsState);
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-        }
-    }
-
-    public String createDatastream(String PID,
                                    String dsID,
                                    String label,
                                    boolean versionable,
@@ -313,7 +295,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                    String dsState) throws RemoteException {
         assertInitialized();
         try {
-            return s_management.createDatastream(getContext(), 
+            return s_management.addDatastream(getContext(), 
                                                  PID, 
                                                  dsID,
                                                  label, 

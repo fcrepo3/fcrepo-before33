@@ -298,8 +298,12 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_obj.pid, localName, e, "");
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
-
+        } 
+        
+/*
+REMOVE THIS BLOCK : This uses the old signature of addDatastream
+        
+        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
             try {
                 addDatastream = false;
                 m_ds = new Datastream();
@@ -358,8 +362,13 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("createDatastream")) {
-
+        }
+*/
+        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
+//
+// THIS PARSES THE DIRECTIVE
+// Used to be createDatastream, now is addDatastream
+//
             try {
                 addDatastream = false;
                 m_ds = new Datastream();
@@ -914,7 +923,9 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 addObject = false;
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
+        }
+/* REMOVE THIS BLOCK - It uses the old signature of addDatastream        
+        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
 
             try {
 
@@ -956,8 +967,13 @@ public class BatchModifyParser extends DefaultHandler
             } finally {
                 addDatastream = false;
             }
-        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("createDatastream")) {
-
+        } */
+        
+        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
+//
+// THIS CALLS THE SERVER
+// Used to be createDatastream, now is addDatastream
+//
             try {
 
                 // Process addDatastream only if no previous errors encountered
@@ -966,20 +982,20 @@ public class BatchModifyParser extends DefaultHandler
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
                         InputStream xmlMetadata = new ByteArrayInputStream(m_ds.xmlContent);
                         m_ds.dsLocation=UPLOADER.upload(xmlMetadata);
-                        datastreamID = APIM.createDatastream(m_ds.objectPID, m_ds.dsID,
+                        datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsID,
                         		m_ds.dsLabel,m_ds.versionable,
                         		m_ds.dsMIME, m_ds.formatURI,
                         		m_ds.dsLocation, m_ds.dsControlGrp, 
                         		m_ds.dsState);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("M")) {
-                        datastreamID = APIM.createDatastream(m_ds.objectPID, m_ds.dsID,
+                        datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsID,
                                 m_ds.dsLabel,m_ds.versionable,
                                 m_ds.dsMIME, m_ds.formatURI,
                                 m_ds.dsLocation, m_ds.dsControlGrp, 
                                 m_ds.dsState);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
                             m_ds.dsControlGrp.equalsIgnoreCase("R")) {
-                        datastreamID = APIM.createDatastream(m_ds.objectPID, m_ds.dsID,
+                        datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsID,
                                 m_ds.dsLabel,m_ds.versionable,
                                 m_ds.dsMIME, m_ds.formatURI,
                                 m_ds.dsLocation, m_ds.dsControlGrp, 

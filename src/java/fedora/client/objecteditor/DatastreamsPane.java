@@ -651,7 +651,7 @@ public class DatastreamsPane
                     } else { // must be E/R
                         location=m_referenceTextField.getText();
                     }
-                    String newID=Administrator.APIM.createDatastream(pid, dsID, label,
+                    String newID=Administrator.APIM.addDatastream(pid, dsID, label,
                             true/** FIXME: make 'versionable' enterable in the UI */, mimeType, 
                             null/** FIXME: make 'formatURI' enterable in the UIR */, 
                             location, m_controlGroup, m_initialState);

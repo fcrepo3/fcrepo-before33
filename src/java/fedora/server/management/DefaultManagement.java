@@ -340,16 +340,16 @@ public class DefaultManagement
         }
     }
 
-    public String createDatastream(Context context,
-                                   String pid,
-                                   String dsID,
-                                   String dsLabel,
-                                   boolean versionable,
-                                   String MIMEType,
-                                   String formatURI,
-                                   String dsLocation,
-                                   String controlGroup,
-                                   String dsState) throws ServerException {
+    public String addDatastream(Context context,
+                                String pid,
+                                String dsID,
+                                String dsLabel,
+                                boolean versionable,
+                                String MIMEType,
+                                String formatURI,
+                                String dsLocation,
+                                String controlGroup,
+                                String dsState) throws ServerException {
                                    	
         if (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL")) {
 			throw new GeneralException("Creation of a datastream with an"
@@ -357,7 +357,7 @@ public class DefaultManagement
         }
         DOWriter w=null;
         try {
-            getServer().logFinest("Entered DefaultManagement.createDatastream");
+            getServer().logFinest("Entered DefaultManagement.addDatastream");
             m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             Datastream ds;
@@ -437,121 +437,6 @@ public class DefaultManagement
                     ds.DatastreamID=dsID;
                 }
             }
-            ds.DSVersionID=ds.DatastreamID + ".0";
-            AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-            audit.id=w.newAuditRecordID();
-            audit.processType="Fedora API-M";
-            audit.action="createDatastream";
-            audit.componentID=ds.DatastreamID;
-            audit.responsibility=context.get("userId");
-            audit.date=nowUTC;
-            audit.justification="Added a new datastream";
-            w.getAuditRecords().add(audit);
-            w.addDatastream(ds);
-            w.commit("Added a new datastream");
-            return ds.DatastreamID;
-        } finally {
-            if (w!=null) {
-                m_manager.releaseWriter(w);
-            }
-            getServer().logFinest("Exiting DefaultManagement.createDatastream");
-        }
-    }
-
-    public String addDatastream(Context context,
-                                String pid,
-                                String dsLabel,
-                                String mimeType,
-                                String dsLocation,
-                                String controlGroup,
-                                String mdClass,
-                                String mdType,
-                                String dsState) throws ServerException {
-        DOWriter w=null;
-        try {
-            getServer().logFinest("Entered DefaultManagement.addDatastream");
-            m_ipRestriction.enforce(context);
-            w=m_manager.getWriter(context, pid);
-            Datastream ds;
-            if (controlGroup.equals("X")) {
-                ds=new DatastreamXMLMetadata();
-                ds.DSInfoType=mdType;
-                if (mdClass.equals("descriptive")) {
-                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
-                } else if (mdClass.equals("digital provenance")) {
-                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.DIGIPROV;
-                } else if (mdClass.equals("source")) {
-                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.SOURCE;
-                } else if (mdClass.equals("rights")) {
-                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.RIGHTS;
-                } else if (mdClass.equals("technical")) {
-                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.TECHNICAL;
-                } else {
-                	// if mdClass is not one of the above, default it to descriptive.
-					((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
-                    //throw new GeneralException("mdClass must be one of the following:\n"
-                    //        + " - descriptive\n"
-                    //        + " - digital provenance\n"
-                    //        + " - source\n"
-                    //        + " - rights\n"
-                    //        + " - technical");
-                }
-                // retrieve the content and set the xmlContent field appropriately
-                try {
-                    InputStream in;
-                    if (dsLocation.startsWith("uploaded://")) {
-                        in=getTempStream(dsLocation);
-                    } else {
-                        in=m_contentManager.getExternalContent(dsLocation).getStream();
-                    }
-                    // parse with xerces... then re-serialize, removing
-                    // processing instructions and ensuring the encoding gets to UTF-8
-                    ByteArrayOutputStream out=new ByteArrayOutputStream();
-                    // use xerces to pretty print the xml, assuming it's well formed
-                    OutputFormat fmt=new OutputFormat("XML", "UTF-8", true);
-                    fmt.setIndent(2);
-                    fmt.setLineWidth(120);
-                    fmt.setPreserveSpace(false);
-                    fmt.setOmitXMLDeclaration(true);
-                    XMLSerializer ser=new XMLSerializer(out, fmt);
-                    DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
-                    factory.setNamespaceAware(true);
-                    DocumentBuilder builder=factory.newDocumentBuilder();
-                    Document doc=builder.parse(in);
-                    ser.serialize(doc);
-                    // now put it in the byte array
-                    ((DatastreamXMLMetadata) ds).xmlContent=out.toByteArray();
-                } catch (Exception e) {
-                    String extraInfo;
-                    if (e.getMessage()==null)
-                        extraInfo="";
-                    else
-                        extraInfo=" : " + e.getMessage();
-                    throw new GeneralException("Error with " + dsLocation + extraInfo);
-                }
-            } else if (controlGroup.equals("M")) {
-                ds=new DatastreamManagedContent();
-                ds.DSInfoType="DATA";
-            } else if (controlGroup.equals("R") || controlGroup.equals("E")) {
-                ds=new DatastreamReferencedContent();
-                ds.DSInfoType="DATA";
-            } else {
-                throw new GeneralException("Invalid control group: " + controlGroup);
-            }
-            ds.isNew=true;
-            ds.DSControlGrp=controlGroup;
-            ds.DSLabel=dsLabel;
-            ds.DSLocation=dsLocation;
-            ds.DSMIME=mimeType;
-            if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
-                throw new InvalidStateException("The datastream state of \"" + dsState
-                        + "\" is invalid. The allowed values for state are: "
-                        + " A (active), D (deleted), and I (inactive).");
-            }            
-            ds.DSState= dsState;
-            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-            ds.DSCreateDT=nowUTC;
-            ds.DatastreamID=w.newDatastreamID();
             ds.DSVersionID=ds.DatastreamID + ".0";
             AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
