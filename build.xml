@@ -76,10 +76,16 @@
 		</copy>
 	</target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
-       <copy todir="dist/release/server" file="LICENSE.TXT"/>
-       <copy todir="dist/release/server" file="COPYRIGHT.TXT"/>
-       <copy todir="dist/release/client" file="LICENSE.TXT"/>
-       <copy todir="dist/release/client" file="COPYRIGHT.TXT"/>
+       <copy todir="dist/server" file="LICENSE.TXT"/>
+       <copy todir="dist/server" file="COPYRIGHT.TXT"/>
+       <copy todir="dist/server" file="license.html"/>
+       <copy todir="dist/server" file="copyright.html"/>
+       <copy todir="dist/server/tomcat41/webapps/userdocs/distribution" file="license.html"/>
+       <copy todir="dist/server/tomcat41/webapps/userdocs/distribution" file="copyright.html"/>
+       <copy todir="dist/client" file="LICENSE.TXT"/>
+       <copy todir="dist/client" file="COPYRIGHT.TXT"/>
+       <copy todir="dist/client" file="license.html"/>
+       <copy todir="dist/client" file="copyright.html"/>
 	</target>
 	<target name="clientunixstuff" depends="clientmostly" if="buildingOnUnix">
 		<!-- add symlinks for shell scripts in unix -->
@@ -347,6 +353,7 @@
 			<arg path="src/dbx/userdocs/documentation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+       <!-- commented out for now... this is currently sourced in html
 		<echo message="Translating license.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -357,6 +364,7 @@
 			<arg path="src/dbx/userdocs/license.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+       -->
 		<echo message="Translating oaiprovider.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -899,6 +907,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.128  2003/05/16 19:17:49  cwilper
+  copying license and copyright files all in the right places.
+
   Revision 1.127  2003/05/16 18:04:34  cwilper
   copied COPYRIGHT.TXT and LICENSE.TXT to binary target root dirs,
   and removed fedora-purge-demos symlinking, since that's going away.
