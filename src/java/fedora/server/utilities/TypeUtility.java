@@ -106,6 +106,13 @@ public abstract class TypeUtility
                 cal.setTime(sf.getMDate());
                 gf.setMDate(cal);
             }
+            if (sf.getDCMDate()!=null) {
+                java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
+                cal.setTime(sf.getMDate());
+                gf.setDcmDate(cal);
+            }
+            if (sf.bDefs().size()!=0) gf.setBDef(toStringArray(sf.bDefs()));
+            if (sf.bMechs().size()!=0) gf.setBMech(toStringArray(sf.bMechs()));
             // Dublin core fields
             if (sf.titles().size()!=0) gf.setTitle(toStringArray(sf.titles()));
             if (sf.creators().size()!=0) gf.setCreator(toStringArray(sf.creators()));

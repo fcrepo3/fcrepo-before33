@@ -47,6 +47,8 @@ public class FieldSearchServlet
         if ( (req.getParameter("cDate")!=null) && (req.getParameter("cDate").equalsIgnoreCase("true")) ) l.add("cDate");
         if ( (req.getParameter("mDate")!=null) && (req.getParameter("mDate").equalsIgnoreCase("true")) ) l.add("mDate");
         if ( (req.getParameter("dcmDate")!=null) && (req.getParameter("dcmDate").equalsIgnoreCase("true")) ) l.add("dcmDate");
+        if ( (req.getParameter("bDef")!=null) && (req.getParameter("bDef").equalsIgnoreCase("true")) ) l.add("bDef");
+        if ( (req.getParameter("bMech")!=null) && (req.getParameter("bMech").equalsIgnoreCase("true")) ) l.add("bMech");
         if ( (req.getParameter("title")!=null) && (req.getParameter("title").equalsIgnoreCase("true")) ) l.add("title");
         if ( (req.getParameter("creator")!=null) && (req.getParameter("creator").equalsIgnoreCase("true")) ) l.add("creator");
         if ( (req.getParameter("subject")!=null) && (req.getParameter("subject").equalsIgnoreCase("true")) ) l.add("subject");
@@ -238,7 +240,7 @@ public class FieldSearchServlet
                             } else if (l.equalsIgnoreCase("mDate")) {
                                 html.append(formatter.format(f.getMDate()));
                             } else if (l.equalsIgnoreCase("dcmDate")) {
-                                html.append(formatter.format(f.getDCMDate()));
+                                if (f.getDCMDate()!=null) html.append(formatter.format(f.getDCMDate()));
                             } else if (l.equalsIgnoreCase("bDef")) {
                                 html.append(getList(f.bDefs()));
                             } else if (l.equalsIgnoreCase("bMech")) {
