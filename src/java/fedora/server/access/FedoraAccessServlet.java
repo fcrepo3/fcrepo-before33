@@ -212,8 +212,12 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 		// FIXME:
 		// For now, fedoraAdmin has all important permissions.  How to do this 
 		// eventually is to-be-decided, but for now it's hardcoded.
-		h.put("canUseInactiveDatastream", "true");
-		h.put("canUseDeletedDatastream", "true");
+		if (authenticatedUser.equals("fedoraAdmin")) {
+    		h.put("canUseInactiveDatastream", "true");
+    		h.put("canUseDeletedDatastream", "true");
+		}
+	} else {
+	    h.put.("userId", "guest");
 	}
     h.put("host", request.getRemoteAddr());
     ReadOnlyContext context = new ReadOnlyContext(h);

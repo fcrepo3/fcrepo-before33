@@ -55,8 +55,12 @@ public class LoginServlet
      */
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+		String notUser=request.getParameter("prevUser");
+		if (notUser==null) {
+		    notUser="guest";
+		}
         String userId=getAuthenticatedUser(request.getHeader("Authorization"));
-        if (userId==null) {
+        if (userId==null || userId.equals(notUser)) {
             // send challenge
 			response.setHeader("WWW-Authenticate", "Basic realm=\"" 
 			        + s_server.getParameter("repositoryName") + "\"");
@@ -65,8 +69,19 @@ public class LoginServlet
             // tell who they're logged in as
             response.setContentType(CONTENT_TYPE_HTML);
             PrintWriter w=response.getWriter();
-            w.println("<html><body>Logged in as <b>" + userId 
-                    + "</b></body></html>");
+            w.println("<html><body>");
+            w.println("You are logged in as <b>" + userId + "</b><br/>");
+   			StringBuffer endOfUrl=new StringBuffer();
+   			endOfUrl.append(s_server.getParameter("fedoraServerHost"));
+   			if (!s_server.getParameter("fedoraServerPort").equals("80")) {
+   			    endOfUrl.append(":" + s_server.getParameter("fedoraServerPort"));
+   			}
+   			endOfUrl.append("/fedora/login?prevUser=" + userId);
+			if (!userId.equals("guest")) {
+                w.println("Login <a href=\"http://guest:guest@" + endOfUrl.toString() + "\"/>as a guest</a>.<br/>");
+			}
+            w.println("Login <a href=\"http://" + endOfUrl.toString() + "\"/>as a different user</a>.");
+            w.println("</body></html>");
         }
     }
 
@@ -106,8 +121,11 @@ public class LoginServlet
    * @return true if the password is correct, false otherwise.
    */
   private boolean isUserPassword(String user, String pass) {
-    // currently only recognizes fedoraAdmin.
-    return (user.equals("fedoraAdmin") && pass.equals(s_server.getParameter("adminPassword")));
+    // currently only recognizes fedoraAdmin with fedora.fcfg-configured pass, 
+    // and guest with any password
+    return ((user.equals("guest")) 
+            || (user.equals("fedoraAdmin") 
+                    && pass.equals(s_server.getParameter("adminPassword"))));
   }
 
     /**
