@@ -191,6 +191,8 @@ public class BasicServer
             } else {
                 String adminPassword="fedoraAdmin";
                 String fedoraServerPort="8080";
+                String fedoraShutdownPort="8005";
+                String fedoraRedirectPort="8443";
                 DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
                 factory.setNamespaceAware(true);
                 DocumentBuilder builder=factory.newDocumentBuilder();
@@ -203,6 +205,10 @@ public class BasicServer
                         fedoraServerPort=valueNode.getNodeValue();
                     } else if (nameNode.getNodeValue().equals("adminPassword")) {
                         adminPassword=valueNode.getNodeValue();
+                    } else if (nameNode.getNodeValue().equals("fedoraShutdownPort")) {
+                        fedoraShutdownPort=valueNode.getNodeValue();
+                    } else if (nameNode.getNodeValue().equals("fedoraRedirectPort")) {
+                        fedoraRedirectPort=valueNode.getNodeValue();
                     }
                 }
                 File serverTemplate=new File(fedoraHome, "server/tomcat41/conf/server_template.xml");
@@ -212,19 +218,14 @@ public class BasicServer
                 while (nextLine!=null) {
                     nextLine=in.readLine();
                     if (nextLine!=null) {
-                        if (nextLine.indexOf("#")==-1) {
-                            out.write(nextLine);
-                        } else {
-                            for (int i=0; i<nextLine.length(); i++) {
-                                char c=nextLine.charAt(i);
-                                if (c=='#') {
-                                    out.write(fedoraServerPort);
-                                } else {
-                                    out.write(c);
-                                }
-                            }
+                        if (nextLine.indexOf("#1")>0) {
+                            nextLine = nextLine.replaceAll("#1",fedoraServerPort);
+                        } else if (nextLine.indexOf("#2")>0) {
+                            nextLine = nextLine.replaceAll("#2",fedoraShutdownPort);
+                        } else if (nextLine.indexOf("#3")>0) {
+                            nextLine = nextLine.replaceAll("#3",fedoraRedirectPort);
                         }
-                        out.write("\n");
+                        out.write(nextLine+"\n");
                     }
                 }
                 in.close();
