@@ -16,11 +16,11 @@
 			<fileset dir="dist/client"/>
 		</copy>
 	</target>
-	<target name="serverdist" depends="server,client,localservices,copyclient" description="builds both client and server in dist\server">
+	<target name="serverandclient" depends="server,client,localservices,copyclient" description="builds both client and server in dist\server">
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/server/bin" perm="u+x" includes="**/*"/>
 	</target>
-    <target name="fullserverdist" depends="serverdist,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
+    <target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
 		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
@@ -599,6 +599,11 @@
 </project>
 <!--
   $Log$
+  Revision 1.100  2003/04/10 18:10:41  cwilper
+  changed so that serverdist does everything, as before.  now, serverandclient
+  target is the shortcut one (that doesn't do docs).  this is better, because
+  documentation doesn't have to change :)
+
   Revision 1.99  2003/04/10 14:26:52  cwilper
   put documentation stuff in a separate, final target, so serverdist
   no longer includes it...
