@@ -484,7 +484,7 @@
 					<para>Disseminators</para>
 					<itemizedlist>
 						<listitem>
-							<para>a.  Behavior Mechanism Objects uses what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  It’s purpose is to allow the contents of Behavior Mechanism Objects to be disseminated via the Fedora Access API.  In Fedora 1.1.1, the Bootstrap Disseminator functionality it not turned on.  However, it must still be encoded in the METS submission package.</para>
+							<para>a.  Behavior Mechanism Objects uses what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  Its purpose is to allow the contents of Behavior Mechanism Objects to be disseminated via the Fedora Access API.  In Fedora 1.1.1, the Bootstrap Disseminator functionality it not turned on.  However, it must still be encoded in the METS submission package.</para>
 						</listitem>
 						<listitem>
 							<para>b.  In terms of encoding the bootstrap disseminator, follow the examples in the demo objects.  The METS:behaviorSec and the METS:structMap are static, meaning that they will be the same in every Behavior Mechanism object.  It is recommended that these sections just be copied into new objects from a demo object.</para>
