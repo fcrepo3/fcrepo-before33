@@ -38,7 +38,7 @@
 		<servlet-name>DatastreamResolverServlet</servlet-name>
 		<display-name>Fedora Access Datastream Locator</display-name>
 		<servlet-class>
-			fedora.server.storage.DatastreamResolverServlet
+			fedora.server.access.dissemination.DatastreamResolverServlet
 		</servlet-class>
 	</servlet>
 	<servlet>
