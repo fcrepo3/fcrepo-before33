@@ -171,14 +171,14 @@ public class DefaultDOReplicator
                 Datastream ds=reader.GetDatastream(dsID, null);
                 if (ds.DSState.equals("D")) {
                     updates.add("DELETE FROM dsBind WHERE doDbID=" + doDbID
-                        + " AND dsID='" + ds.DatastreamID + "' AND dsCurrentVersionID='"
-                        + ds.DSVersionID + "';");
-                    System.out.println("Replicator: Datastream flagged for deletion: doDbID: "+doDbID+" dsID: "+ds.DatastreamID+" versionid: "+ds.DSVersionID);
+                        + " AND dsID='" + ds.DatastreamID + "';"); //"' AND dsCurrentVersionID='"
+                        //+ ds.DSVersionID + "';");
+                    System.out.println("Replicator: Datastream flagged for deletion: doDbID: "+doDbID+" dsID: "+ds.DatastreamID); //+" versionid: "+ds.DSVersionID);
                 } else if (ds.DSState.equals("W")) {
                     updates.add("DELETE FROM dsBind WHERE doDbID=" + doDbID
-                        + " AND dsID='" + ds.DatastreamID + "' AND dsCurrentVersionID='"
-                        + ds.DSVersionID + "';");
-                    System.out.println("Replicator: Datastream withdrawn: doDbID: "+doDbID+" dsID: "+ds.DatastreamID+" versionid: "+ds.DSVersionID);
+                        + " AND dsID='" + ds.DatastreamID + "';"); // + "' AND dsCurrentVersionID='"
+                        //+ ds.DSVersionID + "';");
+                    System.out.println("Replicator: Datastream withdrawn: doDbID: "+doDbID+" dsID: "+ds.DatastreamID); //+" versionid: "+ds.DSVersionID);
                 } else if (!ds.DSLabel.equals(dsLabel)
                         || !ds.DSLocation.equals(dsLocation)
                         || !ds.DSVersionID.equals(dsCurrentVersionID)) {
@@ -187,7 +187,7 @@ public class DefaultDOReplicator
                             // sdp - local.fedora.server conversion
                             + SQLUtility.aposEscape(encodeLocalURL(ds.DSLocation))
                             + "', dsCurrentVersionID='" + ds.DSVersionID + "'"
-                            + " WHERE dsID='" + dsID + "'");
+                            + " WHERE doDbID=" + doDbID + " AND dsID='" + dsID + "'");
                 }
             }
             results.close();
