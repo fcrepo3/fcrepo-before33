@@ -56,6 +56,7 @@
         <xsl:variable name="inmsgname" select="substring-after(wsdl:input/@message,':')"/>
         <xsl:for-each select="//wsdl:message[@name=$inmsgname]">
           <xsl:for-each select="wsdl:part">
+            <xsl:if test="not (position()=1) or (last() &gt; 1)"><br/>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</xsl:if> 
 		    <nobr>
 		    <xsl:variable name="ptypename" select="@type"/>
 		    <xsl:for-each select="//wsdldoc:type[@name=$ptypename]">
