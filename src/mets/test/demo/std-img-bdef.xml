@@ -23,7 +23,7 @@
 	<!--  Here we store WSDL inline as a form of metadata about the behavior definition represented by this object. -->
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="WSDL">
-		<METS:techMD ID="TECH1.0" CREATED="2002-02-17T06:32:00" STATUS="">
+		<METS:techMD ID="WSDL1.0" CREATED="2002-02-17T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL ABSTRACT SERVICE DEFINITION for UVA Standard Image">
 				<METS:xmlData>
 					<wsdl:definitions name="image-std" targetNamespace="test:1" xmlns="test:1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
@@ -31,36 +31,58 @@
 						<!-- WSDL: SCHEMA TYPES FOR STD IMAGE BEHAVIOR DEFINITION -->
 						<!-- *************************************************************************************************************************************-->
 						<wsdl:types>
-							<xsd:schema targetNamespace="test:1" xmlns:pa="test:1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-								<xsd:complexType name="MIMEStream">
-									<xsd:sequence>
-										<xsd:element name="MIME" type="xsd:string"/>
-										<xsd:element name="stream" type="xsd:base64Binary" minOccurs="1" maxOccurs="1"/>
-									</xsd:sequence>
-								</xsd:complexType>
+							<xsd:schema targetNamespace="test:1" xmlns:serviceDef="test:1" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+								<!-- ********************************************************************************************************************************* -->
+								<!-- Import the Fedora base types -->
+								<!--********************************************************************************************************************************* -->
+								<xsd:import namespace="http://fedora.comm.nsdlib.org/" schemaLocation="http://www.cs.cornell.edu/payette/mellon/fedora/fedora-behavior-bind.xsd"/>
+								<!-- ******************************************************************************************************************************** -->
+								<!-- TYPE DEFINITIONS TO SUPPORT INPUT PARAMETERS FOR ABSTRACT SERVICE OPERATIONS -->
+								<!-- These are restrictions on the fedora base types (see fedora-behavior-bind.xsd): -->
+								<!-- 1. userInputType: user-supplied parameters can be defined as input to a service operation by -->
+								<!-- restricting the fedora userInputType.  The userInputType is defined as a string, thus we assume -->
+								<!-- all user-supplied parameters will be some restriction on a string. -->
+								<!-- ******************************************************************************************************************************** -->
+								<!-- -->
+								<!-- SIMPLE USER-SUPPLIED PARAMETERS: these are string parameters whose value will be supplied -->
+								<!-- by the user at run time.  These user-supplied parameters will show up in the official method definitions of -->
+								<!-- the behavior definition to which this service subscribes -->
+								<!-- -->
+								<!-- NO USER PARMS FOR THIS BDEF -->
 							</xsd:schema>
 						</wsdl:types>
 						<!-- ******************************************************************************************************************** -->
 						<!-- WSDL: MESSAGE DEFINITIONS  -->
 						<!-- Here we define the messages that will be used by the WSDL operations, defined below.      -->
+						<!-- FOR FEDORA MESSAGES MUST BE DEFINED EVEN IF THEY HAVE NO PARTS!!!! -->
 						<!-- ******************************************************************************************************************** -->
+						<!-- NOTE: message parts on request messages represent parameters whose values will be supplied by users at runtime. -->
+						<!-- The part types can be dereferenced to its base type of fedora:userInputType, defined above.  -->
+						<wsdl:message name="getThumbRequest"/>
+						<wsdl:message name="getMedRequest"/>
+						<wsdl:message name="getHighRequest"/>
+						<wsdl:message name="getVeryHighRequest"/>
 						<wsdl:message name="singlestream_response">
-							<wsdl:part name="result" type="pa:MIMEStream"/>
+							<wsdl:part name="result" type="fedora:MIMEStreamReturnType"/>
 						</wsdl:message>
 						<!-- ******************************************************************************************************************** -->
 						<!-- WSDL: ABSTRACT OPERATIONS  (Behavior Definitions) -->
 						<!-- ******************************************************************************************************************** -->
 						<wsdl:portType name="stdImagePort">
 							<wsdl:operation name="getThumbnail">
+								<wsdl:input message="getThumbRequest"/>
 								<wsdl:output message="singlestream_response"/>
 							</wsdl:operation>
 							<wsdl:operation name="getMedium">
+								<wsdl:input message="getMedRequest"/>
 								<wsdl:output message="singlestream_response"/>
 							</wsdl:operation>
 							<wsdl:operation name="getHigh">
+								<wsdl:input message="getHighRequest"/>
 								<wsdl:output message="singlestream_response"/>
 							</wsdl:operation>
 							<wsdl:operation name="getVeryHigh">
+								<wsdl:input message="getVeryHighRequest"/>
 								<wsdl:output message="singlestream_response"/>
 							</wsdl:operation>
 						</wsdl:portType>

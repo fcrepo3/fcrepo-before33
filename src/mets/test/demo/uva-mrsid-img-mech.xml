@@ -23,7 +23,7 @@
 	<!-- Here we store XML data that conforms to the Fedora dsBindSpec schema. -->
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="DSBIND">
-		<METS:techMD ID="TECH1.0" CREATED="2002-02-17T06:32:00" STATUS="">
+		<METS:techMD ID="DSBIND1.0" CREATED="2002-02-17T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Binding Specification for MrSID mechanism">
 				<METS:xmlData>
 					<fbs:DSBindingSpec>
@@ -49,7 +49,7 @@
 	<!--  Here we store WSDL inline as a form of metadata about the mechanism represented by this object. -->
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="WSDL">
-		<METS:techMD ID="TECH2.0" CREATED="2002-02-17T06:32:00" STATUS="">
+		<METS:techMD ID="WSDL1.0" CREATED="2002-02-17T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL service definitions for Std Image Behaviors using MrSid mechanism">
 				<METS:xmlData>
 					<wsdl:definitions name="image-std" targetNamespace="test:8" xmlns="test:8" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
@@ -58,20 +58,39 @@
 						<!-- Here are all data types needed by the mechanism.  These could also be imported from a separate file.  -->
 						<!-- *************************************************************************************************************************************-->
 						<wsdl:types>
-							<xsd:schema targetNamespace="test:8" xmlns:pa="test:8" xmlns:fedora="http://fedora.comm.nsdlib.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+							<xsd:schema targetNamespace="test:8" xmlns:service="test:8" xmlns:fedora="http://fedora.comm.nsdlib.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 								<!-- ********************************************************************************************************************************* -->
-								<xsd:import namespace="http://fedora.comm.nsdlib.org/" schemaLocation="fedora-dsbind.xsd"/>
-								<!-- **************************************************************************************************************** -->
-								<!-- TYPE DEFINITIONS TO SUPPORT MECHANISM OPERATIONS (when using SOAP) -->
-								<!-- These are restrictions on the abstract fedora datastream binding type (see fedora-dsbind.xsd). -->
-								<!-- They specifiy a base64Binary format for transmitting datastreams from Fedora repository  -->
-								<!--  to the mechanism using a SOAP message.  -->
-								<!-- ************************************************************************************************************** -->
-								<xsd:complexType name="ThumbImageTransmitType">
+								<!-- Import the Fedora base types for binding to services. -->
+								<!--********************************************************************************************************************************* -->
+								<xsd:import namespace="http://fedora.comm.nsdlib.org/" schemaLocation="http://www.cs.cornell.edu/payette/mellon/fedora/fedora-behavior-bind.xsd"/>
+								<!-- ******************************************************************************************************************************** -->
+								<!-- TYPE DEFINITIONS TO SUPPORT INPUT PARAMETERS FOR SERVICE OPERATIONS -->
+								<!-- These are restrictions on the fedora base types (see fedora-behavior-bind.xsd): -->
+								<!-- 1. datastreamInputType: Datastreams an be defined as input to a service operation by -->
+								<!-- by restricting the fedora datastreamInputType.  The datastreamInputType is defined as a complex -->
+								<!-- type with two elements: a MIME type and content.  Content can be specified as either a URL (content-by-reference) 	-->
+								<!-- or as base64Binary (content-by-value).  -->
+								<!-- Generally, content will be specified as a URL for HTTP service bindings.  For SOAP bindings content can be -->
+								<!-- specified as either a URL or base64Bindary.  -->
+								<!-- 2. userInputType: user-supplied parameters can be defined as input to a service operation by -->
+								<!-- restricting the fedora userInputType.  The userInputType is defined as a string, thus we assume -->
+								<!-- all user-supplied parameters will be some restriction on a string. -->
+								<!-- 3. defaultInputType:  other parameters, with default values, can be defined as input to a service operation. -->
+								<!-- by restricting the fedora defaultInputType.   The defaultInputType is defined as a string, -->
+								<!-- thus we assume all default parameters will be some restriction on a string.-->
+								<!-- ******************************************************************************************************************************** -->
+								<!-- -->
+								<!-- DATASTREAM-AS-INPUT PARAMETERS: these are parameters that identify datastreams in a Fedora -->
+								<!-- data object that will serve as input to the service.  Fedora data objects are created with indirect references to -->
+								<!-- the type definitions described here.   The way this is done is that each data object has a METS structMap-->
+								<!-- that specifies a service URI (PID of bmech object).  The <div> elements of the structMap refer to datastreams -->
+								<!-- in the data object.  Each <div> element has a TYPE attribute that corresponds with the name of one of the complexTypes -->
+								<!-- defined below (a restriction of fedora:datastreamInputType).   At runtime, it is the job of the -->
+								<!-- Fedora repository to locate the appropriate datastreams in the data object based on the name of the complexType.-->
+								<xsd:complexType name="THUMBRES_IMG">
 									<xsd:complexContent>
-										<xsd:restriction base="fedora:dsBindBaseType">
+										<xsd:restriction base="fedora:datastreamInputType">
 											<xsd:sequence>
-												<xsd:element name="keyName" type="xsd:string" fixed="THUMBRES_IMG"/>
 												<xsd:element name="MIME">
 													<xsd:simpleType>
 														<xsd:restriction base="xsd:string">
@@ -79,16 +98,15 @@
 														</xsd:restriction>
 													</xsd:simpleType>
 												</xsd:element>
-												<xsd:element name="content" type="xsd:base64Binary"/>
+												<xsd:element name="contentURL" type="xsd:string" minOccurs="1" maxOccurs="1"/>
 											</xsd:sequence>
 										</xsd:restriction>
 									</xsd:complexContent>
 								</xsd:complexType>
-								<xsd:complexType name="MrSIDTransmitType">
+								<xsd:complexType name="MRSID">
 									<xsd:complexContent>
-										<xsd:restriction base="fedora:dsBindBaseType">
+										<xsd:restriction base="fedora:datastreamInputType">
 											<xsd:sequence>
-												<xsd:element name="keyName" type="xsd:string" fixed="MRSID"/>
 												<xsd:element name="MIME">
 													<xsd:simpleType>
 														<xsd:restriction base="xsd:string">
@@ -96,19 +114,10 @@
 														</xsd:restriction>
 													</xsd:simpleType>
 												</xsd:element>
-												<xsd:element name="content" type="xsd:base64Binary"/>
+												<xsd:element name="contentURL" type="xsd:string" minOccurs="1" maxOccurs="1"/>
 											</xsd:sequence>
 										</xsd:restriction>
 									</xsd:complexContent>
-								</xsd:complexType>
-								<!-- ******************************************************************************************************************** -->
-								<!-- WSDL:  UTILITY TYPE REQUIRED OF ALL FEDORA-COMPLIANT MECHANISMS -->
-								<!-- ******************************************************************************************************************** -->
-								<xsd:complexType name="MIMEStream">
-									<xsd:sequence>
-										<xsd:element name="MIME" type="xsd:string"/>
-										<xsd:element name="stream" type="xsd:base64Binary" minOccurs="1" maxOccurs="1"/>
-									</xsd:sequence>
 								</xsd:complexType>
 							</xsd:schema>
 						</wsdl:types>
@@ -117,19 +126,19 @@
 						<!-- Here we define the messages that will be used by the WSDL operations, defined below.      -->
 						<!-- ******************************************************************************************************************** -->
 						<wsdl:message name="getThumbRequest">
-							<wsdl:part name="THUMBRES_IMG" type="pa:ThumbImageTransmitType"/>
+							<wsdl:part name="THUMBRES_IMG" type="service:THUMBRES_IMG"/>
 						</wsdl:message>
 						<wsdl:message name="getMedRequest">
-							<wsdl:part name="MRSID" type="pa:MrSIDTransmitType"/>
+							<wsdl:part name="MRSID" type="service:MRSID"/>
 						</wsdl:message>
 						<wsdl:message name="getHighRequest">
-							<wsdl:part name="MRSID" type="pa:MrSIDTransmitType"/>
+							<wsdl:part name="MRSID" type="service:MRSID"/>
 						</wsdl:message>
 						<wsdl:message name="getVeryHighRequest">
-							<wsdl:part name="MRSID" type="pa:MrSIDTransmitType"/>
+							<wsdl:part name="MRSID" type="service:MRSID"/>
 						</wsdl:message>
 						<wsdl:message name="singlestream_response">
-							<wsdl:part name="result" type="pa:MIMEStream"/>
+							<wsdl:part name="result" type="fedora:MIMEStreamReturnType"/>
 						</wsdl:message>
 						<!-- ******************************************************************************************************************** -->
 						<!-- WSDL: ABSTRACT OPERATION  DEFINITIONS (Behavior Definitions) -->
