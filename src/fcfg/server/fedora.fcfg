@@ -13,10 +13,21 @@
 	<param name="object_store_base" value="C:\fedora_objects"/>
 	<param name="temp_store_base" value="C:\fedora_temp"/>
 	<param name="datastream_store_base" value="C:\fedora_datastreams"/>
-	<param name="disseminationCacheSize" value="100"/>
-	<param name="debug" value="true"/>
+	<param name="debug" value="false"/>
+		<comment>A boolean toggle used to turn off/on internal debugging in the code.</comment>
 	<param name="datastreamExpirationLimit" value="300"/>
+		<comment>
+			Controls the size of the datastream mediation hash by removing entries outside the specified threshold. 
+ 			The value is specified in seconds.
+ 			Note this value must be greater than the limit specified for the datastreamMediationLimit.
+		</comment>
 	<param name="datastreamMediationLimit" value="5000"/>
+		<comment>
+			Determines the time interval in which external mechanisms must respond to requests by the Fedora server.
+	 		The value is specified in milliseconds.	
+			The value specified should be set high enough to allow for an average response time from any single external mechanisms.
+			Note this value must be less than the limit specified for the datastreamExpirationLimit.
+		</comment>
 	<param name="fedoraServerPort" value="8080"/>
 	<param name="fedoraServerHost" value="www.fedora.info"/>
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
@@ -181,7 +192,7 @@
             The connectionPool providing the connection to the database to
             be used.
         </comment>
-        <param name="maxResults" value="200"/>
+		<param name="maxResults" value="200"/>
 		<param name="connectionPool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
 	</module>
 	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
