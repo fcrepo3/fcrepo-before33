@@ -14,11 +14,11 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 if "%OS%" == "" goto runMinimized
 
 :runInBackground
-start /B %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf
+start "mcKoiBG" /B "%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf
 goto :doneRunning
 
 :runMinimized
-start /m %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf
+start "mckoiMin" /m "%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf
 
 :doneRunning
 set JAVA_HOME=%OLD_JAVA_HOME%
@@ -37,11 +37,11 @@ goto end
 
 :checkEnv
 if "%FEDORA_HOME%" == "" goto noFedoraHome
-if not exist %FEDORA_HOME%\server\config\fedora.fcfg goto configNotFound
+if not exist "%FEDORA_HOME%\server\config\fedora.fcfg" goto configNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 :checkJava
-if not exist %THIS_JAVA_HOME%\bin\java.exe goto noJavaBin
+if not exist "%THIS_JAVA_HOME%\bin\java.exe" goto noJavaBin
 goto envOk
 
 :tryJavaHome
