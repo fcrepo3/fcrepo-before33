@@ -32,7 +32,7 @@ import fedora.client.batch.BatchTool;
 public class BatchBuildGUI
         extends JInternalFrame {
         
-        private static File s_lastDir;	
+        //private static File s_lastDir;	
 	private JTextField m_templateField=new JTextField("", 10);
 	private JTextField m_specsField=new JTextField("", 10);
 	private JTextField m_objectsField=new JTextField("", 10);
@@ -246,10 +246,10 @@ public class BatchBuildGUI
     protected File selectFile (File lastDir, boolean directoriesOnly) throws Exception {
 	    File selection = null; 
 	    JFileChooser browse;
-            if (lastDir==null) {
+            if (Administrator.batchtoolLastDir==null) {
                 browse=new JFileChooser();
             } else {
-                browse=new JFileChooser(lastDir);
+                browse=new JFileChooser(Administrator.batchtoolLastDir);
             }
 	    if (directoriesOnly) {
 		    browse.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -257,14 +257,14 @@ public class BatchBuildGUI
             int returnVal = browse.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 selection = browse.getSelectedFile();		    
-                s_lastDir=selection.getParentFile(); // remember the dir for next time
+                Administrator.batchtoolLastDir=selection.getParentFile(); // remember the dir for next time
 	    }
 	    return selection;
     }
     
     protected void templateAction () {
 	try {
-		   File temp = selectFile(s_lastDir,false);
+		   File temp = selectFile(Administrator.batchtoolLastDir,false);
 		   if (temp != null) {
 			   m_templateField.setText(temp.getPath());
 		   }
@@ -274,7 +274,7 @@ public class BatchBuildGUI
     }    
     protected void specsAction () {
 	try {
-		   File temp = selectFile(s_lastDir,true);
+		   File temp = selectFile(Administrator.batchtoolLastDir,true);
 		   if (temp != null) {
 			   m_specsField.setText(temp.getPath());
 		   }
@@ -284,7 +284,7 @@ public class BatchBuildGUI
     }   
     protected void objectsAction () {
 	try {
-		   File temp = selectFile(s_lastDir,true);
+		   File temp = selectFile(Administrator.batchtoolLastDir,true);
 		   if (temp != null) {
 			   m_objectsField.setText(temp.getPath());
 		   }
@@ -294,7 +294,7 @@ public class BatchBuildGUI
     }
     protected void pidsAction () {
 	try {
-		   File temp = selectFile(s_lastDir,false);
+		   File temp = selectFile(Administrator.batchtoolLastDir,false);
 		   if (temp != null) {
 			   m_pidsField.setText(temp.getPath());
 		   }

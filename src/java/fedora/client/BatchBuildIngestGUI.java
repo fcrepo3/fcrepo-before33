@@ -32,7 +32,7 @@ import fedora.client.batch.BatchTool;
 public class BatchBuildIngestGUI
         extends JInternalFrame {
         
-        private static File s_lastDir;	
+        //private static File s_lastDir;	
 	private JTextField m_templateField=new JTextField("", 10);
 	private JTextField m_specsField=new JTextField("", 10);
 	private JTextField m_objectsField=new JTextField("", 10);
@@ -57,12 +57,22 @@ public class BatchBuildIngestGUI
 	private MDIDesktopPane mdiDesktopPane = null;
 	BatchOutput batchOutput = new BatchOutput("Batch Build and Ingest Output");
 	
-    public BatchBuildIngestGUI(JFrame parent, MDIDesktopPane mdiDesktopPane) {
+	private final String host;
+	private final String port;
+	private final String user;
+	private final String pass;
+	
+    public BatchBuildIngestGUI(JFrame parent, MDIDesktopPane mdiDesktopPane, String host, int port, String user, String pass) {
         super("Batch Build and Ingest",
               true, //resizable
               true, //closable
               true, //maximizable
               true);//iconifiable
+	      
+	this.host = host;
+	this.port = Integer.toString(port);
+	this.user = user;
+	this.pass = pass;
 	      
 	this.mdiDesktopPane = mdiDesktopPane;
 
@@ -219,6 +229,11 @@ public class BatchBuildIngestGUI
 	    properties.setProperty("objects",m_objectsField.getText());
 	    properties.setProperty("ingested-pids",m_pidsField.getText());
 	    properties.setProperty("pids-format",m_xmlMap.isSelected()? "xml" : "text");
+
+	    properties.setProperty("server-fqdn",host);
+	    properties.setProperty("server-port",port);
+	    properties.setProperty("username",user);
+	    properties.setProperty("password",pass);
 	    
 	    try {
 		    mdiDesktopPane.add(batchOutput);
@@ -247,10 +262,10 @@ public class BatchBuildIngestGUI
     protected File selectFile (File lastDir, boolean directoriesOnly) throws Exception {
 	    File selection = null; 
 	    JFileChooser browse;
-            if (lastDir==null) {
+            if (Administrator.batchtoolLastDir==null) {
                 browse=new JFileChooser();
             } else {
-                browse=new JFileChooser(lastDir);
+                browse=new JFileChooser(Administrator.batchtoolLastDir);
             }
 	    if (directoriesOnly) {
 		    browse.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -258,14 +273,14 @@ public class BatchBuildIngestGUI
             int returnVal = browse.showOpenDialog(this);
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 selection = browse.getSelectedFile();		    
-                s_lastDir=selection.getParentFile(); // remember the dir for next time
+                Administrator.batchtoolLastDir=selection.getParentFile(); // remember the dir for next time
 	    }
 	    return selection;
     }
     
     protected void templateAction () {
 	try {
-		   File temp = selectFile(s_lastDir,false);
+		   File temp = selectFile(Administrator.batchtoolLastDir,false);
 		   if (temp != null) {
 			   m_templateField.setText(temp.getPath());
 		   }
@@ -275,7 +290,7 @@ public class BatchBuildIngestGUI
     }    
     protected void specsAction () {
 	try {
-		   File temp = selectFile(s_lastDir,true);
+		   File temp = selectFile(Administrator.batchtoolLastDir,true);
 		   if (temp != null) {
 			   m_specsField.setText(temp.getPath());
 		   }
@@ -285,7 +300,7 @@ public class BatchBuildIngestGUI
     }   
     protected void objectsAction () {
 	try {
-		   File temp = selectFile(s_lastDir,true);
+		   File temp = selectFile(Administrator.batchtoolLastDir,true);
 		   if (temp != null) {
 			   m_objectsField.setText(temp.getPath());
 		   }
@@ -295,7 +310,7 @@ public class BatchBuildIngestGUI
     }
     protected void pidsAction () {
 	try {
-		   File temp = selectFile(s_lastDir,false);
+		   File temp = selectFile(Administrator.batchtoolLastDir,false);
 		   if (temp != null) {
 			   m_pidsField.setText(temp.getPath());
 		   }

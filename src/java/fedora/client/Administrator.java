@@ -64,6 +64,7 @@ public class Administrator extends JFrame {
     private SimpleHelpBroker m_helpBroker;
     
     private static File s_lastDir;
+    /*package*/ static File batchtoolLastDir;
    
     ClassLoader cl;
     
@@ -526,7 +527,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         } catch (java.beans.PropertyVetoException e) {}
     }    
     protected void createBatchBuildIngestConsole() {
-        BatchBuildIngestGUI frame=new BatchBuildIngestGUI(this, s_desktop);
+        BatchBuildIngestGUI frame=new BatchBuildIngestGUI(this, s_desktop, s_host, s_port, s_user, s_pass);
         frame.setVisible(true);
         s_desktop.add(frame);
         try {
@@ -534,7 +535,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         } catch (java.beans.PropertyVetoException e) {}
     }    
     protected void createBatchIngestConsole() {
-        BatchIngestGUI frame=new BatchIngestGUI(this, s_desktop);
+        BatchIngestGUI frame=new BatchIngestGUI(this, s_desktop, s_host, s_port, s_user, s_pass);
         frame.setVisible(true);
         s_desktop.add(frame);
         try {
