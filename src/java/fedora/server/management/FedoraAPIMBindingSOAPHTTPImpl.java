@@ -327,12 +327,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         try {
             fedora.server.storage.types.Datastream[] intDatastreams=s_management.getDatastreams(getContext(), PID, asOfDateTime, state);
-            fedora.server.types.gen.Datastream[] genDatastreams=new fedora.server.types.gen.Datastream[intDatastreams.length];
-			for (int i=0; i<intDatastreams.length; i++) {
-			    genDatastreams[i]=TypeUtility.convertDatastreamToGenDatastream(
-				        intDatastreams[i]);
-			}
-            return genDatastreams;
+            return getGenDatastreams(intDatastreams);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -341,11 +336,27 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public Calendar[] getDatastreamHistory(String PID, String datastreamID)
+    private fedora.server.types.gen.Datastream[] getGenDatastreams(
+            fedora.server.storage.types.Datastream[] intDatastreams) {
+        fedora.server.types.gen.Datastream[] genDatastreams=
+                new fedora.server.types.gen.Datastream[intDatastreams.length];
+    	for (int i=0; i<intDatastreams.length; i++) {
+    	    genDatastreams[i]=TypeUtility.convertDatastreamToGenDatastream(
+   		        intDatastreams[i]);
+		}
+        return genDatastreams;
+    }
+
+    public fedora.server.types.gen.Datastream[] getDatastreamHistory(String PID, String datastreamID)
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            return s_management.getDatastreamHistory(getContext(), PID, datastreamID);
+            fedora.server.storage.types.Datastream[] intDatastreams=
+                    s_management.getDatastreamHistory(
+                            getContext(), 
+                            PID, 
+                            datastreamID);
+            return getGenDatastreams(intDatastreams);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);

@@ -6,8 +6,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
@@ -178,11 +180,6 @@ public class DefaultManagement
         m_ipRestriction.enforce(context);
         DOWriter w=m_manager.newWriter(context, serialization, format, encoding, newPid);
         String pid=w.GetObjectPID();
-        // FIXME: this logic should go in clients,
-        // but it happens that it's convenient to put here for now.
-        // the below does a purgeObject if commit fails... kind of an auto-cleanup
-        // in the future this "initial state" stuff will be reconsidered anyway,
-        // applying the ideas of workflow, etc..
         try {
             w.commit(logMessage);
             return pid;
@@ -237,10 +234,6 @@ public class DefaultManagement
             throws ServerException {
         logFinest("Entered DefaultManagement.purgeObject");
         m_ipRestriction.enforce(context);
-        // FIXME: This should get a writer and call remove, then commit instead...but this works for now
-        // fedora.server.storage.types.BasicDigitalObject obj=new fedora.server.storage.types.BasicDigitalObject();
-        // obj.setPid(pid);
-        // ((fedora.server.storage.DefaultDOManager) m_manager).doCommit(context, obj, logMessage, true);
         DOWriter w=m_manager.getWriter(context, pid);
         w.remove();
         w.commit(logMessage);
@@ -292,12 +285,9 @@ public class DefaultManagement
                     newds.DSState=dsState;
                     //newds.DSState=orig.DSState;
                     if (dsLocation==null || dsLocation.equals("")) {
-                        // if location unspecified, use the location of
-                        // the datastream on the system, thus making a copy
-                        newds.DSLocation="http://" + m_fedoraServerHost + ":"
-                                + m_fedoraServerPort
-                                + "/fedora/get/" + pid + "/fedora-system:3/getItem?itemID="
-                                + datastreamId;
+                        // if location unspecified, cause a copy of the
+                        // prior content to be made at commit-time
+                        newds.DSLocation="copy://" + orig.DSLocation;
                     } else {
                         newds.DSLocation=dsLocation;
                     }
@@ -336,14 +326,9 @@ public class DefaultManagement
                 newds.DSState=dsState;
                 //newds.DSState=orig.DSState;
                 if (dsLocation==null || dsLocation.equals("")) {
-                    // if location unspecified, use the location of
-                    // the datastream on the system, thus making a copy
-                    // TODO: pass credentials here?  Because if it was
-                    // previously inactive, this won't resolve
-                    newds.DSLocation="http://" + m_fedoraServerHost + ":"
-                            + m_fedoraServerPort
-                            + "/fedora/get/" + pid + "/fedora-system:3/getItem?itemID="
-                            + datastreamId;
+                    // if location unspecified for referenced or external, 
+                    // just use the old location
+                    newds.DSLocation=orig.DSLocation;
                 } else {
                     newds.DSLocation=dsLocation;
                 }
@@ -637,11 +622,35 @@ public class DefaultManagement
 		return r.GetDatastreams(d, state);
     }
 
-    public Calendar[] getDatastreamHistory(Context context, String pid, String datastreamID)
+    public Datastream[] getDatastreamHistory(Context context, String pid, String datastreamID)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOReader r=m_manager.getReader(context, pid);
-        return dateArrayToCalendarArray(r.getDatastreamVersions(datastreamID));
+        Date[] versionDates=r.getDatastreamVersions(datastreamID);
+        Datastream[] versions=new Datastream[versionDates.length];
+        for (int i=0; i<versionDates.length; i++) {
+            versions[i]=r.GetDatastream(datastreamID, versionDates[i]);
+        }
+        // sort, ascending
+        Arrays.sort(versions, new DatastreamDateComparator());
+        // reverse it (make it descend, so most recent date is element 0)
+        Datastream[] out=new Datastream[versions.length];
+        for (int i=0; i<versions.length; i++) {
+            out[i]=versions[versions.length-1-i];
+        }
+        return out;
+    }
+
+    public class DatastreamDateComparator
+            implements Comparator {
+
+        public int compare(Object o1, Object o2) {
+            long ms1=((Datastream) o1).DSCreateDT.getTime();
+            long ms2=((Datastream) o1).DSCreateDT.getTime();
+            if (ms1<ms2) return -1;
+            if (ms1>ms2) return 1;
+            return 0;
+        }
     }
 
 /*

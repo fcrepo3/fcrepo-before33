@@ -46,7 +46,6 @@ import fedora.client.actions.ExportObject;
 import fedora.client.actions.Login;
 import fedora.client.actions.PurgeObject;
 import fedora.client.actions.ViewObjectXML;
-import fedora.client.actions.ViewDatastreams;
 import fedora.client.actions.ViewObject;
 import fedora.client.bmech.BDefBuilder;
 import fedora.client.bmech.BMechBuilder;
@@ -271,12 +270,6 @@ public class Administrator extends JFrame {
             }
         });
 
-        JMenuItem fileViewDatastreams=new JMenuItem(new ViewDatastreams());
-        fileViewDatastreams.setMnemonic(KeyEvent.VK_D);
-        fileViewDatastreams.setToolTipText("Launches a viewer/editor for the datastreams of an object.");
-        fileViewDatastreams.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
-                ActionEvent.CTRL_MASK));
-
         JMenuItem fileView=new JMenuItem(new ViewObjectXML());
         fileView.setMnemonic(KeyEvent.VK_V);
         fileView.setToolTipText("Launches an XML viewer for an object.");
@@ -313,7 +306,6 @@ public class Administrator extends JFrame {
         fileMenu.add(fileLogin);
         fileMenu.add(fileViewObject);
         fileMenu.add(fileView);
-        fileMenu.add(fileViewDatastreams);
         fileMenu.add(fileIngest);
         fileMenu.add(fileExport);
         fileMenu.add(filePurge);

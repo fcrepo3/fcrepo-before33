@@ -45,12 +45,10 @@ import fedora.client.Administrator;
 import fedora.client.actions.ExportObject;
 import fedora.client.actions.PurgeObject;
 import fedora.client.actions.ViewObjectXML;
-import fedora.client.actions.ViewDatastreams;
 import fedora.client.console.Console;
 import fedora.client.console.ConsoleSendButtonListener;
 import fedora.client.console.ConsoleCommand;
 import fedora.client.console.ServiceConsoleCommandFactory;
-import fedora.client.datastream.DatastreamViewer;
 import fedora.server.types.gen.ObjectFields;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
@@ -312,11 +310,7 @@ public class ResultFrame
             JMenuItem i3=new JMenuItem(new PurgeObject(pid));
             i3.setMnemonic(KeyEvent.VK_P);
             i3.setToolTipText("Removes the selected object from the repository.");
-            JMenuItem i4=new JMenuItem(new ViewDatastreams(pid));
-            i4.setMnemonic(KeyEvent.VK_D);
-            i4.setToolTipText("Launches a viewer/editor for the datastreams of the object.");
             add(i1);
-            add(i4);
             add(i2);
             add(i3);
         }
@@ -339,11 +333,7 @@ public class ResultFrame
             JMenuItem i3=new JMenuItem(new PurgeObject(pids));
             i3.setMnemonic(KeyEvent.VK_P);
             i3.setToolTipText("Removes the selected objects from the repository.");
-            JMenuItem i4=new JMenuItem(new ViewDatastreams(pids));
-            i4.setMnemonic(KeyEvent.VK_D);
-            i4.setToolTipText("Launches a viewer/editor for the datastreams of the objects.");
             add(i1);
-            add(i4);
             add(i2);
             add(i3);
         }

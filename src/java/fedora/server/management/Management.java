@@ -67,7 +67,7 @@ public interface Management {
 
     public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime, String state) throws ServerException;
 
-    public Calendar[] getDatastreamHistory(Context context, String pid, String datastreamID) throws ServerException;
+    public Datastream[] getDatastreamHistory(Context context, String pid, String datastreamID) throws ServerException;
 
 //    public String addDisseminator(Context context, String pid, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) throws ServerException;
 

@@ -45,11 +45,6 @@ public abstract class TypeUtility
                 new fedora.server.types.gen.Datastream();
         String group=in.DSControlGrp;
         out.setControlGroup(fedora.server.types.gen.DatastreamControlGroup.fromValue(group));
-        if (group.equals("X")) {
-            fedora.server.storage.types.DatastreamXMLMetadata mdDS=
-                    (fedora.server.storage.types.DatastreamXMLMetadata) in;
-            out.setContentStream(mdDS.xmlContent);
-        }
 		if (group.equals("R") || group.equals("E")) {
 		    // only given location if it's a redirect or external datastream
             out.setLocation(in.DSLocation);

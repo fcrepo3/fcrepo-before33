@@ -16,9 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.HashMap;
 
@@ -151,17 +149,9 @@ public class DatastreamPane
 
                 // NORTH: m_versionSlider
 
-                Calendar[] dates=Administrator.APIM.getDatastreamHistory(pid, 
-                        mostRecent.getID());
-                Datastream[] versions=new Datastream[dates.length];
-
-                // retrieve and add in descending order, by date
-                Arrays.sort(dates, new CalendarComparator());
-                versions[0]=mostRecent;
-                for (int i=1; i<dates.length; i++) {
-                    versions[i]=Administrator.APIM.getDatastream(pid,
-                            mostRecent.getID(), dates[dates.length-i-1]);
-                }
+                Datastream[] versions=Administrator.APIM.getDatastreamHistory(
+                        pid, mostRecent.getID());
+     
                 // now that they're sorted, set up the shared button listener for purge
                 m_purgeButtonListener=new PurgeButtonListener(versions);
                 // do the slider if needed
@@ -296,19 +286,6 @@ public class DatastreamPane
         if (m_mostRecent.getState().equals("D"))
             m_stateComboBox.setSelectedIndex(2);
         m_currentVersionPane.undoChanges();
-    }
-
-
-    public class CalendarComparator
-            implements Comparator {
-
-        public int compare(Object o1, Object o2) {
-            long ms1=((Calendar) o1).getTime().getTime();
-            long ms2=((Calendar) o1).getTime().getTime();
-            if (ms1<ms2) return -1;
-            if (ms1>ms2) return 1;
-            return 0;
-        }
     }
 
     public class CurrentVersionPane

@@ -536,6 +536,11 @@ public class DefaultDOManager
 						    mimeTypedStream=new MIMETypedStream(null, m_management.getTempStream(dmc.DSLocation));
                             logInfo("Retrieving ManagedContent datastream from internal uploaded "
                                 + "location: " + dmc.DSLocation);
+						} else if (dmc.DSLocation.startsWith("copy://"))  {
+                            // make a copy of the pre-existing content
+                            mimeTypedStream=new MIMETypedStream(null,
+                                    getDatastreamStore().retrieve(
+                                            dmc.DSLocation.substring(7)));
 						} else {
                             mimeTypedStream = m_contentManager.
                                 getExternalContent(dmc.DSLocation.toString());

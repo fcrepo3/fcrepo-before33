@@ -282,8 +282,8 @@
 		</part>
 	</message>
 	<message name="getDatastreamHistoryResponse">
-		<part name="response" type="fedora-types:ArrayOfDateTime">
-			<documentation>creation dates for each version of the datastream.</documentation>
+		<part name="response" type="fedora-types:ArrayOfDatastream">
+			<documentation>each version of the datastream, sorted from most to least recent.</documentation>
 		</part>
 	</message>
 	<!--
@@ -533,7 +533,7 @@
 			<output message="fedora-api:getDatastreamsResponse"/>
 		</operation>
 		<operation name="getDatastreamHistory">
-			<documentation>Gets the creation dates of each version of a datastream.</documentation>
+			<documentation>Gets all versions of a datastream, sorted from most to least recent.</documentation>
 			<input message="fedora-api:getDatastreamHistoryRequest"/>
 			<output message="fedora-api:getDatastreamHistoryResponse"/>
 		</operation>
