@@ -30,9 +30,11 @@ public class METSLikeDOSerializer
     public static final String FEDORA_AUDIT_NS="http://fedora.comm.nsdlib.org/audit";
     public static final String METS_PREFIX="METS";
     public static final String METS_NS="http://www.loc.gov/METS/";
+    public static final String METS_XSD_LOCATION="http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd";
     public static final String METS_XLINK_NS="http://www.w3.org/TR/xlink";
     public static final String REAL_XLINK_NS="http://www.w3.org/TR/xlink";
     //public static final String REAL_XLINK_NS="http://www.w3.org/1999/xlink";
+    public static final String XSI_NS="http://www.w3.org/2001/XMLSchema-instance";
 
     private String m_XLinkPrefix="xlink";
     private String m_fedoraAuditPrefix="fedora-auditing";
@@ -73,7 +75,15 @@ public class METSLikeDOSerializer
         buf.append("<" + METS_PREFIX + ":mets xmlns:" + METS_PREFIX + "=\"" 
                 + StreamUtility.enc(METS_NS) + "\"\n");
         String indent="           ";
+        // make sure XSI_NS is mapped...
+        String xsiPrefix=(String) obj.getNamespaceMapping().get(XSI_NS);
+        if (xsiPrefix==null) {
+            xsiPrefix="fedoraxsi";
+            obj.getNamespaceMapping().put(XSI_NS, "fedoraxsi"); // 99.999999999% chance this is unique
+        }
         appendNamespaceDeclarations(indent,obj.getNamespaceMapping(),buf);
+        // hardcode xsi:schemaLocation to definitive location for such.
+        buf.append(indent + xsiPrefix + ":schemaLocation=\"" + StreamUtility.enc(METS_NS) + " http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
         if (obj.getPid()==null) {
             throw new ObjectIntegrityException("Object must have a pid.");
         }
