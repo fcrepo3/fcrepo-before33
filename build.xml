@@ -401,6 +401,9 @@
 		<copy file="src/xsl/access/objectmethods.xslt" todir="dist/server/access"/>
 		<!-- the next copy is temporary and may change -->
 		<copy file="src/xsl/access/objectmethods2.xslt" todir="dist/server/access"/>
+		<!--Default Disseminator (DefaultBehaviorImpl) XSLT Stylesheets : local copy packaged with the repository distribution -->
+		<copy file="src/xsl/access/viewItemList.xslt" todir="dist/server/access"/>
+		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/access"/>
 		<echo message="Finished building server distribution in dist/server"/>
 	</target>
 	<target name="localservices" depends="server, localservicesclasses">
@@ -494,6 +497,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.77  2003/02/19 00:17:11  payette
+  added lines to copy default disseminator stylesheets to server distribution
+
   Revision 1.76  2003/02/15 23:38:53  cwilper
   added md5.jar
 
