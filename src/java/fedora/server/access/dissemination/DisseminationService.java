@@ -75,8 +75,8 @@ public class DisseminationService
       if (fedoraHome == null)
       {
           throw new ServerInitializationException(
-              "Server failed to initialize: The 'fedora.home' "
-              + "system property was not set.");
+              "[DisseminationService] Server failed to initialize: The "
+              + "'fedora.home' system property was not set.");
       } else
       {
         s_server = Server.getInstance(new File(fedoraHome));
@@ -87,18 +87,23 @@ public class DisseminationService
         datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
                             + ":" + fedoraServerPort
                             + "/fedora/getDS?id=";
-        s_server.logFinest("datastreamResolverServletURL: "
-                           + datastreamResolverServletURL);
+        s_server.logFinest("[DisseminationService] "
+            + "datastreamResolverServletURL: " + datastreamResolverServletURL);
         String expireLimit = s_server.getParameter("datastreamExpirationLimit");
         if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
         {
-          expireLimit = "300";
+          s_server.logWarning("DatastreamResolverServlet was unable to resolve "
+              + "the datastream expiration limit from the configuration"
+              + "file. The expiration limit has been set to 300 seconds.");
+          datastreamExpirationLimit = 300;
+        } else
+        {
+          Integer I1 =
+              new Integer(expireLimit);
+          datastreamExpirationLimit = I1.intValue();
+          s_server.logFinest("datastreamExpirationLimit: "
+              + datastreamExpirationLimit);
         }
-        Integer I1 =
-            new Integer(expireLimit);
-        datastreamExpirationLimit = I1.intValue();
-        s_server.logFinest("datastreamExpirationLimit: "
-                           + datastreamExpirationLimit);
       }
     } catch (InitializationException ie)
     {
@@ -106,7 +111,7 @@ public class DisseminationService
 
     } catch (UnknownHostException uhe)
     {
-      System.err.println("DisseminationService was unable to "
+      System.err.println("[DisseminationService] was unable to "
           + "resolve the IP address of the Fedora Server: "
           + datastreamResolverServletURL + "."
           + " The underlying error was a "
@@ -219,8 +224,10 @@ public class DisseminationService
           // to compare with the value of the current binding key.
           nextKey = dissBindInfoArray[i+1].DSBindKey;
         }
-        s_server.logFinest("currentKey: '" + currentKey + "'");
-        s_server.logFinest("nextKey: '" + nextKey + "'");
+        s_server.logFinest("[DisseminationService] currentKey: '"
+            + currentKey + "'");
+        s_server.logFinest("[DisseminationService] nextKey: '"
+            + nextKey + "'");
         // In most cases, there is only a single datastream that matches a
         // given DSBindingKey so the substitution process is to just replace
         // the occurence of (BINDING_KEY) with the value of the datastream
@@ -268,7 +275,7 @@ public class DisseminationService
                                            dissBindInfo.dsControlGroupType);
         }
         dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
-        s_server.logFinest("replaced dissURL: "
+        s_server.logFinest("[DisseminationService] replaced dissURL: "
                            + dissURL.toString()
                            + " DissBindingInfo index: " + i);
       }
@@ -281,16 +288,22 @@ public class DisseminationService
         String value = (String)h_userParms.get(name);
         String pattern = "\\(" + name + "\\)";
         dissURL = substituteString(dissURL, pattern, value);
-        s_server.logFinest("User parm substituted in URL: " + dissURL);
+        s_server.logFinest("[DisseminationService] User parm substituted in "
+            + "URL: " + dissURL);
       }
 
       // Resolve content referenced by dissemination result.
-      s_server.logFinest("ProtocolType: " + protocolType);
+      s_server.logFinest("[DisseminationService] ProtocolType: "+protocolType);
       if (protocolType.equalsIgnoreCase("http"))
       {
+        long startTime = new Date().getTime();
         ExternalContentManager externalContentManager = (ExternalContentManager)
             s_server.getModule("fedora.server.storage.ExternalContentManager");
         dissemination = externalContentManager.getExternalContent(dissURL);
+        long stopTime = new Date().getTime();
+        long interval = stopTime - startTime;
+        System.out.println("[DisseminationService] Roundtrip "
+            + "ExternalMechanism: " + interval + " milliseconds.");
 
       } else if (protocolType.equalsIgnoreCase("soap"))
       {
@@ -378,7 +391,8 @@ public class DisseminationService
         if (expireLimit > timeStamp.getTime())
         {
           dsRegistry.remove(key);
-          s_server.logFinest("DatastreamMediationKey removed from Hash: "+key);
+          s_server.logFinest("[DisseminationService] DatastreamMediationKey "
+              + "removed from Hash: " + key);
         }
       }
 
@@ -392,12 +406,13 @@ public class DisseminationService
         dm.dsLocation = dsLocation;
         dm.dsControlGroupType = dsControlGroupType;
         dsRegistry.put(tempID, dm);
-        s_server.logFinest("DatastreammediationKey added to Hash: "+tempID);
+        s_server.logFinest("[DisseminationService] DatastreammediationKey "
+            + "added to Hash: " + tempID);
       }
 
     } catch(Throwable th)
     {
-      throw new DisseminationException("[DisseminationService]register"
+      throw new DisseminationException("[DisseminationService] register"
           + "DatastreamLocation: "
           + "returned an error.\nThe underlying error was a "
           + th.getClass().getName() + "\nThe message "
