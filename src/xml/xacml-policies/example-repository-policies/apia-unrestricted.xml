@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        PolicyId="unrestricted-actions"
+        PolicyId="apia-unrestricted"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
-  <Description> </Description>
+  <Description>note that other policies may provide exceptions to this broad policy</Description>
   <Target>
     <Subjects>
       <AnySubject/>
@@ -11,11 +11,12 @@
     <Actions>
       <Action>
         <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ActionAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">findObjects</AttributeValue>
+          <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+            AttributeId="info:fedora/fedora-system:def/policy#action-api"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">apia</AttributeValue>
         </ActionMatch>
       </Action>
-    </Actions>
+    </Actions>    
     <Resources>
       <AnyResource/>
     </Resources>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        PolicyId="permit-administrator-any-access"
-        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:ordered-deny-overrides">
+        PolicyId="administrator"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
   <Description> </Description>
   <Target>
     <Subjects>
@@ -20,5 +20,5 @@
       <AnyResource/>
     </Resources>
   </Target>
-  <Rule RuleId="permit-any-target-match" Effect="Permit"/>
+  <Rule RuleId="1" Effect="Permit"/>
 </Policy>

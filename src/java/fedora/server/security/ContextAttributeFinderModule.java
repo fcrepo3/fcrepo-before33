@@ -32,8 +32,11 @@ import fedora.server.Context;
 		try {
 			registerAttribute(Authorization.ENVIRONMENT_CURRENT_DATETIME_URI_STRING, StringAttribute.identifier);
 			attributesDenied.add(Authorization.ACTION_CONTEXT_URI_STRING);
+			attributesDenied.add(Authorization.SUBJECT_ID_URI_STRING);
+			attributesDenied.add(Authorization.ACTION_ID_URI_STRING);
+			attributesDenied.add(Authorization.ACTION_API_URI_STRING);
 			registerSupportedDesignatorType(AttributeDesignator.SUBJECT_TARGET);
-			registerSupportedDesignatorType(AttributeDesignator.ACTION_TARGET);
+			registerSupportedDesignatorType(AttributeDesignator.ACTION_TARGET); //<<??????
 			registerSupportedDesignatorType(AttributeDesignator.RESOURCE_TARGET);
 			registerSupportedDesignatorType(AttributeDesignator.ENVIRONMENT_TARGET);
 			
@@ -112,6 +115,8 @@ import fedora.server.Context;
 			return false;
 		return true;
 	}
+
+	private static final String UNDEFINED = "(UNDEFINED)";
 	
 	protected final Object getAttributeLocally(int designatorType, String attributeId, URI resourceCategory, EvaluationCtx ctx) {
 		log("getAttributeLocally context");
@@ -131,7 +136,8 @@ import fedora.server.Context;
 				} else {
 					switch(context.nSubjectValues(attributeId)) {
 						case 0: 
-							values = new String[0];
+							values = new String[1];
+							((String[])values)[0] = UNDEFINED;
 							break;
 						case 1: 
 							values = new String[1];
@@ -148,7 +154,8 @@ import fedora.server.Context;
 				} else {
 					switch(context.nActionValues(attributeId)) {
 						case 0: 
-							values = new String[0];
+							values = new String[1];
+							((String[])values)[0] = UNDEFINED;
 							break;
 						case 1: 
 							values = new String[1];
@@ -165,7 +172,8 @@ import fedora.server.Context;
 				} else {
 					switch(context.nResourceValues(attributeId)) {
 						case 0: 
-							values = new String[0];
+							values = new String[1];
+							((String[])values)[0] = UNDEFINED;
 							break;
 						case 1: 
 							values = new String[1];
@@ -182,7 +190,8 @@ import fedora.server.Context;
 				} else {
 					switch(context.nEnvironmentValues(attributeId)) {
 						case 0: 
-							values = new String[0];
+							values = new String[1];
+							((String[])values)[0] = UNDEFINED;
 							break;
 						case 1: 
 							values = new String[1];

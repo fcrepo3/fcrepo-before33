@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        PolicyId="require-authn"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+  <Description> </Description>
+  <Target>
+    <Subjects>
+      <Subject>
+        <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:subject:subject-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">UNDEFINED</AttributeValue>
+        </SubjectMatch>
+      </Subject>
+    </Subjects>
+    <Actions>
+      <AnyAction/>
+    </Actions>  
+    <Resources>
+      <AnyResource/>
+    </Resources>
+  </Target>
+  <Rule RuleId="1" Effect="Deny">
+</Policy>
