@@ -229,7 +229,7 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="A">
 				<!--This is the thumbnail sized image -->
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH1 AUDREC1" OWNERID="E" STATUS="A">
+				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH1 AUDREC1" OWNERID="E" STATUS="A" DMDID="DESC1">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/image/saskia/006-007a11.jpg" xlink:title="Saskia thumbnail jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
