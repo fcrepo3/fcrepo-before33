@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   $Id$
 
@@ -7,101 +6,62 @@
         Finish doc targets
         Add server targets, similar to client, pulling off common classes
 -->
-
 <project name="Fedora" default="all" basedir=".">
-
-  <property name="javaClassDebug" value="on"/>
-  <property name="javaClassOptimize" value="off"/>
-
-  <property name="javaSourceDir" value="src/java"/>
-  <property name="docDir" value="apidoc"/>
-
-  <target name="all"
-          depends="client"
-          description="Build all distributions">
-  </target>
-
-  <target name="client"
-          depends="clientclasses,clienthelp,clientimages,clientjarincludes"
-          description="Client distribution">
-    <mkdir dir="dist"/>
-    <mkdir dir="dist/client"/>
-    <jar jarfile="dist/client/client.jar"
-         basedir="temp/client"
-         manifest="src/mfs/client.mfs"/>
-    <mkdir dir="dist/client/lib"/>
-    <copy file="lib/client/jhbasic.jar" todir="dist/client/lib"/>
-    <copy file="lib/client/rms.jar" todir="dist/client/lib"/>
-    <!--<copy todir="temp/client">
+	<property name="javaClassDebug" value="on"/>
+	<property name="javaClassOptimize" value="off"/>
+	<property name="javaSourceDir" value="src/java"/>
+	<property name="docDir" value="apidoc"/>
+	<target name="all" depends="client" description="Build all distributions"/>
+	<target name="client" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
+		<mkdir dir="dist"/>
+		<mkdir dir="dist/client"/>
+		<jar jarfile="dist/client/client.jar" basedir="temp/client" manifest="src/mfs/client.mfs"/>
+		<mkdir dir="dist/client/lib"/>
+		<copy file="lib/client/jhbasic.jar" todir="dist/client/lib"/>
+		<copy file="lib/client/rms.jar" todir="dist/client/lib"/>
+		<!--<copy todir="temp/client">
       <fileset dir="inc/client/dist"/>
     </copy>-->
-    <echo message="Finished building client distribution in dist/client"/>
-  </target>
-
-  <target name="runclient"
-          depends="client"
-          description="run the client">
-    <exec dir="dist/client" executable="java">
-      <arg line="-jar client.jar"/>
-    </exec>
-  </target>
-
-  <target name="prep"
-          description="Prepare a temporary build area for targets">
-    <mkdir dir="temp"/>
-  </target>
-
-  <target name="clientprep"
-          depends="prep"
-          description="Prepare a temporary build area for client-related targets">
-    <mkdir dir="temp/client"/>
-  </target>
-
-  <target name="clientclasses"
-          depends="clientprep"
-          description="Compile client java code into temp/client">
-    <javac srcdir="${javaSourceDir}"
-           destdir="temp/client"
-           classpath="lib/client/jhbasic.jar;lib/client/rms.jar"
-           includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**"
-           optimize="${javaClassOptimize}"
-           debug="${javaClassDebug}"/>
-  </target>
-
-  <target name="clienthelp"
-          depends="clientprep"
-          description="Assemble JavaHelp for client into temp/client/help">
-    <mkdir dir="temp/client/help"/>
-    <copy todir="temp/client/help">
-      <fileset dir="src/gif/client/help"/>
-      <fileset dir="src/jpg/client/help"/>
-      <fileset dir="src/html/client/help"/>
-      <fileset dir="src/jhelpset/client/help"/>
-      <fileset dir="src/jhelptoc/client/help"/>
-      <fileset dir="src/jhelpindex/client/help"/>
-      <fileset dir="src/jhelpmap/client/help"/>
-    </copy>
-  </target>
-
-  <target name="clientimages"
-          depends="clientprep"
-          description="Assemble client images dir sources into temp/client/images">
-    <mkdir dir="temp/client/images"/>
-    <copy todir="temp/client/images">
-      <fileset dir="src/gif/client/images"/>
-    </copy>
-  </target>
-
-  <target name="clientjarincludes"
-          depends="clientprep"
-          description="Assemble client includes temp/client">
-    <copy todir="temp/client">
-      <fileset dir="inc/client/jar"/>
-    </copy>
-  </target>
-
-
-<!--
+		<echo message="Finished building client distribution in dist/client"/>
+	</target>
+	<target name="runclient" depends="client" description="run the client">
+		<exec dir="dist/client" executable="java">
+			<arg line="-jar client.jar"/>
+		</exec>
+	</target>
+	<target name="prep" description="Prepare a temporary build area for targets">
+		<mkdir dir="temp"/>
+	</target>
+	<target name="clientprep" depends="prep" description="Prepare a temporary build area for client-related targets">
+		<mkdir dir="temp/client"/>
+	</target>
+	<target name="clientclasses" depends="clientprep" description="Compile client java code into temp/client">
+		<javac srcdir="${javaSourceDir}" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/rms.jar" includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+	</target>
+	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
+		<mkdir dir="temp/client/help"/>
+		<copy todir="temp/client/help">
+			<fileset dir="src/gif/client/help"/>
+			<fileset dir="src/jpg/client/help"/>
+			<fileset dir="src/html/client/help"/>
+			<fileset dir="src/jhelpset/client/help"/>
+			<fileset dir="src/jhelptoc/client/help"/>
+			<fileset dir="src/jhelpindex/client/help"/>
+			<fileset dir="src/jhelpmap/client/help"/>
+		</copy>
+	</target>
+	<target name="clientimages" depends="clientprep" description="Assemble client images dir sources into temp/client/images">
+		<mkdir dir="temp/client/images"/>
+		<copy todir="temp/client/images">
+			<fileset dir="src/gif/client/images"/>
+		</copy>
+	</target>
+	<target name="clientjarincludes" depends="clientprep" description="Assemble client includes temp/client">
+		<copy todir="temp/client">
+			<fileset dir="inc/client/jar"/>
+		</copy>
+	</target>
+	<!--
   <target name="docs"
           description="Build dev docs and user docs">
   </target>
@@ -117,217 +77,223 @@
              use="true"/>
   </target>
 -->
-
-  <target name="devdocs"
-          depends="prep"
-          description="Assemble development/system documentation into dist/devdocs">
-    <mkdir dir="dist"/>
-    <mkdir dir="dist/devdocs"/>
-    <echo message="Copying docs that don't need translation"/>
-    <copy todir="dist/devdocs">
-      <fileset dir="src/txt/devdocs"/>
-      <fileset dir="src/doc/devdocs"/>
-      <fileset dir="src/sdr/devdocs"/>
-    </copy>
-<!--    <mkdir dir="dist/devdocs/devguide"/> -->
-    <echo message="Translating devguide.dbx to html"/>
-    <exec executable="java">
-      <arg value="-classpath"/>
-      <arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
-      <arg value="com.icl.saxon.StyleSheet"/>
-      <arg value="-o"/>
-      <arg path="dist/devdocs/devguide.html"/>
-      <arg path="src/dbx/devdocs/devguide.dbx"/>
-      <arg path="res/docbook-xsl/html/docbook.xsl"/>
- <!--     <arg value="saxon.extensions=true"/>
+	<target name="devdocs" depends="prep" description="Assemble development/system documentation into dist/devdocs">
+		<mkdir dir="dist"/>
+		<mkdir dir="dist/devdocs"/>
+		<echo message="Copying docs that don't need translation"/>
+		<copy todir="dist/devdocs">
+			<fileset dir="src/txt/devdocs"/>
+			<fileset dir="src/doc/devdocs"/>
+			<fileset dir="src/sdr/devdocs"/>
+		</copy>
+		<!--    <mkdir dir="dist/devdocs/devguide"/> -->
+		<echo message="Translating devguide.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/devdocs/devguide.html"/>
+			<arg path="src/dbx/devdocs/devguide.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+			<!--     <arg value="saxon.extensions=true"/>
       <arg value="chunk.section.depth=1"/> -->
-    </exec>
-    <echo message="Translating namespaces.dbx to html"/>
-    <exec executable="java">
-      <arg value="-classpath"/>
-      <arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
-      <arg value="com.icl.saxon.StyleSheet"/>
-      <arg value="-o"/>
-      <arg path="dist/devdocs/namespaces.html"/>
-      <arg path="src/dbx/devdocs/namespaces.dbx"/>
-      <arg path="res/docbook-xsl/html/docbook.xsl"/>
-    </exec>
-  </target>
-  
-  <target name="debug-wsdl"
-          depends="prep"
-          description="Produce html reports on the validity of the API-A and API-M wsdl in temp/debug/">
-    <mkdir dir="temp/debug"/>
-    <echo message="Producing html reports on the validity of API-A and API-M..."/>
-    <echo message="Doing API-A..."/>
-    <exec executable="java">
-      <arg value="-classpath"/>
-      <arg path="res/saxon-6.5/saxon.jar"/>
-      <arg value="com.icl.saxon.StyleSheet"/>
-      <arg value="-o"/>
-      <arg path="temp/debug/Fedora-API-A.html"/>
-      <arg path="src/wsdl/Fedora-API-A.wsdl"/>
-      <arg path="res/wsdl-validator/validate.xsl"/>
-    </exec>
-    <echo message="Doing API-M..."/>
-    <exec executable="java">
-      <arg value="-classpath"/>
-      <arg path="res/saxon-6.5/saxon.jar"/>
-      <arg value="com.icl.saxon.StyleSheet"/>
-      <arg value="-o"/>
-      <arg path="temp/debug/Fedora-API-M.html"/>
-      <arg path="src/wsdl/Fedora-API-M.wsdl"/>
-      <arg path="res/wsdl-validator/validate.xsl"/>
-    </exec>
-  </target>
-  
-  
-  <target name="document-wsdl"
-          depends="prep"
-          description="Produce html documentation of the API-A and API-M wsdl in temp/wsdldoc/">
-    <mkdir dir="temp/wsdldoc"/>
-    <echo message="Producing html reports on the validity of API-A and API-M..."/>
-    <echo message="Doing API-A..."/>
-    <exec executable="java">
-      <arg value="-classpath"/>
-      <arg path="res/saxon-6.5/saxon.jar"/>
-      <arg value="com.icl.saxon.StyleSheet"/>
-      <arg value="-o"/>
-      <arg path="temp/wsdldoc/Fedora-API-A.html"/>
-      <arg path="src/wsdl/Fedora-API-A.wsdl"/>
-      <arg path="res/wsdl-documentor/document.xsl"/>
-    </exec>
-    <echo message="Doing API-M..."/>
-    <exec executable="java">
-      <arg value="-classpath"/>
-      <arg path="res/saxon-6.5/saxon.jar"/>
-      <arg value="com.icl.saxon.StyleSheet"/>
-      <arg value="-o"/>
-      <arg path="temp/wsdldoc/Fedora-API-M.html"/>
-      <arg path="src/wsdl/Fedora-API-M.wsdl"/>
-      <arg path="res/wsdl-documentor/document.xsl"/>
-    </exec>
-  </target>
-  
-  <target name="wsdl2java"
-      depends="prep"
-      description="Generate java classes for API-M and API-A in temp/server/java">
-    <echo message="Generating java classes for API-M and API-A in temp/server/java"/>
-    <mkdir dir="temp/wsdl2java"/>
-    <copy file="inc/server/xsd/wsdl.xsd" todir="temp/wsdl2java"/>
-    <copy file="inc/server/xsd/soapenc.xsd" todir="temp/wsdl2java"/>
-    <copy file="src/xsd/fedora-types.xsd" todir="temp/wsdl2java"/>
-    <copy file="src/xsd/fedora-binding.xsd" todir="temp/wsdl2java"/>
-    <echo message="API-M..."/>
-    <copy file="src/xsd/fedora-auditing.xsd" todir="temp/wsdl2java"/>
-    <copy file="src/wsdl/Fedora-API-M.wsdl" todir="temp/wsdl2java"/>
-    <mkdir dir="temp/server/java"/>
-    <exec executable="java">
-      <arg value="-classpath"/>
-      <arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar"/>
-      <arg value="org.apache.axis.wsdl.WSDL2Java"/>
-      <arg value="-s"/>
-      <arg value="--skeletonDeploy"/>
-      <arg value="true"/>
-      <arg value="--NStoPkg"/>
-      <arg value="http://www.fedora.info/definitions/1/0/api/=fedora.server.management"/>
-      <arg value="--NStoPkg"/>
-      <arg value="http://www.fedora.info/definitions/1/0/types/=fedora.server.types"/>
-      <arg value="--NStoPkg"/>
-      <arg value="http://www.fedora.info/definitions/1/0/auditing/=fedora.server.auditing"/>
-      <arg value="--NStoPkg"/>
-      <arg value="http://www.fedora.info/definitions/1/0/binding/=fedora.server.binding"/>
-      <arg value="-o"/>
-      <arg value="temp/server/java"/>
-      <arg path="temp/wsdl2java/Fedora-API-M.wsdl"/>
-    </exec>
-  </target>
-    
-  <target name="testdeploy">
-    <exec executable="java">
-      <arg value="-classpath"/>
-      <arg path="inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar"/>
-      <arg value="org.apache.axis.client.AdminClient"/>
-      <arg value="-lhttp://localhost:8080/fedora/AdminService"/>
-      <arg value="dist/server/config/deploy.wsdd"/>
-    </exec>
-  </target>
-  
-  <target name="server"
-          depends="serverclasses"
-          description="Server distribution">
-
-    <mkdir dir="dist"/>
-    <mkdir dir="dist/server"/>
-    <copy todir="dist/server">
-      <fileset dir="inc/server"/>
-    </copy>
-    <copy file="src/xsd/fedora-types.xsd" todir="dist/server/xsd"/>
-    <copy file="src/xsd/fedora-auditing.xsd" todir="dist/server/xsd"/>
-    <mkdir dir="dist/server/config"/>
-    <copy file="temp/server/java/fedora/server/management/deploy.wsdd"
-          todir="dist/server/config"/>
-    <copy file="temp/server/java/fedora/server/management/undeploy.wsdd"
-          todir="dist/server/config"/>
-    <replace file="dist/server/config/deploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management/soap"/>
-    <replace file="dist/server/config/deploy.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
-    <replace file="dist/server/config/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management/soap"/>
-    <copy file="src/web-app/web.xml" todir="dist/server/tomcat41/webapps/fedora/WEB-INF"/>
-    <copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
-      <fileset dir="temp/server/classes"/>
-    </copy>
-    <mkdir dir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
-    <copy file="src/properties/server/fedora/server/resources/Server.properties"
-        todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
-    <copy file="src/fcfg/server/fedora.fcfg" todir="dist/server/config"/> 
-    <mkdir dir="dist/server/bin"/>
-    <copy file="src/bat/server/fedora.bat" todir="dist/server/bin"/> 
-    <copy file="src/sh/server/fedora" todir="dist/server/bin"/> 
-    <copy file="lib/common/xerces2-2.0.2.jar" todir="dist/server/tomcat41/common/lib"/> 
-    <echo message="Finished building server distribution in dist/server"/>
-  </target>
-  
-  <target name="servertest"
-          description="run a test on the server">
-    <exec executable="java">
-      <arg value="-Dfedora.home=dist/server"/>
-      <arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
-      <arg value="-classpath"/>
-      <arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
-      <arg value="fedora.server.Server"/>
-      <arg value="test"/>
-    </exec>
-  </target>
-
-  <target name="serverclasses"
-          depends="serverprep,wsdl2java"
-          description="Compile server java code into temp/server/classes">
-    <delete file="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPImpl.java"/>
-    <mkdir dir="temp/server/classes"/>
-    <javac srcdir="${javaSourceDir}:temp/server/java"
-           destdir="temp/server/classes"
-           classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar"
-           includes="fedora/server/**"
-           optimize="${javaClassOptimize}"
-           debug="${javaClassDebug}"/>
-  </target>
-
-  <target name="serverprep"
-          depends="prep"
-          description="Prepare a temporary build area for server-related targets">
-    <mkdir dir="temp/server"/>
-  </target>
-
-  <target name="clean"
-          description="Clean up all targets and temp files">
-    <delete dir="temp"/>
-    <delete dir="dist"/>
-  </target>
-
+		</exec>
+		<echo message="Translating namespaces.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/devdocs/namespaces.html"/>
+			<arg path="src/dbx/devdocs/namespaces.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
+	</target>
+	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A and API-M wsdl in temp/debug/">
+		<mkdir dir="temp/debug"/>
+		<echo message="Producing html reports on the validity of API-A and API-M..."/>
+		<echo message="Doing API-A..."/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="temp/debug/Fedora-API-A.html"/>
+			<arg path="src/wsdl/Fedora-API-A.wsdl"/>
+			<arg path="res/wsdl-validator/validate.xsl"/>
+		</exec>
+		<echo message="Doing API-M..."/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="temp/debug/Fedora-API-M.html"/>
+			<arg path="src/wsdl/Fedora-API-M.wsdl"/>
+			<arg path="res/wsdl-validator/validate.xsl"/>
+		</exec>
+	</target>
+	<target name="document-wsdl" depends="prep" description="Produce html documentation of the API-A and API-M wsdl in temp/wsdldoc/">
+		<mkdir dir="temp/wsdldoc"/>
+		<echo message="Producing html reports on the validity of API-A and API-M..."/>
+		<echo message="Doing API-A..."/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="temp/wsdldoc/Fedora-API-A.html"/>
+			<arg path="src/wsdl/Fedora-API-A.wsdl"/>
+			<arg path="res/wsdl-documentor/document.xsl"/>
+		</exec>
+		<echo message="Doing API-M..."/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="temp/wsdldoc/Fedora-API-M.html"/>
+			<arg path="src/wsdl/Fedora-API-M.wsdl"/>
+			<arg path="res/wsdl-documentor/document.xsl"/>
+		</exec>
+	</target>
+	<target name="wsdl2java" depends="prep" description="Generate java classes for API-M and API-A in temp/server/java">
+		<echo message="Generating java classes for API-M and API-A in temp/server/java"/>
+		<mkdir dir="temp/wsdl2java"/>
+		<copy file="inc/server/xsd/wsdl.xsd" todir="temp/wsdl2java"/>
+		<copy file="inc/server/xsd/soapenc.xsd" todir="temp/wsdl2java"/>
+		<copy file="src/xsd/fedora-types.xsd" todir="temp/wsdl2java"/>
+		<copy file="src/xsd/fedora-binding.xsd" todir="temp/wsdl2java"/>
+		<echo message="API-M..."/>
+		<copy file="src/xsd/fedora-auditing.xsd" todir="temp/wsdl2java"/>
+		<copy file="src/wsdl/Fedora-API-M.wsdl" todir="temp/wsdl2java"/>
+		<mkdir dir="temp/server/java"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar"/>
+			<arg value="org.apache.axis.wsdl.WSDL2Java"/>
+			<arg value="-s"/>
+			<arg value="--skeletonDeploy"/>
+			<arg value="true"/>
+			<arg value="--NStoPkg"/>
+			<arg value="http://www.fedora.info/definitions/1/0/api/=fedora.server.management"/>
+			<arg value="--NStoPkg"/>
+			<arg value="http://www.fedora.info/definitions/1/0/types/=fedora.server.types"/>
+			<arg value="--NStoPkg"/>
+			<arg value="http://www.fedora.info/definitions/1/0/auditing/=fedora.server.auditing"/>
+			<arg value="--NStoPkg"/>
+			<arg value="http://www.fedora.info/definitions/1/0/binding/=fedora.server.binding"/>
+			<arg value="-o"/>
+			<arg value="temp/server/java"/>
+			<arg path="temp/wsdl2java/Fedora-API-M.wsdl"/>
+		</exec>
+		<echo message="API-A..."/>
+		<copy file="src/wsdl/Fedora-API-A.wsdl" todir="temp/wsdl2java"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar"/>
+			<arg value="org.apache.axis.wsdl.WSDL2Java"/>
+			<arg value="-s"/>
+			<arg value="--skeletonDeploy"/>
+			<arg value="true"/>
+			<arg value="--NStoPkg"/>
+			<arg value="http://www.fedora.info/definitions/1/0/api/=fedora.server.access"/>
+			<arg value="--NStoPkg"/>
+			<arg value="http://www.fedora.info/definitions/1/0/types/=fedora.server.types"/>
+			<arg value="-o"/>
+			<arg value="temp/server/java"/>
+			<arg path="temp/wsdl2java/Fedora-API-A.wsdl"/>
+		</exec>
+	</target>
+	<target name="testdeploy">
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar"/>
+			<arg value="org.apache.axis.client.AdminClient"/>
+			<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
+			<arg value="dist/server/config/deploy.wsdd"/>
+		</exec>
+	</target>
+	<target name="testdeployA">
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar"/>
+			<arg value="org.apache.axis.client.AdminClient"/>
+			<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
+			<arg value="dist/server/config/deployAPI-A.wsdd"/>
+		</exec>
+	</target>
+	<target name="server" depends="serverclasses" description="Server distribution">
+		<mkdir dir="dist"/>
+		<mkdir dir="dist/server"/>
+		<copy todir="dist/server">
+			<fileset dir="inc/server"/>
+		</copy>
+		<copy file="src/xsd/fedora-types.xsd" todir="dist/server/xsd"/>
+		<copy file="src/xsd/fedora-auditing.xsd" todir="dist/server/xsd"/>
+		<mkdir dir="dist/server/config"/>
+		<copy file="temp/server/java/fedora/server/management/deploy.wsdd" todir="dist/server/config"/>
+		<copy file="temp/server/java/fedora/server/access/deploy.wsdd" tofile="dist/server/config/deployAPI-A.wsdd"/>
+		<copy file="temp/server/java/fedora/server/management/undeploy.wsdd" todir="dist/server/config"/>
+		<copy file="temp/server/java/fedora/server/access/undeploy.wsdd" tofile="dist/server/config/undeployAPI-A.wsdd"/>
+		<replace file="dist/server/config/deploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management/soap"/>
+		<replace file="dist/server/config/deployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access/soap"/>
+		<replace file="dist/server/config/deploy.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
+		<replace file="dist/server/config/deployAPI-A.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
+		<replace file="dist/server/config/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management/soap"/>
+		<replace file="dist/server/config/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access/soap"/>
+		<copy file="src/web-app/web.xml" todir="dist/server/tomcat41/webapps/fedora/WEB-INF"/>
+		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
+			<fileset dir="temp/server/classes"/>
+		</copy>
+		<!-- temporary fix for testing until we have objects in a real database and config files setup -->
+		<copy todir="dist/server/tomcat41">
+			<fileset dir="src/mets"/>
+		</copy>
+		<!-- end testing -->
+		<mkdir dir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
+		<copy file="src/properties/server/fedora/server/resources/Server.properties" todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
+		<copy file="src/fcfg/server/fedora.fcfg" todir="dist/server/config"/>
+		<mkdir dir="dist/server/bin"/>
+		<copy file="src/bat/server/fedora.bat" todir="dist/server/bin"/>
+		<copy file="src/sh/server/fedora" todir="dist/server/bin"/>
+		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/server/tomcat41/common/lib"/>
+		<echo message="Finished building server distribution in dist/server"/>
+	</target>
+	<target name="servertest" description="run a test on the server">
+		<exec executable="java">
+			<arg value="-Dfedora.home=dist/server"/>
+			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+			<arg value="-classpath"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
+			<arg value="fedora.server.Server"/>
+			<arg value="test"/>
+		</exec>
+	</target>
+	<target name="serverclasses" depends="serverprep,wsdl2java" description="Compile server java code into temp/server/classes">
+		<delete file="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPImpl.java"/>
+		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
+		<mkdir dir="temp/server/classes"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/server/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar" includes="fedora/server/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+	</target>
+	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
+		<mkdir dir="temp/server"/>
+	</target>
+	<target name="clean" description="Clean up all targets and temp files">
+		<delete dir="temp"/>
+		<delete dir="dist"/>
+	</target>
 </project>
-
 <!--
   $Log$
+  Revision 1.21  2002/08/08 16:30:05  rlw
+  Added target "testdeployA" (for testing, may go away) to deploy the API-A soap service.
+
+  Updated target "server" to copy files related to API-A soap service into temp directory.
+
+  Updated target "wsdl2java" to generate API-A soap service classes.
+
   Revision 1.20  2002/08/05 18:58:18  payette
   fixed prob introd by axisb3 upgrade..need saaj.jar (common/lib) for testdeploy target
 
