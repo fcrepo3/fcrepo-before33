@@ -53,6 +53,7 @@ import org.xml.sax.helpers.DefaultHandler;
 // 10. Backward compatibility with METS: AUDIT, object properties, CURRENT attr
 // 11. Add content digest parse;  also to DigitalObject.  What do we do with it now?
 // 12. Check on xml "data level" tracking in parsing code.  What's up?
+// 13. Parse Format URI when it's a mets format to get MDClass and MDType.
 
 /**
  *
@@ -116,7 +117,8 @@ public class FOXMLDODeserializer
     //private int m_dsMDClass;
     private long m_dsSize;
     private String m_dsLocationType;
-    private URL m_dsLocation;
+    private URL m_dsLocationURL;
+    private String m_dsLocation;
     private String m_dsMimeType;
     private String m_dsControlGrp;
 	private String m_dissemId;
@@ -340,7 +342,18 @@ public class FOXMLDODeserializer
             // a new foxml element is starting
             if (localName.equals("digitalObject")) {
                 m_rootElementFound=true;
+                // get object attributes that are invariants
 				m_obj.setPid(grab(a, F, "PID"));
+				m_obj.setCreateDate(DateUtility.convertStringToDate(grab(a, F, "CREATEDATE")));
+				String objType = grab(a, F, "TYPE");
+				if (objType==null) { objType="FedoraObject"; }
+				if (objType.equalsIgnoreCase("FedoraBDefObject")) {
+					m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
+				} else if (objType.equalsIgnoreCase("FedoraBMechObject")) {
+					m_obj.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
+				} else {
+					m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
+				}
 			} else if (localName.equals("datastream")) {
 				// get datastream attributes...
 				m_dsId=grab(a, F, "ID");
@@ -397,12 +410,13 @@ public class FOXMLDODeserializer
                     m_dsControlGrp.equalsIgnoreCase("R") )
                 {
                   try {
-                    m_dsLocation=new URL(dsLocation);
+                    m_dsLocationURL=new URL(dsLocation);
                   } catch (MalformedURLException murle) {
                     throw new SAXException("REF specifies malformed url: " + dsLocation);
                   }
                   m_dsLocationType="URL";
-                  populateDatastream(new DatastreamReferencedContent(), dsLocation);
+                  m_dsLocation=dsLocation;
+                  addDatastream(new DatastreamReferencedContent());
 				  // check if datastream is ManagedContent
                 } else if (m_dsControlGrp.equalsIgnoreCase("M")) {
                   // Validate ManagedContent dsLocation URL only if this
@@ -413,13 +427,14 @@ public class FOXMLDODeserializer
                   if (m_obj.isNew())
                   {
                     try {
-                      m_dsLocation=new URL(dsLocation);
+                      m_dsLocationURL=new URL(dsLocation);
                     } catch (MalformedURLException murle) {
                       throw new SAXException("REF specifies malformed url: " + dsLocation);
                     }
                   }                 
                   m_dsLocationType="INTERNAL_ID";
-				  populateDatastream(new DatastreamManagedContent(), dsLocation);
+				  m_dsLocation=dsLocation;
+				  addDatastream(new DatastreamManagedContent());
                 }
             } else if (localName.equals("binaryContent")) {
                 // signal that we want to suck it in
@@ -546,6 +561,7 @@ public class FOXMLDODeserializer
                     m_dsFirstElementBuffer.append("\"");
                 }
                 DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
+                /*
                 try {
                     String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
                     ds.xmlContent=combined.getBytes(
@@ -556,8 +572,8 @@ public class FOXMLDODeserializer
                 // set the attrs common to all datastreams
                 ds.DatastreamID=m_dsId;
                 ds.DatastreamURI=m_dsURI;
-				ds.isVersionable=m_dsVersionable;
-				ds.FormatURI=m_dsFormatURI;
+				ds.DSVersionable=m_dsVersionable;
+				ds.DSFormatURI=m_dsFormatURI;
                 ds.DSVersionID=m_dsVersId;
                 ds.DSLabel=m_dsLabel;
                 if (m_dsMimeType==null) {
@@ -578,6 +594,8 @@ public class FOXMLDODeserializer
                     + m_dsVersId;
                 // add it to the digitalObject
                 m_obj.datastreams(m_dsId).add(ds);
+                */
+                addXMLDatastream(ds);
                 m_inXMLMetadata=false; // other stuff is re-initted upon
                                        // startElement for next xml metadata
                                        // element
@@ -606,10 +624,11 @@ public class FOXMLDODeserializer
 						m_obj.setContentModelId(m_elementContent.toString());
 					} else if (localName.equals("URI")) {
 						m_obj.setURI(m_elementContent.toString());
-					} else if (localName.equals("state")) {
+					} else if (localName.equals("objectState")) {
 						m_obj.setState(m_elementContent.toString());
 					} else if (localName.equals("label")) {
 						m_obj.setLabel(m_elementContent.toString());
+						/*
 					} else if (localName.equals("objectType")) {
 						String objType=m_elementContent.toString();
 						if (objType==null) { objType="FedoraObject"; }
@@ -623,6 +642,7 @@ public class FOXMLDODeserializer
 					} else if (localName.equals("createdDate")) {
 						m_obj.setCreateDate(
 							DateUtility.convertStringToDate(m_elementContent.toString()));
+					*/
 					} else if (localName.equals("modifiedDate")) {
 						m_obj.setLastModDate(
 							DateUtility.convertStringToDate(m_elementContent.toString()));
@@ -682,20 +702,22 @@ public class FOXMLDODeserializer
         return ret;
     }
     
-    private void populateDatastream(Datastream ds, String dsLocation) {
+    private void addDatastream(Datastream ds) {
     	
 		ds.DatastreamID=m_dsId;
 		ds.DatastreamURI=m_dsURI;
-		ds.isVersionable=m_dsVersionable;
-		ds.FormatURI=m_dsFormatURI;
+		ds.DSVersionable=m_dsVersionable;
+		ds.DSCurrent=m_dsCurrent;
+		ds.DSFormatURI=m_dsFormatURI;
 		ds.DSVersionID=m_dsVersId;
 		ds.DSLabel=m_dsLabel;
 		ds.DSCreateDT=m_dsCreateDate;
 		ds.DSMIME=m_dsMimeType;
 		ds.DSControlGrp=m_dsControlGrp;
-		//ds.DSInfoType="OTHER";
 		ds.DSState=m_dsState;
-		ds.DSLocation=dsLocation;
+		ds.DSLocation=m_dsLocation;
+		// METS legacy
+		ds.DSInfoType="OTHER";
 		// SDP: what is this about?  It does not set mime and size anyhow?
 		/*
 		if (m_queryBehavior!=QUERY_NEVER) {
@@ -720,4 +742,41 @@ public class FOXMLDODeserializer
 		*/
 		m_obj.datastreams(m_dsId).add(ds);   	
     }
+    
+	private void addXMLDatastream(DatastreamXMLMetadata ds) {   	
+		try {
+			String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
+			ds.xmlContent=combined.getBytes(
+					m_characterEncoding);
+		} catch (UnsupportedEncodingException uee) {
+		  System.out.println("oops..encoding not supported, this could have been caught earlier.");
+		}
+		// set the attrs common to all datastream versions
+		ds.DatastreamID=m_dsId;
+		ds.DatastreamURI=m_dsURI;
+		ds.DSVersionable=m_dsVersionable;
+		ds.DSCurrent=m_dsCurrent;
+		ds.DSFormatURI=m_dsFormatURI;
+		ds.DSVersionID=m_dsVersId;
+		ds.DSLabel=m_dsLabel;
+		if (m_dsMimeType==null) {
+			ds.DSMIME="text/xml";
+		} else {
+			ds.DSMIME=m_dsMimeType;
+		}
+		ds.DSCreateDT=m_dsCreateDate;
+		ds.DSSize=ds.xmlContent.length; // bytes, not chars, but
+										// probably N/A anyway
+		ds.DSControlGrp="X";
+		ds.DSState=m_dsState;
+		ds.DSLocation=m_obj.getPid() + "+" + m_dsId + "+"
+			+ m_dsVersId;
+			
+		// FIXIT:  LOOK AT FORMAT URI FOR METS TYPES TO POPULATE
+		// DSInfoType and DSMCClass are METS-only.
+		//ds.DSInfoType="OTHER";
+		//ds.DSMDClass=m_dsMDClass;
+		// add it to the digitalObject
+		m_obj.datastreams(m_dsId).add(ds);   	
+	}
   }
