@@ -157,7 +157,7 @@ public class FieldSearchServlet
                 html.append("<hr size=\"1\">");
             }
             FieldSearchResult fsr=null;
-            if ((fieldsArray!=null && fieldsArray.length>0)) {
+            if ((fieldsArray!=null && fieldsArray.length>0) || (sessionToken!=null)) {
                 if (sessionToken!=null) {
                     fsr=s_access.resumeFindObjects(context, sessionToken);
                 } else {
@@ -185,65 +185,35 @@ public class FieldSearchServlet
                 for (int i=0; i<searchResults.size(); i++) {
                     ObjectFields f=(ObjectFields) searchResults.get(i);
                     if (xml) {
-		        xmlBuf.append("  <objectFields>\n");
-                        for (int j=0; j<fieldsArray.length; j++) {
-                            String l=fieldsArray[j];
-                            if (l.equalsIgnoreCase("pid")) {
-                                appendXML(l, f.getPid(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("label")) {
-                                appendXML(l, f.getLabel(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("fType")) {
-			        appendXML(l, f.getFType(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("cModel")) {
-			        appendXML(l, f.getCModel(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("state")) {
-			        appendXML(l, f.getState(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("locker")) {
-			        appendXML(l, f.getLocker(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("cDate")) {
-			        appendXML(l, f.getCDate(), formatter, xmlBuf);
-                            } else if (l.equalsIgnoreCase("mDate")) {
-			        appendXML(l, f.getMDate(), formatter, xmlBuf);
-                            } else if (l.equalsIgnoreCase("dcmDate")) {
-			        appendXML(l, f.getDCMDate(), formatter, xmlBuf);
-                            } else if (l.equalsIgnoreCase("bDef")) {
-			        appendXML(l, f.bDefs(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("bMech")) {
-			        appendXML(l, f.bMechs(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("title")) {
-			        appendXML(l, f.titles(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("creator")) {
-			        appendXML(l, f.creators(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("subject")) {
-			        appendXML(l, f.subjects(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("description")) {
-			        appendXML(l, f.descriptions(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("publisher")) {
-			        appendXML(l, f.publishers(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("contributor")) {
-			        appendXML(l, f.contributors(), xmlBuf); 
-			    } else if (l.equalsIgnoreCase("date")) {
-			        appendXML(l, f.dates(), xmlBuf); 
-                            } else if (l.equalsIgnoreCase("type")) {
-			        appendXML(l, f.types(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("format")) {
-			        appendXML(l, f.formats(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("identifier")) {
-			        appendXML(l, f.identifiers(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("source")) {
-			        appendXML(l, f.sources(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("language")) {
-			        appendXML(l, f.languages(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("relation")) {
-			        appendXML(l, f.relations(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("coverage")) {
-			        appendXML(l, f.coverages(), xmlBuf);
-                            } else if (l.equalsIgnoreCase("rights")) {
-			        appendXML(l, f.rights(), xmlBuf);
-                            }                        
-			 }
-		         xmlBuf.append("  </objectFields>\n");
-		    } else {
+                        xmlBuf.append("  <objectFields>\n");
+                        appendXML("pid", f.getPid(), xmlBuf);
+                        appendXML("label", f.getLabel(), xmlBuf);
+                        appendXML("fType", f.getFType(), xmlBuf);
+                        appendXML("cModel", f.getCModel(), xmlBuf);
+                        appendXML("state", f.getState(), xmlBuf);
+                        appendXML("locker", f.getLocker(), xmlBuf);
+                        appendXML("cDate", f.getCDate(), formatter, xmlBuf);
+                        appendXML("mDate", f.getMDate(), formatter, xmlBuf);
+                        appendXML("dcmDate", f.getDCMDate(), formatter, xmlBuf);
+                        appendXML("bDef", f.bDefs(), xmlBuf);
+                        appendXML("bMech", f.bMechs(), xmlBuf);
+                        appendXML("title", f.titles(), xmlBuf);
+                        appendXML("creator", f.creators(), xmlBuf);
+                        appendXML("subject", f.subjects(), xmlBuf);
+                        appendXML("description", f.descriptions(), xmlBuf);
+                        appendXML("publisher", f.publishers(), xmlBuf);
+                        appendXML("contributor", f.contributors(), xmlBuf); 
+                        appendXML("date", f.dates(), xmlBuf); 
+                        appendXML("type", f.types(), xmlBuf);
+                        appendXML("format", f.formats(), xmlBuf);
+                        appendXML("identifier", f.identifiers(), xmlBuf);
+                        appendXML("source", f.sources(), xmlBuf);
+                        appendXML("language", f.languages(), xmlBuf);
+                        appendXML("relation", f.relations(), xmlBuf);
+                        appendXML("coverage", f.coverages(), xmlBuf);
+                        appendXML("rights", f.rights(), xmlBuf);
+		                 xmlBuf.append("  </objectFields>\n");
+		             } else {
                         html.append("<tr>");
                         for (int j=0; j<fieldsArray.length; j++) {
                             String l=fieldsArray[j];
@@ -423,7 +393,7 @@ public class FieldSearchServlet
 
     private void appendXML(String name, Date dt, SimpleDateFormat formatter, 
             StringBuffer out) {
-        appendXML(name, formatter.format(dt), out);
+        if(dt!=null) appendXML(name, formatter.format(dt), out);
     }
     
     private String getList(List l) {
