@@ -1,11 +1,14 @@
 package fedora.server;
 
 import fedora.common.*;  // PID, MalformedPIDException
+import fedora.common.policy.XacmlName;
 import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ServerShutdownException;
+import fedora.server.security.Authorization;
 
 import java.io.IOException;
 import java.io.File;
@@ -723,21 +726,17 @@ public abstract class Server
             //    via shutdown()
             logSevere(sie.getMessage());
             try {
-                shutdown();
+                shutdownServer();
             } catch (ServerShutdownException sse) {
                 logSevere(sse.getMessage());
-            } catch (ModuleShutdownException mse) {
-                logSevere(mse.getRole() + ": " + mse.getMessage());
             }
             throw sie;
         } catch (ModuleInitializationException mie) {
             logSevere(mie.getRole() + ": " + mie.getMessage());
             try {
-                shutdown();
+                shutdownServer();
             } catch (ServerShutdownException sse) {
                 logSevere(sse.getMessage());
-            } catch (ModuleShutdownException mse) {
-                logSevere(mse.getRole() + ": " + mse.getMessage());
             }
             throw mie;
         }
@@ -1183,6 +1182,11 @@ public abstract class Server
     public final static boolean hasInstance(File homeDir) {
         return (s_instances.get(homeDir)!=null);
     }
+    
+    public final String status(Context context) throws NotAuthorizedException {
+		((Authorization)getModule("fedora.server.security.Authorization")).enforceServerStatus(context);
+        return "RUNNING";
+    }
 
     public final static Server getInstance(File homeDir, boolean okToStart)
             throws ServerInitializationException,
@@ -1424,12 +1428,15 @@ public abstract class Server
      * instances map.
      *
      * @throws ServerShutdownException If a severe server shutdown-related error
-     *         occurred.
+     *         occurred.    	USER_REPRESENTED = addName(new XacmlName(this, "subjectRepresented"));    	
      * @throws ModuleShutdownException If a severe module shutdown-related error
      *         occurred.
      */
-    public final void shutdown()
-            throws ServerShutdownException, ModuleShutdownException {
+    public final void shutdown(Context context)
+            throws ServerShutdownException, ModuleShutdownException, NotAuthorizedException {
+    	if (context != null) { // fixup for xacml
+    		((Authorization)getModule("fedora.server.security.Authorization")).enforceServerShutdown(context);
+    	}
         Iterator roleIterator=loadedModuleRoles();
         logInfo("Server shutdown requested.");
         while (roleIterator.hasNext()) {
@@ -1478,7 +1485,7 @@ public abstract class Server
      */
     public final void finalize()
             throws ServerShutdownException, ModuleShutdownException {
-        shutdown();
+        shutdownServer();
     }
 
     public final static Locale getLocale() {

@@ -62,7 +62,7 @@ public class TranslatorTest {
             trans.serialize(obj, outStream, args[1], args[2], DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
             System.out.println("Done. Here it is:");
             System.out.println(outStream.toString(args[2]));
-            server.shutdown();
+            server.shutdown(null); //fixup for xacml
         } catch (Exception e) {
             System.out.println("Error: " + e.getClass().getName() + " " + e.getMessage() + "\n");
             e.printStackTrace();
