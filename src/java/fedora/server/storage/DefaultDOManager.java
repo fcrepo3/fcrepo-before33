@@ -8,43 +8,21 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 
-import fedora.common.*;
 import fedora.server.Context;
 import fedora.server.Module;
-import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
-import fedora.server.errors.DatastreamNotFoundException;
-import fedora.server.errors.ConnectionPoolNotFoundException;
-import fedora.server.errors.GeneralException;
-import fedora.server.errors.InvalidContextException;
-import fedora.server.errors.LowlevelStorageException;
-import fedora.server.errors.MalformedPidException;
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ObjectAlreadyInLowlevelStorageException;
-import fedora.server.errors.ObjectDependencyException;
-import fedora.server.errors.ObjectExistsException;
-import fedora.server.errors.ObjectLockedException;
-import fedora.server.errors.ObjectNotFoundException;
-import fedora.server.errors.ObjectNotInLowlevelStorageException;
-import fedora.server.errors.ServerException;
-import fedora.server.errors.StorageException;
-import fedora.server.errors.StorageDeviceException;
+import fedora.server.errors.*;
 import fedora.server.management.Management;
 import fedora.server.management.PIDGenerator;
 import fedora.server.resourceIndex.*;
@@ -56,7 +34,6 @@ import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.replication.DOReplicator;
 import fedora.server.storage.translation.DOTranslator;
-import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -68,15 +45,16 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.StreamUtility;
-import fedora.server.utilities.TableCreatingConnection;
-import fedora.server.utilities.TableSpec;
 import fedora.server.validation.DOValidator;
+import fedora.server.validation.DOValidatorImpl;
 import fedora.server.validation.RelsExtValidator;
 
 /**
  *
  * <p><b>Title:</b> DefaultDOManager.java</p>
- * <p><b>Description:</b> Provides access to digital object readers and writers.
+ * <p><b>Description:</b> Manages the reading and writing of digital objects
+ * by instantiating an appropriate object reader or writer.  Also, manages the
+ * object ingest process and the object replication process.
  * </p>
  *
  * -----------------------------------------------------------------------------
@@ -175,11 +153,9 @@ public class DefaultDOManager
                 + "not given, will defer to ConnectionPoolManager's "
                 + "default pool.");
         }
-        // internal storage format (required)
-		
+        // internal storage format (required)		
         if (fedora.server.Debug.DEBUG) System.out.println("Server property format.storage= " + Server.STORAGE_FORMAT);
 		m_defaultStorageFormat = Server.STORAGE_FORMAT;
-        //m_defaultStorageFormat=getParameter("storageFormat");
         if (m_defaultStorageFormat==null) {
             throw new ModuleInitializationException("System property format.storage "
                 + "not given, but it's required.", getRole());
@@ -374,6 +350,9 @@ public class DefaultDOManager
         }
     }
 
+	/**
+	 * Gets a reader on an an existing digital object.
+	 */
     public DOReader getReader(Context context, String pid)
             throws ServerException {
         if (cachedObjectRequired(context)) {
@@ -385,7 +364,9 @@ public class DefaultDOManager
                     getObjectStore().retrieve(pid), this);
         }
     }
-
+	/**
+	 * Gets a reader on an an existing behavior mechanism object.
+	 */
     public BMechReader getBMechReader(Context context, String pid)
             throws ServerException {
         if (cachedObjectRequired(context)) {
@@ -399,6 +380,9 @@ public class DefaultDOManager
         }
     }
 
+	/**
+	 * Gets a reader on an an existing behavior definition object.
+	 */
     public BDefReader getBDefReader(Context context, String pid)
             throws ServerException {
         if (cachedObjectRequired(context)) {
@@ -411,23 +395,324 @@ public class DefaultDOManager
                     getObjectStore().retrieve(pid), this);
         }
     }
+    
+	/**
+	 * Gets a writer on an an existing object.
+	 */
+	public DOWriter getWriter(Context context, String pid)
+			throws ServerException, ObjectLockedException {
+		if (cachedObjectRequired(context)) {
+			throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
+		} else {
+			// TODO: make sure there's no SESSION lock on a writer for the pid
+
+			BasicDigitalObject obj=new BasicDigitalObject();
+			m_translator.deserialize(getObjectStore().retrieve(pid), obj,
+					m_defaultStorageFormat, m_storageCharacterEncoding, 
+					DOTranslationUtility.DESERIALIZE_INSTANCE);
+			DOWriter w=new SimpleDOWriter(context, this, m_translator,
+					m_defaultStorageFormat,
+					m_storageCharacterEncoding, obj, this);
+			// add to internal list...somehow..think...
+			System.gc();
+			return w;
+		}
+	}
+
+	/**
+	 * Manages the INGEST process which includes validation of the ingest
+	 * XML file, deserialization of the XML into a Digital Object instance,
+	 * setting of properties on the object by the system (dates and states),
+	 * PID validation or generation, object registry functions, getting a
+	 * writer for the digital object, and ultimately writing the object to
+	 * persistent storage via the writer.
+	 * 
+	 * @param context 
+	 * @param in  the input stream that is the XML ingest file for a digital object
+	 * @param format  the format of the XML ingest file (e.g., FOXML, Fedora METS)
+	 * @param encoding  the character encoding of the XML ingest file (e.g., UTF-8)
+	 * @param newPid  true if the system should generate a new PID for the object
+	 *
+	 */
+	public synchronized DOWriter getIngestWriter(Context context, InputStream in, String format, 
+		String encoding, boolean newPid)
+			throws ServerException {
+		getServer().logFinest("INGEST: start ingest via DefaultDOManager.getIngestWriter.");
+
+		File tempFile = null;
+		if (cachedObjectRequired(context)) {
+			throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
+		} else {
+			try {
+				// CURRENT TIME:
+				// Get the current time to use for created dates on object
+				// and object components (if they are not already there).
+				Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+				
+				// TEMP STORAGE:
+				// write ingest input stream to a temporary file
+				tempFile = File.createTempFile("fedora-ingest-temp", ".xml");
+				logFinest("INGEST: Creating temporary file for ingest: " + tempFile.toString());
+				StreamUtility.pipeStream(in, new FileOutputStream(tempFile), 4096);
+
+				// VALIDATION: 
+				// perform initial validation of the ingest submission file
+				logFinest("INGEST: Validation (ingest phase)...");
+				m_validator.validate(tempFile, format, DOValidatorImpl.VALIDATE_ALL, "ingest");
+
+				// DESERIALIZE:
+				// deserialize the ingest input stream into a digital object instance
+				BasicDigitalObject obj=new BasicDigitalObject();
+				// FIXME: just setting ownerId manually for now...
+				obj.setOwnerId("fedoraAdmin");
+				obj.setNew(true);
+				if (fedora.server.Debug.DEBUG) System.out.println("Deserializing from format: " + format);
+				logFinest("INGEST: Deserializing from format: " + format);
+				m_translator.deserialize(new FileInputStream(tempFile), obj, format, encoding, 
+					DOTranslationUtility.DESERIALIZE_INSTANCE);
+                	
+				// SET OBJECT PROPERTIES:
+				logFinest("INGEST: Setting object/component states and create dates if unset...");
+				// set object state to "A" (Active) if not already set
+				if (obj.getState()==null || obj.getState().equals("")) {
+					obj.setState("A");
+				}
+				// set object create date to UTC if not already set
+				if (obj.getCreateDate()==null || obj.getCreateDate().equals("")) {
+					obj.setCreateDate(nowUTC);
+				}
+				// set object last modified date to UTC
+				obj.setLastModDate(nowUTC);
+				
+				// SET DATASTREAM PROPERTIES...
+				Iterator dsIter=obj.datastreamIdIterator();
+				while (dsIter.hasNext()) {
+					List dsList=(List) obj.datastreams((String) dsIter.next());
+					for (int i=0; i<dsList.size(); i++) {
+						Datastream ds=(Datastream) dsList.get(i);
+						// Set create date to UTC if not already set
+						if (ds.DSCreateDT==null || ds.DSCreateDT.equals("")) {
+							ds.DSCreateDT=nowUTC;
+						}
+						// Set state to "A" (Active) if not already set
+						if (ds.DSState==null || ds.DSState.equals("")) {
+							ds.DSState="A";
+						}
+					}
+				}
+				// SET DISSEMINATOR PROPERTIES...
+				Iterator dissIter=obj.disseminatorIdIterator();
+				while (dissIter.hasNext()) {
+					List dissList=(List) obj.disseminators((String) dissIter.next());
+					for (int i=0; i<dissList.size(); i++) {
+						Disseminator diss=(Disseminator) dissList.get(i);
+						// Set create date to UTC if not already set
+						if (diss.dissCreateDT==null || diss.dissCreateDT.equals("")) {
+							diss.dissCreateDT=nowUTC;
+						}
+						// Set state to "A" (Active) if not already set
+						if (diss.dissState==null || diss.dissState.equals("")) {
+							diss.dissState="A";
+						}
+					}
+				}
+
+				// PID VALIDATION:
+				// validate and normalized the provided pid, if any
+				if ( (obj.getPid() != null) && (obj.getPid().length() > 0) ) {
+					obj.setPid(Server.getPID(obj.getPid()).toString());
+				}
+
+				// PID GENERATION:
+				// have the system generate a PID if one was not provided
+				if ( ( obj.getPid()!=null )
+						&& ( obj.getPid().indexOf(":")!=-1 )
+						&& ( ( m_retainPIDs==null )
+								|| ( m_retainPIDs.contains(obj.getPid().split(":")[0]) )
+								)
+						) {
+					getServer().logFinest("INGEST: Stream contained PID with retainable namespace-id... will use PID from stream.");
+					try {
+						m_pidGenerator.neverGeneratePID(obj.getPid());
+					} catch (IOException e) {
+						throw new GeneralException("Error calling pidGenerator.neverGeneratePID(): " + e.getMessage());
+					}
+				} else {
+					if (newPid) {
+						getServer().logFinest("INGEST: client wants a new PID.");
+						// yes... so do that, then set it in the obj.
+						String p=null;
+						try {
+							p=m_pidGenerator.generatePID(m_pidNamespace);
+						} catch (Exception e) {
+							throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
+									+ e.getClass().getName() + ") - " + e.getMessage());
+						}
+						getServer().logFiner("INGEST: Generated new PID: " + p);
+						obj.setPid(p);
+					} else {
+						getServer().logFinest("INGEST: client wants to use existing PID.");
+					}
+				}
+                
+				// CHECK REGISTRY:
+				// ensure the object doesn't already exist
+				if (objectExists(obj.getPid())) {
+					throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
+				}
+
+				// GET DIGITAL OBJECT WRITER:
+				// get an object writer configured with the DEFAULT export format
+				if (fedora.server.Debug.DEBUG) System.out.println("Getting new writer with default export format: " + m_defaultExportFormat);
+				logFinest("INGEST: Instantiating a SimpleDOWriter...");
+				DOWriter w=new SimpleDOWriter(context, this, m_translator,
+						m_defaultExportFormat,
+						m_storageCharacterEncoding, obj, this);
+                
+				// DEFAULT DUBLIN CORE DATASTREAM:
+				logFinest("INGEST: Adding/Checking default DC record...");
+				// DC System Reserved Datastream...
+				// if there's no DC datastream, add one using PID for identifier
+				// and Label for dc:title
+				//
+				// if there IS a DC record, make sure one of the dc:identifiers
+				// is the PID
+				DatastreamXMLMetadata dc=(DatastreamXMLMetadata) w.GetDatastream("DC", null);
+				DCFields dcf;
+				if (dc==null) {
+					dc=new DatastreamXMLMetadata("UTF-8");
+					dc.DSMDClass=0;
+					//dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
+					dc.DatastreamID="DC";
+					dc.DSVersionID="DC1.0";
+					dc.DSControlGrp="X";
+					dc.DSCreateDT=nowUTC;
+					dc.DSLabel="Dublin Core Metadata";
+					dc.DSMIME="text/xml";
+					dc.DSSize=0;
+					dc.DSState="A";
+					dcf=new DCFields();
+					if (obj.getLabel()!=null && !(obj.getLabel().equals(""))) {
+						dcf.titles().add(obj.getLabel());
+					}
+					w.addDatastream(dc);
+				} else {
+					dcf=new DCFields(new ByteArrayInputStream(dc.xmlContent));
+				}
+				// ensure one of the dc:identifiers is the pid
+				boolean sawPid=false;
+				for (int i=0; i<dcf.identifiers().size(); i++) {
+					if ( ((String) dcf.identifiers().get(i)).equals(obj.getPid()) ) {
+						sawPid=true;
+					}
+				}
+				if (!sawPid) {
+					dcf.identifiers().add(obj.getPid());
+				}
+				// set the value of the dc datastream according to what's in the DCFields object
+				try {
+					dc.xmlContent=dcf.getAsXML().getBytes("UTF-8");
+				} catch (UnsupportedEncodingException uee) {
+					// safely ignore... we know UTF-8 works
+				}
+                
+				// RELATIONSHIP METADATA VALIDATION:
+				// if a RELS-EXT datastream exists do validation on it
+				RelsExtValidator deser=new RelsExtValidator("UTF-8", false);
+				DatastreamXMLMetadata relsext=(DatastreamXMLMetadata) w.GetDatastream("RELS-EXT", null);
+				if (relsext!=null) {
+					InputStream in2 = new ByteArrayInputStream(relsext.xmlContent);
+					logFinest("INGEST: Validating RELS-EXT datastream...");
+					deser.deserialize(in2, "info:fedora/" + obj.getPid());
+					if (fedora.server.Debug.DEBUG) System.out.println("Done validating RELS-EXT.");
+					logFinest("INGEST: RELS-EXT datastream passed validation.");
+				}
+
+				// REGISTRY:
+				// at this point the object is valid, so make a record 
+				// of it in the digital object registry
+				registerObject(obj.getPid(), obj.getFedoraObjectType(), 
+					getUserId(context), obj.getLabel(), obj.getContentModelId(), 
+					obj.getCreateDate(), obj.getLastModDate());
+				return w;
+			} catch (IOException e) {
+				String message = e.getMessage();
+				if (message == null) message = e.getClass().getName();
+				e.printStackTrace();
+				throw new GeneralException("Error reading/writing temporary ingest file: " + message);
+			} catch (Exception e) {
+				if (e instanceof ServerException) {
+					ServerException se = (ServerException) e;
+					throw se;
+				}
+				String message = e.getMessage();
+				if (message == null) message = e.getClass().getName();
+				throw new GeneralException("Ingest failed: " + message);
+			} finally {
+				if (tempFile != null) {
+					logFinest("Finally, removing temp file...");
+					try {
+						tempFile.delete();
+					} catch (Exception e) {
+						// don't worry if it doesn't exist
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Gets a writer on a new, empty object.
+	 */
+	/*
+	public synchronized DOWriter getIngestWriter(Context context)
+			throws ServerException {
+		getServer().logFinest("INGEST: Entered DefaultDOManager.getIngestWriter(Context)");
+		if (cachedObjectRequired(context)) {
+			throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
+		} else {
+			BasicDigitalObject obj=new BasicDigitalObject();
+			getServer().logFinest("Creating object, need a new PID.");
+			String p=null;
+			try {
+				p=m_pidGenerator.generatePID(m_pidNamespace);
+			} catch (Exception e) {
+				throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
+						+ e.getClass().getName() + ") - " + e.getMessage());
+			}
+			getServer().logFiner("Generated PID: " + p);
+			obj.setPid(p);
+			if (objectExists(obj.getPid())) {
+				throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
+			}
+			// make a record of it in the registry
+			// FIXME: this method is incomplete...
+			// obj.setNew(true);
+			//registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
+
+			// serialize to disk, then validate.. if that's ok, go on.. else unregister it!
+		}
+		return null;
+	}
+	*/
 
     /**
-     * This could be in response to update *or* delete
-     * makes a new audit record in the object,
-     * saves object to definitive store, and replicates.
+     * The doCommit method finalizes an ingest/update/remove of a digital object. 
+     * The process makes updates the object modified date, stores managed content 
+     * datastreams, creates the final XML serialization of the digital object, 
+     * saves the object to persistent storage, updates the object registry, 
+     * and replicates the object's current version information to the relational db.
      *
      * In the case where it is not a deletion, the session lock (TODO) is released, too.
      * This happens as the result of a writer.commit() call.
      *
-     * FIXME: passing the logMessage in here (and writer.commit) probably
-     * isn't necessary... the audit record will already have been added by this
-     * time.
      */
     public void doCommit(Context context, DigitalObject obj, String logMessage, boolean remove)
             throws ServerException {
+        // OBJECT REMOVAL...
         if (remove) {
-            logFinest("Entered doCommit (remove)");
+            logFinest("COMMIT: Entered doCommit (remove)");
+            // REFERENTIAL INTEGRITY:
             // Before removing an object, verify that there are no other objects
             // in the repository that depend on the object being deleted.
             FieldSearchResult result = findObjects(context,
@@ -454,8 +739,9 @@ public class DefaultDOManager
                   + "interface with the query \"bMech~" + obj.getPid()
                   + "\" to obtain a list of dependent objects.");
             }
+            // DATASTREAM STORAGE:
             // remove any managed content datastreams associated with object
-            // from permanent store.
+            // from persistent storage.
             Iterator dsIDIter = obj.datastreamIdIterator();
             while (dsIDIter.hasNext())
             {
@@ -474,29 +760,30 @@ public class DefaultDOManager
                       (Datastream) dsIter.next();
                   String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                       + dmc.DSVersionID;
-                  logInfo("Deleting ManagedContent datastream. " + "id: " + id);
+                  logInfo("COMMIT: Deleting ManagedContent datastream. " + "id: " + id);
                   try {
                     getDatastreamStore().remove(id);
                   } catch (LowlevelStorageException llse) {
-                    logWarning("While attempting removal of managed content datastream: " + llse.getClass().getName() + ": " + llse.getMessage());
+                    logWarning("COMMIT: While attempting removal of managed content datastream: " + llse.getClass().getName() + ": " + llse.getMessage());
                   }
                 }
               }
             }
-
-            // remove from definitive storage
+            // STORAGE:
+            // remove digital object from persistent storage
             try {
                 getObjectStore().remove(obj.getPid());
             } catch (ObjectNotInLowlevelStorageException onilse) {
-                logWarning("Object wasn't found in permanent low level store, but that might be ok...continuing with purge.");
+                logWarning("COMMIT: Object wasn't found in permanent low level store, but that might be ok...continuing with purge.");
             }
-            // Remove it from the registry
+            // REGISTRY:
+            // Remove digital object from the registry
             boolean wasInRegistry=false;
             try {
                 unregisterObject(obj.getPid());
                 wasInRegistry=true;
             } catch (ServerException se) {
-                logWarning("Object couldn't be removed from registry, but that might be ok...continuing with purge.");
+                logWarning("COMMIT: Object couldn't be removed from registry, but that might be ok...continuing with purge.");
             }
             if (wasInRegistry) {
                 try {
@@ -506,31 +793,22 @@ public class DefaultDOManager
                     m_replicator.delete(obj.getPid());
                     removeReplicationJob(obj.getPid());
                 } catch (ServerException se) {
-                    logWarning("Object couldn't be deleted from the cached copy (" + se.getMessage() + ") ... leaving replication job unfinished.");
+                    logWarning("COMMIT: Object couldn't be deleted from the cached copy (" + se.getMessage() + ") ... leaving replication job unfinished.");
                 }
             }
-
+			// FIELD SEARCH INDEX:
+			// remove digital object from the default search index
             try {
-                logInfo("Deleting from FieldSearch indexes...");
+                logInfo("COMMIT: Deleting from FieldSearch indexes...");
                 m_fieldSearch.delete(obj.getPid());
             } catch (ServerException se) {
-                logWarning("Object couldn't be removed from fieldsearch indexes (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+                logWarning("COMMIT: Object couldn't be removed from fieldsearch indexes (" + se.getMessage() + "), but that might be ok...continuing with purge.");
             }
-            /*
-            // TODO: DELTA-MODULE:
-            // When an object is purged... get rid of it in the delta index,
-            // (possibly sending notification to listeners)
-            try {
-                logInfo("Deleting from delta index...");
-                DELTA-MODULE.purgedObject(obj.getPid());
-            } catch (ServerException se) {
-                logWarning("Object couldn't be deleted from delta index...");
-                // re-throw??
-            }
-            */
+		// OBJECT INGEST (ADD) OR MODIFY...
         } else {
-            logFinest("Entered doCommit (add/modify)");
+            logFinest("COMMIT: Entered doCommit (add/modify)");
             try {
+                // DATASTREAM STORAGE:
                 // copy and store any datastreams of type Managed Content
                 Iterator dsIDIter = obj.datastreamIdIterator();
                 while (dsIDIter.hasNext())
@@ -554,7 +832,7 @@ public class DefaultDOManager
                         MIMETypedStream mimeTypedStream;
 						if (dmc.DSLocation.startsWith("uploaded://")) {
 						    mimeTypedStream=new MIMETypedStream(null, m_management.getTempStream(dmc.DSLocation), null);
-                            logInfo("Retrieving ManagedContent datastream from internal uploaded "
+                            logInfo("COMMIT: Retrieving ManagedContent datastream from internal uploaded "
                                 + "location: " + dmc.DSLocation);
 						} else if (dmc.DSLocation.startsWith("copy://"))  {
                             // make a copy of the pre-existing content
@@ -564,7 +842,7 @@ public class DefaultDOManager
 						} else {
                             mimeTypedStream = m_contentManager.
                                 getExternalContent(dmc.DSLocation.toString());
-                            logInfo("Retrieving ManagedContent datastream from remote "
+                            logInfo("COMMIT: Retrieving ManagedContent datastream from remote "
                                 + "location: " + dmc.DSLocation);
 						}
                         String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
@@ -580,10 +858,9 @@ public class DefaultDOManager
                                 getDatastreamStore().replace(id, mimeTypedStream.getStream());
                             }
                         }
-
                         // Reset dsLocation in object to new internal location.
                         dmc.DSLocation = id;
-                        logInfo("Replacing ManagedContent datastream with "
+                        logInfo("COMMIT: Replacing ManagedContent datastream with "
                             + "internal id: " + id);
                         //bais = null;
                       }
@@ -591,58 +868,51 @@ public class DefaultDOManager
                   }
                 }
 
-                // STORAGE: save to definitive store, validating beforehand
-                // update the system version (add one)
-
-                // set object last modified date, in UTC
+                // MODIFIED DATE:
+                // set digital object last modified date, in UTC
                 obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    
-				// FINAL VALIDATION:
-				// Perform FINAL validation before saving the object to persistent storage.
-				// For now, we'll request all levels of validation (level=0), but we can
-				// consider whether there is too much redundancy in requesting full validation
-				// at time of ingest, then again, here, at time of storage.
-				// We'll just be conservative for now and call all levels both times.
-				// First, serialize the digital object into an Inputstream to be passed to validator.                    
-                logFinest("Serializing for storage validation...");
-                    m_translator.serialize(obj, out, m_defaultStorageFormat, 
-                    	m_storageCharacterEncoding, DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
-                    ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
-                logFinest("Validating (storage phase)...");
-                    m_validator.validate(inV, m_defaultStorageFormat, 0, "store");
-                    // TODO: DELTA-MODULE:
-                    // After validating for storage, but before saving to definitive store,
-                    // tell the Delta Module about new or modified objects
-                    /*
-                    if (obj.isNew()) {
-                        // tell it we've got a new object
-                        DELTA-MODULE.newObject(context, obj)
-                    } else {
-                        // tell it we've got a modified object, giving it a reader on
-                        // the previous version and a DigitalObject on the new one
-                        DELTA-MODULE.modifiedObject(getReader(context, obj.getPid()), obj);
-                    }
-                    */
-                    
-                    // FIXME for now, for testing, only this single hook into
-                    // the ResourceIndex
-                    if (m_resourceIndex != null) {
-                        logFinest("Passed validation.  Adding to ResourceIndex...");
-                        m_resourceIndex.addDigitalObject(obj);
-                        logFinest("Finished adding to ResourceIndex.");
-                    }
-                    
-                    // if ok, write change to perm store here...right before db stuff
-                    logFinest("Passed validation.  Storing object...");
-                    if (obj.isNew()) {
-                        getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
-                    } else {
-                        getObjectStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
-                    }
 
-                logFinest("Updating registry...");
-                // update systemVersion in doRegistry (add one)
+				// FINAL XML SERIALIZATION:
+				// serialize the object in its final form for persistent storage                                      
+                logFinest("COMMIT: Serializing digital object for persistent storage...");
+                m_translator.serialize(obj, out, m_defaultStorageFormat, 
+                	m_storageCharacterEncoding, DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
+
+				// FINAL VALIDATION:
+				// As of version 2.0, final validation is only performed in DEBUG mode.
+				// This is to help performance during the ingest process since validation
+				// is a large amount of the overhead of ingest.  Instead of a second run
+				// of the validation module, we depend on the integrity of our code to 
+				// create valid XML files for persistent storage of digital objects.
+				if (fedora.server.Debug.DEBUG) {
+					ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
+					logFinest("COMMIT: Final Validation (storage phase)...");
+					m_validator.validate(inV, m_defaultStorageFormat,
+						DOValidatorImpl.VALIDATE_ALL, "store");
+				}                     	
+                    
+                // RESOURCE INDEX:
+                // FIXME for now, for testing, only this single hook into
+                // the ResourceIndex
+                if (m_resourceIndex != null) {
+                    logFinest("COMMIT: Adding to ResourceIndex...");
+                    m_resourceIndex.addDigitalObject(obj);
+                    logFinest("COMMIT: Finished adding to ResourceIndex.");
+                }
+                
+                // STORAGE: 
+                // write XML serialization of object to persistent storage
+                logFinest("COMMIT: Storing digital object...");
+                if (obj.isNew()) {
+                    getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+                } else {
+                    getObjectStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+                }
+                
+                // REGISTRY:
+				// update systemVersion in doRegistry (add one)
+                logFinest("COMMIT: Updating registry...");
                 Connection conn=null;
                 Statement s = null;
                 ResultSet results=null;
@@ -678,28 +948,28 @@ public class DefaultDOManager
                         s=null;
                     }
                 }
-                // add to replication jobs table
-                logFinest("Adding replication job...");
+                // REPLICATE:
+                // add to replication jobs table and do replication to db
+                logFinest("COMMIT: Adding replication job...");
                 addReplicationJob(obj.getPid(), false);
-                // replicate
                 try {
                     if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
-                        logInfo("Attempting replication as bdef object: " + obj.getPid());
+                        logInfo("COMMIT: Attempting replication as bdef object: " + obj.getPid());
                         BDefReader reader=getBDefReader(context, obj.getPid());
                         m_replicator.replicate(reader);
-                        logInfo("Updating FieldSearch indexes...");
+                        logInfo("COMMIT: Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
                     } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
-                        logInfo("Attempting replication as bmech object: " + obj.getPid());
+                        logInfo("COMMIT: Attempting replication as bmech object: " + obj.getPid());
                         BMechReader reader=getBMechReader(context, obj.getPid());
                         m_replicator.replicate(reader);
-                        logInfo("Updating FieldSearch indexes...");
+                        logInfo("COMMIT: Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
                     } else {
-                        logInfo("Attempting replication as normal object: " + obj.getPid());
+                        logInfo("COMMIT: Attempting replication as normal object: " + obj.getPid());
                         DOReader reader=getReader(context, obj.getPid());
                         m_replicator.replicate(reader);
-                        logInfo("Updating FieldSearch indexes...");
+                        logInfo("COMMIT: Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
                     }
                     // FIXME: also remove from temp storage if this is successful
@@ -781,317 +1051,6 @@ public class DefaultDOManager
         }
     }
 
-    /**
-     * Gets a writer on an an existing object.
-     */
-    public DOWriter getWriter(Context context, String pid)
-            throws ServerException, ObjectLockedException {
-        if (cachedObjectRequired(context)) {
-            throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
-        } else {
-            // TODO: make sure there's no SESSION lock on a writer for the pid
-
-            BasicDigitalObject obj=new BasicDigitalObject();
-            m_translator.deserialize(getObjectStore().retrieve(pid), obj,
-                    m_defaultStorageFormat, m_storageCharacterEncoding, 
-                    DOTranslationUtility.DESERIALIZE_INSTANCE);
-            DOWriter w=new SimpleDOWriter(context, this, m_translator,
-                    m_defaultStorageFormat,
-                    m_storageCharacterEncoding, obj, this);
-            // add to internal list...somehow..think...
-            System.gc();
-            return w;
-        }
-    }
-
-    /**
-     * Gets a writer on a new, imported object.
-     *
-     * A new object is created in the system, locked by the current user.
-     * The incoming stream must represent a valid object.
-     *
-     * If newPid is false, the PID from the stream will be used
-     * If newPid is true, the PID generator will create a new PID, unless
-     * the PID in the stream has a namespace-id part of "test"... in which
-     * cast the PID from the stream will be used
-     */
-    public synchronized DOWriter getIngestWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
-            throws ServerException {
-        getServer().logFinest("Entered DefaultDOManager.getIngestWriter(Context, InputStream, String, String, boolean)");
-
-        File tempFile = null;
-        if (cachedObjectRequired(context)) {
-            throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
-        } else {
-            try {
-            	// Get the current time to use for created dates on object
-            	// and object components (if they are not already there).
-				Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-				
-                // write ingest input stream to temp file
-                tempFile = File.createTempFile("fedora-ingest-temp", ".xml");
-                logFinest("Adding and retrieving from temp file: " + tempFile.toString());
-                StreamUtility.pipeStream(in, new FileOutputStream(tempFile), 4096);
-
-                // VALIDATION: perform initial validation of the ingest submission file
-                logFinest("Getting another handle from temp store for validation...");
-                logFinest("Validating (ingest phase)...");
-                logFinest("Skipping Schematron validation because it's done at storage time anyway");
-                logFinest("Skipping XML Schema validation because it's done at storage time anyway");
-				//m_validator.validate(tempFile, format, 0, "ingest");
-                // FIXME: above commenting is just a test... when verified
-                // that it's REALLY unnecessary, remove it, this, all the tempFile
-                // stuff (since only one inputStream needs to be used), AND the comments above!!
-
-
-                // deserialize the ingest input stream into a digital object
-                BasicDigitalObject obj=new BasicDigitalObject();
-				// FIXME: just setting ownerId manually for now...
-				obj.setOwnerId("fedoraAdmin");
-				obj.setNew(true);
-				if (fedora.server.Debug.DEBUG) System.out.println("LOOK! Deserializing from format: " + format);
-                logFinest("Deserializing from format: " + format);
-                m_translator.deserialize(new FileInputStream(tempFile), obj, format, encoding, 
-                	DOTranslationUtility.DESERIALIZE_INSTANCE);
-                	
-                // set state...
-                // set object and component states to "A" (Active) unspecified
-                logFinest("Setting object/component states and create dates if unset...");
-				if (obj.getState()==null || obj.getState().equals("")) {
-                    obj.setState("A");
-				}
-				if (obj.getCreateDate()==null || obj.getCreateDate().equals("")) {
-					obj.setCreateDate(nowUTC);
-				}
-                // datastreams...
-                Iterator dsIter=obj.datastreamIdIterator();
-                while (dsIter.hasNext()) {
-                    List dsList=(List) obj.datastreams((String) dsIter.next());
-                    for (int i=0; i<dsList.size(); i++) {
-                        Datastream ds=(Datastream) dsList.get(i);
-                        // Ensure that the most important required fields are there.
-                        // This is covered by validation later, but if
-                        // we catch it here we can guarantee from this point
-                        // on these things exist
-                        String g = ds.DSControlGrp;
-                        if ( g == null || !(g.equals("M") || g.equals("X") || g.equals("E") || g.equals("R")) ) {
-                            throw new GeneralException("Datastream control group must be M, X, E, or R.");
-                        }
-                        if ( ds.DatastreamID == null || ds.DatastreamID.equals("") ) {
-                            throw new GeneralException("Datastream ID must be set");
-                        }
-                        if ( ds.DSLocation == null || ds.DSLocation.equals("") ) {
-                            throw new GeneralException("Datastream location must be set");
-                        }
-
-                        // Set any dates to UTC if not already there!
-						if (ds.DSCreateDT==null || ds.DSCreateDT.equals("")) {
-							ds.DSCreateDT=nowUTC;
-						}
-						if (ds.DSState==null || ds.DSState.equals("")) {
-                            ds.DSState="A";
-						}
-                    }
-                }
-                // finally, disseminators...
-                Iterator dissIter=obj.disseminatorIdIterator();
-                while (dissIter.hasNext()) {
-                    List dissList=(List) obj.disseminators((String) dissIter.next());
-                    for (int i=0; i<dissList.size(); i++) {
-                        Disseminator diss=(Disseminator) dissList.get(i);
-						if (diss.dissCreateDT==null || diss.dissCreateDT.equals("")) {
-							diss.dissCreateDT=nowUTC;
-						}
-						if (diss.dissState==null || diss.dissState.equals("")) {
-                            diss.dissState="A";
-						}
-                    }
-                }
-
-                // validate and normalized the provided pid, if any
-                if ( (obj.getPid() != null) && (obj.getPid().length() > 0) ) {
-                    obj.setPid(Server.getPID(obj.getPid()).toString());
-                }
-
-                // generate PID if needed...
-                if ( ( obj.getPid()!=null )
-                        && ( obj.getPid().indexOf(":")!=-1 )
-                        && ( ( m_retainPIDs==null )
-                                || ( m_retainPIDs.contains(obj.getPid().split(":")[0]) )
-                                )
-                        ) {
-                    getServer().logFinest("Stream contained PID with retainable namespace-id... will use PID from stream.");
-                    try {
-                        m_pidGenerator.neverGeneratePID(obj.getPid());
-                    } catch (IOException e) {
-                        throw new GeneralException("Error calling pidGenerator.neverGeneratePID(): " + e.getMessage());
-                    }
-                } else {
-                    if (newPid) {
-                        getServer().logFinest("Ingesting client wants a new PID.");
-                        // yes... so do that, then set it in the obj.
-                        String p=null;
-                        try {
-                            p=m_pidGenerator.generatePID(m_pidNamespace);
-                        } catch (Exception e) {
-                            throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
-                                    + e.getClass().getName() + ") - " + e.getMessage());
-                        }
-                        getServer().logFiner("Generated PID: " + p);
-                        obj.setPid(p);
-                    } else {
-                        getServer().logFinest("Ingesting client wants to use existing PID.");
-                    }
-                }
-                
-                // ensure the object doesn't already exist
-                if (objectExists(obj.getPid())) {
-                    throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
-                }
-
-                // get a digital object writer configured with
-                // the DEFAULT export format.
-				if (fedora.server.Debug.DEBUG) System.out.println("LOOK! get new writer with default export format: " + m_defaultExportFormat);
-                logFinest("Instantiating a SimpleDOWriter...");
-                DOWriter w=new SimpleDOWriter(context, this, m_translator,
-                        m_defaultExportFormat,
-                        m_storageCharacterEncoding, obj, this);
-
-                // set dates...
-                // set the create and last modified dates as the current
-                // server date/time in UTC (considering the local timezone
-                // and whether it's in daylight savings)
-                obj.setCreateDate(nowUTC);
-                obj.setLastModDate(nowUTC);
-
-                logFinest("Adding/Checking initial DC record...");
-                // DC System Reserved Datastream...
-                // if there's no DC datastream, add one using PID for identifier.
-                // and Label for dc:title
-                //
-                // if there IS a DC record, make sure one of the dc:identifiers
-                // is the pid
-                DatastreamXMLMetadata dc=(DatastreamXMLMetadata) w.GetDatastream("DC", null);
-                DCFields dcf;
-                if (dc==null) {
-                    dc=new DatastreamXMLMetadata("UTF-8");
-                    dc.DSMDClass=0;
-					//dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
-                    dc.DatastreamID="DC";
-                    dc.DSVersionID="DC1.0";
-                    dc.DSControlGrp="X";
-                    dc.DSCreateDT=nowUTC;
-                    dc.DSLabel="Dublin Core Metadata";
-                    dc.DSMIME="text/xml";
-                    dc.DSSize=0;
-                    dc.DSState="A";
-                    dcf=new DCFields();
-                    if (obj.getLabel()!=null && !(obj.getLabel().equals(""))) {
-                        dcf.titles().add(obj.getLabel());
-                    }
-                    w.addDatastream(dc);
-                } else {
-                    dcf=new DCFields(new ByteArrayInputStream(dc.xmlContent));
-                }
-                // ensure one of the dc:identifiers is the pid
-                boolean sawPid=false;
-                for (int i=0; i<dcf.identifiers().size(); i++) {
-                    if ( ((String) dcf.identifiers().get(i)).equals(obj.getPid()) ) {
-                        sawPid=true;
-                    }
-                }
-                if (!sawPid) {
-                    dcf.identifiers().add(obj.getPid());
-                }
-                // set the value of the dc datastream according to what's in the DCFields object
-                try {
-                    dc.xmlContent=dcf.getAsXML().getBytes("UTF-8");
-                } catch (UnsupportedEncodingException uee) {
-                    // safely ignore... we know UTF-8 works
-                }
-                
-                // RELS-EXT System Reserved Datastream... validation
-				RelsExtValidator deser=new RelsExtValidator("UTF-8", false);
-				DatastreamXMLMetadata relsext=(DatastreamXMLMetadata) w.GetDatastream("RELS-EXT", null);
-				if (relsext!=null) {
-					InputStream in2 = new ByteArrayInputStream(relsext.xmlContent);
-					logFinest("Validating RELS-EXT datastream...");
-					deser.deserialize(in2, "info:fedora/" + obj.getPid());
-					if (fedora.server.Debug.DEBUG) System.out.println("Done validating RELS-EXT.");
-					logFinest("RELS-EXT datastream passed validation.");
-				}
-
-
-                // at this point all is good...
-                // so make a record of it in the registry
-                registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context), obj.getLabel(), obj.getContentModelId(), obj.getCreateDate(), obj.getLastModDate());
-                return w;
-            } catch (IOException e) {
-                String message = e.getMessage();
-                if (message == null) message = e.getClass().getName();
-                e.printStackTrace();
-                throw new GeneralException("Error reading/writing temporary ingest file: " + message);
-            } catch (Exception e) {
-                // something failed.  Before throwing the exception, which
-                // may not be informative enough, do a basic validation
-                // of the object (which would throw an exception if it failed)
-                // and if it succeeds, re-throw the original exception
-                if (tempFile != null) {
-				    m_validator.validate(tempFile, format, 0, "ingest");
-                }
-                // since validation succeeded, just re-throw the exception
-                if (e instanceof ServerException) {
-                    ServerException se = (ServerException) e;
-                    throw se;
-                }
-                String message = e.getMessage();
-                if (message == null) message = e.getClass().getName();
-                throw new GeneralException("Ingest failed: " + message);
-            } finally {
-                if (tempFile != null) {
-                    logFinest("Finally, removing temp file...");
-                    try {
-                        tempFile.delete();
-                    } catch (Exception e) {
-                        // don't worry if it doesn't exist
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Gets a writer on a new, empty object.
-     */
-    public synchronized DOWriter getIngestWriter(Context context)
-            throws ServerException {
-        getServer().logFinest("Entered DefaultDOManager.getIngestWriter(Context)");
-        if (cachedObjectRequired(context)) {
-            throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
-        } else {
-            BasicDigitalObject obj=new BasicDigitalObject();
-            getServer().logFinest("Creating object, need a new PID.");
-            String p=null;
-            try {
-                p=m_pidGenerator.generatePID(m_pidNamespace);
-            } catch (Exception e) {
-                throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
-                        + e.getClass().getName() + ") - " + e.getMessage());
-            }
-            getServer().logFiner("Generated PID: " + p);
-            obj.setPid(p);
-            if (objectExists(obj.getPid())) {
-                throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
-            }
-            // make a record of it in the registry
-            // FIXME: this method is incomplete...
-			// obj.setNew(true);
-            //registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
-
-            // serialize to disk, then validate.. if that's ok, go on.. else unregister it!
-        }
-        return null;
-    }
 
     /**
      * Gets the userId property from the context... if it's not
