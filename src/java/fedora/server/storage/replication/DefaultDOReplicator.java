@@ -79,10 +79,12 @@ public class DefaultDOReplicator
             String[] parmDomainValues;
             connection = m_pool.getConnection();
             connection.setAutoCommit(false);
+
             // Insert Behavior Definition row
             bDefPID = bDefReader.GetObjectPID();
             bDefLabel = bDefReader.GetObjectLabel();
             m_ri.insertBehaviorDefinitionRow(connection, bDefPID, bDefLabel);
+
             // Insert Method rows
             bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection, bDefPID);
             if (bDefDBID == null) {
@@ -95,6 +97,7 @@ public class DefaultDOReplicator
                 m_ri.insertMethodRow(connection, bDefDBID,
                         behaviorDefs[i].methodName,
                         behaviorDefs[i].methodLabel);
+
                 // Insert Method Parameter rows
                 methDBID =  m_dl.lookupMethodDBID(connection, bDefDBID,
                     behaviorDefs[i].methodName);
@@ -107,7 +110,7 @@ public class DefaultDOReplicator
                            methodParmDefs[j].parmRequired ? "true" : "false";
                   parmDomainValues = methodParmDefs[j].parmDomainValues;
                   StringBuffer sb = new StringBuffer();
-                  if (parmDomainValues != null)
+                  if (parmDomainValues != null && parmDomainValues.length > 0)
                   {
                     for (int k=0; k<parmDomainValues.length; k++)
                     {
@@ -200,37 +203,38 @@ public class DefaultDOReplicator
             }
 
             for (int i=0; i<dsBindSpec.dsBindRules.length; ++i) {
-                // Convert from type boolean to type String
-                ordinality_flag =
-                        dsBindSpec.dsBindRules[i].ordinality ? "true" : "false";
-                // Convert from type int to type String
-                cardinality = Integer.toString(
-                        dsBindSpec.dsBindRules[i].maxNumBindings);
 
-                m_ri.insertDataStreamBindingSpecRow(connection,
-                        bMechDBID, dsBindSpec.dsBindRules[i].bindingKeyName,
-                        ordinality_flag, cardinality,
-                        dsBindSpec.dsBindRules[i].bindingLabel);
+              // Convert from type boolean to type String
+              ordinality_flag =
+                       dsBindSpec.dsBindRules[i].ordinality ? "true" : "false";
+              // Convert from type int to type String
+              cardinality = Integer.toString(
+                  dsBindSpec.dsBindRules[i].maxNumBindings);
 
-                // Insert DataStreamMIME rows
-                dsBindingKeyDBID =
-                        m_dl.lookupDataStreamBindingSpecDBID(connection,
-                        bMechDBID, dsBindSpec.dsBindRules[i].bindingKeyName);
-                if (dsBindingKeyDBID == null) {
-                        throw new ReplicationException(
-                            "DataStreamBindingSpec row doesn't exist for "
-                            + "bMechDBID: " + bMechDBID
-                            + ", binding key name: "
-                            + dsBindSpec.dsBindRules[i].bindingKeyName);
-                }
+              m_ri.insertDataStreamBindingSpecRow(connection,
+                  bMechDBID, dsBindSpec.dsBindRules[i].bindingKeyName,
+                  ordinality_flag, cardinality,
+                  dsBindSpec.dsBindRules[i].bindingLabel);
 
-                for (int j=0;
-                        j<dsBindSpec.dsBindRules[i].bindingMIMETypes.length;
-                        ++j) {
-                    m_ri.insertDataStreamMIMERow(connection,
+              // Insert DataStreamMIME rows
+              dsBindingKeyDBID =
+                  m_dl.lookupDataStreamBindingSpecDBID(connection,
+                  bMechDBID, dsBindSpec.dsBindRules[i].bindingKeyName);
+              if (dsBindingKeyDBID == null) {
+                throw new ReplicationException(
+                    "DataStreamBindingSpec row doesn't exist for "
+                    + "bMechDBID: " + bMechDBID
+                    + ", binding key name: "
+                    + dsBindSpec.dsBindRules[i].bindingKeyName);
+              }
+
+              for (int j=0;
+                   j<dsBindSpec.dsBindRules[i].bindingMIMETypes.length;
+                   ++j) {
+                m_ri.insertDataStreamMIMERow(connection,
                     dsBindingKeyDBID,
                     dsBindSpec.dsBindRules[i].bindingMIMETypes[j]);
-                }
+              }
             }
 
             behaviorBindings = bMechReader.GetBehaviorMethods(null);
@@ -240,8 +244,9 @@ public class DefaultDOReplicator
                 behaviorBindingsEntry =
                         (MethodDefOperationBind)behaviorBindings[i];
                 if (!behaviorBindingsEntry.protocolType.equals("HTTP")) {
-                    // For the time being, ignore bindings other than HTTP.
-                    continue;
+
+                  // For the time being, ignore bindings other than HTTP.
+                  continue;
                 }
 
                 // Insert MechDefaultParameter rows
@@ -263,7 +268,7 @@ public class DefaultDOReplicator
                            methodParmDefs[j].parmRequired ? "true" : "false";
                   parmDomainValues = methodParmDefs[j].parmDomainValues;
                   StringBuffer sb = new StringBuffer();
-                  if (parmDomainValues != null)
+                  if (parmDomainValues != null && parmDomainValues.length > 0)
                   {
                     for (int k=0; k<parmDomainValues.length; k++)
                     {
@@ -285,7 +290,7 @@ public class DefaultDOReplicator
                           sb.toString(),
                           parmRequired,
                           methodParmDefs[j].parmLabel,
-                            methodParmDefs[j].parmType);
+                          methodParmDefs[j].parmType);
                   }
                 }
                 for (int j=0; j<dsBindSpec.dsBindRules.length; ++j) {
