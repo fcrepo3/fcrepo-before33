@@ -65,7 +65,7 @@ public class DisseminatorsPane
         m_tabbedPane.add("New...", new JLabel("not implemented"));
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
+//        setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         add(m_tabbedPane, BorderLayout.CENTER);
         doNew(false);
     }
@@ -165,6 +165,7 @@ public class DisseminatorsPane
             entryPane.add(new JLabel("Not implemented"), BorderLayout.CENTER);
             
             JButton saveButton=new JButton("Save");
+            Administrator.constrainHeight(saveButton);
             saveButton.setActionCommand("Save");
             saveButton.addActionListener(this);
 
@@ -173,7 +174,7 @@ public class DisseminatorsPane
             buttonPane.add(saveButton);
 
             setLayout(new BorderLayout());
-            setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
+            setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
             add(entryPane, BorderLayout.CENTER);
             add(buttonPane, BorderLayout.SOUTH);
         }

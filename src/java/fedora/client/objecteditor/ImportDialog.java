@@ -90,6 +90,7 @@ public class ImportDialog
         m_importDialog=this;
         ImportAction importAction=new ImportAction();
         JButton importButton=new JButton(importAction);
+        Administrator.constrainHeight(importButton);
 
         m_fileButton=new JRadioButton("From file");
         m_urlButton=new JRadioButton("From URL");
@@ -100,6 +101,7 @@ public class ImportDialog
 
         m_fileField=new JTextField(20);
         JButton browseButton=new JButton("Browse...");
+        Administrator.constrainHeight(browseButton);
 		browseButton.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent evt) {
                 JFileChooser browse;
@@ -128,10 +130,10 @@ public class ImportDialog
         JPanel inputPane=new JPanel();
         inputPane.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createCompoundBorder(
-                    BorderFactory.createEmptyBorder(6, 6, 6, 6),
+                    BorderFactory.createEmptyBorder(4, 4, 4, 4),
                     BorderFactory.createEtchedBorder()
                 ),
-                BorderFactory.createEmptyBorder(6,6,6,6)
+                BorderFactory.createEmptyBorder(4,4,4,4)
                 ));
         GridBagLayout gridBag=new GridBagLayout();
         inputPane.setLayout(gridBag);
@@ -145,6 +147,7 @@ public class ImportDialog
             }
         });
         cancelButton.setLabel("Cancel");
+        Administrator.constrainHeight(cancelButton);
 
         JPanel buttonPane=new JPanel();
         buttonPane.add(importButton);
@@ -161,7 +164,7 @@ public class ImportDialog
     public void addRows(JComponent[] left, JComponent[] right,
             GridBagLayout gridBag, Container container) {
         GridBagConstraints c=new GridBagConstraints();
-        c.insets=new Insets(0, 6, 6, 6);
+        c.insets=new Insets(0, 4, 4, 4);
         for (int i=0; i<left.length; i++) {
             c.anchor=GridBagConstraints.WEST;
             c.gridwidth=GridBagConstraints.RELATIVE; //next-to-last

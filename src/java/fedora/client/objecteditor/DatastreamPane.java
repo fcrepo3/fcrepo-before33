@@ -93,6 +93,7 @@ public class DatastreamPane
                     // RIGHT: values
                     String[] comboBoxStrings={"Active", "Inactive", "Deleted"};
                     m_stateComboBox=new JComboBox(comboBoxStrings);
+                    Administrator.constrainHeight(m_stateComboBox);
                     if (mostRecent.getState().equals("A")) {
                         m_stateComboBox.setSelectedIndex(0);
                         m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
@@ -212,7 +213,7 @@ public class DatastreamPane
                 // Add a panel to versionPane.NORTH
                 // FlowLayout(SwingConstants.LEFT)
                 // JLabel Created  JLabel Date   m_versionSlider
-                m_dateLabelAndValue=new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+                m_dateLabelAndValue=new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
                 JLabel createdLabel=new JLabel("Created");
                 createdLabel.setPreferredSize(m_labelDims);
                 m_dateLabelAndValue.add(createdLabel);
@@ -221,7 +222,7 @@ public class DatastreamPane
                 m_dateLabelAndValue.add(m_dtLabel);
 
                 JPanel stretch=new JPanel(new BorderLayout());
-                stretch.setBorder(BorderFactory.createEmptyBorder(0,0,6,0));
+                stretch.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
                 stretch.add(m_dateLabelAndValue, BorderLayout.WEST);
                 stretch.add(m_versionSlider, BorderLayout.CENTER);
                 versionPane.add(stretch, BorderLayout.NORTH);
@@ -384,9 +385,13 @@ public class DatastreamPane
             m_canView=ContentHandlerFactory.hasViewer(ds.getMIMEType());
             // whether they're used or not, create these here
             m_editButton=new JButton("Edit");
+            Administrator.constrainHeight(m_editButton);
             m_viewButton=new JButton("View");
+            Administrator.constrainHeight(m_viewButton);
             m_importButton=new JButton("Import...");
+            Administrator.constrainHeight(m_importButton);
             m_exportButton=new JButton("Export...");
+            Administrator.constrainHeight(m_exportButton);
             // How we set this JPanel up depends on:
             // what control group it is in and
             // whether it can be edited or viewed
@@ -480,6 +485,7 @@ public class DatastreamPane
                 // if a *separate* viewer is also available, add a view button
                 if (!ContentHandlerFactory.viewerIsEditor(ds.getMIMEType())) {
                     m_separateViewButton=new JButton("View");
+                    Administrator.constrainHeight(m_separateViewButton);
                     m_separateViewButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent evt) {
                             // open a separate viewing window, using the content
@@ -617,6 +623,7 @@ public class DatastreamPane
             });
             // and purge is, too
             JButton purgeButton=new JButton("Purge...");
+            Administrator.constrainHeight(purgeButton);
             purgeButton.addActionListener(m_purgeButtonListener);
             purgeButton.setActionCommand(s_formatter.format(m_ds.getCreateDate().getTime()));
             actionPane.add(purgeButton);
@@ -825,6 +832,7 @@ public class DatastreamPane
             buttonPanel.setLayout(new FlowLayout());
             if (ContentHandlerFactory.hasViewer(ds.getMIMEType())) {
                 JButton viewButton=new JButton("View");
+                Administrator.constrainHeight(viewButton);
                 // CENTER: populated on view
                 viewButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt) {
@@ -849,6 +857,7 @@ public class DatastreamPane
                 buttonPanel.add(viewButton);
             }
             JButton exportButton=new JButton("Export...");
+            Administrator.constrainHeight(exportButton);
             exportButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     // FIXME: save behavior as other exporter, consolidate
@@ -881,6 +890,7 @@ public class DatastreamPane
             });
             buttonPanel.add(exportButton);
             JButton purgeButton=new JButton("Purge...");
+            Administrator.constrainHeight(purgeButton);
             purgeButton.addActionListener(m_purgeButtonListener);
             purgeButton.setActionCommand(s_formatter.format(m_ds.getCreateDate().getTime()));
             buttonPanel.add(purgeButton);

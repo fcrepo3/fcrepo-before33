@@ -46,6 +46,8 @@ public class DisseminatorPane
     private JTextField m_bDefLabelTextField;
     private Dimension m_labelDims;
     private ObjectEditorFrame m_gramps;
+    private boolean m_didSlider;
+    private JComboBox m_bMechComboBox;
 
     public DisseminatorPane(ObjectEditorFrame gramps, String pid, 
             Disseminator[] versions, DisseminatorsPane owner)
@@ -59,15 +61,16 @@ public class DisseminatorPane
 
         // set up the common pane
         // first get width and height we'll use for the labels on the left
-        m_labelDims=new JLabel("Datastream Bindings").getPreferredSize();
+        m_labelDims=new JLabel("Mechanism").getPreferredSize();
         JLabel label1=new JLabel("State"); 
         label1.setPreferredSize(m_labelDims);
-        JLabel label2=new JLabel("Behavior Definition");
+        JLabel label2=new JLabel("Behaviors");
         label2.setPreferredSize(m_labelDims);
-        JLabel label3=new JLabel("Method Definitions");
+        JLabel label3=new JLabel("");
         label3.setPreferredSize(m_labelDims);
         JLabel[] left=new JLabel[] {label1, label2, label3};
         m_stateComboBox=new JComboBox(new String[] {"Active", "Inactive", "Deleted"});
+        Administrator.constrainHeight(m_stateComboBox);
         if (m_mostRecent.getState().equals("A")) {
             m_stateComboBox.setSelectedIndex(0);
             m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
@@ -78,6 +81,7 @@ public class DisseminatorPane
             m_stateComboBox.setSelectedIndex(2);
             m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
         }
+        Administrator.constrainHeight(m_stateComboBox);
         m_stateComboBox.addActionListener(dataChangeListener);
         m_stateComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -95,20 +99,28 @@ public class DisseminatorPane
                 m_owner.colorTabForState(m_mostRecent.getID(), curState);
             }
         });
-        JButton bDefButton=new JButton(m_mostRecent.getBDefPID());
+        JButton bDefButton=new JButton("Open as Object");
         bDefButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 new ViewObject(m_mostRecent.getBDefPID()).launch();
             }
         });
+
         JPanel bDefInfo=new JPanel(new BorderLayout());
-        bDefInfo.add(bDefButton, BorderLayout.WEST);
+
         m_bDefLabelTextField=new JTextField(m_mostRecent.getBDefLabel());
         m_bDefLabelTextField.getDocument().addDocumentListener(dataChangeListener);
         if (m_mostRecent.getState().equals("D")) {
             m_bDefLabelTextField.setEnabled(false);
         }
-        bDefInfo.add(m_bDefLabelTextField, BorderLayout.CENTER);
+        Administrator.constrainHeight(m_bDefLabelTextField);
+        JPanel bDefLabelPanel=new JPanel(new BorderLayout());
+        bDefLabelPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
+        bDefLabelPanel.add(m_bDefLabelTextField, BorderLayout.CENTER);
+        bDefInfo.add(new JLabel("Defined by " + m_mostRecent.getBDefPID()), BorderLayout.WEST);
+        bDefInfo.add(bDefLabelPanel, BorderLayout.CENTER);
+        Administrator.constrainHeight(bDefButton);
+        bDefInfo.add(bDefButton, BorderLayout.EAST);
 
         // get the method map info from the behavior definition
         HashMap parms=new HashMap();
@@ -124,6 +136,7 @@ public class DisseminatorPane
             mNames[i]=mDef.getName();
         }
         m_methodComboBox=new JComboBox(mNames);
+        Administrator.constrainHeight(m_methodComboBox);
         m_methodComboBox.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 String mName=(String) m_methodComboBox.getSelectedItem();
@@ -142,12 +155,12 @@ public class DisseminatorPane
         m_methodCard=new JPanel();
         m_methodCardLayout=new CardLayout();
         m_methodCard.setLayout(m_methodCardLayout);
-        m_methodCard.setBorder(BorderFactory.createEmptyBorder(0,6,0,6));
+        m_methodCard.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
         // add each methodDetailPane to the m_methodCard using the cardlayout
         for (int i=0; i<mDefs.size(); i++) {
             MethodDefinition mDef=(MethodDefinition) mDefs.get(i);
             JPanel methodDetailPane=new JPanel(new BorderLayout());
-            // label of the method at top, or "(no description)"
+            // label of the method at top, if it's there
             JTextArea methodLabelTextArea=new JTextArea();
             methodLabelTextArea.setLineWrap(true);
             methodLabelTextArea.setEditable(false);
@@ -223,6 +236,7 @@ public class DisseminatorPane
 
         // do the slider if needed
         if (versions.length>1) {
+            m_didSlider=true;
             m_versionSlider=new JSlider(JSlider.HORIZONTAL, 0, versions.length-1, 0);
             m_versionSlider.addChangeListener(this);
             m_versionSlider.setMajorTickSpacing(1);
@@ -352,42 +366,69 @@ public class DisseminatorPane
         public CurrentVersionPane(Disseminator diss) throws IOException {
             m_diss=diss;
             // top panel is for labels and such
-            JLabel label1=new JLabel("Disseminator Label");
+            JLabel label1=new JLabel("Label");
             label1.setPreferredSize(m_labelDims);
-            JLabel label2=new JLabel("Behavior Mechanism");
+            JLabel label2=new JLabel("Mechanism");
             label2.setPreferredSize(m_labelDims);
-            JLabel[] left=new JLabel[] {label1, label2};
+            JLabel[] left;
+            if (m_didSlider) {
+                left=new JLabel[] {label1, label2};
+            } else {
+                JLabel createdLabel=new JLabel("Created");
+                createdLabel.setPreferredSize(m_labelDims);
+                left=new JLabel[] {createdLabel, label1, label2};
+            }
             m_labelTextField=new JTextField(m_diss.getLabel());
             m_labelTextField.getDocument().addDocumentListener(dataChangeListener);
             m_labelTextField.setEditable(true);
             m_labelTextField.setEnabled(!m_diss.getState().equals("D"));
-            // bmechButton, m_bMechLabelTextField
-            JButton bMechButton=new JButton(m_diss.getBMechPID());
+            // m_bmechComboBox, m_bMechLabelTextField, bMechButton
+
+// FIXME: replace this with a combo box populated with all
+//        possible bMechs, and attach it to a smart event handler
+//        that lazily instantiates a new DatastreamBindingPane or
+//        switches to one... in the pre-existing cardlayout panel,
+//        and updates the label from the hash of values.
+
+            m_bMechComboBox=new JComboBox(new String[] {m_diss.getBMechPID()});
+            Administrator.constrainHeight(m_bMechComboBox);
+
+            JButton bMechButton=new JButton("Open as Object");
+            Administrator.constrainHeight(bMechButton);
             bMechButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     new ViewObject(m_diss.getBMechPID()).launch();
                 }
             });
+
             m_bMechLabelTextField=new JTextField(m_diss.getBMechLabel());
             m_bMechLabelTextField.getDocument().addDocumentListener(dataChangeListener);
             m_bMechLabelTextField.setEditable(true);
             m_labelTextField.setEnabled(!m_diss.getState().equals("D"));
+
             JPanel bMechInfo=new JPanel(new BorderLayout());
-            bMechInfo.add(bMechButton, BorderLayout.WEST);
-            bMechInfo.add(m_bMechLabelTextField, BorderLayout.CENTER);
-            JComponent[] right=new JComponent[] {m_labelTextField, bMechInfo};
+            bMechInfo.add(m_bMechComboBox, BorderLayout.WEST);
+            JPanel bMechLabelPanel=new JPanel(new BorderLayout());
+            bMechLabelPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
+            bMechLabelPanel.add(m_bMechLabelTextField, BorderLayout.CENTER);
+            bMechInfo.add(bMechLabelPanel, BorderLayout.CENTER);
+            bMechInfo.add(bMechButton, BorderLayout.EAST);
+
+            JComponent[] right;
+            if (m_didSlider) {
+                right=new JComponent[] {m_labelTextField, bMechInfo};
+            } else {
+                right=new JComponent[] {
+                        new JLabel(s_formatter.format(m_diss.getCreateDate().getTime())), 
+                        m_labelTextField, 
+                        bMechInfo};
+            }
             GridBagLayout topGridBag=new GridBagLayout();
             JPanel topPanel=new JPanel(topGridBag);
             addLabelValueRows(left, right, topGridBag, topPanel);
             // middle panel is for displaying the datastream binding
             JPanel middlePanel=new JPanel(new BorderLayout());
-
-            JPanel dsBindingsLabelPane=new JPanel(new BorderLayout());
-            dsBindingsLabelPane.setBorder(BorderFactory.createEmptyBorder(0,6,0,6));
-            JLabel datastreamBindingsLabel=new JLabel("Datastream Bindings");
-            datastreamBindingsLabel.setPreferredSize(m_labelDims);
-            dsBindingsLabelPane.add(datastreamBindingsLabel, BorderLayout.NORTH);
-            middlePanel.add(dsBindingsLabelPane, BorderLayout.WEST);
+            middlePanel.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
 
 // initialize one of these panels for each bmech implementing the bdef...
 // later, undoChanges will undo each... similarly, isDirty() will use
@@ -414,6 +455,7 @@ public class DisseminatorPane
            // bottom panel is for the purge button
             JPanel bottomPanel=new JPanel(new FlowLayout());
             JButton purgeButton=new JButton("Purge...");
+            Administrator.constrainHeight(purgeButton);
             purgeButton.setActionCommand(s_formatter.format(m_diss.getCreateDate().getTime()));
             purgeButton.addActionListener(m_purgeButtonListener);
             bottomPanel.add(purgeButton);
@@ -465,15 +507,16 @@ public class DisseminatorPane
         public PriorVersionPane(Disseminator diss) {
             m_diss=diss;
             // top panel is for labels and such
-            JLabel label1=new JLabel("Disseminator Label");
+            JLabel label1=new JLabel("Label");
             label1.setPreferredSize(m_labelDims);
-            JLabel label2=new JLabel("Behavior Mechanism");
+            JLabel label2=new JLabel("Mechanism");
             label2.setPreferredSize(m_labelDims);
             JLabel[] left=new JLabel[] {label1, label2};
             m_labelTextField=new JTextField(m_diss.getLabel());
             m_labelTextField.setEditable(false);
             // bmechButton, m_bMechLabelTextField
-            JButton bMechButton=new JButton(m_diss.getBMechPID());
+            JButton bMechButton=new JButton("Details...");
+            Administrator.constrainHeight(bMechButton);
             bMechButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     new ViewObject(m_diss.getBMechPID()).launch();
@@ -482,24 +525,24 @@ public class DisseminatorPane
             m_bMechLabelTextField=new JTextField(m_diss.getBMechLabel());
             m_bMechLabelTextField.setEditable(false);
             JPanel bMechInfo=new JPanel(new BorderLayout());
-            bMechInfo.add(bMechButton, BorderLayout.WEST);
-            bMechInfo.add(m_bMechLabelTextField, BorderLayout.CENTER);
+            bMechInfo.add(new JLabel(m_diss.getBMechPID()), BorderLayout.EAST);
+            JPanel bMechLabelPanel=new JPanel(new BorderLayout());
+            bMechLabelPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
+            bMechLabelPanel.add(m_bMechLabelTextField, BorderLayout.CENTER);
+            bMechInfo.add(bMechLabelPanel, BorderLayout.CENTER);
+            bMechInfo.add(bMechButton, BorderLayout.EAST);
             JComponent[] right=new JComponent[] {m_labelTextField, bMechInfo};
             GridBagLayout topGridBag=new GridBagLayout();
             JPanel topPanel=new JPanel(topGridBag);
             addLabelValueRows(left, right, topGridBag, topPanel);
             // middle panel is for displaying the datastream binding
             JPanel middlePanel=new JPanel(new BorderLayout());
-            // DatastreamBinding[] bindArray=m_diss.getDsBindMap().getDsBindings()
-            //                       getBindKeyName
-            //                       getBindLabel
-            //                       getDatastreamID
-            //                       getSeqNo
+            middlePanel.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
+
             SortedMap dsBindingMap=DatastreamBindingPane.getSortedBindingMap(
                     m_diss.getDsBindMap().getDsBindings());
             // one tab per binding key
             JTabbedPane bindingTabbedPane=new JTabbedPane();
-            bindingTabbedPane.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
             Iterator keys=dsBindingMap.keySet().iterator();
             int tabNum=-1;
             while (keys.hasNext()) {
@@ -527,16 +570,11 @@ public class DisseminatorPane
                 bindingTabbedPane.add(key, bindingTab);
                 bindingTabbedPane.setBackgroundAt(tabNum, Administrator.DEFAULT_COLOR);
             }
-            JPanel dsBindingsLabelPane=new JPanel(new BorderLayout());
-            dsBindingsLabelPane.setBorder(BorderFactory.createEmptyBorder(0,6,0,6));
-            JLabel datastreamBindingsLabel=new JLabel("Datastream Bindings");
-            datastreamBindingsLabel.setPreferredSize(m_labelDims);
-            dsBindingsLabelPane.add(datastreamBindingsLabel, BorderLayout.NORTH);
-            middlePanel.add(dsBindingsLabelPane, BorderLayout.WEST);
             middlePanel.add(bindingTabbedPane, BorderLayout.CENTER);
             // bottom panel is for the purge button
             JPanel bottomPanel=new JPanel(new FlowLayout());
             JButton purgeButton=new JButton("Purge...");
+            Administrator.constrainHeight(purgeButton);
             purgeButton.setActionCommand(s_formatter.format(m_diss.getCreateDate().getTime()));
             purgeButton.addActionListener(m_purgeButtonListener);
             bottomPanel.add(purgeButton);
@@ -633,9 +671,12 @@ public class DisseminatorPane
     public void addRows(JComponent[] left, JComponent[] right,
             GridBagLayout gridBag, Container container) {
         GridBagConstraints c=new GridBagConstraints();
-        c.insets=new Insets(0, 6, 6, 6);
+        c.insets=new Insets(0, 4, 4, 4);
+        c.anchor=GridBagConstraints.WEST;
         for (int i=0; i<left.length; i++) {
-            c.anchor=GridBagConstraints.NORTHWEST;
+            if (i==2) {
+                c.anchor=GridBagConstraints.NORTHWEST;
+            }
             c.gridwidth=GridBagConstraints.RELATIVE; //next-to-last
             c.fill=GridBagConstraints.NONE;      //reset to default
             c.weightx=0.0;                       //reset to default
@@ -645,8 +686,6 @@ public class DisseminatorPane
             c.gridwidth=GridBagConstraints.REMAINDER;     //end row
             if (!(right[i] instanceof JComboBox) && !(right[i] instanceof JButton)) {
                 c.fill=GridBagConstraints.HORIZONTAL;
-            } else {
-                c.anchor=GridBagConstraints.WEST;
             }
             c.weightx=1.0;
             gridBag.setConstraints(right[i], c);

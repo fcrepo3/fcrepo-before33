@@ -92,6 +92,7 @@ public abstract class EditingPane
                     }
                 });
                 m_saveButton.setLabel("Save Changes...");
+                Administrator.constrainHeight(m_saveButton);
                 m_saveButton.setEnabled(false);
                 m_undoButton=new JButton(new AbstractAction() {
                     public void actionPerformed(ActionEvent e) {
@@ -100,11 +101,12 @@ public abstract class EditingPane
                     }
                 });
                 m_undoButton.setLabel("Undo Changes");
+                Administrator.constrainHeight(m_undoButton);
                 m_undoButton.setEnabled(false);
 
             JPanel saveUndoPane=new JPanel();
             saveUndoPane.setLayout(new FlowLayout());
-            saveUndoPane.setBorder(BorderFactory.createEmptyBorder(6,0,0,0));
+            saveUndoPane.setBorder(BorderFactory.createEmptyBorder(4,0,0,0));
             saveUndoPane.add(m_saveButton);
             saveUndoPane.add(m_undoButton);
 
@@ -113,11 +115,11 @@ public abstract class EditingPane
             mainPane=new JPanel();
             mainPane.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createEtchedBorder(),
-                    BorderFactory.createEmptyBorder(6,6,6,6)
+                    BorderFactory.createEmptyBorder(4,4,4,4)
                     ));
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
+        setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         add(mainPane, BorderLayout.CENTER);
         add(saveUndoPane, BorderLayout.SOUTH);
 
@@ -165,7 +167,7 @@ public abstract class EditingPane
     public void addLabelValueRows(JLabel[] labels, JComponent[] values,
             GridBagLayout gridBag, Container container) {
         GridBagConstraints c=new GridBagConstraints();
-        c.insets=new Insets(0, 6, 6, 6);
+        c.insets=new Insets(0, 4, 4, 4);
         for (int i=0; i<labels.length; i++) {
             c.anchor=GridBagConstraints.WEST;
             c.gridwidth=GridBagConstraints.RELATIVE; //next-to-last

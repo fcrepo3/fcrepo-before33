@@ -49,7 +49,6 @@ public class DatastreamBindingPane
 
         // construct the tabbedpane, one tab per binding key
         JTabbedPane bindingTabbedPane=new JTabbedPane();
-        bindingTabbedPane.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
         Iterator keys=dsBindingMap.keySet().iterator();
         int tabNum=-1;
         while (keys.hasNext()) {
@@ -193,18 +192,18 @@ public class DatastreamBindingPane
 
             m_addButton=new JButton("Add...");
             gridbag.setConstraints(m_addButton, c);
+            Administrator.constrainHeight(m_addButton);
             buttonPane.add(m_addButton);
-            m_addButton.setMinimumSize(new Dimension(2,18));
 
             m_insertButton=new JButton("Insert...");
             gridbag.setConstraints(m_insertButton, c);
+            Administrator.constrainHeight(m_insertButton);
             buttonPane.add(m_insertButton);
-            m_insertButton.setMinimumSize(new Dimension(2,18));
 
             m_removeButton=new JButton("Remove");
             gridbag.setConstraints(m_removeButton, c);
+            Administrator.constrainHeight(m_removeButton);
             buttonPane.add(m_removeButton);
-            m_removeButton.setMinimumSize(new Dimension(2,18));
 
             Component strut=Box.createVerticalStrut(8);
             gridbag.setConstraints(strut, c);
@@ -212,13 +211,13 @@ public class DatastreamBindingPane
 
             m_upButton=new JButton("Up");
             gridbag.setConstraints(m_upButton, c);
+            Administrator.constrainHeight(m_upButton);
             buttonPane.add(m_upButton);
-            m_upButton.setMinimumSize(new Dimension(2,18));
 
             m_downButton=new JButton("Down");
             gridbag.setConstraints(m_downButton, c);
+            Administrator.constrainHeight(m_downButton);
             buttonPane.add(m_downButton);
-            m_downButton.setMinimumSize(new Dimension(2,18));
 
             c.weighty=1.0;
             c.fill=GridBagConstraints.VERTICAL;

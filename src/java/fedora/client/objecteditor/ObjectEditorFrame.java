@@ -106,7 +106,7 @@ public class ObjectEditorFrame
 
         JPanel outerPane=new JPanel();        
         outerPane.setLayout(new BorderLayout());
-        outerPane.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
+        outerPane.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         outerPane.add(m_tabbedPane, BorderLayout.CENTER);
 
         getContentPane().setLayout(new BorderLayout());

@@ -60,6 +60,7 @@ import fedora.server.management.FedoraAPIM;
 public class Administrator extends JFrame {
 
     private static MDIDesktopPane s_desktop;
+    private static int s_maxButtonHeight;
 
     private JDialog m_aboutDialog;
 
@@ -102,7 +103,7 @@ public class Administrator extends JFrame {
         WATCH_AREA.setFont(new Font("monospaced", Font.PLAIN, 12));
         WATCH_AREA.setCaretPosition(0);
 
-
+        s_maxButtonHeight=new JTextField("test").getPreferredSize().height;
 
         if (host!=null) {
             // already must have passed through non-interactive login
@@ -226,6 +227,14 @@ public class Administrator extends JFrame {
 
     public static Administrator getInstance() {
         return s_instance;
+    }
+
+    public static JComponent constrainHeight(JComponent component) {
+        int preferredWidth=component.getPreferredSize().width;
+        component.setPreferredSize(new Dimension(preferredWidth, s_maxButtonHeight));
+        component.setMaximumSize(new Dimension(2048, s_maxButtonHeight));
+        component.setMinimumSize(new Dimension(preferredWidth, s_maxButtonHeight));
+        return component;
     }
 
     protected JMenuBar createMenuBar() {

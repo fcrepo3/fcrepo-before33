@@ -87,6 +87,7 @@ public class ObjectPane
                     // RIGHT: Values
                     String[] comboBoxStrings={"Active", "Inactive", "Deleted"};
                     m_stateComboBox=new JComboBox(comboBoxStrings);
+                    Administrator.constrainHeight(m_stateComboBox);
                     if (state.equals("A")) {
                         m_stateComboBox.setSelectedIndex(0);
                         m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
@@ -133,10 +134,13 @@ public class ObjectPane
                     JPanel viewPane=new JPanel();
                     JButton viewButton=new JButton(new ViewObjectXML(pid, viewPane));
                     viewButton.setText("View XML");
+                    Administrator.constrainHeight(viewButton);
                     JButton exportButton=new JButton(new ExportObject(pid));
                     exportButton.setText("Export...");
+                    Administrator.constrainHeight(exportButton);
                     JButton purgeButton=new JButton(new PurgeObject(pid));
                     purgeButton.setText("Purge...");
+                    Administrator.constrainHeight(purgeButton);
 
             JPanel actionPane=new JPanel(new FlowLayout());
             actionPane.add(viewButton);

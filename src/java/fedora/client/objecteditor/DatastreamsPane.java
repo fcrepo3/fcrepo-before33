@@ -91,7 +91,7 @@ public class DatastreamsPane
             m_tabbedPane.add("New...", new JPanel());
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(6,6,0,6));
+        //setBorder(BorderFactory.createEmptyBorder(4,4,0,4));
         add(m_tabbedPane, BorderLayout.CENTER);
 
         doNew(ALL_KNOWN_MIMETYPES, false);
@@ -247,7 +247,7 @@ public class DatastreamsPane
     public void addRows(JComponent[] left, JComponent[] right,
             GridBagLayout gridBag, Container container) {
         GridBagConstraints c=new GridBagConstraints();
-        c.insets=new Insets(0, 6, 6, 6);
+        c.insets=new Insets(0, 4, 4, 4);
         for (int i=0; i<left.length; i++) {
             c.anchor=GridBagConstraints.NORTHWEST;
             c.gridwidth=GridBagConstraints.RELATIVE; //next-to-last
@@ -318,6 +318,7 @@ public class DatastreamsPane
 
             m_labelTextField=new JTextField("Enter a label here.");
             m_mimeComboBox=new JComboBox(dropdownMimeTypes);
+            Administrator.constrainHeight(m_mimeComboBox);
             m_mimeComboBox.setEditable(true);
             JPanel controlGroupPanel=new JPanel();
             JRadioButton xButton=new JRadioButton("Internal XML Metadata");
@@ -365,10 +366,12 @@ public class DatastreamsPane
                                                            "digital provenance",
                                                            "source", "rights",
                                                            "technical" });
+            Administrator.constrainHeight(m_mdClassComboBox);
             m_mdTypeComboBox=new JComboBox(new String[] { "DC", "DDI", "EAD",
                                                           "FGDC", "LC_AV", "MARC",
                                                           "NISOIMG", "TEIHDR",
                                                           "VRA" });
+            Administrator.constrainHeight(m_mdTypeComboBox);
             m_mdTypeComboBox.setEditable(true);
             m_lastSelectedMimeType=(String) m_mimeComboBox.getSelectedItem();
             m_mimeComboBox.addActionListener(new ActionListener() {
@@ -409,6 +412,7 @@ public class DatastreamsPane
             JPanel xBottomPane=new JPanel();
             xBottomPane.setLayout(new FlowLayout());
             JButton xImportButton=new JButton("Import...");
+            Administrator.constrainHeight(xImportButton);
             xImportButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     ImportDialog imp=new ImportDialog();
@@ -434,6 +438,7 @@ public class DatastreamsPane
             // SOUTH: [Import]
             JPanel mBottomPane=new JPanel(new FlowLayout());
             JButton mImportButton=new JButton("Import...");
+            Administrator.constrainHeight(mImportButton);
             mImportButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     ImportDialog imp=new ImportDialog();
@@ -493,6 +498,7 @@ public class DatastreamsPane
 
             JPanel erBottomPane=new JPanel(new FlowLayout());
             m_erViewButton=new JButton("View");
+            Administrator.constrainHeight(m_erViewButton);
             m_erViewButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     // get a viewer and put it in the middle of m_erPane
@@ -530,12 +536,13 @@ public class DatastreamsPane
             entryPane.setLayout(new BorderLayout());
             entryPane.setBorder(BorderFactory.createCompoundBorder(
                     BorderFactory.createEtchedBorder(),
-                    BorderFactory.createEmptyBorder(6,6,6,6)
+                    BorderFactory.createEmptyBorder(4,4,4,4)
                     ));
             entryPane.add(commonPane, BorderLayout.NORTH);
             entryPane.add(m_specificPane, BorderLayout.CENTER);
 
             JButton saveButton=new JButton("Save");
+            Administrator.constrainHeight(saveButton);
             saveButton.setActionCommand("Save");
             saveButton.addActionListener(this);
 
@@ -544,7 +551,7 @@ public class DatastreamsPane
             buttonPane.add(saveButton);
 
             setLayout(new BorderLayout());
-            setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
+            setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
             add(entryPane, BorderLayout.CENTER);
             add(buttonPane, BorderLayout.SOUTH);
         }
