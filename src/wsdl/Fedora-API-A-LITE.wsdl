@@ -4,7 +4,7 @@
 <!-- Author:  Sandy Payette,  payette@cs.cornell.edu -->
 <!-- Author:  Ross Wayland,  rlw@virginia.edu -->
 <!-- Author:  Chris Wilper,  cwilper@cs.cornell.edu -->
-<!-- Description:  Fedora API-A-LITE is a  URI-oriented service definition that is intended to support a REST style binding to the Fedora Access web service (in contrast to a traditional SOAP web service binding).  This means that we define a simple URL syntax that can be used to issue service requests to the Fedora Access service. API-A-Lite does not provide service bindings for all of the operations defined in the complete Fedora Access web service (see Fedora-API-A).  API-A-Lite only provides bindings for GetDissemination and GetObjectProfile.  The result of the GetDissemination request is a MIME-typed stream.  The result of the GetObjectProfile request is either HTML or XML, whichever the client requested. The main purpose of defining API-A-Lite is to provide a simple way to run Fedora disseminations via a URL. -->
+<!-- Description:  Fedora API-A-LITE is a  URI-oriented service definition that is intended to support a REST style binding to the Fedora Access web service (in contrast to a traditional SOAP web service binding).  This means that we define a simple URL syntax that can be used to issue service requests to the Fedora Access service. API-A-Lite does not provide service bindings for all of the operations defined in the complete Fedora Access web service (see Fedora-API-A).  API-A-Lite only provides bindings for getDissemination and getObjectProfile.  The result of the getDissemination request is a MIME-typed stream.  The result of the getObjectProfile request is either HTML or XML, whichever the client requested. The main purpose of defining API-A-Lite is to provide a simple way to run Fedora disseminations via a URL. -->
 <definitions targetNamespace="http://www.fedora.info/definitions/1/0/api/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:apachesoap="http://xml.apache.org/xml-soap/" xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" name="Fedora-API-A-LITE-WSDL">
 	<import namespace="http://www.fedora.info/definitions/1/0/types/" location="fedora-types.xsd"/>
 	<types>
@@ -14,7 +14,7 @@
 			<wsdldoc:type name="fedora-types:MIMETypedStream" url="http://www.fedora.info/definitions/1/0/types/#MIMETypedStream"/>
 		</documentation>
 	</types>
-	<message name="GetObjectProfileRequest">
+	<message name="getObjectProfileRequest">
 		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
 		<part name="PID" type="xsd:string">
 			<documentation>the persistent identifier of the object.</documentation>
@@ -31,7 +31,7 @@
 			</documentation>
 		</part>
 	</message>
-	<message name="GetObjectProfileResponse">
+	<message name="getObjectProfileResponse">
 		<part name="response" type="fedora-types:MIMETypedStream">
 			<documentation> The object profile response contains key metadata about the object
 				and URLs for the object's Dissemination Index and Item Index.  The object
@@ -39,7 +39,7 @@
 			</documentation>
 		</part>
 	</message>
-	<message name="GetDisseminationRequest">
+	<message name="getDisseminationRequest">
 		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
 		<part name="PID" type="xsd:string">
 			<documentation>the persistent identifier of the object.</documentation>
@@ -61,7 +61,7 @@
 			<documentation>a set of name-value pairs that are parameters to the behavior method.</documentation>
 		</part>
 	</message>
-	<message name="GetDisseminationResponse">
+	<message name="getDisseminationResponse">
 		<part name="response" type="fedora-types:MIMETypedStream">
 			<documentation>the desired view of the object as a mime-typed stream.</documentation>
 		</part>
@@ -72,32 +72,32 @@
 			Fedora Access web service (in contrast to a traditional SOAP web service definition).  
 			This means that we define a simple URL syntax that can be used to issue service requests.
 			API-A-Lite does not provide service bindings for all of the operations defined in Fedora's full
-			Access service (API-A).  API-A-Lite only provides bindings for GetDissemination and GetObjectProfile. 
-			The result of the GetDissemination request is a MIME-typed stream.  The result of the GetObjectProfile 
+			Access service (API-A).  API-A-Lite only provides bindings for getDissemination and getObjectProfile. 
+			The result of the getDissemination request is a MIME-typed stream.  The result of the getObjectProfile 
 			request is either HTML or XML, whichever the client requested. This is consistent with the main purpose
 			of defining API-A-Lite which is to provide a simple way to run Fedora disseminations via a URL.
 		</documentation>
-		<operation name="GetObjectProfile">
+		<operation name="getObjectProfile">
 			<documentation> Gets a profile of the digital object, which contains
 				key metadata elements about the object, and URLs for the object's
 				Dissemination Index and Item Index.  The object profile is a sort of
 				"home base" for the object from which the object can be investigated.
 				The object profile can be returned as XML data or as an HTML presentation.
 			</documentation>
-			<input message="fedora-api:GetObjectProfileRequest"/>
-			<output message="fedora-api:GetObjectProfileResponse"/>
+			<input message="fedora-api:getObjectProfileRequest"/>
+			<output message="fedora-api:getObjectProfileResponse"/>
 		</operation>
-		<operation name="GetDissemination">
+		<operation name="getDissemination">
 			<documentation>Gets a MIME-typed view of the digital object, given the 
 				behavior definition id, the behavior method name and any parameters to the 
-				behavior method. The GetDissemination request hides from the client the details
+				behavior method. The getDissemination request hides from the client the details
 				of how a behavior method is fulfilled by the Fedora Access service  (i.e., it does
 				not require the client to know about the behavior mechanism that performs the work, 
 				or how the request is invoked upon the behavior mechanism).  The client need only
 				specify an abstract behavior definition information in the request.
 			</documentation>
-			<input message="fedora-api:GetDisseminationRequest"/>
-			<output message="fedora-api:GetDisseminationResponse"/>
+			<input message="fedora-api:getDisseminationRequest"/>
+			<output message="fedora-api:getDisseminationResponse"/>
 		</operation>
 	</portType>
 	<service name="Fedora-API-A-LITE">
@@ -107,7 +107,7 @@
 	</service>
 	<binding name="Fedora-API-A-LITE-Binding" type="fedora-api:Fedora-API-A-LITE">
 		<http:binding verb="GET"/>
-		<operation name="GetObjectProfile">
+		<operation name="getObjectProfile">
 			<http:operation location="get/(PID)[/(DATETIME)][?xml=(ENCODE_XML)]"/>
 			<input>
 				<urlReplacement/>
@@ -133,7 +133,7 @@
 				<mime:content type="text/html"/>
 			</output>
 		</operation>
-		<operation name="GetDissemination">
+		<operation name="getDissemination">
 			<http:operation location="get/(PID)/(BDEF_PID)/(METHODNAME)[/(DATETIME)][?(PARMS)]"/>
 			<input>
 				<urlReplacement/>
