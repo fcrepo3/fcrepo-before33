@@ -89,12 +89,14 @@ public class METSInOutTest {
                         "dist/server/schematron/preprocessor.xslt",
                         ruleSchemaMap, null);
                 if (args[1].equals("1")) {
-                    v.validate(newIn, "metslikefedora1", 1, "ingest");
-                    System.out.println("Level 1 validation: PASSED!");
+                    v.validate(newIn, "metslikefedora1", 
+                    	DOValidatorImpl.VALIDATE_XML_SCHEMA, "ingest");
+                    System.out.println("XML Schema validation: PASSED!");
                 } else {
                     if (args[1].equals("2")) {
-                        v.validate(newIn, "metslikefedora1", 2, "ingest");
-                        System.out.println("Level 2 validation: PASSED!");
+                        v.validate(newIn, "metslikefedora1", 
+                        	DOValidatorImpl.VALIDATE_SCHEMATRON, "ingest");
+                        System.out.println("Schematron validation: PASSED!");
                     } else {
                         System.out.println("Unrecognized validation level, '" + args[1] + "'");
                     }

@@ -3,13 +3,9 @@ package fedora.server.validation;
 // JAXP imports
 import javax.xml.parsers.*;
 import org.xml.sax.*;
-import org.xml.sax.helpers.*;
 
-import java.io.ByteArrayInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -78,8 +74,8 @@ public class DOValidatorXMLSchema
       }
       catch (IOException e)
       {
-        String msg = "DOValidatorXMLSchema returned error. "
-                  + "The underlying exception was a " + e.getClass().getName() + ".  "
+        String msg = "DOValidatorXMLSchema returned error.\n"
+                  + "The underlying exception was a " + e.getClass().getName() + ".\n"
                   + "The message was "  + "\"" + e.getMessage() + "\"";
         throw new GeneralException(msg);
       }
@@ -118,22 +114,22 @@ public class DOValidatorXMLSchema
       }
       catch (ParserConfigurationException e)
       {
-        String msg = "DOValidatorXMLSchema returned parser error. "
-                  + "The underlying exception was a " + e.getClass().getName() + ".  "
+        String msg = "DOValidatorXMLSchema returned parser error.\n"
+                  + "The underlying exception was a " + e.getClass().getName() + ".\n"
                   + "The message was "  + "\"" + e.getMessage() + "\"";
         throw new GeneralException(msg);
       }
       catch (SAXException e)
       {
-        String msg = "DOValidatorXMLSchema returned validation exception. "
-                  + "The underlying exception was a " + e.getClass().getName() + ".  "
+        String msg = "DOValidatorXMLSchema returned validation exception.\n"
+                  + "The underlying exception was a " + e.getClass().getName() + ".\n"
                   + "The message was "  + "\"" + e.getMessage() + "\"";
         throw new ObjectValidityException(msg);
       }
       catch (Exception e)
       {
-        String msg = "DOValidatorXMLSchema returned error. "
-                  + "The underlying error was a " + e.getClass().getName() + ".  "
+        String msg = "DOValidatorXMLSchema returned error.\n"
+                  + "The underlying error was a " + e.getClass().getName() + ".\n"
                   + "The message was "  + "\"" + e.getMessage() + "\"";
         throw new GeneralException(msg);
       }
