@@ -2,14 +2,14 @@
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvadesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/" xmlns:uvadigiprov="http://dl.lib.virginia.edu/bin/admin/digiprov/" xmlns:uvasource="http://dl.lib.virginia.edu/bin/admin/source/" xmlns:uvarights="http://dl.lib.virginia.edu/bin/admin/rights/" xmlns:uvatech="http://dl.lib.virginia.edu/bin/admin/tech/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="uva-lib:3" TYPE="FedoraObject" LABEL="Saskia/AICT Image Collection - Mycenae" PROFILE="UVA_STD_IMAGE">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvadesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/" xmlns:uvadigiprov="http://dl.lib.virginia.edu/bin/admin/digiprov/" xmlns:uvasource="http://dl.lib.virginia.edu/bin/admin/source/" xmlns:uvarights="http://dl.lib.virginia.edu/bin/admin/rights/" xmlns:uvatech="http://dl.lib.virginia.edu/bin/admin/tech/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="uva-lib:3" TYPE="FedoraObject" LABEL="AICT Image Collection - Mycenae" PROFILE="UVA_STD_IMAGE">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-20T06:32:00" RECORDSTATUS="">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name> Ross Wayland </METS:name>
-			<METS:note> Digital Object based on Sakia image and created as the official Fedora sample object </METS:note>
+			<METS:note> Digital Object based on AICT image and created as the official Fedora sample object </METS:note>
 		</METS:agent>
 		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
 			<METS:name> University of Virginia Library </METS:name>
@@ -28,7 +28,7 @@
 			<METS:xmlData>
 				<uvadesc:desc>
 					<uvadesc:date type="created" certainty="ca." era="bc">13th century</uvadesc:date>
-					<uvadesc:identifier scheme="URN">uva-lib:1</uvadesc:identifier>
+					<uvadesc:identifier scheme="URN">uva-lib:2</uvadesc:identifier>
 					<uvadesc:rights type="use">unrestricted</uvadesc:rights>
 					<uvadesc:subject scheme="other" othertype="keyword">Bronze Age, Mycenean</uvadesc:subject>
 					<uvadesc:subject scheme="other" othertype="keyword">Greek</uvadesc:subject>
@@ -121,23 +121,170 @@
 			</METS:mdWrap>
 		</METS:techMD>
 	</METS:amdSec>
+	<METS:amdSec ID="SOURCE1">
+		<METS:techMD ID="SOURCE1.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for THUMBNAIL res image">
+				<METS:xmlData>	
+					<uvalib:source>
+					   <uvalib:identifier>006-007</uvalib:identifier>
+						<uvalib:mediatype type="image">
+							<uvalib:form>slide</uvalib:form>
+						</uvalib:mediatype>
+					</uvalib:source>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>	
+	<METS:amdSec ID="SOURCE2">
+		<METS:techMD ID="SOURCE2.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for MEDRES res image">
+				<METS:xmlData>	
+					<uvalib:source>
+					   <uvalib:identifier>006-007</uvalib:identifier>
+						<uvalib:mediatype type="image">
+							<uvalib:form>slide</uvalib:form>
+						</uvalib:mediatype>
+					</uvalib:source>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>		
+	<METS:amdSec ID="SOURCE3">
+		<METS:techMD ID="SOURCE3.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for HIGH res image">
+				<METS:xmlData>	
+					<uvalib:source>
+					   <uvalib:identifier>006-007</uvalib:identifier>
+						<uvalib:mediatype type="image">
+							<uvalib:form>slide</uvalib:form>
+						</uvalib:mediatype>
+					</uvalib:source>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>		
+	<METS:amdSec ID="SOURCE4">
+		<METS:techMD ID="SOURCE4.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for VERYHIGH res image">
+				<METS:xmlData>	
+					<uvalib:source>
+					   <uvalib:identifier>006-007</uvalib:identifier>
+						<uvalib:mediatype type="image">
+							<uvalib:form>slide</uvalib:form>
+						</uvalib:mediatype>
+					</uvalib:source>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>	
+	<METS:amdSec ID="DIGIPROV1">
+		<METS:techMD ID="DIGIPROV1.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for THUMBNAIL res image">
+				<METS:xmlData>	
+					<uvalib:digiprov>
+						<uvalib:date>2001-09-01:06:32:00</uvalib:date>
+						<uvalib:agent type="corpname">Art Images for College Teaching</uvalib:agent>
+						<uvalib:description>creation</uvalib:description>
+					</uvalib:digiprov>					
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<METS:amdSec ID="DIGIPROV2">
+		<METS:techMD ID="DIGIPROV2.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for MEDRES res image">
+				<METS:xmlData>	
+					<uvalib:digiprov>
+						<uvalib:date>2001-09-01:06:32:00</uvalib:date>
+						<uvalib:agent type="corpname">Art Images for College Teaching</uvalib:agent>
+						<uvalib:description>creation</uvalib:description>
+					</uvalib:digiprov>					
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<METS:amdSec ID="DIGIPROV3">
+		<METS:techMD ID="DIGIPROV3.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for HIGH res image">
+				<METS:xmlData>	
+					<uvalib:digiprov>
+						<uvalib:date>2001-09-01:06:32:00</uvalib:date>
+						<uvalib:agent type="corpname">Art Images for College Teaching</uvalib:agent>
+						<uvalib:description>creation</uvalib:description>
+					</uvalib:digiprov>					
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<METS:amdSec ID="DIGIPROV4">
+		<METS:techMD ID="DIGIPROV4.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for VERYHIGH res image">
+				<METS:xmlData>	
+					<uvalib:digiprov>
+						<uvalib:date>2001-09-01:06:32:00</uvalib:date>
+						<uvalib:agent type="corpname">Art Images for College Teaching</uvalib:agent>
+						<uvalib:description>creation</uvalib:description>
+					</uvalib:digiprov>					
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>			
 	<METS:amdSec ID="RIGHTS1">
 		<METS:rightsMD ID="RIGHTS1.0" CREATED="2002-05-20T06:32:00" STATUS="">
-			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for THUMBNAIL res image">
 				<METS:xmlData>
-					<uvarights:rights>
-						<!-- This is a work in progress -->
-						<uvarights:signature/>
-						<uvarights:methods/>
-						<uvarights:userlist/>
-					</uvarights:rights>
+					<uvalib:adminrights>
+					   <uvalib:policy>
+					      <uvalib:access>unrestricted</uvalib:access>
+					      <uvalib:use>educational</uvalib:use>
+					   </uvalib:policy>
+					</uvalib:adminrights>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:rightsMD>
 	</METS:amdSec>
-	<!---*******************************************************************************************************************************************-->
-	<!--- FEDORA SYSTEM METADATA: OBJECT AUDIT TRAIL-->
-	<!---*******************************************************************************************************************************************-->
+	<METS:amdSec ID="RIGHTS2">
+		<METS:rightsMD ID="RIGHTS2.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for MEDRES res image">
+				<METS:xmlData>
+					<uvalib:adminrights>
+					   <uvalib:policy>
+					      <uvalib:access>unrestricted</uvalib:access>
+					      <uvalib:use>educational</uvalib:use>
+					   </uvalib:policy>
+					</uvalib:adminrights>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:rightsMD>
+	</METS:amdSec>		
+	<METS:amdSec ID="RIGHTS3">
+		<METS:rightsMD ID="RIGHTS3.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for HIGHRES res image">
+				<METS:xmlData>
+					<uvalib:adminrights>
+					   <uvalib:policy>
+					      <uvalib:access>unrestricted</uvalib:access>
+					      <uvalib:use>educational</uvalib:use>
+					   </uvalib:policy>
+					</uvalib:adminrights>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:rightsMD>
+	</METS:amdSec>		
+	<METS:amdSec ID="RIGHTS4">
+		<METS:rightsMD ID="RIGHTS4.0" CREATED="2002-05-20T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for VERYHIGH res image">
+				<METS:xmlData>
+					<uvalib:adminrights>
+					   <uvalib:policy>
+					      <uvalib:access>unrestricted</uvalib:access>
+					      <uvalib:use>educational</uvalib:use>
+					   </uvalib:policy>
+					</uvalib:adminrights>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:rightsMD>
+	</METS:amdSec>	
 	<!---*******************************************************************************************************************************************-->
 	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
 	<!---*******************************************************************************************************************************************-->
@@ -145,25 +292,25 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="">
 				<!--This is the thumbnail sized image -->
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH1 RIGHTS1" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/thumbs/aict/006-007.jpg" xlink:title="Saskia thumbnail jpg image"/>
+				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/thumbs/aict/006-007.jpg" xlink:title="AICT thumbnail jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS2" STATUS="">
-				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH2 RIGHTS1" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="Saskia medium jpg image"/>
+				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="AICT medium jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS3">
 				<!--This is the high resolution image -->
-				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH3 RIGHTS1" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="Saskia high jpg image"/>
+				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="AICT high jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS4">
 				<!--This is the very high resolution image -->
-				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH4 RIGHTS1" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="Saskia vhigh jpg image"/>
+				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="AICT vhigh jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>
