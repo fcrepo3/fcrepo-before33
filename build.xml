@@ -1078,6 +1078,8 @@
 		<copy file="temp/soapclient/lib/fedoragentypes.jar" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/lib"/>
 		<copy file="temp/soapclient/lib/fedorautilities.jar" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/lib"/>
 		<copy file="src/xsl/soapclient/objectMethods.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
+		<copy file="src/xsl/soapclient/listDatastreams.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
+		<copy file="src/xsl/soapclient/listMethods.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/viewObjectProfile.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/viewRepositoryInfo.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/viewObjectHistory.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
