@@ -129,22 +129,25 @@
       <fileset dir="src/doc/devdocs"/>
       <fileset dir="src/sdr/devdocs"/>
     </copy>
-    <mkdir dir="dist/devdocs/devguide"/>
+<!--    <mkdir dir="dist/devdocs/devguide"/> -->
     <echo message="Translating devguide.dbx to html"/>
     <exec executable="java">
       <arg value="-classpath"/>
       <arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
       <arg value="com.icl.saxon.StyleSheet"/>
+      <arg value="-o"/>
+      <arg path="dist/devdocs/devguide.html"/>
       <arg path="src/dbx/devdocs/devguide.dbx"/>
-      <arg path="res/docbook-xsl/html/chunk.xsl"/>
-      <arg value="saxon.extensions=true"/>
-      <arg value="chunk.section.depth=1"/>
+      <arg path="res/docbook-xsl/html/docbook.xsl"/>
+ <!--     <arg value="saxon.extensions=true"/>
+      <arg value="chunk.section.depth=1"/> -->
     </exec>
-    <move todir="dist/devdocs/devguide">
+ <!--   <move todir="dist/devdocs/devguide">
       <fileset dir=".">
         <include name="*.html"/>
       </fileset>
     </move>
+    -->
   </target>
 
 
@@ -158,6 +161,9 @@
 
 <!--
   $Log$
+  Revision 1.5  2002/05/10 20:39:08  cwilper
+  Changed devdocs build back to single-file output... multi-file output is ugly/confusing IMHO
+
   Revision 1.4  2002/05/09 21:23:06  cwilper
   Changed devdocs target to produce devguide.html
   in chunks rather than one big piece.  Also switched
