@@ -115,9 +115,9 @@
     <pathconvert targetos="unix" property="AxisUtility.unix.libs" refid="AxisUtility-libs.path">
         <map from="${lib.dir}" to="$TC_COMMON"/>
     </pathconvert>
-    <!-- %C% should not be interpreted by Ant. -->
+    <!-- %TC_COMMON% should not be interpreted by Ant. -->
     <pathconvert targetos="windows" property="AxisUtility.windows.libs" refid="AxisUtility-libs.path">
-        <map from="${lib.dir}" to="%C%"/>
+        <map from="${lib.dir}" to="%TC_COMMON%"/>
     </pathconvert>
     <path id="ServerController-libs.path">
         <pathelement location="${lib.servlet}"/>

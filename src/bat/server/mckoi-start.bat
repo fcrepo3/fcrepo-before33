@@ -5,11 +5,11 @@ goto checkEnv
 
 rem McKoi environment variables
 set MCKOI_BASENAME=@mckoi.basename@
-set MCKOI_HOME="%FEDORA_HOME%"/server/"%MCKOI_BASENAME%"
-set MCKOI_CLASSPATH="%MCKOI_HOME%"/gnu-regexp-1.1.4.jar
-set MCKOIDB_JAR="%MCKOI_HOME%"/mckoidb.jar
-set MCKOI_CONF="%MCKOI_HOME%"/db.conf
-set MCKOI_DB="%MCKOI_HOME%"/data/DefaultDatabase_sf.koi
+set MCKOI_HOME=%FEDORA_HOME%/server/%MCKOI_BASENAME%
+set MCKOI_CLASSPATH=%MCKOI_HOME%/gnu-regexp-1.1.4.jar
+set MCKOIDB_JAR=%MCKOI_HOME%/mckoidb.jar
+set MCKOI_CONF=%MCKOI_HOME%/db.conf
+set MCKOI_DB=%MCKOI_HOME%/data/DefaultDatabase_sf.koi
 set MCKOI_PORT=9157
 
 if not exist "%MCKOIDB_JAR%" goto mckoiNotFound
