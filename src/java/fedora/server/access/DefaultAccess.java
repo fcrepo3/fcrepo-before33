@@ -10,16 +10,15 @@ import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DisseminatingDOReader;
 import fedora.server.storage.types.DisseminationBindingInfo;
-import fedora.server.types.gen.MethodDef;
-import fedora.server.types.gen.MethodParmDef;
-import fedora.server.types.gen.MIMETypedStream;
-import fedora.server.types.gen.ObjectMethodsDef;
-import fedora.server.types.gen.Property;
+import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.MethodParmDef;
+import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -36,7 +35,6 @@ public class DefaultAccess extends Module implements Access
   private final static String CONTENT_TYPE_XML = "text/xml";
   private final static String LOCAL_ADDRESS_LOCATION = "LOCAL";
   private DOManager m_manager;
-  private static boolean debug = true;
 
   /**
    * <p>Creates and initializes the Access Module. When the server is starting
@@ -89,12 +87,12 @@ public class DefaultAccess extends Module implements Access
       DisseminatingDOReader reader =
           m_manager.getDisseminatingReader(context, PID);
       behaviorDefs = reader.GetBehaviorDefs(versDateTime);
+      return behaviorDefs;
     } catch (Exception e)
     {
       getServer().logWarning(e.getMessage());
-      return behaviorDefs;
     }
-    return behaviorDefs;
+    return null;
   }
 
   /**
@@ -110,44 +108,19 @@ public class DefaultAccess extends Module implements Access
                                         String bDefPID, Calendar asOfDateTime)
       throws ServerException
   {
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
-    MethodDef[] methodDefs = null;
     try
     {
+      Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
       DisseminatingDOReader reader =
           m_manager.getDisseminatingReader(context, PID);
-      fedora.server.storage.types.MethodDef[] methodResults =
+      MethodDef[] methodResults =
           reader.GetBMechMethods(bDefPID, versDateTime);
-      methodDefs = new MethodDef[methodResults.length];
-      for (int i=0; i<methodResults.length; i++)
-      {
-        MethodDef mdef =  new MethodDef();
-        mdef.setMethodLabel(methodResults[i].methodLabel);
-        mdef.setMethodName(methodResults[i].methodName);
-        fedora.server.storage.types.MethodParmDef[] parmResults =
-            methodResults[i].methodParms;
-        if (parmResults.length > 0)
-        {
-          MethodParmDef[] methodParms = new MethodParmDef[parmResults.length];
-          for (int j=0; j<parmResults.length; j++)
-          {
-            MethodParmDef parmdef = new MethodParmDef();
-            parmdef.setParmDefaultValue(parmResults[j].parmDefaultValue);
-            parmdef.setParmLabel(parmResults[j].parmLabel);
-            parmdef.setParmName(parmResults[j].parmName);
-            parmdef.setParmRequired(parmResults[j].parmRequired);
-            methodParms[j] = parmdef;
-          }
-          mdef.setMethodParms(methodParms);
-        }
-      methodDefs[i] = mdef;
-    }
+      return methodResults;
     } catch (Exception e)
     {
       getServer().logWarning(e.getMessage());
-      return methodDefs;
     }
-    return methodDefs;
+    return null;
   }
 
   /**
@@ -164,12 +137,11 @@ public class DefaultAccess extends Module implements Access
   public MIMETypedStream getBehaviorMethodsAsWSDL(Context context,
       String PID, String bDefPID, Calendar asOfDateTime) throws ServerException
   {
-    ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-    MIMETypedStream methodDefs = null;
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
-    InputStream methodResults = null;
     try
     {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+      Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+      InputStream methodResults = null;
       DisseminatingDOReader reader =
           m_manager.getDisseminatingReader(context, PID);
       methodResults = reader.GetBMechMethodsWSDL(bDefPID, versDateTime);
@@ -180,18 +152,16 @@ public class DefaultAccess extends Module implements Access
         baos.write(byteStream);
       }
       methodResults.close();
+      if (methodResults != null)
+      {
+        MIMETypedStream methodDefs = new MIMETypedStream(CONTENT_TYPE_XML, baos.toByteArray());
+        return methodDefs;
+      }
     } catch (Exception e)
     {
       getServer().logWarning(e.getMessage());
-      return methodDefs;
     }
-    if (methodResults != null)
-    {
-    methodDefs = new MIMETypedStream();
-    methodDefs.setMIMEType(CONTENT_TYPE_XML);
-    methodDefs.setStream(baos.toByteArray());
-    }
-    return methodDefs;
+    return null;
   }
 
   /**
@@ -211,42 +181,26 @@ public class DefaultAccess extends Module implements Access
       String bDefPID, String methodName, Property[] userParms,
       Calendar asOfDateTime) throws ServerException
   {
-    String protocolType = null;
-    DisseminationBindingInfo[] dissResults = null;
-    DisseminationBindingInfo dissResult = null;
-    String dissURL = null;
-    String operationLocation = null;
-    MIMETypedStream dissemination = null;
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
-    fedora.server.storage.types.Property[] uParms =
-        new fedora.server.storage.types.Property[userParms.length];
-    for (int i=0; i<userParms.length; i++)
-    {
-      fedora.server.storage.types.Property uParm =
-               new fedora.server.storage.types.Property();
-      uParm.name = userParms[i].getName();
-      uParm.value = userParms[i].getValue();
-      uParms[i] = uParm;
-    }
     try
     {
+      Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+
       // Get the dissemination binding info by reading from Fast store
       DisseminatingDOReader reader =
           m_manager.getDisseminatingReader(context, PID);
-      dissResults = reader.getDissemination(PID, bDefPID, methodName,
-          versDateTime);
+      DisseminationBindingInfo[] dissResults =
+          reader.getDissemination(PID, bDefPID, methodName, versDateTime);
+
       // Assemble the dissemination from the binding info
       DisseminationService dissService = new DisseminationService();
-      fedora.server.storage.types.MIMETypedStream diss =
-          dissService.assembleDissemination(uParms, dissResults);
-      dissemination.setMIMEType(diss.MIMEType);
-      dissemination.setStream(diss.stream);
+      MIMETypedStream dissemination =
+          dissService.assembleDissemination(userParms, dissResults);
+      return dissemination;
     } catch (Exception e)
     {
       getServer().logWarning(e.getMessage());
-      return dissemination;
     }
-   return dissemination;
+   return null;
   }
 
   /**
@@ -261,29 +215,18 @@ public class DefaultAccess extends Module implements Access
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
       Calendar asOfDateTime) throws ServerException
   {
-    ObjectMethodsDef[] methodDefs = null;
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     try
     {
+      Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
       DisseminatingDOReader reader =
           m_manager.getDisseminatingReader(context, PID);
-      fedora.server.storage.types.ObjectMethodsDef[] methodResults =
+      ObjectMethodsDef[] methodDefs =
           reader.getObjectMethods(PID, versDateTime);
-      int size = methodResults.length;
-      methodDefs = new ObjectMethodsDef[methodResults.length];
-      for (int i=0; i<methodResults.length; i++)
-      {
-        ObjectMethodsDef mdef = new ObjectMethodsDef();
-        mdef.setPID(methodResults[i].PID);
-        mdef.setBDefPID(methodResults[i].bDefPID);
-        mdef.setMethodName(methodResults[i].methodName);
-        methodDefs[i] = mdef;
-      }
+      return methodDefs;
     } catch (Exception e)
     {
       getServer().logWarning(e.getMessage());
-      return methodDefs;
     }
-    return methodDefs;
+    return null;
   }
 }

@@ -4,10 +4,10 @@ import java.util.Calendar;
 
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
-import fedora.server.types.gen.MethodDef;
-import fedora.server.types.gen.MIMETypedStream;
-import fedora.server.types.gen.ObjectMethodsDef;
-import fedora.server.types.gen.Property;
+import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.server.storage.types.Property;
 
 /**
  * <p>Defines the access subsystem interface.</p>
