@@ -374,11 +374,13 @@ public class DefaultAccess extends Module implements Access
     defaultMethodParms = bmechreader.getServiceMethodParms(methodName, versDateTime);
     for (int i=0; i<defaultMethodParms.length; i++)
     {
-      if (defaultMethodParms[i].parmType.equals(MethodParmDef.DEFAULT_INPUT)) {
-          this.getServer().logFinest("addedDefaultName: "+defaultMethodParms[i].parmName);
-          this.getServer().logFinest("addedDefaultValue: "+defaultMethodParms[i].parmDefaultValue);
-          h_userParms.put(defaultMethodParms[i].parmName,
-                          defaultMethodParms[i].parmDefaultValue);
+      if (!defaultMethodParms[i].parmType.equals(MethodParmDef.DATASTREAM_INPUT)) {
+          if (!h_userParms.containsKey(defaultMethodParms[i].parmName)) {
+            this.getServer().logFinest("addedDefaultName: "+defaultMethodParms[i].parmName);
+            this.getServer().logFinest("addedDefaultValue: "+defaultMethodParms[i].parmDefaultValue);
+            h_userParms.put(defaultMethodParms[i].parmName,
+                            defaultMethodParms[i].parmDefaultValue);
+          }
       }
     }
 
