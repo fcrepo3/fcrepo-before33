@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -857,17 +858,78 @@ public class DatastreamPane
             implements ActionListener {
 
         Datastream[] m_versions;
+        Object[] m_dateStrings;
+        HashMap m_dsIndex;
 
         public PurgeButtonListener(Datastream[] versions) {
             m_versions=versions;
-
+            m_dateStrings=new Object[versions.length];
+            m_dsIndex=new HashMap();
+            for (int i=0; i<versions.length; i++) {
+                String dateAsString=s_formatter.format(versions[i].getCreateDate().getTime());
+                m_dateStrings[i]=dateAsString;
+                m_dsIndex.put(dateAsString, new Integer(i));
+            }
         }
 
         public void actionPerformed(ActionEvent evt) {
-            String dateAsString=evt.getActionCommand();
-            
-            System.out.println(dateAsString);
-
+            int sIndex=0;
+            boolean canceled=false;
+            if (m_versions.length>1) {
+                String defaultValue=evt.getActionCommand(); // default date string
+                String selected=(String) JOptionPane.showInputDialog(
+                        Administrator.getDesktop(),
+                        "Choose the latest version to purge:",
+                        "Purge version(s) from datastream " + m_versions[0].getID(),
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        m_dateStrings,
+                        defaultValue);
+                if (selected==null) {
+                    canceled=true;
+                } else {
+                    sIndex=((Integer) m_dsIndex.get(selected)).intValue();
+                }
+            }
+            if (!canceled) {
+                // do warning
+                boolean removeAll=false;
+                String detail;
+                if (sIndex==0) {
+                    detail="the entire datastream.";
+                    removeAll=true;
+                } else if (sIndex==m_versions.length-1) {
+                    detail="the oldest version of the datastream.";
+                } else {
+                    int num=m_versions.length-sIndex;
+                    detail="the oldest " + num + " versions of the datastream.";
+                }
+                int n = JOptionPane.showOptionDialog(Administrator.getDesktop(),
+                        "This will permanently remove " + detail + "\n"
+                        + "Are you sure you want to do this?",
+                        "Confirmation",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.WARNING_MESSAGE,
+                        null,     //don't use a custom Icon
+                        new Object[] {"Yes", "No"},  //the titles of buttons
+                        "Yes"); //default button title
+                if (n==0) {
+                    try {
+                        Administrator.APIM.purgeDatastream(m_pid, 
+                                m_versions[sIndex].getID(),
+                                m_versions[sIndex].getCreateDate());
+                        if (removeAll) {
+                            m_owner.remove(m_versions[0].getID());
+                        } else {
+                            m_owner.refresh(m_versions[0].getID());
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                                e.getMessage(), "Purge error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
         }
     }
 

@@ -88,6 +88,11 @@ public class DatastreamsPane
         }
     }
 
+    protected void remove(String dsID) {
+        int i=m_tabbedPane.indexOfTab(dsID);
+        m_tabbedPane.remove(i);
+    }
+
     public boolean isDirty() {
         for (int i=0; i<m_datastreamPanes.length; i++) {
             if (m_datastreamPanes[i].isDirty()) return true;
