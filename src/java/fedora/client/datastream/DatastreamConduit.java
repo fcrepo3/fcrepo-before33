@@ -51,17 +51,6 @@ public class DatastreamConduit {
         m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
 
-    public static String[] listDatastreamIDs(FedoraAPIM skeleton, String pid,
-            String state)
-            throws RemoteException {
-        return skeleton.listDatastreamIDs(pid, state);
-    }
-
-    public String[] listDatastreamIDs(String pid, String state)
-            throws RemoteException {
-        return listDatastreamIDs(m_apim, pid, state);
-    }
-
     public static Datastream getDatastream(FedoraAPIM skeleton, String pid,
             String dsId, Calendar asOfDateTime)
             throws RemoteException {
@@ -72,6 +61,18 @@ public class DatastreamConduit {
             Calendar asOfDateTime)
             throws RemoteException {
         return getDatastream(m_apim, pid, dsId, asOfDateTime);
+    }
+
+    public static Datastream[] getDatastreams(FedoraAPIM skeleton, String pid,
+            Calendar asOfDateTime, String state)
+            throws RemoteException {
+        return skeleton.getDatastreams(pid, asOfDateTime, state);
+    }
+
+    public Datastream[] getDatastreams(String pid, Calendar asOfDateTime, 
+            String state)
+            throws RemoteException {
+        return getDatastreams(m_apim, pid, asOfDateTime, state);
     }
 
     public static void modifyDatastreamByReference(FedoraAPIM skeleton,
@@ -102,30 +103,6 @@ public class DatastreamConduit {
             throws RemoteException {
         modifyDatastreamByValue(m_apim, pid, dsId, dsLabel, logMessage,
                 content, state);
-    }
-
-    public static void deleteDatastream(FedoraAPIM skeleton,
-            String pid, String dsId, String logMessage)
-            throws RemoteException {
-        skeleton.deleteDatastream(pid, dsId, logMessage);
-    }
-
-    public void deleteDatastream(String pid, String dsId,
-            String logMessage)
-            throws RemoteException {
-        deleteDatastream(m_apim, pid, dsId, logMessage);
-    }
-
-    public static void withdrawDatastream(FedoraAPIM skeleton,
-            String pid, String dsId, String logMessage)
-            throws RemoteException {
-        skeleton.withdrawDatastream(pid, dsId, logMessage);
-    }
-
-    public void withdrawDatastream(String pid, String dsId,
-            String logMessage)
-            throws RemoteException {
-        withdrawDatastream(m_apim, pid, dsId, logMessage);
     }
 
     public static Calendar[] purgeDatastream(FedoraAPIM skeleton,
@@ -167,18 +144,18 @@ public class DatastreamConduit {
                 String password=args[3];
                 String pid=args[4];
                 DatastreamConduit c=new DatastreamConduit(hostName, portNum, username, password);
-                String[] ids=c.listDatastreamIDs(pid, "A");
-                for (int i=0; i<ids.length; i++) {
-                    System.out.println("   Datastream : " + ids[i]);
-                    Datastream ds=c.getDatastream(pid, ids[i], null);
+                Datastream[] datastreams=c.getDatastreams(pid, null, null);
+                for (int i=0; i<datastreams.length; i++) {
+                    System.out.println("   Datastream : " + datastreams[i].getID());
+                    Datastream ds=c.getDatastream(pid, datastreams[i].getID(), null);
                     System.out.println("        State : " + ds.getState());
                     System.out.println("Control Group : " + ds.getControlGroup().toString());
                     System.out.println("    Info Type : " + ds.getInfoType());
                     System.out.println("    Mime Type : " + ds.getMIMEType());
                     // print version id, create date, and label for each version
-                    Calendar[] dates=c.getDatastreamHistory(pid, ids[i]);
+                    Calendar[] dates=c.getDatastreamHistory(pid, datastreams[i].getID());
                     for (int j=0; j<dates.length; j++) {
-                        Datastream ver=c.getDatastream(pid, ids[i], dates[j]);
+                        Datastream ver=c.getDatastream(pid, datastreams[i].getID(), dates[j]);
                         System.out.println("      Version : " + ver.getVersionID());
                         System.out.println("        Created : " + FORMATTER.format(ver.getCreateDate().getTime()));
                         System.out.println("          Label : " + ver.getLabel());

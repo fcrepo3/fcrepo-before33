@@ -99,18 +99,18 @@ public class DatastreamViewer
             // CENTER: tabbedPane(datastream panels)
 
             JTabbedPane tabbedPane=new JTabbedPane();
-            String[] dsIDs=CONDUIT.listDatastreamIDs(pid, null);
-            if ( (dsIDs==null) || (dsIDs.length==0) ) {
+            Datastream[] dStreams=CONDUIT.getDatastreams(pid, null, null);
+            if ( (dStreams==null) || (dStreams.length==0) ) {
                 JPanel noDatastreamsPanel=new JPanel();
                 noDatastreamsPanel.setLayout(new BorderLayout());
                 noDatastreamsPanel.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
                 noDatastreamsPanel.add(new JLabel("There are no datastreams in this object."), BorderLayout.CENTER);
                 tabbedPane.addTab("NO DATASTREAMS", noDatastreamsPanel);
             } else {
-                for (int i=0; i<dsIDs.length; i++) {
-                    tabbedPane.addTab(dsIDs[i], new DatastreamPanel(pid,
-                            CONDUIT.getDatastream(pid, dsIDs[i], null), 
-                            CONDUIT.getDatastreamHistory(pid, dsIDs[i])));
+                for (int i=0; i<dStreams.length; i++) {
+                    tabbedPane.addTab(dStreams[i].getID(), new DatastreamPanel(pid,
+                            CONDUIT.getDatastream(pid, dStreams[i].getID(), null), 
+                            CONDUIT.getDatastreamHistory(pid, dStreams[i].getID())));
                 }
             }
             tabbedPane.setSelectedIndex(0);
@@ -472,7 +472,7 @@ dt.getHeight()-5));
             String logMessage=JOptionPane.showInputDialog("Enter a log message.");
             if (logMessage==null) return;
             try {
-                DatastreamViewer.CONDUIT.deleteDatastream(m_pid, m_dsId, logMessage);
+                DatastreamViewer.CONDUIT.delete (method removed) Datastream(m_pid, m_dsId, logMessage);
                 Date dt=DatastreamViewer.CONDUIT.getDatastream(m_pid, m_dsId, null).
                         getCreateDate().getTime();
                 m_modifiedDateLabel.setText(DatastreamViewer.FORMATTER.format(dt));
@@ -507,7 +507,7 @@ dt.getHeight()-5));
             String logMessage=JOptionPane.showInputDialog("Enter a log message.");
             if (logMessage==null) return;
             try {
-                DatastreamViewer.CONDUIT.withdrawDatastream(m_pid, m_dsId, logMessage);
+                DatastreamViewer.CONDUIT.withdraw (method deleted) Datastream(m_pid, m_dsId, logMessage);
                 Date dt=DatastreamViewer.CONDUIT.getDatastream(m_pid, m_dsId, null).
                         getCreateDate().getTime();
                 m_modifiedDateLabel.setText(DatastreamViewer.FORMATTER.format(dt));

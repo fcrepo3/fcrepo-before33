@@ -48,7 +48,7 @@ public class DatastreamsAsXML
     // FIXIT!! Make the output of this valid XML with namespaces for fedora
     public String getItemIndex(String reposBaseURL, DOReader reader, Date versDateTime)
             throws ServerException {
-        Datastream[] datastreams = reader.GetDatastreams(versDateTime);
+        Datastream[] datastreams = reader.GetDatastreams(versDateTime, null);
         StringBuffer out = new StringBuffer();
 
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -99,7 +99,7 @@ public class DatastreamsAsXML
 
     public String getDatastreamList(DOReader reader, Date versDateTime)
             throws ServerException {
-        Datastream[] datastreams = reader.GetDatastreams(versDateTime);
+        Datastream[] datastreams = reader.GetDatastreams(versDateTime, null);
         StringBuffer out = new StringBuffer();
         out.append("<datastreamSet>\n");
         out.append("<pid>" + reader.GetObjectPID() + "</pid>\n");

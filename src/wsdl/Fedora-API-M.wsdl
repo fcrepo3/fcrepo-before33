@@ -57,24 +57,6 @@
 			<documentation>the digital object in METS format.</documentation>
 		</part>
 	</message>
-	<!--
-  <message name="withdrawObjectRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="logMessage" type="xsd:string">
-      <documentation>an explanation of the withdrawal.</documentation>
-    </part>
-  </message>
-  <message name="deleteObjectRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="logMessage" type="xsd:string">
-      <documentation>an explanation of the deletion.</documentation>
-    </part>
-  </message>
--->
 	<message name="purgeObjectRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -84,23 +66,6 @@
 		</part>
 	</message>
 	<!--
-  <message name="obtainLockRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-  </message>
-  <message name="releaseLockRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="logMessage" type="xsd:string">
-      <documentation>an explanation of the change.  If commit is true, this 
-      message is used in the audit record describing the modification.</documentation>
-    </part>
-    <part name="commit" type="xsd:boolean">
-      <documentation>whether the change(s) should be committed.</documentation>
-    </part>
-  </message>
   <message name="getObjectAuditTrailRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -211,28 +176,6 @@
 			<documentation>the state of the datastream.</documentation>
 		</part>
 	</message>
-	<message name="withdrawDatastreamRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
-		</part>
-		<part name="datastreamID" type="xsd:string">
-			<documentation>the ID of the datastream.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a message about the change.</documentation>
-		</part>
-	</message>
-	<message name="deleteDatastreamRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
-		</part>
-		<part name="datastreamID" type="xsd:string">
-			<documentation>the ID of the datastream.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a message about the change.</documentation>
-		</part>
-	</message>
 	<message name="purgeDatastreamRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -270,7 +213,6 @@
 			<documentation>the datastream.</documentation>
 		</part>
 	</message>
-	<!--
   <message name="getDatastreamsRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -280,26 +222,15 @@
       object.  If null, the current view of the object (the most recent time) 
       is assumed.</documentation>
     </part>
+    <part name="state" type="xsd:string">
+      <documentation>the state of the datastreams to get, null for all states.</documentation>
+    </part>
   </message>
   <message name="getDatastreamsResponse">
     <part name="response" type="fedora-types:ArrayOfDatastream">
       <documentation>the datastreams.</documentation>
     </part>
   </message>
--->
-	<message name="listDatastreamIDsRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
-		</part>
-		<part name="state" type="xsd:string">
-			<documentation>the state of the datastreams to list.</documentation>
-		</part>
-	</message>
-	<message name="listDatastreamIDsResponse">
-		<part name="response" type="fedora-types:ArrayOfString">
-			<documentation>the IDs of the datastreams.</documentation>
-		</part>
-	</message>
 	<message name="getDatastreamHistoryRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -348,22 +279,6 @@
     </part>
     <part name="bindingMap" type="fedora-types:DatastreamBindingMap">
       <documentation>the binding map.</documentation>
-    </part>
-  </message>
-  <message name="withdrawDisseminatorRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="disseminatorID" type="xsd:string">
-      <documentation>the ID of the disseminator.</documentation>
-    </part>
-  </message>
-  <message name="deleteDisseminatorRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="disseminatorID" type="xsd:string">
-      <documentation>the ID of the disseminator.</documentation>
     </part>
   </message>
   <message name="purgeDisseminatorRequest">
@@ -417,19 +332,6 @@
   <message name="getDisseminatorsResponse">
     <part name="response" type="fedora-types:ArrayOfDisseminator">
       <documentation>the disseminators.</documentation>
-    </part>
-  </message>
-  <message name="listDisseminatorIDsRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="state" type="xsd:string">
-      <documentation>the state of the disseminators to list.</documentation>
-    </part>
-  </message>
-  <message name="listDisseminatorIDsResponse">
-    <part name="response" type="fedora-types:ArrayOfString">
-      <documentation>the disseminator ids.</documentation>
     </part>
   </message>
   <message name="getDisseminatorHistoryRequest">
@@ -501,34 +403,12 @@
 			<input message="fedora-api:exportObjectRequest"/>
 			<output message="fedora-api:exportObjectResponse"/>
 		</operation>
-		<!--
-    <operation name="withdrawObject">
-      <documentation>Changes the object's state to W, making it inaccessible 
-      from API-A.</documentation>
-      <input message="fedora-api:withdrawObjectRequest"/>
-    </operation>
-    <operation name="deleteObject">
-      <documentation>Marks an object as deleted, changing its state to D.  
-      This makes it inaccessible from API-A, and eligible for purging by the 
-      cleanup process.</documentation>
-      <input message="fedora-api:deleteObjectRequest"/>
-    </operation>
--->
 		<operation name="purgeObject">
 			<documentation>Permanently removes an object from the repository.
       </documentation>
 			<input message="fedora-api:purgeObjectRequest"/>
 		</operation>
 		<!--
-    <operation name="obtainLock">
-      <documentation>Locks an object for writing.  Upon obtaining a lock, a 
-      user may execute write methods on an object.</documentation>
-      <input message="fedora-api:obtainLockRequest"/>
-    </operation>
-    <operation name="releaseLock">
-      <documentation>Unlocks an object for writing.</documentation>
-      <input message="fedora-api:releaseLockRequest"/>
-    </operation>
     <operation name="getObjectAuditTrail">
       <documentation>Gets all audit trail records for the object.</documentation>
       <input message="fedora-api:getObjectAuditTrailRequest"/>
@@ -574,17 +454,6 @@
 			<documentation>Modifies an existing datastream in an object, by value.</documentation>
 			<input message="fedora-api:modifyDatastreamByValueRequest"/>
 		</operation>
-		<operation name="withdrawDatastream">
-			<documentation>Changes a datastream's state to W, making it inaccessible 
-      from API-A.</documentation>
-			<input message="fedora-api:withdrawDatastreamRequest"/>
-		</operation>
-		<operation name="deleteDatastream">
-			<documentation>Marks a datastream as deleted, changing its state to D.  
-      This makes it inaccessible from API-A, and eligible for purging by the 
-      cleanup process.</documentation>
-			<input message="fedora-api:deleteDatastreamRequest"/>
-		</operation>
 		<operation name="purgeDatastream">
 			<documentation>Permanently removes one or more versions of a datastream 
       from an object.</documentation>
@@ -592,17 +461,6 @@
 			<output message="fedora-api:purgeDatastreamResponse"/>
 		</operation>
 		<!--
-    <operation name="withdrawDisseminator">
-      <documentation>Changes a disseminator's state to W, making it inaccessible 
-      from API-A.</documentation>
-      <input message="fedora-api:withdrawDisseminatorRequest"/>
-    </operation>
-    <operation name="deleteDisseminator">
-      <documentation>Marks a disseminator as deleted, changing its state to D.  
-      This makes it inaccessible from API-A, and eligible for purging by the 
-      cleanup process.</documentation>
-      <input message="fedora-api:deleteDisseminatorRequest"/>
-    </operation>
     <operation name="purgeDisseminator">
       <documentation>Permanently removes one or more versions of a disseminator 
       from an object.</documentation>
@@ -615,18 +473,11 @@
 			<input message="fedora-api:getDatastreamRequest"/>
 			<output message="fedora-api:getDatastreamResponse"/>
 		</operation>
-		<!--
     <operation name="getDatastreams">
-      <documentation>Gets all datastreams in an object.</documentation>
+      <documentation>Gets all the datastreams in an object as of a certain date/time and in a certain state.</documentation>
       <input message="fedora-api:getDatastreamsRequest"/>
       <output message="fedora-api:getDatastreamsResponse"/>
     </operation>
--->
-		<operation name="listDatastreamIDs">
-			<documentation>Gets a list of datastreams in an object.</documentation>
-			<input message="fedora-api:listDatastreamIDsRequest"/>
-			<output message="fedora-api:listDatastreamIDsResponse"/>
-		</operation>
 		<operation name="getDatastreamHistory">
 			<documentation>Gets the creation dates of each version of a datastream.</documentation>
 			<input message="fedora-api:getDatastreamHistoryRequest"/>
@@ -642,11 +493,6 @@
       <documentation>Gets all disseminators in an object.</documentation>
       <input message="fedora-api:getDisseminatorsRequest"/>
       <output message="fedora-api:getDisseminatorsResponse"/>
-    </operation>
-    <operation name="listDisseminatorIDs">
-      <documentation>Gets a list of disseminators in an object.</documentation>
-      <input message="fedora-api:listDisseminatorIDsRequest"/>
-      <output message="fedora-api:listDisseminatorIDsResponse"/>
     </operation>
     <operation name="getDisseminatorHistory">
       <documentation>Gets the creation dates of each version of a disseminator.</documentation>
@@ -700,26 +546,6 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
-		<!--
-    <operation name="withdrawObject">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#withdrawObject"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
-    <operation name="deleteObject">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#deleteObject"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
--->
 		<operation name="purgeObject">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeObject"/>
 			<input>
@@ -727,24 +553,6 @@
 			</input>
 		</operation>
 		<!--
-    <operation name="obtainLock">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#obtainLock"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
-    <operation name="releaseLock">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#releaseLock"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
     <operation name="getObjectAuditTrail">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectAuditTrail"/>
@@ -814,29 +622,6 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
 		</operation>
-		<operation name="withdrawDatastream">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#withdrawDatastream"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-		</operation>
-		<!--
-    		<operation name="withdrawDisseminator">
-      		<soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#withdrawDisseminator"/>
-      			<input>
-        				<soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      			</input>
-    		</operation>
-    		-->
-		<operation name="deleteDatastream">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#deleteDatastream"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-		</operation>
 		<operation name="purgeDatastream">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDatastream"/>
 			<input>
@@ -855,7 +640,6 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
-		<!--
     <operation name="getDatastreams">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreams"/>
@@ -870,16 +654,6 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
--->
-		<operation name="listDatastreamIDs">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listDatastreamIDs"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
 		<operation name="getDatastreamHistory">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamHistory"/>
 			<input>
@@ -907,15 +681,6 @@
     <operation name="modifyDisseminator">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDisseminator"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
-    <operation name="deleteDisseminator">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#deleteDisseminator"/>
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
@@ -953,20 +718,6 @@
     <operation name="getDisseminators">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminators"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-    <operation name="listDisseminatorIDs">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#listDisseminatorIDs"/>
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 

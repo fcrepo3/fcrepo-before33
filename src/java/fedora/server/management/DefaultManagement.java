@@ -69,7 +69,7 @@ public class DefaultManagement
     private int m_uploadStorageMinutes;
     private int m_lastId;
     private File m_tempDir;
-    private HashMap m_uploadStartTime=new HashMap();
+    private HashMap m_uploadStartTime;
 
     /**
      * Creates and initializes the Management Module.
@@ -122,6 +122,7 @@ public class DefaultManagement
     		    m_tempDir.mkdirs();
     		}
 			// put leftovers in hash, while saving highest id as m_lastId
+			m_uploadStartTime=new HashMap();
 			String[] fNames=m_tempDir.list();
 			Long leftoverStartTime=new Long(System.currentTimeMillis());
             m_lastId=0;
@@ -135,6 +136,7 @@ public class DefaultManagement
 				}
 			}
 		} catch (Exception e) {
+		    e.printStackTrace();
 		    throw new ModuleInitializationException("Error while initializing "
 			        + "temporary storage area: " + e.getClass().getName() + ": "
 					+ e.getMessage(), getRole());
@@ -227,28 +229,7 @@ public class DefaultManagement
         logFinest("Exiting DefaultManagement.purgeObject");
     }
 
-// obsolete: methods that require a lock will create one automatically
-// if one doesn't already exist... it's easier that way.
-/*    public void obtainLock(Context context, String pid) {
-
-    }
-*/
 /*
-    public void releaseLock(Context context, String pid, String logMessage,
-            boolean commit)
-            throws ServerException {
-        getServer().logFinest("Entered DefaultManagement.releaseLock");
-        m_ipRestriction.enforce(context);
-        DOWriter w=m_manager.getWriter(context, pid);
-        if (commit) {
-            w.commit(logMessage); // FIXME: make the audit record HERE
-        } else {
-            w.cancel();
-        }
-        m_manager.releaseWriter(w);
-        getServer().logFinest("Exiting DefaultManagement.releaseLock");
-    }
-
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
 
     public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) { return null; }
@@ -365,168 +346,6 @@ public class DefaultManagement
         }
     }
 
-//
-    public void deleteDatastream(Context context, String pid,
-                String datastreamId, String logMessage)
-                throws ServerException {
-
-          m_ipRestriction.enforce(context);
-          DOWriter w=null;
-          try {
-              w=m_manager.getWriter(context, pid);
-              fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
-              if (orig.DSControlGrp.equals("X")) {
-                DatastreamXMLMetadata newds=new DatastreamXMLMetadata();
-                newds.DSMDClass=((DatastreamXMLMetadata) orig).DSMDClass;
-                ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-                try {
-                  StreamUtility.pipeStream(orig.getContentStream(), bytes, 1024);
-                } catch (Exception ex) {
-                }
-                newds.xmlContent=bytes.toByteArray();
-                newds.DatastreamID=orig.DatastreamID;
-                newds.DSVersionID=orig.DSVersionID;
-                newds.DSLabel=orig.DSLabel;
-                newds.DSMIME=orig.DSMIME;
-                Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-                newds.DSCreateDT=nowUTC;
-                newds.DSControlGrp=orig.DSControlGrp;
-                newds.DSInfoType=orig.DSInfoType;
-                newds.DSState="D";
-                newds.auditRecordIdList().addAll(orig.auditRecordIdList());
-                // remove, then add the datastream
-                w.removeDatastream(datastreamId, null, null);
-                w.addDatastream(newds);
-                // add the audit record
-                fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-                audit.id="AUDIT" + w.getAuditRecords().size() + 1;
-                audit.processType="Fedora API-M";
-                audit.action="modifyDatastreamByReference";
-                audit.responsibility=context.get("userId");
-                audit.date=nowUTC;
-                audit.justification=logMessage;
-                w.getAuditRecords().add(audit);
-                newds.auditRecordIdList().add(audit.id);
-              } else {
-                // Deal with other kinds
-                DatastreamReferencedContent newds=new DatastreamReferencedContent();
-                newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
-                newds.DatastreamID=orig.DatastreamID;
-                newds.DSVersionID=orig.DSVersionID;
-                newds.DSLabel=orig.DSLabel;
-                newds.DSMIME=orig.DSMIME;
-                Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-                newds.DSCreateDT=nowUTC;
-                newds.DSControlGrp=orig.DSControlGrp;
-                newds.DSInfoType=orig.DSInfoType;
-                newds.DSState="D";
-                newds.DSLocation=orig.DSLocation;
-                newds.auditRecordIdList().addAll(orig.auditRecordIdList());
-                // remove, then add the datastream
-                w.removeDatastream(datastreamId, null, null);
-                w.addDatastream(newds);
-                // add the audit record
-                fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-                audit.id="AUDIT" + w.getAuditRecords().size() + 1;
-                audit.processType="Fedora API-M";
-                audit.action="modifyDatastreamByReference";
-                audit.responsibility=context.get("userId");
-                audit.date=nowUTC;
-                audit.justification=logMessage;
-                w.getAuditRecords().add(audit);
-                newds.auditRecordIdList().add(audit.id);
-              }
-              // if all went ok, commit
-              w.commit(logMessage);
-          } finally {
-              if (w!=null) {
-                  m_manager.releaseWriter(w);
-              }
-          }
-    }
-//
-
-//
-    public void withdrawDatastream(Context context, String pid,
-                String datastreamId, String logMessage)
-                throws ServerException {
-
-          m_ipRestriction.enforce(context);
-          DOWriter w=null;
-          try {
-              w=m_manager.getWriter(context, pid);
-              fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
-              if (orig.DSControlGrp.equals("X")) {
-                DatastreamXMLMetadata newds=new DatastreamXMLMetadata();
-                newds.DSMDClass=((DatastreamXMLMetadata) orig).DSMDClass;
-                ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-                try {
-                  StreamUtility.pipeStream(orig.getContentStream(), bytes, 1024);
-                } catch (Exception ex) {
-                }
-                newds.xmlContent=bytes.toByteArray();
-                newds.DatastreamID=orig.DatastreamID;
-                newds.DSVersionID=orig.DSVersionID;
-                newds.DSLabel=orig.DSLabel;
-                newds.DSMIME=orig.DSMIME;
-                Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-                newds.DSCreateDT=nowUTC;
-                newds.DSControlGrp=orig.DSControlGrp;
-                newds.DSInfoType=orig.DSInfoType;
-                newds.DSState="W";
-                newds.auditRecordIdList().addAll(orig.auditRecordIdList());
-                // remove, then add the datastream
-                w.removeDatastream(datastreamId, null, null);
-                w.addDatastream(newds);
-                // add the audit record
-                fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-                audit.id="AUDIT" + w.getAuditRecords().size() + 1;
-                audit.processType="Fedora API-M";
-                audit.action="modifyDatastreamByReference";
-                audit.responsibility=context.get("userId");
-                audit.date=nowUTC;
-                audit.justification=logMessage;
-                w.getAuditRecords().add(audit);
-                newds.auditRecordIdList().add(audit.id);
-              } else {
-                // Deal with other kinds
-                DatastreamReferencedContent newds=new DatastreamReferencedContent();
-                newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
-                newds.DatastreamID=orig.DatastreamID;
-                newds.DSVersionID=orig.DSVersionID;
-                newds.DSLabel=orig.DSLabel;
-                newds.DSMIME=orig.DSMIME;
-                Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-                newds.DSCreateDT=nowUTC;
-                newds.DSControlGrp=orig.DSControlGrp;
-                newds.DSInfoType=orig.DSInfoType;
-                newds.DSState="W";
-                newds.DSLocation=orig.DSLocation;
-                newds.auditRecordIdList().addAll(orig.auditRecordIdList());
-                // remove, then add the datastream
-                w.removeDatastream(datastreamId, null, null);
-                w.addDatastream(newds);
-                // add the audit record
-                fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-                audit.id="AUDIT" + w.getAuditRecords().size() + 1;
-                audit.processType="Fedora API-M";
-                audit.action="modifyDatastreamByReference";
-                audit.responsibility=context.get("userId");
-                audit.date=nowUTC;
-                audit.justification=logMessage;
-                w.getAuditRecords().add(audit);
-                newds.auditRecordIdList().add(audit.id);
-              }
-              // if all went ok, commit
-              w.commit(logMessage);
-          } finally {
-              if (w!=null) {
-                  m_manager.releaseWriter(w);
-              }
-          }
-    }
-//
-
     public void modifyDatastreamByValue(Context context, String pid,
             String datastreamId, String dsLabel, String logMessage,
             InputStream dsContent, String dsState) throws ServerException {
@@ -583,17 +402,6 @@ public class DefaultManagement
         }
     }
 
-/*
-    public void withdrawDatastream(Context context, String pid,
-            String datastreamId) throws ServerException {
-        m_ipRestriction.enforce(context);
-    }
-
-    public void withdrawDisseminator(Context context, String pid, String disseminatorId) { }
-
-    public void deleteDatastream(Context context, String pid, String datastreamID) { }
-
-*/
     public Calendar[] purgeDatastream(Context context, String pid,
             String datastreamID, Calendar endDT)
             throws ServerException {
@@ -690,7 +498,8 @@ public class DefaultManagement
         return buf.toString();
     }
 
-    public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime)
+    public Datastream getDatastream(Context context, String pid, 
+            String datastreamID, Calendar asOfDateTime)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOReader r=m_manager.getReader(context, pid);
@@ -698,34 +507,18 @@ public class DefaultManagement
         if (asOfDateTime!=null) {
             d=asOfDateTime.getTime();
         }
-		Datastream ds=r.GetDatastream(datastreamID, d);
-		// in the case of managed content OR xml, change the location to the 
-		// getItem request instead of using the internal identifier or null/blank,
-		// so that clients can easily retrieve the content
-        if (ds.DSControlGrp.equalsIgnoreCase("M") || ds.DSControlGrp.equalsIgnoreCase("X")) {
-		    StringBuffer buf=new StringBuffer();
-			buf.append("http://" + m_fedoraServerHost);
-			if (!m_fedoraServerPort.equals("80")) {
-			    buf.append(":" + m_fedoraServerPort);
-			}
-			buf.append("/fedora/get/" + pid + "/fedora-system:3/getItem");
-			if (d!=null) {
-                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-				buf.append("/" + formatter.format(d));
-			}
-			buf.append("?itemID=" + ds.DatastreamID);
-			ds.DSLocation=buf.toString();
-		}
-		return ds;
+		return r.GetDatastream(datastreamID, d);
     }
-/*
-    public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime) { return null; }
-*/
-    public String[] listDatastreamIDs(Context context, String pid, String state)
-            throws ServerException {
-        m_ipRestriction.enforce(context);
+
+    public Datastream[] getDatastreams(Context context, String pid, 
+            Calendar asOfDateTime, String state) 
+            throws ServerException { 
         DOReader r=m_manager.getReader(context, pid);
-        return r.ListDatastreamIDs(state);
+        Date d=null;
+        if (asOfDateTime!=null) {
+            d=asOfDateTime.getTime();
+        }
+		return r.GetDatastreams(d, state);
     }
 
     public Calendar[] getDatastreamHistory(Context context, String pid, String datastreamID)
@@ -740,15 +533,11 @@ public class DefaultManagement
 
     public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) { }
 
-    public void deleteDisseminator(Context context, String pid, String disseminatorId) { }
-
     public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorId, Calendar startDateTime, Calendar endDateTime) { return null; }
 
     public Disseminator getDisseminator(Context context, String pid, String disseminatorId, Calendar asOfDateTime) { return null; }
 
     public Disseminator[] getDisseminators(Context context, String pid, Calendar asOfDateTime) { return null; }
-
-    public String[] listDisseminatorIDs(Context context, String pid, String state) { return null; }
 
     public ComponentInfo[] getDisseminatorHistory(Context context, String pid, String disseminatorId) { return null; }
  */

@@ -769,11 +769,12 @@ public class FastDOReader implements DOReader
    * <p>Gets all the datastreams of a digital object.</p>
    *
    * @param versDateTime The versioning datetime stamp.
+   * @param state The state of the datastreams to get, null if any.
    * @return An array of datastreams.
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public Datastream[] GetDatastreams(Date versDateTime)
+  public Datastream[] GetDatastreams(Date versDateTime, String state)
       throws GeneralException
   {
     Vector queryResults = new Vector();
@@ -855,7 +856,7 @@ public class FastDOReader implements DOReader
         {
           doReader = m_manager.getReader(m_context, PID);
         }
-        datastreamArray = doReader.GetDatastreams(versDateTime);
+        datastreamArray = doReader.GetDatastreams(versDateTime, null);
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "

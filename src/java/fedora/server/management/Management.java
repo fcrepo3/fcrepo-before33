@@ -42,15 +42,7 @@ public interface Management {
 
     public InputStream exportObject(Context context, String pid, String format, String encoding) throws ServerException;
 
-//    public void withdrawObject(Context context, String pid, String logMessage) throws ServerException;
-
-//    public void deleteObject(Context context, String pid, String logMessage) throws ServerException;
-
     public void purgeObject(Context context, String pid, String logMessage) throws ServerException;
-
-//    public void obtainLock(Context context, String pid) throws ServerException;
-
-//    public void releaseLock(Context context, String pid, String logMessage, boolean commit) throws ServerException;
 
 //    public AuditRecord[] getObjectAuditTrail(Context context, String pid) throws ServerException;
 
@@ -64,23 +56,11 @@ public interface Management {
 
     public void modifyDatastreamByValue(Context context, String pid, String datastreamId, String dsLabel, String logMessage, InputStream dsContent, String dsState) throws ServerException;
 
-//    public void withdrawDatastream(Context context, String pid, String datastreamId) throws ServerException;
-
-    public void withdrawDatastream(Context context, String pid, String datastreamId, String logMessage) throws ServerException;
-
-//    public void withdrawDisseminator(Context context, String pid, String disseminatorId) throws ServerException;
-
-//    public void deleteDatastream(Context context, String pid, String datastreamID) throws ServerException;
-
-    public void deleteDatastream(Context context, String pid, String datastreamId, String logMessage) throws ServerException;
-
     public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar endDT) throws ServerException;
 
     public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime) throws ServerException;
 
-//    public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime) throws ServerException;
-
-    public String[] listDatastreamIDs(Context context, String pid, String state) throws ServerException;
+    public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime, String state) throws ServerException;
 
     public Calendar[] getDatastreamHistory(Context context, String pid, String datastreamID) throws ServerException;
 
@@ -88,15 +68,11 @@ public interface Management {
 
 //    public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) throws ServerException;
 
-//    public void deleteDisseminator(Context context, String pid, String disseminatorId) throws ServerException;
-
 //    public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorId, Calendar startDateTime, Calendar endDateTime) throws ServerException;
 
 //    public Disseminator getDisseminator(Context context, String pid, String disseminatorId, Calendar asOfDateTime) throws ServerException;
 
 //    public Disseminator[] getDisseminators(Context context, String pid, Calendar asOfDateTime) throws ServerException;
-
-//    public String[] listDisseminatorIDs(Context context, String pid, String state) throws ServerException;
 
 //    public ComponentInfo[] getDisseminatorHistory(Context context, String pid, String disseminatorId) throws ServerException;
 

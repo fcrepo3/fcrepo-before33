@@ -179,19 +179,23 @@ public interface DOReader
     public Date[] getDatastreamVersions(String datastreamID) throws ServerException;
 
     /**
-     * Gets all datastreams as of a certain date.
+     * Gets all datastreams as of a certain date and in a certain state.
+	 *
      * This iterates through all datastreams in the object and
      * returns only those that existed at the given date/time,
-     * regardless of state.
+     * and currently have a certain state.
+	 *
      * If the date/time given is null, the most recent version of
-     * each datastream is obtained.
+     * each datastream is obtained.  If the state is null, all datastreams
+	 * as of the given time will be returned, regardless of state.
      *
      * @param versDateTime The date-time stamp to get appropriate Datastream versions
-     * @return all datastreams as of a certain date.
+     * @param state The state, null for any.
+     * @return all datastreams as of a certain date and in a certain state.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public Datastream[] GetDatastreams(Date versDateTime) throws ServerException;
+    public Datastream[] GetDatastreams(Date versDateTime, String state) throws ServerException;
 
    /**
      * Gets a particular Datastream in the digital object.

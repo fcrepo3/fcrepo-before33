@@ -50,7 +50,10 @@ public abstract class TypeUtility
                     (fedora.server.storage.types.DatastreamXMLMetadata) in;
             out.setContentStream(mdDS.xmlContent);
         }
-        out.setLocation(in.DSLocation);
+		if (group.equals("R") || group.equals("E")) {
+		    // only given location if it's a redirect or external datastream
+            out.setLocation(in.DSLocation);
+		}
         java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
         cal.setTime(in.DSCreateDT);
         out.setCreateDate(cal);

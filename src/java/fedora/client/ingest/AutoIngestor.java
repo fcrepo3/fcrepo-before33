@@ -57,7 +57,6 @@ public class AutoIngestor {
         ByteArrayOutputStream out=new ByteArrayOutputStream();
         StreamUtility.pipeStream(in, out, 4096);
         String pid=skeleton.ingestObject(out.toByteArray(), logMessage);
-        //skeleton.releaseLock(pid, logMessage, true);
         return pid;
     }
 

@@ -259,12 +259,12 @@ public class SimpleDOReader
         return versionDates;
     }
 
-    public Datastream[] GetDatastreams(Date versDateTime) {
+    public Datastream[] GetDatastreams(Date versDateTime, String state) {
         String[] ids=ListDatastreamIDs(null);
         ArrayList al=new ArrayList();
         for (int i=0; i<ids.length; i++) {
            Datastream ds=GetDatastream(ids[i], versDateTime);
-           if (ds!=null) {
+           if (ds!=null && (state==null || ds.DSState.equals(state)) ) {
                al.add(ds);
            }
         }

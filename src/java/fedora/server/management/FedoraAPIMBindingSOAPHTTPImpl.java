@@ -223,22 +223,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             AxisUtility.throwFault(se);
         }
     }
+
 /*
-    public void obtainLock(String PID) throws java.rmi.RemoteException {
-        assertInitialized();
-        try {
-            ByteArrayInputStream testInputStream=new ByteArrayInputStream(PID.getBytes());
-            s_st.add(PID, testInputStream);
-        } catch (ServerException se) {
-            logStackTrace(se);
-            AxisUtility.throwFault(se);
-        }
-    }
-
-    public void releaseLock(String PID, String logMessage, boolean commit) throws java.rmi.RemoteException {
-        assertInitialized();
-    }
-
     public fedora.server.types.gen.AuditRecord[] getObjectAuditTrail(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
@@ -283,51 +269,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-
-//
-    public void deleteDatastream(String PID, String datastreamID,
-            String logMessage)
-            throws java.rmi.RemoteException {
-        assertInitialized();
-        try {
-            s_management.deleteDatastream(getContext(), PID,
-                    datastreamID, logMessage);
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-        }
-    }
-//
-
-//
-    public void withdrawDatastream(String PID, String datastreamID,
-            String logMessage)
-            throws java.rmi.RemoteException {
-        assertInitialized();
-        try {
-            s_management.withdrawDatastream(getContext(), PID,
-                    datastreamID, logMessage);
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-        }
-    }
-//
-
-/*
-    public void withdrawDatastream(String PID, String datastreamID) throws java.rmi.RemoteException {
-        assertInitialized();
-    }
-
-    public void withdrawDisseminator(String PID, String disseminatorID) throws java.rmi.RemoteException {
-        assertInitialized();
-    }
-
-    public void deleteDatastream(String PID, String datastreamID) throws java.rmi.RemoteException {
-        assertInitialized();
-    }
-
-*/
     public java.util.Calendar[] purgeDatastream(String PID, String datastreamID, java.util.Calendar endDT) throws java.rmi.RemoteException {
         assertInitialized();
         try {
@@ -353,16 +294,16 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-/*
-    public fedora.server.types.gen.Datastream[] getDatastreams(String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-*/
-    public String[] listDatastreamIDs(String PID, String state) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Datastream[] getDatastreams(String PID, java.util.Calendar asOfDateTime, String state) throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            return s_management.listDatastreamIDs(getContext(), PID, state);
+            fedora.server.storage.types.Datastream[] intDatastreams=s_management.getDatastreams(getContext(), PID, asOfDateTime, state);
+            fedora.server.types.gen.Datastream[] genDatastreams=new fedora.server.types.gen.Datastream[intDatastreams.length];
+			for (int i=0; i<intDatastreams.length; i++) {
+			    genDatastreams[i]=TypeUtility.convertDatastreamToGenDatastream(
+				        intDatastreams[i]);
+			}
+            return genDatastreams;
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -370,6 +311,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
     }
+
     public Calendar[] getDatastreamHistory(String PID, String datastreamID)
             throws java.rmi.RemoteException {
         assertInitialized();
@@ -393,10 +335,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
     }
 
-    public void deleteDisseminator(String PID, String disseminatorID) throws java.rmi.RemoteException {
-        assertInitialized();
-    }
-
     public java.util.Calendar[] purgeDisseminator(String PID, String disseminatorID, java.util.Calendar startDT, java.util.Calendar endDT) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
@@ -408,11 +346,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
     public fedora.server.types.gen.Disseminator[] getDisseminators(String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-
-    public String[] listDisseminatorIDs(String PID, String state) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
