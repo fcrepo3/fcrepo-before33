@@ -144,7 +144,7 @@
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar" destdir="dist/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/common/junit.jar" destdir="dist/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
 	</target>
 	<target name="devdocs" depends="prep" description="Assemble development/system documentation into dist/devdocs">
 		<mkdir dir="dist"/>
@@ -375,6 +375,7 @@
 			<fileset dir="src/bat/server"/>
 			<fileset dir="src/sh/server"/>
 		</copy>
+		<copy file="lib/common/junit.jar" todir="dist/server/tomcat41/webapps/fedora/WEB-INF/lib"/>
 		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/server/tomcat41/common/lib"/>
 		<!-- Saxon for use with Schematron validation -->
 		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/fedora/WEB-INF/lib"/>
@@ -448,7 +449,7 @@
 		<mkdir dir="temp/server/classes"/>
 		<javac srcdir="${javaSourceDir}:temp/server/java" 
                destdir="temp/server/classes" 
-               classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar"
+               classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar;lib/common/junit.jar"
                includes="fedora/server/**,edu/cornell/dlrg/logging/**" 
                optimize="${javaClassOptimize}" 
                debug="${javaClassDebug}"/>
@@ -463,6 +464,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.64  2003/01/22 21:45:27  cwilper
+  modified to compile and distribute server with junit.jar
+
   Revision 1.63  2003/01/22 14:42:49  cwilper
   changed filename for metstest
 
