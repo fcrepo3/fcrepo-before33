@@ -1,19 +1,27 @@
 package fedora.server.test;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import junit.framework.TestCase;
 
+import fedora.oai.sample.RandomDCMetadataFactory; 
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearchExistImpl;
 import fedora.server.search.ObjectFields;
 import fedora.server.storage.DirectoryBasedRepositoryReader;
 import fedora.server.storage.DOReader;
+import fedora.server.storage.SimpleDOReader;
 import fedora.server.storage.translation.DOTranslatorImpl;
-import fedora.server.storage.translation.METSDODeserializer;
-import fedora.server.storage.translation.METSDOSerializer;
+import fedora.server.storage.translation.METSLikeDODeserializer;
+import fedora.server.storage.translation.METSLikeDOSerializer;
+import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.storage.types.DatastreamXMLMetadata;
 
 /**
  * Tests the implementation of the FieldSearch interface, 
@@ -41,13 +49,16 @@ public class FieldSearchTest
         try {
             String mets="mets11fedora1";
             HashMap sers=new HashMap();
-            sers.put(mets, new METSDOSerializer());
+            sers.put(mets, new METSLikeDOSerializer());
             HashMap desers=new HashMap();
-            desers.put(mets, new METSDODeserializer());
+            desers.put(mets, new METSLikeDODeserializer());
             DOTranslatorImpl translator=new DOTranslatorImpl(sers, desers, null);
+            translator.setLogLevel(0);
             m_repoReader=new DirectoryBasedRepositoryReader(m_repoDir, translator,
                     mets, mets, mets, "UTF-8", null);
+            m_repoReader.setLogLevel(0);
             m_fieldSearch=new FieldSearchExistImpl(m_existDir.toString(), null);
+            m_fieldSearch.setLogLevel(0);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
@@ -92,6 +103,100 @@ public class FieldSearchTest
             System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
         }
+    }
+    
+    public void testPerformance(File dictionaryFile, int repeatMax, int wordMax, 
+            int numObjects, File indexingOutput, File regexOutput, 
+            File wordOutput, File fieldOutput) {
+        StringBuffer out=new StringBuffer();
+        StringBuffer outTwo=new StringBuffer();
+        StringBuffer outThree=new StringBuffer();
+        StringBuffer outFour=new StringBuffer();
+        StringBuffer mem=new StringBuffer();
+        File memInfo=new File("memory.dat");
+        int i=0;
+        Date now=new Date();
+        Runtime runTime=Runtime.getRuntime();
+        long kbTotal=runTime.totalMemory()/1024;
+        try {
+            RandomDCMetadataFactory dcFactory=new RandomDCMetadataFactory(dictionaryFile);
+            int n=0;
+            for (i=0; i<numObjects; i++) {
+                BasicDigitalObject obj=new BasicDigitalObject();
+                obj.setPid("perftest:" + i);
+                obj.setCreateDate(now);
+                obj.setLastModDate(now);
+                obj.setPid("perftest:" + i);
+                DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
+                ds.xmlContent=dcFactory.get(repeatMax, wordMax).getBytes();
+                ds.DSCreateDT=now;
+                ds.DSVersionID="DC";
+                ds.DSState="A";
+                ds.DatastreamID="DC1.0";
+                obj.datastreams("DC").add(ds);
+                SimpleDOReader doReader=new SimpleDOReader(null, null, null,
+                        null, null, "UTF-8", obj, null);
+                long st=new Date().getTime();
+                m_fieldSearch.update(doReader);
+                long et=new Date().getTime();
+                long tt=et-st;
+                n++;
+                if (n==50) {
+                    out.append(i + " " + tt + "\n");
+                    System.err.println(i + " " + tt);
+                    n=0;
+                    /*
+                    long sst=new Date().getTime();
+                    m_fieldSearch.search(new String[] {"pid"}, "*cense*");
+                    long set=new Date().getTime();
+                    long stt=set-sst;
+                    outTwo.append(i + " " + stt + "\n");
+                    System.err.println(i + " " + stt);
+                    sst=new Date().getTime();
+                    m_fieldSearch.search(new String[] {"pid"}, "license");
+                    set=new Date().getTime();
+                    stt=set-sst;
+                    outThree.append(i + " " + stt + "\n");
+                    System.err.println(i + " " + stt);
+                    sst=new Date().getTime();
+                    m_fieldSearch.search(new String[] {"pid"}, Condition.getConditions("creator~gnu date~license"));
+                    set=new Date().getTime();
+                    stt=set-sst;
+                    outFour.append(i + " " + stt + "\n");
+                    System.err.println(i + " " + stt);
+                    sendToFile(outTwo.toString(), regexOutput);
+                    sendToFile(outThree.toString(), wordOutput);
+                    sendToFile(outFour.toString(), fieldOutput); */
+                    long kbFree=runTime.freeMemory()/1024;
+                    long kbUsed=(kbTotal-kbFree);
+                    double mbUsed=kbUsed/1024;
+                    mem.append(i + " " + mbUsed + "\n");
+                    System.err.println("Used " + kbUsed + "/" + kbTotal);
+                    sendToFile(out.toString(), indexingOutput);
+                    sendToFile(mem.toString(), memInfo);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            /*
+            System.out.println("# finished");
+            try {
+                for (int x=0; x<i; x++) {
+                    m_fieldSearch.delete("perftest:" + x);
+                }
+            } catch (Exception e) { }
+            */
+        }
+    }
+    
+    private void sendToFile(String string, File file) 
+            throws Exception {
+        PrintWriter out=new PrintWriter(new BufferedWriter(new FileWriter(file)));
+        out.println(string);
+        out.flush();
+        out.close();
     }
     
     public void printSimpleSearch(String[] fields, String terms) {
@@ -187,12 +292,22 @@ public class FieldSearchTest
         return out.toString();
     }
     
+    private void shutdown() {
+        m_fieldSearch.shutdown();
+    }
+    
     public static void main(String[] args) {
         FieldSearchTest test=new FieldSearchTest(System.getProperty("fedora.home"), "Testing FieldSearchExistImpl");
         test.setUp();
         if (args.length>0) {
             if (args[0].equals("delete")) {
                 test.testDeleteAll();
+            } else if (args[0].equals("perf")) {
+                test.testPerformance(new File(args[1]), Integer.parseInt(args[2]), 
+                        Integer.parseInt(args[3]), Integer.parseInt(args[4]), 
+                        new File(args[5]), new File(args[6]), new File(args[7]),
+                        new File(args[8]));
+                test.shutdown();
             } else if (args[0].equals("update")) {
                 test.testUpdateAll();
             } else if (args[0].equals("simple")) {
