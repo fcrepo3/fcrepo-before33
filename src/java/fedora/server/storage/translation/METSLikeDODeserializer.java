@@ -6,7 +6,6 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -24,6 +23,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -38,8 +38,8 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * <p><b>Title:</b> METSLikeDODeserializer.java</p>
  * <p><b>Description:</b> 
- *       Deserializes XML encoded in accordance with the Fedora extension of
- *       the METS XML Schema defined at: 
+ *       Deserializes XML digital object encoded in accordance 
+ * 		 with the Fedora extension of the METS schema defined at: 
  *       http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd.
  * 
  *       The METS XML is parsed using SAX and is instantiated into a Fedora
@@ -77,6 +77,25 @@ public class METSLikeDODeserializer
     private final static String XLINK_NAMESPACE="http://www.w3.org/TR/xlink";
     // Mets says the above, but the spec at http://www.w3.org/TR/xlink/
     // says it's http://www.w3.org/1999/xlink
+    
+	/** Namespace declarations for RDF */   
+	public static final String RDF_PREFIX="rdf";
+	public static final String RDF_NS="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	public static final String RDFS_PREFIX="rdfs";
+	public static final String RDFS_NS="http://www.w3.org/2000/01/rdf-schema#";
+	public static final String RELS_PREFIX="fedora";
+	public static final String RELS_NS="info:fedora/fedora-system:def/relations-internal#";
+	
+	/** Buffer to build RDF expression of ADMID and DMDID relationships **/
+	private StringBuffer m_relsBuffer;
+	private boolean hasRels=false;
+	
+	/** Hashtables to record DMDID references */
+	private HashMap m_dsDMDIDs; // key=dsVersionID, value=ArrayList of dsID
+	/** Hashtables to record ADMID references */
+	private HashMap m_dsADMIDs; // key=dsVersionID, value=ArrayList of dsID
+	/** Hashtables to correlate audit record ids to datastreams */
+	private HashMap m_AuditIdToComponentId;
 
     private SAXParser m_parser;
     private String m_characterEncoding;
@@ -99,6 +118,7 @@ public class METSLikeDODeserializer
 	private HashMap m_inlineURIToPrefix;
 	private ArrayList m_inlinePrefixList;
 
+	/** Variables to parse into */
     private boolean m_rootElementFound;
     private String m_dsId;
     private String m_dsVersId;
@@ -117,11 +137,6 @@ public class METSLikeDODeserializer
     private String m_dsMimeType;
     private String m_dsControlGrp;
 
-    // key=dsId, value=List of datastream ids (strings)
-    private HashMap m_dsAdmIds; // these are saved till end of parse
-    private String[] m_dsDmdIds; // these are only saved while parsing cur ds
-
-
     private StringBuffer m_dsXMLBuffer;
     private StringBuffer m_dsFirstElementBuffer;
 
@@ -129,8 +144,6 @@ public class METSLikeDODeserializer
     private boolean m_readingContent;
 
     private boolean m_firstInlineXMLElement;
-
-
 
     /** While parsing, are we inside XML metadata? */
     private boolean m_inXMLMetadata;
@@ -150,7 +163,7 @@ public class METSLikeDODeserializer
     private String m_auditResponsibility;
     private String m_auditDate;
     private String m_auditJustification;
-    private HashMap m_auditIdToComponentId;
+
 
     /** Hashmap for holding disseminators during parsing, keyed
      * by structMapId */
@@ -170,25 +183,26 @@ public class METSLikeDODeserializer
     private String m_structId;
 
     /**
-     * Never query the server and take it's values for Content-length and
-     * Content-type
+     * For non-inline datastreams, never query the server to get values 
+     * for Content-length and Content-type
      */
     public static int QUERY_NEVER=0;
 
     /**
-     * Query the server and take it's values for Content-length and
-     * Content-type if either are undefined.
+     * For non-inline datastreams, conditionally query the server to get values 
+     * for Content-length and Content-type (if either are undefined).
      */
     public static int QUERY_IF_UNDEFINED=1;
 
     /**
-     * Always query the server and take it's values for Content-length and
-     * Content-type.
+     * For non-inline datastreams, always query the server to get values
+     * for Content-length and Content-type.
      */
     public static int QUERY_ALWAYS=2;
 
     private int m_queryBehavior;
 
+	/** The translation context for deserialization */
     private int m_transContext;
 
     public METSLikeDODeserializer()
@@ -210,7 +224,7 @@ public class METSLikeDODeserializer
     /**
      * Initializes by setting up a parser that validates only if validate=true.
      * <p></p>
-     * The character encoding of the XML is auto-determined by sax, but
+     * The character encoding of the XML is auto-determined by SAX, but
      * we need it for when we set the byte[] in DatastreamXMLMetadata, so
      * we effectively, we need to also specify the encoding of the datastreams.
      * this could be different than how the digital object xml was encoded,
@@ -256,81 +270,32 @@ public class METSLikeDODeserializer
         try {
             m_parser.parse(in, this);
         } catch (IOException ioe) {
-            throw new StreamIOException("low-level stream io problem occurred "
-                    + "while sax was parsing this object.");
+            throw new StreamIOException("Low-level stream IO problem occurred "
+                    + "while SAX parsing this object.");
         } catch (SAXException se) {
-            throw new ObjectIntegrityException("mets stream was bad : " + se.getMessage());
+            throw new ObjectIntegrityException("METS stream was bad : " + se.getMessage());
         }
         if (!m_rootElementFound) {
-            throw new ObjectIntegrityException("METS root element not found -- must have 'mets' element in namespace " + M + " as root element.");
+            throw new ObjectIntegrityException("METS root element not found :"
+            	+ " Must have 'mets' element in namespace " + M + " as root element.");
         }
-        obj.setNamespaceMapping(m_URIToPrefix);
+        m_obj.setNamespaceMapping(m_URIToPrefix);
         
-        // Deal with METS way of having datastreams point to other metadata about them
-        // (via ADMID attribute).  We want to figure out which of these IDREFs point
-        // to audit records about changes to datastreams.       
-        Iterator dsIdIter=obj.datastreamIdIterator();
-        while (dsIdIter.hasNext()) {
-            List datastreams=obj.datastreams((String) dsIdIter.next());
-            for (int i=0; i<datastreams.size(); i++) {
-                Datastream ds=(Datastream) datastreams.get(i);
-                List admIdList=(List) m_dsAdmIds.get(ds.DSVersionID);
-                if (admIdList!=null) {
-                    // it's got admids..cool.  decide where to put em based
-                    // on the types of their targets.
-                    Iterator admIdIter=admIdList.iterator();
-                    while (admIdIter.hasNext()) {
-                       String admId=(String) admIdIter.next();
-                       List targetDatastreamSequence=obj.datastreams(admId);
-                       if (targetDatastreamSequence.size()>0) {
-                           // the admId is a datastream in the object, meaning
-                           // it's a datastream that is metadata
-                           // for another datastream... so put the admId in the 
-                           // list of metadata about the current datastream.
-                           try {
-                               DatastreamContent dsc=(DatastreamContent) ds;
-                               dsc.metadataIdList().add(admId);
-                           } catch (ClassCastException cce) {
-                               throw new ObjectIntegrityException(
-                                       "Metadata datastream can't use ADMID to"
-                                       + " point to non-AuditRecord "
-                                       + "datastream(s).");
-                           }
-                       } else {
-                           	// the admId is an audit record for the current datastream,
-                           	// so put it in the audit records list on the datastream
-                           	ds.auditRecordIdList().add(admId);
-                           	// also capture the correlation of admId adn dsid.
-                           	// In v2.0 we can use this during migration from
-                           	// METS to FOXML, specifically we can obtain component ids
-                           	// for the audit records by grabbing the ADMIDs off
-                           	// of datastreams (METS file element).
-							m_auditIdToComponentId.put(admId, ds.DSVersionID);
-                       }
-                    }
-                }
-            }
-        }
-        
-		// update audit records to include the id of the component (datastream)
-		// that the audit record is about.  METS awkwardness about having files
-		// back-reference things that describe them makes this inversion necessary.
-		// We want self-standing audit records that identify the datastreams
-		// they apply to. 
-		Iterator iter=((ArrayList) m_obj.getAuditRecords()).iterator();
-		while (iter.hasNext()) {
-			AuditRecord au=(AuditRecord) iter.next();
-			au.componentID=(String)m_auditIdToComponentId.get(au.id);
-		}
-		
-        // put dissems in obj
+        // POST-PROCESSING...
+        // convert audit records to contain component ids
+		convertAudits();
+		// preserve ADMID and DMDID relationships in a RELS-INT
+		// datastream, if one does not already exist.
+		createRelsInt();        
+		        		
+        // DISSEMINATORS... put disseminators in the instantiated digital object
         Iterator dissemIter=m_dissems.values().iterator();
         while (dissemIter.hasNext()) {
             Disseminator diss=(Disseminator) dissemIter.next();
-            obj.disseminators(diss.dissID).add(diss);
+            m_obj.disseminators(diss.dissID).add(diss);
         }
 		// FIXME: this should somehow be gathered from the serialization, ideally.
-		obj.setOwnerId("fedoraAdmin");
+		m_obj.setOwnerId("fedoraAdmin");
     }
    
 	public void startPrefixMapping(String prefix, String uri) {
@@ -424,7 +389,6 @@ public class METSLikeDODeserializer
                 m_dsCreateDate=null;
                 m_dsMimeType="";
                 m_dsControlGrp="";
-                m_dsDmdIds=null;
                 m_dsState=grab(a,M,"STATUS");
                 m_dsSize=-1;
             } else if (localName.equals("file")) {
@@ -438,10 +402,6 @@ public class METSLikeDODeserializer
                 m_dsControlGrp=grab(a,M,"OWNERID");
                 String ADMID=grab(a,M,"ADMID");
                 if ((ADMID!=null) && (!"".equals(ADMID))) {
-                    // remember admids for when we're finished...
-                    // we can't reliably determine yet whether they are
-                    // metadata refs or audit record refs, since we can't
-                    // rely on having gone through all audit records yet.
                     ArrayList al=new ArrayList();
                     if (ADMID.indexOf(" ")!=-1) {
                         String[] admIds=ADMID.split(" ");
@@ -451,17 +411,21 @@ public class METSLikeDODeserializer
                     } else {
                         al.add(ADMID);
                     }
-                    m_dsAdmIds.put(m_dsVersId, al);
+                    m_dsADMIDs.put(m_dsVersId, al);
                 }
-                String DMDID=grab(a,M,"DMDID");
-                if ((DMDID!=null) && (!"".equals(DMDID))) {
-                    // saved till we're makin' the datastream object
-                    if (DMDID.indexOf(" ")!=-1) {
-                        m_dsDmdIds=DMDID.split(" ");
-                    } else {
-                        m_dsDmdIds=new String[] {DMDID};
-                    }
-                }
+				String DMDID=grab(a,M,"DMDID");
+				if ((DMDID!=null) && (!"".equals(DMDID))) {
+					ArrayList al=new ArrayList();
+					if (DMDID.indexOf(" ")!=-1) {
+						String[] dmdIds=DMDID.split(" ");
+						for (int idi=0; idi<dmdIds.length; idi++) {
+							al.add(dmdIds[idi]);
+						}
+					} else {
+						al.add(DMDID);
+					}
+					m_dsDMDIDs.put(m_dsVersId, al);
+				}
                 String sizeString=grab(a,M,"SIZE");
                 if (sizeString!=null && !sizeString.equals("")) {
                     try {
@@ -592,7 +556,6 @@ public class METSLikeDODeserializer
                 } else {
                     m_indiv=true;
                     // first (outer div) part of structmap
-                    // TYPE="test:2" LABEL="DS Binding Map for UVA Standard Image mechanism"
                     m_diss.dsBindMap.dsBindMechanismPID=grab(a,M,"TYPE");
                     m_diss.dsBindMap.dsBindMapLabel=grab(a,M,"LABEL");
                 }
@@ -625,8 +588,6 @@ public class METSLikeDODeserializer
                 dissem.dissCreateDT=DateUtility.convertStringToDate(grab(a,M,"CREATED"));
                 dissem.dissLabel=grab(a,M,"LABEL");
             } else if (localName.equals("interfaceMD")) {
-                // interfaceDef LABEL="UVA Std Image Behavior Definition"
-                // LOCTYPE="URN" xlink:href="test:1"/>
                 Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
                 // already have the id from containing element, just need label
                 dissem.bDefLabel=grab(a,M,"LABEL");
@@ -707,7 +668,7 @@ public class METSLikeDODeserializer
                 // signaling that we're interested in sending char data to
                 // the m_auditBuffer by making it non-null, and getting
                 // ready to accept data by allocating a new StringBuffer
-                if (m_dsId.equals("FEDORA-AUDITTRAIL")) {
+                if (m_dsId.equals("FEDORA-AUDITTRAIL") || m_dsId.equals("AUDIT")) {
 					if (localName.equals("process")) {
 						m_auditProcessType=grab(a, uri, "type");              	
                     } else if ( (localName.equals("action"))
@@ -745,7 +706,7 @@ public class METSLikeDODeserializer
             if (uri.equals(M) && localName.equals("xmlData")
                     && m_xmlDataLevel==0) {
                 // finished all xml metadata for this datastream
-                if (m_dsId.equals("FEDORA-AUDITTRAIL")) {
+                if (m_dsId.equals("FEDORA-AUDITTRAIL") || m_dsId.equals("AUDIT")) {
                     // we've been looking at an audit trail... set audit record
                     AuditRecord a=new AuditRecord();
                     // In METS each audit record is in its own <digiprovMD>
@@ -841,7 +802,7 @@ public class METSLikeDODeserializer
                 if (uri.equals(M) && localName.equals("xmlData")) {
                     m_xmlDataLevel--;
                 }
-                if (m_dsId.equals("FEDORA-AUDITTRAIL")) {
+                if (m_dsId.equals("FEDORA-AUDITTRAIL") || m_dsId.equals("AUDIT")) {
                     if (localName.equals("action")) {
                         m_auditAction=m_auditBuffer.toString();
                         m_auditBuffer=null;
@@ -904,23 +865,6 @@ public class METSLikeDODeserializer
 				}
 		  }
 		}
-		
-		// LOOK! METS SPECIFIC: 
-		// For E or R datastreams, collect the list of other 
-		// datastream ids that are descriptive metadata about this datastream.  
-		// This is supported in METS via an attribute on METS
-		// file element that allows IDREFS for "about" relationships
-		// on the file element.
-		if (m_dsControlGrp.equalsIgnoreCase("E") ||
-			m_dsControlGrp.equalsIgnoreCase("R") )
-		{
-			if (m_dsDmdIds!=null) {
-			  for (int idi=0; idi<m_dsDmdIds.length; idi++) {
-				((DatastreamReferencedContent)ds).metadataIdList().add(m_dsDmdIds[idi]);
-			  }
-			}
-		}
-		
 		// FINALLY! add the datastream to the digital object instantiation
 		m_obj.datastreams(m_dsId).add(ds);	
 	}
@@ -973,6 +917,208 @@ public class METSLikeDODeserializer
 		// FINALLY! add the xml datastream to the digitalObject
 		m_obj.datastreams(m_dsId).add(ds);  	
 	}
+
+
+	/**
+	 *  convertAudits: In Fedora 2.0 and beyond, we want self-standing audit
+	 *  records.  Make sure audit records are converted to new format
+	 *  that contains a componentID to show what component in the object 
+	 *  the audit record is about. 
+	 */
+	private void convertAudits(){
+		// Only do this if ADMID values were found in the object.
+		if (m_dsADMIDs.size()>0){
+			Iterator dsIdIter=m_obj.datastreamIdIterator();
+			while (dsIdIter.hasNext()) {
+				List datastreams=m_obj.datastreams((String) dsIdIter.next());
+				// The list is a set of versions of the same datastream...
+				for (int i=0; i<datastreams.size(); i++) {
+					Datastream ds=(Datastream) datastreams.get(i);
+					// ADMID processing...
+					// get list of ADMIDs that go with a datastream version
+					List admIdList=(List)m_dsADMIDs.get(ds.DSVersionID);
+					List cleanAdmIdList = new ArrayList();
+					if (admIdList!=null) {
+						Iterator admIdIter=admIdList.iterator();
+						while (admIdIter.hasNext()) {
+						   String admId=(String) admIdIter.next();
+						   // Detect ADMIDs that reference audit records 
+						   // vs. regular admin metadata. Drop audits from
+						   // the list. We know we have an audit if the ADMID
+						   // is not a regular datatream in the object.
+						   List matchedDatastreams=m_obj.datastreams(admId);
+						   if (matchedDatastreams.size()<=0) {                      
+								// Keep track of audit id correlated with the 
+								// datastream version it's about (for later use).
+								m_AuditIdToComponentId.put(admId, ds.DSVersionID);
+						   } else {
+								// Put ADMID of regular admin metadata in new list.
+								cleanAdmIdList.add(admId);
+						   }
+						}
+					}
+					if (cleanAdmIdList.size()<=0){
+						// remove the entry from master hashmap if the ds version
+						// has no regular admin metadata references.
+						m_dsADMIDs.remove(ds.DSVersionID);
+					} else {
+						// otherwise, update the master hashmap with the clean list 
+						m_dsADMIDs.put(ds.DSVersionID, cleanAdmIdList);
+					}
+				}
+			}
+			// Now, put component ids on audit records.  Pre-Fedora 2.0
+			// datastream versions pointed to their audit records.
+			Iterator iter=((ArrayList) m_obj.getAuditRecords()).iterator();
+			while (iter.hasNext()) {
+				AuditRecord au=(AuditRecord) iter.next();
+				if (au.componentID == null || au.componentID.equals("")) {
+					// Before Fedora 2.0 audit records were associated with 
+					// datastream version ids.  From now on, the datastream id
+					// will be posted as the component id in the audit record,
+					// and associations to particular datastream versions can
+					// be derived via the datastream version dates and the audit
+					// record dates.
+					String dsVersId = (String)m_AuditIdToComponentId.get(au.id);
+					au.componentID=dsVersId.substring(0, dsVersId.indexOf("."));
+				}
+			}
+		}
+	}
+	/**
+	 * 	addRelsInt: Build an RDF relationship datastream to preserve
+	 *  DMDID and ADMID references in the digital object when METS
+	 *  is converted to FOXML (or other formats in the future). 
+	 *  If there is no pre-existing RELS-INT, look for DMDID and ADMID
+	 *  attributes to create new RELS-INT datastream.
+	 */
+	private void createRelsInt(){
+		
+		// create a new RELS-INT datastream only if one does not already exist.
+		List metsrels=m_obj.datastreams("RELS-INT");
+		if (metsrels.size()<=0) {
+			m_relsBuffer=new StringBuffer();
+			appendRDFStart(m_relsBuffer);   
+			Iterator dsIds=m_obj.datastreamIdIterator();
+			while (dsIds.hasNext()) {
+				// initialize hash sets to keep a list of
+				// unique DMDIDs or ADMIDs at the datatream id level.
+				HashSet uniqueDMDIDs = new HashSet();
+				HashSet uniqueADMIDs = new HashSet();
+				// get list of datastream *versions*
+				List dsVersionList=m_obj.datastreams((String) dsIds.next());
+				for (int i=0; i<dsVersionList.size(); i++) {
+					Datastream dsVersion=(Datastream) dsVersionList.get(i);
+					// DMDID processing...
+					List dmdIdList=(List) m_dsDMDIDs.get(dsVersion.DSVersionID);
+					if (dmdIdList!=null) {
+						hasRels=true;
+						Iterator dmdIdIter=dmdIdList.iterator();
+						while (dmdIdIter.hasNext()) {
+						   String dmdId=(String) dmdIdIter.next();
+						   // APPEND TO RDF: record the DMDID relationship.
+						   // Relationships will now be recorded at the 
+						   // datastream level, not the datastream version level.
+						   // So, is the relationship existed on more than one
+						   // datastream version, only write it once to the RDF. 
+						   if (!uniqueDMDIDs.contains(dmdId)){
+								appendRDFRel(m_relsBuffer, m_obj.getPid(), dsVersion.DatastreamID, 
+								 "hasDescMetadata", dmdId);
+						   }
+						   uniqueDMDIDs.add(dmdId);
+						}
+					}
+					// ADMID processing (already cleansed of audit refs)...
+					List cleanAdmIdList=(List) m_dsADMIDs.get(dsVersion.DSVersionID);
+					if (cleanAdmIdList!=null) {
+						hasRels=true;
+						Iterator admIdIter=cleanAdmIdList.iterator();
+						while (admIdIter.hasNext()) {
+							String admId=(String) admIdIter.next();             
+							// APPEND TO RDF: record the ADMID relationship.
+							// Relationships will now be recorded at the 
+							// datastream level, not the datastream version level.
+							// So, is the relationship existed on more than one
+							// datastream version, only write it once to the RDF. 
+							if (!uniqueADMIDs.contains(admId)){
+								appendRDFRel(m_relsBuffer, m_obj.getPid(), dsVersion.DatastreamID, 
+									"hasAdminMetadata", admId);
+							}
+							uniqueADMIDs.add(admId);
+						}
+					}
+				}
+			}
+			// APPEND RDF: finish up and add RDF as a system-generated datastream
+			if (hasRels) {
+				appendRDFEnd(m_relsBuffer);
+				setRDFAsDatastream(m_relsBuffer);
+			} else {
+				m_relsBuffer=null;
+			}
+		}
+	}
+	// Create a system-generated datastream from the RDF expression of the
+	// DMDID and ADMID relationships found in the METS file.
+	private void setRDFAsDatastream(StringBuffer buf) {
+		
+		DatastreamXMLMetadata ds = new DatastreamXMLMetadata();
+		// set the attrs common to all datastream versions
+		ds.DatastreamID="RELS-INT";
+		ds.DatastreamURI=""; // FOXML only. In METS it's null;
+		ds.DSVersionable="NO";
+		ds.DSFormatURI="";   // FOXML only. In METS it's null;
+		ds.DSVersionID="RELS-INT.0";
+		ds.DSLabel="DO NOT EDIT: System-generated datastream to preserve METS DMDID/ADMID relationships.";
+		ds.DSCreateDT=DateUtility.convertLocalDateToUTCDate(new Date());
+		ds.DSMIME="text/xml";
+		// set the attrs specific to datastream version
+		ds.DSControlGrp="X";
+		ds.DSState="A";
+		ds.DSLocation=m_obj.getPid() + "+" + ds.DatastreamID + "+" + ds.DSVersionID;
+		ds.DSLocationType="INTERNAL_ID";
+		ds.DSInfoType="DATA";
+		ds.DSMDClass=DatastreamXMLMetadata.TECHNICAL;
+		
+		// now set the xml content stream itself...
+		try {
+			ds.xmlContent=buf.toString().getBytes(m_characterEncoding);
+			ds.DSSize=ds.xmlContent.length;
+		} catch (UnsupportedEncodingException uee) {
+			System.out.println("Encoding error when creating RELS-INT datastream." 
+				+ uee.getMessage());
+		}				
+		// FINALLY! add the RDF and an inline xml datastream in the digital object
+		m_obj.datastreams(ds.DatastreamID).add(ds);  	
+	}
+
+	private StringBuffer appendRDFStart(StringBuffer buf) {
+
+		buf.append("<" + RDF_PREFIX + ":RDF"
+			+ " xmlns:"	+ RDF_PREFIX + "=\"" + RDF_NS + "\""
+			+ " xmlns:"	+ RDFS_PREFIX + "=\"" + RDFS_NS + "\""
+			+ " xmlns:"	+ RELS_PREFIX + "=\"" + RELS_NS + "\">\n");
+		return buf;
+	}
+
+	private StringBuffer appendRDFRel(StringBuffer buf, String pid, 
+		String subjectNodeId, String relType, String objectNodeId) {
+
+		// RDF subject node
+		buf.append("    <" + RDF_PREFIX + ":Description "
+			+ RDF_PREFIX + ":about=\"" + "info:fedora/" + pid + "/" + subjectNodeId + "\">\n");
+		// RDF relationship property and object node
+		buf.append("        <" + RELS_PREFIX + ":" + relType + " "
+			+ RDF_PREFIX + ":resource=\"" + "info:fedora/" + pid + "/" + objectNodeId + "\"/>\n");
+		buf.append("    </" + RDF_PREFIX + ":Description" + ">\n");
+		return buf;
+	}
+	
+	private StringBuffer appendRDFEnd(StringBuffer buf) {
+
+		buf.append("</" + RDF_PREFIX + ":RDF>\n");
+		return buf;
+	}
 	
     private static String grab(Attributes a, String namespace,
             String elementName) {
@@ -995,7 +1141,7 @@ public class METSLikeDODeserializer
 		// temporary variables and state variables
 		m_rootElementFound=false;
 		//m_objPropertyName="";
-		//m_readingBinaryContent=false; // indicates reading base64-encoded content
+		//m_readingBinaryContent=false; // future
 		m_firstInlineXMLElement=false;
 		m_inXMLMetadata=false;
 		m_URIToPrefix=new HashMap();
@@ -1003,12 +1149,12 @@ public class METSLikeDODeserializer
 
 		// temporary variables for processing datastreams		
 		m_dsId="";
-		//m_dsURI="";
-		//m_dsVersionable="";
+		//m_dsURI="";  // FOXML only.
+		//m_dsVersionable=""; // FOXML only.
 		m_dsVersId="";
 		m_dsCreateDate=null;
 		m_dsState="";
-		//m_dsFormatURI="";
+		//m_dsFormatURI=""; // FOXML only.
 		m_dsSize=-1;
 		m_dsLocationType="";
 		m_dsLocationURL=null;
@@ -1022,8 +1168,8 @@ public class METSLikeDODeserializer
 		m_dsXMLBuffer=null;
 		m_inlineURIToPrefix=new HashMap();
 		m_inlinePrefixToURI=new HashMap();
-		m_dsAdmIds=new HashMap();
-		m_dsDmdIds=null;
+		m_dsADMIDs=new HashMap();
+		m_dsDMDIDs=new HashMap();
 		
 		// temporary variables for processing disseminators
 		m_diss=null;
@@ -1037,6 +1183,8 @@ public class METSLikeDODeserializer
 		m_auditResponsibility="";
 		m_auditDate="";
 		m_auditJustification="";
-		m_auditIdToComponentId=new HashMap();
+		
+		m_AuditIdToComponentId=new HashMap();
+		m_relsBuffer=null;
 	}
 }
