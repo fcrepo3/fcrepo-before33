@@ -66,6 +66,124 @@
 			<documentation>the desired view of the object as a mime-typed stream.</documentation>
 		</part>
 	</message>
+	<message name="findObjectsRequest">
+		<part name="pid" type="xsd:string">
+            <documentation>if true, the pids of matching objects will be included in the response.</documentation>
+		</part>
+		<part name="label" type="xsd:string">
+            <documentation>if true, the labels of matching objects will be included in the response.</documentation>
+		</part>
+		<part name="fType" type="xsd:string">
+            <documentation>if true, the fedora object types of matching objects will be included in the response.</documentation>
+		</part>
+		<part name="cModel" type="xsd:string">
+            <documentation>if true, the content models of matching objects will be included in the response.</documentation>
+		</part>
+		<part name="state" type="xsd:string">
+            <documentation>if true, the states of matching objects will be included in the response.</documentation>
+		</part>
+		<part name="locker" type="xsd:string">
+            <documentation>if true, the userids of locking users of objects will be included in the response.</documentation>
+		</part>
+		<part name="cDate" type="xsd:string">
+            <documentation>if true, the create date of objects will be included in the response.</documentation>
+		</part>
+		<part name="mDate" type="xsd:string">
+            <documentation>if true, the modified date of objects will be included in the response.</documentation>
+		</part>
+		<part name="dcmDate" type="xsd:string">
+            <documentation>if true, the modified date of the dublin core record for the objects will be included in the response.</documentation>
+		</part>
+		<part name="title" type="xsd:string">
+            <documentation>if true, the dc:titles of the objects will be included in the response.</documentation>
+		</part>
+		<part name="creator" type="xsd:string">
+            <documentation>if true, the dc:creators of the objects will be included in the response.</documentation>
+		</part>
+		<part name="subject" type="xsd:string">
+            <documentation>if true, the dc:subjects of the objects will be included in the response.</documentation>
+		</part>
+		<part name="description" type="xsd:string">
+            <documentation>if true, the dc:descriptions of the objects will be included in the response.</documentation>
+		</part>
+		<part name="publisher" type="xsd:string">
+            <documentation>if true, the dc:publishers of the objects will be included in the response.</documentation>
+		</part>
+		<part name="contributor" type="xsd:string">
+            <documentation>if true, the dc:contributors of the objects will be included in the response.</documentation>
+		</part>
+		<part name="date" type="xsd:string">
+            <documentation>if true, the dc:dates of the objects will be included in the response.</documentation>
+		</part>
+		<part name="type" type="xsd:string">
+            <documentation>if true, the dc:types of the objects will be included in the response.</documentation>
+		</part>
+		<part name="format" type="xsd:string">
+            <documentation>if true, the dc:formats of the objects will be included in the response.</documentation>
+		</part>
+		<part name="identifier" type="xsd:string">
+            <documentation>if true, the dc:identifiers of the objects will be included in the response.</documentation>
+		</part>
+		<part name="source" type="xsd:string">
+            <documentation>if true, the dc:sources of the objects will be included in the response.</documentation>
+		</part>
+		<part name="language" type="xsd:string">
+            <documentation>if true, the dc:languages of the objects will be included in the response.</documentation>
+		</part>
+		<part name="relation" type="xsd:string">
+            <documentation>if true, the dc:relations of the objects will be included in the response.</documentation>
+		</part>
+		<part name="coverage" type="xsd:string">
+            <documentation>if true, the dc:coverages of the objects will be included in the response.</documentation>
+		</part>
+		<part name="rights" type="xsd:string">
+            <documentation>if true, the dc:rights of the objects will be included in the response.</documentation>
+		</part>
+		<part name="maxResults" type="xsd:string">
+			<documentation>the maximum number of results that the server should
+                provide at once.  If this is unspecified, the server will default
+                to a small value.</documentation>
+		</part>
+		<part name="terms" type="xsd:string">
+			<documentation>a sequence of characters (including the ? and * wildcards) 
+           for the search.  If this sequence is found in any of the fields for an 
+           object, the object is considered a match.  This parameter cannot
+           be used in combination with the query parameter.</documentation>
+		</part>
+		<part name="query" type="xsd:string">
+			<documentation>a sequence of space-separated conditions.  A condition
+           consists of a field name followed directly by an operator, followed
+           directly be a value.  Valid field names are (pid, label, fType, cModel,
+           state, locker, cDate, mDate, dcmDate, bDef, bMech, title, creator, subject,
+           description, publisher, contributor, date, type, format, identifier,
+           source, language, relation, coverage, rights).
+           Valid operators are =, ~, &gt;, &gt;=, &lt;, &lt;=.  The contains (~) operator
+           may be used in combination with the ? and * wildcards to query for simple
+           string patterns.  The inequality operators should only be used with
+           date-based fields (cDate, mDate, dcmDate, date).
+           Values may be any string.  If the string contains a space, the
+           value should begin and end with a single quote character ('). If all conditions
+           are met for an object, the object is considered a match. This parameter
+           cannot be used in combination with the terms parameter.</documentation>
+		</part>
+       <part name="xml" type="xsd:string">
+           <documentation>whether to return the result as an xml document.  If this is
+           given as true, the result will be in xml.  Otherwise, the result will be
+           provided in a simple html document.</documentation>
+       </part>
+	</message>
+	<message name="findObjectsResponse">
+		<part name="response" type="fedora-types:FieldSearchResult">
+			<documentation>containing an array of ObjectFields and, possibly,
+            a listSession.</documentation>
+		</part>
+	</message>
+	<message name="resumeFindObjectsRequest">
+		<part name="sessionToken" type="xsd:string">
+			<documentation>the token of the session in which the next few
+                results can be found.</documentation>
+		</part>
+    </message>
 	<portType name="Fedora-API-A-LITE">
 		<documentation>  This is a simple URI-oriented service definition for the Access service 
 			of a Fedora repository.  It is intended to support a REST-like style of access to the 

@@ -342,6 +342,7 @@
 			<element name="resultList" type="fedora-types:ArrayOfObjectFields"/>
 		</sequence>
 	</complexType>
+   <element name="result" type="fedora-types:FieldSearchResult"/>
 	<complexType name="MethodDef">
 		<annotation>
 			<documentation>method definitions</documentation>
