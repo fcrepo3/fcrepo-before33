@@ -58,8 +58,8 @@ public interface Management {
 
 //    public String addDatastreamXMLMetadata(Context context, String pid, String dsLabel, String MdType, InputStream dsInlineMetadata) throws ServerException;
 
-    public String addDatastream(Context context, 
-                                String pid, 
+    public String addDatastream(Context context,
+                                String pid,
                                 String dsLabel,
                                 String mimeType,
                                 String dsLocation,
@@ -81,7 +81,7 @@ public interface Management {
 
 //    public String addDisseminator(Context context, String pid, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) throws ServerException;
 
-    public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, DSBindingMap bindingMap, String logMessage, String dissState) throws ServerException;
+    public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, String bDefLabel, String bMechLabel, DSBindingMap bindingMap, String logMessage, String dissState) throws ServerException;
 
 //    public void deleteDisseminator(Context context, String pid, String disseminatorId) throws ServerException;
 

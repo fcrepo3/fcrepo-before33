@@ -400,10 +400,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return null;
     }
 
-    public void modifyDisseminator(String PID, String disseminatorID, String bMechPID, String dissLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
-        assertInitialized();
-    }
-
     public java.util.Calendar[] purgeDisseminator(String PID, String disseminatorID, java.util.Calendar startDT, java.util.Calendar endDT) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
@@ -450,6 +446,19 @@ public class FedoraAPIMBindingSOAPHTTPImpl
               throw AxisUtility.getFault(se);
           } catch (Exception e) {
               throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
+    }
+
+    public void modifyDisseminator(String PID, String disseminatorID, String bMechPID, String dissLabel, String bDefLabel, String bMechLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap, String logMessage, String dissState) throws java.rmi.RemoteException {
+        assertInitialized();
+        try {
+            s_management.modifyDisseminator(getContext(), PID,
+                    disseminatorID, bMechPID, dissLabel, bDefLabel, bMechLabel,
+                    TypeUtility.convertGenDatastreamBindingMapToDSBindingMap(bindingMap),
+                    logMessage, dissState);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
         }
     }
 

@@ -270,8 +270,8 @@ public class DefaultManagement
 */
 
     // initial state is always I
-    public String addDatastream(Context context, 
-                                String pid, 
+    public String addDatastream(Context context,
+                                String pid,
                                 String dsLabel,
                                 String mimeType,
                                 String dsLocation,
@@ -312,7 +312,7 @@ public class DefaultManagement
                     } else {
                         in=m_contentManager.getExternalContent(dsLocation).getStream();
                     }
-                    // parse with xerces... then re-serialize, removing 
+                    // parse with xerces... then re-serialize, removing
                     // processing instructions and ensuring the encoding gets to UTF-8
                     ByteArrayOutputStream out=new ByteArrayOutputStream();
                     // use xerces to pretty print the xml, assuming it's well formed
@@ -331,7 +331,7 @@ public class DefaultManagement
                     ((DatastreamXMLMetadata) ds).xmlContent=out.toByteArray();
                 } catch (Exception e) {
                     String extraInfo;
-                    if (e.getMessage()==null) 
+                    if (e.getMessage()==null)
                         extraInfo="";
                     else
                         extraInfo=" : " + e.getMessage();
@@ -339,10 +339,10 @@ public class DefaultManagement
                 }
             } else if (controlGroup.equals("M")) {
                 ds=new DatastreamManagedContent();
-                ds.DSInfoType="DATA"; 
+                ds.DSInfoType="DATA";
             } else if (controlGroup.equals("R") || controlGroup.equals("E")) {
                 ds=new DatastreamReferencedContent();
-                ds.DSInfoType="DATA"; 
+                ds.DSInfoType="DATA";
             } else {
                 throw new GeneralException("Invalid control group: " + controlGroup);
             }
@@ -364,7 +364,7 @@ public class DefaultManagement
             audit.date=nowUTC;
             audit.justification="Added a new datastream";
             w.getAuditRecords().add(audit);
-            ds.auditRecordIdList().add(audit.id); 
+            ds.auditRecordIdList().add(audit.id);
             w.addDatastream(ds);
             w.commit("Added a new datastream");
             return ds.DatastreamID;
@@ -374,7 +374,112 @@ public class DefaultManagement
             }
         }
     }
-
+/*
+    public String addDisseminator(Context context,
+                                String pid,
+                                String dsLabel,
+                                String mimeType,
+                                String dsLocation,
+                                String controlGroup,
+                                String mdClass,
+                                String mdType) throws ServerException {
+        m_ipRestriction.enforce(context);
+        DOWriter w=null;
+        try {
+            w=m_manager.getWriter(context, pid);
+            Datastream ds;
+            if (controlGroup.equals("X")) {
+                ds=new DatastreamXMLMetadata();
+                ds.DSInfoType=mdType;
+                if (mdClass.equals("descriptive")) {
+                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
+                } else if (mdClass.equals("digital provenance")) {
+                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.DIGIPROV;
+                } else if (mdClass.equals("source")) {
+                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.SOURCE;
+                } else if (mdClass.equals("rights")) {
+                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.RIGHTS;
+                } else if (mdClass.equals("technical")) {
+                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.TECHNICAL;
+                } else {
+                    throw new GeneralException("mdClass must be one of the following:\n"
+                            + " - descriptive\n"
+                            + " - digital provenance\n"
+                            + " - source\n"
+                            + " - rights\n"
+                            + " - technical");
+                }
+                // retrieve the content and set the xmlContent field appropriately
+                try {
+                    InputStream in;
+                    if (dsLocation.startsWith("uploaded://")) {
+                        in=getTempStream(dsLocation);
+                    } else {
+                        in=m_contentManager.getExternalContent(dsLocation).getStream();
+                    }
+                    // parse with xerces... then re-serialize, removing
+                    // processing instructions and ensuring the encoding gets to UTF-8
+                    ByteArrayOutputStream out=new ByteArrayOutputStream();
+                    // use xerces to pretty print the xml, assuming it's well formed
+                    OutputFormat fmt=new OutputFormat("XML", "UTF-8", true);
+                    fmt.setIndent(2);
+                    fmt.setLineWidth(120);
+                    fmt.setPreserveSpace(false);
+                    fmt.setOmitXMLDeclaration(true);
+                    XMLSerializer ser=new XMLSerializer(out, fmt);
+                    DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+                    factory.setNamespaceAware(true);
+                    DocumentBuilder builder=factory.newDocumentBuilder();
+                    Document doc=builder.parse(in);
+                    ser.serialize(doc);
+                    // now put it in the byte array
+                    ((DatastreamXMLMetadata) ds).xmlContent=out.toByteArray();
+                } catch (Exception e) {
+                    String extraInfo;
+                    if (e.getMessage()==null)
+                        extraInfo="";
+                    else
+                        extraInfo=" : " + e.getMessage();
+                    throw new GeneralException("Error with " + dsLocation + extraInfo);
+                }
+            } else if (controlGroup.equals("M")) {
+                ds=new DatastreamManagedContent();
+                ds.DSInfoType="DATA";
+            } else if (controlGroup.equals("R") || controlGroup.equals("E")) {
+                ds=new DatastreamReferencedContent();
+                ds.DSInfoType="DATA";
+            } else {
+                throw new GeneralException("Invalid control group: " + controlGroup);
+            }
+            ds.isNew=true;
+            ds.DSControlGrp=controlGroup;
+            ds.DSLabel=dsLabel;
+            ds.DSLocation=dsLocation;
+            ds.DSMIME=mimeType;
+            ds.DSState="I";
+            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+            ds.DSCreateDT=nowUTC;
+            ds.DatastreamID=w.newDatastreamID();
+            ds.DSVersionID=ds.DatastreamID + ".0";
+            AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+            audit.id=w.newAuditRecordID();
+            audit.processType="Fedora API-M";
+            audit.action="addDatastream";
+            audit.responsibility=context.get("userId");
+            audit.date=nowUTC;
+            audit.justification="Added a new datastream";
+            w.getAuditRecords().add(audit);
+            ds.auditRecordIdList().add(audit.id);
+            w.addDatastream(ds);
+            w.commit("Added a new datastream");
+            return ds.DatastreamID;
+        } finally {
+            if (w!=null) {
+                m_manager.releaseWriter(w);
+            }
+        }
+    }
+*/
     public void modifyDatastreamByReference(Context context, String pid,
             String datastreamId, String dsLabel, String logMessage,
             String dsLocation, String dsState)
@@ -547,30 +652,65 @@ public class DefaultManagement
 
     public void modifyDisseminator(Context context, String pid,
             String disseminatorId, String bMechPid, String dissLabel,
-            DSBindingMap bindingMap, String logMessage, String dissState) throws ServerException {
+            String bDefLabel, String bMechLabel, DSBindingMap dsBindingMap,
+            String logMessage, String dissState)
+            throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
+        DOReader r=null;
         try {
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Disseminator orig=w.GetDisseminator(disseminatorId, null);
-                    // copy the original disseminator, replacing any modified fields
-                    // Note: still need to decide what is editable for a disseminator....
-                    //
+            r=m_manager.getReader(context,pid);
+            Date[] d=r.getDisseminatorVersions(disseminatorId);
+                    // copy the original disseminator, replacing any modified fiELDS
                     Disseminator newdiss=new Disseminator();
                     newdiss.dissID=orig.dissID;
-                    // make sure it has a different id
+                    // make sure disseminator has a different id
                     newdiss.dissVersionID=w.newDisseminatorID(disseminatorId);
-                    newdiss.dissLabel=dissLabel;
-                    newdiss.dsBindMapID=orig.dsBindMapID;
-                    newdiss.dsBindMap=orig.dsBindMap;
+                    // for testing; null indicates a new (uninitialized) instance
+                    // of dsBindingMap was passed in which is what you get if
+                    // you pass null in for dsBindingMap using MangementConsole
+                    if (dsBindingMap.dsBindMapID!=null) {
+                      newdiss.dsBindMap=dsBindingMap;
+                    } else {
+                      newdiss.dsBindMap=orig.dsBindMap;
+                    }
+                    // make sure dsBindMapID has a different id
+                    newdiss.dsBindMapID=w.newDatastreamBindingMapID(disseminatorId);
+                    newdiss.dsBindMap.dsBindMapID=w.newDatastreamBindingMapID(disseminatorId);
                     Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                     newdiss.dissCreateDT=nowUTC;
+                    // changing bDefID and ParentPid not permitted; use original values
                     newdiss.bDefID=orig.bDefID;
-                    newdiss.bDefLabel=orig.bDefLabel;
-                    newdiss.bMechID=orig.bMechID;
-                    newdiss.bMechLabel=orig.bMechLabel;
-                    newdiss.dissState=dissState;
                     newdiss.parentPID=orig.parentPID;
+                    // set any fields that were specified; null/empty indicates
+                    // leave original value unchanged
+                    if (dissLabel==null || dissLabel.equals("")) {
+                      newdiss.dissLabel=orig.dissLabel;
+                    } else {
+                      newdiss.dissLabel=dissLabel;
+                    }
+                    if (bDefLabel==null || bDefLabel.equals("")) {
+                      newdiss.bDefLabel=orig.bDefLabel;
+                    } else {
+                      newdiss.bDefLabel=bDefLabel;
+                    }
+                    if (bMechPid==null || bMechPid.equals("")) {
+                      newdiss.bMechID=orig.bMechID;
+                    } else {
+                      newdiss.bMechID=bMechPid;
+                    }
+                    if (bMechLabel==null || bMechLabel.equals("")) {
+                      newdiss.bMechLabel=orig.bMechLabel;
+                    } else {
+                      newdiss.bMechLabel=bMechLabel;
+                    }
+                    if (dissState==null || dissState.equals("")) {
+                      newdiss.dissState=orig.dissState;
+                    } else {
+                      newdiss.dissState=dissState;
+                    }
                     newdiss.auditRecordIdList().addAll(orig.auditRecordIdList());
                     // just add the disseminator
                     w.addDisseminator(newdiss);
