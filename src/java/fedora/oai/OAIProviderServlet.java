@@ -59,7 +59,7 @@ public abstract class OAIProviderServlet
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             getResponder().respond(params, out);
             try {
-                response.setContentType("text/xml");
+                response.setContentType("text/xml; charset=UTF-8");
                 response.getWriter().print(new String(out.toByteArray(), "UTF-8"));
             } catch (UnsupportedEncodingException uee) {
                 // won't happen, since all java impls support UTF-8
