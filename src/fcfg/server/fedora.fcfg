@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server xmlns="http://www.fedora.info/definitions/1/0/config/" 
-        xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" 
-        class="fedora.server.BasicServer">
+<server xmlns="http://www.fedora.info/definitions/1/0/config/" xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" class="fedora.server.BasicServer">
 	<param name="adminPassword" value="fedoraAdmin"/>
 	<param name="log_max_size" value="5242880"/>
 	<param name="log_max_days" value="7"/>
 	<param name="log_dir" value="logs"/>
 	<param name="log_level" value="finest"/>
 	<param name="log_flush_threshold" value="1"/>
-	
 	<param name="path_algorithm" value="fedora.server.storage.lowlevel.TimestampPathAlgorithm"/>
 	<param name="file_system" value="fedora.server.storage.lowlevel.GenericFileSystem"/>
-	<param name="registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>	
+	<param name="registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
 	<param name="backslash_is_escape" value="yes" oraclevalue="no"/>
 	<param name="object_store_base" value="C:\fedora_objects"/>
 	<param name="temp_store_base" value="C:\fedora_temp"/>
 	<param name="datastream_store_base" value="C:\fedora_datastreams"/>
-	
 	<param name="disseminationCacheSize" value="100"/>
 	<param name="debug" value="true"/>
 	<param name="datastreamExpirationLimit" value="300"/>
@@ -80,10 +76,10 @@
               If this is not specified, request acceptance is governed 
               solely by the allowHosts parameter.
         </comment>
-		<param name="allowHosts" value="127.0.0.1" />
+		<param name="allowHosts" value="127.0.0.1"/>
 	</module>
-    <module role="fedora.server.access.Access" class="fedora.server.access.DefaultAccess">
-        <comment>
+	<module role="fedora.server.access.Access" class="fedora.server.access.DefaultAccess">
+		<comment>
         Description:
           The access subsystem.
           This implements the methods necessary to fulfill API-A
@@ -130,34 +126,69 @@
               only for testing or cases where this security issue is not a concern. The 
               default value of doMediateDatastreams is true.
             </comment>
-                <param name="doMediateDatastreams" value="true" />
-    </module>
-    <module role="fedora.server.search.FieldSearch"
-           class="fedora.server.search.FieldSearchExistModule">
-        <comment>Supports the API-A simpleSearch and advancedSearch methods.</comment>
-    </module>
-    <module role="fedora.oai.OAIProvider"
-           class="fedora.server.oai.FedoraOAIProviderModule">
-        <comment>Exposes the repository for OAI harvesters.</comment>
-        <param name="repositoryName" value="Your Fedora Repository Name Here"/>
-        <param name="adminEmails" value="oai-admin@yourco.com bob@yourco.com"/>
-        <param name="friends" value="http://arXiv.org/oai2 http://memory.loc.gov/cgi-bin/oai2_0"/>
-        <param name="maxSets" value="100"/>
-        <param name="maxRecords" value="100"/>
-        <param name="maxHeaders" value="100"/>
-    </module>
-	<module role="fedora.server.storage.translation.DOTranslator"
-           class="fedora.server.storage.translation.DOTranslatorModule">
+		<param name="doMediateDatastreams" value="true"/>
+	</module>
+	<module role="fedora.server.access.DynamicAccess" class="fedora.server.access.DynamicAccessModule">
+		<comment>
+        Description:
+          The dynamic behavior module for the access subsystem.
+          This implements the methods necessary to fulfill API-A
+          requests without regard to:
+             - dynamically associating a default behavior definition and mechanism with objects
+          	- (Future) dynamically associating other behavior definitions and mechanisms with objects
+          	- running disseminations of dynamic behaviors
+        Parameters:
+            - fedora-system:1
+              The interface that defines the methods of the bootstrap
+              disseminator.  These methods are "built-in" to the Fedora
+              system, and are dynamically associated with every 
+              behavior definition and behavior mechanism object.
+            - fedora-system:2
+              The class that implements the methods of the bootstrap
+              disseminator.  These method implementations are "built-in"
+              to the Fedora system, and are dynamically associated with
+              every behavior definition and behavior mechanism object.  
+              This class can be though of as implementing
+              an "internal service" whereas other disseminators use
+              external services (described by WSDL) to do their work.
+            - fedora-system:3
+              The interface that defines the methods of the default
+              disseminator.  These methods are "built-in" to the Fedora
+              system, and are dynamically associated with every object.
+            - fedora-system:4
+              The class that implements the methods of the default
+              disseminator.  These method implementations are "built-in"
+              to the Fedora system, and are dynamically associated with
+              every object.  This class can be though of as implementing
+              an "internal service" whereas other disseminators use
+              external services (described by WSDL) to do their work.
+            </comment>
+		<param name="fedora-system:1" value="fedora.server.access.internalservices.Bootstrap"/>
+		<param name="fedora-system:2" value="fedora.server.access.internalservices.BootstrapImpl"/>
+		<param name="fedora-system:3" value="fedora.server.access.internalservices.DefaultBehavior"/>
+		<param name="fedora-system:4" value="fedora.server.access.internalservices.DefaultBehaviorImpl"/>
+	</module>
+	<module role="fedora.server.search.FieldSearch" class="fedora.server.search.FieldSearchExistModule">
+		<comment>Supports the API-A simpleSearch and advancedSearch methods.</comment>
+	</module>
+	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
+		<comment>Exposes the repository for OAI harvesters.</comment>
+		<param name="repositoryName" value="Your Fedora Repository Name Here"/>
+		<param name="adminEmails" value="oai-admin@yourco.com bob@yourco.com"/>
+		<param name="friends" value="http://arXiv.org/oai2 http://memory.loc.gov/cgi-bin/oai2_0"/>
+		<param name="maxSets" value="100"/>
+		<param name="maxRecords" value="100"/>
+		<param name="maxHeaders" value="100"/>
+	</module>
+	<module role="fedora.server.storage.translation.DOTranslator" class="fedora.server.storage.translation.DOTranslatorModule">
 		<comment>Supports translation from DigitalObject to a stream of 
         some format, and vice-versa.  The parameters below specify 
         serializer/deserializer classes to be used for a given format.
         Those classes must implement the DOSerializer/DODeserializer
         interfaces.
         </comment>
-		<param name="serializer_metslikefedora1" 
-                      value="fedora.server.storage.translation.METSLikeDOSerializer"/>
-		<param name="deserializer_metslikefedora1" 
-                      value="fedora.server.storage.translation.METSLikeDODeserializer"/>
+		<param name="serializer_metslikefedora1" value="fedora.server.storage.translation.METSLikeDOSerializer"/>
+		<param name="deserializer_metslikefedora1" value="fedora.server.storage.translation.METSLikeDODeserializer"/>
 	</module>
 	<module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
 		<comment>The pid generator.</comment>
@@ -170,7 +201,7 @@
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
 		<param name="defaultPoolName" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
-		<param name="poolNames" value="localMySQLPool" mckoivalue="localMcKoiPool"  oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
+		<param name="poolNames" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
 	</module>
 	<module role="fedora.server.validation.DOValidator" class="fedora.server.validation.DOValidatorModule">
 		<comment>
@@ -200,17 +231,16 @@
 	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
 		<comment>This module facilitates obtaining external content via HTTP</comment>
 	</module>
-	<module role="fedora.server.utilities.ThreadMonitor"
-               class="fedora.server.utilities.ThreadMonitorModule">
-	    <comment>Prints basic information about the running threads to the 
+	<module role="fedora.server.utilities.ThreadMonitor" class="fedora.server.utilities.ThreadMonitorModule">
+		<comment>Prints basic information about the running threads to the 
             log periodically for diagnostic purposes.
 
             Parameters:
              - active (optional, default=no): whether to activate this module.  "yes" or "true" activates it.
              - pollInterval (optional, default=10000): how many milliseconds to wait between each polling.
             </comment>
-            <param name="active" value="false"/>
-            <param name="pollInterval" value="5000"/>
+		<param name="active" value="false"/>
+		<param name="pollInterval" value="5000"/>
 	</module>
 	<datastore id="remoteMySQLPool">
 		<comment>MySQL database on UVA test host (known to work)</comment>
