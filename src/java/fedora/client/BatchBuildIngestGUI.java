@@ -157,7 +157,7 @@ public class BatchBuildIngestGUI
 
 	templatePanel.setLayout(new BorderLayout());
 	templatePanel.add(m_foxmlMap, BorderLayout.WEST);
-	templatePanel.add(new JLabel("FOXML or METS Template file (input file)"), BorderLayout.NORTH);
+	templatePanel.add(new JLabel("Template file (input file)"), BorderLayout.NORTH);
 	templatePanel.add(m_metsMap, BorderLayout.CENTER);
 	labelPanel.add(sized (templatePanel, browseMin, browsePref, browseMax));
 
