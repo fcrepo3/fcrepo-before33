@@ -4,10 +4,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.util.Enumeration;
+import java.util.Properties;
 
 /**
  * <p>Title: MethodParameterResolverServlet.java</p>
@@ -28,10 +31,33 @@ public class MethodParameterResolverServlet extends HttpServlet
   /** A string constant for the html MIME type */
   static final private String HTML_CONTENT_TYPE = "text/html";
 
-  private static final String API_A_SERVLET_PATH = "/fedora/access/soapservlet?";
+  /** Servlet mapping for this servlet */
+  private static String SERVLET_PATH = null;
+
+  /** Properties file for soap client */
+  private static final String soapClientPropertiesFile =
+      "WEB-INF/soapclient.properties";
 
   public void init() throws ServletException
-  {}
+  {
+    try
+    {
+      System.out.println("Realpath Properties File: "
+          + getServletContext().getRealPath(soapClientPropertiesFile));
+      FileInputStream fis = new FileInputStream(this.getServletContext().getRealPath(soapClientPropertiesFile));
+      Properties p = new Properties();
+      p.load(fis);
+      SERVLET_PATH = p.getProperty("soapClientServletPath");
+      System.out.println("soapClientServletPath: " + SERVLET_PATH);
+
+    } catch (Throwable th)
+    {
+      String message = "[FedoraSOAPServlet] An error has occurred. "
+          + "The error was a \"" + th.getClass().getName() + "\"  . The "
+          + "Reason: \"" + th.getMessage() + "\"  .";
+      throw new ServletException(message);
+    }
+  }
 
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
@@ -100,8 +126,8 @@ public class MethodParameterResolverServlet extends HttpServlet
       URLDecoder decode = new URLDecoder();
       PID = decode.decode(PID, "UTF-8");
       bDefPID = decode.decode(bDefPID,"UTF-8");
-      redirectURL.append(API_A_SERVLET_PATH
-          + "action_=GetDissemination&"
+      redirectURL.append(SERVLET_PATH
+          + "?action_=GetDissemination&"
           + "PID_=" + PID + "&"
           + "bDefPID_=" + bDefPID + "&"
           + "methodName_=" + methodName);
