@@ -208,9 +208,6 @@ public class FOXMLDODeserializer
 
     private int m_queryBehavior;
 
-    private static Pattern s_localPattern; // "http://local.fedora.server/"
-    private static String s_hostInfo; // "http://actual.hostname:8080/"
-
     public FOXMLDODeserializer()
             throws FactoryConfigurationError, ParserConfigurationException,
             SAXException, UnsupportedEncodingException {
