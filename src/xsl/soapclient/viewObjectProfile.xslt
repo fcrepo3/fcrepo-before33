@@ -25,6 +25,17 @@
 						</tr>
 					</table>
 					<hr/>
+					<xsl:choose>
+						<xsl:when test="@dateTime">
+							<font size="+1" color="blue">Version Date:   </font>
+							<font size="+1"><xsl:value-of select="@dateTime"/></font>
+						</xsl:when>
+						<xsl:otherwise>
+							<font size="+1" color="blue">Version Date:   </font>
+							<font size="+1">current</font>	
+						</xsl:otherwise>
+					</xsl:choose>
+					<p/>						
 					<xsl:variable name="dissIndex-url">
 						<xsl:value-of select="objDissIndexViewURL"/>
 					</xsl:variable>

@@ -113,10 +113,11 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   {
     ObjectProfile profile = m_access.getObjectProfile(context, reader.GetObjectPID(), asOfDateTime);
     InputStream in = null;
+    Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
     try
     {
       in = new ByteArrayInputStream(
-      (new ObjectInfoAsXML().getObjectProfile(reposBaseURL, profile).getBytes("UTF-8")));
+      (new ObjectInfoAsXML().getObjectProfile(reposBaseURL, profile, versDate).getBytes("UTF-8")));
     } catch (UnsupportedEncodingException uee)
     {
       throw new GeneralException("[DefaultBehaviorImpl] An error has occurred. "
@@ -176,6 +177,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       return noMethodIndexMsg();
     }
 
+    Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectMethodsDef[] methods =
       m_access.getObjectMethods(context, reader.GetObjectPID(), asOfDateTime);
     InputStream in = null;
@@ -183,7 +185,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     {
       in = new ByteArrayInputStream(
       (new ObjectInfoAsXML().getMethodIndex(
-        reposBaseURL, reader.GetObjectPID(), methods).getBytes("UTF-8")));
+        reposBaseURL, reader.GetObjectPID(), methods, versDate).getBytes("UTF-8")));
     } catch (UnsupportedEncodingException uee)
     {
       throw new GeneralException("[DefaultBehaviorImpl] An error has occurred. "

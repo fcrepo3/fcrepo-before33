@@ -232,6 +232,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       {
         asOfDateTime = DateUtility.
                    convertStringToCalendar(request.getParameter(parm));
+        versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
       } else if (parm.equals("xml_"))
       {
         xml = new Boolean(request.getParameter(parm)).booleanValue();
@@ -1035,7 +1036,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
                 + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectMethods.xsd\""
-                + " pid=\"" + PID
+                + " pid=\"" + PID + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
           }
@@ -1150,7 +1151,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
                 + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectProfile.xsd\""
-                + " pid=\"" + PID
+                + " pid=\"" + PID + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
           }

@@ -84,6 +84,11 @@
 				<xsl:attribute name="name">methodName</xsl:attribute>
 				<xsl:attribute name="value"><xsl:value-of select="@name"/></xsl:attribute>			
 			</input>
+			<input>
+				<xsl:attribute name="type">hidden</xsl:attribute>
+				<xsl:attribute name="name">asOfDateTime</xsl:attribute>
+				<xsl:attribute name="value"><xsl:value-of select="../../@dateTime"/></xsl:attribute>			
+			</input>			
 			<input type="submit" name="Submit" value="Run"></input>
 		</td>
 		<xsl:choose>

@@ -52,13 +52,27 @@ public class DatastreamsAsXML
         StringBuffer out = new StringBuffer();
 
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        out.append("<objectItemIndex"
-              + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-              + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-              + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-              + " http://www.fedora.info/definitions/1/0/access/objectItemIndex.xsd\""
-              + " PID=\"" + reader.GetObjectPID() + "\">\n");
+        if (versDateTime == null || DateUtility.
+            convertDateToString(versDateTime).equalsIgnoreCase(""))
+        {
+            out.append("<objectItemIndex"
+                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://www.fedora.info/definitions/1/0/access/objectItemIndex.xsd\""
+                + " PID=\"" + reader.GetObjectPID() + "\">\n");
+        } else
+        {
+            out.append("<objectItemIndex"
+                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://www.fedora.info/definitions/1/0/access/objectItemIndex.xsd\""
+                + " PID=\"" + reader.GetObjectPID() + "\""
+                + " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\">\n");
+        }
 
         for (int i=0; i<datastreams.length; i++)
         {

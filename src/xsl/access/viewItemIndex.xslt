@@ -27,8 +27,18 @@
 					<font size="+1">
 						<xsl:value-of select="@PID"/>
 					</font>
-					<hr/>
 					<p/>
+					<xsl:choose>
+						<xsl:when test="@dateTime">
+							<font size="+1" color="blue">Version Date:   </font>
+							<font size="+1"><xsl:value-of select="@dateTime"/></font>
+						</xsl:when>
+						<xsl:otherwise>
+							<font size="+1" color="blue">Version Date:   </font>
+							<font size="+1">current</font>	
+						</xsl:otherwise>
+					</xsl:choose>		
+					<hr/>			
 					<table width="784" border="1" cellpadding="5" cellspacing="5" bgcolor="silver">
 						<tr>
 							<td>

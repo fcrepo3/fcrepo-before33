@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -87,16 +88,29 @@ public class ObjectInfoAsXML
     {
     }
 
-    public String getObjectProfile(String reposBaseURL, ObjectProfile objProfile)
+    public String getObjectProfile(String reposBaseURL, ObjectProfile objProfile, Date versDateTime)
             throws ServerException {
         StringBuffer out = new StringBuffer();
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        out.append("<objectProfile "
-            + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-            + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-            + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-            + " http://" + fedoraServerHost + ":" + fedoraServerPort
-            + "/objectProfile.xsd\"" + " pid=\"" + objProfile.PID + "\" >");
+        if (versDateTime == null || DateUtility.
+            convertDateToString(versDateTime).equalsIgnoreCase(""))
+        {
+            out.append("<objectProfile "
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectProfile.xsd\"" + " pid=\"" + objProfile.PID + "\" >");
+        } else
+        {
+            out.append("<objectProfile "
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectProfile.xsd\"" + " pid=\"" + objProfile.PID + "\""
+                + " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" >");
+        }
 
         // PROFILE FIELDS SERIALIZATION
         out.append("<objLabel>" + objProfile.objectLabel + "</objLabel>");
@@ -126,17 +140,29 @@ public class ObjectInfoAsXML
         return out.toString();
     }
 
-    public String getMethodIndex(String reposBaseURL, String PID, ObjectMethodsDef[] methods)
+    public String getMethodIndex(String reposBaseURL, String PID, ObjectMethodsDef[] methods,
+                                 Date versDateTime)
             throws ServerException {
         StringBuffer out=new StringBuffer();
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        out.append("<objectMethods "
-            + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-            + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-            + " http://" + fedoraServerHost + ":" + fedoraServerPort
-            + "/objectMethods.xsd\"" + " pid=\"" + PID + "\">");
+        if (versDateTime == null || DateUtility.
+            convertDateToString(versDateTime).equalsIgnoreCase(""))
+        {
+            out.append("<objectMethods "
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectMethods.xsd\"" + " pid=\"" + PID + "\">");
+        } else {
+            out.append("<objectMethods "
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectMethods.xsd\"" + " pid=\"" + PID + "\""
+                + " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\">");
+        }
 
         String nextBdef = "null";
         String currentBdef = "";

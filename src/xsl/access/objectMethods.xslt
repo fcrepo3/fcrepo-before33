@@ -23,7 +23,9 @@
 			</table>			
 			<hr/>
 			<font size="+1" color="blue">Object Identifier (PID):   </font>
-			<font size="+1"><xsl:value-of select="@pid"/></font>
+			<font size="+1">
+				<xsl:value-of select="@pid"/>
+			</font>
 			<p/>
 			<xsl:choose>
 				<xsl:when test="@dateTime">
@@ -79,7 +81,7 @@
 			<input>
 				<xsl:attribute name="type">hidden</xsl:attribute>
 				<xsl:attribute name="name">asOfDateTime</xsl:attribute>
-				<xsl:attribute name="value"><xsl:value-of select="@asOfDate"/></xsl:attribute>			
+				<xsl:attribute name="value"><xsl:value-of select="../../@dateTime"/></xsl:attribute>			
 			</input>
 			<input type="submit" name="Submit" value="Run"></input>
 		</td>

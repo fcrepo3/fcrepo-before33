@@ -18,11 +18,24 @@
 								<center>
 									<h2>Fedora Digital Object</h2>
 									<h3>Object Profile View</h3>
+
+									
 								</center>
 							</td>
 						</tr>
 					</table>
 					<hr/>
+					<xsl:choose>
+						<xsl:when test="@dateTime">
+							<font size="+1" color="blue">Version Date:   </font>
+							<font size="+1"><xsl:value-of select="@dateTime"/></font>
+						</xsl:when>
+						<xsl:otherwise>
+							<font size="+1" color="blue">Version Date:   </font>
+							<font size="+1">current</font>	
+						</xsl:otherwise>
+					</xsl:choose>
+					<p/>					
 					<xsl:variable name="dissIndex-url">
 						<xsl:value-of select="objDissIndexViewURL"/>
 					</xsl:variable>
@@ -33,7 +46,6 @@
 					</xsl:variable>
 					<a href="{$itemIndex-url}">View the Item Index for this Object</a>
 					<hr/>
-					<p/>
 					<table width="784" border="1" cellpadding="5" cellspacing="5" bgcolor="silver">
 					<tr>
 						<td align="right">
