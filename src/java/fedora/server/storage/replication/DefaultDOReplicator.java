@@ -1055,7 +1055,6 @@ public class DefaultDOReplicator
         ResultSet results=null;
         try {
 		     st=connection.createStatement();
-                     st2 = connection.createStatement();
             //
             // READ
             //
@@ -1110,6 +1109,7 @@ public class DefaultDOReplicator
                   ResultSet rs = null;
                   logFinest("Getting associated bMechDbID(s) that are unique "
                         + "for this object in diss table...");
+                  st2 = connection.createStatement();
                   rs=logAndExecuteQuery(st2, "SELECT bMechDbID from "
                     + "diss WHERE dissDbID=" + id);
                   while (rs.next())
