@@ -782,16 +782,19 @@
 				<exclude name="**/exist09/**"/>
 			</fileset>
 		</copy>
+		<copy todir="dist/server/xsd">
+			<fileset dir="src/xsd"/>
+		</copy>
+		<!--
 		<copy file="src/xsd/fedora-types.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/fedora-auditing.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/fedora-behavior-bind.xsd" todir="dist/server/xsd"/>
-		<!-- Fedora extension of the METS XML Schema:  local copy packaged with the repository distribution -->
 		<copy file="src/xsd/mets-fedora.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/mets-fedora-ext.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/xlink.xsd" todir="dist/server/xsd"/>
-		<!-- ObjectMethods Schema used by API-A-LITE: local copy packaged with the repository distribution -->
 		<copy file="src/xsd/objectMethods.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/behaviorDefs.xsd" todir="dist/server/xsd"/>
+		-->
 		<!-- Schematron:  Fedora rules schema and schematron preprocessor -->
 		<mkdir dir="dist/server/schematron"/>
 		<copy file="src/xml/schematron/fedoraRulesExt.xml" todir="dist/server/schematron"/>
