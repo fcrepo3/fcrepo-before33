@@ -494,7 +494,7 @@
 		<!--
     <operation name="createObject">
       <documentation>Creates a new, empty digital object in the repository. The 
-      object's initial state will be N.  The repository will generate and return 
+      object's initial state will be A.  The repository will generate and return 
       a new PID for the object resulting from this request.  The PID will have 
       the namespace of the repository.</documentation>
       <input message="null"/>
@@ -503,7 +503,7 @@
 -->
 		<operation name="ingestObject">
 			<documentation>Creates a new digital object in the repository, given the 
-      data in the provided METS document.  The object's initial state will be N.  
+      data in the provided METS document.  The object's initial state will be A.  
       If the METS document does not specify a PID in the OBJID attribute of the 
       root element, the repository will generate and return a new PID for the 
       object resulting from this request.  That PID will have the namespace of 
