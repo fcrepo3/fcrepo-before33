@@ -15,7 +15,7 @@
 	<param name="temp_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
 	<param name="disseminationCacheSize" value="100"/>
 	<param name="debug" value="true"/>
-	<param name="datastreamExpirationLimit" value="5"/>
+	<param name="datastreamExpirationLimit" value="300"/>
 	<param name="fedoraServerPort" value="8080"/>
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
 		<comment>
