@@ -205,12 +205,17 @@ public class MethodsPane extends JPanel {
         return methodsPanel;
     }
 
+	public void clearContractMethods()
+	{	
+		// reinitialize the method map and the method table display
+		methodMap = new HashMap();
+		((DefaultTableModel)methodTable.getModel()).setNumRows(0);
+	}
 	
 	public JTable renderContractMethods(String bDefPID)
 	{
 	  // reinitialize the method map and the method table display
-	  methodMap = new HashMap();
-	  ((DefaultTableModel)methodTable.getModel()).setNumRows(0);
+	  clearContractMethods();
 	  
 	  List methodDefs = getBDefMethods(bDefPID);
 	  for (int i=0; i<methodDefs.size(); i++)
