@@ -342,7 +342,7 @@
 		</exec>
 		<copy todir="dist/server/tomcat41/webapps/userdocs/batch/images">
 			<fileset dir="src/jpg/client/batch"/>
-		</copy>			
+		</copy>
 		<echo message="Translating documentation.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -385,7 +385,7 @@
 		</exec>
 		<copy todir="dist/server/tomcat41/webapps/userdocs/search/images">
 			<fileset dir="src/jpg/search"/>
-		</copy>	
+		</copy>
 		<echo message="Translating server.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -436,6 +436,7 @@
 			<arg path="src/dbx/userdocs/localservices.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/server/tomcat41/webapps/userdocs/images/"/>
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
@@ -655,6 +656,7 @@
 			<fileset dir="src/demo-content"/>
 		</copy>
 		<!-- end setup for demo objects -->
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/server/tomcat41/webapps/ROOT/images/"/>
 		<mkdir dir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
 		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
 			<fileset dir="src/properties/server"/>
@@ -829,6 +831,15 @@
 </project>
 <!--
   $Log$
+  Revision 1.121  2003/05/14 17:59:41  rlw
+  puts a copy of newlogo2.jpg  in
+
+  dist/server/tomcat41/webapps/ROOT/images
+  (in servermostly)
+  and
+  dist/server/tomcat41/webapps/userdocs/images
+  (in userdocs)
+
   Revision 1.120  2003/05/14 08:53:02  cwilper
   puts xerces in compile path for client
 
