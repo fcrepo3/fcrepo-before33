@@ -89,6 +89,7 @@ public class UploadServlet
 				}
 			}
 		} catch (Exception e) {
+                    e.printStackTrace();
 		    sendResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     e.getClass().getName() + ": " + e.getMessage(), response);
 		}
