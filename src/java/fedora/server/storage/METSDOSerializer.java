@@ -185,7 +185,7 @@ public class METSDOSerializer
             buf.append(DateUtility.convertDateToString(obj.getLastModDate()));
             buf.append("\" RECORDSTATUS=\"");
             buf.append(obj.getState());
-            buf.append("\">\n    <!-- This info can't be set via API-M -- if it existed, it was ignored during import -->\n");
+            buf.append("\">\n    <!-- This info can't be set via API-M. If it existed, it was ignored during import -->\n");
             buf.append("  </metsHdr>\n");
             //
             // Serialize Audit Records
@@ -243,7 +243,7 @@ public class METSDOSerializer
                     StreamUtility.enc(audit.justification, buf);
                     buf.append("</");
                     buf.append(auditPrefix);
-                    buf.append(":justfication>\n");
+                    buf.append(":justification>\n");
                     
                     buf.append("          </");
                     buf.append(auditPrefix);
@@ -353,15 +353,15 @@ public class METSDOSerializer
                             buf.append(mdClass);
                             buf.append(">\n");
                         }
-                        buf.append("  </amdsec>\n");
+                        buf.append("  </amdSec>\n");
                     }
                 } else {
                     //
                     // Externally-referenced or managed datastreams
                     //
-                    buf.append("  <fileGrp ID=\"");
+                    buf.append("  <fileSec><fileGrp ID=\"");
                     buf.append(ds.DatastreamID);
-                    buf.append(">\n");
+                    buf.append("\">\n");
                     Iterator contentIter=obj.datastreams(id).iterator();
                     while (contentIter.hasNext()) {
                         DatastreamContent dsc=(DatastreamContent) contentIter.next();
@@ -420,7 +420,10 @@ public class METSDOSerializer
                         }
                         buf.append("    </file>\n");
                     } 
-                    buf.append("  </fileGrp>\n");
+                    buf.append("  </fileGrp></fileSec>\n"); 
+                    // FIXME: METS only allows one fileSec element in the entire doc...
+                    // so the datastreams must be iterated through a second time,
+                    // looking for file-ish datastreams.
                 }
             }
             //

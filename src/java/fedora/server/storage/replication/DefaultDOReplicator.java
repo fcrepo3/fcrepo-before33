@@ -351,16 +351,16 @@ public class DefaultDOReplicator
 
     /**
      * Removes a digital object from the dissemination database.
-     *
+     * <p></p>
      * If the object is a behavior definition or mechanism, it's deleted
      * as such, and then an attempt is made to delete it as a regular
      * digital object as well.
-     *
+     * <p></p>
      * Note that this does not do cascading deletes or check dependencies at
      * all.  It is expected at this point that when this is called, any
      * referencial integrity issues have been ironed out or checked at
      * appropriate.
-     *
+     * <p></p>
      * All deletions happen in a transaction.  If any database errors occur,
      * the change is rolled back.
      *
@@ -368,6 +368,7 @@ public class DefaultDOReplicator
      * @throws ReplicationException If any really bad things happened.
      */
     public void delete(String pid) {
+        // do bdef stuff
 /*
 # behavior definition
 $BDEF_DBID=SELECT BDEF_DBID FROM BehaviorDefinition WHERE BDEF_PID=$PID
