@@ -7,6 +7,8 @@ import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -27,6 +29,7 @@ import javax.swing.event.ChangeListener;
 import fedora.client.Administrator;
 
 import fedora.server.types.gen.Datastream;
+import fedora.server.utilities.StreamUtility;
 
 /**
  * Displays a datastream's attributes, allowing the editing of its state,
@@ -60,7 +63,9 @@ public class DatastreamPane
     private static SimpleDateFormat s_formatter=
             new SimpleDateFormat("yyyy-MM-dd' at 'hh:mm:ss");
 
+    private String m_pid;
     private Datastream m_mostRecent;
+
     private JComboBox m_stateComboBox;
     private JSlider m_versionSlider;
     private JPanel m_valuePane;
@@ -72,6 +77,7 @@ public class DatastreamPane
      */
     public DatastreamPane(String pid, Datastream mostRecent)
             throws Exception {
+		m_pid=pid;
         m_mostRecent=mostRecent;
 
         // mainPane(commonPane, versionPane)
@@ -246,11 +252,14 @@ public class DatastreamPane
            state="I";
         if (i==2)
            state="D";
-        // how we save it depends on the control group
-        // and whether the content has been edited
-        // X = by value
-//        Administrator.APIM.modifyObject(m_pid, state, 
-//                m_labelTextField.getText(), logMessage);
+		if (m_currentVersionPane.isDirty()) {
+		    // defer to the currentVersionPane if anything else changed
+		    m_currentVersionPane.saveChanges(state, logMessage);
+		} else {
+		    // since only state changed, we can take care of it here
+			Administrator.APIM.setDatastreamState(m_pid, m_mostRecent.getID(),
+			        state, logMessage);
+		}
     }
 
     public void changesSaved() {
@@ -294,27 +303,26 @@ public class DatastreamPane
         private Datastream m_ds;
         private JTextField m_labelTextField;
 
-private ContentEditor ed;
+        private ContentEditor m_editor;
 
         public CurrentVersionPane(Datastream ds) {
             m_ds=ds;
             // How we set this JPanel up depends on:
             // Its datastream control group
             // Its mime type
-/*            m_labelTextField=new JTextField(ds.getLabel());
+            setLayout(new BorderLayout());
+            m_labelTextField=new JTextField(ds.getLabel());
             m_labelTextField.getDocument().addDocumentListener(
                     dataChangeListener);
-            add(m_labelTextField);
-                    */
-            setLayout(new BorderLayout());
+            add(m_labelTextField, BorderLayout.NORTH);
             if (ds.getControlGroup().toString().equals("X")) {
                 // try an editor!
                 try {
                 new TextContentEditor();  // causes it to be registered if not already
                 if (ContentHandlerFactory.hasEditor("text/xml")) {
-                    ed=ContentHandlerFactory.getEditor("text/xml", new ByteArrayInputStream(ds.getContentStream()));
-                    ed.setContentChangeListener(dataChangeListener);
-                    add(ed.getComponent(), BorderLayout.CENTER);
+                    m_editor=ContentHandlerFactory.getEditor("text/xml", new ByteArrayInputStream(ds.getContentStream()));
+                    m_editor.setContentChangeListener(dataChangeListener);
+                    add(m_editor.getComponent(), BorderLayout.CENTER);
                 } else {
                     if (ContentHandlerFactory.hasViewer("text/xml")) {
                         ContentViewer viewer=ContentHandlerFactory.getViewer("text/xml", new ByteArrayInputStream(ds.getContentStream()));
@@ -334,21 +342,40 @@ private ContentEditor ed;
             return m_ds;
         }
 
+	public void saveChanges(String state, String logMessage)
+            throws Exception {
+		String g=m_ds.getControlGroup().toString();
+        String label=m_labelTextField.getText();
+		if (g.equals("X")) {
+		    byte[] content=new byte[0];
+		    if (m_editor!=null && m_editor.isDirty()) {
+			    InputStream in=m_editor.getContent();
+			    ByteArrayOutputStream out=new ByteArrayOutputStream();
+				StreamUtility.pipeStream(in, out, 4096);
+				content=out.toByteArray();
+			}
+		    Administrator.APIM.modifyDatastreamByValue(m_pid, m_ds.getID(), 
+		            label, logMessage, content, state);
+		}
+		if (g.equals("R") || g.equals("E")) {
+
+		}
+    }
         public boolean isDirty() {
-   //         if (!m_ds.getLabel().equals(m_labelTextField.getText())) {
-    //            return true;
-     //       }
-            return ed.isDirty();
+            if (!m_ds.getLabel().equals(m_labelTextField.getText())) {
+                 return true;
+            }
+            return (m_editor!=null && m_editor.isDirty());
         }
 
         public void changesSaved() {
-          //  m_ds.setLabel(m_labelTextField.getText());
-            ed.changesSaved();
+            m_ds.setLabel(m_labelTextField.getText());
+            if (m_editor!=null) m_editor.changesSaved();
         }
 
         public void undoChanges() {
-          //  m_labelTextField.setText(m_ds.getLabel());
-            ed.undoChanges();
+            m_labelTextField.setText(m_ds.getLabel());
+            if (m_editor!=null) m_editor.undoChanges();
         }
     }
 
@@ -361,6 +388,8 @@ private ContentEditor ed;
         public PriorVersionPane(Datastream ds) {
             m_ds=ds;
             setLayout(new BorderLayout());
+			JLabel label=new JLabel(ds.getLabel()+ "((" + ds.getVersionID() + "))");
+			add(label, BorderLayout.NORTH);
             if (ds.getControlGroup().toString().equals("X")) {
                 try {
                 v=ContentHandlerFactory.getViewer("text/xml", new ByteArrayInputStream(ds.getContentStream()));
