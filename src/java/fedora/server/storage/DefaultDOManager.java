@@ -1536,6 +1536,17 @@ public class DefaultDOManager
         return m_fieldSearch.resumeFindObjects(sessionToken);
     }
 
+    /**
+     * <p> Gets a list of the requested next available PIDs. the number of PIDs.</p>
+     *
+     * @param numPIDs The number of PIDs to generate. Defaults to 1 if the number
+     *                is not a positive integer.
+     * @param namespace The namespace to be used when generating the PIDs. If
+     *                  null, the namespace defined by the <i>pidNamespace</i>
+     *                  parameter in the fedora.fcfg configuration file is used.
+     * @return An array of PIDs.
+     * @throws ServerException If an error occurs in generating the PIDs.
+     */
     public String[] getNextPID(int numPIDs, String namespace) throws ServerException {
 
       if (numPIDs < 1) {
