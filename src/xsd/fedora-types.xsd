@@ -109,6 +109,12 @@
 		</xsd:annotation>
 		<xsd:restriction base="string"/>
 	</xsd:simpleType>
+    <xsd:simpleType name="Fault">
+        <xsd:annotation>
+            <xsd:documentation>a message indicating what went wrong</xsd:documentation>
+        </xsd:annotation>
+		<xsd:restriction base="string"/>
+    </xsd:simpleType>
 	<xsd:complexType name="MIMETypedStream">
 		<xsd:annotation>
 			<xsd:documentation>a base-64 encoded stream of data with an associated MIME-type</xsd:documentation>

@@ -508,6 +508,10 @@
       ordered earliest first.</documentation>
     </part>
   </message>
+  <message name="CreateObjectFault">
+    <part name="fault" type="fedora-types:Fault">
+    </part>
+  </message>
   <portType name="Fedora-API-M">
     <documentation>The Fedora Management service defines an open interface for
     administering the repository, including creating, modifying, and deleting
@@ -528,6 +532,7 @@
       the namespace of the repository.</documentation>
       <input message="null"/>
       <output message="fedora-api:CreateObjectResponse"/>
+      <fault message="fedora-api:CreateObjectFault"/>
     </operation>
     <operation name="IngestObject">
       <documentation>Creates a new digital object in the repository, given the 
