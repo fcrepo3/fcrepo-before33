@@ -122,7 +122,7 @@
 		  having to create it anew each time a digital object is validated.
         </comment>
 		<param name="tempDir" value="\work"/>
-		<param name="xmlSchemaURL" value="http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd"/>
+		<param name="xmlSchemaURL" value="http://localhost:8080/mets-fedora.xsd"/>
 		<param name="xmlSchemaLocalPath" value="\xsd\mets-fedora.xsd"/>
 		<param name="schematronPreprocessor" value="\schematron\preprocessor.xslt"/>
 		<param name="schematronSchema" value="\schematron\fedoraRules.xml"/>
