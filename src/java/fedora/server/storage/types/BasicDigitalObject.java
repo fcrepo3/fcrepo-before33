@@ -220,6 +220,13 @@ public class BasicDigitalObject
         return newID(auditIDs.iterator(), "AUDIT");
     }
 
+    /**
+     * Given an iterator of existing ids, return a new id that
+     * starts with <code>start</code> and is guaranteed to be
+     * unique.  This algorithm adds one to the highest existing
+     * id that starts with <code>start</code>.  If no such existing
+     * id exists, it will return <i>start</i> + "1".
+     */
     private String newID(Iterator iter, String start) {
         int highest=0;
         while (iter.hasNext()) {
