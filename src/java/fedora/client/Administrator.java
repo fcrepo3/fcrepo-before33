@@ -187,8 +187,8 @@ public class Administrator extends JFrame {
         s_instance=this;
 
 
-        int xs=820;
-        int ys=620;
+        int xs=850;
+        int ys=655;
         Dimension sz=this.getToolkit().getScreenSize();
         int xl=(sz.width/2) - (xs/2);
         int yl=(sz.height/2) - (ys/2);

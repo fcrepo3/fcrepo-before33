@@ -384,7 +384,9 @@ public class DisseminatorPane
 
             JPanel dsBindingsLabelPane=new JPanel(new BorderLayout());
             dsBindingsLabelPane.setBorder(BorderFactory.createEmptyBorder(0,6,0,6));
-            dsBindingsLabelPane.add(new JLabel("Datastream Bindings"), BorderLayout.NORTH);
+            JLabel datastreamBindingsLabel=new JLabel("Datastream Bindings");
+            datastreamBindingsLabel.setPreferredSize(m_labelDims);
+            dsBindingsLabelPane.add(datastreamBindingsLabel, BorderLayout.NORTH);
             middlePanel.add(dsBindingsLabelPane, BorderLayout.WEST);
 
             HashMap hash=new HashMap();
@@ -520,7 +522,9 @@ public class DisseminatorPane
             }
             JPanel dsBindingsLabelPane=new JPanel(new BorderLayout());
             dsBindingsLabelPane.setBorder(BorderFactory.createEmptyBorder(0,6,0,6));
-            dsBindingsLabelPane.add(new JLabel("Datastream Bindings"), BorderLayout.NORTH);
+            JLabel datastreamBindingsLabel=new JLabel("Datastream Bindings");
+            datastreamBindingsLabel.setPreferredSize(m_labelDims);
+            dsBindingsLabelPane.add(datastreamBindingsLabel, BorderLayout.NORTH);
             middlePanel.add(dsBindingsLabelPane, BorderLayout.WEST);
             middlePanel.add(bindingTabbedPane, BorderLayout.CENTER);
             // bottom panel is for the purge button

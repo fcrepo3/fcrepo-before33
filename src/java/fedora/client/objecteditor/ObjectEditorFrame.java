@@ -113,17 +113,18 @@ public class ObjectEditorFrame
         getContentPane().add(outerPane, BorderLayout.CENTER);
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Open16.gif")));
         pack();
-        setSize(new Dimension(740, 545)); 
-/*        Dimension size=getSize();
-        Dimension aSize=Administrator.INSTANCE.getSize();
-        if (size.width>aSize.width-20) {
-            size.width=aSize.width-20;
+        Dimension dims=getSize();
+        if (dims.height<545) {
+            dims.height=545;
+        } else if (dims.height>580) {
+            dims.height=580;
         }
-        if (size.height>aSize.height-20) {
-            size.height=aSize.height-20;
+        if (dims.width<740) {
+            dims.width=740;
+        } else if (dims.width>820) {
+            dims.width=820;
         }
-        setSize(size);
-*/
+        setSize(dims); 
         show();
     }
 

@@ -136,7 +136,7 @@ public class ObjectPane
                     JButton exportButton=new JButton(new ExportObject(pid));
                     exportButton.setText("Export...");
                     JButton purgeButton=new JButton(new PurgeObject(pid));
-                    purgeButton.setText("Purge");
+                    purgeButton.setText("Purge...");
 
             JPanel actionPane=new JPanel(new FlowLayout());
             actionPane.add(viewButton);
