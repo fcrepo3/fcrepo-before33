@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Ronda A. Grizzle (University of Virginia) -->
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!-- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> -->
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
@@ -425,7 +425,13 @@
 			</sect3>
 			<sect3>
 				<title>Search Results Window</title>
-				<para>The Search Results Window displays the results of a successful search in a table format. Across the top of the table are a row of labels of the fields that have been returned from the objects meeting the search criteria. Double clicking anywhere on a row opens that object. Right clicking anywhere on a row opens a pop-up menu that contains object level tasks from which the user may select. These tasks include <emphasis>Open Object</emphasis>, <emphasis>View Object XML</emphasis>, <emphasis>Export ...</emphasis>, and <emphasis>Purge Object</emphasis>.</para>
+				<para>The Search Results Window displays the results of a successful search in a table format. Across the top of the table are a row of labels of the fields that have been returned from the objects meeting the search criteria. Double clicking anywhere on a row opens that object. Right clicking anywhere on a row opens a pop-up menu that contains object level tasks from which the user may select. These tasks include <emphasis>Open Object</emphasis>, <emphasis>View Object XML</emphasis>, <emphasis>Export ...</emphasis>, <emphasis>Purge</emphasis>, and <emphasis>Set Object State To</emphasis>. If <emphasis>Set Object State To</emphasis>is selected, a submenu will provide the user with valid states from which to select.</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/searchpopupmenu.jpg"/>
+					</imageobject>
+				</mediaobject>
+				<para>The <emphasis>Purge</emphasis> and <emphasis>Set Object State To</emphasis> submenu options can be used on multiple objects by using mouse clicks or the equivalent keyboard commands to multiselect rows in the Search Results Window. In this way, groups of objects can be purged from the system, or have their states changed by means of one search and retrieval operation.</para>
 			</sect3>
 		</sect2>
 		<sect2>
