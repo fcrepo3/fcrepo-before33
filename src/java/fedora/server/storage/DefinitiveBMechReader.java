@@ -10,6 +10,7 @@ package fedora.server.storage;
  */
 
 import fedora.server.storage.types.*;
+import fedora.server.errors.*;
 import java.util.Date;
 import java.util.Vector;
 import java.util.Hashtable;
@@ -38,25 +39,35 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
     }
 
     debug = (args[0].equalsIgnoreCase("true")) ? true : false;
-
-    // FOR TESTING...
-    DefinitiveBMechReader doReader = new DefinitiveBMechReader(args[1]);
-    doReader.GetObjectPID();
-    doReader.GetObjectLabel();
-    doReader.ListDatastreamIDs("A");
-    doReader.ListDisseminatorIDs("A");
-    doReader.GetDatastreams(null);
-    Datastream[] dsArray = doReader.GetDatastreams(null);
-    doReader.GetDatastream(dsArray[0].DatastreamID, null);
-    doReader.GetDisseminators(null);
-    String[] bdefArray = doReader.GetBehaviorDefs(null);
-    doReader.GetBMechMethods(bdefArray[0], null);
-    doReader.GetDSBindingMaps(null);
-    doReader.GetBehaviorMethods(null);
-    doReader.GetBehaviorMethodsWSDL(null);
+    try
+    {
+      // FOR TESTING...
+      DefinitiveBMechReader doReader = new DefinitiveBMechReader(args[1]);
+      doReader.GetObjectPID();
+      doReader.GetObjectLabel();
+      doReader.ListDatastreamIDs("A");
+      doReader.ListDisseminatorIDs("A");
+      doReader.GetDatastreams(null);
+      Datastream[] dsArray = doReader.GetDatastreams(null);
+      doReader.GetDatastream(dsArray[0].DatastreamID, null);
+      doReader.GetDisseminators(null);
+      String[] bdefArray = doReader.GetBehaviorDefs(null);
+      doReader.GetBMechMethods(bdefArray[0], null);
+      doReader.GetDSBindingMaps(null);
+      doReader.GetBehaviorMethods(null);
+      doReader.GetBehaviorMethodsWSDL(null);
+    }
+    catch (ServerException e)
+    {
+      System.err.println("FEDORA EXCEPTION:)" + e.getMessage());
+    }
+    catch (Exception e)
+    {
+      System.err.println("NON-FEDORA EXCEPTION:)" + e.toString());
+    }
   }
 
-  public DefinitiveBMechReader(String objectPID)
+  public DefinitiveBMechReader(String objectPID) throws ServerException
   {
     super(objectPID);
   }
