@@ -93,6 +93,8 @@ public class METSDOSerializer
     // Mets says the above, but the spec at http://www.w3.org/TR/xlink/
     // says it's http://www.w3.org/1999/xlink
     private final static String REAL_XLINK_NAMESPACE="http://www.w3.org/1999/xlink";
+    
+    private final static String METS_NAMESPACE="http://www.loc.gov/METS/";
 
     private String m_xlinkPrefix;
 
@@ -147,7 +149,7 @@ public class METSDOSerializer
             buf.append("encoding=\"");
             buf.append(m_characterEncoding);
             buf.append("\" ?>\n");
-            buf.append("<mets xmlns=\"http://www.loc.gov/METS/\"\n");
+            buf.append("<METS:mets xmlns:METS=\"" + METS_NAMESPACE + "\"\n");
             Iterator nsIter=obj.getNamespaceMapping().keySet().iterator();
             boolean didXlink=false;
             while (nsIter.hasNext()) {
@@ -158,11 +160,13 @@ public class METSDOSerializer
                     m_xlinkPrefix=prefix;
                     didXlink=true;
                 }
-                buf.append("    xmlns:");
-                buf.append(prefix);
-                buf.append("=\"");
-                buf.append(uri);
-                buf.append("\"\n");
+                if (!uri.equals(METS_NAMESPACE)) { // ensure mets namespace isn't re-declared
+                    buf.append("    xmlns:");
+                    buf.append(prefix);
+                    buf.append("=\"");
+                    buf.append(uri);
+                    buf.append("\"\n");
+                }
             }
             if (!didXlink) {
                 buf.append("    xmlns:xlink=\"" + REAL_XLINK_NAMESPACE + "\"\n");
@@ -181,31 +185,31 @@ public class METSDOSerializer
             }
             buf.append("\"\n    PROFILE=\"");
             StreamUtility.enc(obj.getContentModelId(), buf);
-            buf.append("\">\n  <metsHdr CREATEDATE=\"");
+            buf.append("\">\n  <METS:metsHdr CREATEDATE=\"");
             buf.append(DateUtility.convertDateToString(obj.getCreateDate()));
             buf.append("\" LASTMODDATE=\"");
             buf.append(DateUtility.convertDateToString(obj.getLastModDate()));
             buf.append("\" RECORDSTATUS=\"");
             buf.append(obj.getState());
             buf.append("\">\n    <!-- This info can't be set via API-M. If it existed, it was ignored during import -->\n");
-            buf.append("  </metsHdr>\n");
+            buf.append("  </METS:metsHdr>\n");
             //
             // Serialize Audit Records
             //
             if (obj.getAuditRecords().size()>0) {
-                buf.append("  <amdSec ID=\"FEDORA-AUDITTRAIL\">\n");
+                buf.append("  <METS:amdSec ID=\"FEDORA-AUDITTRAIL\">\n");
                 String auditPrefix=(String) obj.getNamespaceMapping().get(FEDORA_AUDIT_NAMESPACE_URI);
                 Iterator iter=obj.getAuditRecords().iterator();
                 while (iter.hasNext()) {
                     AuditRecord audit=(AuditRecord) iter.next();
-                    buf.append("    <digiprovMD ID=\"");
+                    buf.append("    <METS:digiprovMD ID=\"");
                     buf.append(audit.id);
                     buf.append("\" CREATED=\"");
                     String createDate=DateUtility.convertDateToString(audit.date);
                     buf.append(createDate);
                     buf.append("\" STATUS=\"A\">\n");  // status is always A
-                    buf.append("      <mdWrap MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\" LABEL=\"Fedora Object Audit Trail Record\">\n");
-                    buf.append("        <xmlData>\n");
+                    buf.append("      <METS:mdWrap MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\" LABEL=\"Fedora Object Audit Trail Record\">\n");
+                    buf.append("        <METS:xmlData>\n");
                     buf.append("          <");
                     buf.append(auditPrefix);
                     buf.append(":record>\n");
@@ -250,11 +254,11 @@ public class METSDOSerializer
                     buf.append("          </");
                     buf.append(auditPrefix);
                     buf.append(":record>\n");
-                    buf.append("        </xmlData>\n");
-                    buf.append("      </mdWrap>\n");
-                    buf.append("    </digiprovMD>\n");
+                    buf.append("        </METS:xmlData>\n");
+                    buf.append("      </METS:mdWrap>\n");
+                    buf.append("    </METS:digiprovMD>\n");
                 }
-                buf.append("  </amdSec>\n");
+                buf.append("  </METS:amdSec>\n");
             }
             //
             // Serialize Datastreams
@@ -289,7 +293,7 @@ public class METSDOSerializer
                         Iterator dmdIter=obj.datastreams(id).iterator();
                         while (dmdIter.hasNext()) {
                             mds=(DatastreamXMLMetadata) dmdIter.next();
-                            buf.append("  <dmdSec ID=\"");
+                            buf.append("  <METS:dmdSec ID=\"");
                             buf.append(mds.DSVersionID);
                             buf.append("\" GROUPID=\"");
                             buf.append(mds.DatastreamID);
@@ -300,7 +304,7 @@ public class METSDOSerializer
                             buf.append(mds.DSState);
                             buf.append("\">\n");
                             mdWrap(mds, buf);
-                            buf.append("  </dmdsec>\n");
+                            buf.append("  </METS:dmdsec>\n");
                         }
                     } else {
                	        //
@@ -324,18 +328,18 @@ public class METSDOSerializer
                         //
                         String mdClass;
                         if (mds.DSMDClass==DatastreamXMLMetadata.TECHNICAL) {
-                            mdClass="techMD";
+                            mdClass="METS:techMD";
                         } else if (mds.DSMDClass==DatastreamXMLMetadata.SOURCE) {
-                            mdClass="sourceMD";
+                            mdClass="METS:sourceMD";
                         } else if (mds.DSMDClass==DatastreamXMLMetadata.RIGHTS) {
-                            mdClass="rightsMD";
+                            mdClass="METS:rightsMD";
                         } else if (mds.DSMDClass==DatastreamXMLMetadata.DIGIPROV) {
-                            mdClass="digiprovMD";
+                            mdClass="METS:digiprovMD";
                         } else {
                             throw new ObjectIntegrityException(
                                     "Datastreams must have a class");
                         }
-                        buf.append("  <amdSec ID=\"");
+                        buf.append("  <METS:amdSec ID=\"");
                         buf.append(mds.DatastreamID);
                         buf.append("\">\n");
                         Iterator amdIter=obj.datastreams(id).iterator();
@@ -356,7 +360,7 @@ public class METSDOSerializer
                             buf.append(mdClass);
                             buf.append(">\n");
                         }
-                        buf.append("  </amdSec>\n");
+                        buf.append("  </METS:amdSec>\n");
                     }
                 }
             }
@@ -373,17 +377,17 @@ public class METSDOSerializer
                     // Externally-referenced or managed datastreams (fileSec)
                     //
                     if (!didFileSec) {
-                        buf.append("  <fileSec>\n");
-                        buf.append("   <fileGrp ID=\"DATASTREAMS\">\n");
+                        buf.append("  <METS:fileSec>\n");
+                        buf.append("   <METS:fileGrp ID=\"DATASTREAMS\">\n");
                         didFileSec=true;
                     }
-                    buf.append("    <fileGrp ID=\"");
+                    buf.append("    <METS:fileGrp ID=\"");
                     buf.append(ds.DatastreamID);
                     buf.append("\">\n");
                     Iterator contentIter=obj.datastreams(id).iterator();
                     while (contentIter.hasNext()) {
                         DatastreamContent dsc=(DatastreamContent) contentIter.next();
-                        buf.append("      <file ID=\"");
+                        buf.append("      <METS:file ID=\"");
                         buf.append(dsc.DSVersionID);
                         buf.append("\" CREATED=\"");
                         buf.append(DateUtility.convertDateToString(dsc.DSCreateDT));
@@ -392,10 +396,15 @@ public class METSDOSerializer
                         buf.append("\" STATUS=\"");
                         buf.append(dsc.DSState);
                         buf.append("\" SIZE=\"" + dsc.DSSize);
-                        buf.append("\" ADMID=\"");
+                        buf.append("\"");
+
+                        // ADMID attr:only printed if >0 admids exist
                         Iterator admIdIter=getIds(obj, dsc, true).iterator();
                         int admNum=0;
                         while (admIdIter.hasNext()) {
+                            if (admNum==0) {
+                                buf.append(" ADMID=\"");
+                            }
                             String admId=(String) admIdIter.next();
                             if (admNum>0) {
                                 buf.append(' ');
@@ -403,10 +412,17 @@ public class METSDOSerializer
                             buf.append(admId);
                             admNum++;
                         }
-                        buf.append("\" DMDID=\"");
+                        if (admNum>0) { 
+                            buf.append("\"");
+                        }
+                        
+                        // DMDID attr:only printed if >0 dmdids exist
                         Iterator dmdIdIter=getIds(obj, dsc, false).iterator();
                         int dmdNum=0;
                         while (dmdIdIter.hasNext()) {
+                            if (dmdNum==0) {
+                                buf.append(" DMDID=\"");
+                            }
                             String dmdId=(String) dmdIdIter.next();
                             if (dmdNum>0) {
                                 buf.append(' ');
@@ -414,9 +430,15 @@ public class METSDOSerializer
                             buf.append(dmdId);
                             dmdNum++;
                         }
+                        if (dmdNum>0) { 
+                            buf.append("\"");
+                        }
+                        
                         //
-                        // other attrs
+                        // DS Control Group ... "OWNERID"
                         //
+                        buf.append(" OWNERID=\"");
+                        buf.append(dsc.DSControlGrp);
                         buf.append("\">\n");
                         //if (dsc.DSControlGrp==Datastream.EXTERNAL_REF) {
                         // External (E) or External-Protected (P) Datastreams
@@ -424,11 +446,11 @@ public class METSDOSerializer
                             dsc.DSControlGrp.equalsIgnoreCase("P")) {
                             DatastreamReferencedContent dsec=(DatastreamReferencedContent) dsc;
                             // xlink:title, xlink:href
-                            buf.append("        <FLocat ");
+                            buf.append("        <METS:FLocat ");
                             buf.append(m_xlinkPrefix);
                             buf.append(":title=\"");
                             buf.append(dsec.DSLabel);
-                            buf.append("\" ");
+                            buf.append("\" LOCTYPE=\"URL\" ");
                             buf.append(m_xlinkPrefix);
                             buf.append(":href=\"");
                             if (dsec.DSLocation==null) {
@@ -439,14 +461,14 @@ public class METSDOSerializer
                         } else {
                             // FContent=base64 encoded
                         }
-                        buf.append("      </file>\n");
+                        buf.append("      </METS:file>\n");
                     }
-                    buf.append("    </fileGrp>\n");
+                    buf.append("    </METS:fileGrp>\n");
                 }
             }
             if (didFileSec) {
-                buf.append("   </fileGrp>\n");
-                buf.append("  </fileSec>\n");
+                buf.append("   </METS:fileGrp>\n");
+                buf.append("  </METS:fileSec>\n");
             }
             // Now do structmap...one for each disseminator
             Iterator dissIdIter=obj.disseminatorIdIterator();
@@ -455,10 +477,10 @@ public class METSDOSerializer
                 Iterator dissIter=obj.disseminators(did).iterator();
                 while (dissIter.hasNext()) {
                     Disseminator diss=(Disseminator) dissIter.next();
-                    buf.append("  <structMap ID=\"");
+                    buf.append("  <METS:structMap ID=\"");
                     buf.append(diss.dsBindMapID);
                     buf.append("\" TYPE=\"fedora:dsBindingMap\">\n");
-                    buf.append("    <div TYPE=\"");
+                    buf.append("    <METS:div TYPE=\"");
                     buf.append(diss.bMechID);
                     buf.append("\" LABEL=\"");
                     buf.append(diss.dsBindMap.dsBindMapLabel);
@@ -466,20 +488,22 @@ public class METSDOSerializer
                     // iterate through diss.dsBindMap.dsBindings[]
                     DSBinding[] bindings=diss.dsBindMap.dsBindings;
                     for (int i=0; i<bindings.length; i++) {
-                        buf.append("      <div TYPE=\"");
+                        buf.append("      <METS:div TYPE=\"");
                         buf.append(bindings[i].bindKeyName);
                         buf.append("\" LABEL=\"");
                         buf.append(bindings[i].bindLabel);
-                        buf.append("\" ORDER=\"");
-                        buf.append(bindings[i].seqNo);
+                        if (bindings[i].seqNo!=null) {
+                            buf.append("\" ORDER=\"");
+                            buf.append(bindings[i].seqNo);
+                        }
                         buf.append("\">\n");
-                        buf.append("        <fptr FILEID=\"");
+                        buf.append("        <METS:fptr FILEID=\"");
                         buf.append(bindings[i].datastreamID);
                         buf.append("\"/>\n");
-                        buf.append("      </div>\n");
+                        buf.append("      </METS:div>\n");
                     }
-                    buf.append("    </div>\n");
-                    buf.append("  </structMap>\n");
+                    buf.append("    </METS:div>\n");
+                    buf.append("  </METS:structMap>\n");
                 }
             }
             // Last, do disseminators
@@ -489,7 +513,7 @@ public class METSDOSerializer
                 Iterator dissIter=obj.disseminators(did).iterator();
                 while (dissIter.hasNext()) {
                     Disseminator diss=(Disseminator) dissIter.next();
-                    buf.append("  <behaviorSec ID=\"");
+                    buf.append("  <METS:behaviorSec ID=\"");
                     buf.append(diss.dissVersionID);
                     buf.append("\" STRUCTID=\"");
                     buf.append(diss.dsBindMapID);
@@ -505,29 +529,23 @@ public class METSDOSerializer
                     buf.append("\" STATUS=\"");
                     buf.append(diss.dissState);
                     buf.append("\">\n");
-                    buf.append("    <interfaceDef LABEL=\"");
+                    buf.append("    <METS:interfaceDef LABEL=\"");
                     buf.append(diss.bDefLabel);
                     buf.append("\" LOCTYPE=\"URN\" xlink:href=\"");
                     buf.append(diss.bDefID);
                     buf.append("\"/>\n");
-                    buf.append("    <mechanism LABEL=\"");
+                    buf.append("    <METS:mechanism LABEL=\"");
                     buf.append(diss.bMechLabel);
                     buf.append("\" LOCTYPE=\"URN\" xlink:href=\"");
                     buf.append(diss.bMechID);
                     buf.append("\"/>\n");
-                    buf.append("  </behaviorSec>\n");
+                    buf.append("  </METS:behaviorSec>\n");
                 }
             }
-/*
-<behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors" GROUPID="DISS1" STATUS="">
-  <interfaceDef LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
-  <mechanism LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
-</behaviorSec>
-*/
             //
             // Serialization Complete
             //
-            buf.append("</mets>");
+            buf.append("</METS:mets>");
             out.write(buf.toString().getBytes(m_characterEncoding));
             out.flush();
         } catch (UnsupportedEncodingException uee) {
@@ -590,14 +608,14 @@ try {
 
     private void mdWrap(DatastreamXMLMetadata mds, StringBuffer buf)
             throws StreamIOException {
-        buf.append("    <mdWrap MIMETYPE=\"");
+        buf.append("    <METS:mdWrap MIMETYPE=\"");
         buf.append(mds.DSMIME);
         buf.append("\" MDTYPE=\"");
         buf.append(mds.DSInfoType);
         buf.append("\" LABEL=\"");
         StreamUtility.enc(mds.DSLabel, buf);
         buf.append("\">\n");
-        buf.append("      <xmlData>");
+        buf.append("      <METS:xmlData>");
         InputStream in=mds.getContentStream();
         try {
             byte[] byteBuf = new byte[4096];
@@ -615,8 +633,8 @@ try {
               // ignore problems while closing
             }
         }
-        buf.append("      </xmlData>\n");
-        buf.append("    </mdWrap>\n");
+        buf.append("      </METS:xmlData>\n");
+        buf.append("    </METS:mdWrap>\n");
     }
 
     public boolean equals(Object o) {
