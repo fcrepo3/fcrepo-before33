@@ -101,7 +101,6 @@ public class METSDOSerializer
     private String m_characterEncoding;
 
     public METSDOSerializer() {
-    System.out.println("Mets do serializer constructed.");
     }
 
     /**
@@ -127,6 +126,10 @@ public class METSDOSerializer
     // subclasses should override this
     public static String getVersion() {
         return "1.0";
+    }
+    
+    public DOSerializer getInstance() {
+        return (DOSerializer) new METSDOSerializer();
     }
 
     /**

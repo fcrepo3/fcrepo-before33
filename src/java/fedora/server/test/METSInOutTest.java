@@ -2,6 +2,7 @@ package fedora.server.test;
 
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.DOTranslatorImpl;
 import fedora.server.storage.METSDOSerializer;
 import fedora.server.storage.METSDODeserializer;
 import fedora.server.validation.DOValidatorImpl;
@@ -11,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Tests the METS deserializer and serializer by opening a METS
@@ -35,14 +37,19 @@ public class METSInOutTest {
         }
         try {
             METSDODeserializer deser=new METSDODeserializer("UTF-8", false, METSDODeserializer.QUERY_NEVER);
+            METSDOSerializer ser=new METSDOSerializer("UTF-8");
+            HashMap desers=new HashMap();
+            HashMap sers=new HashMap();
+            desers.put("mets11fedora1", deser);
+            sers.put("mets11fedora1", ser);
+            DOTranslatorImpl trans=new DOTranslatorImpl(sers, desers, null);
             DigitalObject obj=new BasicDigitalObject();
             System.out.println("Deserializing...");
-            deser.deserialize(in, obj, "UTF-8");
+            trans.deserialize(in, obj, "mets11fedora1", "UTF-8");
             System.out.println("Done.");
-            METSDOSerializer ser=new METSDOSerializer("UTF-8");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             System.out.println("Re-serializing...");
-            ser.serialize(obj, out, "UTF-8");
+            trans.serialize(obj, out, "mets11fedora1", "UTF-8");
             System.out.println("Done.");
             if (args.length>1) {
                 ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
@@ -68,6 +75,7 @@ public class METSInOutTest {
             
         } catch (Exception e) {
             System.out.println("Error: (" + e.getClass().getName() + "):" + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

@@ -38,7 +38,7 @@
           The named connection pool from which read/write
           database connections are to be provided for the storage
           subsystem (see the ConnectionPoolManager module)
-        - storageFormat [default=default provided by the DOTranslator]
+        - storageFormat (required)
           The format in which serializations of digital objects
           are to be written.  There must exist a correspondingly
           named serializer-deserializer pair in the DOTranslator module.
@@ -85,9 +85,8 @@
         some format, and vice-versa.  The parameters below specify 
         serializer/deserializer classes to be used for a given format.
         Those classes must implement the DOSerializer/DODeserializer
-        interfaces, and must have a public constructor that takes no parameters.
+        interfaces.
         </comment>
-		<param name="defaultFormat" value="mets11fedora1"/>
 		<param name="serializer_mets11fedora1" value="fedora.server.storage.METSDOSerializer"/>
 		<param name="deserializer_mets11fedora1" value="fedora.server.storage.METSDODeserializer"/>
 	</module>

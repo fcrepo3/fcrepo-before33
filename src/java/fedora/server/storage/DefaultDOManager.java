@@ -123,11 +123,11 @@ public class DefaultDOManager
                 + "not given, will defer to ConnectionPoolManager's "
                 + "default pool.");
         }
-        // storageFormat (optional, default=DOTranslator's default format)
+        // storageFormat (required)
         m_storageFormat=getParameter("storageFormat");
         if (m_storageFormat==null) {
-            getServer().logConfig("Parameter storageFormat "
-                + "not given, will defer to DOTranslator's default format.");
+            throw new ModuleInitializationException("Parameter storageFormat "
+                + "not given, but it's required.", getRole());
         }
         // storageCharacterEncoding (optional, default=UTF-8)
         m_storageCharacterEncoding=getParameter("storageCharacterEncoding");
@@ -152,9 +152,6 @@ public class DefaultDOManager
         // get ref to translator and derive storageFormat default if not given
         m_translator=(DOTranslator) getServer().
                 getModule("fedora.server.storage.DOTranslator");
-        if (m_storageFormat==null) {
-            m_storageFormat=m_translator.getDefaultFormat();
-        }
         // get ref to replicator
         m_replicator=(DOReplicator) getServer().
                 getModule("fedora.server.storage.replication.DOReplicator");

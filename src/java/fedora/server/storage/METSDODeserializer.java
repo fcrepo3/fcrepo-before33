@@ -1,6 +1,7 @@
 package fedora.server.storage;
 
 import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StreamReadException;
 import fedora.server.storage.types.AuditRecord;
@@ -191,6 +192,17 @@ public class METSDODeserializer
         spf.setValidating(validate);
         spf.setNamespaceAware(true);
         m_parser=spf.newSAXParser();
+    }
+    
+    public DODeserializer getInstance()
+            throws RepositoryConfigurationException {
+        try {
+            return (DODeserializer) new METSDODeserializer("UTF-8", false, QUERY_NEVER);
+        } catch (Exception e) {
+            throw new RepositoryConfigurationException("Error trying to get a "
+                    + "new METSDODeserializer instance: " + e.getClass().getName()
+                    + ": " + e.getMessage());
+        }
     }
 
     public void deserialize(InputStream in, DigitalObject obj, String encoding)

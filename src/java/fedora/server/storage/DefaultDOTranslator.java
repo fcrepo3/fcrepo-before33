@@ -20,7 +20,6 @@ public class DefaultDOTranslator
         
     private HashMap m_serializerClassNameMap;
     private HashMap m_deserializerClassNameMap;
-    private String m_defaultFormat;
     
     /** FIXME: not thread safe, but little impact. */
     private Exception m_instex;
@@ -57,23 +56,6 @@ public class DefaultDOTranslator
                         paramName.indexOf("_")+1), getParameter(paramName));
             }
         }
-        // now get default format, and ensure a serializer/deserializer pair
-        // exists for that format
-        m_defaultFormat=getParameter("defaultFormat");
-        if (m_defaultFormat==null) {
-            throw new ModuleInitializationException("defaultFormat"
-                    + " must be specified.", getRole());
-        }
-        if (! (m_serializerClassNameMap.get(m_defaultFormat)!=null)
-                & (m_deserializerClassNameMap.get(m_defaultFormat)!=null) ) {
-            throw new ModuleInitializationException("implementing serializer"
-                    + " *and* deserializer classes must be specified for "
-                    + "defaultFormat '" + m_defaultFormat + "'.", getRole());
-        }
-    }
-    
-    public String getDefaultFormat() {
-        return m_defaultFormat;
     }
     
     private DOSerializer newSerializerInstance(String className) {
