@@ -86,8 +86,8 @@
           minOccurs="0" 
           maxOccurs="unbounded"/>
     </sequence>
-    <attribute name="name" type="xsd:string"/>
     <attribute name="role" type="xsd:string"/>
+    <attribute name="class" type="xsd:string"/>
   </complexType>
   
   <complexType name="NameValue">
