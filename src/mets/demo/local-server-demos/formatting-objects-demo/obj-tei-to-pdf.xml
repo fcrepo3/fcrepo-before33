@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<!---************************************************************************-->
+<!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS    -->
+<!---************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" 
+           xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:xlink="http://www.w3.org/TR/xlink" 
+           xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" 
+           OBJID="demo:26" TYPE="FedoraObject" LABEL="Sample Document Object (TEI to PDF)" PROFILE="TEI_TO_PDFDOC">
+	<!---*******************************************************************************************************************************************-->
+	<!--  FEDORA SYSTEM METADATA: -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-22T06:32:00" RECORDSTATUS="A">
+		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
+			<METS:name>Chris Wilper</METS:name>
+			<METS:note/>
+		</METS:agent>
+		<METS:agent ID="A3" ROLE="CUSTODIAN" TYPE="OTHER">
+			<METS:name>Cornell</METS:name>
+			<METS:note>Owned by Cornell</METS:note>
+		</METS:agent>
+	</METS:metsHdr>
+	<!---*******************************************************************************************************************************************-->
+	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:dmdSecFedora ID="DC" STATUS="A">
+		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Dublin Core for the Document object">
+				<METS:xmlData>
+					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
+					<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+						<dc:title>Pipeline Tranformation Demo two</dc:title>
+						<dc:creator>Chris Wilper</dc:creator>
+						<dc:subject>tei</dc:subject>
+						<dc:subject>pdf</dc:subject>
+						<dc:description>This object contains a .tei file that is translated to PDF using a two-step process.</dc:description>
+						<dc:identifier>demo:26</dc:identifier>
+						<dc:relation>http://www.fedora.info/</dc:relation>
+						<dc:rights>unrestricted</dc:rights>
+					</oai_dc:dc>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:descMD>
+	</METS:dmdSecFedora>
+	<METS:dmdSecFedora ID="TEISOURCE" STATUS="A">
+		<METS:descMD ID="TEISOURCE1.0" CREATED="2002-05-20T06:32:00">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="TEI Source">
+				<METS:xmlData>
+<TEI.2>
+<teiHeader>
+<fileDesc>
+   <titleStmt>
+     <title>The Purple Cow</title>
+     <author>Frank Gelett Burgess</author>
+   </titleStmt>
+   <publicationStmt>
+     <p>Text entry by <name>Walter Underwood</name>(wunder@infoseek.com) on
+      <date>1999-02-01</date>. This transcription is in the public domain.</p>
+   </publicationStmt>
+   <sourceDesc>
+     <p>From the <title>The Lark</title>, San Fransicsco, <date>1896</date>.</p>
+   </sourceDesc>
+</fileDesc>
+</teiHeader>
+<text>
+<body>
+<div1 type="poem">
+<head>The Purple Cow</head>
+<lg>
+<l>I never saw a purple cow,</l>
+<l>I never hope to see one;</l>
+<l>But I can tell you, anyhow,</l>
+<l>I'd rather see than be one.</l>
+</lg>
+</div1>
+</body>
+</text>
+</TEI.2>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:descMD>
+	</METS:dmdSecFedora>
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="FOPDISSEM" STATUS="">
+				<METS:file ID="FOPRENDITION" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/fedora/get/demo:26/demo:22/getFO" xlink:title="FOP Dissemination as Datastream"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+<!--http://localhost:8080/saxon/SaxonServlet?source=http%3a//localhost%3a8080/fedora/get/demo%3a22/fedora-system%3a3/getItem%3fitemID=DOCBOOKSOURCE&style=http%3a//www.altova.com/stylesheets/docbook/fo/docbook.xsl -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- FEDORA DATASTREAM BINDING MAPS  -->
+	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="demo:20" LABEL="DS Binding Map for FOP mechanism">
+			<METS:div TYPE="XML_SOURCE" LABEL="FOP Source file to be transformed" ORDER="0">
+				<METS:fptr FILEID="FOPDISSEM"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<METS:structMap ID="S2" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="demo:25" LABEL="DS Binding Map for TEI-to-FO mechanism">
+			<METS:div TYPE="TEI_SOURCE" LABEL="TEI Source file to be transformed to FO" ORDER="0">
+				<METS:fptr FILEID="TEISOURCE"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DISSEMINATORS-->
+	<!-- A disseminator provides a "behavior-centric" view of the object.  It has an attribute STRUCTID -->
+	<!-- which is an IDREF to a mechanism-specific structMap.  The structMap labels datastreams in -->
+	<!-- a manner that is understood by the mechanism defined in the disseminator.  -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:19" CREATED="2002-05-20T06:32:00" LABEL="PDF Disseminator">
+			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
+			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
+			<!-- the disseminator subscribes -->
+			<METS:interfaceMD LABEL="PDF Behavior Definition" LOCTYPE="URN" xlink:href="demo:19"/>
+			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
+			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+			<METS:serviceBindMD LABEL="Fedora Local FOP Service Mechanism" LOCTYPE="URN" xlink:href="demo:20"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
+	<METS:behaviorSec ID="DISS2" STATUS="A">
+		<METS:serviceBinding ID="DISS2.0" STRUCTID="S2" BTYPE="demo:22" CREATED="2002-05-20T06:32:00" LABEL="FO Disseminator">
+			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
+			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
+			<!-- the disseminator subscribes -->
+			<METS:interfaceMD LABEL="FO Behavior Definition" LOCTYPE="URN" xlink:href="demo:22"/>
+			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
+			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+			<METS:serviceBindMD LABEL="Fedora Local Saxon TEI-to-FO Service Mechanism" LOCTYPE="URN" xlink:href="demo:25"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
+</METS:mets>
