@@ -505,14 +505,13 @@ public class DefaultDOReplicator
      * <p></p>
      * Pseudocode:
      * <ul><pre>
-     * $BMECH_DBID, $SMTYPE_DBID=SELECT BMECH_DBID, SMType_DBID
+     * $BMECH_DBID=SELECT BMECH_DBID
      * FROM BehaviorMechanism WHERE BMECH_PID=$PID
      * BehaviorMechanism
      * @BKEYIDS=SELECT DSBindingKey_DBID
      * FROM DataStreamBindingSpec
      * WHERE BMECH_DBID=$BMECH_DBID
      * DataStreamMIME WHERE DSBindingKey_DBID in @BKEYIDS
-     * StructMapType where SMType_DBID=$SMTYPE_DBID
      * MechanismImpl
      * </pre></ul>
      *
@@ -529,7 +528,8 @@ public class DefaultDOReplicator
             // READ
             //
             logFinest("Checking BehaviorMechanism table for " + pid + "...");
-            results=logAndExecuteQuery(st, "SELECT BMECH_DBID, SMType_DBID "
+            //results=logAndExecuteQuery(st, "SELECT BMECH_DBID, SMType_DBID "
+            results=logAndExecuteQuery(st, "SELECT BMECH_DBID "
                     + "FROM BehaviorMechanism WHERE BMECH_PID='" + pid + "'");
             if (!results.next()) {
                  // must not be a bmech...exit early
@@ -538,10 +538,11 @@ public class DefaultDOReplicator
                  return;
             }
             int dbid=results.getInt("BMECH_DBID");
-            int smtype_dbid=results.getInt("BMECH_DBID");
+            //int smtype_dbid=results.getInt("BMECH_DBID");
             results.close();
             logFinest(pid + " was found in BehaviorMechanism table (DBID="
-                    + dbid + ", SMTYPE_DBID=" + smtype_dbid + ")");
+            //        + dbid + ", SMTYPE_DBID=" + smtype_dbid + ")");
+                    + dbid);
             logFinest("Getting DSBindingKey_DBID(s) from DataStreamBindingSpec "
                     + "table...");
             HashSet dsBindingKeyIds=new HashSet();
