@@ -5,6 +5,7 @@
 <xsl:stylesheet
 	version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/"
 	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
@@ -19,7 +20,11 @@
 	</head>
 
 	<body>
-      <xsl:for-each select="//wsdl:operation">
+      <xsl:for-each select="//wsdl:portType">
+	    <h2><xsl:value-of select="@name"/></h2>
+		<dir><i><xsl:value-of select="wsdl:documentation"/></i></dir>
+		<hr size="1"></hr>
+        <xsl:for-each select="wsdl:operation">
         <xsl:sort case-order="upper-first" select="@name"/>
 
         <!-- method name -->
@@ -31,7 +36,14 @@
         <xsl:variable name="outmsgname" select="wsdl:output/@message"/>
         <xsl:for-each select="//wsdl:message[@name=$outmsgname]">
           <xsl:for-each select="wsdl:part">
-            <xsl:value-of select="@type"/>
+		    <xsl:variable name="rtypename" select="@type"/>
+              <xsl:for-each select="//wsdldoc:type[@name=$rtypename]">
+			    <a>
+				  <xsl:attribute name="href"><xsl:value-of select="@url"/></xsl:attribute>
+			      <xsl:value-of select="$rtypename"/>
+				</a>
+              </xsl:for-each>
+
             <xsl:if test="not (position()=last())"> 
               <xsl:text>, </xsl:text> 
             </xsl:if> 
@@ -46,8 +58,17 @@
         <xsl:variable name="inmsgname" select="wsdl:input/@message"/>
         <xsl:for-each select="//wsdl:message[@name=$inmsgname]">
           <xsl:for-each select="wsdl:part">
-            <xsl:value-of select="@type"/>&#160;<xsl:value-of select="@name"/>
+		    <nobr>
+		    <xsl:variable name="ptypename" select="@type"/>
+		    <xsl:for-each select="//wsdldoc:type[@name=$ptypename]">
+			  <a>
+		        <xsl:attribute name="href"><xsl:value-of select="@url"/></xsl:attribute>
+			    <xsl:value-of select="$ptypename"/>
+			  </a>
+            </xsl:for-each><xsl:text> </xsl:text>
+            <xsl:value-of select="@name"/>
             <xsl:if test="not (position()=last())"><xsl:text>, </xsl:text></xsl:if> 
+			</nobr>
           </xsl:for-each>
         </xsl:for-each>
         )
@@ -99,6 +120,7 @@
 
         <hr size="1"></hr>
 
+      </xsl:for-each>
     </xsl:for-each>
   </body>
 </html>
