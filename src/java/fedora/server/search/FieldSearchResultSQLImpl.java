@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.sql.Connection;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -85,6 +86,7 @@ public class FieldSearchResultSQLImpl
     private long m_startMillis;
 
     /* internal state */
+    private Statement m_statement;
     private ResultSet m_resultSet;
     private long m_nextCursor=0;
     private boolean m_expired;
@@ -123,17 +125,19 @@ public class FieldSearchResultSQLImpl
         m_maxSeconds=maxSeconds;
         m_conn=m_cPool.getConnection();
         try {
-            m_resultSet=getResultSet(query);
+            m_statement=m_conn.createStatement();
+            m_resultSet=m_statement.executeQuery(logAndGetQueryText(query));
         } catch (SQLException sqle) {
             // if there's any kind of problem getting the resultSet,
             // give the connection back to the pool
             if (m_resultSet != null) m_resultSet.close();
+            if (m_statement != null) m_statement.close();
             m_cPool.free(m_conn);
             throw sqle;
         }
     }
 
-    private ResultSet getResultSet(FieldSearchQuery query)
+    private String logAndGetQueryText(FieldSearchQuery query)
             throws SQLException, QueryParseException {
         StringBuffer queryText=new StringBuffer();
         queryText.append("SELECT doFields.pid FROM doFields");
@@ -143,8 +147,7 @@ public class FieldSearchResultSQLImpl
             queryText.append(getWhereClause(query.getConditions()));
         }
         logFinest("Doing field search query: " + queryText.toString());
-        return m_conn.createStatement().executeQuery(queryText.toString());
-
+        return queryText.toString();
     }
 
     private String getWhereClause(String terms)
@@ -308,6 +311,7 @@ public class FieldSearchResultSQLImpl
             // clean up
             try {
                 m_resultSet.close();
+                m_statement.close();
             } catch (SQLException sqle2) {
             } finally {
                 m_cPool.free(m_conn);
@@ -355,6 +359,7 @@ public class FieldSearchResultSQLImpl
                 m_token=null;
                 try {
                     m_resultSet.close();
+                    m_statement.close();
                 } catch (SQLException sqle2) {
                 } finally {
                     m_cPool.free(m_conn);
@@ -363,6 +368,7 @@ public class FieldSearchResultSQLImpl
         } catch (SQLException sqle) {
             try {
                 m_resultSet.close();
+                m_statement.close();
             } catch (SQLException sqle2) {
             } finally {
                 m_cPool.free(m_conn);
