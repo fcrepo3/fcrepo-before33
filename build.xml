@@ -445,6 +445,7 @@
 	</target>
 	<target name="serverclasses" depends="serverprep,wsdl2java" description="Compile server java code into temp/server/classes">
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPImpl.java"/>
+		<delete file="temp/server/java/fedora/server/management/FedoraAPIMServiceLocator.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<mkdir dir="temp/server/classes"/>
 		<javac srcdir="${javaSourceDir}:temp/server/java" 
@@ -464,6 +465,12 @@
 </project>
 <!--
   $Log$
+  Revision 1.65  2003/01/23 20:45:02  cwilper
+  added line to delete auto-generated API-M ServiceLocator class... this
+  previously auto-generated class is now under revision control, instead of
+  just used from the temp dir after a wsdl2java operation....because
+  it was modified for basic authentication support.
+
   Revision 1.64  2003/01/22 21:45:27  cwilper
   modified to compile and distribute server with junit.jar
 
