@@ -49,8 +49,8 @@
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
 		<param name="pidNamespace" value="test"/>
-		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" mckoinewservalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
-		<param name="storageFormat" value="mets11fedora1" newservalue="metslikefedora1" mckoinewservalue="metslikefedora1"/>
+		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
+		<param name="storageFormat" value="metslikefedora1"/>
 		<param name="storageCharacterEncoding" value="UTF-8"/>
 	</module>
 	<module role="fedora.server.management.Management" class="fedora.server.management.DefaultManagement">
@@ -116,10 +116,6 @@
         Those classes must implement the DOSerializer/DODeserializer
         interfaces.
         </comment>
-		<param name="serializer_mets11fedora1" 
-                      value="fedora.server.storage.translation.METSDOSerializer"/>
-		<param name="deserializer_mets11fedora1" 
-                      value="fedora.server.storage.translation.METSDODeserializer"/>
 		<param name="serializer_metslikefedora1" 
                       value="fedora.server.storage.translation.METSLikeDOSerializer"/>
 		<param name="deserializer_metslikefedora1" 
@@ -135,8 +131,8 @@
 	</module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
-		<param name="defaultPoolName" value="localMySQLPool" mckoivalue="localMcKoiPool" mckoinewservalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
-		<param name="poolNames" value="localMySQLPool" mckoivalue="localMcKoiPool" mckoinewservalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
+		<param name="defaultPoolName" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
+		<param name="poolNames" value="localMySQLPool" mckoivalue="localMcKoiPool"  oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
 	</module>
 	<module role="fedora.server.validation.DOValidator" class="fedora.server.validation.DOValidatorModule">
 		<comment>
@@ -157,10 +153,10 @@
 		  having to create it anew each time a digital object is validated.
         </comment>
 		<param name="tempDir" value="/work"/>
-		<param name="xmlSchemaURL" value="http://localhost:8080/mets-fedora.xsd" newservalue="http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora-ext.xsd" mckoinewservalue="http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora-ext.xsd"/>
+		<param name="xmlSchemaURL" value="http://localhost:8080/mets-fedora-ext.xsd"/>
 		<param name="xmlSchemaLocalPath" value="/xsd/mets-fedora.xsd"/>
 		<param name="schematronPreprocessor" value="/schematron/preprocessor.xslt"/>
-		<param name="schematronSchema" value="/schematron/fedoraRules.xml" newservalue="/schematron/fedoraRulesExt.xml" mckoinewservalue="/schematron/fedoraRulesExt.xml"/>
+		<param name="schematronSchema" value="/schematron/fedoraRulesExt.xml"/>
 		<param name="schematronValidatingXsl" value="/schematron/fedoraValidator.xslt"/>
 	</module>
 	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">

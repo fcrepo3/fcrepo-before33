@@ -349,6 +349,7 @@
 		<copy file="src/xsd/fedora-behavior-bind.xsd" todir="dist/server/xsd"/>
 		<!-- Fedora extension of the METS XML Schema:  local copy packaged with the repository distribution -->
 		<copy file="src/xsd/mets-fedora.xsd" todir="dist/server/xsd"/>
+		<copy file="src/xsd/mets-fedora-ext.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/xlink.xsd" todir="dist/server/xsd"/>
 		<!-- ObjectMethods Schema used by API-A-LITE: local copy packaged with the repository distribution -->
 		<copy file="src/xsd/objectmethods.xsd" todir="dist/server/xsd"/>
@@ -478,6 +479,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.69  2003/02/06 23:02:11  cwilper
+  officially switches over to new ser/deser stuff
+
   Revision 1.68  2003/02/06 17:15:44  cwilper
   copies new version of fedora schematron rules for dist
 
