@@ -169,7 +169,7 @@
 	<td>
 		<input>
 			<xsl:attribute name="type">text</xsl:attribute>
-			<xsl:attribute name="size">10</xsl:attribute>
+			<xsl:attribute name="size">32</xsl:attribute>
 			<xsl:attribute name="maxlength">32</xsl:attribute>
 			<xsl:attribute name="name"><xsl:value-of select="@parmName"/></xsl:attribute>
 			<xsl:attribute name="value"></xsl:attribute>
