@@ -56,6 +56,31 @@ the changed JAASRealm)
 The existing code nulled that out, whenever a principal is created from various login modules.  
 (As opposed to when it passed along intact a GenericPrincipal -- this simple short-circuiting now never 
 happens, GenericPrincipal is no longer handled deferentially by JAASRealm.)
+7. 2005/03/26 added surrogate user, likely acting as web frontend
+8. surrogate user is http-user with usual credentials
+9. represented user coded as http From header ()
+10. works as before if no From header
+11. first, authenticate surrogate (usual login modules) and authorize end-user representation 
+against xacml policies
+12. only then, "authenticate" end-user (from From) and pass through attributes for usual 
+xacml authorization later
+13. no http-username is accepted for first authentication which presents the login-module communications
+password
+13. see notes on surrogate below
 
+new JAASNullLoginModule (2005/03/26)
+1. this "authenticates" any user when triggered by JAASRealm that this is the represented user
+in the case of a surrogate (web frontend)
+2. it provides no attributes itself (but another login module can, e.g., ldap login module)
 
-		
+how to enable surrogate (web frontend) for represented users
+1. web frontend sends end-user id as http From header
+2. jaas.config must include at least one login module which "authenticates" any user with login-module 
+communications password (see jaasrealm notes above)
+3. JAASNullLoginModule does this and can be used to "prime" contingent login module (which provides attributes
+only, after an login module has authenticated)
+4. the provided JAASJNDILoginModule has a contingent mode, which UVa will likely use
+5. any login module which both authenticates -and- provides attributes would need to be adapted minimally
+to honor the login-module communications password, and so fake authenticatio 
+[ ] 6. to-do:  change JAASMemoryLoginModule to do this, and also JAASJNDILoginModule when used in 
+non-contingent mode (as Cornell and VTLS may choose to use it?) 

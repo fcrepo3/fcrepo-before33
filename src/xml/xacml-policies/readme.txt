@@ -77,7 +77,7 @@ As a precaution, policies should be tested for effect.  This is good practice, a
 testing is the only check of the policy-writer's understanding of xacml and against the 
 inevitable typ0.
 
-Though sunxacml parsing is relaxed, <Desciption> </Desciption> apparently requires at least one-character 
+Though sunxacml parsing is relaxed, <Description> </Description> apparently requires at least one-character 
 content:  <Desciption/> doesn't do it.
 
 For now, there is no Fedora-based xacml schema checking of policies.  Some policies fail sunxacml parse
@@ -148,8 +148,8 @@ XML which violates the xacml schema might not show up until Fedora attempts to
 load the policy.
 
 The example policies are crafted to be used together, and are of two broad types:
-1. "positive" policies can only permit authz
-2. "negative" policies can only deny authz
+1. "positive" policies can only permit authz; these are named beginning "permit-"
+2. "negative" policies can only deny authz; these are named beginning "deny-"
 
 We are now discussing an alternate policy-writing approach, which focuses each Policy functionally, 
 but which has it returning Permit or Deny according to several rules.  This is, in fact, the 
@@ -202,4 +202,21 @@ stored in an enhanced Fedora Context object.  It will honor a callback, even for
 hasn't been explicitly coded, so can provide arbitrary attributes, e.g., from ldap lookup in a JAAS
 login module.  [There are a few attributes which it explicitly doesn't serve, to prevent stack overflow
 on improper recursion, or because the attributes are known to be provided in the xacml request itself.]
+
+http://lists.oasis-open.org/archives/xacml/200211/msg00193.html
+MustBePresent
+
+best practices:
+1. policy-id and filename (- .xml) should match, for repository policies
+2. policy-id and filename (- .xml) should match, for object policies in files, with concession to 
+	demand of OS filenames
+3. policy-id and PID should match, for object policies 
+4. policy-id could include policy version, or this could be coded in description
+5. policies should use simplest rule-combining algorithm which gives desired outcome; 
+	avoid a more complicated algorithm which happens to work, but which confuses because 
+	it implies more than what's there
+6. an object policy should be coded so that it applies only to that specific object
+7. it's better to fulfill expectations than to simplify a policy and break an expectation
+(if most policies are single-effect, try to have all of them be single-effect, paid for by small policy
+complication)
  
