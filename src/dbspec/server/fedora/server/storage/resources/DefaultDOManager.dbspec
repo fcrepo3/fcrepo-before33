@@ -146,6 +146,18 @@
 		<column name="ObjectState" type="char(1)" notNull="true" default="A">
 			<comment>The state of the object (currently unused)</comment>
 		</column>
+		<column name="Label" type="varchar(255)" notNull="true" default="">
+			<comment>The label of the object.</comment>
+		</column>
+		<column name="ContentModelId" type="varchar(255)" notNull="true" default="">
+			<comment>The content model of the object.</comment>
+		</column>
+		<column name="CreateDate" type="timestamp" notNull="true">
+			<comment>The date the object was first created or ingested into the repository.</comment>
+		</column>
+		<column name="LastModifiedDate" type="timestamp" notNull="true">
+			<comment>The date the object was last changed.</comment>
+		</column>
 	</table>
 	<table name="ObjectReplicationJob">
 		<comment>Used as a queue for replication jobs.</comment>
