@@ -24,7 +24,7 @@ import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.utilities.StreamUtility;
 
-public class METSLikeDOSerializer 
+public class METSLikeDOSerializer
         implements DOSerializer {
 
     public static final String FEDORA_AUDIT_NS="http://fedora.comm.nsdlib.org/audit";
@@ -49,7 +49,7 @@ public class METSLikeDOSerializer
     }
 
     public void serialize(DigitalObject obj, OutputStream out, String encoding)
-            throws ObjectIntegrityException, StreamIOException, 
+            throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
         StringBuffer buf=new StringBuffer();
         appendXMLDeclaration(obj, encoding, buf);
@@ -65,14 +65,14 @@ public class METSLikeDOSerializer
         writeToStream(buf, out, encoding, true);
     }
 
-    private void appendXMLDeclaration(DigitalObject obj, String encoding, 
+    private void appendXMLDeclaration(DigitalObject obj, String encoding,
             StringBuffer buf) {
         buf.append("<?xml version=\"1.0\" encoding=\"" + encoding + "\" ?>\n");
     }
-    
-    private void appendRootElementStart(DigitalObject obj, StringBuffer buf) 
+
+    private void appendRootElementStart(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
-        buf.append("<" + METS_PREFIX + ":mets xmlns:" + METS_PREFIX + "=\"" 
+        buf.append("<" + METS_PREFIX + ":mets xmlns:" + METS_PREFIX + "=\""
                 + StreamUtility.enc(METS_NS) + "\"\n");
         String indent="           ";
         // make sure XSI_NS is mapped...
@@ -87,7 +87,7 @@ public class METSLikeDOSerializer
         if (obj.getPid()==null) {
             throw new ObjectIntegrityException("Object must have a pid.");
         }
-        buf.append(indent + "OBJID=\"" + obj.getPid() + "\" TYPE=\"" 
+        buf.append(indent + "OBJID=\"" + obj.getPid() + "\" TYPE=\""
                 + getTypeAttribute(obj) + "\"");
         if (obj.getLabel()!=null) {
             buf.append("\n" + indent + "LABEL=\"" + StreamUtility.enc(
@@ -99,8 +99,8 @@ public class METSLikeDOSerializer
         }
         buf.append(">\n");
     }
-    
-    private void appendNamespaceDeclarations(String prepend, Map URIToPrefix, 
+
+    private void appendNamespaceDeclarations(String prepend, Map URIToPrefix,
             StringBuffer buf) {
         Iterator iter=URIToPrefix.keySet().iterator();
         while (iter.hasNext()) {
@@ -111,17 +111,17 @@ public class METSLikeDOSerializer
             } else if (URI.equals(FEDORA_AUDIT_NS)) {
                 m_fedoraAuditPrefix=prefix;
             } else if (!URI.equals(METS_NS)) {
-                buf.append(prepend + "xmlns:" + prefix + "=\"" 
+                buf.append(prepend + "xmlns:" + prefix + "=\""
                         + StreamUtility.enc(URI) + "\"\n");
             }
         }
-        buf.append(prepend + "xmlns:" + m_XLinkPrefix + "=\"" 
+        buf.append(prepend + "xmlns:" + m_XLinkPrefix + "=\""
                 + REAL_XLINK_NS + "\"\n");
-        buf.append(prepend + "xmlns:" + m_fedoraAuditPrefix + "=\"" 
+        buf.append(prepend + "xmlns:" + m_fedoraAuditPrefix + "=\""
                 + FEDORA_AUDIT_NS + "\"\n");
     }
-    
-    private String getTypeAttribute(DigitalObject obj) 
+
+    private String getTypeAttribute(DigitalObject obj)
             throws ObjectIntegrityException {
         int t=obj.getFedoraObjectType();
         if (t==DigitalObject.FEDORA_BDEF_OBJECT) {
@@ -134,14 +134,14 @@ public class METSLikeDOSerializer
             throw new ObjectIntegrityException("Object must have a FedoraObjectType.");
         }
     }
-    
-    private void appendHdr(DigitalObject obj, StringBuffer buf) 
+
+    private void appendHdr(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
         Date cDate=obj.getCreateDate();
         if (cDate==null) {
             throw new ObjectIntegrityException("Object must have a create date.");
         }
-        buf.append("  <" + METS_PREFIX + ":metsHdr CREATEDATE=\"" 
+        buf.append("  <" + METS_PREFIX + ":metsHdr CREATEDATE=\""
                 + m_formatter.format(cDate) + "\" LASTMODDATE=\"");
         Date mDate=obj.getLastModDate();
         if (mDate==null) {
@@ -155,7 +155,7 @@ public class METSLikeDOSerializer
         buf.append(state + "\"/>\n");
     }
 
-    private void appendDescriptiveMD(DigitalObject obj, StringBuffer buf, 
+    private void appendDescriptiveMD(DigitalObject obj, StringBuffer buf,
             String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
@@ -163,7 +163,7 @@ public class METSLikeDOSerializer
         while (iter.hasNext()) {
             String id=(String) iter.next();
             Datastream firstDS=(Datastream) obj.datastreams(id).get(0);
-            if ((firstDS.DSControlGrp.equals("X")) 
+            if ((firstDS.DSControlGrp.equals("X"))
                     && (((DatastreamXMLMetadata) firstDS).DSMDClass==
                     DatastreamXMLMetadata.DESCRIPTIVE)) {
                 appendMDSec(obj, "dmdSecFedora", "descMD", obj.datastreams(id),
@@ -171,9 +171,9 @@ public class METSLikeDOSerializer
             }
         }
     }
-    
-    private void appendMDSec(DigitalObject obj, String outerName, 
-            String innerName, List XMLMetadata, StringBuffer buf, String encoding) 
+
+    private void appendMDSec(DigitalObject obj, String outerName,
+            String innerName, List XMLMetadata, StringBuffer buf, String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
         DatastreamXMLMetadata first=(DatastreamXMLMetadata) XMLMetadata.get(0);
@@ -183,7 +183,7 @@ public class METSLikeDOSerializer
         if (first.DSState==null) {
             throw new ObjectIntegrityException("Datastream must have a state.");
         }
-        buf.append("  <" + METS_PREFIX + ":" + outerName + " ID=\"" 
+        buf.append("  <" + METS_PREFIX + ":" + outerName + " ID=\""
                 + first.DatastreamID + "\" STATUS=\"" + first.DSState + "\">\n");
         for (int i=0; i<XMLMetadata.size(); i++) {
             DatastreamXMLMetadata ds=(DatastreamXMLMetadata) XMLMetadata.get(i);
@@ -193,7 +193,7 @@ public class METSLikeDOSerializer
             if (ds.DSCreateDT==null) {
                 throw new ObjectIntegrityException("Datastream must have a creation date.");
             }
-            buf.append("    <" + METS_PREFIX + ":" + innerName + " ID=\"" 
+            buf.append("    <" + METS_PREFIX + ":" + innerName + " ID=\""
                     + ds.DSVersionID + "\" CREATED=\"" + m_formatter.format(
                     ds.DSCreateDT) + "\">\n");
             if (ds.DSMIME==null) {
@@ -221,17 +221,17 @@ public class METSLikeDOSerializer
             buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + ds.DSMIME
                     + "\" MDTYPE=\"" + mdType + "\"" + otherString
                     + labelString + ">\n");
-            buf.append("        <" + METS_PREFIX + ":xmlData>\n"); 
+            buf.append("        <" + METS_PREFIX + ":xmlData>\n");
             appendStream(ds.getContentStream(), buf, encoding);
-            buf.append("        </" + METS_PREFIX + ":xmlData>"); 
+            buf.append("        </" + METS_PREFIX + ":xmlData>");
             buf.append("      </" + METS_PREFIX + ":mdWrap>\n");
             buf.append("    </" + METS_PREFIX + ":" + innerName + ">\n");
         }
         buf.append("  </" + METS_PREFIX + ":" + outerName + ">\n");
     }
-    
+
     private void appendStream(InputStream in, StringBuffer buf, String encoding)
-            throws ObjectIntegrityException, UnsupportedEncodingException, 
+            throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
         if (in==null) {
             throw new ObjectIntegrityException("Object's inline descriptive "
@@ -255,7 +255,7 @@ public class METSLikeDOSerializer
             }
         }
     }
-    
+
     private void appendAuditRecordAdminMD(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
         if (obj.getAuditRecords().size()>0) {
@@ -285,25 +285,25 @@ public class METSLikeDOSerializer
                         + "\" STATUS=\"A\">\n");
                 buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"text/xml\" "
                         + "MDTYPE=\"OTHER\" OTHERMDTYPE=\"FEDORA-AUDITTRAIL\""
-                        + " LABEL=\"Audit record for '" 
-                        + StreamUtility.enc(audit.action) + "' action by " 
-                        + StreamUtility.enc(audit.responsibility) + " at " 
+                        + " LABEL=\"Audit record for '"
+                        + StreamUtility.enc(audit.action) + "' action by "
+                        + StreamUtility.enc(audit.responsibility) + " at "
                         + m_formatter.format(audit.date) + "\">\n");
                 buf.append("        <" + METS_PREFIX + ":xmlData>\n");
                 buf.append("          <" + m_fedoraAuditPrefix + ":record>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":process type=\""
                         + StreamUtility.enc(audit.processType) + "\"/>\n");
-                buf.append("            <" + m_fedoraAuditPrefix + ":action>" 
-                        + StreamUtility.enc(audit.action) 
+                buf.append("            <" + m_fedoraAuditPrefix + ":action>"
+                        + StreamUtility.enc(audit.action)
                         + "             </" + m_fedoraAuditPrefix + ":action>\n");
-                buf.append("            <" + m_fedoraAuditPrefix + ":responsibility>" 
-                        + StreamUtility.enc(audit.responsibility) 
+                buf.append("            <" + m_fedoraAuditPrefix + ":responsibility>"
+                        + StreamUtility.enc(audit.responsibility)
                         + "             </" + m_fedoraAuditPrefix + ":responsibility>\n");
-                buf.append("            <" + m_fedoraAuditPrefix + ":date>" 
-                        + m_formatter.format(audit.date) 
+                buf.append("            <" + m_fedoraAuditPrefix + ":date>"
+                        + m_formatter.format(audit.date)
                         + "             </" + m_fedoraAuditPrefix + ":date>\n");
-                buf.append("            <" + m_fedoraAuditPrefix + ":justification>" 
-                        + StreamUtility.enc(audit.justification) 
+                buf.append("            <" + m_fedoraAuditPrefix + ":justification>"
+                        + StreamUtility.enc(audit.justification)
                         + "             </" + m_fedoraAuditPrefix + ":justification>\n");
                 buf.append("          </" + m_fedoraAuditPrefix + ":record>\n");
                 buf.append("        </" + METS_PREFIX + ":xmlData>\n");
@@ -313,7 +313,7 @@ public class METSLikeDOSerializer
             buf.append("  </" + METS_PREFIX + ":amdSec>\n");
         }
     }
-    
+
     private void appendOtherAdminMD(DigitalObject obj, StringBuffer buf,
             String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
@@ -322,7 +322,7 @@ public class METSLikeDOSerializer
         while (iter.hasNext()) {
             String id=(String) iter.next();
             Datastream firstDS=(Datastream) obj.datastreams(id).get(0);
-            if ((firstDS.DSControlGrp.equals("X")) 
+            if ((firstDS.DSControlGrp.equals("X"))
                     && (((DatastreamXMLMetadata) firstDS).DSMDClass!=
                     DatastreamXMLMetadata.DESCRIPTIVE)) {
                 DatastreamXMLMetadata md=(DatastreamXMLMetadata) firstDS;
@@ -343,7 +343,7 @@ public class METSLikeDOSerializer
             }
         }
     }
-    
+
     private void appendFileSecs(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
         Iterator iter=obj.datastreamIdIterator();
@@ -362,7 +362,7 @@ public class METSLikeDOSerializer
                 if (ds.DSState==null || ds.DSState.equals("")) {
                     throw new ObjectIntegrityException("Object's content datastream must have a state.");
                 }
-                buf.append("      <" + METS_PREFIX + ":fileGrp ID=\"" 
+                buf.append("      <" + METS_PREFIX + ":fileGrp ID=\""
                         + ds.DatastreamID + "\" STATUS=\"" + ds.DSState + "\">\n");
                 Iterator contentIter=obj.datastreams(ds.DatastreamID).iterator();
                 while (contentIter.hasNext()) {
@@ -378,7 +378,7 @@ public class METSLikeDOSerializer
                     }
                     String labelString="";
                     if (dsc.DSLabel!=null && !dsc.DSLabel.equals("")) {
-                        labelString=" " + m_XLinkPrefix + ":title=\"" 
+                        labelString=" " + m_XLinkPrefix + ":title=\""
                                 + StreamUtility.enc(dsc.DSLabel) + "\"";
                     }
                     if (dsc.DSLocation==null || dsc.DSLocation.equals("")) {
@@ -390,12 +390,12 @@ public class METSLikeDOSerializer
                     if (dsc.DSControlGrp==null || dsc.DSControlGrp.equals("")) {
                         throw new ObjectIntegrityException("Object's content datastream must have a control group.");
                     }
-                    buf.append("        <" + METS_PREFIX + ":file ID=\"" 
-                            + dsc.DSVersionID + "\" CREATED=\"" + m_formatter.format(dsc.DSCreateDT) 
-                            + "\" MIMETYPE=\"" + dsc.DSMIME + "\"" + sizeString 
+                    buf.append("        <" + METS_PREFIX + ":file ID=\""
+                            + dsc.DSVersionID + "\" CREATED=\"" + m_formatter.format(dsc.DSCreateDT)
+                            + "\" MIMETYPE=\"" + dsc.DSMIME + "\"" + sizeString
                             + admIDString + dmdIDString + " OWNERID=\"" + dsc.DSControlGrp + "\">\n");
                     buf.append("          <" + METS_PREFIX + ":FLocat" + labelString
-                            + " LOCTYPE=\"URL\" " + m_XLinkPrefix 
+                            + " LOCTYPE=\"URL\" " + m_XLinkPrefix
                             + ":href=\"" + StreamUtility.enc(dsc.DSLocation) + "\"/>\n");
                     buf.append("        </" + METS_PREFIX + ":file>\n");
                 }
@@ -407,9 +407,9 @@ public class METSLikeDOSerializer
             buf.append("  </" + METS_PREFIX + ":fileSec>\n");
         }
     }
-    
-    private String getIdString(DigitalObject obj, DatastreamContent content, 
-            boolean adm) 
+
+    private String getIdString(DigitalObject obj, DatastreamContent content,
+            boolean adm)
             throws ObjectIntegrityException {
         ArrayList ret;
         if (adm) {
@@ -454,7 +454,7 @@ public class METSLikeDOSerializer
         }
         return out.toString();
     }
-    
+
     private void appendStructMaps(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
         Iterator dissIdIter=obj.disseminatorIdIterator();
@@ -475,24 +475,24 @@ public class METSLikeDOSerializer
                 String labelString="";
                 if ( diss.dsBindMap.dsBindMapLabel!=null
                         && !diss.dsBindMap.dsBindMapLabel.equals("") ) {
-                    labelString=" LABEL=\"" + diss.dsBindMap.dsBindMapLabel + "\"";
+                    labelString=" LABEL=\"" + StreamUtility.enc(diss.dsBindMap.dsBindMapLabel) + "\"";
                 }
-                buf.append("  <" + METS_PREFIX + ":structMap ID=\"" 
+                buf.append("  <" + METS_PREFIX + ":structMap ID=\""
                         + diss.dsBindMapID + "\" TYPE=\"fedora:dsBindingMap\">\n");
                 buf.append("    <" + METS_PREFIX + ":div TYPE=\"" + diss.bMechID
                         + "\"" + labelString + ">\n");
                 DSBinding[] bindings=diss.dsBindMap.dsBindings;
                 for (int i=0; i<bindings.length; i++) {
-                    if (bindings[i].bindKeyName==null 
+                    if (bindings[i].bindKeyName==null
                             || bindings[i].bindKeyName.equals("")) {
                         throw new ObjectIntegrityException("Object's disseminator binding map binding must have a binding key name.");
                     }
                     buf.append("      <" + METS_PREFIX + ":div TYPE=\"");
                     buf.append(bindings[i].bindKeyName);
-                    if (bindings[i].bindLabel!=null 
+                    if (bindings[i].bindLabel!=null
                             && !bindings[i].bindLabel.equals("")) {
                         buf.append("\" LABEL=\"");
-                        buf.append(bindings[i].bindLabel);
+                        buf.append(StreamUtility.enc(bindings[i].bindLabel));
                     }
                     if (bindings[i].seqNo!=null) {
                         buf.append("\" ORDER=\"");
@@ -503,7 +503,7 @@ public class METSLikeDOSerializer
                         throw new ObjectIntegrityException("Object's disseminator binding map binding must point to a datastream.");
                     }
                     buf.append("\">\n        <" + METS_PREFIX + ":fptr FILEID=\""
-                            + bindings[i].datastreamID + "\"/>\n" + "      </" 
+                            + bindings[i].datastreamID + "\"/>\n" + "      </"
                             + METS_PREFIX + ":div>\n");
                 }
                 buf.append("    </" + METS_PREFIX + ":div>\n");
@@ -511,7 +511,7 @@ public class METSLikeDOSerializer
             }
         }
     }
-    
+
     private void appendDisseminators(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
         Iterator dissIdIter=obj.disseminatorIdIterator();
@@ -522,7 +522,7 @@ public class METSLikeDOSerializer
             if (diss.dissState==null || diss.dissState.equals("")) {
                 throw new ObjectIntegrityException("Object's disseminator must have a state.");
             }
-            buf.append("  <" + METS_PREFIX + ":behaviorSec ID=\"" + did 
+            buf.append("  <" + METS_PREFIX + ":behaviorSec ID=\"" + did
                     + "\" STATUS=\"" + diss.dissState + "\">\n");
             for (int i=0; i<obj.disseminators(did).size(); i++) {
                 diss=(Disseminator) obj.disseminators(did).get(i);
@@ -540,15 +540,15 @@ public class METSLikeDOSerializer
                 }
                 String dissLabelString="";
                 if (diss.dissLabel!=null && !diss.dissLabel.equals("")) {
-                    dissLabelString=" LABEL=\"" + diss.dissLabel + "\"";
+                    dissLabelString=" LABEL=\"" + StreamUtility.enc(diss.dissLabel) + "\"";
                 }
                 String bDefLabelString="";
                 if (diss.bDefLabel!=null && !diss.bDefLabel.equals("")) {
-                    bDefLabelString=" LABEL=\"" + diss.bDefLabel + "\"";
+                    bDefLabelString=" LABEL=\"" + StreamUtility.enc(diss.bDefLabel) + "\"";
                 }
                 String bMechLabelString="";
                 if (diss.bMechLabel!=null && !diss.bMechLabel.equals("")) {
-                    bMechLabelString=" LABEL=\"" + diss.bMechLabel + "\"";
+                    bMechLabelString=" LABEL=\"" + StreamUtility.enc(diss.bMechLabel) + "\"";
                 }
                 buf.append("    <" + METS_PREFIX + ":serviceBinding ID=\""
                         + diss.dissVersionID + "\" STRUCTID=\"" + diss.dsBindMapID
@@ -561,19 +561,19 @@ public class METSLikeDOSerializer
                 buf.append("      <" + METS_PREFIX + ":serviceBindMD" + bMechLabelString
                         + " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
                         + diss.bMechID + "\"/>\n");
-                
+
                 buf.append("    </" + METS_PREFIX + ":serviceBinding>\n");
             }
             buf.append("  </" + METS_PREFIX + ":behaviorSec>\n");
-        } 
+        }
     }
-    
+
     private void appendRootElementEnd(StringBuffer buf) {
         buf.append("</" + METS_PREFIX + ":mets>");
     }
-    
+
     private void writeToStream(StringBuffer buf, OutputStream out,
-            String encoding, boolean closeWhenFinished) 
+            String encoding, boolean closeWhenFinished)
             throws StreamIOException, UnsupportedEncodingException {
         try {
             out.write(buf.toString().getBytes(encoding));
