@@ -75,12 +75,12 @@ public class TestClientAPIA
       System.out.println("\n\n*****GETBEHAVIORMETHODS RESULTS*****");
       for (int i=0; i<methodDefs.length; i++)
       {
-        System.out.println("httpBindingAddress :"+
-            methodDefs[i].getHttpBindingAddress());
-        System.out.println("httpBindingOperationLocation :"+
-            methodDefs[i].getHttpBindingOperationLocation());
-        System.out.println("httpBindingURL :"+
-            methodDefs[i].getHttpBindingURL());
+        //System.out.println("httpBindingAddress :"+
+        //    methodDefs[i].getHttpBindingAddress());
+        //System.out.println("httpBindingOperationLocation :"+
+        //    methodDefs[i].getHttpBindingOperationLocation());
+        //System.out.println("httpBindingURL :"+
+        //    methodDefs[i].getHttpBindingURL());
         System.out.println("methodLabel :"+
             methodDefs[i].getMethodLabel());
         System.out.println("methodName :"+
