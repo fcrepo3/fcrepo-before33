@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import fedora.client.bmech.data.*;
+import fedora.client.bmech.BMechBuilderException;
 
 /**
  *
@@ -69,14 +70,14 @@ public class WSDLGenerator
   private Element service;
   private Element binding;
 
-  public WSDLGenerator(BMechTemplate newBMech)
+  public WSDLGenerator(BMechTemplate newBMech) throws BMechBuilderException
   {
     initializeTree();
     genWSDL(newBMech);
     finalizeTree();
   }
 
-  private void initializeTree()
+  private void initializeTree() throws BMechBuilderException
   {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     try
@@ -89,6 +90,8 @@ public class WSDLGenerator
     {
       // Parser with specified options can't be built
       pce.printStackTrace();
+      throw new BMechBuilderException("WSDLGenerator: error configuring parser."
+        + "Underlying exception: " + pce.getMessage());
     }
     root = (Element)document.createElementNS(WSDL, "wsdl:definitions");
     types = (Element)document.createElementNS(WSDL, "wsdl:types");

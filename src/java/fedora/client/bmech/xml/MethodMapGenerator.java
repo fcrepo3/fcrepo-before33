@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
 import fedora.client.bmech.data.*;
+import fedora.client.bmech.BMechBuilderException;
 
 /**
  *
@@ -40,21 +41,25 @@ public class MethodMapGenerator
   private static final String FMM =
     "http://fedora.comm.nsdlib.org/service/methodmap";
 
+  private static final String XMLNS = "http://www.w3.org/2000/xmlns/";
+
   private Document document;
 
   public MethodMapGenerator(BMechTemplate newBMech)
+    throws BMechBuilderException
   {
     createDOM();
     genMethodMap(newBMech);
   }
 
   public MethodMapGenerator(BObjTemplate newBDef)
+    throws BMechBuilderException
   {
     createDOM();
     genMethodMap(newBDef);
   }
 
-  private void createDOM()
+  private void createDOM() throws BMechBuilderException
   {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     try
@@ -67,6 +72,8 @@ public class MethodMapGenerator
     {
       // Parser with specified options can't be built
       pce.printStackTrace();
+      throw new BMechBuilderException("MethodMapGenerator: error configuring parser."
+        + "Underlying exception: " + pce.getMessage());
     }
   }
 
@@ -74,6 +81,7 @@ public class MethodMapGenerator
   {
     Method[] methods = newBDef.getMethods();
     Element root = (Element)document.createElementNS(FMM, "fmm:MethodMap");
+    root.setAttributeNS(XMLNS, "xmlns:fmm", FMM);
     String bdeflabel = (newBDef.getbObjLabel() == null) ? "fix me" : newBDef.getbObjLabel();
     root.setAttribute("name", ("MethodMap - " + bdeflabel));
     document.appendChild(root);

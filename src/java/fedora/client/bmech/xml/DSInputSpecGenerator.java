@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
 import fedora.client.bmech.data.*;
+import fedora.client.bmech.BMechBuilderException;
 
 /**
  *
@@ -40,15 +41,17 @@ public class DSInputSpecGenerator
   private static final String FBS =
     "http://fedora.comm.nsdlib.org/service/bindspec";
 
+  private static final String XMLNS = "http://www.w3.org/2000/xmlns/";
+
   private Document document;
 
-  public DSInputSpecGenerator(BMechTemplate newBMech)
+  public DSInputSpecGenerator(BMechTemplate newBMech) throws BMechBuilderException
   {
     createDOM();
     genDSInputSpec(newBMech);
   }
 
-  private void createDOM()
+  private void createDOM() throws BMechBuilderException
   {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     try
@@ -61,6 +64,8 @@ public class DSInputSpecGenerator
     {
       // Parser with specified options can't be built
       pce.printStackTrace();
+      throw new BMechBuilderException("DSInputSpecGenerator: error configuring parser."
+        + "Underlying exception: " + pce.getMessage());
     }
   }
 
@@ -69,6 +74,7 @@ public class DSInputSpecGenerator
     DSInputRule[] rules = newBMech.getDSInputSpec();
 
     Element root = (Element)document.createElementNS(FBS, "fbs:DSInputSpec");
+    root.setAttributeNS(XMLNS, "xmlns:fbs", FBS);
     String bmlabel = (newBMech.getbObjLabel() == null) ? "" : newBMech.getbObjLabel();
     root.setAttribute("label", ("Datastream Input Specification for " + bmlabel));
     String bDefPID = (newBMech.getbDefContractPID() == null) ? "" : newBMech.getbDefContractPID();
