@@ -3,6 +3,7 @@ package fedora.server.access;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
@@ -50,6 +51,10 @@ public class DefaultAccess extends Module implements Access
 
   /** IP Restriction for the Access subsystem. */
   private IPRestriction m_ipRestriction;
+
+  /** Dynamic Access Module */
+  // FIXIT!! is this the right way to associate the dynamic access module???
+  private DynamicAccessModule m_dynamicAccess;
 
   /**
    * <p>Creates and initializes the Access Module. When the server is starting
@@ -99,6 +104,14 @@ public class DefaultAccess extends Module implements Access
     }
   }
 
+  public void postInitModule()
+      throws ModuleInitializationException
+  {
+      // get ref to DynamicAccess module
+      m_dynamicAccess = (DynamicAccessModule) getServer().
+              getModule("fedora.server.access.DynamicAccess");
+  }
+
   /**
    * <p>Gets the persistent identifiers or PIDs of all Behavior Definition
    * objects associated with the specified digital object.</p>
@@ -115,18 +128,27 @@ public class DefaultAccess extends Module implements Access
   {
     long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
+    // Grab the behavior definitions that are bound to the object
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     String[] behaviorDefs = null;
     DOReader reader =
         m_manager.getReader(context, PID);
     behaviorDefs = reader.GetBehaviorDefs(versDateTime);
-    long stopTime = new Date().getTime();
-    long interval = stopTime - startTime;
-    System.out.println("[DefaultAccess] Roundtrip GetBehaviorDefinitions: "
-        + interval + " milliseconds.");
-    logFiner("[DefaultAccess] Roundtrip GetBehaviorDefinitions: "
-        + interval + " milliseconds.");
-    return behaviorDefs;
+
+    // DYNAMIC!! Grab any dynamic behavior definitions and merge them with
+    // the statically bound behavior definitions
+    String[] behaviorDefsDynamic =
+        m_dynamicAccess.getBehaviorDefinitions(context, PID, asOfDateTime);
+    ArrayList bDefList = new ArrayList();
+    for (int i=0; i < behaviorDefs.length; i++)
+    {
+      bDefList.add(behaviorDefs[i]);
+    }
+    for (int j=0; j < behaviorDefsDynamic.length; j++)
+    {
+      bDefList.add(behaviorDefsDynamic[j]);
+    }
+    return (String[])bDefList.toArray(new String[0]);
   }
 
   /**
@@ -147,18 +169,21 @@ public class DefaultAccess extends Module implements Access
   {
     long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
+
+    // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
+    // grab its dynamic method definitions and return.
+    if (m_dynamicAccess.isDynamicBehaviorDefinition(context, PID, bDefPID))
+    {
+      return
+        m_dynamicAccess.getBehaviorMethods(context, PID, bDefPID, asOfDateTime);
+    }
+
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     DOReader reader =
         m_manager.getReader(context, PID);
-    MethodDef[] methodResults =
+    MethodDef[] methods =
         reader.GetBMechMethods(bDefPID, versDateTime);
-    long stopTime = new Date().getTime();
-    long interval = stopTime - startTime;
-    System.out.println("[DefaultAccess] Roundtrip GetBehaviorMethods: "
-              + interval + " milliseconds.");
-    logFiner("[DefaultAccess] Roundtrip GetBehaviorMethods: "
-              + interval + " milliseconds.");
-    return methodResults;
+    return methods;
   }
 
   /**
@@ -240,6 +265,16 @@ public class DefaultAccess extends Module implements Access
   {
     long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
+
+    // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
+    // perform the dissemination via the DynamicAccess module.
+    if (m_dynamicAccess.isDynamicBehaviorDefinition(context, PID, bDefPID))
+    {
+      return
+        m_dynamicAccess.getDissemination(context, PID, bDefPID, methodName,
+          userParms, asOfDateTime);
+    }
+
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     Hashtable h_userParms = new Hashtable();
     MIMETypedStream dissemination = null;
@@ -314,9 +349,22 @@ public class DefaultAccess extends Module implements Access
     long interval = stopTime - startTime;
     System.out.println("[DefaultAccess] Roundtrip GetObjectMethods: "
               + interval + " milliseconds.");
-    logFiner("[DefaultAccess] Roundtrip GetObjectMethods: "
-              + interval + " milliseconds.");
-    return methodDefs;
+
+    // DYNAMIC!! Grab any dynamic method definitions and merge them with
+    // the statically bound method definitions
+    ObjectMethodsDef[] dynamicMethodDefs =
+        m_dynamicAccess.getObjectMethods(context, PID, asOfDateTime);
+    ArrayList methodList = new ArrayList();
+    for (int i=0; i < methodDefs.length; i++)
+    {
+      methodList.add(methodDefs[i]);
+    }
+    for (int j=0; j < dynamicMethodDefs.length; j++)
+    {
+      methodList.add(dynamicMethodDefs[j]);
+    }
+    return (ObjectMethodsDef[])methodList.toArray(new ObjectMethodsDef[0]);
+    //return methodDefs;
   }
 
   public List search(Context context, String[] resultFields,
