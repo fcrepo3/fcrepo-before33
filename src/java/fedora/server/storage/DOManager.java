@@ -1,4 +1,4 @@
-package fedora.server;
+package fedora.server.storage;
 
 /**
  * Provides access to digital object reader/writer factories,

@@ -1,4 +1,4 @@
-package fedora.server;
+package fedora.server.storage;
 
 /**
  * A provider of DOReaders.

@@ -8,10 +8,9 @@ import fedora.server.errors.ModuleShutdownException;
 /**
  * The base class for Fedora server modules.
  *
- * A server module is a component of the system that can
- * be configured via a &lt;module&gt; element in
- * conf/fedora.fcfc.  The schema for this element is
- * in fedora-config.xsd.
+ * A server module is a parameterized component of the system that can
+ * be configured via a &lt;module&gt; element in conf/fedora.fcfc.  
+ * The schema for this element is in fedora-config.xsd.
  *
  * @author cwilper@cs.cornell.edu
  */
