@@ -273,8 +273,19 @@ public class METSLikeDODeserializer
     }
 
     public void startPrefixMapping(String prefix, String uri) {
+        // save a forward and backward hash of namespace prefix-to-uri
+        // mapping ... for the entire object.
         m_prefixes.put(uri, prefix);
         m_prefixUris.put(prefix, uri);
+        // if we're looking at inline metadata, be sure to save the prefix
+        // so we know it's used in that datastream
+        if (m_inXMLMetadata) {
+            if (!m_dsPrefixes.contains(prefix)) {
+                if (!"".equals(prefix)) {
+                    m_dsPrefixes.add(prefix);
+                }
+            }    
+        }
     }
 
     public void startElement(String uri, String localName, String qName,
