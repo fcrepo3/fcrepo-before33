@@ -181,8 +181,8 @@ public class DisseminationService
     String protocolType = null;
     DisseminationBindingInfo dissBindInfo = null;
     String dissURL = null;
-    String operationLocation = null;
     MIMETypedStream dissemination = null;
+    boolean isRedirect = false;
 
     if (dissBindInfoArray != null && dissBindInfoArray.length > 0)
     {
@@ -199,31 +199,29 @@ public class DisseminationService
       {
         dissBindInfo = dissBindInfoArray[i];
 
-        // If AddressLocation has a value of "LOCAL", this indicates
-        // the associated OperationLocation requires no AddressLocation.
-        // i.e., the OperationLocation contains all information necessary
-        // to perform the dissemination request. This is a special case
-        // used when the web services are generally mechanisms like cgi-scripts,
-        // java servlets, and simple HTTP GETs. Using the value of LOCAL
-        // in the address location also enables one to have different methods
-        // running on different hosts. In true web services like SOAP, the
-        // AddressLocation specifies the host name of the service and all
-        // methods are served from that single host location.
-        if (dissBindInfo.AddressLocation.
-            equalsIgnoreCase(LOCAL_ADDRESS_LOCATION))
-        {
-          dissBindInfo.AddressLocation = "";
-        }
-
         // Match DSBindingKey pattern in WSDL which is a string of the form:
         // (DSBindingKey). Rows in DisseminationBindingInfo are sorted
         // alphabeticaly on binding key.
         String bindingKeyPattern = "\\(" + dissBindInfo.DSBindKey + "\\)";
         if (i == 0)
         {
-          operationLocation = dissBindInfo.OperationLocation;
-          dissURL =
-              dissBindInfo.AddressLocation+dissBindInfo.OperationLocation;
+          // If AddressLocation has a value of "LOCAL", this indicates
+          // the associated OperationLocation requires no AddressLocation.
+          // i.e., the OperationLocation contains all information necessary
+          // to perform the dissemination request. This is a special case
+          // used when the web services are generally mechanisms like cgi-scripts,
+          // java servlets, and simple HTTP GETs. Using the value of LOCAL
+          // in the address location also enables one to have different methods
+          // serviced by different hosts. In true web services like SOAP, the
+          // AddressLocation specifies the host name of the service and all
+          // methods are served from that single host location.
+          if (dissBindInfo.AddressLocation.equalsIgnoreCase(LOCAL_ADDRESS_LOCATION))
+          {
+            dissURL = dissBindInfo.OperationLocation;
+          } else
+          {
+            dissURL = dissBindInfo.AddressLocation+dissBindInfo.OperationLocation;
+          }
           protocolType = dissBindInfo.ProtocolType;
         }
         String currentKey = dissBindInfo.DSBindKey;
@@ -273,9 +271,10 @@ public class DisseminationService
         {
           // Case where binding keys are equal which means that multiple
           // datastreams matched the same binding key.
-          if (doDatastreamMediation ||
+          if ((doDatastreamMediation ||
               dissBindInfo.dsControlGroupType.equalsIgnoreCase("M") ||
-              dissBindInfo.dsControlGroupType.equalsIgnoreCase("X"))
+              dissBindInfo.dsControlGroupType.equalsIgnoreCase("X")) &&
+              !dissBindInfo.dsControlGroupType.equalsIgnoreCase("R"))
           {
             // Use Datastream Mediation.
             replaceString = datastreamResolverServletURL
@@ -287,13 +286,17 @@ public class DisseminationService
             // Bypass Datastream Mediaiton.
             replaceString = dissBindInfo.dsLocation
                 + "+(" + dissBindInfo.DSBindKey + ")";
+            if (dissBindInfo.dsControlGroupType.equalsIgnoreCase("R") &&
+                dissBindInfo.AddressLocation.equals(LOCAL_ADDRESS_LOCATION))
+                    isRedirect = true;
           }
         } else
         {
-          // Case where there are multiple binding keys.
-          if (doDatastreamMediation ||
+          // Case where there are one or more binding keys.
+          if ((doDatastreamMediation ||
               dissBindInfo.dsControlGroupType.equalsIgnoreCase("M") ||
-              dissBindInfo.dsControlGroupType.equalsIgnoreCase("X"))
+              dissBindInfo.dsControlGroupType.equalsIgnoreCase("X")) &&
+              !dissBindInfo.dsControlGroupType.equalsIgnoreCase("R"))
           {
             // Use Datastream Mediation.
             replaceString = datastreamResolverServletURL
@@ -303,6 +306,9 @@ public class DisseminationService
           {
             // Bypass Datastream Mediation.
             replaceString = dissBindInfo.dsLocation;
+            if (dissBindInfo.dsControlGroupType.equalsIgnoreCase("R") &&
+                dissBindInfo.AddressLocation.equals(LOCAL_ADDRESS_LOCATION))
+                    isRedirect = true;
           }
         }
         dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
@@ -328,9 +334,26 @@ public class DisseminationService
       if (protocolType.equalsIgnoreCase("http"))
       {
         long startTime = new Date().getTime();
-        ExternalContentManager externalContentManager = (ExternalContentManager)
-            s_server.getModule("fedora.server.storage.ExternalContentManager");
-        dissemination = externalContentManager.getExternalContent(dissURL);
+        if (isRedirect)
+        {
+          // The dsControlGroupType of Redirect("R") is a special control type
+          // used primarily for streaming media. Datastreams of this type are
+          // not mediated (proxied by Fedora) and their physical dsLocation is
+          // simply redirected back to the client. Therefore, the contents
+          // of the MIMETypedStream returned for dissemination requests will
+          // contain the raw URL of the dsLocation and will be assigned a
+          // special fedora-specific MIME type to identify the stream as
+          // a MIMETypedStream whose contents contain a URL to which the client
+          // should be redirected.
+          dissemination = new MIMETypedStream("application/fedora-redirect",dissURL.getBytes());
+        } else
+        {
+          // For all non-redirected disseminations, Fedora captures and returns
+          // the MIMETypedStream resulting from the dissemination request.
+          ExternalContentManager externalContentManager = (ExternalContentManager)
+              s_server.getModule("fedora.server.storage.ExternalContentManager");
+          dissemination = externalContentManager.getExternalContent(dissURL);
+        }
         long stopTime = new Date().getTime();
         long interval = stopTime - startTime;
         System.out.println("[DisseminationService] Roundtrip "

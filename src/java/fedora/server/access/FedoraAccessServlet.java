@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.io.PrintWriter;
+import java.io.*;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -465,15 +466,36 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     {
       // Dissemination was successful;
       // Return MIMETypedStream back to browser client
-      response.setContentType(dissemination.MIMEType);
-      int byteStream = 0;
-      ByteArrayInputStream dissemResult =
-          new ByteArrayInputStream(dissemination.stream);
-      while ((byteStream = dissemResult.read()) >= 0)
+      if (dissemination.MIMEType.equalsIgnoreCase("application/fedora-redirect"))
       {
-        out.write(byteStream);
+        // A MIME type of application/fedora-redirect signals that the
+        // MIMETypedStream returned from the dissemination is a special
+        // Fedora-specific MIME type. In this case, teh Fedora server will
+        // not proxy the stream, but instead perform a simple redirect to
+        // the URL contained within the body of the MIMETypedStream. This
+        // special MIME type is used primarily for streaming media.
+        BufferedReader br = new BufferedReader(
+            new InputStreamReader(
+            new ByteArrayInputStream(dissemination.stream)));
+        StringBuffer sb = new StringBuffer();
+        String line = null;
+        while ((line = br.readLine()) != null)
+        {
+          sb.append(line);
+        }
+        response.sendRedirect(sb.toString());
+      } else
+      {
+        response.setContentType(dissemination.MIMEType);
+        int byteStream = 0;
+        ByteArrayInputStream dissemResult =
+            new ByteArrayInputStream(dissemination.stream);
+        while ((byteStream = dissemResult.read()) >= 0)
+        {
+          out.write(byteStream);
+        }
+        dissemResult = null;
       }
-      dissemResult = null;
     } else
     {
       // Dissemination request failed; echo back request parameter.
