@@ -30,6 +30,7 @@ import fedora.client.objecteditor.ObjectEditorFrame;
 import fedora.client.purge.AutoPurger;
 import fedora.client.search.ResultFrame;
 import fedora.client.search.Search;
+import fedora.client.batch.BatchModify;
 
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
@@ -465,6 +466,20 @@ public class Administrator extends JFrame {
             }
         });
         toolsBatchSubMenu.add(toolsBatchIngest);
+
+        // rlw
+        // SubMenuItem for batch modify tool
+        JMenuItem toolsBatchModify=new JMenuItem("Modify Batch", KeyEvent.VK_M);
+        toolsBatchModify.setToolTipText("Modifies a batch of objects based on "
+            + "modify directives specified in a file on disk.");
+        toolsBatchModify.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new BatchModify(APIM);
+            }
+        });
+        // rlw
+
+        toolsBatchSubMenu.add(toolsBatchModify);
         toolsMenu.addSeparator();
         toolsMenu.add(toolsBatchSubMenu);
         // < wdn
@@ -685,6 +700,15 @@ public class Administrator extends JFrame {
         } catch (java.beans.PropertyVetoException e) {}
     }
     // < wdn
+
+    protected void createBatchModifyConsole() {
+    BatchModifyGUI frame=new BatchModifyGUI(this, s_desktop, s_host, s_port, s_user, s_pass);
+    frame.setVisible(true);
+    s_desktop.add(frame);
+    try {
+        frame.setSelected(true);
+    } catch (java.beans.PropertyVetoException e) {}
+    }
 
     public Point getCenteredPos(int xSize, int ySize) {
         Dimension screenSize=getToolkit().getScreenSize();
