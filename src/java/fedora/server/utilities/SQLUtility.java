@@ -2,11 +2,7 @@ package fedora.server.utilities;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -160,6 +156,27 @@ public abstract class SQLUtility {
                 throw sqle2;
             } finally {
                 st=null;
+            }
+        }
+    }
+
+    /**
+     * Get a long string, which could be a TEXT or CLOB type.
+     * (CLOBs require special handling -- this method normalizes the reading of them)
+     */
+    public static String getLongString(ResultSet rs, int pos) throws SQLException {
+        String s = rs.getString(pos);
+        if (s != null) {
+            // It's a String-based datatype, so just return it.
+            return s;
+        } else {
+            // It may be a CLOB.  If so, return the contents as a String.
+            try {
+                Clob c = rs.getClob(pos);
+                return c.getSubString(1, (int) c.length());
+            } catch (Throwable th) {
+                th.printStackTrace();
+                return null;
             }
         }
     }
