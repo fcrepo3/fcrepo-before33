@@ -18,11 +18,12 @@ public abstract class StdoutLogging
     public static final int FINER=5;
     public static final int FINEST=6;
     
-    private int m_level=0;
+    private int m_level;
     private Logging m_target;
     
     public StdoutLogging(Logging target) {
         m_target=target;
+        m_level=FINEST;
     }
 
     public void setLogLevel(int level) {
