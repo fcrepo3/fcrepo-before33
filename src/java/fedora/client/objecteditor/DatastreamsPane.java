@@ -33,8 +33,8 @@ import fedora.client.Administrator;
 import fedora.server.types.gen.Datastream;
 
 /**
- * Shows a tabbed pane, one for each datastream in the object.
- * Also show add and purge buttons at the bottom.
+ * Shows a tabbed pane, one for each datastream in the object, and one
+ * special tab for "New...", which handles the creation of new datastreams.
  *
  * -----------------------------------------------------------------------------
  *
@@ -193,6 +193,7 @@ public class DatastreamsPane
             extends JPanel implements ActionListener {
 
         JTextField m_labelTextField;
+        JTextField m_referenceTextField;
         JTextArea m_controlGroupTextArea;
         JComboBox m_mimeComboBox;
         JComboBox m_mdClassComboBox;
@@ -201,8 +202,11 @@ public class DatastreamsPane
         JPanel m_specificPane;
         TextContentEditor m_xEditor=null;
         TextContentEditor m_mEditor=null;
+        JPanel m_erPane;
+        JButton m_erViewButton;
 
         String m_controlGroup;
+        String m_lastSelectedMimeType;
 
         static final String X_DESCRIPTION="Metadata that is stored and managed inside the "
                 + "repository.  This must be well-formed XML and will be "
@@ -282,6 +286,27 @@ public class DatastreamsPane
                                                           "NISOIMG", "TEIHDR",
                                                           "VRA" });
             m_mdTypeComboBox.setEditable(true);
+            m_lastSelectedMimeType=(String) m_mimeComboBox.getSelectedItem();
+            m_mimeComboBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    String cur=(String) m_mimeComboBox.getSelectedItem();
+                    if (!cur.equals(m_lastSelectedMimeType)) {
+                        System.out.println("Changed mime type from " + m_lastSelectedMimeType + " to " + cur);
+                        // X: remove the xml parsing restriction
+                        m_xEditor.setXML(cur.endsWith("+xml") || cur.endsWith("/xml"));
+                        // E/R: in any case, remove the prior viewer
+                        m_erPane.add(new JLabel(), BorderLayout.CENTER);
+                        m_erPane.validate();
+                        if (ContentHandlerFactory.hasViewer(cur)) {
+                            m_erViewButton.setEnabled(true);
+                        } else {
+                            m_erViewButton.setEnabled(false);
+                        }
+                        // remember the mime type
+                        m_lastSelectedMimeType=cur;
+                    }
+                }
+            });
             right=new JComponent[] { m_mdClassComboBox, m_mdTypeComboBox };
             JPanel xTopPane=new JPanel();
             grid=new GridBagLayout();
@@ -321,14 +346,50 @@ public class DatastreamsPane
 
             JPanel mPane=new JPanel();
             mPane.add(new JLabel("mPane"));
-            JPanel erPane=new JPanel();
-            erPane.add(new JLabel("erPane"));
+
+            // NORTH: Location  __________________
+            // SOUTH:        [View]
+            // preview button's actionlistener will only pull up a viewer
+            // if the selected mime type is something we have a viewer for.
+            JPanel erTopPane=new JPanel(new BorderLayout());
+            erTopPane.add(new JLabel("Location  "), BorderLayout.WEST);
+            m_referenceTextField=new JTextField("http://");
+            erTopPane.add(m_referenceTextField, BorderLayout.CENTER);
+
+            JPanel erBottomPane=new JPanel(new FlowLayout());
+            m_erViewButton=new JButton("View");
+            m_erViewButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    // get a viewer and put it in the middle of m_erPane
+                    // we assume we can get a viewer here because
+                    // the view button wouldn't be enabled if that weren't 
+                    // the case
+                    try {
+                        String mimeType=(String) m_mimeComboBox.getSelectedItem();
+                        ContentViewer v=ContentHandlerFactory.getViewer(
+                                mimeType,
+                                Administrator.DOWNLOADER.
+                                        get(m_referenceTextField.getText()));
+                        m_erPane.add(v.getComponent(), BorderLayout.CENTER);
+                        m_erPane.validate();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                                e.getMessage(), "View error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+            erBottomPane.add(m_erViewButton);
+            m_erPane=new JPanel(new BorderLayout());
+            m_erPane.add(erTopPane, BorderLayout.NORTH);
+            m_erPane.add(erBottomPane, BorderLayout.SOUTH);
+
             m_specificPane=new JPanel();
             m_contentCard=new CardLayout();
             m_specificPane.setLayout(m_contentCard);
             m_specificPane.add(xPane, "X");
             m_specificPane.add(mPane, "M");
-            m_specificPane.add(erPane, "ER");
+            m_specificPane.add(m_erPane, "ER");
 
             JPanel entryPane=new JPanel();
             entryPane.setLayout(new BorderLayout());

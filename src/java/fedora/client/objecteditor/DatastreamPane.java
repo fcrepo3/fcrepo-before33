@@ -242,11 +242,11 @@ public class DatastreamPane
 
     private String getControlGroupString(String abbrev) {
         if (abbrev.equals("M")) {
-            return "Internal Managed Content";
+            return "Managed Content";
         } else if (abbrev.equals("X")) {
             return "Internal XML Metadata";
         } else if (abbrev.equals("R")) {
-            return "External Redirect";
+            return "Redirect";
         } else {
             return "External Reference";
         }
@@ -369,7 +369,7 @@ public class DatastreamPane
             JLabel urlLabel=new JLabel("Fedora URL");
             JLabel[] labels;
             if (R || E) {
-                JLabel locationLabel=new JLabel("Reference");
+                JLabel locationLabel=new JLabel("Location");
                 if (m_versionSlider!=null) {
                     labels=new JLabel[] {labelLabel, locationLabel, urlLabel};
                 } else {
@@ -767,7 +767,7 @@ public class DatastreamPane
             JLabel[] labels;
             JComponent[] values;
             if (E || R) {
-                labels=new JLabel[] {labelLabel, new JLabel("Reference"), urlLabel};
+                labels=new JLabel[] {labelLabel, new JLabel("Location"), urlLabel};
                 JTextField refValue=new JTextField();
                 refValue.setText(ds.getLocation());
                 refValue.setEditable(false);
