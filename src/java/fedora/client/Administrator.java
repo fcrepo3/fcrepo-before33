@@ -327,7 +327,7 @@ public class Administrator extends JFrame {
         });
         fileIngestOne.add(fileIngestOneFromFile);
         fileIngestOne.add(fileIngestOneFromRepository);
-        JMenu fileIngestMultiple=new JMenu("Multiple Objects");
+        JMenu fileIngestMultiple=new JMenu("Objects By Type");
         fileIngestMultiple.setMnemonic(KeyEvent.VK_M);
         JMenuItem fileIngestMultipleFromFile=new JMenuItem("From Directory...", KeyEvent.VK_D);
         fileIngestMultipleFromFile.addActionListener(new ActionListener() {
@@ -362,7 +362,7 @@ public class Administrator extends JFrame {
             }
         });
         
-        JMenuItem fileExportMultiple=new JMenuItem("Multiple Objects...");
+        JMenuItem fileExportMultiple=new JMenuItem("Objects By Type...");
         fileExportMultiple.setMnemonic(KeyEvent.VK_M);
         fileExportMultiple.setToolTipText("Exports multiple serialized Digitial Objects to disk.");
         fileExportMultiple.addActionListener(new ActionListener() {
