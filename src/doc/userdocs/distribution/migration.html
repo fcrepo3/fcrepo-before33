@@ -4,7 +4,7 @@
                       
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
-    <title> Fedora&#153; Migration Utility Guide</title>
+    <title>Fedora Migration Utility Guide</title>
     <link rel="stylesheet" type="text/css" href="../docstyle.css" />
 </head>
 
@@ -12,36 +12,295 @@
 <div id="header">
     <a href="../index.html" id="logo"></a>
     <div id="title">
-        <h1> Fedora&#153; Migration Utility Guide</h1>
+        <h1>Fedora Migration Utility Guide</h1>
         <h2>Fedora Release 2.0</h2>
     </div>
 </div>
-    
-    <div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#d0e43">Introduction </a></dt><dt><a href="#d0e48">Using Migration Utility to Upgrade from a Previous Version of Fedora:  </a></dt><dt><a href="#d0e215">Custom Migration:  Export and Ingest via Command Line Utilities and API-M</a></dt></dl></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e43"></a>Introduction </h2></div></div><p>As of Fedora 1.2, a new utility for migrating objects is provided with the Fedora distribution package.  This utility can be used to migrate digital objects from one Fedora repository to another.  The migration utility has two functions: (1) migrating objects from an old repository to a new repository during the process of upgrading from a previous version of Fedora, and (2) moving and copying objects among Fedora repositories for other administrative purposes.</p></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e48"></a>Using Migration Utility to Upgrade from a Previous Version of Fedora:  </h2></div></div><p>Although Fedora 1.2 is backward compatible with previous versions of Fedora at the interface definition level,  there are changes to the underlying database schema that require digital objects to be migrated from an old Fedora installation to the new Fedora installation. </p><p>Upgrading is an easy task using the Migration Utility.   The migration utility will export objects from an old Fedora repository and ingest them into the new Fedora repository.  After migration, both the old and the new repositories will have copies of the objects.  The migration utility does not purge objects from the old repository.  It is up to the Fedora administrator to either purge objects from the old repository, or shut down the old Fedora repository after migration.   </p><p>
-			<span class="emphasis"><em>Note that the migration utility works with Fedora 1.1 and 1.1.1 repositories.  If you are running Fedora 1.0 or earlier, you must first upgrade to Fedora 1.1 to be able to run the migration utility.</em></span>
-		</p><p>The steps for using the migration utility for a Fedora upgrade are:</p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e62"></a>1.  Install Fedora 1.2.</h3></div></div><p>The new Fedora release must be installed in a new location.  See the  <a href="../distribution/installation.html" target="_top">Fedora Installation Guide</a> for specific instructions.</p><p>
-				<span class="emphasis"><em>Do not install Fedora 1.2 on top of your pre-existing Fedora installation.  If you are installing Fedora 1.2 on the same machine as your pre-existing Fedora installation</em></span>, make sure that the following configuration variables for the new Fedora 1.2 installation are different from those of the pre-existing installation:</p><div class="itemizedlist"><ul type="disc"><li><p>$FEDORA_HOME environment variable: install Fedora 1.2 into a different directory than the previous installation</p></li><li><p>Initialize a new database: In Fedora 1.2 the database configuration scripts are set up with new defaults so you will create a new Fedora 1.2 database.  If using MySQL, run mysql-config.bat (.sh for unix) with the new default database name of  &#8220;fedora12&#8221; (or your own new database name that differs from the name used in your pre-existing Fedora installation.  For McKoi, run the mkoi-init.bat (.sh for unix) which has a new default port number for Fedora 1.2.  </p></li><li><p>fedoraServerPort: set a different port for Fedora 1.2 in the Fedora server configuation file (fedora.fcfg)</p></li><li><p>fedoraShutdownPort: set a different shutdown port for Fedora 1.2 </p></li><li><p>fedoraRedirectPort: set a different redirect port for Fedora 1.2 in the Fedora server configuation file (fedora.fcfg)</p></li><li><p>object_store_base: set a different storage path for digital objects in the Fedora server configuation file (fedora.fcfg)</p></li><li><p>datastream_store_base: set a different storage path for datastreams in the Fedora server configuation file (fedora.fcfg) </p></li><li><p>temp_store_base: set a different storage path for temporary files in the Fedora server configuation file (fedora.fcfg)</p></li><li><p>retainPIDs: to set the Fedora 1.2 repository to accept PIDs from the old repository, modify retainPIDs in Fedora server configuration file (fedora.fcfg) to include the PID namepace(s) of the old repository</p></li><li><p> if the OLD Fedora installation is running on <span class="emphasis"><em>a different machine</em></span>, modify the Fedora serverconfiguration file of the OLD Fedora installation to allow requests to be made by the new Fedora 1.2 repository (i.e, add the IP address of the new Fedora 1.2 repository to allowHosts.)</p></li></ul></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e109"></a>2.  Start the new Fedora 1.2 repository.</h3></div></div><p>Make sure you have set the retainPIDs variable in the Fedora server configuration file to contain the PID namespace(s) used in the old repository.  This will tell the Fedora 1.2 repository to accept the pre-existing PIDs of the objects in your pre-existing Fedora repository.  If you do not set retainPIDs with the old repository namespace(s), the new Fedora 1.2 repository will assign NEW PIDs to the migrated objects.</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e114"></a>3.  Run the Migration Utility.</h3></div></div><p>The migration utility is launched via the File/Ingest menu.  Within this menu there are options to ingest &#8220;From Repository.&#8221;  This is where the migration utility functionality gets kicked off.  When Ingesting &#8220;From Repository&#8221; the Fedora Adminstrator client will connect to the old repository you specify, initiate an export of objects from that repository, and ingest the objects into the new repository.  A status report will be displayed when the task is complete.</p><div class="itemizedlist"><ul type="disc"><li><p>
-						<span class="emphasis"><em>Start the Fedora Administrator client for Fedora 1.2.</em></span>
-					</p><p>navigate to the $FEDORA_HOME/client/bin directory</p><p>fedora-admin [hostname] [port] [user] [pass]</p><p>For example, <span class="emphasis"><em>fedora-admin localhost 8080 fedoraAdmin fedoraAdmin</em></span> will start
-			            the GUI for a server running on the local machine, port 8080, where "fedoraAdmin"has been used both as the name and password of the server administrator. </p><p>New to the 1.2 release of Fedora is the authentication dialog. When you start Fedora Administrator, you will be asked to choose the server to which you wish to connect and your username and password. The server and username fields are pre-populated and the password is validated using values from fedora.fcfg</p><div class="mediaobject"><img src="../client/admin-gui/images/login.jpg" /></div></li><li><p>  </p><p>  </p><p>
-						<span class="emphasis"><em>File/Ingest/One_Object/From_Repository&#8230;</em></span>
-					</p><p>To migrate a single object from an old repository, select the File/Ingest/One_Object/From_Repository menu item.</p><div class="mediaobject"><img src="../client/admin-gui/images/file_menu.jpg"></div><p>You will be presented with a dialog box to enter the host and port of the source repository from which you want to migrate objects (i.e., your old Fedora installation).  Enter the information to establish a connection to the source repository.  Enter the hostname:port, username, and password.  </p><div class="mediaobject"><img src="../client/admin-gui/images/ingest_repo.jpg"></div><p>When a connection has been established to the old Fedora repository, you will be prompted to enter the PID of the object you wish to migrate from the old repository to the new repository.  Click OK, and the object will be migrated.</p><div class="mediaobject"><img src="../client/admin-gui/images/input.jpg"></div></li><li><p>  </p><p>  </p><p>
-						<span class="emphasis"><em>File/Ingest/Objects_By_Type/From_Repository&#8230;</em></span>
-					</p><p>To migrate all objects or a group of objects from an old repository, select the File/Ingest/Objects_By_Type/From_Repository menu item.</p><div class="mediaobject"><img src="../client/admin-gui/images/file_menu.jpg"></div><p>When this menu item is selected, you will mass-migrate objects from the old repository to the new repository.  You are provided the option to migrate objects by the three type of Fedora digital object (data objects, behavior definition objects, and behavior mechanism objects).  You can select all types, or specific types to be migrated.  </p><p>First, you will be presented with a dialog box to enter the host and port of the source repository from which you want to migrate objects (i.e., your old Fedora installation).  Enter the information to establish a connection to the source repository.  Enter the hostname:port, username, and password.  </p><div class="mediaobject"><img src="../client/admin-gui/images/ingest_repo.jpg"></div><p>When a connection has been established to the old Fedora repository, you will be presented with a dialog box to select the types of objects you want to migrate into the new repository.  Check all or some of the types. <span class="emphasis"><em> If your intent is to migrate all the objects from your old repository, SELECT ALL THREE TYPES to be sure that you migrate the behavior definition and behavior mechanism objects that your data objects are dependent on!!</em></span>Clicking OK initiates migration of all objects of that type from the source repository into the new repository.  You will see a status report when the process is complete.  </p><div class="mediaobject"><img src="../client/admin-gui/images/selectbytype.jpg"></div></li></ul></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e195"></a>4.  Confirm Status.</h3></div></div><p>When the migration process is complete, objects will still exist in the source repository (i.e., your old repository), and you will have ingested new copies of the objects into your new repository.  If you configured your new repository to accept the PIDs of the old repository, objects in the new repository will have their original PIDs.  Otherwise, they will have been assigned new PIDs when they were ingested into the new repository.</p><p>
-				<span class="emphasis"><em>Be sure to review the status report after migration.</em></span>  The report will list the number of objects ingested (migrated) and will report the PIDs of any objects that failed. </p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e205"></a>5.  Shutdown Old Repository. </h3></div></div><p>To complete the migration task, you should shut down your old Fedora repository.  If you plan to permanently disable the old repository, you can drop the SQL database for the old repository, and delete the directories that store the XML files for the old repository (the paths are defined in the variables object_store_base, datastreams_store_base, and temp_store_base in the Fedora server configuration file for the old repository). </p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e210"></a>6.  Update Host and Port of New Repository.</h3></div></div><p>To maintain persistence of the base URL for your Fedora repository, you should change the new repository configuration to use the hostname and port number that the old repository was running on.  To do this, stop the new Fedora 1.2 server.  Modify fedoraServerHost and fedoraServerPort in the Fedora server configuration file (fedora.fcfg) to the values that were configured in the old repository.  Then, re-start the Fedora 1.2 repository.  This will prevent breakage of URLs that were established during the tenure of the old repository.  </p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e215"></a>Custom Migration:  Export and Ingest via Command Line Utilities and API-M</h2></div></div><p>It is possible to build your own migration utilities using command line utilities provided with Fedora, or by writing clients that make calls via API-M.  There are two command line utilities that can be used together to perform migration tasks:  <span class="emphasis"><em>fedora-export</em></span> and <span class="emphasis"><em>fedora-ingest</em></span>.  Please refer to the <a href="../client/cmd-line/index.html" target="_top">Fedora Command Line Utilities Guide</a> for instructions on how to use these command line functions.  Also, refer to the <a href="http://www.fedora.info/definitions/1/0/api/#apim" target="_top"> API-M interface definition </a> (WSDL) for the binding syntax for invoking the Export and Ingest operations via SOAP.</p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e232"></a></h3></div></div><p></p></div></div></div>
 
-<div id="footer">
-    <div id="copyright">
-        Copyright &#xA9; 2005 Fedora Project
+<div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+        <ol>
+          <li><a href="#intro">Introduction</a></li>
+          <li><a href="#migrate">Migrating From Fedora 1.2.1 to Fedora 2.0</a></li>
+        </ol>
     </div>
+</div>
+
+  <div class="sec1">
+    <div class="titlepage">
+      <div>
+        <h2 class="title" style="clear: both"><a name="intro" id=
+        "intro"></a>1. Introduction</h2>
+      </div>
+    </div>
+
+    <p>Users migrating from Fedora Release 1.2.1 need to follow the
+    steps outlined in the section entitled, Migrating From Fedora
+    1.2.1 to Fedora 2.0, and apply patch number 2 to their existing
+    Fedora 1.2.1 repository BEFORE attempting migration to Fedora
+    2.0. Failure to do so can severely limit future migration
+    options.</p>
+
+    <p>If you are running a version of the Fedora software prior to
+    version 1.2.1, you will need to migrate your server software up
+    to version 1.2.1 first, and then proceed with the migration
+    from Fedora 1.2.1 to Fedora 2.0. Steps for migrating to Fedora
+    1.2.1 can be found in the release notes section for 
+    <a href="release-notes.html#rel1.2.1">Fedora 1.2.1.</a> This
+    document only address migration from a Fedora 1.2.1 repository
+    to a Fedora 2.0 repository.</p>
+  </div>
+
+    <div class="sec2">
+      <h2><a name="migrate" id="migrate">2. Migrating
+      From Fedora 1.2.1 to Fedora 2.0</a></h2>
+
+      <p>If you are upgrading from Fedora 1.2.1 to Fedora 2.0
+      follow these steps:</p>
+
+      <ol>
+        <li>Download patch number 2 from
+        <a href="http://www.fedora.info/release/1.2.1/patch2">
+        http://www.fedora.info/release/1.2.1/patch2.</a></li>
+
+        <li>Make sure you are running v1.2.1 of the Fedora server
+        software.
+
+          <p>DO NOT APPLY THIS PATCH TO ANY OTHER VERSION OF
+          FEDORA!</p>
+
+          <p>To check your repository's version, check the
+          "describe" page. For instance, if you're running Fedora
+          on localhost:8080, visit
+          http://localhost:8080/fedora/describe</p>
+        </li>
+
+        <li>Shut down your Fedora 1.2.1 server (using
+        fedora-stop)</li>
+
+        <li>Make a backup of the METSLikeExportDOSerializer.class
+        file.
+
+          <p>Under Windows, make a backup of the following
+          file:</p>
+
+          <div class="code">
+            <pre>
+%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation\METSLikeExportDOSerializer.class
+</pre>
+          </div>
+
+          <p>Under Unix, make a backup of the following file:</p>
+
+          <div class="code">
+            <pre>
+$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation/METSLikeExportDOSerializer.class
+</pre>
+          </div>
+        </li>
+
+        <li>Copy the METSLikeExportDOSerializer.class from this
+        patch into the above directory replacing the one there.
+
+          <p>Under Windows, copy the
+          METSLikeExportDOSerializer.class from patch into the
+          following directory</p>
+
+          <div class="code">
+            <pre>
+%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation 
+</pre>
+          </div>
+
+          <p>OVER THE EXISTING FILE.</p>
+
+          <p>Under Unix, copy the METSLikeExportDOSerializer.class
+          from patch into the following directory</p>
+
+          <div class="code">
+            <pre>
+$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation 
+</pre>
+          </div>
+
+          <p>OVER THE EXISTING FILE.</p>
+        </li>
+
+        <li>(OPTIONAL) If you installed the source code
+        distribution of Fedora, you should also copy the included
+        METSLikeExportDOSerializer.java file into your source
+        directory.
+
+          <p>Under Windows, copy the
+          METSLikeExportDOSerializer.java file from the patch into
+          the following directory</p>
+
+          <div class="code">
+            <pre>
+%FEDORA_HOME%\src\java\fedora\server\storage\translation
+</pre>
+          </div>
+
+          <p>OVER THE EXISTING FILE.</p>
+
+          <p>Under Unix, copy the METSLikeExportDOSerializer.java
+          file from the patch into the following directory</p>
+
+          <div class="code">
+            <pre>
+$FEDORA_HOME/src/java/fedora/server/storage/translation
+</pre>
+          </div>
+
+          <p>OVER THE EXISTING FILE.</p>
+        </li>
+
+        <li>Re-start your Fedora 1.2.1 server (using fedora-start).
+        Your Fedora 1.2.1 repository is now ready for exporting its
+        objects to the new server.</li>
+
+        <li>Download the Fedora 2.0 software from <a href=
+        "http://www.fedora.info/release/2.0">http://www.fedora.info/release/2.0</a></li>
+
+        <li>Install and configure the new Fedora 2.0 repository
+        with a different host and port than the Fedora 1.2.1
+        server.</li>
+
+        <li>Start the Fedora 2.0 server (using fedora-start).</li>
+
+        <li>There are two ways to ingest objects from the 1.2.1
+        server: 1) use the admin GUI client to ingest the objects
+        from the 1.2.1 repository or 2) use the fedora-ingest
+        command-line utility to ingest the objects from the 1.2.1
+        repository
+
+          <ol type="a">
+            <li>Using the admin GUI client to ingest objects from
+            the 1.2.1 repository
+
+              <ol type="i">
+                <li>Start the fedora admin GUI client (using
+                fedora-admin).</li>
+
+                <li>Under the File menu item, select File, Ingest,
+                Object By Type, From Repository.</li>
+
+                <li>Specify the hostname and port of the Fedora
+                1.2.1 server from which you want to ingest objects.
+                Specify the administrator username and password for
+                the 1.2.1 repository.</li>
+
+                <li>Select all three object types including
+                Behavior Definition, Behavior Mechanism, and Data
+                object and click OK.</li>
+
+                <li>The Fedora 2.0 server will now ingest all
+                objects from the 1.2.1 repository.</li>
+              </ol>OR
+            </li>
+
+            <li>Using the fedora-ingest command-line utility to
+            ingest objects from the 1.2.1 repository.
+
+              <ol type="i">
+                <li>Run the fedora-ingest command-line utility
+                which is found in the client/bin directory.
+
+                  <p>Under Windows, this file is found in:</p>
+
+                  <div class="code">
+                    <pre>
+%FEDORA_HOME%\client\bin\fedora-ingest.bat
+</pre>
+                  </div>
+
+                  <p>Under Unix, this file is found in:</p>
+
+                  <div class="code">
+                    <pre>
+$FEDORA_HOME/client/bin/fedora-ingest.sh
+</pre>
+                  </div>
+                </li>
+
+                <li>Arguments for the fedora-ingest utility should
+                include the following:
+
+                  <ul>
+                    <li>Type of ingest: specify R for
+                    repository</li>
+
+                    <li>Hostname and port of the 1.2.1 repository
+                    from which you wish to ingest objects:
+                    source-host:source-port</li>
+
+                    <li>Administrator username of the 1.2.1
+                    repository: fedoraAdmin</li>
+
+                    <li>Password for the administrator username of
+                    the 1.2.1 repository: fedoraAdmin is the
+                    default</li>
+
+                    <li>Type of objects to ingest: specify DMO for
+                    all three object types.</li>
+
+                    <li>Hostname and port of the 2.0 repository
+                    into which you are ingesting the objects:
+                    destination-host:destination-port</li>
+
+                    <li>Administrator username of the 2.0
+                    repository: fedoraAdmin</li>
+
+                    <li>Password for the administrator username of
+                    the 2.0 repository: fedoraAdmin is the
+                    default</li>
+
+                    <li>Log message: use "" for no message.
+
+                      <p>For example:</p>
+
+                      <div class="code">
+                        <pre>
+fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-port fedoraAdmin fedoraAdmin ""
+</pre>
+                      </div>
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+            </li>
+          </ol>
+        </li>
+
+        <li>After successfully ingesting all objects from the 1.2.1
+        repository, shutdown the 1.2.1 repository (using
+        fedora-stop).</li>
+
+        <li>If you desire to run the Fedora 2.0 repository under
+        the same hostname and port as the 1.2.1 repository, you can
+        now shutdown the 2.0 repository using fedora-stop,
+        reconfigure the host and port in the fedora.fcfg file for
+        the 2.0 repository to match those of the previous 1.2.1
+        repository, and restart the Fedora 2.0 repository.</li>
+      </ol>
+    </div>
+
+  <div id="footer">
+    <div id="copyright">
+      Copyright &#xA9; 2005 Fedora Project
+    </div>
+
     <div id="lastModified">
-        Last Modified
-        <script type="text/javascript">
+      Last Modified <script type="text/javascript">
+      //<![CDATA[
             var cvsDate = "$Date$";
             var parts = cvsDate.split(" ");
             var modifiedDate = parts[1];
             document.write(modifiedDate);
-        </script>
+      //]]>
+      </script>
     </div>
-</div>
-</body></html>
+  </div>
+</body>
+</html>
