@@ -55,7 +55,7 @@ import fedora.server.utilities.StreamUtility;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version $Id $
+ * @version $Id
  */
 public class AutoModify
 {
@@ -84,9 +84,9 @@ public class AutoModify
       throws MalformedURLException, ServiceException, IOException
   {
 
-    this.s_APIM=APIMStubFactory.getStub(host, port, user, pass);
-    this.s_APIA=APIAStubFactory.getStub(host, port, user, pass);
-    this.s_UPLOADER = new Uploader(host, port, user, pass);
+    AutoModify.s_APIM=APIMStubFactory.getStub(host, port, user, pass);
+    AutoModify.s_APIA=APIAStubFactory.getStub(host, port, user, pass);
+    AutoModify.s_UPLOADER = new Uploader(host, port, user, pass);
 
   }
 
