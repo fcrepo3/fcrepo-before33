@@ -14,22 +14,22 @@ import javax.servlet.ServletException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
+//import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Vector;
+//import java.util.Vector;
 
 import fedora.server.access.localservices.HttpService;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
-import fedora.server.errors.MethodParmNotFoundException;
+//import fedora.server.errors.MethodParmNotFoundException;
 import fedora.server.Server;
-import fedora.server.storage.DefinitiveBMechReader;
+//import fedora.server.storage.DefinitiveBMechReader;
 import fedora.server.storage.DefinitiveDOReader;
-import fedora.server.storage.FastDOReader;
+//import fedora.server.storage.FastDOReader;
 import fedora.server.storage.FastDOReader;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.MIMETypedStream;
@@ -199,8 +199,8 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     for ( Enumeration e = h_userParms.keys(); e.hasMoreElements();)
     {
       Property userParm = new Property();
-      userParm.Name = (String)e.nextElement();
-      userParm.Value = (String)h_userParms.get(userParm.Name);
+      userParm.name = (String)e.nextElement();
+      userParm.value = (String)h_userParms.get(userParm.name);
       userParms[userParmCounter] = userParm;
       userParmCounter++;
     }
@@ -656,6 +656,9 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
        fastReader = new FastDOReader(PID);
        dissResults = fastReader.getDissemination(PID, bDefPID, methodName,
            versDateTime);
+       //DisseminationService dissService = new DisseminationService();
+       //dissemination = dissService.getDissemination(PID, bDefPID, methodName,
+       //userParms, asOfDate, dissResults);
        String replaceString = null;
        int numElements = dissResults.length;
 
@@ -1489,9 +1492,9 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     for (int i=0; i<userParms.length; i++)
     {
       out.println("<tr>");
-      out.println("<td><font color='red'>"+userParms[i].Name+"</font></td>");
+      out.println("<td><font color='red'>"+userParms[i].name+"</font></td>");
       out.println("<td> = </td>");
-      out.println("<td>"+userParms[i].Value+"</td>");
+      out.println("<td>"+userParms[i].value+"</td>");
         out.println("</tr>");
     }
     out.println("</table></center></font>");
@@ -1505,8 +1508,8 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       {
         for (int i=0; i<userParms.length; i++)
         {
-          System.out.println("<p>userParm: "+userParms[i].Name+
-          " userValue: "+userParms[i].Value);
+          System.out.println("<p>userParm: "+userParms[i].name+
+          " userValue: "+userParms[i].value);
         }
       }
     }
