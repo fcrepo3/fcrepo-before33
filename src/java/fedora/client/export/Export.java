@@ -210,8 +210,8 @@ public class Export {
         System.err.println("  fedora-export HST:PRT USR PSS PID|FTYPS FORMAT PATH");
         System.err.println();
         System.err.println("Where:");
-        System.err.println("  HST    is the repository's hostname.");
-        System.err.println("  PRT    is the repository's port number.");
+        System.err.println("  HST    is the repository hostname.");
+        System.err.println("  PRT    is the repository port number.");
         System.err.println("  USR    is the id of the repository user.");
         System.err.println("  PSS    is the password of repository user.");
         System.err.println("  PID    is the id of the object to export from the source repository.");
