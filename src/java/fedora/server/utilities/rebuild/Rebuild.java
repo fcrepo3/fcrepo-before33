@@ -3,12 +3,24 @@ package fedora.server.utilities.rebuild;
 import java.io.*;
 import java.util.*;
 
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import fedora.server.config.*;
+import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.StreamIOException;
+import fedora.server.storage.translation.DODeserializer;
+import fedora.server.storage.translation.DOTranslationUtility;
+import fedora.server.storage.translation.FOXMLDODeserializer;
+import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.storage.types.DigitalObject;
 
 /**
  * Entry-point for rebuilding various aspects of the repository.
  *
- * @version $Id$
+ * @@version $Id$
  */
 public class Rebuild {
 
@@ -16,7 +28,8 @@ public class Rebuild {
      * Rebuilders that the rebuild utility knows about.
      */
     public static String[] REBUILDERS = new String[] {
-            "fedora.server.resourceIndex.ResourceIndexRebuilder" };
+            "fedora.server.utilities.rebuild.NoOpRebuilder",
+            "fedora.server.utilities.rebuild.SQLRebuilder" };
 
     public Rebuild(File serverDir, String profile) throws Exception {
         ServerConfiguration serverConfig = getServerConfig(serverDir,
@@ -43,17 +56,22 @@ public class Rebuild {
             System.out.println();
             System.out.println(rebuilder.getAction());
             System.out.println();
-//            ManagedContentFinder finder = getManagedContentFinder(serverConfig);
             Map options = getOptions(rebuilder.init(serverDir, serverConfig));
             if (options != null) {
                 System.out.println();
                 System.out.println("Rebuilding...");
                 try {
                     rebuilder.start(options);
-                    addAllObjects(rebuilder, serverDir, serverConfig);
                     // TODO: Get all the objects from the filesystem
                     //       and call rebuilder.addObject()
-                } finally {
+                    /** encapsulates all configuration data for this package */
+                    fedora.server.storage.lowlevel.Configuration conf = fedora.server.storage.lowlevel.Configuration.getInstance();
+                    String objStoreBaseStr = conf.getObjectStoreBase();
+                    File dir = new File(objStoreBaseStr);
+                    multiFromDirectory(dir, "DMO", rebuilder);
+                    
+                } 
+                finally {
                     rebuilder.finish();
                 }
                 System.out.println("Finished.");
@@ -61,34 +79,138 @@ public class Rebuild {
             }
         }
     }
+     
+    public void multiFromDirectory(File dir, String fTypes, Rebuilder rebuilder)
+                                              throws Exception 
+    {
+        String tps=fTypes.toUpperCase();
+        if (tps.indexOf("D")!=-1) 
+        {
+            rebuildAll(getFiles(dir, "FedoraBDefObject"), rebuilder);
+        }
+        if (tps.indexOf("M")!=-1) 
+        {
+            rebuildAll(getFiles(dir, "FedoraBMechObject"), rebuilder);
+        }
+        if (tps.indexOf("O")!=-1) 
+        {
+            rebuildAll(getFiles(dir, "FedoraObject"), rebuilder);
+        }
+    }
+    
+    
+    private void rebuildAll(Set fileSet, Rebuilder rebuilder)
+    {
+        Iterator setIter = fileSet.iterator();
+        while (setIter.hasNext())
+        {
+            File file = (File)(setIter.next());
+            DigitalObject obj = new BasicDigitalObject();
+            DODeserializer deserializer;
+            try
+            {
+                System.out.println(file.getAbsoluteFile());
+                deserializer = new FOXMLDODeserializer();
+                deserializer.deserialize(new FileInputStream(file), obj, "UTF-8", 
+                        DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
+                rebuilder.addObject(obj);
 
-    private void addAllObjects(Rebuilder rebuilder,
-                              File serverDir,
-                              ServerConfiguration serverConfig) {
-        // Determine which deserializers are supported, and get an
-        // instance of each
+            } 
+            catch (UnsupportedEncodingException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } 
+            catch (FactoryConfigurationError e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } 
+            catch (ParserConfigurationException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } 
+            catch (SAXException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } 
+            catch (ObjectIntegrityException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } 
+            catch (StreamIOException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } 
+            catch (FileNotFoundException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } 
+            catch (Exception e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Set getFiles(File dir, String fTypeString)
+                        throws Exception 
+    {
+        LinkedHashSet set = new LinkedHashSet();
+        if (!dir.isDirectory()) 
+        {
+            throw new IOException("Not a directory: " + dir.getPath());
+        }
+        File[] files = dir.listFiles();
+        for (int i=0; i<files.length; i++) 
+        {
+            if (files[i].isDirectory()) 
+            {
+                set.addAll(getFiles(files[i], fTypeString));
+            }   
+            else 
+            {
+                // if the file is a candidate, add it
+                BufferedReader in = new BufferedReader(new FileReader(files[i]));
+                boolean isCandidate = false;
+                String line;
+                while ( (line = in.readLine()) != null ) 
+                {
+                    if (line.indexOf(fTypeString)!=-1) 
+                    {
+                        isCandidate=true;
+                        break;
+                    }
+                }
+                if (isCandidate) 
+                {
+                    set.add(files[i]);
+                }
+            }
+        }
+        return(set);
     }
 
     private Map getOptions(Map descs) throws IOException {
         Map options = new HashMap();
         Iterator iter = descs.keySet().iterator();
-        boolean hasAtLeastOneOption = false;
         while (iter.hasNext()) {
-            hasAtLeastOneOption = true;
             String name = (String) iter.next();
             String desc = (String) descs.get(name);
             options.put(name, getOptionValue(name, desc));
         }
-        if (hasAtLeastOneOption) {
-            int c = getChoice("Start rebuilding with the above options?", new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
-            if (c == 0) return options;
-            if (c == 1) {
-                System.out.println();
-                return getOptions(descs);
-            }
-        } else {
-            int c = getChoice("Start rebuilding?", new String[] {"Yes", "No, exit."});
-            if (c == 0) return options;
+        int c = getChoice("Start rebuilding with the above options?", 
+new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
+        if (c == 0) return options;
+        if (c == 1) {
+            System.out.println();
+            return getOptions(descs);
         }
         return null;
     }
@@ -103,21 +225,27 @@ public class Rebuild {
         return val;
     }
 
-    private Rebuilder getRebuilder(File serverDir, ServerConfiguration serverConfig) throws Exception {
+    private Rebuilder getRebuilder(File serverDir, ServerConfiguration serverConfig) 
+                      throws Exception 
+    {
         String[] labels = new String[REBUILDERS.length + 1];
         Rebuilder[] rebuilders = new Rebuilder[REBUILDERS.length];
         int i = 0;
-        for (i = 0; i < REBUILDERS.length; i++) {
+        for (i = 0; i < REBUILDERS.length; i++) 
+        {
             Rebuilder r = (Rebuilder) Class.forName(REBUILDERS[i]).newInstance();
             labels[i] = r.getAction();
             rebuilders[i] = r;
         }
         labels[i] = "Exit";
         int choiceNum = getChoice("What do you want to do?", labels);
-        if (choiceNum == i) {
+        if (choiceNum == i) 
+        {
             return null;
-        } else {
-            return rebuilders[i-1];
+        } 
+        else 
+        {
+            return rebuilders[choiceNum];
         }
     }
 
@@ -146,7 +274,8 @@ public class Rebuild {
     }
 
     private static ServerConfiguration getServerConfig(File serverDir, 
-                                                String profile) throws IOException {
+                                                String profile) throws IOException
+ {
         ServerConfigurationParser parser = new ServerConfigurationParser(
                 new FileInputStream(new File(serverDir, "config/fedora.fcfg")));
         ServerConfiguration serverConfig = parser.parse();
@@ -172,7 +301,7 @@ public class Rebuild {
             Parameter param = (Parameter) iter.next();
             String profileValue = (String) param.getProfileValues().get(profile);
             if (profileValue != null) {
-                // System.out.println(param.getName() + " was '" + param.getValue() + "', now '" + profileValue + "'.");
+                // System.out.println(param.getName() + " was '" + param.getValue() + "', now '" + profileValue + '.");
                 param.setValue(profileValue);
                 c++;
             }
@@ -222,7 +351,7 @@ public class Rebuild {
             String msg = th.getMessage();
             if (msg == null) msg = th.getClass().getName();
             fail(msg, false, false);
-//            th.printStackTrace();
+            th.printStackTrace();
         }
     }
 

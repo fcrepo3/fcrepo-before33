@@ -9,7 +9,7 @@ import fedora.server.storage.types.DigitalObject;
 /**
  * A Rebuilder that doesn't do anything useful, for testing purposes.
  * 
- * @version $Id$
+ * @@version $Id$
  */
 public class NoOpRebuilder implements Rebuilder {
 
@@ -28,10 +28,10 @@ public class NoOpRebuilder implements Rebuilder {
     /**
      * Initialize the rebuilder, given the server configuration.
      *
-     * @returns a map of option names to plaintext descriptions.
+     * @@returns a map of option names to plaintext descriptions.
      */
     public Map init(File serverDir,
-                    ServerConfiguration serverConfig) throws Exception {
+                    ServerConfiguration serverConfig) {
         m_serverDir = serverDir;
         m_serverConfig = serverConfig;
         Map m = new HashMap();
@@ -45,12 +45,14 @@ public class NoOpRebuilder implements Rebuilder {
     /**
      * Validate the provided options and perform any necessary startup tasks.
      */
-    public void start(Map options) throws NumberFormatException {
+    public void start(Map options) throws NumberFormatException 
+    {
         long startupDelay = 0;
 
         // validate options
         String s = (String) options.get("startupDelay");
-        if (s != null) {
+        if (s != null && s.length() > 0) 
+        {
             startupDelay = Long.parseLong(s);
         }
         m_echoString = (String) options.get("echoString");
@@ -62,14 +64,16 @@ public class NoOpRebuilder implements Rebuilder {
     /**
      * Add the data of interest for the given object.
      */
-    public void addObject(DigitalObject object) {
-        if (m_echoString != null) System.out.println(m_echoString);
+    public void addObject(DigitalObject object) 
+    {
+        if (m_echoString != null) System.out.println(m_echoString + ": " + object.getPid());
     }
 
     /**
      * Free up any system resources associated with rebuilding.
      */
-    public void finish() {
+    public void finish() 
+    {
         // nothing to free up
     }
 

@@ -12,7 +12,7 @@ import fedora.server.storage.types.DigitalObject;
  * It is expected that clients of this interface will first call init,
  * then start, then addObject (possibly a series of times), then finish.
  * 
- * @version $Id$
+ * @@version $Id$
  */
 public interface Rebuilder {
 
@@ -24,7 +24,7 @@ public interface Rebuilder {
     /**
      * Initialize the rebuilder, given the server configuration.
      *
-     * @returns a map of option names to plaintext descriptions.
+     * @@returns a map of option names to plaintext descriptions.
      */
     public Map init(File serverBaseDir,
                     ServerConfiguration serverConfig) throws Exception;
