@@ -1,17 +1,64 @@
-<html><head>
-    <title>Fedora&#153; Server User Documentation</title></head><body><div><div><div><h1><a name="d0e2"></a>
-			<img src="../images/fedora_logo108x150.jpg">
-		</h1></div>
-    <div> 
-      <h1><a name="d0e2"></a> Fedora&#153; Server User Documentation</h1>
-    </div><div>
-      <h3><i>Software Release 2.0</i></h3>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+    <title>Fedora System Documentation</title>
+    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
+</head>
+
+<body>
+<div id="header">
+    <div id="logo">
+        <a href="../index.html"><img src="images/fedora_logo108x150.jpg" alt="Fedora logo"/></a>
     </div>
-    <div> 
-      <h3> Fedora&#153; Development Team</h3>
-    </div><div>
-      <p>Copyright &copy; 2002-2005 The Rector and Visitors of The University 
-        of Virginia and Cornell University</p>
-    </div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#d0e48">Introduction</a></dt><dt><a href="#d0e53">Code Documentation</a></dt><dt><a href="#d0e61">Access Control and Authentication</a></dt><dt><a href="#d0e66">Server Port Configuration</a></dt></dl></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e48"></a>Introduction</h2></div></div><p>The FEDORA acronym stands for Flexible Extensible Digital Object Repository Architecture.  The Fedora server is an implementation of the Fedora architecture that provides a general purpose digital object repository system for storing, managing, and delivering digital content.</p></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e53"></a>Code Documentation</h2></div></div><p>
-			<a href="serverdocs/index.html" target="_top">Javadocs</a>
-		</p></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e61"></a>Access Control and Authentication</h2></div></div><p>Although Access Control is not slated until year two of the project, the implementation of a simple form of access control has been added to provide a minimal level of security.  IP range restriction is supported at both the Management API and Access API exposures.  The fedora.fcfg configuration file contains two new optional parameters in the Access and Management Modules named "allowhosts" and "denyhosts" that are used to provide a comma delimited set of IP ranges.  By default, the Management API is unrestricted.  In addition, basic authentication is supported for API-M client-to-server communication.  The client scripts and fedora-admin GUI have been modified to take a username and password at startup.  Only one user, the super user "fedoraAdmin" is supported at this time.  The password for fedoraAdmin is configured in fedora.fcfg</p></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e66"></a>Server Port Configuration</h2></div></div><p>Server administrators can now more easily configure the port on which the Fedora server is exposed.  The port is set in fedora.fcfg.  Its default is 8080.</p></div></div></body></html>
+    <div id="title">
+        <h1>Fedora System Documentation</h1>
+        <h2>Fedora Release 2.0</h2>
+    </div>
+</div>
+
+<div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+	<ol>
+		<li><a href="features.html" target="_top">Summary of Features</a></li>
+			<div class="itemizedlist"><ol type="disc">
+				<li><a href="identifiers.html" target="_top">Fedora Identifiers and URIs</a></li>
+				<li><a href="versioning.html" target="_top">Content Versioning</a></li>
+				<li><a href="localservices/index.html" target="_top">Fedora Local Services</a></li>
+			</ol></div>
+			<br/></br>
+		<li><a href="webservices/foo.html" target="_top">Fedora Web Service Interfaces</a></li>
+			<div class="itemizedlist"><ol type="disc">
+				<li><strong>API-A</strong>: Fedora Access Service (SOAP)  [<a href="http://www.fedora.info/definitions/1/0/api/#apia" target="_top">WSDL</a>]</li>
+				<li><strong>API-A-LITE</strong>: Fedora Access Service (REST) [<a href="http://www.fedora.info/definitions/1/0/api/#apialite" target="_top">WSDL</a>]  [<a href="webservices/apialite/index.html" target="_top">User Guide</a>]</li>
+				<li><strong>API-A-M</strong>: Fedora Management Service (SOAP)  [<a href="http://www.fedora.info/definitions/1/0/api/#apim" target="_top">WSDL</a>]</li>
+				<li><strong>API-A-M-LITE</strong>: Fedora Management Service (REST)  [<a href="http://www.fedora.info/definitions/1/0/api/#apim" target="_top">WSDL</a>]  [<a href="webservices/apimlite/index.html" target="_top">User Guide</a>]<em> 
+				(a work in progress)</em></li>
+				<br></br>
+				<li><strong>Search</strong>:  Repository Search via API-A-Lite (REST):  [<a href="webservices/search/index.html" target="_top">User Guide</a>]</li>
+				<li><strong>OAI</strong>:  OAI-PMH Provider (REST):  [<a href="webservices/oai/index.html" target="_top">User Guide</a>]</li>
+				<li><strong>RISearch</strong>:  Resource Index Search (REST):  [<a href="webservices/ri/index.html" target="_top">User Guide</a>]</li>
+			</ol></div>
+	</ol></div>
+</div>
+
+<div id="footer">
+    <div id="copyright">
+        Copyright &#xA9; 2005 Fedora Project
+    </div>
+    <div id="lastModified">
+        Last Modified
+        <script type="text/javascript">
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+        </script>
+    </div>
+</div>
+
+</body>
+</html>
