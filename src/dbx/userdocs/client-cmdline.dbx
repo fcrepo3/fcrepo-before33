@@ -34,7 +34,7 @@
 		<para>The Fedora client distribution comes with several command-line utilities that can be used
              to run some common operations without bringing up the GUI or writing your own SOAP client.  
              A description and usage instructions for each follows.</para>
-		<para>This guide assume you have correctly installed the Fedora client distribution as per the install guide,
+		<para>This guide assumes you have correctly installed the Fedora client distribution as per the install guide,
              including having set up your PATH and FEDORA_HOME appropriately.  The command-line scripts are
              located in FEDORA_HOME/client/bin/.  In Windows, these commands resolve to batch files (.bat); in Unix, they
              resolve to shell scripts (.sh).</para>
@@ -51,13 +51,13 @@
 				<para>&#091;hostname&#093; - The hostname of the Fedora server; default is localhost.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default 8080.</para>
+				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default is 8080.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;user&#093; - The Fedora user (e.g. fedoraAdmin).</para>
 			</listitem>
 			<listitem>
-				<para>&#091;pass&#093; - The user's password.</para>
+				<para>&#091;pass&#093; - The Fedora user's password.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;pid&#093; - The pid of the object whose datastream information should be shown.</para>
@@ -83,16 +83,16 @@
 				<para>&#091;hostname&#093; - The hostname of the Fedora server; default is localhost.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default 8080.</para>
+				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default is 8080.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;user&#093; - The Fedora user (e.g. fedoraAdmin).</para>
 			</listitem>
 			<listitem>
-				<para>&#091;pass&#093; - The user's password.</para>
+				<para>&#091;pass&#093; - The Fedora user's password.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;file&#093; - The file to export to.</para>
+				<para>&#091;file&#093; - The file to which to export.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;pid&#093; - The PID of the object to export.</para>
@@ -118,7 +118,7 @@
 				<para>&#091;hostname&#093; - The hostname of the Fedora server; default is localhost.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default 8080.</para>
+				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default is 8080.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;fieldList&#093; - A space-delimited list of fields.  These are the fields that will be displayed for each object that matches the searchString.  See http://host:port/fedora/search for a complete list of displayable fields and descriptions of each.</para>
@@ -151,13 +151,13 @@
 				<para>&#091;hostname&#093; - The hostname of the Fedora server; default is localhost.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default 8080.</para>
+				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default is 8080.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;user&#093; - The Fedora user (e.g. fedoraAdmin).</para>
 			</listitem>
 			<listitem>
-				<para>&#091;pass&#093; - The user's password.</para>
+				<para>&#091;pass&#093; - The Fedora user's password.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;file&#093; - The METS file to ingest.</para>
@@ -186,13 +186,13 @@
 				<para>&#091;hostname&#093; - The hostname of the Fedora server; default is localhost.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default 8080.</para>
+				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default is 8080.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;user&#093; - The Fedora user (e.g. fedoraAdmin).</para>
 			</listitem>
 			<listitem>
-				<para>&#091;pass&#093; - The user's password.</para>
+				<para>&#091;pass&#093; - The Fedora user's password.</para>
 			</listitem>
 		</itemizedlist>
 		<para>Example:</para>
@@ -216,13 +216,13 @@
 				<para>&#091;hostname&#093; - The hostname of the Fedora server; default is localhost.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default 8080.</para>
+				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default is 8080.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;user&#093; - The Fedora user (e.g. fedoraAdmin).</para>
 			</listitem>
 			<listitem>
-				<para>&#091;pass&#093; - The user's password.</para>
+				<para>&#091;pass&#093; - The Fedora user's password.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;pid&#093; - The PID of the object to permanently remove.</para>

@@ -2,11 +2,13 @@
 <article>
 	<articleinfo>
 		<graphic fileref="images//newlogo2.jpg"/>
-		<title><inlinemediaobject>
+		<title>
+			<inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject></title>
+			</inlinemediaobject>
+		</title>
 		<title>Fedora API-M Admin GUI Client User Documentation</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -24,29 +26,52 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
-		<para><emphasis>Fedora Administrator</emphasis> comes
-       with the client distribution.  You can used it to connect to a local or remote
+		<para>
+			<emphasis>Fedora Administrator</emphasis> comes
+       with the client distribution.  You can use it to connect to a local or remote
        Fedora repository to browse and modify the contents of a repository.</para>
 	</sect1>
-    <sect1>
-        <title>Using the GUI</title>
-        <para>To start Fedora Administrator, type 
-            "fedora-admin [hostname] [port] [user] [pass]".  For example,
+	<sect1>
+		<title>Using the GUI</title>
+		<para>To start Fedora Administrator, type</para> 
+            <para>fedora-admin [hostname] [port] [user] [pass]</para>  
+            <para>For example,
             <emphasis>fedora-admin localhost 8080 fedoraAdmin fedoraAdmin</emphasis> will start
             the GUI for a server running on the local machine, port 8080,
             where fedoraAdmin's password is simply, "fedoraAdmin".
         </para>
-        <sect2>
-            <title>Tasks</title>
-            <itemizedlist>
-              <listitem><para><emphasis>Ingest an Object</emphasis> - Select "Ingest Object" from the File menu.  You will be prompted for the file.  After Fedora successfully imports it, it will return the PID of the object in the repository.</para></listitem>
-              <listitem><para><emphasis>Ingest a Batch of Objects</emphasis> - Fedora Administrator can help you create large batches of objects and ingest them.  See the <ulink url="../batch/index.html">batch utility documentation</ulink> for instructions on this.</para></listitem>
-              <listitem><para><emphasis>Creating a Behavior Definition or Behavior Mechanism Object</emphasis> - Although you can use the example Behavior Definition and Behavior Mechanisms that come in the distribution's demo/ directory, you can also create these objects and ingest them without the need to write XML by hand.  See the <ulink url="../../../server/do-const.html">Digital Object Construction Guide</ulink> for more information on this.</para></listitem>
-              <listitem><para><emphasis>Search the Repository</emphasis> - Select "Tools", then "Search/Browse" and the Search window will come up.  At the top, select the fields you want returned from the search.  At the bottom, enter your query.  The advanced query allows you to do fielded searches.  After you form your query, click "Search" and the results will come up in a table view.  Right click on a row or select multiple rows and right click for a contextual menu.  From there you can view or export an object's xml, purge objects, or view/edit an object's datastreams.</para></listitem>
-              <listitem><para><emphasis>View and Modify an Object's Datastreams</emphasis> - You can reach option this from search results or from the File menu if you know the PID of the object you want to edit.  The datastream editor will have a tab per datastream.  If the datastream is inline XML, you can edit it directly, then press save.  If it's a referenced datastream or managed content, you can set the URL and click Save.  You'll be prompted for a log message, after which the change will be made to the repository.</para></listitem>
-              <listitem><para><emphasis>View and Export an Object's XML (in METS format)</emphasis> - You can also reach this option from search results or the File menu.  Select the output file and Fedora will export the object to you local disk.</para></listitem>
-              <listitem><para><emphasis>Purge an Object</emphasis> - Enter the PID and a log message and Fedora will remove the object from the repository.  If you're removing a Behavior Definition, you must remove dependent objects first.</para></listitem>
-            </itemizedlist>
-        </sect2>
-    </sect1>
+		<sect2>
+			<title>Tasks</title>
+			<itemizedlist>
+				<listitem>
+					<para>
+						<emphasis role="bold">Ingest an Object</emphasis> - Select "Ingest Object" from the File menu.  You will be prompted for the file name.  After Fedora successfully imports it, it will return the PID of the object in the repository.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">Ingest a Batch of Objects</emphasis> - Fedora Administrator can help you create large batches of objects and ingest them.  See the <ulink url="../batch/index.html">batch utility documentation</ulink> for instructions on this.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">Creating a Behavior Definition or Behavior Mechanism Object</emphasis> - Although you can use the example Behavior Definition and Behavior Mechanisms that come in the distribution's demo/ directory, you can also create these objects and ingest them without the need to write XML by hand.  See the <ulink url="../../../server/do-const.html">Digital Object Construction Guide</ulink> for more information on this.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">Search the Repository</emphasis> - From the menu, select "Tools", then "Search/Browse" and the Search window will come up.  At the top, select the fields you want returned from the search.  At the bottom, enter your query.  The advanced query allows you to do fielded searches.  After you form your query, click "Search" and the results will come up in a table view.  Right click on a row or select multiple rows and right click for a contextual menu.  From there you can view or export an object's xml, purge objects, or view/edit an object's datastreams.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">View and Modify an Object's Datastreams</emphasis> - You can reach this option from search results or from the File menu if you know the PID of the object you want to edit.  The datastream editor will have a tab per datastream.  If the datastream is inline XML, you can edit it directly, then press save.  If it's a referenced datastream or managed content, you can set the URL and click Save.  You'll be prompted for a log message, after which the change will be made to the repository.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">View and Export an Object's XML (in METS format)</emphasis> - You can also reach this option from search results or the File menu.  Select the output file and Fedora will export the object to your local disk.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">Purge an Object</emphasis> - Enter the PID and a log message and Fedora will remove the object from the repository.  If you're removing a Behavior Definition, you must remove dependent objects first.</para>
+				</listitem>
+			</itemizedlist>
+		</sect2>
+	</sect1>
 </article>

@@ -37,7 +37,7 @@
 			<emphasis>fedora-admin</emphasis> also supports building objects.  This takes a general template common to all objects in a batch and makes object-specific substitutions into the template.  It also substitutes a common datetime stamp for all date attributes.  The template is a Fedora METS XML document, with data common to the objects of the batch.  Separate XML documents hold the per-object substitution values.</para>
 		<para>The relatedness of objects in a batch is defined by what <emphasis>fedora-admin</emphasis> allows to be substituted and by which substitutions you choose to make.  Data from the template are retained, unless replaced per individual object, including XML comments.</para>
 		<para>
-			<emphasis>fedora-admin</emphasis> provides for three modes of object batch processing:  <emphasis>batch build</emphasis>, <emphasis>batch ingest</emphasis>, and a combined <emphasis>batch build and ingest</emphasis>. </para>
+			<emphasis>fedora-admin</emphasis> provides for three modes of object batch processing:  <emphasis role="bold">batch build</emphasis>, <emphasis role="bold">batch ingest</emphasis>, and a combined <emphasis role="bold">batch build and ingest</emphasis>. </para>
 		<para>This phased processing is shown in the following diagram.</para>
 		<mediaobject>
 			<imageobject>
@@ -53,7 +53,7 @@
 				<emphasis>fedora-admin instructions</emphasis>
 			</title>
 			<blockquote>
-				<para>Pull down on <emphasis>Tools</emphasis> on the <emphasis>fedora-admin</emphasis> menu bar, and select item <emphasis>Build Batch</emphasis>.</para>
+				<para>Select <emphasis>Tools</emphasis> on the <emphasis>fedora-admin</emphasis> menu bar, and select item <emphasis>Build Batch</emphasis>.</para>
 				<para>This will open a <emphasis>Batch Build</emphasis> window.  You may need to adjust this window’s size to see its controls.  Use the <emphasis>browse</emphasis> buttons to enter the four required settings.  Clicking on a <emphasis>browse</emphasis> button opens a standard directory/file selection dialog.</para>
 				<para>Then click the <emphasis>Build this batch</emphasis> button to build the batch of Fedora METS XML documents.</para>
 				<mediaobject>
@@ -89,7 +89,7 @@
 		<sect2>
 			<title>fedora-admin instructions</title>
 			<blockquote>
-				<para>Pull down on <emphasis>Tools</emphasis> on the <emphasis>fedora-admin</emphasis> menu bar, and select item <emphasis>Ingest Batch</emphasis>.</para>
+				<para>Select <emphasis>Tools</emphasis> on the <emphasis>fedora-admin</emphasis> menu bar, and select item <emphasis>Ingest Batch</emphasis>.</para>
 				<para>This will open a <emphasis>Batch Ingest</emphasis> window.  You may need to adjust this window’s size to see its controls.  Use the <emphasis>browse</emphasis> buttons to enter the two required settings.  Clicking on a <emphasis>browse</emphasis> button opens a standard directory/file selection dialog.  </para>
 				<mediaobject>
 					<imageobject>
@@ -127,7 +127,7 @@
 		<sect2>
 			<title>fedora-admin instructions</title>
 			<blockquote>
-				<para>Pull down on <emphasis>Tools</emphasis> on the <emphasis>fedora-admin</emphasis> menu bar, and select item <emphasis>Build and Ingest Batch</emphasis>.</para>
+				<para>Select <emphasis>Tools</emphasis> on the <emphasis>fedora-admin</emphasis> menu bar, and select item <emphasis>Build and Ingest Batch</emphasis>.</para>
 				<para>This will open a <emphasis>Batch Build</emphasis> and Ingest window.  You may need to adjust this window’s size to see its controls.  Use the <emphasis>browse</emphasis> buttons to enter the four required settings.  Clicking on a <emphasis>browse</emphasis> button opens a standard directory/file selection dialog.</para>
 				<mediaobject>
 					<imageobject>

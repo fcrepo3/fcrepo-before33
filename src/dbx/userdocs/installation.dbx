@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!-- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> -->
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
@@ -445,7 +445,6 @@
 			<para>
 				<emphasis>fedora-start</emphasis>
 			</para>
-			
 			<para>The configuration file, fedora.fcfg, can be written so that
             it takes a parameter which has the effect of using an alternate
             value for some of the &lt;param...&gt; elements, if an alternate parameter exists.
@@ -463,7 +462,7 @@
             in order to run with mckoi (simply set the <emphasis>value</emphasis> of
             the parameters to that of the <emphasis>mckoivalue</emphasis> attributes
             so that these values are taken by default.</para>
-            <para>Note for Unix users: The commands <emphasis>fedora-start</emphasis> and <emphasis>fedora-start mckoi</emphasis> do <emphasis role="bold">not</emphasis> have to be run by root.</para>
+			<para>Note for Unix users: The commands <emphasis>fedora-start</emphasis> and <emphasis>fedora-start mckoi</emphasis> do <emphasis role="bold">not</emphasis> have to be run by root.</para>
 		</section>
 		<section>
 			<title>Stopping the Server</title>
@@ -493,15 +492,15 @@
         good idea to check out the demonstration objects to get an idea of
         how Fedora works.  See <ulink url="demos.html">the Demo Manual</ulink> for complete 
         instructions on ingesting and using the demos.</para>
-        <para>The demos may be ingested via the Fedora Admin GUI tool or from the command line.</para> 
+		<para>The demos may be ingested via the Fedora Admin GUI tool or from the command line.</para>
 		<para>To access the Admin GUI use the command:</para>
-        <para>
-        	<emphasis>fedora-admin</emphasis>
-        </para>
-        <para>To ingest the demos from the command line, use the command:</para>
-        <para>
-        	<emphasis>fedora-ingest-demos[hostname] [port] [username] [password]</emphasis>
-        </para>
-        <para>Please note that the demo objects must be ingested before they can be discovered using the default search interface.</para>
-   </section>
+		<para>
+			<emphasis>fedora-admin</emphasis>
+		</para>
+		<para>To ingest the demos from the command line, use the command:</para>
+		<para>
+			<emphasis>fedora-ingest-demos[hostname] [port] [username] [password]</emphasis>
+		</para>
+		<para>Please note that the demo objects must be ingested before they can be discovered using the default search interface.</para>
+	</section>
 </article>

@@ -174,7 +174,7 @@
 			</listitem>
 			<listitem>
 				<para>
-					<emphasis role="bold">soapClientMethodParmResolverServletPath</emphasis> - the servlet mapping used to access the MethodParmResolverServlet which is a utility servlet of the soa client; default is "/soapclient/getAccessParmResolver"</para>
+					<emphasis role="bold">soapClientMethodParmResolverServletPath</emphasis> - the servlet mapping used to access the MethodParmResolverServlet which is a utility servlet of the soap client; default is "/soapclient/getAccessParmResolver"</para>
 			</listitem>
 		</itemizedlist>
 		<para>The web.xml file for the soap client webapp uses these default settings. If the webapp is ported to another servlet engine and any of the serlvet mappings change, the web.xml and the soapclient.properties file must both be updated accordingly. The servlets will dynamically get the values in the soapclient.properties file so no changes should be needed in the source code.</para>

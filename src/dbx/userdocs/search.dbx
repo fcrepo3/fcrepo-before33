@@ -67,7 +67,7 @@
 	</sect1>
 	<sect1>
 		<title>Search Interface Web Form</title>
-		<para>An example of the Search Interface Web Form is displayed below. To perform a search, check the box next to the fields that you would like returned in the search results, enter your search query in either the simple search or advanced search text box, and click the submit button. In the example, the label fields of <emphasis role="italics">pid</emphasis> and <emphasis role="italics">label</emphasis> are checked and the query is to search for the word "image" in any of the indexed fields.
+		<para>An example of the Search Interface Web Form is displayed below. To perform a search, check the box next to the fields that you would like returned in the search results, enter your search query in either the simple search or advanced search text box, and click the submit button. In the example, the label fields of <emphasis>pid</emphasis> and <emphasis>label</emphasis> are checked and the query is to search for the word "image" in any of the indexed fields.
 		</para>
 		<mediaobject>
 			<imageobject>
@@ -87,7 +87,7 @@
 	</sect1>
 	<sect1>
 		<title>Simple Search Query Help</title>
-		<para>The Simple Search query searches both the Dublin Core metadata and the Fedora System Metadata fields. Clicking on the the <emphasis role="italics">help</emphasis> hyperlink next to the <emphasis role="italics">Search all fields for phrase</emphasis>text box will display additional help about Simple Search as displayed below.
+		<para>The Simple Search query searches both the Dublin Core metadata and the Fedora System Metadata fields. Clicking on the the <emphasis>help</emphasis> hyperlink next to the <emphasis>Search all fields for phrase</emphasis>text box will display additional help about Simple Search as displayed below.
 		</para>
 		<mediaobject>
 			<imageobject>
@@ -97,7 +97,7 @@
 	</sect1>
 	<sect1>
 		<title>Fielded Search Query Help</title>
-		<para>The Fielded Search query enables searching of specific fields provided in the query. Clicking on the the <emphasis role="italics">help</emphasis> hyperlink next to the <emphasis role="italics">search specific field(s)</emphasis>text box will display additional help about Fielded Search as displayed below.
+		<para>The Fielded Search query enables searching of specific fields provided in the query. Clicking on the the <emphasis>help</emphasis> hyperlink next to the <emphasis>search specific field(s)</emphasis>text box will display additional help about Fielded Search as displayed below.
 		</para>
 		<mediaobject>
 			<imageobject>
@@ -107,7 +107,7 @@
 	</sect1>
 	<sect1>
 		<title>Search Field Name Help</title>
-		<para>Help is also available on each search field name if you are unfamiliar with the search field labels. Clicking on the hyperlink associated with each search field label provides additional help on that specific search field name. An example of the help provided for the <emphasis role="italics">pid</emphasis> search field is displayed below.
+		<para>Help is also available on each search field name if you are unfamiliar with the search field labels. Clicking on the hyperlink associated with each search field label provides additional help on that specific search field name. An example of the help provided for the <emphasis>pid</emphasis> search field is displayed below.
 		</para>
 		<mediaobject>
 			<imageobject>

@@ -43,7 +43,7 @@
 				<para>&#091;hostname&#093; - The hostname of the Fedora server; default is localhost.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default 8080.</para>
+				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default is 8080.</para>
 			</listitem>
 			<listitem>
 				<para>&#091;xml-fo-source&#093; - The URL of the XML source file.</para>
