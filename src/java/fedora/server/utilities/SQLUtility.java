@@ -45,12 +45,30 @@ public abstract class SQLUtility {
         Statement st=null;
         try {
             st=conn.createStatement();
+System.out.println("SQLUtility.executeUpdate, trying: " + u.toString());
             if (st.executeUpdate(u.toString())==0) {
                 StringBuffer i=new StringBuffer(); // insert statement
                 i.append("INSERT INTO ");
                 i.append(tableName);
                 i.append("\n");
-                i.append(s.toString());
+                i.append("(");
+                for (int x=0; x<columns.length; x++) {
+                    if (x>0) {
+                        i.append(", ");
+                    }
+                    i.append(columns[x]);
+                }
+                i.append(") VALUES (");
+                for (int x=0; x<values.length; x++) {
+                    if (x>0) {
+                        i.append(", ");
+                    }
+                    i.append("'");
+                    i.append(values[x]);
+                    i.append("'");
+                }
+                i.append(")");
+System.out.println("SQLUtility.executeUpdate, now trying: " + i.toString());
                 st.executeUpdate(i.toString());
             }
         } catch (SQLException sqle) {
