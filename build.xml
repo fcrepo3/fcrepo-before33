@@ -458,7 +458,7 @@
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/userdocs/server/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common,fedora.common.rdf,fedora.server.config" sourcepath="${java.src.dir};temp/server/java;src/html/server/javadoc" classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5};${lib.jena};${lib.trippi};${lib.jrdf};${lib.commons-pool};${lib.commons-dbcp};${lib.sunxacml};${lib.commons-httpclient};${lib.jhbasic};${lib.catalina}" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common,fedora.common.rdf,fedora.server.config" sourcepath="${java.src.dir};temp/server/java;src/html/server/javadoc" classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5};${lib.jena};${lib.trippi};${lib.jrdf};${lib.commons-pool};${lib.commons-dbcp};${lib.sunxacml};${lib.commons-httpclient};${lib.jhbasic};${lib.catalina};${lib.jmx}" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
 		<copy todir="${tomcat.deploy.dir}/userdocs/server/serverdocs">
 			<fileset dir="dist/userdocs/server/serverdocs"/>
 		</copy>
@@ -748,9 +748,6 @@
 		<java classpath="${lib.md5}" jar="lib/saxon.jar" fork="true">
 			<arg line="-o ${tomcat.deploy.dir}/fedora/WEB-INF/unrestricted-web.xml ${tomcat.deploy.dir}/fedora/WEB-INF/web.xml src/xsl/security/remove-web-xml-security.xsl"/>
 		</java>
-		<java classname="fedora.common.policy.Release2_1Namespace" 
-			classpath="${tomcat.server.dir}/classes;${lib.dir}/jrdf-0.3.3.jar"
-			output="dist/server/config/xacml-policies/vocabulary.txt"/>
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes">
 				<exclude name="org/**"/>
@@ -832,7 +829,9 @@
 				<include name="fedora/server/security/AttributeFinderModule.class"/>					
 			</fileset>
 		</copy>
-		
+		<java classname="fedora.common.policy.Release2_1Namespace" 
+			classpath="${tomcat.server.dir}/classes;${lib.dir}/jrdf-0.3.3.jar"
+			output="dist/server/config/xacml-policies/vocabulary.txt"/>		
 		<copy file="src/java/org/apache/catalina/realm/readme.txt" todir="${tomcat.server.dir}/classes/org/apache/catalina/realm"/>
 		<copy todir="${tomcat.deploy.dir}/ROOT">
 			<fileset dir="src/xsd"/>
