@@ -103,9 +103,7 @@ public class DemoObjectConverter
   }
 
   /**
-   * <p> Recursively traverse the specified directory and process each file
-   * with the exception of the batch-demo directory which is skipped since no
-   * substitutions are required.<.p>
+   * <p> Recursively traverse the specified directory and process each file.<.p>
    *
    * @param dir The directory to be traversed.
    */
@@ -116,11 +114,8 @@ public class DemoObjectConverter
     {
       if(files[i].isDirectory())
       {
-        // Skip batch-demo directory
-        if(!files[i].equals(new File(fedoraHome, "client/demo/batch-demo")))
-        {
+          // Collect files to be scanned.
           getFiles(files[i]);
-        }
       } else
       {
         // Make hostname and port number substitutions.
