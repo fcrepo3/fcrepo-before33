@@ -216,102 +216,6 @@ public class DefaultDOManager
                     + e.getClass().getName() + ": " + e.getMessage(), getRole());
         }
 
-/*
-        String dbSpec="fedora/server/storage/resources/DefaultDOManager.dbspec";
-        InputStream specIn=this.getClass().getClassLoader().
-                getResourceAsStream(dbSpec);
-        if (specIn==null) {
-            throw new ModuleInitializationException("Cannot find required "
-                    + "resource: " + dbSpec, getRole());
-        }
-        List tSpecs=null;
-        try {
-            tSpecs=TableSpec.getTableSpecs(specIn);
-        } catch (IOException ioe) {
-            throw new ModuleInitializationException("Couldn't read dbspec :"
-                    + ioe.getMessage(), getRole());
-        } catch (InconsistentTableSpecException itse) {
-            throw new ModuleInitializationException("Inconsistent table spec :"
-                    + itse.getMessage(), getRole());
-        }
-        // Look at the database tables and construct a list of
-        // TableSpec objects for tables that don't exist.
-        ArrayList nonExisting=new ArrayList();
-        Connection conn=null;
-        try {
-            conn=m_connectionPool.getConnection();
-            DatabaseMetaData dbMeta=conn.getMetaData();
-            Iterator tSpecIter=tSpecs.iterator();
-            // Get a list of tables that don't exist, if any
-            ResultSet r=dbMeta.getTables(null, null, "%", null);
-            HashSet existingTableSet=new HashSet();
-            while (r.next()) {
-                existingTableSet.add(r.getString("TABLE_NAME").toLowerCase());
-            }
-            r.close();
-            while (tSpecIter.hasNext()) {
-                TableSpec spec=(TableSpec) tSpecIter.next();
-                if (!existingTableSet.contains(spec.getName().toLowerCase())) {
-                    nonExisting.add(spec);
-                }
-            }
-        } catch (SQLException sqle) {
-            throw new ModuleInitializationException("Error while attempting to "
-                    + "inspect database tables: " + sqle.getMessage(),
-                    getRole());
-        } finally {
-            if (conn!=null) {
-                m_connectionPool.free(conn);
-            }
-        }
-        if (nonExisting.size()>0) {
-            Iterator nii=nonExisting.iterator();
-            int i=0;
-            StringBuffer msg=new StringBuffer();
-            msg.append(" required table(s) did not exist (");
-            while (nii.hasNext()) {
-                if (i>0) {
-                    msg.append(", ");
-                }
-                msg.append(((TableSpec) nii.next()).getName());
-                i++;
-            }
-            msg.append(")");
-            getServer().logConfig(i + msg.toString());
-            TableCreatingConnection tcConn=null;
-            try {
-                tcConn=m_connectionPool.getTableCreatingConnection();
-                if (tcConn==null) {
-                    throw new SQLException("Unable to construct CREATE TABLE "
-                        + "statement(s) because there is no DDLConverter "
-                        + "registered for this connection type.");
-                }
-                nii=nonExisting.iterator();
-                while (nii.hasNext()) {
-                    TableSpec spec=(TableSpec) nii.next();
-                    StringBuffer sqlCmds=new StringBuffer();
-                    Iterator iter=tcConn.getDDLConverter().getDDL(spec).iterator();
-                    while (iter.hasNext()) {
-                        sqlCmds.append("\n");
-                        sqlCmds.append((String) iter.next());
-                        sqlCmds.append(";");
-                    }
-                    getServer().logConfig("Attempting to create nonexisting "
-                            + "table '" + spec.getName() + "' with command(s): "
-                            + sqlCmds.toString());
-                    tcConn.createTable(spec);
-                }
-            } catch (SQLException sqle) {
-                throw new ModuleInitializationException("Error while attempting"
-                    + " to create non-existing table(s): " + sqle.getMessage(),
-                    getRole());
-            } finally {
-                if (tcConn!=null) {
-                    m_connectionPool.free(tcConn);
-                }
-            }
-        }
-        */
     }
 
     public void releaseWriter(DOWriter writer) {
@@ -321,13 +225,10 @@ public class DefaultDOManager
 
     public ILowlevelStorage getPermanentStore() {
         return FileSystemLowlevelStorage.getPermanentStore();
-
-//        return m_permanentStore;
     }
 
     public ILowlevelStorage getTempStore() {
         return FileSystemLowlevelStorage.getTempStore();
-//        return m_tempStore;
     }
 
     public ConnectionPool getConnectionPool() {
@@ -382,7 +283,10 @@ public class DefaultDOManager
         if (cachedObjectRequired(context)) {
             return new FastDOReader(context, pid);
         } else {
-            return new DefinitiveDOReader(this, pid);
+            return new SimpleDOReader(context, this, m_translator,
+                    m_storageFormat, m_storageFormat, m_storageFormat,
+                    m_storageCharacterEncoding, 
+                    getPermanentStore().retrieve(pid), this);
         }
     }
 
@@ -391,7 +295,10 @@ public class DefaultDOManager
         if (cachedObjectRequired(context)) {
             throw new InvalidContextException("A BMechReader is unavailable in a cached context.");
         } else {
-            return new DefinitiveBMechReader(this, pid);
+            return new SimpleBMechReader(context, this, m_translator,
+                    m_storageFormat, m_storageFormat, m_storageFormat,
+                    m_storageCharacterEncoding, 
+                    getPermanentStore().retrieve(pid), this);
         }
     }
 
@@ -400,7 +307,10 @@ public class DefaultDOManager
         if (cachedObjectRequired(context)) {
             throw new InvalidContextException("A BDefReader is unavailable in a cached context.");
         } else {
-            return new DefinitiveBDefReader(this, pid);
+            return new SimpleBDefReader(context, this, m_translator,
+                    m_storageFormat, m_storageFormat, m_storageFormat,
+                    m_storageCharacterEncoding, 
+                    getPermanentStore().retrieve(pid), this);
         }
     }
 
@@ -612,21 +522,21 @@ public class DefaultDOManager
             try {
                 if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
                     logInfo("Attempting replication as bdef object: " + obj.getPid());
-                    DefinitiveBDefReader reader=new DefinitiveBDefReader(this, obj.getPid());
+                    BDefReader reader=getBDefReader(context, obj.getPid());
                     logInfo("Got a definitiveBDefReader...");
                     m_replicator.replicate(reader);
                     logInfo("Updating FieldSearch indexes...");
                     m_fieldSearch.update(reader);
                 } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
                     logInfo("Attempting replication as bmech object: " + obj.getPid());
-                    DefinitiveBMechReader reader=new DefinitiveBMechReader(this, obj.getPid());
+                    BMechReader reader=getBMechReader(context, obj.getPid());
                     logInfo("Got a definitiveBMechReader...");
                     m_replicator.replicate(reader);
                     logInfo("Updating FieldSearch indexes...");
                     m_fieldSearch.update(reader);
                 } else {
                     logInfo("Attempting replication as normal object: " + obj.getPid());
-                    DefinitiveDOReader reader=new DefinitiveDOReader(this, obj.getPid());
+                    DOReader reader=getReader(context, obj.getPid());
                     logInfo("Got a definitiveDOReader...");
                     m_replicator.replicate(reader);
                     logInfo("Updating FieldSearch indexes...");

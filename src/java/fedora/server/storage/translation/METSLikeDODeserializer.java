@@ -8,6 +8,7 @@ import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamContent;
+import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
@@ -70,7 +71,7 @@ public class METSLikeDODeserializer
     private String m_dsLabel;
     private int m_dsMDClass;
     private long m_dsSize;
-    private String m_dsLocation;
+    private URL m_dsLocation;
     private String m_dsMimeType;
     private String m_dsControlGrp;
 
@@ -346,7 +347,7 @@ public class METSLikeDODeserializer
                 m_dsMimeType=null;
                 m_dsControlGrp=null;
                 m_dsDmdIds=null;
-                m_dsState=null;
+                m_dsState=grab(a,M,"STATUS");
                 m_dsSize=-1;
             } else if (localName.equals("file")) {
                 // ID="DS3.0"
@@ -387,7 +388,6 @@ public class METSLikeDODeserializer
                         m_dsDmdIds=new String[] {DMDID};
                     }
                 }
-                m_dsState=grab(a,M,"STATUS");
                 String sizeString=grab(a,M,"SIZE");
                 if (sizeString!=null && !sizeString.equals("")) {
                     try {
@@ -407,34 +407,86 @@ public class METSLikeDODeserializer
                 if (dsLocation==null || dsLocation.equals("")) {
                     throw new SAXException("xlink:href must be specified in FLocat element");
                 }
-                m_dsLocation=dsLocation;
-                DatastreamReferencedContent d=new DatastreamReferencedContent();
-                d.DatastreamID=m_dsId;
-                d.DSVersionID=m_dsVersId;
-                d.DSLabel=m_dsLabel;
-                d.DSCreateDT=m_dsCreateDate;
-                d.DSMIME=m_dsMimeType;
-                d.DSControlGrp=m_dsControlGrp;
-                //d.DSControlGrp=Datastream.EXTERNAL_REF;
-                d.DSInfoType="DATA";
-                d.DSState=m_dsState;
-                d.DSLocation=m_dsLocation;
-                if (m_queryBehavior!=QUERY_NEVER) {
+                // rlw begin changes
+                // check if datastream is ExternalReferencedContent or
+                // ManagedContent
+                if (m_dsControlGrp.equalsIgnoreCase("E") )
+                {
+                  try {
+                    m_dsLocation=new URL(dsLocation);
+                  } catch (MalformedURLException murle) {
+                    throw new SAXException("xlink:href specifies malformed url: " + dsLocation);
+                  }
+                  DatastreamReferencedContent drc=new DatastreamReferencedContent();
+                  drc.DatastreamID=m_dsId;
+                  drc.DSVersionID=m_dsVersId;
+                  drc.DSLabel=m_dsLabel;
+                  drc.DSCreateDT=m_dsCreateDate;
+                  drc.DSMIME=m_dsMimeType;
+                  drc.DSControlGrp=m_dsControlGrp;
+                  //d.DSControlGrp=Datastream.EXTERNAL_REF;
+                  drc.DSInfoType="DATA";
+                  drc.DSState=m_dsState;
+                  drc.DSLocation=dsLocation;
+                  if (m_queryBehavior!=QUERY_NEVER) {
                     if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null)
-                            || (m_dsSize==-1)) {
-                        try {
-                            InputStream in=d.getContentStream();
-                        } catch (StreamIOException sioe) {
-                            throw new SAXException(sioe.getMessage());
-                        }
+                        || (m_dsSize==-1)) {
+                      try {
+                        InputStream in=drc.getContentStream();
+                      } catch (StreamIOException sioe) {
+                        throw new SAXException(sioe.getMessage());
+                      }
                     }
-                }
-                if (m_dsDmdIds!=null) {
+                  }
+                  if (m_dsDmdIds!=null) {
                     for (int idi=0; idi<m_dsDmdIds.length; idi++) {
-                        d.metadataIdList().add(m_dsDmdIds[idi]);
+                      drc.metadataIdList().add(m_dsDmdIds[idi]);
                     }
+                  }
+                  m_obj.datastreams(m_dsId).add(drc);
+                } else if (m_dsControlGrp.equalsIgnoreCase("M"))
+                {
+                  // Validate ManagedContent dsLocation URL only if this
+                  // is initial creation of this object; upon subsequent
+                  // invocations, initial URL will have been replaced with
+                  // internal reference to ManagedContent dsLocation and will
+                  // no longer be a URL.
+                  if (m_obj.getState().equalsIgnoreCase("I"))
+                  {
+                    try {
+                      m_dsLocation=new URL(dsLocation);
+                    } catch (MalformedURLException murle) {
+                      throw new SAXException("xlink:href specifies malformed url: " + dsLocation);
+                    }
+                  }
+                  DatastreamManagedContent dmc=new DatastreamManagedContent();
+                  dmc.DatastreamID=m_dsId;
+                  dmc.DSVersionID=m_dsVersId;
+                  dmc.DSLabel=m_dsLabel;
+                  dmc.DSCreateDT=m_dsCreateDate;
+                  dmc.DSMIME=m_dsMimeType;
+                  dmc.DSControlGrp=m_dsControlGrp;
+                  dmc.DSInfoType="DATA";
+                  dmc.DSState=m_dsState;
+                  dmc.DSLocation=dsLocation;
+                  if (m_queryBehavior!=QUERY_NEVER) {
+                    if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null)
+                        || (m_dsSize==-1)) {
+                      try {
+                        InputStream in=dmc.getContentStream();
+                      } catch (StreamIOException sioe) {
+                        throw new SAXException(sioe.getMessage());
+                      }
+                    }
+                  }
+                  if (m_dsDmdIds!=null) {
+                    for (int idi=0; idi<m_dsDmdIds.length; idi++) {
+                      dmc.metadataIdList().add(m_dsDmdIds[idi]);
+                    }
+                  }
+                  m_obj.datastreams(m_dsId).add(dmc);
                 }
-                m_obj.datastreams(m_dsId).add(d);
+                // rlw end changes
             } else if (localName.equals("FContent")) {
                 // signal that we want to suck it in
                 m_readingContent=true;
