@@ -23,7 +23,7 @@
     <Connector port="#1"
                enableLookups="false" redirectPort="#3" acceptCount="15"
                maxThreads="300" maxSpareThreads="75" minSpareThreads="6"
-               debug="0" disableUploadTimeout="true" 
+               debug="0"
                maxPostSize="0" />
 
     <Engine name="Catalina" defaultHost="localhost" debug="0">
