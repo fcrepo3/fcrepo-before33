@@ -8,12 +8,27 @@
 
 package fedora.server.management;
 
+import fedora.server.Server;
+import fedora.server.errors.InitializationException;
+
+import java.io.File;
+import java.util.Iterator;
 import javax.xml.namespace.QName;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 
 public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.FedoraAPIM{
+
+    private static Server s_server;
+
+    static {
+        try {
+            s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+        } catch (InitializationException ie) {
+            System.err.println(ie.getMessage());
+        }
+    }
 
     /**
      * The (SOAP[version-specific] spec-dictated) namespace for fault codes.
@@ -37,7 +52,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.F
     public static String SOAP_ULTIMATE_RECEIVER="http://schemas.xmlsoap.org/soap/actor/ultimateReceiver";
     
     public java.lang.String createObject() throws java.rmi.RemoteException {
-        if (1==1) {
+        if (1==2) {
             AxisFault fault=new AxisFault(new QName(SOAP_FAULT_CODE_NAMESPACE, 
                     "Server.api.methodNotImplemented"), 
                     "The createObject() method hasn't been implemented yet.",
@@ -46,7 +61,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.F
             throw fault;
         }
         return "This would be a PID if this operation implementation wasn't a stub.  BTW, the scope of this service (as defined by the scope property in the wsdd file) is '" 
-                + AxisEngine.getCurrentMessageContext().getStrProp("scope") + "'.";
+                + AxisEngine.getCurrentMessageContext().getStrProp("scope") + "'. Also, fedora.home=" + System.getProperty("fedora.home");
         //return null;
     }
 
@@ -78,7 +93,18 @@ public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.F
     }
 
     public java.lang.String getLockingUser(java.lang.String PID) throws java.rmi.RemoteException {
-        return null;
+        StringBuffer pNames=new StringBuffer();
+        pNames.append("Server parameter names: ");
+        Iterator iter=s_server.parameterNames();
+        boolean first=true;
+        while (iter.hasNext()) {
+            if (!first) {
+                pNames.append(',');
+            }
+            pNames.append((String) iter.next());
+            first=false;
+        }
+        return pNames.toString();
     }
 
     public java.lang.String getObjectState(java.lang.String PID) throws java.rmi.RemoteException {
