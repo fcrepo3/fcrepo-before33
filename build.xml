@@ -159,8 +159,19 @@
 	</target>
 	<target name="srcrelease" depends="clean" description="puts source distributable packages in dist/release">
 		<copy todir="${release.dir}/fedora-${fedora.version}-src">
-			<fileset dir="."/>
+			<fileset dir=".">
+              <exclude name="src/java/fedora/**/*.java"/>
+            </fileset>      
 		</copy>
+        <!-- prepend license boilerplate to all Fedora java source code -->   
+        <copy todir="${release.dir}/fedora-${fedora.version}-src">
+            <fileset dir=".">
+              <include name="src/java/fedora/**/*.java"/>
+            </fileset>   
+            <filterchain>
+                <concatfilter prepend="license/exhibitA-java.txt"/>
+            </filterchain>
+        </copy>   
 		<tar longfile="gnu" tarfile="${release.dir}/fedora-${fedora.version}-src.tar">
 			<tarfileset dir="${release.dir}" mode="755">
 				<include name="fedora-${fedora.version}-src/res/ant/bin/ant/**"/>
