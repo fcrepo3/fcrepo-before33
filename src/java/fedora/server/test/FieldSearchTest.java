@@ -81,7 +81,7 @@ public class FieldSearchTest
             DOTranslatorImpl translator=new DOTranslatorImpl(sers, desers, null);
             translator.setLogLevel(0);
             m_repoReader=new DirectoryBasedRepositoryReader(m_repoDir, translator,
-                    mets, mets, mets, "UTF-8", null);
+                    mets, mets, "UTF-8", null);
             m_repoReader.setLogLevel(0);
             //m_fieldSearch=new FieldSearchExistImpl(m_existDir.toString(), null);
             m_cPool=new ConnectionPool( "com.mckoi.JDBCDriver",
@@ -165,7 +165,7 @@ public class FieldSearchTest
                 ds.DSState="A";
                 ds.DatastreamID="DC1.0";
                 obj.datastreams("DC").add(ds);
-                SimpleDOReader doReader=new SimpleDOReader(null, null, null,
+                SimpleDOReader doReader=new SimpleDOReader(null, null,
                         null, null, "UTF-8", obj, null);
                 long st=new Date().getTime();
                 m_fieldSearch.update(doReader);

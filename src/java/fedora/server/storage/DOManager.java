@@ -72,7 +72,7 @@ public interface DOManager
      * @return A writer.
      * @throws ServerException If anything went wrong.
      */
-    public abstract DOWriter newWriter(Context context)
+    public abstract DOWriter getIngestWriter(Context context)
             throws ServerException;
 
     /**
@@ -88,7 +88,7 @@ public interface DOManager
      * @return a writer.
      * @throws ServerException If anything went wrong.
      */
-    public abstract DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
+    public abstract DOWriter getIngestWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException;
 
     /**

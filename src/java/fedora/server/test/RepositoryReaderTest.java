@@ -58,7 +58,7 @@ public class RepositoryReaderTest
             desers.put(mets, new METSLikeDODeserializer());
             DOTranslatorImpl translator=new DOTranslatorImpl(sers, desers, null);
             m_repoReader=new DirectoryBasedRepositoryReader(m_repoDir, translator,
-                    mets, mets, mets, "UTF-8", null);
+                    mets, mets, "UTF-8", null);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
         }

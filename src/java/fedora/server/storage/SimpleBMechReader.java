@@ -58,12 +58,14 @@ public class SimpleBMechReader
     private ServiceMapper serviceMapper;
 
     public SimpleBMechReader(Context context, RepositoryReader repoReader,
-            DOTranslator translator, String shortExportFormat,
+            DOTranslator translator,
+			//DOTranslator translator, String storageExportFormat,
             String longExportFormat, String currentFormat,
             String encoding, InputStream serializedObject, Logging logTarget)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
-        super(context, repoReader, translator, shortExportFormat,
+		//super(context, repoReader, translator, storageExportFormat,
+        super(context, repoReader, translator,
                 longExportFormat, currentFormat, encoding, serializedObject,
                 logTarget);
         serviceMapper = new ServiceMapper(GetObjectPID());

@@ -83,10 +83,12 @@ public class SimpleDOWriter
     private boolean m_invalidated=false;
 
     public SimpleDOWriter(Context context, DefaultDOManager mgr,
-            DOTranslator translator, String shortExportFormat,
+            DOTranslator translator,
+			//DOTranslator translator, String storageExportFormat,
             String longExportFormat, String encoding, DigitalObject obj,
             Logging logTarget) {
-        super(context, mgr, translator, shortExportFormat, longExportFormat,
+		//super(context, mgr, translator, storageExportFormat, longExportFormat,
+        super(context, mgr, translator, longExportFormat,
                 encoding, obj, logTarget);
         m_context=context;
         m_obj=obj;

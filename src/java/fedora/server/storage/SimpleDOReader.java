@@ -66,16 +66,18 @@ public class SimpleDOReader
     private Context m_context;
     private RepositoryReader m_repoReader;
     private DOTranslator m_translator;
-    private String m_shortExportFormat;
+    //private String m_storageExportFormat;
     private String m_longExportFormat;
+	private String m_storageFormat;
     private String m_encoding;
 
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public SimpleDOReader(Context context, RepositoryReader repoReader,
-            DOTranslator translator, String shortExportFormat,
-            String longExportFormat, String currentFormat,
+            DOTranslator translator,
+			//DOTranslator translator, String storageExportFormat,
+            String longExportFormat, String storageFormat,
             String encoding, InputStream serializedObject, Logging logTarget)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
@@ -83,11 +85,12 @@ public class SimpleDOReader
         m_context=context;
         m_repoReader=repoReader;
         m_translator=translator;
-        m_shortExportFormat=shortExportFormat;
+        //m_storageExportFormat=storageExportFormat;
         m_longExportFormat=longExportFormat;
+		m_storageFormat=storageFormat;
         m_encoding=encoding;
         m_obj=new BasicDigitalObject();
-        m_translator.deserialize(serializedObject, m_obj, currentFormat, encoding);
+        m_translator.deserialize(serializedObject, m_obj, m_storageFormat, encoding);
     }
 
     /**
@@ -95,14 +98,15 @@ public class SimpleDOReader
      * for some reason.
      */
     public SimpleDOReader(Context context, RepositoryReader repoReader,
-            DOTranslator translator, String shortExportFormat,
+            DOTranslator translator,
+			//DOTranslator translator, String storageExportFormat,
             String longExportFormat, String encoding, DigitalObject obj,
             Logging logTarget) {
         super(logTarget);
         m_context=context;
         m_repoReader=repoReader;
         m_translator=translator;
-        m_shortExportFormat=shortExportFormat;
+        //m_storageExportFormat=storageExportFormat;
         m_longExportFormat=longExportFormat;
         m_encoding=encoding;
         m_obj=obj;
@@ -145,7 +149,7 @@ public class SimpleDOReader
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-        m_translator.serialize(m_obj, bytes, m_shortExportFormat, "UTF-8");
+        m_translator.serialize(m_obj, bytes, m_storageFormat, "UTF-8");
         return new ByteArrayInputStream(bytes.toByteArray());
     }
 
