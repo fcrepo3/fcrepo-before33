@@ -82,6 +82,12 @@ public class DefaultAccess extends Module implements Access
       throw new ModuleInitializationException("Can't get a DOManager "
           + "from Server.getModule", getRole());
     }
+    String dsMediation = getParameter("doMediateDatastreams");
+    if (dsMediation==null)
+    {
+        throw new ModuleInitializationException(
+            "doMediateDatastreams parameter must be specified.", getRole());
+    }
     String allowHosts=getParameter("allowHosts");
     String denyHosts=getParameter("denyHosts");
     try {

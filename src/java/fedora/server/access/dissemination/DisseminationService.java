@@ -66,6 +66,9 @@ public class DisseminationService
   /** The IP address of the local host; determined dynamically. */
   private static InetAddress hostIP = null;
 
+  /** Datastream Mediation control flag. */
+  private static boolean doDatastreamMediation;
+
   /** Make sure we have a server instance for error logging purposes. */
   static
   {
@@ -85,24 +88,31 @@ public class DisseminationService
         s_server.logFinest("fedoraServerPort: " + fedoraServerPort);
         hostIP = InetAddress.getLocalHost();
         datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
-                            + ":" + fedoraServerPort
-                            + "/fedora/getDS?id=";
+            + ":" + fedoraServerPort + "/fedora/getDS?id=";
         s_server.logFinest("[DisseminationService] "
             + "datastreamResolverServletURL: " + datastreamResolverServletURL);
         String expireLimit = s_server.getParameter("datastreamExpirationLimit");
         if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
         {
-          s_server.logWarning("DatastreamResolverServlet was unable to resolve "
+          s_server.logWarning("[DisseminationService] Unable to resolve "
               + "the datastream expiration limit from the configuration"
               + "file. The expiration limit has been set to 300 seconds.");
           datastreamExpirationLimit = 300;
         } else
         {
-          Integer I1 =
-              new Integer(expireLimit);
-          datastreamExpirationLimit = I1.intValue();
-          s_server.logFinest("datastreamExpirationLimit: "
+          datastreamExpirationLimit = new Integer(expireLimit).intValue();
+          s_server.logFinest("[DisseminationService] datastreamExpirationLimit: "
               + datastreamExpirationLimit);
+        }
+        String dsMediation = s_server.getParameter("doDatastreamMediation");
+        if (dsMediation == null || dsMediation.equalsIgnoreCase(""))
+        {
+          s_server.logWarning("[DisseminationService] Unable to resolve "
+              + "doDatastreamMediation parameter from the configuration "
+              + "file. ");
+        } else
+        {
+          doDatastreamMediation = new Boolean(dsMediation).booleanValue();
         }
       }
     } catch (InitializationException ie)
@@ -263,16 +273,37 @@ public class DisseminationService
         {
           // Case where binding keys are equal which means that multiple
           // datastreams matched the same binding key.
-          replaceString = datastreamResolverServletURL
-              + registerDatastreamLocation(dissBindInfo.dsLocation,
+          if (doDatastreamMediation ||
+              dissBindInfo.dsControlGroupType.equalsIgnoreCase("M") ||
+              dissBindInfo.dsControlGroupType.equalsIgnoreCase("X"))
+          {
+            // Use Datastream Mediation.
+            replaceString = datastreamResolverServletURL
+                + registerDatastreamLocation(dissBindInfo.dsLocation,
                                            dissBindInfo.dsControlGroupType)
-              + "+(" + dissBindInfo.DSBindKey + ")";
+                + "+(" + dissBindInfo.DSBindKey + ")";
+          } else
+          {
+            // Bypass Datastream Mediaiton.
+            replaceString = dissBindInfo.dsLocation
+                + "+(" + dissBindInfo.DSBindKey + ")";
+          }
         } else
         {
           // Case where there are multiple binding keys.
-          replaceString = datastreamResolverServletURL
-              + registerDatastreamLocation(dissBindInfo.dsLocation,
-                                           dissBindInfo.dsControlGroupType);
+          if (doDatastreamMediation ||
+              dissBindInfo.dsControlGroupType.equalsIgnoreCase("M") ||
+              dissBindInfo.dsControlGroupType.equalsIgnoreCase("X"))
+          {
+            // Use Datastream Mediation.
+            replaceString = datastreamResolverServletURL
+                + registerDatastreamLocation(dissBindInfo.dsLocation,
+                                             dissBindInfo.dsControlGroupType);
+          } else
+          {
+            // Bypass Datastream Mediation.
+            replaceString = dissBindInfo.dsLocation;
+          }
         }
         dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
         s_server.logFinest("[DisseminationService] replaced dissURL: "
