@@ -428,9 +428,9 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
             out.println("<tr>");
             out.println("<td><b><font size='+2'> Object PID "+
                                     " </font></b></td>");
-            out.println("<td><b><font size='+2'> BDEF PID"+
-                                    " </font></b></td>");
             out.println("<td><b><font size='+2'> Version Date"+
+                                    " </font></b></td>");
+            out.println("<td><b><font size='+2'> BDEF PID"+
                                     " </font></b></td>");
             out.println("<td><b><font size='+2'> Method Name"+
                                     " </font></b></td>");
@@ -446,9 +446,9 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                             objMethDefArray[i].PID + "</font></td>");
                 out.flush();
                 out.println("<td><font color=\"green\"> " +
-                            objMethDefArray[i].bDefPID + " </font></td>");
-                out.println("<td><font color=\"green\"> " +
                             versDateTime + " </font></td>");
+                out.println("<td><font color=\"green\"> " +
+                            objMethDefArray[i].bDefPID + " </font></td>");
                 out.println("<td><font color=\"red\"> " +
                             "<a href=\""+requestURL+
                             "action_=GetDissemination&PID_=" +
@@ -459,7 +459,9 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                 //out.flush();
               } else if (i == 1)
               {
-                out.println("<td colspan='3' rowspan='" + rows + "'></td>");
+                out.println("<td colspan='2' rowspan='" + rows + "'></td>");
+                out.println("<td><font color=\"green\"> " +
+                            objMethDefArray[i].bDefPID + " </font></td>");
                 out.println("<td><font color=\"red\"> " +
                             "<a href=\""+requestURL+
                             "action_=GetDissemination&PID_=" +
@@ -469,6 +471,8 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                             objMethDefArray[i].methodName + " </a></td>");
               } else
               {
+                out.println("<td><font color=\"green\"> " +
+                            objMethDefArray[i].bDefPID + " </font></td>");
                 out.println("<td><font color=\"red\"> " +
                             "<a href=\""+requestURL+
                             "action_=GetDissemination&PID_=" +
