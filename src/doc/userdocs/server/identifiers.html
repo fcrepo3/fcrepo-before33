@@ -6,36 +6,20 @@
   <title>Fedora Identifiers</title>
   <meta name="robots" content="all"/>
   <link href="../docstyle.css" rel="stylesheet" type="text/css"/>
-  <script language="Javascript">
-    
-  </script>
 </head>
 
 <body>
-  <div class="title">
-    <h1>Fedora Identifiers</h1>
-  </div>
-    <p align="right">
-      <em>
-        Last Modified
-        <script>
-          var cvsDate = "$Date$";
-          var parts = cvsDate.split(" ");
-          var modifiedDate = parts[1];
-          document.write(modifiedDate);
-        </script>
-      </em>
-    </p>
-
-  <div class="abstract">
-    <h2>Abstract</h2>
-    <p>
-      This document describes the purpose, syntax, and normalization rules for the 
-      major identifiers used in Fedora.  These include PIDs for identifying objects 
-      and URIs for identifying objects and disseminations.
-    </p>
-  </div>
-
+  <div id="header">
+    <div id="logo" style="">
+      <a href="../index.html">
+        <img border="0" width="54" height="75" src="../images/fedora_logo108x150.jpg"/>
+      </a>
+    </div>
+    <div id="title">
+      <h1>Fedora Metadata for Object-to-Object Relationships (RELS-EXT)</h1>
+      <h2>Fedora Release 2.0</h2>
+    </div>
+</div>
   <div class="toc">
     <h2>Table of Contents</h2>
     <div class="tocbox">
@@ -77,12 +61,11 @@
         string identifier.  The syntax is 
         described below using <a href="http://www.ietf.org/rfc/rfc2234.txt">augmented BNF</a>:
       </p>
-      <div class="code">
+      <div class="code"><pre>
 object-pid    = namespace-id ":" object-id
 namespace-id  = 1*( ALPHA / DIGIT / "-" / "." )
 object-id     = 1*( ALPHA / DIGIT / "-" / "." / "~" / "_" / escaped-octet )
-escaped-octet = "%" HEXDIG HEXDIG
-      </div>
+escaped-octet = "%" HEXDIG HEXDIG</pre></div>
       <p>
         <strong>The maximum length of a PID is 64 characters</strong>
       </p>
@@ -90,9 +73,8 @@ escaped-octet = "%" HEXDIG HEXDIG
         For convenience, we provide the following single regular expression, 
         which can be used to validate a normalized PID string:
       </p>
-      <div class="code">
-^([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+$
-      </div>
+      <div class="code"><pre>
+^([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+$</pre></div>
     </div>
     <div class="sec2">
       <h3><a name="PIDs.Examples">B. Examples</a></h3>
@@ -163,11 +145,10 @@ escaped-octet = "%" HEXDIG HEXDIG
         with any parameters).  In the case of a datastream dissemination,
         the URI indicates the datastream id.
       </p>
-      <div class="code">
+      <div class="code"><pre>
 dissemination-uri = "info:fedora/" pid "/" ( method-call / datastream-id )
 method-call       = bDef-pid "/" method-name [ "?" param *( "&" param ) ]
-param             = paramName "=" paramValue
-      </div>
+param             = paramName "=" paramValue</pre></div>
       <p>
         Note that datastream-ids and method-names may consist of XML NCName
         characters.  NCName characters that are not URI-safe must be escaped
@@ -198,5 +179,22 @@ param             = paramName "=" paramValue
       </p>
     </div>
   </div>
+  <div class="footer">
+    <span style="float: left;">
+      <em>Copyright &#xA9; 2005 Fedora Project</em>
+    </span>
+    <span style="float: right;">
+      <em>
+        Last Modified
+        <script>
+          var cvsDate = "$Date$";
+          var parts = cvsDate.split(" ");
+          var modifiedDate = parts[1];
+          document.write(modifiedDate);
+        </script>
+      </em>
+    </span>
+  </div>
+
 </body>
 </html>

@@ -12,6 +12,7 @@ body {
 }
 
 .code {
+  background: #ddddff;
   font-family:Courier, monospace;
   border-right: 1px solid;
   padding-right: 4px;
@@ -24,6 +25,8 @@ body {
   white-space: pre;
   margin-top: 4px;
   margin-bottom: 4px;
+  margin-left: 16px;
+  margin-right: 16px;
 }
 
 /* FIXME: Make these sort of match the Category4 stuff,
@@ -35,12 +38,31 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
+  font-size: 24px;
+  line-height: 110%;
   color: #4C7C8E;
   padding-top: 8px;
-  padding-bottom: 8px;
+  padding-bottom: 4px;
+}
+
+h2 {
+  font-size: 18px;
+}
+
+h3 {
+  font-size: 14px;
+}
+
+h4 {
+  font-size: 13px;
+}
+
+h5 {
+  font-size: 12px;
 }
 
 h2, h3, h4, h5 {
+  color: #4C7C8E;
   padding-top: 4px;
   padding-bottom: 4px;
 }
@@ -60,6 +82,11 @@ p {
   width: 50%;
 }
 
+.footer {
+  border-top: 1px solid;
+  padding-top: 8px;
+}
+
 .tocbox {
   border-right: 1px solid;
   border-top: 1px solid;
@@ -69,10 +96,21 @@ p {
   padding-left: 4px;
 }
 
-.title, .abstract, .toc, .sec1 {
+.abstract, .toc, .sec1 {
   margin-bottom: 4px;
 }
 
-.title {
+#title {
+text-align: center; height:100%;
+}
+
+#logo {
+float:left; height:100%; margin-right: 8px; visibility: visible;
+}
+
+#header {
   border-bottom: 1px solid;
+  clear: both;
+  margin-bottom: 8px;
+  width: 100%;
 }
