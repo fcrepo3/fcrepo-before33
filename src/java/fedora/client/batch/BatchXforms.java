@@ -47,9 +47,10 @@ class BatchXforms {
       private Transformer transformer = null;
 		
       BatchXforms(Properties optValues) throws Exception {
+		xformPath = System.getProperty("fedora.home") + "client/lib/merge.xsl";
+System.out.println("xformPath => " + xformPath);
 		additionsPath = optValues.getProperty(BatchTool.ADDITIONSPATH);
 		objectsPath = optValues.getProperty(BatchTool.OBJECTSPATH);
-		xformPath = optValues.getProperty(BatchTool.XFORMPATH);
 		modelPath = optValues.getProperty(BatchTool.CMODEL);		
 			
 		if (! BatchTool.argOK(additionsPath)) {
