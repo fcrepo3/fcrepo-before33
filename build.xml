@@ -271,7 +271,7 @@
 			<arg line="-s fedora-batch-buildingest.sh fedora-admin"/>
 		</exec>						
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
-		<chmod dir="dist/client/bin" perm="o+x" includes="**/*"/>
+		<chmod dir="dist/client/bin" perm="ugo+x" includes="**/*"/>
 	</target>
 	
 	<target name="client" 
@@ -922,7 +922,7 @@
 			<arg line="-s fedora-stop.sh fedora-stop"/>
 		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
-		<chmod dir="dist/server/bin" perm="o+x" includes="**/*"/>
+		<chmod dir="dist/server/bin" perm="ugo+x" includes="**/*"/>
 	</target>
 	<target name="server" depends="serverunixstuff,servermostly">
 	</target>
