@@ -104,13 +104,7 @@ public class DefaultAccess extends Module implements Access
    */
   public void initModule() throws ModuleInitializationException
   {
-    m_manager=(DOManager) getServer().getModule(
-        "fedora.server.storage.DOManager");
-    if (m_manager == null)
-    {
-      throw new ModuleInitializationException("Can't get a DOManager "
-          + "from Server.getModule", getRole());
-    }
+
     String dsMediation = getParameter("doMediateDatastreams");
     if (dsMediation==null)
     {
@@ -131,6 +125,14 @@ public class DefaultAccess extends Module implements Access
   public void postInitModule()
       throws ModuleInitializationException
   {
+    // get ref to DOManager
+    m_manager=(DOManager) getServer().getModule(
+        "fedora.server.storage.DOManager");
+    if (m_manager == null)
+    {
+      throw new ModuleInitializationException("Can't get a DOManager "
+          + "from Server.getModule", getRole());
+    }
       // get ref to DynamicAccess module
       m_dynamicAccess = (DynamicAccessModule) getServer().
               getModule("fedora.server.access.DynamicAccess");
