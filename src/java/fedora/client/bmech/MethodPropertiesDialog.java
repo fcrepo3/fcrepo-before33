@@ -828,7 +828,13 @@ public class MethodPropertiesDialog extends JDialog
       Pattern multcommas = Pattern.compile(",++");
       Matcher m2 = multcommas.matcher(interim);
       String normal = m2.replaceAll(",");
+      if (normal.endsWith(","))
+      {
+      	int endcomma = normal.lastIndexOf(",");
+      	normal = normal.substring(0, endcomma);
+      }
       return normal;
+
     }
 
     private void renderCurrentProperties(MethodProperties properties)
@@ -895,7 +901,7 @@ public class MethodPropertiesDialog extends JDialog
         for (int i2=0; i2<parms[i].parmDomainValues.length; i2++)
         {
           sb2.append(parms[i].parmDomainValues[i2]);
-          int j = i+1;
+          int j = i2+1;
           if (!(j == parms[i].parmDomainValues.length))
           {
             sb2.append(",");
