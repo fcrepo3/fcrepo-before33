@@ -122,6 +122,15 @@
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-convert-demos.sh fedora-convert-demos"/>
 		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-batch-build.sh fedora-admin"/>
+		</exec>		
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-batch-ingest.sh fedora-admin"/>
+		</exec>		
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-batch-buildingest.sh fedora-admin"/>
+		</exec>						
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="u+x" includes="**/*"/>
 	</target>
@@ -854,7 +863,7 @@
 		<!--Repository Info xsl stylesheet used by API-A-LITE  -->
 		<copy file="src/xsl/access/viewRepositoryInfo.xslt" todir="dist/server/access"/>
 		<!--Object History xsl stylesheet used by API-A-LITE  -->
-		<copy file="src/xsl/access/viewObjectHistory.xslt" todir="dist/server/access"/>		
+		<copy file="src/xsl/access/viewObjectHistory.xslt" todir="dist/server/access"/>
 		<!--Report xsl stylesheet to format html form for report request  -->
 		<copy file="src/xsl/access/reportRequestHtml.xslt" todir="dist/server/access"/>
 		<!--Report xsl stylesheet to format report as html  -->
