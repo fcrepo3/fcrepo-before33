@@ -42,10 +42,11 @@ public class ConnectionPoolManagerImpl extends Module
   /**
    * <p>Creates a new ConnectionPoolManager</p>
    *
-   * @param moduleParameters name/value pair map of module parameters
-   * @param server Server instance
-   * @param role String containing the module role name
-   * @throws ModuleInitializationException
+   * @param moduleParameters The name and value pair map of module parameters
+   * @param server The server instance
+   * @param role The module role name
+   * @throws ModuleInitializationException If initialization values are
+   *         invalid or initialization fails for some other reason.
    */
   public ConnectionPoolManagerImpl(Map moduleParameters,
                                    Server server, String role)
@@ -138,8 +139,8 @@ public class ConnectionPoolManagerImpl extends Module
   /**
    * <p>Gets a named connection pool.</p>
    *
-   * @param poolName name of the ConnectionPool
-   * @return ConnectionPool the named ConnectionPool
+   * @param poolName The name of the connection pool.
+   * @return The named connection pool.
    */
   public ConnectionPool getPool(String poolName)
       throws ModuleInitializationException
@@ -171,8 +172,7 @@ public class ConnectionPoolManagerImpl extends Module
    * <p>Gets the default Connection Pool. This method overrides <code>
    * getPool(String poolName)</code>.</p>
    *
-   * @param poolName name of the ConnectionPool
-   * @return ConnectionPool the named ConnectionPool
+   * @return The default connection pool.
    */
   public ConnectionPool getPool()
       throws ModuleInitializationException
