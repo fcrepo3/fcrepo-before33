@@ -15,7 +15,9 @@ package fedora.server.management;
 
 public interface FedoraManagement
 {
-    // API-M Access Methods
+  /**
+   * API-M Access Methods
+   */
     public byte[] GetObject(String pid);
 
     public String[] ListObjectPIDs(String namespace);
@@ -24,40 +26,53 @@ public interface FedoraManagement
 
     public Disseminator[] GetDisseminators(String pid);
 
-    // API-M Creation Methods
+    /**
+     * API-M Creation Methods
+     */
 
-    public String IngestObject(byte[] mets);
+    public String IngestObject(byte[] mets, Agent[] agents);
 
-    public String CreateObject(String pid, String label, String contentModelID);
+    public String CreateObject(String pid, String label, String contentModelID, Agent[] agents);
 
-    public boolean CreateRefDatastream(String pid, String url);
+    public void ObtainObjectLock(String pid, String userID, String reason);
 
-    public boolean CreateInternalDatastream(String pid, String dsLabel, byte[] content);
+    public void ReleaseObjectLock(String pid);
 
-    public boolean CreateInternalDatastream(String pid, String dsLabel, String url);
+    /** External Datastream:  Referenced Content */
+    public boolean AddDatastreamERC(String pid, String url);
 
-    public boolean CreateMetadataDatastream(String pid, String dsLabel, String mdType, byte[] xmlMD);
+    /** Internal Datastream: Fedora Content */
+    public boolean AddDatastreamFC(String pid, String dsLabel, byte[] content);
 
-    public boolean CreateMetadataDatastream(String pid, String dsLabel, String mdType, String xmlurl);
+    /** Internal Datastream: Fedora Content */
+    public boolean AddDatastreamFCURL(String pid, String dsLabel, String url);
 
-    public boolean CreateDisseminator(String pid, String bDefID, String bMechID, String dissLabel, DSBindingMap dsBindMap);
+    /** Internal Datastream : Fedora User Metadata */
+    public boolean AddDatastreamFUM(String pid, String dsLabel, String mdType, byte[] xmlMD);
+
+    /** Internal Datastream : Fedora User Metadata */
+    public boolean AddDatastreamFUMURL(String pid, String dsLabel, String mdType, String xmlurl);
+
+    public boolean AddDisseminator(String pid, String bDefID, String bMechID, String dissLabel, DSBindingMap dsBindMap);
 
     // API-M Modify Methods
 
-    public boolean ModifyRefDatastream(String pid, String datastreamID, String dsLabel, String url);
+    public boolean ModifyDatastreamERC(String pid, String datastreamID, String dsLabel, String url);
 
-    public boolean ModifyInternalDatastream(String pid, String datastreamID, String dsLabel, byte[] content);
+    public boolean ModifyDatastreamFC(String pid, String datastreamID, String dsLabel, byte[] content);
 
-    public boolean ModifyInternalDatastream(String pid, String datastreamID, String dsLabel, String url);
+    public boolean ModifyDatastreamFCURL(String pid, String datastreamID, String dsLabel, String url);
 
-    public boolean ModifyMetadataDatastream(String pid, String datastreamID, String dsLabel, byte[] xmlMD);
+    public boolean ModifyDatastreamFUM(String pid, String datastreamID, String dsLabel, byte[] xmlMD);
 
-    public boolean ModifyMetadataDatastream(String pid, String datastreamID, String dsLabel, String xmlurl);
+    public boolean ModifyDatastreamFUMURL(String pid, String datastreamID, String dsLabel, String xmlurl);
 
     public boolean ModifyDisseminator(String pid, String dissID, String bDefID, String bMechID, String dissLabel, DSBindingMap dsBindMap);
 
 
-    // API-M Delete Methods
+  /**
+   * API-M Deletion Methods
+   */
 
     public boolean DeleteObject(String pid);
 
