@@ -703,7 +703,7 @@ public class DefaultDOManager
 
                 // at this point all is good...
                 // so make a record of it in the registry
-                registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
+                registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context), obj.getLabel(), obj.getContentModelId(), obj.getCreateDate(), obj.getLastModDate());
                 return w;
             } catch (ServerException se) {
                 // remove from permanent and temp store if anything failed
@@ -751,7 +751,8 @@ public class DefaultDOManager
                 throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
             }
             // make a record of it in the registry
-            registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
+            // FIXME: this method is incomplete...
+            //registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
 
             // serialize to disk, then validate.. if that's ok, go on.. else unregister it!
         }
@@ -935,7 +936,8 @@ public class DefaultDOManager
     /**
      * Adds a new, locked object.
      */
-    private void registerObject(String pid, int fedoraObjectType, String userId)
+    private void registerObject(String pid, int fedoraObjectType, String userId,
+            String label, String contentModelId, Date createDate, Date lastModDate)
             throws StorageDeviceException {
         Connection conn=null;
         Statement st=null;
@@ -947,8 +949,13 @@ public class DefaultDOManager
             foType="M";
         }
         try {
-            String query="INSERT INTO ObjectRegistry (DO_PID, FO_TYPE, LockingUser) "
-                       + "VALUES ('" + pid + "', '" + foType +"', '"+ userId +"')";
+            String query="INSERT INTO ObjectRegistry (DO_PID, FO_TYPE, "
+                                                   + "LockingUser, Label, "
+                                                   + "ContentModelId, CreateDate, "
+                                                   + "LastModDate) "
+                       + "VALUES ('" + pid + "', '" + foType +"', '"
+                                     + userId +"', '" + label + "', '" 
+                                     + contentModelId + "', )";
             conn=m_connectionPool.getConnection();
             st=conn.createStatement();
             st.executeUpdate(query);
