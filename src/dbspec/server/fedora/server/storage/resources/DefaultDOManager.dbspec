@@ -194,13 +194,13 @@
 		<column name="locker" type="varchar(32)" notNull="false">
 			<comment>The userId of the user having a lock on the object.</comment>
 		</column>
-		<column name="cDate" type="timestamp" notNull="true">
+		<column name="cDate" type="bigint" notNull="true">
 			<comment>The date the object was first ingested or created in the repository.</comment>
 		</column>
-		<column name="mDate" type="timestamp" notNull="true">
+		<column name="mDate" type="bigint" notNull="true">
 			<comment>The date the object was last modified.</comment>
 		</column>
-		<column name="dcmDate" type="timestamp" notNull="false">
+		<column name="dcmDate" type="bigint" notNull="false">
 			<comment>The date the primary dublin core record was last modified.</comment>
 		</column>
 		<column name="dcTitle" type="text" notNull="false">
@@ -258,7 +258,7 @@
 		<column name="pid" type="varchar(32)" notNull="true">
 			<comment>The PID of the object</comment>
 		</column>
-		<column name="dcDate" type="timestamp" notNull="true">
+		<column name="dcDate" type="bigint" notNull="true">
 			<comment>A dc:date that was successfully parsed as a date.</comment>
 		</column>
 	</table>
