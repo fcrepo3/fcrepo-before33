@@ -14,10 +14,10 @@ import org.w3c.dom.NodeList;
 public class BasicServer 
         extends Server {
         
-    public BasicServer(NodeList configNodes, File fedoraHomeDir) 
+    public BasicServer(Element rootElement, File fedoraHomeDir) 
             throws ServerInitializationException,
                    ModuleInitializationException {
-        super(configNodes, fedoraHomeDir);
+        super(rootElement, fedoraHomeDir);
     }
 
     /**
