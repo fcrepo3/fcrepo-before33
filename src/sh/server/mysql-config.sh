@@ -77,7 +77,7 @@ echo
 
 # Create Fedora database using specified database name
 
-(exec $1/bin/mysqladmin -u $2 -p$3 -h localhost -S /tmp/mysql41.sock create $6)
+(exec $1/bin/mysqladmin -u $2 -p$3 -h localhost create $6)
 
 # Generate MySQL commands to assign username and password to Fedora database
 # The commands are written to the file mysqlConfig.sql in the current directory.
@@ -123,7 +123,7 @@ echo
 
 # Assign specified username and password for Fedora database
 
-(exec $1/bin/mysql -u $2 -p$3 -h localhost -D mysql -S /tmp/mysql41.sock <mysqlConfig.sql)
+(exec $1/bin/mysql -u $2 -p$3 -h localhost -D mysql <mysqlConfig.sql)
 
 echo
 echo "Database initialization complete!"
