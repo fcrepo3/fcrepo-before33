@@ -89,7 +89,11 @@
 	        org.apache.axis.transport.http.AxisServlet
 	    </servlet-class>
 	</servlet>
-	<servlet-mapping>
+	<servlet-mapping><!-- testing -->
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>	
+	<!--servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>/management/soap</url-pattern>
 	</servlet-mapping>
@@ -100,7 +104,7 @@
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>/AdminService</url-pattern>
-	</servlet-mapping>	
+	</servlet-mapping-->	
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>*.jws</url-pattern>						
