@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+<article>
+	<articleinfo>
+		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<title>Fedora Admin Client Batch Utility</title>
+		<corpauthor>Fedora Development Team</corpauthor>
+		<copyright>
+			<year>2003</year>
+		</copyright>
+		<publisher>
+			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
+		</publisher>
+	</articleinfo>
+	<sect1>
+		<title>Introduction</title>
+			<para>The Fedora Admin Client Batch Utility provides tools to create and ingest multiple Fedora objects.  The Batch Utility can be accessed from the Tools menu of the Fedora Admin GUI Client.  For more detailed information regarding the batch Utility, refer to the <ulink url="/userdocs/server/manual.html">Fedora User Manual</ulink>.</para>
+	</sect1>
+</article>
