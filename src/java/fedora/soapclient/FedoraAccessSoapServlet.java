@@ -174,6 +174,12 @@ public class FedoraAccessSoapServlet extends HttpServlet
   /** User-supplied method parameters from servlet URL. */
   private Hashtable h_userParms = null;
 
+  /** Host name of the Fedora server **/
+  private static String fedoraServerHost = null;
+
+  /** Port number on which the Fedora server is running. **/
+  private static String fedoraServerPort = null;
+
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
    * parameters and then execute the specified request by calling the
@@ -306,7 +312,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               transformer.setParameter("title_", new StringValue("Fedora Digital Object"));
               transformer.setParameter("subtitle_", new StringValue("Behavior Definitions View"));
               transformer.setParameter("soapClientServletPath", new StringValue(SOAP_CLIENT_SERVLET_PATH));
-              transformer.setParameter("soapMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+              transformer.setParameter("soapClientMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
               transformer.transform(new StreamSource(pr), new StreamResult(out));
             }
             out.flush();
@@ -399,7 +405,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               transformer.setParameter("title_", new StringValue("Fedora Digital Object"));
               transformer.setParameter("subtitle_", new StringValue("Behavior Methods View"));
               transformer.setParameter("soapClientServletPath", new StringValue(SOAP_CLIENT_SERVLET_PATH));
-              transformer.setParameter("soapMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+              transformer.setParameter("soapClientMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
               transformer.transform(new StreamSource(pr), new StreamResult(out));
             }
             out.flush();
@@ -652,7 +658,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               transformer.setParameter("title_", new StringValue("Fedora Digital Object"));
               transformer.setParameter("subtitle_", new StringValue("Object Methods View"));
               transformer.setParameter("soapClientServletPath", new StringValue(SOAP_CLIENT_SERVLET_PATH));
-              transformer.setParameter("soapMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+              transformer.setParameter("soapClientMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
               transformer.transform(new StreamSource(pr), new StreamResult(out));
             }
             out.flush();
@@ -745,7 +751,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               transformer.setParameter("title_", new StringValue("Fedora Digital Object"));
               transformer.setParameter("subtitle_", new StringValue("Object Profile View"));
               transformer.setParameter("soapClientServletPath", new StringValue(SOAP_CLIENT_SERVLET_PATH));
-              transformer.setParameter("soapMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+              transformer.setParameter("soapClientMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
               transformer.transform(new StreamSource(pr), new StreamResult(out));
             }
             out.flush();
@@ -830,7 +836,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               transformer.setParameter("title_", new StringValue("Fedora"));
               transformer.setParameter("subtitle_", new StringValue("Describe Repository View"));
               transformer.setParameter("soapClientServletPath", new StringValue(SOAP_CLIENT_SERVLET_PATH));
-              transformer.setParameter("soapMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+              transformer.setParameter("soapClientMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
               transformer.transform(new StreamSource(pr), new StreamResult(out));
             }
             out.flush();
@@ -923,21 +929,37 @@ public class FedoraAccessSoapServlet extends HttpServlet
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
             pw.write("<objectMethods "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectMethods.xsd\""
                 + " pid=\"" + PID + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectMethods.xsd\"/>");
+            //pw.write("<objectMethods "
+            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            //    + " pid=\"" + PID + "\" >");
+            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " location=\"objectMethods.xsd\"/>");
           } else
           {
             pw.write("<objectMethods "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " pid=\"" + PID + "\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectMethods.xsd\""
+                + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectMethods.xsd\"/>");
+            //pw.write("<objectMethods "
+            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            //    + " pid=\"" + PID + "\""
+            //    + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
+            //    + "\" >");
+            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " location=\"objectMethods.xsd\"/>");
           }
           String nextBdef = "null";
           String currentBdef = "";
@@ -1036,21 +1058,37 @@ public class FedoraAccessSoapServlet extends HttpServlet
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
             pw.write("<objectProfile "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectProfile.xsd\""
                 + " pid=\"" + PID + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectProfile.xsd\"/>");
+            //pw.write("<objectProfile "
+            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            //    + " pid=\"" + PID + "\" >");
+            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " location=\"objectProfile.xsd\"/>");
           } else
           {
             pw.write("<objectProfile "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " pid=\"" + PID + "\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectProfile.xsd\""
+                + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectProfile.xsd\"/>");
+            //pw.write("<objectProfile "
+            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            //    + " pid=\"" + PID + "\""
+            //    + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
+            //    + "\" >");
+            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " location=\"objectProfile.xsd\"/>");
           }
 
           // PROFILE FIELDS SERIALIZATION
@@ -1128,11 +1166,17 @@ public class FedoraAccessSoapServlet extends HttpServlet
         {
           pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
           pw.write("<fedoraRepository "
-              + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-              + ">");
-          pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-              + " location=\"fedoraRepository.xsd\"/>");
+              + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+              + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+              + "/fedoraRepository.xsd\">");
+          //pw.write("<fedoraRepository "
+          //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+          //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+          //    + ">");
+          //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+          //    + " location=\"fedoraRepository.xsd\"/>");
 
           // REPOSITORY INFO FIELDS SERIALIZATION
           pw.write("<repositoryName>" + repositoryInfo.getRepositoryName() + "</repositoryName>");
@@ -1224,21 +1268,37 @@ public class FedoraAccessSoapServlet extends HttpServlet
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
             pw.write("<objectMethods "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectMethods.xsd\""
                 + " pid=\"" + PID + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectMethods.xsd\"/>");
+            //pw.write("<objectMethods "
+            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            //    + " pid=\"" + PID + "\" >");
+            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " location=\"objectMethods.xsd\"/>");
           } else
           {
             pw.write("<objectMethods "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " pid=\"" + PID + "\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectMethods.xsd\""
+                + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectMethods.xsd\"/>");
+            //pw.write("<objectMethods "
+            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            //    + " pid=\"" + PID + "\""
+            //    + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
+            //    + "\" >");
+            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " location=\"objectMethods.xsd\"/>");
           }
           String nextBdef = "null";
           String currentBdef = "";
@@ -1337,21 +1397,37 @@ public class FedoraAccessSoapServlet extends HttpServlet
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
             pw.write("<behaviorDefs "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/behaviorDefs.xsd\""
                 + " pid=\"" + PID + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"behaviorDefs.xsd\"/>");
+            //pw.write("<behaviorDefs "
+            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            //    + " pid=\"" + PID + "\" >");
+            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " location=\"behaviorDefs.xsd\"/>");
           } else
           {
             pw.write("<behaviorDefs "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " pid=\"" + PID + "\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/behaviorDefs.xsd\""
+                + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"behaviorDefs.xsd\"/>");
+            //pw.write("<behaviorDefs "
+            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            //    + " pid=\"" + PID + "\""
+            //    + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
+            //    + "\" >");
+            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " location=\"behaviorDefs.xsd\"/>");
           }
           String nextBdef = "null";
           String currentBdef = "";
@@ -1717,10 +1793,19 @@ public class FedoraAccessSoapServlet extends HttpServlet
       p.load(fis);
       FEDORA_ACCESS_ENDPOINT = p.getProperty("fedoraEndpoint");
       SOAP_CLIENT_SERVLET_PATH = p.getProperty("soapClientServletPath");
-      METHOD_PARM_RESOLVER_SERVLET_PATH = p.getProperty("soapMethodParmResolverServletPath");
+      METHOD_PARM_RESOLVER_SERVLET_PATH = p.getProperty("soapClientMethodParmResolverServletPath");
       System.out.println("FedoraEndpoint: " + FEDORA_ACCESS_ENDPOINT);
       System.out.println("soapClientServletPath: " + SOAP_CLIENT_SERVLET_PATH);
-      System.out.println("soapMethodParmResolverServletPath: " + METHOD_PARM_RESOLVER_SERVLET_PATH);
+      System.out.println("soapClientMethodParmResolverServletPath: " + METHOD_PARM_RESOLVER_SERVLET_PATH);
+      // Locations of the internal Fedora XML schemas are local to the Fedora server so it is
+      // the Fedora server hostname and port number are extracted from the
+      // FEDORA_ACCESS_ENDPOINT string for easier access within the servlet.
+      int i = FEDORA_ACCESS_ENDPOINT.indexOf(":",8);
+      int j = FEDORA_ACCESS_ENDPOINT.indexOf("/",i);
+      fedoraServerHost = FEDORA_ACCESS_ENDPOINT.substring(7,i);
+      fedoraServerPort = FEDORA_ACCESS_ENDPOINT.substring(i+1,j);
+      System.out.println("fedoraServerHost: "+fedoraServerHost);
+      System.out.println("fedoraServerPort: "+fedoraServerPort);
 
     } catch (Throwable th)
     {
