@@ -19,6 +19,7 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Hashtable;
@@ -64,7 +65,7 @@ public class DefinitiveDOReader implements DOReader
 
   protected DOReaderSAXErrorHandler doErrorHandler;
   protected XMLReader xmlreader;
-  private String PID = null;
+  protected String PID = null;
   private String doLabel = null;
   private String doState = null;
   private String doLockingUser = null;
@@ -531,22 +532,23 @@ public class DefinitiveDOReader implements DOReader
     {
       // TODO! dateTime filter not implemented in this release!!
 
-        // FIXIT! Consider what to do if the request comes in with a dynamic
-        // behavior definition PID.
-        if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
-             bDefPID.equalsIgnoreCase("fedora-system:3"))
-        {
-          System.out.println("getObjectMethods: Suppressing report of dynamic method parms!");
-          return null;
-        }
-
-      if (debug)
+      if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
+           bDefPID.equalsIgnoreCase("fedora-system:3"))
       {
-        System.out.println("getObjectMethods for BDEF: " + bDefPID);
+        System.out.println("getObjectMethods: Suppressing report of dynamic method parms!");
+        throw new MethodNotFoundException("The object, " + PID
+          + ", will not report on dynamic method definitions "
+          + "at this time (fedora-system:1 and fedora-system:3.");
       }
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
       MethodDef[] methods = mechRead.getServiceMethods(null);
-      return(methods);
+      // Filter out parms that are internal to the mechanism and not part
+      // of the abstract method definition.  We just want user parms.
+      for (int i=0; i<methods.length; i++)
+      {
+        methods[i].methodParms = filterParms(methods[i]);
+      }
+      return methods;
     }
 
     /**
@@ -563,15 +565,16 @@ public class DefinitiveDOReader implements DOReader
     public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime)
       throws GeneralException, ServerException
     {
-      // FIXIT! Consider what to do if the request comes in with a dynamic
-      // behavior definition PID.
+      // TODO! dateTime filter not implemented in this release!!
+
       if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
            bDefPID.equalsIgnoreCase("fedora-system:3"))
       {
-        System.out.println("getObjectMethods: Suppressing report of dynamic method parms!");
-        return null;
+        System.out.println("getObjectMethodsXML: Suppressing report of dynamic method parms!");
+        throw new MethodNotFoundException("The object, " + PID
+          + ", will not report on dynamic method definitions "
+          + "at this time (fedora-system:1 and fedora-system:3.");
       }
-      // TODO! dateTime filter not implemented in this release!!
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
       InputStream instream = mechRead.getServiceMethodsXML(null);
       return(instream);
@@ -597,31 +600,49 @@ public class DefinitiveDOReader implements DOReader
     {
       // TODO! dateTime filter not implemented in this release!!
 
-      // FIXIT! Consider what to do if the request comes in with a dynamic
-      // behavior definition PID.
       if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
            bDefPID.equalsIgnoreCase("fedora-system:3"))
       {
-        System.out.println("getObjectMethods: Suppressing report of dynamic method parms!");
-        return null;
+        System.out.println("getObjectMethodParms: Suppressing report of dynamic method parms!");
+        throw new MethodNotFoundException("The object, " + PID
+          + ", will not report on dynamic method definitions "
+          + "at this time (fedora-system:1 and fedora-system:3.");
       }
 
-      if (debug)
-      {
-        System.out.println("getObjectMethodParms for BDEF: " + bDefPID);
-      }
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
       MethodDef[] methods = mechRead.getServiceMethods(null);
-      MethodParmDef[] methodParms = null;
       for (int i=0; i<methods.length; i++)
       {
         if (methods[i].methodName.equalsIgnoreCase(methodName))
         {
-          methodParms = methods[i].methodParms;
+          return filterParms(methods[i]);
         }
       }
-      return(methodParms);
+      throw new MethodNotFoundException("The object, " + PID
+                  + ", does not have a method named '" + methodName);
     }
+
+    /**
+     * Filter out mechanism-specific parms (system default parms and datastream
+     * input parms) so that what is returned is only the parms that apply to
+     * the abstract method definitions.  Abstract method definitions only
+     * expose user-supplied parms.
+     * @param method
+     * @return
+     */
+     private MethodParmDef[] filterParms(MethodDef method)
+     {
+        ArrayList filteredParms = new ArrayList();
+        MethodParmDef[] parms = method.methodParms;
+        for (int i=0; i<parms.length; i++)
+        {
+          if (parms[i].parmType.equalsIgnoreCase(MethodParmDef.USER_INPUT))
+          {
+            filteredParms.add(parms[i]);
+          }
+        }
+        return (MethodParmDef[])filteredParms.toArray(new MethodParmDef[0]);
+     }
 
     /**
      * Gets list of default method parameters that are available on a particular

@@ -41,7 +41,7 @@ public class SimpleDOReader
         extends StdoutLogging
         implements DOReader {
 
-    private DigitalObject m_obj;
+    protected DigitalObject m_obj;
     private Context m_context;
     private RepositoryReader m_repoReader;
     private DOTranslator m_translator;
@@ -326,34 +326,41 @@ public class SimpleDOReader
     }
 
     public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime)
-            throws DisseminatorNotFoundException, ServerException {
+            throws MethodNotFoundException, ServerException {
 
-        // FIXIT! Consider what to do if the request comes in with a dynamic
-        // behavior definition PID.
         if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
              bDefPID.equalsIgnoreCase("fedora-system:3"))
         {
-          System.out.println("getObjectMethods: Suppressing report of dynamic methods!");
-          return null;
+          throw new MethodNotFoundException("[getObjectMethods] The object, "
+            + m_obj.getPid()
+            + ", will not report on dynamic method definitions "
+            + "at this time (fedora-system:1 and fedora-system:3.");
         }
         String mechPid=getBMechPid(bDefPID, versDateTime);
         if (mechPid==null) {
             return null;
         }
-        return m_repoReader.getBMechReader(m_context, mechPid).
+        MethodDef[] methods = m_repoReader.getBMechReader(m_context, mechPid).
                 getServiceMethods(versDateTime);
+        // Filter out parms that are internal to the mechanism and not part
+        // of the abstract method definition.  We just want user parms.
+        for (int i=0; i<methods.length; i++)
+        {
+          methods[i].methodParms = filterParms(methods[i]);
+        }
+        return methods;
     }
 
     public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime)
-            throws DisseminatorNotFoundException, ServerException {
+            throws MethodNotFoundException, ServerException {
 
-        // FIXIT! Consider what to do if the request comes in with a dynamic
-        // behavior definition PID.
         if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
              bDefPID.equalsIgnoreCase("fedora-system:3"))
         {
-          System.out.println("getObjectMethodsXML: Suppressing report of dynamic methods!");
-          return null;
+          throw new MethodNotFoundException("[getObjectMethodsXML] The object, "
+            + m_obj.getPid()
+            + ", will not report on dynamic method definitions "
+            + "at this time (fedora-system:1 and fedora-system:3.");
         }
         String mechPid=getBMechPid(bDefPID, versDateTime);
         if (mechPid==null) {
@@ -362,6 +369,73 @@ public class SimpleDOReader
         return m_repoReader.getBMechReader(m_context, mechPid).
                 getServiceMethodsXML(versDateTime);
     }
+
+    /**
+     * Get the parameters for a given method.  The parameters returned
+     * will be those that pertain to the abstract method definition, meaning
+     * they will only be user-supplied parms.  Mechanism-specific parms
+     * (system default parms and datastream input parms) will be filtered out.
+     * @param bDefPID
+     * @param methodName
+     * @param versDateTime
+     * @return
+     * @throws DisseminatorNotFoundException
+     * @throws MethodNotFoundException
+     * @throws ServerException
+     */
+    public MethodParmDef[] getObjectMethodParms(String bDefPID,
+            String methodName, Date versDateTime)
+            throws MethodNotFoundException, ServerException {
+
+        if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
+             bDefPID.equalsIgnoreCase("fedora-system:3"))
+        {
+          throw new MethodNotFoundException("[getObjectMethodParms] The object, "
+            + m_obj.getPid()
+            + ", will not report on dynamic method definitions "
+            + "at this time (fedora-system:1 and fedora-system:3.");
+        }
+        // The parms are expressed in the abstract method definitions
+        // in the behavior mechanism object. Note that the mechanism object
+        // is used here as if it were a behavior definition object.
+        String mechPid=getBMechPid(bDefPID, versDateTime);
+        if (mechPid==null) {
+            return null;
+        }
+        MethodDef[] methods = m_repoReader.getBMechReader(m_context, mechPid).
+                getServiceMethods(versDateTime);
+        for (int i=0; i<methods.length; i++)
+        {
+          if (methods[i].methodName.equalsIgnoreCase(methodName))
+          {
+            return filterParms(methods[i]);
+          }
+        }
+        throw new MethodNotFoundException("The object, " + m_obj.getPid()
+                    + ", does not have a method named '" + methodName);
+    }
+
+    /**
+     * Filter out mechanism-specific parms (system default parms and datastream
+     * input parms) so that what is returned is only method parms that reflect
+     * abstract method definitions.  Abstract method definitions only
+     * expose user-supplied parms.
+     * @param method
+     * @return
+     */
+     private MethodParmDef[] filterParms(MethodDef method)
+     {
+        ArrayList filteredParms = new ArrayList();
+        MethodParmDef[] parms = method.methodParms;
+        for (int i=0; i<parms.length; i++)
+        {
+          if (parms[i].parmType.equalsIgnoreCase(MethodParmDef.USER_INPUT))
+          {
+            filteredParms.add(parms[i]);
+          }
+        }
+        return (MethodParmDef[])filteredParms.toArray(new MethodParmDef[0]);
+     }
 
     /**
      * Gets the bmech id for the disseminator subscribing to the bdef.
@@ -397,69 +471,6 @@ public class SimpleDOReader
         } else {
             return "the current time";
         }
-    }
-
-    public MethodParmDef[] getObjectMethodParms(String bDefPID,
-            String methodName, Date versDateTime)
-            throws DisseminatorNotFoundException, MethodNotFoundException,
-            ServerException {
-
-        // FIXIT! Consider what to do if the request comes in with a dynamic
-        // behavior definition PID.
-        if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
-             bDefPID.equalsIgnoreCase("fedora-system:3"))
-        {
-          System.out.println("getObjectMethods: Suppressing report of dynamic method parms!");
-          return null;
-        }
-        // The parms are expressed in the abstract method definitions
-        // of the WSDL datastream in the behavior DEFINITION object.
-        String mechPid=getBMechPid(bDefPID, versDateTime);
-        if (mechPid==null) {
-            return null;
-        }
-        // Note that the mechanism object is used here as
-        // if it were a behavior definition object.
-        // this works because the part of the WSDL datastream
-        // that is being looked at should be the same.
-        return getParms(m_repoReader.getBMechReader(m_context, mechPid).
-                getServiceMethods(versDateTime), methodName);
-    }
-/*
-    public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID,
-            String methodName, Date versDateTime)
-            throws DisseminatorNotFoundException, MethodNotFoundException,
-            ServerException {
-        // The *default* parms are expressed in the method bindings
-        // of the WSDL datastream in the behavior mechanism object.
-        MethodDef[] methods=getObjectMethods(bDefPID, versDateTime);
-        return getParms(methods, methodName);
-    }
-*/
-
-    /**
-     * Gets the parameter definitions for the method named <i>methodName</i>
-     * in <i>methods</i>.
-     *
-     * @return null if methods is given as null
-     * @throws MethodNotFoundException if no mush method exist in the array.
-     */
-    protected MethodParmDef[] getParms(MethodDef[] methods, String methodName)
-            throws MethodNotFoundException {
-        if (methods==null) {
-            return null;
-        }
-        MethodParmDef[] methodParms = null;
-        for (int i=0; i<methods.length; i++) {
-            if (methods[i].methodName.equals(methodName)) {
-                methodParms = methods[i].methodParms;
-            }
-        }
-        if (methodParms==null) {
-            throw new MethodNotFoundException("The object, " + m_obj.getPid()
-                    + ", does not have a method named '" + methodName);
-        }
-        return methodParms;
     }
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
