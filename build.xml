@@ -1,79 +1,134 @@
-<project name="Fedora" default="full" basedir=".">
+<?xml version="1.0"?>
 
-    <property name="javaClassDebug" value="on"/>
-    <property name="javaClassOptimize" value="off"/>
+<!--
+  $Id$
+  
+  TODO: Add optimized targets (separate output area)
+        Add doc targets
+        Add server targets, similar to client, pulling off common classes
+-->
 
-    <property name="javaSourceDir" value="src/java"/>
-    <property name="docDir" value="apidoc"/>
-    
-    <target name="full"
-        depends="client,server,apidoc"
-        description="Build all">
-    </target>
-    
-    <target name="client" 
-        depends="clientclasses"
-        description="Build the client in dist/">
-        <mkdir dir="dist"/>
-        <jar jarfile="dist/client.jar"
-            basedir="temp"
-            manifest="res/client.mfs"/>
-        <copy todir="dist">
-            <fileset dir="inc/client"/>
-        </copy>
-        <mkdir dir="dist/lib"/>
-        <copy file="lib/jhbasic.jar" todir="dist/lib"/>
-        <copy file="lib/rms.jar" todir="dist/lib"/>
-    </target>
+<project name="Fedora" default="all" basedir=".">
 
-    <target name="runclient"
-	    depends="client"
-		description="run the client">
-      <exec dir="dist" executable="java">
-	      <arg line="-jar client.jar"/>
-	  </exec>
-	</target>
-    
-    <target name="server"
-        depends="serverclasses"
-        description="Build the server in dist/">
-    </target>
-        
+  <property name="javaClassDebug" value="on"/>
+  <property name="javaClassOptimize" value="off"/>
 
-    <target name="clientclasses" 
-        description="Compile client java code (.java to .class) into temp/">
-        <mkdir dir="temp"/>
-        <javac srcdir="${javaSourceDir}"
-            destdir="temp"
-            classpath="lib/jhbasic.jar;lib/rms.jar"
-            includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**"
-            optimize="${javaClassOptimize}"
-            debug="${javaClassDebug}"/>
-        <copy todir="temp">
-            <fileset dir="inc/clientjar"/>
-        </copy>
-    </target>
+  <property name="javaSourceDir" value="src/java"/>
+  <property name="docDir" value="apidoc"/>
+    
+  <target name="all"
+          depends="client"
+          description="Build all distributions">
+  </target>
+  
+  <target name="client" 
+          depends="clientclasses,clienthelp,clientimages,clientjarincludes"
+          description="Client distribution">
+    <mkdir dir="dist"/>
+    <mkdir dir="dist/client"/>
+    <jar jarfile="dist/client/client.jar"
+         basedir="temp/client"
+         manifest="src/mfs/client.mfs"/>
+    <mkdir dir="dist/client/lib"/>
+    <copy file="lib/client/jhbasic.jar" todir="dist/client/lib"/>
+    <copy file="lib/client/rms.jar" todir="dist/client/lib"/>
+    <!--<copy todir="temp/client">
+      <fileset dir="inc/client/dist"/>
+    </copy>-->
+    <echo message="Finished building client distribution in dist/client"/>
+  </target>
 
-    <target name="serverclasses" 
-        description="Compile server java code (.java to .class) into temp/">
-    </target>
+  <target name="runclient"
+          depends="client"
+          description="run the client">
+    <exec dir="dist/client" executable="java">
+      <arg line="-jar client.jar"/>
+    </exec>
+  </target>
     
-    <target name="apidoc"
-        description="Build the javadocs">
-        <mkdir dir="apidoc"/>
-        <javadoc packagenames="edu.cornell.dlrg.swing.mdi.*,edu.cornell.dlrg.swing.jhelp.*,fedora.client.*,fedora.common.*"
-            sourcepath="${javaSourceDir}"
-            destdir="apidoc"
-            author="true"
-            version="true"
-            use="true"/>
-    </target>
+  <target name="prep"
+          description="Prepare a temporary build area for targets">
+    <mkdir dir="temp"/>
+  </target>
     
-    <target name="clean"
-        description="Clean up everything (classes, javadocs, distributions)">
-        <delete dir="temp"/>
-        <delete dir="apidoc"/>
-        <delete dir="dist"/>
-    </target>
+  <target name="clientprep"
+          depends="prep"
+          description="Prepare a temporary build area for client-related targets">
+    <mkdir dir="temp/client"/>
+  </target>
+
+  <target name="clientclasses"
+          depends="clientprep"
+          description="Compile client java code into temp/client">
+    <javac srcdir="${javaSourceDir}"
+           destdir="temp/client"
+           classpath="lib/client/jhbasic.jar;lib/client/rms.jar"
+           includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**"
+           optimize="${javaClassOptimize}"
+           debug="${javaClassDebug}"/>
+  </target>
     
+  <target name="clienthelp"
+          depends="clientprep"
+          description="Assemble JavaHelp for client into temp/client/help">
+    <mkdir dir="temp/client/help"/>
+    <copy todir="temp/client/help">
+      <fileset dir="src/gif/client/help"/>
+      <fileset dir="src/jpg/client/help"/>
+      <fileset dir="src/html/client/help"/>
+      <fileset dir="src/jhelpset/client/help"/>
+      <fileset dir="src/jhelptoc/client/help"/>
+      <fileset dir="src/jhelpindex/client/help"/>
+      <fileset dir="src/jhelpmap/client/help"/>
+    </copy>
+  </target>
+  
+  <target name="clientimages"
+          depends="clientprep"
+          description="Assemble client images dir sources into temp/client/images">
+    <mkdir dir="temp/client/images"/>
+    <copy todir="temp/client/images">
+      <fileset dir="src/gif/client/images"/>
+    </copy>
+  </target>
+  
+  <target name="clientjarincludes"
+          depends="clientprep"
+          description="Assemble client includes temp/client">
+    <copy todir="temp/client">
+      <fileset dir="inc/client/jar"/>
+    </copy>
+  </target>
+
+
+<!--
+  <target name="docs"
+          description="Build dev docs and user docs">
+  </target>    
+    
+  <target name="apidoc"
+          description="Build the javadocs">
+    <mkdir dir="apidoc"/>
+    <javadoc packagenames="edu.cornell.dlrg.swing.mdi.*,edu.cornell.dlrg.swing.jhelp.*,fedora.client.*,fedora.common.*"
+             sourcepath="${javaSourceDir}"
+             destdir="apidoc"
+             author="true"
+             version="true"
+             use="true"/>
+  </target>
+-->
+    
+  <target name="clean"
+          description="Clean up all targets and temp files">
+    <delete dir="temp"/>
+    <delete dir="dist"/>
+  </target>
+
 </project>
+
+<!--
+  $Log$
+  Revision 1.2  2002/05/03 16:03:32  cwilper
+  Client builds now work
+
+-->
