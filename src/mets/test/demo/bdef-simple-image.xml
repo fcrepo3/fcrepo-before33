@@ -23,7 +23,7 @@
 	<!--  Here we store WSDL inline as a form of metadata about the behavior definition represented by this object. -->
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="WSDL">
-		<METS:techMD ID="WSDL1.0" CREATED="2002-02-17T06:32:00" STATUS="">
+		<METS:techMD ID="WSDL1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL ABSTRACT SERVICE DEFINITION for UVA Standard Image">
 				<METS:xmlData>
 					<wsdl:definitions name="image-std" targetNamespace="test:1" xmlns="test:1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
@@ -99,8 +99,8 @@
 	<!-- ******************************************************************************************************************** -->
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
-			<METS:fileGrp ID="DS1" STATUS="">
-				<METS:file ID="DS1.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/html" OWNERID="E" STATUS="">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<METS:file ID="DS1.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/html" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href=" http://uva.lib.edu/bdef/stdimage/doc/stdImage.html" xlink:title="Behavior Def Guide"/>
 				</METS:file>
 			</METS:fileGrp>
@@ -128,7 +128,7 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior Mechanism to run the behaviors. -->
 	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Defintion Object.   -->
-	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="uva-bdef-bootstrap:1" CREATED="2000-08-22T06:32:00" LABEL="Bootstrap Behaviors" GROUPID="DISS1" STATUS="">
+	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="uva-bdef-bootstrap:1" CREATED="2000-08-22T06:32:00" LABEL="Bootstrap Behaviors" GROUPID="DISS1" STATUS="A">
 		<METS:interfaceDef LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="uva-bdef-bootstrap:1"/>
 		<METS:mechanism LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="uva-bmech-bootstrap:2"/>
 	</METS:behaviorSec>
