@@ -1,14 +1,5 @@
 package fedora.server.storage.replication;
 
-/**
- * Title: DBIDLookup.java
- * Description: Database DBID lookup code.
- * Copyright: Copyright (c) 2002
- * Company:
- * @author Paul Charlton
- * @version 1.0
- */
-
 import java.util.*;
 import java.sql.*;
 import java.io.*;
@@ -16,13 +7,32 @@ import java.io.*;
 import fedora.server.errors.StorageDeviceException;
 
 /**
-*
-* Description: Looks up and returns the DBID for a row that matches the column
-* values passed in for that particular row.
-*
-* @version 1.0
-*
-*/
+ *
+ * <p><b>Title:</b> DBIDLookup.java</p>
+ * <p><b>Description:</b> Database DBID lookup code. Looks up and returns the
+ * DBID for a row that matches the column values passed in for that
+ * particular row.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author Paul Charlton
+ * @version 1.0
+ */
 public class DBIDLookup {
 
         /**

@@ -16,13 +16,30 @@ import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.errors.ModuleInitializationException;
 
 /**
- * A Module that replicates digital object information to the dissemination
- * database.
- * <p></p>
- * Converts data read from the object reader interfaces and creates or
- * updates the corresponding database rows in the dissemination database.
  *
- * FIXME: recast sqlexceptions as replicationexceptions here and in interface
+ * <p><b>Title:</b> DefaultDOReplicator.java</p>
+ * <p><b>Description:</b> A Module that replicates digital object information
+ * to the dissemination database.</p>
+ *
+ * <p>Converts data read from the object reader interfaces and creates or
+ * updates the corresponding database rows in the dissemination database.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author Paul Charlton, cwilper@cs.cornell.edu
  * @version 1.0
@@ -30,7 +47,7 @@ import fedora.server.errors.ModuleInitializationException;
 public class DefaultDOReplicator
         extends Module
         implements DOReplicator {
-
+    //FIXME: recast sqlexceptions as replicationexceptions here and in interface
     private ConnectionPool m_pool;
     private RowInsertion m_ri;
     private DBIDLookup m_dl;

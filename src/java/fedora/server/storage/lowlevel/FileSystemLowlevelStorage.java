@@ -14,12 +14,32 @@ import java.lang.NoSuchMethodException;
 
 /**
  *
- * @author 	Bill Niebel
-
-*/
+ * <p><b>Title:</b> FileSystemLowlevelStorage.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author wdn5e@virginia.edu
+ * @version 1.0
+ */
 public class FileSystemLowlevelStorage implements ILowlevelStorage {
 /*
-	Methods at this level are non-specific to implementation of a. path algorithm, b. path registry, and 
+	Methods at this level are non-specific to implementation of a. path algorithm, b. path registry, and
 	c. interface to operating system i/o; and provide independence from each other of these three implementations.
 	File objects passed to IFileSystem methods are to the files actually holding Fedora objects.
 	If an implementation of an IFileSystem methods requires other, temporary File objects, instantiation
@@ -28,7 +48,7 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 
 	/** encapsulates all configuration data for this package */
 	private static final Configuration conf = Configuration.getInstance();
-	
+
 	/* make and allow only 3 instantiations of this class.
 	   class purposely unusable if these instantiations fail. */
 	private static final ILowlevelStorage objectStore;
@@ -45,25 +65,25 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 		} catch (Exception e) {
 			tempObjectStore = null;
 			tempDatastreamStore = null;
-			tempTempStore = null;			
+			tempTempStore = null;
 		}
 		objectStore = tempObjectStore;
 		datastreamStore = tempDatastreamStore;
 		tempStore = tempTempStore;
 	}
-	
+
 	/** Path algorithm subfunctionality, loaded as per configuration data */
 	private final IPathAlgorithm pathAlgorithm;
-	
-	/** Path registry subfunctionality, loaded as per configuration data */	
+
+	/** Path registry subfunctionality, loaded as per configuration data */
 	private final IPathRegistry pathRegistry;
 
-	/** File system interface subfunctionality, loaded as per configuration data */	
+	/** File system interface subfunctionality, loaded as per configuration data */
 	private final IFileSystem fileSystem;
-	
+
 	/** load subfunctionality for path algorithm, path registry, and file system interface */
 	private FileSystemLowlevelStorage(String registryName, String registryClass, String storeBase, String[] storeBases) throws LowlevelStorageException {
-	
+
 		ClassLoader loader = getClass().getClassLoader();
 
 		IPathAlgorithm tempPathAlgorithm = null;
@@ -85,11 +105,11 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 			parameterTypes = new Class[] {registryName.getClass(), storeBases.getClass()};
 			constructor = cclass.getConstructor(parameterTypes);
 			tempPathRegistry = (IPathRegistry) constructor.newInstance(parameters);
-			
+
 			reason = "file system access";
 			cclass = loader.loadClass(conf.getFileSystemClass());
 			tempFileSystem = (IFileSystem) cclass.newInstance();
-			
+
 			pathAlgorithm = tempPathAlgorithm;
 			pathRegistry = tempPathRegistry;
 			fileSystem = tempFileSystem;
@@ -100,15 +120,15 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 		}
 	}
 
-	
+
 	public static final ILowlevelStorage getObjectStore() {
 		return objectStore;
 	}
-	
+
 	public static final ILowlevelStorage getDatastreamStore() {
 		return datastreamStore;
 	}
-	
+
 	public static final ILowlevelStorage getTempStore() {
 		return tempStore;
 	}
@@ -119,19 +139,19 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 	public static final ILowlevelStorage getPermanentStore() {
 		return getObjectStore();
 	}
-	
+
 	/**  */
 	private static void log(Exception exception) {
 		System.err.println(exception.getMessage());
 	}
 
-	/** compares a. path registry with OS files; and b. OS files with registry */	
+	/** compares a. path registry with OS files; and b. OS files with registry */
 	public void audit () throws LowlevelStorageException {
 		pathRegistry.auditFiles();
 		pathRegistry.auditRegistry();
 	}
 
-	/** recreates path registry from OS files */	
+	/** recreates path registry from OS files */
 	public void rebuild () throws LowlevelStorageException {
 		pathRegistry.rebuild();
 	}
@@ -197,14 +217,14 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 	public final InputStream retrieve(String pid) throws LowlevelStorageException, ObjectNotInLowlevelStorageException {
 		String filePath;
 		File file;
-		
+
 		try {
 			filePath = pathRegistry.get(pid);
 		} catch (ObjectNotInLowlevelStorageException eReg) {
 			log(eReg);
 			throw eReg;
 		}
-		
+
 		if (filePath == null || filePath.equals("")) { //guard against registry implementation
 			LowlevelStorageException nullPath = new LowlevelStorageException(true, "null path from registry for pid " + pid);
 			log(nullPath);
@@ -226,7 +246,7 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 	public final void remove(String pid) throws LowlevelStorageException, ObjectNotInLowlevelStorageException {
 		String filePath;
 		File file = null;
-		
+
 		try {
 			filePath = pathRegistry.get(pid);
 		} catch (ObjectNotInLowlevelStorageException eReg) {

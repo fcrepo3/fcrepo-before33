@@ -6,18 +6,44 @@ import java.util.Enumeration;
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
+
+/**
+ *
+ * <p><b>Title:</b> SimplePathRegistry.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author wdn5e@virginia.edu
+ * @version 1.0
+ */
 class SimplePathRegistry extends PathRegistry implements IPathRegistry {
 	private Hashtable hashtable = null;
 
-	
+
 	/** encapsulates all configuration data for this package */
 	private static final Configuration conf = Configuration.getInstance();
-	
+
 	public SimplePathRegistry(String registryName, String[] storeBases) throws LowlevelStorageException {
 		super(registryName, storeBases);
 		rebuild(); //<<<===!!!
 	}
-	
+
 	/*
 	public void init () throws LowlevelStorageException {
 		//super.init();
@@ -30,14 +56,14 @@ class SimplePathRegistry extends PathRegistry implements IPathRegistry {
 		try {
 			result = (String) hashtable.get(pid);
 		} catch (Exception e) {
-			throw new LowlevelStorageException(true,"SimplePathRegistry.get(" + pid + ")", e); //<<========			
+			throw new LowlevelStorageException(true,"SimplePathRegistry.get(" + pid + ")", e); //<<========
 		}
 		if ((null == result) || (0 == result.length())) {
 			throw new ObjectNotInLowlevelStorageException("SimplePathRegistry.get(" + pid + "): object not found");
 		}
 		return result;
 	}
-	
+
 	public void put (String pid, String path)  throws LowlevelStorageException {
 		try {
 			hashtable.put(pid,path);
@@ -60,7 +86,7 @@ class SimplePathRegistry extends PathRegistry implements IPathRegistry {
 		traverseFiles(storeBases, AUDIT_FILES, false, FULL_REPORT);
 		System.err.println("end audit:  files-against-registry (ending normally)");
 	}
-	
+
 	protected Enumeration keys() throws LowlevelStorageException, LowlevelStorageInconsistencyException {
 		return hashtable.keys();
 	}

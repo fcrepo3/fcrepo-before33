@@ -1,14 +1,5 @@
 package fedora.server.storage.replication;
 
-/**
- * Title: DbmsConnection.java
- * Description: Manages databases connection for the replication code. 
- * Copyright: Copyright (c) 2002
- * Company: 
- * @author Paul Charlton
- * @version 1.0
- */
-
 import java.util.*;
 import java.sql.*;
 import java.io.*;
@@ -17,17 +8,33 @@ import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.InitializationException;
 
-
 /**
-* 
-* Description: Manages database connections for the replication code. 
-* Note: this will be revised to work with more general configuration parameter 
-* setting code.
-*
-* @version 1.0
-*
-*/
-public class DbmsConnection {   
+ *
+ * <p><b>Title:</b> DbmsConnection.java</p>
+ * <p><b>Description:</b> Manages databases connection for the replication
+ * code.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author Paul Charlton
+ * @version 1.0
+ */
+public class DbmsConnection {
         private static ConnectionPool connectionPool = null;
 	private static final String dbPropsFile = "db.properties";
 	private static boolean debug = true;
@@ -79,9 +86,9 @@ public class DbmsConnection {
             //String id = s_server.getModule("fedora.server.storage.DOManager").
             //            getParameter("fast_db");
             //FIXME!! - temporary fix until problem with above line is resolved
-            
-/*            
-            
+
+/*
+
             String id = "mysql1";
             System.out.println("id: "+id);
             System.out.flush();
@@ -119,15 +126,15 @@ public class DbmsConnection {
         ConnectionPoolManager cpmgr=(ConnectionPoolManager) s_server.getModule(
                 "fedora.server.storage.ConnectionPoolManager");
         if (cpmgr==null) {
-            throw new SQLException( "Server module not loaded: " 
+            throw new SQLException( "Server module not loaded: "
                     + "fedora.server.storage.ConnectionPoolManager");
         } else {
             try {
-                connectionPool=cpmgr.getPool();         
-            } catch (ConnectionPoolNotFoundException cpnfe) { 
+                connectionPool=cpmgr.getPool();
+            } catch (ConnectionPoolNotFoundException cpnfe) {
                 throw new SQLException("Can't get default pool from cpmgr.");
             }
-        }  
+        }
 
 
 
@@ -174,7 +181,7 @@ public class DbmsConnection {
          }
 
         /**
-        * 
+        *
         * Used for unit testing and demonstration purposes.
         *
         * @param args program arguments

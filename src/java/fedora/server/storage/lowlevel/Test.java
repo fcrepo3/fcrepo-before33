@@ -8,11 +8,37 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+/**
+ *
+ * <p><b>Title:</b> Test.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author wdn5e@virginia.edu
+ * @version 1.0
+ */
 class Test {
 	private static final ILowlevelStorage lowlevelStorage = FileSystemLowlevelStorage.getPermanentStore();
 	private Test() {
 	}
-	
+
 	private static final int bufferLength = 512;
 	private static final void stream2streamCopy (InputStream in, OutputStream out) throws IOException {
 		byte[] buffer= new byte[bufferLength];
@@ -21,7 +47,7 @@ class Test {
 			out.write(buffer,0,bytesRead);
 		}
 	}
-	
+
 	public static void main(String[] argv) {
 		System.out.println("\nbeginning Test " + (lowlevelStorage == null));
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -53,7 +79,7 @@ class Test {
 							} catch (Exception e) {
 								System.out.println("error2 " + e.getMessage());
 							}
-						}			
+						}
 					}
 				} else {
 					if (parts.length < 2) {
@@ -99,7 +125,7 @@ class Test {
 									lowlevelStorage.replace(pid,fis);
 								} catch (Exception e) {
 									System.out.println("error6 " + e.getMessage());
-								}				
+								}
 							}
 						} else {
 							System.err.println("action must be add, replace, retrieve, or remove");

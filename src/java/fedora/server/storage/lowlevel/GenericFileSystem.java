@@ -1,5 +1,5 @@
 //synch issues
-//assume that there might be a registry rebuild process which might erroneously add 
+//assume that there might be a registry rebuild process which might erroneously add
 //entries from orphaned files
 
 //check existing low-level in file model, cp w/ properties
@@ -13,16 +13,41 @@ import java.io.FileOutputStream;
 import java.util.Date;
 import fedora.server.errors.LowlevelStorageException;
 
+/**
+ *
+ * <p><b>Title:</b> GenericFileSystem.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author wdn5e@virginia.edu
+ * @version 1.0
+ */
 class GenericFileSystem implements IFileSystem {
 	private static int delay = 0;
 	GenericFileSystem() {
 		//this.delay = 5000;
 	}
-	
+
 	void log(String string) {
 		System.err.println(string);
 	}
-	
+
 	private final File wrappedNewFile(File file, String suffix) throws LowlevelStorageException {
 		File temp;
 		String path = "";
@@ -49,7 +74,7 @@ class GenericFileSystem implements IFileSystem {
 		try {
 			writeIntoExistingDirectory(file,content);
 		} catch (LowlevelStorageException eCaught) {
-			File containingDirectories = null;				
+			File containingDirectories = null;
 			try {
 				containingDirectories = file.getParentFile();
 				containingDirectories.mkdirs();
@@ -68,14 +93,14 @@ class GenericFileSystem implements IFileSystem {
 			out.write(buffer,0,bytesRead);
 		}
 	}
-	
+
 	private final void writeIntoExistingDirectory(File file, InputStream content) throws LowlevelStorageException {
 		//buffered writer?
 		FileOutputStream fileOutputStream = null;
 		try {
 			fileOutputStream = new FileOutputStream(file);
 		} catch (Exception eCaughtFileNotCreated) {
-			throw new LowlevelStorageException(true, "couldn't create file " + getPath(file), eCaughtFileNotCreated);			
+			throw new LowlevelStorageException(true, "couldn't create file " + getPath(file), eCaughtFileNotCreated);
 		}
 		try {
 			stream2streamCopy (content, fileOutputStream);
@@ -103,7 +128,7 @@ class GenericFileSystem implements IFileSystem {
 		}
 
 		File temp = wrappedNewFile(file, ".temp." + now);
-		
+
 		File old = wrappedNewFile(file, ".old." + now);
 
 		FileOutputStream fileOutputStream = null;
@@ -170,17 +195,17 @@ if (0 < delay) {try {Thread.sleep(delay);} catch (InterruptedException ie) {}} /
 				if (lFileLength > Integer.MAX_VALUE) {
 					throw new LowlevelStorageException(true, "file " + getPath(file) + "too large for reading");
 				}
-				
+
 				fileLength = (int) lFileLength;
 			}
 			try {
-				fileInputStream = new FileInputStream(file);					
+				fileInputStream = new FileInputStream(file);
 			} catch (IOException eCaughtOpenFile) {
 				throw new LowlevelStorageException(true, "file " + getPath(file) + "couldn't be opened for reading", eCaughtOpenFile);
 			}
 		} return fileInputStream;
 	}
-	
+
 	public final void delete(File file) throws LowlevelStorageException {
 		file.delete();
 	}
