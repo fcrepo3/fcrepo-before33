@@ -11,7 +11,7 @@
 			<table border="0" cellpadding="0" cellspacing="0">
 				<tr>
 					<td width="141" height="134" valign="top">
-						<img src="http://www.fedora.info/assets/newlogo2.jpg" width="141" height="134"/>
+						<img src="/images/newlogo2.jpg" width="141" height="134"/>
 					</td>
 					<td width="643" valign="top">
 						<center>
