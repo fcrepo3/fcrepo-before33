@@ -36,6 +36,8 @@ public class BatchTool {
 	}
 	
 	public final void process() throws Exception {
+		String separator = "/"; //File.separator would mix "\" with "/" running under Windows/DOS
+		
 		if (good2go) {
 			BatchAdditions batchAdditions = null;
 			BatchXforms batchXforms = null;
@@ -120,12 +122,12 @@ public class BatchTool {
 						compared =  buildFilename.compareTo(ingestFilename);
 					}
 					if (compared <= 0) {
-						buildPath2file = buildPath2directory + File.separator + buildFilename;
-						ingestPath2file = ingestPath2directory + File.separator + buildFilename;						
+						buildPath2file = buildPath2directory + separator + buildFilename;
+						ingestPath2file = ingestPath2directory + separator + buildFilename;						
 						i++;
 					}
 					if (compared >= 0) {
-						ingestPath2file = ingestPath2directory + File.separator + ingestFilename;					
+						ingestPath2file = ingestPath2directory + separator + ingestFilename;					
 						pid = (String) ingestMaps.get(ingestFilename);
 						j++;
 					}
@@ -194,12 +196,7 @@ public class BatchTool {
 	}	
 
 	public static final void main(String[] args) throws Exception {
-		Properties defaults = new Properties();
-		String defaultsPath = System.getProperty("fedora.home") + "\\..\\batch\\default.properties";
-//System.err.println("defaultsPath=[" + defaultsPath + "]");		
-		defaults.load(new FileInputStream(defaultsPath)); //"dist/batch/default.properties"));	
-//System.err.println("after loading defaults");		
-		Properties miscProperties = new Properties(defaults);
+		Properties miscProperties = new Properties();
 		Properties datastreamProperties = new Properties();
 		Properties metadataProperties = new Properties();
 		
