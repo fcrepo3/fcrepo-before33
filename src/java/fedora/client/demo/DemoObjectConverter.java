@@ -61,13 +61,13 @@ public class DemoObjectConverter
   public DemoObjectConverter(String fromHostName, String fromPortNum,
       String toHostName, String toPortNum, String fedoraHome)
   {
-    this.toHostName = toHostName;
-    this.toPortNum = toPortNum;
-    this.fromHostName = fromHostName;
-    this.fromPortNum = fromPortNum;
-    this.fedoraHome = fedoraHome;
-    this.fromName = fromHostName+":"+fromPortNum;
-    this.toName = toHostName+":"+toPortNum;
+    DemoObjectConverter.toHostName = toHostName;
+    DemoObjectConverter.toPortNum = toPortNum;
+    DemoObjectConverter.fromHostName = fromHostName;
+    DemoObjectConverter.fromPortNum = fromPortNum;
+    DemoObjectConverter.fedoraHome = fedoraHome;
+    DemoObjectConverter.fromName = fromHostName+":"+fromPortNum;
+    DemoObjectConverter.toName = toHostName+":"+toPortNum;
   }
 
   /**
@@ -214,7 +214,7 @@ public class DemoObjectConverter
         String toPortNum=args[3];
         String fedoraHome=args[4];
         DemoObjectConverter doc=new DemoObjectConverter(fromHostName, fromPortNum, toHostName, toPortNum, fedoraHome);
-        doc.convert(fedoraHome);
+        DemoObjectConverter.convert(fedoraHome);
       }
     } catch (Exception e)
     {
