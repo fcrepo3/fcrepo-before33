@@ -41,7 +41,7 @@ public class AutoPurger {
 
     public static void main(String[] args) {
         try {
-            if (args.length!=4) {
+            if (args.length!=6) {
                 AutoPurger.showUsage("You must provide six arguments.");
             } else {
                 String hostName=args[0];
