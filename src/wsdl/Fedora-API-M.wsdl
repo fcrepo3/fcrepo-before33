@@ -319,16 +319,13 @@
       <documentation>the ID of the newly created disseminator.</documentation>
     </part>
   </message>
+-->
   <message name="purgeDisseminatorRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
     </part>
     <part name="disseminatorID" type="xsd:string">
       <documentation>the ID of the disseminator.</documentation>
-    </part>
-    <part name="startDT" type="xsd:dateTime">
-      <documentation>the (inclusive) starting date-time stamp of the range. If 
-     null, this is taken to be the smallest possible value.</documentation>
     </part>
     <part name="endDT" type="xsd:dateTime">
       <documentation>the (inclusive) ending date-time stamp of the range. If 
@@ -341,7 +338,6 @@
       earliest first.</documentation>
     </part>
   </message>
--->
 	<message name="getDisseminatorRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -537,14 +533,12 @@
 			<input message="fedora-api:purgeDatastreamRequest"/>
 			<output message="fedora-api:purgeDatastreamResponse"/>
 		</operation>
-		<!--
     <operation name="purgeDisseminator">
       <documentation>Permanently removes one or more versions of a disseminator 
       from an object.</documentation>
       <input message="fedora-api:purgeDisseminatorRequest"/>
       <output message="fedora-api:purgeDisseminatorResponse"/>
     </operation>
--->
 		<operation name="getDatastream">
 			<documentation>Gets a datastream in an object.</documentation>
 			<input message="fedora-api:getDatastreamRequest"/>
@@ -767,6 +761,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+    -->
     <operation name="purgeDisseminator">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDisseminator"/>
@@ -781,7 +776,6 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
-    -->
 		<operation name="getDisseminator">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminator"/>
 			<input>
