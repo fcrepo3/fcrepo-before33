@@ -167,16 +167,19 @@ public class DefaultDOManager
                 + "not given, will defer to ConnectionPoolManager's "
                 + "default pool.");
         }
-        // default storageFormat (required)
-        m_defaultStorageFormat=getParameter("storageFormat");
+        // internal storage format (required)
+		
+        System.out.println("Server property format.storage= " + Server.STORAGE_FORMAT);
+		m_defaultStorageFormat = Server.STORAGE_FORMAT;
+        //m_defaultStorageFormat=getParameter("storageFormat");
         if (m_defaultStorageFormat==null) {
-            throw new ModuleInitializationException("Parameter storageFormat "
+            throw new ModuleInitializationException("System property format.storage "
                 + "not given, but it's required.", getRole());
         }
-        // default exportFormat (required)
-        m_defaultExportFormat=getParameter("exportFormat");
+        // default export format (required)
+        m_defaultExportFormat=getParameter("defaultExportFormat");
         if (m_defaultExportFormat==null) {
-            throw new ModuleInitializationException("Parameter exportFormat "
+            throw new ModuleInitializationException("Parameter defaultExportFormat "
                 + "not given, but it's required.", getRole());
         }
         // storageCharacterEncoding (optional, default=UTF-8)
