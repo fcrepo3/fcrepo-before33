@@ -101,22 +101,19 @@ public class MethodMapGenerator
         String label = (parms[j].parmLabel == null) ? "" : parms[j].parmLabel;
         parm.setAttribute("label", label);
         method.appendChild(parm);
-/*
-        // Append Method Return Type element
-        String[] mimeTypes = methods[i].methodProperties.returnMIMETypes;
-        StringBuffer sb = new StringBuffer();
-        for (int k=0; k<mimeTypes.length; k++)
-        {
-          sb.append(mimeTypes[k].toString() + " ");
-        }
-        Element methodReturn = document.createElementNS(FMM, "fmm:MethodReturnType");
-        methodReturn.setAttribute("wsdlMsgName", "dissem_response");
-        methodReturn.setAttribute("wsdlMsgTOMIME", sb.toString().trim());
-        method.appendChild(methodReturn);
-*/
       }
+      // Append Method Return Type element
+      String[] mimeTypes = methods[i].methodProperties.returnMIMETypes;
+      StringBuffer sb = new StringBuffer();
+      for (int k=0; k<mimeTypes.length; k++)
+      {
+        sb.append(mimeTypes[k].toString() + " ");
+      }
+      Element methodReturn = document.createElementNS(FMM, "fmm:MethodReturnType");
+      methodReturn.setAttribute("wsdlMsgName", "dissem_response");
+      methodReturn.setAttribute("wsdlMsgTOMIME", sb.toString().trim());
+      method.appendChild(methodReturn);
     }
-    //root.appendChild(document.createElementNS(FMM, "fmm:Method"));
   }
 
   public void printMethodMap()
