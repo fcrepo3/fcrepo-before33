@@ -11,6 +11,7 @@ import fedora.client.Administrator;
 import fedora.client.APIAStubFactory;
 import fedora.client.APIMStubFactory;
 import fedora.client.FTypeDialog;
+import fedora.client.ObjectFormatDialog;
 import fedora.client.export.AutoExporter;
 import fedora.client.search.AutoFinder;
 
@@ -58,7 +59,8 @@ public class Ingest {
     private static int s_failedCount;
 
     // launch interactively
-    public Ingest(int kind) {
+    //public Ingest(int kind, String format) {
+	public Ingest(int kind) {
         s_failedCount=0;
         boolean wasMultiple=false;
         try {
@@ -68,9 +70,13 @@ public class Ingest {
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = browse.getSelectedFile();
                     Administrator.setLastDir(file.getParentFile());
-                    String pid=oneFromFile(file, Administrator.APIM, null);
-                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                        "Ingest succeeded.  PID='" + pid + "'.");
+					ObjectFormatDialog fmtDialog = new ObjectFormatDialog();
+					if (fmtDialog.getSelection()!=null) {
+						String format=fmtDialog.getSelection(); 
+	                    String pid=oneFromFile(file, format, Administrator.APIM, null);
+	                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
+	                        "Ingest succeeded.  PID='" + pid + "'.");
+					}
                 }
             } else if (kind==MULTI_FROM_DIR) {
                 wasMultiple=true;
@@ -85,13 +91,17 @@ public class Ingest {
                         String fTypes=dlg.getResult();
                         openLog("ingest-from-dir");
                         long st=System.currentTimeMillis();
-                        String[] pids=multiFromDirectory(file, fTypes, Administrator.APIM, null);
-                        long et=System.currentTimeMillis();
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            pids.length + " objects successfully ingested.\n"
-                            + s_failedCount + " objects failed.\n"
-                            + "Time elapsed: " + getDuration(et-st));
-                         //   Details are in File->Advanced->STDOUT/STDERR window.");
+						ObjectFormatDialog fmtDialog = new ObjectFormatDialog();
+						if (fmtDialog.getSelection()!=null) {
+							String format=fmtDialog.getSelection(); 
+	                        String[] pids=multiFromDirectory(file, format, fTypes, Administrator.APIM, null);
+	                        long et=System.currentTimeMillis();
+	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+	                            pids.length + " objects successfully ingested.\n"
+	                            + s_failedCount + " objects failed.\n"
+	                            + "Time elapsed: " + getDuration(et-st));
+	                         //   Details are in File->Advanced->STDOUT/STDERR window.");
+						}
                     }
                 }
             } else if (kind==ONE_FROM_REPOS) {
@@ -217,19 +227,20 @@ public class Ingest {
     }
 
     // if logMessage is null, will use original path in logMessage
-    public static String oneFromFile(File file, FedoraAPIM targetRepository,
+    public static String oneFromFile(File file, String format, FedoraAPIM targetRepository,
                                      String logMessage)
             throws Exception {
         System.out.println("Ingesting from file " + file.getPath());
         LAST_PATH=file.getPath();
         String pid=AutoIngestor.ingestAndCommit(targetRepository,
                                             new FileInputStream(file),
+                                            format,
                                             getMessage(logMessage, file));
         return pid;
     }
 
     // if logMessage is null, will use original path in logMessage
-    public static String[] multiFromDirectory(File dir, String fTypes,
+    public static String[] multiFromDirectory(File dir, String format, String fTypes,
                                               FedoraAPIM targetRepository,
                                               String logMessage)
             throws Exception {
@@ -239,17 +250,17 @@ public class Ingest {
         if (tps.indexOf("D")!=-1) {
             toIngest=getFiles(dir, "FedoraBDefObject");
             System.out.println("Found " + toIngest.size() + " behavior definitions.");
-            pidSet.addAll(ingestAll("D", toIngest, targetRepository, logMessage));
+            pidSet.addAll(ingestAll("D", toIngest, format, targetRepository, logMessage));
         }
         if (tps.indexOf("M")!=-1) {
             toIngest=getFiles(dir, "FedoraBMechObject");
             System.out.println("Found " + toIngest.size() + " behavior mechanisms.");
-            pidSet.addAll(ingestAll("M", toIngest, targetRepository, logMessage));
+            pidSet.addAll(ingestAll("M", toIngest, format, targetRepository, logMessage));
         }
         if (tps.indexOf("O")!=-1) {
             toIngest=getFiles(dir, "FedoraObject");
             System.out.println("Found " + toIngest.size() + " data objects.");
-            pidSet.addAll(ingestAll("O", toIngest, targetRepository, logMessage));
+            pidSet.addAll(ingestAll("O", toIngest, format, targetRepository, logMessage));
         }
         Iterator iter=pidSet.iterator();
         String[] pids=new String[pidSet.size()];
@@ -262,6 +273,7 @@ public class Ingest {
 
     private static Set ingestAll(String fType,
                                  Set fileSet,
+                                 String format,
                                  FedoraAPIM targetRepository,
                                  String logMessage)
             throws Exception {
@@ -270,7 +282,7 @@ public class Ingest {
         while (iter.hasNext()) {
             File f=(File) iter.next();
             try {
-                String pid=oneFromFile(f, targetRepository, logMessage);
+                String pid=oneFromFile(f, format, targetRepository, logMessage);
                 // success...log it
                 logFromFile(f, fType, pid);
                 set.add(pid);
@@ -367,6 +379,7 @@ public class Ingest {
         ByteArrayOutputStream out=new ByteArrayOutputStream();
         AutoExporter.export(sourceRepository,
                             pid,
+                            null, // take whatever the default export format is
                             out,
                             false);
 
@@ -526,12 +539,12 @@ public class Ingest {
         System.err.println("         the local filesystem or another Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-ingest f[ile] PATH THST:TPRT TUSR TPSS [LOG]");
-        System.err.println("  fedora-ingest d[ir] PATH FTYPS THST:TPRT TUSR TPSS [LOG]");
+        System.err.println("  fedora-ingest f[ile] INPATH THST:TPRT TUSR TPSS [LOG]");
+        System.err.println("  fedora-ingest d[ir] INPATH FTYPS THST:TPRT TUSR TPSS [LOG]");
         System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS [LOG]");
         System.err.println();
         System.err.println("Where:");
-        System.err.println("  PATH       is the local file or directory name.");
+        System.err.println("  INPATH     is the local file or directory name that is ingest source.");
         System.err.println("  FTYPS      is any combination of the characters O, D, and M, specifying");
         System.err.println("             which Fedora object type(s) should be ingested. O=data objects,");
         System.err.println("             D=behavior definitions, and M=behavior mechanisms.");
@@ -568,44 +581,56 @@ public class Ingest {
     public static void main(String[] args) {
         try {
             if (args.length<1) {
-                Ingest.badArgs("Not enough arguments.");
+                Ingest.badArgs("No arguments entered!");
             }
             char kind=args[0].toLowerCase().charAt(0);
             if (kind=='f') {
-                if (args.length<5 || args.length>6) {
+				System.out.println("Doing file in Ingest.java. ");
+				// USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS [LOG]
+                if (args.length<6 || args.length>7) {
                     Ingest.badArgs("Wrong number of arguments for file ingest.");
+                    System.out.println(
+					"USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS [LOG]");
                 }
                 File f=new File(args[1]);
-                String logMessage=null;
-                if (args.length==6) {
-                    logMessage=args[5];
-                }
-                String[] hp=args[2].split(":");
-                FedoraAPIM targetRepos=
-                        APIMStubFactory.getStub(hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[3],
-                                                args[4]);
-                System.out.println("Ingested PID: "
-                        + Ingest.oneFromFile(f, targetRepos, logMessage));
-            } else if (kind=='d') {
-                if (args.length<6 || args.length>7) {
-                    Ingest.badArgs("Wrong number of arguments for directory ingest.");
-                }
-                File d=new File(args[1]);
+                String format = args[2];
                 String logMessage=null;
                 if (args.length==7) {
                     logMessage=args[6];
                 }
+				System.out.println("Just about to get stub for target repo.");
                 String[] hp=args[3].split(":");
                 FedoraAPIM targetRepos=
                         APIMStubFactory.getStub(hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[4],
                                                 args[5]);
+				System.out.println("Got stub for target repo");
+                String pid = Ingest.oneFromFile(f, format, targetRepos, logMessage);
+                System.out.println("Ingested PID: " + pid);
+            } else if (kind=='d') {
+				// USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]
+                if (args.length<7 || args.length>8) {
+                    Ingest.badArgs("Wrong number of arguments for directory ingest.");
+                    System.out.println(
+						"USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]");
+                }
+                File d=new File(args[1]);
+                String format = args[2];
+                String logMessage=null;
+                if (args.length==8) {
+                    logMessage=args[7];
+                }
+                String[] hp=args[4].split(":");
+                FedoraAPIM targetRepos=
+                        APIMStubFactory.getStub(hp[0],
+                                                Integer.parseInt(hp[1]),
+                                                args[5],
+                                                args[6]);
                 Ingest.openLog("ingest-from-dir");
                 String[] pids=Ingest.multiFromDirectory(d,
-                                                        args[2],
+                										format,
+                                                        args[3],
                                                         targetRepos,
                                                         logMessage);
                 System.out.println("Ingested PID(s):");
@@ -619,6 +644,7 @@ public class Ingest {
                 System.out.println();
                 System.out.println("A detailed report is at " + Ingest.s_logPath);
             } else if (kind=='r') {
+            	// USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS [LOG]
                 if (args.length<8 || args.length>9) {
                     Ingest.badArgs("Wrong number of arguments for repository ingest.");
                 }
