@@ -223,7 +223,8 @@ public class DefaultManagement
         }
     }
 
-    public InputStream getObjectXML(Context context, String pid, String format, String encoding) throws ServerException {
+    public InputStream getObjectXML(Context context, String pid, String encoding) 
+    		throws ServerException {
         logFinest("Entered DefaultManagement.getObjectXML");
         m_ipRestriction.enforce(context);
         DOReader reader=m_manager.getReader(context, pid);
@@ -232,12 +233,12 @@ public class DefaultManagement
         return instream;
     }
 
-    public InputStream exportObject(Context context, String pid, String format,
-            String encoding) throws ServerException {
+    public InputStream exportObject(Context context, String pid, String format, String encoding) 
+    		throws ServerException {
         logFinest("Entered DefaultManagement.exportObject");
         m_ipRestriction.enforce(context);
         DOReader reader=m_manager.getReader(context, pid);
-        InputStream instream=reader.ExportObject();
+        InputStream instream=reader.ExportObject(format);
         logFinest("Exiting DefaultManagement.exportObject");
         return instream;
     }
