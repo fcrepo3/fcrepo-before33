@@ -179,8 +179,6 @@
 			<element name="versionID" type="string"/>
 			<element name="label" type="string"/>
 			<element name="MIMEType" type="string"/>
-            <element name="formatURI" type="string"/>
-            <element name="harvestable" type="boolean"/>
 			<element name="createDate" type="dateTime"/>
 			<element name="size" type="long"/>
 			<element name="infoType" type="string">

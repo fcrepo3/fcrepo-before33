@@ -190,9 +190,7 @@ public abstract class EditingPane
             container.add(labels[i]);
 
             c.gridwidth=GridBagConstraints.REMAINDER;     //end row
-            if ((values[i] instanceof JComboBox) 
-                    || (values[i] instanceof JButton)
-                    || (values[i] instanceof JPanel)) {
+            if ((values[i] instanceof JComboBox) || (values[i] instanceof JButton)) {
                 c.anchor=GridBagConstraints.WEST;
             } else {
                 c.anchor=GridBagConstraints.EAST;

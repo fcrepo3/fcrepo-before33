@@ -114,20 +114,6 @@ public class SimpleDOWriter
         }
     }
 
-    public void setDatastreamHarvestable(String datastreamID, boolean harvestable)
-            throws ServerException {
-      assertNotInvalidated();
-      assertNotPendingRemoval();
-      List allVersions = m_obj.datastreams(datastreamID);
-      Iterator dsIter = allVersions.iterator();
-
-      // Set all versions of this datastreamID to the specified harvestable value
-      while (dsIter.hasNext()) {
-          Datastream ds = (Datastream) dsIter.next();
-          ds.isHarvestable=harvestable;
-        }
-    }
-
     public void setDisseminatorState(String disseminatorID, String dissState)
            throws ServerException {
       assertNotInvalidated();

@@ -56,8 +56,6 @@ public abstract class TypeUtility
         out.setInfoType(in.DSInfoType);
         out.setLabel(in.DSLabel);
         out.setMIMEType(in.DSMIME);
-        out.setFormatURI(in.DSFormatURI);
-        out.setHarvestable(in.isHarvestable);
         out.setSize(in.DSSize);
         out.setState(in.DSState);
         out.setVersionID(in.DSVersionID);

@@ -265,17 +265,15 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public String addDatastream(String PID,
                                 String label,
                                 String MIMEType,
-                                String formatURI,
                                 String location,
                                 String controlGroup,
                                 String MDClass,
                                 String MDType,
-                                String dsState,
-                                boolean harvestable) throws RemoteException {
+                                String dsState) throws RemoteException {
         assertInitialized();
         try {
-            return s_management.addDatastream(getContext(), PID, label, MIMEType, formatURI,
-                    location, controlGroup, MDClass, MDType, dsState, harvestable);
+            return s_management.addDatastream(getContext(), PID, label, MIMEType,
+                    location, controlGroup, MDClass, MDType, dsState);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -283,19 +281,19 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
     public void modifyDatastreamByReference(String PID, String datastreamID,
-            String dsLabel, String logMessage, String dsLocation, String dsState, boolean harvestable)
+            String dsLabel, String logMessage, String dsLocation, String dsState)
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
             s_management.modifyDatastreamByReference(getContext(), PID,
-                    datastreamID, dsLabel, logMessage, dsLocation, dsState, harvestable);
+                    datastreamID, dsLabel, logMessage, dsLocation, dsState);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
         }
     }
 
-    public void modifyDatastreamByValue(String PID, String datastreamID, String dsLabel, String logMessage, byte[] dsContent, String dsState, boolean harvestable) throws java.rmi.RemoteException {
+    public void modifyDatastreamByValue(String PID, String datastreamID, String dsLabel, String logMessage, byte[] dsContent, String dsState) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             ByteArrayInputStream byteStream=null;
@@ -303,7 +301,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 byteStream=new ByteArrayInputStream(dsContent);
             }
             s_management.modifyDatastreamByValue(getContext(), PID,
-                    datastreamID, dsLabel, logMessage, byteStream, dsState, harvestable);
+                    datastreamID, dsLabel, logMessage, byteStream, dsState);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -315,17 +313,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             s_management.setDatastreamState(getContext(), PID,
                     datastreamID, dsState, logMessage);
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-        }
-    }
-
-    public void setDatastreamHarvestable(String PID, String datastreamID, boolean harvestable, String logMessage) throws java.rmi.RemoteException {
-        assertInitialized();
-        try {
-            s_management.setDatastreamHarvestable(getContext(), PID,
-                    datastreamID, harvestable, logMessage);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);

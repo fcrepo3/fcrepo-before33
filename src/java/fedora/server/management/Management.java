@@ -62,17 +62,15 @@ public interface Management {
                                 String pid,
                                 String dsLabel,
                                 String mimeType,
-                                String formatURI,
                                 String dsLocation,
                                 String controlGroup,
                                 String mdClass,
                                 String mdType,
-								String dsState,
-                                boolean harvestable) throws ServerException;
+								String dsState) throws ServerException;
 
-    public void modifyDatastreamByReference(Context context, String pid, String datastreamID, String dsLabel, String logMessage, String dsLocation, String dsState, boolean harvestable) throws ServerException;
+    public void modifyDatastreamByReference(Context context, String pid, String datastreamID, String dsLabel, String logMessage, String dsLocation, String dsState) throws ServerException;
 
-    public void modifyDatastreamByValue(Context context, String pid, String datastreamID, String dsLabel, String logMessage, InputStream dsContent, String dsState, boolean harvestable) throws ServerException;
+    public void modifyDatastreamByValue(Context context, String pid, String datastreamID, String dsLabel, String logMessage, InputStream dsContent, String dsState) throws ServerException;
 
     public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar endDT) throws ServerException;
 
@@ -109,8 +107,6 @@ public interface Management {
     public InputStream getTempStream(String id) throws ServerException;
 
     public void setDatastreamState(Context context, String pid, String dsID, String dsState, String logMessage) throws ServerException;
-
-    public void setDatastreamHarvestable(Context context, String pid, String dsID, boolean harvestable, String logMessage) throws ServerException;
 
     public void setDisseminatorState(Context context, String pid, String dsID, String dsState, String logMessage) throws ServerException;
 

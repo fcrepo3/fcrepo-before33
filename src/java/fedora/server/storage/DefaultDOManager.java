@@ -44,8 +44,6 @@ import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.management.Management;
 import fedora.server.management.PIDGenerator;
-import fedora.server.oai.OAIReplicator;
-import fedora.server.oai.FedoraOAIProviderModule;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
 import fedora.server.search.FieldSearchResult;
@@ -112,7 +110,6 @@ public class DefaultDOManager
     private ExternalContentManager m_contentManager;
     private Management m_management;
     private HashSet m_retainPIDs;
-    private FedoraOAIProviderModule m_oaiProvider;
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
@@ -270,14 +267,6 @@ public class DefaultDOManager
         } catch (ConnectionPoolNotFoundException cpnfe) {
             throw new ModuleInitializationException("Couldn't get required "
                     + "connection pool...wasn't found", getRole());
-        }
-        try {
-            m_oaiProvider=(FedoraOAIProviderModule) getServer().getModule("fedora.oai.OAIProvider");
-            if (m_oaiProvider==null) {
-                throw new ModuleInitializationException("The OAIProvider module must be loaded.", getRole());
-            }
-        } catch (ClassCastException cce) {
-            throw new ModuleInitializationException("OAIProvider must be a FedoraOAIProviderModule instance.", getRole());
         }
         try {
             String dbSpec="fedora/server/storage/resources/DefaultDOManager.dbspec";
@@ -511,12 +500,18 @@ public class DefaultDOManager
             } catch (ServerException se) {
                 logWarning("Object couldn't be removed from fieldsearch indexes (" + se.getMessage() + "), but that might be ok...continuing with purge.");
             }
+            /*
+            // TODO: DELTA-MODULE:
+            // When an object is purged... get rid of it in the delta index,
+            // (possibly sending notification to listeners)
             try {
-                logInfo("Deleting from oai tables...");
-                m_oaiProvider.getReplicator().purgedObject(obj.getPid());
+                logInfo("Deleting from delta index...");
+                DELTA-MODULE.purgedObject(obj.getPid());
             } catch (ServerException se) {
-                logWarning("Object couldn't be removed from oai tables (" + se.getMessage() + "), but that might be ok.");
+                logWarning("Object couldn't be deleted from delta index...");
+                // re-throw??
             }
+            */
         } else {
             try {
                 // copy and store any datastreams of type Managed Content
@@ -617,13 +612,19 @@ public class DefaultDOManager
                     m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
                     ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
                     m_validator.validate(inV, 0, "store");
-                    // before saving to definitive store, tell the OAIReplicator about new or modified objects
+                    // TODO: DELTA-MODULE:
+                    // After validating for storage, but before saving to definitive store, 
+                    // tell the Delta Module about new or modified objects
+                    /*
                     if (obj.isNew()) {
-                        m_oaiProvider.getReplicator().newObject(obj);
+                        // tell it we've got a new object
+                        DELTA-MODULE.newObject(context, obj)
                     } else {
-                        // must be a mod
-                        m_oaiProvider.getReplicator().modifiedObject(getReader(context, obj.getPid()), obj);
+                        // tell it we've got a modified object, giving it a reader on
+                        // the previous version and a DigitalObject on the new one
+                        DELTA-MODULE.modifiedObject(getReader(context, obj.getPid()), obj);
                     }
+                    */
                     // if ok, write change to perm store here...right before db stuff
                     if (obj.isNew()) {
                         getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
@@ -936,7 +937,7 @@ public class DefaultDOManager
 
 
                 // if there's no DC record, add one using PID for identifier.
-                // and Label for dc:title, and make it harvestable by default
+                // and Label for dc:title
                 //
                 // if there IS a DC record, make sure one of the dc:identifiers
                 // is the pid
@@ -950,8 +951,6 @@ public class DefaultDOManager
                     dc.DSControlGrp="X";
                     dc.DSCreateDT=nowUTC;
                     dc.DSLabel="Dublin Core Metadata";
-                    dc.DSFormatURI="http://www.openarchives.org/OAI/2.0/oai_dc/";
-                    dc.isHarvestable=true;
                     dc.DSMIME="text/xml";
                     dc.DSSize=0;
                     dc.DSState="A";

@@ -102,9 +102,6 @@
 		<part name="MIMEType" type="xsd:string">
 			<documentation>the mime type.</documentation>
 		</part>
-		<part name="formatURI" type="xsd:string">
-			<documentation>an optional URI identifying the format.</documentation>
-		</part>
 		<part name="location" type="xsd:string">
 			<documentation>the location of the datastream.  The content will be retrieved from this location.</documentation>
 		</part>
@@ -119,9 +116,6 @@
 		</part>
 		<part name="dsState" type="xsd:string">
 			<documentation>the initial state of the datastream.</documentation>
-		</part>
-		<part name="harvestable" type="xsd:boolean">
-			<documentation>whether the datastream should be provided via the OAI interface.  This may only be true if a formatURI is specified.  When provided to OAI, the metadataPrefix of this format will be given as the metadataPrefix associated with the formatURI in config/fmtreg.xml.  The datastream will not be provided via OAI until such a metadataPrefix exists.</documentation>
 		</part>
 	</message>
 	<message name="addDatastreamResponse">
@@ -234,9 +228,6 @@
 		<part name="dsState" type="xsd:string">
 			<documentation>the state of the datastream.</documentation>
 		</part>
-		<part name="harvestable" type="xsd:boolean">
-			<documentation>whether the datastream should be provided via the OAI interface.  This may only be true if a formatURI is specified.  When provided to OAI, the metadataPrefix of this format will be given as the metadataPrefix associated with the formatURI in config/fmtreg.xml.  The datastream will not be provided via OAI until such a metadataPrefix exists.</documentation>
-		</part>
 	</message>
 	<message name="modifyDatastreamByValueRequest">
 		<part name="PID" type="xsd:string">
@@ -256,9 +247,6 @@
 		</part>
 		<part name="dsState" type="xsd:string">
 			<documentation>the state of the datastream.</documentation>
-		</part>
-		<part name="harvestable" type="xsd:boolean">
-			<documentation>whether the datastream should be provided via the OAI interface.  This may only be true if a formatURI is specified.  When provided to OAI, the metadataPrefix of this format will be given as the metadataPrefix associated with the formatURI in config/fmtreg.xml.  The datastream will not be provided via OAI until such a metadataPrefix exists.</documentation>
 		</part>
 	</message>
 	<message name="modifyDisseminatorRequest">
@@ -299,20 +287,6 @@
 		</part>
 		<part name="dsState" type="xsd:string">
 			<documentation>the state to be set on the datastream.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a message about the change.</documentation>
-		</part>
-	</message>
-	<message name="setDatastreamHarvestableRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
-		</part>
-		<part name="datastreamID" type="xsd:string">
-			<documentation>the ID of the datastream.</documentation>
-		</part>
-		<part name="harvestable" type="xsd:boolean">
-			<documentation>whether the datastream should be provided via the OAI interface.  This may only be true if a formatURI is specified.  When provided to OAI, the metadataPrefix of this format will be given as the metadataPrefix associated with the formatURI in config/fmtreg.xml.  The datastream will not be provided via OAI until such a metadataPrefix exists.</documentation>
 		</part>
 		<part name="logMessage" type="xsd:string">
 			<documentation>a message about the change.</documentation>
@@ -594,10 +568,6 @@
 			<documentation>Sets the state of a datastream to the specified state value.</documentation>
 			<input message="fedora-api:setDatastreamStateRequest"/>
 		</operation>
-		<operation name="setDatastreamHarvestable">
-			<documentation>Sets whether the datastream is harvestable by via OAI-PMH or not.</documentation>
-			<input message="fedora-api:setDatastreamHarvestableRequest"/>
-		</operation>
 		<operation name="setDisseminatorState">
 			<documentation>Sets the state of a disseminator to the specified value.</documentation>
 			<input message="fedora-api:setDisseminatorStateRequest"/>
@@ -796,12 +766,6 @@
 		</operation>
 		<operation name="setDatastreamState">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#setDatastreamState"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-		</operation>
-		<operation name="setDatastreamHarvestable">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#setDatastreamHarvestable"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>

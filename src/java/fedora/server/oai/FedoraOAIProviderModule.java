@@ -15,8 +15,6 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.search.FieldSearch;
-import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.ConnectionPoolManager;
 
 /**
  *
@@ -46,7 +44,7 @@ import fedora.server.storage.ConnectionPoolManager;
  */
 public class FedoraOAIProviderModule
         extends Module
-        implements IFedoraOAIProvider {
+        implements OAIProvider {
 
     private FedoraOAIProvider m_wrappedOAIProvider;
 
@@ -164,25 +162,10 @@ public class FedoraOAIProviderModule
                 throw new ModuleInitializationException("maxHeaders value is invalid.", getRole());
             }
         }
-        ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().getModule("fedora.server.storage.ConnectionPoolManager");
-        ConnectionPool defaultPool=null;
-        if (cpm==null) {
-            throw new ModuleInitializationException("ConnectionPoolManager module was not loaded, but is required.", getRole());
-        } else {
-            try {
-                defaultPool=cpm.getPool();
-            } catch (Exception e) {
-                throw new ModuleInitializationException("ConnectionPoolManager could not provide a default connection pool, which is required by this module.", getRole());
-            }
-        }
         m_wrappedOAIProvider=new FedoraOAIProvider(repositoryName, 
                 repositoryDomainName, "http://" + host + ":" + port 
                 + "/fedora/oai", adminEmails, friends, pidNamespace, maxSets, 
-                maxRecords, maxHeaders, fieldSearch, defaultPool, this);
-    }
-
-    public OAIReplicator getReplicator() {
-        return m_wrappedOAIProvider.getReplicator();
+                maxRecords, maxHeaders, fieldSearch, this);
     }
 
     public String getRepositoryName() {

@@ -276,13 +276,11 @@ public class DefaultManagement
                                 String pid,
                                 String dsLabel,
                                 String mimeType,
-                                String formatURI,
                                 String dsLocation,
                                 String controlGroup,
                                 String mdClass,
                                 String mdType,
-                                String dsState,
-                                boolean harvestable) throws ServerException {
+                                String dsState) throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
@@ -356,9 +354,7 @@ public class DefaultManagement
             ds.DSLabel=dsLabel;
             ds.DSLocation=dsLocation;
             ds.DSMIME=mimeType;
-            ds.DSFormatURI=formatURI;
             ds.DSState= dsState;
-            ds.isHarvestable=harvestable;
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             ds.DSCreateDT=nowUTC;
             ds.DatastreamID=w.newDatastreamID();
@@ -435,7 +431,7 @@ public class DefaultManagement
 
     public void modifyDatastreamByReference(Context context, String pid,
             String datastreamId, String dsLabel, String logMessage,
-            String dsLocation, String dsState, boolean harvestable)
+            String dsLocation, String dsState)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
@@ -463,8 +459,6 @@ public class DefaultManagement
                     newds.DSControlGrp="M";
                     newds.DSInfoType=orig.DSInfoType;
                     newds.DSState=dsState;
-                    newds.isHarvestable=harvestable;
-                    newds.DSFormatURI=orig.DSFormatURI;
                     //newds.DSState=orig.DSState;
                     if (dsLocation==null || dsLocation.equals("")) {
                         // if location unspecified, cause a copy of the
@@ -476,12 +470,9 @@ public class DefaultManagement
                     newds.auditRecordIdList().addAll(orig.auditRecordIdList());
                     // just add the datastream
                     w.addDatastream(newds);
-                    // if state was changed, set new state for all prior versions
+                    // if state was changed, set new state
                     if (!orig.DSState.equals(dsState)) {
                         w.setDatastreamState(datastreamId, dsState); }
-                    // if harvestable was changed, set new isHarvestable for all prior versions
-                    if (orig.isHarvestable!=harvestable) {
-                        w.setDatastreamHarvestable(datastreamId, harvestable); }
                     // add the audit record
                     fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                     audit.id=w.newAuditRecordID();
@@ -509,8 +500,6 @@ public class DefaultManagement
                 newds.DSControlGrp=orig.DSControlGrp;
                 newds.DSInfoType=orig.DSInfoType;
                 newds.DSState=dsState;
-                newds.isHarvestable=harvestable;
-                newds.DSFormatURI=orig.DSFormatURI;
                 //newds.DSState=orig.DSState;
                 if (dsLocation==null || dsLocation.equals("")) {
                     // if location unspecified for referenced or external,
@@ -522,12 +511,9 @@ public class DefaultManagement
                 newds.auditRecordIdList().addAll(orig.auditRecordIdList());
                 // just add the datastream
                 w.addDatastream(newds);
-                // if state was changed, set new state for all prior versions
+                // if state was changed, set new state
                 if (!orig.DSState.equals(dsState)) {
                         w.setDatastreamState(datastreamId, dsState); }
-                // if harvestable was changed, set new isHarvestable for all prior versions
-                if (orig.isHarvestable!=harvestable) {
-                        w.setDatastreamHarvestable(datastreamId, harvestable); }
                 // add the audit record
                 fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                 audit.id=w.newAuditRecordID();
@@ -550,7 +536,7 @@ public class DefaultManagement
 
     public void modifyDatastreamByValue(Context context, String pid,
             String datastreamId, String dsLabel, String logMessage,
-            InputStream dsContent, String dsState, boolean harvestable) throws ServerException {
+            InputStream dsContent, String dsState) throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
@@ -593,17 +579,12 @@ public class DefaultManagement
             newds.DSControlGrp=orig.DSControlGrp;
             newds.DSInfoType=orig.DSInfoType;
             newds.DSState=dsState;
-            newds.isHarvestable=harvestable;
-            newds.DSFormatURI=orig.DSFormatURI;
             newds.auditRecordIdList().addAll(orig.auditRecordIdList());
             // just add the datastream
             w.addDatastream(newds);
-            // if state was changed, set new state for all prior versions
+            // if state was changed, set new state
             if (!orig.DSState.equals(dsState)) {
-                    w.setDatastreamState(datastreamId, dsState); }
-            // if harvestable was changed, set new isHarvestable for all prior versions
-            if (orig.isHarvestable!=harvestable) {
-                    w.setDatastreamHarvestable(datastreamId, harvestable); }
+                        w.setDatastreamState(datastreamId, dsState); }
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -1068,36 +1049,6 @@ public class DefaultManagement
           audit.id=w.newAuditRecordID();
           audit.processType="Fedora API-M";
           audit.action="setDatastreamState";
-          audit.responsibility=context.get("userId");
-          Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-          audit.date=nowUTC;
-          audit.justification=logMessage;
-          w.getAuditRecords().add(audit);
-          ds.auditRecordIdList().add(audit.id);
-
-          // if all went ok, commit
-          w.commit(logMessage);
-      } finally {
-          if (w!=null) {
-              m_manager.releaseWriter(w);
-          }
-        }
-    }
-
-    public void setDatastreamHarvestable(Context context, String pid, String datastreamID, boolean harvestable, String logMessage)
-            throws ServerException {
-      m_ipRestriction.enforce(context);
-      DOWriter w=null;
-      try {
-          w=m_manager.getWriter(context, pid);
-          fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);
-          w.setDatastreamHarvestable(datastreamID, harvestable);
-
-          // add the audit record
-          fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-          audit.id=w.newAuditRecordID();
-          audit.processType="Fedora API-M";
-          audit.action="setDatastreamHarvestable(" + harvestable + ")";
           audit.responsibility=context.get("userId");
           Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
           audit.date=nowUTC;

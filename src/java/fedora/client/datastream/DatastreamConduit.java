@@ -69,7 +69,7 @@ public class DatastreamConduit {
         return skeleton.getDatastreams(pid, asOfDateTime, state);
     }
 
-    public Datastream[] getDatastreams(String pid, Calendar asOfDateTime,
+    public Datastream[] getDatastreams(String pid, Calendar asOfDateTime, 
             String state)
             throws RemoteException {
         return getDatastreams(m_apim, pid, asOfDateTime, state);
@@ -77,34 +77,32 @@ public class DatastreamConduit {
 
     public static void modifyDatastreamByReference(FedoraAPIM skeleton,
             String pid, String dsId, String dsLabel, String logMessage,
-            String location, String state, boolean harvestable)
+            String location, String state)
             throws RemoteException {
         skeleton.modifyDatastreamByReference(pid, dsId, dsLabel, logMessage,
-                location, state, harvestable);
+                location, state);
     }
 
     public void modifyDatastreamByReference(String pid, String dsId,
-            String dsLabel, String logMessage, String location, String state,
-            boolean harvestable)
+            String dsLabel, String logMessage, String location, String state)
             throws RemoteException {
         modifyDatastreamByReference(m_apim, pid, dsId, dsLabel, logMessage,
-                location, state, harvestable);
+                location, state);
     }
 
     public static void modifyDatastreamByValue(FedoraAPIM skeleton,
             String pid, String dsId, String dsLabel, String logMessage,
-            byte[] content, String state, boolean harvestable)
+            byte[] content, String state)
             throws RemoteException {
         skeleton.modifyDatastreamByValue(pid, dsId, dsLabel, logMessage,
-                content, state, harvestable);
+                content, state);
     }
 
     public void modifyDatastreamByValue(String pid, String dsId,
-            String dsLabel, String logMessage, byte[] content, String state,
-            boolean harvestable)
+            String dsLabel, String logMessage, byte[] content, String state)
             throws RemoteException {
         modifyDatastreamByValue(m_apim, pid, dsId, dsLabel, logMessage,
-                content, state, harvestable);
+                content, state);
     }
 
     public static Calendar[] purgeDatastream(FedoraAPIM skeleton,
