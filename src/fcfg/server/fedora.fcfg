@@ -27,23 +27,13 @@
     <param name="definitive_registry_class" value="fedora.server.storage.DBRegistry"/>
     <param name="definitive_registry_dbtable" value="mysql1#test1dreg"/>
   </module>
-  <database id="mysql1">
+  <datastore id="mysql1">
     <comment>This one's kind of slow, but it's all
       we've got.</comment>
-    <admin email="mysql@localhost" public="true">
-      <comment>This goes to Elmo's pager.</comment>
-    </admin>
-    <login username="admin" password="admin">
-      <comment>This is locked down to localhost
-        and there are no other users on this box,
-        so default user/pass is ok.</comment>
-    </login>
-    <connection class="com.imaginary.sql.msql.msqlDriver" 
-        url="jdbc:msql://localhost:1114/objreg"
-        initConnections="5"
-        maxConnections="20">
-      <comment>I downloaded this driver from cnet - it got
-          a good review.</comment>
-    </connection>
-  </database>
+    <param name="dbuser" value="fred"/>
+    <param name="dbpass" value="fredspass"/>
+    <param name="connect_string" value="jdbc://db.somecollege.edu/here"/>
+    <param name="pool_max" value="100"/>
+    <param name="pool_min" value="20"/>
+  </datastore>
 </server>
