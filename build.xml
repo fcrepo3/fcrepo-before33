@@ -46,6 +46,9 @@
 		<path id="server-libs.path">
 			<pathelement location="${lib.avalon-framework}"/>
 			<pathelement location="${lib.batik}"/>
+			<pathelement location="${lib.commons-collection}"/>
+			<pathelement location="${lib.commons-dbcp}"/>
+			<pathelement location="${lib.commons-pool}"/>
 			<pathelement location="${lib.cos}"/>
 			<pathelement location="${lib.fop}"/>
 			<pathelement location="${lib.ij}"/>
@@ -71,7 +74,7 @@
 	<pathconvert pathsep="," property="client-libs.list">
 		<path id="client-libs.path">
 			<pathelement location="${lib.axis}"/>
-			<pathelement location="${lib.batik}"/>
+			<pathelement location="${lib.batik}"/>		
 			<pathelement location="${lib.commons-discovery}"/>
 			<pathelement location="${lib.commons-httpclient}"/>
 			<pathelement location="${lib.commons-logging}"/>
@@ -107,6 +110,8 @@
 		<pathelement location="${lib.catalina-optional}"/>
 		<pathelement location="${lib.commons-httpclient}"/>		
 		<pathelement location="${lib.commons-logging}"/>
+		<pathelement location="${lib.commons-dbcp}"/>
+		<pathelement location="${lib.commons-pool}"/>
 		<pathelement location="${lib.cos}"/>
 		<pathelement location="${lib.jai_core}"/>
 		<pathelement location="${lib.jaxrpc}"/>
@@ -452,7 +457,7 @@
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/userdocs/server/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common,fedora.common.rdf,fedora.server.config" sourcepath="${java.src.dir};temp/server/java;src/html/server/javadoc" classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5};${lib.jena};${lib.trippi};${lib.jrdf}" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common,fedora.common.rdf,fedora.server.config" sourcepath="${java.src.dir};temp/server/java;src/html/server/javadoc" classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5};${lib.jena};${lib.trippi};${lib.jrdf};${lib.commons-pool};${lib.commons-dbcp};${lib.sunxacml};${lib.commons-httpclient};${lib.jhbasic};${lib.catalina}" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
 		<copy todir="${tomcat.deploy.dir}/userdocs/server/serverdocs">
 			<fileset dir="dist/userdocs/server/serverdocs"/>
 		</copy>
