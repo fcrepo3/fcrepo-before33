@@ -12,6 +12,6 @@ package fedora.server.storage.types;
  */
 public class Property
 {
-  public String Name;
-  public String Value;
+  public String name;
+  public String value;
 }
