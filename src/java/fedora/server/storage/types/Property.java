@@ -3,8 +3,8 @@ package fedora.server.storage.types;
 /**
  *
  * <p><b>Title:</b> Property.java</p>
- * <p><b>Description:</b> A data structure for holding user-supplied method
- * parameters consisting of name/value pairs.</p>
+ * <p><b>Description:</b> A data structure for holding properties as
+ * name/value pairs. </p>
  *
  * -----------------------------------------------------------------------------
  *
@@ -30,4 +30,12 @@ public class Property
 {
   public String name;
   public String value;
+
+  public Property() {
+  }
+    
+  public Property(String propertyName, String propertyValue) {
+  	name=propertyName;
+  	value=propertyValue;
+  }
 }
