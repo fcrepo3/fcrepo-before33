@@ -153,10 +153,12 @@ public class SimpleDOReader
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-		if (format==null || format.equals("")) {
-			m_translator.serialize(m_obj, bytes, m_exportFormat, "UTF-8", true);       	
+		if (format==null || format.equals("") || format.equalsIgnoreCase("default")) {
+			System.out.println("SimpleDOReader.ExportObject using default format of " + m_exportFormat); 
+			m_translator.serialize(m_obj, bytes, m_exportFormat, "UTF-8", true);     	
 		}
 		else {
+			System.out.println("SimpleDOReader.ExportObject with format arg of " + format); 
 			m_translator.serialize(m_obj, bytes, format, "UTF-8", true); 
 		}
 
