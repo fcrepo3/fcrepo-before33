@@ -829,7 +829,8 @@ public class DefaultDOManager
 
                 // perform initial validation of the ingest submission format
                 InputStream inV=getTempStore().retrieve(tempHandle);
-                m_validator.validate(inV, 0, "ingest");
+                //m_validator.validate(inV, format, 0, "ingest");
+				m_validator.validate(inV, 0, "ingest");
 
                 // deserialize it first
                 BasicDigitalObject obj=new BasicDigitalObject();
@@ -924,7 +925,7 @@ public class DefaultDOManager
                 // signify that the object is new,
 				obj.setNew(true);
 
-                // then get a digital object writing configured with
+                // then get a digital object writer configured with
                 // the DEFAULT export format.
                 DOWriter w=new SimpleDOWriter(context, this, m_translator,
                         m_defaultExportFormat,
@@ -1309,106 +1310,12 @@ public class DefaultDOManager
         }
     }
 
+
     public String[] listObjectPIDs(Context context)
             throws StorageDeviceException {
         return getPIDs("WHERE systemVersion > 0");
     }
 
-    public String[] listObjectPIDs(Context context, String pidPattern,
-            String foType, String ownerIdPattern, String state,
-            String labelPattern, String contentModelIdPattern,
-            Calendar createDateMin, Calendar createDateMax,
-            Calendar lastModDateMin, Calendar lastModDateMax)
-            throws StorageDeviceException {
-        StringBuffer whereClause=new StringBuffer();
-        boolean needEscape=false;
-        whereClause.append("WHERE systemVersion > 0");
-        if (pidPattern!=null) {
-            String part=toSql("doPID", pidPattern);
-            if (part.charAt(0)==' ') {
-                needEscape=true;
-            } else {
-                whereClause.append(' ');
-            }
-            whereClause.append("AND ");
-            whereClause.append(part);
-        }
-        if (foType!=null) {
-            String part=toSql("foType", foType);
-            if (part.charAt(0)==' ') {
-                needEscape=true;
-            } else {
-                whereClause.append(' ');
-            }
-            whereClause.append("AND ");
-            whereClause.append(part);
-        }
-        if (ownerIdPattern!=null) {
-            String part=toSql("ownerId", ownerIdPattern);
-            if (part.charAt(0)==' ') {
-                needEscape=true;
-            } else {
-                whereClause.append(' ');
-            }
-            whereClause.append("AND ");
-            whereClause.append(part);
-        }
-        if (state!=null) {
-            String part=toSql("objectState", state);
-            if (part.charAt(0)==' ') {
-                needEscape=true;
-            } else {
-                whereClause.append(' ');
-            }
-            whereClause.append("AND ");
-            whereClause.append(part);
-        }
-        if (labelPattern!=null) {
-            String part=toSql("label", labelPattern);
-            if (part.charAt(0)==' ') {
-                needEscape=true;
-            } else {
-                whereClause.append(' ');
-            }
-            whereClause.append("AND ");
-            whereClause.append(part);
-        }
-        if (contentModelIdPattern!=null) {
-            String part=toSql("contentModelID", contentModelIdPattern);
-            if (part.charAt(0)==' ') {
-                needEscape=true;
-            } else {
-                whereClause.append(' ');
-            }
-            whereClause.append("AND ");
-            whereClause.append(part);
-        }
-/* this entire method is deprecated (see findObjects)        if (createDateMin!=null) {
-            whereClause.append(" AND createDate >= '");
-            whereClause.append(m_formatter.format(createDateMin));
-            whereClause.append('\'');
-        }
-        if (createDateMax!=null) {
-            whereClause.append(" AND createDate <= '");
-            whereClause.append(m_formatter.format(createDateMax));
-            whereClause.append('\'');
-        }
-        if (lastModDateMin!=null) {
-            whereClause.append(" AND lastModifiedDate >= '");
-            whereClause.append(m_formatter.format(lastModDateMin));
-            whereClause.append('\'');
-        }
-        if (lastModDateMax!=null) {
-            whereClause.append(" AND lastModifiedDate <= '");
-            whereClause.append(m_formatter.format(lastModDateMax));
-            whereClause.append('\'');
-        }
-*/
-        if (needEscape) {
-        //   whereClause.append(" {escape '/'}");
-        }
-        return getPIDs(whereClause.toString());
-    }
 
     // translates simple wildcard string to sql-appropriate.
     // the first character is a " " if it needs an escape

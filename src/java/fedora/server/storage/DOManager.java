@@ -110,12 +110,6 @@ public interface DOManager
      * @return a list of object PIDs.
      * @throws ServerException if an error occurs in getting the list of PIDs.
      */
-    public String[] listObjectPIDs(Context context, String pidPattern,
-            String foType, String ownerIdPattern, String state,
-            String labelPattern, String contentModelIdPattern,
-            Calendar createDateMin, Calendar createDateMax,
-            Calendar lastModDateMin, Calendar lastModDateMax)
-            throws ServerException;
 
     public FieldSearchResult findObjects(Context context,
             String[] resultFields, int maxResults, FieldSearchQuery query)

@@ -196,6 +196,7 @@ public class FastDOReader implements DOReader
    * not stored in the Fast storage area, this method always queries the
    * Definitive storage area using <code>DefinitiveDOReader</code>.</p>
    *
+   * @param format The XML format to export (e.g., foxml, metslikefedora1)
    * @return A stream of bytes consisting of the XML-encoded representation
    *         of the digital object.
    * @throws StreamIOException If there is a problem in getting the XML input
@@ -203,7 +204,7 @@ public class FastDOReader implements DOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public InputStream ExportObject() throws StreamIOException, GeneralException
+  public InputStream ExportObject(String format) throws StreamIOException, GeneralException
   {
     try
     {
@@ -211,7 +212,7 @@ public class FastDOReader implements DOReader
       {
         doReader =  m_manager.getReader(m_context, PID);
       }
-      return(doReader.ExportObject());
+      return(doReader.ExportObject(format));
     } catch (Throwable th)
     {
       throw new GeneralException("[FastDOReader] Definitive doReader returned "

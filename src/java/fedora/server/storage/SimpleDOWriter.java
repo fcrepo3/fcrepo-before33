@@ -84,11 +84,9 @@ public class SimpleDOWriter
 
     public SimpleDOWriter(Context context, DefaultDOManager mgr,
             DOTranslator translator,
-			//DOTranslator translator, String storageExportFormat,
-            String longExportFormat, String encoding, DigitalObject obj,
-            Logging logTarget) {
-		//super(context, mgr, translator, storageExportFormat, longExportFormat,
-        super(context, mgr, translator, longExportFormat,
+            String exportFormat, 
+            String encoding, DigitalObject obj, Logging logTarget) {
+        super(context, mgr, translator, exportFormat,
                 encoding, obj, logTarget);
         m_context=context;
         m_obj=obj;

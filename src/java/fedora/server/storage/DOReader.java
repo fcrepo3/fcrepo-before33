@@ -103,24 +103,20 @@ public interface DOReader
     public InputStream GetObjectXML() throws ServerException;
 
     /**
-     * Gets the content of the entire digital object as XML, with datastream
-     * content included for those datastreams that are under the custodianship
-     * of the repository.  The XML will contain XMLMetadata (inline XML) and
-     * Managed Content datastreams (base64 encoded).  The content of
-     * External Referenced datastreams will not be included inline, but the URL
-     * for those datastreams will be returned.
+     * Gets the content of the entire digital object as XML, with public URIs
+     * as references to managed content datastreams under the custodianship
+     * of the repository. 
      * <p></p>
      * The intent of this method is to return the digital object along with
-     * its datastream content, except in cases where the datastream content is
-     * not actually stored within the repository system.
+     * valid URI pointers for ALL its datastreams.
      *
-     * @return the content of the entire digital object as XML, with datastream
-     *         content included for those datastreams that are under the
-     *         custodianship of the repository.
+     * @param format The XML format to export (e.g., foxml, metslikefedora1)
+     * @return the content of the entire digital object as XML, with public
+     *         URIs for managed content datastreams.
      * @throws ServerException If there object could not be found or there was
      *         was a failure in accessing the object for any reason.
      */
-    public InputStream ExportObject() throws ServerException;
+    public InputStream ExportObject(String format) throws ServerException;
 
     /**
      * Gets the PID of the digital object.

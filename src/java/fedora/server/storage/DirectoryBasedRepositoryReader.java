@@ -59,8 +59,7 @@ public class DirectoryBasedRepositoryReader
 
     private File m_directory;
     private DOTranslator m_translator;
-    //private String m_storageExportFormat;
-    private String m_longExportFormat;
+    private String m_exportFormat;
     private String m_storageFormat;
     private String m_encoding;
     private HashMap m_files=new HashMap();
@@ -72,13 +71,12 @@ public class DirectoryBasedRepositoryReader
      *
      * @param directory the directory where this repository is based.
      * @param translator the serialization/deserialization engine for objects.
-     * @param longExportFormat the format to use for exportObject requests.
+     * @param exportFormat the format to use for exportObject requests.
      * @param storageFormat the format of the objects on disk.
      * @param encoding The character encoding used across all formats.
      */
     public DirectoryBasedRepositoryReader(File directory, DOTranslator translator,
-            String longExportFormat, String storageFormat,
-			//String storageExportFormat, String longExportFormat, String storageFormat,
+            String exportFormat, String storageFormat,
             String encoding, Logging logTarget)
             throws StorageDeviceException, ObjectIntegrityException,
             StreamIOException, UnsupportedTranslationException,
@@ -86,8 +84,7 @@ public class DirectoryBasedRepositoryReader
         super(logTarget);
         m_directory=directory;
         m_translator=translator;
-        //m_storageExportFormat=storageExportFormat;
-        m_longExportFormat=longExportFormat;
+        m_exportFormat=exportFormat;
         m_storageFormat=storageFormat;
         m_encoding=encoding;
         File[] files=directory.listFiles();
@@ -100,8 +97,7 @@ public class DirectoryBasedRepositoryReader
                 try {
                     FileInputStream in=new FileInputStream(thisFile);
                     SimpleDOReader reader=new SimpleDOReader(null, this, m_translator,
-							m_longExportFormat, m_storageFormat,
-                            //m_storageExportFormat, m_longExportFormat, m_storageFormat,
+							m_exportFormat, m_storageFormat,
                             m_encoding, in, this);
                     String pid=reader.GetObjectPID();
                     if (reader.GetObjectPID().length()==0) {
@@ -132,8 +128,7 @@ public class DirectoryBasedRepositoryReader
             throws ObjectIntegrityException, ObjectNotFoundException,
             StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleDOReader(null, this, m_translator,
-                m_longExportFormat, m_storageFormat,
-				//m_storageExportFormat, m_longExportFormat, m_storageFormat,
+                m_exportFormat, m_storageFormat,
                 m_encoding, getStoredObjectInputStream(pid), this);
     }
 
@@ -141,8 +136,7 @@ public class DirectoryBasedRepositoryReader
             throws ObjectIntegrityException, ObjectNotFoundException,
             StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleBMechReader(null, this, m_translator,
-                m_longExportFormat, m_storageFormat,
-				//m_storageExportFormat, m_longExportFormat, m_storageFormat,
+                m_exportFormat, m_storageFormat,
                 m_encoding, getStoredObjectInputStream(pid), this);
     }
 
@@ -150,8 +144,7 @@ public class DirectoryBasedRepositoryReader
             throws ObjectIntegrityException, ObjectNotFoundException,
             StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleBDefReader(null, this, m_translator,
-                m_longExportFormat, m_storageFormat,
-				//m_storageExportFormat, m_longExportFormat, m_storageFormat,
+                m_exportFormat, m_storageFormat,
                 m_encoding, getStoredObjectInputStream(pid), this);
     }
 
