@@ -339,7 +339,7 @@ public class DefaultDOReplicator
                     // BindingMaps can be shared by other objects so first check to see if
                     // the orignial bindingMap is bound to datastreams of any other objects.
                     Statement st2 = connection.createStatement();
-                    results=logAndExecuteQuery(st2,"SELECT DISTINCT doDbId,dsBindMapDbId FROM dsBind WHERE dsBindMapDbId="+origDSBindMapDbID);
+                    results=logAndExecuteQuery(st2,"SELECT DISTINCT doDbID,dsBindMapDbID FROM dsBind WHERE dsBindMapDbID="+origDSBindMapDbID);
                     int numRows = 0;
                     while (results.next()) {
                         numRows++;
