@@ -8,3 +8,5 @@ dist
 *.properties
 *.library
 Tomcat
+.DS_Store
+server-config.wsdd
