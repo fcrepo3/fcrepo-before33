@@ -18,6 +18,7 @@ import fedora.server.Parameterized;
 import fedora.server.TestLogging;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.translation.FOXMLDODeserializer;
+import fedora.server.storage.translation.METSLikeDODeserializer;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.ConfigurationLoader;
@@ -180,12 +181,22 @@ public abstract class TestResourceIndex extends TestCase implements Constants {
         }
     }
 
-    protected DigitalObject getDigitalObject(File file) throws Exception {
+    protected DigitalObject getFoxmlObject(File file) throws Exception {
         FileInputStream in;
         DigitalObject obj = new BasicDigitalObject();
 
         in = new FileInputStream(file);
         FOXMLDODeserializer deser = new FOXMLDODeserializer();
+        deser.deserialize(in, obj, "UTF-8", 0);
+        return obj;
+    }
+    
+    protected DigitalObject getMetsObject(File file) throws Exception {
+        FileInputStream in;
+        DigitalObject obj = new BasicDigitalObject();
+
+        in = new FileInputStream(file);
+        METSLikeDODeserializer deser = new METSLikeDODeserializer();
         deser.deserialize(in, obj, "UTF-8", 0);
         return obj;
     }

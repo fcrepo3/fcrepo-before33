@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:DualResImageCollection" xmlns:audit="info:fedora/fedora-system:def/audit#"
+  xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+  <foxml:objectProperties>
+    <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraBMechObject"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Dual Resolution Image Collection"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2005-01-13T17:16:51.020Z"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2005-01-13T17:16:51.447Z"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
+  </foxml:objectProperties>
+  <foxml:datastream CONTROL_GROUP="X" ID="WSDL" STATE="A" VERSIONABLE="true">
+    <foxml:datastreamVersion CREATED="2005-01-13T17:16:51.020Z" ID="WSDL1.0" LABEL="WSDL definition of service"
+      MIMETYPE="text/xml" SIZE="4300">
+      <foxml:xmlContent>
+        <wsdl:definitions name="Dual Resolution Image Collection" targetNamespace="bmech"
+          xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+          xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap"
+          xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:this="bmech"
+          xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <wsdl:types>
+            <xsd:schema targetNamespace="bmech">
+              <xsd:simpleType name="TYPEType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+              <xsd:simpleType name="QUERYType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+              <xsd:simpleType name="XSLTType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+              <xsd:simpleType name="LANGType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+              <xsd:simpleType name="LISTType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+              <xsd:simpleType name="CLEAR_CACHEType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+              <xsd:simpleType name="FORMATType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+            </xsd:schema>
+          </wsdl:types>
+          <wsdl:message name="viewRequest">
+            <wsdl:part name="XSLT" type="this:XSLTType"/>
+            <wsdl:part name="LIST" type="this:LISTType"/>
+            <wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+          </wsdl:message>
+          <wsdl:message name="listRequest">
+            <wsdl:part name="TYPE" type="this:TYPEType"/>
+            <wsdl:part name="QUERY" type="this:QUERYType"/>
+            <wsdl:part name="LANG" type="this:LANGType"/>
+            <wsdl:part name="FORMAT" type="this:FORMATType"/>
+          </wsdl:message>
+          <wsdl:message name="dissemResponse">
+            <wsdl:part name="dissem" type="xsd:base64Binary"/>
+          </wsdl:message>
+          <wsdl:portType name="DualResImageCollectionPortType">
+            <wsdl:operation name="view">
+              <wsdl:input message="this:viewRequest"/>
+              <wsdl:output message="this:dissemResponse"/>
+            </wsdl:operation>
+            <wsdl:operation name="list">
+              <wsdl:input message="this:listRequest"/>
+              <wsdl:output message="this:dissemResponse"/>
+            </wsdl:operation>
+          </wsdl:portType>
+          <wsdl:service name="DualResImageCollection">
+            <wsdl:port binding="this:DualResImageCollection_http" name="DualResImageCollection_port">
+              <http:address location="http://local.fedora.server/"/>
+            </wsdl:port>
+          </wsdl:service>
+          <wsdl:binding name="DualResImageCollection_http" type="this:DualResImageCollectionPortType">
+            <http:binding verb="GET"/>
+            <wsdl:operation name="view">
+              <http:operation location="saxon/SaxonServlet?source=(LIST)&amp;style=(XSLT)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+              <wsdl:input>
+                <http:urlReplacement/>
+              </wsdl:input>
+              <wsdl:output>
+                <mime:content type="text/html"/>
+              </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name="list">
+              <http:operation location="fedora/risearch?type=(TYPE)&amp;lang=(LANG)&amp;format=(FORMAT)&amp;query=(QUERY)"/>
+              <wsdl:input>
+                <http:urlReplacement/>
+              </wsdl:input>
+              <wsdl:output>
+                <mime:content type="text/xml"/>
+              </wsdl:output>
+            </wsdl:operation>
+          </wsdl:binding>
+        </wsdl:definitions>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="SERVICE-PROFILE" STATE="A" VERSIONABLE="true">
+    <foxml:datastreamVersion CREATED="2004-12-17T15:32:11.000Z" ID="SERVICE-PROFILE1.0"
+      LABEL="Service Profile - Technical description of the service" MIMETYPE="text/xml" SIZE="784">
+      <foxml:xmlContent>
+        <fsvp:serviceProfile bDefPID="demo:Collection" name="" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+          <fsvp:serviceDescription/>
+          <fsvp:serviceImplementation>
+            <fsvp:serviceLiveTestURL/>
+            <fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
+            <fsvp:serviceInputFormats/>
+            <fsvp:serviceOutputFormats>
+              <fsvp:MIMEType>text/xml</fsvp:MIMEType>
+              <fsvp:MIMEType>text/html</fsvp:MIMEType>
+            </fsvp:serviceOutputFormats>
+            <fsvp:serviceImplDependencies/>
+          </fsvp:serviceImplementation>
+        </fsvp:serviceProfile>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="DC" STATE="A" VERSIONABLE="true">
+    <foxml:datastreamVersion CREATED="2005-01-13T17:16:51.020Z" ID="DC1.0" LABEL="Dublin Core Metadata for Service"
+      MIMETYPE="text/xml" SIZE="258">
+      <foxml:xmlContent>
+        <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+          <dc:title>Dual Resolution Image Collection</dc:title>
+          <dc:identifier>demo:DualResImageCollection</dc:identifier>
+        </oai_dc:dc>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="DSINPUTSPEC" STATE="A" VERSIONABLE="true">
+    <foxml:datastreamVersion CREATED="2004-12-17T15:32:11.000Z" ID="DSINPUTSPEC1.0"
+      LABEL="Datastream Input Specification for Service" MIMETYPE="text/xml" SIZE="1078">
+      <foxml:xmlContent>
+        <fbs:DSInputSpec bDefPID="demo:Collection"
+          label="Datastream Input Specification for Dual Resolution Image Collection" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+          <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="XSLT">
+            <fbs:DSInputLabel>XSLT Binding</fbs:DSInputLabel>
+            <fbs:DSMIME>text/xml</fbs:DSMIME>
+            <fbs:DSInputInstruction/>
+          </fbs:DSInput>
+          <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="LIST">
+            <fbs:DSInputLabel>LIST Binding</fbs:DSInputLabel>
+            <fbs:DSMIME>text/xml</fbs:DSMIME>
+            <fbs:DSInputInstruction/>
+          </fbs:DSInput>
+          <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="QUERY">
+            <fbs:DSInputLabel>QUERY Binding</fbs:DSInputLabel>
+            <fbs:DSMIME>text/plain</fbs:DSMIME>
+            <fbs:DSInputInstruction/>
+          </fbs:DSInput>
+        </fbs:DSInputSpec>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP" STATE="A" VERSIONABLE="true">
+    <foxml:datastreamVersion CREATED="2005-01-13T17:16:51.020Z" ID="METHODMAP1.0"
+      LABEL="Mapping of WSDL to Fedora notion of Method Definitions" MIMETYPE="text/xml" SIZE="1884">
+      <foxml:xmlContent>
+        <fmm:MethodMap bDefPID="demo:Collection" name="MethodMap - Dual Resolution Image Collection" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+          <fmm:Method operationLabel="An html representation of the collection" operationName="view"
+            wsdlMsgName="viewRequest" wsdlMsgOutput="dissemResponse">
+            <fmm:DatastreamInputParm defaultValue="" label="Stylesheet to transform LIST into html" parmName="XSLT"
+              passBy="URL_REF" required="true"/>
+            <fmm:DatastreamInputParm defaultValue="" label="The result of the list dissemination as a datastream"
+              parmName="LIST" passBy="URL_REF" required="true"/>
+            <fmm:DefaultInputParm defaultValue="yes" label="Whether to reload the stylesheet each time"
+              parmName="CLEAR_CACHE" passBy="VALUE" required="true"/>
+            <fmm:MethodReturnType wsdlMsgName="dissemResponse" wsdlMsgTOMIME="text/html"/>
+          </fmm:Method>
+          <fmm:Method operationLabel="An xml list of members in the collection" operationName="list"
+            wsdlMsgName="listRequest" wsdlMsgOutput="dissemResponse">
+            <fmm:DefaultInputParm defaultValue="tuples" label="" parmName="TYPE" passBy="VALUE" required="true"/>
+            <fmm:DatastreamInputParm defaultValue="" label="" parmName="QUERY" passBy="URL_REF" required="true"/>
+            <fmm:DefaultInputParm defaultValue="itql" label="" parmName="LANG" passBy="VALUE" required="true"/>
+            <fmm:DefaultInputParm defaultValue="Sparql" label="" parmName="FORMAT" passBy="VALUE" required="true"/>
+            <fmm:MethodReturnType wsdlMsgName="dissemResponse" wsdlMsgTOMIME="text/xml"/>
+          </fmm:Method>
+        </fmm:MethodMap>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+</foxml:digitalObject>

@@ -29,37 +29,37 @@ public class TestResourceIndexQueries extends TestResourceIndex {
         super.setUp();
         
         //
-        DigitalObject ri1010 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri1010 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri1010.xml"));
-        DigitalObject ri1011 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri1011 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri1011.xml"));
-        DigitalObject ri1100 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri1100 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri1100.xml"));
-        DigitalObject ri1101 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri1101 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri1101.xml"));
-        DigitalObject ri1102 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri1102 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri1102.xml"));
-        DigitalObject ri1103 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri1103 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri1103.xml"));
-        DigitalObject ri1104 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri1104 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri1104.xml"));
-        DigitalObject ri2010 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri2010 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri2010.xml"));
-        DigitalObject ri2011 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri2011 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri2011.xml"));
-        DigitalObject ri2100 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri2100 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri2100.xml"));
-        DigitalObject ri2101 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri2101 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri2101.xml"));
-        DigitalObject ri2102 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri2102 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri2102.xml"));
-        DigitalObject ri2103 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri2103 = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri2103.xml"));
-        DigitalObject ri2104a = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri2104a = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri2104a.xml"));
-        DigitalObject ri2104d = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri2104d = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri2104d.xml"));
-        DigitalObject ri2104i = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject ri2104i = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri2104i.xml"));
         
         m_ri.addDigitalObject(ri1010);

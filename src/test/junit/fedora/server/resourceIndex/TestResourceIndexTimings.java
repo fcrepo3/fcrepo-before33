@@ -14,11 +14,11 @@ public class TestResourceIndexTimings extends TestResourceIndex {
     }
 
     public void testAddAndDelete() throws Exception {
-        DigitalObject bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject bdef = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/bdefs/demo_ri8.xml"));
-        DigitalObject bmech = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject bmech = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/bmechs/demo_ri9.xml"));
-        DigitalObject dataobject = getDigitalObject(new File(
+        DigitalObject dataobject = getFoxmlObject(new File(
                 DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_ri10.xml"));
 
         long add_start = System.currentTimeMillis();

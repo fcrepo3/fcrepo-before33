@@ -27,16 +27,16 @@ public class TestResourceIndexImpl extends TestResourceIndex {
     protected void setUp() throws Exception {
         super.setUp();
         
-        bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        bdef = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/bdefs/demo_ri8.xml"));
-        bmech = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        bmech = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/bmechs/demo_ri9.xml"));
-        dataobject = getDigitalObject(new File(
+        dataobject = getFoxmlObject(new File(
                 DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_ri10.xml"));
     }
 
     public void testAddDigitalObject() throws Exception {
-        DigitalObject obj = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+        DigitalObject obj = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri1000.xml"));
         m_ri.addDigitalObject(obj);
         m_ri.commit();

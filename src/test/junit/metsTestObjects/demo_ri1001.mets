@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METS:mets OBJID="demo:ri1001" TYPE="FedoraObject" xmlns:METS="http://www.loc.gov/METS/"
+  xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+  xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd">
+  <METS:metsHdr CREATEDATE="2004-05-05T11:22:33Z" LASTMODDATE="2005-01-11T18:51:59Z" RECORDSTATUS="A"/>
+  <METS:amdSec ID="RELS-EXT" STATUS="A">
+    <METS:techMD CREATED="2004-12-07T19:32:00Z" ID="RELS-EXT1.0">
+      <METS:mdWrap LABEL="Relationships" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <rdf:RDF xmlns:nsdl="http://www.nsdl.org/ontologies/relationships#"
+            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+            <rdf:Description rdf:about="info:fedora/demo:ri1001">
+              <nsdl:hasMetadata rdf:resource="info:fedora/demo:ri2010"/>
+            </rdf:Description>
+          </rdf:RDF>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:amdSec ID="DC" STATUS="A">
+    <METS:techMD CREATED="2005-01-11T18:51:59Z" ID="DC1.0">
+      <METS:mdWrap LABEL="Dublin Core Metadata" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+        <METS:xmlData>
+          <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+            <dc:identifier>demo:ri1001</dc:identifier>
+          </oai_dc:dc>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+</METS:mets>
