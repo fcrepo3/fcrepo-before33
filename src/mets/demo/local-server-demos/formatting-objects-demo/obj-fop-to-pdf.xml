@@ -9,7 +9,7 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DC" STATUS="A">
-		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="DC1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Dublin Core for the Document object">
 				<METS:xmlData>
 					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
@@ -29,7 +29,7 @@
 		</METS:descMD>
 	</METS:dmdSecFedora>
 	<METS:dmdSecFedora ID="FOPSAMPLE" STATUS="A">
-		<METS:descMD ID="FOPSAMPLE1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="FOPSAMPLE1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="FOP Sample">
 				<METS:xmlData>
 					<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xml.apache.org/fop/extensions">
@@ -419,7 +419,7 @@ This font contains no embedding license restrictions
 	<!--- THE NSDL EXHIBIT DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:19" CREATED="2002-05-20T06:32:00" LABEL="PDF Disseminator">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:19" LABEL="PDF Disseminator">
 			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 			<!-- the disseminator subscribes -->

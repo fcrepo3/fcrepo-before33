@@ -15,7 +15,7 @@
 	<!-- NOTE!! The Fedora Service Profile Schema is still a work in progress!!  This is a preliminary metadata format which requires more analysis.-->
 	<!--********************************************************************************************-->
 	<METS:amdSec ID="SERVICE-PROFILE">
-		<METS:techMD CREATED="2003-12-03T13:40:12" ID="SERVICE-PROFILE1.0" STATUS="A">
+		<METS:techMD ID="SERVICE-PROFILE1.0" STATUS="A">
 			<METS:mdWrap LABEL="Service Profile - Technical description of the service" MDTYPE="OTHER" MIMETYPE="text/xml">
 				<METS:xmlData>
 					<fsvp:serviceProfile xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile" bDefPID="demo:22" name="Saxon Service for TEI-to-FO">
@@ -49,7 +49,7 @@
 	<!-- That Datastream will serve as an input to one for more MrSID service operations. -->
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="DSINPUTSPEC">
-		<METS:techMD ID="DSINPUTSPEC1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+		<METS:techMD ID="DSINPUTSPEC1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Input Specification Mapping to the Fedora Local Saxon Service">
 				<METS:xmlData>
 					<fbs:DSInputSpec label="Mapping to the Fedora Local Saxon Service" bDefPID="demo:22" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
@@ -69,7 +69,7 @@
 	<!-- This is how we make a service definition expressed in WSDL play nicely with Fedora. -->
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="METHODMAP">
-		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+		<METS:techMD ID="METHODMAP1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
 				<METS:xmlData>
 					<fmm:MethodMap name="MethodMap - FO BDEF Methods" bDefPID="demo:22" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
@@ -89,7 +89,7 @@
 	<!--  Fedora Behavior Definition Object. -->
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="WSDL">
-		<METS:techMD ID="WSDL1.0" CREATED="2002-02-17T06:32:00" STATUS="">
+		<METS:techMD ID="WSDL1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL definition for the Fedora Local Saxon Service">
 				<METS:xmlData>
 					<!-- ******************************************************************************************************************************** -->
@@ -164,8 +164,8 @@
 	<!-- ******************************************************************************************************************** -->
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
-			<METS:fileGrp ID="DS1" STATUS="">
-				<METS:file ID="DS1.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/html" OWNERID="E" STATUS="">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<METS:file ID="DS1.0" SEQ="1" MIMETYPE="text/html" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/saxon/" xlink:title="Programmer documentation"/>
 				</METS:file>
 			</METS:fileGrp>
@@ -208,7 +208,7 @@
 	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Mechanism Object.   -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" CREATED="2000-08-22T06:32:00" LABEL="Bootstrap Behaviors">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" LABEL="Bootstrap Behaviors">
 			<METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="fedora-system:1"/>
 			<METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="fedora-system:2"/>
 		</METS:serviceBinding>

@@ -10,7 +10,7 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DC" STATUS="A">
-		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="DC1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Dublin Core Record">
 				<METS:xmlData>
 					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
@@ -38,18 +38,18 @@
 	<!---*******************************************************************************************************************************************-->
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
-			<METS:fileGrp ID="DS1" STATUS="">
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/svg+xml" OWNERID="M" STATUS="">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<METS:file ID="DS1.0" MIMETYPE="image/svg+xml" OWNERID="M" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.fedora.info/demo/misc/batikBatik.svg" xlink:title="Local copy of batikBatik.svg"/>
 				</METS:file>
 			</METS:fileGrp>
-			<METS:fileGrp ID="DS2" STATUS="">
-				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/svg+xml" OWNERID="M" STATUS="">
+			<METS:fileGrp ID="DS2" STATUS="A">
+				<METS:file ID="DS2.0" MIMETYPE="image/svg+xml" OWNERID="M" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.fedora.info/demo/misc/sizeOfSun.svg" xlink:title="Local copy of sizeOfSun.svg"/>
 				</METS:file>
 			</METS:fileGrp>
-			<METS:fileGrp ID="DS3" STATUS="">
-				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/html" OWNERID="R" STATUS="">
+			<METS:fileGrp ID="DS3" STATUS="A">
+				<METS:file ID="DS3.0" MIMETYPE="text/html" OWNERID="R" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://xml.apache.org/batik/" xlink:title="Homepage for Batik, the software that the demos came with."/>
 				</METS:file>
 			</METS:fileGrp>

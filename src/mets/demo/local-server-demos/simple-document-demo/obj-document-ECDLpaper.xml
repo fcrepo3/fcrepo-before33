@@ -16,7 +16,7 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DC" STATUS="A">
-		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="DC1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Dublin Core for the Document object">
 				<METS:xmlData>
 					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
@@ -49,18 +49,18 @@
 	<!---*******************************************************************************************************************************************-->
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
-			<METS:fileGrp ID="DS1" STATUS="">
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="application/msword" OWNERID="M" STATUS="">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<METS:file ID="DS1.0" MIMETYPE="application/msword" OWNERID="M" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-document-demo/ecdl2002pay.doc" xlink:title="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in MSWord)"/>
 				</METS:file>
 			</METS:fileGrp>
-			<METS:fileGrp ID="DS2" STATUS="">
-				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="application/pdf" OWNERID="M" STATUS="">
+			<METS:fileGrp ID="DS2" STATUS="A">
+				<METS:file ID="DS2.0" MIMETYPE="application/pdf" OWNERID="M" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-document-demo/ecdl2002pay.pdf" xlink:title="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in PDF)"/>
 				</METS:file>
 			</METS:fileGrp>
-			<METS:fileGrp ID="DS3" STATUS="">
-				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="application/ps" OWNERID="M" STATUS="">
+			<METS:fileGrp ID="DS3" STATUS="A">
+				<METS:file ID="DS3.0" MIMETYPE="application/ps" OWNERID="M" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-document-demo/ecdl2002pay.ps" xlink:title="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in PS)"/>
 				</METS:file>
 			</METS:fileGrp>

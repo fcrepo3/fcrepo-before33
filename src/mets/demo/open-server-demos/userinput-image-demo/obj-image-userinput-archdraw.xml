@@ -16,7 +16,7 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DC" STATUS="A">
-		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="DC1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="DC Record for Exhibit Intro: Pavillion III Architectural image object">
 				<METS:xmlData>
 					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
@@ -39,7 +39,7 @@
 		</METS:descMD>
 	</METS:dmdSecFedora>
 	<METS:dmdSecFedora ID="DESC1" STATUS="A">
-		<METS:descMD ID="DESC1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="DESC1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata for MRSID image">
 				<METS:xmlData>
 					<uvalibdesc:desc>
@@ -68,7 +68,7 @@
 		</METS:descMD>
 	</METS:dmdSecFedora>
 	<METS:amdSec ID="TECH1">
-		<METS:techMD ID="TECH1.0" CREATED="2002-05-20T06:32:00" STATUS="A">
+		<METS:techMD ID="TECH1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for MRSID image">
 				<METS:xmlData>
 					<uvalibadmin:admin>
@@ -86,7 +86,7 @@
 		</METS:techMD>
 	</METS:amdSec>
 	<METS:amdSec ID="SOURCE1">
-		<METS:techMD ID="SOURCE1.0" CREATED="2002-05-20T06:32:00" STATUS="A">
+		<METS:techMD ID="SOURCE1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for MRSID image">
 				<METS:xmlData>
 					<uvalibadmin:admin>
@@ -102,7 +102,7 @@
 		</METS:techMD>
 	</METS:amdSec>
 	<METS:amdSec ID="DIGIPROV1">
-		<METS:techMD ID="DIGIPROV1.0" CREATED="2002-05-20T06:32:00" STATUS="A">
+		<METS:techMD ID="DIGIPROV1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for MRSID image">
 				<METS:xmlData>
 					<uvalibadmin:admin>
@@ -117,7 +117,7 @@
 		</METS:techMD>
 	</METS:amdSec>
 	<METS:amdSec ID="RIGHTS1">
-		<METS:rightsMD ID="RIGHTS1.0" CREATED="2002-05-20T06:32:00" STATUS="A">
+		<METS:rightsMD ID="RIGHTS1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for MRSID  image">
 				<METS:xmlData>
 					<uvalibadmin:admin>
@@ -139,7 +139,7 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="A">
 				<!--MrSID Wavelet encoded file -->
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/x-mrsid-image" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="A">
+				<METS:file ID="DS1.0" MIMETYPE="image/x-mrsid-image" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerd01.sid" xlink:title="Exhibit Intro: Architectural Drawings, Pavilion III, University of Virginia"/>
 				</METS:file>
 			</METS:fileGrp>
@@ -166,7 +166,7 @@
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR USING MrSID Mechanism -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:8" CREATED="2002-05-20T06:32:00" LABEL="UserInput Image Behaviors">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:8" LABEL="UserInput Image Behaviors">
 			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 			<!-- the disseminator subscribes -->

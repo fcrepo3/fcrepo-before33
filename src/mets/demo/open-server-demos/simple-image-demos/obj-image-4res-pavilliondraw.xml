@@ -14,7 +14,7 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DC" STATUS="A">
-		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="DC1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="DC Record for Pavillion III Architectural image object">
 				<METS:xmlData>
 					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
@@ -41,27 +41,27 @@
 	<!---*******************************************************************************************************************************************-->
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
-			<METS:fileGrp ID="DS1" STATUS="">
+			<METS:fileGrp ID="DS1" STATUS="A">
 				<!--This is the low resolution sized image -->
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" OWNERID="E" STATUS="">
+				<METS:file ID="DS1.0" MIMETYPE="image/jpeg" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/archerd05small.jpg" xlink:title="Architectural Drawing Pavilion III (low res)"/>
 				</METS:file>
 			</METS:fileGrp>
-			<METS:fileGrp ID="DS2" STATUS="">
+			<METS:fileGrp ID="DS2" STATUS="A">
 				<!-- This is the medium resolution image -->
-				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" OWNERID="E" STATUS="">
+				<METS:file ID="DS2.0" MIMETYPE="image/jpeg" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg" xlink:title="Architectural Drawing Pavilion III (med res)"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS3">
 				<!--This is the high resolution image -->
-				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" OWNERID="E" STATUS="">
+				<METS:file ID="DS3.0" MIMETYPE="image/jpeg" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/archerd05medium2.jpg" xlink:title="Architectural Drawing Pavilion III (high res)"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS4">
 				<!--This is the very high resolution image -->
-				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" OWNERID="E" STATUS="">
+				<METS:file ID="DS4.0" MIMETYPE="image/jpeg" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/archerd05high.jpg" xlink:title="Architectural Drawing Pavilion III (veryhigh res)"/>
 				</METS:file>
 			</METS:fileGrp>
@@ -97,7 +97,7 @@
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Simple Image Behaviors">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:1" LABEL="UVA Simple Image Behaviors">
 			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 			<!-- the disseminator subscribes -->

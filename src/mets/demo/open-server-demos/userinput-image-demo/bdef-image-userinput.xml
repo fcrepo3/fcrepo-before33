@@ -25,7 +25,7 @@
 	<!--  and attributes wsdlMsgName and wsdlMsgOutput on element Method. -->
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="METHODMAP">
-		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+		<METS:techMD ID="METHODMAP1.0" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Method Map of the Fedora Behavior Definition for UserInput Image">
 				<METS:xmlData>
 					<fmm:MethodMap name="Fedora MethodMap for UserInput Image BDef" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
@@ -59,7 +59,7 @@
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="A">
-				<METS:file ID="DS1.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/html" OWNERID="E" STATUS="A">
+				<METS:file ID="DS1.0" SEQ="1" MIMETYPE="text/html" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href=" http://uva.lib.edu/bdef/image/doc/userInputImage.html" xlink:title="Behavior Def Guide"/>
 				</METS:file>
 			</METS:fileGrp>
@@ -88,7 +88,7 @@
 	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior Mechanism to run the behaviors. -->
 	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Defintion Object.   -->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" CREATED="2000-08-22T06:32:00" LABEL="Bootstrap Behaviors">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" LABEL="Bootstrap Behaviors">
 			<METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="fedora-system:1"/>
 			<METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="fedora-system:2"/>
 		</METS:serviceBinding>

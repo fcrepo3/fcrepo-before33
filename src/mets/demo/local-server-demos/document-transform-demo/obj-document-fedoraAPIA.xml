@@ -9,7 +9,7 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DC" STATUS="A">
-		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="DC1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Dublin Core for the Document object">
 				<METS:xmlData>
 					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
@@ -35,21 +35,21 @@
 	<!---*******************************************************************************************************************************************-->
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
-			<METS:fileGrp ID="DS1" STATUS="">
+			<METS:fileGrp ID="DS1" STATUS="A">
 				<!--exhibit xml file -->
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="M" STATUS="">
+				<METS:file ID="DS1.0" MIMETYPE="text/xml" OWNERID="M" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/document-transform-demo/Fedora-API-A.wsdl" xlink:title="XML source for Fedora Access Web Service Definition (WSDL)"/>
 				</METS:file>
 			</METS:fileGrp>
-			<METS:fileGrp ID="DS2" STATUS="">
+			<METS:fileGrp ID="DS2" STATUS="A">
 				<!--elly's exhibit stylesheet file -->
-				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="M" STATUS="">
+				<METS:file ID="DS2.0" MIMETYPE="text/xml" OWNERID="M" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/document-transform-demo/wsdlToAPIDoc.xsl" xlink:title="XSL Stylesheet to transform WSDL to HTML"/>
 				</METS:file>
 			</METS:fileGrp>
-			<METS:fileGrp ID="DS3" STATUS="">
+			<METS:fileGrp ID="DS3" STATUS="A">
 				<!--ted's exhibit stylesheet file -->
-				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="M" STATUS="">
+				<METS:file ID="DS3.0" MIMETYPE="text/xml" OWNERID="M" STATUS="A">
 					<!--TED, insert your own URL below.  I just repeated the URL for Elly's stylesheet to fill things in -->
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/document-transform-demo/wsdlToSummaryTbl.xsl" xlink:title="Alt. XSL Stylesheet to transform WSDL to HTML"/>
 				</METS:file>
@@ -83,7 +83,7 @@
 	<!--- THE NSDL EXHIBIT DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:12" CREATED="2002-05-20T06:32:00" LABEL="NSDL Exhibit Disseminator">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:12" LABEL="NSDL Exhibit Disseminator">
 			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 			<!-- the disseminator subscribes -->

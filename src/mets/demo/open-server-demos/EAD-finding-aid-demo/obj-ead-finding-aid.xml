@@ -10,7 +10,7 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DC" STATUS="A">
-		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="DC1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="DC Record for Rita Mae Brown EAD-encoded Finding Aid object">
 				<METS:xmlData>
 					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
@@ -40,9 +40,9 @@
 	<!---*******************************************************************************************************************************************-->
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
-			<METS:fileGrp ID="DS1" STATUS="">
+			<METS:fileGrp ID="DS1" STATUS="A">
 				<!--This is the Finding Aid source XML file -->
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+				<METS:file ID="DS1.0" MIMETYPE="text/xml" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/xmltext/ead/viu03270" xlink:title="EAD-encoded Finding Aid: Rita Mae Brown Papers"/>
 				</METS:file>
 			</METS:fileGrp>
@@ -81,7 +81,7 @@
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:15" CREATED="2002-05-20T06:32:00" LABEL="UVA EAD-encoded Finding Aid Behaviors">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:15" LABEL="UVA EAD-encoded Finding Aid Behaviors">
 			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 			<!-- the disseminator subscribes -->

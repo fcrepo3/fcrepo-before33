@@ -9,7 +9,7 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DC" STATUS="A">
-		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="DC1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Dublin Core for the Document object">
 				<METS:xmlData>
 					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
@@ -28,7 +28,7 @@
 		</METS:descMD>
 	</METS:dmdSecFedora>
 	<METS:dmdSecFedora ID="TEISOURCE" STATUS="A">
-		<METS:descMD ID="TEISOURCE1.0" CREATED="2002-05-20T06:32:00">
+		<METS:descMD ID="TEISOURCE1.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="TEI Source">
 				<METS:xmlData>
 					<TEI.2>
@@ -67,8 +67,8 @@
 	</METS:dmdSecFedora>
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
-			<METS:fileGrp ID="FOPDISSEM" STATUS="">
-				<METS:file ID="FOPRENDITION" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+			<METS:fileGrp ID="FOPDISSEM" STATUS="A">
+				<METS:file ID="FOPRENDITION" SEQ="1" MIMETYPE="text/xml" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/fedora/get/demo:26/demo:22/getFO" xlink:title="FOP Dissemination as Datastream"/>
 				</METS:file>
 			</METS:fileGrp>
@@ -100,7 +100,7 @@
 	<!-- a manner that is understood by the mechanism defined in the disseminator.  -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:19" CREATED="2002-05-20T06:32:00" LABEL="PDF Disseminator">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:19" LABEL="PDF Disseminator">
 			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 			<!-- the disseminator subscribes -->
@@ -111,7 +111,7 @@
 		</METS:serviceBinding>
 	</METS:behaviorSec>
 	<METS:behaviorSec ID="DISS2" STATUS="A">
-		<METS:serviceBinding ID="DISS2.0" STRUCTID="S2" BTYPE="demo:22" CREATED="2002-05-20T06:32:00" LABEL="FO Disseminator">
+		<METS:serviceBinding ID="DISS2.0" STRUCTID="S2" BTYPE="demo:22" LABEL="FO Disseminator">
 			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 			<!-- the disseminator subscribes -->
