@@ -5,6 +5,7 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.errors.StorageDeviceException;
 import fedora.server.storage.METSDOSerializer;
 import fedora.server.storage.DefinitiveDOWriter;
 import fedora.server.storage.METSDODeserializer;
@@ -14,6 +15,10 @@ import fedora.server.utilities.AxisUtility;
 
 import java.io.File;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.MessageContext;
@@ -94,7 +99,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public byte[] getObjectXML(java.lang.String PID) throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            return w.GetObjectXML().getBytes("UTF-8");
+            InputStream in=w.GetObjectXML();
+            ByteArrayOutputStream out=new ByteArrayOutputStream();
+            pipeStream(in, out);
+            return out.toByteArray();
         } catch (ServerException se) {
             AxisUtility.throwFault(se);
         } catch (Exception e) {
@@ -102,9 +110,39 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
         return null;
     }
+    
+    private void pipeStream(InputStream in, OutputStream out) 
+            throws StorageDeviceException {
+        try {
+            byte[] buf = new byte[4096];
+            int len;
+            while ( ( len = in.read( buf ) ) != -1 ) {
+                out.write( buf, 0, len );
+            }
+        } catch (IOException ioe) {
+            throw new StorageDeviceException("Error writing to stream");
+        } finally {
+            try {
+                out.close();
+                in.close();
+            } catch (IOException closeProb) {
+              // ignore problems while closing
+            }
+        }
+    }
 
     public byte[] exportObject(java.lang.String PID) throws java.rmi.RemoteException {
         assertInitialized();
+        try {
+            InputStream in=w.ExportObject();
+            ByteArrayOutputStream out=new ByteArrayOutputStream();
+            pipeStream(in, out);
+            return out.toByteArray();
+        } catch (ServerException se) {
+            AxisUtility.throwFault(se);
+        } catch (Exception e) {
+            AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
         return null;
     }
 
