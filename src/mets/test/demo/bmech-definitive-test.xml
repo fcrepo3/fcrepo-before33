@@ -2,7 +2,7 @@
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR MECHANISM OBJECT ENCODED USING METS -->
 <!---********************************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora-ext.xsd" OBJID="test:14" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object for MrSID Service implementing PickSize Image BDEF contract." PROFILE="fedora:BMECH">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora-ext.xsd" OBJID="test:114" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object for MrSID Service implementing PickSize Image BDEF contract." PROFILE="fedora:BMECH">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
@@ -31,7 +31,7 @@
 				<METS:xmlData>
 					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
 					<!-- bMechPID is the PID of THIS Behavior Mechanism Object (self-referential) which is a surrogate for an external service-->
-					<fsvp:serviceProfile bDefPID="test:13" bMechPID="test:14" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+					<fsvp:serviceProfile bDefPID="test:113" bMechPID="test:114" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
 						<!-- The URI for the namespace that Fedora will use to refer to the service.  Fedora convention is to use the value of behaviorMechPID. -->
 						<fsvp:serviceNamespaceURI>test:14</fsvp:serviceNamespaceURI>
 						<fsvp:serviceName>MrSID</fsvp:serviceName>
@@ -70,7 +70,7 @@
 		<METS:techMD ID="DSINPUTSPEC1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Input Specification for MrSID service">
 				<METS:xmlData>
-					<fbs:DSInputSpec label="MrSID Service Datastream Input Specification" bDefPID="test:13" bMechPID="test:14" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+					<fbs:DSInputSpec label="MrSID Service Datastream Input Specification" bDefPID="test:113" bMechPID="test:114" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
 						<fbs:DSInput wsdlMsgPartName="MRSID" DSMin="1" DSMax="1" DSOrdinality="false">
 							<fbs:DSInputLabel>MrSid file</fbs:DSInputLabel>
 							<fbs:DSMIME>image/x-mrsid-image</fbs:DSMIME>
@@ -90,7 +90,7 @@
 		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
 				<METS:xmlData>
-					<fmm:MethodMap name="MethodMap - MrSID BMech for PickSize BDEF" bDefPID="test:13" bMechPID="test:14" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+					<fmm:MethodMap name="MethodMap - MrSID BMech for PickSize BDEF" bDefPID="test:113" bMechPID="test:114" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 						<!-- NOTE: The operationName attribute correlates to WSDL operation in terms of mapping to WSDL definitions -->
 						<fmm:Method operationName="getThumbnail" wsdlMsgName="getThumbRequest" wsdlMsgOutput="mrsid_response">
 							<fmm:DatastreamInputParm parmName="MRSID" passBy="URL_REF"/>
@@ -246,7 +246,7 @@
 	<!-- is used by the bootstrap service.  -->
 	<!-- ******************************************************************************************************************** -->
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
-		<METS:div TYPE="uva-bmech-bootstrap:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
+		<METS:div TYPE="fedora-system:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
 			<METS:div TYPE="SERVICE-PROFILE" LABEL="Service profile metadata">
 				<METS:fptr FILEID="SERVICE-PROFILE"/>
 			</METS:div>
@@ -275,9 +275,9 @@
 	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Mechanism Object.   -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="uva-bdef-bootstrap:1" CREATED="2002-05-20T06:32:00" LABEL="Bootstrap Behaviors" STATUS="A">
-			<METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="uva-bdef-bootstrap:1"/>
-			<METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="uva-bmech-bootstrap:2"/>
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" CREATED="2002-05-20T06:32:00" LABEL="Bootstrap Behaviors">
+			<METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="fedora-system:1"/>
+			<METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="fedora-system:2"/>
 		</METS:serviceBinding>
 	</METS:behaviorSec>
 </METS:mets>

@@ -203,7 +203,7 @@
 	<!---*******************************************************************************************************************************************-->
 	<!-- DATASTREAM BINDING MAP FOR THE FEDORA BOOTSTRAP MECHANISM (An internal Fedora service) -->
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
-		<METS:div TYPE="uva-bmech-bootstrap:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
+		<METS:div TYPE="fedora-system:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
 			<METS:div TYPE="DSBINDSPEC" LABEL="XML data that serves as Datastream Binding Specification for Watermarking service">
 				<METS:fptr FILEID="DSBIND"/>
 			</METS:div>
@@ -226,8 +226,8 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior Mechanism to run the behaviors. -->
 	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Mechanism Object.   -->
-	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="uva-bdef-bootstrap:1" CREATED="2000-08-22T06:32:00" LABEL="Bootstrap Behaviors" GROUPID="DISS1" STATUS="A">
-		<METS:interfaceDef LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="uva-bdef-bootstrap:1"/>
-		<METS:mechanism LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="uva-bmech-bootstrap:2"/>
+	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" CREATED="2000-08-22T06:32:00" LABEL="Bootstrap Behaviors" GROUPID="DISS1" STATUS="A">
+		<METS:interfaceDef LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="fedora-system:1"/>
+		<METS:mechanism LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="fedora-system:2"/>
 	</METS:behaviorSec>
 </METS:mets>

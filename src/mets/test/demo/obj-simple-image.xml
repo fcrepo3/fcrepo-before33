@@ -23,7 +23,8 @@
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
-	<METS:dmdSec ID="DESC1.0" CREATED="2002-05-20T06:32:00" GROUPID="DESC1" STATUS="">
+	<METS:dmdSecFedora ID="DESC1" STATUS="A">
+     <METS:descMD ID="DESC1.0" CREATED="2002-05-20T06:32:00">
 		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
 			<METS:xmlData>
 				<uvalibdesc:desc>
@@ -62,7 +63,8 @@
 				</uvalibdesc:desc>
 			</METS:xmlData>
 		</METS:mdWrap>
-	</METS:dmdSec>
+	  </METS:descMD>
+	</METS:dmdSecFedora>
 	<METS:amdSec ID="TECH1">
 		<METS:techMD ID="TECH1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for THUMBNAIL image">
@@ -383,13 +385,15 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors" GROUPID="DISS1" STATUS="">
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+     <METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors">
 		<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 		<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 		<!-- the disseminator subscribes -->
-		<METS:interfaceDef LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
+		<METS:interfaceMD LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
 		<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
 		<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
-		<METS:mechanism LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
+		<METS:serviceBindMD LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
+      <METS:serviceBinding>
 	</METS:behaviorSec>
 </METS:mets>

@@ -2,7 +2,7 @@
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS    -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora-ext.xsd" OBJID="test:512" TYPE="FedoraObject" LABEL="IVA Image Collection - University of Virginia" PROFILE="UVA_MRSID_IMAGE">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora-ext.xsd" OBJID="test:116" TYPE="FedoraObject" LABEL="IVA Image Collection - University of Virginia" PROFILE="UVA_MRSID_IMAGE">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
@@ -177,7 +177,7 @@
 	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
-		<METS:div TYPE="test:14" LABEL="DS Binding Map for MrSID Image mechanism">
+		<METS:div TYPE="test:114" LABEL="DS Binding Map for MrSID Image mechanism">
 			<METS:div TYPE="MRSID" LABEL="MrSID file from which different image resolutions will be derived" ORDER="0">
 				<METS:fptr FILEID="DS1"/>
 			</METS:div>
@@ -193,9 +193,9 @@
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR USING MrSID Mechanism -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="test:13" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors" STATUS="A">
-			<METS:interfaceMD LABEL="UVA PickSize Behavior Definition" LOCTYPE="URN" xlink:href="test:13"/>
-			<METS:serviceBindMD LABEL="MrSID PickSize Behavior Mechanism" LOCTYPE="URN" xlink:href="test:14"/>
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="test:113" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors" STATUS="A">
+			<METS:interfaceMD LABEL="UVA PickSize Behavior Definition" LOCTYPE="URN" xlink:href="test:113"/>
+			<METS:serviceBindMD LABEL="MrSID PickSize Behavior Mechanism" LOCTYPE="URN" xlink:href="test:114"/>
 		</METS:serviceBinding>
 	</METS:behaviorSec>
 </METS:mets>
