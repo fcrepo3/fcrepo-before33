@@ -417,8 +417,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                        "FROM riMethodPermutation, riMethodImpl " +
                        "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
                        "AND riMethodImpl.bMechPid = '" + bMechPID + "'";
-        String deleteRIMIB = "DELETE FROM riMethodImplBinding " +
-                             "WHERE methodImplId LIKE '" + bMechPID + "/%'";
         Connection conn = null;
         Statement select = null;
         Statement delete = null;
@@ -436,6 +434,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             }
             delete = conn.createStatement();
             if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_BMECH_OBJECT) {
+                String deleteRIMIB = "DELETE FROM riMethodImplBinding " +
+                                     "WHERE methodImplId LIKE '" + bMechPID + "/%'";
                 delete.execute(deleteRIMIB);
             }
         } catch (SQLException e) {
