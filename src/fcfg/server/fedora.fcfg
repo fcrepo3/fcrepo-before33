@@ -430,19 +430,19 @@
     <datastore id="localKowariTriplestore">
         <comment>local Kowari Triplestore used by the Resource Index</comment>
         <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
-        <param name="modelName" value="ri"/>
-        <param name="poolMaxGrowth" value="-1"/>
-        <param name="path" value="C:\fedora2_0_resourceIndex"/>
-        <param name="bufferFlushBatchSize" value="20000"/>
-        <param name="autoCreate" value="true"/>
-        <param name="bufferSafeCapacity" value="40000"/>
-        <param name="autoFlushDormantSeconds" value="5"/>
-        <param name="poolInitialSize" value="3"/>
-        <param name="serverName" value="fedora"/>
-        <param name="readOnly" value="false"/>
-        <param name="autoTextIndex" value="false"/>
-        <param name="autoFlushBufferSize" value="20000"/>
         <param name="remote" value="false"/>
+        <param name="path" value="C:\fedora2_0_resourceIndex"/>
+        <param name="serverName" value="fedora"/>
+        <param name="modelName" value="ri"/>
+        <param name="poolInitialSize" value="3"/>
+        <param name="poolMaxGrowth" value="-1"/>
+        <param name="readOnly" value="false"/>
+        <param name="autoCreate" value="true"/>
+        <param name="autoTextIndex" value="false"/>
         <param name="memoryBuffer" value="true"/>
+        <param name="autoFlushDormantSeconds" value="5"/>
+        <param name="autoFlushBufferSize" value="20000"/>
+        <param name="bufferFlushBatchSize" value="20000"/>
+        <param name="bufferSafeCapacity" value="40000"/>
     </datastore>
 </server>
