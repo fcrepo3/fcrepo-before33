@@ -84,8 +84,8 @@ public class FOXMLInOutTest
 			
 			// re-serialize (either for the EXPORT or STORAGE context)
 			//int m_transContext = DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
-			//int m_transContext = DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE;
-			int m_transContext = DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE;
+			//int m_transContext = DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC;
+			int m_transContext = DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE;
 			trans.serialize(obj, out, "foxml1.0", "UTF-8", m_transContext);
 			System.out.println("Done. Serialized for context: " + m_transContext);
 			//System.out.println("Here it is:");
