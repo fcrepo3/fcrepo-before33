@@ -14,6 +14,7 @@ public class ConfigApp {
         m_configFile = configFile;
         m_configuration = new ServerConfigurationParser(new FileInputStream(configFile)).parse();
         //m_configuration.serialize(System.out);
+//        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 initGUI();

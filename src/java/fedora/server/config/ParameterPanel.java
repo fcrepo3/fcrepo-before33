@@ -28,13 +28,18 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         m_paramList.addListSelectionListener(this);
         paramChoice.add(new JScrollPane(m_paramList), BorderLayout.CENTER);
         JPanel paramButtonPanel = new JPanel(new BorderLayout());
+        paramButtonPanel.setBorder(BorderFactory.createEmptyBorder(6,0,0,0));
         JButton addButton = new JButton("Add Parameter...");
         addButton.addActionListener(this);
         JButton deleteButton = new JButton("Delete Parameter...");
         deleteButton.addActionListener(this);
         paramButtonPanel.add(addButton, BorderLayout.NORTH);
-        paramButtonPanel.add(deleteButton, BorderLayout.SOUTH);
+        JPanel deleteButtonPanel = new JPanel(new BorderLayout());
+        deleteButtonPanel.add(deleteButton, BorderLayout.CENTER);
+        deleteButtonPanel.setBorder(BorderFactory.createEmptyBorder(6,0,0,0));
+        paramButtonPanel.add(deleteButtonPanel, BorderLayout.SOUTH);
         paramChoice.add(paramButtonPanel, BorderLayout.SOUTH);
+        paramChoice.setBorder(BorderFactory.createEmptyBorder(6,12,12,6));
 
         //
         // CENTER: CardLayout, one panel per parameter
@@ -44,6 +49,7 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         while (iter.hasNext()) {
             addParamValueCard((Parameter) iter.next());
         }
+        m_paramValuePanel.setBorder(BorderFactory.createEmptyBorder(6,6,12,12));
 
         add(paramChoice, BorderLayout.WEST);
         add(m_paramValuePanel, BorderLayout.CENTER);
@@ -71,6 +77,7 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
             CardLayout cl = (CardLayout) (m_paramValuePanel.getLayout());
             Parameter param = (Parameter) m_model.getElementAt(m_paramList.getSelectedIndex());
             cl.show(m_paramValuePanel, param.getName());
+            validate();
         }
     }
 
@@ -91,7 +98,7 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
 
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().startsWith("Add")) {
-            String paramName = JOptionPane.showInputDialog("Enter the name of the new parameter.");
+            String paramName = JOptionPane.showInputDialog("What is the new parameter name?");
             if (paramName != null) {
                 // first, check if one of that name is in m_model (if so we'll just switch to it)
                 Iterator iter = m_model.toList().iterator();
@@ -107,6 +114,7 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
                 }
                 // switch to the new (or already existing) parameter
                 m_paramList.setSelectedValue(param, true);
+                valueChanged(null);
             }
         } else if (e.getActionCommand().startsWith("Delete")) {
             // delete the currently selected item from m_model
@@ -114,25 +122,32 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
                 public void run() {
                     m_ignoreValueChanged = true;
                     int i = m_paramList.getSelectedIndex();
-                    Parameter param = (Parameter) m_paramList.getSelectedValue();
-                    m_model.remove(i);
-                    m_ignoreValueChanged = false;
-                    // ...and set the selection to something sane
-                    if (m_model.size() > 0) {
-                        if (m_model.size() > i) {
-                            m_paramList.setSelectedIndex(i);
-                        } else {
-                            i = m_model.size() - 1;
-                            m_paramList.setSelectedIndex(m_model.size() - 1);
+                    if ( i >= 0 ) {
+                        Parameter param = (Parameter) m_paramList.getSelectedValue();
+                        m_model.remove(i);
+                        m_ignoreValueChanged = false;
+                        // ...and set the selection to something sane
+                        if (m_model.size() > 0) {
+                            if (m_model.size() > i) {
+                                m_paramList.setSelectedIndex(i);
+                            } else {
+                                i = m_model.size() - 1;
+                                m_paramList.setSelectedIndex(m_model.size() - 1);
+                            }
                         }
+                        // finally, remove the panel from the cardlayout
+                        deleteParamValueCard(param);
                     }
-                    // finally, remove the panel from the cardlayout
-                    deleteParamValueCard(param);
                 }
             });
         }
     }
 
+    /** 
+     * A JPanel for modifying the description, value, and server profile-specific values
+     * of a particular parameter.
+     * The layout is accomplished through nested Panels using BorderLayouts.
+     */
     public class ParamValueCard extends JPanel {
 
         private Parameter m_param;
@@ -146,11 +161,6 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
             return m_name;
         }
 
-        /** 
-         * A JPanel for modifying the description, value, and server profile-specific values
-         * of a particular parameter.
-         * The layout is accomplished through nested Panels using BorderLayouts.
-         */
         public ParamValueCard(Parameter param) {
             super(new BorderLayout());
             m_name = param.getName();
@@ -184,10 +194,12 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
             add(s1, BorderLayout.SOUTH);
             JPanel c2 = new JPanel(new BorderLayout());
             JPanel w3 = new JPanel(new BorderLayout());
+            w3.setBorder(BorderFactory.createEmptyBorder(6,0,0,6));
             w3.add(m_profileList, BorderLayout.NORTH);
 
             JPanel c3 = new JPanel(new BorderLayout());
             c3.add(m_valueText, BorderLayout.NORTH);
+            c3.setBorder(BorderFactory.createEmptyBorder(6,0,0,0));
 
             c2.add(c3, BorderLayout.CENTER);
             c2.add(w3, BorderLayout.WEST);
