@@ -21,6 +21,7 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.StreamIOException;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -345,9 +346,9 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
         // Can never occur since Java fully supports UTF-8
       }
       return new MIMETypedStream("application/fedora-redirect",in);
-    } else if ( ds.DSState.equals("D") && 
-                ( context.get("canUseDeletedDatastream")==null 
-                  || (!context.get("canUseDeletedDatastream").equals("true")) ) 
+    } else if ( ds.DSState.equals("D") &&
+                ( context.get("canUseDeletedDatastream")==null
+                  || (!context.get("canUseDeletedDatastream").equals("true")) )
               )
     {
       // Datastream has been flagged for deletion so it is no longer accessible.
@@ -389,9 +390,9 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       }
       return new MIMETypedStream("text/html",in);
 
-    } else if ( ds.DSState.equals("I") && 
-                ( context.get("canUseInactiveDatastream")==null 
-                  || (!context.get("canUseInactiveDatastream").equals("true")) ) 
+    } else if ( ds.DSState.equals("I") &&
+                ( context.get("canUseInactiveDatastream")==null
+                  || (!context.get("canUseInactiveDatastream").equals("true")) )
               )
     {
       // Datastream has been made inactive so it is no longer accessible.
@@ -435,23 +436,57 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
 
     } else
     {
-      in = ds.getContentStream();
       int byteStream = 0;
       try
       {
-        byte[] buffer = new byte[255];
+        in = ds.getContentStream();
+        byte[] buffer = new byte[4096];
         while ((byteStream = in.read(buffer)) >= 0)
         {
           out.write(buffer, 0, byteStream);
         }
         buffer = null;
         in.close();
-        } catch (IOException ioe)
+        } catch (Exception e)
         {
-          throw new DisseminationException("[DefaultBehaviorImpl] had an error "
-              + "in reading or writing getItem bytestream. "
-              + "Underlying exception was: "
-              + ioe.getMessage());
+          StringBuffer errorText = new StringBuffer();
+          errorText.append("<html><title>Datastream Flagged For Deletion</title>");
+          errorText.append("<body>");
+          errorText.append("<center>");
+          errorText.append("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
+          errorText.append("<tr><td width=\"141\" height=\"134\" valign=\"top\">");
+          errorText.append("<img src=\"/images/newlogo2.jpg\" width=\"141\" height=\"134\"></td>");
+          errorText.append("<td width=\"643\" valign=\"top\">");
+          errorText.append("<center>");
+          errorText.append("<h2>Fedora Digital Object</h2>");
+          errorText.append("<h3>Default Disseminator - <font color=\"red\">Error Page</font></h3>");
+          errorText.append("<h4><font color=\"red\">");
+          errorText.append("The requested external Datastream cannot be accessed.<br>");
+          errorText.append("</font></h4>");
+          errorText.append("</center>");
+          errorText.append("</td></tr>");
+          errorText.append("</table>");
+          errorText.append("<hr><font size=\"+1\" color=\"blue\">Object Identifier (PID):</font>");
+          errorText.append("<font size=\"+1\">" + reader.GetObjectPID() + "</font><hr>");
+          errorText.append("<p></p>");
+          errorText.append("<table width=\"784\" border=\"1\" cellspacing=\"5\" cellpadding=\"5\" bgcolor=\"silver\">");
+          errorText.append("<tr><td><b>DatastreamLocation</b></td><td>" + ds.DSLocation + "</td></tr>");
+          errorText.append("<tr><td><b>DatastreamVersionID</b></td><td>" + ds.DSVersionID + "</td></tr>");
+          errorText.append("<tr><td><b>DatastreamLabel</b></td><td>" + ds.DSLabel + "</td></tr>");
+          errorText.append("<tr><td><b>DatastreamControlGroupType</b></td><td>" + ds.DSControlGrp + "</td></tr>");
+          errorText.append("<tr><td><b>DatastreamState</td></b><td>" + ds.DSState + "</td></tr>");
+          errorText.append("<tr><td><b>DatastreamMIMEType</b></td><td>" + ds.DSMIME + "</td></tr>");
+          errorText.append("<tr><td><b>Reason for Failure</b></td><td>" + e.getMessage() + "</td></tr>");
+          errorText.append("</center></table>");
+          errorText.append("</body></html>");
+          try
+          {
+            in = new ByteArrayInputStream(errorText.toString().getBytes("UTF-8"));
+          } catch (UnsupportedEncodingException uee)
+          {
+            // Can never occur since Java fully supports UTF-8
+          }
+          return new MIMETypedStream("text/html",in);
         }
         InputStream is = new ByteArrayInputStream(out.toByteArray());
         return new MIMETypedStream(ds.DSMIME, is);
