@@ -1,8 +1,20 @@
 package fedora.server.utilities;
 
+import java.io.InputStream;
+import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+
+import fedora.server.Logging;
+import fedora.server.errors.InconsistentTableSpecException;
+import fedora.server.storage.ConnectionPool;
 
 public abstract class SQLUtility {
 
@@ -79,6 +91,83 @@ System.out.println("SQLUtility.executeUpdate, now trying: " + i.toString());
                     st.close();
                 } catch (SQLException sqle) { }
             }
+        }
+    }
+    
+    public static void createNonExistingTables(ConnectionPool cPool,
+            InputStream dbSpec, Logging log) 
+            throws IOException, InconsistentTableSpecException, SQLException {
+        List nonExisting=null;
+        Connection conn=null;
+        try {
+            conn=cPool.getConnection();
+            nonExisting=SQLUtility.getNonExistingTables(conn,
+                    TableSpec.getTableSpecs(dbSpec));
+        } finally {
+            if (conn!=null) {
+                cPool.free(conn);
+            }
+        }
+        if (nonExisting.size()>0) {
+            TableCreatingConnection tcConn=null;
+            try {
+                tcConn=cPool.getTableCreatingConnection();
+                if (tcConn==null) {
+                    throw new SQLException(
+                          "Unable to construct CREATE TABLE "
+                        + "statement(s) because there is no DDLConverter "
+                        + "registered for this connection type.");
+                }
+                SQLUtility.createTables(tcConn, nonExisting, log);
+            } finally {
+                if (tcConn!=null) {
+                    cPool.free(tcConn);
+                }
+            }
+        }
+    }
+    
+    public static List getNonExistingTables(Connection conn,
+            List tSpecs) 
+            throws SQLException {
+        ArrayList nonExisting=new ArrayList();
+        DatabaseMetaData dbMeta=conn.getMetaData();
+        Iterator tSpecIter=tSpecs.iterator();
+        // Get a list of tables that don't exist, if any
+        ResultSet r=dbMeta.getTables(null, null, "%", null);
+        HashSet existingTableSet=new HashSet();
+        while (r.next()) {
+            existingTableSet.add(r.getString("TABLE_NAME").toLowerCase());
+        }
+        r.close();
+        while (tSpecIter.hasNext()) {
+            TableSpec spec=(TableSpec) tSpecIter.next();
+            if (!existingTableSet.contains(spec.getName().toLowerCase())) {
+                nonExisting.add(spec);
+            }
+        }
+        return nonExisting;
+    }
+    
+    public static void createTables(TableCreatingConnection tcConn, List tSpecs,
+            Logging log) 
+            throws SQLException {
+        Iterator nii=tSpecs.iterator();
+        while (nii.hasNext()) {
+            TableSpec spec=(TableSpec) nii.next();
+            if (log.loggingConfig()) {
+                StringBuffer sqlCmds=new StringBuffer();
+                Iterator iter=tcConn.getDDLConverter().getDDL(spec).iterator();
+                while (iter.hasNext()) {
+                    sqlCmds.append("\n");
+                    sqlCmds.append((String) iter.next());
+                    sqlCmds.append(";");
+                }
+                log.logConfig("Attempting to create nonexisting "
+                        + "table '" + spec.getName() + "' with command(s): "
+                        + sqlCmds.toString());
+            }
+            tcConn.createTable(spec);
         }
     }
     

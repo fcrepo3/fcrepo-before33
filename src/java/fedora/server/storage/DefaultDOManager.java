@@ -13,7 +13,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -26,7 +25,6 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.GeneralException;
-import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.errors.InvalidContextException;
 import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
@@ -184,6 +182,21 @@ public class DefaultDOManager
             throw new ModuleInitializationException("Couldn't get required "
                     + "connection pool...wasn't found", getRole());
         }
+        try {
+            String dbSpec="fedora/server/storage/resources/DefaultDOManager.dbspec";
+            InputStream specIn=this.getClass().getClassLoader().
+                    getResourceAsStream(dbSpec);
+            if (specIn==null) {
+                throw new IOException("Cannot find required "
+                    + "resource: " + dbSpec);
+            }
+            SQLUtility.createNonExistingTables(m_connectionPool, specIn, this);
+        } catch (Exception e) {
+            throw new ModuleInitializationException("Error while attempting to "
+                    + "check for and create non-existing table(s): " 
+                    + e.getClass().getName() + ": " + e.getMessage(), getRole());
+        }
+/*
         String dbSpec="fedora/server/storage/resources/DefaultDOManager.dbspec";
         InputStream specIn=this.getClass().getClassLoader().
                 getResourceAsStream(dbSpec);
@@ -201,7 +214,6 @@ public class DefaultDOManager
             throw new ModuleInitializationException("Inconsistent table spec :"
                     + itse.getMessage(), getRole());
         }
-
         // Look at the database tables and construct a list of
         // TableSpec objects for tables that don't exist.
         ArrayList nonExisting=new ArrayList();
@@ -232,7 +244,6 @@ public class DefaultDOManager
                 m_connectionPool.free(conn);
             }
         }
-
         if (nonExisting.size()>0) {
             Iterator nii=nonExisting.iterator();
             int i=0;
@@ -280,6 +291,7 @@ public class DefaultDOManager
                 }
             }
         }
+        */
     }
 
     public void releaseWriter(DOWriter writer) {
