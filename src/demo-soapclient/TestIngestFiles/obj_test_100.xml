@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---*******************************************************************************************************************************************-->
+<!-- THIS FOXML TEST OBJECT:  Use this to test all variants of datastreams and disseminators. -->
+<!---*******************************************************************************************************************************************-->
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="test:100" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<!---*******************************************************************************************************************************************-->
+	<!--   FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object-->
+	<!---*******************************************************************************************************************************************-->
+	<foxml:objectProperties>
+		<!-- OBJECT PROPERTIES DEFINED IN FOXML SCHEMA -->
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
+		<!-- ALLOW EXTENSIBLE PROPERTIES (Fedora will retain these, but not operate on them.) -->
+		<foxml:extproperty NAME="http://www.openarchives.org/OAI/1.1/oai-identifier.xsd" VALUE="oai:cornell.edu:test:100"/>
+	</foxml:objectProperties>
+	<!---*******************************************************************************************************************************************-->
+	<!--  FEDORA RESERVED DATASTREAM: DUBLIN CORE METADATA FOR OBJECT -->
+	<!--  Note use of the new FORMAT_URI attribute for datastreams.  Fedora will retain it, but not do anything with it now. -->
+	<!---*******************************************************************************************************************************************-->
+	<foxml:datastream ID="DC" STATE="A"  CONTROL_GROUP="X" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DC.0" MIMETYPE="text/xml" LABEL="Default Dublin Core Record" CREATED="2004-08-18T06:32:00" FORMAT_URI="http://www.openarchives.org/OAI/2.0/oai_dc/">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+					<dc:title>Sandy's Reference Object</dc:title>
+					<dc:creator>Sandy Payette</dc:creator>
+					<dc:subject>FOXML Testing</dc:subject>
+					<dc:description>Object depicts all types of datastreams and disseminators</dc:description>
+					<dc:publisher>Cornell CIS</dc:publisher>
+					<dc:identifier>test:100</dc:identifier>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!--*******************************************************************************************************************************************-->
+	<!--  FEDORA RESERVED DATASTREAM: OBJECT-TO-OBJECT RELATIONSHIPS -->
+	<!--  The RELS-EXT datastream is validated by Fedora. -->
+	<!--*******************************************************************************************************************************************-->
+	<foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X">
+		<foxml:datastreamVersion ID="RELS-EXT.0"  MIMETYPE="text/xml" LABEL="Fedora Relationship Metadata">
+			<foxml:xmlContent>
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<rdf:Description rdf:about="info:fedora/test:100">
+						<fedora:isMemberOfCollection rdf:resource="info:fedora/something:49"/>
+						<fedora:isMemberOfCollection rdf:resource="info:fedora/something:48"/>
+						<myns:isPartOf rdf:resource="info:fedora/mystuff:100"/>
+					</rdf:Description>
+				</rdf:RDF>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!--*******************************************************************************************************************************************-->
+	<!--   FEDORA RESERVED DATASTREAM: INNER OBJECT RELATIONSHIP METADATA -->
+	<!--  This datastream demonstrates datastream-to-datastream relationships in this object, expressed as RDF. -->
+	<!--  This is NOT validated by Fedora. -->
+	<!--  Clients can provide this type of datastream if they want one.  Fedora provides an OWL schema as best practice.  -->
+	<!--  Also Fedora will automatically create a RELS-INT upon ingest of a METS file wiith DMDID and ADMID relationships expressed witin.  -->
+	<!--*******************************************************************************************************************************************-->
+	<foxml:datastream ID="RELS-INT" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+		<foxml:datastreamVersion ID="RELS-INT.0" MIMETYPE="text/xml" LABEL="Fedora Internal Object Relationship Metadata">
+			<foxml:xmlContent>
+				<!-- Note:  it is up to the object owner to ensure that these relationships are maintained as the object changes.-->
+				<!-- Fedora does not ensure referential integrity of RELS-INT assertions at this time. -->
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:relsint="info:fedora/fedora-system:def/relations-internal#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-	schema#">
+					<relsint:Datastream rdf:about="info:fedora/test:100/UVATECH">
+						<relsint:adminMetadataFor rdf:resource="info:fedora/test:100/DS4"/>
+					</relsint:Datastream>
+				</rdf:RDF>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!---*******************************************************************************************************************************************-->
+	<!--- USER-DEFINED DATASTREAMS  -->
+	<!---*******************************************************************************************************************************************-->
+	<!-- This datastream demonstrates "Externally Referenced Content" (E) using an absolute URL to the local Fedora repository -->
+	<foxml:datastream CONTROL_GROUP="M" ID="DS1" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DS1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (low res)" SIZE="0">
+			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05small.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="M" ID="DS2" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DS2.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (med res)" SIZE="0">
+			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="E" ID="DS3" STATE="A">
+		<foxml:datastreamVersion ID="DS3.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (high res)" SIZE="0">
+			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05medium2.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="R" ID="DS4" STATE="A" VERSIONABLE="false">
+		<foxml:datastreamVersion ID="DS4.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (veryhigh res)" SIZE="0">
+			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05high.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="E" ID="DS5" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DS5.0" MIMETYPE="image/x-mrsid-image" LABEL="Pavilion III, University of Virginia">
+			<foxml:contentLocation REF="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!-- This datastream demonstrates "Inlined XML Content" (X) and user-provided datastream ID -->
+	<foxml:datastream ID="UVATECH" STATE="A"  CONTROL_GROUP="X" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="UVATECH.0" MIMETYPE="text/xml" FORMAT_URI="info:fedora/format:xml:mets:techMD:OTHER:uvalibadmin" LABEL="UVA Technical Metadata Record">
+			<foxml:xmlContent>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://virginia.lib.edu/uvalibadmin:tech">
+					<uvalibadmin:technical>
+						<uvalibadmin:format>image/jpeg</uvalibadmin:format>
+						<uvalibadmin:compression>LZW</uvalibadmin:compression>
+						<uvalibadmin:bitDepth BITS=""/>
+						<uvalibadmin:colorSpace/>
+						<uvalibadmin:colorProfile CPLOCAT="" CPFILE=""/>
+						<uvalibadmin:resolution>600</uvalibadmin:resolution>
+					</uvalibadmin:technical>
+				</uvalibadmin:admin>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!---*******************************************************************************************************************************************-->
+	<!--- CUSTOM DISSEMINATORS -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- DISSEMINATOR 1:  INTERNAL HTTP SERVICE SCENARIO (just resolves URLs and sends out datastream content)-->
+	<foxml:disseminator BDEF_CONTRACT_PID="demo:1" ID="DISS1" STATE="A" VERSIONABLE="true">
+		<foxml:disseminatorVersion BMECH_SERVICE_PID="demo:2" ID="DISS1.0" LABEL="UVA Simple Image Behaviors">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="THUMBRES_IMG" LABEL="Low resolution binding"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DS2" KEY="MEDRES_IMG" LABEL="Medium resolution binding"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DS3" KEY="HIGHRES_IMG" LABEL="High resolution binding"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DS4" KEY="VERYHIGHRES_IMG" LABEL="Master resolution binding"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
+	<!--- DISSEMINATOR 2:  EXTERNAL SERVICE SCENARIO  (External MrSID Service processes input datastream and sends back result)-->
+	<foxml:disseminator ID="DISS2" BDEF_CONTRACT_PID="demo:8" STATE="A" VERSIONABLE="true">
+		<foxml:disseminatorVersion ID="DISS2.0" BMECH_SERVICE_PID="demo:9" LABEL="Dynamic Image Sizing via MrSID Service">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="DS5" KEY="MRSID" LABEL="MRSID wavelet-encoded image binding"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
+	<!--- DISSEMINATOR 3:  LOCAL SERVICE SCENARIO (Local Image Manip Service allows user to do various things with image-->
+	<foxml:disseminator ID="DISS3" BDEF_CONTRACT_PID="demo:27" STATE="A" VERSIONABLE="true">
+		<foxml:disseminatorVersion ID="DISS3.0" BMECH_SERVICE_PID="demo:28" LABEL="Image behaviors via Local Image Manip Service">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="DS4" KEY="url" LABEL="Image binding"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
+</foxml:digitalObject>
