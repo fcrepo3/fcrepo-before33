@@ -35,6 +35,7 @@ public class RepositoryInfo
   public String repositoryBaseURL = null;
   public String repositoryVersion = null;
   public String repositoryPIDNamespace = null;
+  public String defaultExportFormat = null;
   public String OAINamespace = null;
   public String[] adminEmailList = new String[0];
   public String samplePID = null;

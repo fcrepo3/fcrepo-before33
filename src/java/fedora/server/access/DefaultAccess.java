@@ -581,6 +581,7 @@ public class DefaultAccess extends Module implements Access
       getServer().VERSION_MAJOR + "." + getServer().VERSION_MINOR;
     Module domgr = getServer().getModule("fedora.server.storage.DOManager");
     repositoryInfo.repositoryPIDNamespace = domgr.getParameter("pidNamespace");
+	repositoryInfo.defaultExportFormat = domgr.getParameter("exportFormat");
     repositoryInfo.OAINamespace = m_repositoryDomainName;
     repositoryInfo.adminEmailList = getAdminEmails();
     repositoryInfo.samplePID = repositoryInfo.repositoryPIDNamespace + ":100";
