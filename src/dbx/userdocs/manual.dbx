@@ -1,247 +1,203 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+    "http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <book>
   <bookinfo>
-    <title>The Fedora Manual, v1.0</title>
+    <graphic/>
+    <title>The Fedora Manual</title>
+    <subtitle>for Software Release 1.0</subtitle>
     <copyright>
-      <year>2003</year>
-      <holder>Cornell University and The University of Virginia</holder>
+      <year>2003, Cornell University and The University of Virginia</year>
     </copyright>
-
-    <abstract>
-      <para>User Guide, Administrator's Guide, and Developer's Guide for
-      Fedora v1.0.</para>
-    </abstract>
   </bookinfo>
-
   <preface>
-    <title>Preface</title>
-    <para>This is the manual for Fedora.  Inside, you'll find basic information
-    about Fedora and its concepts, detailed instructions on installation and
-    use of the server and clients, and a full reference for the public API.
+    <title>About This Manual</title>
+    <para>This is the official manual for Fedora, an open-source digital 
+        repository management system available at 
+        <ulink url="http://www.fedora.info/">http://www.fedora.info/</ulink>.
+    </para>
+    <para><itemizedlist>
+        <title>There are three parts:</title>
+        <listitem>
+          <para><emphasis>User&apos;s Guide</emphasis>: Provides basic 
+              information about the software and demonstrates how an 
+              end-user interacts with it.
+          </para>
+        </listitem>
+        <listitem>
+          <para><emphasis>Administrator&apos;s Guide</emphasis>: Explains 
+              how to install and configure the server, how to use the GUI and 
+              command-line clients, and how to create your own digital 
+              objects for use within the repository.</para>
+        </listitem>
+        <listitem>
+          <para><emphasis>Developer&apos;s Guide</emphasis>: Gives API 
+              documentation, and tips on modifying the server&apos;s source 
+              code.
+          </para>
+        </listitem>
+      </itemizedlist></para>
+    <para>In this manual, <emphasis>end-user</emphasis> refers to a person 
+        using a web browser or custom client to interact with an existing 
+        repository, <emphasis>administrator</emphasis> refers to a person 
+        responsible for installing, configuring, and maintaining a repository, 
+        and <emphasis>developer</emphasis> refers to a person who writes 
+        programs to extend the functionality of the software or a particular 
+        repository.
     </para>
   </preface>
-
   <part>
-    <title>User's Guide</title>
+    <title>User&apos;s Guide</title>
     <chapter>
-      <title>New To Fedora?</title>
-      <para>If you haven't worked with Fedora before...</para>
+      <title>Introducing Fedora</title>
       <sect1>
         <title>Background</title>
-        <para>The stork brought it.</para>
+        <para>The Fedora software is based on an architecture known as FEDORA 
+            (Flexible Extensible Digital Object and Repository Architecture) 
+            [<ulink url="http://www.cs.cornell.edu/payette/papers/ECDL98/FEDORA.html">view paper</ulink>].
+            The Fedora architecture was developed by Carl Lagoze and Sandy 
+            Payette at Cornell University, inspired by ideas of the 
+            Kahn/Wilensky Framework [<ulink url="http://www.cnri.reston.va.us/cstr/arch/k-w.html">view paper</ulink>] 
+            and the Warwick Framework [<ulink url="http://www.dlib.org/dlib/july96/lagoze/07lagoze.html">view paper</ulink>].
+        </para>
+        <para>Over the last several years, Cornell University and The 
+            University of Virginia have created promising prototypes of their 
+            own.  This open-source implementation, indended for public release,
+            is the result of a collaborative effort between Cornell and UVA. 
+            The project is funded by a grant from the Andrew W. Mellon 
+            foundation.
+        </para>
+        <para>More information about the project and its history can be found 
+            at <ulink url="http://www.fedora.info/">http://www.fedora.info/</ulink>.
+        </para>
       </sect1>
       <sect1>
         <title>Concepts</title>
-        <para>The Fedora Object Model is...</para>
+        <para>In Fedora, a <emphasis>digital object</emphasis> is a data 
+            structure with a <emphasis>PID</emphasis> (a unique, persistent 
+            identifer), one or more <emphasis>datastreams</emphasis> (typed 
+            sequences of bits), and one or more <emphasis>disseminators.</emphasis> 
+            A disseminator maps an object&apos;s datastreams as input to 
+            a service, enabling the repository to provide disseminations of 
+            the object. A dissemination is simply a representation of an object.
+        </para>
+        <para>A behavior mechanism represents a service that performs functions 
+            on datastreams.  It is the means by which a disseminator binds to a 
+            service.  A behavior mechanism specifies the datastream input 
+            constraints of the service it describes.  It also adheres to a 
+            contract that is specified by its behavior definition.
+        </para>
+        <para>A behavior definition specifies the names of methods that 
+            subscribing mechanisms must implement.  It also specifies the user 
+            parameters that implementing services must accept.  These are the 
+            same user parameters that are used by the disseminating party in 
+            the request to the Fedora repository.
+        </para>
       </sect1>
     </chapter>
     <chapter>
       <title>Features</title>
-      <para>Science Fiction, double feature.</para>
+      <para>Text for features.</para>
     </chapter>
     <chapter>
-      <title>Using Fedora with a Web Browser</title>
-      <para>The web blah blah.</para>
+      <title>Web Exposure</title>
       <sect1>
-        <title>Viewing a Dissemination</title>
-        <para>Huh?</para>
+        <title>Disseminations</title>
+        <para>Text for viewing a dissemination.</para>
       </sect1>
       <sect1>
-        <title>Using Dissemination Index for an Object</title>
-        <para>The thingy where you fill in params.</para>
+        <title>Object Profiles and Dissemination Indexes</title>
+        <para>Text for viewing a dissemination index.</para>
+      </sect1>
+      <sect1>
+        <title>Search/Browse</title>
+        <para>http://localhost:8080/fedora/search</para>
       </sect1>
     </chapter>
   </part>
   <part>
-    <title>Administrator's Guide</title>
+    <title>Administrator&apos;s Guide</title>
     <chapter>
       <title>Server Software</title>
-      <para>This chapter will tell you that the server is blah dee blah.</para>
       <sect1>
         <title>Overview</title>
-        <para>The server is there to hold content and provide access
-        to disseminations.  It also does other stuff.</para>
+        <para>Overview text. (Directory structure here)
+        </para>
       </sect1>
       <sect1>
         <title>Installation</title>
-        <para>Clicky-click.  Tap tap.</para>
         <sect2>
           <title>Requirements</title>
-          <para>Make it go.  Java and things.</para>
+          <para>Requirements text</para>
         </sect2>
         <sect2>
           <title>Process</title>
-          <para>Fedora was written to be RDBMS-independent.  You have a choice.
-          See the module reference and developer's guide for more about how
-          db stuff can be configured to work with just about any RDBMS.</para>
-          <sect3>
-            <title>MySQL</title>
-            <para>Do this that and the other thing.</para>
-          </sect3>
-          <sect4>
-            <title>McKoi</title>
-            <para>Do this that and the other thing.</para>
-          </sect4>
+          <para>Process text</para>
         </sect2>
         <sect2>
           <title>Stopping</title>
-          <part>How come?</part>
+          <para>Stopping text</para>
         </sect2>
         <sect2>
           <title>Configuration</title>
-          <para>Config it with a wrench.</para>
-          <sect3>
-            <title>Schema</title>
-            <para>The config file looks like...</para>
-          </sect3>
-          <sect3>
-            <title>Common Stuff</title>
-            <para>The top part...blah blah</para>
-          </sect3>
-          <sect3>
-            <title>Module Reference</title>
-            <para>Take dox from fedora.fcfg and put here...</para>
-          </sect3>
+          <para>For server, for modules.</para>
         </sect2>
         <sect2>
           <title>Restarting</title>
-          <part>Say you wanna re-config or something.</part>
+          <para>Restarting text</para>
         </sect2>
       </sect1>
       <sect1>
         <title>Client Tools</title>
-        <para>blah blah, etc.</para>
         <sect2>
           <title>Administrator</title>
-          <sect3>
-            <title>Basic Actions</title>
-          </sect3>
-          <sect3>
-            <title>Search/Browse</title>
-          </sect3>
-          <sect3>
-            <title>Consoles</title>
-          </sect3>
+          <para>Administrator text.</para>
         </sect2>
         <sect2>
           <title>Batch Ingest</title>
-          <para>Insert Bill's dox</para>
+          <para>Batch ingest text.</para>
         </sect2>
         <sect2>
           <title>Other Command-Line Tools</title>
-          <para>how to use these</para>
+          <para>Other text.</para>
         </sect2>
       </sect1>
     </chapter>
     <chapter>
       <title>Digital Object Construction</title>
-      <para>(Be specific about METS stuff here)</para>
       <sect1>
         <title>Objects</title>
+        <para>text</para>
       </sect1>
       <sect1>
         <title>Behavior Definitions</title>
+        <para>text</para>
       </sect1>
       <sect1>
         <title>Behavior Mechanisms</title>
-      </sect1>
-      <sect1>
-        <title>Creating a New Object</title>
-      </sect1>
-      <sect1>
-        <title>Creating a New Behavior Mechanism</title>
-      </sect1>
-      <sect1>
-        <title>Creating a New Behavior Definition</title>
+        <para>text</para>
       </sect1>
     </chapter>
   </part>
   <part>
-    <title>Developer's Guide</title>
+    <title>Developer&apos;s Guide</title>
     <chapter>
       <title>Public APIs</title>
-      <para>These are exposed, etc, etc, point to wsdldocs, etc.</para>
       <sect1>
-        <title>API-A</title>
-        <para>Point or include?</para>
+        <title>Access (API-A)</title>
+        <para>text</para>
       </sect1>
       <sect1>
-        <title>API-M</title>
-        <para>Point or include?</para>
+        <title>Management (API-M)</title>
+        <para>text</para>
       </sect1>
     </chapter>
     <chapter>
       <title>Modifying the Source</title>
-      <para>It's in java.  The directories are like x, y, z.
-      Point to the javadocs, and also beef up (and trim down!) the devguide
-      appropriately.
-      </para>
+      <para>Point to javadocs, which include dox on source structure.</para>
     </chapter>
   </part>
-<!--
-
-
-<article>
-    <title>Fedora User Guide</title>
-    <subtitle>Release 1.0</subtitle>
-    <articleinfo>
-        <author>
-            <othername>Fedora Development Team</othername>
-        </author>
-        <edition>$Revision$</edition>
-        <date>$Date$</date>
-        <releaseinfo>
-            $Id$
-        </releaseinfo>
-    </articleinfo>
-    <section>
-      <title>Object Metadata</title>
-      <para></para>
-      <section>
-          <title>System Metadata</title>
-          <para>Metadata that relates the object to the system.</para>
-          <section>
-              <title>Hidden</title>
-              <para>Metadata that is used to manage the object but is
-                    not exposed to the user.</para>
-          </section>
-          <section>
-              <title>Key</title>
-              <para>Metadata describing the object's basic properties 
-                    as an entity in a repository.</para>
-          </section>
-          <section>
-              <title>Audit</title>
-              <para>Metadata about the object's changes in the repository.</para>
-          </section>
-      </section>
-      <section>
-          <title>User Metadata</title>
-          <para>Arbitrary, internally-managed XML metadata that is under
-                the direct control of the user.</para>
-          <section>
-              <title>Primary Dublin Core Record</title>
-              <para>Every object in the repository has a primary Dublin Core
-                    datastream with a special datastream identifier, 'DC'.
-                    This datastream is an XML dublin core record which
-                    includes at least one dc:title, and any number of any
-                    of the basic 15 dublin core elements.</para>
-              <para>While an object is ingested or newly created in the
-                    repository, the system checks for this datastream.
-                    If it does not exist, it is automatically created.
-                    If it does not have at least one dc:title, the
-                    value of the dc:title is set to the value of the
-                    object label.  If the object label is missing or
-                    empty, it is automatically created as "New Object PID",
-                    where PID is the actual PID of the object.</para>
-          </section>
-    </section>
-      
-itemizedlist
-  listitem
-
-literallayout 
-
-
-</article> -->
 </book>
