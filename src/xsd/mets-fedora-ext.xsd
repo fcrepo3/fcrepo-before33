@@ -270,6 +270,11 @@
 		<xsd:attribute name="LABEL" type="xsd:string" use="optional"/>
 		<xsd:attribute name="TYPE" type="xsd:string" use="optional"/>
 		<xsd:attribute name="PROFILE" type="xsd:string" use="optional"/>
+        <xsd:anyAttribute namespace="##other" processContents="lax"/>
+        <!-- FEDORA EXTENSION: added anyAttribute so that things can be put there -->
+        <!-- without causing schema validation phase to file.  This is especially -->
+        <!-- important so that we can ignore any supplied xsi:schemaLocation by -->
+        <!-- just renaming it temporarily right before schema validation. -->
 	</xsd:complexType>
 	<!-- FEDORA EXTENSION: created new dmdSecType (1-29-03) -->
 	<!-- Created dmdSecType to define a metadata container for descriptive metadata.  This makes dmdSec-->
