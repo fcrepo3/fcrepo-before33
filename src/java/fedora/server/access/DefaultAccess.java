@@ -329,7 +329,7 @@ public class DefaultAccess extends Module implements Access
           // This is a fatal error. A required method parameter does not
           // appear in the list of user supplied parameters.
           sb.append("The required parameter \""
-              + methodParm.parmName + "\" was not found in the "
+              + validName + "\" was not found in the "
               + "user-supplied parameter list.");
           throw new InvalidUserParmException("[Invalid User Parameters] "
               + sb.toString());
