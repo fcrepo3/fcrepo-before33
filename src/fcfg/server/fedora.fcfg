@@ -9,6 +9,7 @@
 	<param name="log_max_days" value="7"/>
 	<param name="log_dir" value="logs"/>
 	<param name="log_level" value="finest"/>
+	<param name="log_flush_threshold" value="1"/>
 	<param name="store_base" value="C:\temp"/>
 	<param name="pid_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
 	<param name="backslash_is_escape" value="yes"/>
