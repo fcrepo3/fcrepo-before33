@@ -20,7 +20,6 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.storage.DOReader;
-import fedora.server.storage.DefinitiveDOReader;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.MethodDef;

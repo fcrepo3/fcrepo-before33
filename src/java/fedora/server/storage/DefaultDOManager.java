@@ -584,21 +584,21 @@ public class DefaultDOManager
                 if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
                     logInfo("Attempting replication as bdef object: " + obj.getPid());
                     BDefReader reader=getBDefReader(context, obj.getPid());
-                    logInfo("Got a definitiveBDefReader...");
+                    logInfo("Got a BDefReader...");
                     m_replicator.replicate(reader);
                     logInfo("Updating FieldSearch indexes...");
                     m_fieldSearch.update(reader);
                 } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
                     logInfo("Attempting replication as bmech object: " + obj.getPid());
                     BMechReader reader=getBMechReader(context, obj.getPid());
-                    logInfo("Got a definitiveBMechReader...");
+                    logInfo("Got a BMechReader...");
                     m_replicator.replicate(reader);
                     logInfo("Updating FieldSearch indexes...");
                     m_fieldSearch.update(reader);
                 } else {
                     logInfo("Attempting replication as normal object: " + obj.getPid());
                     DOReader reader=getReader(context, obj.getPid());
-                    logInfo("Got a definitiveDOReader...");
+                    logInfo("Got a DOReader...");
                     m_replicator.replicate(reader);
                     logInfo("Updating FieldSearch indexes...");
                     m_fieldSearch.update(reader);
