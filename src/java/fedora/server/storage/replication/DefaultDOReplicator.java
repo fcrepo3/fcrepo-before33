@@ -753,13 +753,38 @@ public class DefaultDOReplicator
         try {
             connection=m_pool.getConnection();
             st=connection.createStatement();
-            results=logAndExecuteQuery(st, "SELECT bDefDbID FROM bDef WHERE "
+            results=logAndExecuteQuery(st, "SELECT bDefDbID,bDefState FROM bDef WHERE "
                     + "bDefPID='" + reader.GetObjectPID() + "'");
             if (!results.next()) {
                 logFinest("DefaultDOReplication.updateComponents: Object is "
                         + "new; components dont need updating.");
                 return false;
             }
+
+            int bDefDbID=results.getInt("bDefDbID");
+            String bDefState=results.getString("bDefState");
+            results.close();
+            ArrayList updates=new ArrayList();
+            // check if state has changed for the bdef object
+            String objState = reader.GetObjectState();
+            if (!bDefState.equalsIgnoreCase(objState)) {
+              updates.add("UPDATE bDef SET bDefState='"+objState+"' WHERE bDefDbID=" + bDefDbID);
+              updates.add("UPDATE doRegistry SET objectState='"+objState+"' WHERE doPID='" + reader.GetObjectPID() + "'");
+            }
+
+            // do any required updates via a transaction
+            if (updates.size()>0) {
+                connection.setAutoCommit(false);
+                triedUpdate=true;
+                for (int i=0; i<updates.size(); i++) {
+                    String update=(String) updates.get(i);
+                    logAndExecuteUpdate(st, update);
+                }
+                connection.commit();
+            } else {
+                logFinest("No datastream labels or locations changed.");
+            }
+
         } catch (SQLException sqle) {
             failed=true;
             throw new ReplicationException("An error has occurred during "
@@ -815,13 +840,37 @@ public class DefaultDOReplicator
         try {
             connection=m_pool.getConnection();
             st=connection.createStatement();
-            results=logAndExecuteQuery(st, "SELECT bMechDbID FROM bMech WHERE "
+            results=logAndExecuteQuery(st, "SELECT bMechDbID,bMechState FROM bMech WHERE "
                     + "bMechPID='" + reader.GetObjectPID() + "'");
             if (!results.next()) {
                 logFinest("DefaultDOReplication.updateComponents: Object is "
                         + "new; components dont need updating.");
                 return false;
             }
+            int bMechDbID=results.getInt("bMechDbID");
+            String bMechState=results.getString("bMechState");
+            results.close();
+            ArrayList updates=new ArrayList();
+            // check if state has changed for the bdef object
+            String objState = reader.GetObjectState();
+            if (!bMechState.equalsIgnoreCase(objState)) {
+              updates.add("UPDATE bMech SET bMechState='"+objState+"' WHERE bMechDbID=" + bMechDbID);
+              updates.add("UPDATE doRegistry SET objectState='"+objState+"' WHERE doPID='" + reader.GetObjectPID() + "'");
+            }
+
+            // do any required updates via a transaction
+            if (updates.size()>0) {
+                connection.setAutoCommit(false);
+                triedUpdate=true;
+                for (int i=0; i<updates.size(); i++) {
+                    String update=(String) updates.get(i);
+                    logAndExecuteUpdate(st, update);
+                }
+                connection.commit();
+            } else {
+                logFinest("No datastream labels or locations changed.");
+            }
+
         } catch (SQLException sqle) {
             failed=true;
             throw new ReplicationException("An error has occurred during "
