@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import fedora.server.Logging;
 import fedora.server.Server;
@@ -161,6 +162,15 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
       ds = new DisseminationService();
       dsRegistry = ds.dsRegistry;
       DatastreamMediation dm = (DatastreamMediation)dsRegistry.get(id);
+      if (dm==null) {
+        StringBuffer entries=new StringBuffer();
+        Iterator eIter=dsRegistry.keySet().iterator();
+        while (eIter.hasNext()) {
+            entries.append("'" + (String) eIter.next() + "' ");
+        }
+        throw new IOException("Cannot find datastream in temp registry by key: " + id + "\n"
+                + "Reg entries: " + entries.toString());
+      }
       dsPhysicalLocation = dm.dsLocation;
       dsControlGroupType = dm.dsControlGroupType;
       keyTimestamp = keyTimestamp.valueOf(ds.extractTimestamp(id));
