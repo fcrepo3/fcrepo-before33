@@ -217,9 +217,8 @@ public class DefinitiveDOReader implements DOReader
     /**
      * Gets the state of the digital object.  The state indicates the status
      * of the digital object at any point in time.  Valid states are:
-     * A=Active, L=Locked, R=Replicating, N=Incomplete, W=Withdrawn,
-     * C=Marked for Deletion, D=Pending Deletion.  New states may be
-     * defined in the future.
+     * A=Active, W=Withdrawn, C=Marked for Deletion, D=Pending Deletion.
+     * New states may be defined in the future.
      *
      * @throws ObjectIntegrityException If there was a failure in accessing the object
      *         for any integrity-oriented reason. Extends ServerException.
