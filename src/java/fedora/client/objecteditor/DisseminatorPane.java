@@ -458,15 +458,34 @@ public class DisseminatorPane
         }
 
         public boolean isDirty() {
-            if ((m_versionSlider==null || m_versionSlider.getValue()==0) && !m_bDefLabelTextField.getText().equals(m_diss.getBDefLabel())) {
+			
+			// if repo returns null bDef or bMech label, set label to empty string
+			// so comparision to swing text field does not fail in case where text
+			// field is empty string.
+			// is empty too.
+			String bDefLabel=m_diss.getBDefLabel();
+			if (bDefLabel==null){
+				bDefLabel="";
+			}
+			String bMechLabel=m_diss.getBMechLabel();
+			if (bMechLabel==null){
+				bMechLabel="";
+			}
+			// now test for changes...
+            if ((m_versionSlider==null || m_versionSlider.getValue()==0) 
+            	&& !m_bDefLabelTextField.getText().equals(bDefLabel)) {
                 return true;
             }
             if (!m_labelTextField.getText().equals(m_diss.getLabel())) {
                 return true;
             }
-            if (!m_bMechLabelTextField.getText().equals(m_diss.getBMechLabel())) {
+            if (!m_bDefLabelTextField.getText().equals(bDefLabel)) {
                 return true;
             }
+
+			if (!m_bMechLabelTextField.getText().equals(bMechLabel)) {
+				return true;
+			}
             // is the bmech the same?
             String currentBMech=(String) m_bMechComboBox.getSelectedItem();
             if (currentBMech.equals(m_diss.getBMechPID())) {
