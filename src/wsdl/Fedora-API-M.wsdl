@@ -14,6 +14,7 @@
 			<wsdldoc:type name="fedora-types:DatastreamBindingMap" url="http://www.fedora.info/definitions/1/0/types/#DatastreamBindingMap"/>
 			<wsdldoc:type name="fedora-types:Disseminator" url="http://www.fedora.info/definitions/1/0/types/#Disseminator"/>
 			<wsdldoc:type name="fedora-types:ArrayOfDisseminator" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDisseminator"/>
+			<wsdldoc:type name="fedora-types:UserInfo" url="http://www.fedora.info/definitions/1/0/types/#UserInfo"/>
 			<wsdldoc:type name="fedora-auditing:ArrayOfAuditRecord" url="http://www.fedora.info/definitions/1/0/auditing/#ArrayOfAuditRecord"/>
 		</documentation>
 	</types>
@@ -153,6 +154,17 @@
 			<documentation>the ID of the newly created disseminator.</documentation>
 		</part>
 	</message>
+	<message name="describeUserRequest">
+		<part name="id" type="xsd:string">
+			<documentation>the id of the user.</documentation>
+		</part>
+    </message>
+	<message name="describeUserResponse">
+		<part name="response" type="fedora-types:UserInfo">
+			<documentation>information about the user.</documentation>
+		</part>
+	</message>
+
 	<!--
   <message name="addDatastreamManagedContentRequest">
     <part name="PID" type="xsd:string">
@@ -477,6 +489,11 @@
 			<input message="fedora-api:ingestObjectRequest"/>
 			<output message="fedora-api:ingestObjectResponse"/>
 		</operation>
+		<operation name="describeUser">
+            <documentation>Gets key information about the named user.</documentation>
+			<input message="fedora-api:describeUserRequest"/>
+			<output message="fedora-api:describeUserResponse"/>
+		</operation>
 		<operation name="modifyObject">
 			<documentation>Changes the state and/or label of the object.</documentation>
 			<input message="fedora-api:modifyObjectRequest"/>
@@ -621,6 +638,15 @@
 -->
 		<operation name="ingestObject">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#ingestObject"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="describeUser">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#describeUser"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>

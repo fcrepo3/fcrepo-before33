@@ -474,6 +474,15 @@
 			<xsd:element name="sampleOAIURL" type="string"/>
 		</xsd:sequence>
 	</xsd:complexType>
+    <xsd:complexType name="UserInfo">
+        <xsd:annotation>
+            <xsd:documentation>Key information about a user</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="id" type="string"/>
+            <xsd:element name="administrator" type="boolean"/>
+        </xsd:sequence>
+    </xsd:complexType>
 	<xsd:complexType name="Property">
 		<xsd:annotation>
 			<xsd:documentation>a name-value pair.</xsd:documentation>

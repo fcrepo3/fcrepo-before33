@@ -3,6 +3,7 @@ package fedora.server.management;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
@@ -164,6 +165,17 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             logStackTrace(e);
             throw AxisUtility.getFault(e);
         }
+    }
+
+    public fedora.server.types.gen.UserInfo describeUser(String id)
+            throws RemoteException {
+        if (id==null || !id.equals("fedoraAdmin")) {
+            throw AxisUtility.getFault(new GeneralException("Unrecognized user: " + id));
+        }
+        fedora.server.types.gen.UserInfo inf=new fedora.server.types.gen.UserInfo();
+        inf.setId(id);
+        inf.setAdministrator(true);
+        return inf;
     }
 
 

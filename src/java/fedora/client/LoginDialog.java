@@ -39,6 +39,7 @@ import fedora.client.APIAStubFactory;
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.RepositoryInfo;
+import fedora.server.types.gen.UserInfo;
 
 /**
  * Launch a dialog for logging into a Fedora repository.
@@ -260,12 +261,12 @@ public class LoginDialog
                         + info.getRepositoryVersion() + ", but this"
                         + " client only works with version 1.1.1");
             }
-            // do a bogus API-M call, and if it doesn't come back
+            // do a simple API-M call, and if it doesn't come back
             // unauthorized, assume all is ok.
             try {
-                Administrator.APIM.getDatastream(null, null, null);
+                UserInfo inf=Administrator.APIM.describeUser(user);
             } catch (Exception e) {
-                if (e.getMessage().indexOf("Unauthorized")!=-1) {
+                if (e.getMessage().indexOf("Unauthorized")!=-1 || e.getMessage().indexOf("Unknown")!=-1) {
                     throw new IOException("Bad username or password.");
                 }
             }
