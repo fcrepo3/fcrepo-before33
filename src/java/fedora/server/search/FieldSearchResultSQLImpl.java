@@ -669,6 +669,7 @@ public class FieldSearchResultSQLImpl
      * @return whether it's a dublin core field
      */
     private static final boolean isDCProp(String in) {//2004.05.18 wdn5e wasn't static final
+        if (in.equals("mDate") || in.equals("dcmDate")) return false;
         for (int i=0; i<FieldSearchSQLImpl.DB_COLUMN_NAMES.length; i++) {
             String n=FieldSearchSQLImpl.DB_COLUMN_NAMES[i];       
 			if ( (n.startsWith("dc"))            
