@@ -169,7 +169,7 @@ public class FedoraAccessServlet extends HttpServlet
    * @param basicAuthString base64-encoder user:pass string.
    * @return the user id.
    */
-  private String getAuthenticatedUser(String basicAuthString) {
+  private static String getAuthenticatedUser(String basicAuthString) {
     String authUser=null;
 	if (basicAuthString!=null) {
 		String userAndPass=new String(StreamUtility.decodeBase64(basicAuthString.substring(6).trim()));
@@ -192,9 +192,38 @@ public class FedoraAccessServlet extends HttpServlet
    * @param user the possible password.
    * @return true if the password is correct, false otherwise.
    */
-  private boolean isUserPassword(String user, String pass) {
+  private static boolean isUserPassword(String user, String pass) {
     // currently only recognizes fedoraAdmin.
     return (user.equals("fedoraAdmin") && pass.equals(s_server.getParameter("adminPassword")));
+  }
+
+  /*
+   * Gets a Context appropriate for the request, and whether it is ok
+   * to use the dissemination cache or not.
+   */
+  private static Context getContext(HttpServletRequest request, 
+                                    boolean useCachedObject) {
+    HashMap h=new HashMap();
+    h.put("application", "apia");
+    h.put("useCachedObject", "" + useCachedObject);
+	String authenticatedUser=getAuthenticatedUser(request.getHeader("Authorization"));
+	if (authenticatedUser!=null) {
+        h.put("userId", authenticatedUser);
+		// add permissions to context, based on userId.
+		// FIXME:
+		// For now, fedoraAdmin has all important permissions.  How to do this
+		// eventually is to-be-decided, but for now it's hardcoded.
+		if (authenticatedUser.equals("fedoraAdmin")) {
+    		h.put("canUseInactiveDatastream", "true");
+    		h.put("canUseDeletedDatastream", "true");
+                h.put("canUseDeletedObject", "true");
+                h.put("canUseInactiveObject", "true");
+		}
+	} else {
+	    h.put("userId", "guest");
+	}
+    h.put("host", request.getRemoteAddr());
+    return new ReadOnlyContext(h);
   }
 
   /**
@@ -223,28 +252,6 @@ public class FedoraAccessServlet extends HttpServlet
     boolean isGetDisseminationRequest = false;
     boolean isGetDatastreamDisseminationRequest = false;
     boolean xml = false;
-
-    HashMap h=new HashMap();
-    h.put("application", "apia");
-    h.put("useCachedObject", "true");
-	String authenticatedUser=getAuthenticatedUser(request.getHeader("Authorization"));
-	if (authenticatedUser!=null) {
-        h.put("userId", authenticatedUser);
-		// add permissions to context, based on userId.
-		// FIXME:
-		// For now, fedoraAdmin has all important permissions.  How to do this
-		// eventually is to-be-decided, but for now it's hardcoded.
-		if (authenticatedUser.equals("fedoraAdmin")) {
-    		h.put("canUseInactiveDatastream", "true");
-    		h.put("canUseDeletedDatastream", "true");
-                h.put("canUseDeletedObject", "true");
-                h.put("canUseInactiveObject", "true");
-		}
-	} else {
-	    h.put("userId", "guest");
-	}
-    h.put("host", request.getRemoteAddr());
-    ReadOnlyContext context = new ReadOnlyContext(h);
 
     requestURI = request.getRequestURL().toString() + "?"
         + request.getQueryString();
@@ -424,7 +431,7 @@ public class FedoraAccessServlet extends HttpServlet
         logger.logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
             + "Encountered: "+ requestURI);
         logger.logFinest("PID: " + PID + " asOfDate: " + versDateTime);
-        getObjectProfile(context, PID, asOfDateTime, xml, request, response);
+        getObjectProfile(getContext(request, asOfDateTime == null), PID, asOfDateTime, xml, request, response);
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
         logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
@@ -450,7 +457,7 @@ public class FedoraAccessServlet extends HttpServlet
             + "Encountered");
         logger.logFinest("PID: " + PID + " bDefPID: " + bDefPID
             + " methodName: " + methodName + " asOfDate: " + versDateTime);
-        getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime, response, request);
+        getDissemination(getContext(request, asOfDateTime == null), PID, bDefPID, methodName, userParms, asOfDateTime, response, request);
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
         logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
@@ -458,16 +465,11 @@ public class FedoraAccessServlet extends HttpServlet
       }
       else if (isGetDatastreamDisseminationRequest)
       {
-          HashMap hm=new HashMap();
-          hm.put("application", "apia");
-          hm.put("useCachedObject", "false");
-          hm.put("userId", "fedoraAdmin");
-          ReadOnlyContext unCachedContext = new ReadOnlyContext(hm);
           logger.logFinest("[FedoraAccessServlet] GetDatastreamDissemination Syntax "
               + "Encountered: "+ requestURI);
           logger.logFinest("PID: " + PID + " dsID: " + dsID
               + " asOfDate: " + versDateTime);
-          getDatastreamDissemination(unCachedContext, PID, dsID, asOfDateTime, response, request);
+          getDatastreamDissemination(getContext(request, false), PID, dsID, asOfDateTime, response, request);
           long stopTime = new Date().getTime();
           long interval = stopTime - servletStartTime;
           logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
