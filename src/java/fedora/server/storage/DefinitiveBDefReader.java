@@ -10,6 +10,7 @@ package fedora.server.storage;
  */
 
 import fedora.server.storage.types.*;
+import fedora.server.errors.*;
 import java.util.Date;
 import java.util.Vector;
 import java.util.StringTokenizer;
@@ -35,25 +36,36 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
 
     debug = (args[0].equalsIgnoreCase("true")) ? true : false;
 
-    // FOR TESTING...
-    DefinitiveBDefReader doReader = new DefinitiveBDefReader(args[1]);
-    doReader.GetObjectPID();
-    doReader.GetObjectLabel();
-    doReader.ListDatastreamIDs("A");
-    doReader.ListDisseminatorIDs("A");
-    doReader.GetDatastreams(null);
-    Datastream[] dsArray = doReader.GetDatastreams(null);
-    doReader.GetDatastream(dsArray[0].DatastreamID, null);
-    doReader.GetDisseminators(null);
-    doReader.GetBehaviorDefs(null);
-    doReader.GetBehaviorMethods(null);
-    doReader.GetBehaviorMethodsWSDL(null);
-    Disseminator d = doReader.GetDisseminator("DISS1", null);
-    doReader.GetBMechMethods(d.bDefID, null);
-    doReader.GetDSBindingMaps(null);
+    try
+    {
+      // FOR TESTING...
+      DefinitiveBDefReader doReader = new DefinitiveBDefReader(args[1]);
+      doReader.GetObjectPID();
+      doReader.GetObjectLabel();
+      doReader.ListDatastreamIDs("A");
+      doReader.ListDisseminatorIDs("A");
+      doReader.GetDatastreams(null);
+      Datastream[] dsArray = doReader.GetDatastreams(null);
+      doReader.GetDatastream(dsArray[0].DatastreamID, null);
+      doReader.GetDisseminators(null);
+      doReader.GetBehaviorDefs(null);
+      doReader.GetBehaviorMethods(null);
+      doReader.GetBehaviorMethodsWSDL(null);
+      Disseminator d = doReader.GetDisseminator("DISS1", null);
+      doReader.GetBMechMethods(d.bDefID, null);
+      doReader.GetDSBindingMaps(null);
+    }
+    catch (ServerException e)
+    {
+      System.err.println("FEDORA EXCEPTION:)" + e.getMessage());
+    }
+    catch (Exception e)
+    {
+      System.err.println("NON-FEDORA EXCEPTION:)" + e.toString());
+    }
   }
 
-  public DefinitiveBDefReader(String objectPID)
+  public DefinitiveBDefReader(String objectPID) throws ServerException
   {
     super(objectPID);
   }
