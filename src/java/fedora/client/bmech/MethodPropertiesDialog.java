@@ -591,7 +591,7 @@ public class MethodPropertiesDialog extends JDialog
 
     private boolean validMethodProperties(MethodProperties mp)
     {
-      System.out.println("MethodPropertiesDialog: validating method properties...");
+      //System.out.println("MethodPropertiesDialog: validating method properties...");
       return (validBinding(mp)
               && validMethodParms(mp.methodParms)
               && validReturnTypes(mp.returnMIMETypes))
@@ -714,13 +714,13 @@ public class MethodPropertiesDialog extends JDialog
         {
           mp.methodFullURL = URL_textDS.getText();
           mp.methodRelativeURL = mp.methodFullURL;
-          mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
+          mp.protocolType = MethodProperties.HTTP_MESSAGE_PROTOCOL;
         }
         else if (rb_httpFull.isSelected())
         {
           mp.methodFullURL = URL_textFull.getText();
           mp.methodRelativeURL = " ";
-          mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
+          mp.protocolType = MethodProperties.HTTP_MESSAGE_PROTOCOL;
         }
         else if (rb_httpRelative.isSelected())
         {
@@ -732,7 +732,7 @@ public class MethodPropertiesDialog extends JDialog
             mp.methodRelativeURL = mp.methodRelativeURL.substring(1);
           }
           mp.methodFullURL = baseURL + mp.methodRelativeURL;
-          mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
+          mp.protocolType = MethodProperties.HTTP_MESSAGE_PROTOCOL;
         }
         //else
         //{
