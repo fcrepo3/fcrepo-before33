@@ -9,6 +9,7 @@ import javax.swing.*;
 import fedora.client.Administrator;
 import fedora.client.APIAStubFactory;
 import fedora.client.APIMStubFactory;
+import fedora.client.FTypeDialog;
 import fedora.client.export.AutoExporter;
 import fedora.client.search.AutoFinder;
 
