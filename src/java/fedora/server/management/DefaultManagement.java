@@ -21,6 +21,7 @@ import fedora.server.security.*;
 import fedora.server.storage.*;
 import fedora.server.storage.types.*;
 import fedora.server.utilities.*;
+import fedora.server.validation.RelsExtValidator;
 
 /**
  * Implements API-M without regard to the transport/messaging protocol.
@@ -342,6 +343,11 @@ public class DefaultManagement
                         in=m_contentManager.getExternalContent(dsLocation).getStream();
                     }
                     ((DatastreamXMLMetadata) ds).xmlContent = getEmbeddableXML(in);
+                    // If it's a RELS-EXT datastream, do validation
+                    if (dsID.equals("RELS-EXT")){
+                    	validateRelsExt(pid, new ByteArrayInputStream(
+                    		((DatastreamXMLMetadata) ds).xmlContent));
+                    }
                 } catch (Exception e) {
                     String extraInfo;
                     if (e.getMessage()==null)
@@ -714,6 +720,11 @@ public class DefaultManagement
             } else {
                 // If it's not null, use it
                 newds.xmlContent = getEmbeddableXML(dsContent);
+				// If it's a RELS-EXT datastream, do validation
+				if (orig.DatastreamID.equals("RELS-EXT")){
+					validateRelsExt(pid, new ByteArrayInputStream(
+						((DatastreamXMLMetadata) newds).xmlContent));
+				}
             }
             newds.DatastreamID=orig.DatastreamID;
             // make sure it has a different id
@@ -1532,5 +1543,23 @@ public class DefaultManagement
             }
             throw new GeneralException(buf.toString());
         }
+    }
+    
+    private void validateRelsExt(String pid, InputStream relsext)
+		throws ServerException {			
+		// RELATIONSHIP METADATA VALIDATION:
+		try {
+			RelsExtValidator deser=new RelsExtValidator("UTF-8", false);
+			if (relsext!=null) {
+				logFinest("API-M: Validating RELS-EXT datastream...");
+				deser.deserialize(relsext, "info:fedora/" + pid);
+				if (fedora.server.Debug.DEBUG) System.out.println("Done validating RELS-EXT.");
+				logFinest("API-M: RELS-EXT datastream passed validation.");
+			}
+		} catch (Exception e) {
+			String message = e.getMessage();
+			if (message == null) message = e.getClass().getName();
+			throw new GeneralException("RELS-EXT validation failed: " + message);
+		}
     }
 }
