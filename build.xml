@@ -195,6 +195,39 @@
     </exec>
   </target>
 
+  <target name="server"
+          depends="serverclasses"
+          description="Server distribution">
+
+    <mkdir dir="dist"/>
+    <mkdir dir="dist/server"/>
+    <copy todir="dist/server">
+      <fileset dir="inc/server"/>
+    </copy>
+    <copy file="src/web-app/web.xml" todir="dist/server/tomcat41/webapps/fedora/WEB-INF"/>
+    <copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
+      <fileset dir="temp/server/classes"/>
+    </copy>
+    <echo message="Finished building server distribution in dist/server"/>
+  </target>
+
+  <target name="serverclasses"
+          depends="serverprep"
+          description="Compile server java code into temp/server/classes">
+    <mkdir dir="temp/server/classes"/>
+    <javac srcdir="${javaSourceDir}"
+           destdir="temp/server/classes"
+           classpath="inc/server/tomcat41/common/lib/servlet.jar"
+           includes="fedora/server/**"
+           optimize="${javaClassOptimize}"
+           debug="${javaClassDebug}"/>
+  </target>
+
+  <target name="serverprep"
+          depends="prep"
+          description="Prepare a temporary build area for server-related targets">
+    <mkdir dir="temp/server"/>
+  </target>
 
   <target name="clean"
           description="Clean up all targets and temp files">
@@ -206,6 +239,9 @@
 
 <!--
   $Log$
+  Revision 1.8  2002/07/16 14:25:40  cwilper
+  added target for server
+
   Revision 1.7  2002/07/15 19:38:53  cwilper
   First import of wsdl-documenting stuff.  This import includes an ant task
   for doing wsdl documentation, the stylesheet, and a couple fixes to the
