@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DSInputSpec label="EAD Finding Aid Service Datastream Input Specification" bDefPID="demo:15" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="C:\fedora\mellon\src\xsd\fedoraBindingSpec.xsd">
+	<DSInput wsdlMsgPartName="XML_SOURCE" DSMin="1" DSMax="1" DSOrdinality="false">
+		<DSInputLabel>XML source file</DSInputLabel>
+		<DSMIME>text/xml</DSMIME>
+		<DSInputInstruction>EAD Finding Aid source XML file</DSInputInstruction>
+	</DSInput>
+	<!-- Fedora currently requires that every behavior method bind to at least one datastream. -->
+	<!-- However, there are cases where a behavior method may not require a datastream to  -->
+	<!-- perform its function; e.g., a method to provide the current date/time. The following -->
+	<!-- DSInput for NULLBIND is an example of how to handle mechanisms that do not bind -->
+	<!-- to any datastreams in the object. Rather than bind to an arbitrary datastream, a special -->
+	<!-- is created using the name NULLBIND that binds to the Dublin Core datastream in the -->
+	<!-- data object. Any methods in the mechanism that do not require a datastream can use -->
+	<!-- the special NULLBIND binding to satisfy the current Fedora  binding requirement. -->
+	<DSInput wsdlMsgPartName="NULLBIND" DSMin="1" DSMax="1" DSOrdinality="false">
+		<DSInputLabel>Virtual Datastream</DSInputLabel>
+		<DSMIME>text/xml</DSMIME>
+		<DSInputInstruction>Virtual datastream</DSInputInstruction>
+	</DSInput>
+</DSInputSpec>
