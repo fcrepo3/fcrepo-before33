@@ -19,10 +19,10 @@
 		<load-on-startup>100</load-on-startup>
 	</servlet>
 	<servlet>
-		<servlet-name>ShutdownServlet</servlet-name>
-		<display-name>Fedora Shutdown Servlet</display-name>
+		<servlet-name>ControlServlet</servlet-name>
+		<display-name>Fedora Control Servlet</display-name>
 		<servlet-class>
-        fedora.server.management.ShutdownServlet
+        fedora.server.ServerController
     </servlet-class>
 	</servlet>
 	<!-- Testing servlet to experiment with soap access via a java servlet -->
@@ -74,8 +74,8 @@
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>ShutdownServlet</servlet-name>
-		<url-pattern>/management/shutdown</url-pattern>
+		<servlet-name>ControlServlet</servlet-name>
+		<url-pattern>/management/control</url-pattern>
 	</servlet-mapping>
 	<!-- Testing soap access via a java servlet -->
 	<servlet-mapping>
@@ -113,7 +113,7 @@
         <security-constraint>
             <web-resource-collection>
                 <web-resource-name>Fedora Management Interface</web-resource-name>
-                <url-pattern>/management/*</url-pattern>
+                <url-pattern>/management/s*</url-pattern>
             </web-resource-collection>
             <auth-constraint>
                 <role-name>administrator</role-name>
