@@ -202,29 +202,60 @@
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
 			<url-pattern>/management/soap</url-pattern>
+			<http-method>POST</http-method><!-- xxxxxxxxxxxxxxxxx -->
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>administrator</role-name>
+			<role-name>*</role-name><!-- xxxxxxxxxxxxxxxxx administrator -->
 		</auth-constraint>
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
 			<url-pattern>/management/upload</url-pattern>
+			<http-method>POST</http-method><!-- xxxxxxxxxxxxxxxxx -->
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>administrator</role-name>
+			<role-name>*</role-name><!-- xxxxxxxxxxxxxxxxx administrator -->
 		</auth-constraint>
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
 			<url-pattern>/mgmt/getNextPID</url-pattern>
+			<http-method>POST</http-method><!-- xxxxxxxxxxxxxxxxx -->
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>administrator</role-name>
+			<role-name>*</role-name><!-- xxxxxxxxxxxxxxxxx administrator -->
 		</auth-constraint>
 	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Management Interface</web-resource-name>
+			<url-pattern>/report</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>	
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Management Interface</web-resource-name>
+			<url-pattern>/get/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>		
+	<security-constraint><!-- added for testing -->
+		<web-resource-collection>
+			<web-resource-name>Fedora Management Interface</web-resource-name><!-- should be Access ???? -->
+			<url-pattern>/access/soap</url-pattern>
+			<http-method>POST</http-method><!-- xxxxxxxxxxxxxxxxx -->
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>			
 	<login-config>
 		<auth-method>BASIC</auth-method>
 		<realm-name>Fedora Management Interface</realm-name>
