@@ -36,7 +36,7 @@ public abstract class APIAStubFactory {
 
 public static FedoraAPIA getStub(String host, int port, String username, String password)
         throws MalformedURLException, ServiceException {
-    FedoraAPIAServiceLocator locator=new FedoraAPIAServiceLocator();  // user/pass n/a on api-a (yet?) username, password);
+    FedoraAPIAServiceLocator locator=new FedoraAPIAServiceLocator(username, password);  
     URL ourl=new URL(locator.getFedoraAPIAPortSOAPHTTPAddress());
     StringBuffer nurl=new StringBuffer();
     nurl.append("http://");
