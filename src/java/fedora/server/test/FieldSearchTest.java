@@ -65,8 +65,8 @@ public class FieldSearchTest
             m_cPool=new ConnectionPool( "com.mckoi.JDBCDriver", 
                     "jdbc:mckoi://localhost/", "fedoraAdmin", "fedoraAdmin", 5, 
                     10, true);
-            m_fieldSearch=new FieldSearchSQLImpl(m_cPool, null);
-            m_fieldSearch.setLogLevel(0);
+            m_fieldSearch=new FieldSearchSQLImpl(m_cPool, m_repoReader, null);
+            m_fieldSearch.setLogLevel(1);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();

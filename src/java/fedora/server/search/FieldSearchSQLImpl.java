@@ -11,9 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 
 import fedora.server.Logging;
+import fedora.server.ReadOnlyContext;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.QueryParseException;
@@ -22,6 +24,7 @@ import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.UnrecognizedFieldException;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
+import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.utilities.SQLUtility;
 
@@ -36,17 +39,27 @@ public class FieldSearchSQLImpl
         implements FieldSearch {
 
     private ConnectionPool m_cPool;
+    private RepositoryReader m_repoReader;
     private static long s_maxResults=200;
     private static String[] s_dbColumnNames=new String[] {"pid", "label", 
             "foType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate",
             "dcTitle", "dcCreator", "dcSubject", "dcDescription", "dcPublisher",
             "dcContributor", "dcDate", "dcType", "dcFormat", "dcIdentifier",
             "dcSource", "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
+            
+    private static ReadOnlyContext s_nonCachedContext;
+    static {
+        HashMap h=new HashMap();
+        h.put("useCachedObject", "false");
+        s_nonCachedContext=new ReadOnlyContext(h);
+    }
         
-    public FieldSearchSQLImpl(ConnectionPool cPool, Logging logTarget) {
+    public FieldSearchSQLImpl(ConnectionPool cPool, RepositoryReader repoReader, 
+            Logging logTarget) {
         super(logTarget);
         logFinest("Entering constructor");
         m_cPool=cPool;
+        m_repoReader=repoReader;
         logFinest("Exiting constructor");
     }
     
@@ -186,7 +199,7 @@ public class FieldSearchSQLImpl
             // TODO:formulate the rest...
             logFinest("Doing search using whereClause: '" + terms + "'");
             conn=m_cPool.getConnection();
-            List ret=getObjectFields(conn, whereClause, resultFields);
+            List ret=getObjectFields(conn, "dcFields" + whereClause, resultFields);
             return ret;
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting word search: \"" 
@@ -246,26 +259,40 @@ public class FieldSearchSQLImpl
         out.append(" ");
         return out.toString();
     }
-   
-    // the resultSet simply contains the pid field... return 
-    private List getObjectFields(Connection conn, String whereClause, 
+ 
+    // tablePart should contain the name of at least one table, if multiple,
+    // separate by space-comma... like "doFields, dcDates"
+    private List getObjectFields(Connection conn, String query,
             String[] resultFields) 
-            throws SQLException, UnrecognizedFieldException {
-        ArrayList fields=new ArrayList();
-        //TODO: do query
-        ResultSet results=null;
-        while (results.next()) {
-            String pid=results.getString("pid");
-            fields.add(getObjectFields(pid, resultFields));
+            throws SQLException, UnrecognizedFieldException, ServerException {
+        Statement st=null;
+        try {
+            ArrayList fields=new ArrayList();
+            st=conn.createStatement();
+            ResultSet results=st.executeQuery(query);
+            while (results.next()) {
+                String pid=results.getString("pid");
+                fields.add(getObjectFields(pid, resultFields));
+            }
+            return fields;
+        } finally {
+            if (st!=null) {
+                try {
+                    st.close();
+                } catch (Exception e) { }
+            }
         }
-        return fields;
     }
     
     private ObjectFields getObjectFields(String pid, String[] resultFields) 
-            throws UnrecognizedFieldException {
+            throws UnrecognizedFieldException, ServerException {
         ObjectFields f=new ObjectFields(resultFields);
-        //TODO: sax parse datastream
-        // now add values for resultFields 
+        DOReader r=m_repoReader.getReader(s_nonCachedContext, pid);
+        
+        //TODO: sax parse most recent DC datastream
+        
+        //TODO: add non-dc values from doReader for the others in resultFields[]
+        
         return f;
     }
     
