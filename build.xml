@@ -374,7 +374,7 @@
 			<arg path="dist/userdocs/client/browser/apimlite/index.html"/>
 			<arg path="src/dbx/userdocs/apimlite.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>		
+		</exec>
 		<echo message="Translating apimadmingui.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -814,7 +814,7 @@
 		<copy file="src/xsd/mets-fedora-ext.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/xlink.xsd" todir="dist/server/xsd"/>
 		<!-- ObjectMethods Schema used by API-A-LITE: local copy packaged with the repository distribution -->
-		<copy file="src/xsd/objectmethods.xsd" todir="dist/server/xsd"/>
+		<copy file="src/xsd/objectMethods.xsd" todir="dist/server/xsd"/>
 		<!-- Schematron:  Fedora rules schema and schematron preprocessor -->
 		<mkdir dir="dist/server/schematron"/>
 		<copy file="src/xml/schematron/fedoraRulesExt.xml" todir="dist/server/schematron"/>
@@ -864,7 +864,7 @@
 		</copy>
 		<mkdir dir="dist/server/access"/>
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
-		<copy file="src/xsl/access/objectmethods.xslt" todir="dist/server/access"/>
+		<copy file="src/xsl/access/objectMethods.xslt" todir="dist/server/access"/>
 		<!--ObjectProfile xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/access"/>
 		<!--ItemIndex xsl stylesheet used by Default Disseminator (DefaultBehaviorImpl) -->
@@ -912,7 +912,7 @@
 		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
 		<copy file="temp/soapclient/lib/fedoragentypes.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
 		<copy file="temp/soapclient/lib/fedorautilities.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
-		<copy file="src/xsl/soapclient/objectmethods.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
+		<copy file="src/xsl/soapclient/objectMethods.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/viewObjectProfile.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/viewRepositoryInfo.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/behaviordefs.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
