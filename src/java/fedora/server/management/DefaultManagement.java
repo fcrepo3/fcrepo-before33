@@ -269,11 +269,6 @@ public class DefaultManagement
 /*
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
 
-    public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) { return null; }
-
-    public String addDatastreamManagedContent(Context context, String pid, String dsLabel, String MimeType, InputStream dsContent) { return null; }
-
-    public String addDatastreamXMLMetadata(Context context, String pid, String dsLabel, String MdType, InputStream dsInlineMetadata) { return null; }
 */
 
     // initial state is always I
@@ -872,12 +867,6 @@ public class DefaultManagement
         }
     }
 
-/*
-    public String addDisseminator(Context context, String pid, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) { return null; }
-
-    public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) { }
-
-*/
     public Calendar[] purgeDisseminator(Context context, String pid, 
             String disseminatorID, Calendar endDT) 
             throws ServerException { 
@@ -971,16 +960,12 @@ public class DefaultManagement
 
         public int compare(Object o1, Object o2) {
             long ms1=((Disseminator) o1).dissCreateDT.getTime();
-            long ms2=((Disseminator) o1).dissCreateDT.getTime();
+            long ms2=((Disseminator) o2).dissCreateDT.getTime();
             if (ms1<ms2) return -1;
             if (ms1>ms2) return 1;
             return 0;
         }
     }
-
-/*
-    public ComponentInfo[] getDisseminatorHistory(Context context, String pid, String disseminatorId) { return null; }
- */
 
     public String putTempStream(InputStream in)
     	    throws StreamWriteException {
