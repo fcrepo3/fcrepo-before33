@@ -318,8 +318,16 @@ public class FOXMLDODeserializer
 				// set datastream URI for integrity purposes
 				m_dsURI = m_obj.getURI() + "/" + m_dsId;
 				m_dsState=grab(a, F, "STATE");
-				m_dsAltIds=(grab(a, F, "ALT_IDS")).split(" ");
+                String altIDsString = grab(a, F, "ALT_IDS");
+                if (altIDsString.length() == 0) {
+                    m_dsAltIds = new String[0];
+                } else {
+                    m_dsAltIds = altIDsString.split(" ");
+                }
 				m_dsFormatURI=grab(a, F, "FORMAT_URI");
+                if (m_dsFormatURI.length() == 0) {
+                    m_dsFormatURI = null;
+                }
 				m_dsMimeType=grab(a, F, "MIMETYPE");
 				m_dsControlGrp=grab(a, F, "CONTROL_GROUP");
 				String versionable =grab(a, F, "VERSIONABLE");
