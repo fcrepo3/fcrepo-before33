@@ -5,6 +5,8 @@ import javax.swing.JInternalFrame;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JComponent;
@@ -16,9 +18,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
-//import java.util.HashMap;
 import java.util.Vector;
-
 import fedora.client.bmech.data.DCElement;
 
 /**
@@ -46,37 +46,107 @@ import fedora.client.bmech.data.DCElement;
  * @author payette@cs.cornell.edu
  * @version 1.0
  */
-public class GeneralPane
-        extends JPanel {
 
+public class GeneralPane extends JPanel
+{
+    private JInternalFrame parent;
     private JTextField bDefPID;
-    private JTextField bMechLabel;
-    private JTextField bMechName;
+    protected JTextField bObjectPID;
+    private JRadioButton rb_sysPID;
+    private JRadioButton rb_testPID;
+    private final ButtonGroup rb_buttonGroup = new ButtonGroup();
+    protected String rb_chosen;
+    private JTextField bObjectLabel;
+    private JTextField bObjectName;
     private JTable dcTable;
     protected DefaultTableModel model;
 
-    public GeneralPane()
+    public GeneralPane(BMechBuilder parent)
     {
-        //setSize(600, 400);
+        this.parent = parent;
         setLayout(new BorderLayout());
+        JPanel contractPanel = new JPanel();
+        contractPanel.setLayout(new GridBagLayout());
+        contractPanel.setBorder(new TitledBorder("Behavior Contract"));
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.anchor = GridBagConstraints.WEST;
+        gbc2.gridy = 0;
+        gbc2.gridx = 0;
+        contractPanel.add(
+          new JLabel("Behavior Definition PID:                         "),
+          gbc2);
+        gbc2.gridx = 1;
+        contractPanel.add(bDefPID = new JTextField(20), gbc2);
+        gbc2.gridx = 2;
+        contractPanel.add(new JLabel("                             "), gbc2);
+        gbc2.gridx = 3;
+        contractPanel.add(new JLabel("                             "), gbc2);
 
-        // Text Fields Panel
-        JPanel textPanel = new JPanel();
-        textPanel.setBorder(new TitledBorder("Service Contract"));
-        textPanel.setLayout(new GridLayout(6,2));
-        textPanel.add(new JLabel(""));
-        textPanel.add(new JLabel(""));
-        textPanel.add(new JLabel("Behavior Mechanism PID: "));
-        textPanel.add(new JLabel("system assigned"));
-        textPanel.add(new JLabel("Behavior Definition Contract (bDefPID): "));
-        textPanel.add(bDefPID = new JTextField());
-        textPanel.add(new JLabel("Behavior Mechanism Label: "));
-        textPanel.add(bMechLabel = new JTextField());
-        textPanel.add(new JLabel("Behavior Mechanism Nickname (1 word): "));
-        textPanel.add(bMechName = new JTextField());
-        textPanel.add(new JLabel(""));
-        textPanel.add(new JLabel(""));
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new GridLayout(2,1));
+        topPanel.add(setDescriptionPanel());
+        topPanel.add(contractPanel);
 
+        add(topPanel, BorderLayout.NORTH);
+        add(setDCPanel(), BorderLayout.CENTER);
+        setVisible(true);
+    }
+
+    public GeneralPane(BDefBuilder parent)
+    {
+        this.parent = parent;
+        setLayout(new BorderLayout());
+        add(setDescriptionPanel(), BorderLayout.NORTH);
+        add(setDCPanel(), BorderLayout.CENTER);
+        setVisible(true);
+    }
+
+    private JPanel setDescriptionPanel()
+    {
+        ActionListener rb_listen = new PIDActionListener();
+        rb_sysPID = new JRadioButton("system assigned", true);
+        rb_sysPID.setActionCommand("sysPID");
+        rb_sysPID.addActionListener(rb_listen);
+        rb_chosen = "sysPID";
+        rb_testPID = new JRadioButton("test PID", false);
+        rb_testPID.setActionCommand("testPID");
+        rb_testPID.addActionListener(rb_listen);
+        //rb_buttonGroup = new ButtonGroup();
+        rb_buttonGroup.add(rb_sysPID);
+        rb_buttonGroup.add(rb_testPID);
+        JPanel descriptionPanel = new JPanel();
+        descriptionPanel.setLayout(new GridBagLayout());
+        descriptionPanel.setBorder(new TitledBorder("Object Description"));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.gridy = 0;
+        gbc.gridx = 0;
+        descriptionPanel.add(new JLabel("Behavior Object PID: "), gbc);
+        gbc.gridx = 1;
+        descriptionPanel.add(rb_sysPID, gbc);
+        gbc.gridx = 2;
+        descriptionPanel.add(rb_testPID, gbc);
+        gbc.gridx = 3;
+        descriptionPanel.add(bObjectPID = new JTextField(10), gbc);
+        bObjectPID.setEnabled(false);
+        gbc.gridy = 1;
+        gbc.gridx = 0;
+        descriptionPanel.add(new JLabel("Behavior Object Label: "), gbc);
+        gbc.gridx = 1;
+        descriptionPanel.add(bObjectLabel = new JTextField(20), gbc);
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        descriptionPanel.add(new JLabel("Behavior Object Nickname (1 word): "), gbc);
+        gbc.gridx = 1;
+        descriptionPanel.add(bObjectName = new JTextField(20), gbc);
+        gbc.gridy = 3;
+        gbc.gridx = 0;
+        descriptionPanel.add(new JLabel(" "), gbc);
+        return descriptionPanel;
+    }
+
+    private JPanel setDCPanel()
+    {
         // Table Panel
         model = new DefaultTableModel();
         dcTable = new JTable(model);
@@ -134,30 +204,35 @@ public class GeneralPane
         t_buttonPanel.add(jb3);
 
         JPanel dcPanel = new JPanel(new BorderLayout());
-        dcPanel.setBorder(new TitledBorder("Dublin Core Metadata for Mechanism:"));
+        dcPanel.setBorder(new TitledBorder("Dublin Core Metadata"));
         dcPanel.add(scrollpane, BorderLayout.CENTER);
         dcPanel.add(t_buttonPanel, BorderLayout.EAST);
-
-        add(textPanel, BorderLayout.NORTH);
-        //add(scrollpane, BorderLayout.CENTER);
-        //add(t_buttonPanel, BorderLayout.EAST);
-        add(dcPanel, BorderLayout.CENTER);
-        setVisible(true);
+        return dcPanel;
     }
 
-    public String getBDefPID()
+    public String getBDefContractPID()
     {
-      return bDefPID.getText();
+      if (parent.getClass().getName().equalsIgnoreCase(
+        "fedora.client.bmech.BMechBuilder"))
+      {
+        return bDefPID.getText();
+      }
+      return null;
     }
 
-    public String getBMechLabel()
+    public String getBObjectPID()
     {
-      return bMechLabel.getText();
+      return bObjectPID.getText();
     }
 
-    public String getBMechName()
+    public String getBObjectLabel()
     {
-      return bMechName.getText();
+      return bObjectLabel.getText();
+    }
+
+    public String getBObjectName()
+    {
+      return bObjectName.getText();
     }
 
     public DCElement[] getDCElements()
@@ -166,10 +241,8 @@ public class GeneralPane
       {
         dcTable.getCellEditor().stopCellEditing();
       }
-      //HashMap elements = new HashMap();
       Vector elements = new Vector();
       int rowcount = dcTable.getModel().getRowCount();
-      System.out.println("dcTable rowcount=" + rowcount);
       for (int i=0; i<rowcount; i++)
       {
         DCElement dcElement = new DCElement();
@@ -200,5 +273,23 @@ public class GeneralPane
     private void deleteTableRow()
     {
       model.removeRow(dcTable.getSelectedRow());
+    }
+
+    // Action Listener for button group
+    class PIDActionListener implements ActionListener
+    {
+      public void actionPerformed(ActionEvent e)
+      {
+        rb_chosen = rb_buttonGroup.getSelection().getActionCommand();
+        if (rb_chosen.equalsIgnoreCase("testPID"))
+        {
+          bObjectPID.setEnabled(true);
+        }
+        else if (rb_chosen.equalsIgnoreCase("sysPID"))
+        {
+          bObjectPID.setEnabled(false);
+          bObjectPID.setText("");
+        }
+      }
     }
 }
