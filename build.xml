@@ -33,10 +33,19 @@
 		<copy todir="dist/client/bin">
 			<fileset dir="src/sh/client"/>
 		</copy>
+		<!-- begin setup for demo objects -->
 		<mkdir dir="dist/client/demo"/>
 		<copy todir="dist/client/demo">
-			<fileset dir="src/mets/test/demo"/>
+			<fileset dir="src/mets/demo"/>
 		</copy>
+		<!-- setup for demo object datastream content (put in localhost staging area) -->
+		<mkdir dir="dist/server/tomcat41/webapps/ROOT/demo"/>
+		<copy todir="dist/server/tomcat41/webapps/ROOT/demo">
+			<fileset dir="src/jpg/demo"/>
+			<fileset dir="src/xsl/demo"/>
+		</copy>
+		<copy file="src/wsdl/Fedora-API-A.wsdl" todir="dist/server/tomcat41/webapps/ROOT/demo"/>
+		<!-- end setup for demo objects -->
 		<mkdir dir="dist/client/client"/>
 		<jar jarfile="dist/client/client/client.jar" basedir="temp/client" manifest="src/mfs/client.mfs"/>
 		<mkdir dir="dist/client/client/lib"/>
@@ -57,7 +66,7 @@
 		<copy file="src/doc/batch/batch.doc" todir="dist/batch"/>
 		<copy file="src/properties/batch/default.properties" todir="dist/batch"/>
 		<copy file="src/xsl/batch/merge.xsl" todir="dist/batch"/>
-		<copy file="src/xml/batch/example.xml" todir="dist/batch"/>					
+		<copy file="src/xml/batch/example.xml" todir="dist/batch"/>
 		<mkdir dir="dist/batch/bin"/>
 		<copy file="src/bat/batch/fedora-batch.bat" todir="dist/batch/bin"/>
 		<mkdir dir="dist/batch/beta1-demo1"/>
@@ -557,6 +566,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.90  2003/03/06 00:03:30  payette
+  added dist setup for new demo objects and content
+
   Revision 1.89  2003/03/05 22:30:42  rlw
   added copy for new behaviordefs.xslt stylesheet
 
