@@ -319,7 +319,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         });
         toolsMenu.add(toolsSearch);
 
-        JMenuItem toolsAdvanced=new JMenuItem("Advanced",KeyEvent.VK_A);
+        JMenu toolsAdvanced=new JMenu("Advanced");
 
 
         JMenuItem toolsManagement=new JMenuItem("Management Console",KeyEvent.VK_M);
@@ -340,7 +340,8 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         toolsMenu.add(toolsAdvanced);
 
 	//wdn >
-        JMenuItem toolsBatchSubMenu=new JMenuItem("Batch", KeyEvent.VK_B);
+        //JMenu toolsBatchSubMenu=new JMenu("Batch", KeyEvent.VK_B);
+        JMenu toolsBatchSubMenu=new JMenu("Batch");
 
         JMenuItem toolsBatchBuild=new JMenuItem("Build Batch"/*, KeyEvent.VK_A*/);
         toolsBatchBuild.addActionListener(new ActionListener() {
