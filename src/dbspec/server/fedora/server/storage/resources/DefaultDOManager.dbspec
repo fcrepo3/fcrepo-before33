@@ -94,7 +94,7 @@
 		<column name="methodDbID" type="int(11)" notNull="true" default="0" index="methodDbID"/>
 		<column name="bDefDbID" type="int(11)" notNull="true" default="0" index="bDefDbID"/>
 		<column name="parmName" type="varchar(32)" notNull="true" default="" index="parmName"/>
-		<column name="parmDefaultValue" type="varchar(32)" notNull="true" default="" index="parmDefaultValue"/>
+		<column name="parmDefaultValue" type="varchar(255)" notNull="true" default="" index="parmDefaultValue"/>
 		<column name="parmDomainValues" type="varchar(255)" notNull="true" default="" index="parmDomainValues"/>
 		<column name="parmRequiredFlag" type="varchar(5)" notNull="true" default="false" index="parmRequiredFlag"/>
 		<column name="parmLabel" type="varchar(255)" notNull="true" default="" index="parmLabel"/>
@@ -289,7 +289,7 @@
 		<column name="methodDbID" type="int(11)" notNull="true" default="0" index="methodDbID"/>
 		<column name="bMechDbID" type="int(11)" notNull="true" default="0" index="bMechDbID"/>
 		<column name="defParmName" type="varchar(32)" notNull="true" default="" index="defParmName"/>
-		<column name="defParmDefaultValue" type="varchar(32)" notNull="true" default="" index="defParmDefaultValue"/>
+		<column name="defParmDefaultValue" type="varchar(255)" notNull="true" default="" index="defParmDefaultValue"/>
 		<column name="defParmDomainValues" type="varchar(255)" notNull="true" default="" index="defParmDomainValues"/>
 		<column name="defParmRequiredFlag" type="varchar(5)" notNull="true" default="false" index="defParmRequiredFlag"/>
 		<column name="defParmLabel" type="varchar(255)" notNull="true" default="" index="defParmLabel"/>
