@@ -555,15 +555,17 @@ public class FedoraAccessServlet extends HttpServlet
     {
 
         // testing to see what's in request header that might be of interest
-        for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
-            String name = (String)e.nextElement();
-            Enumeration headerValues =  request.getHeaders(name);
-            StringBuffer sb = new StringBuffer();
-            while (headerValues.hasMoreElements()) {
-                sb.append((String) headerValues.nextElement());
+        if (fedora.server.Debug.DEBUG) {
+            for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
+                String name = (String)e.nextElement();
+                Enumeration headerValues =  request.getHeaders(name);
+                StringBuffer sb = new StringBuffer();
+                while (headerValues.hasMoreElements()) {
+                    sb.append((String) headerValues.nextElement());
+                }
+                String value = sb.toString();
+                System.out.println("FEDORASERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
             }
-            String value = sb.toString();
-            if (fedora.server.Debug.DEBUG) System.out.println("FEDORASERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
         }
 
         // Dissemination was successful;
@@ -628,15 +630,17 @@ public class FedoraAccessServlet extends HttpServlet
     {
 
         // testing to see what's in request header that might be of interest
-        for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
-            String name = (String)e.nextElement();
-            Enumeration headerValues =  request.getHeaders(name);
-            StringBuffer sb = new StringBuffer();
-            while (headerValues.hasMoreElements()) {
-                sb.append((String) headerValues.nextElement());
+        if (fedora.server.Debug.DEBUG) { 
+            for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
+                String name = (String)e.nextElement();
+                Enumeration headerValues =  request.getHeaders(name);
+                StringBuffer sb = new StringBuffer();
+                while (headerValues.hasMoreElements()) {
+                    sb.append((String) headerValues.nextElement());
+                }
+                String value = sb.toString();
+                System.out.println("FEDORASERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
             }
-            String value = sb.toString();
-            if (fedora.server.Debug.DEBUG) System.out.println("FEDORASERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
         }
 
       // Dissemination was successful;
