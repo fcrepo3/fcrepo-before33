@@ -1,15 +1,14 @@
 package fedora.server.access;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+//import java.io.ByteArrayInputStream;
+//import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
-import java.io.PrintWriter;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -67,10 +66,6 @@ import fedora.server.utilities.DateUtility;
  *     implemented in release 1.0.)
  * <li>parmArray - optional array of method parameters consisting of
  *     name/value pairs in the form parm1=value1&parm2=value2...</li>
- * <li>clearCache_ - optional servlet parameter that signals whether the
- *                   dissemination cache is to be cleared; value of "yes"
- *                   clears cache; value of "no" or omission continues to
- *                   use cache.</li>
  * </ul>
  * <li>http://hostname:port/PID[/dateTime][?xmlEncode=BOOLEAN] - this syntax
  *     requests a list all methods associated with the specified digital
@@ -91,20 +86,7 @@ import fedora.server.utilities.DateUtility;
  *                 absence of the xmlEncode parameter or a value of "no"
  *                 indicates format is to be text/html.</li>
  * </ul>
- * <i><b>Note that the clearCache_ parameter name ends with the underscore
- * character ("_"). This is done to avoid possible name clashes with
- * user-supplied method parameter names that may be in the dissemination
- * request. As a general rule, user-supplied parameters should never contain
- * names that end with the underscore character to prevent possible name
- * clashes with the servlet.</b></i>
- * <p>If a dissemination request is successful, it is placed into the
- * dissemination cache which has a default size of 100. This default can be
- * changed by setting the <code>disseminationCacheSize</code> parameter in
- * the <code>fedora.fcfg</code> configuration file. If this parameter is not
- * present or cannot be parsed, the cache size will default to 100.</p><p>This
- * is a crude form of caching. A more robust cache will be needed to enhance
- * performance as the number of dissemination requests becomes very large.</p>
- * </p>
+ *
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
  * @author Ross Wayland
@@ -117,15 +99,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 
   /** Content type for xml. */
   private static final String CONTENT_TYPE_XML  = "text/xml";
-
-  /** Debug toggle for testing */
-  private static boolean debug = false;
-
-  /** Dissemination cache size; this value used if not provided in config file.*/
-  private static int DISS_CACHE_SIZE = 100;
-
-  /** Dissemination cache. */
-  private Hashtable disseminationCache = new Hashtable();
 
   /** Instance of the Fedora server. */
   private static Server s_server = null;
@@ -164,7 +137,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     Calendar asOfDateTime = null;
     Date versDateTime = null;
     String action = null;
-    String clearCache = null;
     Property[] userParms = null;
     long servletStartTime = new Date().getTime();
     boolean isGetObjectMethodsRequest = false;
@@ -232,9 +204,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       if (name.equalsIgnoreCase("xmlEncode"))
       {
         xmlEncode = request.getParameter(name);
-      } else if (name.equalsIgnoreCase("clearCache_"))
-      {
-        clearCache = request.getParameter(name);
       } else
       {
         String value = request.getParameter(name);
@@ -269,7 +238,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       } else if (isGetDisseminationRequest)
       {
         getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime,
-                         clearCache, response);
+                         response);
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
         System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
@@ -284,7 +253,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
             + se.getClass().getName()
             + " \". Reason: "  + se.getMessage();
         showURLParms(PID, bDefPID, methodName, asOfDateTime,
-                     userParms, clearCache, response, message);
+                     userParms, response, message);
         //response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         //response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
         logWarning(message);
@@ -316,7 +285,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       HttpServletResponse response) throws IOException, ServerException
   {
 
-    PrintWriter out = response.getWriter();
+    ServletOutputStream out = response.getOutputStream();
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectMethodsDef[] objMethDefArray = null;
     PipedWriter pw = new PipedWriter();
@@ -324,7 +293,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 
     try
     {
-      out = response.getWriter();
       pw = new PipedWriter();
       pr = new PipedReader(pw);
       objMethDefArray = s_access.getObjectMethods(context, PID, asOfDateTime);
@@ -361,7 +329,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         String message = "[FedoraAccessServlet] No Object Method Definitions "
             + "returned.";
         logInfo(message);
-        showURLParms(PID, "", "", asOfDateTime, new Property[0], "", response, message);
+        showURLParms(PID, "", "", asOfDateTime, new Property[0], response, message);
         response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         response.sendError(response.SC_NO_CONTENT, message);
       }
@@ -505,21 +473,19 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
    * @param methodName The method name.
    * @param userParms An array of user-supplied method parameters.
    * @param asOfDateTime The version datetime stamp of the digital object.
-   * @param clearCache The dissemination cache flag.
    * @param response The servlet response.
    * @throws IOException If an error occurrs with an input or output operation.
    * @throws ServerException If an error occurs in the Access Subsystem.
    */
   public void getDissemination(Context context, String PID, String bDefPID, String methodName,
-      Property[] userParms, Calendar asOfDateTime, String clearCache,
-      HttpServletResponse response) throws IOException, ServerException
+      Property[] userParms, Calendar asOfDateTime, HttpServletResponse response)
+      throws IOException, ServerException
   {
-    //PrintWriter out = response.getWriter();
     ServletOutputStream out = response.getOutputStream();
-    // See if dissemination request is in local cache
     MIMETypedStream dissemination = null;
-    dissemination = getDisseminationFromCache(context, PID, bDefPID,
-        methodName, userParms, asOfDateTime, clearCache, response);
+    dissemination =
+        s_access.getDissemination(context, PID, bDefPID, methodName,
+                                  userParms, asOfDateTime);
     if (dissemination != null)
     {
       // Dissemination was successful;
@@ -539,7 +505,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         //BufferedReader br = new BufferedReader(
         //    new InputStreamReader(
         //        new ByteArrayInputStream(dissemination.stream)));
-
         // RLW: change required by conversion fom byte[] to InputStream
         StringBuffer sb = new StringBuffer();
         String line = null;
@@ -563,7 +528,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         {
           out.write(byteStream);
         }*/
-        byte[] buffer = new byte[256];
+        byte[] buffer = new byte[255];
         while ((byteStream = dissemResult.read(buffer)) != -1)
         {
           out.write(buffer, 0, byteStream);
@@ -584,7 +549,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       String message = "[FedoraAccessServlet] No Dissemination Result "
           + " was returned.";
       showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms,
-                  clearCache, response, message);
+                  response, message);
       logInfo(message);
       response.setStatus(HttpServletResponse.SC_NO_CONTENT);
       response.sendError(response.SC_NO_CONTENT, message);
@@ -616,20 +581,12 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
-      DISS_CACHE_SIZE = new Integer(s_server.getParameter("disseminationCacheSize")).intValue();
-      debug = new Boolean(s_server.getParameter("debug")).booleanValue();
       m_manager=(DOManager) s_server.getModule("fedora.server.storage.DOManager");
       s_access = (Access) s_server.getModule("fedora.server.access.Access");
     } catch (InitializationException ie)
     {
       throw new ServletException("Unable to get Fedora Server instance."
           + ie.getMessage());
-    } catch (NumberFormatException nfe)
-    {
-      logInfo("[FedoraAccessServlet] Unable to convert disseminationCacheSize "
-          + "parameter into an integer. Value read from config file was: \""
-          + s_server.getParameter("disseminationCacheSize") + "\". Cache size "
-          + "has been set to default value of 100");
     }
   }
 
@@ -638,102 +595,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
    */
   public void destroy()
   {}
-
-  /**
-   * <p>Instantiates a new dissemination cache.</p>
-   */
-  private synchronized void clearDisseminationCache()
-  {
-    disseminationCache = new Hashtable();
-  }
-
-  /**
-   * <p>Gets dissemination from cache. This method attempts to retrieve
-   * a dissemination from the cache. If found, the dissemination is
-   * returned. If not found, this method calls <code>GetDissemination</code>
-   * to get the dissemination. If the retrieval is successful, the
-   * dissemination is added to the cache. The cache may be cleared by
-   * setting the URL servlet parameter <code>clearCache</code> to a value
-   * of "yes". The cache is also flushed when it reaches the limit
-   * specified by <code>DISS_CACHE_SIZE</code>.</p>
-   *
-   * @param context The read only context of the request.
-   * @param PID The persistent identifier of the Digital Object.
-   * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param methodName The method name.
-   * @param userParms An array of user-supplied method parameters.
-   * @param asOfDateTime The version datetime stamp of the digital object.
-   * @param clearCache The dissemination cache flag.
-   * @param response The servlet response.
-   * @return The MIME-typed stream containing dissemination result.
-   * @throws IOException If an error occurrs with an input or output operation.
-   * @throws ServerException If an error occurs in Access Subsystem.
-   */
-  private synchronized MIMETypedStream getDisseminationFromCache(
-      Context context, String PID, String bDefPID, String methodName,
-      Property[] userParms, Calendar asOfDateTime, String clearCache,
-      HttpServletResponse response) throws IOException, ServerException
-  {
-    // Clear cache if size gets larger than DISS_CACHE_SIZE
-    if ( (disseminationCache.size() > DISS_CACHE_SIZE) ||
-         (clearCache != null && clearCache.equalsIgnoreCase(YES)) )
-    {
-      clearDisseminationCache();
-    }
-
-    long startTime = new Date().getTime();
-    MIMETypedStream disseminationResult = null;
-    // See if dissemination request is in local cache
-    // RLW: change required by conversion fom byte[] to InputStream
-    //dissemination Result = disseminationCache.get(requestURI);
-    disseminationResult = TypeUtility.convertGenMIMETypedStreamToMIMETypedStream(
-        (fedora.server.types.gen.MIMETypedStream) disseminationCache.get(requestURI));
-    //disseminationResult = (MIMETypedStream) disseminationCache.get(requestURI);
-    // RLW: change required by conversion fom byte[] to InputStream
-
-    long stopTime = new Date().getTime();
-    long interval = stopTime - startTime;
-    System.out.println("[FedoraAccessServlet] Roundtrip Getting from Cache: "
-        + interval + " milliseconds.");
-    logFiner("[FedoraAccessServlet] Roundtrip Getting from Cache: "
-      + interval + " milliseconds.");
-      logFinest("CACHE SIZE: "+disseminationCache.size());
-
-    startTime = new Date().getTime();
-    if (disseminationResult == null)
-    {
-      // Dissemination request NOT in local cache.
-      // Try reading from relational database
-      disseminationResult =
-          s_access.getDissemination(context, PID, bDefPID, methodName,
-              userParms, asOfDateTime);
-
-      if (disseminationResult != null)
-      {
-        // Dissemination request succeeded, so add to local cache
-        // FIXME!! This is a crude cache. More robust caching will be needed
-        // to achieve optimum performance as the number of requests gets large.
-
-        // RLW: change required by conversion fom byte[] to InputStream
-        fedora.server.types.gen.MIMETypedStream stream =
-            TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(disseminationResult);
-        disseminationCache.put(requestURI, stream);
-        //disseminationCache.put(requestURI, disseminationResult);
-        // RLW: change required by conversion fom byte[] to InputStream
-        logFinest("ADDED to CACHE: "+requestURI);
-      }
-      stopTime = new Date().getTime();
-      interval = stopTime - startTime;
-      System.out.println("[FedoraAccessServlet] Roundtrip Adding to Cache: "
-          + interval + " milliseconds.");
-      logFiner("[FedoraAccessServlet] Roundtrip Adding to Cache: "
-        + interval + " milliseconds.");
-      logFinest("CACHE SIZE: "+disseminationCache.size());
-
-    }
-
-    return disseminationResult;
-  }
 
   /**
    * <p>Displays a list of the servlet input parameters. This method is
@@ -748,21 +609,20 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
    * @param methodName the name of the method.
    * @param asOfDateTime The version datetime stamp of the digital object.
    * @param userParms An array of user-supplied method parameters and values.
-   * @param clearCache The dissemination cache flag.
    * @param response The servlet response.
    * @param message The message text to include at the top of the output page.
    * @throws IOException If an error occurrs with an input or output operation.
    */
   private void showURLParms(String PID, String bDefPID,
                            String methodName, Calendar asOfDateTime,
-                           Property[] userParms, String clearCache,
+                           Property[] userParms,
                            HttpServletResponse response,
                            String message)
       throws IOException
   {
 
     String versDate = DateUtility.convertCalendarToString(asOfDateTime);
-    PrintWriter out = response.getWriter();
+    ServletOutputStream out = response.getOutputStream();
     response.setContentType(CONTENT_TYPE_HTML);
 
     // Display servlet input parameters
@@ -794,11 +654,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     html.append("<td><font color='red'>asOfDateTime</td>");
     html.append("<td> = </td>");
     html.append("<td>" + versDate + "</td>");
-    html.append("</tr>");
-    html.append("<tr>");
-    html.append("<td><font color='red'>clearCache_</td>");
-    html.append("<td> = </td>");
-    html.append("<td>" + clearCache + "</td>");
     html.append("</tr>");
     html.append("<tr>");
     html.append("</tr>");
