@@ -98,7 +98,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         namespaces.put("fedora", NS_FEDORA);
         namespaces.put("fedora-ont", NS_FEDORA_MODEL);
         namespaces.put("rdf", NS_RDF);
-        namespaces.put("xml-schema", NS_XML_SCHEMA);
+        namespaces.put("xml-schema", NS_XSD);
         m_connector = connector;
         m_reader = m_connector.getReader();
         m_writer = m_connector.getWriter();
@@ -141,8 +141,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		
 		// Insert basic system metadata
         queuePlainLiteralTriple(doIdentifier, MODEL_LABEL, digitalObject.getLabel());
-        queuePlainLiteralTriple(doIdentifier, MODEL_DATE_CREATED, getDate(digitalObject.getCreateDate()));
-        queueTypedLiteralTriple(doIdentifier, MODEL_DATE_MODIFIED, getDate(digitalObject.getLastModDate()), XML_DATE);
+        queueTypedLiteralTriple(doIdentifier, MODEL_DATE_CREATED, getDate(digitalObject.getCreateDate()), XSD_DATETIME);
+        queueTypedLiteralTriple(doIdentifier, MODEL_DATE_MODIFIED, getDate(digitalObject.getLastModDate()), XSD_DATETIME);
 		
 		if (digitalObject.getOwnerId() != null) {
 		    queuePlainLiteralTriple(doIdentifier, MODEL_OWNER, digitalObject.getOwnerId());
@@ -219,7 +219,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         //queuePlainLiteralTriple(datastreamURI, REP_VOLATILE, isVolatile);
 
         queueTriple(doURI, REP_REPRESENTATION, datastreamURI);
-        queueTypedLiteralTriple(datastreamURI, MODEL_DATE_MODIFIED, getDate(ds.DSCreateDT), XML_DATE);
+        queueTypedLiteralTriple(datastreamURI, MODEL_DATE_MODIFIED, getDate(ds.DSCreateDT), XSD_DATETIME);
         addQueue(false);
         
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
@@ -280,7 +280,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                      queueTypedLiteralTriple(rep, 
                                              MODEL_DATE_MODIFIED, 
                                              dissCreateDT,
-                                             XML_DATE); 
+                                             XSD_DATETIME); 
                  }
             } catch (SQLException e) {
                 try {
@@ -474,6 +474,16 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }	
 	}
     
+    public void commit() throws ResourceIndexException {
+        try {
+            m_writer.flushBuffer();
+        } catch (IOException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
     /**
      * 
      * @param out
@@ -482,6 +492,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
      * @throws TrippiException
      */
     public void export(OutputStream out, RDFFormat format) throws ResourceIndexException {
+        commit();
         try {
             TripleIterator it = m_reader.findTriples(null, null, null, 0);
             it.setAliasMap(namespaces);

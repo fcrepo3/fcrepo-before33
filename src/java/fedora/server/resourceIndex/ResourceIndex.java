@@ -54,10 +54,10 @@ public interface ResourceIndex extends TriplestoreReader {
     public static final String NS_FEDORA_MODEL  = NS_FEDORA + "fedora-system:def/model#";
     public static final String NS_FEDORA_REP    = NS_FEDORA + "fedora-system:def/service#";
     public static final String NS_RDF           = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-    public static final String NS_XML_SCHEMA    = "http://www.w3.org/2001/XMLSchema#";
+    public static final String NS_XSD           = "http://www.w3.org/2001/XMLSchema#";
     
 	public static final String RDF_TYPE                = NS_RDF + "type";
-    public static final String XML_DATE                = NS_XML_SCHEMA + "date";
+    public static final String XSD_DATETIME            = NS_XSD + "dateTime";
 	
     public static final String MODEL_ALT_ID            = NS_FEDORA_MODEL + "alternateIdentifier";
 	public static final String MODEL_BDEF              = NS_FEDORA_MODEL + "bdef";
@@ -117,6 +117,14 @@ public interface ResourceIndex extends TriplestoreReader {
 	public void deleteDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
 	
     /**
+     * Forces the ResourceIndex to write any buffered changes.
+     * This method does not need to be used in normal usage, as the ResourceIndex
+     * will write out its buffer periodically.
+     * @throws ResourceIndexException
+     */
+    public void commit() throws ResourceIndexException;
+    
+    /**
      * Write a serialized representation of the ResourceIndex in the specified 
      * format.
      * @param out The output stream to which the RDF is written
@@ -124,7 +132,7 @@ public interface ResourceIndex extends TriplestoreReader {
      * @throws ResourceIndexException
      */
 	public void export(OutputStream out, RDFFormat format) throws ResourceIndexException;
-
+    
     /*
 	public void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
 	public void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;

@@ -139,6 +139,10 @@ public class ResourceIndexModule extends Module
         m_resourceIndex.deleteDigitalObject(digitalObject);
     }
     
+    public void commit() throws ResourceIndexException {
+        m_resourceIndex.commit();
+    }
+    
     public void export(OutputStream out, RDFFormat format) throws ResourceIndexException {
         m_resourceIndex.export(out, format);
     }
