@@ -103,29 +103,31 @@
               If this is not specified, request acceptance is governed 
               solely by the allowHosts parameter.
             - doMediateDatastreams (required)
-              A boolean flag indicating whether Datastream Mediation is activated or not.
+              A boolean switch indicating whether Datastream Mediation is activated or not.
               Datastream Mediation provides additional repository security by not exposing 
-              the actual physical location of datastreams to external mechanisms(services).
-              Instead of exposing the actual physical location of datastreams , Datastream 
-              Mediation functions as a proxy requiring all external services to communicate
-              through the Fedora server in order to resolve the location of datastreams.
-              For Datastream Mediation to function, the Fedora server must be internet 
-              accessible on its designated port by any potential external service. This 
-              requirement can be difficult to satisfy if the Fedora server is located 
-              behind a firewall and you do not have ready access to the firewall's 
-              configuration to enable the required access. If the Fedora server is behind
-              a firewall and you have no access to the firewall's configuration, you can
-              disable Datastream Mediation which will allow external services to access
-              Referenced Content datastreams using their physical locations. Managed Content
-              and XMLMetadata datastreams are stored internally in the Fedora repository
-              and can only be accessed through the Fedora server so disabling datastream
-              mediation has no effect on these types of datastreams
-              Disabling Datastream mediation exposes the physical location of Referenced
-              Content datastream to external services. It is recommended that Datastream 
-              Mediation be disabled only for testing. The default value of 
-              doMediateDatastreams is true.
+              the actual physical location of Referenced Content datastreams to external 
+              mechanisms(services). Instead of exposing the actual physical location of 
+              Referenced Content datastreams , Datastream Mediation functions as a proxy 
+              requiring all external services to communicate through the Fedora server to 
+              resolve the location of Referenced Content datastreams. For Datastream 
+              Mediation to function, the Fedora server must be internet accessible on its 
+              designated port by any potential external service. This requirement can be 
+              difficult to satisfy if the Fedora server is located behind a firewall and 
+              you do not have ready access to the firewall's configuration to enable the 
+              required access. If the Fedora server is behind a firewall and you have no 
+              access to the firewall's configuration, you can disable Datastream Mediation 
+              which will allow external services to access Referenced Content datastreams 
+              using their actual physical locations. Managed Content and XMLMetadata 
+              datastreams are stored internally in the Fedora repository and can only be 
+              accessed through the Fedora server so disabling Datastream Mediation has no 
+              effect on these types of datastreams. Disabling Datastream Mediation exposes 
+              the physical location of Referenced Content datastream to external services
+              which can result in unintended access to the raw datastreams by surreptitious
+              external mechanisms. It is recommended that Datastream Mediation be disabled 
+              only for testing or cases where this security issue is not a concern. The 
+              default value of doMediateDatastreams is true.
             </comment>
-                <param name="doMediateDatastreams" value="false" />
+                <param name="doMediateDatastreams" value="true" />
     </module>
     <module role="fedora.server.search.FieldSearch"
            class="fedora.server.search.FieldSearchExistModule">
