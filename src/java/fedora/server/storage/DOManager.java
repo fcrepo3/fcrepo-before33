@@ -1,5 +1,10 @@
 package fedora.server.storage;
 
+import fedora.server.errors.ModuleInitializationException;
+import fedora.server.Module;
+
+import java.util.Map;
+
 /**
  * Provides access to digital object reader/writer factories,
  * which ultimately provide DOReader and DOWriter objects on
@@ -7,8 +12,16 @@ package fedora.server.storage;
  *
  * @author cwilper@cs.cornell.edu
  */
-public interface DOManager 
+public abstract class DOManager 
         extends Module {
+
+    /**
+     * Creates a new DOManager.
+     */
+    public DOManager(Map moduleParameters)
+            throws ModuleInitializationException {
+        super(moduleParameters);
+    }
 
     /**
      * Gets the digital object reader factory best fit for
@@ -17,7 +30,7 @@ public interface DOManager
      * @param storageType The storage type.
      * @returns DOReaderFactory An appropriate provider of DOReaders.
      */
-    public DOReaderFactory getReaderFactory(String storageType);
+    public abstract DOReaderFactory getReaderFactory(String storageType);
 
     /**
      * Gets the digital object writer factory best fit for
@@ -26,7 +39,7 @@ public interface DOManager
      * @param storageType The storage type.
      * @returns DOWriterFactory An appropriate provider of DOWriters.
      */
-    public DOWriterFactory getWriterFactory(String storageType);
+    public abstract DOWriterFactory getWriterFactory(String storageType);
     
     /**
      * Gets a Registry for the given storage type.
@@ -34,6 +47,6 @@ public interface DOManager
      * @param storageType The storage type.
      * @returns Registry A registry appropriate for the storage role
      */
-    public DORegistry getRegistry(String storageType);
+    public abstract DORegistry getRegistry(String storageType);
 
 }
