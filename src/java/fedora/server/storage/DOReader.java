@@ -145,12 +145,6 @@ public interface DOReader
      */
     public Disseminator GetDisseminator(String disseminatorID, Date versDateTime) throws ServerException;
 
-  /**
-   *  Methods to obtain information stored in the Behavior Definition and
-   *  Behavior Mechanism objects to which the digital object's disseminators
-   *  refer.
-   */
-
    /**
      * Gets PIDs of Behavior Definitions to which object subscribes.  This is
      * done by looking at all the Disseminators for the object, and reflecting
@@ -162,7 +156,7 @@ public interface DOReader
      */
     public String[] GetBehaviorDefs(Date versDateTime) throws ServerException;
 
-  /**
+    /**
      * Gets list of method definitions that are available on a particular
      * Disseminator. This is done by reflecting on the Disseminator
      * that subscribes to the Behavior Definition that is specified in the
@@ -176,10 +170,9 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-
     public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime) throws ServerException;
 
-  /**
+    /**
      * Gets list of method definitions that are available on a particular
      * Disseminator. Works like method GetBMechMethods, except the method
      * definitions are returned as XML in accordance with the WSDL schema.
