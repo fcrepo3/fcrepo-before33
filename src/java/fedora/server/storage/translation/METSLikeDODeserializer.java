@@ -410,7 +410,8 @@ public class METSLikeDODeserializer
                 // rlw begin changes
                 // check if datastream is ExternalReferencedContent or
                 // ManagedContent
-                if (m_dsControlGrp.equalsIgnoreCase("E") )
+                if (m_dsControlGrp.equalsIgnoreCase("E") ||
+                    m_dsControlGrp.equalsIgnoreCase("R") )
                 {
                   try {
                     m_dsLocation=new URL(dsLocation);
