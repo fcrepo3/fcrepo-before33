@@ -1,5 +1,5 @@
 Fedora Release 1.2 - December 22, 2003
----------------------------------------------------------------
+--------------------------------------------------------------
 This is a full source code release of Fedora,
 downloaded from http://www.fedora.info/release/1.2/
 
