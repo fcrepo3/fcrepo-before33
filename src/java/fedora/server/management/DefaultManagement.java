@@ -18,6 +18,7 @@ import fedora.server.types.gen.ComponentInfo;
 import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.DatastreamBindingMap;
 import fedora.server.types.gen.Disseminator;
+import fedora.server.types.gen.ObjectInfo;
 
 /**
  * The Management Module, providing support for API-M.
@@ -134,13 +135,7 @@ public class DefaultManagement
         getServer().logFinest("Exiting DefaultManagement.releaseLock");
     }
 
-    public String getLockingUser(Context context, String pid) { return null; }
-
-    public String getObjectState(Context context, String pid) { return null; }
-
-    public Calendar getObjectCreateDate(Context context, String pid) { return null; }
-
-    public Calendar getObjectLastModDate(Context context, String pid) { return null; }
+    public ObjectInfo getObjectInfo(Context context, String pid) { return null; }
 
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
 

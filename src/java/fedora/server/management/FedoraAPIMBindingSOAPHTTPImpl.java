@@ -14,6 +14,7 @@ import fedora.server.storage.METSDODeserializer;
 import fedora.server.storage.TestFileStreamStorage;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
+import fedora.server.types.gen.ObjectInfo;
 import fedora.server.utilities.AxisUtility;
 
 import java.io.File;
@@ -238,35 +239,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
 */
     }
-
-    public String getLockingUser(String PID) throws java.rmi.RemoteException {
-        assertInitialized();
-        StringBuffer pNames=new StringBuffer();
-        pNames.append("Server parameter names: ");
-        Iterator iter=s_server.parameterNames();
-        boolean first=true;
-        while (iter.hasNext()) {
-            if (!first) {
-                pNames.append(',');
-            }
-            pNames.append((String) iter.next());
-            first=false;
-        }
-        return pNames.toString();
-    }
-
-    public String getObjectState(String PID) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-
-    public java.util.Calendar getObjectCreateDate(String PID) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-
-    public java.util.Calendar getObjectLastModDate(String PID) throws java.rmi.RemoteException {
-        assertInitialized();
+    
+    public ObjectInfo getObjectInfo(String PID) 
+            throws RemoteException {
         return null;
     }
 

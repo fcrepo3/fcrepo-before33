@@ -10,6 +10,7 @@ import fedora.server.types.gen.ComponentInfo;
 import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.DatastreamBindingMap;
 import fedora.server.types.gen.Disseminator;
+import fedora.server.types.gen.ObjectInfo;
 
 /**
  * The management subsystem interface.
@@ -34,13 +35,7 @@ public interface Management {
 
     public void releaseLock(Context context, String pid, String logMessage, boolean commit) throws ServerException;
 
-    public String getLockingUser(Context context, String pid) throws ServerException;
-
-    public String getObjectState(Context context, String pid) throws ServerException;
-
-    public Calendar getObjectCreateDate(Context context, String pid) throws ServerException;
-
-    public Calendar getObjectLastModDate(Context context, String pid) throws ServerException;
+    public ObjectInfo getObjectInfo(Context context, String pid) throws ServerException;
 
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) throws ServerException;
 

@@ -118,44 +118,17 @@
       <documentation>whether the change(s) should be committed.</documentation>
     </part>
   </message>
-  <message name="getLockingUserRequest">
+  <message name="getObjectInfoRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
     </part>
   </message>
-  <message name="getLockingUserResponse">
-    <part name="response" type="xsd:string">
-      <documentation>the userID of the user with the lock.</documentation>
-    </part>
-  </message>
-  <message name="getObjectStateRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-  </message>
-  <message name="getObjectStateResponse">
-    <part name="response" type="xsd:string">
-      <documentation>the state of the object.</documentation>
-    </part>
-  </message>
-  <message name="getObjectCreateDateRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-  </message>
-  <message name="getObjectCreateDateResponse">
-    <part name="response" type="xsd:dateTime">
-      <documentation>the date/time of the creation of the object.</documentation>
-    </part>
-  </message>
-  <message name="getObjectLastModDateRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-  </message>
-  <message name="getObjectLastModDateResponse">
-    <part name="response" type="xsd:dateTime">
-      <documentation>the date/time of the last modification of the object.</documentation>
+  <message name="getObjectInfoResponse">
+    <part name="response" type="fedora-types:ObjectInfo">
+      <documentation>Key information about the object, including
+      an element for each of the following:
+      label, foType, profile, state and lockedBy (all xsd:strings),
+      and createDate and lastModDate (both xsd:dateTimes)</documentation>
     </part>
   </message>
   <message name="getObjectAuditTrailRequest">
@@ -518,10 +491,6 @@
       ordered earliest first.</documentation>
     </part>
   </message>
-  <message name="createObjectFault">
-    <part name="fault" type="fedora-types:Fault">
-    </part>
-  </message>
   <portType name="Fedora-API-M">
     <documentation>The Fedora Management service defines an open interface for
     administering the repository, including creating, modifying, and deleting
@@ -542,7 +511,6 @@
       the namespace of the repository.</documentation>
       <input message="null"/>
       <output message="fedora-api:createObjectResponse"/>
-      <fault message="fedora-api:createObjectFault"/>
     </operation>
     <operation name="ingestObject">
       <documentation>Creates a new digital object in the repository, given the 
@@ -601,29 +569,10 @@
       <documentation>Unlocks an object for writing.</documentation>
       <input message="fedora-api:releaseLockRequest"/>
     </operation>
-    <operation name="getLockingUser">
-      <documentation>Tells who has a write lock on an object.</documentation>
-      <input message="fedora-api:getLockingUserRequest"/>
-      <output message="fedora-api:getLockingUserResponse"/>
-    </operation>
-    <operation name="getObjectState">
-      <documentation>Gets the state of the object.</documentation>
-      <input message="fedora-api:getObjectStateRequest"/>
-      <output message="fedora-api:getObjectStateResponse"/>
-    </operation>
-    <operation name="getObjectCreateDate">
-      <documentation>Gets the date/time of the object's creation in this 
-      repository.</documentation>
-      <input message="fedora-api:getObjectCreateDateRequest"/>
-      <output message="fedora-api:getObjectCreateDateResponse"/>
-    </operation>
-    <operation name="getObjectLastModDate">
-      <documentation>Gets the date/time of the object's most recent modification 
-      in this repository.  The modification date of an object is set when changes
-      to an object are committed via the ReleaseLock method.
-      </documentation>
-      <input message="fedora-api:getObjectLastModDateRequest"/>
-      <output message="fedora-api:getObjectLastModDateResponse"/>
+    <operation name="getObjectInfo">
+      <documentation>Gets key information about the object.</documentation>
+      <input message="fedora-api:getObjectInfoRequest"/>
+      <output message="fedora-api:getObjectInfoResponse"/>
     </operation>
     <operation name="getObjectAuditTrail">
       <documentation>Gets all audit trail records for the object.</documentation>
@@ -886,44 +835,8 @@
         <mime:mimeXml part="response"/>
       </output>
     </operation>
-    <operation name="getLockingUser">
-      <http:operation location="getLockingUser"/>
-      <input>
-        <http:urlEncoded/>
-      </input>
-      <output>
-        <mime:mimeXml part="response"/>
-      </output>
-    </operation>
     <operation name="getObjectAuditTrail">
       <http:operation location="getObjectAuditTrail"/>
-      <input>
-        <http:urlEncoded/>
-      </input>
-      <output>
-        <mime:mimeXml part="response"/>
-      </output>
-    </operation>
-    <operation name="getObjectCreateDate">
-      <http:operation location="getObjectCreateDate"/>
-      <input>
-        <http:urlEncoded/>
-      </input>
-      <output>
-        <mime:mimeXml part="response"/>
-      </output>
-    </operation>
-    <operation name="getObjectLastModDate">
-      <http:operation location="getObjectLastModDate"/>
-      <input>
-        <http:urlEncoded/>
-      </input>
-      <output>
-        <mime:mimeXml part="response"/>
-      </output>
-    </operation>
-    <operation name="getObjectState">
-      <http:operation location="getObjectState"/>
       <input>
         <http:urlEncoded/>
       </input>
@@ -1032,6 +945,12 @@
     </operation>
     <operation name="releaseLock">
       <http:operation location="releaseLock"/>
+      <input>
+        <http:urlEncoded/>
+      </input>
+    </operation>
+    <operation name="getObjectInfo">
+      <http:operation location="getObjectInfo"/>
       <input>
         <http:urlEncoded/>
       </input>
@@ -1158,61 +1077,14 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
-    <operation name="getLockingUser">
+    <operation name="getObjectInfo">
       <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#getLockingUser"/>
+          soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectInfo"/>
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-    <operation name="getObjectState">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectState"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-    <operation name="getObjectCreateDate">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectCreateDate"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-    <operation name="getObjectLastModDate">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectLastModDate"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
     </operation>
     <operation name="getObjectAuditTrail">
       <soap:operation style="rpc" 
