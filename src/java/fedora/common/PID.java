@@ -50,6 +50,7 @@ import java.io.*;  // BufferedReader, InputStreamReader
  */
 public class PID {
 
+    /** The maximum length of a PID is 64. */
     public static final int MAX_LENGTH = 64;
 
     private String m_normalized;
@@ -94,13 +95,76 @@ public class PID {
 
         // Then normalize while checking syntax
         StringBuffer out = new StringBuffer();
+        boolean inObjectID = false;
         for (int i = 0; i < pidString.length(); i++) {
             char c = pidString.charAt(i);
-           
+            if (!inObjectID) {
+                if (c == ':') {
+                    out.append(':');
+                    inObjectID = true;
+                } else if (c == '%') {
+                    // next 2 chars MUST be 3[aA]
+                    if (pidString.length() >= i + 3) {
+                        i++;
+                        if (pidString.charAt(i) == '3') {
+                            i++;
+                            c = pidString.charAt(i);
+                            if ( c == 'a' || c == 'A' ) {
+                                out.append(":");
+                                inObjectID = true;
+                            } else {
+                                throw new MalformedPIDException("Error in PID after first '%': expected '3a' or '3A', but saw '3" + c + "'.");
+                            }
+                        } else {
+                            throw new MalformedPIDException("Error in PID after first '%': expected '3a' or '3A', but saw '" + pidString.substring(i, i+2) + "'.");
+                        }
+                    } else {
+                        throw new MalformedPIDException("Error in PID after first '%': expected '3a' or '3A', but saw '" + pidString.substring(i+1) + "'.");
+                    }
+                } else if (isAlphaNum(c) || c == '-' || c == '.') {
+                    out.append(c);
+                } else {
+                    // invalid char for namespace-id
+                    throw new MalformedPIDException("PID namespace-id cannot contain '" + c + "' character.");
+                }
+            } else if (isAlphaNum(c) || c == '-' || c == '.' || c == '~' || c == '_' ) {
+                out.append(c);
+            } else if (c == '%') {
+                // next 2 chars MUST be [0-9][a-f][A-F]
+                if (pidString.length() >= i + 3) {
+                    char h1 = getNormalizedHexChar(pidString.charAt(++i));
+                    char h2 = getNormalizedHexChar(pidString.charAt(++i));
+                    out.append("%" + h1 + h2);
+                } else {
+                    throw new MalformedPIDException("PID object-id ended early: need at least 2 chars after '%'.");
+                }
+            } else {
+                throw new MalformedPIDException("PID object-id cannot contain '" + c + "' character.");
+            }
         }
+
+
+        if (!inObjectID) throw new MalformedPIDException("PID delimiter (:) is missing.");
+        String outString = out.toString();
+        if (outString.startsWith(":")) throw new MalformedPIDException("PID namespace-id cannot be empty.");
+        if (outString.length() < 3) throw new MalformedPIDException("PID object-id cannot be empty.");
 
         // If we got here, it's well-formed, so return it.
         return out.toString();
+    }
+
+    private static boolean isAlphaNum(char c) {
+        return (    ( ( c >= '0' ) && ( c <= '9' ) )
+                 || ( ( c >= 'a' ) && ( c <= 'z' ) )
+                 || ( ( c >= 'A' ) && ( c <= 'Z' ) ) );
+    }
+
+    private static char getNormalizedHexChar(char c) 
+            throws MalformedPIDException {
+        if ( c >= '0' && c <= '9' ) return c;
+        c = ("" + c).toUpperCase().charAt(0);
+        if ( c >= 'A' && c <= 'F' ) return c;
+        throw new MalformedPIDException("Bad hex-digit in PID object-id: " + c);
     }
 
     /**
