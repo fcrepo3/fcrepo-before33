@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.fedora.info/definitions/1/0/config/" 
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/"
+    elementFormDefault="qualified">
+    
+  <!--
+  
+  The schema for configuration.
+  
+  For the server, this allows configuration of the form:
+
+  <server>
+    <identity namespace="cornell-dlrg-test1" 
+              label="Test Fedora Repository"/>
+    <location port="8080" host="localhost"/>
+    <admin email="root@localhost" public="true"/>
+    <control name="dissemination_speed"/>
+      <param name="db" value="mysql1"/>
+    </control>
+    <database id="mysql1">
+      <admin email="mysql" public="true"/>
+      <login username="admin" password="admin"/>
+      <jdbc class="com.imaginary.sql.msql.msqlDriver" 
+          url="jdbc:msql://localhost:1114/objreg"/>
+    </database>
+  </server>
+  
+  This schema might be extended for client configurations, too.
+  
+  -->
+
+  <element name="server">
+    <complexType>
+      <sequence>
+        <element name="identity" type="fedora-config:ServerIdentity"/>
+        <element name="location" type="fedora-config:ServerLocation"/>
+        <element name="admin" type="fedora-config:Admin"/>
+        <element name="control" 
+            type="fedora-config:ServerControl" 
+            minOccurs="0" 
+            maxOccurs="unbounded"/>
+        <element name="database"
+            type="fedora-config:Database"
+            minOccurs="0"
+            maxOccurs="unbounded"/>
+      </sequence>
+    </complexType>
+  </element>
+  
+  <complexType name="ServerIdentity">
+    <attribute name="namespace" type="xsd:string"/>
+    <attribute name="label" type="xsd:string"/>
+  </complexType>
+  
+  <complexType name="ServerLocation">
+    <attribute name="port" type="xsd:positiveInteger"/>
+    <attribute name="host" type="xsd:string"/>
+  </complexType>
+  
+  <complexType name="Admin">
+    <attribute name="email" type="xsd:string"/>
+    <attribute name="public" type="xsd:boolean"/>
+  </complexType>
+  
+  <complexType name="ServerControl">
+    <sequence>
+      <element name="param" 
+          type="fedora-config:NameValue" 
+          minOccurs="0" 
+          maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="name" type="xsd:string"/>
+  </complexType>
+  
+  <complexType name="NameValue">
+    <attribute name="name" type="xsd:string"/>
+    <attribute name="value" type="xsd:string"/>
+  </complexType>
+  
+  <complexType name="Database">
+    <sequence>
+      <element name="admin" type="fedora-config:Admin"/>
+      <element name="login" type="fedora-config:UsernameAndPassword"/>
+      <element name="jdbc" type="fedora-config:JDBCConnectionInfo"/>
+    </sequence>
+  </complexType>
+  
+  <complexType name="UsernameAndPassword">
+    <attribute name="username" type="xsd:string"/>
+    <attribute name="password" type="xsd:string"/>
+  </complexType>
+  
+  <complexType name="JDBCConnectionInfo">
+    <attribute name="class" type="xsd:string"/>
+    <attribute name="url" type="xsd:string"/>
+  </complexType>
+  
+</schema>
