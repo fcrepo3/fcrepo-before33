@@ -1,11 +1,8 @@
 package fedora.server.storage.translation;
 
-import fedora.server.Server;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
-import fedora.server.errors.InitializationException;
 import fedora.server.errors.StreamIOException;
-import fedora.server.errors.StreamReadException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
@@ -19,7 +16,6 @@ import fedora.server.storage.types.DSBinding;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -43,20 +39,11 @@ import org.xml.sax.helpers.DefaultHandler;
 
 // FIXMEs:
 // 1.  Implement binaryContent.  Now we flag it but do not process it. (See m_readingContent) Also in METS.
-// 2.  Set object-level properties from the objectProperties datastream (during or after parse?)
-// 2.  AUDIT: what do they look like now? Finalize new datastream format and check parsing code.
 // 3.  AUDIT: (in METS ds backrefs via the ADMID)?  Ignore in FOXML or put in inner rels ds?
 // 4.  ADMID and DMDID pointers in METS.  How preserve in FOXML serialization?  Inner relationship datastream?
-// 5.  DS location TYPE attribute gets dropped on ingest.  Add to Datastream class?
-// 6.  Check use of old METS metadata type categories.  Now just take format URI for m_dsInfoType.
 // 7.  Commented out stuff on query behavior to gets the datastream content as inputstream.  What's up?
-// 8.  dsVersionable:  if null on ingest or addDatastream, where do we set it to repo defaults?
 // 9.  m_objPropertyName: how propogate these into default indexing?
-// 10. Backward compatibility with METS: AUDIT, object properties, CURRENT attr
 // 11. Add content digest parse;  also to DigitalObject.  What do we do with it now?
-// 12. Check on xml "data level" tracking in parsing code.  What's up?
-// 13. Parse Format URI when it's a mets format to get MDClass and MDType.
-// 14. Fix FMETA in terms of repeating values, and get one instance of cmodel and label.
 
 /**
  *
@@ -91,20 +78,28 @@ public class FOXMLDODeserializer
     /** The namespace for FOXML */
     private final static String F="info:fedora/def:foxml1.0";
     
-
+	/** The object to deserialize to. */
+	private DigitalObject m_obj;
+    
+	/** SAX parser */
     private SAXParser m_parser;
-    private String m_characterEncoding;
 
-    /** The object to deserialize to. */
-    private DigitalObject m_obj;
-
-    /**
-     * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
-     */
+    // URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
     private HashMap m_prefixes;
     private HashMap m_prefixUris;
 
+	// temporary variables and state variables
+	private int m_queryBehavior;
+	private String m_characterEncoding;
     private boolean m_rootElementFound;
+	private String m_objPropertyName;
+	private boolean m_readingBinaryContent; // indicates reading base64-encoded content
+	private boolean m_firstInlineXMLElement;
+	private boolean m_inXMLMetadata;	
+	// Indicator for FOXML within FOXML (inline XML datastream contains FOXML)
+	private int m_xmlDataLevel;
+	
+	// temporary variables for datastream processing
     private String m_dsId;
 	private String m_dsURI;
 	private String m_dsVersionable;
@@ -118,95 +113,55 @@ public class FOXMLDODeserializer
     private URL m_dsLocationURL;
     private String m_dsLocation;
     private String m_dsMimeType;
-    private String m_dsControlGrp;
-	private String m_dissemId;
-	private String m_dissemState;
-	private String m_objPropertyName;
-	
-	// For METS backward compatibility
-	private String m_dsInfoType;
-	private String m_dsOtherInfoType;
-	private int m_dsMDClass;
+    private String m_dsControlGrp;	
+	private String m_dsInfoType; // for METS backward compatibility
+	private String m_dsOtherInfoType; // for METS backward compatibility
+	private int m_dsMDClass; // for METS backward compatibility
 	private Pattern metsPattern=Pattern.compile("info:fedora/format:xml:mets:");
+	private ArrayList m_dsPrefixes; // namespace prefixes in inline XML
+	private HashMap m_dsAdmIds; // key=dsId, value=List of datastream ids (strings)
+	private String[] m_dsDmdIds; // key=dsId, value=List of datastream ids (strings)
+    	
+	// temporary variables for processing disseminators
+	private Disseminator m_diss;
+	private String m_dissID;
+	private String m_bDefID;
+	private String m_dissState;
+	private String m_dissVersionable;
+	private DSBindingMap m_dsBindMap;
+	private ArrayList m_dsBindings;
 	
-	private AuditRecord m_auditRec;
-
-    // key=dsId, value=List of datastream ids (strings)
-    private HashMap m_dsAdmIds; // these are saved till end of parse
-    private String[] m_dsDmdIds; // these are only saved while parsing cur ds
-
-	// buffer for reading single element content
-	private StringBuffer m_elementContent;
-	// buffer for reading arbitrary chunks of inline XML metadata
-    private StringBuffer m_dsXMLBuffer;
+	// temporary variables for processing audit records
+	private AuditRecord m_auditRec;	
+	private boolean m_gotAudit=false;
+	//private String m_auditRecordID;
+	private String m_auditComponentID;
+	private String m_auditProcessType;
+	private String m_auditAction;
+	private String m_auditResponsibility;
+	private String m_auditDate;
+	private String m_auditJustification;
+	
+	// buffers for reading content
+	private StringBuffer m_elementContent; // single element
+    private StringBuffer m_dsXMLBuffer; // chunks of inline XML metadata
     private StringBuffer m_dsFirstElementBuffer;
     
-
-
-    // are we reading binaryContent element (base64-encoded)?
-    private boolean m_readingBinaryContent;
-
-    private boolean m_firstInlineXMLElement;
-
-    /** Namespace prefixes used in the currently scanned datastream */
-    private ArrayList m_dsPrefixes;
-
-    /** While parsing, are we inside XML metadata? */
-    private boolean m_inXMLMetadata;
-
     /**
-     * Used to differentiate between a metadata section in this object
-     * and a metadata section in an inline XML datastream that happens
-     * to be a METS document.
-     */
-    //private int m_xmlDataLevel;
-
-    /** Variables for audit element contents */
-    private boolean m_gotAudit=false;
-	private String m_auditRecordID;
-	private String m_auditComponentID;
-    private String m_auditProcessType;
-    private String m_auditAction;
-    private String m_auditResponsibility;
-    private String m_auditDate;
-    private String m_auditJustification;
-
-    /** Hashmap for holding disseminators during parsing, keyed
-     * by structMapId */
-    private HashMap m_dissems;
-
-    /**
-     * Currently-being-initialized disseminator, during structmap parsing.
-     */
-    private Disseminator m_diss;
-
-    /**
-     * Whether, while in structmap, we've already seen a div
-     */
-    //private boolean m_indiv;
-
-    /** The structMapId of the dissem currently being parsed. */
-    //private String m_structId;
-
-    /**
-     * Never query the server and take it's values for Content-length and
-     * Content-type
+     * Never query web server for content size and MIME type
      */
     public static int QUERY_NEVER=0;
 
     /**
-     * Query the server and take it's values for Content-length and
-     * Content-type if either are undefined.
+     * Query web server for content size and MIME type if either are undefined.
      */
     public static int QUERY_IF_UNDEFINED=1;
 
     /**
-     * Always query the server and take it's values for Content-length and
-     * Content-type.
+     * Always query web server for content size and MIME type.
      */
     public static int QUERY_ALWAYS=2;
 
-    private int m_queryBehavior;
 
     public FOXMLDODeserializer()
             throws FactoryConfigurationError, ParserConfigurationException,
@@ -240,8 +195,6 @@ public class FOXMLDODeserializer
             throws FactoryConfigurationError, ParserConfigurationException,
             SAXException, UnsupportedEncodingException {
         m_queryBehavior=queryBehavior;
-        // ensure the desired encoding is supported before starting
-        // unsuppenc will be thrown if not
         m_characterEncoding=characterEncoding;
         StringBuffer buf=new StringBuffer();
         buf.append("test");
@@ -269,24 +222,7 @@ public class FOXMLDODeserializer
             	
         System.out.println("Deserializing using FOXMLDODeserializer...");
         m_obj=obj;
-        m_rootElementFound=false;
-        m_dsId=null;
-		m_dsURI=null;
-		m_dsVersionable=null;
-        m_dsVersId=null;
-        m_dsCreateDate=null;
-        m_dsState=null;
-        m_dsFormatURI=null;
-        m_dsInfoType=null;
-        m_dsOtherInfoType=null;
-        m_dsMDClass=0;
-        m_dsLabel=null;
-        m_dsXMLBuffer=null;
-        m_prefixes=new HashMap();
-        m_prefixUris=new HashMap();
-        m_dsAdmIds=new HashMap();
-        m_dsDmdIds=null;
-        m_dissems=new HashMap();
+        initialize();
         try {
             m_parser.parse(in, this);
         } catch (IOException ioe) {
@@ -296,8 +232,6 @@ public class FOXMLDODeserializer
             throw new ObjectIntegrityException("FOXML stream was bad : " + se.getMessage());
         }
         System.out.println("Just finished parse.");
-        // SDP: Can we move any of this logic to a utility class shared among deserializers or is
-        // there METS-specific logic here?
 
         if (!m_rootElementFound) {
             throw new ObjectIntegrityException("FOXMLDODeserializer: Input stream is not valid FOXML." +
@@ -305,12 +239,6 @@ public class FOXMLDODeserializer
         }
         
         obj.setNamespaceMapping(m_prefixes);
-        
-		//TEST:
-		//Iterator i = obj.datastreamIdIterator();
-		//while (i.hasNext()){
-		//	System.out.println("DSID=" + i.next());
-		//}
     }
 
     public void startPrefixMapping(String prefix, String uri) {
@@ -320,12 +248,9 @@ public class FOXMLDODeserializer
         m_prefixUris.put(prefix, uri);
         // if we're looking at inline metadata, be sure to save the prefix
         // so we know it's used in that datastream
-
         if (m_inXMLMetadata) {
             if (!m_dsPrefixes.contains(prefix)) {
-//                if (!"".equals(prefix)) {
-                    m_dsPrefixes.add(prefix);
-//                }
+            	m_dsPrefixes.add(prefix);
             }
         }
     }
@@ -338,41 +263,30 @@ public class FOXMLDODeserializer
 		m_elementContent=new StringBuffer();
 
         if (uri.equals(F) && !m_inXMLMetadata) {
-            // a new foxml element is starting
+            // WE ARE NOT INSIDE A BLOCK OF INLINE XML...
             if (localName.equals("digitalObject")) {
                 m_rootElementFound=true;
-                // get object properties
+                // get object identifiers
 				m_obj.setPid(grab(a, F, "PID"));
 				m_obj.setURI("info:fedora/" + grab(a, F, "PID"));
-				/*
-				m_obj.setState(grab(a, F, "STATE"));
-				m_obj.setContentModelId(grab(a, F, "CMODEL"));
-				m_obj.setLabel(grab(a, F, "LABEL"));
-				m_obj.setCreateDate(DateUtility.convertStringToDate(grab(a, F, "CREATED")));
-				m_obj.setLastModDate(DateUtility.convertStringToDate(grab(a, F, "MODIFIED")));
-				String objType = grab(a, F, "TYPE");
-				if (objType==null) { objType="FedoraObject"; }
-				if (objType.equalsIgnoreCase("FedoraBDefObject")) {
-					m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-				} else if (objType.equalsIgnoreCase("FedoraBMechObject")) {
-					m_obj.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
-				} else {
-					m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
-				}
-				 */
-				// alt: get object properties
+			// get object properties
             } else if (localName.equals("property") || localName.equals("extproperty")) {
 				m_objPropertyName = grab(a, F, "NAME");
+			// PROCESS DATASTREAMS...
 			} else if (localName.equals("datastream")) {
 				// get datastream attributes...
 				m_dsId=grab(a, F, "ID");
+				// set datastream URI for integrity purposes
 				m_dsURI = m_obj.getURI() + "/" + m_dsId;
-				//m_dsURI=grab(a, F, "URI");
 				m_dsState=grab(a, F, "STATE");
 				m_dsFormatURI=grab(a, F, "FORMAT_URI");
 				m_dsMimeType=grab(a, F, "MIMETYPE");
 				m_dsControlGrp=grab(a, F, "CONTROL_GROUP");
 				m_dsVersionable=grab(a, F, "VERSIONABLE");
+				// If dsVersionable is null or missing, default to YES.
+				if (m_dsVersionable==null || m_dsVersionable.equals("")) {
+					m_dsVersionable="YES";
+				}
 				// Never allow the AUDIT datastream to be versioned
 				// since it naturally represents a system-controlled
 				// view of changes over time.
@@ -380,12 +294,6 @@ public class FOXMLDODeserializer
 				if (m_dsId.equals("AUDIT")) {
 					m_dsVersionable="NO";
 				}
-				// initialize values for datastream version-level attributes				
-				//m_dsVersId=null;
-				//m_dsLabel=null;
-				//m_dsCreateDate=null;
-				//m_dsSize=-1;
-				//m_dsXMLBuffer=null;
 			} else if (localName.equals("datastreamVersion")) {
 				// get datastream version-level attributes...
 				m_dsVersId=grab(a, F, "ID");
@@ -410,11 +318,10 @@ public class FOXMLDODeserializer
 				m_dsXMLBuffer=new StringBuffer();
 				m_dsFirstElementBuffer=new StringBuffer();
 				m_dsPrefixes=new ArrayList();
-				//m_xmlDataLevel=0;
+				m_xmlDataLevel=0;
 				m_inXMLMetadata=true;
 				m_firstInlineXMLElement=true;
             } else if (localName.equals("contentLocation")) {
-				//String dsLocationType=grab(a, F, "TYPE");
                 String dsLocation=grab(a,F,"REF");
                 if (dsLocation==null || dsLocation.equals("")) {
                     throw new SAXException("REF attribute must be specified in contentLocation element");
@@ -428,6 +335,7 @@ public class FOXMLDODeserializer
                   } catch (MalformedURLException murle) {
                     throw new SAXException("REF specifies malformed url: " + dsLocation);
                   }
+                  // system will take control of dsLocationType...
                   m_dsLocationType="URL";
                   m_dsLocation=dsLocation;
                   populateDatastream(new DatastreamReferencedContent());
@@ -451,12 +359,52 @@ public class FOXMLDODeserializer
 				  populateDatastream(new DatastreamManagedContent());
                 }
             } else if (localName.equals("binaryContent")) {
-                // signal that we want to suck it in
 				// FIXME: implement support for this in Fedora 1.2
 				m_readingBinaryContent=true;
-            }
+            } else if (localName.equals("disseminator")) {
+				// PROCESS DISSEMINATORS...
+				m_dissID=grab(a, F,"ID");
+				m_bDefID=grab(a, F, "BDEF_CONTRACT_PID");
+				m_dissState=grab(a, F,"STATE");
+				m_dissVersionable=grab(a, F,"VERSIONABLE");
+            } else if (localName.equals("disseminatorVersion")) {
+				m_diss = new Disseminator();
+				m_diss.dissID=m_dissID;
+				m_diss.bDefID=m_bDefID;
+				m_diss.dissState=m_dissState;
+				m_diss.dissVersionable=m_dissVersionable;
+				// If dissVersionable is null or missing, default to YES.
+				if (m_diss.dissVersionable==null || m_diss.dissVersionable.equals("")) {
+					m_diss.dissVersionable="YES";
+				}
+				m_diss.dissVersionID=grab(a, F,"ID");
+				m_diss.dissLabel=grab(a, F, "LABEL");
+				m_diss.bMechID=grab(a, F, "BMECH_SERVICE_PID");
+				m_diss.dissCreateDT=DateUtility.convertStringToDate(grab(a, F, "CREATED"));
+			} else if (localName.equals("serviceInputMap")) {
+				m_diss.dsBindMap=new DSBindingMap();
+				m_dsBindings = new ArrayList();
+				// Note that the dsBindMapID is not really necessary from the
+				// FOXML standpoint, but it was necessary in METS since the structMap
+				// was outside the disseminator. (Look at how it's used in the sql db.)
+				// Also, the rest of the attributes on the DSBindingMap are not 
+				// really necessary since they are inherited from the disseminator.
+				// I just use the values picked up from disseminatorVersion.
+				m_diss.dsBindMapID=m_diss.dissVersionID + "b";
+				m_diss.dsBindMap.dsBindMapID=m_diss.dsBindMapID;
+				m_diss.dsBindMap.dsBindMechanismPID = m_diss.bMechID;
+				m_diss.dsBindMap.dsBindMapLabel = null;
+				m_diss.dsBindMap.state = m_diss.dissState;
+			} else if (localName.equals("datastreamBinding")) {
+				DSBinding dsb = new DSBinding();
+				dsb.bindKeyName = grab(a, F,"KEY");
+				dsb.bindLabel = null; // not defined in FOXML
+				dsb.datastreamID = grab(a, F,"DATASTREAM_ID");
+				dsb.seqNo = grab(a, F,"ORDER");
+				m_dsBindings.add(dsb);
+			}
         } else {
-        	// process inline XML datastream content
+        	// WE ARE INSIDE A BLOCK OF INLINE XML!
             if (m_inXMLMetadata) {
                 // we are inside an xmlContent element.
                 // just output it, remembering the number of foxml:xmlContent elements we see
@@ -508,15 +456,22 @@ public class FOXMLDODeserializer
                     m_dsXMLBuffer.append("\"");
                 }
                 m_dsXMLBuffer.append('>');
-                //if (uri.equals(F) && localName.equals("xmlContent")) {
-                //    m_xmlDataLevel++;
-                //}
                 
-				// if this is the AUDIT datastream: 
-				// initialize new audit record object
+                // FOXML INSIDE FOXML! Set an indicator that means that we 
+                // encountered a FOXML xmlContent element within this 
+                // inline XML datastream!  This means that we have an inline 
+                // XML datastream that is itself FOXML.  We do not want 
+                // to parse this! It must be treated as just a blob of 
+                // xml content from the standpoint of this digital object.
+                if (uri.equals(F) && localName.equals("xmlContent")) {
+                    m_xmlDataLevel++;
+                }
+                
+				// if AUDIT datastream, initialize new audit record object
 				if (m_gotAudit) {
 					if (localName.equals("record")) {
 						m_auditRec=new AuditRecord();
+						m_auditRec.id=grab(a, uri, "ID");
 					} else if (localName.equals("process")) {
 						m_auditProcessType=grab(a, uri, "type");
 					}
@@ -541,20 +496,21 @@ public class FOXMLDODeserializer
 			StreamUtility.enc(ch, start, length, m_dsXMLBuffer);
         } else if (m_readingBinaryContent) {
             // append it to something...
-            // SDP: IMPLEMENT HERE FOR V1.2?
+            // FIXME: IMPLEMENT HERE IN POST v2.0
         }
     }
 
     public void endElement(String uri, String localName, String qName) {
         if (m_inXMLMetadata) {
+			// WE ARE DEALING WITH INLINE XML...
 			if (m_gotAudit) {
 				// AUDIT datastream... 
 				// Pick up audit records from the current ds version
 				// and populate audit records array in digital object.
 				if (localName.equals("action")) {
 					m_auditAction=m_elementContent.toString();
-				} else if (localName.equals("recordID")) {
-					m_auditRecordID=m_elementContent.toString();
+				//} else if (localName.equals("recordID")) {
+				//	m_auditRecordID=m_elementContent.toString();
 				} else if (localName.equals("componentID")) {
 					m_auditComponentID=m_elementContent.toString();
 				} else if (localName.equals("responsibility")) {
@@ -564,7 +520,7 @@ public class FOXMLDODeserializer
 				} else if (localName.equals("justification")) {
 					m_auditJustification=m_elementContent.toString();
 				} else if (localName.equals("record")) {
-					m_auditRec.id=m_auditRecordID;
+					//m_auditRec.id=m_auditRecordID;
 					m_auditRec.processType=m_auditProcessType;
 					m_auditRec.action=m_auditAction;
 					m_auditRec.componentID=m_auditComponentID;
@@ -583,13 +539,15 @@ public class FOXMLDODeserializer
 				} else if (localName.equals("auditTrail")) {
 					m_gotAudit=false;
 				}
-			} else if (uri.equals(F) && localName.equals("xmlContent")) {
+			// process end of xmlContent ONLY if it is NOT embedded within inline XML!
+			} else if (uri.equals(F) && localName.equals("xmlContent") && m_xmlDataLevel==0) {
 				if (m_dsId.equals("AUDIT")) {
-					System.out.println("found end of xmlContent within AUDIT ds");
+					// if we are in the inline XML of the AUDIT datastream just 
+					// end processing and move on.  Audit datastream handled elsewhere.
 					m_inXMLMetadata=false;
 				} else {
-					// For ALL other inline xml datastreams...
-					// populate the right class of datastream and add it to m_obj
+					// for ALL other inline xml datastreams...
+					// populate the appropriate class of datastream and add it to m_obj
 					for (int i=0; i<m_dsPrefixes.size(); i++) {
 						// now finish writing to m_dsFirstElementBuffer, a series of strings like
 						// ' xmlns:PREFIX="URI"'
@@ -627,27 +585,22 @@ public class FOXMLDODeserializer
                 }
                 m_dsXMLBuffer.append(localName);
                 m_dsXMLBuffer.append(">");
-                //if (uri.equals(F) && localName.equals("xmlContent")) {
-                //    m_xmlDataLevel--;
-                //}					
+                if (uri.equals(F) && localName.equals("xmlContent")) {
+                    m_xmlDataLevel--;
+                }					
             }
-        // NOT m_inXMLMetadata ...
+        // WE ARE NOT DEALING WITH INLINE XML ...
         } else if (uri.equals(F) && (localName.equals("property") || localName.equals("extproperty"))) {
 			if (m_objPropertyName.equals("info:fedora/def:dobj:state")){
 				m_obj.setState(m_elementContent.toString());
-				//m_obj.setExtProperty(m_objPropertyName, m_elementContent.toString());
 			} else if (m_objPropertyName.equals("info:fedora/def:dobj:cmodel")){
 				m_obj.setContentModelId(m_elementContent.toString());
-				//m_obj.setExtProperty(m_objPropertyName, m_elementContent.toString());
 			} else if (m_objPropertyName.equals("info:fedora/def:dobj:label")){
 				m_obj.setLabel(m_elementContent.toString());
-				//m_obj.setExtProperty(m_objPropertyName, m_elementContent.toString());
 			} else if (m_objPropertyName.equals("info:fedora/def:dobj:created")){
 				m_obj.setCreateDate(DateUtility.convertStringToDate(m_elementContent.toString()));
-				//m_obj.setExtProperty(m_objPropertyName, m_elementContent.toString());
 			} else if (m_objPropertyName.equals("info:fedora/def:dobj:modified")){
 				m_obj.setLastModDate(DateUtility.convertStringToDate(m_elementContent.toString()));
-				//m_obj.setExtProperty(m_objPropertyName, m_elementContent.toString());
 			} else if (m_objPropertyName.equals("info:fedora/def:dobj:type")){
 				String objType = m_elementContent.toString();
 				if (objType==null) { objType="FedoraObject"; }
@@ -658,22 +611,21 @@ public class FOXMLDODeserializer
 				} else {
 					m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
 				}
-				//m_obj.setExtProperty(m_objPropertyName, m_elementContent.toString());
 			} else {
 				// add an extensible property in the property map
 				m_obj.setExtProperty(m_objPropertyName, m_elementContent.toString());
 			}
 
         } else if (uri.equals(F) && localName.equals("binaryContent")) {
-			// FIXME: Implement for version 1.2?
+			// FIXME: Implement functionality for inline base64 datastreams
+			// in a future version (post 2.0)
 			m_readingBinaryContent=false;
 		} else if (uri.equals(F) && localName.equals("datastreamVersion")) {
 			// reinitialize datastream version-level attributes...
 			m_dsVersId=null;
 			m_dsLabel=null;
 			m_dsCreateDate=null;
-			m_dsSize=0;
-			//m_dsXMLBuffer=null;
+			m_dsSize=-1;
 			//m_dsAdmIds=new HashMap();
 			//m_dsDmdIds=null;
         } else if (uri.equals(F) && localName.equals("datastream")) {
@@ -686,7 +638,19 @@ public class FOXMLDODeserializer
 			m_dsInfoType=null;
 			m_dsOtherInfoType=null;
 			m_dsMDClass=0;
+		} else if (localName.equals("serviceInputMap")) {
+			m_diss.dsBindMap.dsBindings=(DSBinding[])m_dsBindings.toArray(new DSBinding[0]);
+			m_dsBindings=null;
+		} else if (uri.equals(F) && localName.equals("disseminatorVersion")) {
+			m_obj.disseminators(m_diss.dissID).add(m_diss);
+			m_diss=null;
+        } else if (uri.equals(F) && localName.equals("disseminator")) {
+			m_dissID=null;
+			m_bDefID=null;
+			m_dissState=null;
+			m_dissVersionable=null;
         }
+
     }
 
     private static String grab(Attributes a, String namespace,
@@ -711,6 +675,7 @@ public class FOXMLDODeserializer
 		ds.DSControlGrp=m_dsControlGrp;
 		ds.DSState=m_dsState;
 		ds.DSLocation=m_dsLocation;
+		ds.DSLocationType=m_dsLocationType;
 		ds.DSInfoType=null; // METS legacy
 		// SDP: what is this about?  It does not set mime and size anyhow?
 		/*
@@ -764,13 +729,13 @@ public class FOXMLDODeserializer
 		ds.DSControlGrp="X";
 		ds.DSState=m_dsState;
 		ds.DSLocation=m_obj.getPid() + "+" + m_dsId + "+" + m_dsVersId;
+		ds.DSLocationType=m_dsLocationType;
 		ds.DSInfoType=m_dsInfoType; // METS legacy
 		ds.DSMDClass=m_dsMDClass;   // METS legacy
 		// add it to the digitalObject
 		m_obj.datastreams(m_dsId).add(ds);
 		//reinitDS();   	
-	}
-	
+	}	
 	
 	private void checkMETSFormat(String formatURI) {
 		//"info:fedora/format:xml:mets:"
@@ -814,5 +779,59 @@ public class FOXMLDODeserializer
 			}
 		}
 		return mostRecentDS;
+	}
+	
+	private void initialize(){
+
+		// temporary variables and state variables
+		m_rootElementFound=false;
+		m_objPropertyName=null;
+		m_readingBinaryContent=false; // indicates reading base64-encoded content
+		m_firstInlineXMLElement=false;
+		m_inXMLMetadata=false;
+
+		// temporary variables for processing datastreams		
+		m_dsId=null;
+		m_dsURI=null;
+		m_dsVersionable=null;
+		m_dsVersId=null;
+		m_dsCreateDate=null;
+		m_dsState=null;
+		m_dsFormatURI=null;
+		m_dsSize=-1;
+		m_dsLocationType=null;
+		m_dsLocationURL=null;
+		m_dsLocation=null;
+		m_dsMimeType=null;
+		m_dsControlGrp=null;
+		m_dsInfoType=null;
+		m_dsOtherInfoType=null;
+		m_dsMDClass=0;
+		m_dsLabel=null;
+		m_dsXMLBuffer=null;
+		m_prefixes=new HashMap();
+		m_prefixUris=new HashMap();
+		//m_dsAdmIds=new HashMap();
+		//m_dsDmdIds=null;
+		
+		// temporary variables for processing disseminators
+		m_diss=null;
+		m_dissID=null;
+		m_bDefID=null;
+		m_dissState=null;
+		m_dissVersionable=null;
+		m_dsBindMap=null;
+		m_dsBindings=null;
+		
+		// temporary variables for processing audit records
+		m_auditRec=null;	
+		m_gotAudit=false;
+		//m_auditRecordID=null;
+		m_auditComponentID=null;
+		m_auditProcessType=null;
+		m_auditAction=null;
+		m_auditResponsibility=null;
+		m_auditDate=null;
+		m_auditJustification=null;
 	}
   }
