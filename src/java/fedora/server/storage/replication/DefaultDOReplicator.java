@@ -203,7 +203,7 @@ public class DefaultDOReplicator
             // check if any mods to disseminators for this object...
             // first get a list of disseminator db IDs
             results=logAndExecuteQuery(st, "SELECT dissDbID FROM doDissAssoc WHERE "
-                    + "doDbID="+doDbID+";");
+                    + "doDbID="+doDbID);
             HashSet dissDbIDs = new HashSet();
             while (results.next()) {
               dissDbIDs.add(new Integer(results.getInt("dissDbID")));
@@ -291,7 +291,7 @@ public class DefaultDOReplicator
               // and replace what's in db if they are different
               results=logAndExecuteQuery(st, "SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE "
                   + "dsBind.doDbID=" + doDbID + " AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID "
-                  + "AND dsBindMap.bMechDbID="+bMechDbID+";");
+                  + "AND dsBindMap.bMechDbID="+bMechDbID);
               String origDSBindMapID=null;
               int origDSBindMapDbID=0;
               while (results.next()) {
@@ -305,7 +305,7 @@ public class DefaultDOReplicator
                 // BindingMaps can be shared by other objects so first check to see if
                 // the orignial bindingMap is bound to datastreams of any other objects.
                 Statement st2 = connection.createStatement();
-                results=logAndExecuteQuery(st2,"SELECT DISTINCT doDbId,dsBindMapDbId FROM dsBind WHERE dsBindMapDbId="+origDSBindMapDbID+";");
+                results=logAndExecuteQuery(st2,"SELECT DISTINCT doDbId,dsBindMapDbId FROM dsBind WHERE dsBindMapDbId="+origDSBindMapDbID);
                 int numRows = 0;
                 while (results.next()) {
                   numRows++;
@@ -314,13 +314,13 @@ public class DefaultDOReplicator
                 results.close();
                 if(numRows == 1) {
                   // The bindingMap is NOT shared by any other objects and can be removed.
-                  int rowCount = logAndExecuteUpdate(st, "DELETE FROM dsBindMap WHERE dsBindMapDbID=" + origDSBindMapDbID + ";");
+                  int rowCount = logAndExecuteUpdate(st, "DELETE FROM dsBindMap WHERE dsBindMapDbID=" + origDSBindMapDbID);
                   logFinest("deleted "+rowCount+" rows from dsBindMapDbID");
                 } else {
                   // The bindingMap IS shared by other objects so leave bindingMap untouched.
                   logFinest("dsBindMapID: "+origDSBindMapID+" is shared by other objects; it will NOT be deleted");
                 }
-                int rowCount = logAndExecuteUpdate(st,"DELETE FROM dsBind WHERE doDbID=" + doDbID + ";");
+                int rowCount = logAndExecuteUpdate(st,"DELETE FROM dsBind WHERE doDbID=" + doDbID);
                 logFinest("deleted "+rowCount+" rows from dsBind");
 
                 // now add back new datastreams and dsBindMap associated with this disseminator
@@ -558,7 +558,7 @@ public class DefaultDOReplicator
                         HashSet dissDbIds = new HashSet();
                         results=logAndExecuteQuery(st, "SELECT dissDbID"
                             + " FROM doDissAssoc"
-                            + " WHERE doDbID=" + doDbID+";");
+                            + " WHERE doDbID=" + doDbID);
                         while (results.next()) {
                           Integer id = new Integer(results.getInt("dissDbID"));
                           dissDbIds.add(id);
@@ -570,7 +570,7 @@ public class DefaultDOReplicator
                         // Get all binding maps that are in db for this object
                         HashSet dsBindMapIds = new HashSet();
                         results=logAndExecuteQuery(st, "SELECT DISTINCT dsBindMapDbID "
-                            + " FROM dsBind WHERE doDbID=" + doDbID + ";");
+                            + " FROM dsBind WHERE doDbID=" + doDbID);
                         while (results.next()) {
                           Integer id = new Integer(results.getInt("dsBindMapDbID"));
                           dsBindMapIds.add(id);
@@ -618,7 +618,7 @@ public class DefaultDOReplicator
                                 results=logAndExecuteQuery(st, "SELECT dsBindMapDbID, dsBindMapID"
                                     + " FROM dsBindMap,bMech,diss"
                                     + " WHERE dsBindMap.bmechDbID=bMech.bmechDbID AND bMech.bmechPID='" + dissArray[j].bMechID + "' "
-                                    + " AND diss.dissID='" + dissArray[j].dissID + "' AND dsBindMapID='" + dissArray[j].dsBindMapID + "' ;");
+                                    + " AND diss.dissID='" + dissArray[j].dissID + "' AND dsBindMapID='" + dissArray[j].dsBindMapID + "'");
 
                                 if (!results.next()) {
                                   // No disseminator was found in db so it must be new one
@@ -2564,7 +2564,7 @@ public class DefaultDOReplicator
                       + "table...");
               rowCount=logAndExecuteUpdate(st, "DELETE FROM "
                       + "doDissAssoc WHERE doDbID=" + dbid
-                      + " AND ( " + inIntegerSetWhereConditionString("dissDbID", dissIds) + " );");
+                      + " AND ( " + inIntegerSetWhereConditionString("dissDbID", dissIds) + " )");
               logFinest("Deleted " + rowCount + " row(s).");
 
               // In dsBind table, we are removing rows specific to the doDbID,
@@ -2572,7 +2572,7 @@ public class DefaultDOReplicator
               logFinest("Attempting row deletion from dsBind table..");
               rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBind "
                       + "WHERE doDbID=" + dbid
-                      + " AND ( " + inIntegerSetWhereConditionString("dsBindMapDbID", bmapIds) + " );");
+                      + " AND ( " + inIntegerSetWhereConditionString("dsBindMapDbID", bmapIds) + " )");
 
               // In diss table, dissDbIds can be shared by other objects so only
               // remove dissDbIds that are not shared.

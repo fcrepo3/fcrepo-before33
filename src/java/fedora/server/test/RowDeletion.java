@@ -43,7 +43,7 @@ public class RowDeletion {
         * @exception SQLException JDBC, SQL error
         */
 	public void deleteBehaviorDefinitionRow(Connection connection, String bDefDBID) throws SQLException {
-		String deletionStatement = "DELETE FROM bDef WHERE bDefDbID = " + bDefDBID + " LIMIT 1;";
+		String deletionStatement = "DELETE FROM bDef WHERE bDefDbID = " + bDefDBID + " LIMIT 1";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -58,7 +58,7 @@ public class RowDeletion {
         * @exception SQLException JDBC, SQL error
         */
 	public void deleteBehaviorMechanismRow(Connection connection, String bMechDBID) throws SQLException {
-		String deletionStatement = "DELETE FROM bMech WHERE bMechDbID = " + bMechDBID + " LIMIT 1;";
+		String deletionStatement = "DELETE FROM bMech WHERE bMechDbID = " + bMechDBID + " LIMIT 1";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -75,7 +75,7 @@ public class RowDeletion {
 	public void deleteDataStreamBindingRow(Connection connection, String doDBID) throws SQLException {
 
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM dsBind WHERE doDbID = " +  doDBID + ";";
+		String deletionStatement = "DELETE FROM dsBind WHERE doDbID = " +  doDBID + "";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -91,7 +91,7 @@ public class RowDeletion {
         */
 	public void deleteDataStreamBindingMapRow(Connection connection, String bMechDBID) throws SQLException {
 
-		String deletionStatement = "DELETE FROM dsBindMap WHERE bMechDbID = " + bMechDBID + ";";
+		String deletionStatement = "DELETE FROM dsBindMap WHERE bMechDbID = " + bMechDBID + "";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -108,7 +108,7 @@ public class RowDeletion {
 	public void deleteDataStreamBindingSpecRow(Connection connection, String bMechDBID) throws SQLException {
 
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM dsBindSpec WHERE bMechDbID = " + bMechDBID + ";";
+		String deletionStatement = "DELETE FROM dsBindSpec WHERE bMechDbID = " + bMechDBID + "";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -132,7 +132,7 @@ public class RowDeletion {
                 ResultSet rs;
 
                 query = "SELECT dsBindKeyDbID FROM dsBindSpec WHERE ";
-                query += "bMechDbID = " + bMechDBID + ";";
+                query += "bMechDbID = " + bMechDBID + "";
 System.out.println("deleteDataStream, query = " + query);
 
                 statement = connection.createStatement();
@@ -140,7 +140,7 @@ System.out.println("deleteDataStream, query = " + query);
 
                 while (rs.next()) {
                         dsBindKeyDbID = rs.getString(1);
-			deletionStatement = "DELETE FROM dsMIME WHERE dsBindKeyDbID = " + dsBindKeyDbID + ";";
+			deletionStatement = "DELETE FROM dsMIME WHERE dsBindKeyDbID = " + dsBindKeyDbID + "";
 
 			deleteGen(connection, deletionStatement);
 		}
@@ -160,7 +160,7 @@ System.out.println("deleteDataStream, query = " + query);
         */
 	public void deleteDigitalObjectRow(Connection connection, String doDBID) throws SQLException {
 
-		String deletionStatement = "DELETE FROM do WHERE doDbID = " +  doDBID + " LIMIT 1;";
+		String deletionStatement = "DELETE FROM do WHERE doDbID = " +  doDBID + " LIMIT 1";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -177,7 +177,7 @@ System.out.println("deleteDataStream, query = " + query);
 	public void deleteDigitalObjectDissAssocRow(Connection connection, String doDBID) throws SQLException {
 
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM doDissAssoc WHERE doDbID = " +  doDBID + ";";
+		String deletionStatement = "DELETE FROM doDissAssoc WHERE doDbID = " +  doDBID + "";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -211,7 +211,7 @@ System.out.println("deleteDataStream, query = " + query);
 	public void deleteDisseminatorRow(Connection connection, String bMechDBID) throws SQLException {
 
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM diss WHERE bMechDbID = " +  bMechDBID + "1;";
+		String deletionStatement = "DELETE FROM diss WHERE bMechDbID = " +  bMechDBID + "1";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -227,7 +227,7 @@ System.out.println("deleteDataStream, query = " + query);
         */
 	public void deleteMechanismImplRow(Connection connection, String bMechDBID) throws SQLException {
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM mechImpl WHERE bMechDbID = " +  bMechDBID + ";";
+		String deletionStatement = "DELETE FROM mechImpl WHERE bMechDbID = " +  bMechDBID + "";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -244,7 +244,7 @@ System.out.println("deleteDataStream, query = " + query);
 	public void deleteMethodRow(Connection connection, String bDefDBID) throws SQLException {
 
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM method WHERE bDefDbID = " + bDefDBID + ";";
+		String deletionStatement = "DELETE FROM method WHERE bDefDbID = " + bDefDBID + "";
 
 		deleteGen(connection, deletionStatement);
 	}
