@@ -78,7 +78,11 @@ public class DirectoryBasedRepositoryReader
                         m_shortExportFormat, m_longExportFormat, m_storageFormat,
                         m_encoding, in, this);
                 String pid=reader.GetObjectPID();
-                m_files.put(pid, files[i]);
+                if (reader.GetObjectPID().length()==0) {
+                    logWarning("File " + files[i] + " has no pid...skipping");
+                } else {
+                    m_files.put(pid, files[i]);
+                }
             }
         } catch (FileNotFoundException fnfe) {
             // won't happen
@@ -88,7 +92,7 @@ public class DirectoryBasedRepositoryReader
     private InputStream getStoredObjectInputStream(String pid) 
             throws ObjectNotFoundException {
         try {
-            return new FileInputStream((String) m_files.get(pid));
+            return new FileInputStream((File) m_files.get(pid));
         } catch (Throwable th) {
             throw new ObjectNotFoundException("The object, " + pid + " was "
                     + "not found in the repository.");
