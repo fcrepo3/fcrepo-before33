@@ -13,13 +13,12 @@
 		2. little or no change to servlet and servlet-mapping sections
 		3. much change to security-constraints to tighten container security for those urls and methods
 		not otherwise specifically declared
-		4. several security-constraints are temporarily relaxed (the auth-constraint commented out) 
-		because client code is not now in fact sending credentials; see to-do below 
+		4. several security-constraints may still be at odds with client code not yet 
+		sending credentials; see to-do below 
 	-->
 	
 	<!-- to do: 
-		1. implement basic auth in client code which accesses some urls,
-		then uncomment auth-constraint in security-constraints below.
+		1. implement basic auth in client code which accesses some urls.
 		Fedora < 2.1 has credentials passed and detected in a variety of ad hoc ways, 
 		including writing and reading password in querystring,
 		reading http headers directly (web.xml wasn't correct to force tomcat to do this for POSTs),
@@ -29,14 +28,14 @@
 		should we change it?  any implications?
 		3. the servlet names (labels) and display names could be regularized; may be too late/messy now.
 		4. /mgmt/getNextPID not formed generally, e.g., /management/upload; should we use /management/getNextPID ?
-		5. note:  the explicit login servlet has become essentially an upfront authenticated ping.
+		5. note:  the explicit login servlet has become essentially an upfront authentication ping.
 	-->
 
-	<!-- lock down (no access to any roles) by default -->
+	<!-- lock down (no access to any roles) as default case -->
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
-			<url-pattern>/*</url-pattern>
+			<url-pattern>/</url-pattern>
 			<http-method>CONNECT</http-method>			
 			<http-method>DELETE</http-method>
 			<http-method>GET</http-method>
@@ -44,7 +43,7 @@
 			<http-method>OPTIONS</http-method>
 			<http-method>POST</http-method>
 			<http-method>PUT</http-method>
-			<http-method>TRACE</http-method>			
+			<http-method>TRACE</http-method>
 		</web-resource-collection>
 		<auth-constraint/>
 	</security-constraint>	
@@ -52,14 +51,22 @@
 	<welcome-file-list id="WelcomeFileList_1">
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/index.html</url-pattern>
+	</servlet-mapping>	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
 			<url-pattern>/index.html</url-pattern>
+			<!--url-pattern>*.html</url-pattern-->			
 			<http-method>GET</http-method>
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>		
+		</auth-constraint>				
 	</security-constraint>	
 	
 	<servlet>
@@ -84,29 +91,36 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/*</url-pattern>
+		<url-pattern>/management/soap</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>*.jws</url-pattern>
+		<url-pattern>/access/soap</url-pattern>
+	</servlet-mapping>	
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/AdminService</url-pattern>
+	</servlet-mapping>	
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>*.jws</url-pattern>						
 	</servlet-mapping>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Fedora Management Interface</web-resource-name>
-			<url-pattern>/access/soap</url-pattern>
-			<http-method>GET</http-method>			
-			<http-method>HEAD</http-method>
-			<http-method>POST</http-method>
-		</web-resource-collection>
-		<!-- uncomment after implementing basic auth in client GETting this url
-		auth-constraint>
-			<role-name>*</role-name>
-		</auth-constraint -->
-	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
 			<url-pattern>/management/soap</url-pattern>
+			<http-method>GET</http-method>			
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Management Interface</web-resource-name>
+			<url-pattern>/access/soap</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>
@@ -115,7 +129,7 @@
 			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>
-	
+	<!-- called during fedora server startup -->	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
@@ -124,11 +138,24 @@
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>
-		<!--auth-constraint>
+		<auth-constraint>
 			<role-name>*</role-name>
-		</auth-constraint -->
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Management Interface</web-resource-name>
+			<url-pattern>*.jws</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
 	</security-constraint>
 
+	<!-- start, stop, get server status -->
 	<servlet>
 		<servlet-name>ControlServlet</servlet-name>
 		<display-name>Fedora Control Servlet</display-name>
@@ -148,9 +175,11 @@
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>
-		<!-- auth-constraint>
-			<role-name>*</role-name>
-		</auth-constraint -->
+		<auth-constraint>
+			<!-- note that xacml authz requires started server, 
+			so server start must be protected here, if at all-->
+			<role-name>administrator</role-name>
+		</auth-constraint>
 	</security-constraint>	
 
 	<servlet>
@@ -488,5 +517,22 @@
 			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>
+	<error-page>
+		<error-code>401</error-code>
+		<location>/401.jsp</location>
+	</error-page>		
+	<error-page>
+		<error-code>403</error-code>
+		<location>/403.jsp</location>
+	</error-page>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Management Interface</web-resource-name>
+			<url-pattern>*.jsp</url-pattern>						
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>	
 	
 </web-app>
