@@ -26,15 +26,21 @@ public abstract class DateUtility
    * the date format: yyyy-MM-ddTHH:mm:ss
    *
    * @param dateTime A datetime string
-   * @return Corresponding instance of java.util.Calendar
+   * @return Corresponding instance of java.util.Calendar (returns null
+   * if dateTime string argument is empty string or null)
    */
   public static Calendar convertStringToCalendar(String dateTime)
   {
-    Calendar calendar = Calendar.getInstance();
-    ParsePosition pos = new ParsePosition(0);
-    Date date = formatter.parse(dateTime, pos);
-    calendar.setTime(date);
+    Calendar calendar = null;
+    if (!dateTime.equalsIgnoreCase("") && !(dateTime == null))
+    {
+      calendar = Calendar.getInstance();
+      ParsePosition pos = new ParsePosition(0);
+      Date date = formatter.parse(dateTime, pos);
+      calendar.setTime(date);
+    }
     return(calendar);
+
   }
 
   /**
@@ -42,12 +48,17 @@ public abstract class DateUtility
    * the date format: yyyy-MM-ddTHH:mm:ss
    *
    * @param dateTime A datetime string
-   * @return Corresponding instance of java.util.Date
+   * @return Corresponding instance of java.util.Date (returns null
+   * if dateTime string argument is empty string or null)
    */
   public static Date convertStringToDate(String dateTime)
   {
-    ParsePosition pos = new ParsePosition(0);
-    Date date = formatter.parse(dateTime, pos);
+    Date date = null;
+    if (!dateTime.equalsIgnoreCase("") && !(dateTime == null))
+    {
+      ParsePosition pos = new ParsePosition(0);
+      date = formatter.parse(dateTime, pos);
+    }
     return(date);
   }
 
@@ -56,13 +67,18 @@ public abstract class DateUtility
    * the date format: yyyy-MM-ddTHH:mm:ss
    *
    * @param calendar An instance of java.util.Calendar
-   * @return Corresponding datetime string
+   * @return Corresponding datetime string (returns null if Calendar
+   * argument is null)
    */
   public static String convertCalendarToString(Calendar calendar)
   {
-    Date date = calendar.getTime();
-    String dateTimeString = formatter.format(date);
-    return(dateTimeString);
+    String dateTime = null;
+    if (!(calendar == null))
+    {
+      Date date = calendar.getTime();
+      dateTime = formatter.format(date);
+    }
+    return(dateTime);
   }
 
   /**
@@ -70,25 +86,72 @@ public abstract class DateUtility
    * the date format: yyyy-MM-ddTHH:mm:ss
    *
    * @param date Instance of java.util.Date
-   * @return Corresponding datetime string
+   * @return Corresponding datetime string (returns null if Date argument
+   * is null)
    */
   public static String convertDateToString(Date date)
   {
-    String dateTimeString = formatter.format(date);
-    return(dateTimeString);
+    String dateTime = null;
+    if (!(date == null))
+    {
+      dateTime = formatter.format(date);
+    }
+    return(dateTime);
+  }
+
+  /**
+   * Converts an instance of java.util.Calendar into and instance
+   * of java.util.Date.
+   *
+   * @param calendar Instance of java.util.Calendar
+   * @return Corresponding instance of java.util.Date (returns null
+   * if Calendar argument is null)
+   */
+  public static Date convertCalendarToDate(Calendar calendar)
+  {
+    Date date = null;
+    if(!(calendar == null))
+    {
+      date = calendar.getTime();
+    }
+    return(date);
+  }
+
+  /**
+   * Converts an instance of java.util.Date into an instance
+   * of java.util.Calendar.
+   *
+   * @param date Instance of java.util.Date
+   * @return Corresponding instance of java.util.Calendar (returns null
+   * if Date argument is null)
+   */
+  public static Calendar convertDateToCalendar(Date date)
+  {
+    Calendar calendar = null;
+    if (!(date == null))
+    {
+      calendar = Calendar.getInstance();
+      ParsePosition pos = new ParsePosition(0);
+      calendar.setTime(date);
+    }
+    return(calendar);
   }
 
   public static void main(String[] args)
   {
     String dateTimeString = "2002-08-22T13:58:06";
     Calendar cal = convertStringToCalendar(dateTimeString);
-    System.out.println("DateString: "+dateTimeString+"\nCalendar: "+cal);
+    System.out.println("DateString: "+dateTimeString+"\nConvertCalendarToString: "+cal);
     Date date = convertStringToDate(dateTimeString);
-    System.out.println("\nDateString: "+dateTimeString+"\nDate: "+
+    System.out.println("\nDateString: "+dateTimeString+"\nConvertDateToString: "+
                        convertDateToString(date));
-    System.out.println("\nCalendar: "+cal+"\nDateTimeString: "+
+    System.out.println("\nCalendar: "+cal+"\nConvertCalendarToString: "+
                        convertCalendarToString(cal));
-    System.out.println("\nDate: "+date+"\nDateTimeString: "+
+    System.out.println("\nDate: "+convertDateToString(date)+"\nConvertDateT0String: "+
                        convertDateToString(date));
+    System.out.println("\nCalendar: "+cal+"\nConvertCalendarToDate: "+
+                       convertDateToString(convertCalendarToDate(cal)));
+    System.out.println("\nDate: "+convertDateToString(date)+
+                       "\nConvertDateToCalendar: "+convertDateToCalendar(date));
   }
 }
