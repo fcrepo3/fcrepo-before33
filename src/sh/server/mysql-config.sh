@@ -12,7 +12,7 @@
 #
 # 1) An empty database. The name used must agree with the name used in the Fedora
 #    fedora.fcfg configuratino file. The default name in the configuration file
-#    is "FedoraObjects". The database must initially be empty and then Fedora will
+#    is "fedora12". The database must initially be empty and then Fedora will
 #    automatically generate the required tables.
 # 2) A MySQL username and password with dba privileges on the Fedora database must 
 #    exist for the specified database. The username and password must agree with
@@ -27,7 +27,7 @@
 # arg 3 - the password for the MySQL user with dba privileges (e.g., none)
 # arg 4 - the name of MySQL user admin for Fedora database (e.g., fedoraAdmin)
 # arg 5 - the password of MySQL user admin for Fedora database (e.g., fedoraAdmin)
-# arg 6 - the name of the Fedora database (e.g., FedoraObjects)
+# arg 6 - the name of the Fedora database (e.g., fedora12)
 #
 
 # check for six input arguments
@@ -40,7 +40,7 @@ if [ "$#" != 6 ]; then
   echo "mysql_dba_pass  - the password for the MySQL user with dba privileges"
   echo "fedoradba_user  - the name of MySQL user admin for Fedora database (e.g., fedoraAdmin)"
   echo "fedora_dba_pass - the password of MySQL user admin for Fedora database (e.g., fedoraAdmin)"
-  echo "mysql_db_name   - the name of the Fedora database (e.g., FedoraObjects)"
+  echo "mysql_db_name   - the name of the Fedora database (e.g., fedora12)"
   echo
   exit 1
 fi
@@ -69,7 +69,7 @@ echo "#" >mysqlConfig.sql
 echo "# Configure MySQL with the proper username and password for the Fedora database by" >>mysqlConfig.sql
 echo "# 1\) adding a username of $4 with no global permissions" >>mysqlConfig.sql
 echo "# 2\) assigning initial password of $5 for username $4" >>mysqlConfig.sql
-echo "# 3\) granting the fedoraAdmin username DBA permissions on the Fedora Database named 'FedoraObjects'" >>mysqlConfig.sql
+echo "# 3\) granting the fedoraAdmin username DBA permissions on the Fedora Database named 'fedora12'" >>mysqlConfig.sql
 echo "#" >>mysqlConfig.sql
 echo "grant all privileges on $6.* to $4@localhost identified by '$5' with grant option;" >>mysqlConfig.sql
 echo "grant all privileges on $6.* to $4@'%' identified by '$5' with grant option;" >>mysqlConfig.sql
