@@ -6,6 +6,17 @@
 
 
 
+<xsd:complexType name="ArrayOfProperty"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+<xsd:complexType name="MIMETypedStream"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+<xsd:complexType name="ArrayOfString"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+<xsd:complexType name="ArrayOfDateTime"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+<xsd:complexType name="Datastream"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+<xsd:complexType name="ArrayOfDatastream"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+<xsd:complexType name="ArrayOfComponentInfo"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+<xsd:complexType name="DatastreamBindingMap"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+<xsd:complexType name="Disseminator"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+<xsd:complexType name="ArrayOfDisseminator"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+
 <!-- Here's some old stuff:
 
   <xsd:element name="dsBindingSpec" type="fedora:dsBindingSpecType" abstract="true"/>
