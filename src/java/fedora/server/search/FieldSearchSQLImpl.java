@@ -212,14 +212,6 @@ public class FieldSearchSQLImpl
         }
     }
    
-/**
- * = for dates and non-repeating fields
-
-~ for all fields, excluding cDate mDate dcDate
-
->, <, >=, <= for dates
-
-*/
     public List search(String[] resultFields, String terms) 
             throws StorageDeviceException, QueryParseException, ServerException {
         Connection conn=null;
@@ -278,12 +270,22 @@ public class FieldSearchSQLImpl
         }
     }
 
+/**
+ * = for dates and non-repeating fields
+
+~ for all fields, excluding cDate mDate dcDate
+
+>, <, >=, <= for dates
+
+*/
     public List search(String[] resultFields, List conditions) 
             throws ServerException {
         Connection conn=null;
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         try {
             logFinest("Entering search(String[], List)");
             StringBuffer whereClause=new StringBuffer();
+            boolean willJoin=false;
             if (conditions.size()>0) {
                 boolean needsEscape=false;
                 whereClause.append(" WHERE");
@@ -292,14 +294,20 @@ public class FieldSearchSQLImpl
                     if (i>0) {
                         whereClause.append(" AND");
                     }
-                    whereClause.append(' ');
                     String op=cond.getOperator().getSymbol();
                     String prop=cond.getProperty();
-                    if (prop.endsWith("date")) {
-                        // deal with dates ... cDate mDate dcDate date
+                    if (prop.toLowerCase().endsWith("date")) {
+                        // deal with dates ... cDate mDate dcmDate date
                         if (op.equals("~")) {
                             if (prop.equals("date")) {
-                                // toSql dcDate
+                                // query for dcDate as string
+                                String sqlPart=toSql("doFields.dcDate", cond.getValue());
+                                if (sqlPart.startsWith(" ")) {
+                                    needsEscape=true;
+                                } else {
+                                    whereClause.append(' ');
+                                }
+                                whereClause.append(sqlPart);
                             } else {
                                 throw new QueryParseException("The ~ operator "
                                         + "cannot be used with cDate, mDate, "
@@ -309,7 +317,34 @@ public class FieldSearchSQLImpl
                         } else { // =, <, <=, >, >=
                             // property must be parsable as a date... if ok,
                             // do (cDate, mDate, dcmDate) 
-                            // or (dcDate) <- dcDates table
+                            // or (date) <- dcDate from dcDates table
+                            Date dt=parseDate(cond.getValue());
+                            if (dt==null) {
+                                throw new QueryParseException("When using "
+                                        + "equality or inequality operators "
+                                        + "with a date-based value, the date "
+                                        + "must be in yyyy-MM-DD[Thh:mm:ss[Z]] "
+                                        + "form.");
+                            }
+                            String formattedDate=formatter.format(dt);
+                            if (prop.equals("date")) {
+                                // do a left join on the dcDates table...dcDate
+                                // query will be of form: 
+                                // select pid 
+                                // from doFields 
+                                // left join dcDates on doFields.pid=dcDates.pid 
+                                // where...
+                                if (!willJoin) {
+                                    willJoin=true;
+                                    whereClause.insert(0, " LEFT JOIN dcDates "
+                                            + "ON doFields.pid=dcDates.pid");
+                                }
+                                whereClause.append(" dcDates.dcDate" + op + "'"
+                                        + formattedDate + "'");
+                            } else {
+                                whereClause.append(" doFields." + prop + op + "'"
+                                        + formattedDate + "'");
+                            }
                         }
                     } else {
                         if (op.equals("=")) {
@@ -319,14 +354,38 @@ public class FieldSearchSQLImpl
                                         + "non-repeating fields.");
                             } else {
                                 // do a real equals check... do a toSql but
-                                // reject it if it starts with "LIKE" or " LIKE"
+                                // reject it if it uses "LIKE"
+                                String sqlPart=toSql("doFields." + prop, cond.getValue());
+                                if (sqlPart.indexOf("LIKE ")!=-1) {
+                                    throw new QueryParseException("The = "
+                                        + "operator cannot be used with "
+                                        + "wildcards.");
+                                }
+                                if (sqlPart.startsWith(" ")) {
+                                    needsEscape=true;
+                                } else {
+                                    whereClause.append(' ');
+                                }
+                                whereClause.append(sqlPart);
                             }
                         } else if (op.equals("~")) {
                             if (isDCProp(prop)) {
-                                // prepend dc and caps the first char, then toSql it
-                            } else {
-                                // tosql it
+                                // prepend dc and caps the first char first...
+                                prop="dc" + prop.substring(0,1).toUpperCase() 
+                                        + prop.substring(1);  
                             }
+                            // the field name is ok, so toSql it
+                            String sqlPart=toSql("doFields." + prop, 
+                                    cond.getValue());
+                            if (sqlPart.startsWith(" ")) {
+                                needsEscape=true;
+                            } else {
+                                whereClause.append(' ');
+                            }
+                            whereClause.append(sqlPart);
+                        } else {
+                            throw new QueryParseException("Can't use >, >=, <, "
+                                    + "or <= operator on a string-based field.");
                         }
                     }
                 }
@@ -341,7 +400,7 @@ public class FieldSearchSQLImpl
                     + whereClause.toString(), resultFields);
             return ret;
         } catch (SQLException sqle) {
-            throw new StorageDeviceException("Error attempting field search: "
+            throw new StorageDeviceException("Error from SQL DB while attempting field search: "
                     + sqle.getMessage());
         } finally {
             if (conn!=null) {
@@ -351,30 +410,6 @@ public class FieldSearchSQLImpl
         }
     }
     
-            /*
-            StringBuffer queryPart=new StringBuffer();
-            for (int i=0; i<conditions.size(); i++) {
-                Condition cond=(Condition) conditions.get(i);
-                if (i>0) {
-                    queryPart.append(" and ");
-                }
-                queryPart.append(' ');
-                String op=cond.getOperator().getSymbol();
-                if (cond.getProperty().toLowerCase().endsWith("date")) {
-                    if ( (op.startsWith(">")) || (op.startsWith("<")) ) {
-                        // num by itself
-                        long n=parseDateAsNum(cond.getValue());
-                        if (n==-1) { 
-                            throw new QueryParseException("Bad date given with "
-                                    + "lt, le, gt, or ge operator.  Dates must "
-                                    + "be given in yyyy-MM-ddThh:mm:ss[Z] or yyyy-MM-dd format.");
-        } catch (SQLException sqle) {
-            throw new StorageDeviceException("Error attempting advanced search: \"" 
-                    + sqle.getMessage());
-        }
-             */
-                                    
-
     /**
      * Get the string that should be inserted for a dublin core column,
      * given a list of values.  Turn each value to lowercase and separate them 
