@@ -1532,44 +1532,4 @@ public abstract class Server
         return out.toString();
     }
     
-
-    /**
-     * Tests this class.
-     * 
-     * @param Command-line arguments.
-     */
-    public static void main(String[] args) {
-        // use the env var FEDORA_HOME
-        // java -Dfedora.home=$FEDORA_HOME
-        String serverHome=System.getProperty(Server.HOME_PROPERTY);
-        if (serverHome==null) {
-            System.err.println("Warning: " + Server.HOME_PROPERTY 
-                    + " not set, using \".\"");
-            serverHome=".";
-        }
-        Server server=null;
-        try {
-            server=Server.getInstance(new File(serverHome));
-            System.out.println(server.getConfigSummary());
-        } catch (ServerInitializationException sie) {
-            System.err.println("Error: Server could not initialize: "
-                    + sie.getMessage());
-        } catch (ModuleInitializationException mie) {
-            System.err.println("Error: Module with role '" + mie.getRole()
-                    + "' could not initialize: " + mie.getMessage());
-        } finally {
-            if (server!=null) {
-            try {
-                server.shutdown();
-            } catch (ServerShutdownException sse) {
-                System.err.println("Error: Server had trouble shutting down: "
-                        + sse.getMessage());
-            } catch (ModuleShutdownException mse) {
-                System.err.println("Error: Module with role '" + mse.getRole()
-                        + "' had trouble shutting down: " + mse.getMessage());
-            }
-            }
-        }
-    }
-
 }

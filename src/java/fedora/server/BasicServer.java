@@ -7,13 +7,19 @@ import fedora.server.errors.ModuleShutdownException;
 
 import edu.cornell.dlrg.logging.DatingFileHandler;
 import edu.cornell.dlrg.logging.SimpleXMLFormatter;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 public class BasicServer 
         extends Server {
@@ -144,6 +150,87 @@ public class BasicServer
     public String[] getRequiredModuleRoles() {
         return new String[] {"fedora.server.storage.DOManager"};
     }
-
+    
+    public static void main(String[] args) throws Exception {
+        // prepare for an in-tomcat-instance run of the server by
+        // reading the adminPassword and fedoraServerPort from fedora.fcfg,
+        // and sending it to <FEDORA_HOME>/tomcat41/config/
+        String fedoraHome=System.getProperty("fedora.home");
+        if (fedoraHome==null || fedoraHome.equals("")) {
+            System.out.println("ERROR: fedora.home property not set.");
+        } else {
+            File fedoraHomeDir=new File(fedoraHome);
+            File fcfgFile=new File(fedoraHomeDir, "config/fedora.fcfg");
+            if (!fcfgFile.exists()) {
+                System.out.println("ERROR: fedora.fcfg not found in config/ -- is fedora.home set properly?");
+            } else {
+                String adminPassword="fedoraAdmin";
+                String fedoraServerPort="8080";
+                DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                DocumentBuilder builder=factory.newDocumentBuilder();
+                Element rootElement=builder.parse(fcfgFile).getDocumentElement();
+                NodeList params=rootElement.getElementsByTagName("param");
+                for (int i=0; i<params.getLength(); i++) {
+                    Node nameNode=params.item(i).getAttributes().getNamedItem("name");
+                    Node valueNode=params.item(i).getAttributes().getNamedItem("value");
+                    if (nameNode.getNodeValue().equals("fedoraServerPort")) {
+                        fedoraServerPort=valueNode.getNodeValue();
+                    } else if (nameNode.getNodeValue().equals("adminPassword")) {
+                        adminPassword=valueNode.getNodeValue();
+                    }
+                }
+                File serverTemplate=new File(fedoraHome, "tomcat41/conf/server_template.xml"); 
+                BufferedReader in=new BufferedReader(new FileReader(serverTemplate));
+                FileWriter out=new FileWriter(new File(fedoraHome, "tomcat41/conf/server.xml"));
+                String nextLine="";
+                while (nextLine!=null) {
+                    nextLine=in.readLine();
+                    if (nextLine!=null) {
+                        if (nextLine.indexOf("#")==-1) {
+                            out.write(nextLine);
+                        } else {
+                            for (int i=0; i<nextLine.length(); i++) {
+                                char c=nextLine.charAt(i);
+                                if (c=='#') {
+                                    out.write(fedoraServerPort);
+                                } else {
+                                    out.write(c);
+                                }
+                            }
+                        }
+                        out.write("\n");
+                    }
+                }
+                in.close();
+                out.close();
+                
+                File usersTemplate=new File(fedoraHome, "tomcat41/conf/tomcat-users_template.xml"); 
+                in=new BufferedReader(new FileReader(usersTemplate));
+                out=new FileWriter(new File(fedoraHome, "tomcat41/conf/tomcat-users.xml"));
+                nextLine="";
+                while (nextLine!=null) {
+                    nextLine=in.readLine();
+                    if (nextLine!=null) {
+                        if (nextLine.indexOf("#")==-1) {
+                            out.write(nextLine);
+                        } else {
+                            for (int i=0; i<nextLine.length(); i++) {
+                                char c=nextLine.charAt(i);
+                                if (c=='#') {
+                                    out.write(adminPassword);
+                                } else {
+                                    out.write(c);
+                                }
+                            }
+                        }
+                        out.write("\n");
+                    }
+                }
+                in.close();
+                out.close();
+            }
+        }
+    }
     
 }
