@@ -24,6 +24,9 @@ import java.util.ResourceBundle;
  * <pre>
  *     throw new MyException(null, "myMessageId", null, null, null);
  * </pre>
+ * <p></p>
+ * Exceptions of this type have the benefit that they can be easily converted
+ * to informative, localized SOAP Fault envelopes.
  *
  * @author cwilper@cs.cornell.edu
  */
