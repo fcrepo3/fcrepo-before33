@@ -657,44 +657,44 @@
     <operation name="GetDatastream">
       <documentation>gets a datastream in an object.</documentation>
       <input message="GetDatastreamRequest"/>
-      <input message="GetDatastreamResponse"/>
+      <output message="GetDatastreamResponse"/>
     </operation>
     <operation name="GetDatastreams">
       <documentation>gets all datastreams in an object.</documentation>
       <input message="GetDatastreamsRequest"/>
-      <input message="GetDatastreamsResponse"/>
+      <output message="GetDatastreamsResponse"/>
 	</operation>
 	<operation name="ListDatastreamIDs">
       <documentation>gets a list of datastreams in an object.</documentation>
 	  <input message="ListDatastreamIDsRequest"/>
-	  <input message="ListDatastreamIDsResponse"/>
+	  <output message="ListDatastreamIDsResponse"/>
 	</operation>
 	<operation name="GetDatastreamHistory">
       <documentation>gets the componentID, createDT, state, and label history
       of a datastream.</documentation>
 	  <input message="GetDatastreamHistoryRequest"/>
-	  <input message="GetDatastreamHistoryResponse"/>
+	  <output message="GetDatastreamHistoryResponse"/>
 	</operation>
 	<operation name="GetDisseminator">
       <documentation>gets a disseminator in an object.</documentation>
 	  <input message="GetDisseminatorRequest"/>
-	  <input message="GetDisseminatorResponse"/>
+	  <output message="GetDisseminatorResponse"/>
 	</operation>
 	<operation name="GetDisseminators">
       <documentation>gets all disseminators in an object.</documentation>
 	  <input message="GetDisseminatorsRequest"/>
-	  <input message="GetDisseminatorsResponse"/>
+	  <output message="GetDisseminatorsResponse"/>
 	</operation>
 	<operation name="ListDisseminatorIDs">
       <documentation>gets a list of disseminators in an object.</documentation>
 	  <input message="ListDisseminatorIDsRequest"/>
-	  <input message="ListDisseminatorIDsResponse"/>
+	  <output message="ListDisseminatorIDsResponse"/>
 	</operation>
 	<operation name="GetDisseminatorHistory">
       <documentation>gets the componentID, createDT, state, and label history
       of a disseminator.</documentation>
 	  <input message="GetDisseminatorHistoryRequest"/>
-	  <input message="GetDisseminatorHistoryResponse"/>
+	  <output message="GetDisseminatorHistoryResponse"/>
 	</operation>
   </portType>
   <binding name="Fedora-API-M-Binding-SOAPHTTP" type="Fedora-API-M-PortType">

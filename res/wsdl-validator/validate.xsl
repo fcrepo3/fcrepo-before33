@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<aaa:stylesheet xmlns:aaa="http://www.w3.org/1999/XSL/Transform" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sch="http://www.ascc.net/xml/schematron" xmlns:zvon="http://zvon.org/schematron" xmlns:saxon="http://icl.com/saxon" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" version="1.0" extension-element-prefixes="saxon" saxon:saxon="" zvon:zvon="http://zvon.org/schematron" wsdl:wsdl="http://schemas.xmlsoap.org/wsdl/" soap:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+                xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" version="1.0" extension-element-prefixes="saxon" saxon:saxon="" zvon:zvon="http://zvon.org/schematron" wsdl:wsdl="http://schemas.xmlsoap.org/wsdl/" soap:soap="http://schemas.xmlsoap.org/wsdl/soap/">
    <aaa:output method="html" indent="yes"/>
    <aaa:key name="binding" match="wsdl:binding" use="@name"/>
    <aaa:key name="portType" match="wsdl:portType" use="@name"/>
