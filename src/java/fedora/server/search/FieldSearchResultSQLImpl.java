@@ -166,7 +166,9 @@ public class FieldSearchResultSQLImpl
 			queryText.append(resultFieldsString);
 
         }
-        return queryText.toString();
+        String qt=queryText.toString();
+        logFinest(qt);
+        return qt;
     }
 
     private String getWhereClause(String terms)
