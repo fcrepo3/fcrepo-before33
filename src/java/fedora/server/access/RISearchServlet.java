@@ -26,7 +26,8 @@ public class RISearchServlet extends TrippiServlet {
     }
 
     public boolean closeOnDestroy() { return false; }
-    public String getErrorStylesheetLocation() { return "/ri/error.xsl"; }
-    public String getFormStylesheetLocation() { return "/ri/form.xsl"; }
+    public String getIndexStylesheetLocation() { return "/ROOT/ri/index.xsl"; }
+    public String getFormStylesheetLocation() { return "/ROOT/ri/form.xsl"; }
+    public String getErrorStylesheetLocation() { return "/ROOT/ri/error.xsl"; }
     public String getContext(String origContext) { return "/ri"; }
 }

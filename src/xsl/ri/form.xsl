@@ -7,9 +7,9 @@
 <!ENTITY tripleFormTitle      "Find Triples">
 <!ENTITY responseFormatPrompt "Response">
 <!ENTITY queryLanguagePrompt  "Language">
-<!ENTITY queryTextPrompt      "Query">
+<!ENTITY queryTextPrompt      "Query Text or URL">
 <!ENTITY usingTemplate        "(using template)">
-<!ENTITY templateTextPrompt   "Template (if applicable)">
+<!ENTITY templateTextPrompt   "Template Text or URL (if applicable)">
 <!ENTITY limitPrompt          "Limit">
 <!ENTITY otherPrompt          "Advanced">
 <!ENTITY distinctPrompt       "Force Distinct">
