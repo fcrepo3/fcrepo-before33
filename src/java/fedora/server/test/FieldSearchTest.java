@@ -73,7 +73,7 @@ public class FieldSearchTest
 
     public void setUp() {
         try {
-            String mets="mets11fedora1";
+            String mets="metslikefedora1";
             HashMap sers=new HashMap();
             sers.put(mets, new METSLikeDOSerializer());
             HashMap desers=new HashMap();
