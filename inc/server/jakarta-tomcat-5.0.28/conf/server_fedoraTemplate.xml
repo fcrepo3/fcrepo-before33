@@ -1,24 +1,4 @@
 <Server port="#2" shutdown="SHUTDOWN">
-  <!-- Global JNDI resources -->
-  <GlobalNamingResources>
-    <!-- Editable user database that can also be used by
-         UserDatabaseRealm to authenticate users -->
-    <Resource name="UserDatabase" auth="Container"
-              type="org.apache.catalina.UserDatabase"
-       description="User database that can be updated and saved">
-    </Resource>
-    <ResourceParams name="UserDatabase">
-      <parameter>
-        <name>factory</name>
-        <value>org.apache.catalina.users.MemoryUserDatabaseFactory</value>
-      </parameter>
-      <parameter>
-        <name>pathname</name>
-        <value>conf/tomcat-users.xml</value>
-      </parameter>
-    </ResourceParams>
-  </GlobalNamingResources>
-  
   <Service name="Fedora-Server">
 	<!-- enableLookups="true" supports client dns/fqdn in xacml authz policies -->
 	<!-- set independently in the 2 Connector elements below -->
