@@ -55,6 +55,11 @@ public class DefaultDOReplicator
     private RowInsertion m_ri;
     private DBIDLookup m_dl;
 
+    // sdp - local.fedora.server conversion
+    private Pattern hostPattern = null;
+    private Pattern hostPortPattern = null;
+    private Pattern serializedLocalURLPattern = null;
+
     /**
      * Server instance to work with in this module.
      */
@@ -99,6 +104,11 @@ public class DefaultDOReplicator
             if (fedoraServerHost==null || fedoraServerHost.equals("")) {
                 fedoraServerHost=hostIP.getHostName();
             }
+            hostPattern = Pattern.compile(fedoraServerHost);
+            hostPortPattern = Pattern.compile(fedoraServerHost+":"+fedoraServerPort);
+            serializedLocalURLPattern = Pattern.compile("local.fedora.server");
+            //System.out.println("Replicator: hostPattern is " + hostPattern.pattern());
+            //System.out.println("Replicator: hostPortPattern is " + hostPortPattern.pattern());
             //
         } catch (ServerException se) {
             throw new ModuleInitializationException(
@@ -1813,7 +1823,7 @@ public class DefaultDOReplicator
                 return ID;
 	}
 
-        private String encodeLocalURL(String hostPortString)
+        private String encodeLocalURL(String locationString)
         {
           // Replace any occurences of the host:port of the local Fedora
           // server with the internal serialization string "local.fedora.server."
@@ -1821,22 +1831,52 @@ public class DefaultDOReplicator
           // local server) will be recognizable if the server host and
           // port configuration changes after an object is stored in the
           // repository.
-          String s = hostPortString.replaceAll(
-            fedoraServerHost+":"+fedoraServerPort, "local.fedora.server");
-          System.out.println("LOCAL URL serialized: " + s);
-          return s;
+          if (fedoraServerPort.equalsIgnoreCase("80") &&
+              hostPortPattern.matcher(locationString).find())
+          {
+              //System.out.println("port is 80 and hostPort pattern found - convert to l.f.s");
+              return hostPortPattern.matcher(
+                locationString).replaceAll("local.fedora.server");
+          }
+          else if (fedoraServerPort.equalsIgnoreCase("80") &&
+              hostPattern.matcher(locationString).find())
+          {
+              //System.out.println("port is 80 and host pattern found - convert to l.f.s");
+              return hostPattern.matcher(
+                locationString).replaceAll("local.fedora.server");
+          }
+
+          else if (hostPortPattern.matcher(locationString).find())
+          {
+              //System.out.println("hostPort pattern found - convert to l.f.s");
+              return hostPortPattern.matcher(
+                locationString).replaceAll("local.fedora.server");
+          }
+          else
+          {
+              //System.out.println("no local pattern found");
+              return locationString;
+          }
         }
 
-        private String unencodeLocalURL(String serializedLocationString)
+        private String unencodeLocalURL(String storedLocationString)
         {
           // Replace any occurrences of the internal serialization string
           // "local.fedora.server" with the current host and port of the
           // local Fedora server.  This translates local URLs (self-referential
           // to the local server) back into resolvable URLs that reflect
           // the currently configured host and port for the server.
-          String s = serializedLocationString.replaceAll(
-            "local.fedora.server", fedoraServerHost+":"+fedoraServerPort);
-          System.out.println("LOCAL URL deserialized: " + s);
-          return s;
+
+          if (fedoraServerPort.equalsIgnoreCase("80"))
+          {
+            return serializedLocalURLPattern.matcher(
+              storedLocationString).replaceAll(fedoraServerHost);
+          }
+          else
+          {
+            return serializedLocalURLPattern.matcher(
+              storedLocationString).replaceAll(
+              fedoraServerHost+":"+fedoraServerPort);
+          }
         }
 }
