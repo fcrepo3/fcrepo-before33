@@ -282,6 +282,7 @@
     <copy file="src/fcfg/server/fedora.fcfg" todir="dist/server/config"/> 
     <mkdir dir="dist/server/bin"/>
     <copy file="src/bat/server/fedora.bat" todir="dist/server/bin"/> 
+    <copy file="src/sh/server/fedora" todir="dist/server/bin"/> 
     <copy file="lib/common/xerces2-2.0.2.jar" todir="dist/server/tomcat41/common/lib"/> 
     <echo message="Finished building server distribution in dist/server"/>
   </target>
@@ -327,6 +328,9 @@
 
 <!--
   $Log$
+  Revision 1.19  2002/08/05 18:16:47  cwilper
+  added fedora shell script copy to server target
+
   Revision 1.18  2002/08/05 16:31:03  cwilper
   modified "server" target so that it uses server constants properties
   file, uses xerces2-2.0.2, copies the fedora.bat file (fedora.sh forthcoming),
