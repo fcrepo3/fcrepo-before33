@@ -78,7 +78,7 @@ public class METSDODeserializer
     private String m_dsLabel;
     private int m_dsMDClass;
     private long m_dsSize;
-    private URL m_dsLocation;
+    private String m_dsLocation;
     private String m_dsMimeType;
     private String m_dsControlGrp;
 
@@ -416,11 +416,7 @@ public class METSDODeserializer
                 if (dsLocation==null || dsLocation.equals("")) {
                     throw new SAXException("xlink:href must be specified in FLocat element");
                 }
-                try {
-                    m_dsLocation=new URL(dsLocation);
-                } catch (MalformedURLException murle) {
-                    throw new SAXException("xlink:href specifies malformed url: " + dsLocation);
-                }
+                m_dsLocation=dsLocation;
                 DatastreamReferencedContent d=new DatastreamReferencedContent();
                 d.DatastreamID=m_dsId;
                 d.DSVersionID=m_dsVersId;
