@@ -48,7 +48,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
-public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
+public class FedoraAccessSoapServlet extends HttpServlet
 {
 
   private Hashtable disseminationCache = new Hashtable();
@@ -103,6 +103,7 @@ public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
+
     String action = "";
     String PID = null;
     String bDefPID = null;
@@ -325,8 +326,10 @@ public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
         viewObject(PID, bDefPID, methodName, asOfDate, request, out);
       }
     }
+
   }
 
+/*
   /**
    * Method that implements GetBehaviorDefinitions in the FedoraAccess
    * interface. The method returns a string array containing a list of the
@@ -395,12 +398,14 @@ public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
   public MIMETypedStream GetDissemination(String PID, String bDefPID,
        String methodName, Vector userParms, Calendar asOfDate)
    {
+
      String protocolType = null;
      Vector dissResult = null;
      String dissURL = null;
      String operationLocation = null;
      MIMETypedStream dissemination = null;
      Date versDateTime = null;
+    /*
      if (!(asOfDate == null))
      {
        versDateTime = DateUtility.convertCalendarToDate(asOfDate);
@@ -546,6 +551,7 @@ public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
        System.out.println("getdissem: ObjectNotFound");
        this.getServletContext().log(onfe.getMessage(), onfe.getCause());
      }
+    */
      return dissemination;
    }
 
@@ -555,7 +561,7 @@ public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
     FastDOReader fastReader = null;
     Vector queryResults = null;
-
+/*
     try
     {
       fastReader = new FastDOReader(PID, bDefPID, methodName, versDateTime);
@@ -630,8 +636,9 @@ public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
     {
       System.out.println(onfe.getMessage());
       this.getServletContext().log(onfe.getMessage(), onfe.getCause());
-    }
+    } */
   }
+
 
   /**
    * Method to perform simple string replacement using regular expressions.
@@ -668,6 +675,7 @@ public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
     boolean valid = true;
     FastDOReader fdor = null;
     Vector methodParms = new Vector();
+    /*
     try
     {
       fdor = new FastDOReader(PID, bDefPID, methodName, versDateTime);
@@ -758,7 +766,9 @@ public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
         }
       }
     }
+    */
     return(valid);
+
   }
 
   private void emptyResult(String action, String PID, String bDefPID,
@@ -766,7 +776,7 @@ public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
                            Vector userParms, String clearCache, HttpServletResponse response)
       throws IOException
   {
-
+/*
     String versDate = DateUtility.convertCalendarToString(asOfDate);
     //String versDate = "";
     //if (asOfDate != null)
@@ -813,6 +823,7 @@ public class FedoraAccessSoapServlet extends HttpServlet implements FedoraAccess
       }
     }
     System.out.println("REQUEST Returned NO Data");
+    */
   }
 
   /**
