@@ -502,7 +502,7 @@ public class Administrator extends JFrame {
                 host=s_host;
                 port=s_port;
                 AutoExporter exporter=new AutoExporter(host, port, s_user, s_pass);
-                exporter.export(pid, new FileOutputStream(file));
+                exporter.export(pid, new FileOutputStream(file), false);
                 JOptionPane.showMessageDialog(this,
                         "Export succeeded.");
             }

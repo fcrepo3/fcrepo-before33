@@ -89,7 +89,7 @@ public class ViewObjectXML
                 try {
                     String pid=(String) pidIter.next();
                     ByteArrayOutputStream out=new ByteArrayOutputStream();
-                    exporter.export(pid, out);
+                    exporter.export(pid, out, true);
                     JInternalFrame viewFrame=new JInternalFrame("Viewing " + pid, true, true, true, true);
                     viewFrame.setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Edit16.gif")));
                     JTextComponent textEditor=new JTextArea();

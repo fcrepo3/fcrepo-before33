@@ -96,6 +96,7 @@ public class DefaultDOManager
     private String m_pidNamespace;
     private String m_storagePool;
     private String m_storageFormat;
+    private String m_exportFormat;
     private String m_storageCharacterEncoding;
     private PIDGenerator m_pidGenerator;
     private DOTranslator m_translator;
@@ -167,6 +168,12 @@ public class DefaultDOManager
         m_storageFormat=getParameter("storageFormat");
         if (m_storageFormat==null) {
             throw new ModuleInitializationException("Parameter storageFormat "
+                + "not given, but it's required.", getRole());
+        }
+        // exportFormat (required)
+        m_exportFormat=getParameter("exportFormat");
+        if (m_exportFormat==null) {
+            throw new ModuleInitializationException("Parameter exportFormat "
                 + "not given, but it's required.", getRole());
         }
         // storageCharacterEncoding (optional, default=UTF-8)
@@ -291,6 +298,10 @@ public class DefaultDOManager
         return m_storageFormat;
     }
 
+    public String getExportFormat() {
+        return m_exportFormat;
+    }
+
     public String getStorageCharacterEncoding() {
         return m_storageCharacterEncoding;
     }
@@ -317,7 +328,7 @@ public class DefaultDOManager
             return new FastDOReader(context, pid);
         } else {
             return new SimpleDOReader(context, this, m_translator,
-                    m_storageFormat, m_storageFormat, m_storageFormat,
+                    m_storageFormat, m_exportFormat, m_storageFormat,
                     m_storageCharacterEncoding,
                     getObjectStore().retrieve(pid), this);
         }
@@ -330,7 +341,7 @@ public class DefaultDOManager
             //throw new InvalidContextException("A BMechReader is unavailable in a cached context.");
         } else {
             return new SimpleBMechReader(context, this, m_translator,
-                    m_storageFormat, m_storageFormat, m_storageFormat,
+                    m_storageFormat, m_exportFormat, m_storageFormat,
                     m_storageCharacterEncoding,
                     getObjectStore().retrieve(pid), this);
         }
@@ -343,7 +354,7 @@ public class DefaultDOManager
             //throw new InvalidContextException("A BDefReader is unavailable in a cached context.");
         } else {
             return new SimpleBDefReader(context, this, m_translator,
-                    m_storageFormat, m_storageFormat, m_storageFormat,
+                    m_storageFormat, m_exportFormat, m_storageFormat,
                     m_storageCharacterEncoding,
                     getObjectStore().retrieve(pid), this);
         }
@@ -913,7 +924,7 @@ public class DefaultDOManager
 
                 // then get the writer
                 DOWriter w=new SimpleDOWriter(context, this, m_translator,
-                        m_storageFormat, m_storageFormat,
+                        m_storageFormat, m_exportFormat,
                         m_storageCharacterEncoding, obj, this);
 
                 Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());

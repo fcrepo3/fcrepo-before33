@@ -41,7 +41,7 @@ public interface Management {
 
     public InputStream getObjectXML(Context context, String pid, String format, String encoding) throws ServerException;
 
-//    public InputStream exportObject(Context context, String pid, String format, String encoding) throws ServerException;
+    public InputStream exportObject(Context context, String pid, String format, String encoding) throws ServerException;
 
 //    public void withdrawObject(Context context, String pid, String logMessage) throws ServerException;
 

@@ -72,7 +72,6 @@
       <documentation>the digital object in METS format.</documentation>
     </part>
   </message>
-<!--
   <message name="exportObjectRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -83,6 +82,7 @@
       <documentation>the digital object in METS format.</documentation>
     </part>
   </message>
+<!--
   <message name="withdrawObjectRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -568,7 +568,6 @@
       <input message="fedora-api:getObjectXMLRequest"/>
       <output message="fedora-api:getObjectXMLResponse"/>
     </operation>
-<!--
     <operation name="exportObject">
       <documentation>Gets the entire METS-encoded digital object for 
       external use (viewing, editing, moving to another repository).  XML 
@@ -578,6 +577,7 @@
       <input message="fedora-api:exportObjectRequest"/>
       <output message="fedora-api:exportObjectResponse"/>
     </operation>
+<!--
     <operation name="withdrawObject">
       <documentation>Changes the object's state to W, making it inaccessible 
       from API-A.</documentation>
@@ -796,7 +796,6 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
-<!--
     <operation name="exportObject">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#exportObject"/>
@@ -811,6 +810,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+<!--
     <operation name="withdrawObject">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#withdrawObject"/>

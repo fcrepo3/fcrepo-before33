@@ -58,13 +58,20 @@ public class AutoExporter {
         m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
 
-    public void export(String pid, OutputStream outStream) throws RemoteException, IOException {
-        export(m_apim, pid, outStream);
+    public void export(String pid, OutputStream outStream, boolean internal) 
+            throws RemoteException, IOException {
+        export(m_apim, pid, outStream, internal);
     }
 
-    public static void export(FedoraAPIM skeleton, String pid, OutputStream outStream)
+    public static void export(FedoraAPIM skeleton, String pid, 
+            OutputStream outStream, boolean internal)
             throws RemoteException, IOException {
-        byte[] bytes=skeleton.getObjectXML(pid);
+        byte[] bytes;
+        if (internal) {
+            bytes=skeleton.getObjectXML(pid);
+        } else {
+            bytes=skeleton.exportObject(pid);
+        }
         try {
             // use xerces to pretty print the xml, assuming it's well formed
             OutputFormat fmt=new OutputFormat("XML", "UTF-8", true);
@@ -107,7 +114,7 @@ public class AutoExporter {
                     AutoExporter.showUsage("Third argument must be the path to a non-existing file.");
                 } else {
                     AutoExporter a=new AutoExporter(hostName, portNum, username, password);
-                    a.export(pid, new FileOutputStream(f));
+                    a.export(pid, new FileOutputStream(f), false);
                 }
             }
         } catch (Exception e) {

@@ -143,9 +143,17 @@ public class DefaultManagement
         return instream;
     }
 
-/*
-    public InputStream exportObject(Context context, String pid, String format, String encoding) { return null; }
+    public InputStream exportObject(Context context, String pid, String format, 
+            String encoding) throws ServerException { 
+        logFinest("Entered DefaultManagement.exportObject");
+        m_ipRestriction.enforce(context);
+        DOReader reader=m_manager.getReader(context, pid);
+        InputStream instream=reader.ExportObject();
+        logFinest("Exiting DefaultManagement.exportObject");
+        return instream;
+    }
 
+/*
     public void withdrawObject(Context context, String pid, String logMessage) { }
 
     public void deleteObject(Context context, String pid, String logMessage) { }

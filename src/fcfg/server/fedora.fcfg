@@ -108,15 +108,20 @@
           database connections are to be provided for the storage
           subsystem (see the ConnectionPoolManager module)
         - storageFormat (required)
-          The format in which serializations of digital objects
+          The format in which internal serializations of digital objects
           are to be written.  There must exist a correspondingly
           named serializer-deserializer pair in the DOTranslator module.
         - storageCharacterEncoding [default=UTF-8]
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
+        - exportFormat (required)
+          The format in which external serializations of digital objects
+          are to be written.  There must exist a correspondingly
+          named serializer-deserializer pair in the DOTranslator module.
 		<param name="pidNamespace" value="changeme"/>
 		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
 		<param name="storageFormat" value="metslikefedora1"/>
+		<param name="exportFormat" value="metslikefedora1export"/>
 		<param name="storageCharacterEncoding" value="UTF-8"/>
 	</module>
 	<module role="fedora.server.management.Management" class="fedora.server.management.DefaultManagement">
@@ -307,6 +312,8 @@
         </comment>
 		<param name="serializer_metslikefedora1" value="fedora.server.storage.translation.METSLikeDOSerializer"/>
 		<param name="deserializer_metslikefedora1" value="fedora.server.storage.translation.METSLikeDODeserializer"/>
+		<param name="serializer_metslikefedora1export" value="fedora.server.storage.translation.METSLikeExportDOSerializer"/>
+		<param name="deserializer_metslikefedora1export" value="fedora.server.storage.translation.METSLikeDODeserializer"/>
 	</module>
 	<module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
 		<comment>The pid generator.</comment>

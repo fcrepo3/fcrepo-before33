@@ -98,7 +98,7 @@ public class ExportObject
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File file = browse.getSelectedFile();
                         Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
-                        exporter.export(pid, new FileOutputStream(file));
+                        exporter.export(pid, new FileOutputStream(file), false);
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
                                 "Exported " + pid);
                     }
@@ -138,7 +138,7 @@ public class ExportObject
                                 }
                             }
                             File outFile=new File(browse.getSelectedFile(), buf.toString());
-                            exporter.export(pid, new FileOutputStream(outFile));
+                            exporter.export(pid, new FileOutputStream(outFile),false);
                         }
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
                                 "Exported " + m_pids.size() + " objects.");

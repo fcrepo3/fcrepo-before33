@@ -165,6 +165,21 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
+    public byte[] exportObject(String PID)
+            throws RemoteException {
+        assertInitialized();
+        try {
+            InputStream in=s_management.exportObject(getContext(), PID, "metslikefedora1export", "UTF-8");
+            ByteArrayOutputStream out=new ByteArrayOutputStream();
+            pipeStream(in, out);
+            return out.toByteArray();
+        } catch (ServerException se) {
+            throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
+    }
+
     // temporarily here
     private void pipeStream(InputStream in, OutputStream out)
             throws StorageDeviceException {
