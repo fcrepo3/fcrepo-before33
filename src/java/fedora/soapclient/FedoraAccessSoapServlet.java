@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.xml.namespace.QName;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -198,7 +197,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
-    Calendar asOfDateTime = null;
+    Date asOfDateTime = null;
     Date versDateTime = null;
     String action = null;
     String bDefPID = null;
@@ -230,9 +229,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         methodName = decoder.decode(request.getParameter(parm), "UTF-8");
       } else if (parm.equals("asOfDateTime_"))
       {
-        asOfDateTime = DateUtility.
-                   convertStringToCalendar(request.getParameter(parm));
-        versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+        asOfDateTime = DateUtility.convertStringToDate(request.getParameter(parm));
+        versDateTime = asOfDateTime;
       } else if (parm.equals("xml_"))
       {
         xml = new Boolean(request.getParameter(parm)).booleanValue();
@@ -1159,9 +1157,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
           // PROFILE FIELDS SERIALIZATION
           pw.write("<objLabel>" + objProfile.getObjLabel() + "</objLabel>");
           pw.write("<objContentModel>" + objProfile.getObjContentModel() + "</objContentModel>");
-          String cDate = DateUtility.convertCalendarToString(objProfile.getObjCreateDate());
+          String cDate = objProfile.getObjCreateDate();
           pw.write("<objCreateDate>" + cDate + "</objCreateDate>");
-          String mDate = DateUtility.convertCalendarToString(objProfile.getObjLastModDate());
+          String mDate = objProfile.getObjLastModDate();
           pw.write("<objLastModDate>" + mDate + "</objLastModDate>");
           String objType = objProfile.getObjType();
           pw.write("<objType>");
@@ -1590,10 +1588,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @throws Exception If an error occurs in communicating with the Fedora
    *         Access SOAP service.
    */
-  public String[] getBehaviorDefinitions(String PID, Calendar asOfDateTime)
+  public String[] getBehaviorDefinitions(String PID, Date asOfDateTime)
       throws Exception
   {
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    Date versDateTime = asOfDateTime;
     Service service = new Service();
     Call call = (Call) service.createCall();
     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
@@ -1636,7 +1634,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
    *         Access SOAP service.
    */
   public MethodDef[] getBehaviorMethods(String PID,
-      String bDefPID, Calendar asOfDateTime) throws Exception
+      String bDefPID, Date asOfDateTime) throws Exception
   {
     MethodDef[] methodDefs = null;
     Service service = new Service();
@@ -1656,7 +1654,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         new BeanSerializerFactory(MethodParmDef.class, qn2),
         new BeanDeserializerFactory(MethodParmDef.class, qn2));
     methodDefs = (MethodDef[]) call.invoke( new Object[] { PID,
-          bDefPID, asOfDateTime} );
+          bDefPID, DateUtility.convertDateToString(asOfDateTime)} );
     return methodDefs;
   }
 
@@ -1673,7 +1671,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
    *         Access SOAP service.
    */
   public MIMETypedStream getBehaviorMethodsXML(
-      String PID, String bDefPID, Calendar asOfDateTime) throws Exception
+      String PID, String bDefPID, Date asOfDateTime) throws Exception
   {
     MIMETypedStream methodDefs = null;
     Service service = new Service();
@@ -1690,7 +1688,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         new BeanSerializerFactory(MIMETypedStream.class, qn),
         new BeanDeserializerFactory(MIMETypedStream.class, qn));
     methodDefs = (MIMETypedStream)
-                 call.invoke( new Object[] { PID, bDefPID, asOfDateTime} );
+                 call.invoke( new Object[] { PID, bDefPID, DateUtility.convertDateToString(asOfDateTime)} );
     return methodDefs;
   }
 
@@ -1708,7 +1706,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
    *         Access SOAP service.
    */
   public MIMETypedStream getDissemination(String PID, String bDefPID,
-      String methodName, Property[] userParms, Calendar asOfDateTime)
+      String methodName, Property[] userParms, Date asOfDateTime)
       throws Exception
    {
     // Generate a call to the Fedora SOAP service requesting the
@@ -1731,7 +1729,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         new BeanSerializerFactory(Property.class, qn2),
         new BeanDeserializerFactory(Property.class, qn2));
     dissemination = (MIMETypedStream) call.invoke( new Object[] { PID, bDefPID,
-        methodName, userParms, asOfDateTime} );
+        methodName, userParms, DateUtility.convertDateToString(asOfDateTime)} );
     return dissemination;
    }
 
@@ -1746,9 +1744,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     *         Access SOAP service.
     */
   public ObjectMethodsDef[] getObjectMethods(String PID,
-      Calendar asOfDateTime) throws Exception
+      Date asOfDateTime) throws Exception
   {
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectMethodsDef[] objMethDefArray = null;
     Service service = new Service();
     Call call = (Call) service.createCall();
@@ -1767,7 +1764,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         new BeanSerializerFactory(MethodParmDef.class, qn2),
         new BeanDeserializerFactory(MethodParmDef.class, qn2));
     objMethDefArray =
-        (ObjectMethodsDef[]) call.invoke( new Object[] { PID, asOfDateTime} );
+        (ObjectMethodsDef[]) call.invoke( new Object[] { PID, DateUtility.convertDateToString(asOfDateTime)} );
     return objMethDefArray;
   }
 
@@ -1782,9 +1779,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     *         Access SOAP service.
     */
   public ObjectProfile getObjectProfile(String PID,
-      Calendar asOfDateTime) throws Exception
+      Date asOfDateTime) throws Exception
   {
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectProfile objProfile = null;
     Service service = new Service();
     Call call = (Call) service.createCall();
@@ -1799,7 +1795,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         new BeanSerializerFactory(ObjectProfile.class, qn),
         new BeanDeserializerFactory(ObjectProfile.class, qn));
     objProfile =
-        (ObjectProfile) call.invoke( new Object[] { PID, asOfDateTime} );
+        (ObjectProfile) call.invoke( new Object[] { PID, DateUtility.convertDateToString(asOfDateTime)} );
     return objProfile;
   }
 
@@ -2318,14 +2314,14 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @throws IOException If an error occurrs with an input or output operation.
    */
   private void showURLParms(String action, String PID, String bDefPID,
-                           String methodName, Calendar asOfDateTime,
+                           String methodName, Date asOfDateTime,
                            Property[] userParms,
                            HttpServletResponse response,
                            String message)
       throws IOException
   {
 
-    String versDate = DateUtility.convertCalendarToString(asOfDateTime);
+    String versDate = DateUtility.convertDateToString(asOfDateTime);
     ServletOutputStream out = response.getOutputStream();
     response.setContentType(CONTENT_TYPE_HTML);
 
