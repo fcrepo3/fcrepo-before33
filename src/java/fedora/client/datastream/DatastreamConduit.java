@@ -32,7 +32,7 @@ import fedora.server.types.gen.Datastream;
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.</p>
  *
- * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * <p>The entire file consists of original code.  Copyright &copy; 2002, 2003 by The
  * Rector and Visitors of the University of Virginia and Cornell University.
  * All rights reserved.</p>
  *
@@ -50,14 +50,14 @@ public class DatastreamConduit {
             throws MalformedURLException, ServiceException {
         m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
-    
+
     public static String[] listDatastreamIDs(FedoraAPIM skeleton, String pid,
             String state)
             throws RemoteException {
         return skeleton.listDatastreamIDs(pid, state);
     }
-    
-    public String[] listDatastreamIDs(String pid, String state) 
+
+    public String[] listDatastreamIDs(String pid, String state)
             throws RemoteException {
         return listDatastreamIDs(m_apim, pid, state);
     }
@@ -68,37 +68,37 @@ public class DatastreamConduit {
         return skeleton.getDatastream(pid, dsId, asOfDateTime);
     }
 
-    public Datastream getDatastream(String pid, String dsId, 
+    public Datastream getDatastream(String pid, String dsId,
             Calendar asOfDateTime)
             throws RemoteException {
         return getDatastream(m_apim, pid, dsId, asOfDateTime);
     }
-    
-    public static void modifyDatastreamByReference(FedoraAPIM skeleton, 
+
+    public static void modifyDatastreamByReference(FedoraAPIM skeleton,
             String pid, String dsId, String dsLabel, String logMessage,
-            String location) 
+            String location)
             throws RemoteException {
         skeleton.modifyDatastreamByReference(pid, dsId, dsLabel, logMessage,
                 location);
     }
 
     public void modifyDatastreamByReference(String pid, String dsId,
-            String dsLabel, String logMessage, String location) 
+            String dsLabel, String logMessage, String location)
             throws RemoteException {
         modifyDatastreamByReference(m_apim, pid, dsId, dsLabel, logMessage,
                 location);
     }
-    
-    public static void modifyDatastreamByValue(FedoraAPIM skeleton, 
-            String pid, String dsId, String dsLabel, String logMessage, 
-            byte[] content) 
+
+    public static void modifyDatastreamByValue(FedoraAPIM skeleton,
+            String pid, String dsId, String dsLabel, String logMessage,
+            byte[] content)
             throws RemoteException {
         skeleton.modifyDatastreamByValue(pid, dsId, dsLabel, logMessage,
                 content);
     }
 
     public void modifyDatastreamByValue(String pid, String dsId,
-            String dsLabel, String logMessage, byte[] content) 
+            String dsLabel, String logMessage, byte[] content)
             throws RemoteException {
         modifyDatastreamByValue(m_apim, pid, dsId, dsLabel, logMessage,
                 content);
@@ -132,7 +132,7 @@ public class DatastreamConduit {
                     System.out.println("Label : " + ds.getLabel());
                     System.out.println("Info Type : " + ds.getInfoType());
                     System.out.println("Mime Type : " + ds.getMIMEType());
-                    if ((!ds.getControlGroup().toString().equals("X")) 
+                    if ((!ds.getControlGroup().toString().equals("X"))
                             && (!ds.getControlGroup().toString().equals("X"))) {
                         System.out.println("Location : " + ds.getLocation());
                     }
