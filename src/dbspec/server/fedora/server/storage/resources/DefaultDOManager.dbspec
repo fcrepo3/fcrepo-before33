@@ -164,6 +164,17 @@
 			<comment>The date the object was last changed.</comment>
 		</column>
 	</table>
+    <table name="objectFields">
+		<comment>Used for searching key object metadata, including repository
+                 fields and dublin core fields.</comment>
+		<column name="doDbID" type="int(11)" notNull="true" default="0" index="doDbID"/>
+		<column name="doPID" type="varchar(32)" notNull="true">
+			<comment>The PID of the object</comment>
+		</column>
+		<column name="doLabel" type="varchar(255)" notNull="true">
+			<comment>The label of the object</comment>
+		</column>
+    </table>
 	<table name="doRepJob">
 		<comment>Used as a queue for replication jobs.</comment>
 		<column name="doPID" type="varchar(32)" notNull="true">
