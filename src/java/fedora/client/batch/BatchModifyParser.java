@@ -939,10 +939,10 @@ public class BatchModifyParser extends DefaultHandler
 				                    xml.append("    PID=\"" + StreamUtility.enc(m_obj.pid) + "\""); 
 				                    xml.append("    FEDORA_URI=\"info:fedora/" + StreamUtility.enc(m_obj.pid) + "\">\n");
 				    				xml.append("  <foxml:objectProperties>\n");
-				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/fType\" VALUE=\"FedoraObject\"/>\n");
-				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/state\" VALUE=\"A\"/>");
-				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/label\" VALUE=\"" + StreamUtility.enc(m_obj.label) + "\"/>\n");
-				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/cModel\" VALUE=\"" + StreamUtility.enc(m_obj.cModel) + "\"/>\n");			
+				    				xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"DataObject\"/>\n");
+				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#state\" VALUE=\"Active\"/>");
+				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"" + StreamUtility.enc(m_obj.label) + "\"/>\n");
+				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"" + StreamUtility.enc(m_obj.cModel) + "\"/>\n");			
 				    				xml.append("  </foxml:objectProperties>\n");
 				    				xml.append("</foxml:digitalObject>");
 				    				String objXML=xml.toString();

@@ -160,12 +160,12 @@
 		<xsd:attribute name="NAME" use="required">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
-					<xsd:enumeration value="info:fedora/fedora-system:def/fType"/>
-					<xsd:enumeration value="info:fedora/fedora-system:def/state"/>
-					<xsd:enumeration value="info:fedora/fedora-system:def/label"/>
-					<xsd:enumeration value="info:fedora/fedora-system:def/cDate"/>
-					<xsd:enumeration value="info:fedora/fedora-system:def/mDate"/>
-					<xsd:enumeration value="info:fedora/fedora-system:def/cModel"/>
+					<xsd:enumeration value="http://www.w3.org/1999/02/22-rdf-syntax-ns#type"/>
+					<xsd:enumeration value="info:fedora/fedora-system:def/model#state"/>
+					<xsd:enumeration value="info:fedora/fedora-system:def/model#label"/>
+					<xsd:enumeration value="info:fedora/fedora-system:def/model#createdDate"/>
+					<xsd:enumeration value="info:fedora/fedora-system:def/view#lastModifiedDate"/>
+					<xsd:enumeration value="info:fedora/fedora-system:def/model#contentModel"/>
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
