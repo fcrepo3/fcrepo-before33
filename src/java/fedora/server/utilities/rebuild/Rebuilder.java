@@ -30,6 +30,12 @@ public interface Rebuilder {
                     ServerConfiguration serverConfig) throws Exception;
 
     /**
+     * Returns true is the server _must_ be shut down for this 
+     * rebuilder to safely operate.
+     */
+    public boolean shouldStopServer();
+    
+    /**
      * Validate the provided options and perform any necessary startup tasks.
      */
     public void start(Map options) throws Exception;

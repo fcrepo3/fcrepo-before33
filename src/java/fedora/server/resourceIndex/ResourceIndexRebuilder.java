@@ -45,6 +45,15 @@ public class ResourceIndexRebuilder implements Rebuilder {
     }
 
     /**
+     * Returns true is the server _must_ be shut down for this 
+     * rebuilder to safely operate.
+     */
+    public boolean shouldStopServer()
+    {
+        return(true);
+    }
+    
+    /**
      * Initialize the rebuilder, given the server configuration.
      *
      * @returns a map of option names to plaintext descriptions.

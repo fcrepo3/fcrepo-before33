@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -59,6 +60,15 @@ public class SQLRebuilder implements Rebuilder {
         return "Rebuild SQL database.";
     }
 
+    /**
+     * Returns true is the server _must_ be shut down for this 
+     * rebuilder to safely operate.
+     */
+    public boolean shouldStopServer()
+    {
+        return(true);
+    }
+ 
     /**
      * Initialize the rebuilder, given the server configuration.
      *
@@ -126,8 +136,7 @@ public class SQLRebuilder implements Rebuilder {
         }        
     }
     
-    
-    
+        
     public static List getExistingTables( Connection conn )
             throws SQLException 
     {

@@ -26,6 +26,15 @@ public class NoOpRebuilder implements Rebuilder {
     }
 
     /**
+     * Returns true is the server _must_ be shut down for this 
+     * rebuilder to safely operate.
+     */
+    public boolean shouldStopServer()
+    {
+        return(false);
+    }
+
+    /**
      * Initialize the rebuilder, given the server configuration.
      *
      * @@returns a map of option names to plaintext descriptions.

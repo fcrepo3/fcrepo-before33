@@ -1,6 +1,10 @@
 package fedora.server.utilities.rebuild;
 
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.Socket;
+import java.net.URL;
 import java.util.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
@@ -61,6 +65,10 @@ public class Rebuild {
             System.out.println(rebuilder.getAction());
             System.out.println();
             Map options = getOptions(rebuilder.init(serverDir, serverConfig));
+            if (isServerRunning(serverConfig) && rebuilder.shouldStopServer())
+            {
+                shutDownServer(serverConfig);
+            }
             if (options != null) {
                 System.out.println();
                 System.out.println("Rebuilding...");
@@ -362,5 +370,104 @@ new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
             th.printStackTrace();
         }
     }
+    
+    
+    public static boolean isServerRunning(ServerConfiguration serverConfig)
+    {
+        boolean running = false;
+        try {
+            URL url = new URL("http://"+serverConfig.getParameter("fedoraServerHost").getValue()+":"+
+                              serverConfig.getParameter("fedoraServerPort").getValue()+"/fedora/describe");
+            String response = getResponse(url);
+            if (!response.startsWith("ERROR"))
+            {
+                running = true;
+            }
+        } 
+        catch (MalformedURLException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+        return(running);
+    }
+    /**
+     * The shutdown command string we are looking for.
+     */
+    private static String shutdown = "SHUTDOWN";
+
+    
+    public static void shutDownServer(ServerConfiguration serverConfig)
+    {
+        try
+        {
+            URL url=new URL("http://"+serverConfig.getParameter("fedoraServerHost").getValue()+":" + 
+                            serverConfig.getParameter("fedoraServerPort").getValue() + 
+                            "/fedora/management/control?action=shutdown&password=" + 
+                            serverConfig.getParameter("adminPassword").getValue());
+            String response = getResponse(url);
+            System.out.println(response);
+            // Load our startup class and call its process() method
+
+            // Stop the existing server
+            try {
+                Socket socket = new Socket("localhost", Integer.parseInt(serverConfig.getParameter("fedoraShutdownPort").getValue()));
+                OutputStream stream = socket.getOutputStream();
+                 for (int i = 0; i < shutdown.length(); i++)
+                    stream.write(shutdown.charAt(i));
+                stream.flush();
+                stream.close();
+                socket.close();
+            } 
+            catch (IOException e) 
+            {
+                System.out.println("Exception while shutting down Fedora Server");
+                e.printStackTrace(System.out);
+                System.exit(1);
+            }
+        }
+        catch (MalformedURLException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (Exception e) 
+        {
+            System.out.println("Exception while shutting down Fedora Server");
+            e.printStackTrace(System.out);
+            System.exit(2);
+        }    
+        catch (Error e) 
+        {
+            System.out.println("Error while shutting down Fedora Server");
+            e.printStackTrace(System.out);
+            System.exit(2);
+        }
+
+    }
+    
+    public static String getResponse(URL url) 
+    {
+        try {
+            HttpURLConnection conn=(HttpURLConnection) url.openConnection();
+            if (conn.getResponseCode()!=200) 
+            {
+                return "ERROR: Request to control servlet failed, response code was " + conn.getResponseCode();
+            }
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String firstLine = in.readLine();
+            if (firstLine == null) 
+            {
+                return "ERROR: control servlet response was empty.";
+            }
+            return firstLine;
+        } 
+        catch (Exception e) 
+        {
+            return "ERROR: can't connect to control servlet.";
+        }
+    }
+
+
 
 }
