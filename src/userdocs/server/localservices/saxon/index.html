@@ -1,0 +1,18 @@
+<html><head>
+        <title>Saxon Webapp Documentation</title></head><body><div><div><div><h1><a name="d0e2"></a>
+			<img src="../../../images/fedora_logo108x150.jpg">
+		</h1></div><div><h1><a name="d0e2"></a>Saxon Webapp</h1></div><div>
+      <h3><i>Software Release 2.0</i></h3>
+    </div>
+    <div> 
+      <h3> Fedora&#153; Development Team</h3>
+    </div><div>
+      <p>Copyright &copy; 2002-2005 The Rector and Visitors of The University 
+        of Virginia and Cornell University</p>
+    </div><hr></div><div><p><b>Table of Contents</b></p><dl><dt><a href="#d0e45">Welcome to the Saxon XSLT Processor Local Service</a></dt></dl></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e45"></a>Welcome to the Saxon XSLT Processor<sup>[<a href="#ftn.fnrex11">1</a>]</sup> Local Service</h2></div></div><p>This local service provides an XSLT Transformation Engine for transforming XML-encoded source documents using a supplied XSLT stylesheet. The service functions as a java servlet and can be invoked usingthe following syntax:</p><blockquote class="blockquote"><p>
+				<span class="bold"><b>http://[hostname]:[port-number]/saxon/SaxonServlet?source=[xml-source]&amp;style=[xsl-stylesheet]&amp;clear-stylesheet-cache=yes</b></span>
+			</p></blockquote><p>Where:</p><div class="itemizedlist"><ul type="disc"><li><p>[hostname] - The hostname of the Fedora server; default is localhost.</p></li><li><p>[port-number] - The port number on which the Fedora server is running; default is 8080.</p></li><li><p>[xml-source] - The URL of the XML source file.</p></li><li><p>[xsl-stylesheet] - The URL of the XSLT stylesheet file.</p></li><li><p>clear-stylesheet-cache - An optional parameter indicating if the stylesheet cache is to be cleared. A value of of "yes" signals to clear the stylesheet cache. If the parameter is omitted or has any other value, the stylesheet cache remains untouched.</p></li></ul></div><p>Example:</p><blockquote class="blockquote"><p>http://localhost:8080/saxon/SaxonServlet?source=http://dl.lib.virginia.edu/data/xmltext/ead/viu03270&amp;style=http://dl.lib.virginia.edu/bin/ead/xsl/document.xsl</p></blockquote><p>
+			<span class="emphasis"><em>
+				<sup>[<a name="fnrex11" href="#ftn.fnrex11">1</a>]</sup>
+			</em></span>
+		</p></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.fnrex11" href="#fnrex11">1</a>] </sup>This service uses the SAXON XSLT Processor from Michael Kay which is licensed under the Mozilla Public License (<a href="http://www.mozilla.org/MPL/" target="_top">MPL</a>). For additonal information regarding the SAXON XSLT Processor, please refer to the Saxon project web site on SourceForge at: <a href="http://saxon.sourceforge.net/" target="_top">http://saxon.sourceforge.net/</a>.</p></div></div></div></body></html>

@@ -1,0 +1,57 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Fedora&#153; Distribution Structure Documentation</title></head>
+		<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+		<div class="article"><div class="titlepage"><div><h1 class="title"><a name="d0e2"></a>
+			<span class="inlinemediaobject"><img src="../images/fedora_logo108x150.jpg"></span>
+		</h1></div>
+    <div> 
+      <h1 class="title"><a name="d0e2"></a> Fedora&#153; Distribution Structure</h1>
+    </div><div><h3 class="subtitle"><i>Software Release 2.0</i></h3></div>
+    <div> 
+      <h3 class="corpauthor"> Fedora&#153; Development Team</h3>
+    </div>
+			<div>
+      <p class="copyright">Copyright &copy; 2002-2005 The Rector and Visitors 
+        of The University of Virginia and Cornell University</p>
+    </div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#d0e48">Directory Structure</a></dt></dl></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e48"></a>Directory Structure</h2></div></div><p>The application's base directory contains several entries
+          you should be aware of.</p><div class="itemizedlist"><p class="title"><b>Key directories:</b></p><ul type="disc"><li><p>
+						<span class="emphasis"><em>bin/</em></span>
+          - Contains executables for the server and client tools (.bat files
+          for Windows and shell scripts for unix)</p></li><li><p>
+						<span class="emphasis"><em>config/</em></span>
+          - Contains the server configuration file, fedora.fcfg.</p></li><li><p>
+						<span class="emphasis"><em>demo/</em></span>
+          - Contains sample digital objects that can be used as examples.</p></li><li><p>
+						<span class="emphasis"><em>doc/</em></span>
+          - Contains the software documentation.</p></li><li><p>
+						<span class="emphasis"><em>logs/</em></span>
+          - Contains the logfiles that the server writes to while it's
+          running.</p></li></ul></div><p>
+		</p><p>Besides these key directories, you will notice several others.
+          These are important to the server's operation, but their
+          contents don't need to be understood in order to administer the
+          server.</p><div class="itemizedlist"><p class="title"><b>Other directories:</b></p><ul type="disc"><li><p>
+						<span class="emphasis"><em>access/</em></span>
+          - Stylesheets for the default disseminator. All objects in the
+          repository automatically subscribe to this disseminator, which
+          provides methods for listing and retrieving the components of the
+          object.</p></li><li><p>
+						<span class="emphasis"><em>client/</em></span>
+          - The java classes necessary to run the client applications.</p></li><li><p>
+						<span class="emphasis"><em>mckoi094/</em></span>
+          - A bundled java-based database that can be used as the underlying
+          RDBMS for the server.</p></li><li><p>
+						<span class="emphasis"><em>pidgen/</em></span>
+          - Files supporting the PID generator, the component of the server
+          that provides unique ids for new objects.</p></li><li><p>
+						<span class="emphasis"><em>schematron/</em></span>
+          - Files supporting the validation of serialized digital objects.</p></li><li><p>
+						<span class="emphasis"><em>tomcat41/</em></span>
+          - The bundled web server, which makes the repository web-accessible.</p></li><li><p>
+						<span class="emphasis"><em>work/</em></span>
+          - A temporary directory used by to support various server
+          activities.</p></li><li><p>
+						<span class="emphasis"><em>xsd/</em></span>
+          - W3 XML schemas, for reference and validation support.</p></li></ul></div><p>
+		</p></div></div></body></html>

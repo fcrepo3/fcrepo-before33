@@ -1,0 +1,399 @@
+<html>
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link rel=Edit-Time-Data href="index_files/editdata.mso">
+<title>Fedora&#8482; Client Command-Line Utilities Documentation</title>
+<o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
+ name="PlaceName"/> <o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
+ name="PlaceType"/> <o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
+ name="place"/> 
+<style><!--
+.Normal
+	{font-size:12.0pt;
+	font-family:"Times New Roman";
+	color:black;}
+.copyright
+	{font-size:12.0pt;
+	font-family:"Times New Roman";
+	color:black;}
+.bold
+	{}
+.NormalWebChar
+	{color:black;}
+.SpellE
+	{}
+.GramE
+	{}
+-->
+</style>
+</head>
+<body bgcolor=#FFFFFF lang=EN-US link=blue vlink="#840084" alink="#0000FF" class="Normal">
+<div> 
+  <div> 
+    <h1><a name=d0e2><img width=108 height=150 id="_x0000_i1025"
+src="../../images/fedora_logo108x150.jpg"></a></h1>
+  </div>
+  <h1>Fedora&#8482; Client Command-Line Utilities</h1>
+  <h3><i>Software Release 2.0</i></h3>
+  <h3>Fedora&#8482; Development Team</h3>
+  <p class=copyright>Copyright © 2002-2005 <span class=GramE>The</span> Rector 
+    and Visitors of The <st1:place><st1:PlaceType>University</st1:PlaceType> of 
+    <st1:PlaceName>Virginia</st1:PlaceName></st1:place> and <st1:place><st1:PlaceName>Cornell</st1:PlaceName> 
+    <st1:PlaceType>University</st1:PlaceType></st1:place></p>
+  <div align=center style='text-align:center'> 
+    <hr size=2 width="100%" align=center>
+  </div>
+  <p><b>Table of Contents</b></p>
+  <p><a href="#d0e48">Introduction</a></p>
+  <p><a href="#d0e55"><span class=GramE>fedora-<span
+class=SpellE>dsinfo</span></span></a></p>
+  <p><a href="#d0e89"><span class=GramE>fedora-export</span></a></p>
+  <p><a href="#d0e131"><span class=GramE>fedora-find</span></a></p>
+  <p><a href="#d0e164"><span class=GramE>fedora-</span>ingest</a></p>
+  <p><a href="#d0e221"><span class=GramE>fedora-ingest-demos</span></a></p>
+  <p><a href="#d0e252"><span class=GramE>fedora-convert-demos</span></a></p>
+  <p><a href="#d0e291"><span class=GramE>fedora-purge</span></a></p>
+  <p><a href="#fedmod">fedora-modify</a></p>
+  <div> 
+    <h2><a name=d0e48></a>Introduction</h2>
+  </div>
+  <p>The Fedora client distribution comes with several command-line utilities 
+    that can be used to run some common operations without bringing up the GUI 
+    or writing your own SOAP client. A description and usage instructions for 
+    each follows.</p>
+  <p>This guide assumes you have correctly installed the Fedora client distribution 
+    as per the install guide, including having set up your PATH and FEDORA_HOME 
+    appropriately. The command-line scripts are located in FEDORA_HOME/client/bin/. 
+    In Windows, these commands resolve to batch files (.bat); in <span class=GramE>Unix</span>, 
+    they resolve to shell scripts (.<span
+class=SpellE>sh</span>).</p>
+  <div> 
+    <h2><a name=d0e55></a><span class=GramE>fedora-<span class=SpellE>dsinfo</span></span></h2>
+  </div>
+  <blockquote> 
+    <p><span class=GramE><span class=bold><b>fedora-<span class=SpellE>dsinfo</span></b></span></span> 
+      [hostname] [port-number] [user] [pass] [<span class=SpellE>pid</span>]</p>
+  </blockquote>
+  <p>Where:</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [hostname] - The hostname of the Fedora server; default is 
+    <span class=SpellE>localhost</span>.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [port-number] - The port number on which the Fedora server 
+    is running; default is 8080.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [user] - The Fedora user (e.g. <span
+class=SpellE>fedoraAdmin</span>).</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [pass] - The Fedora user's password.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [<span class=SpellE>pid</span>] - The <span
+class=SpellE><span class=GramE>pid</span></span> of the object whose datastream 
+    information should be shown.</p>
+  <p>Example:</p>
+  <blockquote> 
+    <p><span class=GramE>fedora-<span class=SpellE>dsinfo</span></span> <span
+class=SpellE>localhost</span> 8080 <span class=SpellE>fedoraAdmin</span> <span
+class=SpellE>fedoraAdmin</span> demo:5</p>
+  </blockquote>
+  <p>Displays key information about each of an object's datastreams. </p>
+  <div> 
+    <h2><a name=d0e89></a><span class=GramE>fedora-export</span></h2>
+  </div>
+  <blockquote> 
+    <p><span class=GramE><span class=bold><b>fedora-export</b></span></span> HST:PRT 
+      USR PSS PID|FTYPS PATH</p>
+  </blockquote>
+  <p>Where:</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> HST - The repository's hostname.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> PRT - The repository's port number.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> USR - The id of the repository user.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> PSS - The password of the repository user.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> PID - The id of the object to export from the repository.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> FTYPS - Any combination of the characters O, D, and M, specifying 
+    which Fedora object type(s) should be exported. O=regular objects, D=behavior 
+    definitions, M=behavior mechanisms.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> PATH - The directory to export to.</p>
+  <p>Examples:</p>
+  <blockquote> 
+    <p><span class=GramE>fedora-export</span> example.com:80 <span class=SpellE>fedoraAdmin</span> 
+      <span class=SpellE>fedoraAdmin</span> changeme:1 .</p>
+    <p><span class=GramE>fedora-export</span> example.com:80 <span class=SpellE>fedoraAdmin</span> 
+      <span class=SpellE>fedoraAdmin</span> DMO /<span class=SpellE>tmp/fedoradump</span></p>
+  </blockquote>
+  <p><span class=GramE>Exports one or more objects from a Fedora repository.</span> 
+  </p>
+  <div> 
+    <h2><a name=d0e131></a><span class=GramE>fedora-find</span></h2>
+  </div>
+  <blockquote> 
+    <p><span class=GramE><span class=bold><b>fedora-find</b></span></span> [hostname] 
+      [port-number] [<span class=SpellE>fieldList</span>] [<span
+class=SpellE>searchString</span>]</p>
+  </blockquote>
+  <p>Where:</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [hostname] - The hostname of the Fedora server; default is 
+    <span class=SpellE>localhost</span>.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [port-number] - The port number on which the Fedora server 
+    is running; default is 8080.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [<span class=SpellE>fieldList</span>] - A space-delimited list 
+    of fields. These are the fields that will be displayed for each object that 
+    matches the <span class=SpellE>searchString</span>. See http://host:port/fedora/search 
+    for a complete list of displayable fields and descriptions of each.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [<span class=SpellE>searchString</span>] - A simple text string 
+    to search all fields for. This may include wildcard characters and is case-insensitive.</p>
+  <p>Example:</p>
+  <blockquote> 
+    <p><span class=GramE>fedora-find</span> <span class=SpellE>localhost</span> 
+      8080 &quot;<span class=SpellE>pid</span> <span class=SpellE>fType</span> 
+      title description&quot; &quot;fedora&quot;</p>
+    <p>(<span class=GramE>shows</span> the <span class=SpellE>pid</span>, Fedora 
+      object type, title, and description fields of each object that has the word 
+      fedora somewhere in it's indexed fields.)</p>
+  </blockquote>
+  <p>A simple way to search a repository's indexed fields. More advanced searches 
+    can be done with the web-based search interface at http://host:port/fedora/search, 
+    or the Admin GUI's search interface. </p>
+  <div> 
+    <h2><a name=d0e164></a><span class=GramE>fedora-</span>ingest</h2>
+  </div>
+  <blockquote> 
+    <p><span class=GramE><span class=bold><b>fedora-</b></span></span><span
+class=bold><b>ingest</b></span> f[<span class=SpellE>ile</span>] PATH THST:TPRT 
+      TUSR TPSS [LOG]</p>
+    <p><span class=GramE><span class=bold><b>fedora-</b></span></span><span
+class=bold><b>ingest</b></span> d[<span class=SpellE>ir</span>] PATH FTYPS THST:TPRT 
+      TUSR TPSS [LOG]</p>
+    <p><span class=GramE><span class=bold><b>fedora-</b></span></span><span
+class=bold><b>ingest</b></span> r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT 
+      TUSR TPSS [LOG]</p>
+  </blockquote>
+  <p>Where:</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> PATH - the local file or directory name.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> FTYPS - any combination of the characters O, D, and M, specifying 
+    which Fedora object type(s) should be ingested. O=regular objects, D=behavior 
+    definitions, and M=behavior mechanisms.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> PID - the id of the object to ingest from the source repository.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> SHST/THST - the source or target repository's hostname.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> SPRT/TPRT - the source or target repository's port number.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> SUSR/TUSR - the id of the source or target repository user.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> SPSS/TPSS - the password of the source or target repository 
+    user.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> LOG - the optional log message. If unspecified, the log message 
+    will indicate the source of the object(s).</p>
+  <p>Examples:</p>
+  <blockquote> 
+    <p><span class=GramE>fedora-</span>ingest file obj1.xml example.com:80 <span
+class=SpellE>fedoraAdmin</span> <span class=SpellE>fedoraAdmin</span></p>
+    <p>fedora-ingest dir c:\archive M example.com:80 <span class=SpellE>fedoraAdmin</span> 
+      <span class=SpellE>fedoraAdmin</span> &quot;&quot;</p>
+    <p>fedora-ingest dir c:\archive ODM example.com:80 <span class=SpellE>fedoraAdmin</span> 
+      <span class=SpellE>fedoraAdmin</span> &quot;&quot;</p>
+  </blockquote>
+  <p><span class=GramE>Ingests one or more objects into the repository, either 
+    from disk or from another Fedora repository.</span> </p>
+  <div> 
+    <h2><a name=d0e221></a><span class=GramE>fedora-ingest-demos</span></h2>
+  </div>
+  <blockquote> 
+    <p><span class=GramE><span class=bold><b>fedora-ingest-demos</b></span></span> 
+      [hostname] [port-number] [user] [pass]</p>
+  </blockquote>
+  <p>Where:</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [hostname] - The hostname of the Fedora server; default is 
+    <span class=SpellE>localhost</span>.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [port-number] - The port number on which the Fedora server 
+    is running; default is 8080.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [user] - The Fedora user (e.g. <span
+class=SpellE>fedoraAdmin</span>).</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [pass] - The Fedora user's password.</p>
+  <p>Example:</p>
+  <blockquote> 
+    <p><span class=GramE>fedora-ingest-demos</span> <span class=SpellE>localhost</span> 
+      8080 <span class=SpellE>fedoraAdmin</span> <span class=SpellE>fedoraAdmin</span></p>
+  </blockquote>
+  <p>A convenient script to ingest all included demo objects for a new Fedora 
+    installation. See the Demo guide for descriptions of these objects. Note: 
+    This script should not be run until you have ensured that the hostname and 
+    port numbers in the demo objects have been corrected (with the fedora-convert-demos 
+    script) to use the actual hostname and port of your Fedora server. </p>
+  <div> 
+    <h2><a name=d0e252></a><span class=GramE>fedora-convert-demos</span></h2>
+  </div>
+  <blockquote> 
+    <p><span class=GramE><span class=bold><b>fedora-convert-demos</b></span></span> 
+      [<span class=SpellE>fromHostName</span>] [<span class=SpellE>fromPortNum</span>] 
+      [<span class=SpellE>toHostName</span>] [<span class=SpellE>toHostNum</span>] 
+      [<span
+class=SpellE>fedoraHomeDir</span>]</p>
+  </blockquote>
+  <p>Where:</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [<span class=SpellE>fromHostName</span>] - The hostname currently 
+    being used in the demo object files.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [<span class=SpellE>fromPortNum</span>] - The port number currently 
+    being used in the demo object files.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [<span class=SpellE>toHostName</span>] - The hostname of the 
+    repository.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [<span class=SpellE>toPortNum</span>] - The port number of 
+    the repository.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [<span class=SpellE>fedoraHomeDir</span>] - Fedora's install 
+    base directory. This is the directory that contains the client directory.</p>
+  <p>Example:</p>
+  <blockquote> 
+    <p><span class=GramE>fedora-convert-demos</span> <span class=SpellE>localhost</span> 
+      8080 <span class=SpellE>www.fedora.info</span> 80 c:\fedora-1.2.1</p>
+  </blockquote>
+  <p><span class=GramE>Converts URLs in the demo objects from one host/port combination 
+    to another.</span> After running this script with your repository's hostname, 
+    the demo objects can successfully be ingested. </p>
+  <p><em>Background:</em> The demo objects that come with the Fedora client have 
+    embedded URLs inside them that assume the server is running on a machine called 
+    <span class=SpellE>localhost</span> on port number 8080. Those URLs must be 
+    changed to reflect the actual host and port the server is running on. Rather 
+    than search through all the demo files and change the references by hand, 
+    you can just run this script. It is not necessary to run this script if you 
+    have already run fedora-ingest-demos <span class=SpellE>succcessfully</span> 
+    and wish to change the hostname and port of the Fedora server, as the demo 
+    objects are already in the repository and the references inside them will 
+    automatically be corrected by the server. </p>
+  <div> 
+    <h2><a name=d0e291></a><span class=GramE>fedora-purge</span></h2>
+  </div>
+  <blockquote> 
+    <p><span class=GramE><span class=bold><b>fedora-purge</b></span></span> [hostname] 
+      [port-number] [user] [pass] [<span class=SpellE>pid</span>] [<span
+class=SpellE>logMessage</span>]</p>
+  </blockquote>
+  <p>Where:</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [hostname] - The hostname of the Fedora server; default is 
+    <span class=SpellE>localhost</span>.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [port-number] - The port number on which the Fedora server 
+    is running; default is 8080.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [user] - The Fedora user (e.g. <span
+class=SpellE>fedoraAdmin</span>).</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [pass] - The Fedora user's password.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [<span class=SpellE>pid</span>] - The PID of the object to 
+    permanently remove.</p>
+  <p> <span>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [<span class=SpellE>logMessage</span>] - A log message explaining 
+    the removal.</p>
+  <p>Example:</p>
+  <blockquote> 
+    <p><span class=GramE>fedora-purge</span> <span class=SpellE>localhost</span> 
+      8080 <span class=SpellE>fedoraAdmin</span> <span class=SpellE>fedoraAdmin</span> 
+      demo:6 &quot;It was just a test object&quot;</p>
+  </blockquote>
+  <p>Permanently removes an object from the repository. Note: Behavior Definition 
+    objects (<span class=SpellE>BDefs</span>) cannot be removed if there are objects 
+    that depend on them. When removing a <span class=SpellE>BDef</span> from the 
+    repository, first the dependent object(s) should be removed, then the implementing 
+    Behavior Mechanism(s), then the <span class=SpellE>BDef</span> itself. </p>
+  <h2><span class=GramE><a name="fedmod"></a>fedora-</span>modify</h2>
+</div>
+<blockquote>
+  <div><span
+class=GramE><span class=bold><b>fedora-</b></span></span><span class=bold><b>modify</b></span> 
+    [<span class=SpellE>hostname:port</span>]  [user]  [password]  [directives-<span
+class=SpellE>filepath</span>] [log-<span class=SpellE>filepath</span>]  [validate-only-option]*</div>
+</blockquote>
+<div>
+  <p>Where:</p>
+  <p> <span>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span>  [<span
+class=SpellE>host:port</span>] &#8211; The hostname and port of the target Fedora 
+    server.</p>
+  <p> <span>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [user] &#8211; The Fedora administrator username (e.g., <span class=SpellE>fedoraAdmin</span>)</p>
+  <p> <span>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [password] &#8211; The password for the Fedora administrator 
+    user.</p>
+  <p> <span>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [directives-<span class=SpellE>filepath</span>] &#8211; The 
+    full path to the file containing the batch <span class=GramE>modify</span> 
+    directives.</p>
+  <p> <span>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [log-<span class=SpellE>filepath</span>] &#8211; The full path 
+    to the file where logs will be written.</p>
+  <p> <span>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+    </span></span> [validate-only-option] &#8211; An optional <span
+class=SpellE><span class=GramE>boolean</span></span> toggle indicating whether 
+    to only validate the directives file or to process the file. A value of &#8220;true&#8221; 
+    indicates validate only. If omitted or given a value of false, the directives 
+    file will be processed.</p>
+  <p>The fedora-modify command line utility enables the running of the batch modify 
+    utility of the Administrator GUI client from the command line.</p>
+</div>
+</body>
+</html>

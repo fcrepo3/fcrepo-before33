@@ -1,0 +1,19 @@
+<html><head>
+      <meta>
+   <title>FOP Webapp Documentation</title></head><body><div><div><div><h1><a name="d0e2"></a>
+			<img src="../../../images/fedora_logo108x150.jpg">
+		</h1></div><div><h1><a name="d0e2"></a>FOP Webapp</h1></div><div>
+      <h3><i>Software Release 2.0</i></h3>
+    </div>
+    <div> 
+      <h3> Fedora&#153; Development Team</h3>
+    </div><div>
+      <p>Copyright &copy; 2002-2005 The Rector and Visitors of The University 
+        of Virginia and Cornell University</p>
+    </div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#d0e45">Welcome to the FOP Local Service</a></dt></dl></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e45"></a>Welcome to the FOP<sup>[<a href="#ftn.fnrex11">1</a>]</sup> Local Service</h2></div></div><p>This local service provides transformations from <a href="http://www.zvon.org/xxl/xslfoReference/Output/" target="_top">XSL-FO</a> format to PDF. The service functions as a java servlet and can be invoked using the following syntax:</p><blockquote class="blockquote"><p>
+				<span class="bold"><b>http://[hostname]:[port-number]/fop/FOPServlet?source=[xml-fo-source]</b></span>
+			</p></blockquote><p>Where:</p><div class="itemizedlist"><ul type="disc"><li><p>[hostname] - The hostname of the Fedora server; default is localhost.</p></li><li><p>[port-number] - The port number on which the Fedora server is running; default is 8080.</p></li><li><p>[xml-fo-source] - The URL of the XML source file.</p></li></ul></div><p>Example:</p><blockquote class="blockquote"><p>http://localhost:8080/fop/FOPServlet?source=http://www.fedora.info/services/fop/sample_fo.xml</p></blockquote><p>
+			<span class="emphasis"><em>
+				<sup>[<a name="fnrex11" href="#ftn.fnrex11">1</a>]</sup>
+			</em></span>
+		</p></div><div class="footnotes"><br><hr width="100" align="left"><div class="footnote"><p><sup>[<a name="ftn.fnrex11" href="#fnrex11">1</a>] </sup>This service uses the FOP formatter from Apache which is licensed under the Apache Software License v1.1 <a href="http://xml.apache.org/fop/license.html" target="_top">(ASL)</a>. For additonal information regarding FOP formatter, please refer to the FOP project web site at: <a href="http://xml.apache.org/fop/" target="_top">http://xml.apache.org/fop/</a>.</p></div></div></div></body></html>
