@@ -1,23 +1,19 @@
-// FIXME: this is going to change so that 1) it takes a storageType on
-// construction, 2) the config stuff needs to be smoothed out given new
-// config thoughts, 3) it provides readers and writers based on the
-// storageType order given in the constructor... or something? hmm.
-// 4) the createObject and deleteObject things can be taken care of
-// in terms of the PID generator and DORegistry.  The DORegistry is
-// going to be reader/writer pair-specific, and won't live at this
-// level, btw.
-
 package fedora.server.storage;
 
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.StorageException;
 import fedora.server.Module;
 
 import java.util.Map;
 
 /**
- * Provides access to digital object reader/writer factories,
- * which ultimately provide DOReader and DOWriter objects on
- * a per-digital-object basis.
+ * Provides access to digital object readers and writers.
+ *
+ * Note that both instance methods throw StorageException and
+ * ObjectNotFoundException (a subclass of the abstract
+ * StorageException). Implementations of DOManager are expected 
+ * to throw concrete subclasses of StorageException where needed.
  *
  * @author cwilper@cs.cornell.edu
  */
@@ -31,31 +27,32 @@ public abstract class DOManager
             throws ModuleInitializationException {
         super(moduleParameters);
     }
-
-    /**
-     * Gets the digital object reader factory best fit for
-     * the given storage type.
-     *
-     * @param storageType The storage type.
-     * @returns DOReaderFactory An appropriate provider of DOReaders.
-     */
-    public abstract DOReaderFactory getReaderFactory(String storageType);
-
-    /**
-     * Gets the digital object writer factory best fit for
-     * the given storage type.
-     *
-     * @param storageType The storage type.
-     * @returns DOWriterFactory An appropriate provider of DOWriters.
-     */
-    public abstract DOWriterFactory getWriterFactory(String storageType);
     
     /**
-     * Gets a Registry for the given storage type.
+     * Gets a digital object reader.
      *
-     * @param storageType The storage type.
-     * @returns Registry A registry appropriate for the storage role
+     * @param pid The PID of the object.
+     * @returns DOReader A reader.
+     * @throws StorageException If the request could not be fulfilled.
+     * @throws ObjectNotFoundException If the object requested was not found.
      */
-    public abstract DORegistry getRegistry(String storageType);
+    public abstract DOReader getReader(String pid)
+            throws StorageException, 
+                   ObjectNotFoundException;
+
+    /**
+     * Gets a digital object writer.
+     *
+     * If the pid parameter is null, a new digital object will be
+     * created (ObjectNotFound will never be thrown in this case).
+     *
+     * @param pid The PID of the object.
+     * @returns DOWriter A writer.
+     * @throws StorageException If the request could not be fulfilled.
+     * @throws ObjectNotFoundException If the object requested was not found.
+     */
+    public abstract DOWriter getWriter(String pid)
+            throws StorageException, 
+                   ObjectNotFoundException;
 
 }
