@@ -3,6 +3,7 @@ package fedora.server.storage;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import fedora.server.Context;
@@ -131,6 +132,18 @@ public class SimpleDOWriter
         assertNotInvalidated();
         assertNotPendingRemoval();
         m_obj.datastreams(datastream.DatastreamID).add(datastream);
+        //if (datastream.DSState.equals("D") || datastream.DSState.equals("W") )
+        //{
+          List allVersions = m_obj.datastreams(datastream.DatastreamID);
+          Iterator dsIter = allVersions.iterator();
+
+          // iterate over all versions of this dsID
+          while (dsIter.hasNext())
+          {
+            Datastream ds = (Datastream) dsIter.next();
+            ds.DSState=datastream.DSState;
+          }
+        //}
     }
 
     /**
