@@ -103,7 +103,7 @@ public class FieldSearchServlet
             h.put("useCachedObject", "true");
             h.put("userId", "fedoraAdmin");
             h.put("host", request.getRemoteAddr());
-            ReadOnlyContext context = new ReadOnlyContext(h);
+            ReadOnlyContext context = ReadOnlyContext.getContext(h);
 
             String[] fieldsArray=getFieldsArray(request);
             HashSet fieldHash=new HashSet();

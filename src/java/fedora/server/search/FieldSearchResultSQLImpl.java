@@ -65,7 +65,7 @@ public class FieldSearchResultSQLImpl
     static {
         HashMap h=new HashMap();
         h.put("useCachedObject", "false");
-        s_nonCachedContext=new ReadOnlyContext(h);
+        s_nonCachedContext=ReadOnlyContext.getContext(h);
     }
 
     /* fields supporting public accessors */

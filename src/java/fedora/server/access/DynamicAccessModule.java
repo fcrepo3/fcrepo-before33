@@ -263,7 +263,7 @@ public class DynamicAccessModule extends Module implements Access
     h.put("application", "apia");
     h.put("useCachedObject", "false");
     h.put("userId", "fedoraAdmin");
-    ReadOnlyContext newContext = new ReadOnlyContext(h);
+    ReadOnlyContext newContext = ReadOnlyContext.getContext(h);
     return da.getDissemination(context, PID, bDefPID, methodName, userParms,
       asOfDateTime, m_manager.getReader(newContext, PID));
   }

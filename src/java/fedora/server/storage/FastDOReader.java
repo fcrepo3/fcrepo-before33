@@ -147,7 +147,7 @@ public class FastDOReader implements DOReader
       h.put("application", "apia");
       h.put("useCachedObject", "false");
       h.put("userId", "fedoraAdmin");
-      m_context = new ReadOnlyContext(h);
+      m_context = ReadOnlyContext.getContext(h);
     } catch (InitializationException ie)
     {
       System.err.println(ie.getMessage());
