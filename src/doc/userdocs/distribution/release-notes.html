@@ -1,481 +1,480 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
-  <title>Fedora Release Notes</title>
-  <meta name="robots" content="all"/>
-  <link href="../docstyle.css" rel="stylesheet" type="text/css"/>
+    <title>Fedora Release Notes</title>
+    <meta name="robots" content="all"/>
+    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
 </head>
 
 <body>
-  <div id="header">
-    <div id="logo" style="">
-      <a href="../index.html">
-        <img border="0" width="54" height="75" src="../images/fedora_logo108x150.jpg"/>
-      </a>
+<div id="header">
+    <div id="logo">
+        <a href="../index.html"><img src="../images/logo_44x60.gif" alt="Fedora logo" /></a>
     </div>
     <div id="title">
-      <h1>Fedora Release Notes</h1>
-      <h2>Fedora Release 2.0</h2>
-    </div>
-  </div>
-  <div clas="toc">
-    <h2>Table of Contents</h2>
-    <div class="tocbox">
-      <ol>
-        <li><a href="#rel2.0">Release 2.0 - January 28, 2005</a></li>
-        <ol type="A">
-          <li><a href="#rel2.0.migrate">Migrating from Fedora 1.2.1 to Fedora 2.0</a></li>
-	      <li><a href="#rel2.0.features">New Features</a></li>
-	      <li><a href="#rel2.0.bugfix">Bug Fixes</a></li>
-        </ol>
-        <li><a href="#rel1.2.1">Release 1.2.1 (Bug Fix Release) - April 19, 2004</a></li>
-        <li><a href="#rel1.2">Release 1.2 - December 15, 2003</a></li>
-        <li><a href="#rel1.1.1">Release 1.1.1 (Bug Fix Release) - September 5, 2003</a></li>
-        <li><a href="#rel1.1">Release 1.1 (Bug Fix Release) - August 5, 2003</a></li>
-        <li><a href="#rel1.0">Release 1.0 - May 16, 2003</a></li>
-        <li><a href="#rel0.9">Release 0.9 - March 7, 2003</a></li>
-        <li><a href="#relbeta1">Beta 1 - Dec 20, 2002</a></li>
-        <li><a href="#relalpha1">Alpha 1 - Oct 31, 2002</a></li>
-      </ol>
+        <h1>Fedora Release Notes</h1>
+        <h2>Fedora Release 2.0</h2>
     </div>
 </div>
+
+<div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="tocbox">
+        <ol>
+            <li><a href="#rel2.0">Release 2.0 - January 28, 2005</a>
+                <ol>
+                    <li><a href="#rel2.0.migrate">Migrating from Fedora 1.2.1 to Fedora 2.0</a></li>
+                    <li><a href="#rel2.0.features">New Features</a></li>
+                    <li><a href="#rel2.0.bugfix">Bug Fixes</a></li>
+                </ol>
+            </li>
+            <li><a href="#rel1.2.1">Release 1.2.1 (Bug Fix Release) - April 19, 2004</a></li>
+            <li><a href="#rel1.2">Release 1.2 - December 15, 2003</a></li>
+            <li><a href="#rel1.1.1">Release 1.1.1 (Bug Fix Release) - September 5, 2003</a></li>
+            <li><a href="#rel1.1">Release 1.1 (Bug Fix Release) - August 5, 2003</a></li>
+            <li><a href="#rel1.0">Release 1.0 - May 16, 2003</a></li>
+            <li><a href="#rel0.9">Release 0.9 - March 7, 2003</a></li>
+            <li><a href="#relbeta1">Beta 1 - Dec 20, 2002</a></li>
+            <li><a href="#relalpha1">Alpha 1 - Oct 31, 2002</a></li>
+        </ol>
+    </div>
+</div>
+
 <div class="sect">
-<h2><a name="rel2.0">1. Release 2.0 - January 28, 2005</a></h2>
-  <p>
-  Fedora 2.0 is a major release that culminates Phase I of the initial Fedora 
-  project that began in October 2001 and ended in October 2004. Fedora 2.0 includes 
-  significant new features and improvements including the introduction of the 
-  Fedora Object XML (FOXML) schema as the new internal storage format for objects, 
-  introduction of the Resource Index that provides enhanced search capability, 
-  introduction of a Batch Modify utility, upgrades of all third party libraries, 
-  performance enhancements, and a number of bug fixes.
-  </p>
-  <p>
-  IMPORTANT!! - Migrating From Fedora Release 1.2.1
-  </p>
-  <p>Users migrating from Fedora Release 1.2.1 need to follow the steps outlined 
-  in the section entitled, Migrating From Fedora 1.2.1 to Fedora 2.0, and apply 
-  patch number 2 to their existing Fedora 1.2.1 repository BEFORE attempting migration 
-  to Fedora 2.0. Failure to do so can severely limit future migration options. 
-  </p>
-  <p>If you are running a version of the Fedora software prior to version 1.2.1, 
-  you will need to migrate your server software up to version 1.2.1 first, and 
-  then proceed with the migration from Fedora 1.2.1 to Fedora 2.0. Steps for migrating 
-  to Fedora 1.2.1 can be found in the release notes section for Fedora 1.2.1.
-  <p>
-  <div class="sect2">
-  <h2><a name="rel2.0.migrate">Migrating From Fedora 1.2.1 to Fedora 2.0</a></h2>
-  <p>If you are upgrading from Fedora 1.2.1 to Fedora 2.0 follow these steps:</p>
-  <ol>
-    <li>Download patch number 2 from http://www.fedora.info/release/1.2.1/patch2.</li>
-    <li>Make sure you are running v1.2.1 of the Fedora server software.
-      <p>DO NOT APPLY THIS PATCH TO ANY OTHER VERSION OF FEDORA!</p>
-      <p>To check your repository's version, check the &quot;describe&quot; page. For 
-  instance, if you're running Fedora on localhost:8080, visit http://localhost:8080/fedora/describe</li>
-    <li>Shut down your Fedora 1.2.1 server (using fedora-stop)</p></li>
-    <li>Make a backup of the METSLikeExportDOSerializer.class file.
-      <p>Under Windows, make a backup of the following file:</p>
-      <div class="code">
-	    <pre>%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation\METSLikeExportDOSerializer.class</pre>
-	  </div>
-      <p>Under Unix, make a backup of the following file:
-      <div class="code">
-	    <pre>$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation/METSLikeExportDOSerializer.class</pre>
-	  </div>
-	</li>
-    <li>Copy the METSLikeExportDOSerializer.class from this patch into the above 
-  directory replacing the one there.
-      <p>Under Windows, copy the METSLikeExportDOSerializer.class from patch into the following directory</p>
-      <div class="code">
-        <pre>%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation </pre>
-      </div>
-      <p>OVER THE EXISTING FILE.</p>
-      <p>Under Unix, copy the METSLikeExportDOSerializer.class from patch into the following directory</p>
-      <div class="code">
-        <pre>$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation </pre>
-      </div>
-      <p>OVER THE EXISTING FILE.</p></li>
-    <li>(OPTIONAL) If you installed the source code distribution of Fedora, you should 
-  also copy the included METSLikeExportDOSerializer.java file into your source 
-  directory.
-      <p>Under Windows, copy the METSLikeExportDOSerializer.java file from the patch 
-  into the following directory
-      <div class="code">
-        <pre>%FEDORA_HOME%\src\java\fedora\server\storage\translation</pre>
-      </div>
-      <p>OVER THE EXISTING FILE.</p>
-      <p>Under Unix, copy the METSLikeExportDOSerializer.java file from the patch into the following directory</p>
-      <div class="code">
-        <pre>$FEDORA_HOME/src/java/fedora/server/storage/translation</pre>
-      </div>
-      <p>OVER THE EXISTING FILE.</p>
-    </li>
-  <li>Re-start your Fedora 1.2.1 server (using fedora-start). Your Fedora 1.2.1 
-  repository is now ready for exporting its objects to the new server.</li>
-  <li>Download the Fedora 2.0 software from
-  <a href="http://www.fedora.info/release/2.0">http://www.fedora.info/release/2.0</a></li>
-  <li>Install and configure the new Fedora 2.0 repository with a different host 
-  and port than the Fedora 1.2.1 server.</li>
-  <li>Start the Fedora 2.0 server (using fedora-start).</li>
-  <li>There are two ways to ingest objects from the 1.2.1 server: 1) use the admin 
-  GUI client to ingest the objects from the 1.2.1 repository or 2) use the fedora-ingest 
-  command-line utility to ingest the objects from the 1.2.1 repository</li>
-  <ol type="a">
-  <li>Using the admin GUI client to ingest objects from the 1.2.1 repository</li>
-    <ol type="i">
-      <li>Start the fedora admin GUI client (using fedora-admin).<li>
-      <li>Under the File menu item, select File, Ingest, Object By Type, From Repository.<li>
-      <li>Specify the hostname and port of the Fedora 1.2.1 server from which you 
-  want to ingest objects. Specify the administrator username and password for 
-  the 1.2.1 repository.<li>
-      <li>Select all three object types including Behavior Definition, Behavior Mechanism, 
-  and Data object and click OK.<li>
-      <li>The Fedora 2.0 server will now ingest all objects from the 1.2.1 repository.<br>
-  OR</li>
-    </ol>
-  <li>Using the fedora-ingest command-line utility toingest objects from the 1.2.1 
-  repository.</li>
-    <ol type="i">
-      <li>Run the fedora-ingest command-line utility which is found in the client/bin 
-  directory.
-        <p>Under Windows, this file is found in:</p>
-        <div class="code">
-          <pre>%FEDORA_HOME%\client\bin\fedora-ingest.bat</pre>
-        </div>
-        <p>Under Unix, this file is found in: </p>
-        <div class="code">
-          <pre>$FEDORA_HOME/client/bin/fedora-ingest.sh</pre>
-        </div>
-      </li>
-     <li>Arguments for the fedora-ingest utility should include the following:</li>
-	 <ul>
-       <li>Type of ingest: specify R for repository</li>
-       <li>Hostname and port of the 1.2.1 repository from which you wish to ingest objects: 
-  source-host:source-port</li>
-       <li>Administrator username of the 1.2.1 repository: fedoraAdmin</li>
-       <li>Password for the administrator username of the 1.2.1 repository: fedoraAdmin 
-  is the default</li>
-       <li>Type of objects to ingest: specify DMO for all three object types.</li>
-       <li>Hostname and port of the 2.0 repository into which you are ingesting the 
-  objects: destination-host:destination-port</li>
-       <li>Administrator username of the 2.0 repository: fedoraAdmin</li>
-       <li>Password for the administrator username of the 2.0 repository: fedoraAdmin 
-  is the default</li>
-       <li>Log message: use &quot;&quot; for no message.
-         <p>For example: </p>
-         <div class="code">
-           <pre>fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-port fedoraAdmin fedoraAdmin &quot;&quot;</pre>
-         </div>
-      </li>
-     </ul>
-   </ol>
-   </ol>
-   <li>After successfully ingesting all objects from the 1.2.1 repository, shutdown 
-  the 1.2.1 repository (using fedora-stop).</li>
-   <li>If you desire to run the Fedora 2.0 repository under the same hostname and 
-  port as the 1.2.1 repository, you can now shutdown the 2.0 repository using 
-  fedora-stop, reconfigure the host and port in the fedora.fcfg file for the 2.0 
-  repository to match those of the previous 1.2.1 repository, and restart the 
-  fedora 2.0 repository.</li>
-  </ol>
+    <h2><a name="rel2.0">1. Release 2.0 - January 28, 2005</a></h2>
+    <p>Fedora 2.0 is a major release that culminates Phase I of the initial 
+    Fedora project that began in October 2001 and ended in October 2004. Fedora 
+    2.0 includes significant new features and improvements including the 
+    introduction of the Fedora Object XML (FOXML) schema as the new internal 
+    storage format for objects, introduction of the Resource Index that provides 
+    enhanced search capability, introduction of a Batch Modify utility, upgrades 
+    of all third party libraries, performance enhancements, and a number of bug 
+    fixes.</p>
+    <p>IMPORTANT!! - Migrating From Fedora Release 1.2.1</p>
+    <p>Users migrating from Fedora Release 1.2.1 need to follow the steps 
+    outlined in the section entitled, Migrating From Fedora 1.2.1 to Fedora 2.0, 
+    and apply patch number 2 to their existing Fedora 1.2.1 repository BEFORE 
+    attempting migration to Fedora 2.0. Failure to do so can severely limit 
+    future migration options.</p>
+    <p>If you are running a version of the Fedora software prior to version 
+    1.2.1, you will need to migrate your server software up to version 1.2.1 
+    first, and then proceed with the migration from Fedora 1.2.1 to Fedora 2.0. 
+    Steps for migrating to Fedora 1.2.1 can be found in the release notes 
+    section for Fedora 1.2.1.</p>
+
+    <div class="sec2">
+        <h2><a name="rel2.0.migrate">Migrating From Fedora 1.2.1 to Fedora 2.0</a></h2>
+        <p>If you are upgrading from Fedora 1.2.1 to Fedora 2.0 follow these steps:</p>
+        <ol>
+            <li>Download patch number 2 from http://www.fedora.info/release/1.2.1/patch2.</li>
+            <li>Make sure you are running v1.2.1 of the Fedora server software.
+                <p>DO NOT APPLY THIS PATCH TO ANY OTHER VERSION OF FEDORA!</p>
+                <p>To check your repository's version, check the 
+                &quot;describe&quot; page. For instance, if you're running 
+                Fedora on localhost:8080, visit 
+                http://localhost:8080/fedora/describe</p>
+            </li>
+            <li>Shut down your Fedora 1.2.1 server (using fedora-stop)</li>
+            <li>Make a backup of the METSLikeExportDOSerializer.class file.
+                <p>Under Windows, make a backup of the following file:</p>
+                <div class="code"><pre>
+%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation\METSLikeExportDOSerializer.class</pre></div>
+                <p>Under Unix, make a backup of the following file:</p>
+                <div class="code"><pre>
+$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation/METSLikeExportDOSerializer.class</pre></div>
+            </li>
+            <li>Copy the METSLikeExportDOSerializer.class from this patch into 
+                the above directory replacing the one there.
+                <p>Under Windows, copy the METSLikeExportDOSerializer.class from 
+                patch into the following directory </p>
+                <div class="code"><pre>
+%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation </pre></div>
+                <p>OVER THE EXISTING FILE.</p>
+                <p>Under Unix, copy the METSLikeExportDOSerializer.class from patch into the following directory</p>
+                <div class="code"><pre>
+$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation </pre></div>
+                <p>OVER THE EXISTING FILE.</p>
+            </li>
+            <li>(OPTIONAL) If you installed the source code distribution of 
+                Fedora, you should also copy the included 
+                METSLikeExportDOSerializer.java file into your source directory.
+                <p>Under Windows, copy the METSLikeExportDOSerializer.java file 
+                from the patch into the following directory</p>
+                <div class="code"><pre>
+%FEDORA_HOME%\src\java\fedora\server\storage\translation</pre></div>
+                <p>OVER THE EXISTING FILE.</p>
+                <p>Under Unix, copy the METSLikeExportDOSerializer.java file 
+                from the patch into the following directory</p>
+                <div class="code"><pre>
+$FEDORA_HOME/src/java/fedora/server/storage/translation</pre></div>
+                <p>OVER THE EXISTING FILE.</p>
+            </li>
+            <li>Re-start your Fedora 1.2.1 server (using fedora-start). Your Fedora 1.2.1 
+            repository is now ready for exporting its objects to the new server.</li>
+            <li>Download the Fedora 2.0 software from
+            <a href="http://www.fedora.info/release/2.0">http://www.fedora.info/release/2.0</a></li>
+            <li>Install and configure the new Fedora 2.0 repository with a different host 
+            and port than the Fedora 1.2.1 server.</li>
+            <li>Start the Fedora 2.0 server (using fedora-start).</li>
+            <li>There are two ways to ingest objects from the 1.2.1 server: 1) use the admin 
+            GUI client to ingest the objects from the 1.2.1 repository or 2) use the fedora-ingest 
+            command-line utility to ingest the objects from the 1.2.1 repository
+                <ol>
+                    <li>Using the admin GUI client to ingest objects from the 1.2.1 repository
+                        <ol>
+                            <li>Start the fedora admin GUI client 
+                                (using fedora-admin).</li>
+                            <li>Under the File menu item, select File, Ingest, 
+                                Object By Type, From Repository.</li>
+                            <li>Specify the hostname and port of the Fedora 
+                                1.2.1 server from which you want to ingest 
+                                objects. Specify the administrator username and 
+                                password for the 1.2.1 repository.</li>
+                            <li>Select all three object types including Behavior 
+                                Definition, Behavior Mechanism, and Data object 
+                                and click OK.</li>
+                            <li>The Fedora 2.0 server will now ingest all 
+                                objects from the 1.2.1 repository.</li>
+                        </ol>
+                        OR    
+                    </li>               
+                    <li>Using the fedora-ingest command-line utility to ingest 
+                        objects from the 1.2.1 repository.
+                        <ol>
+                            <li>Run the fedora-ingest command-line utility which 
+                                is found in the client/bin directory.
+                                <p>Under Windows, this file is found in:</p>
+                                <div class="code"><pre>
+%FEDORA_HOME%\client\bin\fedora-ingest.bat</pre></div>
+                                <p>Under Unix, this file is found in: </p>
+                                <div class="code"><pre>
+$FEDORA_HOME/client/bin/fedora-ingest.sh</pre></div>
+                            </li>
+                            <li>Arguments for the fedora-ingest utility should include the following:
+                                <ul>
+                                    <li>Type of ingest: specify R for repository</li>
+                                    <li>Hostname and port of the 1.2.1 repository from which you wish to ingest objects: 
+                                    source-host:source-port</li>
+                                    <li>Administrator username of the 1.2.1 repository: fedoraAdmin</li>
+                                    <li>Password for the administrator username of the 1.2.1 repository: fedoraAdmin 
+                                    is the default</li>
+                                    <li>Type of objects to ingest: specify DMO for all three object types.</li>
+                                    <li>Hostname and port of the 2.0 repository into which you are ingesting the 
+                                    objects: destination-host:destination-port</li>
+                                    <li>Administrator username of the 2.0 repository: fedoraAdmin</li>
+                                    <li>Password for the administrator username of the 2.0 repository: fedoraAdmin 
+                                    is the default</li>
+                                    <li>Log message: use &quot;&quot; for no message.
+                                        <p>For example: </p>
+                                        <div class="code"><pre>
+fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-port fedoraAdmin fedoraAdmin &quot;&quot;</pre></div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ol>
+                    </li>
+                </ol>
+            </li>
+            <li>After successfully ingesting all objects from the 1.2.1 
+                repository, shutdown the 1.2.1 repository (using fedora-stop).
+            </li>
+            <li>If you desire to run the Fedora 2.0 repository under the same 
+                hostname and port as the 1.2.1 repository, you can now shutdown 
+                the 2.0 repository using fedora-stop, reconfigure the host and 
+                port in the fedora.fcfg file for the 2.0 repository to match 
+                those of the previous 1.2.1 repository, and restart the Fedora 
+                2.0 repository.
+            </li>
+        </ol>
 </div>
 <div class="sect2">
 <h2><a name="rel2.0.features"></a>New Features</h2>
 <ol>
-  <li><b>Fedora Object XML (FOXML)</b>
-  <p>A new XML schema has been developed that provides a simple and unambiguous expression 
-  the Fedora digital object model. Previously, Fedora digital objects could only 
-  be expressed in XML using an extension of the METS schema. FOXML is the new 
-  internal storage format for digital objects inside a Fedora repository. However, 
-  Fedora supports both METS and FOXML as ingest and export formats (see #2 below). 
-  The introduction of FOXML was motivated by several requirements: (1) simplicity 
-  - user feedback called for a conceptually easy mapping of the Fedora concepts 
-  to an XML format. Users wanted an obvious sense of how to create Fedora ingest 
-  files, especially those who are not familiar with formats such as METS and DIDL, 
-  (2) optimization and performance - the FOXML schema was designed to improve 
-  repository performance, both at ingest and during disseminations. Overall ingest 
-  performance has been positively affected with FOXML, especially in the validation 
-  phases, (3) flexibility - internal storage of FOXML enables easier evolution 
-  of functionality in the Fedora repository, without relying on Fedora-specific 
-  extensions to the METS schema. FOXML also introduces several new features to 
-  the Fedora Object Model including, the ability to store alternate identifiers 
-  for datastreams, and the ability to store format URIs for datastreams and objects 
-  (i.e., in anticipation of services such as the Global Digital Format Registry 
-  (GDRF). Refer to the user documentation for more details about FOXML and new 
-  features of the Fedora Object Model.</p>
-  <p>The XML schema for FOXML is available at:</p>
-  <p><a href="http://www.fedora.info/definitions/1/0/foxml1-0.xsd">http://www.fedora.info/definitions/1/0/foxml1-0.xsd</a></p>
-  </li>
-  <li><b>Ingest and Export with Different XML Formats</b>
-  <p>The Fedora project is committed to providing repository ingest and export functions 
-  are compatible with community developed standards for digital object XML encoding. 
-  This is motivated by both interoperability and digital preservation concerns, 
-  where flexibility in the transmission format of digital objects is an important 
-  feature. In support of this, the ingest and export operations of API-M have 
-  been redesigned to allow submission and retrieval of digital objects in several 
-  alternative XML formats. In release 2.0, digital objects can be ingested and 
-  exported in either METS (Fedora extension) or FOXML. In future releases, we 
-  will add support for METS 1.3 and MPEG21/DIDL. Internally, the Fedora repository 
-  system provides a translation module that is responsible for mapping digital 
-  objects to the different supported formats. See the new &quot;Ingest and Export 
-  Guide&quot; in the system documentation for more details.</p>
-  </li>
-  <li><b>Relationship Metadata for Digital Objects</b>
-  <p>Fedora now supports the assertion of object-to-object relationships. Fedora 
-  digital objects can be related to other Fedora objects in many ways. For example 
-  there may be a Fedora object that represents a collection and other objects 
-  that are members of that collection. Also, it may be the case that one object 
-  is considered a part of another object, a derivation of another object, a description 
-  of another object, or even equivalent to another object. Relationship metadata 
-  of this sort can now be encoded in Fedora digital objects in a special reserved 
-  datastream reserved (identified as &quot;RELS-EXT&quot;). Relationships are 
-  expressed as RDF/XML. Fedora provides a default relationship ontology that defines 
-  a set of common relationships (see: http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs). 
-  Also, there is support for community or user-defined relationships. The relationships 
-  datastream is automatically indexed by Fedora as part of the new Resource Index 
-  module (described below), which provides RDF-based searching of the repository, 
-  including object-to-object relationships.</p>
-  </li>
-  <li><b>Resource Index</b>
-  <p>The Resource Index Module provides an RDF storage and query service for object 
-  metadata and relationships in Fedora. By default, the Resource Index indexes 
-  object properties, datastream, and dissemination information. In addition, user-defined, 
-  inter-object relationships expressed the RELS-EXT datastream are also automatically 
-  indexed. Refer to the user documentation for additional information about the 
-  Resource Index.</p>
-  </li>
-  <li><b>Batch Modify Utility</b>
-  <p>A new utility has been added to the Fedora administrative client that allows 
-  repository administrators to perform object modifications in batch mode. The 
-  utility is built using the management API method of API-M so that most of the 
-  API-M methods can be run against groups of objects. The utility works by creating 
-  an xml-encoded input file of modify directives. This directives files is then 
-  processed in sequence to carry out the designated tasks. A sample batch modify 
-  directives file is included in the distribution in the batch-demo directory. 
-  Refer to the Batch Modify Utility user documentation for additional information 
-  regarding the batch Modify Utility.</p>
-  </li>
-  <li><b>Repository Administrator Reporting Tools</b>
-  <p>A new Reporting interface has been added for obtaining simple administrative 
-  reports about objects in the repository. The interface consists of several static 
-  queries that can be performed on the repository to obtain statistics about objects. 
-  These queries currently include object counts based on type of object, creation 
-  date, and pid namespace. Refer to the user documentation for additional information.</p>
-  </li>
-  <li><b>Third party Library Upgrades</b>
-  <p>All of the major third party libraries used in the Fedora codebase have been 
-  updated to reflect the most current stable versions available. This includes 
-  updating the underlying tomcat server to tomcat version 5. For Additional details 
-  regarding new library versions, refer to the LICENSE.html file in the distribution 
-  which has a complete list of the new library versions.</p>
-  </li>
-  <li><b>Performance Tuning</b>
-  <p>Significant enhancements have been made to the Fedora server code to improve 
-  ingest performance. These enhancements included both tuning of the underlying 
-  relational database as well as tuning how ingests are handled internally in 
-  the Fedora server.</p>
-  </li>
-  <li><b>API-A and API-A-LITE Changes</b>
-  <p>A general cleanup of the methods found in API-A and API-A-LITE has been done 
-  to provide better consistency between the SOAP-based and REST-based interfaces 
-  for API-A. The corresponding WSDL files have also been updated to reflect the 
-  changes. </p>
-  <p>Previously in Fedora 1.2.1:</p>
-  <div class="code">
-  <pre>
-  API-A
-  
-    describeRepository
-    findObjects
-    getBehaviorDefinitions
-    getBehaviorMethods
-    getBehaviorMethodsXML
-    getDissemination
-    getObjectMethods
-    getObjectProfile
-    resumeFindObjects
- 
-  API-A-LITE
-
-    describeRepository</li>
-    findObjects</li>
-    getDissemination</li>
-    getObjectProfile</li>
-    resumeFindObjects</pre>
-    </div>
-<p>In Fedora 2.0:</p>
-<div class="code">
-  <pre>
-  API-A
-
-  describeRepository</li>
-  findObjects</li>
-  getDatastreamDissemination</li>
-  getDissemination</li>
-  getObjectHistory</li>
-  getObjectProfile</li>
-  listMethods</li>
-  listDatastreams</li>
-  resumeFindObjects</li>
-
-  API-A-LITE
-
-  describeRepository
-  findObjects
-  getDatastreamDissemination
-  getDissemination
-  getObjectHistory
-  getObjectProfile
-  listDatastreams
-  listMethods
-  resumeFindObjects
-  </pre>
-  </div>
-<p>API-A Methods removed:</p>
-<ul>
-<li>getBehaviorDefinitions - the functionality of this method is replaced with 
-  the revised getObjectProfile method which now provides complete object info 
-  including behavior definitions and methods.</li>
-<li>getBehaviorMethods - the functionality of this method is replaced with the 
-  revised getObjectProfile method which now provides complete object info including 
-  behavior definitions and methods.</li>
-<li>getBehaviorMethodsXML - the functionality of this method is replaced with the 
-  revised getObjectProfile method which now provides complete object info including 
-  behavior definitions and methods.</li>
-<li>getObjectMethods - the functionality of this method is replaced with the revised 
-  getObjectProfile method which now provides complete object info including behavior 
-  definitions and methods.</li>
-</ul>
-<p>API-A Methods added or modified:</p>
-<ul>
-<li>getDatastreamDissemination - this new method replaces the functionality provided 
-  in earlier releases using the getItem method of the Default Disseminator to 
-  return the contents of a datastream. Use of the default disseminator getItem 
-  method is now deprecated.</li>
-<li>getObjectHistory - this new method provides a change history for a digital 
-  object listing each modification date when an object component has been modified. 
-  This is an interim solution to provide some basic information through API-A 
-  and API-A-LITE about the change history of an object. Eventually we would like 
-  to provide more detailed information from the Fedora audit records so one could 
-  obtain a detailed history of what changes were made to specific components of 
-  the object.</li>
-<li>getObjectProfile - this method has been modified to return the complete object 
-  profile for a digital object. The object profile now includes all component 
-  information about an object.</li>
-<li>listDatastreams - this new method replaces the functionality provided in earlier 
-  releases using the getItemIndex method of the Default Disseminator to list the 
-  datastreams of an object.</li>
-<li>listMethods - this new method replaces the functionality provided in earlier 
-  releases using the getMethodIndex method of the Default Disseminator to list 
-  the methods of an object.</li>
-  </li>
-</ul>
-<li><b>API-M changes</b>
-<p></p>
-<ul>
-<li>logMessage parameter now exists on all object-modifying methods.</li>
-<li>Datastream altIDs attribute. Any number of alternate identifiers can be specified 
-  for datastreams on creation or modification. This information is currently maintained, 
-  but not acted upon.</li>
-<li>Datastream versionable attribute. A new boolean parameter that indicates whether 
-  Fedora should make changes in-place or retain prior versions on datastream modification. 
-  This information is currently maintained, but not acted upon.</p>
-<li>modifyDatastream now supports changing the mimeType and<br>
-  formatURI, and altID.</li>
-<li>modifyDatastream and modifyDisseminator methods now support a &quot;force&quot; 
-  parameter, which indicates that even if a data type contract would be broken, 
-  Fedora should accept the change anyway.</li>
-<li>purgeObject and purgeDatastream now include force parameters. Currently when 
-  specified as true, these throw an exception. This feature will be implemented 
-  in a future release.</li>
-<li>Consistent parameter ordering. Parameter ordering of all the API-M methods 
-  was adjusted to make parameter ordering more consistent. Generally, the first 
-  one or two parameters identify the thing being accessed/modified (object PID, 
-  datastream or disseminator ID). When &quot;logMessage&quot; is relevant, it 
-  occurs just after any data parameters. When &quot;force&quot; is relevant, it 
-  occurs last.</li>
-</ul>
-<p>Summary of API-M changes:</p>
-<ul>
-<li>addDatastream: added parameters altIDs and logMessage</li>
-  <li>addDisseminator: added parameter logMessage; removed</li>
-  <li>parameters bDefLabel and bMechLabel</li>
-  <li>describeUser: [no change]</li>
-  <li>export: [no change]</li>
-  <li>exportObject: [no change]</li>
-  <li>getDatastream: [no change]</li>
-  <li>getDatastreamHistory: [no change]</li>
-  <li>getDatastreams: [no change]</li>
-  <li>getDisseminator: [no change]</li>
-  <li>getDisseminatorHistory: [no change]</li>
-  <li>getDisseminators: [no change]</li>
-  <li>getNextPID: [no change]</li>
-  <li>getObjectXML: [no change]</li>
-  <li>ingest: [no change]</li>
-  <li>ingestObject: [no change]</li>
-  <li>modifyDatastreamByReference: added parameters altIDs, versionable, MIMEType, and formatURI, and force</li>
-  <li>modifyDatastreamByValue: added parameters altIDs, versionable, MIMEType, formatURI,
-  and force</li>
-  <li>modifyDisseminator: added parameter force; removed parameters bDefLabel and bMechLabel</li>
-  <li>modifyObject: [no change]</li>
-  <li>purgeDatastream: added parameters logMessage and force</li>
-  <li>purgeDisseminator: added parameter logMessage</li>
-  <li>purgeObject: added parameter force</li>
-  <li>setDatastreamState: [no change]</li>
-  <li>setDisseminatorState: [no change]</li>
-  </ul>
-</li>
-<li><b>PID Definition Syntax Relaxed</b>
-<p>Prior to Fedora version 2.0, the syntax for persistent identifiers (PIDs) was 
-  defined as a subset of the URN syntax, but was not strictly enforced by the 
-  server software. In version 2.0, the PID definition syntax has been relaxed 
-  to enable a wider range of possible PID values and the server software now strictly 
-  enforces the syntax of incoming PIDs.</p>
-<p>
-  The following describes the syntactic constraints for PIDs in normalized form. 
-  The only differences with non-normalized PIDs are that the colon delimiter may 
-  be encoded as &quot;%3a&quot; or &quot;%3A&quot;, and hex-digits may use lowercase 
-  [a-f].</p>
-  <div class="code">
-  <pre>
-  PID:<br>
-  Length : maximum 64<br>
-  Syntax : namespace-id &quot;:&quot; object-id
-  
-  namespace-id:<br>
-  Syntax : ( [A-Z] / [a-z] / [0-9] / &quot;-&quot; / &quot;.&quot; ) 1+
-  
-  object-id:<br>
-  Syntax : ( [A-Z] / [a-z] / [0-9] / &quot;-&quot; / &quot;.&quot; / &quot;~&quot; / &quot;_&quot; / escaped-octet ) 1+<br>
-  
-  escaped-octet:
-  Syntax : &quot;%&quot; hex-digit hex-digit
-  
-  hex-digit:
-  Syntax : [0-9] / [A-F]
-
-  </pre>
-  </div>
-</li>
-<li><b>Including PID As Default Parameter in Disseminations</b>
-<p>When constructing complex user-defined disseminators that reference disseminations 
-  from other objects, it is often handy to be able to pass the PID of the data 
-  object on to the nested dissemination requests. Prior to Fedora 2.0, the only 
-  way to accomplish this was to add a formal User Parameter to the disseminator 
-  method and use it to pass the value of the PID. This syntax is ackward since 
-  the PID of the data object is already contained in the dissemination request. 
-  For example:</p>
-  <div class="code">
-  <pre>http://localhost:8080/fedora/get/demo:999/demo:991/getMethod?userparm1=value&amp;userparm2=value&amp;pid=demo:999</pre>
-  </div>
-  <p>In the future, we plan to make it possible for the PID of the data object to 
-  be automatically passed as a parameter so it is always available downstream 
-  as a valid parameter on any dissemination request. As an interim solution to 
-  address this issue, Fedora 2.0 allows the PID of the data object to be passed 
-  as a default behavior mechanism parameter by using a special syntax of the DefaultInputParm 
-  element in the behavior mechanism object. For example:</p>
+    <li><b>Fedora Object XML (FOXML)</b>
+        <p>A new XML schema has been developed that provides a simple and unambiguous expression 
+        the Fedora digital object model. Previously, Fedora digital objects could only 
+        be expressed in XML using an extension of the METS schema. FOXML is the new 
+        internal storage format for digital objects inside a Fedora repository. However, 
+        Fedora supports both METS and FOXML as ingest and export formats (see #2 below). 
+        The introduction of FOXML was motivated by several requirements: (1) simplicity 
+        - user feedback called for a conceptually easy mapping of the Fedora concepts 
+        to an XML format. Users wanted an obvious sense of how to create Fedora ingest 
+        files, especially those who are not familiar with formats such as METS and DIDL, 
+        (2) optimization and performance - the FOXML schema was designed to improve 
+        repository performance, both at ingest and during disseminations. Overall ingest 
+        performance has been positively affected with FOXML, especially in the validation 
+        phases, (3) flexibility - internal storage of FOXML enables easier evolution 
+        of functionality in the Fedora repository, without relying on Fedora-specific 
+        extensions to the METS schema. FOXML also introduces several new features to 
+        the Fedora Object Model including, the ability to store alternate identifiers 
+        for datastreams, and the ability to store format URIs for datastreams and objects 
+        (i.e., in anticipation of services such as the Global Digital Format Registry 
+        (GDRF). Refer to the user documentation for more details about FOXML and new 
+        features of the Fedora Object Model.</p>
+        <p>The XML schema for FOXML is available at:</p>
+        <p><a href="http://www.fedora.info/definitions/1/0/foxml1-0.xsd">http://www.fedora.info/definitions/1/0/foxml1-0.xsd</a></p>
+    </li>
+    <li><b>Ingest and Export with Different XML Formats</b>
+    <p>The Fedora project is committed to providing repository ingest and export functions 
+    are compatible with community developed standards for digital object XML encoding. 
+    This is motivated by both interoperability and digital preservation concerns, 
+    where flexibility in the transmission format of digital objects is an important 
+    feature. In support of this, the ingest and export operations of API-M have 
+    been redesigned to allow submission and retrieval of digital objects in several 
+    alternative XML formats. In release 2.0, digital objects can be ingested and 
+    exported in either METS (Fedora extension) or FOXML. In future releases, we 
+    will add support for METS 1.3 and MPEG21/DIDL. Internally, the Fedora repository 
+    system provides a translation module that is responsible for mapping digital 
+    objects to the different supported formats. See the new &quot;Ingest and Export 
+    Guide&quot; in the system documentation for more details.</p>
+    </li>
+    <li><b>Relationship Metadata for Digital Objects</b>
+    <p>Fedora now supports the assertion of object-to-object relationships. Fedora 
+    digital objects can be related to other Fedora objects in many ways. For example 
+    there may be a Fedora object that represents a collection and other objects 
+    that are members of that collection. Also, it may be the case that one object 
+    is considered a part of another object, a derivation of another object, a description 
+    of another object, or even equivalent to another object. Relationship metadata 
+    of this sort can now be encoded in Fedora digital objects in a special reserved 
+    datastream reserved (identified as &quot;RELS-EXT&quot;). Relationships are 
+    expressed as RDF/XML. Fedora provides a default relationship ontology that defines 
+    a set of common relationships (see: http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs). 
+    Also, there is support for community or user-defined relationships. The relationships 
+    datastream is automatically indexed by Fedora as part of the new Resource Index 
+    module (described below), which provides RDF-based searching of the repository, 
+    including object-to-object relationships.</p>
+    </li>
+    <li><b>Resource Index</b>
+    <p>The Resource Index Module provides an RDF storage and query service for object 
+    metadata and relationships in Fedora. By default, the Resource Index indexes 
+    object properties, datastream, and dissemination information. In addition, user-defined, 
+    inter-object relationships expressed the RELS-EXT datastream are also automatically 
+    indexed. Refer to the user documentation for additional information about the 
+    Resource Index.</p>
+    </li>
+    <li><b>Batch Modify Utility</b>
+    <p>A new utility has been added to the Fedora administrative client that allows 
+    repository administrators to perform object modifications in batch mode. The 
+    utility is built using the management API method of API-M so that most of the 
+    API-M methods can be run against groups of objects. The utility works by creating 
+    an xml-encoded input file of modify directives. This directives files is then 
+    processed in sequence to carry out the designated tasks. A sample batch modify 
+    directives file is included in the distribution in the batch-demo directory. 
+    Refer to the Batch Modify Utility user documentation for additional information 
+    regarding the batch Modify Utility.</p>
+    </li>
+    <li><b>Repository Administrator Reporting Tools</b>
+    <p>A new Reporting interface has been added for obtaining simple administrative 
+    reports about objects in the repository. The interface consists of several static 
+    queries that can be performed on the repository to obtain statistics about objects. 
+    These queries currently include object counts based on type of object, creation 
+    date, and pid namespace. Refer to the user documentation for additional information.</p>
+    </li>
+    <li><b>Third party Library Upgrades</b>
+    <p>All of the major third party libraries used in the Fedora codebase have been 
+    updated to reflect the most current stable versions available. This includes 
+    updating the underlying tomcat server to tomcat version 5. For Additional details 
+    regarding new library versions, refer to the LICENSE.html file in the distribution 
+    which has a complete list of the new library versions.</p>
+    </li>
+    <li><b>Performance Tuning</b>
+    <p>Significant enhancements have been made to the Fedora server code to improve 
+    ingest performance. These enhancements included both tuning of the underlying 
+    relational database as well as tuning how ingests are handled internally in 
+    the Fedora server.</p>
+    </li>
+    <li><b>API-A and API-A-LITE Changes</b>
+        <p>A general cleanup of the methods found in API-A and API-A-LITE has been done 
+        to provide better consistency between the SOAP-based and REST-based interfaces 
+        for API-A. The corresponding WSDL files have also been updated to reflect the 
+        changes. </p>
+        <p>Previously in Fedora 1.2.1:</p>
+        <div class="code"><pre>
+      API-A
+      
+        describeRepository
+        findObjects
+        getBehaviorDefinitions
+        getBehaviorMethods
+        getBehaviorMethodsXML
+        getDissemination
+        getObjectMethods
+        getObjectProfile
+        resumeFindObjects
+     
+      API-A-LITE
+    
+        describeRepository
+        findObjects
+        getDissemination
+        getObjectProfile
+        resumeFindObjects</pre></div>
+        
+        <p>In Fedora 2.0:</p>
+        <div class="code"><pre>
+      API-A
+    
+      describeRepository
+      findObjects
+      getDatastreamDissemination
+      getDissemination
+      getObjectHistory
+      getObjectProfile
+      listMethods
+      listDatastreams
+      resumeFindObjects
+    
+      API-A-LITE
+    
+      describeRepository
+      findObjects
+      getDatastreamDissemination
+      getDissemination
+      getObjectHistory
+      getObjectProfile
+      listDatastreams
+      listMethods
+      resumeFindObjects</pre></div>
+        <p>API-A Methods removed:</p>
+        <ul>
+            <li>getBehaviorDefinitions - the functionality of this method is replaced with 
+            the revised getObjectProfile method which now provides complete object info 
+            including behavior definitions and methods.</li>
+            <li>getBehaviorMethods - the functionality of this method is replaced with the 
+            revised getObjectProfile method which now provides complete object info including 
+            behavior definitions and methods.</li>
+            <li>getBehaviorMethodsXML - the functionality of this method is replaced with the 
+            revised getObjectProfile method which now provides complete object info including 
+            behavior definitions and methods.</li>
+            <li>getObjectMethods - the functionality of this method is replaced with the revised 
+            getObjectProfile method which now provides complete object info including behavior 
+            definitions and methods.</li>
+        </ul>
+        <p>API-A Methods added or modified:</p>
+        <ul>
+            <li>getDatastreamDissemination - this new method replaces the functionality provided 
+            in earlier releases using the getItem method of the Default Disseminator to 
+            return the contents of a datastream. Use of the default disseminator getItem 
+            method is now deprecated.</li>
+            <li>getObjectHistory - this new method provides a change history for a digital 
+            object listing each modification date when an object component has been modified. 
+            This is an interim solution to provide some basic information through API-A 
+            and API-A-LITE about the change history of an object. Eventually we would like 
+            to provide more detailed information from the Fedora audit records so one could 
+            obtain a detailed history of what changes were made to specific components of 
+            the object.</li>
+            <li>getObjectProfile - this method has been modified to return the complete object 
+            profile for a digital object. The object profile now includes all component 
+            information about an object.</li>
+            <li>listDatastreams - this new method replaces the functionality provided in earlier 
+            releases using the getItemIndex method of the Default Disseminator to list the 
+            datastreams of an object.</li>
+            <li>listMethods - this new method replaces the functionality provided in earlier 
+            releases using the getMethodIndex method of the Default Disseminator to list 
+            the methods of an object.</li>
+        </ul>
+    </li>
+    
+    <li><b>API-M changes</b>
+        <ul>
+            <li>logMessage parameter now exists on all object-modifying methods.</li>
+            <li>Datastream altIDs attribute. Any number of alternate identifiers can be specified 
+              for datastreams on creation or modification. This information is currently maintained, 
+              but not acted upon.</li>
+            <li>Datastream versionable attribute. A new boolean parameter that indicates whether 
+              Fedora should make changes in-place or retain prior versions on datastream modification. 
+              This information is currently maintained, but not acted upon.</li>
+            <li>modifyDatastream now supports changing the mimeType and formatURI, and altID.</li>
+            <li>modifyDatastream and modifyDisseminator methods now support a &quot;force&quot; 
+              parameter, which indicates that even if a data type contract would be broken, 
+              Fedora should accept the change anyway.</li>
+            <li>purgeObject and purgeDatastream now include force parameters. Currently when 
+              specified as true, these throw an exception. This feature will be implemented 
+              in a future release.</li>
+            <li>Consistent parameter ordering. Parameter ordering of all the API-M methods 
+              was adjusted to make parameter ordering more consistent. Generally, the first 
+              one or two parameters identify the thing being accessed/modified (object PID, 
+              datastream or disseminator ID). When &quot;logMessage&quot; is relevant, it 
+              occurs just after any data parameters. When &quot;force&quot; is relevant, it 
+              occurs last.</li>
+        </ul>
+        <p>Summary of API-M changes:</p>
+        <ul>
+            <li>addDatastream: added parameters altIDs and logMessage</li>
+            <li>addDisseminator: added parameter logMessage; removed</li>
+            <li>parameters bDefLabel and bMechLabel</li>
+            <li>describeUser: [no change]</li>
+            <li>export: [no change]</li>
+            <li>exportObject: [no change]</li>
+            <li>getDatastream: [no change]</li>
+            <li>getDatastreamHistory: [no change]</li>
+            <li>getDatastreams: [no change]</li>
+            <li>getDisseminator: [no change]</li>
+            <li>getDisseminatorHistory: [no change]</li>
+            <li>getDisseminators: [no change]</li>
+            <li>getNextPID: [no change]</li>
+            <li>getObjectXML: [no change]</li>
+            <li>ingest: [no change]</li>
+            <li>ingestObject: [no change]</li>
+            <li>modifyDatastreamByReference: added parameters altIDs, versionable, MIMEType, and formatURI, and force</li>
+            <li>modifyDatastreamByValue: added parameters altIDs, versionable, MIMEType, formatURI,
+            and force</li>
+            <li>modifyDisseminator: added parameter force; removed parameters bDefLabel and bMechLabel</li>
+            <li>modifyObject: [no change]</li>
+            <li>purgeDatastream: added parameters logMessage and force</li>
+            <li>purgeDisseminator: added parameter logMessage</li>
+            <li>purgeObject: added parameter force</li>
+            <li>setDatastreamState: [no change]</li>
+            <li>setDisseminatorState: [no change]</li>
+          </ul>
+    </li>
+    <li><b>PID Definition Syntax Relaxed</b>
+    <p>Prior to Fedora version 2.0, the syntax for persistent identifiers (PIDs) was 
+      defined as a subset of the URN syntax, but was not strictly enforced by the 
+      server software. In version 2.0, the PID definition syntax has been relaxed 
+      to enable a wider range of possible PID values and the server software now strictly 
+      enforces the syntax of incoming PIDs.</p>
+    <p>
+      The following describes the syntactic constraints for PIDs in normalized form. 
+      The only differences with non-normalized PIDs are that the colon delimiter may 
+      be encoded as &quot;%3a&quot; or &quot;%3A&quot;, and hex-digits may use lowercase 
+      [a-f].</p>
+      <div class="code"><pre>
+      PID:
+      Length : maximum 64
+      Syntax : namespace-id &quot;:&quot; object-id
+      
+      namespace-id:
+      Syntax : ( [A-Z] / [a-z] / [0-9] / &quot;-&quot; / &quot;.&quot; ) 1+
+      
+      object-id:
+      Syntax : ( [A-Z] / [a-z] / [0-9] / &quot;-&quot; / &quot;.&quot; / &quot;~&quot; / &quot;_&quot; / escaped-octet ) 1+
+      
+      escaped-octet:
+      Syntax : &quot;%&quot; hex-digit hex-digit
+      
+      hex-digit:
+      Syntax : [0-9] / [A-F]</pre></div>
+    </li>
+    <li><b>Including PID As Default Parameter in Disseminations</b>
+        <p>When constructing complex user-defined disseminators that reference disseminations 
+          from other objects, it is often handy to be able to pass the PID of the data 
+          object on to the nested dissemination requests. Prior to Fedora 2.0, the only 
+          way to accomplish this was to add a formal User Parameter to the disseminator 
+          method and use it to pass the value of the PID. This syntax is ackward since 
+          the PID of the data object is already contained in the dissemination request. 
+          For example:</p>
+          <div class="code"><pre>
+http://localhost:8080/fedora/get/demo:999/demo:991/getMethod?userparm1=value&amp;userparm2=value&amp;pid=demo:999</pre></div>
+        <p>In the future, we plan to make it possible for the PID of the data object to 
+        be automatically passed as a parameter so it is always available downstream 
+        as a valid parameter on any dissemination request. As an interim solution to 
+        address this issue, Fedora 2.0 allows the PID of the data object to be passed 
+        as a default behavior mechanism parameter by using a special syntax of the DefaultInputParm 
+        element in the behavior mechanism object. For example:</p>
   <div class="code">
   <pre>&lt;fmm:DefaultInputParm defaultValue="$PID" label="The PID of the data object" parmName="PID" passBy="VALUE" required="true"/&gt;</pre>
   </div>
@@ -499,7 +498,7 @@
   runScript.pl?pid=pid-of-the-data-object
 </pre>
 </div>
-<p><br>
+<p>
   A similar syntax is available to pass the object URI of the data object. If 
   you want to pass the data object's URI, then specify a DefaultInputParm with 
   a default value of &quot;$objuri&quot; and this will be translated at run time 
@@ -510,7 +509,7 @@
 <p>where PID is the persistent identifier of the data object.</p>
 <p>The demo data object object named demo_SmileyStuff.xml and the associated behavior 
   mechanism object named demo_DualResImageCollection.xml provide an example of 
-  the new syntax.<br>
+  the new syntax.
 </p>
 </li>
 <li><b>Syntax Of Timestamp Values Extended</b>
@@ -532,19 +531,20 @@
 <div class="sect2">
 <h2><a name="rel2.0.bugfix"></a>Bug Fixes</h2>
 <ol>
-  <li><b>Incorrect GMT Datetimes - Creation dates for objects do not appear to have 
-  the correct GMT timestamps. (Bugzilla #52)</b>
-<p>When objects were created, the GMT timestamps stored did not reflect the correct 
-  time of object creation. This was bug in fedora.server.utilitites.DateUtility. 
-  The time zone offset was incorrectly being applied to the creation datetime. 
-  Objects now reflect the correct GMT creation datetimestamp.</p>  
-<li><b>Managed datastreams inadvertently deleted - Under certain situations managed 
-  content datastreams could be deleted when purging similarly PIDed objects. (Bugzilla 
-  #53)</b>
-<p>This was a bug in fedora.server.storage.replication.DefaultDOReplicator. Managed 
-  datastreams are stored internally using an identifier that consists of objPID 
-  + dsID + dsVerID. An errant regular expression was matching </p>
-  </li>
+    <li><b>Incorrect GMT Datetimes - Creation dates for objects do not appear to have 
+    the correct GMT timestamps. (Bugzilla #52)</b>
+    <p>When objects were created, the GMT timestamps stored did not reflect the correct 
+    time of object creation. This was bug in fedora.server.utilitites.DateUtility. 
+    The time zone offset was incorrectly being applied to the creation datetime. 
+    Objects now reflect the correct GMT creation datetimestamp.</p>  
+    </li>
+    <li><b>Managed datastreams inadvertently deleted - Under certain situations managed 
+      content datastreams could be deleted when purging similarly PIDed objects. (Bugzilla 
+      #53)</b>
+    <p>This was a bug in fedora.server.storage.replication.DefaultDOReplicator. Managed 
+      datastreams are stored internally using an identifier that consists of objPID 
+      + dsID + dsVerID. An errant regular expression was matching </p>
+    </li>
 <li><b>Errant space in SchemaLocation used by getnextPID - There is an erroneous 
   space preceding the SchemaLocation in output for getNextPID. (Bugzilla #54)</b>
 <p>The SchemaLoaction in the xml header output when running the getNextPID method 
@@ -883,21 +883,19 @@ For additional information refer to the demos.html file in the userdocs director
              partially redundant database.
            </p></div></div>
 <!-- end Inserted release notesf rom Fedora 1.2.1 -->	
-  <div class="footer">
-    <span style="float: left;">
-      <em>Copyright &#xA9; 2005 Fedora Project</em>
-    </span>
-    <span style="float: right;">
-      <em>
+<div id="footer">
+    <div id="copyright">
+        Copyright &copy; 2005 Fedora Project
+    </div>
+    <div id="lastModified">
         Last Modified
-        <script>
-          var cvsDate = "$Date$";
-          var parts = cvsDate.split(" ");
-          var modifiedDate = parts[1];
-          document.write(modifiedDate);
+        <script type="text/javascript">
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
         </script>
-      </em>
-    </span>
-  </div>	   
+    </div>
+</div>	   
 </body>
 </html>

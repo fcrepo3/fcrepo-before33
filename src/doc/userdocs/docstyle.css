@@ -52,8 +52,25 @@ body {
     padding-right: 4px;
 }
 
-#introduction, .sec1 {
+#tocbox ol {
+    list-style: decimal outside none;
+}
+
+#tocbox ol ol {
+    list-style: upper-alpha outside none;
+}
+
+#introduction {
     margin-bottom: 4px;
+}
+
+.sect {
+    margin-bottom: 5px;
+}
+
+.sect .subsect {
+    margin-left: 20px;
+    margin-bottom: 5px;
 }
 
 #footer {
