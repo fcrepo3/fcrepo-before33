@@ -374,10 +374,7 @@
 	<!-- ****************************************************************** -->
 	<!-- Modify the second disseminator by changing the label of its        -->
 	<!-- associated behavior mechanism. Also remove the datastream binding  -->
-	<!-- for SCREEN. Note that since no new binding was added to replace    -->
-	<!-- the one deleted, this will generate an error during processing     -->
-	<!-- screen without a binding the existing disseminator would not       -->
-	<!-- function.                                                          -->
+	<!-- for SCREEN and replace it back with DS3.                           -->
 	<!-- ****************************************************************** -->
 	<fbm:modifyDisseminator pid="demo:32" dissID="DISS2" bMechPid="demo:28" dissState="A" logMessage="BatchModify - modifyDisseminator">
 		<fbm:removeDatastreamBinding dsID="SCREEN"/>
