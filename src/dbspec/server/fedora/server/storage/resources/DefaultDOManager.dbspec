@@ -7,7 +7,6 @@
   <table name="BehaviorMechanism" primaryKey="BMECH_DBID">
     <column name="BMECH_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
     <column name="BDEF_DBID" type="int(11)" notNull="true" default="0" index="BDEF_ID"/>
-    <column name="SMType_DBID" type="int(11)" notNull="true" default="0" index="SMType_ID"/>
     <column name="BMECH_PID" type="varchar(32)" notNull="true" default="" unique="true"/>
     <column name="BMECH_Label" type="varchar(255)" notNull="true" default="" index="BMECH_Label"/>
   </table>
@@ -151,10 +150,5 @@
     <column name="Action" type="char(1)" notNull="true">
       <comment>M or D, meaning "modified" or "deleted"</comment>
     </column>
-  </table>
-  <table name="StructureMapType" primaryKey="SMType_DBID">
-    <column name="SMType_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
-    <column name="SMType_Name" type="varchar(32)" notNull="true" default="" index="SMType_Name"/>
-    <column name="SMType_Label" type="varchar(255)" notNull="true" default="" index="SMType_Label"/>
   </table>
 </database>
