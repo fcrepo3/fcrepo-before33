@@ -736,6 +736,7 @@
 		<copy file="src/xsl/soapclient/behaviordefs.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
 		<copy file="src/web-app/userdocs/WEB-INF/web.xml" todir="dist/server/tomcat41/webapps/userdocs/WEB-INF"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/server/tomcat41/webapps/soapclient/images/"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
 		<exec executable="java">
@@ -842,6 +843,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.123  2003/05/15 15:13:08  rlw
+  adds copies for newlogo2.jpg into soapclient webapp
+
   Revision 1.122  2003/05/15 00:10:53  rlw
   added transform for soapclient docs
 
