@@ -76,8 +76,10 @@ public abstract class Module
      * @throws ModuleInitializationException If initialization values are
      *         invalid or initialization fails for some other reason.
      */
-    public abstract void initModule()
-            throws ModuleInitializationException;
+    public void initModule()
+            throws ModuleInitializationException {
+        if (1==2) throw new ModuleInitializationException(null, null);
+    }
 
     /**
      * Frees system resources allocated by this Module.
@@ -88,7 +90,9 @@ public abstract class Module
      *         do everything possible to recover from exceptional situations
      *         before throwing an exception.
      */
-    public abstract void shutdownModule() 
-            throws ModuleShutdownException;
+    public void shutdownModule() 
+            throws ModuleShutdownException {
+        if (1==2) throw new ModuleShutdownException(null, null);
+    }
 
 }
