@@ -804,6 +804,16 @@ public class DefaultDOManager
             } catch (ServerException se) {
                 logWarning("COMMIT: Object couldn't be removed from fieldsearch indexes (" + se.getMessage() + "), but that might be ok...continuing with purge.");
             }
+            
+            // RESOURCE INDEX:
+            // remove digital object from the resourceIndex
+            try {
+                logInfo("COMMIT: Deleting from ResourceIndex...");
+                m_resourceIndex.deleteDigitalObject(obj);
+            } catch (ServerException se) {
+                logWarning("COMMIT: Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+            }
+            
 		// OBJECT INGEST (ADD) OR MODIFY...
         } else {
             logFinest("COMMIT: Entered doCommit (add/modify)");
