@@ -14,15 +14,15 @@
 	<param name="temp_store_base" value="C:\fedora_temp"/>
 	<param name="datastream_store_base" value="C:\fedora_datastreams"/>
 	<param name="debug" value="false"/>
-		<comment>A boolean toggle used to turn off/on internal debugging in the code.</comment>
+	<comment>A boolean toggle used to turn off/on internal debugging in the code.</comment>
 	<param name="datastreamExpirationLimit" value="300"/>
-		<comment>
+	<comment>
 			Controls the size of the datastream mediation hash by removing entries outside the specified threshold. 
  			The value is specified in seconds.
  			Note this value must be greater than the limit specified for the datastreamMediationLimit.
 		</comment>
 	<param name="datastreamMediationLimit" value="5000"/>
-		<comment>
+	<comment>
 			Determines the time interval in which external mechanisms must respond to requests by the Fedora server.
 	 		The value is specified in milliseconds.	
 			The value specified should be set high enough to allow for an average response time from any single external mechanisms.
@@ -237,7 +237,6 @@
 		  - tempDir  (required):  this is a directory that the validation module can use as a work space, as when it must
 		  write a temporary file.
 		  - xmlSchemaID: this is official URI for the Fedora-METS XML schema used to do XML schema validation of digital objects
-		  - xmlSchemaLocalPath:  this is an alternative local storage location for the Fedora-METS XML schema 
 		  - schematronPreprocessorID:  this is the "skeleton" style sheet for schematron processing
 		  - schematronSchemaID:  this is the Fedora Schematron Schema used to do Fedora-specific validation of digital objects.
 		  This schema expresses integrity rules which are not covered by the Fedora-METS XML schema.
@@ -245,12 +244,11 @@
 		  to enforce the Fedora Schematron Schema.  The validating stylesheet is created every time the server starts up to prevent
 		  having to create it anew each time a digital object is validated.
         </comment>
-		<param name="tempDir" value="/work"/>
+		<param name="tempDir" value="work"/>
 		<param name="xmlSchemaURL" value="http://localhost:8080/mets-fedora-ext.xsd"/>
-		<param name="xmlSchemaLocalPath" value="/xsd/mets-fedora.xsd"/>
-		<param name="schematronPreprocessor" value="/schematron/preprocessor.xslt"/>
-		<param name="schematronSchema" value="/schematron/fedoraRulesExt.xml"/>
-		<param name="schematronValidatingXsl" value="/schematron/fedoraValidator.xslt"/>
+		<param name="schematronPreprocessor" value="schematron/preprocessor.xslt"/>
+		<param name="schematronSchema" value="schematron/fedoraRulesExt.xml"/>
+		<param name="schematronValidatingXsl" value="schematron/fedoraValidator.xslt"/>
 	</module>
 	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
 		<comment>This module facilitates obtaining external content via HTTP</comment>
