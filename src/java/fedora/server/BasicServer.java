@@ -27,7 +27,7 @@ public class BasicServer
      * @returns String[] The roles.
      */
     public String[] getRequiredModuleRoles() {
-        return new String[] {Server.DOMANAGER_CLASSNAME};
+        return new String[] {Server.DOMANAGER_CLASS};
     }
     
     public DOManager getManager(String name) {
