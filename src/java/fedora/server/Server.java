@@ -604,7 +604,7 @@ public abstract class Server
                     Constructor moduleConstructor=moduleClass.getConstructor(
                             new Class[] {param1Class,param2Class,param3Class});
                     Module inst=(Module) moduleConstructor.newInstance( 
-                            new Object[] {(Map) moduleParams, (Server) this, role} );
+                            new Object[] {moduleParams.get(role), (Server) this, role} );
                     m_loadedModules.put(role, inst);
                 } catch (ClassNotFoundException cnfe) {
                     throw new ModuleInitializationException(
@@ -1337,6 +1337,69 @@ public abstract class Server
         return s_locale;
     }
 
+    public String getConfigSummary() {
+        int i;
+        StringBuffer out=new StringBuffer();
+        out.append("[ Fedora Server Configuration Summary ]\n\n");
+        out.append("Server class     : " + this.getClass().getName() + "\n");
+        out.append("Required modules : ");
+        String padding="                   ";
+        String[] roles=getRequiredModuleRoles();
+        if (roles.length==0) {
+            out.append("<none>\n");
+        } else {
+            for (i=0; i<roles.length; i++) {
+                if (i>0) {
+                    out.append(padding);
+                }
+                out.append(roles[i] + "\n");
+            }
+        }
+        out.append("Parameters       : ");
+        Iterator iter=parameterNames();
+        i=0;
+        while (iter.hasNext()) {
+            String name=(String) iter.next();
+            String value=getParameter(name);
+            if (i>0) {
+                out.append(padding);
+            }
+            out.append(name + "=" + value + "\n");
+            i++;
+        }
+        if (i==0) {
+            out.append("<none>\n");
+        }
+
+        iter=loadedModuleRoles();
+        while (iter.hasNext()) {
+            String role=(String) iter.next();
+            out.append("\nLoaded Module : " + role + "\n");
+            Module module=getModule(role);
+            out.append("Class         : " + module.getClass().getName() + "\n");
+            out.append("Parameters    : ");
+            padding="                ";
+            i=0;
+            iter=module.parameterNames();
+            while (iter.hasNext()) {
+                String name=(String) iter.next();
+                String value=module.getParameter(name);
+                if (i>0) {
+                    out.append(padding);
+                }
+                out.append(name + "=" + value + "\n");
+                i++;
+            }
+            if (i==0) {
+                out.append("<none>\n");
+            }
+            
+        }
+        
+        return out.toString();
+    }
+    
+
     /**
      * Tests this class.
      * 
@@ -1354,6 +1417,7 @@ public abstract class Server
         Server server=null;
         try {
             server=Server.getInstance(new File(serverHome));
+            System.out.println(server.getConfigSummary());
         } catch (ServerInitializationException sie) {
             System.err.println("Error: Server could not initialize: "
                     + sie.getMessage());
