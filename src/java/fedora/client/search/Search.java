@@ -61,9 +61,10 @@ public class Search
                 
                 // EAST: modifySelectedFieldsButton
                 JButton modifySelectedFieldsButton=new JButton("Change..");
-                modifySelectedFieldsButton.addActionListener(
+                ChangeFieldsButtonListener cfbl=
                         new ChangeFieldsButtonListener(selectedFieldsLabel, 
-                        m_displayFields));
+                        m_displayFields);
+                modifySelectedFieldsButton.addActionListener(cfbl);
                 
             JPanel fieldsPanel=new JPanel();
             fieldsPanel.setLayout(new BorderLayout());
@@ -140,7 +141,7 @@ public class Search
                 // FLOW: searchButton
                 JButton searchButton=new JButton("Search");
                 searchButton.addActionListener(new SearchButtonListener(
-                        m_displayFields, m_model));
+                        cfbl, m_model));
                 
             JPanel finishButtonsPanel=new JPanel();
             finishButtonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -164,6 +165,16 @@ public class Search
     
     public class SelectFieldsDialog
             extends JDialog {
+
+        private List m_selectedFields;
+        
+        private JCheckBox pidBox, bDefBox, typeBox, labelBox, bMechBox,
+                          formatBox, fTypeBox, titleBox, identifierBox,
+                          cModelBox, creatorBox, sourceBox, stateBox,
+                          subjectBox, languageBox, lockerBox, descriptionBox,
+                          relationBox, cDateBox, publisherBox, coverageBox,
+                          mDateBox, contributorBox, rightsBox, dcmDateBox,
+                          dateBox;
         
         public SelectFieldsDialog(List fieldList) {
             super(Administrator.getInstance(), "Select Fields to Display", true);
@@ -172,32 +183,32 @@ public class Search
 
                 // NORTH: northPanel(bunch of JCheckBoxes)
 
-                    JCheckBox pidBox=new JCheckBox("pid");
-                    JCheckBox bDefBox=new JCheckBox("bDef");
-                    JCheckBox typeBox=new JCheckBox("type");
-                    JCheckBox labelBox=new JCheckBox("label");
-                    JCheckBox bMechBox=new JCheckBox("bMech");
-                    JCheckBox formatBox=new JCheckBox("format");
-                    JCheckBox fTypeBox=new JCheckBox("fType");
-                    JCheckBox titleBox=new JCheckBox("title");
-                    JCheckBox identifierBox=new JCheckBox("identifier");
-                    JCheckBox cModelBox=new JCheckBox("cModel");
-                    JCheckBox creatorBox=new JCheckBox("creator");
-                    JCheckBox sourceBox=new JCheckBox("source");
-                    JCheckBox stateBox=new JCheckBox("state");
-                    JCheckBox subjectBox=new JCheckBox("subject");
-                    JCheckBox languageBox=new JCheckBox("language");
-                    JCheckBox lockerBox=new JCheckBox("locker");
-                    JCheckBox descriptionBox=new JCheckBox("description");
-                    JCheckBox relationBox=new JCheckBox("relation");
-                    JCheckBox cDateBox=new JCheckBox("cDate");
-                    JCheckBox publisherBox=new JCheckBox("publisher");
-                    JCheckBox coverageBox=new JCheckBox("coverage");
-                    JCheckBox mDateBox=new JCheckBox("mDate");
-                    JCheckBox contributorBox=new JCheckBox("contributor");
-                    JCheckBox rightsBox=new JCheckBox("rights");
-                    JCheckBox dcmDateBox=new JCheckBox("dcmDate");
-                    JCheckBox dateBox=new JCheckBox("date");
+                    pidBox=new JCheckBox("pid", fieldList.contains("pid"));
+                    bDefBox=new JCheckBox("bDef", fieldList.contains("bDef"));
+                    typeBox=new JCheckBox("type", fieldList.contains("type"));
+                    labelBox=new JCheckBox("label", fieldList.contains("label"));
+                    bMechBox=new JCheckBox("bMech", fieldList.contains("bMech"));
+                    formatBox=new JCheckBox("format", fieldList.contains("format"));
+                    fTypeBox=new JCheckBox("fType", fieldList.contains("fType"));
+                    titleBox=new JCheckBox("title", fieldList.contains("title"));
+                    identifierBox=new JCheckBox("identifier", fieldList.contains("identifier"));
+                    cModelBox=new JCheckBox("cModel", fieldList.contains("cModel"));
+                    creatorBox=new JCheckBox("creator", fieldList.contains("creator"));
+                    sourceBox=new JCheckBox("source", fieldList.contains("source"));
+                    stateBox=new JCheckBox("state", fieldList.contains("state"));
+                    subjectBox=new JCheckBox("subject", fieldList.contains("subject"));
+                    languageBox=new JCheckBox("language", fieldList.contains("language"));
+                    lockerBox=new JCheckBox("locker", fieldList.contains("locker"));
+                    descriptionBox=new JCheckBox("description", fieldList.contains("description"));
+                    relationBox=new JCheckBox("relation", fieldList.contains("relation"));
+                    cDateBox=new JCheckBox("cDate", fieldList.contains("cDate"));
+                    publisherBox=new JCheckBox("publisher", fieldList.contains("publisher"));
+                    coverageBox=new JCheckBox("coverage", fieldList.contains("coverage"));
+                    mDateBox=new JCheckBox("mDate", fieldList.contains("mDate"));
+                    contributorBox=new JCheckBox("contributor", fieldList.contains("contributor"));
+                    rightsBox=new JCheckBox("rights", fieldList.contains("rights"));
+                    dcmDateBox=new JCheckBox("dcmDate", fieldList.contains("dcmDate"));
+                    dateBox=new JCheckBox("date", fieldList.contains("date"));
 
                 JPanel northPanel=new JPanel();
                 northPanel.setLayout(new GridLayout(9,3));
@@ -240,6 +251,7 @@ public class Search
                     JButton okButton=new JButton("Ok");
                     okButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
+                            updateSelectedFields();
                             setVisible(false);
                         }
                     });
@@ -256,23 +268,58 @@ public class Search
             setLocation(Administrator.getInstance().getCenteredPos(getSize().width, getSize().height));
         }
         
+        public void updateSelectedFields() {
+                            m_selectedFields=new ArrayList();
+                            if (pidBox.isSelected()) m_selectedFields.add("pid");
+                            if (bDefBox.isSelected()) m_selectedFields.add("bDef");
+                            if (typeBox.isSelected()) m_selectedFields.add("type");
+                            if (labelBox.isSelected()) m_selectedFields.add("label");
+                            if (bMechBox.isSelected()) m_selectedFields.add("bMech");
+                            if (formatBox.isSelected()) m_selectedFields.add("format");
+                            if (fTypeBox.isSelected()) m_selectedFields.add("fType");
+                            if (titleBox.isSelected()) m_selectedFields.add("title");
+                            if (identifierBox.isSelected()) m_selectedFields.add("identifier");
+                            if (cModelBox.isSelected()) m_selectedFields.add("cModel");
+                            if (creatorBox.isSelected()) m_selectedFields.add("creator");
+                            if (sourceBox.isSelected()) m_selectedFields.add("source");
+                            if (stateBox.isSelected()) m_selectedFields.add("state");
+                            if (subjectBox.isSelected()) m_selectedFields.add("subject");
+                            if (languageBox.isSelected()) m_selectedFields.add("language");
+                            if (lockerBox.isSelected()) m_selectedFields.add("locker");
+                            if (descriptionBox.isSelected()) m_selectedFields.add("description");
+                            if (relationBox.isSelected()) m_selectedFields.add("relation");
+                            if (cDateBox.isSelected()) m_selectedFields.add("cDate");
+                            if (publisherBox.isSelected()) m_selectedFields.add("publisher");
+                            if (coverageBox.isSelected()) m_selectedFields.add("coverage");
+                            if (mDateBox.isSelected()) m_selectedFields.add("mDate");
+                            if (contributorBox.isSelected()) m_selectedFields.add("contributor");
+                            if (rightsBox.isSelected()) m_selectedFields.add("rights");
+                            if (dcmDateBox.isSelected()) m_selectedFields.add("dcmDate");
+                            if (dateBox.isSelected()) m_selectedFields.add("date");
+        }
+
+        public List getSelectedFields() {
+            return m_selectedFields;
+        }
+        
     }
     
     public class SearchButtonListener
             implements ActionListener {
         
-        private List m_fields;
+        private ChangeFieldsButtonListener m_fieldSelector;
         private ConditionsTableModel m_model;
         
-        public SearchButtonListener(List fields, ConditionsTableModel model) {
-            m_fields=fields;
+        public SearchButtonListener(ChangeFieldsButtonListener fieldSelector, ConditionsTableModel model) {
+            m_fieldSelector=fieldSelector;
             m_model=model;
         }
         
         public void actionPerformed(ActionEvent e) {
-            String[] displayFields=new String[m_fields.size()];
-            for (int i=0; i<m_fields.size(); i++) {
-                displayFields[i]=(String) m_fields.get(i);
+            List fields=m_fieldSelector.getFieldList();
+            String[] displayFields=new String[fields.size()];
+            for (int i=0; i<fields.size(); i++) {
+                displayFields[i]=(String) fields.get(i);
             }
             FieldSearchQuery query=new FieldSearchQuery();
             List conditions=m_model.getConditions();
@@ -311,18 +358,24 @@ public class Search
             // first, construct the dialog with the values from fieldList
             SelectFieldsDialog dialog=new SelectFieldsDialog(m_fieldList);
             dialog.setVisible(true);
-            
-            // if they clicked cancel, just exit.
-            // otherwise, set the values in m_fieldList,
-            // then set the text of m_fieldLabel based on those.
-            StringBuffer text=new StringBuffer();
-            text.append("<html><i>");
-            for (int i=0; i<m_fieldList.size(); i++) {
-                if (i>0) text.append(", ");
-                text.append((String) m_fieldList.get(i));
+            if (dialog.getSelectedFields()!=null) {
+                m_fieldList=dialog.getSelectedFields(); 
+                // if they clicked cancel, just exit.
+                // otherwise, set the values in m_fieldList,
+                // then set the text of m_fieldLabel based on those.
+                StringBuffer text=new StringBuffer();
+                text.append("<html><i>");
+                for (int i=0; i<m_fieldList.size(); i++) {
+                    if (i>0) text.append(", ");
+                    text.append((String) m_fieldList.get(i));
+                }
+                text.append("</i></html>");
+                m_fieldLabel.setText(text.toString());
             }
-            text.append("</i></html>");
-            m_fieldLabel.setText(text.toString());
+        }
+        
+        public List getFieldList() {
+            return m_fieldList;
         }
     }
     
