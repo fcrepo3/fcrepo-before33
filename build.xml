@@ -16,14 +16,16 @@
 			<fileset dir="dist/client"/>
 		</copy>
 	</target>
-	<target name="serverdist" depends="server,client,localservices,userdocs,serverdocs,copyclient" description="builds both client and server in dist\server, in a package suitable for distribution">
+	<target name="serverdist" depends="server,client,localservices,copyclient" description="builds both client and server in dist\server">
+		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
+		<chmod dir="dist/server/bin" perm="u+x" includes="**/*"/>
+	</target>
+    <target name="fullserverdist" depends="serverdist,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
 		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
 		<copy file="dist/userdocs/demos.html" todir="dist/server/doc"/>
-		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
-		<chmod dir="dist/server/bin" perm="u+x" includes="**/*"/>
-	</target>
+    </target>
 	<target name="client" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/client"/>
@@ -597,6 +599,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.99  2003/04/10 14:26:52  cwilper
+  put documentation stuff in a separate, final target, so serverdist
+  no longer includes it...
+
   Revision 1.98  2003/03/10 18:00:21  cwilper
   added fop stuff
 
