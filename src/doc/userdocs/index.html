@@ -6,6 +6,16 @@
 <head>
     <title>Fedora System Documentation</title>
     <link rel="stylesheet" type="text/css" href="docstyle.css" />
+    <style type="text/css">
+        ol {
+            list-style: square outside none;
+        }
+        
+        ol ol {
+            list-style: disc outside none;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -19,61 +29,65 @@
     </div>
 </div>
 
-<div class="sec1">
+<div class="sect">
 	<h2><a href="distribution/index.html">Fedora Software Distribution</a></h2>
-	<div class="itemizedlist"><ol type="square">
-		<li><a href="distribution/release-notes.html" target="_top">Release Notes</a></li>
-		<li><a href="distribution/installation.html" target="_top">Installation Guide</a></li>
-		<li><a href="distribution/migration.html" target="_top">Migration Guide</a></li>
-		<li><a href="distribution/diststruct.html" target="_top">Distribution Structure</a></li>
-		<li><a href="server/serverdocs/index.html" target="_top">Java Doc</a></li>
-	</ol></div>
+	<div class="itemizedlist">
+	    <ol>
+    		<li><a href="distribution/release-notes.html">Release Notes</a></li>
+    		<li><a href="distribution/installation.html">Installation Guide</a></li>
+    		<li><a href="distribution/migration.html">Migration Guide</a></li>
+    		<li><a href="distribution/diststruct.html">Distribution Structure</a></li>
+    		<li><a href="server/serverdocs/index.html">Java Doc</a></li>
+	    </ol>
+	</div>
 </div>
-<div class="sec1">
+<div class="sect">
 	<h2><a href="digitalobjects/index.html">Fedora Digital Objects</a></h2>
-	<div class="itemizedlist"><ol type="square">
-		<li><a href="digitalobjects/objectModel.html" target="_top">Fedora Digital Object Model</a></li>
-		<li><a href="digitalobjects/introFOXML.html" target="_top">Fedora Object XML (FOXML)</a></li>
-		<li><a href="digitalobjects/introRelsExt.html" target="_top">Object-to-Object Relationships</a></li>
-		<li><a href="digitalobjects/ingestExportGuide.html" target="_top">Ingest and Export Guide</a></li>
-		<div class="itemizedlist"><ol type="disc">
-			<li><a href="digitalobjects/foxml-ingest-example.xml" target="_top">FOXML Ingest Example</a></li>
-			<li><a href="digitalobjects/mets-ingest-example.xml" target="_top">METS Ingest Example</a></li>
-		</ol></div>
-	</ol></div>
+	    <ol>
+    		<li><a href="digitalobjects/objectModel.html">Fedora Digital Object Model</a></li>
+    		<li><a href="digitalobjects/introFOXML.html">Fedora Object XML (FOXML)</a></li>
+    		<li><a href="digitalobjects/introRelsExt.html">Object-to-Object Relationships</a></li>
+    		<li><a href="digitalobjects/ingestExportGuide.html">Ingest and Export Guide</a>
+    		    <ol>
+        			<li><a href="digitalobjects/foxml-ingest-example.xml">FOXML Ingest Example</a></li>
+        			<li><a href="digitalobjects/mets-ingest-example.xml">METS Ingest Example</a></li>
+    		    </ol>
+    		</li>
+    	</ol>
 </div>
-<div class="sec1">
+<div class="sect">
 	<h2><a href="server/index.html">Fedora Repository Service (server)</a></h2>
-	<div class="itemizedlist"><ol type="square">
-		<li><a href="server/features.html" target="_top">Summary of Features</a></li>
-			<div class="server/itemizedlist"><ol type="disc">
-				<li><a href="server/identifiers.html" target="_top">Fedora Identifiers and URIs</a></li>
-				<li><a href="server/versioning.html" target="_top">Content Versioning</a></li>
-				<li><a href="server/localservices/index.html" target="_top">Fedora Local Services</a></li>
-			</ol></div>
-			<br/></br>
-		<li><a href="webservices/foo.html" target="_top">Fedora Web Service Interfaces</a></li>
-			<div class="itemizedlist"><ol type="disc">
-				<li><strong>API-A</strong>: Fedora Access Service (SOAP)  [<a href="http://www.fedora.info/definitions/1/0/api/#apia" target="_top">WSDL</a>]</li>
-				<li><strong>API-A-LITE</strong>: Fedora Access Service (REST) [<a href="http://www.fedora.info/definitions/1/0/api/#apialite" target="_top">WSDL</a>]  [<a href="server/webservices/apialite/index.html" target="_top">User Guide</a>]</li>
-				<li><strong>API-A-M</strong>: Fedora Management Service (SOAP)  [<a href="http://www.fedora.info/definitions/1/0/api/#apim" target="_top">WSDL</a>]</li>
-				<li><strong>API-A-M-LITE</strong>: Fedora Management Service (REST)  [<a href="http://www.fedora.info/definitions/1/0/api/#apim" target="_top">WSDL</a>]  [<a href="server/webservices/apimlite/index.html" target="_top">User Guide</a>]<em> 
+	<ol>
+		<li><a href="server/features.html">Summary of Features</a>
+			<ol>
+				<li><a href="server/identifiers.html">Fedora Identifiers and URIs</a></li>
+				<li><a href="server/versioning.html">Content Versioning</a></li>
+				<li><a href="server/localservices/index.html">Fedora Local Services</a></li>
+				<li><a href="server/resourceIndex/index.html">Resource Index</a></li>
+			</ol>
+	    </li>
+		<li><a href="webservices/foo.html">Fedora Web Service Interfaces</a>
+			<ol>
+				<li><strong>API-A</strong>: Fedora Access Service (SOAP)  [<a href="http://www.fedora.info/definitions/1/0/api/#apia">WSDL</a>]</li>
+				<li><strong>API-A-LITE</strong>: Fedora Access Service (REST) [<a href="http://www.fedora.info/definitions/1/0/api/#apialite">WSDL</a>]  [<a href="server/webservices/apialite/index.html">User Guide</a>]</li>
+				<li><strong>API-A-M</strong>: Fedora Management Service (SOAP)  [<a href="http://www.fedora.info/definitions/1/0/api/#apim">WSDL</a>]</li>
+				<li><strong>API-A-M-LITE</strong>: Fedora Management Service (REST)  [<a href="http://www.fedora.info/definitions/1/0/api/#apim">WSDL</a>]  [<a href="server/webservices/apimlite/index.html">User Guide</a>]<em> 
 				(a work in progress)</em></li>
-				<br></br>
-				<li><strong>Search</strong>:  Repository Search via API-A-Lite (REST):  [<a href="server/webservices/search/index.html" target="_top">User Guide</a>]</li>
-				<li><strong>OAI</strong>:  OAI-PMH Provider (REST):  [<a href="server/webservices/oai/index.html" target="_top">User Guide</a>]</li>
-				<li><strong>RISearch</strong>:  Resource Index Search (REST):  [<a href="server/webservices/ri/index.html" target="_top">User Guide</a>]</li>
-			</ol></div>
-	</ol></div>
+				<li><strong>Search</strong>:  Repository Search via API-A-Lite (REST):  [<a href="server/webservices/search/index.html">User Guide</a>]</li>
+				<li><strong>OAI</strong>:  OAI-PMH Provider (REST):  [<a href="server/webservices/oai/index.html">User Guide</a>]</li>
+				<li><strong>RISearch</strong>:  Resource Index Search (REST):  [<a href="server/webservices/ri/index.html">User Guide</a>]</li>
+			</ol>
+		</li>
+	</ol>
 </div>
 
-<div class="sec1">
+<div class="sect">
 	<h2><a href="client/index.html">Fedora Clients</a></h2>
-	<div class="itemizedlist"><ol type="square">
-		<li><a href="client/admin-gui/index.html" target="_top">Fedora Administrator (Java client application)</a></li>
-		<li><a href="client/cmd-line/index.html" target="_top">Command-Line Utilities</a></li>
-		<li><a href="client/browser/webexp.html" target="_top">Access via Browser</a></li>
-		<li><a href="client/servlet/soapclient/index.html" target="_top">Sample SOAP Client (a Java servlet that wraps Fedora API-A calls)</a>]</li>
+	<div class="itemizedlist"><ol>
+		<li><a href="client/admin-gui/index.html">Fedora Administrator (Java client application)</a></li>
+		<li><a href="client/cmd-line/index.html">Command-Line Utilities</a></li>
+		<li><a href="client/browser/webexp.html">Access via Browser</a></li>
+		<li><a href="client/servlet/soapclient/index.html">Sample SOAP Client (a Java servlet that wraps Fedora API-A calls)</a>]</li>
 	</ol></div>
 </div>
 <div id="footer">
