@@ -6,8 +6,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.FileWriter;
 import java.io.Writer;
+import java.io.BufferedWriter;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.Properties;
@@ -27,6 +29,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.*;
 
 import javax.xml.parsers.ParserConfigurationException;
+import fedora.client.bmech.BMechBuilderException;
 
 public class XMLWriter
 {
@@ -65,6 +68,43 @@ public class XMLWriter
     transformer.transform(new DOMSource(rootElement), new StreamResult(out));
     out.close();
     return w.toString();
+  }
+
+  public void writeXMLToFile(File file)
+    throws TransformerException,
+           TransformerConfigurationException,
+           ParserConfigurationException, IOException
+  {
+    PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+    TransformerFactory tfactory = TransformerFactory.newInstance();
+    Transformer transformer = tfactory.newTransformer();
+    Properties transProps = new Properties();
+    transProps.put("method", "xml");
+    transProps.put("indent", "yes");
+    transProps.put("omit-xml-declaration", "no");
+    transformer.setOutputProperties(transProps);
+    transformer.transform(new DOMSource(rootElement), new StreamResult(out));
+    out.close();
+    return;
+  }
+
+  public InputStream writeXMLToStream()
+    throws TransformerException,
+           TransformerConfigurationException,
+           ParserConfigurationException, IOException
+  {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    TransformerFactory tfactory = TransformerFactory.newInstance();
+    Transformer transformer = tfactory.newTransformer();
+    Properties transProps = new Properties();
+    transProps.put("method", "xml");
+    transProps.put("indent", "yes");
+    transProps.put("omit-xml-declaration", "no");
+    transformer.setOutputProperties(transProps);
+    transformer.transform(new DOMSource(rootElement), new StreamResult(out));
+    InputStream in = new ByteArrayInputStream(out.toByteArray());
+    out.close();
+    return(in);
   }
 
   /** Serializes the specified node, recursively, to a Writer
