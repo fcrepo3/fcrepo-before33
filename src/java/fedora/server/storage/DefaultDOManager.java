@@ -1,5 +1,15 @@
 package fedora.server.storage;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.SQLException;
+
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.ReadOnlyContext;
@@ -9,15 +19,6 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.SQLException;
 
 /**
  * Provides access to digital object readers and writers.
@@ -35,12 +36,14 @@ import java.sql.SQLException;
  * @author cwilper@cs.cornell.edu
  */
 public class DefaultDOManager 
-        extends DOManager {
+        extends Module implements DOManager {
         
     private String m_osrPoolName;
     private String m_osrTableName;
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
+    
+    public static String DEFAULT_STATE="L";
         
     /**
      * Creates a new DefaultDOManager.
@@ -75,7 +78,6 @@ public class DefaultDOManager
         if (m_osrTableName.length()==0) {
             throw new ModuleInitializationException("Parameter object_state_registry must be in the form poolName#tableName, where tableName is not empty.", getRole());
         }
-        // TODO: read and set default_context_XXX variables from config
     }
 
     public void postInitModule()
@@ -135,19 +137,38 @@ public class DefaultDOManager
     }
 
     /** pid will always be non-null, context will always be non-null */
-    protected DOReader getReaderForContext(String pid, ReadOnlyContext context) {
+    public DOReader getReader(Context context, String pid) {
         return null;
     }
 
-    /** pid may be null, context will always be non-null */
-    protected DOWriter getWriterForContext(String pid, ReadOnlyContext context) {
-        if (pid==null) {
+    /** nulls not allowed */
+    public DOWriter getWriter(Context context, String pid) {
+            // create a new, empty object, giving it a DEFAULT_STATE
+//            DefinitiveDOWriter writer=new DefinitiveDOWriter(newPid, DEFAULT_STATE,
             
-        }
+/*
+    public DefinitiveDOWriter(String pid, TestStreamStorage storage, 
+            TestStreamStorage tempStorage, StreamValidator validator,
+            DODeserializer importDeserializer, DOSerializer storageSerializer,
+            DODeserializer storageDeserializer, DOSerializer exportSerializer,
+            InputStream initialContent, boolean useContentPid) 
+*/
+
+ //           );
         return null;
     }
     
-    protected String[] getObjectPIDsForContext(String state, ReadOnlyContext context) 
+    /** nulls not allowed */
+    public DOWriter newWriter(Context context, InputStream in, boolean newPid) {
+        return null; 
+    }
+    
+    /** nulls not allowed */
+    public DOWriter newWriter(Context context) {
+        return null;
+    }
+    
+    public String[] listObjectPIDs(Context context, String state) 
             throws StorageDeviceException {
         String wherePredicate;
         if (state==null) {

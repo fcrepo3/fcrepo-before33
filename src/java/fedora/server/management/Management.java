@@ -18,7 +18,7 @@ public interface Management {
 
     public String createObject(Context context) throws ServerException;
 
-    public String ingestObject(Context context, InputStream xml) throws ServerException;
+    public String ingestObject(Context context, InputStream serialization, boolean newPid) throws ServerException;
 
     public InputStream getObjectXML(Context context, String pid) throws ServerException;
 

@@ -4,7 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -12,24 +15,29 @@ import java.util.Iterator;
 import fedora.server.errors.ObjectExistsException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ObjectNotInLowlevelStorageException;
+import fedora.server.errors.ObjectAlreadyInLowlevelStorageException;
+import fedora.server.errors.ServerException;
+import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StreamReadException;
 import fedora.server.errors.StreamWriteException;
 import fedora.server.errors.ValidationException;
+import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.*;
+import fedora.server.utilities.MethodInvokerThread;
 
 /**
  * A <code>DOWriter</code> for working with the definitive copy of a
  * digital object in the reference implementation.
  * <p></p>
  * This implementation stores the entire digital object in a 
- * <code>TestStreamStorage</code>, while allowing the periodic saving of 
- * non-committed changes to an additional <code>TestStreamStorage</code>.
+ * <code>ILowlevelStorage</code>.
  * <p></p>
  * The serialization and deserialization formats used by instances of this 
  * class are configured by means of the constructor's exportSerializer,
@@ -66,8 +74,7 @@ public class DefinitiveDOWriter
                     + "because the object has been removed and the change "
                     + "has been committed.");
     
-    private TestStreamStorage m_storage;
-    private TestStreamStorage m_tempStorage;
+    private ILowlevelStorage m_storage;
     private StreamValidator m_validator;
     private DODeserializer m_importDeserializer;
     private DOSerializer m_storageSerializer;
@@ -81,16 +88,13 @@ public class DefinitiveDOWriter
      * find one, it works from the definitive copy (acts as if workingCopy was
      * false)
      */
-    public DefinitiveDOWriter(String pid, TestStreamStorage storage, 
-            TestStreamStorage tempStorage, StreamValidator validator,
+    public DefinitiveDOWriter(String pid, ILowlevelStorage storage, StreamValidator validator,
             DODeserializer importDeserializer, DOSerializer storageSerializer,
             DODeserializer storageDeserializer, DOSerializer exportSerializer,
             boolean workingCopy) 
-            throws StorageDeviceException, ObjectNotFoundException,
-            ObjectIntegrityException, StreamIOException, StreamReadException {
+            throws ServerException {
         m_obj=new BasicDigitalObject();
         m_storage=storage;
-        m_tempStorage=tempStorage;
         m_validator=validator;
         m_importDeserializer=importDeserializer;
         m_storageSerializer=storageSerializer;
@@ -99,24 +103,24 @@ public class DefinitiveDOWriter
         boolean initialized=false;
         if (workingCopy) {
             try {
-                m_storageDeserializer.deserialize(m_tempStorage.retrieve(pid + "-pendingCommit"), m_obj);
+                m_storageDeserializer.deserialize(m_storage.retrieve(pid + "-pendingCommit"), m_obj);
                 // it was found, and it's pending commit...init it as such
                 m_removed=false;
                 m_pendingRemoval=false;
                 makeDirty();
                 initialized=true;
-            } catch (ObjectNotFoundException onfe) {
+            } catch (ObjectNotInLowlevelStorageException onfe) {
                 try {
-                    InputStream in=m_tempStorage.retrieve(pid + "-pendingRemoval");
+                    InputStream in=m_storage.retrieve(pid + "-pendingRemoval");
                     // it was found, and it's pending removal...init it as such
                     try {
-                    in.close();
-                    } catch (IOException ioe) { }
+                        in.close();
+                    } catch (IOException dontCare) { }
                     m_removed=false;
                     m_pendingRemoval=true;
                     makeDirty();
                     initialized=true;
-                } catch (ObjectNotFoundException onfe2) {
+                } catch (ObjectNotInLowlevelStorageException onfe2) {
                     // it wasnt found... so we should load from permanent
                     // source (this will happen after exit from this block
                     // because initialized is false
@@ -143,16 +147,13 @@ public class DefinitiveDOWriter
     /**
      * Constructs a DOWriter as a handle on a new digital object.
      */
-    public DefinitiveDOWriter(String pid, TestStreamStorage storage, 
-            TestStreamStorage tempStorage, StreamValidator validator,
+    public DefinitiveDOWriter(String pid, ILowlevelStorage storage, StreamValidator validator,
             DODeserializer importDeserializer, DOSerializer storageSerializer,
             DODeserializer storageDeserializer, DOSerializer exportSerializer,
             InputStream initialContent, boolean useContentPid) 
-            throws ObjectIntegrityException, 
-            StreamIOException, StreamReadException {
+            throws ServerException {
         m_obj=new BasicDigitalObject();
         m_storage=storage;
-        m_tempStorage=tempStorage;
         m_validator=validator;
         m_importDeserializer=importDeserializer;
         m_storageSerializer=storageSerializer;
@@ -288,7 +289,7 @@ public class DefinitiveDOWriter
      * @param logMessage An explanation of the change(s).
      */
     public void commit(String logMessage)
-            throws ObjectIntegrityException {
+            throws StorageException {
         assertNotRemoved();
         if (save()) {
             AuditRecord a=new AuditRecord();
@@ -401,9 +402,6 @@ public class DefinitiveDOWriter
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        
-        assertNotRemoved();
-        assertNotPendingRemoval();
         Iterator iter=m_obj.disseminatorIdIterator();
         ArrayList al=new ArrayList();
         while (iter.hasNext()) {
@@ -479,15 +477,62 @@ public class DefinitiveDOWriter
    
     // saves if it hasn't been saved in this state yet
     public boolean save()
-            throws ObjectIntegrityException {
+            throws StorageException {
         assertNotRemoved();
         if (m_pendingSave) {
            if (m_pendingRemoval) {
                // flag that removal is needed by removing the temp copy
                // and creating a 0000-pendingRemoval item
+               try {
+                   m_storage.remove(m_obj.getPid() + "-pendingCommit");
+               } catch (ObjectNotInLowlevelStorageException onilse) {
+                   // don't care... it may not have been saved yet...
+               }
+               String removeMeString="pending removal";
+               ByteArrayInputStream removeMeStream=new ByteArrayInputStream(removeMeString.getBytes());
+               m_storage.add(m_obj.getPid() + "-pendingRemoval", removeMeStream);
            } else {
-               
-               // serialize to temp copy as 0000-pendingCommit
+               // serialize to temp copy as 0000-pendingCommit...
+               Method m=null;
+               PipedInputStream in=null;
+               PipedOutputStream out=null;
+               try {
+                   try {
+                       in=new PipedInputStream();
+                       out=new PipedOutputStream(in);
+                       m=m_storageSerializer.getClass().getMethod("serialize", new Class[] {m_obj.getClass(), Class.forName("java.io.OutputStream")});
+                   } catch (Throwable wontHappen) { }
+                   MethodInvokerThread serThread=new MethodInvokerThread(m_storageSerializer, m, new Object[] {m_obj, out});
+                   serThread.start();
+                   m_storage.add(m_obj.getPid() + "-pendingCommit", in);
+                   if (serThread.getThrown()!=null) {
+                       try {
+                           throw serThread.getThrown();
+                       } catch (StorageException se) {
+                           throw se;
+                       } catch (Throwable th) {
+                           System.out.println("[Do something better here] non-storageException during save (add): " + th.getClass().getName() + ": " + th.getMessage());
+                       }
+                   }
+               } catch (ObjectAlreadyInLowlevelStorageException oailse) {
+                   try {
+                       in=new PipedInputStream();
+                       out=new PipedOutputStream(in);
+                       m=m_storageSerializer.getClass().getMethod("serialize", new Class[] {m_obj.getClass(), Class.forName("java.io.OutputStream")});
+                   } catch (Throwable wontHappen) { }
+                   MethodInvokerThread serThread=new MethodInvokerThread(m_storageSerializer, m, new Object[] {m_obj, out});
+                   serThread.start();
+                   m_storage.replace(m_obj.getPid() + "-pendingCommit", in);
+                   if (serThread.getThrown()!=null) {
+                       try {
+                           throw serThread.getThrown();
+                       } catch (StorageException se) {
+                           throw se;
+                       } catch (Throwable th) {
+                           System.out.println("[Do something better here] non-storageException during save (replace): " + th.getClass().getName() + ": " + th.getMessage());
+                       }
+                   }
+               }
            }
            m_pendingSave=false;
            return true;
@@ -507,7 +552,7 @@ public class DefinitiveDOWriter
             throw ERROR_REMOVED;
     }
     
-    public void finalize() throws ObjectIntegrityException {
+    public void finalize() throws StorageException {
         save();
     }
 }

@@ -86,7 +86,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
         assertInitialized();
-        try {
+/*        try {
             String pid="1234";
             TestFileStreamStorage st=new TestFileStreamStorage(new File(s_server.getHomeDir(), "data"), 4096);
             METSDOSerializer ser=new METSDOSerializer("UTF-8");
@@ -99,7 +99,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             AxisUtility.throwFault(se);
         } catch (Exception e) {
             AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
-        }
+        } */
        /* 
     public DefinitiveDOWriter(String pid, TestStreamStorage storage, 
             TestStreamStorage tempStorage, StreamValidator validator,

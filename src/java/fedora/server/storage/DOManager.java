@@ -1,131 +1,72 @@
 package fedora.server.storage;
 
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ObjectNotFoundException;
-import fedora.server.errors.ServerException;
-import fedora.server.errors.StorageException;
-import fedora.server.Context;
-import fedora.server.Module;
-import fedora.server.ReadOnlyContext;
-import fedora.server.Server;
+import java.io.InputStream;
 
-import java.util.Map;
+import fedora.server.errors.ServerException;
+import fedora.server.Context;
 
 /**
- * Provides access to digital object readers and writers.
- *
- * Note that both instance methods throw StorageException and
- * ObjectNotFoundException (a subclass of the abstract
- * StorageException). Implementations of DOManager are expected 
- * to throw concrete subclasses of StorageException where needed.
+ * Provides context-appropriate digital object readers and writers
+ * and repository query facilities.
  *
  * @author cwilper@cs.cornell.edu
  */
-public abstract class DOManager 
-        extends Module {
+public interface DOManager {
         
-    private Context m_defaultContext;
-
     /**
-     * Creates a new DOManager with an empty default context.
-     */
-    public DOManager(Map moduleParameters, Server server, String role)
-            throws ModuleInitializationException {
-        super(moduleParameters, server, role);
-        m_defaultContext=null;
-    }
-    
-    public void setDefaultContext(Context defaultContext) {
-        m_defaultContext=defaultContext;
-    }
-
-    /**
-     * Gets a digital object reader, using the default context.
+     * Gets a digital object reader.
      *
+     * @param context The context of this request.
      * @param pid The PID of the object.
-     * @returns DOReader A reader.
-     * @throws StorageException If the request could not be fulfilled.
-     * @throws ObjectNotFoundException If the object requested was not found.
+     * @return A reader.
+     * @throws ServerException If anything went wrong.
      */
-    public final DOReader getReader(String pid)
-            throws StorageException, 
-                   ObjectNotFoundException {
-        return getReader(pid, null);
-    }
-
-    /**
-     * Gets a digital object reader, using the default context with additional
-     * or overridden values from the given context.
-     */
-    public final DOReader getReader(String pid, Context context)
-            throws StorageException, 
-                   ObjectNotFoundException {
-        return getReaderForContext(pid, ReadOnlyContext.getUnion(m_defaultContext, context));
-    }
-
-    protected abstract DOReader getReaderForContext(String pid, ReadOnlyContext context)
-            throws StorageException, 
-                   ObjectNotFoundException;
-
-    /**
-     * Gets a digital object writer, using the default context.
-     *
-     * If the pid parameter is null, a new digital object will be
-     * created (ObjectNotFound will never be thrown in this case).
-     *
-     * @param pid The PID of the object.
-     * @returns DOWriter A writer.
-     * @throws StorageException If the request could not be fulfilled.
-     * @throws ObjectNotFoundException If the object requested was not found.
-     */
-    public final DOWriter getWriter(String pid)
-            throws StorageException, 
-                   ObjectNotFoundException {
-        return getWriter(pid, null);
-    }
-    
-    /**
-     * Gets a digital object writer, using the default context with additional
-     * or overridden values from the given context.
-     */
-    public final DOWriter getWriter(String pid, Context context)
-            throws StorageException, 
-                   ObjectNotFoundException {
-        return getWriterForContext(pid, ReadOnlyContext.getUnion(m_defaultContext, context));
-    }
-
-    /**
-     * Gets a digital object writer on a new digital object, using the default context.
-     */
-    public final DOWriter getWriter()
-            throws StorageException {
-        return getWriter(null, m_defaultContext);
-    }
-    
-    /**
-     * Gets a digital object writer on a new digital object, using the default 
-     * context with additional or overridden values from the given context.
-     */
-    public final DOWriter getWriter(Context context)
-            throws StorageException, ObjectNotFoundException {
-        return getWriterForContext(null, ReadOnlyContext.getUnion(m_defaultContext, context));
-    }
-
-    protected abstract DOWriter getWriterForContext(String pid, ReadOnlyContext context)
-            throws StorageException, 
-                   ObjectNotFoundException;
-                   
-    public final String[] getObjectPIDs(String state) 
-            throws ServerException {
-        return getObjectPIDs(state, null);
-    }
-    
-    public final String[] getObjectPIDs(String state, Context context)
-            throws ServerException {
-        return getObjectPIDsForContext(state, ReadOnlyContext.getUnion(m_defaultContext, context));
-    }
-    
-    protected abstract String[] getObjectPIDsForContext(String state, 
-            ReadOnlyContext context) 
+    public abstract DOReader getReader(Context context, String pid)
             throws ServerException;
+
+
+    /**
+     * Gets a DOWriter for an existing digital object.
+     *
+     * @param context The context of this request.
+     * @param pid The PID of the object.
+     * @return A writer, or null if the pid didn't point to an accessible object.
+     * @throws ServerException If anything went wrong.
+     */
+    public abstract DOWriter getWriter(Context context, String pid)
+            throws ServerException;
+
+    /**
+     * Creates a digital object with a newly-allocated pid, and returns 
+     * a DOWriter on it.  The initial state will be "L" (locked).
+     *
+     * @param context The context of this request.
+     * @param pid The PID of the object.
+     * @return A writer.
+     * @throws ServerException If anything went wrong.
+     */
+    public abstract DOWriter newWriter(Context context)
+            throws ServerException;
+    
+    /**
+     * Creates a copy of the digital object given by the InputStream,
+     * with either a new PID or the PID indicated by the InputStream.
+     *
+     * @param context The context of this request.
+     * @param InputStream A serialization of the digital object.
+     * @param newPid Whether a new PID should be generated or the one indicated
+     *        by the InputStream should be used.
+     * @throws ServerException If anything went wrong.
+     */
+    public abstract DOWriter newWriter(Context context, InputStream in, boolean newPid)
+            throws ServerException;
+
+    /**
+     * Gets a list of object PIDs in the given state.
+     * If state is given as null, all accessible PIDs for the context
+     * are returned.
+     */
+    public abstract String[] listObjectPIDs(Context context, String state)
+            throws ServerException;
+    
 }

@@ -60,11 +60,15 @@ public class DefaultManagement
 
     public String createObject(Context context) 
             throws ServerException {
-        DOWriter w=m_manager.getWriter(context);
+        DOWriter w=m_manager.newWriter(context);
         return "hi"; //return w.GetObjectPID();
     }
 
-    public String ingestObject(Context context, InputStream xml) { return null; }
+    public String ingestObject(Context context, InputStream serialization, boolean newPid) 
+            throws ServerException {
+        DOWriter w=m_manager.newWriter(context, serialization, newPid);
+        return w.GetObjectPID();
+    }
 
     public InputStream getObjectXML(Context context, String pid) { return null; }
 
@@ -92,7 +96,7 @@ public class DefaultManagement
 
     public String[] listObjectPIDs(Context context, String state) 
             throws ServerException { 
-        return m_manager.getObjectPIDs(state, context);
+        return m_manager.listObjectPIDs(context, state);
     }
 
     public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) { return null; }
