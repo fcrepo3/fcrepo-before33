@@ -193,7 +193,7 @@ public class DefinitiveDOReader implements DOReader
       throw new GeneralException("ERROR_MISC: " + e.getMessage());
     }
   }
-  
+
     public String getFedoraObjectType() {
         return doFedoraObjectType;
     }
@@ -201,7 +201,7 @@ public class DefinitiveDOReader implements DOReader
     public String getContentModelId() {
         return doContentModelId;
     }
-    
+
     public Date getCreateDate() {
         return doCreateDate;
     }
@@ -209,8 +209,8 @@ public class DefinitiveDOReader implements DOReader
     public Date getLastModDate() {
         return doLastModDate;
     }
-    
-    public String getLockingUser() 
+
+    public String getLockingUser()
             throws StorageDeviceException, ObjectNotFoundException {
         return m_mgr.getLockingUser(PID);
     }
@@ -974,6 +974,11 @@ public class DefinitiveDOReader implements DOReader
           // FIXIT! This does not properly deal with picking up
           // datastreamID vs. datastream version ID (dmdSec issue)
           h_datastream.DatastreamID = attrs.getValue("ID");
+          h_datastream.DSVersionID = attrs.getValue("GROUPID");
+          h_datastream.DSLocation = h_PID + "+" + attrs.getValue("ID")
+              + "+" + attrs.getValue("GROUPID");
+          if (debug) System.out.println("ControlGroupType: X dsLocation: "
+              + h_datastream.DSLocation);
         }
         else if (qName.equalsIgnoreCase("METS:amdSec"))
         {

@@ -5,11 +5,14 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import fedora.server.Server;
@@ -18,8 +21,13 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.ConnectionPoolManager;
+import fedora.server.Context;
+import fedora.server.ReadOnlyContext;
+import fedora.server.storage.DOManager;
+import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
 
 /**
@@ -40,6 +48,8 @@ public class DatastreamResolverServlet extends HttpServlet
 {
 
   private static Server s_server;
+  private static DOManager m_manager;
+  private static Context m_context;
   private static ConnectionPool connectionPool;
   private static Hashtable dsRegistry;
   private static int datastreamExpirationLimit;
@@ -56,6 +66,13 @@ public class DatastreamResolverServlet extends HttpServlet
               + "system property was not set.");
       } else {
           s_server = Server.getInstance(new File(fedoraHome));
+          m_manager = (DOManager) s_server.getModule(
+              "fedora.server.storage.DOManager");
+          HashMap h = new HashMap();
+          h.put("application", "apia");
+          h.put("useCachedObject", "false");
+          h.put("userId", "fedoraAdmin");
+      m_context = new ReadOnlyContext(h);
       }
     } catch (InitializationException ie) {
         System.err.println(ie.getMessage());
@@ -182,15 +199,29 @@ public class DatastreamResolverServlet extends HttpServlet
                      + "supported");
       } else if (dsControlGroupType.equalsIgnoreCase("X"))
       {
-        // Not yet implemented
-        out = response.getWriter();
-        response.setContentType(HTML_CONTENT_TYPE);
-        out.println("<br>DatastreamResolverServlet: "
-                    + "Repository-Defined XML Metadata Datastreams not yet "
-                    + "supported</br>");
-        s_server.logWarning("DatastreamResolverServlet: "
-                            + "Repository-Defined XML Metadata Datastreams "
-                            + "not yet supported</br>");
+        String PID = null;
+        String dsVersionID = null;
+        String dsID = null;
+        System.out.println("dsPhysicalLocation: "+dsPhysicalLocation);
+        String[] s = dsPhysicalLocation.split("\\+");
+        System.out.println("size s: "+s.length);
+        PID = s[0];
+        dsID = s[1];
+        dsVersionID = s[2];
+        System.out.println("PID: "+PID+" dsID: "+dsID+" dsVersionID: "+dsVersionID);
+        System.out.println("[DSResolverServlet] ControlGroup: "+dsControlGroupType);
+        System.out.println("dsLocation: "+dsPhysicalLocation);
+        DOReader doReader =  m_manager.getReader(m_context, PID);
+        InputStream is =
+            doReader.GetDatastream(dsID, null).getContentStream();
+        int bytestream = 0;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+        outStream = response.getOutputStream();
+        response.setContentType("text/xml");
+        while ((bytestream = is.read()) != -1)
+        {
+          outStream.write(bytestream);
+        }
       } else
       {
         out = response.getWriter();
@@ -206,6 +237,7 @@ public class DatastreamResolverServlet extends HttpServlet
                                  + "underlying error was a "
                                  + th.getClass().getName() + "The message "
                                  + "was \"" + th.getMessage() + "\"");
+      th.printStackTrace();
       s_server.logWarning("DatastreamResolverServlet returned an error. The "
                                  + "underlying error was a "
                                  + th.getClass().getName() + "The message "
