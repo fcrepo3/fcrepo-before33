@@ -71,8 +71,10 @@ public interface DOManager
      * @return A writer.
      * @throws ServerException If anything went wrong.
      */
+    /*
     public abstract DOWriter getIngestWriter(Context context)
             throws ServerException;
+    */
 
     /**
      * Creates a copy of the digital object given by the InputStream,
