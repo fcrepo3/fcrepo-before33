@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -26,6 +27,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -76,39 +78,46 @@ public class ImportDialog
 
     private JTextField m_fileField;
     private JTextField m_urlField;
+    private JRadioButton m_fileButton;
+    private JRadioButton m_urlButton;
 
-/*
 
-                            JFileChooser browse;
-                            if (Administrator.getLastDir()==null) {
-                                browse=new JFileChooser();
-                            } else {
-                                browse=new JFileChooser(Administrator.getLastDir());
-                            }
-                            browse.setApproveButtonText("Import");
-                            browse.setApproveButtonMnemonic('I');
-                            browse.setApproveButtonToolTipText("Imports the selected file.");
-                            browse.setDialogTitle("Import " + m_ds.getMIMEType() + " Datastream...");
-                            int returnVal = browse.showOpenDialog(Administrator.getDesktop());
-                            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                                File file = browse.getSelectedFile();
-
-*/
+    private ImportDialog m_importDialog;
 
     public ImportDialog() {
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Import Content", true);
 
+        m_importDialog=this;
         ImportAction importAction=new ImportAction();
         JButton importButton=new JButton(importAction);
 
-        JRadioButton fileButton=new JRadioButton("From file");
-        JRadioButton urlButton=new JRadioButton("From URL");
+        m_fileButton=new JRadioButton("From file");
+        m_urlButton=new JRadioButton("From URL");
         ButtonGroup group=new ButtonGroup();
-        group.add(fileButton);
-        group.add(urlButton);
+        group.add(m_fileButton);
+        group.add(m_urlButton);
+		m_fileButton.setSelected(true);
 
         m_fileField=new JTextField(20);
         JButton browseButton=new JButton("Browse...");
+		browseButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent evt) {
+                JFileChooser browse;
+                if (Administrator.getLastDir()==null) {
+                    browse=new JFileChooser();
+                } else {
+                    browse=new JFileChooser(Administrator.getLastDir());
+                }
+                browse.setApproveButtonText("Import");
+                browse.setApproveButtonMnemonic('I');
+                browse.setApproveButtonToolTipText("Imports the selected file.");
+                browse.setDialogTitle("Import New Datastream Content...");
+                int returnVal = browse.showOpenDialog(Administrator.getDesktop());
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    m_fileField.setText(browse.getSelectedFile().getPath());
+				}
+			}
+		});
         JPanel fileValuePanel=new JPanel();
         fileValuePanel.setLayout(new FlowLayout());
         fileValuePanel.add(m_fileField);
@@ -126,7 +135,7 @@ public class ImportDialog
                 ));
         GridBagLayout gridBag=new GridBagLayout();
         inputPane.setLayout(gridBag);
-        addRows(new JComponent[] {fileButton, urlButton}, 
+        addRows(new JComponent[] {m_fileButton, m_urlButton}, 
                 new JComponent[] {fileValuePanel, m_urlField}, 
                 gridBag, inputPane);
 
@@ -178,16 +187,36 @@ public class ImportDialog
         }
 
         public void actionPerformed(ActionEvent evt) {
-        /*
             try {
-                // pull out values and do a quick syntax check
+			    if (m_fileButton.isSelected()) {
+				    if (m_fileField.getText().equals("")) {
+					    throw new IOException("No filename entered.");
+					}
+					File f=new File(m_fileField.getText());
+					if (!f.exists()) {
+					    throw new IOException("File does not exist.");
+					}
+				} else {
+				    if (m_urlField.getText().equals("")) {
+					    throw new IOException("No URL entered.");
+					}
+					File f=File.createTempFile("fedora-ingest-", null);
+					f.deleteOnExit();
+					try {
+                    Administrator.DOWNLOADER.get(m_urlField.getText(), new FileOutputStream(f));
+					} catch (Exception e) {
+					    throw new IOException("Download failed: " + m_urlField.getText());
+					}
+					url=m_urlField.getText();
+					file=f;
+				}
                 dispose();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(m_loginDialog,
+                JOptionPane.showMessageDialog(m_importDialog,
                     e.getMessage(),
                     "Import Error",
                     JOptionPane.ERROR_MESSAGE);
-            } */
+            }
         }
     }
 

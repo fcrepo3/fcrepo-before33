@@ -75,6 +75,7 @@ public class DatastreamPane
     private String m_pid;
     private Datastream m_mostRecent;
 
+    private Hashtable[] m_labelTables;
     private JComboBox m_stateComboBox;
     private JSlider m_versionSlider;
     private JPanel m_valuePane;
@@ -161,13 +162,15 @@ public class DatastreamPane
                     m_versionSlider.setMajorTickSpacing(1);
                     m_versionSlider.setSnapToTicks(true);
                     m_versionSlider.setPaintTicks(true);
-                    Hashtable labelTable=new Hashtable();
-                    labelTable.put(new Integer(0), new JLabel("Current"));
-                    if (versions.length>1) {
-                        labelTable.put(new Integer(versions.length-1), 
-                                new JLabel("First"));
-                    }
-                    m_versionSlider.setLabelTable(labelTable);
+                    m_labelTables=new Hashtable[versions.length];
+					for (int i=0; i<versions.length; i++) {
+					    Hashtable thisTable=new Hashtable();
+						thisTable.put(new Integer(i), new JLabel("Created " 
+						        + s_formatter.format(versions[i].getCreateDate().getTime())));
+						m_labelTables[i]=thisTable;
+					}
+
+                    m_versionSlider.setLabelTable(m_labelTables[0]);
                     m_versionSlider.setPaintLabels(true);
                 }
 
@@ -219,6 +222,7 @@ public class DatastreamPane
     public void stateChanged(ChangeEvent e) {
        JSlider source=(JSlider)e.getSource();
        if (!source.getValueIsAdjusting()) {
+           m_versionSlider.setLabelTable(m_labelTables[source.getValue()]);
            m_versionCardLayout.show(m_valuePane, "" + source.getValue());
        }
     }
@@ -365,16 +369,14 @@ public class DatastreamPane
             setLayout(new BorderLayout());
 
             // do the field panel (NORTH)
-            JLabel dateLabel=new JLabel("Created");
             JLabel labelLabel=new JLabel("Label");
             JLabel[] labels;
             if (R || E) {
                 JLabel locationLabel=new JLabel("Reference");
-                labels=new JLabel[] {dateLabel, labelLabel, locationLabel};
+                labels=new JLabel[] {labelLabel, locationLabel};
             } else {
-                labels=new JLabel[] {dateLabel, labelLabel};
+                labels=new JLabel[] {labelLabel};
             }
-            JLabel dateValue=new JLabel(s_formatter.format(ds.getCreateDate().getTime()));
             m_labelTextField=new JTextField(ds.getLabel());
             m_labelTextField.getDocument().addDocumentListener(
                     dataChangeListener);
@@ -390,9 +392,9 @@ public class DatastreamPane
                 m_locationTextField=new JTextField(m_ds.getLocation());
                 m_locationTextField.getDocument().addDocumentListener(
                     dataChangeListener);
-                values=new JComponent[] {dateValue, m_labelTextField, m_locationTextField};
+                values=new JComponent[] {m_labelTextField, m_locationTextField};
             } else {
-                values=new JComponent[] {dateValue, m_labelTextField};
+                values=new JComponent[] {m_labelTextField};
             }
 
             JPanel fieldPane=new JPanel();
@@ -588,15 +590,17 @@ public class DatastreamPane
 		} else if (M) {
             String loc=null; // if not set, server will not change content
             if (m_importFile!=null) {
-                // TODO: upload the import file and set the ref
+                // upload the import file, getting a temporary ref
                 loc=Administrator.UPLOADER.upload(m_importFile);
             } else if (m_editor!=null && m_editor.isDirty()) {
-                // They've edited managed content... use its content
+                // They've edited managed content that came up in an editor... 
+                // use its content
                 loc=Administrator.UPLOADER.upload(m_editor.getContent());
             }
             Administrator.APIM.modifyDatastreamByReference(m_pid, m_ds.getID(),
                     label, logMessage, loc, state);
         } else {
+		    // external ref or redirect
             Administrator.APIM.modifyDatastreamByReference(m_pid, m_ds.getID(),
                     label, logMessage, m_locationTextField.getText(), state);
 		}
@@ -617,15 +621,12 @@ public class DatastreamPane
             m_ds.setLabel(m_labelTextField.getText());
             if (m_locationTextField!=null) m_ds.setLocation(m_locationTextField.getText());
             if (m_editor!=null) m_editor.changesSaved();
-            // TODO: would deal with m_importFile here, too... 
             if (m_importFile!=null) {
                 // update display, and set to null
                 m_importFile=null;
                 remove(m_importLabel);
                 m_importLabel=null;
             }
-
-
             // But all this may be a moot point, since it may be best to just
             // re-load the entire datastream history to get a fresh view with
             // the new version being the editable one
