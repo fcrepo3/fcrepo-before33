@@ -36,17 +36,19 @@ import fedora.client.bmech.BMechBuilderException;
 public class BMechMETSSerializer extends BObjMETSSerializer
 {
   private Element in_dc;
+  private Element in_profile;
   private Element in_dsInputSpec;
   private Element in_methodMap;
   private Element in_wsdl;
 
 
   public BMechMETSSerializer(BMechTemplate bMechData, Element dc,
-    Element dsInputSpec, Element methodMap, Element wsdl)
+    Element serviceProfile, Element dsInputSpec, Element methodMap, Element wsdl)
     throws BMechBuilderException
   {
     super((BObjTemplate)bMechData);
     in_dc = dc;
+	in_profile = serviceProfile;
     in_dsInputSpec = dsInputSpec;
     in_methodMap = methodMap;
     in_wsdl = wsdl;
@@ -68,6 +70,12 @@ public class BMechMETSSerializer extends BObjMETSSerializer
   protected Element[] getVariableStructMapDivs()
   {
     Vector v_divs = new Vector();
+    
+	Element serviceProfileDiv =
+	  setDiv("SERVICE-PROFILE",
+	  "XML data that describes the technical nature of the service",
+	  "SERVICE-PROFILE");
+	v_divs.add(serviceProfileDiv);
 
     Element dsInputSpecDiv =
       setDiv("FEDORA-TO-WSDL-DSINPUTSPEC",
@@ -94,12 +102,13 @@ public class BMechMETSSerializer extends BObjMETSSerializer
   {
     Vector v_elements = new Vector();
     v_elements.add(setDC(in_dc));
+	v_elements.add(setServiceProfile(in_profile));
     v_elements.add(setDSInputSpec(in_dsInputSpec));
     v_elements.add(setMethodMap(in_methodMap));
     v_elements.add(setWSDL(in_wsdl));
     return (Element[])v_elements.toArray(new Element[0]);
   }
-
+  
   private Element setDSInputSpec(Element dsInputSpec) throws BMechBuilderException
   {
     Element dsInputNode = document.createElementNS(METS, "METS:amdSec");
@@ -169,6 +178,7 @@ public class BMechMETSSerializer extends BObjMETSSerializer
     profileNode.setAttribute("ID", "SERVICE-PROFILE");
     Element techMD = document.createElementNS(METS, "METS:techMD");
     techMD.setAttribute("ID", "SERVICE-PROFILE1.0");
+	techMD.setAttribute("CREATED", now);
     techMD.setAttribute("STATUS", "A");
     Element mdWrap = document.createElementNS(METS, "METS:mdWrap");
     mdWrap.setAttribute("MIMETYPE", "text/xml");
