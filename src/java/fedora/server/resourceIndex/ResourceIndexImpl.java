@@ -102,10 +102,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     public ResourceIndexImpl(int indexLevel, 
                              TriplestoreConnector connector, 
                              ConnectionPool cPool, 
+                             Map aliasMap,
                              Logging target) throws ResourceIndexException {
         super(target);  
         m_indexLevel = indexLevel;
-        namespaces = new HashMap();
+        namespaces = aliasMap;
+        if (namespaces == null) namespaces = new HashMap();
         
         namespaces.put("fedora", FEDORA.uri);
         namespaces.put("dc", DC.uri);

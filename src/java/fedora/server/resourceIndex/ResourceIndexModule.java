@@ -91,6 +91,20 @@ public class ResourceIndexModule extends Module
             throw new ModuleInitializationException("Could not find requested "
                     + "connectionPool.", getRole());
         }
+
+        //
+        // get anything starting with alias: and put the following name
+        // and it's value in the alias map.
+        //
+        HashMap aliasMap = new HashMap();
+        Iterator iter = parameterNames();
+        while (iter.hasNext()) {
+            String pName = (String) iter.next();
+            String[] parts = pName.split(":");
+            if ((parts.length == 2) && (parts[0].equals("alias"))) {
+                aliasMap.put(parts[1], getParameter(pName));
+            }
+        }
         
         String datastore = getParameter("datastore");
         if (datastore == null || datastore.equals("")) {
@@ -114,7 +128,7 @@ public class ResourceIndexModule extends Module
             m_conn = TriplestoreConnector.init(connectorClassName,
                                                map);
             try {
-                m_resourceIndex = new ResourceIndexImpl(m_level, m_conn, cPool, this);
+                m_resourceIndex = new ResourceIndexImpl(m_level, m_conn, cPool, aliasMap, this);
             } catch (ResourceIndexException e) {
                 throw new ModuleInitializationException("Error initializing "
                        + "connection pool.", getRole(), e);
