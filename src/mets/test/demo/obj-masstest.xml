@@ -21,10 +21,7 @@
 		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Dublin Core Metadata">
 				<METS:xmlData>
-					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
-					<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
 ##SPLITTER##
-                    </oai_dc:dc>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:descMD>
