@@ -947,7 +947,7 @@ public class FastDOReader implements DOReader
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String query =
-          "SELECT DISTINCT "
+          "SELECT "
           + "do.doPID,"
           + "bDef.bDefPID,"
           + "method.methodName,"
