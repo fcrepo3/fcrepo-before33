@@ -40,7 +40,6 @@
 }
 
 .tabs a.tab-active {
-/*  background:#fff url("bar_on.gif") repeat-x;  */
   background-color: LightSteelBlue;
   border-right: 1px solid #6D99B6;
 }
@@ -56,6 +55,4 @@
   border-right:1px solid #6D99B6;
 }
 
-textarea {
-  background-color: Azure;
-}
+

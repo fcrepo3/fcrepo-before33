@@ -212,9 +212,9 @@ function showPane(paneId, activeTab) {
   <div class="inputForm">
     <fieldset>
       <legend>&otherPrompt;</legend>
-      <input type="checkbox" name="distinct"/> &distinctPrompt;<br/>
-      <input type="checkbox" name="dt" checked="checked"/> &safeTypesPrompt;<br/>
-      <input type="checkbox" name="stream"/> &streamPrompt;
+      <input type="checkbox" name="distinct"/> <label for="distinct">&distinctPrompt;</label><br/>
+      <input type="checkbox" name="dt" checked="checked"/> <label for="dt">&safeTypesPrompt;</label><br/>
+      <input type="checkbox" name="stream"/> <label for="stream">&streamPrompt;</label>
     </fieldset>
   </div>
 </xsl:template>
@@ -260,7 +260,7 @@ function showPane(paneId, activeTab) {
           <xsl:value-of select="@name"/>
         </xsl:attribute>
         <xsl:if test="position() = 1">
-          <xsl:attribute name="selected" value="selected"/>
+          <xsl:attribute name="selected">selected</xsl:attribute>
         </xsl:if>
         <xsl:value-of select="@name"/>
       </option>
@@ -294,7 +294,7 @@ function showPane(paneId, activeTab) {
           <xsl:value-of select="@name"/>
         </xsl:attribute>
         <xsl:if test="position() = 1">
-          <xsl:attribute name="selected" value="selected"/>
+          <xsl:attribute name="selected">selected</xsl:attribute>
         </xsl:if>
         <xsl:value-of select="@name"/>
       </option>
