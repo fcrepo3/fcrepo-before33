@@ -549,6 +549,20 @@ public class SimpleDOReader
         return augMaps;
     }
 
+    private String getDisseminatorID(String bDefPID) 
+            throws DisseminatorNotFoundException {
+        String[] ids=ListDisseminatorIDs(null);
+        ArrayList al=new ArrayList();
+        for (int i=0; i<ids.length; i++) {
+            Disseminator diss=GetDisseminator(ids[i], null);
+            if (diss.bDefID.equals(bDefPID)) {
+                return diss.dissID;
+            }
+        }
+        throw new DisseminatorNotFoundException("Cannot find a disseminator "
+                + " subscribing to bdef " + bDefPID);
+    }
+
     public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
           String methodName, Date versDateTime)
           throws ServerException {
@@ -556,7 +570,7 @@ public class SimpleDOReader
         DisseminationBindingInfo[] bindingInfo;
         // The disseminator provides the datastream bindings and the bmech pid,
         // which we need in order to construct the bindingInfo array.
-        Disseminator diss=GetDisseminator(bDefPID, versDateTime);
+        Disseminator diss=GetDisseminator(getDisseminatorID(bDefPID), versDateTime);
         if (diss==null) {
             throw new DisseminatorNotFoundException("Cannot get binding info "
                     + "for disseminator " + bDefPID + " because the disseminator"
@@ -576,6 +590,7 @@ public class SimpleDOReader
         boolean foundMethod=false;
         for (int i=0; i<opBindings.length; i++) {
             if (opBindings[i].methodName.equals(methodName)) {
+                foundMethod=true;
                 addressLocation=opBindings[i].serviceBindingAddress;
                 operationLocation=opBindings[i].operationLocation;
                 protocolType=opBindings[i].protocolType;
@@ -598,6 +613,7 @@ public class SimpleDOReader
             bindingInfo[i].dsLocation=ds.DSLocation;
             bindingInfo[i].dsControlGroupType=ds.DSControlGrp;
             bindingInfo[i].dsID=dsID;
+            bindingInfo[i].dsVersionID=ds.DSVersionID;
             // these will be the same for all elements of the array
             bindingInfo[i].methodParms=methodParms;
             bindingInfo[i].AddressLocation=addressLocation;

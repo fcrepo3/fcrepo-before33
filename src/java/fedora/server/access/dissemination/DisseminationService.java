@@ -13,6 +13,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.text.SimpleDateFormat;
 
 import fedora.server.Server;
 import fedora.server.errors.DisseminationException;
@@ -200,7 +201,8 @@ public class DisseminationService
    *         reason.
    */
   public MIMETypedStream assembleDissemination(String PID,
-      Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray)
+      Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray,
+      Date asOfDateTime)
       throws ServerException
   {
     String protocolType = null;
@@ -289,7 +291,7 @@ public class DisseminationService
             dissURL = dissBindInfo.AddressLocation+dissBindInfo.OperationLocation;
           }
           datastreamResolverServletURL = "http://" + fedoraServerHost
-            + ":" + fedoraServerPort + "/fedora/getDS?id=";
+              + ":" + fedoraServerPort + "/fedora/getDS?id=";
           protocolType = dissBindInfo.ProtocolType;
         }
         String currentKey = dissBindInfo.DSBindKey;
