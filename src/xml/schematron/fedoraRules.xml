@@ -43,13 +43,6 @@
 	<!-- COMPLETED PATTERN: -->
 	<!-- These rules are to be applied to objects when they are considered completed and ready to be stored persistently in the repository.-->
 	<sch:pattern name="Completed Object Checks" id="completed">
-		<sch:rule context="METS:mets">
-			<sch:assert test="string(@OBJID)">Object must have a PID (element mets: OBJID is missing or empty)</sch:assert>
-			<sch:assert test="METS:amdSec[@ID='FEDORA-AUDITTRAIL']">Object must have an audit trail (element amdSec: ID="FEDORA-AUDITTRAIL)</sch:assert>
-		</sch:rule>
-		<sch:rule context="METS:file">
-			<sch:assert test="@ADMID">Every Datastream must have an audit trail record associated with it (element file: ADMID is missing)</sch:assert>
-		</sch:rule>
 		<sch:rule context="METS:metsHdr">
 			<sch:assert test="@CREATEDATE">Object must have a date of creation (element header: CREATEDATE missing)</sch:assert>
 			<sch:assert test="string(@RECORDSTATUS)">Object state must be recorded (element header: RECORDSTATUS missing or empty)</sch:assert>
