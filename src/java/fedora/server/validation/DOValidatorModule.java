@@ -17,6 +17,8 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.InitializationException;
 import fedora.server.Module;
 import fedora.server.Server;
+import fedora.server.storage.ConnectionPool;
+import fedora.server.storage.ConnectionPoolManager;
 
 // Java imports
 import java.util.Map;
@@ -67,6 +69,11 @@ public class DOValidatorModule extends Module implements DOValidator
       dov.schematronPreprocessorID = System.getProperty("fedora.home") + this.getParameter("schematronPreprocessor");
       dov.schematronSchemaID = System.getProperty("fedora.home") + this.getParameter("schematronSchema");
       dov.schematronValidatingXslID = System.getProperty("fedora.home") + this.getParameter("schematronValidatingXsl");
+
+      // Get a connection pool manager for the validator module
+      ConnectionPoolManager poolManager = (ConnectionPoolManager)
+          s_server.getModule("fedora.server.storage.ConnectionPoolManager");
+      dov.connectionPool = poolManager.getPool();
     }
     catch(Exception e)
     {
