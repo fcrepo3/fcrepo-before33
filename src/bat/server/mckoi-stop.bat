@@ -11,7 +11,7 @@ if "%2" == "" goto showUsage
 
 echo Stopping McKoi DB...
 
-java -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf -shutdown %1 %2
+java -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf -shutdown localhost 9158 %1 %2
 
 echo Finished.
 
