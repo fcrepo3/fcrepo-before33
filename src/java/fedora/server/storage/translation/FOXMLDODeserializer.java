@@ -104,7 +104,6 @@ public class FOXMLDODeserializer
 	
 	// temporary variables for datastream processing
     private String m_dsId;
-	private String m_dsURI;
 	private boolean m_dsVersionable;
     private String m_dsVersId;
     private Date m_dsCreateDate;
@@ -280,7 +279,6 @@ public class FOXMLDODeserializer
                 // OBJECT IDENTIFIERS...
                 //======================
 				m_obj.setPid(grab(a, F, "PID"));
-				m_obj.setURI("info:fedora/" + grab(a, F, "PID"));
 			//=====================
 			// OBJECT PROPERTIES...
 			//=====================
@@ -325,8 +323,6 @@ public class FOXMLDODeserializer
 			} else if (localName.equals("datastream")) {
 				// get datastream attributes...
 				m_dsId=grab(a, F, "ID");
-				// set datastream URI for integrity purposes
-				m_dsURI = m_obj.getURI() + "/" + m_dsId;
 				m_dsState=grab(a, F, "STATE");
                 String altIDsString = grab(a, F, "ALT_IDS");
                 if (altIDsString.length() == 0) {
@@ -756,7 +752,6 @@ public class FOXMLDODeserializer
         } else if (uri.equals(F) && localName.equals("datastream")) {
 			// reinitialize datastream attributes ...
 			m_dsId="";
-			m_dsURI="";
 			m_dsVersionable=true;
 			m_dsState="";
 			m_dsAltIds=new String[0];
@@ -798,7 +793,6 @@ public class FOXMLDODeserializer
 
 		// set datastream variables with values grabbed from the SAX parse    	  	
 		ds.DatastreamID=m_dsId;
-		ds.DatastreamURI=m_dsURI;
 		ds.DatastreamAltIDs=m_dsAltIds;
 		ds.DSVersionable=m_dsVersionable;
 		ds.DSFormatURI=m_dsFormatURI;
@@ -853,7 +847,6 @@ public class FOXMLDODeserializer
 		
 		// set the attrs common to all datastream versions
 		ds.DatastreamID=m_dsId;
-		ds.DatastreamURI=m_dsURI;
 		ds.DatastreamAltIDs=m_dsAltIds;
 		ds.DSVersionable=m_dsVersionable;
 		ds.DSFormatURI=m_dsFormatURI;
@@ -957,7 +950,6 @@ public class FOXMLDODeserializer
 
 		// temporary variables for processing datastreams		
 		m_dsId="";
-		m_dsURI="";
 		m_dsVersionable=true;
 		m_dsVersId="";
 		m_dsCreateDate=null;
