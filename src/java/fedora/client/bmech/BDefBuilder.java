@@ -262,7 +262,7 @@ public class BDefBuilder extends JInternalFrame
           if (validGeneralTab((GeneralPane)tabs[i]))
           {
             GeneralPane gp = (GeneralPane)tabs[i];
-            if (gp.rb_chosen.equalsIgnoreCase("testPID"))
+            if (gp.rb_chosen.equalsIgnoreCase("retainPID"))
             {
               newBDef.setbObjPID(gp.getBObjectPID());
             }
@@ -407,7 +407,7 @@ public class BDefBuilder extends JInternalFrame
 
     private boolean validGeneralTab(GeneralPane gp)
     {
-      if (gp.rb_chosen.equalsIgnoreCase("testPID") &&
+      if (gp.rb_chosen.equalsIgnoreCase("retainPID") &&
          (gp.getBObjectPID() == null || gp.getBObjectPID().trim().equals("")))
       {
         assertTabPaneMsg("The test PID value is missing on General Tab.", gp.getName());

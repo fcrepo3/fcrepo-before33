@@ -3,15 +3,15 @@ package fedora.client.bmech;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.FlowLayout;
 import javax.swing.JLabel;
-import java.awt.Component;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+
+import fedora.client.Administrator;
 
 /**
  *
@@ -46,7 +46,7 @@ public class MethodDialog extends JDialog {
 
     public MethodDialog(MethodsPane parent, String title, boolean modal)
     {
-        super();
+		super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Add Method", true);
         this.parent = parent;
         setTitle(title);
         setModal(modal);

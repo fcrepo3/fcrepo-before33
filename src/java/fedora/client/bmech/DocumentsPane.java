@@ -1,22 +1,11 @@
 package fedora.client.bmech;
 
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JComponent;
-import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import java.util.Vector;
