@@ -117,8 +117,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
         assertInitialized();
         try {
+          // always gens pid, unless pid in stream starts with "test: or demo:"
             return s_management.ingestObject(getContext(),
-                    new ByteArrayInputStream(METSXML), "metslikefedora1", "UTF-8", true); // always gens pid, unless pid in stream starts with "test:"
+                    new ByteArrayInputStream(METSXML), "metslikefedora1", "UTF-8", true);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
