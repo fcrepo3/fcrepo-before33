@@ -49,7 +49,7 @@ public class OAIReplicator
     /**
      * Get a connection from the pool with autocommit turned off.
      */
-    private Connection beginTransaction() 
+    private Connection beginTransaction()
             throws SQLException {
         Connection conn=m_pool.getConnection();
         conn.setAutoCommit(false);
@@ -80,7 +80,7 @@ public class OAIReplicator
     /**
      * Update the OAI information as the result of a createObject API call.
      */
-    public void newObject(DigitalObject newObj) 
+    public void newObject(DigitalObject newObj)
             throws ServerException {
         logFiner("OAIReplication.newObject(" + newObj.getPid() + ") started.");
         Connection conn=null;
@@ -89,7 +89,7 @@ public class OAIReplicator
         try {
             conn=beginTransaction();
             st=conn.createStatement();
-            // Make or replace an Item row, throwing an exception if 
+            // Make or replace an Item row, throwing an exception if
             // a non-purged object is already using the itemID.
             String itemID=getItemID(newObj);
             int status=1;
@@ -106,18 +106,25 @@ public class OAIReplicator
                 Datastream ds=getMostRecentDatastream(newObj.datastreams(dsID));
                 if (ds.isHarvestable && ds.DSState.equals("A")) {
                     addRecord(st,
-                              itemDbID, 
-                              dsID, 
+                              itemDbID,
+                              dsID,
                               getFormatDbID(ds.DSFormatURI),
                               ds.DSCreateDT.getTime());
                 }
             }
             commit=true;
         } catch (SQLException e) {
-            throw new GeneralException("OAIReplicator.newObject failed due to SQLException: " 
-                    + e.getMessage(), e); 
+            throw new GeneralException("OAIReplicator.newObject failed due to SQLException: "
+                    + e.getMessage(), e);
         } finally {
-            if (st!=null) try { st.close(); } catch (SQLException e) { }
+            try {
+                if (st!=null) st.close();
+            } catch (SQLException e) {
+                throw new StorageDeviceException("Error with sql database. "
+                        + e.getMessage());
+            } finally {
+                st=null;
+            }
             endTransaction(conn, commit);
             logFiner("OAIReplication.newObject(" + newObj.getPid() + ") finished.");
         }
@@ -128,23 +135,25 @@ public class OAIReplicator
      * modifyObject, addDatastream, modifyDatastreamByReference/Value,
      * setDatastreamState, setDatastreamHarvestable, purgeDatastream
      */
-    public void modifiedObject(DOReader oldReader, DigitalObject newObj) 
+    public void modifiedObject(DOReader oldReader, DigitalObject newObj)
             throws ServerException {
         String pid=newObj.getPid();
         logFiner("OAIReplication.modifiedObject(" + pid + ") started.");
         long nowUTC=DateUtility.convertLocalDateToUTCDate(new java.util.Date()).getTime();
         Connection conn=null;
         Statement st=null;
+        ResultSet results=null;
+        ResultSet rs=null;
         boolean commit=false;
         try {
             conn=beginTransaction();
             st=conn.createStatement();
             // We need to account for all combinations of possible changes (including NONE).
-            // modifyObject: 
+            // modifyObject:
             //   OBJECT_STATE_CHANGE
-            // addDatastream: 
+            // addDatastream:
             //   NEW_DATASTREAM
-            // modifyDatastreamByReference/Value: 
+            // modifyDatastreamByReference/Value:
             //   CHANGED_DC_DATASTREAM
             //   CHANGED_DATASTREAM_STATE
             //   CHANGED_DATASTREAM_HARVESTABLE
@@ -156,7 +165,7 @@ public class OAIReplicator
             //   PURGED_DATASTREAM
             ItemDbIDGetter itemDbID=new ItemDbIDGetter(st, pid);
             String itemUpdates=null;
-            // CHANGED_DC_DATASTREAM? 
+            // CHANGED_DC_DATASTREAM?
             // (checked first as it's most likely to generate an error)
             Datastream oldDC=oldReader.GetDatastream("DC", null);
             Datastream newDC=getMostRecentDatastream(newObj.datastreams("DC"));
@@ -175,8 +184,8 @@ public class OAIReplicator
                 //   - change the itemID in place (and give oai warning)
                 if (!newItemID.equals(oldItemID)) {
                     logFinest("Trying itemID change from " + oldItemID + " to " + newItemID);
-                    ResultSet results=logAndExecuteQuery(st, 
-                            "SELECT itemDbID, status, pid FROM oItem WHERE itemID='" 
+                    results=logAndExecuteQuery(st,
+                            "SELECT itemDbID, status, pid FROM oItem WHERE itemID='"
                             + newItemID + "' AND NOT itemDbID=" + itemDbID.get() + "");
                     if (results.next()) {
                         long status=results.getLong("status");
@@ -186,22 +195,24 @@ public class OAIReplicator
                                     + "so we can remove the old Item and associated Records.");
                             long oldDbID=results.getLong("itemDbID");
                             results.close();
+                            results=null;
                             logAndExecuteUpdate(st, "DELETE FROM oItem WHERE itemDbID=" + oldDbID);
                             int rows=logAndExecuteUpdate(st, "DELETE FROM oRecord WHERE itemDbID=" + oldDbID);
                             if (rows>0) {
-                                logWarning("Removed " + rows + " rows from oRecord because the itemID " 
-                                        + newItemID + " which was previously used by purged object " 
+                                logWarning("Removed " + rows + " rows from oRecord because the itemID "
+                                        + newItemID + " which was previously used by purged object "
                                         + otherPID + " is now being used by " + pid + ".  Certain "
                                         + "incremental harvesters may not realize the old records "
                                         + "have been deleted.");
                             }
                         } else {
-                            throw new GeneralException("Couldn't change itemID to " + newItemID 
+                            throw new GeneralException("Couldn't change itemID to " + newItemID
                                     + " since that itemID belongs to object " + otherPID);
                         }
                     }
                     // we can just change the itemID in place
                     results.close();
+                    results=null;
                     itemUpdates="itemID='" + newItemID + "'";
                     logWarning("Changing an itemID.  If any harvestable records existed for "
                         + "this object, harvesters won't see them with the old id anymore.");
@@ -232,7 +243,7 @@ public class OAIReplicator
                 }
             }
             if (itemUpdates!=null) {
-                logAndExecuteUpdate(st, "UPDATE oItem SET " + itemUpdates 
+                logAndExecuteUpdate(st, "UPDATE oItem SET " + itemUpdates
                         + " WHERE itemDbID=" + itemDbID.get());
             }
             // Check for NEW_DATASTREAMS while checking for CHANGED_DATASTREAM_STATE/HARVESTABLE
@@ -245,7 +256,7 @@ public class OAIReplicator
                     // NEW_DATASTREAM - insert (or update a purged one if needed)
                     if (newDS.isHarvestable && newDS.DSState.equals("A")) {
                         logFiner("Detected new, harvestable datastream: " + dsID);
-                        addOrUpdateRecord(st, 
+                        addOrUpdateRecord(st,
                                            itemDbID.get(),
                                            dsID,
                                            getFormatDbID(newDS.DSFormatURI),
@@ -260,7 +271,7 @@ public class OAIReplicator
                         if (oldDS.DSState.equals("A")) {
                             if (!newDS.isHarvestable || !newDS.DSState.equals("A")) {
                                 // was eligible, but now shouldn't be
-                                logFinest("Making " + dsID + " ineligible because it's either " 
+                                logFinest("Making " + dsID + " ineligible because it's either "
                                         + "no longer harvestable or has a non-active status.");
                                 logAndExecuteUpdate(st, "UPDATE oRecord SET iDate="
                                         + nowUTC
@@ -278,14 +289,15 @@ public class OAIReplicator
                         // ... but is it eligible now?
                         if (newDS.isHarvestable && newDS.DSState.equals("A")) {
                             // YES, so add/update it
-                            ResultSet results=logAndExecuteQuery(st, "SELECT itemDbID FROM "
+                            rs=logAndExecuteQuery(st, "SELECT itemDbID FROM "
                                     + "oRecord WHERE itemDbID="
                                     + itemDbID.get() + " AND formatDbID=" + getFormatDbID(newDS.DSFormatURI));
-                            boolean wasEverEligible=results.next();
-                            results.close();
+                            boolean wasEverEligible=rs.next();
+                            rs.close();
+                            rs=null;
                             if (!wasEverEligible) {
                                 // it was never eligible, so add as new
-                                logFinest("In this object, a Record with formatURI " + newDS.DSFormatURI 
+                                logFinest("In this object, a Record with formatURI " + newDS.DSFormatURI
                                         + " was never eligible for harvest, but "
                                         + "now is.  Adding new Record row.");
                                 addRecord(st,
@@ -295,11 +307,11 @@ public class OAIReplicator
                                           nowUTC);
                             } else {
                                 // it was previously eligible, so do update
-                                logFinest("In this object, the Record with formatURI " + newDS.DSFormatURI 
+                                logFinest("In this object, the Record with formatURI " + newDS.DSFormatURI
                                         + " was not eligible for harvest before, but "
                                         + "now is.  *Updating* Record row since at one point in the past"
                                         + " it was eligible.");
-                                logAndExecuteUpdate(st, "UPDATE oRecord SET eDate=" + 
+                                logAndExecuteUpdate(st, "UPDATE oRecord SET eDate=" +
                                         + nowUTC
                                         + " WHERE itemDbID=" + itemDbID.get()
                                         + " AND formatDbID=" + getFormatDbID(newDS.DSFormatURI));
@@ -312,12 +324,12 @@ public class OAIReplicator
                     //
                     if (oldDS.DSCreateDT.getTime()!=newDS.DSCreateDT.getTime()
                             && newDS.isHarvestable && newDS.DSState.equals("A")) {
-                        // the row exists by now, because if it didn't exist before, 
+                        // the row exists by now, because if it didn't exist before,
                         // it would have been created above after we found it didn't
                         // have an entry in the oRecord table.
                         logFinest("Updating Record " + dsID + "'s cDate because its "
                                 + "contents have changed and it is currently eligible for harvest.");
-                        logAndExecuteUpdate(st, "UPDATE oRecord SET cDate=" 
+                        logAndExecuteUpdate(st, "UPDATE oRecord SET cDate="
                                 + newDS.DSCreateDT.getTime()
                                 + " WHERE itemDbID=" + itemDbID.get()
                                 + " AND repID='" + dsID + "'");
@@ -337,10 +349,21 @@ public class OAIReplicator
             }
             commit=true;
         } catch (SQLException e) {
-            throw new GeneralException("OAIReplicator.modifiedObject failed due to SQLException: " 
-                    + e.getMessage(), e); 
+            throw new GeneralException("OAIReplicator.modifiedObject failed due to SQLException: "
+                    + e.getMessage(), e);
         } finally {
-            if (st!=null) try { st.close(); } catch (SQLException e) { }
+            try {
+                if (st!=null) st.close();
+                if (results!=null) results.close();
+                if (rs!=null) rs.close();
+            } catch (SQLException e) {
+                throw new StorageDeviceException("Error with sql database. "
+                        + e.getMessage());
+            } finally {
+                st=null;
+                results=null;
+                rs=null;
+            }
             endTransaction(conn, commit);
             logFiner("OAIReplication.modifiedObject(" + newObj.getPid() + ") finished.");
         }
@@ -354,29 +377,40 @@ public class OAIReplicator
         logFiner("OAIReplication.purgedObject(" + pid + ") started.");
         Connection conn=null;
         Statement st=null;
+        ResultSet results=null;
         try {
             // don't bother using a transaction since we're only executing one update at the end
             conn=m_pool.getConnection();
             st=conn.createStatement();
             // change vDate only if the item was previously active
             String vDatePart="";
-            ResultSet results=logAndExecuteQuery(st, "SELECT status FROM oItem "
+            results=logAndExecuteQuery(st, "SELECT status FROM oItem "
                                                    + "WHERE pid='" + pid + "'");
             if (results.next()) {
                 if (results.getLong("status")==2) {
                     vDatePart=", vDate=" + DateUtility.convertLocalDateToUTCDate(
                             new java.util.Date()).getTime();
                 }
-                logAndExecuteUpdate(st, "UPDATE oItem SET status=0" + vDatePart 
+                logAndExecuteUpdate(st, "UPDATE oItem SET status=0" + vDatePart
                                      + " WHERE pid='" + pid + "'");
             }
             results.close();
+            results=null;
         } catch (SQLException e) {
-            throw new GeneralException("OAIReplicator.purgedObject failed due to SQLException: " 
-                    + e.getMessage(), e); 
+            throw new GeneralException("OAIReplicator.purgedObject failed due to SQLException: "
+                    + e.getMessage(), e);
         } finally {
-            if (st!=null) try { st.close(); } catch (SQLException e) { }
-            if (conn!=null) m_pool.free(conn);
+            try {
+                if (st!=null) st.close();
+                if (results!=null) results.close();
+                if (conn!=null) m_pool.free(conn);
+            } catch (SQLException e) {
+                throw new StorageDeviceException("Error with sql database. "
+                        + e.getMessage());
+            } finally {
+                st=null;
+                results=null;
+            }
             logFiner("OAIReplication.purgedObject(" + pid + ") finished.");
         }
     }
@@ -386,62 +420,77 @@ public class OAIReplicator
      *
      * If an Item row exists with the given itemID:
      *   If the assoc obj has been purged, replace, and REMOVE assoc recs.
-     *     (may leave incremental oai harvesters in the dark, 
+     *     (may leave incremental oai harvesters in the dark,
      *     but it's the best we can do)
      *   Else die "An object (ePID) already exists with itemID (itemID)"
      * If it doesn't:
      *   Add the row.
      */
-    private long addOrReplaceItem(Statement st, 
+    private long addOrReplaceItem(Statement st,
                                   String itemID,
-                                  String pid, 
-                                  int status, 
-                                  long vDate) 
+                                  String pid,
+                                  int status,
+                                  long vDate)
             throws SQLException, GeneralException {
-        ResultSet results=logAndExecuteQuery(st, "SELECT itemDbID, pid, status "
+        ResultSet results=null;
+        long itemDbID=0;
+        try {
+            results=logAndExecuteQuery(st, "SELECT itemDbID, pid, status "
                                                + "FROM oItem WHERE itemID='" + itemID + "'");
-        if (results.next()) {
-            // An object existed with that itemID
-            long itemDbID=results.getLong("itemDbID");
-            int oldStatus=results.getInt("status");
-            String oldPID=results.getString("pid");
-            results.close();
-            if (oldStatus==0) {
-                // It was purged, so we're going to replace it
-                logFinest("Object " + oldPID + " used this itemID (" 
-                        + itemID + "), but that object was purged, so we'll re-use it.");
-                logAndExecuteUpdate(st, "UPDATE oItem "
-                                      + "SET pid='" + pid 
-                                          + "', status=" + status 
-                                          + ", vDate=" + vDate + " "
-                                      + "WHERE itemID='" + itemID + "'");
-                // .. then remove all associated Records
-                int rows=logAndExecuteUpdate(st, "DELETE FROM oRecord WHERE itemDbID=" + itemDbID);
-                if (rows>0) {
-                    logWarning("Removed " + rows + " rows from oRecord because the itemID " 
-                            + itemID + " which was previously used by purged object " 
-                            + oldPID + " is now being used by " + pid + ".  Certain "
-                            + "incremental harvesters may not realize the old records "
-                            + "have been deleted.");
+            if (results.next()) {
+                // An object existed with that itemID
+                itemDbID=results.getLong("itemDbID");
+                int oldStatus=results.getInt("status");
+                String oldPID=results.getString("pid");
+                results.close();
+                results=null;
+                if (oldStatus==0) {
+                    // It was purged, so we're going to replace it
+                    logFinest("Object " + oldPID + " used this itemID ("
+                              + itemID + "), but that object was purged, so we'll re-use it.");
+                    logAndExecuteUpdate(st, "UPDATE oItem "
+                                        + "SET pid='" + pid
+                                        + "', status=" + status
+                                        + ", vDate=" + vDate + " "
+                                        + "WHERE itemID='" + itemID + "'");
+                    // .. then remove all associated Records
+                    int rows=logAndExecuteUpdate(st, "DELETE FROM oRecord WHERE itemDbID=" + itemDbID);
+                    if (rows>0) {
+                        logWarning("Removed " + rows + " rows from oRecord because the itemID "
+                                   + itemID + " which was previously used by purged object "
+                                   + oldPID + " is now being used by " + pid + ".  Certain "
+                                   + "incremental harvesters may not realize the old records "
+                                   + "have been deleted.");
+                    }
+                } else {
+                    // It hasn't been purged, so throw an error
+                    throw new GeneralException("Object " + oldPID + " already exists with OAI Item id "
+                            + itemID + ".");
                 }
             } else {
-                // It hasn't been purged, so throw an error
-                throw new GeneralException("Object " + oldPID + " already exists with OAI Item id "
-                        + itemID + ".");
+                results.close();
+                results=null;
+                // insert it as a new one
+                logFinest("This itemID (" + itemID + ") has never been used, so we'll create a new Item row.");
+                logAndExecuteUpdate(st, "INSERT INTO oItem (itemID, pid, status, vDate) "
+                                    + "VALUES ('" + itemID + "', '" + pid + "', "
+                                    + status + ", " + vDate + ")");
+                results=logAndExecuteQuery(st, "SELECT itemDbID from oItem "
+                        + "WHERE itemID='" + itemID + "'");
+                results.next();
+                itemDbID=results.getLong("itemDbID");
             }
-            return itemDbID;
-        } else {
-            results.close();
-            // insert it as a new one
-            logFinest("This itemID (" + itemID + ") has never been used, so we'll create a new Item row.");
-            logAndExecuteUpdate(st, "INSERT INTO oItem (itemID, pid, status, vDate) "
-                                          + "VALUES ('" + itemID + "', '" + pid + "', " 
-                                                        + status + ", " + vDate + ")");
-            results=logAndExecuteQuery(st, "SELECT itemDbID from oItem "
-                                         + "WHERE itemID='" + itemID + "'");
-            results.next();
-            long itemDbID=results.getLong("itemDbID");
-            return itemDbID;
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            try {
+                if (results!=null) results.close();
+            } catch (SQLException sqle) {
+                throw sqle;
+            } finally {
+                results=null;
+                return itemDbID;
+            }
         }
     }
 
@@ -451,7 +500,7 @@ public class OAIReplicator
                                    long formatDbID,
                                    long ceDate)
             throws SQLException {
-            
+
 /*
 I think I need to add a check on insert, and REPLACE the record row if that happens
 (because, if all has gone right, we can assume it could have only gotten to this point
@@ -464,19 +513,34 @@ as their assumptions might also need changing!
 
 */
 
-            
-        ResultSet results=logAndExecuteQuery(st, "SELECT itemDbID from oRecord "
+        ResultSet results=null;
+        try {
+            results=logAndExecuteQuery(st, "SELECT itemDbID from oRecord "
                 + "WHERE itemDbID=" + itemDbID + " AND repID='" + repID + "'");
-        if (results.next()) {
-            results.close();
-            logFinest("Record " + repID + " existed for this object, but was previously deleted.  Updating it...");
-            logAndExecuteUpdate(st, "UPDATE oRecord SET formatDbID=" + formatDbID
-                    + ", cDate=" + ceDate + ", eDate=" + ceDate + " "
-                    + "WHERE itemDbID=" + itemDbID + " AND repID='" + repID + "'");
-        } else {
-            results.close();
-            logFinest("Record " + repID + " never existed before for this object.  Adding it...");
-            addRecord(st, itemDbID, repID, formatDbID, ceDate);
+            if (results.next()) {
+                results.close();
+                results=null;
+                logFinest("Record " + repID + " existed for this object, but was previously deleted.  Updating it...");
+                logAndExecuteUpdate(st, "UPDATE oRecord SET formatDbID=" + formatDbID
+                                    + ", cDate=" + ceDate + ", eDate=" + ceDate + " "
+                                    + "WHERE itemDbID=" + itemDbID + " AND repID='" + repID + "'");
+            } else {
+                results.close();
+                results=null;
+                logFinest("Record " + repID + " never existed before for this object.  Adding it...");
+                addRecord(st, itemDbID, repID, formatDbID, ceDate);
+            }
+        } catch (SQLException sqle) {
+            throw sqle;
+        } finally {
+            try {
+                if (results!=null) results.close();
+            } catch (SQLException sqle) {
+                throw sqle;
+            } finally {
+                results=null;
+            }
+
         }
     }
 
@@ -499,23 +563,34 @@ as their assumptions might also need changing!
      */
     private long getFormatDbID(String uri)
             throws SQLException {
+
         if (m_formatDbIDs==null) {
             m_formatDbIDs=new HashMap();
             Connection conn=null;
             Statement st=null;
+            ResultSet results=null;
             try {
                 conn=m_pool.getConnection();
                 st=conn.createStatement();
-                ResultSet results=logAndExecuteQuery(st, "SELECT * FROM format");
+                results=logAndExecuteQuery(st, "SELECT * FROM format");
                 while (results.next()) {
                     long fmtid=results.getLong("formatDbID");
                     String fmturi=results.getString("formatURI");
                     m_formatDbIDs.put(fmturi, new Long(fmtid));
                 }
                 results.close();
+                results=null;
             } finally {
-                if (st!=null) st.close();
-                if (conn!=null) m_pool.free(conn);
+                try {
+                    if (st!=null) st.close();
+                    if (results!=null) results.close();
+                    if (conn!=null) m_pool.free(conn);
+                } catch (SQLException sqle) {
+                    throw sqle;
+                } finally {
+                    st=null;
+                    results=null;
+                }
             }
         }
         Long formatDbID=(Long) m_formatDbIDs.get(uri);
@@ -525,18 +600,27 @@ as their assumptions might also need changing!
         // if it doesn't exist yet, add it to the table (and the hash)
         Connection conn=null;
         Statement st=null;
+        ResultSet results=null;
         try {
             conn=m_pool.getConnection();
             st=conn.createStatement();
             int count=logAndExecuteUpdate(st, "INSERT INTO format (formatURI) VALUES ('" +  uri + "')");
-            ResultSet results=logAndExecuteQuery(st, "SELECT formatDbID FROM format");
+            results=logAndExecuteQuery(st, "SELECT formatDbID FROM format");
             results.next();
             long fmtid=results.getLong("formatDbID");
             m_formatDbIDs.put(uri, new Long(fmtid));
             return fmtid;
         } finally {
-            if (st!=null) st.close();
-            if (conn!=null) m_pool.free(conn);
+            try {
+                if (st!=null) st.close();
+                if (results!=null) results.close();
+                if (conn!=null) m_pool.free(conn);
+            } catch (SQLException sqle) {
+                throw sqle;
+            } finally {
+                st=null;
+                results=null;
+            }
         }
     }
 
@@ -563,7 +647,7 @@ as their assumptions might also need changing!
         return getItemID(currentDC, obj.getPid());
     }
 
-    private String getItemID(Datastream currentDC, String pid) 
+    private String getItemID(Datastream currentDC, String pid)
             throws ServerException {
         List ids=new DCFields(currentDC.getContentStream()).identifiers();
         if (ids.size()==0) {
@@ -617,15 +701,15 @@ as their assumptions might also need changing!
             m_got=true;
         }
 
-        public long get() 
+        public long get()
                 throws SQLException {
             if (m_got) {
                 return m_dbID;
             } else {
-                ResultSet results=logAndExecuteQuery(m_st, 
+                ResultSet results=logAndExecuteQuery(m_st,
                         "SELECT itemDbID from oItem WHERE pid='" + m_pid + "'");
                 results.next();
-                set(results.getLong("itemDbID")); 
+                set(results.getLong("itemDbID"));
                 return m_dbID;
             }
         }

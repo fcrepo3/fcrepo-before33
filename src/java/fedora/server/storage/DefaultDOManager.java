@@ -659,10 +659,13 @@ public class DefaultDOManager
                     {
                       if (results!=null) results.close();
                       if (s!= null) s.close();
-                      m_connectionPool.free(conn);
+                      if (conn!=null) m_connectionPool.free(conn);
                     } catch (SQLException sqle)
                     {
-                      throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
+                        throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+                    } finally {
+                        results=null;
+                        s=null;
                     }
                 }
                 // add to replication jobs table
@@ -749,16 +752,23 @@ public class DefaultDOManager
     private void removeReplicationJob(String pid)
             throws StorageDeviceException {
         Connection conn=null;
+        Statement s=null;
         try {
             conn=m_connectionPool.getConnection();
-            Statement s=conn.createStatement();
+            s=conn.createStatement();
             s.executeUpdate("DELETE FROM doRepJob "
                     + "WHERE doPID = '" + pid + "'");
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error removing entry from replication jobs table: " + sqle.getMessage());
         } finally {
-            if (conn!=null) {
-                m_connectionPool.free(conn);
+
+            try {
+                if (s!=null) s.close();
+                if (conn!=null) m_connectionPool.free(conn);
+            } catch (SQLException sqle) {
+                throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+            } finally {
+                s=null;
             }
         }
     }
@@ -1177,10 +1187,13 @@ public class DefaultDOManager
           {
             if (results!=null) results.close();
             if (s!= null) s.close();
-            m_connectionPool.free(conn);
+            if (conn!=null) m_connectionPool.free(conn);
           } catch (SQLException sqle)
           {
-            throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+              throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+          } finally {
+              results=null;
+              s=null;
           }
         }
     }
@@ -1209,10 +1222,13 @@ public class DefaultDOManager
           {
             if (results!=null) results.close();
             if (s!= null) s.close();
-            m_connectionPool.free(conn);
+            if (conn!=null) m_connectionPool.free(conn);
           } catch (SQLException sqle)
           {
             throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+          } finally {
+              results=null;
+              s=null;
           }
         }
     }
@@ -1256,13 +1272,13 @@ public class DefaultDOManager
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Unexpected error from SQL database while registering object: " + sqle.getMessage());
         } finally {
-            if (conn!=null) {
-                if (st!=null) {
-                    try {
-                        st.close();
-                    } catch (Exception e) { }
-                }
-                m_connectionPool.free(conn);
+            try {
+                if (st!=null) st.close();
+                if (conn!=null) m_connectionPool.free(conn);
+            } catch (Exception sqle) {
+                throw new StorageDeviceException("Unexpected error from SQL database while registering object: " + sqle.getMessage());
+            } finally {
+                st=null;
             }
         }
     }
@@ -1281,13 +1297,13 @@ public class DefaultDOManager
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Unexpected error from SQL database while unregistering object: " + sqle.getMessage());
         } finally {
-            if (conn!=null) {
-                if (st!=null) {
-                    try {
-                        st.close();
-                    } catch (Exception e) { }
-                }
-                m_connectionPool.free(conn);
+            try {
+                if (st!=null) st.close();
+                if (conn!=null) m_connectionPool.free(conn);
+            } catch (Exception sqle) {
+                throw new StorageDeviceException("Unexpected error from SQL database while unregistering object: " + sqle.getMessage());
+            } finally {
+                st=null;
             }
         }
     }
@@ -1533,10 +1549,13 @@ public class DefaultDOManager
           {
             if (results!=null) results.close();
             if (s!= null) s.close();
-            m_connectionPool.free(conn);
+            if (conn!=null) m_connectionPool.free(conn);
           } catch (SQLException sqle)
           {
             throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+          } finally {
+              results=null;
+              s=null;
           }
         }
     }

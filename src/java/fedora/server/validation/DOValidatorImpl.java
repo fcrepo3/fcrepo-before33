@@ -432,7 +432,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
         throw new GeneralException(e.getMessage());
       }
       finally {
-        connectionPool.free(dbConnection);
+        if (dbConnection!=null) connectionPool.free(dbConnection);
       }
       logFinest("[DOValidatorImpl]: Object is valid at Level 3: (INTEGRITY)");
       //System.out.println("Object validated to Level 3: (INTEGRITY)");
@@ -501,8 +501,8 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
     {
       try
       {
-        pool.free(connection);
-        connection.close();
+        if (connection!=null) pool.free(connection);
+        //connection.close();
       }
       catch (Throwable th)
       {

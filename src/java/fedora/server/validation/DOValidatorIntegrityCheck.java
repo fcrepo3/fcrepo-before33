@@ -163,6 +163,9 @@ import fedora.server.errors.InitializationException;
         } catch (SQLException sqle)
         {
           throw new GeneralException("Unexpected error from SQL database: " + sqle.getMessage());
+        } finally {
+          queryResult=null;
+          statement=null;
         }
       }
       if (!rowFound)
@@ -211,7 +214,6 @@ import fedora.server.errors.InitializationException;
         statement = connection.createStatement();
         queryResult = statement.executeQuery(query);
         rowFound = queryResult.next();
-        statement.close();
       }
       catch (Throwable th)
       {
@@ -227,6 +229,9 @@ import fedora.server.errors.InitializationException;
         } catch (SQLException sqle)
         {
           throw new GeneralException("Unexpected error from SQL database: " + sqle.getMessage());
+        } finally {
+          queryResult=null;
+          statement=null;
         }
       }
       if (!rowFound)

@@ -315,12 +315,23 @@ public class RowInsertion {
 	public void insertGen(Connection connection, String insertionStatement) throws SQLException {
 		int rowCount = 0;
 		Statement statement = null;
+                try {
 
-		statement = connection.createStatement();
+                    statement = connection.createStatement();
 
-		// Debug statement
-		//System.out.println("insertGen: insertionStatement = " + insertionStatement);
-		rowCount = statement.executeUpdate(insertionStatement);
-		statement.close();
+                    // Debug statement
+                    //System.out.println("insertGen: insertionStatement = " + insertionStatement);
+                    rowCount = statement.executeUpdate(insertionStatement);
+                } catch (SQLException sqle) {
+                    throw sqle;
+                } finally {
+                    try {
+                        if (statement!=null) statement.close();
+                    } catch (SQLException sqle2) {
+                        throw sqle2;
+                    } finally {
+                        statement=null;
+                    }
+                }
 	}
 }

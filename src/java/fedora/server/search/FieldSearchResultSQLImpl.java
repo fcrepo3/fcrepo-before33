@@ -130,10 +130,17 @@ public class FieldSearchResultSQLImpl
         } catch (SQLException sqle) {
             // if there's any kind of problem getting the resultSet,
             // give the connection back to the pool
-            if (m_resultSet != null) m_resultSet.close();
-            if (m_statement != null) m_statement.close();
-            m_cPool.free(m_conn);
-            throw sqle;
+            try {
+                if (m_resultSet != null) m_resultSet.close();
+                if (m_statement != null) m_statement.close();
+                if (m_conn!=null) m_cPool.free(m_conn);
+                throw sqle;
+            } catch (SQLException sqle2) {
+                throw sqle2;
+            } finally {
+                m_resultSet=null;
+                m_statement=null;
+            }
         }
     }
 
@@ -310,11 +317,13 @@ public class FieldSearchResultSQLImpl
         if (m_expired) {
             // clean up
             try {
-                m_resultSet.close();
-                m_statement.close();
-            } catch (SQLException sqle2) {
+                if (m_resultSet!=null) m_resultSet.close();
+                if (m_statement!=null) m_statement.close();
+                if (m_conn!=null) m_cPool.free(m_conn);
+            } catch (SQLException sqle) {
             } finally {
-                m_cPool.free(m_conn);
+                m_resultSet=null;
+                m_statement=null;
             }
         }
         return m_expired;
@@ -358,20 +367,30 @@ public class FieldSearchResultSQLImpl
                 // no, so make sure the token is null and clean up
                 m_token=null;
                 try {
-                    m_resultSet.close();
-                    m_statement.close();
+                    if (m_resultSet!=null) m_resultSet.close();
+                    if (m_statement!=null) m_statement.close();
+                    if (m_conn!=null) m_cPool.free(m_conn);
                 } catch (SQLException sqle2) {
+                    throw new StorageDeviceException("Error closing statement "
+                        + "or result set." + sqle2.getMessage());
                 } finally {
-                    m_cPool.free(m_conn);
+                    m_resultSet=null;
+                    m_statement=null;
                 }
             }
         } catch (SQLException sqle) {
             try {
-                m_resultSet.close();
-                m_statement.close();
+                if (m_resultSet!=null) m_resultSet.close();
+                if (m_statement!=null) m_statement.close();
+                if (m_conn!=null) m_cPool.free(m_conn);
+                throw new StorageDeviceException("Error with sql database. "
+                        + sqle.getMessage());
             } catch (SQLException sqle2) {
+                throw new StorageDeviceException("Error closing statement "
+                        + "or result set." + sqle.getMessage() + sqle2.getMessage());
             } finally {
-                m_cPool.free(m_conn);
+                m_resultSet=null;
+                m_statement=null;
             }
         }
     }

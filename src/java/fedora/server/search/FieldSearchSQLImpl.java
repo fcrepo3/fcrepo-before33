@@ -140,7 +140,7 @@ public class FieldSearchSQLImpl
             }
             dbRowValues[7]="" + date.getTime();
             // add bdef and bmech ids for each active disseminator
-            // and if the object is a bMech, add the bDefPID (from the 
+            // and if the object is a bMech, add the bDefPID (from the
             // datastream input spec) to its list of bDefs
             Disseminator[] disses=reader.GetDisseminators(null, null);
             ArrayList bDefs=new ArrayList();
@@ -221,15 +221,16 @@ public class FieldSearchSQLImpl
             throw new StorageDeviceException("Error attempting update of "
                     + "object with pid '" + pid + ": " + sqle.getMessage());
         } finally {
-            if (conn!=null) {
-                if (st!=null) {
-                    try {
-                        st.close();
-                    } catch (Exception e) { }
-                }
-                m_cPool.free(conn);
+            try {
+                if (st!=null) st.close();
+                if (conn!=null) m_cPool.free(conn);
+            } catch (SQLException sqle2) {
+                throw new StorageDeviceException("Error closing statement "
+                        + "while attempting update of object" + sqle2.getMessage());
+            } finally {
+                st=null;
+                logFinest("Exiting update(DOReader)");
             }
-            logFinest("Exiting update(DOReader)");
         }
     }
 
@@ -249,15 +250,16 @@ public class FieldSearchSQLImpl
                     + "object with pid '" + pid + "': "
                     + sqle.getMessage());
         } finally {
-            if (conn!=null) {
-                if (st!=null) {
-                    try {
-                        st.close();
-                    } catch (Exception e) { }
-                }
-                m_cPool.free(conn);
+            try {
+                if (st!=null) st.close();
+                if (conn!=null) m_cPool.free(conn);
+            } catch (SQLException sqle2) {
+                throw new StorageDeviceException("Error closing statement "
+                        + "while attempting update of object" + sqle2.getMessage());
+            } finally {
+                st=null;
+                logFinest("Exiting delete(String)");
             }
-            logFinest("Exiting delete(String)");
         }
     }
 

@@ -118,12 +118,15 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			throw new LowlevelStorageException(true,"sql failure (get)", e1);
 		} finally {
 			try {
-                                if (rs != null) rs.close();
-				if (statement != null) statement.close();
-				connectionPool.free(connection);
+                                if (rs!=null) rs.close();
+				if (statement!=null) statement.close();
+				if (connection!=null) connectionPool.free(connection);
 			} catch (Exception e2) { // purposely general to include uninstantiated statement, connection
 				throw new LowlevelStorageException(true,"sql failure closing statement, connection, pool (get)", e2);
-			}
+			} finally {
+                            rs=null;
+                            statement=null;
+                        }
 		}
 		return path;
 	}
@@ -148,12 +151,13 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			throw new LowlevelStorageException(true,"sql failurex (exec)", e1);
 		} finally {
 			try {
-				statement.close();
-//				connection.close();
-				connectionPool.free(connection);
+				if (statement!=null) statement.close();
+				if (connection!=null) connectionPool.free(connection);
 			} catch (Exception e2) { // purposely general to include uninstantiated statement, connection
 				throw new LowlevelStorageException(true,"sql failure closing statement, connection, pool (exec)", e2);
-			}
+			} finally {
+                            statement=null;
+                        }
 		}
 	}
 
@@ -180,9 +184,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		} catch (SQLException e1) {
 			throw new ObjectNotInLowlevelStorageException("put into db registry failed for [" + pid + "]", e1);
 		} finally {
-           if (conn!=null) {
-               connectionPool.free(conn);
-           }
+           if (conn!=null) connectionPool.free(conn);
        }
 	}
 
@@ -223,12 +225,15 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			}
 			finally {
 				try {
-                                        if (rs != null) rs.close();
-					if (statement != null) statement.close();
-					connectionPool.free(connection);
+                                        if (rs!=null) rs.close();
+					if (statement!=null) statement.close();
+					if (connection!=null) connectionPool.free(connection);
 				} catch (Exception e2) { // purposely general to include uninstantiated statement, connection
 					throw new LowlevelStorageException(true,"sql failure closing statement, connection, pool (enum)", e2);
-				}
+				} finally {
+                                    rs=null;
+                                    statement=null;
+                                }
 			}
 		}
 		return hashtable.keys();

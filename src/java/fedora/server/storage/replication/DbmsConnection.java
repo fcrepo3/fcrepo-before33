@@ -52,7 +52,7 @@ public class DbmsConnection {
 	}
 
 	public void freeConnection(Connection connection) {
-		connectionPool.free(connection);
+		if (connection!=null) connectionPool.free(connection);
 	}
 
 

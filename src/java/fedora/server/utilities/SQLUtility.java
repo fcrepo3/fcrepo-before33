@@ -152,12 +152,14 @@ public abstract class SQLUtility {
                 st.executeUpdate(i.toString());
             }
         } catch (SQLException sqle) {
-			throw sqle;
+            throw sqle;
         } finally {
-            if (st!=null) {
-                try {
-                    st.close();
-                } catch (SQLException sqle) { }
+            try {
+                if (st!=null) st.close();
+            } catch (SQLException sqle2) {
+                throw sqle2;
+            } finally {
+                st=null;
             }
         }
     }
@@ -212,6 +214,7 @@ public abstract class SQLUtility {
             existingTableSet.add(r.getString("TABLE_NAME").toLowerCase());
         }
         r.close();
+        r=null;
         while (tSpecIter.hasNext()) {
             TableSpec spec=(TableSpec) tSpecIter.next();
             if (!existingTableSet.contains(spec.getName().toLowerCase())) {
@@ -223,7 +226,13 @@ public abstract class SQLUtility {
         throw new SQLException(sqle.getMessage());
       } finally
       {
-        if (r != null) r.close();
+        try {
+            if (r != null) r.close();
+        } catch (SQLException sqle2) {
+            throw sqle2;
+        } finally {
+            r=null;
+        }
       }
       return nonExisting;
     }
@@ -248,6 +257,20 @@ public abstract class SQLUtility {
             }
             tcConn.createTable(spec);
         }
+    }
+
+    public static String backslashEscape(String in) {
+        if (in==null) return in;
+        if (in.indexOf("\\")==-1) return in;
+        StringBuffer out=new StringBuffer();
+        for (int i=0; i<in.length(); i++) {
+          char c=in.charAt(i);
+          if (c=='\\') {
+            out.append('\\');
+          }
+          out.append(c);
+        }
+        return out.toString();
     }
 
     public static String aposEscape(String in) {

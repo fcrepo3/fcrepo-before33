@@ -51,7 +51,6 @@ public class DefaultDOReplicator
         implements DOReplicator {
     private ConnectionPool m_pool;
     private RowInsertion m_ri;
-    private DBIDLookup m_dl;
 
     // sdp - local.fedora.server conversion
     private Pattern hostPattern = null;
@@ -159,6 +158,7 @@ public class DefaultDOReplicator
             int doDbID=results.getInt("doDbID");
             String doState=results.getString("doState");
             results.close();
+            results=null;
             ArrayList updates=new ArrayList();
 
             // Check if state has changed for the digital object.
@@ -195,6 +195,7 @@ public class DefaultDOReplicator
                 }
             }
             results.close();
+            results=null;
 
             // Do any required updates via a transaction.
             if (updates.size()>0) {
@@ -226,6 +227,7 @@ public class DefaultDOReplicator
                 return false;
             }
             results.close();
+            results=null;
 
             // Iterate over disseminators to check if any have been modified
             Iterator dissIter = dissDbIDs.iterator();
@@ -251,6 +253,7 @@ public class DefaultDOReplicator
                     bMechPID=results.getString("bMechPID");
                 }
                 results.close();
+                results=null;
 
                 // Compare the latest version of the disseminator with what's in the db...
                 // Replace what's in db if they are different.
@@ -291,6 +294,7 @@ public class DefaultDOReplicator
                         }
                         newBMechDbID=results.getInt("bMechDbID");
                         results.close();
+                        results=null;
                     }
 
                     // Update the diss table with all new, correct values.
@@ -315,6 +319,7 @@ public class DefaultDOReplicator
                     origDSBindMapDbID=results.getInt("dsBindMapDbID");
                 }
                 results.close();
+                results=null;
                 String newDSBindMapID=diss.dsBindMapID;
                 logFinest("DefaultDOReplicator.updateComponents: newDSBindMapID: "
                           + newDSBindMapID + " origDSBindMapID: " + origDSBindMapID);
@@ -332,7 +337,9 @@ public class DefaultDOReplicator
                         numRows++;
                     }
                     st2.close();
+                    st2=null;
                     results.close();
+                    results=null;
 
                     // Remove all datastreams for this binding map.
                     // If anything has changed, they will all be added back
@@ -473,11 +480,13 @@ public class DefaultDOReplicator
                         if (results != null) results.close();
                         if (st!=null) st.close();
                         connection.setAutoCommit(true);
+                        if (connection!=null) m_pool.free(connection);
                     } catch (SQLException sqle) {
                         logWarning("While cleaning up: " +  sqle.getClass().getName()
                             + ": " + sqle.getMessage());
                     } finally {
-                        m_pool.free(connection);
+                        results=null;
+                        st=null;
                     }
                 }
             }
@@ -511,6 +520,7 @@ public class DefaultDOReplicator
             }
             int doDbID=results.getInt("doDbID");
             results.close();
+            results=null;
 
             Disseminator[] dissArray = reader.GetDisseminators(null, null);
             HashSet newDisseminators = new HashSet();
@@ -562,11 +572,13 @@ public class DefaultDOReplicator
                         if (results != null) results.close();
                         if (st!=null) st.close();
                         connection.setAutoCommit(true);
+                        if (connection!=null) m_pool.free(connection);
                     } catch (SQLException sqle) {
                         logWarning("While cleaning up: " +  sqle.getClass().getName()
                                    + ": " + sqle.getMessage());
                     } finally {
-                        m_pool.free(connection);
+                        results=null;
+                        st=null;
                     }
                 }
             }
@@ -607,6 +619,7 @@ public class DefaultDOReplicator
                         }
                         int doDbID=results.getInt("doDbID");
                         results.close();
+                        results=null;
 
                         // FIXME: this is a quick hack to fix the problem of versioned datastreams
                         // not being properly removed from LLStore at time of purge.
@@ -644,6 +657,7 @@ public class DefaultDOReplicator
                           }
                         }
                         results.close();
+                        results=null;
                         if(isDeleted)
                           return true;
 
@@ -657,6 +671,7 @@ public class DefaultDOReplicator
                           dissDbIds.add(id);
                         }
                         results.close();
+                        results=null;
                         logFinest("DefaultDOReplicator.purgeComponents: Found "
                             + dissDbIds.size() + "dissDbId(s). ");
 
@@ -669,6 +684,7 @@ public class DefaultDOReplicator
                           dsBindMapIds.add(id);
                         }
                         results.close();
+                        results=null;
                         logFinest("DefaultDOReplicator.purgeComponents: Found "
                             + dsBindMapIds.size() + "dsBindMapDbId(s). ");
 
@@ -697,6 +713,7 @@ public class DefaultDOReplicator
                                       + " dissDbId: " + id + " to list of Existing dissDbId(s). ");
                                 }
                                 results.close();
+                                results=null;
                         }
                         logFinest("DefaultDOReplicator.purgeComponents: Found "
                             + existingDisseminators.size() + " existing dissDbId(s). ");
@@ -726,6 +743,7 @@ public class DefaultDOReplicator
                                       + " dsBindMapDbId: " + dsBindMapDbId + " to list of Existing dsBindMapDbId(s). ");
                                 }
                                 results.close();
+                                results=null;
                         }
                         logFinest("DefaultDOReplicator.purgeComponents: Found "
                             + existingDsBindMapIds.size() + " existing dsBindMapDbId(s). ");
@@ -805,11 +823,13 @@ public class DefaultDOReplicator
                                                 if (results != null) results.close();
                                                 if (st!=null) st.close();
                                                 connection.setAutoCommit(true);
+                                                if (connection!=null) m_pool.free(connection);
                                         } catch (SQLException sqle) {
                                                 logWarning("While cleaning up: " +  sqle.getClass().getName()
                                                         + ": " + sqle.getMessage());
                                         } finally {
-                                                m_pool.free(connection);
+                                                results=null;
+                                                st=null;
                                         }
                                 }
                         }
@@ -851,6 +871,7 @@ public class DefaultDOReplicator
             int bDefDbID=results.getInt("bDefDbID");
             String bDefState=results.getString("bDefState");
             results.close();
+            results=null;
             ArrayList updates=new ArrayList();
             // check if state has changed for the bdef object
             String objState = reader.GetObjectState();
@@ -894,11 +915,13 @@ public class DefaultDOReplicator
                         if (results != null) results.close();
                         if (st!=null) st.close();
                         connection.setAutoCommit(true);
+                        if (connection!=null) m_pool.free(connection);
                     } catch (SQLException sqle) {
                         logWarning("While cleaning up: " +  sqle.getClass().getName()
                             + ": " + sqle.getMessage());
                     } finally {
-                        m_pool.free(connection);
+                        results=null;
+                        st=null;
                     }
                 }
             }
@@ -938,6 +961,7 @@ public class DefaultDOReplicator
             int bMechDbID=results.getInt("bMechDbID");
             String bMechState=results.getString("bMechState");
             results.close();
+            results=null;
             ArrayList updates=new ArrayList();
             // check if state has changed for the bdef object
             String objState = reader.GetObjectState();
@@ -981,11 +1005,13 @@ public class DefaultDOReplicator
                         if (results != null) results.close();
                         if (st!=null) st.close();
                         connection.setAutoCommit(true);
+                        if (connection!=null) m_pool.free(connection);
                     } catch (SQLException sqle) {
                         logWarning("While cleaning up: " +  sqle.getClass().getName()
                             + ": " + sqle.getMessage());
                     } finally {
-                        m_pool.free(connection);
+                        results=null;
+                        st=null;
                     }
                 }
             }
@@ -1486,9 +1512,15 @@ public class DefaultDOReplicator
                     + "bDefDbID=" + dbid);
             logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Deleted " + rowCount + " row(s).");
         } finally {
-            if (results != null) results.close();
-            if (st!=null) st.close();
-            logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Exiting -----");
+            try {
+                if (results != null) results.close();
+                if (st!=null) st.close();
+            } catch (SQLException sqle) {
+            } finally {
+                results=null;
+                st=null;
+                logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Exiting -----");
+            }
         }
     }
 
@@ -1535,6 +1567,7 @@ public class DefaultDOReplicator
             int dbid=results.getInt("bMechDbID");
             //int smtype_dbid=results.getInt("bMechDbID");
             results.close();
+            results=null;
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism:" + pid + " was found in bMech table (DBID="
             //        + dbid + ", SMTYPE_DBID=" + smtype_dbid + ")");
                     + dbid);
@@ -1548,6 +1581,7 @@ public class DefaultDOReplicator
                         results.getInt("dsBindKeyDbID")));
             }
             results.close();
+            results=null;
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Found " + dsBindingKeyIds.size()
                     + " dsBindKeyDbID(s).");
             //
@@ -1586,9 +1620,15 @@ public class DefaultDOReplicator
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
 
         } finally {
-            if (results != null) results.close();
-            if (st!=null)st.close();
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Exiting -----");
+            try {
+                if (results != null) results.close();
+                if (st!=null)st.close();
+            } catch (SQLException sqle) {
+            } finally {
+                results=null;
+                st=null;
+                logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Exiting -----");
+            }
         }
     }
 
@@ -1637,6 +1677,7 @@ public class DefaultDOReplicator
             }
             int dbid=results.getInt("doDbID");
             results.close();
+            results=null;
             logFinest("DefaultDOReplicator.deleteDigitalObject: " + pid + " was found in do table (DBID="
                     + dbid + ")");
 
@@ -1652,6 +1693,7 @@ public class DefaultDOReplicator
                 dissIds.add(new Integer(results.getInt("dissDbID")));
             }
             results.close();
+            results=null;
 
             logFinest("DefaultDOReplicator.deleteDigitalObject: Found " + dissIds.size() + " dissDbID(s).");
             logFinest("DefaultDOReplicator.deleteDigitalObject: Getting dissDbID(s) from doDissAssoc "
@@ -1681,6 +1723,7 @@ public class DefaultDOReplicator
                 }
               }
               results.close();
+              results=null;
 
             }
 
@@ -1692,6 +1735,7 @@ public class DefaultDOReplicator
                 bmapIds.add(new Integer(results.getInt("dsBindMapDbID")));
             }
             results.close();
+            results=null;
             logFinest("DefaultDOReplicator.deleteDigitalObject: Found " + bmapIds.size() + " dsBindMapDbID(s).");
 
             // Iterate over bmapIds and separate those that are unique
@@ -1723,7 +1767,9 @@ public class DefaultDOReplicator
               }
 
               rs.close();
+              rs=null;
               st2.close();
+              st2=null;
             }
 
             //
@@ -1760,10 +1806,17 @@ public class DefaultDOReplicator
                     "dsBindMapDbID", bmapIdsNotShared));
             logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s).");
         } finally {
-            if (results != null) results.close();
-            if (st!=null) st.close();
-            if (st2!=null) st2.close();
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Exiting -----");
+            try {
+                if (results != null) results.close();
+                if (st!=null) st.close();
+                if (st2!=null) st2.close();
+            } catch (SQLException sqle) {
+            } finally {
+                results=null;
+                st=null;
+                st2=null;
+                logFinest("DefaultDOReplicator.deleteDigitalObject: Exiting -----");
+            }
         }
     }
 
@@ -2105,6 +2158,7 @@ public class DefaultDOReplicator
 		logFinest("Doing DB Insert: " + insertionStatement);
 		rowCount = statement.executeUpdate(insertionStatement);
 		statement.close();
+                statement=null;
 	}
 
         /**
@@ -2244,12 +2298,14 @@ public class DefaultDOReplicator
                 {
                     if (rs != null) rs.close();
                     if (statement != null) statement.close();
-
                 } catch (SQLException sqle)
                 {
                     throw new StorageDeviceException("[DBIDLookup] An error has "
                         + "occurred. The error was \" " + sqle.getClass().getName()
                         + " \". The cause was \" " + sqle.getMessage() + " \"");
+                } finally {
+                    rs=null;
+                    statement=null;
                 }
             }
             return ID;
@@ -2316,12 +2372,14 @@ public class DefaultDOReplicator
                     {
                         if (rs != null) rs.close();
                         if (statement != null) statement.close();
-
                     } catch (SQLException sqle)
                     {
                         throw new StorageDeviceException("[DBIDLookup] An error has "
                             + "occurred. The error was \" " + sqle.getClass().getName()
                             + " \". The cause was \" " + sqle.getMessage() + " \"");
+                    } finally {
+                        rs=null;
+                        statement=null;
                     }
                 }
                 return ID;
@@ -2375,12 +2433,14 @@ public class DefaultDOReplicator
                     {
                         if (rs != null) rs.close();
                         if (statement != null) statement.close();
-
                     } catch (SQLException sqle)
                     {
                         throw new StorageDeviceException("[DBIDLookup] An error has "
                             + "occurred. The error was \" " + sqle.getClass().getName()
                             + " \". The cause was \" " + sqle.getMessage() + " \"");
+                    } finally {
+                        rs=null;
+                        statement=null;
                     }
                 }
                 return ID;
@@ -2430,12 +2490,14 @@ public class DefaultDOReplicator
                     {
                         if (rs != null) rs.close();
                         if (statement != null) statement.close();
-
                     } catch (SQLException sqle)
                     {
                         throw new StorageDeviceException("[DBIDLookup] An error has "
                             + "occurred. The error was \" " + sqle.getClass().getName()
                             + " \". The cause was \" " + sqle.getMessage() + " \"");
+                    } finally {
+                        rs=null;
+                        statement=null;
                     }
                 }
                 return ID;
@@ -2472,12 +2534,14 @@ public class DefaultDOReplicator
                     {
                         if (rs != null) rs.close();
                         if (statement != null) statement.close();
-
                     } catch (SQLException sqle)
                     {
                         throw new StorageDeviceException("[DBIDLookup] An error has "
                             + "occurred. The error was \" " + sqle.getClass().getName()
                             + " \". The cause was \" " + sqle.getMessage() + " \"");
+                    } finally {
+                        rs=null;
+                        statement=null;
                     }
                 }
                 return ID;
@@ -2689,6 +2753,7 @@ public class DefaultDOReplicator
               }
               int dbid=results.getInt("doDbID");
               results.close();
+              results=null;
               logFinest("DefaultDOReplicator.purgeDisseminators: " + pid + " was found in do table (DBID="
                       + dbid + ")");
 
@@ -2723,6 +2788,7 @@ public class DefaultDOReplicator
                   }
                 }
                 results.close();
+                results=null;
               }
 
               // Iterate over bmapIds and separate those that are unique
@@ -2756,7 +2822,9 @@ public class DefaultDOReplicator
                 }
 
                 rs.close();
+                rs=null;
                 st2.close();
+                st2=null;
               }
 
               //
@@ -2797,10 +2865,17 @@ public class DefaultDOReplicator
               logFinest("DefaultDOReplicator.purgeDisseminators: Deleted " + rowCount + " row(s).");
 
           } finally {
-              if (results != null) results.close();
-              if (st!=null) st.close();
-              if (st2!=null) st2.close();
-              logFinest("DefaultDOReplicator.purgeDisseminators: Exiting ------");
+              try {
+                  if (results != null) results.close();
+                  if (st!=null) st.close();
+                  if (st2!=null) st2.close();
+              } catch (SQLException sqle) {
+              } finally {
+                  results=null;
+                  st=null;
+                  st2=null;
+                  logFinest("DefaultDOReplicator.purgeDisseminators: Exiting ------");
+              }
         }
       }
 

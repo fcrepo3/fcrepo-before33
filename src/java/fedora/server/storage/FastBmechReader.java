@@ -234,12 +234,15 @@ public class FastBmechReader extends FastDOReader implements BMechReader
         {
           if (rs != null) rs.close();
           if (statement != null) statement.close();
-          connectionPool.free(connection);
+          if (connection!=null) connectionPool.free(connection);
         } catch (SQLException sqle)
         {
           throw new GeneralException("[FastBmechReader] Unexpected error "
               + "from SQL database. The error was \"" + sqle.getMessage()
               + "\"  .");
+        } finally {
+          rs=null;
+          statement=null;
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -363,12 +366,15 @@ public class FastBmechReader extends FastDOReader implements BMechReader
         {
           if (rs != null) rs.close();
           if (statement != null) statement.close();
-          connectionPool.free(connection);
+          if (connection!=null) connectionPool.free(connection);
         } catch (SQLException sqle)
         {
           throw new GeneralException("[FastBmechReader] Unexpected error "
               + "from SQL database. The error was \"" + sqle.getMessage()
               + "\"  .");
+        } finally {
+          rs=null;
+          statement=null;
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -523,12 +529,15 @@ public class FastBmechReader extends FastDOReader implements BMechReader
       {
         if (rs != null) rs.close();
         if (statement != null) statement.close();
-        connectionPool.free(connection);
+        if (connection!=null) connectionPool.free(connection);
       } catch (SQLException sqle)
       {
         throw new GeneralException("[FastBmechReader] Unexpected error "
             + "from SQL database. The error was \"" + sqle.getMessage()
             + "\"  .");
+        } finally {
+          rs=null;
+          statement=null;
         }
       }
     if (bMechLabel == null || bMechLabel.equalsIgnoreCase(""))
