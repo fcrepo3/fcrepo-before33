@@ -57,7 +57,8 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName LIST_METHODS;		
 	public final XacmlName LIST_OBJECT_IN_FIELD_SEARCH_RESULTS;
 	public final XacmlName LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS;
-
+	public final XacmlName SURROGATE_PING;
+	public final XacmlName USER_REPRESENTED;
 
     private ActionNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
@@ -77,7 +78,7 @@ public class ActionNamespace extends XacmlNamespace {
     	this.N_NEW_PIDS = addName(new XacmlName(this, "nNewPids"));
     	this.BDEF_PID = addName(new XacmlName(this, "bdefPid"));
     	this.BDEF_NAMESPACE = addName(new XacmlName(this, "bdefNamespace"));
-    	this.DISSEMINATOR_METHOD = addName(new XacmlName(this, "disseminatorMethod"));
+    	this.DISSEMINATOR_METHOD = addName(new XacmlName(this, "disseminatorMethod"));    	
     	
     	// Values of CONTEXT_ID are sequential numerals, hence not enumerated here.
     	
@@ -122,7 +123,8 @@ public class ActionNamespace extends XacmlNamespace {
     	LIST_METHODS               = addName(new XacmlName(this, "listMethods"));		
     	LIST_OBJECT_IN_FIELD_SEARCH_RESULTS               = addName(new XacmlName(this, "listObjectInFieldSearchResults"));
     	LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS               = addName(new XacmlName(this, "listObjectInResourceIndexResults"));
-    	
+    	SURROGATE_PING = addName(new XacmlName(this, "actAsSurrogateFor"));
+    	USER_REPRESENTED = addName(new XacmlName(this, "subject-represented"));    	
     }
 
 	public static ActionNamespace onlyInstance = new ActionNamespace(Release2_1Namespace.getInstance(), "action");

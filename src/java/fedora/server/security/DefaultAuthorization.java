@@ -7,6 +7,8 @@ import java.util.Map;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.catalina.realm.JAASRealm;
+
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Module;
@@ -137,6 +139,7 @@ public class DefaultAuthorization extends Module implements Authorization {
     if (moduleParameters.containsKey(ENFORCE_MODE)) {
     	enforceMode = (String) moduleParameters.get(ENFORCE_MODE);
     }
+	System.err.println("DefaultAuthorization constructor end");
  /*
 	try {
 		ACTION_NEW_STATE_URI = new URI(ACTION_NEW_STATE_URI_STRING);		
@@ -205,19 +208,33 @@ public class DefaultAuthorization extends Module implements Authorization {
    * @throws ModuleInitializationException If the module cannot be initialized.
    */
   public void initModule() throws ModuleInitializationException {
+	System.err.println("DefaultAuthorization.initModule()");
   }
 
   public void postInitModule() throws ModuleInitializationException {
+  	System.err.println("in DefaultAuthorization.postInitModule() 1");
     DOManager m_manager = (DOManager) getServer().getModule("fedora.server.storage.DOManager");
+  	System.err.println("in DefaultAuthorization.postInitModule() 2");
     if (m_manager == null) {
+    	System.err.println("in DefaultAuthorization.postInitModule() 3");
       throw new ModuleInitializationException("Can't get a DOManager from Server.getModule", getRole());
     }
+  	System.err.println("in DefaultAuthorization.postInitModule() 4");
     try {
+      	System.err.println("in DefaultAuthorization.postInitModule() 5");
         xacmlPep = PolicyEnforcementPoint.getInstance();
+      	System.err.println("in DefaultAuthorization.postInitModule() 6");
         xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesDirectory, objectPoliciesDirectory, m_manager);
+      	System.err.println("in DefaultAuthorization.postInitModule() 7");
     } catch (Throwable e1) {
+      	System.err.println("in DefaultAuthorization.postInitModule() 8");
     	ModuleInitializationException e2 = new ModuleInitializationException(e1.getMessage(), getRole());
     	throw e2;
+    }
+    File surrogatePolicyDirectory = new File(repositoryPoliciesDirectory);    
+    if (surrogatePolicyDirectory.isDirectory() && surrogatePolicyDirectory.canRead()) {
+        Transom.getInstance().setAllowSurrogate(true);
+        Transom.getInstance().setSurrogatePolicyDirectory(surrogatePolicyDirectory);
     }
   }
 

@@ -19,10 +19,13 @@
 package org.apache.catalina.realm;
 
 
+import java.io.File;
 import java.security.Principal;
 import java.security.acl.Group;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.security.auth.Subject;
@@ -31,12 +34,26 @@ import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.Container;
+import org.apache.catalina.Context;
+import org.apache.catalina.HttpRequest;
+import org.apache.catalina.HttpResponse;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import fedora.common.Constants;
+//import fedora.server.errors.ModuleInitializationException;
+//import fedora.server.security.PolicyEnforcementPoint;
+import fedora.server.MultiValueMap;
+//import fedora.server.errors.AuthzOperationalException;
+import fedora.server.security.ReducedPolicyEnforcementPoint;
+import fedora.server.security.Transom;
 
 
 /**
@@ -132,7 +149,7 @@ public class JAASRealm
      * The string manager for this package.
      */
     protected static final StringManager sm =
-        StringManager.getManager(Constants.Package);
+        StringManager.getManager("org.apache.catalina.realm");
 
 
     /**
@@ -161,6 +178,9 @@ public class JAASRealm
 
     public void setContainer(Container container) {
         super.setContainer(container);
+        System.err.println("**************************************************" + container);
+        JAASMemoryLoginModule.setStaticContainer(container); //fixup
+        JAASJNDILoginModule.setStaticContainer(container); //fixup        
         String name=container.getName();
         if( appName==null  ) {
             appName=name;
@@ -233,7 +253,32 @@ public class JAASRealm
 
 
     // --------------------------------------------------------- Public Methods
-
+    private ReducedPolicyEnforcementPoint rpep = null;
+    private void initt() {
+        boolean allowSurrogate = false;
+        if ((Transom.getInstance().getAllowSurrogate() != null) 
+        &&  (Transom.getInstance().getSurrogatePolicyDirectory() != null)) {
+    		allowSurrogate = Transom.getInstance().getAllowSurrogate().booleanValue();
+    	}
+        File surrogatePoliciesDirectory = null;
+        if (allowSurrogate) {
+        	surrogatePoliciesDirectory = Transom.getInstance().getSurrogatePolicyDirectory();
+            try {
+              	System.err.println("in initt() 5");
+                rpep = ReducedPolicyEnforcementPoint.getInstance();
+              	System.err.println("in initt() 6");
+              	if (rpep != null) {
+                    rpep.initPep("com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg", surrogatePoliciesDirectory);             		
+              	}
+              	System.err.println("in initt() 7");
+            } catch (Throwable e1) {
+              	System.err.println("in initt() 8");	        	
+            	rpep = null;
+            }
+        }    	
+    }
+    
+    /*package*/ static final String DONTCHECK = "@(y@+$y@+y@md0n++y@+";
 
     /**
      * Return the Principal associated with the specified username and
@@ -249,7 +294,72 @@ public class JAASRealm
      *  authenticating this username
      */
     public Principal authenticate(String username, String credentials) {
+    	if (DONTCHECK.equals(credentials)) {
+    		return null;
+    	}
+    	Principal principal = null;
+    	try {
+    		System.err.println("calling innerAuth for " + username);
+    		principal = innerAuthenticate(username, credentials);
+    		System.err.println("back from innerAuth " + principal);
+    		if ((principal != null) && (represented != null) && !"".equals(represented)) {
+        		System.err.println("in conditional");    			
+    			String[] roles = null;
+    		  	if (principal instanceof GenericPrincipal) {		
+    		  		roles = ((GenericPrincipal) principal).getRoles();
+    		  	}
+    		  	principal = null;
+    			if (rpep == null) {
+    				initt();
+    			}
+    			if (rpep != null) {
+            		System.err.println("in conditional 2a");
+    				fedora.server.Context context = fedora.server.ReadOnlyContext.getContext("", httpServletRequest, false,
+    						username, null, roles);
+    				String target = "urn:fedora:names:fedora:2.1:action:actAsSurrogateFor";            		
+            		MultiValueMap actionAttributes = new MultiValueMap();
+            		String name = "";
+            		try {
+            			name = actionAttributes.setReturn("urn:fedora:names:fedora:2.1:action:subject-represented", represented);
+                		context.setActionAttributes(actionAttributes);            		
+            		} catch (Exception e) {
+            			context.setActionAttributes(null);		
+            			throw new Exception(target + " couldn't set " + name, e);	
+            		}
+            		context.setResourceAttributes(null);
+            		System.err.println("in conditional 2b");
+    				try {
+        				log("enforcing " + target);
+    					rpep.enforce(username, target, "", "", "", context);
+                		System.err.println("in conditional 2c");
+    	    			principal = innerAuthenticate(represented, DONTCHECK);
+                		System.err.println("in conditional 2d");
+    				} catch (Throwable t) {
+                		System.err.println("in conditional 2e, prob authz error on surrogate");
+    				}
+    			}
+    		}
+        } catch(Throwable t) {
+            log.error( "error ", t);
+        }
+        return principal;
+    }
 
+    /**
+     * Return the Principal associated with the specified username and
+     * credentials, if there is one; otherwise return <code>null</code>.
+     *
+     * If there are any errors with the JDBC connection, executing
+     * the query or anything we return null (don't authenticate). This
+     * event is also logged, and the connection will be closed so that
+     * a subsequent request will automatically re-open it.
+     *
+     * @param username Username of the Principal to look up
+     * @param credentials Password or other credentials to use in
+     *  authenticating this username
+     */
+    private Principal innerAuthenticate(String username, String credentials) {
+		System.err.println("begin innerAuth for " + username);
         // Establish a LoginContext to use for authentication
         try {
         LoginContext loginContext = null;
@@ -263,45 +373,76 @@ public class JAASRealm
         ClassLoader ocl=Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
         try {
+    		System.err.println("innerAuth in try, before callback new " + appName + " " + username + " " + credentials);
+    		//JAASCallbackHandler dummyJAASCallbackHandler = new JAASCallbackHandler(this, username, credentials);
+    		System.err.println("innerAuth before new logincontext");
+
             loginContext = new LoginContext
                 (appName, new JAASCallbackHandler(this, username,
                                                   credentials));
+    		System.err.println("innerAuth after new logincontext");
+
         } catch (Throwable e) {
+    		System.err.println("innerAuth after blowup");
+    		System.err.println(e.getMessage());
+    		System.err.println(e.getCause().getMessage());    		
             log.error(sm.getString("jaasRealm.unexpectedError"), e);
             return (null);
         } finally {
             Thread.currentThread().setContextClassLoader(ocl);
         }
-
+		System.err.println("didn't blowup");
         if( log.isDebugEnabled())
             log.debug("Login context created " + username);
 
         // Negotiate a login via this LoginContext
         Subject subject = null;
         try {
+    		System.err.println("before loginContext.login()");
             loginContext.login();
+    		System.err.println("after loginContext.login()");            
             subject = loginContext.getSubject();
             if (subject == null) {
                 if( log.isDebugEnabled())
                     log.debug(sm.getString("jaasRealm.failedLogin", username));
                 return (null);
             }
-        } catch (AccountExpiredException e) {
+        } catch (AccountExpiredException e) {    		
+        	System.err.println("then got 1 " + e.getMessage());
+        	if (e.getCause() != null) {
+            	System.err.println("then got " + e.getCause().getMessage());        	        		
+        	}
             if (log.isDebugEnabled())
                 log.debug(sm.getString("jaasRealm.accountExpired", username));
             return (null);
         } catch (CredentialExpiredException e) {
+        	System.err.println("then got 2 " + e.getMessage());
+        	if (e.getCause() != null) {
+            	System.err.println("then got " + e.getCause().getMessage());        	        		
+        	}       	
             if (log.isDebugEnabled())
                 log.debug(sm.getString("jaasRealm.credentialExpired", username));
             return (null);
         } catch (FailedLoginException e) {
+        	System.err.println("then got 3 " + e.getMessage());
+        	if (e.getCause() != null) {
+            	System.err.println("then got " + e.getCause().getMessage());        	        		
+        	}  	
             if (log.isDebugEnabled())
                 log.debug(sm.getString("jaasRealm.failedLogin", username));
             return (null);
         } catch (LoginException e) {
+        	System.err.println("then got 4 " + e.getMessage());
+        	if (e.getCause() != null) {
+            	System.err.println("then got " + e.getCause().getMessage());        	        		
+        	}
             log.warn(sm.getString("jaasRealm.loginException", username), e);
             return (null);
         } catch (Throwable e) {
+        	System.err.println("then got 5 " + e.getMessage());
+        	if (e.getCause() != null) {
+            	System.err.println("then got " + e.getCause().getMessage());        	        		
+        	}        	
             log.error(sm.getString("jaasRealm.unexpectedError"), e);
             return (null);
         }
@@ -318,7 +459,7 @@ public class JAASRealm
         if (log.isDebugEnabled()) {
             log.debug(sm.getString("jaasRealm.authenticateSuccess", username));
         }
-
+		System.err.println("end innerAuth for " + username);        
         return (principal);
         } catch( Throwable t) {
             log.error( "error ", t);
@@ -371,6 +512,7 @@ public class JAASRealm
      * @param subject The Subject representing the logged in user
      */
     protected Principal createPrincipal(String username, Subject subject) {
+    	System.err.println("in createPrincipal");    	
         // Prepare to scan the Principals for this Subject
         String password = null; // -will- be carried forward
         ArrayList roles = new ArrayList();
@@ -419,9 +561,11 @@ public class JAASRealm
             	String[]  tempRoles = ((GenericPrincipal) principal).getRoles();
             	for (int i = 0; i < tempRoles.length; i++) {
                     roles.add(tempRoles[i]);            		
+System.err.println("AAAAAAAAAA adding role:" + tempRoles[i]);                    
             	}
             } else if (roleClasses.contains(principalClass)) {
                 roles.add(principal.getName());
+System.err.println("XXXXXXXXXX adding role:" + principal.getName());                                 
             }
             
             // following code left intact:
@@ -453,10 +597,10 @@ public class JAASRealm
         return tomcatSeesOnlyThisPrincipal;
     }
 
-
+    
     // ------------------------------------------------------ Lifecycle Methods
 
-
+ 
     /**
      *
      * Prepare for active use of the public methods of this Component.
@@ -469,7 +613,9 @@ public class JAASRealm
         // Perform normal superclass initialization
         super.start();
 
+
     }
+	
 
 
     /**
@@ -484,6 +630,42 @@ public class JAASRealm
         super.stop();
 
     }
+    
+    private String represented = "";
+    
+    private HttpServletRequest httpServletRequest = null;
+    
+    public SecurityConstraint[] findSecurityConstraints(HttpRequest request, Context context) {
+    	System.err.println("in findSecurityConstraints");
+    	ServletRequest servletRequest = request.getRequest();
+    	if (servletRequest instanceof HttpServletRequest) {
+        	System.err.println("got HttpServletRequest");
+        	httpServletRequest = (HttpServletRequest) servletRequest;
+        	String fromHeader = httpServletRequest.getHeader("From");
+    		if ((fromHeader != null) && ! "".equals(fromHeader)) {
+    			represented = fromHeader;
+            	System.err.println("got from=" + represented);    			
+    		}
+    	}
+
+     	return super.findSecurityConstraints(request, context);
+     }
+    
+    public boolean hasUserDataPermission(HttpRequest request, HttpResponse response,
+            SecurityConstraint[] constraints) throws java.io.IOException {
+    	System.err.println("in hasUserDataPermission");
+    	return super.hasUserDataPermission(request, response, constraints);
+    }
+	 
+	 public boolean hasResourcePermission(HttpRequest request, HttpResponse response,
+            SecurityConstraint[] constraints, Context context) throws java.io.IOException {
+    	System.err.println("in hasResourcePermission");
+	 	return super.hasResourcePermission(request, response, constraints, context);
+	 }
+	 
+	 public JAASRealm() {
+	 	represented = "";
+	 }
 
 
 }
