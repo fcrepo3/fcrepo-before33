@@ -33,7 +33,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 
-public class FedoraAPIMBindingSOAPHTTPImpl 
+public class FedoraAPIMBindingSOAPHTTPImpl
         implements FedoraAPIM {
 
     /** The Fedora Server instance */
@@ -66,14 +66,14 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 s_initialized=true;
                 s_management=(Management) s_server.getModule("fedora.server.management.Management");
             }
-            s_st=FileSystemLowlevelStorage.getPermanentStore();  // FIXME: Move this
+            s_st=FileSystemLowlevelStorage.getObjectStore();  // FIXME: Move this
         } catch (InitializationException ie) {
             System.err.println(ie.getMessage());
             s_initialized=false;
             s_initException=ie;
         }
     }
-    
+
     private Context getContext() {
         HashMap h=new HashMap();
         h.put("application", "apim");
@@ -86,8 +86,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         h.put("host", req.getRemoteAddr());
         return new ReadOnlyContext(h);
     }
-    
-    public String createObject() 
+
+    public String createObject()
             throws RemoteException {
         assertInitialized();
         try {
@@ -97,7 +97,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(se);
         }
     }
-    
+
     private void logStackTrace(Exception e) {
         StackTraceElement[] els=e.getStackTrace();
         StringBuffer lines=new StringBuffer();
@@ -117,7 +117,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            return s_management.ingestObject(getContext(), 
+            return s_management.ingestObject(getContext(),
                     new ByteArrayInputStream(METSXML), "metslikefedora1", "UTF-8", true); // always gens pid, unless pid in stream starts with "test:"
         } catch (ServerException se) {
             logStackTrace(se);
@@ -128,7 +128,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public byte[] getObjectXML(String PID) 
+    public byte[] getObjectXML(String PID)
             throws RemoteException {
         assertInitialized();
         try {
@@ -144,7 +144,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
     // temporarily here
-    private void pipeStream(InputStream in, OutputStream out) 
+    private void pipeStream(InputStream in, OutputStream out)
             throws StorageDeviceException {
         try {
             byte[] buf = new byte[4096];
@@ -216,8 +216,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
 */
     }
-    
-    public ObjectInfo getObjectInfo(String pid) 
+
+    public ObjectInfo getObjectInfo(String pid)
             throws RemoteException {
         assertInitialized();
         try {
@@ -233,17 +233,17 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return null;
     }
 
-    public String[] listObjectPIDs(String pidPattern, String foType, 
-            String lockedByPattern, String state, String labelPattern, 
-            String contentModelIdPattern, Calendar createDateMin, 
-            Calendar createDateMax, Calendar lastModDateMin, 
-            Calendar lastModDateMax) 
+    public String[] listObjectPIDs(String pidPattern, String foType,
+            String lockedByPattern, String state, String labelPattern,
+            String contentModelIdPattern, Calendar createDateMin,
+            Calendar createDateMax, Calendar lastModDateMin,
+            Calendar lastModDateMax)
             throws RemoteException {
         assertInitialized();
         try {
             return s_management.listObjectPIDs(getContext(), pidPattern,
                     foType, lockedByPattern, state, labelPattern,
-                    contentModelIdPattern, createDateMin, createDateMax, 
+                    contentModelIdPattern, createDateMin, createDateMax,
                     lastModDateMin, lastModDateMax);
         } catch (ServerException se) {
             logStackTrace(se);
@@ -361,7 +361,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         return null;
     }
-    
+
     private void assertInitialized()
             throws java.rmi.RemoteException {
         if (!s_initialized) {

@@ -167,7 +167,7 @@ public class DefaultDOManager
         m_pidGenerator=(PIDGenerator) getServer().
                 getModule("fedora.server.management.PIDGenerator");
         // get the permanent and temporary storage handles
-        // m_permanentStore=FileSystemLowlevelStorage.getPermanentStore();
+        // m_permanentStore=FileSystemLowlevelStorage.getObjectStore();
         // m_tempStore=FileSystemLowlevelStorage.getTempStore();
         // moved above to getPerm and getTemp (lazy instantiation) because of
         // multi-instance problem due to s_server.getInstance occurring while another is running
@@ -224,8 +224,12 @@ public class DefaultDOManager
         // remove pid from tracked list...m_writers.remove(writer);
     }
 
-    public ILowlevelStorage getPermanentStore() {
-        return FileSystemLowlevelStorage.getPermanentStore();
+    public ILowlevelStorage getObjectStore() {
+        return FileSystemLowlevelStorage.getObjectStore();
+    }
+
+    public ILowlevelStorage getDatastreamStore() {
+        return FileSystemLowlevelStorage.getDatastreamStore();
     }
 
     public ILowlevelStorage getTempStore() {
@@ -286,8 +290,8 @@ public class DefaultDOManager
         } else {
             return new SimpleDOReader(context, this, m_translator,
                     m_storageFormat, m_storageFormat, m_storageFormat,
-                    m_storageCharacterEncoding, 
-                    getPermanentStore().retrieve(pid), this);
+                    m_storageCharacterEncoding,
+                    getObjectStore().retrieve(pid), this);
         }
     }
 
@@ -298,8 +302,8 @@ public class DefaultDOManager
         } else {
             return new SimpleBMechReader(context, this, m_translator,
                     m_storageFormat, m_storageFormat, m_storageFormat,
-                    m_storageCharacterEncoding, 
-                    getPermanentStore().retrieve(pid), this);
+                    m_storageCharacterEncoding,
+                    getObjectStore().retrieve(pid), this);
         }
     }
 
@@ -310,8 +314,8 @@ public class DefaultDOManager
         } else {
             return new SimpleBDefReader(context, this, m_translator,
                     m_storageFormat, m_storageFormat, m_storageFormat,
-                    m_storageCharacterEncoding, 
-                    getPermanentStore().retrieve(pid), this);
+                    m_storageCharacterEncoding,
+                    getObjectStore().retrieve(pid), this);
         }
     }
 
@@ -366,7 +370,7 @@ public class DefaultDOManager
                   String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                       + dmc.DSVersionID;
                   logInfo("Deleting ManagedContent datastream. " + "id: " + id);
-                  getPermanentStore().remove(id);
+                  getDatastreamStore().remove(id);
                 }
               }
             }
@@ -379,7 +383,7 @@ public class DefaultDOManager
                 // FIXME: could check modification state with reg table to
                 // deal with this better, but for now this works
             }
-            getPermanentStore().remove(obj.getPid());
+            getObjectStore().remove(obj.getPid());
             // Remove it from the registry
             unregisterObject(obj.getPid());
             // Set entry for this object to "D" in the replication jobs table
@@ -416,7 +420,7 @@ public class DefaultDOManager
                       new ByteArrayInputStream(mimeTypedStream.stream);
                   String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                             + dmc.DSVersionID;
-                  getPermanentStore().add(id, bais);
+                  getDatastreamStore().add(id, bais);
 
                   // Make new audit record.
                   a = new AuditRecord();
@@ -487,7 +491,7 @@ public class DefaultDOManager
                 ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
                 m_validator.validate(inV, 0, "store");
                 // if ok, write change to perm store here...right before db stuff
-                getPermanentStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+                getObjectStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
             } else {
                 m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
             }
@@ -660,7 +664,7 @@ public class DefaultDOManager
             // TODO: make sure there's no session lock on a writer for the pid
 
             BasicDigitalObject obj=new BasicDigitalObject();
-            m_translator.deserialize(getPermanentStore().retrieve(pid), obj,
+            m_translator.deserialize(getObjectStore().retrieve(pid), obj,
                     m_storageFormat, m_storageCharacterEncoding);
             DOWriter w=new DefinitiveDOWriter(context, this, obj);
             // add to internal list...somehow..think...
@@ -762,7 +766,7 @@ public class DefaultDOManager
                 // and this is removed, be sure to change the .replace(...) call
                 // to .add(...) in doCommit()
                 InputStream in3=getTempStore().retrieve("temp-ingest");
-                getPermanentStore().add(obj.getPid(), in3);
+                getObjectStore().add(obj.getPid(), in3);
 
                 permPid=obj.getPid();
                 inPermanentStore=true; // signifies successful perm store addition
@@ -792,7 +796,7 @@ public class DefaultDOManager
                 // remove from permanent and temp store if anything failed
                 if (permPid!=null) {
                     if (inPermanentStore) {
-                        getPermanentStore().remove(permPid);
+                        getObjectStore().remove(permPid);
                     }
                     if (inTempStore) {
                         getTempStore().remove(permPid);

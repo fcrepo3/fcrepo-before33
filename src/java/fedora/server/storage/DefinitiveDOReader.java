@@ -142,7 +142,7 @@ public class DefinitiveDOReader implements DOReader
     try
     {
       // LLSTORE: call to low level storage layer to retrieve object
-      doXML = new InputSource(FileSystemLowlevelStorage.getPermanentStore().retrieve(objectPID));
+      doXML = new InputSource(FileSystemLowlevelStorage.getObjectStore().retrieve(objectPID));
     }
     catch(LowlevelStorageException e)
     {
@@ -218,7 +218,7 @@ public class DefinitiveDOReader implements DOReader
       InputStream doIn = null;
       try
       {
-        doIn = FileSystemLowlevelStorage.getPermanentStore().retrieve(PID);
+        doIn = FileSystemLowlevelStorage.getObjectStore().retrieve(PID);
       }
       catch(LowlevelStorageException e)
       {

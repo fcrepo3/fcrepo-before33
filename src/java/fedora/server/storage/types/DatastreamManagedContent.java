@@ -26,7 +26,7 @@ public class DatastreamManagedContent
     {
       try
       {
-        return FileSystemLowlevelStorage.getPermanentStore().
+        return FileSystemLowlevelStorage.getDatastreamStore().
             retrieve(this.DSLocation);
 
       } catch (Throwable th)
