@@ -157,7 +157,9 @@
 		<mkdir dir="${dist.dir}"/>
 		<mkdir dir="${release.dir}"/>
 		<mkdir dir="${release.dir}/fedora-${fedora.version}-src"/>
-		<copy todir="${release.dir}/fedora-${fedora.version}-src"/>
+		<copy todir="${release.dir}/fedora-${fedora.version}-src">
+			<fileset dir="."/>
+		</copy>
 		<tar longfile="gnu" tarfile="${release.dir}/fedora-${fedora.version}-src.tar">
 			<tarfileset dir="${release.dir}" mode="755">
 				<include name="fedora-${fedora.version}-src/res/ant/bin/ant/**"/>
@@ -301,6 +303,7 @@
 		<copy file="src/xsl/batchtool/merge.xsl" todir="dist/client/lib"/>
 		<mkdir dir="dist/client/demo/batch-demo"/>
 		<copy file="src/demo-objects/mets/batch-demo/mets-template.xml" todir="dist/client/demo/batch-demo"/>
+		<copy file="src/demo-objects/mets/batch-demo/modify-batch-directives.xml" todir="dist/client/demo/batch-demo"/>
 		<copy todir="dist/client/demo/batch-demo/object-specifics">
 			<fileset dir="src/xml/batch-demo/object-specifics"/>
 		</copy>
