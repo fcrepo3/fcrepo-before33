@@ -41,9 +41,10 @@ import fedora.server.errors.StorageDeviceException;
 public class DefaultDOManager 
         extends Module implements DOManager {
         
-    private String m_osrPoolName;
-    private String m_osrTableName;
+    private String m_storagePool;
+    private String m_storageFormat;
     private String m_storageCharacterEncoding;
+    
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
     
@@ -58,54 +59,33 @@ public class DefaultDOManager
     }
 
     /**
-     * Ensures that object_state_registry has been specified correctly.
-     *
-     * @throws ModuleInitializationException If it hasn't.
+     * Sets initial param values.
      */
-    public void initModule()
-            throws ModuleInitializationException {
-        // object_state_registry parameter (required)
-        String osr=getParameter("object_state_registry");
-        if (osr==null) {
-            throw new ModuleInitializationException("Parameter object_state_registry unspecified.", getRole());
+    public void initModule() {
+        // storagePool (optional, default=ConnectionPoolManager's default pool)
+        m_storagePool=getParameter("storagePool");
+        if (m_storagePool==null) {
+            getServer().logConfig("Parameter storagePool "
+                + "not given, will defer to ConnectionPoolManager's "
+                + "default pool.");
         }
-        int hashPos=osr.indexOf("#");
-        if (hashPos==-1) {
-            throw new ModuleInitializationException("Parameter object_state_registry must be in the form poolName#tableName... the hash mark is required.", getRole());
+        // storageFormat (optional, default=DOTranslator's default format)
+        m_storageFormat=getParameter("storageFormat");
+        if (m_storageFormat==null) {
+            getServer().logConfig("Parameter storageFormat "
+                + "not given, will defer to DOTranslator's default format.");
         }
-        m_osrPoolName=osr.substring(0, hashPos);
-        m_osrTableName=osr.substring(hashPos+1);
-        getServer().logConfig("object_state_registry, poolName=" + m_osrPoolName + ", tableName=" + m_osrTableName);
-        if (m_osrPoolName.length()==0) {
-            getServer().logConfig("Parameter object_state_registry provides no poolName... will attempt to use default pool.");
-        }
-        if (m_osrTableName.length()==0) {
-            throw new ModuleInitializationException("Parameter object_state_registry must be in the form poolName#tableName, where tableName is not empty.", getRole());
-        }
-        // storage_character_encoding (optional, default=UTF-8)
-        m_storageCharacterEncoding=getParameter("storage_character_encoding");
-        if (m_storageCharacterEncoding!=null) {
-            try {
-                String test="test";
-                test.getBytes(m_storageCharacterEncoding);
-                getServer().logConfig("Parameter storage_character_encoding "
-                    + "given: " + m_storageCharacterEncoding + " is supported"
-                    + " by the server, ok.");
-            } catch (UnsupportedEncodingException uee) {
-                throw new ModuleInitializationException("Parameter "
-                        + "storage_character_encoding given: " 
-                        + m_storageCharacterEncoding + " is not supported by "
-                        + "the server.", getRole());
-            }
-        } else {
+        // storageCharacterEncoding (optional, default=UTF-8)
+        m_storageCharacterEncoding=getParameter("storageCharacterEncoding");
+        if (m_storageCharacterEncoding==null) {
             getServer().logConfig("Parameter storage_character_encoding "
                 + "not given, using UTF-8");
             m_storageCharacterEncoding="UTF-8";
         }
     }
     
-    public void postInitModule()
-            throws ModuleInitializationException {
+    public void postInitModule() 
+  {/*          throws ModuleInitializationException {
         ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().getModule("fedora.server.storage.ConnectionPoolManager");
         try {
             if (m_osrPoolName.length()==0) {
@@ -154,6 +134,7 @@ public class DefaultDOManager
         } catch (SQLException sqle) {
             throw new ModuleInitializationException("Couldn't set autocommit=true on the object_state_registry db connection.", getRole());
         }
+        */
     }
     
     public String[] getRequiredModuleRoles() {
@@ -256,9 +237,8 @@ public class DefaultDOManager
             throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
         }
     }
-    
     public String[] listObjectPIDs(Context context, String state) 
-            throws StorageDeviceException, InvalidContextException {
+{return null;}/*            throws StorageDeviceException, InvalidContextException {
         if ( (!context.get("application").equals("apim")) 
                 && (!context.get("application").equals("apia")) ) {
             throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
@@ -291,6 +271,7 @@ public class DefaultDOManager
             throw new StorageDeviceException("Problem querying db for object ids: " + sqle.getMessage());
         }
     }
+    */
 
     // meant to be called by DOReader and DOWriter instances... this
     // is just an artifact of how this DOManager is written... and
@@ -302,6 +283,7 @@ public class DefaultDOManager
      * @param return The name of the user, or null if the object doesn't exist
      *               or isn't locked.
      */
+     /*
     public String getLockingUser(String pid) 
             throws StorageDeviceException {
         String wherePredicate=" WHERE State='L' AND DO_PID='" + pid + "'";
@@ -320,7 +302,7 @@ public class DefaultDOManager
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Problem querying db for locking user: " + sqle.getMessage());
         }
-    }
+    } */
 
     // called internally when obj created, and by DOWriters
     public void updateObject(String pid, String state, String lockingUser) {
@@ -329,7 +311,9 @@ public class DefaultDOManager
     // called by a DOWriter
     public void dropObject(String pid) {
     }
-    
+
+    // consider this more...should i really lock a connection?
+    // maybe that's not actually faster, since it has to be synch'd.
     public void shutdownModule() {
         if (m_connectionPool!=null) {
             m_connectionPool.free(m_connection);

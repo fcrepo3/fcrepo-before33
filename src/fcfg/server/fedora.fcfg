@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server xmlns="http://www.fedora.info/definitions/1/0/config/" xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" class="fedora.server.BasicServer">
+<server xmlns="http://www.fedora.info/definitions/1/0/config/" 
+        xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" 
+        class="fedora.server.BasicServer">
 	<comment>Your server comment here.</comment>
 	<param name="label" value="Your Server Label Here"/>
 	<param name="port" value="8080"/>
@@ -21,25 +23,47 @@
 	<param name="disseminationCacheSize" value="100"/>
 	<param name="debug" value="true"/>	
 	<module role="fedora.server.storage.DOManager" 
-            class="fedora.server.storage.DefaultDOManager">
-		<comment>The interface to the storage subsystem.  This provides
-        context-appropriate DOReaders and DOWriters for reflecting on and 
-        writing to the objects stored in the repository.  It also
-        provides methods for reflecting on the contents of the repository 
-        as a whole.  This implementation uses DefinitiveDOReader/Writer
-        for an "application" of "apim" and a FastDOReader/Writer
-        for an "application" of "apia" (from the Context).  If neither
-        "apim" nor "apia", the getReader/Writer call will fail.</comment>
-        <param name="object_state_registry" value="poolOne#State"/>
-        <param name="storage_format" value="mets11fedora1"/>
-        <param name="storage_character_encoding" value="UTF-8"/>
+          class="fedora.server.storage.DefaultDOManager">
+		<comment>
+        Description:
+          The interface to the storage subsystem.  This provides
+          context-appropriate DOReaders and DOWriters for reflecting on and 
+          writing to the objects stored in the repository.  It also
+          provides methods for reflecting on the contents of the repository 
+          as a whole.  This implementation uses DefinitiveDOReader/Writer
+          for an "application" of "apim" and a FastDOReader/Writer
+          for an "application" of "apia" (from the Context).  Other
+          context-specific logic TBD. 
+        Parameters:
+        - storagePool [default=default provided by the ConnectionPoolManager]
+          The named connection pool from which read/write
+          database connections are to be provided for the storage
+          subsystem (see the ConnectionPoolManager module)
+        - storageFormat [default=default provided by the DOTranslator]
+          The format in which serializations of digital objects
+          are to be written.  There must exist a correspondingly
+          named serializer-deserializer pair in the DOTranslator module.
+        - storageCharacterEncoding [default=UTF-8]
+          If the serialization format is text-based, 
+          this is the character encoding that should be used.</comment>
+        <param name="storagePool" value="localMcKoiPool"/>
+        <param name="storageFormat" value="mets11fedora1"/>
+        <param name="storageCharacterEncoding" value="UTF-8"/>
     </module>
     <module role="fedora.server.management.Management" 
             class="fedora.server.management.DefaultManagement">
-        <comment>The management subsystem, which implements the methods 
-        necessary to fulfill API-M requests without regard to how the 
-        service is exposed, or how bytestreams and java types might be
-        marshalled/demarshalled over the wire.</comment>
+        <comment>
+        Description:
+          The management subsystem.
+          This implements the methods necessary to fulfill API-M 
+          requests without regard to:
+            - how the service is exposed
+            - how bytestreams and java types might be marshalled/demarshalled 
+              over the wire
+            - how the storage subsystem is implemented.
+        Parameters:
+          None.
+        </comment>
         <param name="testName" value="testValue"/>
     </module>
     <module role="fedora.server.storage.DOTranslator"
@@ -50,6 +74,7 @@
         Those classes must implement the DOSerializer/DODeserializer
         interfaces, and must have a public constructor that takes no parameters.
         </comment>
+        <param name="defaultFormat" value="mets11fedora1"/>
         <param name="serializer_mets11fedora1" value="fedora.server.storage.METSDOSerializer"/>
         <param name="deserializer_mets11fedora1" value="fedora.server.storage.METSDODeserializer"/>
     </module>
@@ -61,7 +86,7 @@
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
 		<param name="defaultPoolName" value="poolOne"/>
-		<param name="poolNames" value="poolOne,poolTwo,poolThree"/>
+		<param name="poolNames" value="poolOne,poolTwo,localMcKoiPool"/>
 	</module>
 	<datastore id="poolOne">
 		<comment>Config parameters for ConnectionPool number one</comment>
@@ -83,7 +108,7 @@
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
-	<datastore id="poolThree">
+	<datastore id="localMcKoiPool">
 		<comment>Config parameters for ConnectionPool on localhost using mckoi java db</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
