@@ -152,7 +152,7 @@ public class NewObjectDialog
 
       public void actionPerformed(ActionEvent evt) {
           try {
-              String pid="";
+              String pid = null;
               String label=m_labelField.getText();
               String cModel=m_cModelField.getText();
               boolean ok=true;
@@ -167,7 +167,7 @@ public class NewObjectDialog
                   pid=m_customPIDField.getText();
                   if (m_customPIDField.getText().indexOf(":")<1) {
                       JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                           "Custom PID should be of the form \"namespace:1234\"",
+                           "Custom PID should be of the form \"namespace:alphaNumericName\"",
                            "Error",
                            JOptionPane.ERROR_MESSAGE);
                       ok=false;
@@ -177,6 +177,12 @@ public class NewObjectDialog
               if (ok) {
 	          	dispose();
 	              // now that things look ok, give it a try
+	              /** 
+
+                  (NO LONGER USING METS HERE -- USING FOXML INSTEAD -- SEE BELOW)
+
+                  if (pid == null) pid = "";
+
 	              StringBuffer xml=new StringBuffer();
 	              xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 	              xml.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
@@ -192,24 +198,26 @@ public class NewObjectDialog
 	              xml.append("           PROFILE=\"" + StreamUtility.enc(cModel) + "\">\n");
 	              xml.append("</METS:mets>");
 	              String objXML=xml.toString();
+	              **/
 
-	              /**
+                // Serialize the most basic 
 				StringBuffer xml=new StringBuffer();
 				xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 				xml.append("<foxml:digitalObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
 				xml.append("           xmlns:foxml=\"info:fedora/fedora-system:def/foxml#\"\n");
-				xml.append("           xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1.0.xsd\"\n");
-				xml.append("           PID=\"" + StreamUtility.enc(pid) + "\">\n");
+				xml.append("           xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd\"");
+                if (pid != null) {
+				    xml.append("\n           PID=\"" + StreamUtility.enc(pid) + "\">\n");
+                } else {
+				    xml.append(">\n");
+                }
 				xml.append("  <foxml:objectProperties>\n");
-				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/fType\">FedoraObject</foxml:property>\n");
-				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/label\">" + label + "</foxml:property>\n");
-				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/cModel\">" + cModel + "</foxml:property>\n");
+				xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"DataObject\"/>\n");
+				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"" + StreamUtility.enc(label) + "\"/>\n");
+				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"" + StreamUtility.enc(cModel) + "\"/>\n");
 				xml.append("  </foxml:objectProperties>\n");
 				xml.append("</foxml:digitalObject>");
 				String objXML=xml.toString();
-	            System.out.println("Ingesting new object:");
-	            System.out.println(objXML);
-	              **/
 
 	            ByteArrayInputStream in=new ByteArrayInputStream(
 	                    objXML.getBytes("UTF-8"));
@@ -217,8 +225,8 @@ public class NewObjectDialog
 	            		Administrator.APIA,
 	                    Administrator.APIM,
 	                    in,
-	            //        "foxml1.0",
-	                    "metslikefedora1",
+	                    "foxml1.0",
+	            //        "metslikefedora1",
 	                    "Created with Admin GUI \"New Object\" command");
 	            new ViewObject(newPID).launch();
               }
