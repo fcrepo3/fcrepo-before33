@@ -531,6 +531,24 @@ public class METSLikeDOSerializer
         ArrayList ret;
         if (adm) {
             ret=new ArrayList(content.auditRecordIdList());
+            // if no audit records are found on the datastream, take a look at
+            // the audit records on the object to see if we can pick up
+            // component ids recorded on the audit record themselves.
+            // (this will be the case in v2.0 with FOXML).  We do this
+            // to be able to preserve the ADMID attribute on METS file
+            // elements, where the datastreams point to their audit records.
+            /*
+            if (ret.size()==0) {
+				Iterator iter=((ArrayList) m_obj.getAuditRecords()).iterator();
+				while (iter.hasNext()) {
+					AuditRecord au=(AuditRecord) iter.next();
+					if (au.componentID.equals(content.DSVersionID))
+					{
+						ret.add(au.id);
+					}
+				}
+            }
+            */
         } else {
             ret=new ArrayList();
         }
