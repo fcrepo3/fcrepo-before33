@@ -52,11 +52,8 @@ echo >>mysqlConfig.sql # 1) adding a username of %fedora_dba_user% with no globa
 echo >>mysqlConfig.sql # 2) assigning initial password of %fedora_dba_pass% for username %fedora_dba_user%
 echo >>mysqlConfig.sql # 3) granting the fedoraAdmin username DBA permissions on the Fedora Database named 'FedoraObjects'
 echo >>mysqlConfig.sql #
-echo >>mysqlConfig.sql insert into user values ('%%','%fedora_dba_user%',password('%fedora_dba_pass%'),'n','n','n','n','n','n','n','n','n','n','n','n','n','n');
-echo >>mysqlConfig.sql insert into db values ('%%','%fedora_db_name%','%fedora_dba_user%','y','y','y','y','y','y','y','y','y','y');
-echo >>mysqlConfig.sql flush privileges;
-echo >>mysqlConfig.sql #
-echo >>mysqlConfig.sql # assign a password
+echo >>mysqlConfig.sql grant all privileges on %fedora_db_name%.* to %fedora_dba_user%@localhost identified by '%fedora_dba_pass%' with grant option;
+echo >>mysqlConfig.sql grant all privileges on %fedora_db_name%.* to %fedora_dba_user%@'%%' identified by '%fedora_dba_pass%' with grant option;
 echo >>mysqlConfig.sql #
 echo >>mysqlConfig.sql # Display results for verification
 echo >>mysqlConfig.sql #
