@@ -564,7 +564,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               int byteStream = 0;
               dissemResult = new ByteArrayInputStream(dissemination.getStream());
               byte[] buffer = new byte[255];
-              while ((byteStream = dissemResult.read(buffer)) >= 0)
+              while ((byteStream = dissemResult.read(buffer)) != -1)
               {
                 out.write(buffer, 0, byteStream);
               }
@@ -596,7 +596,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
         {
           try
           {
-            if (out != null) out.close();
             if (dissemResult != null) dissemResult.close();
           } catch (Throwable th)
           {
