@@ -217,35 +217,54 @@ public class DefaultManagement
             String dsLocation, boolean managed) 
             throws ServerException { 
         m_ipRestriction.enforce(context);
-        DOWriter w=m_manager.getWriter(context, pid);
-        fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
-        if (orig.DSControlGrp.equals("M")) {
-            // copy the original datastream, replacing its DSLocation with
-            // the new location, triggering to doCommit that it needs to
-            // be loaded from a new remote location
-            DatastreamManagedContent newds=new DatastreamManagedContent();
-            newds.DatastreamID=orig.DatastreamID;
-            newds.DSVersionID=orig.DSVersionID;
-            newds.DSLabel=dsLabel;
-            //newds.DSMIME will be computed later
-            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-            newds.DSCreateDT=nowUTC;
-            //newds.DSSize will be computed later
-            newds.DSControlGrp="M";
-            newds.DSInfoType=orig.DSInfoType;
-            newds.DSState=orig.DSState;
-            newds.DSLocation=dsLocation;
-            newds.auditRecordIdList().addAll(orig.auditRecordIdList());
-            // add the audit record
-            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-            audit.id="AUDIT" + w.getAuditRecords().size() + 1;
-            audit.processType="Fedora API-M";
-            audit.action="modifyDatastreamByReference";
-            audit.responsibility=context.get("userId");
-            audit.date=nowUTC;
-            audit.justification=logMessage;
-            w.getAuditRecords().add(audit);
-            newds.auditRecordIdList().add(audit);
+        DOWriter w=null;
+        try {
+            w=m_manager.getWriter(context, pid);
+            fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
+            if (orig.DSControlGrp.equals("M")) {
+                if (managed) {
+                    // copy the original datastream, replacing its DSLocation with
+                    // the new location, triggering to doCommit that it needs to
+                    // be loaded from a new remote location
+                    DatastreamManagedContent newds=new DatastreamManagedContent();
+                    newds.DatastreamID=orig.DatastreamID;
+                    newds.DSVersionID=orig.DSVersionID;
+                    newds.DSLabel=dsLabel;
+                    //newds.DSMIME will be computed later
+                    Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+                    newds.DSCreateDT=nowUTC;
+                    //newds.DSSize will be computed later
+                    newds.DSControlGrp="M";
+                    newds.DSInfoType=orig.DSInfoType;
+                    newds.DSState=orig.DSState;
+                    newds.DSLocation=dsLocation;
+                    newds.auditRecordIdList().addAll(orig.auditRecordIdList());
+                    // remove, then add the datastream
+                    w.removeDatastream(datastreamId, null, null);
+                    w.addDatastream(newds);
+                    // add the audit record
+                    fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+                    audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+                    audit.processType="Fedora API-M";
+                    audit.action="modifyDatastreamByReference";
+                    audit.responsibility=context.get("userId");
+                    audit.date=nowUTC;
+                    audit.justification=logMessage;
+                    w.getAuditRecords().add(audit);
+                    newds.auditRecordIdList().add(audit.id);
+                    // also...how to replace() not add() later?....
+                } else {
+                    // TODO: they want it referenced...probably easy, but how to remove old content?
+                }
+            } else {
+                // TODO: other control groups for current datastream
+            }
+            // now commit it... note: committing here is probably temporary.
+            w.commit(logMessage);
+        } finally {
+            if (w!=null) {
+                m_manager.releaseWriter(w);
+            }
         }
     }
 

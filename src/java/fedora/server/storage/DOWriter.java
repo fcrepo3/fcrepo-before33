@@ -62,11 +62,10 @@ public interface DOWriter
      * Adds a datastream to the object.
      *
      * @param datastream The datastream.
-     * @return An internally-unique datastream id.
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public String addDatastream(Datastream datastream) throws ServerException;
+    public void addDatastream(Datastream datastream) throws ServerException;
 
     /**
      * Adds a disseminator to the object.
@@ -76,7 +75,7 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public String addDisseminator(Disseminator disseminator) 
+    public void addDisseminator(Disseminator disseminator) 
             throws ServerException;
 
     /**

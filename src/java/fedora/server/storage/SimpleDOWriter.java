@@ -1,7 +1,9 @@
 package fedora.server.storage;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import fedora.server.Context;
 import fedora.server.Logging;
@@ -99,24 +101,28 @@ public class SimpleDOWriter
      * Adds a datastream to the object.
      *
      * @param datastream The datastream.
-     * @return An internally-unique datastream id.
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public String addDatastream(Datastream datastream) {
-        return null;
+    public void addDatastream(Datastream datastream) 
+            throws ServerException {
+        assertNotInvalidated();
+        assertNotPendingRemoval();
+        m_obj.datastreams(datastream.DatastreamID).add(datastream);
     }
 
     /**
      * Adds a disseminator to the object.
      *
      * @param disseminator The disseminator.
-     * @return An internally-unique disseminator id.
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public String addDisseminator(Disseminator disseminator) {
-        return null;
+    public void addDisseminator(Disseminator disseminator)
+            throws ServerException {
+        assertNotInvalidated();
+        assertNotPendingRemoval();
+        m_obj.disseminators(disseminator.dissID).add(disseminator);
     }
 
     /**
@@ -132,8 +138,36 @@ public class SimpleDOWriter
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public void removeDatastream(String id, Date start, Date end) {
-        
+    public void removeDatastream(String id, Date start, Date end) 
+            throws ServerException {
+        assertNotInvalidated();
+        assertNotPendingRemoval();
+        List versions=m_obj.datastreams(id);
+        ArrayList removeList=new ArrayList();
+        for (int i=0; i<versions.size(); i++) {
+            Datastream ds=(Datastream) versions.get(i);
+            if (start!=null) {
+                if (end!=null) {
+                    if ( (ds.DSCreateDT.compareTo(start)>=0) 
+                            && (ds.DSCreateDT.compareTo(end)<=0) ) {
+                        removeList.add(ds);
+                    }
+                } else {
+                    if (ds.DSCreateDT.compareTo(start)>=0) {
+                        removeList.add(ds);
+                    }
+                }
+            } else {
+                if (end!=null) {
+                    if (ds.DSCreateDT.compareTo(end)<=0) {
+                        removeList.add(ds);
+                    }
+                } else {
+                    removeList.add(ds);
+                }
+            }
+        }
+        versions.removeAll(removeList);
     }
 
     /**
@@ -149,7 +183,36 @@ public class SimpleDOWriter
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public void removeDisseminator(String id, Date start, Date end) {
+    public void removeDisseminator(String id, Date start, Date end) 
+            throws ServerException {
+        assertNotInvalidated();
+        assertNotPendingRemoval();
+        List versions=m_obj.disseminators(id);
+        ArrayList removeList=new ArrayList();
+        for (int i=0; i<versions.size(); i++) {
+            Disseminator diss=(Disseminator) versions.get(i);
+            if (start!=null) {
+                if (end!=null) {
+                    if ( (diss.dissCreateDT.compareTo(start)>=0) 
+                            && (diss.dissCreateDT.compareTo(end)<=0) ) {
+                        removeList.add(diss);
+                    }
+                } else {
+                    if (diss.dissCreateDT.compareTo(start)>=0) {
+                        removeList.add(diss);
+                    }
+                }
+            } else {
+                if (end!=null) {
+                    if (diss.dissCreateDT.compareTo(end)<=0) {
+                        removeList.add(diss);
+                    }
+                } else {
+                    removeList.add(diss);
+                }
+            }
+        }
+        versions.removeAll(removeList);
     }
 
     /**

@@ -344,7 +344,7 @@ public class DefaultDOManager
         a.responsibility=getUserId(context);
         a.date=new Date();
         a.justification=logMessage;
-        obj.getAuditRecords().add(a);
+        //obj.getAuditRecords().add(a);
 
         if (remove) {
             // Before removing an object, verify that there are no other objects
@@ -427,10 +427,11 @@ public class DefaultDOManager
             while (dsIDIter.hasNext())
             {
               String dsID=(String) dsIDIter.next();
-              String controlGroupType =
-                  ((Datastream) obj.datastreams(dsID).get(0)).DSControlGrp;
+              Datastream dStream=(Datastream) obj.datastreams(dsID).get(0);
+              String controlGroupType = dStream.DSControlGrp;
               if ( controlGroupType.equalsIgnoreCase("M") &&
-                   obj.getState().equalsIgnoreCase("I") )
+                   (dStream.DSLocation.indexOf("//")!=-1) ) 
+                   // if it's managed, and a url, means we need to grab content
               {
                 List allVersions = obj.datastreams(dsID);
                 Iterator dsIter = allVersions.iterator();
@@ -451,7 +452,12 @@ public class DefaultDOManager
                   String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                             + dmc.DSVersionID;
                   // RLW: change required by conversion fom byte[] to InputStream
-                  getDatastreamStore().add(id, mimeTypedStream.getStream());
+                  if (obj.getState().equals("I")) {
+                      getDatastreamStore().add(id, mimeTypedStream.getStream());
+                  } else {
+                      // object already existed...so call replace instead
+                      getDatastreamStore().replace(id, mimeTypedStream.getStream());
+                  }
                   //getDatastreamStore().add(id, bais);
                   // RLW: change required by conversion fom byte[] to InputStream
 
