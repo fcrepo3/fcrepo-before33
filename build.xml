@@ -102,6 +102,7 @@
 	</path>
 	<path id="serverclasses-lib.path">
 		<pathelement location="${lib.axis}"/>
+		<pathelement location="${lib.catalina}"/>
 		<pathelement location="${lib.commons-logging}"/>
 		<pathelement location="${lib.cos}"/>
 		<pathelement location="${lib.jaxrpc}"/>
@@ -115,10 +116,10 @@
 		<pathelement location="${lib.md5}"/>
 		<pathelement location="${lib.saxon}"/>
 		<pathelement location="${lib.servlet}"/>
+		<pathelement location="${lib.sunxacml}"/>
 		<pathelement location="${lib.wsdl4j}"/>
 		<pathelement location="${lib.xerces}"/>
 		<pathelement location="${lib.xml-apis}"/>
-		<pathelement location="${lib.catalina}"/>
 	</path>
 	<!-- Set up the classpath arguments to be inserted into the Fedora startup scripts -->
 	<path id="AxisUtility-libs.path">
@@ -856,6 +857,7 @@
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPImpl.java"/>
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMServiceLocator.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
+		<delete file="temp/server/java/fedora/server/access/FedoraAPIAServiceLocator.java"/>
 		<mkdir dir="temp/server/classes"/>
 		<javac srcdir="${java.src.dir}:temp/server/java" destdir="temp/server/classes" classpathref="serverclasses-lib.path" includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**" optimize="${build.optimize}" debug="${build.debug}"/>
 	</target>

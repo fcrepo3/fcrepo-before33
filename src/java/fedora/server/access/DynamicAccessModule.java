@@ -9,7 +9,6 @@ import java.util.Map;
 // Fedora imports
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.security.IPRestriction;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
@@ -77,9 +76,6 @@ public class DynamicAccessModule extends Module implements Access
 
   /** Main Access module of the Fedora server. */
   private Access m_access;
-
-  /** IP Restriction for the Access subsystem. */
-  private IPRestriction m_ipRestriction;
 
   private Hashtable dynamicBDefToMech = null;
   private String reposBaseURL = null;
