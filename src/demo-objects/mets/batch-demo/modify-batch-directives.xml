@@ -194,9 +194,13 @@
 	<!-- ****************************************************************** -->
 	<!-- Modify datastream DS1 of demo:5 object by changing its label.      -->
 	<!--                                                                    -->
-	<!-- NOTE: Optional attributes that are omitted or set to "" imply that -->
-	<!-- the original values are to remain unchanged so in this example the -->
-	<!-- datastream location, and state attributes are not modified.        -->
+	<!-- NOTE: Optional attributes that are omitted indicate that that      -->
+	<!-- attribute is to remain uncahnged and the original value of of the  -->
+	<!-- datastream attribute in the object will be preserved. Optional     -->
+	<!-- attributes that are set to the empty string indicate that the      -->
+	<!-- atrribute value will be blanked out in the datastream.             -->
+	<!-- In this example the datastream location and state attributes are   -->
+	<!-- not modified.                                                      -->
 	<!--                                                                    -->
 	<!-- Required attributes on directive:                                  -->
 	<!-- pid - PID of the object                                            -->
@@ -226,9 +230,11 @@
 	<!-- and datastream location so that it points to the same content as   -->
 	<!-- that of datastream DS3 which is a high-res image.                  -->
 	<!--                                                                    -->
-	<!-- NOTE: Optional attributes that are omitted or set to "" imply that -->
-	<!-- the original values are to remain unchanged so in this example the -->
-	<!-- datastream state attribute is not modified.                        -->
+	<!-- NOTE: Optional attributes that are omitted indicate that that      -->
+	<!-- attribute is to remain uncahnged and the original value of of the  -->
+	<!-- datastream attribute in the object will be preserved. Optional     -->
+	<!-- attributes that are set to the empty string indicate that the      -->
+	<!-- atrribute value will be blanked out in the datastream.             -->
 	<!-- ****************************************************************** -->
 	<fbm:modifyDatastream pid="demo:32" dsID="SCREEN" dsControlGroupType="E" dsLabel="Changed label for datastream SCREEN" dsLocation="http://localhost:8080/fedora/get/demo:5/DS4" logMessage="BatchModify - modifyDatastream"/>
 	
@@ -313,7 +319,7 @@
 	<!-- addDatastreamBinding - specifies datastream binding for the        -->
 	<!--                        disseminator                                -->
 	<!-- ****************************************************************** -->
-	<fbm:addDisseminator pid="demo:32" bDefPid="demo:1" bMechPid="demo:2" bDefLabel="" bMechLabel="" dissLabel="HTTP Getter Image Disseminator" dissState="A" logMessage="BatchModify - addDisseminator">
+	<fbm:addDisseminator pid="demo:32" bDefPid="demo:1" bMechPid="demo:2" dissLabel="HTTP Getter Image Disseminator" dissState="A" logMessage="BatchModify - addDisseminator">
 		<fbm:addDatastreamBinding dsBindKeyName="THUMBRES_IMG" dsID="DS1" dsBindLabel=""/>
 		<fbm:addDatastreamBinding dsBindKeyName="MEDRES_IMG" dsID="DS2" dsBindLabel=""/>
 		<fbm:addDatastreamBinding dsBindKeyName="HIGHRES_IMG" dsID="DS3" dsBindLabel=""/>
@@ -326,7 +332,7 @@
 	<!-- Manipulation service (demo:28). The mechanism  specifies a single  -->
 	<!-- Binding Key name of url.                                           -->
 	<!-- ****************************************************************** -->
-	<fbm:addDisseminator pid="demo:32" bDefPid="demo:27" bMechPid="demo:28" bDefLabel="" bMechLabel="" dissLabel="Image Manipulation Disseminator" dissState="A" logMessage="BatchModify - addDisseminator">
+	<fbm:addDisseminator pid="demo:32" bDefPid="demo:27" bMechPid="demo:28" dissLabel="Image Manipulation Disseminator" dissState="A" logMessage="BatchModify - addDisseminator">
 		<fbm:addDatastreamBinding dsBindKeyName="url" dsID="SCREEN" dsBindLabel=""/>
 	</fbm:addDisseminator>
 	
@@ -336,9 +342,11 @@
 	<!-- the datastream binding for DS3 and replace it with a new binding   -->
 	<!-- that maps to dsID SCREEN for the high resolution image.            -->
 	<!--                                                                    -->
-	<!-- NOTE: Optional attributes that are omitted or set to "" imply that -->
-	<!-- the original values are to remain unchanged so in this example the -->
-	<!-- disseminator bMech label is not modified.                          -->
+	<!-- NOTE: Optional attributes that are omitted indicate that that      -->
+	<!-- attribute is to remain uncahnged and the original value of of the  -->
+	<!-- datastream attribute in the object will be preserved. Optional     -->
+	<!-- attributes that are set to the empty string indicate that the      -->
+	<!-- atrribute value will be blanked out in the datastream.             -->
 	<!--                                                                    -->
 	<!-- Required attributes on directive:                                  -->
 	<!-- pid - PID of the object                                            -->
@@ -362,7 +370,7 @@
 	<!-- removeDatastreamBinding - specifies datastream binding for the     -->
 	<!--                           disseminator                             -->	
 	<!-- ****************************************************************** -->
-	<fbm:modifyDisseminator pid="demo:32" dissID="DISS1" bMechPid="demo:2" dissLabel="changed DISS label" bDefLabel="new label for dDef" bMechLabel="" dissState="A" logMessage="BatchModify - modifyDisseminator">
+	<fbm:modifyDisseminator pid="demo:32" dissID="DISS1" bMechPid="demo:2" dissLabel="changed DISS label" dissState="A" logMessage="BatchModify - modifyDisseminator">
 		<fbm:removeDatastreamBinding dsID="DS3"/>
 		<fbm:addDatastreamBinding dsBindKeyName="HIGHRES_IMG" dsID="SCREEN" dsBindLabel="Label for New Binding"/>
 	</fbm:modifyDisseminator>
@@ -375,7 +383,7 @@
 	<!-- screen without a binding the existing disseminator would not       -->
 	<!-- function.                                                          -->
 	<!-- ****************************************************************** -->
-	<fbm:modifyDisseminator pid="demo:32" dissID="DISS2" bMechPid="demo:28" bMechLabel="new label for bmech" bDefLabel="" dissState="A" logMessage="BatchModify - modifyDisseminator">
+	<fbm:modifyDisseminator pid="demo:32" dissID="DISS2" bMechPid="demo:28" dissState="A" logMessage="BatchModify - modifyDisseminator">
 		<fbm:removeDatastreamBinding dsID="SCREEN"/>
 		<fbm:addDatastreamBinding dsBindKeyName="url" dsID="DS3" dsBindLabel="Label for New Binding"/>
 	</fbm:modifyDisseminator>
