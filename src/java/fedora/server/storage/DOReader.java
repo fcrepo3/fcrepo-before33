@@ -21,9 +21,9 @@ public interface DOReader
    * Methods that pertain to the digital object as a whole
    */
 
-    public String GetObjectXML() throws ServerException;
+    public InputStream GetObjectXML() throws ServerException;
 
-    public String ExportObject() throws ServerException;
+    public InputStream ExportObject() throws ServerException;
 
   /**
    * Methods that pertain to getting the digital object components
