@@ -9,6 +9,7 @@ package fedora.server.access;
 
 import fedora.server.storage.DefinitiveDOReader;
 import fedora.server.storage.DefinitiveBDefReader;
+import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.FastDOReader;
 import java.util.Enumeration;
 import java.util.Vector;
