@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---********************************************************************************************-->
+<!-- SAMPLE FEDORA BEHAVIOR MECHANISM OBJECT ENCODED USING METS -->
+<!---********************************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:28" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object implementing the UVA Simple Image BDEF contract using the UVA MrSID Service." PROFILE="fedora:BMECH">
+	<!---*******************************************************************************************************************************************-->
+	<!--  FEDORA SYSTEM METADATA: -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
+		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
+			<METS:name>Theodore Serbinski</METS:name>
+			<METS:note>ImageManipulation is a Java servlet that takes a URL of an image as a param and based on other given parameters, can perform a variety of image related manipulations on the object. After the image is manipulated, it is then sent back as an image/type object to the calling parent, most often a browser or an HTML img tag.</METS:note>
+		</METS:agent>
+		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
+			<METS:name>Cornell University</METS:name>
+			<METS:note>Object owned by Cornell University</METS:note>
+		</METS:agent>
+	</METS:metsHdr>
+	<!---*******************************************************************************************************************************************-->
+	<!--  INLINE METADATA DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT: -->
+	<!---*******************************************************************************************************************************************-->
+	<!---********************************************************************************************-->
+	<!-- SERVICE PROFILE: -->
+	<!-- This is a Fedora metadata format for describing an external service. The intent is to have some basic "preservation-significant"  -->
+	<!-- metadata that can be helpful in diagnosing potential vulnerabilities with the service over time. -->
+	<!-- NOTE!! The Fedora Service Profile Schema is still a work in progress!!  This is a preliminary metadata format which requires more analysis.-->
+	<!--********************************************************************************************-->
+	<METS:amdSec ID="SERVICE-PROFILE">
+		<METS:techMD ID="SERVICE-PROFILE1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
+				<METS:xmlData>
+					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
+					<!-- bMechPID is the PID of THIS Behavior Mechanism Object (self-referential) which is a surrogate for an external service-->
+					<fsvp:serviceProfile bDefPID="image:1" bMechPID="image:2" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+						<!-- The URI for the namespace that Fedora will use to refer to the service.  Fedora convention is to use the value of behaviorMechPID. -->
+						<fsvp:serviceNamespaceURI>image:2</fsvp:serviceNamespaceURI>
+						<fsvp:serviceName>ImageManipulation</fsvp:serviceName>
+						<fsvp:serviceLabel>ImageManipulatoin service for providing different functions for manipulation images.</fsvp:serviceLabel>
+						<fsvp:serviceImplementation>
+							<fsvp:serviceTransportProtocol>HTTP</fsvp:serviceTransportProtocol>
+							<fsvp:serviceMessagingtProtocol>HTTP GET</fsvp:serviceMessagingtProtocol>
+							<fsvp:serviceInputFormats>
+								<fsvp:MIMEType>image/gif</fsvp:MIMEType>
+								<fsvp:MIMEType>image/jpg</fsvp:MIMEType>
+								<fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
+								<fsvp:MIMEType>image/tif</fsvp:MIMEType>
+								<fsvp:MIMEType>image/tiff</fsvp:MIMEType>
+							</fsvp:serviceInputFormats>
+							<fsvp:serviceOutputFormats>
+								<fsvp:MIMEType>image/gif</fsvp:MIMEType>
+								<fsvp:MIMEType>image/jpg</fsvp:MIMEType>
+								<fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
+							</fsvp:serviceOutputFormats>
+							<fsvp:serviceImplDependencies>
+								<fsvp:tool name="Java" version="1.4.1" type="programming language"/>
+								<!-- ImageJ can be downloaded here http://rsb.info.nih.gov/ij/ -->
+								<fsvp:tool name="ImageJ" version="1.29" type="imaging api"/>
+								<fsvp:tool name="ImageManipulation Servlet" version="1.0" type="web service"/>
+							</fsvp:serviceImplDependencies>
+							<fsvp:serviceLiveTestURL></fsvp:serviceLiveTestURL>
+						</fsvp:serviceImplementation>
+					</fsvp:serviceProfile>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!-- SERVICE DATASTREAM INPUT SPECIFICATION: -->
+	<!-- THIS IS  METADATA DESCRIBING A DATASTREAM CONTRACT BETWEEN A FEDORA DATA OBJECT and the SERVICE. -->
+	<!-- This specifies the what kind of Datastream(s) must be in a Fedora Data Object to serve as runtime input to the external service -->
+	<!-- represented by this Behavior Mechanism Object.  In this example, we see that a single MrSID image file must be -->
+	<!-- present as a Datastream  in a Fedora Data Object to enable that object to play nicely with the MrSID service.  -->
+	<!-- That Datastream will serve as an input to one for more MrSID service operations. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="DSINPUTSPEC">
+		<METS:techMD ID="DSINPUTSPEC1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Input Specification for UVA MrSID service">
+				<METS:xmlData>
+					<fbs:DSInputSpec label="CU ImageManipulation Datastream Input Specification" bDefPID="demo:27" bMechPID="demo:28" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+						<fbs:DSInput wsdlMsgPartName="url" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>Image URL</fbs:DSInputLabel>
+							<fbs:DSMIME>image/gif</fbs:DSMIME>
+							<fbs:DSMIME>image/jpg</fbs:DSMIME>
+							<fbs:DSMIME>image/jpeg</fbs:DSMIME>
+							<fbs:DSMIME>image/tif</fbs:DSMIME>
+							<fbs:DSMIME>image/tiff</fbs:DSMIME>
+							<fbs:DSInputInstruction>URL pointing to an image of type GIF, JPG, or TIF</fbs:DSInputInstruction>
+						</fbs:DSInput>
+					</fbs:DSInputSpec>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!-- FEDORA-TO-WSDL METHOD MAP: -->
+	<!-- THIS IS  METADATA DESCRIBING HOW THE SERVICE WSDL MAPS TO FEDORA METHOD DEFINITIONS -->
+	<!-- This is how we make a service definition expressed in WSDL play nicely with Fedora. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="METHODMAP">
+		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
+				<METS:xmlData>
+					<fmm:MethodMap name="MethodMap - ImageManipulation BMech for CU ImageManipulation BDEF" bDefPID="demo:27" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+						<!-- NOTE: The operationName attribute correlates to WSDL operation in terms of mapping to WSDL definitions -->
+						<fmm:Method operationName="resizeImage" wsdlMsgName="resizeImageRequest" wsdlMsgOutput="image_response">
+							<fmm:UserInputParm parmName="width" required="true" defaultValue="150" passBy="VALUE"/>
+							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
+							
+							<!-- BUT THE MIME TYPE WILL CHANGE DEPENDING ON WHAT IS INPUT THROUGH THE URL, HOW IS THIS COMPENSATED FOR? -->
+							
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+						</fmm:Method>
+						<fmm:Method operationName="zoomImage" wsdlMsgName="zoomImageRequest" wsdlMsgOutput="image_response">
+							<fmm:UserInputParm parmName="zoom" required="true" defaultValue="3" passBy="VALUE"/>
+							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+						</fmm:Method>
+						<fmm:Method operationName="brightImage"  wsdlMsgName="brightImageRequest" wsdlMsgOutput="image_response">
+							<fmm:UserInputParm parmName="bright" required="true" defaultValue="3.5" passBy="VALUE"/>
+							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+						</fmm:Method>
+						<fmm:Method operationName="watermarkImage"  wsdlMsgName="watermarkImageRequest" wsdlMsgOutput="image_response">
+							<fmm:UserInputParm parmName="watermark" required="true" defaultValue="Watermarked 2003" passBy="VALUE"/>
+							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+						</fmm:Method>
+						<fmm:Method operationName="grayscaleImage"  wsdlMsgName="grayscaleImageRequest" wsdlMsgOutput="image_response">
+							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+						</fmm:Method>
+						<fmm:Method operationName="cropImage"  wsdlMsgName="cropImageRequest" wsdlMsgOutput="image_response">
+							<fmm:UserInputParm parmName="x" required="true" defaultValue="30" passBy="VALUE"/>
+							<fmm:UserInputParm parmName="y" required="true" defaultValue="100" passBy="VALUE"/>
+							<fmm:UserInputParm parmName="width" required="false" defaultValue="" passBy="VALUE"/>
+							<fmm:UserInputParm parmName="height" required="false" defaultValue="" passBy="VALUE"/>
+							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+						</fmm:Method>
+						<fmm:Method operationName="convertImage"  wsdlMsgName="convertImageRequest" wsdlMsgOutput="image_response">
+							<fmm:UserInputParm parmName="convert" required="true" defaultValue="gif" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="gif"/>
+									<fmm:ValidParm value="jpg"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+						</fmm:Method>
+					</fmm:MethodMap>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!-- ****************************************************************************************************************************************** -->
+	<!--  WSDL SERVICE DEFINITION -->
+	<!--  Here we store WSDL as a form of metadata about the external service that is represented by this  -->
+	<!--  Fedora Behavior Definition Object. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="WSDL">
+		<METS:techMD ID="WSDL1.0" CREATED="2002-02-17T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL definition for UVA MrSid service">
+				<METS:xmlData>
+					<!-- ******************************************************************************************************************************** -->
+					<!-- SERVICE WSDL THAT IS NOT FEDORA-AWARE -->
+					<!-- ******************************************************************************************************************************** -->
+					<wsdl:definitions name="CU ImageManipulation Servlet" targetNamespace="ImageManipluation" xmlns:this="ImageManipulation" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: Schema Type Definitions used in this WSDL -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:types>
+							<xsd:schema targetNamespace="ImageManipulation">
+								<xsd:simpleType name="urlType">
+									<xsd:restriction base="xsd:string"/>
+								</xsd:simpleType>
+								<xsd:simpleType name="widthType">
+									<xsd:restriction base="xsd:integer"/>
+								</xsd:simpleType>
+								<xsd:simpleType name="zoomType">
+									<xsd:restriction base="xsd:float"/>
+								</xsd:simpleType>
+								<xsd:simpleType name="brightType">
+									<xsd:restriction base="xsd:float"/>
+								</xsd:simpleType>
+								<xsd:simpleType name="watermarkType">
+									<xsd:restriction base="xsd:string"/>
+								</xsd:simpleType>
+								<xsd:simpleType name="xType">
+									<xsd:restriction base="xsd:integer"/>
+								</xsd:simpleType>
+								<xsd:simpleType name="yType">
+									<xsd:restriction base="xsd:integer"/>
+								</xsd:simpleType>
+								<xsd:simpleType name="heightType">
+									<xsd:restriction base="xsd:integer"/>
+								</xsd:simpleType>
+								<xsd:simpleType name="convertType">
+									<xsd:restriction base="xsd:string">
+										<xsd:enumeration value="gif"/>
+										<xsd:enumeration value="jpg"/>
+									</xsd:restriction>
+								</xsd:simpleType>
+							</xsd:schema>
+						</wsdl:types>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: MESSAGE DEFINITIONS -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:message name="resizeImageRequest">
+							<wsdl:part name="url" type="this:urlType"/>
+							<wsdl:part name="width" type="this:widthType"/>
+						</wsdl:message>
+						<wsdl:message name="zoomImageRequest">
+							<wsdl:part name="url" type="this:urlType"/>
+							<wsdl:part name="zoom" type="this:zoomType"/>
+						</wsdl:message>
+						<wsdl:message name="brightImageRequest">
+							<wsdl:part name="url" type="this:urlType"/>
+							<wsdl:part name="bright" type="this:brightType"/>
+						</wsdl:message>
+						<wsdl:message name="watermarkImageRequest">
+							<wsdl:part name="url" type="this:urlType"/>
+							<wsdl:part name="watermark" type="this:watermarkType"/>
+						</wsdl:message>
+						<wsdl:message name="grayscaleImageRequest">
+							<wsdl:part name="url" type="this:urlType"/>
+						</wsdl:message>
+						<wsdl:message name="cropImageRequest">
+							<wsdl:part name="url" type="this:urlType"/>
+							<wsdl:part name="x" type="this:xType"/>
+							<wsdl:part name="y" type="this:yType"/>
+							<wsdl:part name="width" type="this:widthType"/>
+							<wsdl:part name="height" type="this:heightType"/>
+						</wsdl:message>
+						<wsdl:message name="convertImageRequest">
+							<wsdl:part name="url" type="this:urlType"/>
+							<wsdl:part name="convert" type="this:convertType"/>
+						</wsdl:message>
+						<wsdl:message name="image_response">
+							<wsdl:part name="image" type="xsd:base64Binary"/>
+						</wsdl:message>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: ABSTRACT OPERATION  DEFINITIONS (Fedora Behavior Definitions) -->
+						<!-- Here we define the operations the service implements -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:portType name="ImageManipulationPortType">
+							<wsdl:operation name="resizeImage">
+								<wsdl:input message="this:resizeImageRequest"/>
+								<wsdl:output message="this:image_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="zoomImage">
+								<wsdl:input message="this:zoomImageRequest"/>
+								<wsdl:output message="this:image_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="brightImage">
+								<wsdl:input message="this:brightImageRequest"/>
+								<wsdl:output message="this:image_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="watermarkImage">
+								<wsdl:input message="this:watermarkImageRequest"/>
+								<wsdl:output message="this:image_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="grayscaleImage">
+								<wsdl:input message="this:grayscaleImageRequest"/>
+								<wsdl:output message="this:image_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="cropImage">
+								<wsdl:input message="this:cropImageRequest"/>
+								<wsdl:output message="this:image_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="convertImage">
+								<wsdl:input message="this:convertImageRequest"/>
+								<wsdl:output message="this:image_response"/>
+							</wsdl:operation>
+						</wsdl:portType>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: THE SERVICE DEFINITION -->
+						<!-- Here we define how to bind to operations to run the Service -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:service name="ImageManipulation">
+							<!-- THIS IS THE HTTP PORT -->
+							<wsdl:port name="ImageManipulation_port" binding="this:ImageManipulation_http">
+								<http:address location="http://localhost:8080/imagemanip/"/>
+							</wsdl:port>
+						</wsdl:service>
+						<!-- ******************************************************************************************************************** -->
+						<!-- The HTTP Bindings for Service: -->
+						<!-- NOTE: the http:operation location attribute is subject to a URL replacement algorithm.  -->
+						<!-- See the W3C Specification for WSDL Bindings at: http://www.w3.org/TR/2002/WD-wsdl12-bindings-20020709 -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:binding name="ImageManipulation_http" type="this:ImageManipulationPortType">
+							<http:binding verb="GET"/>
+							<wsdl:operation name="resizeImage">
+								<http:operation location="ImageManipulation?url=(url)&amp;op=resize&amp;newWidth=(width)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="image/gif"/>
+									<mime:content type="image/jpg"/>
+									<mime:content type="image/jpeg"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="zoomImage">
+								<http:operation location="ImageManipulation?url=(url)&amp;op=zoom&amp;zoomAmt=(zoom)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="image/gif"/>
+									<mime:content type="image/jpg"/>
+									<mime:content type="image/jpeg"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="brightImage">
+								<http:operation location="ImageManipulation?url=(url)&amp;op=brightness&amp;brightAmt=(bright)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="image/gif"/>
+									<mime:content type="image/jpg"/>
+									<mime:content type="image/jpeg"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="watermarkImage">
+								<http:operation location="ImageManipulation?url=(url)&amp;op=watermark&amp;wmText=(watermark)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="image/gif"/>
+									<mime:content type="image/jpg"/>
+									<mime:content type="image/jpeg"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="grayscaleImage">
+								<http:operation location="ImageManipulation?url=(url)&amp;op=grayscale"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="image/gif"/>
+									<mime:content type="image/jpg"/>
+									<mime:content type="image/jpeg"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="cropImage">
+								<http:operation location="ImageManipulation?url=(url)&amp;op=crop&amp;cropX=(x)&amp;cropY=(y)&amp;cropWidth=(width)&amp;cropHeight=(height)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="image/gif"/>
+									<mime:content type="image/jpg"/>
+									<mime:content type="image/jpeg"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="convertImage">
+								<http:operation location="ImageManipulation?url=(url)&amp;op=convert&amp;convertTo=(convert)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="image/gif"/>
+									<mime:content type="image/jpg"/>
+									<mime:content type="image/jpeg"/>
+								</wsdl:output>
+							</wsdl:operation>
+						</wsdl:binding>
+					</wsdl:definitions>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- OTHER DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT -->
+	<!--  This is content that is relevant to describing the external service that this Behavior Mechanism Object represents. -->
+	<!--  These can be schema definitions, debugging tools, documentation, or other resources.  -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="">
+				<METS:file ID="DS1.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/html" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.seebindingurlinstead.com/" xlink:title="See binding URL in XML source"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--  DATASTREAM BINDING MAP FOR FOR THIS BEHAVIOR MECHANISM OBJECT-->
+	<!-- Since THIS Behavior Mechanism Object is, itself, a Fedora Digital Object, we can disseminate its contents. -->
+	<!-- The Fedora system provides a bootstrap service (built-in to the repository system) that will enable the -->
+	<!-- dissemination of content from a Behavior Mechanism Objects.  What follows is the Datastream Binding Map for that -->
+	<!-- is used by the bootstrap service.  -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="fedora-system:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
+			<METS:div TYPE="SERVICE-PROFILE" LABEL="Service profile metadata">
+				<METS:fptr FILEID="SERVICE-PROFILE"/>
+			</METS:div>
+			<METS:div TYPE="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service">
+				<METS:fptr FILEID="DSINPUTSPEC"/>
+			</METS:div>
+			<METS:div TYPE="FEDORA-TO-WSDL-METHODMAP" LABEL="XML data that enables FEDORA to understand how to use the service WSDL">
+				<METS:fptr FILEID="METHODMAP"/>
+			</METS:div>
+			<METS:div TYPE="WSDL" LABEL="Service definitions in WSDL format">
+				<METS:fptr FILEID="WSDL"/>
+			</METS:div>
+			<METS:div TYPE="PROGGUIDE" LABEL="The Programmer's user guide for using the service">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- BOOTSTRAP  DISSEMINATOR FOR THIS BEHAVIOR MECHANISM OBJECT: -->
+	<!--  This is a disseminator for THIS Behavior Definition Object that lets a client be able to treat it like any other Fedora Object.  -->
+	<!--  Thus, clients can disseminate all this great metadata about the external service that is represented by this -->
+	<!--  Behavior Mechanism Object. -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior -->
+	<!--   Mechanism to run the behaviors. -->
+	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Mechanism Object.   -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" CREATED="2000-08-22T06:32:00" LABEL="Bootstrap Behaviors">
+			<METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="fedora-system:1"/>
+			<METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="fedora-system:2"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
+</METS:mets>
+
