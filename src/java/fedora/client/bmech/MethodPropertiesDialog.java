@@ -7,6 +7,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JOptionPane;
 import javax.swing.ButtonGroup;
 import javax.swing.JTable;
+import javax.swing.JRootPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableCellEditor;
@@ -123,6 +124,8 @@ public class MethodPropertiesDialog extends JDialog
       MethodProperties methodProperties)
     {
 		super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Add Method Properties", true);
+		this.setLocation(100,100);
+		//setLocationRelativeTo(parent);
         loadParmTypeTbl();
         loadParmTypeToDisplayTbl();
         loadPassByTbl();
@@ -189,6 +192,8 @@ public class MethodPropertiesDialog extends JDialog
         getContentPane().add(parmsPanel, BorderLayout.CENTER);
         getContentPane().add(lowerPanel, BorderLayout.SOUTH);
         renderCurrentProperties(methodProperties);
+        JRootPane root = getRootPane();
+        root.setDefaultButton(done);
         setVisible(true);
     }
 

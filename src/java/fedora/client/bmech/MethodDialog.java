@@ -3,6 +3,7 @@ package fedora.client.bmech;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JRootPane;
 import javax.swing.JOptionPane;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -47,6 +48,7 @@ public class MethodDialog extends JDialog {
     public MethodDialog(MethodsPane parent, String title, boolean modal)
     {
 		super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Add Method", true);
+		setLocationRelativeTo(parent);
         this.parent = parent;
         setTitle(title);
         setModal(modal);
@@ -58,7 +60,9 @@ public class MethodDialog extends JDialog {
     public MethodDialog(MethodsPane parent, String title, boolean modal,
       String txt_methodName, String txt_methodDesc)
     {
-        super();
+        //super();
+		super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Edit Method", true);
+		setLocationRelativeTo(parent);
         this.parent = parent;
         setTitle(title);
         setModal(modal);
@@ -101,6 +105,8 @@ public class MethodDialog extends JDialog {
 
       getContentPane().add(textPanel, BorderLayout.CENTER);
       getContentPane().add(mainButtonPanel, BorderLayout.SOUTH);
+	  JRootPane root = getRootPane();
+	  root.setDefaultButton(done);
       return;
     }
 
