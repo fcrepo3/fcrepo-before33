@@ -33,13 +33,15 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction </title>
-		<para>As of Fedora 1.2 a new utility for migrating objects is provided with the Fedora distribution package.  This utility can be used to migrate digital objects from one Fedora repository to another.  The migration utility has two functions: (1) migrating objects from an old repository to a new repository during the process of upgrading from a previous version of Fedora, and (2) moving and copying objects among Fedora repositories for other administrative purposes.</para>
+		<para>As of Fedora 1.2, a new utility for migrating objects is provided with the Fedora distribution package.  This utility can be used to migrate digital objects from one Fedora repository to another.  The migration utility has two functions: (1) migrating objects from an old repository to a new repository during the process of upgrading from a previous version of Fedora, and (2) moving and copying objects among Fedora repositories for other administrative purposes.</para>
 	</sect1>
 	<sect1>
 		<title>Using Migration Utility to Upgrade from a Previous Version of Fedora:  </title>
 		<para>Although Fedora 1.2 is backward compatible with previous versions of Fedora at the interface definition level,  there are changes to the underlying database schema that require digital objects to be migrated from an old Fedora installation to the new Fedora installation. </para>
 		<para>Upgrading is an easy task using the Migration Utility.   The migration utility will export objects from an old Fedora repository and ingest them into the new Fedora repository.  After migration, both the old and the new repositories will have copies of the objects.  The migration utility does not purge objects from the old repository.  It is up to the Fedora administrator to either purge objects from the old repository, or shut down the old Fedora repository after migration.   </para>
-		<para><emphasis>Note that the migration utility works with Fedora 1.1 and 1.1.1 repositories.  If you are running Fedora 1.0 or earlier, you must first upgrade to Fedora 1.1 to be able to run the migration utility.</emphasis></para>
+		<para>
+			<emphasis>Note that the migration utility works with Fedora 1.1 and 1.1.1 repositories.  If you are running Fedora 1.0 or earlier, you must first upgrade to Fedora 1.1 to be able to run the migration utility.</emphasis>
+		</para>
 		<para>The steps for using the migration utility for a Fedora upgrade are:</para>
 		<sect2>
 			<title>1.  Install Fedora 1.2.</title>
@@ -95,7 +97,7 @@
 					<para>fedora-admin [hostname] [port] [user] [pass]</para>
 					<para>For example, <emphasis>fedora-admin localhost 8080 fedoraAdmin fedoraAdmin</emphasis> will start
 			            the GUI for a server running on the local machine, port 8080, where "fedoraAdmin"has been used both as the name and password of the server administrator. </para>
-			            	<para>New to the 1.2 release of Fedora is the authentication dialog. When you start Fedora Administrator, you will be asked to choose the server to which you wish to connect and your username and password. The server and username fields are pre-populated and the password is validated using values from fedora.fcfg</para>
+					<para>New to the 1.2 release of Fedora is the authentication dialog. When you start Fedora Administrator, you will be asked to choose the server to which you wish to connect and your username and password. The server and username fields are pre-populated and the password is validated using values from fedora.fcfg</para>
 					<mediaobject>
 						<imageobject>
 							<imagedata fileref="../client/admin-gui/images/login.jpg"/>
@@ -158,7 +160,8 @@
 		<sect2>
 			<title>4.  Confirm Status.</title>
 			<para>When the migration process is complete, objects will still exist in the source repository (i.e., your old repository), and you will have ingested new copies of the objects into your new repository.  If you configured your new repository to accept the PIDs of the old repository, objects in the new repository will have their original PIDs.  Otherwise, they will have been assigned new PIDs when they were ingested into the new repository.</para>
-			<para><emphasis>Be sure to review the status report after migration.</emphasis>  The report will list the number of objects ingested (migrated) and will report the PIDs of any objects that failed. </para>
+			<para>
+				<emphasis>Be sure to review the status report after migration.</emphasis>  The report will list the number of objects ingested (migrated) and will report the PIDs of any objects that failed. </para>
 		</sect2>
 		<sect2>
 			<title>5.  Shutdown Old Repository. </title>
