@@ -7,7 +7,7 @@ set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 
 :runMinimized
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.purge.AutoPurger %1 %2 %3 %4
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.purge.AutoPurger %1 %2 %3 %4 %5 %6
 
 set JAVA_HOME=%OLD_JAVA_HOME%
 

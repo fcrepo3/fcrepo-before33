@@ -8,29 +8,29 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 
 :runMinimized
 rem bdefs
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\bdef-mrsid-image-picksize.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\bdef-mrsid-image.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\bdef-simple-image.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\bdef-mrsid-image-picksize.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\bdef-mrsid-image.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\bdef-simple-image.xml "first import"
 
 rem bmechs
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\bmech-mrsid-image-picksize.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\bmech-mrsid-image.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\bmech-simple-image.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\bmech-sizer-image.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\bmech-mrsid-image-picksize.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\bmech-mrsid-image.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\bmech-simple-image.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\bmech-sizer-image.xml "first import"
 
 rem regular objects (demonstrating different bdefs/mechs)
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\obj-mrsid-image-picksize.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\obj-mrsid-image.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\obj-simple-image.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\obj-sizer-image.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\obj-mrsid-image-picksize.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\obj-mrsid-image.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\obj-simple-image.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\obj-sizer-image.xml "first import"
 
 rem regular objects (demonstrating different dc ingest scenarios)
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\obj-nolabel-nodc.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\obj-nolabel-15dc.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\obj-nolabel-30dc.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\obj-label-nodc.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\obj-label-15dc.xml "first import"
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor localhost 8080 %FEDORA_HOME%\demo\obj-label-30dc.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\obj-nolabel-nodc.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\obj-nolabel-15dc.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\obj-nolabel-30dc.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\obj-label-nodc.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\obj-label-15dc.xml "first import"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\obj-label-30dc.xml "first import"
 
 set JAVA_HOME=%OLD_JAVA_HOME%
 

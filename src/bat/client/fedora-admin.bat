@@ -9,7 +9,7 @@ set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 
 :runMinimized
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client -Dfedora.home=%FEDORA_HOME% -jar %FEDORA_HOME%\client\client.jar %1 %2
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client -Dfedora.home=%FEDORA_HOME% -jar %FEDORA_HOME%\client\client.jar %1 %2 %3 %4
 
 set JAVA_HOME=%OLD_JAVA_HOME%
 
