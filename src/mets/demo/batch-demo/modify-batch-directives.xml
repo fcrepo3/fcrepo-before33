@@ -131,19 +131,9 @@
 	<!-- Change the state of datastream DS7 to inactive                                                                                 -->
 	<!-- ************************************************************************************************************ -->
 	<fbm:setDatastreamState pid="demo:32" dsID="DS6" dsState="I"/>
-	<!-- ************************************************************************************************************ -->
-	<!-- Make the contents of the DC datastream of object demo:32 unharvestable                                    -->
-	<!-- ************************************************************************************************************ -->
-	<fbm:setDatastreamHarvestable pid="demo:32" dsID="DC" harvestable="false"/>
-	<!-- ************************************************************************************************************ -->
 	<!-- Make the contents of the DS6 datastream of object demo:32 harvestable                                      -->
 	<!-- ************************************************************************************************************ -->
 	<fbm:setDatastreamHarvestable pid="demo:32" dsID="DS6" harvestable="true"/>
-	<!-- ************************************************************************************************************ -->
-	<!-- Generate an error by attempting to set the harvestable attribute to true for DC datastream          -->
-	<!-- This is an error since only one datastream of a given formatURI may be harvestable,                   -->
-	<!-- ************************************************************************************************************ -->
-	<fbm:setDatastreamHarvestable pid="demo:32" dsID="DC" harvestable="true"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a new disseminator for object demo:32 using the UVA Simple Image Behavior Definition  -->
 	<!-- (demo:1) and Fedora HTTP Getter Service (demo:2). Binding Key names defined for this         -->
