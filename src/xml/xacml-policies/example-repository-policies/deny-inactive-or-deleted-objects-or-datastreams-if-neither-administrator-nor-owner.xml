@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        PolicyId="restrict-inactive-or-deleted-objects-of-datastreams-plus-owner"
+        PolicyId="deny-inactive-or-deleted-objects-or-datastreams-if-neither-administrator-nor-owner"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
-  <Description> </Description>
+  <Description>deny any access to objects or datastreams, which are either inactive or deleted,
+    unless subject has administrator role or is the object owner</Description>
   <Target>
     <Subjects>
       <AnySubject/> 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        PolicyId="apim-restricted-to-localhost"
+        PolicyId="deny-apim-if-not-localhost"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
-  <Description> </Description>
+  <Description>deny any access if client ip address is not 127.0.0.1</Description>
   <Target>
     <Subjects>
       <AnySubject/>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        PolicyId="ip-addresses-to-allow"
+        PolicyId="deny-if-not-in-ip-address-range"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
-  <Description>see also policy "ip-addresses-to-deny"</Description>
+  <Description>deny any access if client ip address is not in the specified range.
+    see also the related policy "deny-if-in-ip-address-range"</Description>
   <Target>
     <Subjects>
       <AnySubject/>

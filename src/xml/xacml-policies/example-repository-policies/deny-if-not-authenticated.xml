@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        PolicyId="require-authn"
+        PolicyId="deny-if-not-authenticated"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
-  <Description> </Description>
+  <Description>deny any access if client hasn't authenticated.  this really applies only to urls not protected
+    by container security as specified in web.xml, as container-protected access would prevent a failed
+    authentication from reaching xacml authorization evaluation</Description>
   <Target>
     <Subjects>
       <Subject><!-- require attribute to be present -->

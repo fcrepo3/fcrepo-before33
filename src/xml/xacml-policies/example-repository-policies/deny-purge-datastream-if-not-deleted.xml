@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        PolicyId="restrict-policy-management"
+        PolicyId="deny-purge-datastream-if-not-deleted"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
-  <Description> </Description>
+  <Description>deny datastream purge unless datastream is in deleted state</Description>
   <Target>
     <Subjects>
       <AnySubject/> 
