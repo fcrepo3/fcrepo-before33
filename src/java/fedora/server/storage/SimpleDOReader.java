@@ -1,6 +1,8 @@
 package fedora.server.storage;
 
 import fedora.server.Context;
+import fedora.server.Logging;
+import fedora.server.StdoutLogging;
 import fedora.server.errors.DisseminatorNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
@@ -8,6 +10,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.DOTranslator;
+import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.DisseminationBindingInfo;
@@ -35,27 +38,35 @@ import java.text.SimpleDateFormat;
  * @author cwilper@cs.cornell.edu
  */
 public class SimpleDOReader
+        extends StdoutLogging
         implements DOReader {
         
     private DigitalObject m_obj;
     private Context m_context;
     private RepositoryReader m_repoReader;
     private DOTranslator m_translator;
-    private String m_shortFormat;
-    private String m_longFormat;
+    private String m_shortExportFormat;
+    private String m_longExportFormat;
+    private String m_encoding;
     
     private static SimpleDateFormat s_formatter=
             new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     
-    public SimpleDOReader(DigitalObject obj, Context context, 
-            RepositoryReader repoReader, DOTranslator translator, 
-            String shortFormat, String longFormat) {
-        m_obj=obj;
+    public SimpleDOReader(Context context, RepositoryReader repoReader, 
+            DOTranslator translator, String shortExportFormat, 
+            String longExportFormat, String currentFormat,
+            String encoding, InputStream serializedObject, Logging logTarget) 
+            throws ObjectIntegrityException, StreamIOException,
+            UnsupportedTranslationException {
+        super(logTarget);
         m_context=context;
         m_repoReader=repoReader;
         m_translator=translator;
-        m_shortFormat=shortFormat;
-        m_longFormat=longFormat;
+        m_shortExportFormat=shortExportFormat;
+        m_longExportFormat=longExportFormat;
+        m_encoding=encoding;
+        m_obj=new BasicDigitalObject();
+        m_translator.deserialize(serializedObject, m_obj, currentFormat, encoding); 
     }
 
     public String getFedoraObjectType() {
@@ -91,7 +102,7 @@ public class SimpleDOReader
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-        m_translator.serialize(m_obj, bytes, m_shortFormat, "UTF-8");
+        m_translator.serialize(m_obj, bytes, m_shortExportFormat, "UTF-8");
         return new ByteArrayInputStream(bytes.toByteArray());
     }
 
@@ -99,7 +110,7 @@ public class SimpleDOReader
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-        m_translator.serialize(m_obj, bytes, m_longFormat, "UTF-8");
+        m_translator.serialize(m_obj, bytes, m_longExportFormat, "UTF-8");
         return new ByteArrayInputStream(bytes.toByteArray());
     }
 

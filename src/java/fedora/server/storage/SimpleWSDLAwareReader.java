@@ -9,9 +9,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import fedora.server.Context;
+import fedora.server.Logging;
 import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
+import fedora.server.errors.StreamIOException;
+import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.DOTranslator;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.Datastream;
@@ -21,10 +24,15 @@ import fedora.server.storage.types.DigitalObject;
 public class SimpleWSDLAwareReader
         extends SimpleDOReader {
         
-    public SimpleWSDLAwareReader(DigitalObject obj, Context context, 
-            RepositoryReader repoReader, DOTranslator translator, 
-            String shortFormat, String longFormat) {
-        super(obj, context, repoReader, translator, shortFormat, longFormat);
+    public SimpleWSDLAwareReader(Context context, RepositoryReader repoReader, 
+            DOTranslator translator, String shortExportFormat, 
+            String longExportFormat, String currentFormat,
+            String encoding, InputStream serializedObject, Logging logTarget) 
+            throws ObjectIntegrityException, StreamIOException,
+            UnsupportedTranslationException {
+        super(context, repoReader, translator, shortExportFormat, 
+                longExportFormat, currentFormat, encoding, serializedObject,
+                logTarget);
     }
     
     protected DatastreamXMLMetadata getWSDLDatastream(Date versDateTime) 

@@ -5,9 +5,12 @@ import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 
 import fedora.server.Context;
+import fedora.server.Logging;
 import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
+import fedora.server.errors.StreamIOException;
+import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.DOTranslator;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.Datastream;
@@ -19,11 +22,16 @@ public class SimpleBDefReader
         extends SimpleWSDLAwareReader
         implements BDefReader {
         
-    public SimpleBDefReader(DigitalObject obj, Context context, 
-            RepositoryReader repoReader, DOTranslator translator, 
-            String shortFormat, String longFormat) {
-        super(obj, context, repoReader, translator, shortFormat, longFormat);
-    }
+    public SimpleBDefReader(Context context, RepositoryReader repoReader, 
+            DOTranslator translator, String shortExportFormat, 
+            String longExportFormat, String currentFormat,
+            String encoding, InputStream serializedObject, Logging logTarget) 
+            throws ObjectIntegrityException, StreamIOException,
+            UnsupportedTranslationException {
+        super(context, repoReader, translator, shortExportFormat, 
+                longExportFormat, currentFormat, encoding, serializedObject,
+                logTarget);
+    }    
     
     public MethodDef[] GetBehaviorMethods(Date versDateTime) 
             throws DatastreamNotFoundException, ObjectIntegrityException,
