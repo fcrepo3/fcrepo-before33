@@ -18,7 +18,7 @@
 			<xsd:element name="datastream" type="datastreamType" minOccurs="0" maxOccurs="unbounded"/>
 			<xsd:element name="disseminator" type="disseminatorType" minOccurs="0" maxOccurs="unbounded"/>
 		</xsd:sequence>
-		<xsd:attribute name="PID" type="xsd:string" use="optional"/>
+		<xsd:attribute name="PID" type="pidType" use="optional"/>
 		<xsd:attribute name="URI" type="xsd:string" use="optional"/>
 		<xsd:anyAttribute namespace="##other" processContents="lax"/>
 		<!-- The anyAttribute declaration lets us temporarily rename the xsi:schemaLocation attribute -->
@@ -188,6 +188,13 @@
 			<xsd:enumeration value="A"/>
 			<xsd:enumeration value="D"/>
 			<xsd:enumeration value="I"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- See http://www.fedora.info/definitions/identifiers/ -->
+	<xsd:simpleType name="pidType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+"/>
+			<xsd:maxLength value="64"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="nonEmptyStringType">

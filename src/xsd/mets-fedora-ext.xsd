@@ -266,7 +266,7 @@
 			<!-- FEDORA EXTENSION ELEMENT: re-defined behavior section (1-29-03) -->
 		</xsd:sequence>
 		<xsd:attribute name="ID" type="xsd:ID" use="optional"/>
-		<xsd:attribute name="OBJID" type="xsd:string" use="optional"/>
+		<xsd:attribute name="OBJID" type="pidType" use="optional"/>
 		<xsd:attribute name="LABEL" type="xsd:string" use="optional"/>
 		<xsd:attribute name="TYPE" type="xsd:string" use="optional"/>
 		<xsd:attribute name="PROFILE" type="xsd:string" use="optional"/>
@@ -960,4 +960,11 @@
 		</xsd:attribute>
 		<xsd:attribute name="OTHERLOCTYPE" type="xsd:string" use="optional"/>
 	</xsd:attributeGroup>
+	<!-- See http://www.fedora.info/definitions/identifiers/ -->
+	<xsd:simpleType name="pidType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+"/>
+			<xsd:maxLength value="64"/>
+		</xsd:restriction>
+	</xsd:simpleType>
 </xsd:schema>
