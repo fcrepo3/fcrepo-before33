@@ -2,12 +2,12 @@ package fedora.server.access.dissemination;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.net.InetAddress;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.Timestamp;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -194,7 +194,7 @@ public class DisseminationService
       // on DSBindingKey and method parameter values in WSDL
       // Note: In case where more than one datastream matches the
       // DSBindingKey or there are multiple DSBindingKeys for the
-      // method, multiple rows will be present; otherwise there us only
+      // method, multiple rows will be present; otherwise there is only
       // a single row.
       for (int i=0; i<dissBindInfoArray.length; i++)
       {
@@ -202,19 +202,19 @@ public class DisseminationService
 
         // Match DSBindingKey pattern in WSDL which is a string of the form:
         // (DSBindingKey). Rows in DisseminationBindingInfo are sorted
-        // alphabeticaly on binding key.
+        // alphabetically on binding key.
         String bindingKeyPattern = "\\(" + dissBindInfo.DSBindKey + "\\)";
         if (i == 0)
         {
-          // If AddressLocation has a value of "LOCAL", this indicates
-          // the associated OperationLocation requires no AddressLocation.
-          // i.e., the OperationLocation contains all information necessary
+          // If addressLocation has a value of "LOCAL", this indicates
+          // the associated operationLocation requires no addressLocation.
+          // i.e., the operationLocation contains all information necessary
           // to perform the dissemination request. This is a special case
           // used when the web services are generally mechanisms like cgi-scripts,
           // java servlets, and simple HTTP GETs. Using the value of LOCAL
           // in the address location also enables one to have different methods
           // serviced by different hosts. In true web services like SOAP, the
-          // AddressLocation specifies the host name of the service and all
+          // addressLocation specifies the host name of the service and all
           // methods are served from that single host location.
           if (dissBindInfo.AddressLocation.equalsIgnoreCase(LOCAL_ADDRESS_LOCATION))
           {
@@ -286,7 +286,7 @@ public class DisseminationService
                 + "+(" + dissBindInfo.DSBindKey + ")";
           } else
           {
-            // Bypass Datastream Mediaiton.
+            // Bypass Datastream Mediation.
             replaceString = dissBindInfo.dsLocation
                 + "+(" + dissBindInfo.DSBindKey + ")";
             if (dissBindInfo.dsControlGroupType.equalsIgnoreCase("R") &&
@@ -316,7 +316,7 @@ public class DisseminationService
         }
         try
         {
-          // If the operationLocation contains DatastreamInputParms
+          // If the operationLocation contains datastreamInputParms
           // URLEncode each parameter before substitution. Otherwise, the
           // operationLocation has no parameters (i.e., it is a simple URL )
           // so bypass URLencoding.
@@ -340,7 +340,7 @@ public class DisseminationService
                            + " DissBindingInfo index: " + i);
       }
 
-      // Substitute user-supplied parameter values in dissemination URL
+      // Substitute method parameter values in dissemination URL
       Enumeration e = h_userParms.keys();
       while (e.hasMoreElements())
       {
@@ -542,8 +542,7 @@ public class DisseminationService
           + "was \"" + th.getMessage() + "\" .");
     }
 
-    // Since the tempID will eventually appear in a URL, escape any blanks with
-    // the character "T".
+    // Replace the blank between date and time with the character "T".
     return tempID.replaceAll(" ","T");
   }
 
@@ -611,7 +610,6 @@ public class DisseminationService
     int index = sb.lastIndexOf("&");
     if ( index != -1 && index+1 == sb.length())
       sb.replace(index,sb.length(),"");
-    System.out.println("Outgoing URL: "+requestURI+sb.toString());
     return requestURI+sb.toString();
   }
 }
