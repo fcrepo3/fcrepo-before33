@@ -181,9 +181,9 @@
 		</metadata>
 	</metadata>
 	<datastreams>
-		<datastream ID="DS1" xlink:href="http://localhost:8080/beta1-demo1/thumb/tiberriver.jpg"/>
-		<datastream ID="DS2" xlink:href="http://localhost:8080/beta1-demo1/medium/tiberriver.jpg"/>
-		<datastream ID="DS3" xlink:href="http://localhost:8080/beta1-demo1/high/tiberriver.jpg"/>
-		<datastream ID="DS4" xlink:href="http://localhost:8080/beta1-demo1/very-high/tiberriver.jpg"/>
+		<datastream ID="DS1" xlink:href="http://localhost:8080/beta1-demo/thumb/tiberriver.jpg"/>
+		<datastream ID="DS2" xlink:href="http://localhost:8080/beta1-demo/medium/tiberriver.jpg"/>
+		<datastream ID="DS3" xlink:href="http://localhost:8080/beta1-demo/high/tiberriver.jpg"/>
+		<datastream ID="DS4" xlink:href="http://localhost:8080/beta1-demo/very-high/tiberriver.jpg"/>
 	</datastreams>
 </input>

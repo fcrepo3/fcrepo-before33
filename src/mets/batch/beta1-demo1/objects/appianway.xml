@@ -585,7 +585,7 @@
 				
             <METS:file ID="DS1.0" CREATED="2002-12-20T11:30:04" MIMETYPE="image/jpg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="">
 					
-               <METS:FLocat LOCTYPE="URL" xlink:title="AICT thumbnail jpg image" xlink:href="http://localhost:8080/beta1-demo1/thumb/appianway.jpg"/>
+               <METS:FLocat LOCTYPE="URL" xlink:title="AICT thumbnail jpg image" xlink:href="http://localhost:8080/beta1-demo/thumb/appianway.jpg"/>
 				
             </METS:file>
 			
@@ -596,7 +596,7 @@
 				
             <METS:file ID="DS2.0" CREATED="2002-12-20T11:30:04" MIMETYPE="image/jpg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
 					
-               <METS:FLocat LOCTYPE="URL" xlink:title="AICT medium jpg image" xlink:href="http://localhost:8080/beta1-demo1/medium/appianway.jpg"/>
+               <METS:FLocat LOCTYPE="URL" xlink:title="AICT medium jpg image" xlink:href="http://localhost:8080/beta1-demo/medium/appianway.jpg"/>
 				
             </METS:file>
 			
@@ -607,7 +607,7 @@
 				
             <METS:file ID="DS3.0" CREATED="2002-12-20T11:30:04" MIMETYPE="image/jpg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
 					
-               <METS:FLocat LOCTYPE="URL" xlink:title="AICT high jpg image" xlink:href="http://localhost:8080/beta1-demo1/high/appianway.jpg"/>
+               <METS:FLocat LOCTYPE="URL" xlink:title="AICT high jpg image" xlink:href="http://localhost:8080/beta1-demo/high/appianway.jpg"/>
 				
             </METS:file>
 			
@@ -618,7 +618,7 @@
 				
             <METS:file ID="DS4.0" CREATED="2002-12-20T11:30:04" MIMETYPE="image/jpg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
 					
-               <METS:FLocat LOCTYPE="URL" xlink:title="AICT veryhigh jpg image" xlink:href="http://localhost:8080/beta1-demo1/very-high/appianway.jpg"/>
+               <METS:FLocat LOCTYPE="URL" xlink:title="AICT veryhigh jpg image" xlink:href="http://localhost:8080/beta1-demo/very-high/appianway.jpg"/>
 				
             </METS:file>
 			
