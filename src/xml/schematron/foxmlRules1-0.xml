@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- **********************************************************************************************************-->
-<!-- SCHEMATRON  SCHEMA FOR FEDORA DIGITAL OBJECTS-->
-<!-- TITLE:  fedoraRulesFOXML.xml -->
+<!-- TITLE: SCHEMATRON  SCHEMA FOR FEDORA DIGITAL OBJECTS-->
+<!-- SOURCE:  fedoraRulesFOXML.xml -->
 <!-- DESCRIPTION:  This schema expresses validation rules for Fedora digital objects that -->
 <!-- are NOT ALREADY EXPRESSED in the FOXML XML Schema.-->
 <!-- AUTHOR:  Sandy Payette,  payette@cs.cornell.edu -->
@@ -10,25 +10,20 @@
 	<!-- FIGURE OUT: how to best deal with validation and namespace prefix declaration-->
 	<sch:ns prefix="foxml" uri="info:fedora/fedora-system:def/foxml#"/>
 	<sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
-	<!-- RULES FOR OBJECT INGEST PHASE:  These rules apply to a digital object in its "submission" format for ingest into the repository-->
+	<!-- VALIDATION FOR OBJECT INGEST PHASE:  These rules apply to a digital object in its "submission" format for ingest into the repository-->
 	<!-- These rules are to be applied upon initial receipt of the object by the repository, before the repository has done any processing of the input.-->
 	<sch:phase id="ingest">
 		<sch:active pattern="preliminary"/>
 	</sch:phase>
-	<!-- RULES FOR OBJECT STORAGE PHASE: Rules to ensure that digital object is FULLY valid before being accepted for final storage in the repository-->
+	<!-- VALIDATION FOR OBJECT STORAGE PHASE: Rules to ensure that digital object is FULLY valid before being accepted for final storage in the repository-->
 	<!-- These rules are to be applied after all processing has been done by the repository, and before it is submitted to low level storage.-->
 	<sch:phase id="store">
 		<sch:active pattern="preliminary"/>
-		<!-- Note:  we could choose to do "completed" checks programmatically within the Fedora server, but this puts it all in one place.. -->
 		<sch:active pattern="completed"/>
 	</sch:phase>
-	<!-- PRELIMINARY PATTERN: -->
+	<!-- PRELIMINARY INGEST RULES PATTERN: -->
 	<!-- These rules are to be applied to objects no matter what phase of the object lifecycle they are in.-->
 	<sch:pattern name="Preliminary Object Checks" id="preliminary">
-		<!-- RULE:  check that inline XML does not declare a schemaLocation.-->
-		<sch:rule context="foxml:xmlContent">
-			<sch:assert test="child::*[not(@xsi:schemaLocation)]">Inline XML datastreams (xmlContent) cannot contain schemaLocation attributes.</sch:assert>
-		</sch:rule>
 		<!-- RULE:  check that Behavior Mechanism objects have the proper kinds of datastreams (DSINPUTSPEC, METHODMAP, and WSDL).-->
 		<sch:rule context="foxml:property[@NAME='info:fedora/fedora-system:def/fType' and @VALUE='FedoraBMechObject']">
 			<sch:assert test="../../foxml:datastream[@ID='DSINPUTSPEC']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Input Spec (foxml:datastream with ID="DSINPUTSPEC" must exist).</sch:assert>
@@ -80,7 +75,7 @@
 			<sch:assert test="string(@BMECH_SERVICE_PID)">Disseminator must have a behavior mechanism id.   (foxml:disseminatorVersion: value of BMECH_SERVICE_PID is missing)</sch:assert>
 		</sch:rule>
 	</sch:pattern>
-	<!-- COMPLETED PATTERN: -->
+	<!-- COMPLETED RULES PATTERN: -->
 	<!-- These rules are to be applied to objects when they are considered completed and ready to be stored persistently in the repository.-->
 	<!-- These are attributes that are optional in the FOXML XML Schema (i.e., to support ingest files), but that ultimately must be assigned by the system. -->
 	<!-- This validation may be unnecessary if we accept that the Fedora server will ensure this programmatically. -->
