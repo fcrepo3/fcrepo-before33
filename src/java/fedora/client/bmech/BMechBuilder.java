@@ -108,10 +108,8 @@ public class BMechBuilder extends JInternalFrame
             public void stateChanged(ChangeEvent e) {
                 int index = tabpane.getSelectedIndex();
                 String title = tabpane.getTitleAt(index);
-                System.out.println("index = " +
-                                        index);
-                System.out.println("title = " +
-                                        title);
+                //System.out.println("index = " + index);
+                //System.out.println("title = " + title);
 
                 if (index == 2)
                 {
@@ -250,10 +248,10 @@ public class BMechBuilder extends JInternalFrame
     {
 
       Component[] tabs = tabpane.getComponents();
-      System.out.println("tabs count: " + tabs.length);
+      //System.out.println("tabs count: " + tabs.length);
       for (int i=0; i < tabs.length; i++)
       {
-        System.out.println("tab name: " + tabs[i].getName());
+        //System.out.println("tab name: " + tabs[i].getName());
         if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
         {
           if (validGeneralTab((GeneralPane)tabs[i]))
@@ -325,7 +323,7 @@ public class BMechBuilder extends JInternalFrame
           }
         }
       }
-      printBMech();
+      //printBMech();
       DCGenerator dcg = null;
       DSInputSpecGenerator dsg = null;
       MethodMapGenerator mmg = null;
@@ -382,7 +380,7 @@ public class BMechBuilder extends JInternalFrame
         e.printStackTrace();
         assertTabPaneMsg("BMechBuilder: error in creating METS for bmech.", null);
       }
-      mets.printMETS();
+      //mets.printMETS();
       return mets;
     }
 

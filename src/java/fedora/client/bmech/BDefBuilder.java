@@ -106,10 +106,8 @@ public class BDefBuilder extends JInternalFrame
             public void stateChanged(ChangeEvent e) {
                 int index = tabpane.getSelectedIndex();
                 String title = tabpane.getTitleAt(index);
-                System.out.println("index = " +
-                                        index);
-                System.out.println("title = " +
-                                        title);
+                //System.out.println("index = " + index);
+                //System.out.println("title = " + title);
             }
         });
 
@@ -241,10 +239,10 @@ public class BDefBuilder extends JInternalFrame
     {
 
       Component[] tabs = tabpane.getComponents();
-      System.out.println("tabs count: " + tabs.length);
+      //System.out.println("tabs count: " + tabs.length);
       for (int i=0; i < tabs.length; i++)
       {
-        System.out.println("tab name: " + tabs[i].getName());
+        //System.out.println("tab name: " + tabs[i].getName());
         if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
         {
           if (validGeneralTab((GeneralPane)tabs[i]))
@@ -327,7 +325,7 @@ public class BDefBuilder extends JInternalFrame
         e.printStackTrace();
         assertTabPaneMsg("BDefBuilder: error in creating METS for bdef.", null);
       }
-      mets.printMETS();
+      //mets.printMETS();
       return mets;
     }
 
