@@ -121,25 +121,6 @@ public class Ingest {
                             "migrate",
                             out);
         
-        // fix the host-specific references before ingesting (except "M" datastreams)
-        StringBuffer fixed=new StringBuffer();
-        BufferedReader in=new BufferedReader(
-            new InputStreamReader(new ByteArrayInputStream(out.toByteArray())));
-        String line;
-        while ( (line=in.readLine()) != null ) {
-            if (line.indexOf("fedora-system:3")==-1) {
-                // if the line doesn't have a managed datastream reference,
-                // replace all occurances of sourceHost:sourcePort with
-                // local.fedora.server
-                fixed.append(line.replaceAll(
-                        sourceHost + ":" + sourcePort, "local.fedora.server"));
-            } else {
-                fixed.append(line);
-            }
-            fixed.append("\n");
-        }
-        in.close();
-
         // INGEST into target repository        
         String realLogMessage=logMessage;
         if (realLogMessage==null) {
@@ -147,8 +128,8 @@ public class Ingest {
         }
         return AutoIngestor.ingestAndCommit(targetRepoAPIA,
                                             targetRepoAPIM,
-                                            new ByteArrayInputStream(
-                                             fixed.toString().getBytes("UTF-8")),
+                                            new ByteArrayInputStream(out.toByteArray()),
+                                             //fixed.toString().getBytes("UTF-8")),
                                             sourceExportFormat,
                                             realLogMessage);
     }
@@ -399,7 +380,11 @@ public class Ingest {
         System.err.println("  The object will be exported from the source repository in the default");
         System.err.println("  export format configured at the source." );
         System.err.println("  All log messages will be empty.");
-        System.err.println();
+		System.err.println();
+		System.err.println("fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:80 jane jpw \"\"");
+		System.err.println();
+		System.err.println("  Same as above, but ingests all data objects (type O).");
+		System.err.println();
         System.err.println("ERROR  : " + msg);
         System.exit(1);
     }
