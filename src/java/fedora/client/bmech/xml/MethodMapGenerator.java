@@ -117,6 +117,20 @@ public class MethodMapGenerator
         parm.setAttribute("defaultValue", def);
         String label = (parms[j].parmLabel == null) ? "" : parms[j].parmLabel;
         parm.setAttribute("label", label);
+
+        if (parms[j].parmDomainValues.length > 0)
+        {
+          Element parmDomain = document.createElementNS(FMM, "fmm:ValidParmValues");
+          for (int k=0; k<parms[j].parmDomainValues.length; k++)
+          {
+            Element parmDomainVal = document.createElementNS(FMM, "fmm:ValidParm");
+            String value = (parms[j].parmDomainValues[k] == null)
+              ? "" : parms[j].parmDomainValues[k];
+            parmDomainVal.setAttribute("value", value);
+            parmDomain.appendChild(parmDomainVal);
+          }
+          parm.appendChild(parmDomain);
+        }
         method.appendChild(parm);
       }
     }
@@ -174,6 +188,20 @@ public class MethodMapGenerator
         parm.setAttribute("defaultValue", def);
         String label = (parms[j].parmLabel == null) ? "" : parms[j].parmLabel;
         parm.setAttribute("label", label);
+
+        if (parms[j].parmDomainValues.length > 0)
+        {
+          Element parmDomain = document.createElementNS(FMM, "fmm:ValidParmValues");
+          for (int k=0; k<parms[j].parmDomainValues.length; k++)
+          {
+            Element parmDomainVal = document.createElementNS(FMM, "fmm:ValidParm");
+            String value = (parms[j].parmDomainValues[k] == null)
+              ? "" : parms[j].parmDomainValues[k];
+            parmDomainVal.setAttribute("value", value);
+            parmDomain.appendChild(parmDomainVal);
+          }
+          parm.appendChild(parmDomain);
+        }
         method.appendChild(parm);
       }
       // Append Method Return Type element
