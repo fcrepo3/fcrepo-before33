@@ -53,6 +53,7 @@ public class DisseminationService
           Boolean B1 = new Boolean(s_server.getParameter("debug"));
           debug = B1.booleanValue();
       }
+      s_server.logFinest("successful instance of server");
     } catch (InitializationException ie) {
         System.err.println(ie.getMessage());
     }
@@ -194,7 +195,9 @@ public class DisseminationService
         HttpService httpService = new HttpService(dissURL);
         try
         {
+          if (debug) s_server.logFinest("initiating httpservice call");
           dissemination = httpService.getHttpContent(dissURL);
+          if (debug) s_server.logFinest("dissMIME: "+dissemination.MIMEType);
         } catch (HttpServiceNotFoundException hsnfe)
         {
           s_server.logWarning(hsnfe.getMessage());
