@@ -39,8 +39,8 @@ import java.util.regex.*;
 
 public class DefinitiveDOReader implements DOReader
 {
-  // TEMPORARY: static variables to suppor testing via main()
-  protected static boolean debug = true;
+  // TEMPORARY: static variables to support testing/debug via main()
+  protected static boolean debug = false;
   private static Hashtable fakeDORegistry;
   private static final String [][] testObjects =
   {
@@ -52,6 +52,17 @@ public class DefinitiveDOReader implements DOReader
       {"uva-bmech-stdimg:10", "std-img-mech.xml"},
       {"uva-bmech-test:00", "testmech.xml"},
       {"uva-lib:99", "testobj.xml"},
+      {"test:1", "demo/std-img-bdef.xml"},
+      {"test:2", "demo/std-img-mech.xml"},
+      {"test:3", "demo/image-vanilla.xml"},
+      {"test:4", "demo/sizer-img-mech.xml"},
+      {"test:5", "demo/mrsid-img-mech.xml"},
+      {"test:6", "demo/image-sized.xml"},
+      {"test:7", "demo/imageMrSID-level0.xml"},
+      {"test:8", "demo/uva-mrsid-img-mech.xml"},
+      {"test:9", "demo/image-uva-mrsid.xml"},
+      {"test:10", "demo/zoom-img-bdef.xml"},
+      {"test:11", "demo/zoom-img-mrsid-mech.xml"},
   };
   // TEMPORARY: static method to load the Fake DO Registry
   static
@@ -125,12 +136,13 @@ public class DefinitiveDOReader implements DOReader
     try
     {
       File doFile = locateObject(objectPID);
-      if (debug) System.out.println("object filepath = " + doFile.getPath());
+      System.out.println("object filepath = " + doFile.getPath());
       doXML = new InputSource(new FileInputStream(doFile));
     }
     catch (Exception e)
     {
-      System.out.println("ERROR in Constructor: " + e);
+      System.out.println("DefinitiveDOReader: ERROR in Constructor: " + e);
+      throw new GeneralException("DefinitiveDOReader: " + e.getMessage());
     }
     */
 
@@ -511,13 +523,13 @@ public class DefinitiveDOReader implements DOReader
       // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
       if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
       {
-        System.out.println("Suppressing report of methods for bootstrap mechanism!");
+        System.out.println("GetBMechMethods: Suppressing report of methods for bootstrap mechanism!");
         return null;
       }
 
       if (debug)
       {
-        System.out.println("Behavior Methods for BDEF: " + bDefPID);
+        System.out.println("GetBMechMethods for BDEF: " + bDefPID);
       }
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
       MethodDef[] methods = mechRead.GetBehaviorMethods(null);
@@ -539,7 +551,7 @@ public class DefinitiveDOReader implements DOReader
     {
       if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
       {
-        System.out.println("Suppressing report of WSDL for bootstrap mechanism!");
+        System.out.println("GetBMechMethodsWSDL: Suppressing report of WSDL for bootstrap mechanism!");
         return null;
       }
       // TODO! dateTime filter not implemented in this release!!
@@ -590,7 +602,7 @@ public class DefinitiveDOReader implements DOReader
 
       if (debug)
       {
-          System.out.println("AUGMENTED BINDING MAPS:");
+          System.out.println("GetDSBindingMaps: AUGMENTED BEHAVIOR DEFS:");
           for (int k = 0; k < allBindingMaps.length; k++)
           {
             System.out.println("  >>dsBindMapID[" + k + "]= " + allBindingMaps[k].dsBindMapID);
