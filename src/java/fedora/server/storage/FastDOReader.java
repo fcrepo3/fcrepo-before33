@@ -12,9 +12,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
 
+import fedora.server.Context;
+import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.GeneralException;
@@ -24,6 +27,7 @@ import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.ConnectionPoolManagerImpl;
+import fedora.server.storage.DOManager;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DisseminationBindingInfo;
@@ -85,12 +89,15 @@ public class FastDOReader implements DisseminatingDOReader
   private static boolean debug;
   private static ConnectionPool connectionPool = null;
   private static Server s_server = null;
+  private static DOManager m_manager = null;
   private boolean isFoundInFastStore = false;
   private boolean isFoundInDefinitiveStore = false;
   private String doLabel = null;
   private String PID = null;
   private DefinitiveDOReader doReader = null;
   private DefinitiveBMechReader bMechReader = null;
+  private Context s_context = null;
+  private static Context m_context = null;
 
   static
   {
@@ -99,7 +106,13 @@ public class FastDOReader implements DisseminatingDOReader
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
       Boolean B1 = new Boolean(s_server.getParameter("debug"));
       debug = B1.booleanValue();
-      System.out.println("Debug: "+debug);
+      m_manager=(DOManager) s_server.getModule(
+              "fedora.server.storage.DOManager");
+      HashMap h = new HashMap();
+      h.put("application", "apia");
+      h.put("useCachedObject", "false");
+      h.put("userId", "fedoraAdmin");
+      m_context = new ReadOnlyContext(h);
     } catch (InitializationException ie) {
       System.err.println(ie.getMessage());
     }
@@ -116,7 +129,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @param objectPID The persistent identifier of the digital object.
    * @throws ObjectNotFoundException If the digital object cannot be found.
    */
-  public FastDOReader(String objectPID) throws ServerException
+  public FastDOReader(Context context, String objectPID) throws ServerException
   {
     try
     {
@@ -129,18 +142,17 @@ public class FastDOReader implements DisseminatingDOReader
       // Attempt to find object in either Fast or Definitive store
       this.doLabel = locatePID(objectPID);
       this.PID = objectPID;
-
-    } catch (ConnectionPoolNotFoundException cpnfe)
+      this.s_context = context;
+      s_server.logFinest("instantiated FastDOReader: context:" + s_context);
+    } catch (ServerException se)
     {
-      throw new ObjectNotFoundException("Object not found: " +
-                                        objectPID + "\n" +
-                                        cpnfe.getMessage() + "\n");
-    } catch (Exception e)
+      throw se;
+    } catch (Throwable th)
     {
-      // FIXME!! - Decide on Exception handling
-      throw new ObjectNotFoundException("Object not found:" +
-                                        objectPID + "\n" +
-                                        e.getMessage() + "\n");
+      s_server.logWarning("Unable to construct FastDOReader");
+      throw new GeneralException("Fast reader returned error: ("
+                                 + th.getClass().getName() + ") - "
+                                 + th.getMessage());
     }
   }
 
@@ -156,10 +168,17 @@ public class FastDOReader implements DisseminatingDOReader
   {
     try
     {
-      if (doReader == null) doReader = new DefinitiveDOReader(PID);
-    } catch (ServerException se)
+      if (doReader == null)
+      {
+        //doReader = new DefinitiveDOReader(PID);
+        doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+      }
+    } catch (Throwable th)
     {
-      System.err.println("ExportObject: Can't create DefinitiveDOReader");
+      throw new GeneralException("Definitive reader returned error. The "
+                                 + "underlying error was a "
+                                 + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
     }
     return(doReader.ExportObject());
   }
@@ -181,20 +200,20 @@ public class FastDOReader implements DisseminatingDOReader
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String  query =
-          "SELECT DISTINCT "+
-          "BehaviorDefinition.BDEF_PID "+
-          "FROM "+
-          "BehaviorDefinition,"+
-          "Disseminator,"+
-          "DigitalObject,"+
-          "DigitalObjectDissAssoc "+
-          "WHERE "+
-          "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "+
-          "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "+
-          "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "+
-          "DigitalObject.DO_PID=\'" + PID + "\';";
+          "SELECT DISTINCT "
+          + "BehaviorDefinition.BDEF_PID "
+          + "FROM "
+          + "BehaviorDefinition,"
+          + "Disseminator,"
+          + "DigitalObject,"
+          + "DigitalObjectDissAssoc "
+          + "WHERE "
+          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
+          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
+          + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) System.out.println("GetbDefsObjectQuery: "+query);
+      if (debug) s_server.logInfo("GetBehaviorDefsQuery: " + query);
       ResultSet rs = null;
       String results = null;
       try
@@ -222,14 +241,12 @@ public class FastDOReader implements DisseminatingDOReader
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        // Problem with the relational database or query
-        System.out.println("Object not found: " +
-            sqle.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " +
-        //    sqle.getMessage() + "\n");
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -237,24 +254,18 @@ public class FastDOReader implements DisseminatingDOReader
       // query Definitive storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveBMechReader
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
         behaviorDefs = doReader.GetBehaviorDefs(versDateTime);
-
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
-      } catch (Exception e)
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: \n PID: " +
-                         PID + "\n asOfDate: " +
-                         DateUtility.convertDateToString(versDateTime) + "\n");
-        //throw new ObjectNotFoundException("Object not found: \n PID: " +
-        //    PID + "\n asOfDate: " +
-        //    DateUtility.convertDateToString(versDateTime) + "\n");
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     }
     return behaviorDefs;
@@ -272,7 +283,6 @@ public class FastDOReader implements DisseminatingDOReader
    */
   public MethodParmDef[] GetBMechMethodParm(String bDefPID, String methodName,
       Date versDateTime) throws GeneralException
-  //throws MethodNotFoundException
   {
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
@@ -283,34 +293,34 @@ public class FastDOReader implements DisseminatingDOReader
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String query =
-          "SELECT DISTINCT "+
-          "PARM_Name,"+
-          "PARM_Default_Value,"+
-          "PARM_Required_Flag,"+
-          "PARM_Label "+
-          " FROM "+
-          "DigitalObject,"+
-          "BehaviorDefinition,"+
-          "BehaviorMechanism,"+
-          "MechanismImpl,"+
-          "Method,"+
-          "Parameter "+
-          " WHERE "+
-          "BehaviorMechanism.BDEF_DBID=Parameter.BDEF_DBID AND "+
-          "Method.BDEF_DBID=Parameter.BDEF_DBID AND "+
-          "Method.METH_DBID=Parameter.METH_DBID AND "+
-          "BehaviorMechanism.BDEF_DBID=Method.BDEF_DBID AND "+
-          "MechanismImpl.METH_DBID=Method.METH_DBID AND " +
-          "BehaviorMechanism.BDEF_DBID=BehaviorDefinition.BDEF_DBID AND "+
-          "DigitalObject.DO_PID=\'" + PID + "\' AND "+
-          "BehaviorDefinition.BDEF_PID='" + bDefPID + "' AND "+
-          "Method.METH_Name='"  + methodName + "' ";
+          "SELECT DISTINCT "
+          + "PARM_Name,"
+          + "PARM_Default_Value,"
+          + "PARM_Required_Flag,"
+          + "PARM_Label "
+          + " FROM "
+          + "DigitalObject,"
+          + "BehaviorDefinition,"
+          + "BehaviorMechanism,"
+          + "MechanismImpl,"
+          + "Method,"
+          + "Parameter "
+          + " WHERE "
+          + "BehaviorMechanism.BDEF_DBID=Parameter.BDEF_DBID AND "
+          + "Method.BDEF_DBID=Parameter.BDEF_DBID AND "
+          + "Method.METH_DBID=Parameter.METH_DBID AND "
+          + "BehaviorMechanism.BDEF_DBID=Method.BDEF_DBID AND "
+          + "MechanismImpl.METH_DBID=Method.METH_DBID AND "
+          + "BehaviorMechanism.BDEF_DBID=BehaviorDefinition.BDEF_DBID AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\' AND "
+          + "BehaviorDefinition.BDEF_PID='" + bDefPID + "' AND "
+          + "Method.METH_Name='"  + methodName + "' ";
 
-      if(debug) System.out.println("MethodParmQuery="+query+"\n");
+      if(debug) s_server.logInfo("GetBMechMethodParmQuery=" + query);
       try
       {
         Connection connection = connectionPool.getConnection();
-        if(debug) System.out.println("connectionPool = "+connectionPool);
+        if(debug) s_server.logInfo("connectionPool = " + connectionPool);
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -342,14 +352,12 @@ public class FastDOReader implements DisseminatingDOReader
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
+      } catch (Throwable th)
       {
-        // Problem with the relational database or query
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " +
-            PID + "\n" + sqle.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " +
-        //    PID + "\n" + sqle.getMessage() + "\n");
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -357,30 +365,16 @@ public class FastDOReader implements DisseminatingDOReader
       // query Definitive storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveBMechReader
         DefinitiveBMechReader bMechReader = new DefinitiveBMechReader(bDefPID);
+
         // FIXME!! - code to get method parameters directly from the
         // XML objects NOT implemented yet.
-        return methodParms;
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
-      } catch (Exception e)
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Method parameter not found: " +
-           "\n bDefPID: " + bDefPID +
-           "\n methodName: "+methodName +
-           "\n asOfDate: " + DateUtility.convertDateToString(versDateTime) +
-           "\n");
-        //throw new MethodNotFoundException("Method parameter not found: " +
-        throw new GeneralException("Method parameter not found: " +
-           "\n bDefPID: " + bDefPID +
-           "\n methodName: "+methodName +
-           "\n asOfDate: " + DateUtility.convertDateToString(versDateTime) +
-           "\n" + e.getMessage() + "\n");
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     }
     return methodParms;
@@ -408,7 +402,6 @@ public class FastDOReader implements DisseminatingDOReader
   public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
       throws GeneralException
   {
-    System.out.println("MethodPIDMech: "+PID);
     MethodDef[] methodDefs = null;
     MethodDef methodDef = null;
     Vector queryResults = new Vector();
@@ -417,32 +410,32 @@ public class FastDOReader implements DisseminatingDOReader
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String  query =
-          "SELECT DISTINCT " +
-          "Method.METH_Name," +
-          "Method.METH_Label," +
-          "MechanismImpl.MECHImpl_Address_Location," +
-          "MechanismImpl.MECHImpl_Operation_Location " +
-          "FROM " +
-          "BehaviorDefinition," +
-          "Disseminator," +
-          "Method," +
-          "DigitalObject," +
-          "DigitalObjectDissAssoc," +
-          "BehaviorMechanism," +
-          "MechanismImpl " +
-          "WHERE " +
-          "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND " +
-          "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND " +
-          "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND " +
-          "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND " +
-          "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND " +
-          "BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND " +
-          "Method.METH_DBID = MechanismImpl.METH_DBID AND " +
-          "Method.BDEF_DBID = BehaviorDefinition.BDEF_DBID AND " +
-          "BehaviorDefinition.BDEF_PID = \'" + bDefPID + "\' AND " +
-          "DigitalObject.DO_PID=\'" + PID + "\';";
+          "SELECT DISTINCT "
+          + "Method.METH_Name,"
+          + "Method.METH_Label,"
+          + "MechanismImpl.MECHImpl_Address_Location,"
+          + "MechanismImpl.MECHImpl_Operation_Location "
+          + "FROM "
+          + "BehaviorDefinition,"
+          + "Disseminator,"
+          + "Method,"
+          + "DigitalObject,"
+          + "DigitalObjectDissAssoc,"
+          + "BehaviorMechanism,"
+          + "MechanismImpl "
+          + "WHERE "
+          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
+          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
+          + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
+          + "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "
+          + "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND "
+          + "BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND "
+          + "Method.METH_DBID = MechanismImpl.METH_DBID AND "
+          + "Method.BDEF_DBID = BehaviorDefinition.BDEF_DBID AND "
+          + "BehaviorDefinition.BDEF_PID = \'" + bDefPID + "\' AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) System.out.println("ObjectQuery: "+query);
+      if (debug) s_server.logInfo("GetBMechMethodsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -459,7 +452,6 @@ public class FastDOReader implements DisseminatingDOReader
           for (int i=1; i<=cols; i++)
           {
             results[i-1] = rs.getString(i);
-            System.out.println("method[+"+i+"] = "+results[i-1]);
           }
           methodDef.methodName = results[0];
           methodDef.methodLabel = results[1];
@@ -467,13 +459,14 @@ public class FastDOReader implements DisseminatingDOReader
           {
             methodDef.methodParms = this.GetBMechMethodParm(bDefPID,
                 methodDef.methodName, versDateTime);
-          //} catch (MethodNotFoundException mpnfe)
-          } catch (GeneralException ge)
+          } catch (Throwable th)
           {
-            // FIXME!! - Decide on Exception handling
-            System.out.println("Method not found: " + methodDef.methodName);
-            //throw new MethodNotFoundException("Method not found: " +
-            //    methodDef.methodName +"\n");
+            // Failed to get method paramters
+            throw new GeneralException("Fast reader returned error. The "
+                                       + "underlying error was a "
+                                       + th.getClass().getName()
+                                       + "The message was \""
+                                       + th.getMessage() + "\"");
           }
           queryResults.add(methodDef);
         }
@@ -487,14 +480,12 @@ public class FastDOReader implements DisseminatingDOReader
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
+      } catch (Throwable th)
       {
-        // Problem with the relational database or query
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-                           "\n" + sqle.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    "\n" + sqle.getMessage() + "\n");
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -502,27 +493,18 @@ public class FastDOReader implements DisseminatingDOReader
       // query Definitive storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveBMechReader
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
         methodDefs = doReader.GetBMechMethods(bDefPID, versDateTime);
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
-      } catch (Exception e)
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-                           "\n bDefPID: " + bDefPID +
-                           "\n asOfDate: "+
-                           DateUtility.convertDateToString(versDateTime) +
-                           "\n" + e.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //                   "\n bDefPID: " + bDefPID +
-        //                   "\n asOfDate: "+
-        //                   DateUtility.convertDateToString(versDateTime) +
-        //                   "\n" + e.getMessage() + "\n");
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     }
     return methodDefs;
@@ -544,12 +526,23 @@ public class FastDOReader implements DisseminatingDOReader
   {
     try
     {
-    if (doReader == null) doReader = new DefinitiveDOReader(PID);
+      if (doReader == null)
+      {
+        //doReader = new DefinitiveDOReader(PID);
+        doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+      }
+      return doReader.GetBMechMethodsWSDL(bDefPID, versDateTime);
     } catch (ServerException se)
     {
-      System.err.println("GetBMechMethodsWSDL: Can't create DefinitiveDOReader");
+      throw se;
+
+    } catch (Throwable th)
+    {
+      throw new GeneralException("Definitive reader returned error. The "
+                                 + "underlying error was a "
+                                 + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
     }
-    return doReader.GetBMechMethodsWSDL(bDefPID, versDateTime);
   }
 
   /**
@@ -570,19 +563,19 @@ public class FastDOReader implements DisseminatingDOReader
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String  query =
-          "SELECT DISTINCT "+
-          "DataStreamBinding.DSBinding_DS_Label,"+
-          "DataStreamBinding.DSBinding_DS_MIME,"+
-          "DataStreamBinding.DSBinding_DS_Location "+
-          "FROM "+
-          "DigitalObject,"+
-          "DataStreamBinding "+
-          "WHERE "+
-          "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "+
-          "DataStreamBinding.DSBinding_DS_ID=\'" + datastreamID +"\' AND "+
-          "DigitalObject.DO_PID=\'" + PID + "\';";
+          "SELECT DISTINCT "
+          + "DataStreamBinding.DSBinding_DS_Label,"
+          + "DataStreamBinding.DSBinding_DS_MIME,"
+          + "DataStreamBinding.DSBinding_DS_Location "
+          + "FROM "
+          + "DigitalObject,"
+          + "DataStreamBinding "
+          + "WHERE "
+          + "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "
+          + "DataStreamBinding.DSBinding_DS_ID=\'" + datastreamID +"\' AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) System.out.println("ObjectQuery: "+query);
+      if (debug) s_server.logInfo("GetDatastreamQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -615,14 +608,13 @@ public class FastDOReader implements DisseminatingDOReader
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
+      } catch (Throwable th)
       {
         // Problem with the relational database or query
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            sqle.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    sqle.getMessage() + "\n");
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -630,25 +622,18 @@ public class FastDOReader implements DisseminatingDOReader
       // query Definitive storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveBMechReader
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
         datastream = doReader.GetDatastream(datastreamID, versDateTime);
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
-      } catch (Exception e)
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            "\n asOfDate: " +
-            DateUtility.convertDateToString(versDateTime) +
-            "\n" + e.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    "\n asOfDate: " +
-        //    DateUtility.convertDateToString(versDateTime) +
-        //    "\n" + e.getmessage() + "\n");
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
       }
     }
     return datastream;
@@ -664,25 +649,25 @@ public class FastDOReader implements DisseminatingDOReader
       throws GeneralException
   {
     Vector queryResults = new Vector();
-    Datastream[] datastreams = null;
+    Datastream[] datastreamArray = null;
     Datastream datastream = null;
     if (isFoundInFastStore && versDateTime == null)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String  query =
-          "SELECT DISTINCT "+
-          "DataStreamBinding.DSBinding_DS_Label,"+
-          "DataStreamBinding.DSBinding_DS_MIME,"+
-          "DataStreamBinding.DSBinding_DS_Location "+
-          "FROM "+
-          "DigitalObject,"+
-          "DataStreamBinding "+
-          "WHERE "+
-          "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "+
-          "DigitalObject.DO_PID=\'" + PID + "\';";
+          "SELECT DISTINCT "
+          + "DataStreamBinding.DSBinding_DS_Label,"
+          + "DataStreamBinding.DSBinding_DS_MIME,"
+          + "DataStreamBinding.DSBinding_DS_Location "
+          + "FROM "
+          + "DigitalObject,"
+          + "DataStreamBinding "
+          + "WHERE "
+          + "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) System.out.println("ObjectQuery: "+query);
+      if (debug) s_server.logInfo("GetDatastreamsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -705,24 +690,22 @@ public class FastDOReader implements DisseminatingDOReader
           datastream.DSLocation = results[2];
           queryResults.addElement(datastream);
         }
-        datastreams = new Datastream[queryResults.size()];
+        datastreamArray = new Datastream[queryResults.size()];
         int rowCount = 0;
         for (Enumeration e = queryResults.elements(); e.hasMoreElements();)
         {
-          datastreams[rowCount] = (Datastream)e.nextElement();
+          datastreamArray[rowCount] = (Datastream)e.nextElement();
           rowCount++;
         }
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
+      } catch (Throwable th)
       {
-        // Problem with the relational database or query
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            sqle.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    sqle.getMessage() + "\n");
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -733,25 +716,24 @@ public class FastDOReader implements DisseminatingDOReader
         // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
-        datastreams = doReader.GetDatastreams(versDateTime);
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
+        datastreamArray = doReader.GetDatastreams(versDateTime);
         // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
-      } catch (Exception e)
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            "\n asOfDate: " +
-            DateUtility.convertDateToString(versDateTime) +
-            "\n" + e.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    "\n asOfDate: " +
-        //    DateUtility.convertDateToString(versDateTime) +
-        //    "\n" + e.getmessage() + "\n");
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
       }
     }
-    return datastreams;
+    return datastreamArray;
   }
 
   /**
@@ -767,7 +749,7 @@ public class FastDOReader implements DisseminatingDOReader
    */
   public DisseminationBindingInfo[] getDissemination(String PID,
       String bDefPID, String methodName, Date versDateTime)
-      throws ObjectNotFoundException
+      throws GeneralException
   {
     DisseminationBindingInfo dissBindInfo = null;
     DisseminationBindingInfo[] dissBindInfoArray = null;
@@ -777,48 +759,49 @@ public class FastDOReader implements DisseminatingDOReader
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String query =
-          "SELECT DISTINCT "+
-          "DigitalObject.DO_PID,"+
-          "BehaviorDefinition.BDEF_PID,"+
-          "Method.METH_Name,"+
-          "MechanismImpl.MECHImpl_Address_Location,"+
-          "MechanismImpl.MECHImpl_Operation_Location,"+
-          "MechanismImpl.MECHImpl_Protocol_Type,"+
-          "DataStreamBinding.DSBinding_DS_Location, "+
-          "DataStreamBindingSpec.DSBindingSpec_Name "+
-          " FROM "+
-          "DigitalObject,"+
-          "BehaviorDefinition,"+
-          "BehaviorMechanism,"+
-          "DataStreamBinding,"+
-          "Disseminator,"+
-          "DigitalObjectDissAssoc,"+
-          "MechanismImpl,"+
-          "Method,"+
-          "DataStreamBindingSpec "+
-           " WHERE "+
-          "DigitalObject.DO_DBID=DigitalObjectDissAssoc.DO_DBID AND "+
-          "DigitalObjectDissAssoc.DISS_DBID=Disseminator.DISS_DBID AND " +
-          "Disseminator.BDEF_DBID = BehaviorDefinition.BDEF_DBID AND " +
-          "Disseminator.BMECH_DBID = BehaviorMechanism.BMECH_DBID AND " +
-          "DataStreamBinding.DO_DBID = DigitalObject.DO_DBID AND " +
-          "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND " +
-          "MechanismImpl.DSBindingKey_DBID = " +
-                     "DataStreamBinding.DSBindingKey_DBID AND " +
-          "DataStreamBindingSpec.DSBindingKey_DBID = " +
-                     "MechanismImpl.DSBindingKey_DBID AND "+
-          "MechanismImpl.METH_DBID = Method.METH_DBID AND " +
-          "DigitalObject.DO_PID='" + PID + "' AND " +
-          " BehaviorDefinition.BDEF_PID=\'" + bDefPID + "\' AND " +
-          " Method.METH_Name=\'"  + methodName + "\' "+
-          " ORDER BY DataStreamBindingSpec.DSBindingSpec_Name";
-      if(debug) System.out.println("DisseminationQuery="+query+"\n");
+          "SELECT DISTINCT "
+          + "DigitalObject.DO_PID,"
+          + "BehaviorDefinition.BDEF_PID,"
+          + "Method.METH_Name,"
+          + "MechanismImpl.MECHImpl_Address_Location,"
+          + "MechanismImpl.MECHImpl_Operation_Location,"
+          + "MechanismImpl.MECHImpl_Protocol_Type,"
+          + "DataStreamBinding.DSBinding_DS_Location, "
+          + "DataStreamBindingSpec.DSBindingSpec_Name "
+          + " FROM "
+          + "DigitalObject,"
+          + "BehaviorDefinition,"
+          + "BehaviorMechanism,"
+          + "DataStreamBinding,"
+          + "Disseminator,"
+          + "DigitalObjectDissAssoc,"
+          + "MechanismImpl,"
+          + "Method,"
+          + "DataStreamBindingSpec "
+          + " WHERE "
+          + "DigitalObject.DO_DBID=DigitalObjectDissAssoc.DO_DBID AND "
+          + "DigitalObjectDissAssoc.DISS_DBID=Disseminator.DISS_DBID AND "
+          + "Disseminator.BDEF_DBID = BehaviorDefinition.BDEF_DBID AND "
+          + "Disseminator.BMECH_DBID = BehaviorMechanism.BMECH_DBID AND "
+          + "DataStreamBinding.DO_DBID = DigitalObject.DO_DBID AND "
+          + "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND "
+          + "MechanismImpl.DSBindingKey_DBID = "
+          + "DataStreamBinding.DSBindingKey_DBID AND "
+          + "DataStreamBindingSpec.DSBindingKey_DBID = "
+          + "MechanismImpl.DSBindingKey_DBID AND "
+          + "MechanismImpl.METH_DBID = Method.METH_DBID AND "
+          + "DigitalObject.DO_PID='" + PID + "' AND "
+          + " BehaviorDefinition.BDEF_PID=\'" + bDefPID + "\' AND "
+          + " Method.METH_Name=\'"  + methodName + "\' "
+          + " ORDER BY DataStreamBindingSpec.DSBindingSpec_Name";
+
+      if(debug) s_server.logInfo("GetDisseminationQuery=" + query);
 
       try
       {
         // execute database query and retrieve results
         Connection connection = connectionPool.getConnection();
-        if(debug) System.out.println("DisseminationConnectionPool: "+
+        if(debug) s_server.logInfo("DisseminationConnectionPool: "+
                                      connectionPool);
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery(query);
@@ -864,45 +847,38 @@ public class FastDOReader implements DisseminatingDOReader
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
+      } catch (Throwable th)
       {
-        // Problem with the relational database or query
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            sqle.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    sqle.getMessage() + "\n");
-    }
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
+      }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitive storage area.
       try
       {
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
+
         // FIXME!! - code to perform disseminations directly from the
-        // XML objects NOT implemented in this release.
-        return dissBindInfoArray;
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any Exception.
-      } catch (Exception e)
+        // XML objects NOT implemented in this release. When implemented
+        // it will go here.
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-                           "\n bDefPID: " + bDefPID +
-                           "\n methodName: " + methodName +
-                           "\n asOfDate: "+
-                           DateUtility.convertDateToString(versDateTime) +
-                           "\n" + e.getMessage() + "\n");
-        throw new ObjectNotFoundException("Object not found: " + PID +
-                           "\n bDefPID: " + bDefPID +
-                           "\n methodName: " + methodName +
-                           "\n asOfDate: "+
-                           DateUtility.convertDateToString(versDateTime) +
-                           "\n" + e.getMessage() + "\n");
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
       }
     }
+    s_server.logFinest("FastDOReader: dissBind: "+dissBindInfoArray+
+                       "size: "+dissBindInfoArray.length);
     return dissBindInfoArray;
   }
 
@@ -922,28 +898,28 @@ public class FastDOReader implements DisseminatingDOReader
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String  query =
-          "SELECT DISTINCT "+
-          "Disseminator.DISS_ID,"+
-          "BehaviorDefinition.BDEF_PID,"+
-          "BehaviorMechanism.BMECH_PID,"+
-          "DataStreamBindingMap.DSBindingMap_ID "+
-          "FROM "+
-          "BehaviorDefinition,"+
-          "Disseminator,"+
-          "DataStreamBindingMap,"+
-          "DigitalObject,"+
-          "DigitalObjectDissAssoc,"+
-          "BehaviorMechanism "+
-          "WHERE "+
-          "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "+
-          "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "+
-          "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "+
-          "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "+
-          "DataStreamBindingMap.BMECH_DBID=BehaviorMechanism.BMECH_DBID AND "+
-          "Disseminator.DISS_ID=\'" + disseminatorID +"\' AND "+
-          "DigitalObject.DO_PID=\'" + PID + "\';";
+          "SELECT DISTINCT "
+          + "Disseminator.DISS_ID,"
+          + "BehaviorDefinition.BDEF_PID,"
+          + "BehaviorMechanism.BMECH_PID,"
+          + "DataStreamBindingMap.DSBindingMap_ID "
+          + "FROM "
+          + "BehaviorDefinition,"
+          + "Disseminator,"
+          + "DataStreamBindingMap,"
+          + "DigitalObject,"
+          + "DigitalObjectDissAssoc,"
+          + "BehaviorMechanism "
+          + "WHERE "
+          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
+          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
+          + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
+          + "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "
+          + "DataStreamBindingMap.BMECH_DBID=BehaviorMechanism.BMECH_DBID AND "
+          + "Disseminator.DISS_ID=\'" + disseminatorID + "\' AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) System.out.println("ObjectQuery: "+query);
+      if (debug) s_server.logInfo("GetDisseminatorQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -969,14 +945,12 @@ public class FastDOReader implements DisseminatingDOReader
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
+      } catch (Throwable th)
       {
-        // Problem with the relational database or query
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            sqle.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    sqle.getMessage() + "\n");
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -984,25 +958,18 @@ public class FastDOReader implements DisseminatingDOReader
       // query Definitive storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveBMechReader
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
         disseminator = doReader.GetDisseminator(disseminatorID, versDateTime);
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
-      } catch (Exception e)
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            "\n asOfDate: " +
-            DateUtility.convertDateToString(versDateTime) +
-            "\n" + e.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    "\n asOfDate: " +
-        //    DateUtility.convertDateToString(versDateTime) +
-        //    "\n" + e.getmessage() + "\n");
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     }
     return disseminator;
@@ -1017,7 +984,7 @@ public class FastDOReader implements DisseminatingDOReader
   public Disseminator[] GetDisseminators(Date versDateTime)
       throws GeneralException
   {
-    Disseminator[] disseminators = null;
+    Disseminator[] disseminatorArray = null;
     Disseminator disseminator = null;
     Vector queryResults = new Vector();
     if (isFoundInFastStore && versDateTime == null)
@@ -1025,27 +992,27 @@ public class FastDOReader implements DisseminatingDOReader
       // Requested object exists in the Fast storage area and is NOT versioned;
       // query relational database
       String  query =
-          "SELECT DISTINCT "+
-          "Disseminator.DISS_ID,"+
-          "BehaviorDefinition.BDEF_PID,"+
-          "BehaviorMechanism.BMECH_PID,"+
-          "DataStreamBindingMap.DSBindingMap_ID "+
-          "FROM "+
-          "BehaviorDefinition,"+
-          "Disseminator,"+
-          "DataStreamBindingMap,"+
-          "DigitalObject,"+
-          "DigitalObjectDissAssoc,"+
-          "BehaviorMechanism "+
-          "WHERE "+
-          "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "+
-          "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "+
-          "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "+
-          "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "+
-          "DataStreamBindingMap.BMECH_DBID=BehaviorMechanism.BMECH_DBID AND "+
-          "DigitalObject.DO_PID=\'" + PID + "\';";
+          "SELECT DISTINCT "
+          + "Disseminator.DISS_ID,"
+          + "BehaviorDefinition.BDEF_PID,"
+          + "BehaviorMechanism.BMECH_PID,"
+          + "DataStreamBindingMap.DSBindingMap_ID "
+          + "FROM "
+          + "BehaviorDefinition,"
+          + "Disseminator,"
+          + "DataStreamBindingMap,"
+          + "DigitalObject,"
+          + "DigitalObjectDissAssoc,"
+          + "BehaviorMechanism "
+          + "WHERE "
+          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
+          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
+          + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
+          + "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "
+          + "DataStreamBindingMap.BMECH_DBID=BehaviorMechanism.BMECH_DBID AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) System.out.println("ObjectQuery: "+query);
+      if (debug) s_server.logInfo("GetDisseminatorsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -1069,24 +1036,22 @@ public class FastDOReader implements DisseminatingDOReader
           disseminator.dsBindMapID = results[3];
           queryResults.addElement(disseminator);
         }
-        disseminators = new Disseminator[queryResults.size()];
+        disseminatorArray = new Disseminator[queryResults.size()];
         int rowCount = 0;
         for (Enumeration e = queryResults.elements(); e.hasMoreElements();)
         {
-          disseminators[rowCount] = (Disseminator)e.nextElement();
+          disseminatorArray[rowCount] = (Disseminator)e.nextElement();
           rowCount++;
         }
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
+      } catch (Throwable th)
       {
-        // Problem with the relational database or query
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            sqle.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    sqle.getMessage() + "\n");
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -1094,28 +1059,21 @@ public class FastDOReader implements DisseminatingDOReader
       // query Definitive storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveBMechReader
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
-        disseminators = doReader.GetDisseminators(versDateTime);
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
-      } catch (Exception e)
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
+        disseminatorArray = doReader.GetDisseminators(versDateTime);
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            "\n asOfDate: " +
-            DateUtility.convertDateToString(versDateTime) +
-            "\n" + e.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    "\n asOfDate: " +
-        //    DateUtility.convertDateToString(versDateTime) +
-        //    "\n" + e.getmessage() + "\n");
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     }
-    return disseminators;
+    return disseminatorArray;
   }
 
   /**
@@ -1130,9 +1088,12 @@ public class FastDOReader implements DisseminatingDOReader
     try
     {
       if (bMechReader == null) bMechReader = new DefinitiveBMechReader(PID);
-    } catch (ServerException se)
+    } catch (Throwable th)
     {
-      System.err.println("GetDSBindingMaps: Can't create DefinitiveBMechReader");
+      throw new GeneralException("Definitive reader returned error. The "
+                                 + "underlying error was a "
+                                 + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
     }
     return bMechReader.GetDSBindingMaps(versDateTime);
   }
@@ -1144,7 +1105,7 @@ public class FastDOReader implements DisseminatingDOReader
    */
   public String GetObjectLabel() throws GeneralException
   {
-    if (debug) System.out.println("GetObjectLabel = " + doLabel);
+    if (debug) s_server.logInfo("GetObjectLabel = " + doLabel);
     return doLabel;
   }
 
@@ -1160,7 +1121,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @throws ObjectNotFoundException if object cannot be found
    */
   public ObjectMethodsDef[] getObjectMethods(String PID, Date versDateTime)
-      throws ObjectNotFoundException
+      throws GeneralException
   {
     ObjectMethodsDef[] objectMethodsDefArray = null;
     ObjectMethodsDef objectMethodsDef = null;
@@ -1171,29 +1132,29 @@ public class FastDOReader implements DisseminatingDOReader
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String  query =
-          "SELECT DISTINCT "+
-          "DigitalObject.DO_PID,"+
-          "BehaviorDefinition.BDEF_PID,"+
-          "Method.METH_Name "+
-          "FROM "+
-          "BehaviorDefinition,"+
-          "Disseminator,"+
-          "Method,"+
-          "DigitalObject,"+
-          "DigitalObjectDissAssoc,"+
-          "BehaviorMechanism,"+
-          "MechanismImpl "+
-          "WHERE "+
-          "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "+
-          "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "+
-          "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "+
-          "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "+
-          "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND "+
-          "BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND "+
-          "Method.METH_DBID = MechanismImpl.METH_DBID AND "+
-          "DigitalObject.DO_PID=\'" + PID + "\';";
+          "SELECT DISTINCT "
+          + "DigitalObject.DO_PID,"
+          + "BehaviorDefinition.BDEF_PID,"
+          + "Method.METH_Name "
+          + "FROM "
+          + "BehaviorDefinition,"
+          + "Disseminator,"
+          + "Method,"
+          + "DigitalObject,"
+          + "DigitalObjectDissAssoc,"
+          + "BehaviorMechanism,"
+          + "MechanismImpl "
+          + "WHERE "
+          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
+          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
+          + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
+          + "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "
+          + "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND "
+          + "BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND "
+          + "Method.METH_DBID = MechanismImpl.METH_DBID AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) System.out.println("getObjectMethodsQuery: "+query);
+      if (debug) s_server.logInfo("getObjectMethodsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -1226,25 +1187,24 @@ public class FastDOReader implements DisseminatingDOReader
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
-      {
-        // Problem with the relational database or query
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            sqle.getMessage() + "\n");
-        throw new ObjectNotFoundException("Object not found: " + PID +
-            sqle.getMessage() + "\n");
-      }
+     } catch (Throwable th)
+     {
+       throw new GeneralException("Fast reader returned error. The "
+                                  + "underlying error was a "
+                                  + th.getClass().getName() + "The message "
+                                  + "was \"" + th.getMessage() + "\"");
+     }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitve storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveBMechReader
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
         String[] behaviorDefs = doReader.GetBehaviorDefs(versDateTime);
         Vector results = new Vector();
         for (int i=0; i<behaviorDefs.length; i++)
@@ -1268,23 +1228,14 @@ public class FastDOReader implements DisseminatingDOReader
           objectMethodsDefArray[rowCount] = (ObjectMethodsDef)e.nextElement();
           rowCount++;
         }
-        // FIXME!! - need to add code to get object info from XML objects
         return objectMethodsDefArray;
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
-      } catch (Exception e)
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            "\n asOfDate: " +
-            DateUtility.convertDateToString(versDateTime) +
-            "\n" + e.getMessage() + "\n");
-        throw new ObjectNotFoundException("Object not found: " + PID +
-            "\n asOfDate: " +
-            DateUtility.convertDateToString(versDateTime) +
-            "\n" + e.getMessage() + "\n");
-        }
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
+      }
     }
     return objectMethodsDefArray;
   }
@@ -1296,7 +1247,7 @@ public class FastDOReader implements DisseminatingDOReader
    */
   public String GetObjectPID() throws GeneralException
   {
-    if (debug) System.out.println("GetObjectPID = " + PID);
+    if (debug) s_server.logInfo("GetObjectPID = " + PID);
     return this.PID;
   }
 
@@ -1309,10 +1260,17 @@ public class FastDOReader implements DisseminatingDOReader
   {
     try
     {
-      if (doReader == null) doReader = new DefinitiveDOReader(PID);
-    } catch (ServerException se)
+      if (doReader == null)
+      {
+        //doReader = new DefinitiveDOReader(PID);
+        doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+      }
+    } catch (Throwable th)
     {
-      System.err.println("GetObjectState: Can't create DefinitiveDOReader");
+      throw new GeneralException("Definitive reader returned error. The "
+                                 + "underlying error was a "
+                                 + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
     }
     return doReader.GetObjectState();
     }
@@ -1330,10 +1288,17 @@ public class FastDOReader implements DisseminatingDOReader
   {
     try
     {
-      if (doReader == null) doReader = new DefinitiveDOReader(PID);
-    } catch (ServerException se)
+      if (doReader == null)
+      {
+        //doReader = new DefinitiveDOReader(PID);
+        doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+      }
+    } catch (Throwable th)
     {
-      System.err.println("GetObjectXML: Can't create DefinitiveDOReader");
+      throw new GeneralException("Definitive reader returned error. The "
+                                 + "underlying error was a "
+                                 + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
     }
     return(doReader.GetObjectXML());
   }
@@ -1359,16 +1324,16 @@ public class FastDOReader implements DisseminatingDOReader
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database.
       String  query =
-          "SELECT DISTINCT "+
-          "DataStreamBinding.DSBinding_DS_ID "+
-          "FROM "+
-          "DigitalObject,"+
-          "DataStreamBinding "+
-          "WHERE "+
-          "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "+
-          "DigitalObject.DO_PID=\'" + PID + "\';";
+          "SELECT DISTINCT "
+          + "DataStreamBinding.DSBinding_DS_ID "
+          + "FROM "
+          + "DigitalObject,"
+          + "DataStreamBinding "
+          + "WHERE "
+          + "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) System.out.println("ObjectQuery: "+query);
+      if (debug) s_server.logInfo("ListDatastreamIDsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -1399,14 +1364,12 @@ public class FastDOReader implements DisseminatingDOReader
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
+      } catch (Throwable th)
       {
-        // Problem with the relational database or query
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            sqle.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    sqle.getMessage() + "\n");
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore)
     {
@@ -1414,21 +1377,18 @@ public class FastDOReader implements DisseminatingDOReader
       // query Definitive storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveBMechReader
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
         datastreamIDs = doReader.ListDatastreamIDs("");
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
-      } catch (Exception e)
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            "\n" + e.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    "\n" + e.getmessage() + "\n");
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     }
     return datastreamIDs;
@@ -1454,18 +1414,18 @@ public class FastDOReader implements DisseminatingDOReader
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String  query =
-          "SELECT DISTINCT "+
-          "Disseminator.DISS_ID "+
-          "FROM "+
-          "Disseminator,"+
-          "DigitalObject,"+
-          "DigitalObjectDissAssoc "+
-          "WHERE "+
-          "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "+
-          "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "+
-          "DigitalObject.DO_PID=\'" + PID + "\';";
+          "SELECT DISTINCT "
+          + "Disseminator.DISS_ID "
+          + "FROM "
+          + "Disseminator,"
+          + "DigitalObject,"
+          + "DigitalObjectDissAssoc "
+          + "WHERE "
+          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
+          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) System.out.println("ObjectQuery: "+query);
+      if (debug) s_server.logInfo("ListDisseminatorIDsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -1497,14 +1457,12 @@ public class FastDOReader implements DisseminatingDOReader
         connectionPool.free(connection);
         connection.close();
         statement.close();
-      } catch (SQLException sqle)
+      } catch (Throwable th)
       {
-        // Problem with the relational database or query
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            sqle.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    sqle.getMessage() + "\n");
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore)
     {
@@ -1512,21 +1470,18 @@ public class FastDOReader implements DisseminatingDOReader
       // query Definitive storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveBMechReader
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
         disseminatorIDs = doReader.ListDisseminatorIDs("A");
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
-      } catch (Exception e)
+      } catch (Throwable th)
       {
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            "\n" + e.getMessage() + "\n");
-        //throw new ObjectNotFoundException("Object not found: " + PID +
-        //    "\n" + e.getmessage() + "\n");
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     }
     return disseminatorIDs;
@@ -1544,23 +1499,23 @@ public class FastDOReader implements DisseminatingDOReader
    * @return String containing label of the specified digital object
    * @throws ObjectNotFoundException if object cannot be found
    */
-  public String locatePID(String PID) throws ObjectNotFoundException
+  public String locatePID(String PID) throws ServerException, GeneralException
   {
     ResultSet rs = null;
     String  query =
-        "SELECT "+
-        "DigitalObject.DO_Label "+
-        "FROM "+
-        "DigitalObject "+
-        "WHERE "+
-        "DigitalObject.DO_PID=\'" + PID + "\';";
-    if (debug) System.out.println("LocatObjectQuery: "+query);
+        "SELECT "
+        + "DigitalObject.DO_Label "
+        + "FROM "
+        + "DigitalObject "
+        + "WHERE "
+        + "DigitalObject.DO_PID=\'" + PID + "\';";
+    if (debug) s_server.logInfo("LocatPIDQuery: " + query);
 
     try
     {
       Connection connection = connectionPool.getConnection();
-      if(debug) System.out.println("LocatePIDConnectionPool: "+
-                                   connectionPool);
+      if(debug) s_server.logInfo("LocatePIDConnectionPool: "
+                                   + connectionPool);
       Statement statement = connection.createStatement();
       rs = statement.executeQuery(query);
       while (rs.next())
@@ -1570,14 +1525,12 @@ public class FastDOReader implements DisseminatingDOReader
       connectionPool.free(connection);
       connection.close();
       statement.close();
-    } catch (SQLException sqle)
+    } catch (Throwable th)
     {
-      // Problem with the relational database or query
-      // FIXME!! Decide on Exception handling
-      System.out.println("Object not found: " + PID +
-          sqle.getMessage() + "\n");
-      throw new ObjectNotFoundException("Object not found: " + PID +
-                                        "\n" + sqle.getMessage() + "\n");
+      throw new GeneralException("Fast reader returned error. The "
+                                 + "underlying error was a "
+                                 + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
     }
     if (doLabel == null || doLabel.equalsIgnoreCase(""))
     {
@@ -1588,33 +1541,33 @@ public class FastDOReader implements DisseminatingDOReader
       // Definitive storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveDOReader
-        if (doReader == null) doReader = new DefinitiveDOReader(PID);
+        if (doReader == null)
+        {
+          //doReader = new DefinitiveDOReader(PID);
+          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        }
         doLabel = doReader.GetObjectLabel();
         isFoundInDefinitiveStore = true;
-        if (debug) System.out.println("OBJECT FOUND IN DEFINITIVE STORE");
-      } catch (Exception e)
+        s_server.logInfo("OBJECT FOUND IN DEFINITIVE STORE: " + PID);
+      //} catch (StreamIOException sioe)
+      //{
+      //  ServerException se = (ServerException) sioe;
+      //  throw se;
+      } catch (ServerException se)
       {
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
-
-        // If object cannot be found in the Definitive storage area,
-        // then the object request contains errors or the object does NOT
-        // exist in the repository. In either case, this is a nonfatal
-        // error that is passed back up the line.
-        // FIXME!! - Decide on Exception handling
-        System.out.println("Object not found: " + PID +
-            "\n" + e.getMessage() + "\n");
-        throw new ObjectNotFoundException("Object not found: " + PID +
-            "\n" + e.getMessage() + "\n");
+        throw se;
+      } catch (Throwable th)
+      {
+        s_server.logWarning("OBJECT NOT FOUND IN DEFINITIVE STORE: " + PID);
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else
     {
       isFoundInFastStore = true;
-        if (debug) System.out.println("OBJECT FOUND IN FAST STORE");
+      s_server.logInfo("OBJECT FOUND IN FAST STORE: " + PID);
     }
     return doLabel;
   }
@@ -1634,25 +1587,30 @@ public class FastDOReader implements DisseminatingDOReader
     Date versDateTime = null;
     FastDOReader fdor = null;
     DisseminationBindingInfo[] dissem = null;
+    java.util.HashMap h = new java.util.HashMap();
+     h.put("application", "apia");
+     h.put("useCachedObject", "true");
+     h.put("userId", "fedoraAdmin");
+     Context s_context = new fedora.server.ReadOnlyContext(h);
     try
     {
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       dissem = fdor.getDissemination(PID, bDefPID, methodName, versDateTime);
       for (int i=0; i<dissem.length; i++)
       {
-          System.out.println("dissemResults["+i+"] = "+i+
-          "dissemAddress: "+dissem[i].AddressLocation+
-          "dissemOperation: "+dissem[i].OperationLocation+
-          "dissemDSLocation: "+dissem[i].DSLocation+
-          "dissemProtocol: "+dissem[i].ProtocolType+
-          "dissemBindKey: "+dissem[i].DSBindKey);
+          System.out.println("dissemResults[" + i + "] = " + i
+              + "dissemAddress: "    + dissem[i].AddressLocation
+              + "dissemOperation: "  + dissem[i].OperationLocation
+              + "dissemDSLocation: " + dissem[i].DSLocation
+              + "dissemProtocol: "   + dissem[i].ProtocolType
+              + "dissemBindKey: "    + dissem[i].DSBindKey);
           if (dissem[i].methodParms != null)
           {
             MethodParmDef[] methodParms = dissem[i].methodParms;
             for (int j=0; j<methodParms.length; j++)
             {
-              System.out.println("Dissem: MethodParms:"+
-              "parm["+j+"] = "+methodParms[j]);
+              System.out.println("Dissem: MethodParms:"
+                  + "parm[" + j + "] = " + methodParms[j]);
             }
           } else
           {
@@ -1662,67 +1620,74 @@ public class FastDOReader implements DisseminatingDOReader
       System.out.println("END ----- TEST RESULTS FOR DISSEMINATION\n");
 
       // Test reading method paramters (method has parms)
-      System.out.println("\nBEGIN ----- TEST RESULTS FOR READING METHOD"+
-                         "PARMS:\n (method that has parms)");
+      System.out.println("\nBEGIN ----- TEST RESULTS FOR READING METHOD"
+                         + "PARMS:\n (method that has parms)");
       MethodParmDef[] methodParms = null;
       PID = "1007.lib.dl.test/text_ead/viu00003";
       bDefPID = "web_ead";
       methodName = "get_web_default";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       methodParms = fdor.GetBMechMethodParm(bDefPID, methodName,versDateTime);
       for (int i=0; i<methodParms.length; i++)
       {
-        System.out.println("methodParmName:"+i+" \n"+methodParms[i].parmName+
-        "\n   methodParmDefaultValue["+i+"] = "+methodParms[i].parmDefaultValue+
-        "\n   methodParmRequiredFlag["+i+"] = "+methodParms[i].parmRequired+
-        "\n   methodParmLabel["+i+"] = "+methodParms[i].parmLabel+"\n");
+        System.out.println("methodParmName:" + i + " \n"
+            + methodParms[i].parmName
+            + "\n   methodParmDefaultValue[" + i + "] = "
+            + methodParms[i].parmDefaultValue
+            + "\n   methodParmRequiredFlag[" + i + "] = "
+            + methodParms[i].parmRequired
+            + "\n          methodParmLabel[" + i + "] = "
+            + methodParms[i].parmLabel + "\n");
       }
       // Test reading method parameters (method has no parms)
       System.out.println("(method tha has NO parms)");
       PID = "1007.lib.dl.test/text_ead/viu00003";
       bDefPID = "web_ead";
       methodName = "get_tp";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       methodParms = fdor.GetBMechMethodParm(bDefPID, methodName,versDateTime);
       System.out.println("\n\nTest with method that has NO parms\n");
       for (int i=0; i<methodParms.length; i++)
       {
-        System.out.println("methodParmName:"+i+" \n"+methodParms[i].parmName+
-        "\n   methodParmDefaultValue["+i+"] = "+methodParms[i].parmDefaultValue+
-        "\n   methodParmRequiredFlag["+i+"] = "+methodParms[i].parmRequired+
-        "\n   methodParmLabel["+i+"] = "+methodParms[i].parmLabel+"\n");
+        System.out.println("methodParmName:" + i + " \n"
+            + methodParms[i].parmName
+            + "\n   methodParmDefaultValue[" + i + "] = "
+            + methodParms[i].parmDefaultValue
+            + "\n   methodParmRequiredFlag[" + i + "] = "
+            + methodParms[i].parmRequired
+            + "\n          methodParmLabel[" + i + "] = "
+            + methodParms[i].parmLabel + "\n");
       }
-      System.out.println("END ----- TEST RESULTS FOR READING METHOD "+
-                        "PARAMETERS\n");
+      System.out.println("END ----- TEST RESULTS FOR READING METHOD "
+                         + "PARAMETERS\n");
 
       // Test reading behavior methods
       System.out.println("\nBEGIN ----- TEST RESULTS FOR READING ALL METHODS:");
       MethodDef[] methodDefs = null;
       PID = "1007.lib.dl.test/text_ead/viu00003";
       bDefPID = "web_ead";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       methodDefs = fdor.GetBMechMethods(bDefPID, versDateTime);
       for (int i=0; i<methodDefs.length; i++)
       {
-        System.out.println("methodDefName: "+i+" \n"+methodDefs[i].methodName+
-        "\n   methodDefLabel["+i+"] = "+methodDefs[i].methodLabel);
-        //"\n   methodDefBindingURL["+i+"] = "+methodDefs[i].httpBindingURL+
-        //"\n   methodDefAddress["+i+"] = "+methodDefs[i].httpBindingAddress+
-        //"\n   methodDefOperation["+i+"] = "+
-        //methodDefs[i].httpBindingOperationLocation+"\n");
+        System.out.println("methodDefName: " + i + " \n"
+            + methodDefs[i].methodName
+            + "\n   methodDefLabel[" + i + "] = "
+            + methodDefs[i].methodLabel);
         methodParms = methodDefs[i].methodParms;
         if (methodParms != null)
         {
           System.out.println("\nMETHOD HAS PARMs\n");
           for (int j=0; j<methodParms.length; j++)
           {
-            System.out.println("methodParm: "+j+" \n"+methodParms[j].parmName+
-            "\n   methodParmDefaultValue["+j+"] = "+
-            methodParms[j].parmDefaultValue+
-            "\n   methodParmRequiredFlag["+j+"] = "+
-            methodParms[j].parmRequired+
-            "\n   methodParmLabel["+j+"] = "+
-            methodParms[j].parmLabel+"\n");
+            System.out.println("methodParm: " + j + " \n"
+                + methodParms[j].parmName
+                + "\n   methodParmDefaultValue[" + j + "] = "
+                + methodParms[j].parmDefaultValue
+                + "\n   methodParmRequiredFlag[" + j + "] = "
+                + methodParms[j].parmRequired
+                + "\n          methodParmLabel[" + j + "] = "
+                + methodParms[j].parmLabel + "\n");
           }
         } else
         {
@@ -1733,75 +1698,79 @@ public class FastDOReader implements DisseminatingDOReader
 
       System.out.println("\nBEGIN ----- TEST GET OBJECT METHODS");
       PID = "1007.lib.dl.test/text_ead/viu00003";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       ObjectMethodsDef[] omdArray = fdor.getObjectMethods(PID, versDateTime);
       System.out.println("size: "+omdArray.length);
       for (int i=0; i<omdArray.length; i++)
       {
         ObjectMethodsDef omd = omdArray[i];
-        System.out.println("omdArray["+i+"] = "+
-                           "\n   PID: "+omd.PID+
-                           "\n   bDefPID: "+omd.bDefPID+
-                           "\n   methodName: "+omd.methodName);
+        System.out.println("omdArray[" + i + "] = "
+                           + "\n        PID: " + omd.PID
+                           + "\n    bDefPID: " + omd.bDefPID
+                           + "\n methodName: " + omd.methodName);
       }
       System.out.println("END ----- TEST GET OBJECT METHODS");
 
       System.out.println("\nBEGIN ----- TEST GET BEAHVIOR DEFS");
       String[] bDefs = null;
       PID = "1007.lib.dl.test/text_ead/viu00003";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       bDefs = fdor.GetBehaviorDefs(versDateTime);
       for (int i=0; i<bDefs.length; i++)
       {
-        System.out.println("bDef["+i+"] = "+bDefs[i]);
+        System.out.println("bDef[" + i + "] = " + bDefs[i]);
       }
       System.out.println("END ----- TEST GET BEAHVIOR DEFS");
 
-      System.out.println("\nBEGIN ----- TEST GET DISSEMINATOR"+
-                         "\n (retro style object)");
+      System.out.println("\nBEGIN ----- TEST GET DISSEMINATOR"
+                         + "\n (retro style object)");
       PID = "1007.lib.dl.test/text_ead/viu00003";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       Disseminator diss = fdor.GetDisseminator("web_ead1", versDateTime);
-      System.out.println("dissID: "+diss.dissID+"\nbDefPID: "+diss.bDefID+
-                         "\nbMechPID: "+diss.bMechID+"\nbBindMapID: "+
-                         diss.dsBindMapID);
+      System.out.println("dissID: " + diss.dissID
+                         + "\n    bDefPID: " + diss.bDefID
+                         + "\n   bMechPID: " + diss.bMechID
+                         + "\n bBindMapID: " + diss.dsBindMapID);
       System.out.println("\n(new stle object)");
       PID = "uva-lib:1225";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       diss = fdor.GetDisseminator("DISS1", versDateTime);
-      System.out.println("dissID: "+diss.dissID+"\nbDefPID: "+diss.bDefID+
-                         "\nbMechPID: "+diss.bMechID+"\nbBindMapID: "+
-                         diss.dsBindMapID);
+      System.out.println("dissID: " + diss.dissID
+                         + "\n    bDefPID: " + diss.bDefID
+                         + "\n   bMechPID: " + diss.bMechID
+                         + "\n bBindMapID: " + diss.dsBindMapID);
       System.out.println("END ----- TEST GET DISSEMINATOR");
 
-      System.out.println("\nBEGIN ----- TEST GET DISSEMINATORS"+
-                         "\n(new style object)");
+      System.out.println("\nBEGIN ----- TEST GET DISSEMINATORS"
+                         + "\n(new style object)");
       PID = "uva-lib:1225";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       Disseminator[] diss1 = fdor.GetDisseminators(versDateTime);
       for (int i=0; i<diss1.length; i++)
       {
-        System.out.println("dissID: "+diss1[i].dissID+"\nbDefPID: "+
-        diss1[i].bDefID+"\nbMechPID: "+diss1[i].bMechID+"\nbBindMapID: "+
-        diss1[i].dsBindMapID);
+        System.out.println("dissID: " + diss1[i].dissID
+        + "\n    bDefPID: " + diss1[i].bDefID
+        + "\n   bMechPID: " + diss1[i].bMechID
+        + "\n bBindMapID: " + diss1[i].dsBindMapID);
       }
       System.out.println("\n(retro style object)");
       PID = "1007.lib.dl.test/text_ead/viu00001";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       Disseminator[] diss2 = fdor.GetDisseminators(versDateTime);
       System.out.println("size: "+diss1.length);
       for (int i=0; i<diss2.length; i++)
       {
-        System.out.println("dissID: "+diss2[i].dissID+"\nbDefPID: "+
-        diss2[i].bDefID+"\nbMechPID: "+diss2[i].bMechID+"\nbBindMapID: "+
-        diss2[i].dsBindMapID);
+        System.out.println("dissID: " + diss2[i].dissID
+            + "\n    bDefPID: " + diss2[i].bDefID
+            + "\n   bMechPID: " + diss2[i].bMechID
+            + "\n bBindMapID: " + diss2[i].dsBindMapID);
       }
       System.out.println("END ----- TEST GET DISSEMINATORS");
 
-      System.out.println("\nBEGIN ----- TEST LIST DISSEMINATORIDS"+
-                         "\n(retro style object)");
+      System.out.println("\nBEGIN ----- TEST LIST DISSEMINATORIDS"
+                         + "\n(retro style object)");
       PID = "1007.lib.dl.test/text_ead/viu00001";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       String[] dissIDs = fdor.ListDisseminatorIDs("");
       for (int i=0; i<dissIDs.length; i++)
       {
@@ -1809,7 +1778,7 @@ public class FastDOReader implements DisseminatingDOReader
       }
       System.out.println("\n(new style object)");
       PID = "uva-lib:1225";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       dissIDs = fdor.ListDisseminatorIDs("");
       for (int i=0; i<dissIDs.length; i++)
       {
@@ -1820,54 +1789,56 @@ public class FastDOReader implements DisseminatingDOReader
       System.out.println("\nBEGIN ----- TEST GET DATASTREAM"+
                          "\n(new style object)");
       PID = "uva-lib:1225";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       Datastream ds = fdor.GetDatastream("DS1", versDateTime);
-      System.out.println("GetDatastreamLabel: "+ds.DSLabel+"\nMIME: "+
-                         ds.DSMIME+"\nLocation: "+ds.DSLocation);
+      System.out.println("GetDatastreamLabel: " + ds.DSLabel+"\nMIME: "
+                         + ds.DSMIME+"\nLocation: " + ds.DSLocation);
       System.out.println("\n(retro style object)");
       PID = "1007.lib.dl.test/text_ead/viu00001";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       ds = fdor.GetDatastream("1", versDateTime);
-      System.out.println("GetDatastreamLabel: "+ds.DSLabel+"\nMIME: "+
-                         ds.DSMIME+"\nLocation: "+ds.DSLocation);
+      System.out.println("GetDatastreamLabel: " + ds.DSLabel + "\nMIME: "
+                         + ds.DSMIME + "\nLocation: " + ds.DSLocation);
       System.out.println("END ----- TEST GET DATASTREAM");
 
-      System.out.println("\nBEGIN ----- TEST GET DATASTREAMS"+
-                         "\n(retro style object)");
+      System.out.println("\nBEGIN ----- TEST GET DATASTREAMS"
+                         + "\n(retro style object)");
       PID = "1007.lib.dl.test/text_ead/viu00001";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       Datastream[] dsa = fdor.GetDatastreams(versDateTime);
       for (int i=0; i<dsa.length; i++)
       {
-        System.out.println("GetDatastreamsLabel: "+dsa[i].DSLabel+"\nMIME: "+
-        dsa[i].DSMIME+"\nLocation: "+dsa[i].DSLocation);
+        System.out.println("GetDatastreamsLabel: " + dsa[i].DSLabel
+            + "\n     MIME: " + dsa[i].DSMIME
+            + "\n Location: " + dsa[i].DSLocation);
       }
       System.out.println("\n(new style object)");
       PID = "uva-lib:1225";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       dsa = fdor.GetDatastreams(versDateTime);
       for (int i=0; i<dsa.length; i++)
       {
-        System.out.println("GetDatastreamLabel: "+dsa[i].DSLabel+"\nMIME: "+
-        dsa[i].DSMIME+"\nLocation: "+dsa[i].DSLocation);
+        System.out.println("GetDatastreamLabel: " + dsa[i].DSLabel
+            + "\n     MIME: " + dsa[i].DSMIME
+            + "\n Location: " + dsa[i].DSLocation);
       }
       System.out.println("END ----- TEST GET DATASTREAMS");
 
       System.out.println("\nBEGIN ----- TEST GET OBJECT LABEL");
       PID = "uva-lib:1225";
-      fdor = new FastDOReader(PID);
-      System.out.println("ObjectLabel: "+fdor.GetObjectLabel());
+      fdor = new FastDOReader(s_context, PID);
+      System.out.println("ObjectLabel: " + fdor.GetObjectLabel());
 
       System.out.println("\nBEGIN ----- TEST GET OBJECT PID");
       PID = "uva-lib:1225";
-      fdor = new FastDOReader(PID);
-      System.out.println("ObjectLabel: "+fdor.GetObjectPID());
+      fdor = new FastDOReader(s_context, PID);
+      System.out.println("ObjectLabel: " + fdor.GetObjectPID());
       System.out.println("END ----- TEST GET OBJECT PID");
 
-      System.out.println("\nBEGIN ----- TEST GET OBJECT PID only in "+
-                         "Definitive Store");
+      System.out.println("\nBEGIN ----- TEST GET OBJECT PID only in "
+                         + "Definitive Store");
       PID = "uva-lib:1220";
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       System.out.println("ObjectLabel: "+fdor.GetObjectPID());
       System.out.println("END ----- TEST GET OBJECT PID");
 
