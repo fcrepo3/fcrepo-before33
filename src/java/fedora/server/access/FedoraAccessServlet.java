@@ -588,7 +588,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                 sb.append((String) headerValues.nextElement());
             }
             String value = sb.toString();
-            System.out.println("FEDORASERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
+            if (fedora.server.Debug.DEBUG) System.out.println("FEDORASERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
             response.setHeader(name,value);
         }
 
@@ -625,7 +625,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
             for(int i=0; i<headerArray.length; i++) {
                 if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
                     response.addHeader(headerArray[i].name, headerArray[i].value);
-                    System.out.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
+                    if (fedora.server.Debug.DEBUG) System.out.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
                 }
             }
         }

@@ -188,14 +188,14 @@ public class SimpleDOReader
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
 		if (format==null || format.equals("") || format.equalsIgnoreCase("default")) {
-			System.out.println("SimpleDOReader.ExportObject using default format: " + m_exportFormat);
-			System.out.println("SimpleDOReader.ExportObject transContext: ");
+			if (fedora.server.Debug.DEBUG) System.out.println("SimpleDOReader.ExportObject using default format: " + m_exportFormat);
+			if (fedora.server.Debug.DEBUG) System.out.println("SimpleDOReader.ExportObject transContext: ");
 			m_translator.serialize(m_obj, bytes, m_exportFormat, 
 				"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE);
 				//"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE);
 		}
 		else {
-			System.out.println("SimpleDOReader.ExportObject with format arg of " + format);
+			if (fedora.server.Debug.DEBUG) System.out.println("SimpleDOReader.ExportObject with format arg of " + format);
 			m_translator.serialize(m_obj, bytes, format,
 				"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE); 
 				//"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE);

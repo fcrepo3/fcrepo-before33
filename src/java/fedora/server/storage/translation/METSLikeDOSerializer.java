@@ -84,7 +84,7 @@ public class METSLikeDOSerializer
     public void serialize(DigitalObject obj, OutputStream out, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
-		System.out.println("Serializing METS (Fedora extension)...");
+		if (fedora.server.Debug.DEBUG) System.out.println("Serializing METS (Fedora extension)...");
 		m_transContext=transContext;
         StringBuffer buf=new StringBuffer();
         appendXMLDeclaration(obj, encoding, buf);

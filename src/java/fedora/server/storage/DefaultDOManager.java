@@ -169,7 +169,7 @@ public class DefaultDOManager
         }
         // internal storage format (required)
 		
-        System.out.println("Server property format.storage= " + Server.STORAGE_FORMAT);
+        if (fedora.server.Debug.DEBUG) System.out.println("Server property format.storage= " + Server.STORAGE_FORMAT);
 		m_defaultStorageFormat = Server.STORAGE_FORMAT;
         //m_defaultStorageFormat=getParameter("storageFormat");
         if (m_defaultStorageFormat==null) {
@@ -850,7 +850,7 @@ public class DefaultDOManager
 				// FIXME: just setting ownerId manually for now...
 				obj.setOwnerId("fedoraAdmin");
 				obj.setNew(true);
-				System.out.println("LOOK! Deserializing from format: " + format);
+				if (fedora.server.Debug.DEBUG) System.out.println("LOOK! Deserializing from format: " + format);
                 logFinest("Deserializing from format: " + format);
                 m_translator.deserialize(in2, obj, format, encoding, 
                 	DOTranslationUtility.DESERIALIZE_INSTANCE);
@@ -956,7 +956,7 @@ public class DefaultDOManager
 
                 // get a digital object writer configured with
                 // the DEFAULT export format.
-				System.out.println("LOOK! get new writer with default export format: " + m_defaultExportFormat);
+				if (fedora.server.Debug.DEBUG) System.out.println("LOOK! get new writer with default export format: " + m_defaultExportFormat);
                 logFinest("Instantiating a SimpleDOWriter...");
                 DOWriter w=new SimpleDOWriter(context, this, m_translator,
                         m_defaultExportFormat,

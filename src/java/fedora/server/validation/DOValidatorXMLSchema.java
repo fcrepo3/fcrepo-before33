@@ -175,8 +175,8 @@ public class DOValidatorXMLSchema
 						+ "\n"); 
 				line = rdr.readLine();
 			}
-			System.out.println("LOOK! schemaLocation replacement: ");
-			System.out.println(buf);
+			if (fedora.server.Debug.DEBUG) System.out.println("LOOK! schemaLocation replacement: ");
+			if (fedora.server.Debug.DEBUG) System.out.println(buf);
 			rdr.close();
 			return new ByteArrayInputStream(buf.toString().getBytes("UTF-8"));
 		} catch (Exception e) {

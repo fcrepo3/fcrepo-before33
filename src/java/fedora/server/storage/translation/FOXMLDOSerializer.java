@@ -79,7 +79,7 @@ public class FOXMLDOSerializer
 	public void serialize(DigitalObject obj, OutputStream out, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
-		System.out.println("Serializing FOXML for transContext: " + transContext);
+		if (fedora.server.Debug.DEBUG) System.out.println("Serializing FOXML for transContext: " + transContext);
 		m_transContext=transContext;
         StringBuffer buf=new StringBuffer();
         appendXMLDeclaration(obj, encoding, buf);

@@ -42,7 +42,7 @@ public class DbmsConnection {
 	public DbmsConnection() throws Exception {
 		initDB();
 		// Debug statement
-		System.out.println("DbmsConnection constructor: using connectionPool: " + connectionPool);
+		if (fedora.server.Debug.DEBUG) System.out.println("DbmsConnection constructor: using connectionPool: " + connectionPool);
 	}
 
 	public Connection getConnection() throws Exception {
@@ -90,14 +90,14 @@ public class DbmsConnection {
 /*
 
             String id = "mysql1";
-            System.out.println("id: "+id);
-            System.out.flush();
+            if (fedora.server.Debug.DEBUG) System.out.println("id: "+id);
+            if (fedora.server.Debug.DEBUG) System.out.flush();
             String driv = s_server.getDatastoreConfig("mysql1").
                           getParameter("jdbc_driver_class");
-            System.out.println("driver: "+driv);
+            if (fedora.server.Debug.DEBUG) System.out.println("driver: "+driv);
             String label = s_server.getParameter("label");
-            System.out.println("label: "+label);
-            System.out.flush();
+            if (fedora.server.Debug.DEBUG) System.out.println("label: "+label);
+            if (fedora.server.Debug.DEBUG) System.out.flush();
             String driver = s_server.getDatastoreConfig(id).
                             getParameter("jdbc_driver_class");
             String username = s_server.getDatastoreConfig(id).
@@ -112,10 +112,10 @@ public class DbmsConnection {
             Integer i2 = new Integer(s_server.getDatastoreConfig(id).
                                getParameter("pool_max"));
             int maxConnections = i2.intValue();
-            System.out.println("id: "+id+"\ndriver: "+driver+"\nuser"+username+
+            if (fedora.server.Debug.DEBUG) System.out.println("id: "+id+"\ndriver: "+driver+"\nuser"+username+
                                "\npass: "+password+"\nurl: "+url+"\nmin: "+
                                initConnections+"\nmax: "+maxConnections);
-            System.out.flush();
+            if (fedora.server.Debug.DEBUG) System.out.flush();
             if(debug) System.out.println("\nurl = "+url);
 
             // initialize connection pool

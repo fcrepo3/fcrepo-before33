@@ -80,6 +80,22 @@ public class BasicServer
         System.out.println("Fedora Version " + VERSION_MAJOR + "." + VERSION_MINOR);
         System.out.println("Server Host Name: " + fedoraServerHost);
         System.out.println("Server Port: " + fedoraServerPort);
+
+        // debug (optional, default = false)
+        String debugString = getParameter("debug");
+        String offOrOn = "OFF";
+        if ( debugString != null) {
+            debugString = debugString.toLowerCase();
+            if (debugString.equals("true")
+                    || debugString.equals("yes")
+                    || debugString.equals("on")) {
+                offOrOn = "ON";
+            }
+        }
+        System.out.println("Debugging: " + debugString);
+        if (debugString.equals("ON")) {
+            fedora.server.Debug.DEBUG = true;
+        }
     }
 
     private int getLoggerIntParam(String paramName)

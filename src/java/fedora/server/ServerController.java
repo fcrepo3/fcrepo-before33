@@ -55,7 +55,7 @@ public class ServerController
             throws ServletException, IOException {
         String action=request.getParameter("action");
         String requestInfo="Got controller '" + action + "' request from " + request.getRemoteAddr();
-        System.out.println(requestInfo);
+        if (fedora.server.Debug.DEBUG) System.out.println(requestInfo);
         PrintWriter out = response.getWriter();
         response.setContentType("text/plain");
         if (action==null) {

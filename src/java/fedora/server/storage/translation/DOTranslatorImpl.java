@@ -57,7 +57,7 @@ public class DOTranslatorImpl
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         try {
-        	System.out.println("Grabbing deserializer for: " + format);
+        	if (fedora.server.Debug.DEBUG) System.out.println("Grabbing deserializer for: " + format);
             DODeserializer des=(DODeserializer) m_deserializers.get(format);
             if (des==null) {
                 throw new UnsupportedTranslationException("No deserializer exists "
@@ -77,7 +77,7 @@ public class DOTranslatorImpl
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         try {
-			System.out.println("Grabbing serializer for: " + format);
+			if (fedora.server.Debug.DEBUG) System.out.println("Grabbing serializer for: " + format);
             DOSerializer ser=(DOSerializer) m_serializers.get(format);
             if (ser==null) {
                 throw new UnsupportedTranslationException(

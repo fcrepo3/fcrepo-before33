@@ -249,7 +249,7 @@ public class METSLikeDODeserializer
 
     public void deserialize(InputStream in, DigitalObject obj, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
-		System.out.println("Deserializing METS (Fedora extension)...");
+		if (fedora.server.Debug.DEBUG) System.out.println("Deserializing METS (Fedora extension)...");
         m_obj=obj;
 		m_transContext=transContext;
 		initialize();       

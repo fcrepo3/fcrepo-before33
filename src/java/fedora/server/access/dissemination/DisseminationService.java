@@ -551,7 +551,7 @@ public class DisseminationService
           // the MIMETypedStream resulting from the dissemination request.
           ExternalContentManager externalContentManager = (ExternalContentManager)
               s_server.getModule("fedora.server.storage.ExternalContentManager");
-          System.out.println("URL: "+dissURL);
+          if (fedora.server.Debug.DEBUG) System.out.println("URL: "+dissURL);
           dissemination = externalContentManager.getExternalContent(dissURL);
         }
         long stopTime = new Date().getTime();
@@ -763,7 +763,7 @@ public class DisseminationService
       {
           DOReader doReader =  m_manager.getReader(m_context, PID);
           Datastream d = (Datastream) doReader.getDatastream(s[1], s[2]);
-          System.out.println("DSDate: "+DateUtility.convertDateToString(d.DSCreateDT));
+          if (fedora.server.Debug.DEBUG) System.out.println("DSDate: "+DateUtility.convertDateToString(d.DSCreateDT));
           dsLocation = "http://"+fedoraServerHost+":"+fedoraServerPort
               +"/fedora/get/"+s[0]+"/fedora-system:3/getItem/"
               +DateUtility.convertDateToString(d.DSCreateDT)+"?itemID="+s[1];

@@ -233,7 +233,7 @@ public class FOXMLDODeserializer
     public void deserialize(InputStream in, DigitalObject obj, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
             	
-        System.out.println("Deserializing FOXML for transContext: " + transContext);
+        if (fedora.server.Debug.DEBUG) System.out.println("Deserializing FOXML for transContext: " + transContext);
         m_obj=obj;
         m_transContext=transContext;
         initialize();
@@ -245,7 +245,7 @@ public class FOXMLDODeserializer
         } catch (SAXException se) {
             throw new ObjectIntegrityException("FOXML IO stream was bad : " + se.getMessage());
         }
-        System.out.println("Just finished parse.");
+        if (fedora.server.Debug.DEBUG) System.out.println("Just finished parse.");
 
         if (!m_rootElementFound) {
             throw new ObjectIntegrityException("FOXMLDODeserializer: Input stream is not valid FOXML." +

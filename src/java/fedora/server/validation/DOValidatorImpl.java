@@ -265,7 +265,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
     	int validationLevel, String phase)
       	throws ObjectValidityException, GeneralException {
 		
-	  System.out.println("LOOK! Validation phase=" + phase + " format=" + format);		
+	  if (fedora.server.Debug.DEBUG) System.out.println("LOOK! Validation phase=" + phase + " format=" + format);		
       logFinest("[DOValidatorImpl]: Initiating validation: " 
       		+ " phase=" + phase	+ " format=" + format);
       		
