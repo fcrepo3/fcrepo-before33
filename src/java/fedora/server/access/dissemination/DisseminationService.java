@@ -14,6 +14,7 @@ import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.DisseminationBindingInfoNotFoundException;
@@ -186,6 +187,30 @@ public class DisseminationService
       }
   }
 
+  public void checkState(Context context, String state, String dsID, String PID)
+      throws ServerException
+  {
+    // Check Object State
+    if ( state.equalsIgnoreCase("D")  &&
+         ( context.get("canUseDeletedObject")==null
+           || (!context.get("canUseDeletedObject").equals("true")) )
+      )
+    {
+      throw new GeneralException("The requested dissemination for data object \""+PID+"\" is no "
+          + "longer available for dissemination. One of its datastreams (dsID=\""+dsID+"\") has been flagged for DELETION "
+          + "by the repository administrator. ");
+
+    } else if ( state.equalsIgnoreCase("I")  &&
+                ( context.get("canUseInactiveObject")==null
+                  || (!context.get("canUseInactiveObject").equals("true")) )
+              )
+    {
+      throw new GeneralException("The requested dissemination for data object \""+PID+"\" is no "
+          + "longer available for dissemination. One of its datastreams (dsID=\""+dsID+"\") has been flagged as INACTIVE "
+          + "by the repository administrator. ");
+    }
+  }
+
   /**
    * <p>Assembles a dissemination given an instance of <code>
    * DisseminationBindingInfo</code> which has the dissemination-related
@@ -199,7 +224,7 @@ public class DisseminationService
    * @throws ServerException If unable to assemble the dissemination for any
    *         reason.
    */
-  public MIMETypedStream assembleDissemination(String PID,
+  public MIMETypedStream assembleDissemination(Context context, String PID,
       Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray)
       throws ServerException
   {
@@ -222,6 +247,11 @@ public class DisseminationService
       // a single row.
       for (int i=0; i<dissBindInfoArray.length; i++)
       {
+        // Check state of datastreams in binding info
+        // If any datastreams have a state other than Inactive,
+        // the dissemination request is denied by throwing an
+        // Exception explaining the reason for denying the dissemination request.
+        checkState(context, dissBindInfoArray[i].dsState, dissBindInfoArray[i].dsID, PID);
         dissBindInfo = dissBindInfoArray[i];
 
         // Before doing anything, check whether we can replace any
