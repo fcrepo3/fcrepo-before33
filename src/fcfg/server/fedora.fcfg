@@ -53,10 +53,10 @@
 		This value should be adjusted based on your installation environment; 
 		default assumes a Windows installation of C:\fedora1_2_objects.
 	</comment>
-	<param name="temp_store_base" value="C:\fedora_temp"/>
+	<param name="temp_store_base" value="C:\fedora1_2_temp"/>
 	<comment>Defines the root directory for Fedora temporary storage. 
 		This value should be adjusted based on your installation environment; 
-		default assumes a Windows installation of C:\fedora_temp.
+		default assumes a Windows installation of C:\fedora1_2_temp.
 	</comment>
 	<param name="datastream_store_base" value="C:\fedora1_2_datastreams"/>
 	<comment>Defines the root directory for the internal storage of Managed Content datastreams. 
