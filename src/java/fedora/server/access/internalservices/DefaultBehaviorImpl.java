@@ -330,34 +330,44 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    */
   public MIMETypedStream getItem(String itemID) throws ServerException
   {
-    // FIXIT!! We need to look for the case when dsControlGrp indicates
-    // that there is an externally referenced datastream that we want
-    // to redirect the client to, as opposed to obtaining the bytes here
-    // and sending them back as an inputstream. See DisseminationService.
-
     Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
     Datastream ds = reader.GetDatastream(itemID, versDate);
     ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
-    InputStream in = ds.getContentStream();
-    int byteStream = 0;
-    try
+    InputStream in = null;
+    if (ds.DSControlGrp.equalsIgnoreCase("R"))
     {
-    byte[] buffer = new byte[255];
-    while ((byteStream = in.read(buffer)) >= 0)
+      String dsLocation = ds.DSLocation;
+      try
+      {
+        in = new ByteArrayInputStream(dsLocation.getBytes("UTF-8"));
+      } catch (UnsupportedEncodingException uee)
+      {
+        // Can never occur since Java fully supports UTF-8
+      }
+      return new MIMETypedStream("application/fedora-redirect",in);
+    } else
     {
-      out.write(buffer, 0, byteStream);
+      in = ds.getContentStream();
+      int byteStream = 0;
+      try
+      {
+        byte[] buffer = new byte[255];
+        while ((byteStream = in.read(buffer)) >= 0)
+        {
+          out.write(buffer, 0, byteStream);
+        }
+        buffer = null;
+        in.close();
+        } catch (IOException ioe)
+        {
+          throw new DisseminationException("[DefaultBehaviorImpl] had an error "
+              + "in reading or writing getItem bytestream. "
+              + "Underlying exception was: "
+              + ioe.getMessage());
+        }
+        InputStream is = new ByteArrayInputStream(out.toByteArray());
+        return new MIMETypedStream(ds.DSMIME, is);
     }
-    buffer = null;
-    in.close();
-    } catch (IOException ioe)
-    {
-      throw new DisseminationException("[DefaultBehaviorImpl] had an error "
-          + "in reading or writing getItem bytestream. "
-          + "Underlying exception was: "
-          + ioe.getMessage());
-    }
-    InputStream is = new ByteArrayInputStream(out.toByteArray());
-    return new MIMETypedStream(ds.DSMIME, is);
   }
 
   /**
