@@ -12,6 +12,7 @@ package fedora.server.storage.service;
 import fedora.server.errors.*;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
+import java.io.InputStream;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.HashMap;
@@ -38,12 +39,12 @@ class MmapParser extends DefaultHandler
   // Fedora Method Map Entities
 
   private Mmap methodMap;
-  private MethodDef methodMapMethod;
-  private MethodParmDef methodMapParm;
+  private MmapMethodDef methodMapMethod;
+  private MmapMethodParmDef methodMapParm;
 
-  private Hashtable wsdlMsgToMethodTbl;
+  //private Hashtable wsdlMsgToMethodTbl;
   private Hashtable wsdlOperationToMethodDefTbl;
-  private Hashtable wsdlMsgPartsTbl;
+  private Hashtable wsdlMsgPartToParmDefTbl;
 
   // Working variables...
 
@@ -51,6 +52,46 @@ class MmapParser extends DefaultHandler
   private Vector tmp_parms;
   private Vector tmp_methods;
 
+  /**
+   *   Constructor to enable another class to initiate the parsing
+   */
+  public MmapParser()
+  {
+  }
+
+  /**
+   *   Constructor allows this class to initiate the parsing
+   */
+  public MmapParser(InputStream in)
+    throws RepositoryConfigurationException, ObjectIntegrityException
+  {
+      XMLReader xmlReader = null;
+      try
+      {
+          SAXParserFactory saxfactory=SAXParserFactory.newInstance();
+          saxfactory.setValidating(false);
+          SAXParser parser=saxfactory.newSAXParser();
+          xmlReader=parser.getXMLReader();
+          xmlReader.setContentHandler(this);
+          xmlReader.setFeature("http://xml.org/sax/features/namespaces", false);
+          xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
+      }
+      catch (Exception e)
+      {
+          throw new RepositoryConfigurationException("Internal SAX error while "
+                  + "preparing for Method Map datastream parsing: "
+                  + e.getMessage());
+      }
+      try
+      {
+          xmlReader.parse(new InputSource(in));
+      }
+      catch (Exception e)
+      {
+          throw new ObjectIntegrityException("Error parsing Method Map datastream" +
+                  e.getClass().getName() + ": " + e.getMessage());
+      }
+  }
   protected Mmap getMethodMap()
   {
     return methodMap;
@@ -60,7 +101,6 @@ class MmapParser extends DefaultHandler
   {
     System.out.println("MmapParser: START DOC");
     nsPrefixMap = new HashMap();
-    wsdlMsgToMethodTbl = new Hashtable();
     wsdlOperationToMethodDefTbl = new Hashtable();
   }
 
@@ -72,7 +112,6 @@ class MmapParser extends DefaultHandler
 
   public void startPrefixMapping(String prefix, String uri) throws SAXException
   {
-    System.out.println("MmapParser: START PREFIX MAP");
     nsPrefixMap.put(uri, prefix);
   }
 
@@ -94,8 +133,8 @@ class MmapParser extends DefaultHandler
   public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
     throws SAXException
   {
-    System.out.println("MmapParser: START ELEMENT " + qName);
-    if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("fedoraToWSDLMap"))
+    //System.out.println("MmapParser: START ELEMENT " + qName);
+    if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("MethodMap"))
     {
       methodMap = new Mmap();
       methodMap.mmapName = attrs.getValue("name");
@@ -104,47 +143,48 @@ class MmapParser extends DefaultHandler
     else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("Method"))
     {
         inMethod = true;
-        methodMapMethod = new MethodDef();
-        methodMapMethod.methodName = attrs.getValue("wsdlOperationName");
+        methodMapMethod = new MmapMethodDef();
+        methodMapMethod.methodName = attrs.getValue("operationName");
         methodMapMethod.methodLabel = "fix me";
+        methodMapMethod.wsdlOperationName = attrs.getValue("operationName");
         methodMapMethod.wsdlMessageName = attrs.getValue("wsdlMsgName");
         methodMapMethod.wsdlOutputMessageName = attrs.getValue("wsdlMsgOutput");
         tmp_parms = new Vector();
-        wsdlMsgPartsTbl = new Hashtable();
+        wsdlMsgPartToParmDefTbl = new Hashtable();
     }
     else if (inMethod)
     {
       if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("DatastreamInputParm"))
       {
-        methodMapParm = new MethodParmDef();
-        methodMapParm.wsdlMessagePartName = attrs.getValue("wsdlMsgPartName");
-        methodMapParm.parmName = attrs.getValue("wsdlMsgPartName");
+        methodMapParm = new MmapMethodParmDef();
+        methodMapParm.wsdlMessagePartName = attrs.getValue("parmName");
+        methodMapParm.parmName = attrs.getValue("parmName");
         methodMapParm.parmLabel = "fix me";
         methodMapParm.parmPassBy = attrs.getValue("passBy");
-        methodMapParm.parmType = "fedora:datastreamInputType";
+        methodMapParm.parmType = MethodParmDef.DATASTREAM_INPUT;
         methodMapParm.parmDefaultValue = null;
         methodMapParm.parmDomainValues = new String[0];
       }
       else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("DefaultInputParm"))
       {
-        methodMapParm = new MethodParmDef();
-        methodMapParm.wsdlMessagePartName = attrs.getValue("wsdlMsgPartName");
-        methodMapParm.parmName = attrs.getValue("wsdlMsgPartName");
+        methodMapParm = new MmapMethodParmDef();
+        methodMapParm.wsdlMessagePartName = attrs.getValue("parmName");
+        methodMapParm.parmName = attrs.getValue("parmName");
         methodMapParm.parmLabel = "fix me";
         methodMapParm.parmPassBy = MethodParmDef.PASS_BY_VALUE;
-        methodMapParm.parmType = "fedora:defaultInputType";
+        methodMapParm.parmType = MethodParmDef.DEFAULT_INPUT;
         methodMapParm.parmDefaultValue = attrs.getValue("defaultValue");
         methodMapParm.parmDomainValues = new String[0];
       }
       else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("UserInputParm"))
       {
         inUserInputParm = true;
-        methodMapParm = new MethodParmDef();
-        methodMapParm.wsdlMessagePartName = attrs.getValue("wsdlMsgPartName");
-        methodMapParm.parmName = attrs.getValue("wsdlMsgPartName");
+        methodMapParm = new MmapMethodParmDef();
+        methodMapParm.wsdlMessagePartName = attrs.getValue("parmName");
+        methodMapParm.parmName = attrs.getValue("parmName");
         methodMapParm.parmLabel = "fix me";
         methodMapParm.parmPassBy = MethodParmDef.PASS_BY_VALUE;
-        methodMapParm.parmType = "fedora:userInputType";
+        methodMapParm.parmType = MethodParmDef.USER_INPUT;
         methodMapParm.parmDefaultValue = attrs.getValue("defaultValue");
       }
       else if (inUserInputParm)
@@ -163,23 +203,21 @@ class MmapParser extends DefaultHandler
 
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException
   {
-    System.out.println("MmapParser: END ELEMENT " + qName);
-    if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("fedoraToWSDLMap"))
+    //System.out.println("MmapParser: END ELEMENT " + qName);
+    if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("MethodMap"))
     {
-      methodMap.fedoraMethodDefs = (MethodDef[])tmp_methods.toArray(new MethodDef[0]);
-      methodMap.wsdlMsgToMethodDef = wsdlMsgToMethodTbl;
+      methodMap.mmapMethods = (MmapMethodDef[])tmp_methods.toArray(new MmapMethodDef[0]);
       methodMap.wsdlOperationToMethodDef = wsdlOperationToMethodDefTbl;
-      wsdlMsgToMethodTbl = null;
       tmp_methods = null;
     }
     else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("Method"))
     {
         methodMapMethod.methodParms = (MethodParmDef[])tmp_parms.toArray(new MethodParmDef[0]);
+        methodMapMethod.wsdlMsgParts = (MmapMethodParmDef[])tmp_parms.toArray(new MmapMethodParmDef[0]);
+        methodMapMethod.wsdlMsgPartToParmDefTbl = wsdlMsgPartToParmDefTbl;
         tmp_methods.add(methodMapMethod);
-        methodMapMethod.wsdlMsgParts = wsdlMsgPartsTbl;
-        wsdlMsgPartsTbl = null;
-        wsdlMsgToMethodTbl.put(methodMapMethod.wsdlMessageName, methodMapMethod);
         wsdlOperationToMethodDefTbl.put(methodMapMethod.methodName, methodMapMethod);
+        wsdlMsgPartToParmDefTbl = null;
         methodMapMethod = null;
         tmp_parms = null;
         inMethod = false;
@@ -189,19 +227,19 @@ class MmapParser extends DefaultHandler
       if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("DatastreamInputParm"))
       {
         tmp_parms.add(methodMapParm);
-        wsdlMsgPartsTbl.put(methodMapParm.wsdlMessagePartName, methodMapParm);
+        wsdlMsgPartToParmDefTbl.put(methodMapParm.wsdlMessagePartName, methodMapParm);
         methodMapParm = null;
       }
       else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("DefaultInputParm"))
       {
         tmp_parms.add(methodMapParm);
-        wsdlMsgPartsTbl.put(methodMapParm.wsdlMessagePartName, methodMapParm);
+        wsdlMsgPartToParmDefTbl.put(methodMapParm.wsdlMessagePartName, methodMapParm);
         methodMapParm = null;
       }
       else if (namespaceURI.equalsIgnoreCase(FMM) && localName.equalsIgnoreCase("UserInputParm"))
       {
         tmp_parms.add(methodMapParm);
-        wsdlMsgPartsTbl.put(methodMapParm.wsdlMessagePartName, methodMapParm);
+        wsdlMsgPartToParmDefTbl.put(methodMapParm.wsdlMessagePartName, methodMapParm);
         methodMapParm = null;
         inUserInputParm = false;
       }
