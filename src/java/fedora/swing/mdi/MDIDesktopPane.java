@@ -2,7 +2,6 @@ package fedora.swing.mdi;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.*;
 
 /**

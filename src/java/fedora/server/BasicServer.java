@@ -3,7 +3,6 @@ package fedora.server;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ServerShutdownException;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ModuleShutdownException;
 
 import fedora.logging.DatingFileHandler;
 import fedora.logging.SimpleXMLFormatter;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;

@@ -1,6 +1,5 @@
 package fedora.client.console;
 
-import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 
 /**

@@ -1,6 +1,5 @@
 package fedora.oai;
 
-import java.io.InputStream;
 import java.util.Set;
 
 /**

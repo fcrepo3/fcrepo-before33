@@ -714,8 +714,8 @@ public class MethodPropertiesDialog extends JDialog
           + parm.parmName);
         return false;
       }
-      else if ( parm.parmType.equalsIgnoreCase(parm.DATASTREAM_INPUT)
-        && parm.parmPassBy.equalsIgnoreCase(parm.PASS_BY_VALUE))
+      else if ( parm.parmType.equalsIgnoreCase(MethodParm.DATASTREAM_INPUT)
+        && parm.parmPassBy.equalsIgnoreCase(MethodParm.PASS_BY_VALUE))
       {
         assertMethodPropertiesMsg("'Pass By' must be URL_REF "
           + "when 'Parm Type' is fedora:datastreamInputType.");

@@ -1,8 +1,5 @@
 package fedora.client.objecteditor.types;
 
-import java.io.*;
-import java.util.*;
-
 /**
  * A single rule of a behavior mechanism's datastream binding specification.
  *

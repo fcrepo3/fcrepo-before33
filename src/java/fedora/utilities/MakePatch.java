@@ -3,7 +3,6 @@ package fedora.utilities;
 import java.io.*;
 import java.util.*;
 import java.util.jar.*;
-import java.util.zip.*;
 import com.twmacinta.util.MD5;
 import com.twmacinta.util.MD5InputStream;
 

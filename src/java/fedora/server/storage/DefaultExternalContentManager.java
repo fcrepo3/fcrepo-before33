@@ -1,13 +1,10 @@
 package fedora.server.storage;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.List;
@@ -155,7 +152,7 @@ public class DefaultExternalContentManager extends Module
       if(contentType == null)
       {
         contentType =
-          connection.guessContentTypeFromStream(connection.getInputStream());
+          URLConnection.guessContentTypeFromStream(connection.getInputStream());
         if (contentType == null) contentType = "text/plain";
       }
       httpContent = new MIMETypedStream(contentType, inStream, headerArray);

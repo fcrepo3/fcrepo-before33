@@ -86,6 +86,6 @@ public class StringUtility
                     + "interface with the query \"bDef~" + pid
                     + "\" to obtain a list of dependent objects.";
     System.out.println("123456789+123456789+123456789+123456789+123456789+123456789+123456789+123456789+");
-    System.out.println(su.prettyPrint(in, 70, null));
+    System.out.println(StringUtility.prettyPrint(in, 70, null));
   }
 }

@@ -1,6 +1,5 @@
 package fedora.server.test;
 
-import javax.xml.namespace.QName;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
 

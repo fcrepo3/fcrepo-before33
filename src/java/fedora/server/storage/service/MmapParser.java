@@ -1,7 +1,6 @@
 package fedora.server.storage.service;
 
 import fedora.server.errors.*;
-import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import java.lang.Boolean;
 import java.io.InputStream;

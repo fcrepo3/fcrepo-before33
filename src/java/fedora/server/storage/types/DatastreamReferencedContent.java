@@ -5,7 +5,6 @@ import fedora.server.errors.StreamIOException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.HttpURLConnection;
 
 /**

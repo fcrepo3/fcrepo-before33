@@ -6,9 +6,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.table.*;
 
-import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.DatastreamBinding;
 import fedora.server.types.gen.DatastreamBindingMap;
 import fedora.server.types.gen.Disseminator;
@@ -16,8 +14,6 @@ import fedora.server.types.gen.Disseminator;
 import fedora.client.Administrator;
 import fedora.client.actions.ViewObject;
 import fedora.client.objecteditor.types.DatastreamInputSpec;
-import fedora.client.objecteditor.types.MethodDefinition;
-import fedora.client.objecteditor.types.ParameterDefinition;
 
 /**
  * Pane for disseminator.

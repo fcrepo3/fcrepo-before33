@@ -1,17 +1,11 @@
 package fedora.client.datastream;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 
 import fedora.client.APIMStubFactory;
 import fedora.server.management.FedoraAPIM;
-import fedora.server.utilities.StreamUtility;
 import fedora.server.types.gen.Datastream;
 
 /**

@@ -1,6 +1,5 @@
 package fedora.client.console;
 
-import java.awt.Component;
 import java.lang.reflect.InvocationTargetException;
 
 /**

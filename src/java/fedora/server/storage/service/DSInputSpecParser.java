@@ -7,7 +7,6 @@ import fedora.server.storage.types.BMechDSBindRule;
 import java.io.InputStream;
 import java.util.Vector;
 import java.util.StringTokenizer;
-import java.util.Hashtable;
 import java.util.HashMap;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -126,7 +125,6 @@ public class DSInputSpecParser extends DefaultHandler
   public void endDocument() throws SAXException
   {
       dsInputSpec.dsBindRules = (BMechDSBindRule[]) tmp_InputRules.toArray(new BMechDSBindRule[0]);
-      dsInputSpec = dsInputSpec;
       tmp_InputRules = null;
       nsPrefixMap = null;
   }

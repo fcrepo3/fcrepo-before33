@@ -49,13 +49,10 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import javax.media.jai.JAI;
-import javax.media.jai.RenderedOp;
-import com.sun.media.jai.codec.FileSeekableStream;
 import com.sun.media.jai.codec.MemoryCacheSeekableStream;
 import com.sun.media.jai.codec.BMPEncodeParam;
 import com.sun.media.jai.codec.ImageEncodeParam;
 import com.sun.media.jai.codec.ImageCodec;
-import com.sun.media.jai.codec.ImageEncoder;
 import com.sun.media.jai.codec.JPEGEncodeParam;
 import com.sun.media.jai.codec.PNGEncodeParam;
 import com.sun.media.jai.codec.TIFFEncodeParam;
@@ -64,7 +61,6 @@ import ij.*;
 import ij.io.*;
 import ij.process.*;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import org.apache.commons.httpclient.HttpClient;

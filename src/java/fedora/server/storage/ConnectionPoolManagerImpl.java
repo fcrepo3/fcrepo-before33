@@ -3,11 +3,9 @@ package fedora.server.storage;
 import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.regex.PatternSyntaxException;
 
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.InitializationException;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.utilities.DDLConverter;

@@ -49,7 +49,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	private static final Configuration conf = Configuration.getInstance();
 	private static ConnectionPool commonConnectionPool = null;
 	static {
-		if (conf.getTestConfig()) {
+		if (Configuration.getTestConfig()) {
 			try {
 				commonConnectionPool = new ConnectionPool("com.mysql.jdbc.Driver",
 					"jdbc:mysql://localhost/FedoraObjects",

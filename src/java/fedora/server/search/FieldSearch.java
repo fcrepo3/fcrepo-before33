@@ -1,7 +1,5 @@
 package fedora.server.search;
 
-import java.util.List;
-
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOReader;
 

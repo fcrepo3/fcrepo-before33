@@ -4,9 +4,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDesktopPane;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -15,11 +12,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.xml.rpc.ServiceException;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.Font;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -31,7 +25,6 @@ import fedora.client.console.ConsoleSendButtonListener;
 import fedora.client.console.ConsoleCommand;
 import fedora.client.console.ServiceConsoleCommandFactory;
 import fedora.server.access.FedoraAPIAServiceLocator;
-import fedora.server.access.FedoraAPIA;
 
 /**
  *

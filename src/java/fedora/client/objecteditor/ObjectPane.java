@@ -2,7 +2,6 @@ package fedora.client.objecteditor;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
 
 import fedora.client.Administrator;

@@ -1,12 +1,9 @@
 package fedora.server.storage.types;
 
 import fedora.server.errors.StreamIOException;
+import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 
 import java.io.InputStream;
-
-import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
-import fedora.server.errors.LowlevelStorageException;
-import fedora.server.errors.ObjectNotInLowlevelStorageException;
 
 /**
  *

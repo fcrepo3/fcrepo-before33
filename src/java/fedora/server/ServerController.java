@@ -18,7 +18,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 
 import fedora.server.errors.InitializationException;
-import fedora.server.errors.ShutdownException;
 import fedora.server.Server;
 
 /**

@@ -1,7 +1,5 @@
 package fedora.server.storage.types;
 
-import java.util.Hashtable;
-
 /**
  *
  * <p><b>Title:</b> MethodDef.java</p>

@@ -5,16 +5,12 @@ import junit.framework.TestCase;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.translation.*;
-import fedora.server.validation.DOValidatorImpl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.net.URI;
 
 /**
  *

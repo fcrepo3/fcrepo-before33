@@ -3,7 +3,6 @@ package fedora.server.resourceIndex;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -12,7 +11,6 @@ import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.BasicDigitalObject;
 
-import org.trippi.RDFFormat;
 import org.trippi.TriplestoreConnector;
 import org.trippi.TriplestoreWriter;
 

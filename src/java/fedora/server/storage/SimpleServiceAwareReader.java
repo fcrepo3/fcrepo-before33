@@ -1,18 +1,12 @@
 package fedora.server.storage;
 
 import java.util.Date;
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
 import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
-import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
@@ -20,7 +14,6 @@ import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.DigitalObject;
 
 /**
  *

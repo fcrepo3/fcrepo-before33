@@ -2,8 +2,6 @@ package fedora.client.console;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Cursor;
-import java.lang.reflect.InvocationTargetException;
 import javax.swing.JDialog;
 
 import fedora.server.utilities.MethodInvokerThread;

@@ -3,7 +3,6 @@ package fedora.swing.jtable;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.table.*;
 
 /**
  * <p><b>Title:</b> JSortTableTest.java</p>

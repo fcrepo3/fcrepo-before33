@@ -3,7 +3,6 @@ package fedora.server.storage.lowlevel;
 import java.io.File;
 
 import fedora.server.Server;
-import fedora.server.errors.InitializationException;
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.MalformedPidException;
 

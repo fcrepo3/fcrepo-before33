@@ -2,9 +2,6 @@ package fedora.client.batch;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import com.icl.saxon.StyleSheet;
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
 import java.util.Properties;
 import java.io.File;
 import java.io.FileInputStream;

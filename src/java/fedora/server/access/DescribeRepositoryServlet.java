@@ -130,7 +130,7 @@ public class DescribeRepositoryServlet extends HttpServlet
     // Check for xml parameter.
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
     {
-      String name = decoder.decode((String)e.nextElement(), "UTF-8");
+      String name = URLDecoder.decode((String)e.nextElement(), "UTF-8");
       if (name.equalsIgnoreCase("xml"))
       {
         xml = new Boolean(request.getParameter(name)).booleanValue();

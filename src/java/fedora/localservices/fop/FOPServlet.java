@@ -6,11 +6,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
 import org.apache.fop.apps.Driver;
-import org.apache.fop.apps.Version;
-import org.apache.fop.apps.XSLTInputHandler;
 import org.apache.fop.messaging.MessageHandler;
 
 import org.apache.avalon.framework.logger.ConsoleLogger;

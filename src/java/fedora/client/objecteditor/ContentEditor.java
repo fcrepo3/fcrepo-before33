@@ -3,7 +3,6 @@ package fedora.client.objecteditor;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Edit content of certain types in a JComponent.

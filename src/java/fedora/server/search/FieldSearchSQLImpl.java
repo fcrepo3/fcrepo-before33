@@ -1,20 +1,15 @@
 package fedora.server.search;
 
 import java.io.InputStream;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ObjectIntegrityException;
-import fedora.server.errors.QueryParseException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageDeviceException;

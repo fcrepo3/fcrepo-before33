@@ -41,9 +41,6 @@ import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 
-import org.openrdf.rio.Parser;
-import org.openrdf.rio.rdfxml.RdfXmlParser;
-
 import org.trippi.RDFFormat;
 import org.trippi.TripleMaker;
 import org.trippi.TripleIterator;
@@ -52,7 +49,6 @@ import org.trippi.TriplestoreReader;
 import org.trippi.TriplestoreWriter;
 import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
-import org.trippi.io.RIOTripleIterator;
 
 import org.xml.sax.InputSource;
 

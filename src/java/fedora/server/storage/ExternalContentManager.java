@@ -1,7 +1,5 @@
 package fedora.server.storage;
 
-import java.io.InputStream;
-
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.MIMETypedStream;
 

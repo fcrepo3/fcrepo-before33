@@ -11,9 +11,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import fedora.oai.sample.RandomDCMetadataFactory;
-import fedora.server.StdoutLogging;
 import fedora.server.search.Condition;
-//import fedora.server.search.FieldSearchExistImpl;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchSQLImpl;
 import fedora.server.search.ObjectFields;
@@ -24,7 +22,6 @@ import fedora.server.storage.SimpleDOReader;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSLikeDODeserializer;
 import fedora.server.storage.translation.METSLikeDOSerializer;
-import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 

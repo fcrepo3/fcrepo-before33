@@ -1,17 +1,8 @@
 package fedora.server.storage;
 
-import java.io.InputStream;
 import java.util.Date;
 
 import fedora.server.errors.ServerException;
-import fedora.server.errors.StreamIOException;
-import fedora.server.errors.StreamReadException;
-import fedora.server.errors.StreamWriteException;
-import fedora.server.errors.StorageDeviceException;
-import fedora.server.errors.ObjectExistsException;
-import fedora.server.errors.ObjectIntegrityException;
-import fedora.server.errors.ObjectNotFoundException;
-import fedora.server.errors.ValidationException;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
 

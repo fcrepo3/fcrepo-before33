@@ -9,7 +9,6 @@ import javax.swing.*;
 import fedora.client.Administrator;
 import fedora.client.actions.ViewObject;
 
-import fedora.server.types.gen.DatastreamBinding;
 import fedora.server.types.gen.DatastreamBindingMap;
 import fedora.server.types.gen.Disseminator;
 

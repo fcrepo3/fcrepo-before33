@@ -12,7 +12,6 @@ import fedora.client.objecteditor.types.DatastreamInputSpec;
 import fedora.client.objecteditor.types.DatastreamBindingRule;
 import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.DatastreamBinding;
-import fedora.server.types.gen.Disseminator;
 
 /**
  * Binding pane for datastreams.
@@ -438,9 +437,9 @@ public class DatastreamBindingPane
         public void tableChanged(TableModelEvent e) {
 		    DatastreamBindingTableModel model=(DatastreamBindingTableModel) e.getSource();
             // update the shown selection of the table
-            if (e.getType()==e.INSERT) {
+            if (e.getType()==TableModelEvent.INSERT) {
                 selectRowLater(e.getFirstRow());
-            } else if (e.getType()==e.DELETE) {
+            } else if (e.getType()==TableModelEvent.DELETE) {
                 if (m_tableModel.getRowCount()>0) {
                     if (m_tableModel.getRowCount()==e.getFirstRow()) {
                         // if the row that was deleted was the last one,

@@ -1,9 +1,5 @@
 package fedora.client.console;
 
-import java.awt.BorderLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
 import java.lang.reflect.Method;
 
 /**

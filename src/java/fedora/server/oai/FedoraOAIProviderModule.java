@@ -8,12 +8,9 @@ import java.util.Set;
 
 import fedora.oai.OAIProvider;
 import fedora.oai.*;
-import fedora.server.Logging;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ModuleShutdownException;
-import fedora.server.errors.ServerException;
 import fedora.server.search.FieldSearch;
 
 /**

@@ -1,12 +1,5 @@
 package fedora.server.storage.types;
 
-import fedora.server.errors.StreamIOException;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 /**
  *
  * <p><b>Title:</b> Datastream.java</p>
@@ -40,8 +33,5 @@ public class DatastreamDef {
 
     public String dsMIME = null;
 
-
     public DatastreamDef() {}
-
-
 }

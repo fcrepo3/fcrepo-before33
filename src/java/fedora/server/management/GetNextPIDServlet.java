@@ -20,8 +20,6 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
-import com.icl.saxon.expr.StringValue;
-
 import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
@@ -135,18 +133,18 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     // Get optional supplied parameters.
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
     {
-      String name = decoder.decode((String)e.nextElement(), "UTF-8");
+      String name = URLDecoder.decode((String)e.nextElement(), "UTF-8");
       if (name.equalsIgnoreCase("xml"))
       {
         xml = new Boolean(request.getParameter(name)).booleanValue();
       }
       if (name.equalsIgnoreCase("numPIDs"))
       {
-        numPIDs = new Integer(decoder.decode(request.getParameter(name), "UTF-8")).intValue();
+        numPIDs = new Integer(URLDecoder.decode(request.getParameter(name), "UTF-8")).intValue();
       }
       if (name.equalsIgnoreCase("namespace"))
       {
-        namespace = decoder.decode(request.getParameter(name), "UTF-8");
+        namespace = URLDecoder.decode(request.getParameter(name), "UTF-8");
       }
     }
 

@@ -1,19 +1,14 @@
 package fedora.server.access;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 // Fedora imports
 import fedora.server.errors.ServerException;
-import fedora.server.errors.GeneralException;
-import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.InitializationException;
 import fedora.server.security.IPRestriction;
 import fedora.server.Context;
 import fedora.server.Module;
@@ -24,7 +19,6 @@ import fedora.server.search.FieldSearchResult;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.DatastreamDef;
 import fedora.server.storage.types.MethodDef;
-import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.Property;

@@ -11,7 +11,6 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSLikeDODeserializer;
 import fedora.server.storage.translation.METSLikeDOSerializer;
-import fedora.server.storage.translation.DOTranslationUtility;
 
 /**
  *

@@ -2,11 +2,9 @@ package fedora.server.storage.lowlevel;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.io.File;
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
-import fedora.server.errors.InitializationException;
 
 /**
  *

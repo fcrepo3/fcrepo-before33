@@ -1,15 +1,9 @@
 package fedora.client.bmech;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Component;
+import javax.swing.JComboBox;
+import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-
-
-  import java.awt.Component;
-  import javax.swing.JComboBox;
-  import javax.swing.JTable;
-  import javax.swing.table.TableCellRenderer;
 
   /**
    *

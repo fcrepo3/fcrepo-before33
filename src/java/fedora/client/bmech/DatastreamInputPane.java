@@ -5,8 +5,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;

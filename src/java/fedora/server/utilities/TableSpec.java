@@ -2,12 +2,10 @@ package fedora.server.utilities;
 
 import java.io.InputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import org.w3c.dom.Element;
 
 import fedora.server.errors.InconsistentTableSpecException;
 

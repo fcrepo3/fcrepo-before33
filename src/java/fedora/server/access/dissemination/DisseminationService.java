@@ -185,14 +185,14 @@ public class DisseminationService
   public DisseminationService() throws ServerException
   {
 
-    if (this.fedoraServerPort == null || fedoraServerPort.equalsIgnoreCase(""))
+    if (DisseminationService.fedoraServerPort == null || fedoraServerPort.equalsIgnoreCase(""))
     {
       throw new DisseminationException("[DisseminationService] was unable to "
           + "resolve the port number of the Fedora Server: "
           + datastreamResolverServletURL + "from the configuration file. This "
           + "information is required by the Dissemination Service.");
     }
-    if (this.hostIP == null)
+    if (DisseminationService.hostIP == null)
     {
       throw new DisseminationException("[DisseminationService] was unable to "
           + "resolve the IP address of the Fedora Server: "
@@ -647,7 +647,7 @@ public class DisseminationService
       for ( Enumeration e = dsRegistry.keys(); e.hasMoreElements(); )
       {
         String key = (String)e.nextElement();
-        timeStamp = timeStamp.valueOf(extractTimestamp(key));
+        timeStamp = Timestamp.valueOf(extractTimestamp(key));
         if (expireLimit > timeStamp.getTime())
         {
           dsRegistry.remove(key);

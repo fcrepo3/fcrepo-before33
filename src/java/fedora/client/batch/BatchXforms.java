@@ -1,35 +1,21 @@
 package fedora.client.batch;
 
-import java.io.FileOutputStream;
-
-import java.io.PrintStream;
 import java.io.File;
-//import java.util.Hashtable;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
 import java.util.Properties;
-import java.util.Enumeration;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
+import java.util.Vector;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerConfigurationException;
-//import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactory; // RunXSLT works with this
-//import javax.xml.transform.sax.SAXTransformerFactory; // was with error
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
-
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.OutputStream;
-
-import java.io.Reader;
-import java.io.BufferedReader;
-
-import java.net.URI;
-
-import java.util.Vector;
 
 /**
  *

@@ -1,6 +1,5 @@
 package fedora.client.batch.types;
 
-import fedora.server.storage.types.DSBindingMap;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;

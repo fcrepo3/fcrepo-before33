@@ -2,15 +2,12 @@ package fedora.server.storage.translation;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import fedora.server.Logging;
 import fedora.server.Module;
 import fedora.server.Server;
-import fedora.server.StdoutLogging;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;

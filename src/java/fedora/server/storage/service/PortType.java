@@ -1,7 +1,5 @@
 package fedora.server.storage.service;
 
-import java.util.Vector;
-
 /**
  *
  * <p><b>Title:</b> PortType.java</p>

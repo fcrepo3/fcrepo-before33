@@ -16,15 +16,12 @@ import java.awt.event.ActionListener;
 import fedora.client.Administrator;
 import java.io.File;
 import javax.swing.JFileChooser;
-import fedora.client.batch.BatchTool;
 import java.util.Properties;
-import java.io.FileInputStream;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.FontMetrics;
 import javax.swing.Box;
 import javax.swing.JFrame;
-import java.awt.Component;
 import javax.swing.JComponent;
 import fedora.swing.mdi.MDIDesktopPane;
 

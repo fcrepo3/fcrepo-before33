@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.logging.ErrorManager;
 import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.StreamHandler;

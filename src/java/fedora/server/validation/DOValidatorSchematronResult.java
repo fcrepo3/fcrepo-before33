@@ -1,15 +1,5 @@
 package fedora.server.validation;
 
-import fedora.server.errors.ObjectValidityException;
-import fedora.server.errors.ServerException;
-
-import java.io.InputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileWriter;
 import java.io.Writer;
 import java.io.StringWriter;
 import java.io.PrintWriter;
@@ -23,7 +13,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
 // TrAX classes
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;

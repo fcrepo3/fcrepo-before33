@@ -16,7 +16,6 @@ import fedora.server.Logging;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
-import fedora.server.utilities.StreamUtility;
 
 /**
  * Accepts and HTTP Multipart POST of a file from an authorized user, and if 

@@ -1,7 +1,6 @@
 package fedora.server.utilities;
 
 import com.twmacinta.util.MD5;
-import com.twmacinta.util.MD5InputStream;
 
 /**
  *

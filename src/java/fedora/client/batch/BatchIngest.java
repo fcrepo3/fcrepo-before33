@@ -2,8 +2,6 @@ package fedora.client.batch;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.Properties;
 import java.util.Hashtable;
 import java.util.Vector;

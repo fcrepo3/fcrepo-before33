@@ -2,12 +2,9 @@ package fedora.server.access.defaultdisseminator;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import fedora.server.Server;
 import fedora.server.access.ObjectProfile;
@@ -17,7 +14,6 @@ import fedora.server.errors.ServerException;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.utilities.DateUtility;

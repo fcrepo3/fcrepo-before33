@@ -1,8 +1,6 @@
 package fedora.server.access;
 
 import java.util.Date;
-import fedora.server.storage.types.MethodDef;
-import fedora.server.storage.types.ObjectMethodsDef;
 /**
  * <p><b>Title: </b>ObjectProfile.java</p>
  * <p><b>Description: </b>Data structure to contain a profile of

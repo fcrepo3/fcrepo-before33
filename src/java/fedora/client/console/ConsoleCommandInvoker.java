@@ -1,7 +1,6 @@
 package fedora.client.console;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
@@ -10,7 +9,6 @@ import java.util.Date;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 
 /**
  *

@@ -1,10 +1,6 @@
 package fedora.server.oai;
 
 import java.io.File;
-import java.util.HashSet;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletException;
 
 import fedora.oai.OAIResponder;
 import fedora.oai.OAIProvider;

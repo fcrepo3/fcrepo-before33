@@ -1,7 +1,6 @@
 package fedora.server.storage.service;
 
 import java.util.Hashtable;
-import fedora.server.storage.types.MethodDef;
 
 /**
  *

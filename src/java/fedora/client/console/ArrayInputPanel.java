@@ -1,7 +1,6 @@
 package fedora.client.console;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import java.util.ArrayList;
 
 /**

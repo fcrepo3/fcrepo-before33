@@ -9,7 +9,6 @@ import java.lang.Class;
 import java.lang.reflect.*;
 
 import fedora.server.Context;
-import fedora.server.access.defaultdisseminator.DefaultDisseminator;
 import fedora.server.access.defaultdisseminator.DefaultDisseminatorImpl;
 import fedora.server.access.defaultdisseminator.ServiceMethodDispatcher;
 import fedora.server.errors.MethodNotFoundException;

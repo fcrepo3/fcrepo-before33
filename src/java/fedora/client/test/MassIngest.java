@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileReader;
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 
 import fedora.client.utility.ingest.AutoIngestor;

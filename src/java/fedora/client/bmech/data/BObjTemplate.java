@@ -1,8 +1,6 @@
 package fedora.client.bmech.data;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
 
 /**
  *

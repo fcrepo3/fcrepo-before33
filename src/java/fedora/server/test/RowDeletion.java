@@ -1,8 +1,6 @@
 package fedora.server.test;
 
-import java.io.*;
 import java.sql.*;
-import java.util.*;
 import fedora.server.storage.replication.*;
 
 /**

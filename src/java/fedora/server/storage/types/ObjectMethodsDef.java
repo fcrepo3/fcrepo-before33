@@ -1,7 +1,6 @@
 package fedora.server.storage.types;
 
 import java.util.Date;
-import fedora.server.storage.types.MethodDef;
 
 /**
  *

@@ -1,16 +1,11 @@
 package fedora.server.search;
 
-import java.io.File;
-import java.util.List;
 import java.util.Map;
 
-import fedora.server.Logging;
 import fedora.server.Module;
 import fedora.server.Server;
-import fedora.server.StdoutLogging;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.storage.ConnectionPool;

@@ -1,6 +1,5 @@
 package fedora.client;
 import java.io.OutputStream;
-import java.io.BufferedOutputStream;
 import javax.swing.JTextArea;
 
 /**

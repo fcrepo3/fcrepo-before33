@@ -3,7 +3,6 @@ package fedora.server.storage;
 import fedora.server.errors.ValidationException;
 
 import java.io.InputStream;
-import java.io.IOException;
 
 
 /**

@@ -1,14 +1,12 @@
 package fedora.server.access;
 
 import java.util.Date;
-import java.util.List;
 
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.storage.types.DatastreamDef;
-import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.Property;

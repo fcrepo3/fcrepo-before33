@@ -1,7 +1,5 @@
 package fedora.oai.sample;
 
-import java.io.ByteArrayOutputStream;
-
 import fedora.oai.OAIProviderServlet;
 import fedora.oai.OAIResponder;
 import fedora.oai.RepositoryException;

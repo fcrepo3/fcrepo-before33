@@ -1,9 +1,7 @@
 package fedora.client.bmech.xml;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
-import org.w3c.dom.Attr;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -11,7 +9,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
 

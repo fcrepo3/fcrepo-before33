@@ -3,7 +3,6 @@ package fedora.server.storage.translation;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
-import fedora.server.errors.StreamReadException;
 import fedora.server.storage.types.DigitalObject;
 
 import java.io.InputStream;

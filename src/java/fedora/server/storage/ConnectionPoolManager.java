@@ -1,7 +1,6 @@
 package fedora.server.storage;
 
 import fedora.server.errors.ConnectionPoolNotFoundException;
-import fedora.server.errors.ModuleInitializationException;
 import fedora.server.storage.ConnectionPool;
 
 /**

@@ -1,20 +1,13 @@
 package fedora.client.objecteditor;
 
 import java.awt.*;
-import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import org.apache.axis.types.NonNegativeInteger;
-
 import fedora.client.Administrator;
 
 import fedora.server.types.gen.Datastream;
-import fedora.server.types.gen.ComparisonOperator;
-import fedora.server.types.gen.Condition;
-import fedora.server.types.gen.FieldSearchQuery;
-import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ObjectFields;
 
 /**
