@@ -10,16 +10,16 @@ package fedora.server.storage;
  */
 
 import fedora.server.storage.types.*;
-import fedora.server.errors.GeneralException;
+import fedora.server.errors.ServerException;
 import java.io.InputStream;
 import java.util.Date;
 
 public interface BMechReader extends DOReader
 {
 
-  public MethodDef[] GetBehaviorMethods(Date versDateTime) throws GeneralException;
+  public MethodDef[] GetBehaviorMethods(Date versDateTime) throws ServerException;
 
-  public InputStream GetBehaviorMethodsWSDL(Date versDateTime) throws GeneralException;
+  public InputStream GetBehaviorMethodsWSDL(Date versDateTime) throws ServerException;
 
-  public BMechDSBindSpec GetDSBindingSpec(Date versDateTime) throws GeneralException;
+  public BMechDSBindSpec GetDSBindingSpec(Date versDateTime) throws ServerException;
 }
