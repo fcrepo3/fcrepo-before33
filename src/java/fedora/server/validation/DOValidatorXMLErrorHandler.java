@@ -47,6 +47,7 @@ public class DOValidatorXMLErrorHandler implements ErrorHandler
   public void error(SAXParseException e) throws SAXException
   {
     System.err.print("ValidationErrorHandler says SAX ERROR found.  Re-throwing SAXException.");
+    e.printStackTrace();
     //printPubID(e);
     //printMsg(e);
     //printStack(e);

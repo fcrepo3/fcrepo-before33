@@ -183,6 +183,9 @@ public class SimpleDOReader
 	 * The Fedora local URL syntax will be recognized by repositories upon
 	 * ingest, and the new repository will consider these URLs to be local
 	 * to itself.
+     *
+     * @param format The format to export the object in.  If null or "default",
+     *               will use the repository's configured default export format.
 	 */
     public InputStream ExportObject(String format)
             throws ObjectIntegrityException, StreamIOException,

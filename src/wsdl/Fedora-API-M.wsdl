@@ -70,7 +70,9 @@
 			<documentation>the pid of the object.</documentation>
 		</part>
 		<part name="format" type="xsd:string">
-			<documentation>the XML format to export</documentation>
+			<documentation>the XML format to export.  Can be "metslikefedora1",
+      "foxml1.0", or null.  If null, will export in the default format
+      configured for the repository.</documentation>
 		</part>
 	</message>
 	<message name="exportObjectRequest">
@@ -516,7 +518,7 @@
 			<output message="fedora-api:getObjectXMLResponse"/>
 		</operation>
 		<operation name="export">
-			<documentation>Gets the entire METS-encoded digital object for 
+			<documentation>Gets the entire XML-encoded digital object for 
       external use (viewing, editing, moving to another repository).  XML 
       metadata datastreams will be included inline, content datastreams will 
       be included inline (base64-encoded), and external datastreams will be 
