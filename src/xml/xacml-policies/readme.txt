@@ -5,8 +5,14 @@ OASIS
 http://docs.oasis-open.org/xacml/access_control-xacml-2_0-core-spec-cd-04.pdf 
 this is a spec and a good reference for identifiers.  
 
+Also, a nice intro to the xacml concepts is at:
+http://www.oasis-open.org/committees/download.php/2713/Brief_Introduction_to_XACML.html
+
 Other documents general to XACML are available at the homepage:
 http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=xacml
+
+In writing policies, the following reference is useful:
+http://www.zvon.org/xxl/XACML1.0/Output/index.html
 
 
 SUN
