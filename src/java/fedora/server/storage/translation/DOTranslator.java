@@ -42,7 +42,7 @@ public interface DOTranslator {
             UnsupportedTranslationException, ServerException;
 
     public abstract void serialize(DigitalObject in, OutputStream out,
-            String format, String encoding)
+            String format, String encoding, boolean encodeForExport)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException;
 

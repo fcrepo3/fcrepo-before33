@@ -56,6 +56,7 @@ public class DOTranslatorImpl
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         try {
+        	System.out.println("Grabbing deserializer for: " + format);
             DODeserializer des=(DODeserializer) m_deserializers.get(format);
             if (des==null) {
                 throw new UnsupportedTranslationException("No deserializer exists "
@@ -70,17 +71,18 @@ public class DOTranslatorImpl
     }
 
     public void serialize(DigitalObject in, OutputStream out,
-            String format, String encoding)
+            String format, String encoding, boolean encodeForExport)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         try {
+			System.out.println("Grabbing serializer for: " + format);
             DOSerializer ser=(DOSerializer) m_serializers.get(format);
             if (ser==null) {
                 throw new UnsupportedTranslationException("No serializer exists "
                         + "for format: " + format);
             }
             DOSerializer newSer=ser.getInstance();
-            newSer.serialize(in, out, encoding);
+            newSer.serialize(in, out, encoding, encodeForExport);
         } catch (UnsupportedEncodingException uee) {
             throw new UnsupportedTranslationException("Serializer for format: "
                     + format + " does not support encoding: " + encoding);

@@ -38,7 +38,8 @@ public interface DOSerializer {
 
     public DOSerializer getInstance() throws ServerException;
 
-    public void serialize(DigitalObject obj, OutputStream out, String encoding)
+    public void serialize(DigitalObject obj, OutputStream out, String encoding, 
+    	boolean encodeForExport)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException;
 
