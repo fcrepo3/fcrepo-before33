@@ -11,14 +11,14 @@ package fedora.server.access;
 
 public class DissResultSet
 {
-  public String addressLocation = null;
-  public String operationLocation = null;
-  public String dsLocation = null;
-  public String dsBindingKey = null;
-  public String protocolType = null;
-  public String doPID = null;
-  public String dissName = null;
-  public String method = null;
+  public String addressLocation = "";
+  public String operationLocation = "";
+  public String dsLocation = "";
+  public String dsBindingKey = "";
+  public String protocolType = "";
+  public String doPID = "";
+  public String dissName = "";
+  public String method = "";
 
   public DissResultSet()
   {}
