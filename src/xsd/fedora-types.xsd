@@ -278,12 +278,6 @@
 			<xsd:element name="dissState" type="string"/>
 		</xsd:sequence>
 	</xsd:complexType>
-	<xsd:simpleType name="Fault">
-		<xsd:annotation>
-			<xsd:documentation>a message indicating what went wrong</xsd:documentation>
-		</xsd:annotation>
-		<xsd:restriction base="string"/>
-	</xsd:simpleType>
 	<xsd:complexType name="MethodDef">
 		<xsd:annotation>
 			<xsd:documentation>method definitions</xsd:documentation>
@@ -329,7 +323,7 @@
 		<xsd:sequence>
 			<xsd:element name="label" type="string"/>
 			<xsd:element name="foType" type="string"/>
-			<xsd:element name="profile" type="string"/>
+			<xsd:element name="contentModelId" type="string"/>
 			<xsd:element name="state" type="string"/>
 			<xsd:element name="lockedBy" type="string"/>
 			<xsd:element name="createDate" type="dateTime"/>
