@@ -67,7 +67,7 @@ public class DBIDLookup {
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupDataStreamBindingMapDBID(Connection connection, String bMechDBID, String dsBindingMapID) throws SQLException {
-		return lookupDBID2(connection, "BindingMap_DBID", "DataStreamBindingMap", "BMECH_DBID", bMechDBID, "DSBindingMap_ID", dsBindingMapID);
+		return lookupDBID2FirstNum(connection, "BindingMap_DBID", "DataStreamBindingMap", "BMECH_DBID", bMechDBID, "DSBindingMap_ID", dsBindingMapID);
 	}
 
         /**
@@ -83,7 +83,7 @@ public class DBIDLookup {
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupDataStreamBindingSpecDBID(Connection connection, String bMechDBID, String dsBindingSpecName) throws SQLException {
-		return lookupDBID2(connection, "DSBindingKey_DBID", "DataStreamBindingSpec", "BMECH_DBID", bMechDBID, "DSBindingSpec_Name", dsBindingSpecName);
+		return lookupDBID2FirstNum(connection, "DSBindingKey_DBID", "DataStreamBindingSpec", "BMECH_DBID", bMechDBID, "DSBindingSpec_Name", dsBindingSpecName);
 	}
 
         /**
@@ -153,7 +153,7 @@ public class DBIDLookup {
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupMethodDBID(Connection connection, String bDefDBID, String methName) throws SQLException {
-		return lookupDBID2(connection, "METH_DBID", "Method", "BDEF_DBID", bDefDBID, "METH_Name", methName);
+		return lookupDBID2FirstNum(connection, "METH_DBID", "Method", "BDEF_DBID", bDefDBID, "METH_Name", methName);
 	}
 
         /**
@@ -222,6 +222,31 @@ public class DBIDLookup {
 
 		// Debug statement
 		// System.out.println("lookupDBID2, query = " + query);
+
+		statement = connection.createStatement();
+		rs = statement.executeQuery(query); 
+
+		while (rs.next()) 
+			ID = rs.getString(1);
+
+		statement.close();
+		rs.close();
+
+		return ID;
+	}
+
+	public String lookupDBID2FirstNum(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws SQLException {
+		String query;
+		String ID = null;
+		Statement statement;
+		ResultSet rs;
+
+		query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
+		query += lookupColumnName1 + " = " + lookupColumnValue1 + " AND ";
+		query += lookupColumnName2 + " = '" + lookupColumnValue2 + "';";
+
+		// Debug statement
+		// System.out.println("lookupDBID2FirstNum, query = " + query);
 
 		statement = connection.createStatement();
 		rs = statement.executeQuery(query); 
