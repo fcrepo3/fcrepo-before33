@@ -294,7 +294,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
               + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
               + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/management/"
               + " http://" + s_serverHost + ":" + s_serverPort
-              + "/ getNextPIDInfo.xsd\">\n");
+              + "/getNextPIDInfo.xsd\">\n");
 
           // PID array serialization
           for (int i=0; i<pidList.length; i++) {
