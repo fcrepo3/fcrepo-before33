@@ -1004,6 +1004,7 @@ public class FastDOReader implements DOReader
         // Note: When more than one datastream matches the DSBindingKey
         // or there are multiple DSBindingKeys associated with the method
         // in the dissemination query, multiple rows are returned.
+        HashMap uniqueHash = new HashMap();
         while (rs.next())
         {
           results = new String[cols];
@@ -1016,25 +1017,30 @@ public class FastDOReader implements DOReader
                 results[i-1] = rs.getString(i);
             }
           }
-          dissBindInfo.AddressLocation = unencodeLocalURL(results[3]);
-          dissBindInfo.OperationLocation = unencodeLocalURL(results[4]);
-          dissBindInfo.ProtocolType = results[5];
-          dissBindInfo.dsLocation = unencodeLocalURL(results[6]);
-          dissBindInfo.dsControlGroupType = results[7];
-          dissBindInfo.dsID = results[8];
-          dissBindInfo.dsVersionID = results[9];
-          dissBindInfo.DSBindKey = results[10];
-          dissBindInfo.dsState = results[11];
-          try
-          {
-            dissBindInfo.methodParms = this.getObjectMethodParms(results[1],
-                results[2], versDateTime);
-          } catch (GeneralException ge)
-          {
-            dissBindInfo.methodParms = null;
+          String uniqueString = results[8] + "+" + results[10];
+          if (uniqueHash.get(uniqueString) == null) { // if haven't seen this dsID + dsBindKey, add the row
+            uniqueHash.put(uniqueString, "");
+            dissBindInfo.dsID = results[8];
+            dissBindInfo.DSBindKey = results[10];
+            dissBindInfo.AddressLocation = unencodeLocalURL(results[3]);
+            dissBindInfo.OperationLocation = unencodeLocalURL(results[4]);
+            dissBindInfo.ProtocolType = results[5];
+            dissBindInfo.dsLocation = unencodeLocalURL(results[6]);
+            dissBindInfo.dsControlGroupType = results[7];
+            dissBindInfo.dsVersionID = results[9];
+            dissBindInfo.dsState = results[11];
+  
+            try
+            {
+              dissBindInfo.methodParms = this.getObjectMethodParms(results[1],
+                  results[2], versDateTime);
+            } catch (GeneralException ge)
+            {
+              dissBindInfo.methodParms = null;
+            }
+            // Add each row of returned data
+            queryResults.addElement(dissBindInfo);
           }
-          // Add each row of returned data
-          queryResults.addElement(dissBindInfo);
         }
         dissBindInfoArray = new DisseminationBindingInfo[queryResults.size()];
         int rowCount = 0;
