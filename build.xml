@@ -712,6 +712,7 @@
 		<replace file="dist/server/config/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access/soap"/>
 		<!-- xacml:  set up policy directories -->
 		<mkdir dir="dist/server/config/xacml-policies"/>
+		<copy file="src/xml/xacml-policies/readme.txt" todir="dist/server/config/xacml-policies"/>
 		<mkdir dir="dist/server/config/xacml-policies/repository-policies"/>
 		<mkdir dir="dist/server/config/xacml-policies/object-policies"/>
 		<copy todir="dist/server/config/xacml-policies/example-repository-policies">
@@ -720,7 +721,6 @@
 		<copy todir="dist/server/config/xacml-policies/example-object-policies">
 			<fileset dir="src/xml/xacml-policies/example-object-policies"/>
 		</copy>
-
 		<copy file="src/web-app/fedora/server/web.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes">
@@ -732,6 +732,7 @@
 				<include name="org/**"/>
 			</fileset>
 		</copy>
+		<copy file="src/java/org/apache/catalina/realm/readme.txt" todir="${tomcat.server.dir}/classes/org/apache/catalina/realm"/>
 		<copy todir="${tomcat.deploy.dir}/ROOT">
 			<fileset dir="src/xsd"/>
 		</copy>
