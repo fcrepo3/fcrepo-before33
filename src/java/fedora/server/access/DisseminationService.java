@@ -34,9 +34,18 @@ public class DisseminationService
 
   /** The exception indicating that initialization failed. */
   private static InitializationException s_initException;
+
+  /** Signifies the special type of address location known as LOCAL.
+   *  An address location of LOCAL implies that no remote host name is
+   *  required for the address location and that the contents of the
+   *  operation location are sufficient to execute the associated mechanism.
+   */
   private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
+
+  /** User-supplied method parameters. */
   private Hashtable h_userParms = new Hashtable();
 
+  /** Make sure we have a server instance for error logging purposes. */
   static
   {
     try
@@ -64,7 +73,7 @@ public class DisseminationService
    * @param dissBindInfoArray The associated dissemination binding information.
    * @return A MIME-typed stream containing the result of the dissemination.
    * @throws ServerException If unable to assemble the dissemination for any
-   * reason.
+   *         reason.
    */
   public MIMETypedStream assembleDissemination(Property[] userParms,
       DisseminationBindingInfo[] dissBindInfoArray)
@@ -91,8 +100,8 @@ public class DisseminationService
       // on DSBindingKey and method parameter values in WSDL
       // Note: In case where more than one datastream matches the
       // DSBindingKey or there are multiple DSBindingKeys for the
-      // method, multiple rows will be returned; otherwise
-      // a single row is returned.
+      // method, multiple rows will be present; otherwise there us only
+      // a single row.
       for (int i=0; i<dissBindInfoArray.length; i++)
       {
         dissBindInfo = dissBindInfoArray[i];
@@ -136,17 +145,20 @@ public class DisseminationService
         // value of the datastream location and the value +(BINDING_KEY) is
         // appended so that subsequent datastreams matching the binding key
         // will be substituted. The end result is that the binding key will
-        // be replaced by a string datastream locations separated by a plus(+)
-        // sign. e.g.,
+        // be replaced by a series of datastream locations separated by a
+        // plus(+) sign. For example, in the case where 3 datastreams match
+        // the binding key for PHOTO:
         //
         // file=(PHOTO) becomes
         // file=dslocation1+dslocation2+dslocation3
         //
         // It is the responsibility of the Behavior Mechanism to know how to
-        // handle an input parameter with multiple datastreams.
+        // handle an input parameter with multiple datastream locations.
         //
         // In the case of a method containing multiple binding keys,
-        // substitutions are performed on each binding key. e.g.,
+        // substitutions are performed on each binding key. For example, in
+        // the case where there are 2 binding keys named PHOTO and WATERMARK
+        // where each matches a single datastream:
         //
         // image=(PHOTO)&watermark=(WATERMARK) becomes
         // image=dslocation1&watermark=dslocation2
@@ -171,7 +183,6 @@ public class DisseminationService
                            + " DissBindingInfo index: " + i);
       }
 
-      // User-supplied parameters have already been validated.
       // Substitute user-supplied parameter values in dissemination URL
       Enumeration e = h_userParms.keys();
       while (e.hasMoreElements())
@@ -183,14 +194,11 @@ public class DisseminationService
         s_server.logFinest("User parm substituted in URL: " + dissURL);
       }
 
-      // Resolve content referenced by dissemination result
+      // Resolve content referenced by dissemination result.
       s_server.logFinest("ProtocolType: " + protocolType);
       if (protocolType.equalsIgnoreCase("http"))
       {
         // FIXME!! need to implement Access Policy control.
-        // If access is based on restrictions to content,
-        // this is the last chance to apply those restrictions
-        // before returnign dissemination result to client.
         HttpService httpService = new HttpService();
         try
         {
@@ -203,21 +211,22 @@ public class DisseminationService
         }
       } else if (protocolType.equalsIgnoreCase("soap"))
       {
-        // FIXME!! future handling of soap bindings
-        s_server.logInfo("Protocol type specified: " + protocolType);
-        s_server.logWarning("Soap protocol not currently supported for "
-                            + "disseminators");
-        dissemination = null;
+        // FIXME!! future handling of soap bindings.
+        String message = "DisseminationService: Protocol type: "
+            + protocolType + "NOT yet implemented";
+        s_server.logWarning(message);
+        throw new DisseminationBindingInfoNotFoundException(message);
       } else
       {
-        s_server.logWarning("Protocol type: " + protocolType
-                            + "not supported");
-        dissemination = null;
+        String message = "DisseminationService: Protocol type: "
+            + protocolType + "NOT supported.";
+        s_server.logWarning(message);
+        throw new DisseminationBindingInfoNotFoundException(message);
       }
     } else
     {
       // DisseminationBindingInfo was empty so there was no information
-      // provided to construct a dissemination
+      // provided to construct a dissemination.
       String message = "DisseminationService: Dissemination Binding "+
                          "Info contained no data";
       s_server.logWarning(message);
