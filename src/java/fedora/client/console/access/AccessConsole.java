@@ -141,7 +141,16 @@ public class AccessConsole
 
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/development/Host16.gif")));
 
-        setSize(400,400);
+        pack();
+        int w=getSize().width;
+        int h=getSize().height;
+        if (w>Administrator.getDesktop().getWidth()-10) {
+            w=Administrator.getDesktop().getWidth()-10;
+        }
+        if (h>Administrator.getDesktop().getHeight()-10) {
+            h=Administrator.getDesktop().getHeight()-10;
+        }
+        setSize(w, h);
         m_isBusy=false;
     }
 

@@ -134,7 +134,7 @@ public class DatastreamViewer
 
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Open16.gif")));
 
-        setSize(400,400);
+        setSize(720,520);
     }
 
     public class DatastreamPanel

@@ -669,8 +669,8 @@ public class Administrator extends JFrame {
         System.out.println("Using Fedora server at " + host + ":" + port + " with userId=" + user + " and password=[not displayed].");
         Administrator administrator=new Administrator(host, port, user, pass);
 
-        int xSize=810;
-        int ySize=630;
+        int xSize=820;
+        int ySize=620;
         Dimension screenSize=administrator.getToolkit().getScreenSize();
         int xLoc=(screenSize.width/2) - (xSize/2);
         int yLoc=(screenSize.height/2) - (ySize/2);

@@ -172,7 +172,9 @@ public class BatchIngestGUI
 
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Export16.gif")));
 
-        setSize(400,400);
+        pack();
+        setSize(getSize().width+20, getSize().height*2);
+        //setSize(400,400);
     }
 
     private final void sizeIt (JComponent jc, Dimension min, Dimension pref, Dimension max) {

@@ -97,7 +97,7 @@ public class ViewObjectXML
                     textEditor.setText(new String(out.toByteArray()));
                     textEditor.setCaretPosition(0);
                     viewFrame.getContentPane().add(new JScrollPane(textEditor));
-                    viewFrame.setSize(600,400);
+                    viewFrame.setSize(720,520);
                     viewFrame.setVisible(true);
                     Administrator.getDesktop().add(viewFrame);
                     try {

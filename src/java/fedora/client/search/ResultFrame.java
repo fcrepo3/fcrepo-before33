@@ -175,8 +175,8 @@ public class ResultFrame
             getContentPane().add(m_moreButton, BorderLayout.SOUTH);
         }
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Zoom16.gif")));
-        setSize(400,400);
         pack();
+        setSize(Administrator.getDesktop().getWidth()-40,getSize().height);
     }
 
     protected void removeMoreResultsButton() {

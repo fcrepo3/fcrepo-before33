@@ -204,8 +204,10 @@ public class BatchBuildIngestGUI
 
 
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/New16.gif")));
-
-        setSize(400,400);
+        
+        pack();
+        setSize(getSize().width+20, getSize().height*2);
+        // setSize(400,400);
 
     }
 
