@@ -15,6 +15,8 @@ import fedora.server.errors.ServerException;
 import java.io.InputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
@@ -187,6 +189,7 @@ public class DOValidatorSchematron
     StreamSource rulesSource, StreamSource preprocessorSource, String validatingStyleSheetID, String workFlowPhase)
     throws ObjectValidityException
   {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
     try
     {
       System.out.println("CREATING NEW VALIDATING STYLESHEET FOR WORKFLOW PHASE: " + workFlowPhase);
@@ -197,13 +200,15 @@ public class DOValidatorSchematron
 
       // Transform the Schematron schema (rules) into a validating stylesheet
       // that will be written to a file in the system-configured location
-      ptransformer.transform(rulesSource, new StreamResult(new File(validatingStyleSheetID)));
+      //ptransformer.transform(rulesSource, new StreamResult(new File(validatingStyleSheetID)));
+      ptransformer.transform(rulesSource, new StreamResult(out));
     }
     catch(TransformerException e)
     {
        System.err.println("Schematron validation: " + e.getMessage()) ;
        throw new ObjectValidityException(e.getMessage());
     }
-    return(new StreamSource(new File(validatingStyleSheetID)));
+    //return(new StreamSource(new File(validatingStyleSheetID)));
+    return(new StreamSource(new ByteArrayInputStream(out.toByteArray())));
   }
 }
