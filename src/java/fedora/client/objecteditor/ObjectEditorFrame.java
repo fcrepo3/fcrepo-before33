@@ -87,7 +87,6 @@ public class ObjectEditorFrame
             m_objectPane=new ObjectPane(this, pid, state, label, cModel, cDate,
                     mDate, ownerId);
             m_datastreamsPane=new DatastreamsPane(this, pid);
-            m_disseminatorsPane=new DisseminatorsPane(this, pid);
         
             m_tabbedPane=new JTabbedPane();
             m_tabbedPane.addTab("Properties", m_objectPane);
@@ -96,9 +95,13 @@ public class ObjectEditorFrame
             m_tabbedPane.addTab("Datastreams", m_datastreamsPane);
             m_tabbedPane.setBackgroundAt(1, Administrator.DEFAULT_COLOR);
             m_tabbedPane.setIconAt(1, dsIcon);
-            m_tabbedPane.addTab("Disseminators", m_disseminatorsPane);
-            m_tabbedPane.setBackgroundAt(2, Administrator.DEFAULT_COLOR);
-            m_tabbedPane.setIconAt(2, dissIcon);
+            if (fType.equals("O")) {
+                // only do the disseminators tab if it's a regular object
+                m_disseminatorsPane=new DisseminatorsPane(this, pid);
+                m_tabbedPane.addTab("Disseminators", m_disseminatorsPane);
+                m_tabbedPane.setBackgroundAt(2, Administrator.DEFAULT_COLOR);
+                m_tabbedPane.setIconAt(2, dissIcon);
+            }
             m_tabbedPane.setSelectedIndex(startTab);
 
         JPanel outerPane=new JPanel();        
@@ -124,6 +127,14 @@ public class ObjectEditorFrame
         show();
     }
 
+    public Datastream[] getInitialCurrentDatastreamVersions() {
+        return m_datastreamsPane.getInitialCurrentVersions();
+    }
+
+    public void addDatastreamListener(DatastreamListener dl) {
+        m_datastreamsPane.addDatastreamListener(dl);
+    }
+
     private void doTitle(boolean dirty) {
         String d="";
         if (dirty) d="*";
@@ -138,7 +149,7 @@ public class ObjectEditorFrame
 
     public boolean isDirty() {
         return ( m_objectPane.isDirty() || m_datastreamsPane.isDirty()
-                || m_disseminatorsPane.isDirty() );
+                || (m_disseminatorsPane!=null && m_disseminatorsPane.isDirty()) );
     }
 
     public void indicateDirtiness() {

@@ -57,6 +57,10 @@ public class DatastreamPane
     private DatastreamsPane m_owner;
     private PurgeButtonListener m_purgeButtonListener;
     private boolean m_done;
+    private Dimension m_labelDims;
+    private JLabel m_dtLabel;
+    private JPanel m_dateLabelAndValue;
+    private Datastream[] m_versions;
 
     /**
      * Build the pane.
@@ -65,9 +69,11 @@ public class DatastreamPane
             throws Exception {
         super(gramps, owner, versions[0].getID());
 		m_pid=pid;
+        m_versions=versions;
         Datastream mostRecent=versions[0];
         m_mostRecent=mostRecent;
         m_owner=owner;
+        m_labelDims=new JLabel("Control Group").getPreferredSize();
         new TextContentEditor();  // causes it to be registered if not already
         new ImageContentViewer();  // causes it to be registered if not already
         new SVGContentViewer();  // causes it to be registered if not already
@@ -81,8 +87,8 @@ public class DatastreamPane
                     JLabel mimeTypeLabel=new JLabel("MIME Type");
                     JLabel controlGroupLabel=new JLabel("Control Group");
                     JLabel infoTypeLabel=new JLabel("Info Type");
-                    JLabel[] leftCommonLabels=new JLabel[] {stateLabel, mimeTypeLabel};
-                    JLabel[] rightCommonLabels=new JLabel[] {controlGroupLabel, infoTypeLabel};
+                    JLabel[] leftCommonLabels=new JLabel[] {stateLabel, mimeTypeLabel, controlGroupLabel, infoTypeLabel};
+//                    JLabel[] rightCommonLabels=new JLabel[] {controlGroupLabel, infoTypeLabel};
 
                     // RIGHT: values
                     String[] comboBoxStrings={"Active", "Inactive", "Deleted"};
@@ -120,25 +126,26 @@ public class DatastreamPane
                                     mostRecent.getControlGroup().toString())
                             );
                     JLabel infoTypeValueLabel=new JLabel(mostRecent.getInfoType());
-                    JComponent[] leftCommonValues=new JComponent[] {m_stateComboBox, mimeTypeValueLabel};
-                    JComponent[] rightCommonValues=new JComponent[] {controlGroupValueLabel, infoTypeValueLabel};
+                    JComponent[] leftCommonValues=new JComponent[] {m_stateComboBox, mimeTypeValueLabel, controlGroupValueLabel, infoTypeValueLabel};
+ //                   JComponent[] rightCommonValues=new JComponent[] {controlGroupValueLabel, infoTypeValueLabel};
     
                 JPanel leftCommonPane=new JPanel();
                 GridBagLayout leftCommonGridBag=new GridBagLayout();
                 leftCommonPane.setLayout(leftCommonGridBag);
                 addLabelValueRows(leftCommonLabels, leftCommonValues, 
                         leftCommonGridBag, leftCommonPane);
-            
+/*            
                 JPanel rightCommonPane=new JPanel();
                 GridBagLayout rightCommonGridBag=new GridBagLayout();
                 rightCommonPane.setLayout(rightCommonGridBag);
                 addLabelValueRows(rightCommonLabels, rightCommonValues, 
                         rightCommonGridBag, rightCommonPane);
-
-            JPanel commonPane=new JPanel();
-            commonPane.setLayout(new FlowLayout());
-            commonPane.add(leftCommonPane);
-            commonPane.add(rightCommonPane);
+*/
+            JPanel commonPane=leftCommonPane;
+//            JPanel commonPane=new JPanel();
+//            commonPane.setLayout(new FlowLayout());
+//            commonPane.add(leftCommonPane);
+//            commonPane.add(rightCommonPane);
 
             // CENTER: versionPane(m_versionSlider, m_valuePane)
 
@@ -154,6 +161,7 @@ public class DatastreamPane
                     m_versionSlider.setMajorTickSpacing(1);
                     m_versionSlider.setSnapToTicks(true);
                     m_versionSlider.setPaintTicks(true);
+                    /*
                     m_labelTables=new Hashtable[versions.length];
 					for (int i=0; i<versions.length; i++) {
 					    Hashtable thisTable=new Hashtable();
@@ -164,6 +172,7 @@ public class DatastreamPane
 
                     m_versionSlider.setLabelTable(m_labelTables[0]);
                     m_versionSlider.setPaintLabels(true);
+                    */
                 }
 
 
@@ -200,7 +209,23 @@ public class DatastreamPane
                             versionPaneLabel ));
 */
             if (versions.length>1) {
-                versionPane.add(m_versionSlider, BorderLayout.NORTH);
+                // Add a panel to versionPane.NORTH
+                // FlowLayout(SwingConstants.LEFT)
+                // JLabel Created  JLabel Date   m_versionSlider
+                m_dateLabelAndValue=new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+                JLabel createdLabel=new JLabel("Created");
+                createdLabel.setPreferredSize(m_labelDims);
+                m_dateLabelAndValue.add(createdLabel);
+                m_dateLabelAndValue.add(Box.createHorizontalStrut(0));
+                m_dtLabel=new JLabel(s_formatter.format(versions[0].getCreateDate().getTime()) + " ");
+                m_dateLabelAndValue.add(m_dtLabel);
+
+                JPanel stretch=new JPanel(new BorderLayout());
+                stretch.setBorder(BorderFactory.createEmptyBorder(0,0,6,0));
+                stretch.add(m_dateLabelAndValue, BorderLayout.WEST);
+                stretch.add(m_versionSlider, BorderLayout.CENTER);
+                versionPane.add(stretch, BorderLayout.NORTH);
+                //versionPane.add(m_versionSlider, BorderLayout.NORTH);
             }
             versionPane.add(m_valuePane, BorderLayout.CENTER);
 
@@ -212,8 +237,8 @@ public class DatastreamPane
     public void stateChanged(ChangeEvent e) {
        JSlider source=(JSlider)e.getSource();
        if (!source.getValueIsAdjusting()) {
-           m_versionSlider.setLabelTable(m_labelTables[source.getValue()]);
            m_versionCardLayout.show(m_valuePane, "" + source.getValue());
+           m_dtLabel.setText(s_formatter.format(m_versions[source.getValue()].getCreateDate().getTime()));
        }
     }
 
@@ -369,10 +394,13 @@ public class DatastreamPane
 
             // do the field panel (NORTH)
             JLabel labelLabel=new JLabel("Label");
+            labelLabel.setPreferredSize(m_labelDims);
             JLabel urlLabel=new JLabel("Fedora URL");
+            urlLabel.setPreferredSize(m_labelDims);
             JLabel[] labels;
             if (R || E) {
                 JLabel locationLabel=new JLabel("Location");
+                locationLabel.setPreferredSize(m_labelDims);
                 if (m_versionSlider!=null) {
                     labels=new JLabel[] {labelLabel, locationLabel, urlLabel};
                 } else {
@@ -764,10 +792,12 @@ public class DatastreamPane
             // NORTH: fieldPanel
             // disabled labels and values
             JLabel labelLabel=new JLabel("Label");
+            labelLabel.setMinimumSize(m_labelDims);
             JTextField labelValue=new JTextField();
             labelValue.setText(ds.getLabel());
             labelValue.setEditable(false);
             JLabel urlLabel=new JLabel("Fedora URL");
+            urlLabel.setPreferredSize(m_labelDims);
             JTextField urlTextField=new JTextField(getFedoraURL(m_ds, true));
             urlTextField.setEditable(false);  // so they can copy, but not modify
             JLabel[] labels;
@@ -930,8 +960,10 @@ public class DatastreamPane
                                 m_versions[sIndex].getCreateDate());
                         if (removeAll) {
                             m_owner.remove(m_versions[0].getID());
+                            m_done=true;
                         } else {
                             m_owner.refresh(m_versions[0].getID());
+                            m_done=true;
                         }
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),

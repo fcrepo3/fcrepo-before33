@@ -3,6 +3,7 @@ package fedora.client.objecteditor;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 import javax.swing.*;
 
 import fedora.client.Administrator;
@@ -41,6 +42,8 @@ public class DatastreamsPane
     private JTabbedPane m_tabbedPane;
     private DatastreamPane[] m_datastreamPanes;
     private ObjectEditorFrame m_owner;
+    private ArrayList m_dsListeners;
+    private Datastream[] m_currentVersions;
 
     public String[] ALL_KNOWN_MIMETYPES = new String[] {"text/xml", "text/xml",
             "text/plain", "text/html", "text/html+xml", "text/svg+xml",
@@ -58,31 +61,32 @@ public class DatastreamsPane
         m_pid=pid;
         m_owner=owner;
         // this(m_tabbedPane)
+        m_dsListeners=new ArrayList();
 
             // m_tabbedPane(DatastreamPane[])
 
             m_tabbedPane=new JTabbedPane(SwingConstants.LEFT);
-            Datastream[] currentVersions=Administrator.APIM.
+            m_currentVersions=Administrator.APIM.
                     getDatastreams(pid, null, null);
-            m_datastreamPanes=new DatastreamPane[currentVersions.length];
-            for (int i=0; i<currentVersions.length; i++) {
+            m_datastreamPanes=new DatastreamPane[m_currentVersions.length];
+            for (int i=0; i<m_currentVersions.length; i++) {
                 m_datastreamPanes[i]=new DatastreamPane(
                         owner,
                         pid, 
                         Administrator.APIM.getDatastreamHistory(
                                 pid,
-                                currentVersions[i].getID()),
+                                m_currentVersions[i].getID()),
                         this);
                 StringBuffer tabLabel=new StringBuffer();
-                tabLabel.append(currentVersions[i].getID());
+                tabLabel.append(m_currentVersions[i].getID());
     /*            tabLabel.append(" (");
-                tabLabel.append(currentVersions[i].getState());
+                tabLabel.append(m_currentVersions[i].getState());
                 tabLabel.append(")"); */
                 m_tabbedPane.add(tabLabel.toString(), m_datastreamPanes[i]);
-                m_tabbedPane.setToolTipTextAt(i, currentVersions[i].getMIMEType() 
-                        + " - " + currentVersions[i].getLabel() + " (" 
-                        + currentVersions[i].getControlGroup().toString() + ")");
-                colorTabForState(currentVersions[i].getID(), currentVersions[i].getState());
+                m_tabbedPane.setToolTipTextAt(i, m_currentVersions[i].getMIMEType() 
+                        + " - " + m_currentVersions[i].getLabel() + " (" 
+                        + m_currentVersions[i].getControlGroup().toString() + ")");
+                colorTabForState(m_currentVersions[i].getID(), m_currentVersions[i].getState());
             }
             m_tabbedPane.add("New...", new JPanel());
 
@@ -91,6 +95,10 @@ public class DatastreamsPane
         add(m_tabbedPane, BorderLayout.CENTER);
 
         doNew(ALL_KNOWN_MIMETYPES, false);
+    }
+
+    public Datastream[] getInitialCurrentVersions() {
+        return m_currentVersions;
     }
 
     public void colorTabForState(String id, String s) {
@@ -152,11 +160,37 @@ public class DatastreamsPane
                     + versions[0].getControlGroup().toString() + ")");
             colorTabForState(dsID, versions[0].getState());
             setDirty(dsID, false);
+            fireDatastreamModified(versions[0]);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(Administrator.getDesktop(),
                     e.getMessage() + "\nTry re-opening the object viewer.", 
                     "Error while refreshing",
                     JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void addDatastreamListener(DatastreamListener dsl) {
+        m_dsListeners.add(dsl);
+    }
+
+    protected void fireDatastreamAdded(Datastream ds) {
+        for (int i=0; i<m_dsListeners.size(); i++) {
+            DatastreamListener l=(DatastreamListener) m_dsListeners.get(i);
+            l.datastreamAdded(ds);
+        }
+    }
+
+    protected void fireDatastreamModified(Datastream ds) {
+        for (int i=0; i<m_dsListeners.size(); i++) {
+            DatastreamListener l=(DatastreamListener) m_dsListeners.get(i);
+            l.datastreamModified(ds);
+        }
+    }
+
+    protected void fireDatastreamPurged(String dsID) {
+        for (int i=0; i<m_dsListeners.size(); i++) {
+            DatastreamListener l=(DatastreamListener) m_dsListeners.get(i);
+            l.datastreamPurged(dsID);
         }
     }
 
@@ -182,6 +216,7 @@ public class DatastreamsPane
         colorTabForState(dsID, versions[0].getState());
         m_tabbedPane.setSelectedIndex(newIndex);
         doNew(ALL_KNOWN_MIMETYPES, false);
+        fireDatastreamAdded(versions[0]);
     }
 
     protected void remove(String dsID) {
@@ -199,6 +234,7 @@ public class DatastreamsPane
         m_datastreamPanes=newArray;
         // then make sure dirtiness indicators are corrent
         m_owner.indicateDirtiness();
+        fireDatastreamPurged(dsID);
     }
 
     public boolean isDirty() {
@@ -213,7 +249,7 @@ public class DatastreamsPane
         GridBagConstraints c=new GridBagConstraints();
         c.insets=new Insets(0, 6, 6, 6);
         for (int i=0; i<left.length; i++) {
-            c.anchor=GridBagConstraints.NORTHEAST;
+            c.anchor=GridBagConstraints.NORTHWEST;
             c.gridwidth=GridBagConstraints.RELATIVE; //next-to-last
             c.fill=GridBagConstraints.NONE;      //reset to default
             c.weightx=0.0;                       //reset to default
@@ -224,7 +260,7 @@ public class DatastreamsPane
             if (!(right[i] instanceof JComboBox)) {
                 c.fill=GridBagConstraints.HORIZONTAL;
             } else {
-                c.anchor=GridBagConstraints.WEST;
+                c.anchor=GridBagConstraints.NORTHWEST;
             }
             c.weightx=1.0;
             gridBag.setConstraints(right[i], c);
@@ -271,7 +307,7 @@ public class DatastreamsPane
         static final String R_DESCRIPTION="Fedora will send clients a redirect to the URL "
                 + "you specify for this datastream.  This is useful in situations where the content "
                 + "must be delivered by a special streaming server, it contains "
-                + "relative hyperlinks, or there are licensing restrictions that prevent "
+                + "relative hyperlinks, or there are licensing or access restrictions that prevent "
                 + "it from being proxied.";
 
         public NewDatastreamPane(String[] dropdownMimeTypes) {

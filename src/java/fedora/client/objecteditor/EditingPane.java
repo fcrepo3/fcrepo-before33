@@ -1,24 +1,9 @@
 package fedora.client.objecteditor;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.*;
 
 import fedora.client.Administrator;
 
@@ -182,7 +167,7 @@ public abstract class EditingPane
         GridBagConstraints c=new GridBagConstraints();
         c.insets=new Insets(0, 6, 6, 6);
         for (int i=0; i<labels.length; i++) {
-            c.anchor=GridBagConstraints.EAST;
+            c.anchor=GridBagConstraints.WEST;
             c.gridwidth=GridBagConstraints.RELATIVE; //next-to-last
             c.fill=GridBagConstraints.NONE;      //reset to default
             c.weightx=0.0;                       //reset to default
@@ -190,10 +175,11 @@ public abstract class EditingPane
             container.add(labels[i]);
 
             c.gridwidth=GridBagConstraints.REMAINDER;     //end row
-            if (!(values[i] instanceof JComboBox)) {
-                c.fill=GridBagConstraints.HORIZONTAL;
-            } else {
+            if ((values[i] instanceof JComboBox) || (values[i] instanceof JButton)) {
                 c.anchor=GridBagConstraints.WEST;
+            } else {
+                c.anchor=GridBagConstraints.EAST;
+                c.fill=GridBagConstraints.HORIZONTAL;
             }
             c.weightx=1.0;
             gridBag.setConstraints(values[i], c);

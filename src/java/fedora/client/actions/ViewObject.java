@@ -78,6 +78,7 @@ public class ViewObject
                 Administrator.getDesktop().add(editor);
                 editor.setSelected(true);
             } catch (Exception e) {
+                e.printStackTrace();
                 JOptionPane.showMessageDialog(Administrator.getDesktop(),
                         e.getClass().getName() + ": " + e.getMessage(),
                         "Error Opening Object",

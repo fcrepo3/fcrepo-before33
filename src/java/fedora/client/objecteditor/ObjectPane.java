@@ -8,6 +8,7 @@ import javax.swing.*;
 
 import fedora.client.Administrator;
 import fedora.client.actions.ExportObject;
+import fedora.client.actions.PurgeObject;
 import fedora.client.actions.ViewObjectXML;
 
 /**
@@ -46,6 +47,7 @@ public class ObjectPane
     private String m_label;
     private JComboBox m_stateComboBox;
     private JTextField m_labelTextField;
+    private Dimension m_labelDims;
 
     /**
      * Build the pane.
@@ -57,6 +59,7 @@ public class ObjectPane
         m_pid=pid;
         m_state=state;
         m_label=label;
+        m_labelDims=new JLabel("Content Model").getPreferredSize();
 
         // mainPane(valuePane, actionPane)
 
@@ -66,11 +69,17 @@ public class ObjectPane
 
                     // LEFT: Labels
                     JLabel stateLabel=new JLabel("State");
+                    stateLabel.setPreferredSize(m_labelDims);
                     JLabel labelLabel=new JLabel("Label");
+                    labelLabel.setPreferredSize(m_labelDims);
                     JLabel cModelLabel=new JLabel("Content Model");
+                    cModelLabel.setPreferredSize(m_labelDims);
                     JLabel cDateLabel=new JLabel("Created");
+                    cDateLabel.setPreferredSize(m_labelDims);
                     JLabel mDateLabel=new JLabel("Modified");
+                    mDateLabel.setPreferredSize(m_labelDims);
                     JLabel ownerIdLabel=new JLabel("Owner");
+                    ownerIdLabel.setPreferredSize(m_labelDims);
                     JLabel[] labels=new JLabel[] { stateLabel,
                             labelLabel, cModelLabel, cDateLabel, mDateLabel,
                             ownerIdLabel };
@@ -118,31 +127,26 @@ public class ObjectPane
                 northValuePane.setLayout(gridBag);
                 addLabelValueRows(labels, values, gridBag, northValuePane);
 
-            JPanel valuePane=new JPanel();
-            valuePane.setLayout(new BorderLayout());
-            valuePane.add(northValuePane, BorderLayout.NORTH);
-
             // EAST: actionPane(northActionPane)
 
                 // NORTH: northActionPane(viewButton, exportButton)
-
-                    JButton viewButton=new JButton(new ViewObjectXML(pid));
+                    JPanel viewPane=new JPanel();
+                    JButton viewButton=new JButton(new ViewObjectXML(pid, viewPane));
                     viewButton.setText("View XML");
                     JButton exportButton=new JButton(new ExportObject(pid));
                     exportButton.setText("Export...");
+                    JButton purgeButton=new JButton(new PurgeObject(pid));
+                    purgeButton.setText("Purge");
 
-                JPanel northActionPane=new JPanel();
-                northActionPane.setLayout(new GridLayout(2, 1, 0, 4));
-                northActionPane.add(viewButton);
-                northActionPane.add(exportButton);
-
-            JPanel actionPane=new JPanel();
-            actionPane.setLayout(new BorderLayout());
-            actionPane.add(northActionPane, BorderLayout.NORTH);
+            JPanel actionPane=new JPanel(new FlowLayout());
+            actionPane.add(viewButton);
+            actionPane.add(exportButton);
+            actionPane.add(purgeButton);
 
         mainPane.setLayout(new BorderLayout());
-        mainPane.add(valuePane, BorderLayout.CENTER);
-        mainPane.add(actionPane, BorderLayout.EAST);
+        mainPane.add(northValuePane, BorderLayout.NORTH);
+        mainPane.add(viewPane, BorderLayout.CENTER);
+        mainPane.add(actionPane, BorderLayout.SOUTH);
     }
 
     public boolean isDirty() {

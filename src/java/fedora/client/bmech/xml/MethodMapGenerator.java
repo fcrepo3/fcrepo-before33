@@ -92,6 +92,7 @@ public class MethodMapGenerator
       String mname = methods[i].methodName;
       String mlabel = (methods[i].methodLabel == null) ? "fix me" : methods[i].methodLabel;
       method.setAttribute("operationName", mname.trim());
+      method.setAttribute("label", mlabel.trim());
       root.appendChild(method);
 
       // Append Method Parm elements
