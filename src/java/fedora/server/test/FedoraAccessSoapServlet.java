@@ -33,6 +33,7 @@ import fedora.server.types.gen.MethodDef;
 import fedora.server.types.gen.MethodParmDef;
 import fedora.server.types.gen.MIMETypedStream;
 import fedora.server.types.gen.ObjectMethodsDef;
+import fedora.server.types.gen.ObjectProfile;
 import fedora.server.types.gen.Property;
 import fedora.server.utilities.DateUtility;
 
@@ -62,6 +63,7 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * <li>GetBehaviorMethodsXML - Gets Behavior Methods as XML</li>
  * <li>GetDissemination - Gets a dissemination result</li>
  * <li>GetObjectmethods - Gets a list of all Behavior Methods of an object.</li>
+ * <li>GetObjectProfile - Gets object profile.</li>
  * </ol>
  * <li>PID_ - persistent identifier of the digital object</li>
  * <li>bDefPID_ - persistent identifier of the Behavior Definiton object</li>
@@ -128,6 +130,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
   /** GetObjectMethods service name. */
   private static final String GET_OBJECT_METHODS =
       "GetObjectMethods";
+
+  /** GetObjectProfile service name. */
+  private static final String GET_OBJECT_PROFILE =
+      "GetObjectProfile";
 
   private static final String SERVLET_PATH = "/fedora/access/soapservlet?";
 
@@ -215,7 +221,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
     if (isValidURLParms(action, PID, bDefPID, methodName, versDateTime,
                       h_userParms, response))
     {
-
       // Have valid request.
       if (action.equals(GET_BEHAVIOR_DEFINITIONS))
       {
@@ -312,7 +317,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         long interval = stopTime - servletStartTime;
         System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
             + "GetBehaviorDefinitions: " + interval + " milliseconds.");
-      } else if (action.equals(GET_BEHAVIOR_METHODS))
+      }
+      else if (action.equals(GET_BEHAVIOR_METHODS))
       {
         MethodDef[] methodDefs = null;
         try
@@ -428,7 +434,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         long interval = stopTime - servletStartTime;
         System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
             + "GetBehaviorDefinitions: " + interval + " milliseconds.");
-      } else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML))
+      }
+      else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML))
       {
         MIMETypedStream methodDefs = null;
         try
@@ -480,87 +487,89 @@ public class FedoraAccessSoapServlet extends HttpServlet
         long interval = stopTime - servletStartTime;
         System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
             + "GetBehaviorMethodsAsWSDL: " + interval + " milliseconds.");
-      } else if (action.equals(GET_DISSEMINATION))
+      }
+      else if (action.equals(GET_DISSEMINATION))
+      {
+        try
         {
-          try
+          // Call Fedora Access SOAP service to request dissemination.
+          MIMETypedStream dissemination = null;
+          dissemination = getDissemination(PID, bDefPID, methodName,
+              userParms, asOfDateTime);
+          if (dissemination != null)
           {
-            // Call Fedora Access SOAP service to request dissemination.
-            MIMETypedStream dissemination = null;
-            dissemination = getDissemination(PID, bDefPID, methodName,
-                userParms, asOfDateTime);
-            if (dissemination != null)
+            // Dissemination found. Output the mime-typed stream.
+            //
+            // Note that what is returned by the Fedora Access SOAP service is
+            // a data structure. In a browser-based environment, it makes more
+            // sense to return something that is "browser-friendly" so the
+            // returned datastructure is written back to the serlvet response.
+            // In a nonbrowser-based environment, one would use the returned
+            // data structure directly and most likely forgo this
+            // transformation step.
+            //
+            if (dissemination.getMIMEType().
+                equalsIgnoreCase("application/fedora-redirect"))
             {
-              // Dissemination found. Output the mime-typed stream.
-              //
-              // Note that what is returned by the Fedora Access SOAP service is
-              // a data structure. In a browser-based environment, it makes more
-              // sense to return something that is "browser-friendly" so the
-              // returned datastructure is written back to the serlvet response.
-              // In a nonbrowser-based environment, one would use the returned
-              // data structure directly and most likely forgo this
-              // transformation step.
-              //
-              if (dissemination.getMIMEType().
-                  equalsIgnoreCase("application/fedora-redirect"))
+              // A MIME type of application/fedora-redirect signals that the
+              // MIMETypedStream returned from the dissemination is a special
+              // Fedora-specific MIME type. In this case, teh Fedora server
+              // will not proxy the stream, but instead perform a simple
+              // redirect to the URL contained within the body of the
+              // MIMETypedStream. This special MIME type is used primarily
+              // for streaming media.
+              BufferedReader br = new BufferedReader(
+                  new InputStreamReader(
+                  new ByteArrayInputStream(dissemination.getStream())));
+              StringBuffer sb = new StringBuffer();
+              String line = null;
+              while ((line = br.readLine()) != null)
               {
-                // A MIME type of application/fedora-redirect signals that the
-                // MIMETypedStream returned from the dissemination is a special
-                // Fedora-specific MIME type. In this case, teh Fedora server
-                // will not proxy the stream, but instead perform a simple
-                // redirect to the URL contained within the body of the
-                // MIMETypedStream. This special MIME type is used primarily
-                // for streaming media.
-                BufferedReader br = new BufferedReader(
-                    new InputStreamReader(
-                    new ByteArrayInputStream(dissemination.getStream())));
-                StringBuffer sb = new StringBuffer();
-                String line = null;
-                while ((line = br.readLine()) != null)
-                {
-                  sb.append(line);
-                }
-                response.sendRedirect(sb.toString());
-              } else
-              {
-                response.setContentType(dissemination.getMIMEType());
-                int byteStream = 0;
-                ByteArrayInputStream dissemResult =
-                    new ByteArrayInputStream(dissemination.getStream());
-                byte[] buffer = new byte[255];
-                while ((byteStream = dissemResult.read(buffer)) >= 0)
-                {
-                  out.write(buffer, 0, byteStream);
-                }
-                buffer = null;
-                dissemResult.close();
+                sb.append(line);
               }
+              response.sendRedirect(sb.toString());
             } else
             {
-              // Dissemination request returned nothing.
-              String message = "[FedoraAccessSOAPServlet] No Dissemination "
-                  + "result returned. <br> See server logs for additional info";
-              System.err.println(message);
-              showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
-                           userParms, response, message);
+              response.setContentType(dissemination.getMIMEType());
+              int byteStream = 0;
+              ByteArrayInputStream dissemResult =
+                  new ByteArrayInputStream(dissemination.getStream());
+              byte[] buffer = new byte[255];
+              while ((byteStream = dissemResult.read(buffer)) >= 0)
+              {
+                out.write(buffer, 0, byteStream);
+              }
+              buffer = null;
+              dissemResult.close();
             }
-          } catch (Exception e)
+          } else
           {
-            // FIXME!! Needs more refined Exception handling.
-            e.printStackTrace();
+            // Dissemination request returned nothing.
             String message = "[FedoraAccessSOAPServlet] No Dissemination "
-                + "result returned. <br> Exception: "
-                + e.getClass().getName()
-                + " <br> Reason: "  + e.getMessage()
-                + " <br> See server logs for additional info";
+                + "result returned. <br> See server logs for additional info";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                          userParms, response, message);
           }
-          long stopTime = new Date().getTime();
-          long interval = stopTime - servletStartTime;
-          System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
-              + "GetDissemination: " + interval + " milliseconds.");
-      } else if (action.equals(GET_OBJECT_METHODS))
+        } catch (Exception e)
+        {
+          // FIXME!! Needs more refined Exception handling.
+          e.printStackTrace();
+          String message = "[FedoraAccessSOAPServlet] No Dissemination "
+              + "result returned. <br> Exception: "
+              + e.getClass().getName()
+              + " <br> Reason: "  + e.getMessage()
+              + " <br> See server logs for additional info";
+          System.err.println(message);
+          showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
+                       userParms, response, message);
+        }
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+            + "GetDissemination: " + interval + " milliseconds.");
+      }
+      else if (action.equals(GET_OBJECT_METHODS))
       {
         ObjectMethodsDef[] objMethDefArray = null;
         PipedWriter pw = new PipedWriter();
@@ -590,7 +599,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               // Transform results into an html table
               response.setContentType(CONTENT_TYPE_HTML);
-              File xslFile = new File("dist/server/access/objectmethods2.xslt");
+              //File xslFile = new File("dist/server/access/objectmethods2.xslt");
+              File xslFile = new File("dist/server/access/objectmethods.xslt");
               TransformerFactory factory = TransformerFactory.newInstance();
               Templates template = factory.newTemplates(new StreamSource(xslFile));
               Transformer transformer = template.newTransformer();
@@ -598,7 +608,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
               transformer.transform(new StreamSource(pr), new StreamResult(out));
             }
             pr.close();
-
           } else
           {
             // Object Methods Definition request returned nothing.
@@ -625,22 +634,92 @@ public class FedoraAccessSoapServlet extends HttpServlet
             if (pr != null) pr.close();
         }
         out.close();
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+          + "GetObjectMethods: " + interval + " milliseconds.");
       }
-    } else
-    {
-      // Object Methods Definition request returned nothing.
-      String message = "[FedoraAccessServlet] No Object Method Definitions "
-          + "returned.";
-      System.out.println(message);
-      showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
-                   response, message);
-      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-      response.sendError(response.SC_NO_CONTENT, message);
+      else if (action.equals(GET_OBJECT_PROFILE))
+      {
+        ObjectProfile objProfile = null;
+        PipedWriter pw = new PipedWriter();
+        PipedReader pr = new PipedReader(pw);
+
+        try
+        {
+          out = response.getOutputStream();
+          pw = new PipedWriter();
+          pr = new PipedReader(pw);
+          objProfile = getObjectProfile(PID, asOfDateTime);
+          if (objProfile != null)
+          {
+            // Object Profile found.
+            // Deserialize ObjectProfile datastructure into XML
+            new ProfileSerializerThread(PID, objProfile, versDateTime, pw).start();
+            if (xmlEncode)
+            {
+              // Return results as raw XML
+              response.setContentType(CONTENT_TYPE_XML);
+              int bytestream = 0;
+              while ( (bytestream = pr.read()) >= 0)
+              {
+                out.write(bytestream);
+              }
+            } else
+            {
+              // Transform results into an html table
+              response.setContentType(CONTENT_TYPE_HTML);
+              File xslFile = new File("dist/server/access/viewObjectProfile.xslt");
+              TransformerFactory factory = TransformerFactory.newInstance();
+              Templates template = factory.newTemplates(new StreamSource(xslFile));
+              Transformer transformer = template.newTransformer();
+              Properties details = template.getOutputProperties();
+              transformer.transform(new StreamSource(pr), new StreamResult(out));
+            }
+            pr.close();
+
+          } else
+          {
+            // No Object Profile returned
+            String message = "[FedoraAccessServlet] No Object Profile returned.";
+            System.out.println(message);
+            showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
+                         response, message);
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            response.sendError(response.SC_NO_CONTENT, message);
+          }
+        } catch (Throwable th)
+        {
+          String message = "[FedoraAccessServlet] An error has occured. "
+              + " The error was a \" "
+              + th.getClass().getName()
+              + " \". Reason: "  + th.getMessage();
+          System.out.println(message);
+          th.printStackTrace();
+          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+        } finally
+        {
+            if (pr != null) pr.close();
+        }
+        out.close();
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+          + "GetObjectProfile: " + interval + " milliseconds.");
+        // end Object Profile processing
+      }
+      else
+      {
+        // Action not recognized
+        String message = "[FedoraAccessServlet] Requested action not recognized.";
+        System.out.println(message);
+        showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
+                     response, message);
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        response.sendError(response.SC_NO_CONTENT, message);
+      }
     }
-    long stopTime = new Date().getTime();
-    long interval = stopTime - servletStartTime;
-    System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
-        + "GetObjectMethods: " + interval + " milliseconds.");
   }
 
   /**
@@ -756,6 +835,107 @@ public class FedoraAccessSoapServlet extends HttpServlet
     }
   }
 
+  /**
+   * <p> A Thread to serialize an ObjectProfile object into XML.</p>
+   *
+   */
+  public class ProfileSerializerThread extends Thread
+  {
+    private PipedWriter pw = null;
+    private String PID = null;
+    private ObjectProfile objProfile = null;
+    private Date versDateTime = null;
+
+    /**
+     * <p> Constructor for ProfileSerializeThread.</p>
+     *
+     * @param PID The persistent identifier of the specified digital object.
+     * @param objProfile An object profile data structure.
+     * @param versDateTime The version datetime stamp of the request.
+     * @param pw A PipedWriter to which the serialization info is written.
+     */
+    public ProfileSerializerThread(String PID, ObjectProfile objProfile,
+                        Date versDateTime, PipedWriter pw)
+    {
+      this.pw = pw;
+      this.PID = PID;
+      this.objProfile = objProfile;
+      this.versDateTime = versDateTime;
+    }
+
+    /**
+     * <p> This method executes the thread.</p>
+     */
+    public void run()
+    {
+      if (pw != null)
+      {
+        try
+        {
+          pw.write("<?xml version=\"1.0\"?>");
+          if (versDateTime == null || DateUtility.
+              convertDateToString(versDateTime).equalsIgnoreCase(""))
+          {
+            pw.write("<objectProfile "
+                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " pid=\"" + PID + "\" >");
+            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"objectProfile.xsd\"/>");
+          } else
+          {
+            pw.write("<objectProfile "
+                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " pid=\"" + PID + "\""
+                + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
+                + "\" >");
+            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"objectProfile.xsd\"/>");
+          }
+
+          // PROFILE FIELDS SERIALIZATION
+          pw.write("<objLabel>" + objProfile.getObjLabel() + "</objLabel>");
+          pw.write("<objContentModel>" + objProfile.getObjContentModel() + "</objContentModel>");
+          String cDate = DateUtility.convertCalendarToString(objProfile.getObjCreateDate());
+          pw.write("<objCreateDate>" + cDate + "</objCreateDate>");
+          String mDate = DateUtility.convertCalendarToString(objProfile.getObjLastModDate());
+          pw.write("<objLastModDate>" + mDate + "</objLastModDate>");
+          String objType = objProfile.getObjType();
+          pw.write("<objType>");
+          if (objType.equalsIgnoreCase("O"))
+          {
+            pw.write("Fedora Data Object");
+          }
+          else if (objType.equalsIgnoreCase("D"))
+          {
+            pw.write("Fedora Behavior Definition Object");
+          }
+          else if (objType.equalsIgnoreCase("M"))
+          {
+            pw.write("Fedora Behavior Mechanism Object");
+          }
+          pw.write("</objType>");
+          pw.write("<objDissIndexViewURL>" + objProfile.getObjDissIndexViewURL() + "</objDissIndexViewURL>");
+          pw.write("<objItemIndexViewURL>" + objProfile.getObjItemIndexViewURL() + "</objItemIndexViewURL>");
+          pw.write("</objectProfile>");
+          pw.flush();
+          pw.close();
+        } catch (IOException ioe) {
+          System.err.println("WriteThread IOException: " + ioe.getMessage());
+        } finally
+        {
+          try
+          {
+            if (pw != null) pw.close();
+          } catch (IOException ioe)
+          {
+            System.err.println("WriteThread IOException: " + ioe.getMessage());
+          }
+        }
+      }
+    }
+  }
   /**
    * <p>For now, treat a HTTP POST request just like a GET request.</p>
    *
@@ -942,6 +1122,37 @@ public class FedoraAccessSoapServlet extends HttpServlet
         (ObjectMethodsDef[]) call.invoke( new Object[] { PID, asOfDateTime} );
     return objMethDefArray;
   }
+   /**
+    * <p>Gets a object profile for the specified object by
+    * invoking the appropriate Fedora Access SOAP service.</p>
+    *
+    * @param PID The persistent identifier for the digital object.
+    * @param asOfDateTime The versioning datetime stamp.
+    * @return An object profile data structure.
+    * @throws Exception If an error occurs in communicating with the Fedora
+    *         Access SOAP service.
+    */
+  public ObjectProfile getObjectProfile(String PID,
+      Calendar asOfDateTime) throws Exception
+  {
+    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    ObjectProfile objProfile = null;
+    Service service = new Service();
+    Call call = (Call) service.createCall();
+    call.setOperationName(new QName(FEDORA_API_URI, GET_OBJECT_PROFILE) );
+    QName qn = new QName(FEDORA_TYPE_URI, "ObjectProfile");
+    call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
+
+    // Any Fedora-defined types required by the SOAP service must be registered
+    // prior to invocation so the SOAP service knows the appropriate
+    // serializer/deserializer to use for these types.
+    call.registerTypeMapping(ObjectProfile.class, qn,
+        new BeanSerializerFactory(ObjectProfile.class, qn),
+        new BeanDeserializerFactory(ObjectProfile.class, qn));
+    objProfile =
+        (ObjectProfile) call.invoke( new Object[] { PID, asOfDateTime} );
+    return objProfile;
+  }
 
   /**
    * <p>Initialize servlet.</p>
@@ -1055,7 +1266,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
       //FIXME!! Validation for any user-supplied parameters not implemented.
     } else if (action != null &&
                (action.equals(GET_BEHAVIOR_DEFINITIONS) ||
-               action.equals(GET_OBJECT_METHODS)))
+                action.equals(GET_OBJECT_METHODS) ||
+                action.equals(GET_OBJECT_PROFILE)))
     {
       if (PID == null)
       {
