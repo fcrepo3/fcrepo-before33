@@ -13,7 +13,9 @@ import junit.framework.TestCase;
 import fedora.oai.sample.RandomDCMetadataFactory; 
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearchExistImpl;
+import fedora.server.search.FieldSearchSQLImpl;
 import fedora.server.search.ObjectFields;
+import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DirectoryBasedRepositoryReader;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.SimpleDOReader;
@@ -25,7 +27,7 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 
 /**
  * Tests the implementation of the FieldSearch interface, 
- * DirectoryBasedFieldSearch.
+ * FieldSearchSQLImpl.
  *
  * @author cwilper@cs.cornell.edu
  */
@@ -35,9 +37,11 @@ public class FieldSearchTest
     private File m_repoDir;
     private File m_existDir;
     private DirectoryBasedRepositoryReader m_repoReader;
-    private FieldSearchExistImpl m_fieldSearch;
+    //private FieldSearchExistImpl m_fieldSearch;
+    private FieldSearchSQLImpl m_fieldSearch;
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+    private ConnectionPool m_cPool;
         
     public FieldSearchTest(String fedoraHome, String label) {
         super(label);
@@ -57,7 +61,11 @@ public class FieldSearchTest
             m_repoReader=new DirectoryBasedRepositoryReader(m_repoDir, translator,
                     mets, mets, mets, "UTF-8", null);
             m_repoReader.setLogLevel(0);
-            m_fieldSearch=new FieldSearchExistImpl(m_existDir.toString(), null);
+            //m_fieldSearch=new FieldSearchExistImpl(m_existDir.toString(), null);
+            m_cPool=new ConnectionPool( "com.mckoi.JDBCDriver", 
+                    "jdbc:mckoi://localhost/", "fedoraAdmin", "fedoraAdmin", 5, 
+                    10, true);
+            m_fieldSearch=new FieldSearchSQLImpl(m_cPool, null);
             m_fieldSearch.setLogLevel(0);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
@@ -141,8 +149,8 @@ public class FieldSearchTest
                 long et=new Date().getTime();
                 long tt=et-st;
                 n++;
+                out.append(i + " " + tt + "\n");
                 if (n==50) {
-                    out.append(i + " " + tt + "\n");
                     System.err.println(i + " " + tt);
                     n=0;
                     /*
@@ -293,11 +301,12 @@ public class FieldSearchTest
     }
     
     private void shutdown() {
-        m_fieldSearch.shutdown();
+        //m_fieldSearch.shutdown();
+        m_cPool.closeAllConnections();
     }
     
     public static void main(String[] args) {
-        FieldSearchTest test=new FieldSearchTest(System.getProperty("fedora.home"), "Testing FieldSearchExistImpl");
+        FieldSearchTest test=new FieldSearchTest(System.getProperty("fedora.home"), "Testing FieldSearch...Impl");
         test.setUp();
         if (args.length>0) {
             if (args[0].equals("delete")) {
@@ -337,3 +346,32 @@ public class FieldSearchTest
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

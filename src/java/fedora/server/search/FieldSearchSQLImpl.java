@@ -22,6 +22,7 @@ import fedora.server.errors.StorageDeviceException;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.utilities.SQLUtility;
 
 /**
  * A FieldSearch implementation that uses a relational database
@@ -35,10 +36,16 @@ public class FieldSearchSQLImpl
 
     private ConnectionPool m_cPool;
     private static long s_maxResults=200;
+    private static String[] s_dbColumnNames=new String[] {"pid", "label", 
+            "foType", "cModel", "state", "locker", "cDate", "mDate", 
+            "dcTitle", "dcCreator", "dcSubject", "dcDescription", "dcPublisher",
+            "dcContributor", "dcDate", "dcType", "dcFormat", "dcIdentifier",
+            "dcSource", "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
         
     public FieldSearchSQLImpl(ConnectionPool cPool, Logging logTarget) {
         super(logTarget);
         logFinest("Entering constructor");
+        m_cPool=cPool;
         logFinest("Exiting constructor");
     }
     
@@ -50,125 +57,68 @@ public class FieldSearchSQLImpl
         try {
             SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             conn=m_cPool.getConnection();
-            
-/*
-                   out.append("<pid>" + reader.GetObjectPID() + "</pid>\n");
-        String label=reader.GetObjectLabel();
-        if (label==null) label="";
-        out.append("<label>" + label + "</label>\n");
-        out.append("<fType>" + reader.getFedoraObjectType() + "</fType>\n");
-        String cModel=reader.getContentModelId();
-        if (cModel==null) cModel="";
-        out.append("<cModel>" + cModel + "</cModel>\n");
-        out.append("<state>" + reader.GetObjectState() + "</state>\n");
-        String locker=reader.getLockingUser();
-        if (locker==null) locker="";
-        out.append("<locker>" + locker + "</locker>\n");
-        out.append("<cDate>" + formatter.format(reader.getCreateDate()) + "</cDate>\n");
-        out.append("<cDateAsNum>" + reader.getCreateDate().getTime() + "</cDateAsNum>\n");
-        out.append("<mDate>" + formatter.format(reader.getLastModDate()) + "</mDate>\n");
-        out.append("<mDateAsNum>" + reader.getLastModDate().getTime() + "</mDateAsNum>\n"); 
-        DatastreamXMLMetadata dcmd=null;
-        try {
-            dcmd=(DatastreamXMLMetadata) reader.GetDatastream("DC", null);
-        } catch (ClassCastException cce) {
-            throw new ObjectIntegrityException("Object " + reader.GetObjectPID() 
-                    + " has a DC datastream, but it's not inline XML.");
-        }
-        if (dcmd!=null) {
-            logFine("Had DC Metadata datastream for this object.");
-            out.append("<dcmDate>" + formatter.format(dcmd.DSCreateDT) + "</dcmDate>\n");
-            out.append("<dcmDateAsNum>" + dcmd.DSCreateDT.getTime() + "</dcmDateAsNum>\n");
-            InputStream in=dcmd.getContentStream();
-            DCFields dc=new DCFields(in);
-            for (int i=0; i<dc.titles().size(); i++) {
-                out.append("<title>");
-                out.append((String) dc.titles().get(i));
-                out.append("</title>\n");
+            String[] dbRowValues=new String[23];
+            dbRowValues[0]=reader.GetObjectPID();
+            dbRowValues[1]=reader.GetObjectLabel();
+            dbRowValues[2]=reader.getFedoraObjectType();
+            dbRowValues[3]=reader.getContentModelId();
+            dbRowValues[4]=reader.GetObjectState();
+            dbRowValues[5]=reader.getLockingUser();
+            dbRowValues[6]=formatter.format(reader.getCreateDate());
+            dbRowValues[7]=formatter.format(reader.getLastModDate());
+            DatastreamXMLMetadata dcmd=null;
+            try {
+                dcmd=(DatastreamXMLMetadata) reader.GetDatastream("DC", null);
+            } catch (ClassCastException cce) {
+                throw new ObjectIntegrityException("Object " + reader.GetObjectPID() 
+                        + " has a DC datastream, but it's not inline XML.");
             }
-            for (int i=0; i<dc.creators().size(); i++) {
-                out.append("<creator>");
-                out.append((String) dc.creators().get(i));
-                out.append("</creator>\n");
-            }
-            for (int i=0; i<dc.subjects().size(); i++) {
-                out.append("<subject>");
-                out.append((String) dc.subjects().get(i));
-                out.append("</subject>\n");
-            }
-            for (int i=0; i<dc.descriptions().size(); i++) {
-                out.append("<description>");
-                out.append((String) dc.descriptions().get(i));
-                out.append("</description>\n");
-            }
-            for (int i=0; i<dc.publishers().size(); i++) {
-                out.append("<publisher>");
-                out.append((String) dc.publishers().get(i));
-                out.append("</publisher>\n");
-            }
-            for (int i=0; i<dc.contributors().size(); i++) {
-                out.append("<contributor>");
-                out.append((String) dc.contributors().get(i));
-                out.append("</contributor>\n");
-            }
-            for (int i=0; i<dc.dates().size(); i++) {
-                String dateString=(String) dc.dates().get(i);
-                out.append("<date>");
-                out.append(dateString);
-                out.append("</date>\n");
-                long dateNum=parseDateAsNum(dateString);
-                if (dateNum!=-1) {
-                    out.append("<dateAsNum>");
-                    out.append(dateNum);
-                    out.append("</dateAsNum>");
+            if (dcmd==null) {
+                logFine("Did not have DC Metadata datastream for this object.");
+            } else {
+                logFine("Had DC Metadata datastream for this object.  "
+                        + "Formulating SQL and inserting/updating...");
+                InputStream in=dcmd.getContentStream();
+                DCFields dc=new DCFields(in);
+                dbRowValues[8]=getDbValue(dc.titles()); 
+                dbRowValues[9]=getDbValue(dc.creators()); 
+                dbRowValues[10]=getDbValue(dc.subjects()); 
+                dbRowValues[11]=getDbValue(dc.descriptions()); 
+                dbRowValues[12]=getDbValue(dc.publishers()); 
+                dbRowValues[13]=getDbValue(dc.contributors()); 
+                dbRowValues[14]=getDbValue(dc.dates()); 
+                List wellFormedDates=null;
+                for (int i=0; i<dc.dates().size(); i++) {
+                    if (i==0) {
+                        wellFormedDates=new ArrayList();
+                    }
+                    // get any dc.dates strings that are formed such that they
+                    // can be treated as a timestamp
+                    Date p=parseDate((String) dc.dates().get(i));
+                    if (p!=null) {
+                        wellFormedDates.add(p);
+                    }
                 }
+                if (wellFormedDates.size()>0) {
+                    // found at least one... so delete the existing dates
+                    // in that table for this pid, then add these.
+                    // TODO: delete old here
+                    for (int i=0; i<wellFormedDates.size(); i++) {
+                        Date dt=(Date) wellFormedDates.get(i);
+                        // TODO: insert it here
+                    }
+                }
+                dbRowValues[15]=getDbValue(dc.types()); 
+                dbRowValues[16]=getDbValue(dc.formats()); 
+                dbRowValues[17]=getDbValue(dc.identifiers()); 
+                dbRowValues[18]=getDbValue(dc.sources()); 
+                dbRowValues[19]=getDbValue(dc.languages()); 
+                dbRowValues[20]=getDbValue(dc.relations()); 
+                dbRowValues[21]=getDbValue(dc.coverages()); 
+                dbRowValues[22]=getDbValue(dc.rights()); 
+                SQLUtility.replaceInto(conn, "doFields", s_dbColumnNames,
+                        dbRowValues, "pid");
             }
-            for (int i=0; i<dc.types().size(); i++) {
-                out.append("<type>");
-                out.append((String) dc.types().get(i));
-                out.append("</type>\n");
-            }
-            for (int i=0; i<dc.formats().size(); i++) {
-                out.append("<format>");
-                out.append((String) dc.formats().get(i));
-                out.append("</format>\n");
-            }
-            for (int i=0; i<dc.identifiers().size(); i++) {
-                out.append("<identifier>");
-                out.append((String) dc.identifiers().get(i));
-                out.append("</identifier>\n");
-            }
-            for (int i=0; i<dc.sources().size(); i++) {
-                out.append("<source>");
-                out.append((String) dc.sources().get(i));
-                out.append("</source>\n");
-            }
-            for (int i=0; i<dc.languages().size(); i++) {
-                out.append("<language>");
-                out.append((String) dc.languages().get(i));
-                out.append("</language>\n");
-            }
-            for (int i=0; i<dc.relations().size(); i++) {
-                out.append("<relation>");
-                out.append((String) dc.relations().get(i));
-                out.append("</relation>\n");
-            }
-            for (int i=0; i<dc.coverages().size(); i++) {
-                out.append("<coverage>");
-                out.append((String) dc.coverages().get(i));
-                out.append("</coverage>\n");
-            }
-            for (int i=0; i<dc.rights().size(); i++) {
-                out.append("<rights>");
-                out.append((String) dc.rights().get(i));
-                out.append("</rights>\n");
-            }
-        } else {
-            logFine("Did not have DC Metadata datastream for this object.");
-        }
-        out.append("</fields>");
-        logFinest("Writing to XML DB: " + out.toString());
-        return out.toString(); */
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting update of " 
                     + "object with pid '" + pid + ": " + sqle.getMessage());
@@ -178,7 +128,13 @@ public class FieldSearchSQLImpl
             }
             logFinest("Exiting update(DOReader)");
         }
-    }                                       
+    /*            long dateNum=parseDateAsNum(dateString);
+                if (dateNum!=-1) {
+                    out.append("<dateAsNum>");
+                    out.append(dateNum);
+                    out.append("</dateAsNum>");
+                } */
+    }
     
     public boolean delete(String pid) 
             throws ServerException {
@@ -254,27 +210,64 @@ public class FieldSearchSQLImpl
     }
     
         
-
+    private static String getDbValue(List dcItem) {
+        if (dcItem.size()==0) {
+            return null;
+        }
+        StringBuffer out=new StringBuffer();
+        for (int i=0; i<dcItem.size(); i++) {
+            //replace all " , " with "_,_"
+            String val=(String) dcItem.get(i);
+            String replaced=encodeSpaceCommaSpace(val);
+            //add the string, starting with "[,] ", and ending with " "
+            if (i>0) {
+                out.append(",");
+            }
+            out.append(" ");
+            out.append(replaced);
+            out.append(" ");
+        }
+        return out.toString();
+    }
+    
+    private static String encodeSpaceCommaSpace(String val) {
+        int i=val.indexOf(" , ");
+        if (i==-1) return val;
+        return encodeSpaceCommaSpace(val.substring(0, i) 
+                + "_,_" + val.substring(i+3));
+    }
+    
+    private static String decodeSpaceCommaSpace(String val) {
+        int i=val.indexOf("_,_");
+        if (i==-1) return val;
+        return encodeSpaceCommaSpace(val.substring(0, i) 
+                + " , " + val.substring(i+3));
+    }
     
     private List getObjectFields(ResultSet results, String[] resultFields) {
         return null;
     }
     
-    // returns -1 if can't parse as date
-    private long parseDateAsNum(String str) {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").parse(str).getTime();
-        } catch (ParseException pe) {
+    // returns null if can't parse as date
+    private static Date parseDate(String str) {
+        if (str.indexOf("T")!=-1) {
             try {
-                return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'").parse(str).getTime();
-            } catch (ParseException pe2) {
+                return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").parse(str);
+            } catch (ParseException pe) {
                 try {
-                    return new SimpleDateFormat("yyyy-MM-dd").parse(str).getTime();
-                } catch (ParseException pe3) {
-                    return -1;
+                    return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'").parse(str);
+                } catch (ParseException pe2) {
+                    return null;
                 }
             }
+        } else {
+            try {
+                return new SimpleDateFormat("yyyy-MM-dd").parse(str);
+            } catch (ParseException pe3) {
+                return null;
+            }
         }
+        
     }
     
 /*
@@ -548,5 +541,9 @@ public class FieldSearchSQLImpl
         return ret;
     }
     */
+    
+    public static void main(String[] args) {
+        System.out.println(FieldSearchSQLImpl.encodeSpaceCommaSpace(args[0]));
+    }
 
 }
