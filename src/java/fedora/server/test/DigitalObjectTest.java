@@ -11,26 +11,47 @@ import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.Datastream;
 
 /**
- * Tests the implementation of the DigitalObject interface, BasicDigitalObject.
+ *
+ * <p><b>Title:</b> DigitalObjectTest.java</p>
+ * <p><b>Description:</b> Tests the implementation of the DigitalObject
+ * interface, BasicDigitalObject.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
-public class DigitalObjectTest 
+public class DigitalObjectTest
         extends TestCase {
-        
+
     private DigitalObject m_obj, m_bdef, m_bmech;
     private Date m_startTime;
     private String m_namespacePrefix;
     private String m_namespaceURI;
     private Datastream m_ds1_0, m_ds1_1, m_ds2_0;
     private Disseminator m_diss1_0, m_diss1_1, m_diss2_0;
-    private AuditRecord m_audit1, m_audit2, m_audit3, m_audit4, 
+    private AuditRecord m_audit1, m_audit2, m_audit3, m_audit4,
             m_audit5, m_audit6, m_audit7;
 
     public DigitalObjectTest(String label) {
         super(label);
     }
-    
+
     public void setUp() {
         // init common values
         m_startTime=new Date();
@@ -114,7 +135,7 @@ public class DigitalObjectTest
         m_bmech.setPid("test:3");
         m_bmech.setState("D");
     }
-    
+
     public void testSimpleParts() {
         assertEquals(m_obj.getContentModelId(), "cModel1");
         assertEquals(m_bdef.getContentModelId(), "cModel2");
@@ -144,20 +165,20 @@ public class DigitalObjectTest
         assertEquals(m_bdef.getState(), "W");
         assertEquals(m_bmech.getState(), "D");
     }
-    
+
     public void testAuditRecordComposition() {
         m_obj.getAuditRecords().add(m_audit1);
     }
-    
+
     public void testDatastreamComposition() {
         m_obj.getAuditRecords().add(m_audit2);
         m_ds1_0.auditRecordIdList().add(m_audit2.id);
         m_obj.datastreams("DS1").add(m_ds1_0);
-        
+
         m_obj.getAuditRecords().add(m_audit3);
         m_ds1_1.auditRecordIdList().add(m_audit3.id);
         m_obj.datastreams("DS1").add(m_ds1_1);
-        
+
         m_obj.getAuditRecords().add(m_audit4);
         m_ds2_0.auditRecordIdList().add(m_audit4.id);
         m_obj.datastreams("DS2").add(m_ds2_0);

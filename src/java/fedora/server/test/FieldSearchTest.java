@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import junit.framework.TestCase;
 
-import fedora.oai.sample.RandomDCMetadataFactory; 
+import fedora.oai.sample.RandomDCMetadataFactory;
 import fedora.server.StdoutLogging;
 import fedora.server.search.Condition;
 //import fedora.server.search.FieldSearchExistImpl;
@@ -28,14 +28,34 @@ import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 
 /**
- * Tests the implementation of the FieldSearch interface, 
- * FieldSearchSQLImpl.
+ *
+ * <p><b>Title:</b> FieldSearchTest.java</p>
+ * <p><b>Description:</b> Tests the implementation of the FieldSearch interface,
+ * FieldSearchSQLImpl.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
-public class FieldSearchTest 
+public class FieldSearchTest
         extends TestCase {
-        
+
     private File m_repoDir;
     private File m_existDir;
     private DirectoryBasedRepositoryReader m_repoReader;
@@ -44,13 +64,13 @@ public class FieldSearchTest
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
     private ConnectionPool m_cPool;
-        
+
     public FieldSearchTest(String fedoraHome, String label) {
         super(label);
         m_repoDir=new File(new File(fedoraHome), "server/demo");
         m_existDir=new File(new File(fedoraHome), "server/exist09");
     }
-    
+
     public void setUp() {
         try {
             String mets="mets11fedora1";
@@ -64,8 +84,8 @@ public class FieldSearchTest
                     mets, mets, mets, "UTF-8", null);
             m_repoReader.setLogLevel(0);
             //m_fieldSearch=new FieldSearchExistImpl(m_existDir.toString(), null);
-            m_cPool=new ConnectionPool( "com.mckoi.JDBCDriver", 
-                    "jdbc:mckoi://localhost/", "fedoraAdmin", "fedoraAdmin", 5, 
+            m_cPool=new ConnectionPool( "com.mckoi.JDBCDriver",
+                    "jdbc:mckoi://localhost/", "fedoraAdmin", "fedoraAdmin", 5,
                     10, true);
             m_fieldSearch=new FieldSearchSQLImpl(m_cPool, m_repoReader, 50, 50, null);
         } catch (Exception e) {
@@ -73,7 +93,7 @@ public class FieldSearchTest
             e.printStackTrace();
         }
     }
-    
+
     public void testDeleteAll() {
         try {
             String[] pids=m_repoReader.listObjectPIDs(null);
@@ -85,7 +105,7 @@ public class FieldSearchTest
             e.printStackTrace();
         }
     }
-    
+
     public void testUpdateAll() {
         try {
             String[] pids=m_repoReader.listObjectPIDs(null);
@@ -98,7 +118,7 @@ public class FieldSearchTest
             e.printStackTrace();
         }
     }
-    
+
     public void testSimpleSearch() {
         try {
             List results;
@@ -115,9 +135,9 @@ public class FieldSearchTest
             e.printStackTrace();
         }
     }
-    
-    public void testPerformance(File dictionaryFile, int repeatMax, int wordMax, 
-            int numObjects, File indexingOutput, File regexOutput, 
+
+    public void testPerformance(File dictionaryFile, int repeatMax, int wordMax,
+            int numObjects, File indexingOutput, File regexOutput,
             File wordOutput, File fieldOutput) {
         StringBuffer out=new StringBuffer();
         StringBuffer outTwo=new StringBuffer();
@@ -201,27 +221,27 @@ public class FieldSearchTest
             */
         }
     }
-    
-    private void sendToFile(String string, File file) 
+
+    private void sendToFile(String string, File file)
             throws Exception {
         PrintWriter out=new PrintWriter(new BufferedWriter(new FileWriter(file)));
         out.println(string);
         out.flush();
         out.close();
     }
-    
+
     public void printSimpleSearch(String[] fields, String terms) {
         try {
             System.out.println("Searching...");
             printResults(fields, m_fieldSearch.findObjects(fields, 50,
                     new FieldSearchQuery(terms)).objectFieldsList());
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getClass().getName() + ": " 
+            System.out.println("ERROR: " + e.getClass().getName() + ": "
             + e.getMessage());
             e.printStackTrace();
         }
     }
-            
+
     public void printAdvancedSearch(String[] fields, String conditionQuery) {
         try {
             System.out.println("Searching...");
@@ -233,7 +253,7 @@ public class FieldSearchTest
             e.printStackTrace();
         }
     }
-            
+
     private void printResults(String[] fields, List results) {
         System.out.println("Got " + results.size() + " results.");
         for (int i=0; i<results.size(); i++) {
@@ -291,7 +311,7 @@ public class FieldSearchTest
             System.out.println("");
         }
     }
-    
+
     private String printList(List l) {
         StringBuffer out=new StringBuffer();
         out.append("{");
@@ -306,12 +326,12 @@ public class FieldSearchTest
         out.append("}");
         return out.toString();
     }
-    
+
     private void shutdown() {
         //m_fieldSearch.shutdown();
         m_cPool.closeAllConnections();
     }
-    
+
     public static void main(String[] args) {
         FieldSearchTest test=new FieldSearchTest(System.getProperty("fedora.home"), "Testing FieldSearch...Impl");
         test.setUp();
@@ -319,8 +339,8 @@ public class FieldSearchTest
             if (args[0].equals("delete")) {
                 test.testDeleteAll();
             } else if (args[0].equals("perf")) {
-                test.testPerformance(new File(args[1]), Integer.parseInt(args[2]), 
-                        Integer.parseInt(args[3]), Integer.parseInt(args[4]), 
+                test.testPerformance(new File(args[1]), Integer.parseInt(args[2]),
+                        Integer.parseInt(args[3]), Integer.parseInt(args[4]),
                         new File(args[5]), new File(args[6]), new File(args[7]),
                         new File(args[8]));
             } else if (args[0].equals("update")) {

@@ -1,14 +1,5 @@
 package fedora.server.test;
 
-/**
- * Title: DeleteTest.java
- * Description: Program to delete Fedora test objects from the database.
- * Copyright: Copyright (c) 2002
- * Company: 
- * @author Paul Charlton
- * @version 1.0
- */
-
 import java.util.*;
 import java.sql.*;
 import java.io.*;
@@ -18,15 +9,33 @@ import fedora.server.storage.*;
 import fedora.server.storage.types.*;
 import fedora.server.storage.replication.*;
 
-
 /**
-*
-* Description: Program to delete Fedora test objects from the database.
-*
-* @version 1.0
-*
-*/
-public class DeleteTest { 
+ *
+ * <p><b>Title:</b> DeleteTest.java</p>
+ * <p><b>Description:</b> Program to delete Fedora test objects from the
+ * database.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author Paul Charlton
+ * @version 1.0
+ */
+public class DeleteTest {
 
 
     /**
@@ -45,7 +54,7 @@ public class DeleteTest {
 	DbmsConnection db;
 	DBIDLookup dl;
 	String doDBID;
-	RowDeletion rd; 
+	RowDeletion rd;
 
 	db = new DbmsConnection();
 	connection = db.getConnection();
@@ -84,7 +93,7 @@ public class DeleteTest {
 	DbmsConnection db;
 	DBIDLookup dl;
 	String doDBID;
-	RowDeletion rd; 
+	RowDeletion rd;
 	String bDefDBID;
 	String bDefPID;
 
@@ -122,7 +131,7 @@ public class DeleteTest {
 	DbmsConnection db;
 	DBIDLookup dl;
 	String doDBID;
-	RowDeletion rd; 
+	RowDeletion rd;
 	String bMechDBID;
 	String bMechPID;
 
@@ -149,7 +158,7 @@ public class DeleteTest {
     	rd.deleteDataStreamBindingSpecRow(connection, bMechDBID);
 	// Possibly multiple row deletes.  Note that Disseminator rows are
 	// inserted from the Data Object, but are deleted by a specified
-	// Behavior Mechanism PID.  See RowDeletion.java for more information. 
+	// Behavior Mechanism PID.  See RowDeletion.java for more information.
     	rd.deleteDisseminatorRow(connection, bMechDBID);
 
 	db.freeConnection(connection);
@@ -174,7 +183,7 @@ public class DeleteTest {
 	}
 
 
-    	if (!(args[0].equals("do") || args[0].equals("bd") || args[0].equals("bm"))) 
+    	if (!(args[0].equals("do") || args[0].equals("bd") || args[0].equals("bm")))
 	{
 		System.out.println(usage);
 		System.exit(1);
@@ -188,10 +197,10 @@ public class DeleteTest {
 	if (delOpt.equals("do"))
 		dt.deleteDataObject(pid);
 	else {
-		if (delOpt.equals("bd")) 
+		if (delOpt.equals("bd"))
 			dt.deleteBehaviorDefinition(pid);
 		else {
-			if (delOpt.equals("bm")) 
+			if (delOpt.equals("bm"))
 				dt.deleteBehaviorMechanism(pid);
 		}
 	}
