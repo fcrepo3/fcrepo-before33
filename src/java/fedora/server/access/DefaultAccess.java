@@ -586,10 +586,10 @@ public class DefaultAccess extends Module implements Access
     repositoryInfo.repositoryName = getServer().getParameter("repositoryName");
     repositoryInfo.repositoryBaseURL = getReposBaseURL() + "/fedora";
     repositoryInfo.repositoryVersion =
-      getServer().VERSION_MAJOR + "." + getServer().VERSION_MINOR;
+      Server.VERSION_MAJOR + "." + Server.VERSION_MINOR;
     Module domgr = getServer().getModule("fedora.server.storage.DOManager");
     repositoryInfo.repositoryPIDNamespace = domgr.getParameter("pidNamespace");
-	repositoryInfo.defaultExportFormat = domgr.getParameter("exportFormat");
+	repositoryInfo.defaultExportFormat = domgr.getParameter("defaultExportFormat");
     repositoryInfo.OAINamespace = m_repositoryDomainName;
     repositoryInfo.adminEmailList = getAdminEmails();
     repositoryInfo.samplePID = repositoryInfo.repositoryPIDNamespace + ":100";
