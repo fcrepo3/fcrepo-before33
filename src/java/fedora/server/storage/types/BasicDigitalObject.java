@@ -210,6 +210,36 @@ public class BasicDigitalObject
         return newID(versionIDs.iterator(), id + ".");
     }
 
+    public String newDatastreamBindingMapID() {
+        ArrayList mapIDs=new ArrayList(); // the list we'll put
+                                          // allbinding map ids in
+        Iterator dissIter=m_disseminators.keySet().iterator();
+        // for every List of disseminators...
+        while (dissIter.hasNext()) {
+            // get the dissID
+            String id=(String) dissIter.next();
+            Iterator iter=((ArrayList) m_disseminators.get(id)).iterator();
+            // then for every version with that id...
+            while (iter.hasNext()) {
+                Disseminator diss=(Disseminator) iter.next();
+                // add its dsBindMapID to the mapIDs list
+                mapIDs.add(diss.dsBindMapID);
+            }
+        }
+        // get a new, unique binding map id, starting with "S" given the complete list
+        return newID(mapIDs.iterator(), "S");
+    }
+
+    public String newDatastreamBindingMapID(String id) {
+        ArrayList versionIDs=new ArrayList();
+        Iterator iter=((ArrayList) m_disseminators.get(id)).iterator();
+        while (iter.hasNext()) {
+            Disseminator diss=(Disseminator) iter.next();
+            versionIDs.add(diss.dsBindMapID);
+        }
+        return newID(versionIDs.iterator(), "S");
+    }
+
     public String newAuditRecordID() {
         ArrayList auditIDs=new ArrayList();
         Iterator iter=m_auditRecords.iterator();
