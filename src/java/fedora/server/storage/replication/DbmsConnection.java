@@ -1,3 +1,5 @@
+package fedora.server.storage.replication;
+
 /**
  * <p>Title: DbmsConnection.java</p>
  * <p>Description: Manages databases connection for the replication code. 
@@ -22,7 +24,7 @@ import java.io.*;
 *
 */
 public class DbmsConnection {   
-	Connection connection  = null;
+	public Connection connection  = null;
 
         final private static String hostname = "icarus.lib.virginia.edu";
 
