@@ -61,7 +61,7 @@
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
 		<param name="defaultPoolName" value="poolOne"/>
-		<param name="poolNames" value="poolOne,poolTwo"/>
+		<param name="poolNames" value="poolOne,poolTwo,poolThree"/>
 	</module>
 	<datastore id="poolOne">
 		<comment>Config parameters for ConnectionPool number one</comment>
@@ -69,6 +69,7 @@
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mysql://icarus.lib.virginia.edu:3306/FedoraObjects"/>
 		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
+        <param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
@@ -78,6 +79,17 @@
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mysql://localhost/FedoraObjects"/>
 		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
+        <param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
+		<param name="minPoolSize" value="10"/>
+		<param name="maxPoolSize" value="100"/>
+	</datastore>
+	<datastore id="poolThree">
+		<comment>Config parameters for ConnectionPool on localhost using mckoi java db</comment>
+		<param name="dbUsername" value="fedoraAdmin"/>
+		<param name="dbPassword" value="fedoraAdmin"/>
+		<param name="jdbcURL" value="jdbc:mckoi://localhost/"/>
+		<param name="jdbcDriverClass" value="com.mckoi.JDBCDriver"/>
+        <param name="ddlConverter" value="fedora.server.utilities.McKoiDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
