@@ -7,6 +7,7 @@ public class AuditRecord {
     public AuditRecord() {
     }
     
+    public String id;
     public String processType;
     public String action;
     public String responsibility;

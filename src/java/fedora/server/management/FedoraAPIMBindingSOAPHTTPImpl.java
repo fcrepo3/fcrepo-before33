@@ -3,10 +3,13 @@ package fedora.server.management;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.storage.TestFileStreamStorage;
 import fedora.server.utilities.AxisUtility;
 
 import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.MessageContext;
@@ -54,6 +57,27 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public java.lang.String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
         assertInitialized();
+        try {
+            String pid="1234";
+            TestFileStreamStorage st=new TestFileStreamStorage(new File(s_server.getHomeDir(), "data"), 4096);
+            
+            // DefinitiveDOWriter w=new DefinitiveDOWriter(pid, st, st, null, );
+            return pid;
+        } catch (ServerException se) {
+            AxisUtility.throwFault(se);
+        } catch (Exception e) {
+            AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
+       /* 
+    public DefinitiveDOWriter(String pid, TestStreamStorage storage, 
+            TestStreamStorage tempStorage, StreamValidator validator,
+            DODeserializer importDeserializer, DOSerializer storageSerializer,
+            DODeserializer storageDeserializer, DOSerializer exportSerializer,
+            InputStream initialContent, boolean useContentPid) 
+            throws ObjectIntegrityException, 
+            StreamIOException, StreamReadException {        
+        */    
+            
         return null;
     }
 

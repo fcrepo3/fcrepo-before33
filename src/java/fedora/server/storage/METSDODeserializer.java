@@ -46,6 +46,7 @@ public class METSDODeserializer
     private String m_dsState;
     private String m_dsInfoType;
     private String m_dsLabel;
+    private int m_dsMDClass;
     private StringBuffer m_dsXMLBuffer;
     private ArrayList m_dsPrefixes;    // namespace prefixes used in the currently scanned datastream
     private boolean m_inXMLMetadata;
@@ -142,12 +143,26 @@ public class METSDODeserializer
                         grab(a, M, "LASTMODDATE")));
                 m_obj.setState(grab(a, M, "RECORDSTATUS"));
             } else if (localName.equals("amdSec")) {
-                // are we in an audit trail? remember for later
                 m_dsId=grab(a, M, "ID");
             } else if (localName.equals("techMD") || localName.equals("dmdSec") 
+                    || localName.equals("sourceMD")
+                    || localName.equals("rightsMD")
                     || localName.equals("digiprovMD")) {
                 m_dsVersId=grab(a, M, "ID");
+                if (localName.equals("techMD")) {
+                    m_dsMDClass=DatastreamXMLMetadata.TECHNICAL;
+                }
+                if (localName.equals("sourceMD")) {
+                    m_dsMDClass=DatastreamXMLMetadata.SOURCE;
+                }
+                if (localName.equals("rightsMD")) {
+                    m_dsMDClass=DatastreamXMLMetadata.RIGHTS;
+                }
+                if (localName.equals("digiprovMD")) {
+                    m_dsMDClass=DatastreamXMLMetadata.DIGIPROV;
+                }
                 if (localName.equals("dmdSec")) {
+                    m_dsMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
                     // dmdsec metadata has primary id in GROUPID attribute
                     // whereas amdSec metadata has an outerlying element
                     // that includes the primary id in an ID attribute
@@ -243,6 +258,8 @@ public class METSDODeserializer
                     // m_auditResponsibility, m_auditDate, m_auditJustification
                     // should all be set
                     AuditRecord a=new AuditRecord();
+                    a.id=m_dsVersId; // it's like the FEDORA-AUDITTRAIL is a 
+                                     // datastream and the records are versions
                     a.processType=m_auditProcessType;
                     a.action=m_auditAction;
                     a.responsibility=m_auditResponsibility;
@@ -273,6 +290,7 @@ public class METSDODeserializer
                     ds.DSSize="" + ds.xmlContent.length; // bytes, not chars, but probably N/A anyway
                     ds.DSControlGrp=Datastream.XML_METADATA;
                     ds.DSInfoType=m_dsInfoType;
+                    ds.DSMDClass=m_dsMDClass;
                     ds.DSState=m_dsState;
                     ds.DSLocation=null;  // N/A
                     // add it to the digitalObject

@@ -15,12 +15,30 @@ import java.util.Date;
 
 public class DatastreamXMLMetadata extends Datastream
 {
-
+ 
+  // metadata classes, from METS:
+  //
+  // techMD (technical metadata), 
+  // sourceMD (analog/digital source metadata), 
+  // rightsMD (intellectual property rights metadata), 
+  // digiprovMD (digital provenance metadata).
+  // dmdSec (descriptive metadata).
+  public final static int TECHNICAL=1;
+  public final static int SOURCE=2;
+  public final static int RIGHTS=3;
+  public final static int DIGIPROV=3;
+  public final static int DESCRIPTIVE=4;
+  
   // FIXME:not sure if this is used publicly, but getContentStream
   // should preclude its public use.  Also not sure how this affect
   // character encoding/decoding and what the dependencies are.
   public byte[] xmlContent;
 
+  /**
+   * The metadata class. See above.
+   */
+  public int DSMDClass;
+  
   /** 
    * The namespace prefixes used in the XML encoding of the object.
    * This can be used to fully qualify the elements in an XML datastream

@@ -282,6 +282,16 @@
 			<arg value="test"/>
 		</exec>
 	</target>
+	<target name="metstest" description="run fedora.server.test.METSInOutTest on dist/server/tomcat41/image-w.xml">
+		<exec executable="java">
+			<arg value="-Dfedora.home=dist/server"/>
+			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+			<arg value="-classpath"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
+			<arg value="fedora.server.test.METSInOutTest"/>
+			<arg value="dist/server/tomcat41/image-w.xml"/>
+		</exec>
+	</target>
 	<target name="serverclasses" depends="serverprep,wsdl2java" description="Compile server java code into temp/server/classes">
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPImpl.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
@@ -298,6 +308,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.29  2002/09/12 12:42:45  cwilper
+  more serialization work + test code
+
   Revision 1.28  2002/09/09 16:29:08  rlw
   fixed typo in testdeployA
 

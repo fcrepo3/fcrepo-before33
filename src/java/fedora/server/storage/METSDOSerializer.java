@@ -79,14 +79,13 @@ public class METSDOSerializer
             buf.append("  </metsHdr>\n");
 
             if (obj.getAuditRecords().size()>0) {
-                buf.append("  <admSec ID=\"FEDORA-AUDITTRAIL\">\n");
+                buf.append("  <amdSec ID=\"FEDORA-AUDITTRAIL\">\n");
                 String auditPrefix=(String) obj.getNamespaceMapping().get(FEDORA_AUDIT_NAMESPACE_URI);
                 Iterator iter=obj.getAuditRecords().iterator();
-                int recNum=1;
                 while (iter.hasNext()) {
                     AuditRecord audit=(AuditRecord) iter.next();
-                    buf.append("    <digiprovMD ID=\"AUDREC"); 
-                    buf.append(recNum++);
+                    buf.append("    <digiprovMD ID=\"");
+                    buf.append(audit.id);
                     buf.append("\" CREATED=\""); 
                     String createDate=DateUtility.convertDateToString(audit.date); 
                     buf.append(createDate);
@@ -141,8 +140,21 @@ public class METSDOSerializer
                     buf.append("      </mdWrap>\n");
                     buf.append("    </digiprovMD>\n");
                 }
-                buf.append("  </admSec>\n");
-                
+                buf.append("  </amdSec>\n");
+                Iterator idIter=obj.datastreamIdIterator();
+                while (idIter.hasNext()) {
+                    String id=(String) idIter.next();
+                    // from the first one with this id, 
+                    // decide if it needs an amdSec or dmdSec
+                    Datastream ds=(Datastream) obj.datastreams(id).get(0);
+                    String mdClass="N/A";
+                    if (ds.DSControlGrp==Datastream.XML_METADATA) {
+                        DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
+                        mdClass="" + mds.DSMDClass;
+                    }
+                    // FIXME: this isn't mets-valid... it's just a test to see if we got what's expected
+                    buf.append("<datastream class=\"" + mdClass + "\" id=\"" + id + "\" ctrlGroup=\"" + ds.DSControlGrp + "\" infoType=\"" + ds.DSInfoType + "\"/>");
+                }
             }
             
             buf.append("</mets>");
