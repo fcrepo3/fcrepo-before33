@@ -47,7 +47,7 @@
         - storageCharacterEncoding [default=UTF-8]
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
-		<param name="pidNamespace" value="test"/>
+		<param name="pidNamespace" value="changeme"/>
 		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
 		<param name="storageFormat" value="metslikefedora1"/>
 		<param name="storageCharacterEncoding" value="UTF-8"/>
@@ -168,8 +168,21 @@
 		<param name="fedora-system:3" value="fedora.server.access.internalservices.DefaultBehavior"/>
 		<param name="fedora-system:4" value="fedora.server.access.internalservices.DefaultBehaviorImpl"/>
 	</module>
-	<module role="fedora.server.search.FieldSearch" class="fedora.server.search.FieldSearchExistModule">
-		<comment>Supports the API-A simpleSearch and advancedSearch methods.</comment>
+	<module role="fedora.server.search.FieldSearch" class="fedora.server.search.FieldSearchSQLModule">
+		<comment>
+        Description:
+          Supports the API-A simpleSearch and advancedSearch methods.
+        Parameters:
+          - maxResults (required, must be > 0)
+            The maximum number of records to return as the result of a search.
+            Even if a client requests more results at a time, this is the
+            cutoff value.
+          - connectionPool (optional, default=ConnectionPoolManager's default)
+            The connectionPool providing the connection to the database to
+            be used.
+        </comment>
+        <param name="maxResults" value="200"/>
+		<param name="connectionPool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
 	</module>
 	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
 		<comment>Exposes the repository for OAI harvesters.</comment>
