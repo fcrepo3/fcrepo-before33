@@ -1,3 +1,5 @@
+package fedora.server.storage.replication;
+
 /**
  * <p>Title: RowInsertion.java</p>
  * <p>Description: Database row insertion code.
