@@ -76,14 +76,6 @@ import fedora.server.types.gen.ObjectFields;
 public class BatchModifyParser extends DefaultHandler
 {
 
-    public static final String[] DEFAULT_ALTIDS      = new String[0];
-    public static final String   DEFAULT_LOGMESSAGE  = "BatchModifyParser generated this logMessage.";
-    public static final boolean  DEFAULT_VERSIONABLE = true;
-    public static final String   DEFAULT_MIMETYPE    = null;
-    public static final String   DEFAULT_FORMATURI   = null;
-    public static final boolean  DEFAULT_FORCE       = true;
-    public static final boolean  DEFAULT_FORCE_PURGE = false;
-
     /** Instance of Uploader */
     private static Uploader UPLOADER;
 
@@ -117,6 +109,8 @@ public class BatchModifyParser extends DefaultHandler
     private boolean m_inXMLMetadata;
     private boolean m_firstInlineXMLElement;
     private boolean addObject = false;
+    private boolean modifyObject = false;
+    private boolean purgeObject = false;
     private boolean addDatastream = false;
     private boolean modifyDatastream = false;
     private boolean purgeDatastream = false;
@@ -284,6 +278,7 @@ public class BatchModifyParser extends DefaultHandler
             m_obj.pid = attrs.getValue("pid");
             m_obj.label = attrs.getValue("label");
             m_obj.cModel = attrs.getValue("contentModel");
+            m_obj.logMessage = attrs.getValue("logMessage");
 
             try {
                 if ( m_obj.label.equals("") ) {
@@ -306,77 +301,72 @@ public class BatchModifyParser extends DefaultHandler
                 failedCount++;
                 logFailedDirective(m_obj.pid, localName, e, "");
             }
-        } 
-        
-/*
-REMOVE THIS BLOCK : This uses the old signature of addDatastream
-        
-        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
-            try {
-                addDatastream = false;
-                m_ds = new Datastream();
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyObject")) {
+            modifyObject = false;
+            m_obj = new DigitalObject();
 
-                // Get required attributes
-                m_ds.objectPID = attrs.getValue("pid");
-                m_ds.dsControlGrp = attrs.getValue("dsControlGroupType");
-                m_ds.dsID = attrs.getValue("datstreamID");
-                m_ds.dsLabel = attrs.getValue("dsLabel");
-                m_ds.dsState = attrs.getValue("dsState");
-                m_ds.dsMIME = attrs.getValue("dsMIME");
-
-                // Check for optional attributes
-                if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equalsIgnoreCase(""))
-                    m_ds.dsLocation = attrs.getValue("dsLocation");
-                if (attrs.getValue("dsMdClass") != null && !attrs.getValue("dsMdClass").equalsIgnoreCase("")) {
-                    m_ds.mdClass = attrs.getValue("dsMdClass");
-                } else {
-                    // Check that mdClass attribute is specified for XMLMetadata datastreams
-                    if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
+            // Get required attributes
+            m_obj.pid = attrs.getValue("pid");
+            m_obj.logMessage = attrs.getValue("logMessage");            
+            
+            try {       
+                if ( !m_obj.pid.equalsIgnoreCase("") ) {
+                    if (m_obj.pid.indexOf(":")<1) {
                         failedCount++;
-                        logFailedDirective(m_ds.objectPID, localName, null,
-                                "Datastream MDClass attribute must be specified when"
-                                + " adding datastreams of type \"X\".");
+                        logFailedDirective(m_obj.pid, localName, null,
+                                "Custom PID should be of the form \"namespace:1234\"");
                         return;
                     }
                 }
-                if (attrs.getValue("dsMdType") != null && !attrs.getValue("dsMdType").equalsIgnoreCase("")) {
-                    m_ds.mdType = attrs.getValue("dsMdType");
-                } else {
-                    // Check that mdType attribute is specified when mdClass is other than "descriptive"
-                    if (m_ds.dsControlGrp.equalsIgnoreCase("X")
-                            && !m_ds.mdClass.equalsIgnoreCase("descriptive")) {
-                        failedCount++;
-                        logFailedDirective(m_ds.objectPID, localName, null,
-                                "Datastream MDType attribute must be specified when"
-                                + " adding datastreams of type \"X\" and MDClass is"
-                                + " \""+m_ds.mdClass+"\".");
-                        return;
-                    }
+                
+                // Get optional attributes
+                if ( attrs.getValue("label") != null && !attrs.getValue("label").equalsIgnoreCase(""))
+                    m_obj.label = attrs.getValue("label");
+                else {
+                    m_obj.label = null;
                 }
-                // Check that MIME type is text/xml if datastream is XMLMetadata datastream
-                if (m_ds.dsControlGrp.equalsIgnoreCase("X") &&
-                        !m_ds.dsMIME.equalsIgnoreCase("text/xml") ) {
-                    failedCount++;
-                    logFailedDirective(m_ds.objectPID, localName, null,
-                            "Datastream dsMIME attribute must be \"text/xml\" when"
-                            + " adding datastreams of type \"X\". dsMIME type is: "
-                            + " \""+m_ds.dsMIME+"\".");
-                    return;
-                }
-
-                addDatastream = true;
+                if ( attrs.getValue("state") != null && !attrs.getValue("state").equalsIgnoreCase(""))
+                    m_obj.state = attrs.getValue("state");
+                else {
+                    m_obj.state = null;
+                }                
+                modifyObject = true;
 
             } catch (Exception e) {
                 failedCount++;
-                logFailedDirective(m_ds.objectPID, localName, e, "");
+                logFailedDirective(m_obj.pid, localName, e, "");
             }
-        }
-*/
-        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
-//
-// THIS PARSES THE DIRECTIVE
-// Used to be createDatastream, now is addDatastream
-//
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeObject")) {
+            purgeObject = false;
+            m_obj = new DigitalObject();
+
+            // Get required attributes
+            m_obj.pid = attrs.getValue("pid");
+            m_obj.logMessage = attrs.getValue("logMessage");            
+
+            try {
+                if ( !m_obj.pid.equalsIgnoreCase("") ) {
+                    if (m_obj.pid.indexOf(":")<1) {
+                        failedCount++;
+                        logFailedDirective(m_obj.pid, localName, null,
+                                "Custom PID should be of the form \"namespace:1234\"");
+                        return;
+                    }
+                }
+                
+                // Get optional attributes
+                if ( attrs.getValue("force") != null && !attrs.getValue("force").equalsIgnoreCase(""))
+                    m_obj.force = new Boolean(attrs.getValue("force")).booleanValue();
+                else {
+                    m_obj.force = false;
+                }                
+                purgeObject = true;
+
+            } catch (Exception e) {
+                failedCount++;
+                logFailedDirective(m_obj.pid, localName, e, "");
+            }
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
             try {
                 addDatastream = false;
                 m_ds = new Datastream();
@@ -384,12 +374,10 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 // Get required attributes
                 m_ds.objectPID = attrs.getValue("pid");
                 m_ds.dsControlGrp = attrs.getValue("dsControlGroupType");
-                //m_ds.dsID = attrs.getValue("dsID");
                 m_ds.dsLabel = attrs.getValue("dsLabel");
                 m_ds.dsState = attrs.getValue("dsState");
                 m_ds.dsMIME = attrs.getValue("dsMIME");
-                //m_ds.formatURI = attrs.getValue("formatURI");
-                //m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
+                m_ds.logMessage = attrs.getValue("logMessage");                
 
                 // Check for optional attributes
                 if ( attrs.getValue("dsID") != null && !attrs.getValue("dsID").equalsIgnoreCase("")) {
@@ -402,8 +390,10 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 if ( attrs.getValue("formatURI") != null && !attrs.getValue("formatURI").equalsIgnoreCase(""))
                     m_ds.formatURI = attrs.getValue("formatURI");
                 if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equalsIgnoreCase(""))
-                    m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();                
-
+                    m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
+                //System.out.println("add-vers: "+m_ds.versionable);
+                if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equalsIgnoreCase(""))
+                    m_ds.altIDs = attrs.getValue("altIDs").split(" ");             
                 // Check that MIME type is text/xml if datastream is XMLMetadata datastream
                 if (m_ds.dsControlGrp.equalsIgnoreCase("X") &&
                         !m_ds.dsMIME.equalsIgnoreCase("text/xml") ) {
@@ -418,6 +408,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 addDatastream = true;                
 
             } catch (Exception e) {
+                e.printStackTrace();
                 failedCount++;
                 logFailedDirective(m_ds.objectPID, localName, e, "");
                 return;
@@ -431,12 +422,15 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 // Get required attributes
                 m_ds.objectPID = attrs.getValue("pid");
                 m_ds.dsID = attrs.getValue("dsID");
+                m_ds.logMessage = attrs.getValue("logMessage");
 
-                // check for optional attributes. If asOfDate attribute is missing
+                // Get optional attributes. If asOfDate attribute is missing
                 // or empty its value is null and indicates that all versions
                 // of the datastream are to be purged.
                 if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equalsIgnoreCase(""))
                     m_ds.asOfDate = attrs.getValue("asOfDate");
+                if ( attrs.getValue("force") != null && !attrs.getValue("force").equalsIgnoreCase(""))
+                    m_ds.force = new Boolean(attrs.getValue("force")).booleanValue();
 
                 purgeDatastream = true;
 
@@ -455,6 +449,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 m_ds.objectPID = attrs.getValue("pid");
                 m_ds.dsID = attrs.getValue("dsID");
                 m_ds.dsControlGrp = attrs.getValue("dsControlGroupType");
+                m_ds.logMessage = attrs.getValue("logMessage");
 
                 try {
                     dsOrig = APIM.getDatastream(m_ds.objectPID, m_ds.dsID, null);
@@ -472,7 +467,6 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 // later by the server, but may as well detect this now and
                 // flag as an error in directives file.
                 if (dsOrig.getControlGroup().getValue().equalsIgnoreCase(m_ds.dsControlGrp)) {
-
 
                     // Check for optional atributes. Missing or empty optional
                     // attributes indicate that those fields remain unchanged so
@@ -492,18 +486,34 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                     } else {
                         m_ds.dsLocation = dsOrig.getLocation();
                     }
-                    //
-                    // Ross,
-                    //
-                    // You can insert code here to parse/set DEFAULT_s for:
-                    //
-                    //   m_ds.altIDs (default from dsOrig.getAltIDs())
-                    //   m_ds.versionable (default from dsOrig.isVersionable())
-                    //   m_ds.mimeType (default from dsOrig.getMIMEType())
-                    //   m_ds.formatURI (default from dsOrig.getFormatURI())
-                    //
-                    // - Chris
-                    //
+                    if ( attrs.getValue("dsMIME") != null && !attrs.getValue("dsMIME").equalsIgnoreCase("")) {
+                        m_ds.dsMIME = attrs.getValue("dsMIME");
+                    } else {
+                        m_ds.dsMIME = dsOrig.getMIMEType();
+                    }
+                    if ( attrs.getValue("force") != null && !attrs.getValue("force").equalsIgnoreCase("")) {
+                        m_ds.force = new Boolean(attrs.getValue("force")).booleanValue();
+                    } else {
+                        m_ds.force = false;
+                    }                    
+                    if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equalsIgnoreCase("")) {
+                        //System.out.println("mod-vers-in: "+attrs.getValue("versionable"));
+                        m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
+                    } else {
+                        //System.out.println("mod-vers-out: "+dsOrig.isVersionable());
+                        m_ds.versionable = dsOrig.isVersionable();
+                    }     
+                    //System.out.println("mod-vers: "+m_ds.versionable);
+                    if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equalsIgnoreCase("")) {
+                        m_ds.altIDs = attrs.getValue("altIDs").split(" ");
+                    } else {
+                        m_ds.altIDs = dsOrig.getAltIDs();
+                    }
+                    if ( attrs.getValue("formatURI") != null && !attrs.getValue("formatURI").equalsIgnoreCase("")) {
+                        m_ds.formatURI = attrs.getValue("formatURI");
+                    } else {
+                        m_ds.formatURI = dsOrig.getFormatURI();
+                    }                    
 
                     modifyDatastream = true;
 
@@ -530,6 +540,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 m_ds.objectPID = attrs.getValue("pid");
                 m_ds.dsID = attrs.getValue("dsID");
                 m_ds.dsState = attrs.getValue("dsState");
+                m_ds.logMessage = attrs.getValue("logMessage");
                 setDatastreamState = true;
 
             } catch (Exception e) {
@@ -589,8 +600,13 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                     m_dsBinding.setSeqNo("0");
                 }
 
-                if(!addDisseminator) {
+                if(addDisseminator) {
                     
+                    // If adding new disseminator, just go ahead and add binding
+                    m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
+                    
+                } else {
+
                     // If modifying disseminator, check that specified binding key name matches that in original disseminator
                     boolean bindKeyExists = false;
                     for (int i=0; i<m_origBinding.length; i++) {
@@ -598,6 +614,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                             bindKeyExists = true;
                         }
                     }
+                    
                     // Add datastream binding to hash of bindings
                     if (bindKeyExists) {
                         m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
@@ -610,10 +627,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                                 +" does not exist in disseminator: "+m_diss.dissID
                                 +"/n    Unable to add datastream binding for datastream: "
                                 +m_dsBinding.getDatastreamID()+" .");
-                    }
-                } else {
-                    // If adding new disseminator, just go ahead and add binding
-                    m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
+                    }                    
                 }
 
             } catch (Exception e) {
@@ -664,6 +678,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 m_diss.bDefID = attrs.getValue("bDefPid");
                 m_diss.bMechID = attrs.getValue("bMechPid");
                 m_diss.dissLabel = attrs.getValue("dissLabel");
+                m_diss.logMessage = attrs.getValue("logMessage");
 
                 // Get original labels for bDef and bMech object for this disseminator
                 Map m_bDefLabels = new HashMap();
@@ -672,7 +687,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 m_bMechLabels = getBMechLabelMap(m_diss.bDefID);
 
                 // Get optional attrributes. Missing or empty attributes indicate
-                // that defaults values are to be used.
+                // that default values are to be used.
                 if ( attrs.getValue("dissState") != null && !attrs.getValue("dissState").equalsIgnoreCase("")) {
                     m_diss.dissState = attrs.getValue("dissState");
                 } else {
@@ -706,7 +721,8 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 // Get require attributes
                 m_diss.parentPID = attrs.getValue("pid");
                 m_diss.bMechID = attrs.getValue("bMechPid");
-                m_diss.dissID = attrs.getValue("dissID");
+                m_diss.dissID = attrs.getValue("dissID");    
+                m_diss.logMessage = attrs.getValue("logMessage");
 
                 try {
                     origDiss = APIM.getDisseminator(m_diss.parentPID, m_diss.dissID, null);
@@ -750,6 +766,11 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 } else {
                     m_diss.bMechLabel =  origDiss.getBMechLabel();
                 }
+                if ( attrs.getValue("force") != null && !attrs.getValue("force").equalsIgnoreCase("")) {
+                    m_diss.force = new Boolean(attrs.getValue("force")).booleanValue();
+                } else {
+                    m_diss.force = false;
+                }                              
 
                 modifyDisseminator = true;
 
@@ -762,6 +783,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
             try {
                 purgeDisseminator = false;
                 m_diss = new Disseminator();
+                m_diss.logMessage = attrs.getValue("logMessage");
 
                 // Get require attributes
                 m_diss.parentPID = attrs.getValue("pid");
@@ -772,6 +794,11 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 // of the disseminator are to be removed.
                 if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equalsIgnoreCase(""))
                     m_diss.asOfDate = attrs.getValue("asOfDate");
+                if ( attrs.getValue("force") != null && !attrs.getValue("force").equalsIgnoreCase("")) {
+                    m_diss.force = new Boolean(attrs.getValue("force")).booleanValue();
+                } else {
+                    m_diss.force = false;
+                }     
 
                 purgeDisseminator = true;
 
@@ -789,6 +816,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 m_diss.parentPID = attrs.getValue("pid");
                 m_diss.dissID = attrs.getValue("dissID");
                 m_diss.dissState = attrs.getValue("dissState");
+                m_diss.logMessage = attrs.getValue("logMessage");
                 setDisseminatorState = true;
 
             } catch (Exception e) {
@@ -913,7 +941,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
 				                    xml.append("    xsi:schemaLocation=\"info:fedora/fedora-system:def/foxml# ");
 				                    xml.append("    http://www.fedora.info/definitions/1/0/foxml1-0.xsd\"");
 				                    xml.append("    PID=\"" + StreamUtility.enc(m_obj.pid) + "\""); 
-				                    xml.append("    URI=\"info:fedora/" + StreamUtility.enc(m_obj.pid) + "\">\n");
+				                    xml.append("    FEDORA_URI=\"info:fedora/" + StreamUtility.enc(m_obj.pid) + "\">\n");
 				    				xml.append("  <foxml:objectProperties>\n");
 				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/fType\" VALUE=\"FedoraObject\"/>\n");
 				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/state\" VALUE=\"A\"/>");
@@ -943,57 +971,55 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
             } finally {
                 addObject = false;
             }
-        }
-/* REMOVE THIS BLOCK - It uses the old signature of addDatastream        
-        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("modifyObject")) {
 
             try {
 
-                // Process addDatastream only if no previous errors encountered
-                if(addDatastream) {
-                    String datastreamID = null;
-                    if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
-                        InputStream xmlMetadata = new ByteArrayInputStream(m_ds.xmlContent);
-                        m_ds.dsLocation=UPLOADER.upload(xmlMetadata);
-                        datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsLabel,
-                                m_ds.dsMIME, m_ds.dsLocation,
-                                m_ds.dsControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.dsState);
-                    } else if (m_ds.dsControlGrp.equalsIgnoreCase("M")) {
-                        datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsLabel,
-                                m_ds.dsMIME,  m_ds.dsLocation,
-                                	m_ds.dsControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.dsState);
-                    } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
-                            m_ds.dsControlGrp.equalsIgnoreCase("R")) {
-                        datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsLabel,
-                                m_ds.dsMIME, m_ds.dsLocation,
-                                m_ds.dsControlGrp, m_ds.mdClass, m_ds.mdType, m_ds.dsState);
-                    }
-                    if (datastreamID!=null) {
-                        succeededCount++;
-                        logSucceededDirective(m_ds.objectPID, localName,
-                                "datastreamID: " + datastreamID + " added");
-                    } else {
-                        failedCount++;
-                        //addDatastream = false;
-                        logFailedDirective(m_ds.objectPID, localName, null,
-                        "Unable to add datastream");
-                    }
+                // Process modifyObject only if no previous errors encountered
+                if(modifyObject) {
+                        APIM.modifyObject(m_obj.pid, m_obj.state, m_obj.label,
+                                "ModifyObject");
                 }
+                succeededCount++;
+                logSucceededDirective(m_obj.pid, localName,
+                        "Object PID: " + m_obj.pid + " modified");
+
             } catch (Exception e) {
-                if(addDatastream) {
+                if(modifyObject) {
                     failedCount++;
-                    logFailedDirective(m_ds.objectPID, localName, e, "");
+                    logFailedDirective(m_obj.pid, localName, e, null);
                 }
             } finally {
-                addDatastream = false;
-            }
-        } */
-        
-        else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
-//
-// THIS CALLS THE SERVER
-// Used to be createDatastream, now is addDatastream
-//
+                modifyObject = false;
+            }    
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("purgeObject")) {
+
+            try {
+
+                // Process purgeDatastream only if no previous errors encountered
+                if (purgeObject) {
+                    String purgedPid = null;
+                    purgedPid = APIM.purgeObject(m_obj.pid, "PurgeObject", m_obj.force);
+                    if (purgedPid != null) {
+                        succeededCount++;
+                        logSucceededDirective(m_obj.pid, localName,
+                                "Purged PID: " + m_obj.pid);
+                    } else {
+                        failedCount++;
+                        logFailedDirective(m_ds.objectPID, localName, null,
+                                "Unable to purge object with PID: " + m_obj.pid);
+                    }
+                }
+            } catch (Exception e) {
+                if(purgeObject) {
+                    failedCount++;
+                    logFailedDirective(m_obj.pid, localName, e, "");
+      
+                }
+            } finally {
+                purgeObject = false;
+            }            
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
             try {
 
                 // Process addDatastream only if no previous errors encountered
@@ -1003,26 +1029,30 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                         InputStream xmlMetadata = new ByteArrayInputStream(m_ds.xmlContent);
                         m_ds.dsLocation=UPLOADER.upload(xmlMetadata);
                         datastreamID = APIM.addDatastream(m_ds.objectPID, 
-                                m_ds.dsID, DEFAULT_ALTIDS,
-                        		m_ds.dsLabel, m_ds.versionable,
-                        		m_ds.dsMIME, m_ds.formatURI,
-                        		m_ds.dsLocation, m_ds.dsControlGrp, 
-                        		m_ds.dsState, DEFAULT_LOGMESSAGE);
-                    } else if (m_ds.dsControlGrp.equalsIgnoreCase("M")) {
-                        datastreamID = APIM.addDatastream(m_ds.objectPID, 
-                                m_ds.dsID, DEFAULT_ALTIDS,
-                                m_ds.dsLabel,m_ds.versionable,
-                                m_ds.dsMIME, m_ds.formatURI,
-                                m_ds.dsLocation, m_ds.dsControlGrp, 
-                                m_ds.dsState, DEFAULT_LOGMESSAGE);
+                                m_ds.dsID, 
+                                m_ds.altIDs,
+                                m_ds.dsLabel, 
+                                m_ds.versionable,
+                                m_ds.dsMIME, 
+                                m_ds.formatURI,
+                                m_ds.dsLocation, 
+                                m_ds.dsControlGrp, 
+                                m_ds.dsState, 
+                                m_ds.logMessage);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
-                            m_ds.dsControlGrp.equalsIgnoreCase("R")) {
+                            	 m_ds.dsControlGrp.equalsIgnoreCase("M") ||
+                            	 m_ds.dsControlGrp.equalsIgnoreCase("R")) {
                         datastreamID = APIM.addDatastream(m_ds.objectPID, 
-                                m_ds.dsID, DEFAULT_ALTIDS,
-                                m_ds.dsLabel,m_ds.versionable,
-                                m_ds.dsMIME, m_ds.formatURI,
-                                m_ds.dsLocation, m_ds.dsControlGrp, 
-                                m_ds.dsState, DEFAULT_LOGMESSAGE);
+                                m_ds.dsID, 
+                                m_ds.altIDs,
+                                m_ds.dsLabel,
+                                m_ds.versionable,
+                                m_ds.dsMIME, 
+                                m_ds.formatURI,
+                                m_ds.dsLocation, 
+                                m_ds.dsControlGrp, 
+                                m_ds.dsState, 
+                                m_ds.logMessage);
                     }
                     if (datastreamID!=null) {
                         succeededCount++;
@@ -1030,12 +1060,12 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                                 "datastreamID: " + datastreamID + " added");
                     } else {
                         failedCount++;
-                        //addDatastream = false;
                         logFailedDirective(m_ds.objectPID, localName, null,
                         "Unable to add datastream");
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 if(addDatastream) {
                     failedCount++;
                     logFailedDirective(m_ds.objectPID, localName, e, "");
@@ -1051,7 +1081,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 if (purgeDatastream) {
                     String[] versionsPurged = null;
                     versionsPurged = APIM.purgeDatastream(m_ds.objectPID,
-                        m_ds.dsID, m_ds.asOfDate, DEFAULT_LOGMESSAGE, DEFAULT_FORCE_PURGE);
+                        m_ds.dsID, m_ds.asOfDate, m_ds.logMessage, m_ds.force);
                     if (versionsPurged.length > 0) {
                         succeededCount++;
                         if (m_ds.asOfDate!=null) {
@@ -1074,7 +1104,6 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                         logFailedDirective(m_ds.objectPID, localName, null,
                             "Unable to purge datastream; verify datastream ID and/or asOfDate");
                     }
-                    purgeDatastream = false;
                 }
             } catch (Exception e) {
                 if(purgeDatastream) {
@@ -1092,38 +1121,27 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 if(modifyDatastream) {
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
                         APIM.modifyDatastreamByValue(m_ds.objectPID, m_ds.dsID, 
-                                DEFAULT_ALTIDS, m_ds.dsLabel,
-                                DEFAULT_VERSIONABLE,
-                                DEFAULT_MIMETYPE,
-                                DEFAULT_FORMATURI,
+                                m_ds.altIDs, m_ds.dsLabel,
+                                m_ds.versionable,
+                                m_ds.dsMIME,
+                                m_ds.formatURI,
                                 m_ds.xmlContent, 
                                 m_ds.dsState,
-                                "ModifyDatastreamByValue", 
-                                DEFAULT_FORCE);
-                    } else if (m_ds.dsControlGrp.equalsIgnoreCase("M")) {
-                        APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, 
-                                DEFAULT_ALTIDS, m_ds.dsLabel,
-                                DEFAULT_VERSIONABLE,
-                                DEFAULT_MIMETYPE,
-                                DEFAULT_FORMATURI,
-                                m_ds.dsLocation, 
-                                m_ds.dsState,
-                                "ModifyDatastreamByReference",
-                                DEFAULT_FORCE);
+                                m_ds.logMessage, 
+                                m_ds.force);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
-                               m_ds.dsControlGrp.equalsIgnoreCase("R")) {
-                        // Ross - I noticed this did the same thing as the 
-                        //        above block, but I didn't consolidate in case
-                        //        you wanted it like that. - Chris
+                               m_ds.dsControlGrp.equalsIgnoreCase("M") ||
+                               m_ds.dsControlGrp.equalsIgnoreCase("R") ) {
                         APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, 
-                                DEFAULT_ALTIDS, m_ds.dsLabel,
-                                DEFAULT_VERSIONABLE,
-                                DEFAULT_MIMETYPE,
-                                DEFAULT_FORMATURI,
+                                m_ds.altIDs, 
+                                m_ds.dsLabel,
+                                m_ds.versionable,
+                                m_ds.dsMIME,
+                                m_ds.formatURI,
                                 m_ds.dsLocation, 
                                 m_ds.dsState,
-                                "ModifyDatastreamByReference",
-                                DEFAULT_FORCE);
+                                m_ds.logMessage,
+                                m_ds.force);
                     }
                     succeededCount++;
                     logSucceededDirective(m_ds.objectPID, localName,
@@ -1188,7 +1206,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                     dissID = APIM.addDisseminator(m_diss.parentPID, m_diss.bDefID,
                             m_diss.bMechID, m_diss.dissLabel, m_diss.bDefLabel,
                             m_diss.bMechLabel, m_dsBindingMap, m_diss.dissState,
-                            DEFAULT_LOGMESSAGE);
+                            m_diss.logMessage);
                     if (dissID!=null) {
                         succeededCount++;
                         logSucceededDirective(m_diss.parentPID, localName,
@@ -1234,7 +1252,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                     APIM.modifyDisseminator(m_diss.parentPID, m_diss.dissID,
                             m_diss.bMechID, m_diss.dissLabel, m_diss.bDefLabel,
                             m_diss.bMechLabel, m_dsBindingMap,
-                            m_diss.dissState, "ModifyDisseminator", DEFAULT_FORCE);
+                            m_diss.dissState, "ModifyDisseminator", m_diss.force);
                     succeededCount++;
                     logSucceededDirective(m_diss.parentPID, localName,
                         "disseminatorID: " + m_diss.dissID + " Modified.");
@@ -1257,7 +1275,10 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 if (purgeDisseminator) {
                     String[] versionsPurged = null;
                     versionsPurged = APIM.purgeDisseminator(m_diss.parentPID,
-                        m_diss.dissID, m_diss.asOfDate, DEFAULT_LOGMESSAGE);
+                    //    m_diss.dissID, m_diss.asOfDate);
+                    //versionsPurged = APIM.purgeDisseminator(m_diss.parentPID,
+                    //        m_diss.dissID, m_diss.asOfDate, m_diss.force);
+                        m_diss.dissID, m_diss.asOfDate, m_diss.logMessage);
                     if (versionsPurged.length > 0) {
                         succeededCount++;
                         if (m_diss.asOfDate!= null) {

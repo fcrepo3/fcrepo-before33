@@ -60,8 +60,8 @@ public class BatchModifyValidator extends DefaultHandler
      * @param APIM - An instance of FedoraAPIM.
      * @param in - An input stream containing the xml to be parsed.
      * @param out - A print stream used for writing log info.
-     * @throws RepositoryConfigurationException - If an error occurs in configuring
-     *                                            the SAX parser.
+     * @throws Exception - If an error occurs in configuring
+     *                     the SAX parser.
      */
     public BatchModifyValidator(InputStream in, PrintStream out) throws Exception
     {
