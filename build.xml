@@ -296,7 +296,7 @@
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
 			<arg value="-classpath"/>
-			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/mm.mysql-2.0.14-bin.jar"/>
 			<arg value="fedora.server.Server"/>
 			<arg value="test"/>
 		</exec>
@@ -327,6 +327,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.37  2002/09/26 14:19:57  cwilper
+  for servertest target, puts mysql jdbc driver in path
+
   Revision 1.36  2002/09/24 22:22:26  cwilper
   testdeploy target now deploys both API-A and API-M services
 
