@@ -1,9 +1,8 @@
 package fedora.server.test;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+//import java.io.ByteArrayOutputStream;
 import java.io.File;
-//import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServlet;
@@ -14,14 +13,14 @@ import javax.servlet.ServletException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 
-import fedora.server.access.localservices.HttpService;
-import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.InitializationException;
-import fedora.server.errors.MethodNotFoundException;
-import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.Context;
+import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
+import fedora.server.storage.DOManager;
 import fedora.server.storage.FastDOReader;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MIMETypedStream;
@@ -31,20 +30,18 @@ import fedora.server.utilities.DateUtility;
 import javax.xml.namespace.QName;
 import org.apache.axis.client.Service;
 import org.apache.axis.client.Call;
+import org.apache.axis.AxisFault;
 
 /**
  * <p>Title: FedoraAccessSoapServlet.java</p>
- * <p>Description: Provides a test interface for the Fedora Access SOAP service.
- * This servlet is used for testing the Fedora Access SOAP service using a
- * java servlet. This servlet mirrors the functionality of
- * <code>FedoraAccessServlet</code> with the major difference being that
- * this servlet provides an interface to the Fedora Access SOAP service
- * while <code>FedoraAccessServlet</code> provides an interface to the Fedora
- * Access HTTP service. Note that this servlet is provided as an example of
- * how one could write a simple web-based interface to the Fedora SOAP service.
- * Applications that can readily handle SOAP requests and responses
- * would most likely communicate directly with the Fedora SOAP service rather
- * than use a java servlet as an intermediary.
+ * <p>Description: Provides an example of a web-based client that provides a
+ * front end to the Fedora Access SOAP service. This servlet is designed to
+ * provide a "browser centric" view of the Fedora Access interface. Return
+ * types from the Fedora Access SOAP service are translated into a form
+ * suitable for viewing with a web browser. Applications that can readily
+ * handle SOAP requests and responses would most likely communicate directly
+ * with the Fedora SOAP service rather than use a java servlet as an
+ * intermediary.
  *
  * Input parameters for the servlet include:
  * <ul>
@@ -88,21 +85,68 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private static boolean debug = false;
   private static final String CONTENT_TYPE_HTML = "text/html";
   private static final String CONTENT_TYPE_XML  = "text/xml";
+
+  /** GetBehaviorDefinitions service name */
   private static final String GET_BEHAVIOR_DEFINITIONS =
       "GetBehaviorDefinitions";
+
+  /** GetBehaviorMethods service name */
   private static final String GET_BEHAVIOR_METHODS =
       "GetBehaviorMethods";
+
+  /** GetBehaviorMethodsAsWSDL service name */
   private static final String GET_BEHAVIOR_METHODS_AS_WSDL =
       "GetBehaviorMethodsAsWSDL";
+
+  /** GetDissemination service name */
   private static final String GET_DISSEMINATION =
       "GetDissemination";
+
+  /** GetObjectMethods service name */
   private static final String GET_OBJECT_METHODS =
       "GetObjectMethods";
+
+  /** Signifies the special type of address location known as LOCAL.
+   *  An address location of LOCAL implies that no remote host name is
+   *  required for the address location and that the contents of the
+   *  operation location are sufficient to execute the associated mechanism.
+   */
   private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
+
+  /** Fedora server instance */
   private static Server s_server = null;
-  private static final String YES = "yes";
+
+  /** Context obtained from DOManager */
+  private static Context m_context = null;
+
+  /** DOManager instance */
+  private static DOManager m_manager = null;
+
+  /** Default size of servlet dissemination cache. This is configurable
+   * in fedora.fcfg. If no value is given in the configuraiton file, this
+   * default value is used.
+   */
   private static int DISS_CACHE_SIZE = 100;
 
+  /** Hashtable containing dissemination cache */
+  private Hashtable disseminationCache = new Hashtable();
+
+  /** Servlet session */
+  private HttpSession session = null;
+
+  /** Hastable containing user-supplied parameters from servlet URL */
+  private Hashtable h_userParms = null;
+
+  /** The incoming request URL */
+  private String requestURL = null;
+
+  /** The incoming request URI */
+  private String requestURI = null;
+
+  /** Constant indicating dissemination cache is to be flushed */
+  private static final String YES = "yes";
+
+  /** get an instance of the Fedora server to obtain configuration variables */
   static
   {
     try
@@ -114,6 +158,13 @@ public class FedoraAccessSoapServlet extends HttpServlet
       DISS_CACHE_SIZE = I1.intValue();
       Boolean B1 = new Boolean(s_server.getParameter("debug"));
       debug = B1.booleanValue();
+      m_manager=(DOManager) s_server.getModule(
+              "fedora.server.storage.DOManager");
+      HashMap h = new HashMap();
+      h.put("application", "apia");
+      h.put("useCachedObject", "false");
+      h.put("userId", "fedoraAdmin");
+      m_context = new ReadOnlyContext(h);
     } catch (InitializationException ie)
     {
       System.err.println(ie.getMessage());
@@ -123,12 +174,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
                          "size set to 100." + nfe.getMessage());
     }
   }
-
-  private Hashtable disseminationCache = new Hashtable();
-  private HttpSession session = null;
-  private Hashtable h_userParms = new Hashtable();
-  private String requestURL = null;
-  private String requestURI = null;
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -151,12 +196,14 @@ public class FedoraAccessSoapServlet extends HttpServlet
     String methodName = null;
     String PID = null;
     Property[] userParms = null;
+    h_userParms = new Hashtable();
 
     // FIXME!! getRequestURL() not available in all releases of servlet API
     // requestURL = request.getRequestURL().toString()+"?";
-    requestURL = "http://"+request.getServerName()+":"+request.getServerPort()+
-                 request.getRequestURI()+"?";
-    requestURI = requestURL+request.getQueryString();
+    requestURL = new String("http://" + request.getServerName()
+                            + ":" + request.getServerPort()
+                            + request.getRequestURI() + "?");
+    requestURI = new String(requestURL + request.getQueryString());
     session = request.getSession(true);
     PrintWriter out = response.getWriter();
     if (debug) s_server.logFinest("RequestURL: "+requestURL+
@@ -194,7 +241,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       }
     }
 
-    // API-A interface requires user-supplied paramters to be of type
+    // API-A interface requires user-supplied parameters to be of type
     // Property[] so create Property[] from hashtable of user parameters.
     int userParmCounter = 0;
     if ( !h_userParms.isEmpty() )
@@ -211,54 +258,23 @@ public class FedoraAccessSoapServlet extends HttpServlet
     }
 
     // Validate servlet URL parameters to verify that all parameters required
-    // by the servlet implementation of API-A are present and to verify
-    // that any other user-supplied parameters are valid for the request.
+    // by the servlet are present and to verify that any other user-supplied
+    // parameters are valid for the request.
     if (isValidURLParms(action, PID, bDefPID, methodName, versDateTime,
                       h_userParms, clearCache, response))
     {
       // FIXME!! May need to deal with session management in the future
       // Have valid request.
-      if (action.equals(GET_DISSEMINATION))
-      {
-        try
-        {
-          MIMETypedStream dissemination = null;
-          dissemination = getDisseminationFromCache(action, PID, bDefPID,
-              methodName, userParms, asOfDate, clearCache, response);
-          if (dissemination != null)
-          {
-            response.setContentType(dissemination.MIMEType);
-            int byteStream = 0;
-            ByteArrayInputStream dissemResult =
-                new ByteArrayInputStream(dissemination.stream);
-            while ((byteStream = dissemResult.read()) >= 0)
-            {
-              out.write(byteStream);
-            }
-            dissemResult.close();
-          } else
-          {
-            // Dissemination request failed
-            // FIXME!! need to decide on exception handling
-            s_server.logWarning("Dissemination Result: NULL");
-            showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                        clearCache, response);
-          }
-        } catch (Exception e)
-        {
-          // FIXME!! Decide on error handling
-          s_server.logWarning(e.getMessage());
-          s_server.logWarning("GetDissemination: NO RESULT");
-          showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                       clearCache, response);
-        }
-      } else if (action.equals(GET_BEHAVIOR_DEFINITIONS))
+
+      if (action.equals(GET_BEHAVIOR_DEFINITIONS))
       {
         String[] behaviorDefs = null;
         try
         {
           // Call Fedora Access SOAP service to request Behavior Definiitons
+          s_server.logFinest("about to call bDefs");
           behaviorDefs = getBehaviorDefinitions(PID, asOfDate);
+          s_server.logFinest("got bDefs: "+behaviorDefs);
           if (behaviorDefs != null)
           {
             response.setContentType(CONTENT_TYPE_HTML);
@@ -314,18 +330,25 @@ public class FedoraAccessSoapServlet extends HttpServlet
           } else
           {
             // Dissemination request failed
-            // FIXME!! need to decide on exception handling
+            // FIXME!! Needs more refined Exception handling
+            String message = "FedoraSoapServlet: No Behavior Definitons "+
+                             "returned.";
+            s_server.logWarning(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                        clearCache, response);
-            s_server.logWarning("GetBehaviorDefinitions Result: NULL");
+                        clearCache, response, message);
+
           }
 
-          // FIXME!! Decide on Exception handling
+          // FIXME!! Needs more refined Exception handling
         } catch (Exception e)
         {
-          s_server.logWarning(e.getMessage());
+          String message = "FedoraSoapServlet: Failed to get Behavior "
+                         + "Definitions <br > Exception: "
+                         + e.getClass().getName() + " <br> Reason: "
+                         + e.getMessage();
+          s_server.logWarning(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                       clearCache, response);
+                       clearCache, response, message);
         }
       } else if (action.equals(GET_BEHAVIOR_METHODS))
       {
@@ -407,68 +430,115 @@ public class FedoraAccessSoapServlet extends HttpServlet
             out.println("</html>");
           } else
           {
-            // No method definitions found; echo back request parameters
-            s_server.logWarning("GetBehaviorMethods: NO METHODS FOUND");
+            // No method definitions found
+            // FIXME!! Needs more refined Exception handling
+            String message = "FedoraSoapServlet: No Behavior Methods returned.";
+            s_server.logWarning(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                         clearCache, response);
+                         clearCache, response, message);
           }
 
-          // FIXME!! Need to decide on Exception handling
+          // FIXME!! Needs more refined Exception handling
         } catch (Exception e)
         {
-          s_server.logWarning(e.getMessage());
-          s_server.logWarning("GetBehaviorMethods: NO RESULTS");
+          String message = "FedoraSoapServlet: No Behavior Methods returned."
+                         + " <br> Exception: " + e.getClass().getName()
+                         + " <br> Reason: "  + e.getMessage();
+          s_server.logWarning(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                       clearCache, response);
+                       clearCache, response, message);
         }
-        } else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_AS_WSDL))
+      } else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_AS_WSDL))
+      {
+        fedora.server.types.gen.MIMETypedStream methodDefs = null;
+        try
         {
-          fedora.server.types.gen.MIMETypedStream methodDefs = null;
+          // Call Fedora Access SOAP service to request Method Definitions
+          // in WSDL form
+          methodDefs = getBehaviorMethodsAsWSDL(PID, bDefPID, asOfDate);
+          if (methodDefs != null)
+          {
+            ByteArrayInputStream methodResults =
+                new ByteArrayInputStream(methodDefs.getStream());
+            response.setContentType(methodDefs.getMIMEType());
+
+            // FIXME!! Namespacing info should be handled by
+            // DefinitiveBMechReader; do it here for now.
+            out.println("<?xml version=\"1.0\"?>");
+            out.println("<definitions " +
+                "xmlns:xsd=\"http://www.w3.org/2000/10/XMLSchema-instance\" "+
+                "xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" "+
+                "xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" "+
+                "xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" "+
+                "xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\">");
+            int byteStream = 0;
+            while ((byteStream = methodResults.read()) >= 0)
+            {
+              out.write(byteStream);
+            }
+            out.println("</definitions>");
+          } else
+          {
+            // No method WSDL found.
+            // FIXME!! Needs more refined Exception handling
+            String message = "FedoraSoapServlet: No Behavior Methods returned "
+                + "as WSDL.";
+            s_server.logWarning(message);
+            showURLParms(action, PID, bDefPID, methodName, asOfDate,
+                         userParms, clearCache, response, message);
+          }
+        } catch (Exception e)
+        {
+          // FIXME!! Needs more refined Exception handling
+          String message = "FedoraSoapServlet: No Behavior Methods returned "
+                         + "as WSDL. <br> Exception: " + e.getClass().getName()
+                         + " <br> Reason: "  + e.getMessage();
+          s_server.logWarning(message);
+          showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
+                       clearCache, response, message);
+        }
+      } else if (action.equals(GET_DISSEMINATION))
+        {
           try
           {
-            // Call Fedora Access SOAP service to request Method Definitions
-            // in WSDL form
-            methodDefs = getBehaviorMethodsAsWSDL(PID, bDefPID, asOfDate);
-            if (methodDefs != null)
+            MIMETypedStream dissemination = null;
+            dissemination = getDisseminationFromCache(action, PID, bDefPID,
+                methodName, userParms, asOfDate, clearCache, response);
+            if (dissemination != null)
             {
-              ByteArrayInputStream methodResults =
-                  new ByteArrayInputStream(methodDefs.getStream());
-              response.setContentType(methodDefs.getMIMEType());
-              // WSDL is actually just an XML fragment so add appropriate
-              // XML namespace and XML declaration to make a valid XML
-              // output stream
-              // FIXME!! Should these be added automatically in
-              // the class DefinitiveBMechReader
-              out.println("<?xml version=\"1.0\"?>");
-              out.println("<definitions " +
-                  "xmlns:xsd=\"http://www.w3.org/2000/10/XMLSchema-instance\" "+
-                  "xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" "+
-                  "xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" "+
-                  "xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" "+
-                  "xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\">");
+              response.setContentType(dissemination.MIMEType);
               int byteStream = 0;
-              while ((byteStream = methodResults.read()) >= 0)
+              ByteArrayInputStream dissemResult =
+                  new ByteArrayInputStream(dissemination.stream);
+              while ((byteStream = dissemResult.read()) >= 0)
               {
                 out.write(byteStream);
               }
-              out.println("</definitions>");
+              dissemResult.close();
             } else
             {
-              // No method WSDL found; echo back request parameters
-              s_server.logWarning("GetBehaviorMethodsAsWSDL: NO METHODS FOUND");
-              showURLParms(action, PID, bDefPID, methodName, asOfDate,
-                           userParms, clearCache, response);
+              // Dissemination request returned nothing.
+              // FIXME!! Needs more refined Exception handling
+              String message = "FedoraSoapServlet: No Dissemination result "
+                  + "returned.";
+              s_server.logWarning(message);
+              showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
+                          clearCache, response, message);
             }
           } catch (Exception e)
           {
-            s_server.logWarning("GetBehaviorMethodsAsWSDL: NO METHODS FOUND");
-            s_server.logWarning(e.getMessage());
+            // FIXME!! Needs more refined Exception handling
+            String message = "FedoraSoapServlet: No Dissemination result "
+                           + "returned. <br> Exception: "
+                           + e.getClass().getName()
+                           + " <br> Reason: "  + e.getMessage()
+                           + " <br> See server logs for additional info";
+            s_server.logWarning(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                         clearCache, response);
-        }
+                         clearCache, response, message);
+          }
       } else if (action.equals(GET_OBJECT_METHODS))
       {
-        //fedora.server.types.gen.ObjectMethodsDef objMethDef = null;
         fedora.server.types.gen.ObjectMethodsDef[] objMethDefArray = null;
         try
         {
@@ -551,18 +621,24 @@ public class FedoraAccessSoapServlet extends HttpServlet
             out.println("</html>");
           } else
           {
-            // No object methods were found; echo back request parameters
-            s_server.logWarning("GetObjectMethods: NO METHODS FOUND");
+            // No object methods were found.
+            // FIXME!! Needs more refined Exception handling
+            String message = "FedoraSoapServlet: No Object Method Definitions "
+               + "result returned.";
+            s_server.logWarning(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                         clearCache, response);
+                         clearCache, response, message);
           }
         } catch (Exception e)
         {
-          // FIXME!! Need to decide on Exception handling
-          s_server.logWarning(e.getMessage());
-          s_server.logWarning("GetObjectMethods: NO METHODS FOUND");
+          // FIXME!! Needs more refined Exception handling
+          String message = "FedoraSoapServlet: No Object Method Definitions "
+                         + "result returned. <br> Exception: "
+                         + e.getClass().getName()
+                         + " <br> Reason: "  + e.getMessage();
+          s_server.logWarning(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                       clearCache, response);
+                       clearCache, response, message);
         }
       }
     } else
@@ -571,9 +647,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
       // URL parameters failed validation check
       // Output from showURLParms method should provide enough information
       // to discern the cause of the failure.
-      s_server.logWarning("URLParametersInvalid");
-      showURLParms(action, PID, bDefPID, methodName,asOfDate, userParms,
-                   clearCache, response);
+      String message = "FedoraSoapServlet: URL parameters are invalid";
+      s_server.logWarning(message);
+      //showURLParms(action, PID, bDefPID, methodName,asOfDate, userParms,
+      //             clearCache, response, message);
     }
   }
 
@@ -601,25 +678,19 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @return An array of Behavior Definition PIDs.
    */
   public String[] getBehaviorDefinitions(String PID, Calendar asOfDate)
+      throws Exception
   {
-    String[] behaviorDefs = null;
-    try
-    {
-       Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
-       String qName1 = "http://www.fedora.info/definitions/1/0/api/";
-       String endpoint = "http://localhost:8080/fedora/access/soap";
-       Service service = new Service();
-       Call call = (Call) service.createCall();
-       call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-       call.setOperationName(new javax.xml.namespace.QName(qName1,
-           "GetBehaviorDefinitions") );
-       behaviorDefs = (String[])call.invoke(new Object[] { PID, versDateTime });
-    } catch (Exception e)
-    {
-      // FIXME!! - need to decide on exception handling
-      s_server.logWarning("GetBehaviorMethods: No Method Defs FOUND");
-      return behaviorDefs;
-    }
+    Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
+    String qName1 = "http://www.fedora.info/definitions/1/0/api/";
+    String endpoint = "http://localhost:8080/fedora/access/soap";
+    Service service = new Service();
+    Call call = (Call) service.createCall();
+    call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+    call.setOperationName(new javax.xml.namespace.QName(qName1,
+        "GetBehaviorDefinitions") );
+    s_server.logWarning("invoking soap call for getBDefs");
+    String[] behaviorDefs =
+    (String[])call.invoke(new Object[] { PID, versDateTime });
     return behaviorDefs;
   }
 
@@ -634,41 +705,34 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @return An array of method definitions.
    */
   public fedora.server.types.gen.MethodDef[] getBehaviorMethods(String PID,
-      String bDefPID, Calendar asOfDate)
+      String bDefPID, Calendar asOfDate) throws Exception
   {
     fedora.server.types.gen.MethodDef[] methodDefs = null;
-    try
-    {
-      String qName1 = "http://www.fedora.info/definitions/1/0/api/";
-      String endpoint = "http://localhost:8080/fedora/access/soap";
-      Service service = new Service();
-      Call call = (Call) service.createCall();
-      call.setOperationName(new javax.xml.namespace.QName(qName1,
-          "GetBehaviorMethods") );
-      QName qn = new QName("http://www.fedora.info/definitions/1/0/types/",
-                            "MethodDef");
-      QName qn2 = new QName("http://www.fedora.info/definitions/1/0/types/",
-                            "MethodParmDef");
-      call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-      call.registerTypeMapping(fedora.server.types.gen.MethodDef.class,
-          qn,
-          new org.apache.axis.encoding.ser.BeanSerializerFactory(
-          fedora.server.types.gen.MethodDef.class, qn),
-          new org.apache.axis.encoding.ser.BeanDeserializerFactory(
-          fedora.server.types.gen.MethodDef.class, qn));
-      call.registerTypeMapping(fedora.server.types.gen.MethodParmDef.class,
-          qn2,
-          new org.apache.axis.encoding.ser.BeanSerializerFactory(
-          fedora.server.types.gen.MethodParmDef.class, qn2),
-          new org.apache.axis.encoding.ser.BeanDeserializerFactory(
-          fedora.server.types.gen.MethodParmDef.class, qn2));
-      methodDefs = (fedora.server.types.gen.MethodDef[])
-          call.invoke( new Object[] { PID, bDefPID, asOfDate} );
-    } catch (Exception e)
-    {
-      s_server.logWarning(e.getMessage());
-      return methodDefs;
-    }
+    String qName1 = "http://www.fedora.info/definitions/1/0/api/";
+    String endpoint = "http://localhost:8080/fedora/access/soap";
+    Service service = new Service();
+    Call call = (Call) service.createCall();
+    call.setOperationName(new javax.xml.namespace.QName(qName1,
+        "GetBehaviorMethods") );
+    QName qn = new QName("http://www.fedora.info/definitions/1/0/types/",
+                         "MethodDef");
+    QName qn2 = new QName("http://www.fedora.info/definitions/1/0/types/",
+                          "MethodParmDef");
+    call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+    call.registerTypeMapping(fedora.server.types.gen.MethodDef.class,
+        qn,
+        new org.apache.axis.encoding.ser.BeanSerializerFactory(
+        fedora.server.types.gen.MethodDef.class, qn),
+        new org.apache.axis.encoding.ser.BeanDeserializerFactory(
+        fedora.server.types.gen.MethodDef.class, qn));
+    call.registerTypeMapping(fedora.server.types.gen.MethodParmDef.class,
+        qn2,
+        new org.apache.axis.encoding.ser.BeanSerializerFactory(
+        fedora.server.types.gen.MethodParmDef.class, qn2),
+        new org.apache.axis.encoding.ser.BeanDeserializerFactory(
+        fedora.server.types.gen.MethodParmDef.class, qn2));
+    methodDefs = (fedora.server.types.gen.MethodDef[])
+    call.invoke( new Object[] { PID, bDefPID, asOfDate} );
     return methodDefs;
   }
 
@@ -684,34 +748,27 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * from WSDL.
    */
   public fedora.server.types.gen.MIMETypedStream getBehaviorMethodsAsWSDL(
-      String PID, String bDefPID, Calendar asOfDate)
+      String PID, String bDefPID, Calendar asOfDate) throws Exception
   {
     fedora.server.types.gen.MIMETypedStream methodDefs = null;
-    try
-    {
-      String qName1 = "http://www.fedora.info/definitions/1/0/api/";
-      String endpoint = "http://localhost:8080/fedora/access/soap";
-      Service service = new Service();
-      Call call = (Call) service.createCall();
-      call.setOperationName(new javax.xml.namespace.QName(qName1,
-          "GetBehaviorMethodsAsWSDL") );
-      QName qn = new QName("http://www.fedora.info/definitions/1/0/types/",
-                            "MIMETypedStream");
-      call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-      call.registerTypeMapping(fedora.server.types.gen.MIMETypedStream.class,
-          qn,
-          new org.apache.axis.encoding.ser.BeanSerializerFactory(
-          fedora.server.types.gen.MIMETypedStream.class, qn),
-          new org.apache.axis.encoding.ser.BeanDeserializerFactory(
-          fedora.server.types.gen.MIMETypedStream.class, qn));
-      methodDefs = new fedora.server.types.gen.MIMETypedStream();
-      methodDefs = (fedora.server.types.gen.MIMETypedStream)
-                   call.invoke( new Object[] { PID, bDefPID, asOfDate} );
-    } catch (Exception e)
-    {
-      s_server.logWarning(e.getMessage());
-      return methodDefs;
-    }
+    String qName1 = "http://www.fedora.info/definitions/1/0/api/";
+    String endpoint = "http://localhost:8080/fedora/access/soap";
+    Service service = new Service();
+    Call call = (Call) service.createCall();
+    call.setOperationName(new javax.xml.namespace.QName(qName1,
+        "GetBehaviorMethodsAsWSDL") );
+    QName qn = new QName("http://www.fedora.info/definitions/1/0/types/",
+                         "MIMETypedStream");
+    call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+    call.registerTypeMapping(fedora.server.types.gen.MIMETypedStream.class,
+        qn,
+        new org.apache.axis.encoding.ser.BeanSerializerFactory(
+        fedora.server.types.gen.MIMETypedStream.class, qn),
+        new org.apache.axis.encoding.ser.BeanDeserializerFactory(
+        fedora.server.types.gen.MIMETypedStream.class, qn));
+    methodDefs = new fedora.server.types.gen.MIMETypedStream();
+    methodDefs = (fedora.server.types.gen.MIMETypedStream)
+                 call.invoke( new Object[] { PID, bDefPID, asOfDate} );
     return methodDefs;
   }
 
@@ -727,54 +784,46 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @return A MIME-typed stream containing the dissemination result.
    */
   public MIMETypedStream getDissemination(String PID, String bDefPID,
-       String methodName, Property[] userParms, Calendar asOfDate)
+      String methodName, Property[] userParms, Calendar asOfDate)
+      throws Exception
    {
     MIMETypedStream dissemination = null;
-    try
+    // See if dissemination request is in local cache
+    // Generate a call to the Fedora SOAP service requesting the
+    // GetDissemination method
+    String qName1 = "http://www.fedora.info/definitions/1/0/api/";
+    String endpoint = "http://localhost:8080/fedora/access/soap";
+    Service service = new Service();
+    Call call = (Call) service.createCall();
+    call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+    call.setOperationName(new javax.xml.namespace.QName(qName1,
+        "GetDissemination") );
+    QName qn =
+        new QName("http://www.fedora.info/definitions/1/0/types/",
+        "MIMETypedStream");
+    QName qn2 = new QName("http://www.fedora.info/definitions/1/0/types/",
+                          "Property");
+    call.registerTypeMapping(
+        fedora.server.types.gen.MIMETypedStream.class,
+        qn,
+        new org.apache.axis.encoding.ser.BeanSerializerFactory(
+        fedora.server.types.gen.MIMETypedStream.class, qn),
+        new org.apache.axis.encoding.ser.BeanDeserializerFactory(
+        fedora.server.types.gen.MIMETypedStream.class, qn));
+    call.registerTypeMapping(fedora.server.types.gen.Property.class,
+        qn2,
+        new org.apache.axis.encoding.ser.BeanSerializerFactory(
+        fedora.server.types.gen.Property.class, qn2),
+        new org.apache.axis.encoding.ser.BeanDeserializerFactory(
+        fedora.server.types.gen.Property.class, qn2));
+    fedora.server.types.gen.MIMETypedStream dissem =
+        (fedora.server.types.gen.MIMETypedStream)
+        call.invoke( new Object[] { PID, bDefPID, methodName, userParms,
+        asOfDate} );
+    if (dissem != null)
     {
-      // See if dissemination request is in local cache
-      // Generate a call to the Fedora SOAP service requesting the
-      // GetDissemination method
-      String qName1 = "http://www.fedora.info/definitions/1/0/api/";
-      String endpoint = "http://localhost:8080/fedora/access/soap";
-      Service service = new Service();
-      Call call = (Call) service.createCall();
-      call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-      call.setOperationName(new javax.xml.namespace.QName(qName1,
-          "GetDissemination") );
-      QName qn =
-          new QName("http://www.fedora.info/definitions/1/0/types/",
-          "MIMETypedStream");
-      QName qn2 = new QName("http://www.fedora.info/definitions/1/0/types/",
-                            "Property");
-      call.registerTypeMapping(
-          fedora.server.types.gen.MIMETypedStream.class,
-          qn,
-          new org.apache.axis.encoding.ser.BeanSerializerFactory(
-          fedora.server.types.gen.MIMETypedStream.class, qn),
-          new org.apache.axis.encoding.ser.BeanDeserializerFactory(
-          fedora.server.types.gen.MIMETypedStream.class, qn));
-      call.registerTypeMapping(fedora.server.types.gen.Property.class,
-          qn2,
-          new org.apache.axis.encoding.ser.BeanSerializerFactory(
-          fedora.server.types.gen.Property.class, qn2),
-          new org.apache.axis.encoding.ser.BeanDeserializerFactory(
-          fedora.server.types.gen.Property.class, qn2));
-      fedora.server.types.gen.MIMETypedStream dissem =
-          (fedora.server.types.gen.MIMETypedStream)
-          call.invoke( new Object[] { PID, bDefPID, methodName, userParms,
-          asOfDate} );
-
-      // FIXME!! Decide on exception handling
-      if (dissem != null)
-      {
-        dissemination = new MIMETypedStream(dissem.getMIMEType(),
-            dissem.getStream());
-      }
-    } catch (Exception e)
-    {
-      s_server.logWarning(e.getMessage());
-      return dissemination;
+      dissemination = new MIMETypedStream(dissem.getMIMEType(),
+          dissem.getStream());
     }
     return dissemination;
    }
@@ -788,36 +837,27 @@ public class FedoraAccessSoapServlet extends HttpServlet
     * @return An array of object method definitions.
     */
   public fedora.server.types.gen.ObjectMethodsDef[] getObjectMethods(String PID,
-      Calendar asOfDate)
+      Calendar asOfDate) throws Exception
   {
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
     fedora.server.types.gen.ObjectMethodsDef[] objMethDefArray = null;
-
-    try
-    {
-      String qName1 = "http://www.fedora.info/definitions/1/0/api/";
-      String endpoint = "http://localhost:8080/fedora/access/soap";
-      Service service = new Service();
-      Call call = (Call) service.createCall();
-      call.setOperationName(new javax.xml.namespace.QName(qName1,
-          "GetObjectMethods") );
-      QName qn = new QName("http://www.fedora.info/definitions/1/0/types/",
-                            "ObjectMethodsDef");
-      call.setTargetEndpointAddress( new java.net.URL(endpoint) );
-      call.registerTypeMapping(fedora.server.types.gen.ObjectMethodsDef.class,
-          qn,
-          new org.apache.axis.encoding.ser.BeanSerializerFactory(
-          fedora.server.types.gen.ObjectMethodsDef.class, qn),
-          new org.apache.axis.encoding.ser.BeanDeserializerFactory(
-          fedora.server.types.gen.ObjectMethodsDef.class, qn));
-      objMethDefArray = (fedora.server.types.gen.ObjectMethodsDef[])
-          call.invoke( new Object[] { PID, asOfDate} );
-
-    } catch (Exception e)
-    {
-      s_server.logWarning(e.getMessage());
-      return objMethDefArray;
-    }
+    String qName1 = "http://www.fedora.info/definitions/1/0/api/";
+    String endpoint = "http://localhost:8080/fedora/access/soap";
+    Service service = new Service();
+    Call call = (Call) service.createCall();
+    call.setOperationName(new javax.xml.namespace.QName(qName1,
+        "GetObjectMethods") );
+    QName qn = new QName("http://www.fedora.info/definitions/1/0/types/",
+                         "ObjectMethodsDef");
+    call.setTargetEndpointAddress( new java.net.URL(endpoint) );
+    call.registerTypeMapping(fedora.server.types.gen.ObjectMethodsDef.class,
+        qn,
+        new org.apache.axis.encoding.ser.BeanSerializerFactory(
+        fedora.server.types.gen.ObjectMethodsDef.class, qn),
+        new org.apache.axis.encoding.ser.BeanDeserializerFactory(
+        fedora.server.types.gen.ObjectMethodsDef.class, qn));
+    objMethDefArray = (fedora.server.types.gen.ObjectMethodsDef[])
+    call.invoke( new Object[] { PID, asOfDate} );
     return objMethDefArray;
   }
 
@@ -864,7 +904,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private synchronized MIMETypedStream getDisseminationFromCache(String action,
       String PID, String bDefPID, String methodName,
       Property[] userParms, Calendar asOfDate, String clearCache,
-      HttpServletResponse response) throws IOException
+      HttpServletResponse response) throws Exception
   {
     // Clear cache if size gets larger than DISS_CACHE_SIZE
     // FIXME!! This needs to part of the Fedora server config parameters
@@ -1120,13 +1160,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
         out.println("<td><font color='blue'>(REQUIRED)</font></td>");
         out.println("</tr>");
         out.println("<tr>");
-        /*
-        out.println("<td><font color='red'>methodName_</td>");
-        out.println("<td> = </td>");
-        out.println("<td>"+methodName+"</td>");
-        out.println("<td><font color='green'>(OPTIONAL)</font></td>");
-        out.println("</tr>");
-        */
         out.println("<tr>");
         out.println("<td><font color='red'>AsOfDate_</td>");
         out.println("<td> = </td>");
@@ -1271,14 +1304,18 @@ public class FedoraAccessSoapServlet extends HttpServlet
       throws IOException
   {
     boolean valid = true;
-    FastDOReader fdor = null;
+    FastDOReader fastReader = null;
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
 
     try
     {
-      fdor = new FastDOReader(PID);
-      methodParms = fdor.GetBMechMethodParm(bDefPID, methodName, versDateTime);
+      //FIXME!! Eventually GetBehaviorMethodParm will become new method in
+      // API-A and will be access as other API-A methods. This is a temp
+      // fix to allow validation of user-supplied parameters. Currently,
+      // this is only implemented in FastDOReader and NOT Definitive DOReader.
+      fastReader = (FastDOReader) m_manager.getDisseminatingReader(m_context, PID);
+      methodParms = fastReader.GetBMechMethodParm(bDefPID, methodName, versDateTime);
 
       // FIXME!! Decide on Exception handling
     } catch (Exception e)
@@ -1417,7 +1454,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private void showURLParms(String action, String PID, String bDefPID,
                            String methodName, Calendar asOfDate,
                            Property[] userParms, String clearCache,
-                           HttpServletResponse response)
+                           HttpServletResponse response,
+                           String message)
       throws IOException
   {
 
@@ -1431,7 +1469,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     out.println("<title>FedoraServlet</title>");
     out.println("</head>");
     out.println("<body>");
-    out.println("<br></br><font size='+3' REQUEST Returned NO Data</font>");
+    out.println("<br></br><font size='+2'>" + message + "</font>");
     out.println("<br></br><font color='red'>Request Parameters</font>");
     out.println("<br></br>");
     out.println("<table cellpadding='5'>");
@@ -1474,6 +1512,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     out.println("</tr>");
 
     // List user-supplied parameters if any
+    if (userParms != null)
+    {
     for (int i=0; i<userParms.length; i++)
     {
       out.println("<tr>");
@@ -1481,6 +1521,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       out.println("<td> = </td>");
       out.println("<td>"+userParms[i].value+"</td>");
         out.println("</tr>");
+    }
     }
     out.println("</table></center></font>");
     out.println("</body></html>");
