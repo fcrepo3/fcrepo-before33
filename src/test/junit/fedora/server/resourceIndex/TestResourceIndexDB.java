@@ -49,9 +49,9 @@ public class TestResourceIndexDB extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(1, count);
+            assertEquals(2, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(1, count);
+            assertEquals(2, count);
         }
         
         query = "SELECT * FROM riMethodPermutation";
@@ -61,9 +61,9 @@ public class TestResourceIndexDB extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(1, count);
+            assertEquals(2, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(6, count);
+            assertEquals(7, count);
         }
         
         m_ri.deleteDigitalObject(bdef);

@@ -56,18 +56,17 @@ public class TestResourceIndexLevels extends TestResourceIndex {
         assertEquals(39, m_ri.countTriples(null, null, null, 0));
         m_ri.addDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(83, m_ri.countTriples(null, null, null, 0));
-        export("/tmp/out1.rdf");
+        assertEquals(87, m_ri.countTriples(null, null, null, 0));
         
         m_ri.modifyDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(83, m_ri.countTriples(null, null, null, 0));
+        assertEquals(87, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(83, m_ri.countTriples(null, null, null, 0));
+        assertEquals(87, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(83, m_ri.countTriples(null, null, null, 0));
+        assertEquals(87, m_ri.countTriples(null, null, null, 0));
     }
     
     public void testLevelWithPermutations() throws Exception {
@@ -81,16 +80,16 @@ public class TestResourceIndexLevels extends TestResourceIndex {
         assertEquals(39, m_ri.countTriples(null, null, null, 0));
         m_ri.addDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(108, m_ri.countTriples(null, null, null, 0));
+        assertEquals(112, m_ri.countTriples(null, null, null, 0));
         
         m_ri.modifyDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(108, m_ri.countTriples(null, null, null, 0));
+        assertEquals(112, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(108, m_ri.countTriples(null, null, null, 0));
+        assertEquals(112, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(108, m_ri.countTriples(null, null, null, 0));
+        assertEquals(112, m_ri.countTriples(null, null, null, 0));
     }
 }

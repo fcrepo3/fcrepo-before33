@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jrdf.graph.SubjectNode;
+import org.jrdf.graph.ObjectNode;
 
 import org.trippi.TupleIterator;
 
@@ -98,7 +99,7 @@ public class TestResourceIndexQueries extends TestResourceIndex {
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
             assertEquals(78, count);
         }
-        //m_ri.export(new FileOutputStream("/tmp/out.rdf"), RDFFormat.RDF_XML);
+        export("/tmp/out.rdf");
     }
     
     public void testQueryAll() throws Exception {
@@ -156,7 +157,17 @@ public class TestResourceIndexQueries extends TestResourceIndex {
     }
     
     public void testQueryDate() throws Exception {
-        //TODO datatyped...
+        String query = "select ?subject ?date " +
+                       "where (?subject <info:fedora/fedora-system:def/model#createdDate> ?date) " +
+                       "and ?date > \"2004-12-01T00:00:00\"^^<http://www.w3.org/2001/XMLSchema#dateTime>";
+        TupleIterator it;
+        it = m_ri.findTuples("rdql", query, 0, true);
+        Map tuples;
+        List dates = new ArrayList();
+        while (it.hasNext()) {
+            tuples = it.next();
+            System.out.println( "***date: " + ((ObjectNode)tuples.get("date")).toString() );
+        }
     }
     
     public void testQueryExtProperties() throws Exception {

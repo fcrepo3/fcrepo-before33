@@ -17,9 +17,9 @@ import org.trippi.TripleMaker;
 public class TestResourceIndexImpl extends TestResourceIndex {
     private DigitalObject bdef, bmech, dataobject;
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(TestResourceIndexImpl.class);
-    }
+    //public static void main(String[] args) {
+    //    junit.textui.TestRunner.run(TestResourceIndexImpl.class);
+    //}
 
     /*
      * @see TestCase#setUp()
@@ -89,9 +89,9 @@ public class TestResourceIndexImpl extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, c);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(83, c);
+            assertEquals(87, c);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(108, c);
+            assertEquals(112, c);
         }
         
         m_ri.deleteDigitalObject(dataobject);

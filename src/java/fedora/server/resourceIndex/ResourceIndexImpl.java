@@ -625,44 +625,44 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    boolean noRequiredParms;
         int optionalParms;
         PreparedStatement insertMethod = null, insertPermutation = null;
-        
-	    for (int i = 0; i < mdef.length; i++) {
-	    	methodName = mdef[i].methodName;
-	    	MethodParmDef[] mparms = mdef[i].methodParms;
-	    	if (m_indexLevel != INDEX_LEVEL_PERMUTATIONS || mparms.length == 0) { // no method parameters
-                permutations.add(methodName);
-	    	} else {
-	    		noRequiredParms = true;
-                optionalParms = 0;
-                List parms = new ArrayList();
-	    		for (int j = 0; j < mparms.length; j++) {
-	    			if (noRequiredParms && mparms[j].parmRequired) {
-	    			    noRequiredParms = false;
-    			    }
-                    if (!mparms[j].parmRequired) {
-                        optionalParms++;
-                    }
-	    		}
-	    		if (noRequiredParms) {
+        try {
+            insertMethod = m_conn.prepareStatement("INSERT INTO riMethod (methodId, bDefPid, methodName) VALUES (?, ?, ?)");
+            insertPermutation = m_conn.prepareStatement("INSERT INTO riMethodPermutation (methodId, permutation) VALUES (?, ?)");
+
+    	    for (int i = 0; i < mdef.length; i++) {
+    	    	methodName = mdef[i].methodName;
+    	    	MethodParmDef[] mparms = mdef[i].methodParms;
+    	    	if (m_indexLevel != INDEX_LEVEL_PERMUTATIONS || mparms.length == 0) { // no method parameters
                     permutations.add(methodName);
-	    		} else {
-	    		    // add methods with their required, fixed parameters
-                    parms.addAll(getMethodParameterCombinations(mparms, true));
-	    		}
-                if (optionalParms > 0) {
-                    parms.addAll(getMethodParameterCombinations(mparms, false));
-                }
-                Iterator it = parms.iterator();
-                while (it.hasNext()) {
-                    permutations.add(methodName + "?" + it.next());
-                }
-	    	}
-            
-            // build the batch of sql statements to execute
-            String riMethodPK = getRIMethodPrimaryKey(bDefPid, methodName);
-            try {
-                insertMethod = m_conn.prepareStatement("INSERT INTO riMethod (methodId, bDefPid, methodName) VALUES (?, ?, ?)");
-                insertPermutation = m_conn.prepareStatement("INSERT INTO riMethodPermutation (methodId, permutation) VALUES (?, ?)");
+    	    	} else {
+    	    		noRequiredParms = true;
+                    optionalParms = 0;
+                    List parms = new ArrayList();
+    	    		for (int j = 0; j < mparms.length; j++) {
+    	    			if (noRequiredParms && mparms[j].parmRequired) {
+    	    			    noRequiredParms = false;
+        			    }
+                        if (!mparms[j].parmRequired) {
+                            optionalParms++;
+                        }
+    	    		}
+    	    		if (noRequiredParms) {
+                        permutations.add(methodName);
+    	    		} else {
+    	    		    // add methods with their required, fixed parameters
+                        parms.addAll(getMethodParameterCombinations(mparms, true));
+    	    		}
+                    if (optionalParms > 0) {
+                        parms.addAll(getMethodParameterCombinations(mparms, false));
+                    }
+                    Iterator it = parms.iterator();
+                    while (it.hasNext()) {
+                        permutations.add(methodName + "?" + it.next());
+                    }
+    	    	}
+                
+                // build the batch of sql statements to execute
+                String riMethodPK = getRIMethodPrimaryKey(bDefPid, methodName);
                 insertMethod.setString(1, riMethodPK);
                 insertMethod.setString(2, bDefPid);
                 insertMethod.setString(3, methodName);
@@ -675,34 +675,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                     insertPermutation.addBatch();
                 }
                 permutations.clear();
-            
-            } catch (SQLException e) {
-                try {
-                    if (insertMethod != null) {
-                        insertMethod.close();
-                    }
-                    if (insertPermutation != null) {
-                        insertPermutation.close();
-                    }
-                    m_cPool.free(m_conn);
-                } catch(SQLException e2) {
-                    throw new ResourceIndexException(e2.getMessage(), e2);
-                } finally {
-                    insertMethod = null;
-                    insertPermutation = null;
-                }
-                throw new ResourceIndexException(e.getMessage(), e);
-            }
+    
+    	    	// FIXME do we need passby and type in the graph?
+                // for (int j = 0; j < mparms.length; j++) {
+                //	   System.out.println(methodName + " *parmName: " + mparms[j].parmName);
+                //	   System.out.println(methodName + " *parmPassBy: " + mparms[j].parmPassBy);
+                //     System.out.println(methodName + " *parmType: " + mparms[j].parmType);
+                // }
+    	    }
 
-	    	// FIXME do we need passby and type in the graph?
-//	        for (int j = 0; j < mparms.length; j++) {
-//	            System.out.println(methodName + " *parmName: " + mparms[j].parmName);
-//	            System.out.println(methodName + " *parmPassBy: " + mparms[j].parmPassBy);
-//	            System.out.println(methodName + " *parmType: " + mparms[j].parmType);
-//	        }
-	    }
-        
-        try {
             insertMethod.executeBatch();
             insertPermutation.executeBatch();
         } catch (SQLException e) {
@@ -713,7 +694,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 if (insertPermutation != null) {
                     insertPermutation.close();
                 }
-            m_cPool.free(m_conn);
+                m_cPool.free(m_conn);
             } catch(SQLException e2) {
                 throw new ResourceIndexException(e2.getMessage(), e2);
             } finally {
