@@ -202,41 +202,4 @@ class FileSystemLowlevelStorage implements ILowlevelStorage {
 		fileSystem.delete(file);
 	}
 
-	public static void main(String[] argv) {
-		ILowlevelStorage lowlevelStorage = FileSystemLowlevelStorage.getInstance();
-		System.out.println("\nbeginning Test " + (lowlevelStorage == null));
-		byte[] bytes = new byte[1];
-		bytes[0] = 32;
-		try {
-			lowlevelStorage.add("abc",new ByteArrayInputStream(bytes));
-		} catch (Exception e) {
-			System.out.println("1 " + e.getMessage());
-		}
-		try {
-			lowlevelStorage.add("xyz",new ByteArrayInputStream(bytes));
-		} catch (Exception e) {
-			System.out.println("2 " + e.getMessage());
-		}
-		try {
-			lowlevelStorage.add("xyz",new ByteArrayInputStream(bytes));
-		} catch (Exception e) {
-			System.out.println("3 " + e.getMessage());
-		}
-		try {
-			lowlevelStorage.replace("xyz",new ByteArrayInputStream(bytes));
-		} catch (Exception e) {
-			System.out.println("4 " + e.getMessage());
-		}				
-		try {
-			InputStream outputStream = lowlevelStorage.retrieve("abc");
-		} catch (Exception e) {
-			System.out.println("5 " + e.getMessage());
-		}
-		try {
-			lowlevelStorage.audit();
-		} catch (Exception e) {
-			System.out.println("6 " + e.getMessage());
-		}
-	}
-
 }
