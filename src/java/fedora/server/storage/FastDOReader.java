@@ -1545,12 +1545,26 @@ public class FastDOReader implements DisseminatingDOReader
         {
           MethodDef[] methodDefs = doReader.GetBMechMethods(behaviorDefs[i],
                                    versDateTime);
+          // FIXME!! Behavior Mechanism and Behavior Definition
+          // objects cannot currently be disseminated because the code
+          // to implement this in the definitive readers has not been
+          // implemented. GetBMechMethods returns null for Behavior
+          // Mechanism and Behavior Definition objects which gets trapped
+          // here.
+          if(methodDefs == null)
+          {
+            throw new GeneralException("The object: " + PID + " is not a "
+                + "data object. Behavior Definition and Behavior Mechanism "
+                + "objects cannot be disseminated in the current release.");
+          }
           for (int j=0; j<methodDefs.length; j++)
           {
             objectMethodsDef = new ObjectMethodsDef();
             objectMethodsDef.PID = PID;
             objectMethodsDef.bDefPID = behaviorDefs[i];
             objectMethodsDef.methodName = methodDefs[j].methodName;
+            System.out.println("methodName: "+methodDefs[j].methodName);
+            System.out.println("CALL: bdef: "+behaviorDefs[i]+"methodefs: "+methodDefs[i].methodName);
             objectMethodsDef.methodParmDefs = doReader.GetBMechMethodParms(behaviorDefs[i], methodDefs[i].methodName, versDateTime);
             objectMethodsDef.asOfDate = versDateTime;
             results.addElement(objectMethodsDef);
@@ -1566,6 +1580,7 @@ public class FastDOReader implements DisseminatingDOReader
         return objectMethodsDefArray;
       } catch (Throwable th)
       {
+        th.printStackTrace();
         throw new GeneralException("Definitive reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
