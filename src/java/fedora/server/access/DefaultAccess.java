@@ -28,6 +28,7 @@ import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.security.IPRestriction;
 import fedora.server.storage.DOReader;
+import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.DisseminationBindingInfo;
@@ -341,6 +342,30 @@ public class DefaultAccess extends Module implements Access
     return null;
   }
 
+  public void checkState(Context context, String objectType, String state, String PID)
+      throws ServerException
+  {
+    // Check Object State
+    if ( state.equalsIgnoreCase("D")  &&
+         ( context.get("canUseDeletedObject")==null
+           || (!context.get("canUseDeletedObject").equals("true")) )
+      )
+    {
+      throw new GeneralException("The requested "+objectType+" object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged for DELETION "
+          + "by the repository administrator. ");
+
+    } else if ( state.equalsIgnoreCase("I")  &&
+                ( context.get("canUseInactiveObject")==null
+                  || (!context.get("canUseInactiveObject").equals("true")) )
+              )
+    {
+      throw new GeneralException("The requested "+objectType+" object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged as INACTIVE "
+          + "by the repository administrator. ");
+    }
+  }
+
   /**
    * <p>Disseminates the content produced by executing the specified method
    * of the associated Behavior Mechanism object of the specified digital
@@ -361,33 +386,12 @@ public class DefaultAccess extends Module implements Access
       String bDefPID, String methodName, Property[] userParms,
       Calendar asOfDateTime) throws ServerException
   {
-    long initStartTime = new Date().getTime();
     m_ipRestriction.enforce(context);
+    long initStartTime = new Date().getTime();
+    long startTime = new Date().getTime();
     DOReader reader = m_manager.getReader(context, PID);
 
-    // Check Object State
-    String state = reader.GetObjectState();
-    if ( state.equalsIgnoreCase("D")  &&
-         ( context.get("canUseDeletedObject")==null
-           || (!context.get("canUseDeletedObject").equals("true")) )
-      )
-    {
-      throw new GeneralException("The requested digital object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged for DELETION "
-          + "by the repository administrator. ");
 
-    } else if ( state.equalsIgnoreCase("I")  &&
-                ( context.get("canUseInactiveObject")==null
-                  || (!context.get("canUseInactiveObject").equals("true")) )
-              )
-    {
-      throw new GeneralException("The requested digital object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged as INACTIVE "
-          + "by the repository administrator. ");
-    }
-
-
-    long startTime = new Date().getTime();
     // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
     // perform the dissemination via the DynamicAccess module.
     if (m_dynamicAccess.isDynamicBehaviorDefinition(context, PID, bDefPID))
@@ -401,14 +405,16 @@ public class DefaultAccess extends Module implements Access
     logFiner("[DefaultAccess] Roundtrip DynamicDisseminator: "
         + interval + " milliseconds.");
 
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
-    Hashtable h_userParms = new Hashtable();
-    MIMETypedStream dissemination = null;
-    MethodParmDef[] defaultMethodParms = null;
-    reader = m_manager.getReader(context, PID);
+    // Check data object state
+    checkState(context, "Data", reader.GetObjectState(), PID);
+
+    // Check associated bdef object state
+    BDefReader bDefReader = m_manager.getBDefReader(context, bDefPID);
+    checkState(context, "Behavior Definition", bDefReader.GetObjectState(), bDefPID);
 
     // SDP: get a bmech reader to get information that is specific to
     // a mechanism.
+    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     BMechReader bmechreader = null;
     Disseminator[] dissSet = reader.GetDisseminators(versDateTime, null);
     startTime = new Date().getTime();
@@ -424,6 +430,15 @@ public class DefaultAccess extends Module implements Access
     interval = stopTime - startTime;
     logFiner("[DefaultAccess] Roundtrip Looping Diss: "
               + interval + " milliseconds.");
+
+    // Check bmech object state
+    checkState(context, "behavior mechanism", bmechreader.GetObjectState(), bmechreader.GetObjectPID());
+
+    // Get method parms
+    Hashtable h_userParms = new Hashtable();
+    MIMETypedStream dissemination = null;
+    MethodParmDef[] defaultMethodParms = null;
+    reader = m_manager.getReader(context, PID);
 
     startTime = new Date().getTime();
     // Put any user-supplied method parameters into hash table
