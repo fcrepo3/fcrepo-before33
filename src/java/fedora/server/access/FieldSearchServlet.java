@@ -2,6 +2,7 @@ package fedora.server.access;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -109,52 +110,44 @@ public class FieldSearchServlet
             StringBuffer html=new StringBuffer();
             if (!xml) {
                 html.append("<form method=\"post\" action=\"/fedora/search\">");
-                html.append("<center><table border=0 cellpadding=8>\n");
-                html.append("<tr><td width=18% valign=top>");
-                html.append("<input type=\"checkbox\" name=\"pid\" value=\"true\"" + (fieldHash.contains("pid") ? " checked" : "") + "> Pid<br>");
-                html.append("<input type=\"checkbox\" name=\"label\" value=\"true\"" + (fieldHash.contains("label") ? " checked" : "") + "> Label<br>");
-                html.append("<input type=\"checkbox\" name=\"fType\" value=\"true\"" + (fieldHash.contains("fType") ? " checked" : "") + "> Fedora Object Type<br>");
-                html.append("<input type=\"checkbox\" name=\"cModel\" value=\"true\"" + (fieldHash.contains("cModel") ? " checked" : "") + "> Content Model<br>");
-                html.append("<input type=\"checkbox\" name=\"state\" value=\"true\"" + (fieldHash.contains("state") ? " checked" : "") + "> State<br>");
-                html.append("<input type=\"checkbox\" name=\"locker\" value=\"true\"" + (fieldHash.contains("locker") ? " checked" : "") + "> Locking User<br>");
-                html.append("<input type=\"checkbox\" name=\"cDate\" value=\"true\"" + (fieldHash.contains("cDate") ? " checked" : "") + "> Creation Date<br>");
-                html.append("<input type=\"checkbox\" name=\"mDate\" value=\"true\"" + (fieldHash.contains("mDate") ? " checked" : "") + "> Last Modified Date<br>");
-                html.append("<input type=\"checkbox\" name=\"dcmDate\" value=\"true\"" + (fieldHash.contains("dcmDate") ? " checked" : "") + "> Dublin Core Modified Date<br>");
-                html.append("<input type=\"checkbox\" name=\"bDef\" value=\"true\"" + (fieldHash.contains("bDef") ? " checked" : "") + "> Behavior Definition PID<br>");
-                html.append("<input type=\"checkbox\" name=\"bMech\" value=\"true\"" + (fieldHash.contains("bMech") ? " checked" : "") + "> Behavior Mechanism PID<br>");
-                html.append("</td><td width=18% valign=top>");
-                html.append("<input type=\"checkbox\" name=\"title\" value=\"true\"" + (fieldHash.contains("title") ? " checked" : "") + "> Title<br>");
-                html.append("<input type=\"checkbox\" name=\"creator\" value=\"true\"" + (fieldHash.contains("creator") ? " checked" : "") + "> Creator<br>");
-                html.append("<input type=\"checkbox\" name=\"subject\" value=\"true\"" + (fieldHash.contains("subject") ? " checked" : "") + "> Subject<br>");
-                html.append("<input type=\"checkbox\" name=\"description\" value=\"true\"" + (fieldHash.contains("description") ? " checked" : "") + "> Description<br>");
-                html.append("<input type=\"checkbox\" name=\"publisher\" value=\"true\"" + (fieldHash.contains("publisher") ? " checked" : "") + "> Publisher<br>");
-                html.append("<input type=\"checkbox\" name=\"contributor\" value=\"true\"" + (fieldHash.contains("contributor") ? " checked" : "") + "> Contributor<br>");
-                html.append("<input type=\"checkbox\" name=\"date\" value=\"true\"" + (fieldHash.contains("date") ? " checked" : "") + "> Date<br>");
-                html.append("<input type=\"checkbox\" name=\"type\" value=\"true\"" + (fieldHash.contains("type") ? " checked" : "") + "> Type<br>");
-                html.append("<input type=\"checkbox\" name=\"format\" value=\"true\"" + (fieldHash.contains("format") ? " checked" : "") + "> Format<br>");
-                html.append("<input type=\"checkbox\" name=\"identifier\" value=\"true\"" + (fieldHash.contains("identifier") ? " checked" : "") + "> Identifier<br>");
-                html.append("<input type=\"checkbox\" name=\"source\" value=\"true\"" + (fieldHash.contains("source") ? " checked" : "") + "> Source<br>");
-                html.append("<input type=\"checkbox\" name=\"language\" value=\"true\"" + (fieldHash.contains("language") ? " checked" : "") + "> Language<br>");
-                html.append("<input type=\"checkbox\" name=\"relation\" value=\"true\"" + (fieldHash.contains("relation") ? " checked" : "") + "> Relation<br>");
-                html.append("<input type=\"checkbox\" name=\"coverage\" value=\"true\"" + (fieldHash.contains("coverage") ? " checked" : "") + "> Coverage<br>");
-                html.append("<input type=\"checkbox\" name=\"rights\" value=\"true\"" + (fieldHash.contains("rights") ? " checked" : "") + "> Rights<br>");
-                html.append("</td><td width=64% valign=top>");
-                html.append("Simple Query: <input type=\"text\" name=\"terms\" size=\"15\" value=\"" + (terms==null ? "" : StreamUtility.enc(terms)) + "\"><p> ");
-                html.append("Advanced Query: <input type=\"text\" name=\"query\" size=\"15\" value=\"" + (query==null ? "" : StreamUtility.enc(query)) + "\"><p> ");
-                html.append("Maximum Results: <select name=\"maxResults\"><option value=\"20\">20</option><option value=\"40\">40</option><option value=\"60\">60</option><option value=\"80\">80</option></select><p>&nbsp;</p> ");
-                html.append("<input type=\"submit\" value=\"Search\"><p> ");
-                html.append("<font size=-1>Choose the fields you want returned by checking the appropriate boxes.");
-                html.append(" For simple queries, fill in the Simple Query box and press Search.  ");
-                html.append("A simple query consists of one or more words comprising a phrase, where keywords can contain the * and ? wildcards.");
-                html.append("For advanced queries, fill in the Advanced Query box and press Search.");
-                html.append(" An advanced query is a space-delimited set of conditions.  A condition is of the form <i>propertyOPERATORvalue</i>.");
-                html.append("Valid operators are =, ~ (meaning 'contains' -- this can take wildcards), <, <=, >, or >=.  Conditions may not contain spaces, ");
-                html.append("unless the value is enclosed in single quotes.  For date-based fields, you may use the ");
-                html.append("<, <=, >, or >= operators, and you must format your date like: <i>yyyy-DD-MM[THH:MM:SS[Z]]</i>, where square brackets indicate optional parts.  Note that the ");
-                html.append("letter T acts as a delimiter between the date and time parts of the string.</font>");
+                html.append("<center><table border=0 cellpadding=6 cellspacing=0>\n");
+                html.append("<tr><td colspan=3 valign=top><i>Fields to display:</i></td><td></td></tr>");
+                html.append("<tr><td valign=top><font size=-1>");
+                html.append("<input type=\"checkbox\" name=\"pid\" value=\"true\" checked> <a href=\"#\" onClick=\"javascript:alert('Persistent Identfier\\n\\nThe globally unique identifier of the resource.')\">pid</a><br>");
+                html.append("<input type=\"checkbox\" name=\"label\" value=\"true\"" + (fieldHash.contains("label") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Label\\n\\nThe label of the object')\">label</a><br>");
+                html.append("<input type=\"checkbox\" name=\"fType\" value=\"true\"" + (fieldHash.contains("fType") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Fedora Object Type\\n\\nThe type of Fedora object.\\nThis will be one of:\\n  D - Behavior Definition\\n  M - Behavior Mechanism\\n  O - Regular Object')\">fType</a><br>");
+                html.append("<input type=\"checkbox\" name=\"cModel\" value=\"true\"" + (fieldHash.contains("cModel") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Content Model\\n\\nIdentifies the template upon\\nwhich the object is based')\">cModel</a><br>");
+                html.append("<input type=\"checkbox\" name=\"state\" value=\"true\"" + (fieldHash.contains("state") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('State\\n\\nThe state of the object.\\nThis will be:\\n  A - Active')\">state</a><br>");
+                html.append("<input type=\"checkbox\" name=\"locker\" value=\"true\"" + (fieldHash.contains("locker") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Locking User\\n\\nThe userId of the user with a write lock on the object, if any')\">locker</a><br>");
+                html.append("<input type=\"checkbox\" name=\"cDate\" value=\"true\"" + (fieldHash.contains("cDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Creation Date\\n\\nThe UTC date the object was created,\\nin YYYY-MM-DDTHH:MM:SS format')\">cDate</a><br>");
+                html.append("<input type=\"checkbox\" name=\"mDate\" value=\"true\"" + (fieldHash.contains("mDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Modified Date\\n\\nThe UTC date the object was last modified,\\nin YYYY-MM-DDTHH:MM:SS format')\">mDate</a><br>");
+                html.append("<input type=\"checkbox\" name=\"dcmDate\" value=\"true\"" + (fieldHash.contains("dcmDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Dublin Core Modified Date\\n\\nThe UTC date the DC datastream was last modified,\\nin YYYY-MM-DDTHH:MM:SS format')\">dcmDate</a><br>");
+                html.append("</font></td><td valign=top><font size=-1>");
+                html.append("<input type=\"checkbox\" name=\"bDef\" value=\"true\"" + (fieldHash.contains("bDef") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Behavior Definition Pid\\n\\nThe pid of the behavior definition\\nobject(s) to which this object subscribes.\\nThis is a repeating field.')\">bDef</a><br>");
+                html.append("<input type=\"checkbox\" name=\"bMech\" value=\"true\"" + (fieldHash.contains("bMech") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Behavior Mechanism Pid\\n\\nThe pid of the behavior mechanism\\nobject(s) this object uses.\\nThis is a repeating field.\\nThe order will coincide with that of the bDef field values.')\">bMech</a><br>");
+                html.append("<input type=\"checkbox\" name=\"title\" value=\"true\"" + (fieldHash.contains("title") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Title\\n\\nA name given to the resource.\\nThis is a repeating field.')\">title</a><br>");
+                html.append("<input type=\"checkbox\" name=\"creator\" value=\"true\"" + (fieldHash.contains("creator") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Creator\\n\\nAn entity primarily responsible for making\\nthe content of the resource.\\nThis is a repeating field.')\">creator</a><br>");
+                html.append("<input type=\"checkbox\" name=\"subject\" value=\"true\"" + (fieldHash.contains("subject") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Subject and Keywords\\n\\nA topic of the content of the resource.\\nThis is a repeating field.')\">subject</a><br>");
+                html.append("<input type=\"checkbox\" name=\"description\" value=\"true\"" + (fieldHash.contains("description") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Description\\n\\nAn account of the content of the resource.\\nThis is a repeating field.')\">description</a><br>");
+                html.append("<input type=\"checkbox\" name=\"publisher\" value=\"true\"" + (fieldHash.contains("publisher") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Publisher\\n\\nAn entity responsible for making the resource available.\\nThis is a repeating field.')\">publisher</a><br>");
+                html.append("<input type=\"checkbox\" name=\"contributor\" value=\"true\"" + (fieldHash.contains("contributor") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Contributor\\n\\nAn entity responsible for making contributions\\nto the content of the resource.\\nThis is a repeating field.')\">contributor</a><br>");
+                html.append("<input type=\"checkbox\" name=\"date\" value=\"true\"" + (fieldHash.contains("date") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Date\\n\\nA date of an event in the lifecycle of the resource.\\nThis is a repeating field.')\">date</a><br>");
+                html.append("</font></td><td valign=top><font size=-1>");
+                html.append("<input type=\"checkbox\" name=\"type\" value=\"true\"" + (fieldHash.contains("type") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Resource Type\\n\\nThe nature or genre of the resource.\\nThis is a repeating field.')\">type</a><br>");
+                html.append("<input type=\"checkbox\" name=\"format\" value=\"true\"" + (fieldHash.contains("format") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Format\\n\\nThe physical or digital manifestation of the resource.\\nThis is a repeating field.')\">format</a><br>");
+                html.append("<input type=\"checkbox\" name=\"identifier\" value=\"true\"" + (fieldHash.contains("identifier") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Resource Identifier\\n\\nAn unambiguous reference to the resource within a given context.\\nThis is a repeating field.')\">identifier</a><br>");
+                html.append("<input type=\"checkbox\" name=\"source\" value=\"true\"" + (fieldHash.contains("source") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Source\\n\\nA reference to a resource from which the present resource is derived.\\nThis is a repeating field.')\">source</a><br>");
+                html.append("<input type=\"checkbox\" name=\"language\" value=\"true\"" + (fieldHash.contains("language") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Language\\n\\nA language of the intellectual content of the resource.\\nThis is a repeating field.')\">language</a><br>");
+                html.append("<input type=\"checkbox\" name=\"relation\" value=\"true\"" + (fieldHash.contains("relation") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Relation\\n\\nA reference to a related resource.\\nThis is a repeating field.')\">relation</a><br>");
+                html.append("<input type=\"checkbox\" name=\"coverage\" value=\"true\"" + (fieldHash.contains("coverage") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Coverage\\n\\nThe extent or scope of the content of the resource.\\nThis is a repeating field.')\">coverage</a><br>");
+                html.append("<input type=\"checkbox\" name=\"rights\" value=\"true\"" + (fieldHash.contains("rights") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Rights Management\\n\\nInformation about rights held in and over the resource.\\nThis is a repeating field.')\">rights</a><br>");
+                html.append("</font></td><td bgcolor=silver valign=top>&nbsp;&nbsp;&nbsp;</td><td valign=top>");
+                html.append("Search all fields for phrase: <input type=\"text\" name=\"terms\" size=\"15\" value=\"" + (terms==null ? "" : StreamUtility.enc(terms)) + "\"> <a href=\"#\" onClick=\"javascript:alert('Search All Fields\\n\\nEnter a phrase.  Objects where any field contains the phrase will be returned.\\nThis is a case-insensitive search, and you may use the * or ? wildcards.\\n\\nExamples:\\n\\n  *o*\\n    finds objects where any field contains the letter o.\\n\\n  ?edora\\n    finds objects where a word starts with any letter and ends with edora.')\"><i>help</i></a><p> ");
+                html.append("Or search specific field(s): <input type=\"text\" name=\"query\" size=\"15\" value=\"" + (query==null ? "" : StreamUtility.enc(query)) + "\"> <a href=\"#\" onClick=\"javascript:alert('Search Specific Field(s)\\n\\nEnter one or more conditions, separated by space.  Objects matching all conditions will be returned.\\nA condition is a field (choose from the field names on the left) followed by an operator, followed by a value.\\nThe = operator will match if the field\\'s entire value matches the value given.\\nThe ~ operator will match on phrases within fields, and accepts the ? and * wildcards.\\nThe &lt;, &gt;, &lt;=, and &gt;= operators can be used with numeric values, such as dates.\\n\\nExamples:\\n\\n  fType=M\\n    Matches all behavior mechanism objects.\\n\\n  pid~demo:* description~fedora\\n    Matches all demo objects with a description containing the word fedora.\\n\\n  cDate&gt;=1976-03-04 creator~*n*\\n    Matches objects created on or after March 4th, 1976 where at least one of the creators has an n in their name.\\n\\n  mDate&gt;2002-10-2 mDate&lt;2002-10-2T12:00:00\\n    Matches objects modified sometime before noon (UTC) on October 2nd, 2002')\"><i>help</i></a><p> ");
+                html.append("Maximum Results: <select name=\"maxResults\"><option value=\"20\">20</option><option value=\"40\">40</option><option value=\"60\">60</option><option value=\"80\">80</option></select> ");
+                html.append("<p><input type=\"submit\" value=\"Search\"> ");
                 html.append("</td></tr></table></center>");
-                html.append("</form>");
-                html.append("<hr size=\"1\">");
+                html.append("</form><hr size=1>");
             }
             FieldSearchResult fsr=null;
             if ((fieldsArray!=null && fieldsArray.length>0) || (sessionToken!=null)) {
@@ -349,28 +342,31 @@ public class FieldSearchServlet
                 out.print("</center>");
                 out.print("</body>");
             } else {
-                response.setContentType("text/xml");
-                PrintWriter out=response.getWriter();
-		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		out.println("<result xmlns=\"http://www.fedora.info/definitions/1/0/types/\">");
-       if ((fsr!=null) && (fsr.getToken()!=null)) {
-           out.println("  <listSession>");
-           out.println("    <token>" + fsr.getToken() + "</token>");
-           if (fsr.getCursor()!=-1) {
-               out.println("    <cursor>" + fsr.getCursor() + "</cursor>");
-           }
-           if (fsr.getCompleteListSize()!=-1) {
-               out.println("    <completeListSize>" + fsr.getCompleteListSize() + "</completeListSize>");
-           }
-           if (fsr.getExpirationDate()!=null) {
-               out.println("    <expirationDate>" + new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'").format(fsr.getExpirationDate()) + "</expirationDate>");
-           }
-           out.println("  </listSession>");
-       }
-		out.println("<resultList>");
-		out.println(xmlBuf.toString());
-		out.println("</resultList>");
-		out.println("</result>");
+                response.setContentType("text/xml; charset=UTF-8");
+                PrintWriter out=new PrintWriter(
+                        new OutputStreamWriter(
+                        response.getOutputStream(), "UTF-8"));
+                out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                out.println("<result xmlns=\"http://www.fedora.info/definitions/1/0/types/\">");
+                if ((fsr!=null) && (fsr.getToken()!=null)) {
+                    out.println("  <listSession>");
+                    out.println("    <token>" + fsr.getToken() + "</token>");
+                    if (fsr.getCursor()!=-1) {
+                        out.println("    <cursor>" + fsr.getCursor() + "</cursor>");
+                    }
+                    if (fsr.getCompleteListSize()!=-1) {
+                        out.println("    <completeListSize>" + fsr.getCompleteListSize() + "</completeListSize>");
+                    }
+                    if (fsr.getExpirationDate()!=null) {
+                        out.println("    <expirationDate>" + new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'").format(fsr.getExpirationDate()) + "</expirationDate>");
+                    }
+                    out.println("  </listSession>");
+                }
+                out.println("<resultList>");
+                out.println(xmlBuf.toString());
+                out.println("</resultList>");
+                out.println("</result>");
+                out.flush(); out.close();
             }
         } catch (ServerException se) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
