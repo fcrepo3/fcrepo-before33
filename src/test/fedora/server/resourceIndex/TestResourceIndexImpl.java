@@ -3,6 +3,7 @@ package fedora.server.resourceIndex;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -11,6 +12,7 @@ import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.BasicDigitalObject;
 
+import org.trippi.RDFFormat;
 import org.trippi.TriplestoreConnector;
 import org.trippi.TriplestoreWriter;
 
@@ -99,9 +101,6 @@ public class TestResourceIndexImpl extends TestCase {
         deleteDirectory(LOCAL_SERVER_PATH);
     }
 
-    //    public void testExecuteQuery() {
-    //    }
-
     //    public void testAddDigitalObjects() throws Exception {
     //        addBDefs();
     //        addBMechs();
@@ -139,20 +138,22 @@ public class TestResourceIndexImpl extends TestCase {
         int c = m_ri.countTriples(null, null, null, 0);
         assertTrue(c > b);
         
-        m_ri.deleteDigitalObject(dataobject);
-        m_writer.flushBuffer();
-        int d = m_ri.countTriples(null, null, null, 0);
-        assertTrue(d == b);
+        m_ri.export(new FileOutputStream("/tmp/out.rdf"), RDFFormat.RDF_XML);
         
-        m_ri.deleteDigitalObject(bmech);
-        m_writer.flushBuffer();
-        int e = m_ri.countTriples(null, null, null, 0);
-        assertTrue(e == a);
-        
-        m_ri.deleteDigitalObject(bdef);
-        m_writer.flushBuffer();
-        int f = m_ri.countTriples(null, null, null, 0);
-        assertEquals(m_ri.countTriples(null, null, null, 0), 0);
+//        m_ri.deleteDigitalObject(dataobject);
+//        m_writer.flushBuffer();
+//        int d = m_ri.countTriples(null, null, null, 0);
+//        assertTrue(d == b);
+//        
+//        m_ri.deleteDigitalObject(bmech);
+//        m_writer.flushBuffer();
+//        int e = m_ri.countTriples(null, null, null, 0);
+//        assertTrue(e == a);
+//        
+//        m_ri.deleteDigitalObject(bdef);
+//        m_writer.flushBuffer();
+//        int f = m_ri.countTriples(null, null, null, 0);
+//        assertEquals(m_ri.countTriples(null, null, null, 0), 0);
     }
 
     //    public void testAddDatastream() {

@@ -1,9 +1,12 @@
 package fedora.server.resourceIndex;
 
+import org.trippi.RDFFormat;
 import org.trippi.TriplestoreReader;
 
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.types.*;
+
+import java.io.OutputStream;
 
 /**
  * ResourceIndex is the interface to the Fedora Resource Index. The Fedora Resource
@@ -66,6 +69,8 @@ public interface ResourceIndex extends TriplestoreReader {
 	public void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
 	
 	public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
+
+	public void export(OutputStream out, RDFFormat format) throws ResourceIndexException;
 }
 
 

@@ -43,6 +43,7 @@ import org.jrdf.graph.SubjectNode;
 import org.openrdf.rio.Parser;
 import org.openrdf.rio.rdfxml.RdfXmlParser;
 
+import org.trippi.RDFFormat;
 import org.trippi.TripleFactory;
 import org.trippi.TripleIterator;
 import org.trippi.TriplestoreConnector;
@@ -98,6 +99,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         } catch (SQLException e) {
             throw new ResourceIndexException("ResourceIndex Connection Pool " +
                                              "was unable to get a connection", e);
+        } finally {
+            m_cPool.free(m_conn);
         }
     }
 
@@ -115,7 +118,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		// Insert basic system metadata
         queuePlainLiteralTriple(doIdentifier, LABEL_URI, digitalObject.getLabel());
         queuePlainLiteralTriple(doIdentifier, DATE_CREATED_URI, getDate(digitalObject.getCreateDate()));
-        queuePlainLiteralTriple(doIdentifier, DATE_LAST_MODIFIED_URI, getDate(digitalObject.getLastModDate()));
+        queueTypedLiteralTriple(doIdentifier, DATE_LAST_MODIFIED_URI, getDate(digitalObject.getLastModDate()), "http://www.w3.org/2001/XMLSchema#date");
 		
 		if (digitalObject.getOwnerId() != null) {
 		    queuePlainLiteralTriple(doIdentifier, OWNER_ID_URI, digitalObject.getOwnerId());
@@ -180,7 +183,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
 
         queueTriple(doURI, HAS_REPRESENTATION_URI, datastreamURI);
-        queuePlainLiteralTriple(datastreamURI, DATE_LAST_MODIFIED_URI, getDate(ds.DSCreateDT));
+        queueTypedLiteralTriple(datastreamURI, DATE_LAST_MODIFIED_URI, getDate(ds.DSCreateDT), "http://www.w3.org/2001/XMLSchema#date");
         queuePlainLiteralTriple(datastreamURI, DISSEMINATION_DIRECT_URI, "true");
         queuePlainLiteralTriple(datastreamURI, DISSEMINATION_VOLATILE_URI, isVolatile);
         addQueue(false);
@@ -218,7 +221,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         queueTriple(doIdentifier, USES_BMECH_URI, getDOURI(bMechPID));
 	    DSBindingMap m = diss.dsBindMap; // is this needed???
 	    String bDefPID = diss.bDefID;
-	    
+        String dissState = diss.dissState.equalsIgnoreCase("A") ? STATE_ACTIVE_URI : STATE_INACTIVE_URI;
+	    String dissCreateDT = getDate(diss.dissCreateDT);
+        
 	    // insert representations
 	    if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_OBJECT) {
             String query = "SELECT riMethodPermutation.permutation, riMethodMimeType.mimeType " +
@@ -237,21 +242,26 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                      mimeType = rs.getString("mimeType");
                      rep = doIdentifier + "/" + bDefPID + "/" + permutation;
                      queueTriple(doIdentifier, HAS_REPRESENTATION_URI, rep);
+                     queueTriple(rep, STATE_URI, dissState);
                      queuePlainLiteralTriple(rep, 
                                              DISSEMINATION_MEDIA_TYPE_URI, 
                                              mimeType);
                      queuePlainLiteralTriple(rep, 
                                              DISSEMINATION_DIRECT_URI, 
                                              "false"); 
+                     queueTypedLiteralTriple(rep, 
+                                             DATE_LAST_MODIFIED_URI, 
+                                             dissCreateDT,
+                                             "http://www.w3.org/2001/XMLSchema#date"); 
                  }
             } catch (SQLException e) {
                 throw new ResourceIndexException(e.getMessage(), e);
+            } finally {
+                m_cPool.free(m_conn);
             }
 	    }
 
 	    // TODO
-		//m_store.insertLiteral(disseminatorIdentifier, DATE_LAST_MODIFIED_URI, getDate(diss.dissCreateDT));
-		//m_store.insertLiteral(disseminatorIdentifier, STATE_URI, diss.dissState); // change to uri #active/#inactive
         //m_store.insert(disseminatorIdentifier, DISSEMINATION_TYPE_URI, diss.?);
         //m_store.insert(disseminatorIdentifier, DISSEMINATION_VOLATILE_URI, diss.?); // redirect, external, based on diss that depends on red/ext (true/false)
         addQueue(false);
@@ -264,8 +274,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         if (m_indexLevel == 0) {
             return;
         }
-        
-        // FIXME simple, dumb way to modify
+
 		deleteDigitalObject(digitalObject);
         addDigitalObject(digitalObject);
 	}
@@ -419,6 +428,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 throw new ResourceIndexException(e.getMessage(), e);
             } catch (TrippiException e) {
                 throw new ResourceIndexException(e.getMessage(), e);
+            } finally {
+                m_cPool.free(m_conn);
             }
         }	
 	}
@@ -624,6 +635,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             
             } catch (SQLException e) {
                 throw new ResourceIndexException(e.getMessage(), e);
+            } finally {
+                m_cPool.free(m_conn);
             }
 
 	    	// FIXME do we need passby and type in the graph?
@@ -639,13 +652,17 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             insertPermutation.executeBatch();
         } catch (SQLException e) {
             throw new ResourceIndexException(e.getMessage(), e);
+        } finally {
+            m_cPool.free(m_conn);
         }
 	}
 	
     private void addRelsDatastream(Datastream ds) throws ResourceIndexException {
         DatastreamXMLMetadata rels = (DatastreamXMLMetadata)ds;
         try {
-            m_writer.load(rels.getContentStream(), null);
+            m_writer.add(TripleIterator.fromStream(rels.getContentStream(), 
+                                                   RDFFormat.RDF_XML),
+                                                   false);
         } catch (IOException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } catch (TrippiException e) {
@@ -734,12 +751,16 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 insertMethodMimeType.executeBatch();
             } catch (SQLException e) {
                 throw new ResourceIndexException(e.getMessage(), e);
+            } finally {
+                m_cPool.free(m_conn);
             }
             
         } catch (WSDLException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } catch (SQLException e) {
             throw new ResourceIndexException(e.getMessage(), e);
+        } finally {
+            m_cPool.free(m_conn);
         }
     }
     
@@ -770,6 +791,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             stmt.execute(delete);
         } catch (SQLException e) {
             throw new ResourceIndexException(e.getMessage(), e);
+        } finally {
+            m_cPool.free(m_conn);
         }
     }
 
@@ -811,6 +834,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             stmt.execute(delete);
         } catch (SQLException e) {
             throw new ResourceIndexException(e.getMessage(), e);
+        } finally {
+            m_cPool.free(m_conn);
         }
     }
     
@@ -1176,11 +1201,20 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         return m_reader.countTriples(queryLang, tripleQuery, tripleTemplate, limit, distinct);
     }
 
-    /* (non-Javadoc)
-     * @see org.trippi.TriplestoreReader#dump(java.io.OutputStream)
+    /**
+     * 
+     * @param out
+     * @param format
+     * @throws IOException
+     * @throws TrippiException
      */
-    public void dump(OutputStream out) throws IOException, TrippiException {
-        m_reader.dump(out);
+    public void export(OutputStream out, RDFFormat format) throws ResourceIndexException {
+        try {
+            m_reader.findTriples(null, null, null, 0)
+            .toStream(out, RDFFormat.RDF_XML);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
     }
 
     /* (non-Javadoc)

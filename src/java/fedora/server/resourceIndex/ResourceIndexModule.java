@@ -182,11 +182,6 @@ public class ResourceIndexModule extends Module
         return m_resourceIndex.countTriples(queryLang, tupleQuery, tripleTemplate, limit, distinct);
     }
 
-    public void dump(OutputStream out) throws IOException,
-                                              TrippiException {
-        m_resourceIndex.dump(out);
-    }
-
     public String[] listTupleLanguages() {
         return m_resourceIndex.listTupleLanguages();
     }
@@ -266,6 +261,10 @@ public class ResourceIndexModule extends Module
      */
     public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
         m_resourceIndex.deleteDisseminator(digitalObject, disseminatorID);
-    }   
+    }
+    
+    public void export(OutputStream out, RDFFormat format) throws ResourceIndexException {
+        m_resourceIndex.export(out, format);
+    }
 
 }
