@@ -6,17 +6,20 @@ import java.util.ArrayList;
 
 public class ArrayInputPanel
         extends InputPanel {
-        
+
     private ArrayList m_inputPanels;
 
     public ArrayInputPanel(Class cl) {
         m_inputPanels=new ArrayList();
         add(new JLabel("Array handler not implemented, will be null."));
     }
-    
+
     public Object getValue() {
-        Object[] out=new Object[m_inputPanels.size()];
-        
+        Object[] out = null;
+        if (m_inputPanels.size() > 0)
+        {
+          out=new Object[m_inputPanels.size()];
+        }
         return out;
     }
 
