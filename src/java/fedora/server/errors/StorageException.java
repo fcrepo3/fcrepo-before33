@@ -6,7 +6,7 @@ package fedora.server.errors;
  * @author cwilper@cs.cornell.edu
  */
 public abstract class StorageException 
-        extends Exception {
+        extends ServerException {
 
     /**
      * Creates a StorageException.
@@ -15,7 +15,12 @@ public abstract class StorageException
      *                (possibly) how to fix it.
      */
     public StorageException(String message) {
-        super(message);
+        super(null, message, null, null, null);
+    }
+    
+    public StorageException(String bundleName, String code, String[] values, 
+            String[] details, Throwable cause) {
+        super(bundleName, code, values, details, cause);
     }
 
 }
