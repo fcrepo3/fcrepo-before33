@@ -72,9 +72,6 @@ public class AutoBatchIngest {
                 errors = true;
             }
             if (!errors) {
-                for (int i=0; i<args.length; i++) {
-                    System.out.println("args["+i+"]: "+args[i]);
-                }
                 AutoBatchIngest autoBatch = new AutoBatchIngest(args[0], args[1], args[2], server[0], server[1], args[4], args[5]);
             }
         } else {
