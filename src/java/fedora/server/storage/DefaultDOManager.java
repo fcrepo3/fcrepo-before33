@@ -421,7 +421,6 @@ public class DefaultDOManager
             removeReplicationJob(obj.getPid());
         } else {
             // save to definitive store, validating beforehand
-            // FIXME: definitive save skipped for testing..
             // update the system version (add one) and reflect that the object is no longer locked
 
             // Validation:
@@ -435,7 +434,10 @@ public class DefaultDOManager
             m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
             ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
             m_validator.validate(inV, 0, "store");
-
+            
+            // validation worked... so write to perm storage, then update the 
+            // lockinguser (set to NULL) and systemVersion (add one)
+            // FIXME: write change to perm store here...right before db stuff
             Connection conn=null;
             try {
                 conn=m_connectionPool.getConnection();
@@ -482,6 +484,7 @@ public class DefaultDOManager
                     m_replicator.replicate(reader);
                     logInfo("Finished replication as normal object: " + obj.getPid());
                 }
+                // FIXME: also remove from temp storage if this is successful
                 removeReplicationJob(obj.getPid());
             } catch (ServerException se) {
                 throw se;
@@ -612,64 +615,95 @@ public class DefaultDOManager
     public DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException {
         getServer().logFinest("Entered DefaultDOManager.newWriter(Context, InputStream, String, String, boolean)");
+        String permPid=null;
+        boolean wroteTempIngest=false;
+        boolean inPermanentStore=false;
+        boolean inTempStore=false;
         if (cachedObjectRequired(context)) {
             throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
         } else {
-            // write it to temp, as "temp-ingest": FIXME: temp-ingest stuff is temporary, and not threadsafe
-            getTempStore().add("temp-ingest", in);
-            InputStream in2=getTempStore().retrieve("temp-ingest");
+            try {
+                // write it to temp, as "temp-ingest"
+                // FIXME: temp-ingest stuff is temporary, and not threadsafe
+                getTempStore().add("temp-ingest", in);
+                wroteTempIngest=true;
+                InputStream in2=getTempStore().retrieve("temp-ingest");
+    
+                // perform initial validation of the ingest submission format
+                InputStream inV=getTempStore().retrieve("temp-ingest");
+                m_validator.validate(inV, 0, "ingest");
 
-            // perform initial validation of the ingest submission format
-            InputStream inV=getTempStore().retrieve("temp-ingest");
-            m_validator.validate(inV, 0, "ingest");
+                // deserialize it first
+                BasicDigitalObject obj=new BasicDigitalObject();
+                m_translator.deserialize(in2, obj, format, encoding);
+                InputStream in3=getTempStore().retrieve("temp-ingest");
+                // do we need to generate a pid?
+                if (newPid) {
+                   getServer().logFinest("Ingesting client wants a new PID.");
+                   // yes... so do that, then set it in the obj.
+                   String p=null;
+                   try {
+                       p=m_pidGenerator.generatePID(m_pidNamespace);
+                   } catch (Exception e) {
+                       throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
+                               + e.getClass().getName() + ") - " + e.getMessage());
+                   }
+                   getServer().logFiner("Generated PID: " + p);
+                   obj.setPid(p);
+                } else {
+                   getServer().logFinest("Ingesting client wants to use existing PID.");
+                }
+                // now check the pid.. 1) it must be a valid pid and 2) it can't already exist
 
-            // deserialize it first
-            BasicDigitalObject obj=new BasicDigitalObject();
-            m_translator.deserialize(in2, obj, format, encoding);
-            InputStream in3=getTempStore().retrieve("temp-ingest");
-            // do we need to generate a pid?
-            if (newPid) {
-               getServer().logFinest("Ingesting client wants a new PID.");
-               // yes... so do that, then set it in the obj.
-               String p=null;
-               try {
-                   p="urn:" + m_pidGenerator.generatePID(m_pidNamespace);
-               } catch (Exception e) {
-                   throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
-                           + e.getClass().getName() + ") - " + e.getMessage());
-               }
-               getServer().logFiner("Generated PID: " + p);
-               obj.setPid(p);
-            } else {
-               getServer().logFinest("Ingesting client wants to use existing PID.");
+
+                // FIXME: need to take out urn: assumption from following func and re-calc length limits.
+                // assertValidPid(obj.getPid());
+
+                // make sure the pid isn't already used by a registered object
+                if (objectExists(obj.getPid())) {
+                    throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
+                }
+    
+                // serialize to disk, then validate.. if that's ok, go on.. else unregister it!
+                ByteArrayOutputStream out=new ByteArrayOutputStream();
+                m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
+                ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
+                // getPermanentStore().add(obj.getPid(), newIn);
+                getPermanentStore().add(obj.getPid(), in3);
+                permPid=obj.getPid();
+                inPermanentStore=true; // signifies successful perm store addition
+                InputStream in4=getTempStore().retrieve("temp-ingest");
+                
+                // now add it to the working area with the *known* pid
+                getTempStore().add(obj.getPid(), in4);
+                inTempStore=true; // signifies successful perm store addition
+
+                // then get the writer
+                DOWriter w=new DefinitiveDOWriter(context, this, obj);
+                
+                // add to internal list...somehow..think...
+                
+                // at this point all is good...
+                // so make a record of it in the registry
+                registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
+                return w;
+            } catch (ServerException se) {
+                // remove from permanent and temp store if anything failed
+                if (permPid!=null) {
+                    if (inPermanentStore) {
+                        getPermanentStore().remove(permPid);
+                    }
+                    if (inTempStore) {
+                        getTempStore().remove(permPid);
+                    }
+                }
+                throw se; // re-throw it so the client knows what's up
+            } finally {
+                if (wroteTempIngest) {
+                    // remove this in any case
+                    getTempStore().remove("temp-ingest");
+                }
             }
-            // now check the pid.. 1) it must be a valid pid and 2) it can't already exist
-
-
-// FIXME: uncomment the following after lv0 test
-//            assertValidPid(obj.getPid());
-
-            if (objectExists(obj.getPid())) {
-                throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
-            }
-            // make a record of it in the registry
-            registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
-
-            // serialize to disk, then validate.. if that's ok, go on.. else unregister it!
-            ByteArrayOutputStream out=new ByteArrayOutputStream();
-            m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
-            ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
-            // getPermanentStore().add(obj.getPid(), newIn);
-            getPermanentStore().add(obj.getPid(), in3);
-            InputStream in4=getTempStore().retrieve("temp-ingest");
-            getTempStore().add(obj.getPid(), in4);
-            getTempStore().remove("temp-ingest");
-
-
-            // then get the writer
-            DOWriter w=new DefinitiveDOWriter(context, this, obj);
-            // add to internal list...somehow..think...
-            return w;
         }
     }
 
