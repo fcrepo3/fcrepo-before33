@@ -17,6 +17,7 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.types.gen.Condition;
+import fedora.server.types.gen.DatastreamDef;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ObjectFields;
@@ -109,50 +110,6 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       return new ReadOnlyContext(h);
   }
 
-  /**
-   * <p>Gets a list of Behavior Definition object PIDs for the specified
-   * digital object.</p>
-   *
-   * @param PID The persistent identifier of the digital object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return An array containing Behavior Definition PIDs.
-   * @throws java.rmi.RemoteException
-   */
-  public java.lang.String[] getBehaviorDefinitions(String PID,
-                                                   String asOfDateTime) 
-          throws java.rmi.RemoteException
-  {
-    Context context=getContext();
-    assertInitialized();
-    try
-    {
-      String[] bDefs =
-          s_access.getBehaviorDefinitions(context, 
-                                          PID, 
-                                          DateUtility.convertStringToDate(asOfDateTime));
-      if (bDefs != null && debug)
-      {
-        for (int i=0; i<bDefs.length; i++)
-        {
-          s_server.logFinest("bDef["+i+"] = "+bDefs[i]);
-        }
-      }
-      return bDefs;
-    } catch (ServerException se)
-    {
-      s_server.logFinest("ServerException: " + se.getMessage());
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      s_server.logFinest("Exception: " + e.getMessage());
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
-    }
-    return null;
-  }
-
   public java.lang.String[] getObjectHistory(java.lang.String PID)
           throws java.rmi.RemoteException
   {
@@ -186,86 +143,6 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   }
 
   /**
-   * <p>Gets a list of Behavior Methods associated with the specified
-   * Behavior Mechanism object.</p>
-   *
-   * @param PID The persistent identifier of digital object.
-   * @param bDefPID The persistent identifier of Behavior Definition object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return An array of method definitions.
-   * @throws java.rmi.RemoteException.
-   */
-  public fedora.server.types.gen.MethodDef[] getBehaviorMethods(String PID,
-                                                                String bDefPID,
-                                                                String asOfDateTime)
-      throws java.rmi.RemoteException
-  {
-    Context context=getContext();
-    assertInitialized();
-    try
-    {
-      fedora.server.storage.types.MethodDef[] methodDefs =
-          s_access.getBehaviorMethods(context, 
-                                      PID, 
-                                      bDefPID, 
-                                      DateUtility.convertStringToDate(asOfDateTime));
-      fedora.server.types.gen.MethodDef[] genMethodDefs =
-          TypeUtility.convertMethodDefArrayToGenMethodDefArray(methodDefs);
-      return genMethodDefs;
-    } catch (ServerException se)
-    {
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
-    }
-    return null;
-  }
-
-  /**
-   * <p>Gets a bytestream containing the WSDL that defines the Behavior Methods
-   * of the associated Behavior Mechanism object.</p>
-   *
-   * @param PID The persistent identifier of Digital Object.
-   * @param bDefPID The persistent identifier of Behavior Definition object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return A MIME-typed stream containing WSDL method definitions.
-   * @throws java.rmi.RemoteException
-   */
-  public fedora.server.types.gen.MIMETypedStream getBehaviorMethodsXML(String PID, 
-                                                                       String bDefPID,
-                                                                       String asOfDateTime) 
-      throws java.rmi.RemoteException
-  {
-    Context context=getContext();
-    try
-    {
-      fedora.server.storage.types.MIMETypedStream mimeTypedStream =
-          s_access.getBehaviorMethodsXML(context, 
-                                         PID,
-                                         bDefPID, 
-                                         DateUtility.convertStringToDate(asOfDateTime));
-      fedora.server.types.gen.MIMETypedStream genMIMETypedStream =
-          TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
-          mimeTypedStream);
-      return genMIMETypedStream;
-    } catch (ServerException se)
-    {
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
-    }
-    return null;
-  }
-
-  /**
    * <p>Gets a MIME-typed bytestream containing the result of a dissemination.
    * </p>
    *
@@ -282,7 +159,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                                   String bDefPID,
                                   String methodName,
                                   fedora.server.types.gen.Property[] userParms,
-                                  String asOfDateTime) 
+                                  String asOfDateTime)
       throws java.rmi.RemoteException
   {
     Context context=getContext();
@@ -291,11 +168,11 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       fedora.server.storage.types.Property[] properties =
           TypeUtility.convertGenPropertyArrayToPropertyArray(userParms);
       fedora.server.storage.types.MIMETypedStream mimeTypedStream =
-          s_access.getDissemination(context, 
-                                    PID, 
-                                    bDefPID, 
+          s_access.getDissemination(context,
+                                    PID,
+                                    bDefPID,
                                     methodName,
-                                    properties, 
+                                    properties,
                                     DateUtility.convertStringToDate(asOfDateTime));
       fedora.server.types.gen.MIMETypedStream genMIMETypedStream =
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
@@ -314,29 +191,25 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     return null;
   }
 
-  /**
-   * <p>Gets a list of all method definitions for the specified object.</p>
-   *
-   * @param PID The persistent identifier for the digital object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return An array of object method definitions.
-   * @throws java.rmi.RemoteException
-   */
-  public fedora.server.types.gen.ObjectMethodsDef[] getObjectMethods(String PID,
-                                                                     String asOfDateTime)
+  public fedora.server.types.gen.MIMETypedStream getDatastreamDissemination(
+                                  String PID,
+                                  String dsID,
+                                  String asOfDateTime)
       throws java.rmi.RemoteException
   {
     Context context=getContext();
     try
     {
-      fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs =
-          s_access.getObjectMethods(context, 
-                                    PID, 
+
+      fedora.server.storage.types.MIMETypedStream mimeTypedStream =
+          s_access.getDatastreamDissemination(context,
+                                    PID,
+                                    dsID,
                                     DateUtility.convertStringToDate(asOfDateTime));
-      fedora.server.types.gen.ObjectMethodsDef[] genObjectMethodDefs =
-          TypeUtility.convertObjectMethodsDefArrayToGenObjectMethodsDefArray(
-          objectMethodDefs);
-      return genObjectMethodDefs;
+      fedora.server.types.gen.MIMETypedStream genMIMETypedStream =
+          TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
+          mimeTypedStream);
+      return genMIMETypedStream;
     } catch (ServerException se)
     {
       logStackTrace(se);
@@ -404,6 +277,98 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   }
 
   /**
+   * <p>Gets a list of all method definitions for the specified object.</p>
+   *
+   * @param PID The persistent identifier for the digital object.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return An array of object method definitions.
+   * @throws java.rmi.RemoteException
+   */
+  public fedora.server.types.gen.ObjectMethodsDef[] getObjectMethods(String PID,
+                                                                     String asOfDateTime)
+      throws java.rmi.RemoteException
+  {
+    Context context=getContext();
+    try
+    {
+      fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs =
+          s_access.getObjectMethods(context,
+                                    PID,
+                                    DateUtility.convertStringToDate(asOfDateTime));
+      fedora.server.types.gen.ObjectMethodsDef[] genObjectMethodDefs =
+          TypeUtility.convertObjectMethodsDefArrayToGenObjectMethodsDefArray(
+          objectMethodDefs);
+      return genObjectMethodDefs;
+    } catch (ServerException se)
+    {
+      logStackTrace(se);
+      AxisUtility.throwFault(se);
+    } catch (Exception e) {
+      logStackTrace(e);
+      AxisUtility.throwFault(
+          new ServerInitializationException(e.getClass().getName() + ": "
+          + e.getMessage()));
+    }
+    return null;
+  }
+
+
+  public fedora.server.types.gen.ObjectMethodsDef[] listMethods(String PID,
+                                                                     String asOfDateTime)
+      throws java.rmi.RemoteException
+  {
+    Context context=getContext();
+    try
+    {
+      fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs =
+          s_access.listMethods(context,
+                                    PID,
+                                    DateUtility.convertStringToDate(asOfDateTime));
+      fedora.server.types.gen.ObjectMethodsDef[] genObjectMethodDefs =
+          TypeUtility.convertObjectMethodsDefArrayToGenObjectMethodsDefArray(
+          objectMethodDefs);
+      return genObjectMethodDefs;
+    } catch (ServerException se)
+    {
+      logStackTrace(se);
+      AxisUtility.throwFault(se);
+    } catch (Exception e) {
+      logStackTrace(e);
+      AxisUtility.throwFault(
+          new ServerInitializationException(e.getClass().getName() + ": "
+          + e.getMessage()));
+    }
+    return null;
+  }
+
+  public fedora.server.types.gen.DatastreamDef[] listDatastreams(String PID, String asOfDateTime)
+      throws java.rmi.RemoteException
+  {
+    Context context=getContext();
+    try
+    {
+      fedora.server.storage.types.DatastreamDef[] datastreamDefs =
+          s_access.listDatastreams(context,
+                                    PID,
+                                    DateUtility.convertStringToDate(asOfDateTime));
+      fedora.server.types.gen.DatastreamDef[] genDatastreamDefs =
+          TypeUtility.convertDatastreamDefArrayToGenDatastreamDefArray(
+          datastreamDefs);
+      return genDatastreamDefs;
+    } catch (ServerException se)
+    {
+      logStackTrace(se);
+      AxisUtility.throwFault(se);
+    } catch (Exception e) {
+      logStackTrace(e);
+      AxisUtility.throwFault(
+          new ServerInitializationException(e.getClass().getName() + ": "
+          + e.getMessage()));
+    }
+    return null;
+  }
+
+  /**
    * <p>Gets the object profile which included key metadata about the object
    * and URLs for the Dissemination Index and Item Index of the object.</p>
    *
@@ -413,15 +378,15 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
    * @throws java.rmi.RemoteException
    */
   public fedora.server.types.gen.ObjectProfile getObjectProfile(String PID,
-                                                                String asOfDateTime) 
+                                                                String asOfDateTime)
       throws java.rmi.RemoteException
   {
     Context context=getContext();
     try
     {
       fedora.server.access.ObjectProfile objectProfile =
-          s_access.getObjectProfile(context, 
-                                    PID, 
+          s_access.getObjectProfile(context,
+                                    PID,
                                     DateUtility.convertStringToDate(asOfDateTime));
       fedora.server.types.gen.ObjectProfile genObjectProfile =
           TypeUtility.convertObjectProfileToGenObjectProfile(

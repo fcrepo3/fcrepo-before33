@@ -26,11 +26,9 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
-import com.icl.saxon.expr.StringValue;
-
 import fedora.server.Context;
-import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
+import fedora.server.Logging;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
@@ -40,12 +38,15 @@ import fedora.server.storage.DOManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.Logger;
 import fedora.server.utilities.StreamUtility;
 
 /**
  * <p><b>Title: </b>FedoraAccessServlet.java</p>
- * <p><b>Description: </b>Implements Fedora Access LITE (API-A-LITE) interface using a
- * java servlet front end. The syntax defined by API-A-LITE has two bindings:
+ * <p><b>Description: </b>Implements the three methods GetObjectProfile, GetDissemination,
+ * and GetDatastreamDissemination of the Fedora Access LITE (API-A-LITE) interface using a
+ * java servlet front end. The syntax defined by API-A-LITE defines three bindings for
+ * these methods:
  * <ol>
  * <li>GetDissemination URL syntax:
  * http://hostname:port/fedora/get/PID/bDefPID/methodName[/dateTime][?parmArray]
@@ -88,6 +89,19 @@ import fedora.server.utilities.StreamUtility;
  *           A value of "true" indicates a return type of text/xml; the
  *           absence of the xml parameter or a value of "false"
  *           indicates format is to be text/html.</li>
+ * <li>GetDatastreamDissemination URL syntax:
+ * http://hostname:port/fedora/get/PID/DSID[/dateTime]
+ * This syntax requests a datastream dissemination for the specified digital
+ * object. It is used to return the contents of a datastream.
+ * <ul>
+ * <li>hostname - required hostname of the Fedora server.</li>
+ * <li>port - required port number on which the Fedora server is running.</li>
+ * <li>fedora - required name of the Fedora access service.</li>
+ * <li>get - required verb of the Fedora service.</li>
+ * <li>PID - required persistent identifier of the digital object.</li>
+ * <li>DSID - required datastream identifier for the datastream.</li>
+ * <li>dateTime - optional dateTime value indicating dissemination of a
+ *                version of the digital object at the specified point in time.
  * </ul>
  *
  * -----------------------------------------------------------------------------
@@ -110,7 +124,7 @@ import fedora.server.utilities.StreamUtility;
  * @author rlw@virginia.edu
  * @version $Id$
  */
-public class FedoraAccessServlet extends HttpServlet implements Logging
+public class FedoraAccessServlet extends HttpServlet
 {
   /** Content type for html. */
   private static final String CONTENT_TYPE_HTML = "text/html; charset=UTF-8";
@@ -144,6 +158,9 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 
   /** Port number on which the Fedora server is running. **/
   private static String fedoraServerPort = null;
+
+  /** Instance of Logger to log servlet events in Fedora server log */
+  public Logger logger = null;
 
   /**
    * Get the userId if the provided base64-encoded user:pass string
@@ -196,14 +213,15 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     String PID = null;
     String bDefPID = null;
     String methodName = null;
+    String dsID = null;
     Date asOfDateTime = null;
     Date versDateTime = null;
     String action = null;
     Property[] userParms = null;
     long servletStartTime = new Date().getTime();
-    //boolean isGetObjectMethodsRequest = false;
     boolean isGetObjectProfileRequest = false;
     boolean isGetDisseminationRequest = false;
+    boolean isGetDatastreamDisseminationRequest = false;
     boolean xml = false;
 
     HashMap h=new HashMap();
@@ -232,6 +250,22 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         + request.getQueryString();
 
     // Parse servlet URL.
+    // For the Fedora API-A-LITE "get" syntax, valid entries include:
+    //
+    //     For dissemination requests:
+    //     http://host:port/fedora/get/pid/bDefPid/methodName
+    //     http://host:port/fedora/get/pid/bDefPid/methodName/timestamp
+    //     http://host:port/fedora/get/pid/bDefPid/methodName?parm=value[&parm=value]
+    //     http://host:port/fedora/get/pid/bDefPid/methodName/timestamp?parm=value[&parm=value]
+    //
+    //     For object profile requests:
+    //     http://host:port/fedora/get/pid
+    //     http://host:port/fedora/get/pid/timestamp
+    //
+    //     For datastream dissemination requests:
+    //     http://host:port/fedora/get/pid/dsID
+    //     http://host:port/fedora/get/pid/dsID/timestamp
+    //
     String[] URIArray = request.getRequestURL().toString().split("/");
     if (URIArray.length == 6 || URIArray.length == 7) {
         // Request is either an ObjectProfile request or a datastream request
@@ -243,7 +277,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                     + th.getClass().getName()
                     + " \". Reason: "  + th.getMessage()
                     + "  Input Request was: \"" + request.getRequestURL().toString();
-            logWarning(message);
+            logger.logWarning(message);
             response.setContentType(CONTENT_TYPE_HTML);
             ServletOutputStream out = response.getOutputStream();
             out.println("<html><body><h3>" + message + "</h3></body></html>");
@@ -253,38 +287,9 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
             // They either specified a date/time or a datastream id.
             if (URIArray[6].indexOf(":")==-1) {
                 // If it doesn't contain a colon, they were after a datastream,
-                // so use the default disseminator.
-                bDefPID = "fedora-system:3";
-                methodName = "getItem";
-                Property itemID = new Property();
-                itemID.name = "itemID";
-                itemID.value = URIArray[6];
-                userParms=new Property[] { itemID };
-                asOfDateTime=null;
-                try {
-                    getDissemination(context,
-                                     PID,
-                                     bDefPID,
-                                     methodName,
-                                     userParms,
-                                     asOfDateTime,
-                                     response,
-                                     request);
-                    long stopTime = new Date().getTime();
-                    long interval = stopTime - servletStartTime;
-                    logFiner("[FedoraAccessServlet] Servlet Roundtrip "
-                        + "GetDatastream: " + interval + " milliseconds.");
-                } catch (Throwable th) {
-                    String message = "[FedoraAccessServlet] An error has occured in "
-                            + "accessing the Fedora Access Subsystem. The error was \" "
-                            + th.getClass().getName()
-                            + " \". Reason: "  + th.getMessage()
-                            + "  Input Request was: \"" + request.getRequestURL().toString();
-                    showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms, response, message);
-                    logWarning(message);
-                    th.printStackTrace();
-                }
-                return;
+                // so this is a DatastreamDissemination request
+                dsID = URLDecoder.decode(URIArray[6],"UTF-8");
+                isGetDatastreamDisseminationRequest = true;
             } else {
                 // If it DOES contain a colon, they were after a date/time-stamped object profile
                 versDateTime = DateUtility.convertStringToDate(URIArray[6]);
@@ -299,38 +304,31 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                       + URIArray[3] + "/" + URIArray[4]
                       + "/PID[/dateTime] \"  ."
                       + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
-                    logWarning(message);
+                    logger.logWarning(message);
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
                     return;
                 } else {
                     asOfDateTime=versDateTime;
                 }
-                logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
-                    + "Encountered: "+ requestURI);
-                logFinest("PID: " + PID + " bDefPID: "
-                    + " asOfDate: " + versDateTime);
                 isGetObjectProfileRequest = true;
             }
-        } else { // URIArray.length==6
-            logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
-                + "Encountered: "+ requestURI);
-            logFinest("PID: " + PID + " bDefPID: "
-                + " asOfDate: " + versDateTime);
+        } else {
+            // URIArray.length==6 so this is a GetObjectProfile request
             isGetObjectProfileRequest = true;
         }
     } else if (URIArray.length > 7) {
       // Request is either dissemination request or timestamped get datastream request
         try {
             PID = Server.getPID(URIArray[5]).toString();  // normalize the PID
-            bDefPID = Server.getPID(URIArray[6]).toString();  // this one too
+            //bDefPID = Server.getPID(URIArray[6]).toString();  // this one too
         } catch (Throwable th) {
             String message = "[FedoraAccessServlet] An error has occured in "
                     + "accessing the Fedora Access Subsystem. The error was \" "
                     + th.getClass().getName()
                     + " \". Reason: "  + th.getMessage()
                     + "  Input Request was: \"" + request.getRequestURL().toString();
-            logWarning(message);
+            logger.logWarning(message);
             response.setContentType(CONTENT_TYPE_HTML);
             ServletOutputStream out = response.getOutputStream();
             out.println("<html><body><h3>" + message + "</h3></body></html>");
@@ -340,76 +338,73 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       if (URIArray.length == 8) {
         if (URIArray[6].indexOf(":")==-1) {
             // If it doesn't contain a colon, they were after a timestamped
-            // datastream, so use the default disseminator.
-            bDefPID = "fedora-system:3";
-            methodName = "getItem";
-            Property itemID = new Property();
-            itemID.name = "itemID";
-            itemID.value = URIArray[6];
-            userParms=new Property[] { itemID };
+            // datastream, so this is a GetDatastreamDissemination request.
+            dsID = URLDecoder.decode(URIArray[6], "UTF-8");
             versDateTime = DateUtility.convertStringToDate(URIArray[7]);
             if (versDateTime == null) {
-                String message = "Dissemination Request Syntax Error: DateTime value "
+                String message = "GetDatastreamDissemination Request Syntax Error: DateTime value "
                     + "of \"" + URIArray[7] + "\" is not a valid DateTime format. "
                     + " ----- The expected format for DateTime is \""
                     + "YYYY-MM-DDTHH:MM:SSZ\".  "
-                    + " ----- The expected syntax for Dissemination requests is: \""
+                    + " ----- The expected syntax for GetDatastreamDissemination requests is: \""
                     + URIArray[0] + "//" + URIArray[2] + "/"
                     + URIArray[3] + "/" + URIArray[4]
-                    + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
-              + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
-                logWarning(message);
+                    + "/PID/dsID[/dateTime] \"  "
+                    + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+                logger.logWarning(message);
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
                 return;
             } else {
                 asOfDateTime=versDateTime;
             }
+            isGetDatastreamDisseminationRequest = true;
+        } else {
             try {
-                getDissemination(context,
-                                 PID,
-                                 bDefPID,
-                                 methodName,
-                                 userParms,
-                                 asOfDateTime,
-                                 response,
-                                 request);
-                long stopTime = new Date().getTime();
-                long interval = stopTime - servletStartTime;
-                logFiner("[FedoraAccessServlet] Servlet Roundtrip "
-                    + "GetDatastream: " + interval + " milliseconds.");
+                bDefPID = Server.getPID(URIArray[6]).toString();  // this one too
+                isGetDisseminationRequest = true;
             } catch (Throwable th) {
                 String message = "[FedoraAccessServlet] An error has occured in "
                         + "accessing the Fedora Access Subsystem. The error was \" "
                         + th.getClass().getName()
                         + " \". Reason: "  + th.getMessage()
                         + "  Input Request was: \"" + request.getRequestURL().toString();
-                showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms, response, message);
-                logWarning(message);
-                th.printStackTrace();
+                logger.logWarning(message);
+                response.setContentType(CONTENT_TYPE_HTML);
+                ServletOutputStream out = response.getOutputStream();
+                out.println("<html><body><h3>" + message + "</h3></body></html>");
+                return;
             }
-            return;
         }
       } else if(URIArray.length == 9) {
           versDateTime = DateUtility.convertStringToDate(URIArray[8]);
-            if (versDateTime == null) {
-                String message = "Dissemination Request Syntax Error: DateTime value "
-                    + "of \"" + URIArray[8] + "\" is not a valid DateTime format. "
-                    + " ----- The expected format for DateTime is \""
-                    + "YYYY-MM-DDTHH:MM:SS\".  "
-                    + " ----- The expected syntax for Dissemination requests is: \""
-                    + URIArray[0] + "//" + URIArray[2] + "/"
-                    + URIArray[3] + "/" + URIArray[4]
-                    + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
-                    + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
-                logWarning(message);
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-                return;
-            } else {
-                asOfDateTime=versDateTime;
-            }
-
+          if (versDateTime == null) {
+              String message = "Dissemination Request Syntax Error: DateTime value "
+                  + "of \"" + URIArray[8] + "\" is not a valid DateTime format. "
+                  + " ----- The expected format for DateTime is \""
+                  + "YYYY-MM-DDTHH:MM:SS\".  "
+                  + " ----- The expected syntax for Dissemination requests is: \""
+                  + URIArray[0] + "//" + URIArray[2] + "/"
+                  + URIArray[3] + "/" + URIArray[4]
+                  + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+                  + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+              logger.logWarning(message);
+              response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+              response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+              return;
+          } else {
+              asOfDateTime=versDateTime;
+          }
+          try {
+              bDefPID = Server.getPID(URIArray[6]).toString();  // this one too
+              isGetDisseminationRequest = true;
+          } catch (Throwable th) {
+              String message = "[FedoraAccessServlet] An error has occured in "
+                  + "accessing the Fedora Access Subsystem. The error was \" "
+                  + th.getClass().getName()
+                  + " \". Reason: "  + th.getMessage()
+                  + "  Input Request was: \"" + request.getRequestURL().toString();
+          }
       }
       if (URIArray.length > 9) {
         String message = "Dissemination Request Syntax Error: The expected "
@@ -418,16 +413,11 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
             + URIArray[3] + "/" + URIArray[4]
             + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
             + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
-        logWarning(message);
+        logger.logWarning(message);
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
         return;
       }
-      logFinest("[FedoraAccessServlet] Dissemination Syntax "
-          + "Encountered");
-      logFinest("PID: " + PID + " bDefPID: " + bDefPID
-          + " methodName: " + methodName + " asOfDate: " + versDateTime);
-      isGetDisseminationRequest = true;
     } else
     {
       // Bad syntax; redirect to syntax documentation page.
@@ -468,19 +458,43 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     {
       if (isGetObjectProfileRequest)
       {
+        logger.logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
+            + "Encountered: "+ requestURI);
+        logger.logFinest("PID: " + PID + " asOfDate: " + versDateTime);
         getObjectProfile(context, PID, asOfDateTime, xml, request, response);
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        logFiner("[FedoraAccessServlet] Servlet Roundtrip "
+        logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
             + "GetObjectProfile: " + interval + " milliseconds.");
       }
       else if (isGetDisseminationRequest)
       {
+        logger.logFinest("[FedoraAccessServlet] Dissemination Syntax "
+            + "Encountered");
+        logger.logFinest("PID: " + PID + " bDefPID: " + bDefPID
+            + " methodName: " + methodName + " asOfDate: " + versDateTime);
         getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime, response, request);
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        logFiner("[FedoraAccessServlet] Servlet Roundtrip "
+        logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
             + "GetDissemination: " + interval + " milliseconds.");
+      }
+      else if (isGetDatastreamDisseminationRequest)
+      {
+          HashMap hm=new HashMap();
+          hm.put("application", "apia");
+          hm.put("useCachedObject", "false");
+          hm.put("userId", "fedoraAdmin");
+          ReadOnlyContext newContext = new ReadOnlyContext(hm);
+          logger.logFinest("[FedoraAccessServlet] GetDatastreamDissemination Syntax "
+              + "Encountered: "+ requestURI);
+          logger.logFinest("PID: " + PID + " dsID: " + dsID
+              + " asOfDate: " + versDateTime);
+          getDatastreamDissemination(newContext, PID, dsID, asOfDateTime, response, request);
+          long stopTime = new Date().getTime();
+          long interval = stopTime - servletStartTime;
+          logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
+            + "GetDatastreamDissemination: " + interval + " milliseconds.");
       }
     } catch (Throwable th)
       {
@@ -489,9 +503,10 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
             + th.getClass().getName()
             + " \". Reason: "  + th.getMessage()
             + "  Input Request was: \"" + request.getRequestURL().toString();
-        showURLParms(PID, bDefPID, methodName, asOfDateTime,
-                     userParms, response, message);
-        logWarning(message);
+
+        //logger.logWarning(message);
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
         th.printStackTrace();
     }
   }
@@ -550,7 +565,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       {
         // Object Profile Definition request returned nothing.
         String message = "[FedoraAccessServlet] No Object Profile returned.";
-        logInfo(message);
+        logger.logInfo(message);
         showURLParms(PID, "", "", asOfDateTime, new Property[0], response, message);
       }
     } catch (Throwable th)
@@ -559,7 +574,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                      + " The error was a \" "
                      + th.getClass().getName()
                      + " \". Reason: "  + th.getMessage();
-      logWarning(message);
+      logger.logWarning(message);
       th.printStackTrace();
       throw new GeneralException(message);
     } finally
@@ -576,6 +591,63 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                      + " \". Reason: "  + th.getMessage();
         throw new StreamIOException(message);
       }
+    }
+  }
+
+  public void getDatastreamDissemination(Context context, String PID, String dsID,
+      Date asOfDateTime, HttpServletResponse response, HttpServletRequest request)
+      throws IOException, ServerException
+  {
+    ServletOutputStream out = null;
+    MIMETypedStream dissemination = null;
+    dissemination =
+        s_access.getDatastreamDissemination(context, PID, dsID, asOfDateTime);
+    if (dissemination != null)
+    {
+
+        // testing to see what's in request header that might be of interest
+        for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
+            String name = (String)e.nextElement();
+            Enumeration headerValues =  request.getHeaders(name);
+            StringBuffer sb = new StringBuffer();
+            while (headerValues.hasMoreElements()) {
+                sb.append((String) headerValues.nextElement());
+            }
+            String value = sb.toString();
+            if (fedora.server.Debug.DEBUG) System.out.println("FEDORASERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
+            response.setHeader(name,value);
+        }
+
+        // Dissemination was successful;
+        // Return MIMETypedStream back to browser client
+        response.setContentType(dissemination.MIMEType);
+        Property[] headerArray = dissemination.header;
+        if(headerArray != null) {
+            for(int i=0; i<headerArray.length; i++) {
+                if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
+                    response.addHeader(headerArray[i].name, headerArray[i].value);
+                    if (fedora.server.Debug.DEBUG) System.out.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
+                }
+            }
+        }
+        out = response.getOutputStream();
+        int byteStream = 0;
+        InputStream dissemResult = dissemination.getStream();
+        byte[] buffer = new byte[255];
+        while ((byteStream = dissemResult.read(buffer)) != -1)
+        {
+          out.write(buffer, 0, byteStream);
+        }
+        buffer = null;
+        dissemResult.close();
+        dissemResult = null;
+
+    } else
+    {
+      // Dissemination request failed; echo back request parameter.
+      String message = "[FedoraAccessServlet] No Datastream Dissemination Result "
+          + " was returned.";
+      logger.logInfo(message);
     }
   }
 
@@ -669,7 +741,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         dissemResult = null;
         long stopTime = new Date().getTime();
         long interval = stopTime - startTime;
-        logFiner("[FedoraAccessServlet] Read InputStream "
+        logger.logFiner("[FedoraAccessServlet] Read InputStream "
             + interval + " milliseconds.");
       }
     } else
@@ -679,9 +751,11 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           + " was returned.";
       showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms,
                   response, message);
-      logInfo(message);
+      logger.logInfo(message);
     }
   }
+
+
 
   /**
    * <p> A Thread to serialize an ObjectProfile object into XML.</p>
@@ -813,6 +887,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       fedoraServerPort = s_server.getParameter("fedoraServerPort");
       m_manager=(DOManager) s_server.getModule("fedora.server.storage.DOManager");
       s_access = (Access) s_server.getModule("fedora.server.access.Access");
+      logger = new Logger();
     } catch (InitializationException ie)
     {
       throw new ServletException("Unable to get Fedora Server instance."
@@ -911,13 +986,13 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     html.append("</body></html>");
     out.println(html.toString());
 
-    logFinest("PID: " + PID + " bDefPID: " + bDefPID
+    logger.logFinest("PID: " + PID + " bDefPID: " + bDefPID
               + " methodName: " + methodName);
     if (userParms != null)
     {
       for (int i=0; i<userParms.length; i++)
       {
-        logFinest("userParm: " + userParms[i].name
+        logger.logFinest("userParm: " + userParms[i].name
         + " userValue: "+userParms[i].value);
       }
     }
@@ -926,134 +1001,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 
   private Server getServer() {
       return s_server;
-  }
-
-  /**
-   * Logs a SEVERE message, indicating that the server is inoperable or
-   * unable to start.
-   *
-   * @param message The message.
-   */
-  public final void logSevere(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logSevere(m.toString());
-  }
-
-  public final boolean loggingSevere() {
-      return getServer().loggingSevere();
-  }
-
-  /**
-   * Logs a WARNING message, indicating that an undesired (but non-fatal)
-   * condition occured.
-   *
-   * @param message The message.
-   */
-  public final void logWarning(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logWarning(m.toString());
-  }
-
-  public final boolean loggingWarning() {
-      return getServer().loggingWarning();
-  }
-
-  /**
-   * Logs an INFO message, indicating that something relatively uncommon and
-   * interesting happened, like server or module startup or shutdown, or
-   * a periodic job.
-   *
-   * @param message The message.
-   */
-  public final void logInfo(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logInfo(m.toString());
-  }
-
-  public final boolean loggingInfo() {
-      return getServer().loggingInfo();
-  }
-
-  /**
-   * Logs a CONFIG message, indicating what occurred during the server's
-   * (or a module's) configuration phase.
-   *
-   * @param message The message.
-   */
-  public final void logConfig(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logConfig(m.toString());
-  }
-
-  public final boolean loggingConfig() {
-      return getServer().loggingConfig();
-  }
-
-  /**
-   * Logs a FINE message, indicating basic information about a request to
-   * the server (like hostname, operation name, and success or failure).
-   *
-   * @param message The message.
-   */
-  public final void logFine(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logFine(m.toString());
-  }
-
-  public final boolean loggingFine() {
-      return getServer().loggingFine();
-  }
-
-  /**
-   * Logs a FINER message, indicating detailed information about a request
-   * to the server (like the full request, full response, and timing
-   * information).
-   *
-   * @param message The message.
-   */
-  public final void logFiner(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logFiner(m.toString());
-  }
-
-  public final boolean loggingFiner() {
-      return getServer().loggingFiner();
-  }
-
-  /**
-   * Logs a FINEST message, indicating method entry/exit or extremely
-   * verbose information intended to aid in debugging.
-   *
-   * @param message The message.
-   */
-  public final void logFinest(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logFinest(m.toString());
-  }
-
-  public final boolean loggingFinest() {
-      return getServer().loggingFinest();
   }
 
 }

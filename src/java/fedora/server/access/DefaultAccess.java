@@ -22,6 +22,8 @@ import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.access.dissemination.DisseminationService;
+import fedora.server.errors.DatastreamNotFoundException;
+import fedora.server.errors.DisseminatorNotFoundException;
 import fedora.server.errors.InvalidUserParmException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.GeneralException;
@@ -34,6 +36,10 @@ import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamDef;
+import fedora.server.storage.types.DatastreamReferencedContent;
+import fedora.server.storage.types.DatastreamManagedContent;
+import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MethodDef;
@@ -87,6 +93,10 @@ public class DefaultAccess extends Module implements Access
   /** Dynamic Access Module */
   // FIXIT!! is this the right way to associate the dynamic access module???
   private DynamicAccessModule m_dynamicAccess;
+
+  private String fedoraServerHost = null;
+
+  private String fedoraServerPort = null;
 
   /**
    * <p>Creates and initializes the Access Module. When the server is starting
@@ -156,148 +166,6 @@ public class DefaultAccess extends Module implements Access
           + "module has the repositoryDomainName parameter specified.", getRole());
     }
 
-  }
-
-  /**
-   * <p>Gets the persistent identifiers or PIDs of all Behavior Definition
-   * objects associated with the specified digital object.</p>
-   *
-   * @param context The context of this request.
-   * @param PID The persistent identifier of the digitla object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return An Array containing the list of Behavior Definition object PIDs.
-   * @throws ServerException If any type of error occurred fulfilling the
-   *         request.
-   */
-  public String[] getBehaviorDefinitions(Context context, String PID,
-      Date asOfDateTime) throws ServerException
-  {
-    long startTime = new Date().getTime();
-    m_ipRestriction.enforce(context);
-    // Grab the behavior definitions that are bound to the object
-    Date versDateTime = asOfDateTime;
-    String[] behaviorDefs = null;
-    DOReader reader =
-        m_manager.getReader(context, PID);
-    behaviorDefs = reader.GetBehaviorDefs(versDateTime);
-
-    // Check data object state
-    checkState(context, "Data", reader.GetObjectState(), PID);
-
-    // DYNAMIC!! Grab any dynamic behavior definitions and merge them with
-    // the statically bound behavior definitions
-    String[] behaviorDefsDynamic =
-        m_dynamicAccess.getBehaviorDefinitions(context, PID, asOfDateTime);
-    ArrayList bDefList = new ArrayList();
-    for (int i=0; i < behaviorDefs.length; i++)
-    {
-      bDefList.add(behaviorDefs[i]);
-    }
-    for (int j=0; j < behaviorDefsDynamic.length; j++)
-    {
-      bDefList.add(behaviorDefsDynamic[j]);
-    }
-    return (String[])bDefList.toArray(new String[0]);
-  }
-
-
-  /**
-   * <p>Gets the method definitions of the Behavior Mechanism object
-   * associated with the specified Behavior Definition object in the form of
-   * an array of method definitions.</p>
-   *
-   * @param context The context of this request.
-   * @param PID The persistent identifier of the digital object.
-   * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return An Array containing the list of method definitions.
-   * @throws ServerException If any type of error occurred fulfilling the
-   *         request.
-   */
-  public MethodDef[] getBehaviorMethods(Context context, String PID,
-      String bDefPID, Date asOfDateTime) throws ServerException
-  {
-    long startTime = new Date().getTime();
-    m_ipRestriction.enforce(context);
-
-    // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
-    // grab its dynamic method definitions and return.
-    if (m_dynamicAccess.isDynamicBehaviorDefinition(context, PID, bDefPID))
-    {
-      return
-        m_dynamicAccess.getBehaviorMethods(context, PID, bDefPID, asOfDateTime);
-    }
-
-    Date versDateTime = asOfDateTime;
-    DOReader reader =
-        m_manager.getReader(context, PID);
-
-    // Check data object state
-    checkState(context, "Data", reader.GetObjectState(), PID);
-
-    // Check associated bdef object state
-    BDefReader bDefReader = m_manager.getBDefReader(context, bDefPID);
-    checkState(context, "Behavior Definition", bDefReader.GetObjectState(), bDefPID);
-
-    MethodDef[] methods =
-        reader.getObjectMethods(bDefPID, versDateTime);
-    return methods;
-  }
-
-  /**
-   * <p>Gets the method definitions of the Behavior Mechanism object
-   * associated with the specified Behavior Definition object in the form of
-   * XML as defined in the WSDL.</p>
-   *
-   * @param context The context of this request.
-   * @param PID The persistent identifier of the digital object.
-   * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return A MIME-typed stream containing the method definitions in the form
-   *         of an XML fragment obtained from the WSDL in the associated
-   *         Behavior Mechanism object.
-   * @throws ServerException If any type of error occurred fulfilling the
-   *         request.
-   */
-  public MIMETypedStream getBehaviorMethodsXML(Context context,
-      String PID, String bDefPID, Date asOfDateTime) throws ServerException
-  {
-    long startTime = new Date().getTime();
-    m_ipRestriction.enforce(context);
-    try
-    {
-      Date versDateTime = asOfDateTime;
-      InputStream methodResults = null;
-      DOReader reader =
-          m_manager.getReader(context, PID);
-
-      // Check data object state
-      checkState(context, "Data", reader.GetObjectState(), PID);
-
-      // Check associated bdef object state
-      BDefReader bDefReader = m_manager.getBDefReader(context, bDefPID);
-      checkState(context, "Behavior Definition", bDefReader.GetObjectState(), bDefPID);
-
-      methodResults = reader.getObjectMethodsXML(bDefPID, versDateTime);
-      if (methodResults != null)
-      {
-        MIMETypedStream methodDefs =
-            new MIMETypedStream(CONTENT_TYPE_XML, methodResults, null);
-        long stopTime = new Date().getTime();
-        long interval = stopTime - startTime;
-        logFiner("[DefaultAccess] Roundtrip GetBehaviorMethodsXML: "
-              + interval + " milliseconds.");
-        return methodDefs;
-      }
-    } catch (Throwable th)
-    {
-      getServer().logWarning(th.getMessage());
-      throw new GeneralException("DefaultAccess returned error. The "
-                                 + "underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
-    }
-    return null;
   }
 
   public void checkState(Context context, String objectType, String state, String PID)
@@ -384,6 +252,19 @@ public class DefaultAccess extends Module implements Access
         bmechreader = m_manager.getBMechReader(context, dissSet[i].bMechID);
         break;
       }
+    }
+
+    // if bmechreader is null, it means that no disseminators matched the specified bDef PID
+    // This can occur if a date/time stamp value is specified that is earlier than the creation
+    // date of all disseminators or if the specified bDef PID does not match the bDef of
+    // any disseminators in the object.
+    if(bmechreader == null) {
+        String message = "[DefaultAccess] Either there are no disseminators found in "
+            + "the object \"" + PID + "\" that match the specified date/time stamp "
+            + "of \"" + DateUtility.convertDateToString(asOfDateTime) + "\"  OR "
+            + "the specified bDef PID of \"" + bDefPID + "\" does not match the "
+            + "bDef PID of any disseminators for this digital object.";
+        throw new DisseminatorNotFoundException(message);
     }
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
@@ -512,6 +393,72 @@ public class DefaultAccess extends Module implements Access
       methodList.add(dynamicMethodDefs[j]);
     }
     return (ObjectMethodsDef[])methodList.toArray(new ObjectMethodsDef[0]);
+  }
+
+  public ObjectMethodsDef[] listMethods(Context context, String PID,
+      Date asOfDateTime) throws ServerException
+  {
+    long startTime = new Date().getTime();
+    m_ipRestriction.enforce(context);
+    Date versDateTime = asOfDateTime;
+    DOReader reader =
+        m_manager.getReader(context, PID);
+
+    // Check data object state
+    checkState(context, "Data", reader.GetObjectState(), PID);
+
+    ObjectMethodsDef[] methodDefs =
+        reader.getObjectMethods(versDateTime);
+    long stopTime = new Date().getTime();
+    long interval = stopTime - startTime;
+    logFiner("[DefaultAccess] Roundtrip GetObjectMethods: "
+              + interval + " milliseconds.");
+
+    // DYNAMIC!! Grab any dynamic method definitions and merge them with
+    // the statically bound method definitions
+    ObjectMethodsDef[] dynamicMethodDefs =
+        m_dynamicAccess.getObjectMethods(context, PID, asOfDateTime);
+    ArrayList methodList = new ArrayList();
+    for (int i=0; i < methodDefs.length; i++)
+    {
+      methodList.add(methodDefs[i]);
+    }
+    for (int j=0; j < dynamicMethodDefs.length; j++)
+    {
+      methodList.add(dynamicMethodDefs[j]);
+    }
+    return (ObjectMethodsDef[])methodList.toArray(new ObjectMethodsDef[0]);
+  }
+
+  public DatastreamDef[] listDatastreams(Context context, String PID,
+      Date asOfDateTime) throws ServerException
+  {
+    long startTime = new Date().getTime();
+    m_ipRestriction.enforce(context);
+    Date versDateTime = asOfDateTime;
+    DOReader reader =
+        m_manager.getReader(context, PID);
+
+    // Check data object state
+    checkState(context, "Data", reader.GetObjectState(), PID);
+
+    Datastream[] datastreams = reader.GetDatastreams(asOfDateTime, null);
+    /*if (datastreams.length == 0) {
+        String message = "[DefaultAccess] The digital object with PID of \""
+            + PID + "\" contains no datastreams that match the datetimestamp "
+            + " of \"" + DateUtility.convertDateToString(asOfDateTime) + "\" .";
+        throw new DatastreamNotFoundException(message);
+    }*/
+    DatastreamDef[] dsDefs = new DatastreamDef[datastreams.length];
+    for (int i=0; i<datastreams.length; i++) {
+        DatastreamDef dsDef = new DatastreamDef();
+        dsDef.dsID = datastreams[i].DatastreamID;
+        dsDef.dsLabel = datastreams[i].DSLabel;
+        dsDef.dsMIME = datastreams[i].DSMIME;
+        dsDefs[i] = dsDef;
+    }
+
+    return dsDefs;
   }
 
   public ObjectProfile getObjectProfile(Context context, String PID,
@@ -923,5 +870,30 @@ public class DefaultAccess extends Module implements Access
     }
     reposBaseURL = "http://" + fedoraServerHost + ":" + fedoraServerPort;
     return reposBaseURL;
+  }
+
+  public MIMETypedStream getDatastreamDissemination(Context context, String PID,
+          String dsID, Date asOfDateTime) throws ServerException {
+      m_ipRestriction.enforce(context);
+      long initStartTime = new Date().getTime();
+      long startTime = new Date().getTime();
+      DOReader reader = m_manager.getReader(context, PID);
+
+      // Check data object state
+      checkState(context, "Data", reader.GetObjectState(), PID);
+      Datastream ds = (Datastream) reader.GetDatastream(dsID, asOfDateTime);
+      InputStream inStream = null;
+      if (ds.DSControlGrp.equalsIgnoreCase("E") || ds.DSControlGrp.equalsIgnoreCase("R")) {
+          DatastreamReferencedContent drc = (DatastreamReferencedContent) reader.GetDatastream(dsID, asOfDateTime);
+          inStream = drc.getContentStream();
+      } else if(ds.DSControlGrp.equalsIgnoreCase("M")) {
+          DatastreamManagedContent dmc = (DatastreamManagedContent) reader.GetDatastream(dsID, asOfDateTime);
+          inStream = dmc.getContentStream();
+      } else if(ds.DSControlGrp.equalsIgnoreCase("X")) {
+          DatastreamXMLMetadata dxm =  (DatastreamXMLMetadata) reader.GetDatastream(dsID, asOfDateTime);
+          inStream = dxm.getContentStream();
+      }
+      return new MIMETypedStream(ds.DSMIME, inStream, null);
+
   }
 }

@@ -22,6 +22,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.storage.DOManager;
+import fedora.server.storage.types.DatastreamDef;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MIMETypedStream;
@@ -234,6 +235,11 @@ public class DynamicAccessModule extends Module implements Access
     return da.getBehaviorMethodsXML(context, PID, bDefPID, asOfDateTime);
   }
 
+  public MIMETypedStream getDatastreamDissemination(Context context, String PID,
+          String dsID, Date asOfDateTime) throws ServerException {
+      return da.getDatastreamDissemination(context, PID, dsID, asOfDateTime);
+  }
+
   /**
    * Perform a dissemination for a behavior method that belongs to a
    * dynamic disseminator that is associate with the digital object.  The
@@ -342,5 +348,17 @@ public class DynamicAccessModule extends Module implements Access
   {
     //m_ipRestriction.enforce(context);
     return da.isDynamicBehaviorDefinition(context, PID, bDefPID);
+  }
+
+  public ObjectMethodsDef[] listMethods(Context context, String PID,
+          Date asOfDateTime) throws ServerException
+  {
+      return da.listMethods(context, PID, asOfDateTime);
+  }
+
+  public DatastreamDef[] listDatastreams(Context context, String PID,
+          Date asOfDateTime) throws ServerException
+  {
+      return da.listDatastreams(context, PID, asOfDateTime);
   }
 }

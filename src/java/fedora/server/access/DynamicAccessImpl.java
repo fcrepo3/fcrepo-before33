@@ -18,6 +18,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.storage.DOReader;
+import fedora.server.storage.types.DatastreamDef;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.ObjectMethodsDef;
@@ -303,5 +304,22 @@ public class DynamicAccessImpl
       return true;
     }
     return false;
+  }
+
+  // FIXIT: What do these mean in this context...anything?
+  // Maybe these methods' exposure needs to be re-thought?
+  public MIMETypedStream getDatastreamDissemination(Context context, String PID,
+          String dsID, Date asOfDateTime) throws ServerException {
+      return null;
+  }
+
+  public ObjectMethodsDef[] listMethods(Context context, String PID,
+          Date asOfDateTime) throws ServerException {
+      return null;
+  }
+
+  public DatastreamDef[] listDatastreams(Context context, String PID,
+          Date asOfDateTime) throws ServerException {
+      return null;
   }
 }

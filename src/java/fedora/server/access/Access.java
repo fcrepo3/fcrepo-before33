@@ -7,6 +7,7 @@ import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
+import fedora.server.storage.types.DatastreamDef;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.ObjectMethodsDef;
@@ -39,52 +40,8 @@ import fedora.server.storage.types.Property;
 public interface Access
 {
 
-  /**
-   * <p>Gets the persistent identifiers or PIDs of all Behavior Definition
-   * objects associated with the specified digital object.</p>
-   *
-   * @param context The context of this request.
-   * @param PID The persistent identifier of the digitla object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return An Array containing the list of Behavior Definition object PIDs.
-   * @throws ServerException If any type of error occurred fulfilling the
-   *         request.
-   */
-  public String[] getBehaviorDefinitions(Context context, String PID,
-      Date asOfDateTime) throws ServerException;
-
-  /**
-   * <p>Gets the method definitions of the Behavior Mechanism object
-   * associated with the specified Behavior Definition object in the form of
-   * an array of method definitions.</p>
-   *
-   * @param context The context of this request.
-   * @param PID The persistent identifier of the digital object.
-   * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return An Array containing the list of method definitions.
-   * @throws ServerException If any type of error occurred fulfilling the
-   *         request.
-   */
-  public MethodDef[] getBehaviorMethods(Context context, String PID,
-      String bDefPID, Date asOfDateTime) throws ServerException;
-
-  /**
-   * <p>Gets the method definitions associated with the specified Behavior
-   * Definition object in the form of XML as defined in the WSDL.</p>
-   *
-   * @param context The context of this request.
-   * @param PID The persistent identifier of the digital object.
-   * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return A MIME-typed stream containing the method definitions in the form
-   *         of an XML fragment obtained from the WSDL in the associated
-   *         Behavior Mechanism object.
-   * @throws ServerException If any type of error occurred fulfilling the
-   *         request.
-   */
-  public MIMETypedStream getBehaviorMethodsXML(Context context, String PID,
-      String bDefPID, Date asOfDateTime) throws ServerException;
+    public MIMETypedStream getDatastreamDissemination(Context context, String PID,
+        String dsID, Date asOfDateTime) throws ServerException;
 
   /**
    * <p>Disseminates the content produced by executing the specified method
@@ -107,6 +64,20 @@ public interface Access
       Date asOfDateTime) throws ServerException;
 
   /**
+   * <p>Gets object profile</p>
+   *
+   * @param context The context of this request.
+   * @param PID The persistent identifier of the digital object
+   * @param asOfDateTime The versioning datetime stamp
+   * @return An array of all methods associated with the specified
+   *         digital object.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
+  public ObjectProfile getObjectProfile(Context context, String PID,
+      Date asOfDateTime) throws ServerException;
+
+  /**
    * <p>Gets a list of all Behavior Definition object PIDs and method names
    * associated with the specified digital object.</p>
    *
@@ -121,18 +92,10 @@ public interface Access
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
       Date asOfDateTime) throws ServerException;
 
-  /**
-   * <p>Gets object profile</p>
-   *
-   * @param context The context of this request.
-   * @param PID The persistent identifier of the digital object
-   * @param asOfDateTime The versioning datetime stamp
-   * @return An array of all methods associated with the specified
-   *         digital object.
-   * @throws ServerException If any type of error occurred fulfilling the
-   *         request.
-   */
-  public ObjectProfile getObjectProfile(Context context, String PID,
+  public ObjectMethodsDef[] listMethods(Context context, String PID,
+      Date asOfDateTime) throws ServerException;
+
+  public DatastreamDef[] listDatastreams(Context context, String PID,
       Date asOfDateTime) throws ServerException;
 
   /**
