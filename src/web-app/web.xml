@@ -99,4 +99,17 @@
 	<welcome-file-list id="WelcomeFileList_1">
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
+        <security-constraint>
+            <web-resource-collection>
+                <web-resource-name>Fedora Management Interface</web-resource-name>
+                <url-pattern>/management/*</url-pattern>
+            </web-resource-collection>
+            <auth-constraint>
+                <role-name>administrator</role-name>
+            </auth-constraint>
+        </security-constraint>
+        <login-config>
+            <auth-method>BASIC</auth-method>
+            <realm-name>Fedora Management Interface</realm-name>
+        </login-config>
 </web-app>
