@@ -297,7 +297,7 @@
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPImpl.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<mkdir dir="temp/server/classes"/>
-		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/server/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar" includes="fedora/server/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/server/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar" includes="fedora/server/**,edu/cornell/dlrg/logging/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
@@ -309,6 +309,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.25  2002/08/29 10:44:49  cwilper
+  serverclasses target compiles logging extensions
+
   Revision 1.24  2002/08/21 21:21:57  cwilper
   Updated as per our meeting today re:types packaging.  This effectively
   moves fedora generated types (which used to be in fedora.server.types,
