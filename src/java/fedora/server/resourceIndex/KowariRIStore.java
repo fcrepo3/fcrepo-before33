@@ -19,10 +19,13 @@ import org.kowari.store.jena.RdqlQuery;
 import org.kowari.itql.ItqlInterpreterException;
 
 import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdql.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +36,8 @@ import java.util.Set;
 public class KowariRIStore implements RIStore {
 	private Session m_session;
 	private Model m_model;
+	private List m_statements;
+	private final static int FLUSH_THRESHOLD = 30000;
 	private URI m_fullTextModelURI;
 	
 	//URI rdql = new URI("http://jena.hpl.hp.com/2003/07/query/RDQL");
@@ -50,6 +55,7 @@ public class KowariRIStore implements RIStore {
 	public KowariRIStore(Session session, Model model, URI fullTextModelURI) {
 		m_session = session;
 		m_model = model;
+		m_statements = new ArrayList();
 		m_fullTextModelURI = fullTextModelURI;
 		m_supportedQueryLanguages = new HashSet();
 		m_supportedQueryLanguages.add("rdql");
@@ -76,8 +82,10 @@ public class KowariRIStore implements RIStore {
     public RIResultIterator executeQuery(RIQuery query) throws ResourceIndexException {
         String queryLanguage = query.getQueryLanguage();
         if (m_supportedQueryLanguages.contains(queryLanguage) && queryLanguage.equals("rdql")) {
+            flush();
             return executeQuery((RDQLQuery)query);
         } else if (m_supportedQueryLanguages.contains(queryLanguage) && queryLanguage.equals("itql")) {
+            flush();
             return executeQuery((ITQLQuery)query);
         } else {
             throw new UnsupportedQueryLanguageException(queryLanguage + " is not supported.");
@@ -88,19 +96,21 @@ public class KowariRIStore implements RIStore {
 	 * @see fedora.server.resourceIndex.RIStore#insert(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void insert(String subject, String predicate, String object) {
-		m_model.add(m_model.createResource(subject), 
-				    m_model.createProperty(predicate), 
-					m_model.createResource(object));
+	    m_statements.add(ResourceFactory.createStatement(m_model.createResource(subject),
+	                                                     m_model.createProperty(predicate), 
+	                                                     m_model.createResource(object)));
+	    flushAtThreshold();
 	}
 
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.RIStore#insertLiteral(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void insertLiteral(String subject, String predicate, String object) {
-		m_model.add(m_model.createResource(subject), 
-			        m_model.createProperty(predicate), 
-				    m_model.createLiteral(object));
+	    m_statements.add(ResourceFactory.createStatement(m_model.createResource(subject),
+                                                         m_model.createProperty(predicate), 
+                                                         m_model.createLiteral(object)));
 		
+	    flushAtThreshold();
 		insertLiteralIntoFullTextModel(subject, predicate, object);
 	}
 
@@ -108,10 +118,11 @@ public class KowariRIStore implements RIStore {
 	 * @see fedora.server.resourceIndex.RIStore#insertTypedLiteral(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void insertTypedLiteral(String subject, String predicate, String object, String datatype) {
-		m_model.add(m_model.createResource(subject), 
-			        m_model.createProperty(predicate), 
-				    m_model.createTypedLiteral(object, datatype));
-		
+	    m_statements.add(ResourceFactory.createStatement(m_model.createResource(subject),
+                                                         m_model.createProperty(predicate), 
+                                                         m_model.createTypedLiteral(object, datatype)));
+	    
+	    flushAtThreshold();
 		insertLiteralIntoFullTextModel(subject, predicate, object);
 	}
 
@@ -119,10 +130,11 @@ public class KowariRIStore implements RIStore {
 	 * @see fedora.server.resourceIndex.RIStore#insertLocalLiteral(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public void insertLocalLiteral(String subject, String predicate, String object, String language) {
-		m_model.add(m_model.createResource(subject), 
-		            m_model.createProperty(predicate), 
-		            m_model.createLiteral(object, language));
-		
+	    m_statements.add(ResourceFactory.createStatement(m_model.createResource(subject),
+                										 m_model.createProperty(predicate), 
+                                                         m_model.createLiteral(object, language)));
+
+	    flushAtThreshold();
 		insertLiteralIntoFullTextModel(subject, predicate, object);
 	}
 	
@@ -163,9 +175,9 @@ public class KowariRIStore implements RIStore {
 		    Triple t = new TripleImpl(new URIReferenceImpl(s),
 		            				  new URIReferenceImpl(p),
 		            				  new LiteralImpl(object));
-		    Set statements = new HashSet();
-		    statements.add(t);
-            m_session.insert(m_fullTextModelURI, statements);
+		    Set fullTextStatements = new HashSet();
+		    fullTextStatements.add(t);
+            m_session.insert(m_fullTextModelURI, fullTextStatements);
 		} catch (URISyntaxException ue) {
 		    // TODO Auto-generated catch block
             ue.printStackTrace();
@@ -173,5 +185,16 @@ public class KowariRIStore implements RIStore {
             // TODO Auto-generated catch block
             qe.printStackTrace();
         }
+	}
+	
+	private void flushAtThreshold() {
+	    if (m_statements.size() >= FLUSH_THRESHOLD) {
+	        flush();
+	    }
+	}
+	
+	private void flush() {
+        m_model.add(m_statements);
+        m_statements.clear();
 	}
 }

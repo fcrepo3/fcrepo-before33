@@ -423,21 +423,21 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    	
 	    	// FIXME just for testing
 	        // get method parms
-	        for (int j = 0; j < mparms.length; j++) {
-	            System.out.println(methodName + " *parmName: " + mparms[j].parmName);
-	            System.out.println(methodName + " *parmPassBy: " + mparms[j].parmPassBy);
-	            System.out.println(methodName + " *parmType: " + mparms[j].parmType);
-	            System.out.print(methodName + " *parmDomainValues: ");
-	            for (int k = 0; k < mparms[j].parmDomainValues.length; k++) {
-	            	System.out.print(mparms[j].parmDomainValues[k]);
-	            	if (k < mparms[j].parmDomainValues.length -1) {
-	            		System.out.print(", ");
-	            	}
-	            }
-	            System.out.print("\n");
-	            System.out.println(methodName + " *parmRequired: " + mparms[j].parmRequired);
-	            System.out.println(methodName + " *parmDefaultValue: " + mparms[j].parmDefaultValue);
-	        }
+//	        for (int j = 0; j < mparms.length; j++) {
+//	            System.out.println(methodName + " *parmName: " + mparms[j].parmName);
+//	            System.out.println(methodName + " *parmPassBy: " + mparms[j].parmPassBy);
+//	            System.out.println(methodName + " *parmType: " + mparms[j].parmType);
+//	            System.out.print(methodName + " *parmDomainValues: ");
+//	            for (int k = 0; k < mparms[j].parmDomainValues.length; k++) {
+//	            	System.out.print(mparms[j].parmDomainValues[k]);
+//	            	if (k < mparms[j].parmDomainValues.length -1) {
+//	            		System.out.print(", ");
+//	            	}
+//	            }
+//	            System.out.print("\n");
+//	            System.out.println(methodName + " *parmRequired: " + mparms[j].parmRequired);
+//	            System.out.println(methodName + " *parmDefaultValue: " + mparms[j].parmDefaultValue);
+//	        }
 	    }
 		
 	}
