@@ -28,7 +28,7 @@ import fedora.server.storage.types.DigitalObject;
  * @version $Id$
  */
 public class ResourceIndexRebuilder implements Rebuilder {
-    private static final String DB_SPEC = "src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec";
+    private static final String DB_SPEC = "fedora/server/storage/resources/DefaultDOManager.dbspec";
 
     private File m_serverDir;
     private ServerConfiguration m_serverConfig;
@@ -136,16 +136,14 @@ public class ResourceIndexRebuilder implements Rebuilder {
      * @throws ResourceIndexException
      */
     public void addObject(DigitalObject object) throws ResourceIndexException {
-        System.out.println("Rebuilding " + object.getPid());
         m_ri.addDigitalObject(object);
     }
 
     /**
      * Free up any system resources associated with rebuilding.
      */
-    public void finish() {
-        // nothing to free up
-
+    public void finish() throws Exception {
+        if (m_ri != null) m_ri.close();
     }
     
     private boolean deleteDirectory(String directory) {
@@ -227,9 +225,9 @@ public class ResourceIndexRebuilder implements Rebuilder {
         InputStream specIn;
         
         try {
-            specIn = new FileInputStream(DB_SPEC);
+            specIn = getClass().getClassLoader().getResourceAsStream(DB_SPEC);
             if (specIn == null) {
-                throw new IOException("Cannot find required resource: " + DB_SPEC);
+                throw new IOException("Cannot find required resource in classpath: " + DB_SPEC);
             }
     
             SQLUtility.createNonExistingTables(m_cPool, specIn, new DummyLogging());
