@@ -1,7 +1,5 @@
 package fedora.server.utilities;
 
-import fedora.server.errors.ServerException;
-
 import java.io.IOException;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -9,8 +7,15 @@ import java.net.URL;
 import java.net.HttpURLConnection;
 import java.util.Date;
 import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;                           
+
+import fedora.server.errors.ServerException;
 
 public abstract class AxisUtility {
 
@@ -77,7 +82,7 @@ public abstract class AxisUtility {
     
     public static void showDeployUsage() {
         System.out.println("Usage:");
-        System.out.println("    AxisUtility deploy wsdd_file admin_url timeout_seconds [finished_url]");
+        System.out.println("    AxisUtility deploy wsdd_file timeout_seconds [finished_url]");
     }
     
     public static boolean serverActive(URL url, int timeoutSeconds) {
@@ -110,7 +115,7 @@ public abstract class AxisUtility {
     public static void main(String args[]) {
         if (args.length>0) {
            if (args[0].equals("deploy")) {
-               if ((args.length!=4) && (args.length!=5)) {
+               if ((args.length!=3) && (args.length!=4)) {
                    showDeployUsage();
                } else {
                    File wsddFile=new File(args[1]);
@@ -119,22 +124,39 @@ public abstract class AxisUtility {
                        showDeployUsage();
                    } else {
                        try {
-                           URL adminUrl=new URL(args[2]);
-                           String host=adminUrl.getHost();
-                           int port=adminUrl.getPort();
-                           if (port==-1) {
-                               port=80;
+                           // figure out port from fedora.fcfg... and use it here
+                           String fedoraHome=System.getProperty("fedora.home");
+                           if ((fedoraHome==null) || (fedoraHome.equals(""))) {
+                               throw new IOException("fedora.home system property is not set, but it's required.");
                            }
-                           URL mainUrl=new URL("http", host, port, "/");
-                           String[] parms=new String[] {"-l" + args[2], wsddFile.toString()};
-                           int timeoutSeconds=Integer.parseInt(args[3]);
+                           File fedoraHomeDir=new File(fedoraHome);
+                           File fcfgFile=new File(fedoraHomeDir, "config/fedora.fcfg");
+                           String port="8080";
+                           DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+                           factory.setNamespaceAware(true);
+                           DocumentBuilder builder=factory.newDocumentBuilder();
+                           Element rootElement=builder.parse(fcfgFile).getDocumentElement();
+                           NodeList params=rootElement.getElementsByTagName("param");
+                           for (int i=0; i<params.getLength(); i++) {
+                               Node nameNode=params.item(i).getAttributes().getNamedItem("name");
+                               Node valueNode=params.item(i).getAttributes().getNamedItem("value");
+                               if (nameNode.getNodeValue().equals("fedoraServerPort")) {
+                                   port=valueNode.getNodeValue();
+                               }
+                           }                                      
+                           
+                           StringBuffer url=new StringBuffer("http://localhost:" + port + "/fedora/AdminService");
+                           URL adminUrl=new URL(url.toString());
+                           URL mainUrl=new URL("http://localhost:" + port + "/");
+                           String[] parms=new String[] {"-l" + adminUrl, wsddFile.toString()};
+                           int timeoutSeconds=Integer.parseInt(args[2]);
                            if (serverActive(mainUrl, timeoutSeconds)) {
                                AdminClient.main(parms);
-                               if (args.length==5) {
+                               if (args.length==4) {
                                    try {
-                                       serverActive(new URL(args[4]), 2);
+                                       serverActive(new URL(args[3]), 2);
                                    } catch (MalformedURLException murle) {
-                                       System.out.println("finished_url " + args[4] + " was malformed.");
+                                       System.out.println("finished_url " + args[3] + " was malformed.");
                                        System.exit(1);
                                    }
                                }
@@ -143,10 +165,13 @@ public abstract class AxisUtility {
                                System.exit(1);
                            }
                        } catch (MalformedURLException murle) {
-                           System.out.println("Error: admin_url " + args[2] + " is malformed.");
+                           System.out.println("Error: malformed url.");
                            showDeployUsage();
                        } catch (NumberFormatException nfe) {
-                           System.out.println("Error: timeout_seconds " + args[3] + " is not an integer.");
+                           System.out.println("Error: timeout_seconds " + args[2] + " is not an integer.");
+                           showDeployUsage();
+                       } catch (Exception e) {
+                           System.out.println("Error trying to read <FEDORA_HOME>/config/fedora.fcfg: " + e.getClass().getName() + ": " + e.getMessage());
                            showDeployUsage();
                        }
                    }
