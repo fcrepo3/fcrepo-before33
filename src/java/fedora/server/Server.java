@@ -1,9 +1,11 @@
 package fedora.server;
 
-import fedora.server.errors.ServerInitializationException;
-import fedora.server.errors.ServerShutdownException;
+import fedora.common.*;  // PID, MalformedPIDException
+import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
+import fedora.server.errors.ServerInitializationException;
+import fedora.server.errors.ServerShutdownException;
 import fedora.server.storage.DOManager;
 import fedora.server.utilities.MethodInvokerThread;
 
@@ -1550,6 +1552,26 @@ public abstract class Server
         }
 
         return out.toString();
+    }
+
+    // Wraps PID constructor, throwing a ServerException instead
+    public static PID getPID(String pidString) 
+            throws MalformedPidException {
+        try {
+            return new PID(pidString);
+        } catch (MalformedPIDException e) {
+            throw new MalformedPidException(e.getMessage());
+        }
+    }
+
+    // Wraps PID.fromFilename, throwing a ServerException instead
+    public static PID pidFromFilename(String filename) 
+            throws MalformedPidException {
+        try {
+            return PID.fromFilename(filename);
+        } catch (MalformedPIDException e) {
+            throw new MalformedPidException(e.getMessage());
+        }
     }
 
 }

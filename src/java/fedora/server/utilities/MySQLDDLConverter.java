@@ -56,7 +56,20 @@ public class MySQLDDLConverter
             out.append("  ");
             out.append(cs.getName());
             out.append(' ');
-            out.append(cs.getType());
+            if (cs.getType().equalsIgnoreCase("text")) {
+                if (cs.getBinary()) {
+                    out.append("blob");
+                } else {
+                    out.append(cs.getType());
+                }
+            } else {
+                out.append(cs.getType());
+                if (cs.getType().toLowerCase().startsWith("varchar")) {
+                    if (cs.getBinary()) {
+                        out.append(" BINARY");
+                    }
+                }
+            }
             if (cs.isNotNull()) {
                 out.append(" NOT NULL");
             }

@@ -2,14 +2,14 @@
 <database>
 	<table name="bDef" primaryKey="bDefDbID">
 		<column name="bDefDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="bDefPID" type="varchar(64)" notNull="true" default="" unique="true"/>
+		<column name="bDefPID" type="varchar(64)" notNull="true" default="" binary="true" unique="true"/>
 		<column name="bDefLabel" type="varchar(255)" notNull="false" default=""/>
 		<column name="bDefState" type="char(1)" notNull="true" default="I"/>
 	</table>
 	<table name="bMech" primaryKey="bMechDbID">
 		<column name="bMechDbID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="bDefDbID" type="int(11)" notNull="true" default="0" index="bDefDbID"/>
-		<column name="bMechPID" type="varchar(64)" notNull="true" default="" unique="true"/>
+		<column name="bMechPID" type="varchar(64)" notNull="true" binary="true" default="" unique="true"/>
 		<column name="bMechLabel" type="varchar(255)" notNull="false" default=""/>
 		<column name="bMechState" type="char(1)" notNull="true" default="I"/>
 	</table>
@@ -47,7 +47,7 @@
 	</table>
 	<table name="do" primaryKey="doDbID">
 		<column name="doDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="doPID" type="varchar(64)" notNull="true" default="" unique="true"/>
+		<column name="doPID" type="varchar(64)" notNull="true" default="" binary="true" unique="true"/>
 		<column name="doLabel" type="varchar(255)" notNull="false" default=""/>
 		<column name="doState" type="char(1)" notNull="true" default="I"/>
 	</table>
@@ -111,7 +111,7 @@
         The PID generation algorithm simply increments this value to get
         the next id within the namespace.
         </comment>
-        <column name="namespace" type="varchar(255)" notNull="true"/>
+        <column name="namespace" type="varchar(255)" notNull="true" binary="true"/>
         <column name="highestID" type="int(11)" notNull="true"/>
     </table>
 	<table name="policy" primaryKey="policyID">
@@ -126,7 +126,7 @@
              has been assigned, and the object is written to the definitive
              store, an entry is created here.
             </comment>
-		<column name="doPID" type="varchar(64)" notNull="true">
+		<column name="doPID" type="varchar(64)" notNull="true" binary="true">
 			<comment>The PID of the object</comment>
 		</column>
 		<column name="foType" type="char(1)" notNull="true" default="O">
@@ -162,7 +162,7 @@
                  All dublin core fields start and end with a space, and are
                  in a normalized form (all lowercase letters) so that case
                  insensitive searching may be done.</comment>
-		<column name="pid" type="varchar(64)" notNull="true" index="pid">
+		<column name="pid" type="varchar(64)" notNull="true" index="pid" binary="true">
 			<comment>The PID of the object</comment>
 		</column>
 		<column name="label" type="varchar(255)" notNull="false">
@@ -192,10 +192,10 @@
 		<column name="dcmDate" type="bigint" notNull="false">
 			<comment>The date the primary dublin core record was last modified.</comment>
 		</column>
-       <column name="bDef" type="text" notNull="false">
+       <column name="bDef" type="text" notNull="false" binary="true">
            <comment>The pids of the behavior definition objects to which this object subscribes.</comment>
        </column>
-       <column name="bMech" type="text" notNull="false">
+       <column name="bMech" type="text" notNull="false" binary="true">
            <comment>The pids of the behavior mechanism objects to which this object subscribes.
            The order corresponds to the bDef order; that is, for a given position in the bDef
            list, the same position in the bMech list contains the pid of the bMech that fulfills
@@ -253,7 +253,7 @@
 			When greater-than, greater-than or equal, less-than, less-than or equal,
 			or equals operators are used when querying of the dc:date, the values
 			here are checked.</comment>
-		<column name="pid" type="varchar(64)" notNull="true">
+		<column name="pid" type="varchar(64)" notNull="true" binary="true">
 			<comment>The PID of the object</comment>
 		</column>
 		<column name="dcDate" type="bigint" notNull="true">
@@ -262,7 +262,7 @@
 	</table>
 	<table name="doRepJob">
 		<comment>Used as a queue for replication jobs.</comment>
-		<column name="doPID" type="varchar(64)" notNull="true">
+		<column name="doPID" type="varchar(64)" notNull="true" binary="true">
 			<comment>The object pid</comment>
 		</column>
 		<column name="action" type="char(1)" notNull="true">

@@ -543,7 +543,10 @@ public class FieldSearchResultSQLImpl
      *         as described above
      */
     private static String toSql(String name, String in) {
-        in=in.toLowerCase();
+        if (   !name.endsWith("pid") 
+            && !name.endsWith("bDef") 
+            && !name.endsWith("bMech")) in=in.toLowerCase(); // if it's not a PID-type field, 
+                                                             // it's case insensitive
         if (name.startsWith("dc") || (name.startsWith("doFields.dc"))
             || (name.equals("bDef")) || (name.equals("doFields.bDef"))
             || (name.equals("bMech")) || (name.equals("doFields.bMech")) ) {

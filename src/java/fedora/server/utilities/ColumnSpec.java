@@ -28,6 +28,7 @@ package fedora.server.utilities;
 public class ColumnSpec {
 
     private String m_name;
+    private boolean m_binary;
     private String m_type;
     private String m_defaultValue;
     private boolean m_isAutoIncremented;
@@ -38,12 +39,13 @@ public class ColumnSpec {
     private String m_foreignColumnName;
     private String m_onDeleteAction;
 
-    public ColumnSpec(String name, String type, String defaultValue,
+    public ColumnSpec(String name, String type, boolean binary, String defaultValue,
             boolean isAutoIncremented, String indexName, boolean isUnique,
             boolean isNotNull, String foreignTableName, String foreignColumnName,
             String onDeleteAction) {
         m_name=name;
         m_type=type;
+        m_binary=binary;
         m_defaultValue=defaultValue;
         m_isAutoIncremented=isAutoIncremented;
         m_indexName=indexName;
@@ -56,6 +58,10 @@ public class ColumnSpec {
 
     public String getName() {
         return m_name;
+    }
+
+    public boolean getBinary() {
+        return m_binary;
     }
 
     public String getType() {

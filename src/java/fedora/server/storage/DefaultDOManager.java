@@ -24,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 
+import fedora.common.*;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.ReadOnlyContext;
@@ -879,6 +880,12 @@ public class DefaultDOManager
 						}
                     }
                 }
+
+                // validate and normalized the provided pid, if any
+                if ( (obj.getPid() != null) && (obj.getPid().length() > 0) ) {
+                    obj.setPid(Server.getPID(obj.getPid()).toString());
+                }
+
                 // generate PID if needed...
                 if ( ( obj.getPid()!=null )
                         && ( obj.getPid().indexOf(":")!=-1 )
@@ -910,10 +917,7 @@ public class DefaultDOManager
                     }
                 }
                 
-                // validate PID...
-                // it must be a valid format 
-                assertWellFormedPID(obj.getPid());
-                // and it can't already exist
+                // ensure the object doesn't already exist
                 if (objectExists(obj.getPid())) {
                     throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
                 }
@@ -1060,32 +1064,6 @@ public class DefaultDOManager
             throw new InvalidContextException("The context identifies no userId, but a user must be identified for this operation.");
         }
         return ret;
-    }
-
-    /**
-     * Validate the format of a PID.
-     *
-     * PIDs are formatted like:
-     *  - namespace-part ":" identifier-part
-     * The PID may not exceed 64 characters, total.
-     * The namespace part:
-     *   - is case sensitive
-     *   - must begin with an alpha character
-     *   - must end with an alpha or numeric character
-     *   - may contain "-" or "."
-     *   - unlike the identifier part, may NOT contain "%"
-     * The identifier part:
-     *   - is case sensitive
-     *   - may only consist of [A-Za-z0-9], "-", "." in any position
-     *   - may also use "%", but "%" must be followed by two hex (0-9A-F)
-     *     characters in normalized form.
-     */
-    private void assertWellFormedPID(String pid)
-            throws MalformedPidException {
-        if (pid.length()>64) {
-            throw new MalformedPidException("Pid is too long.  Max total length is 64 chars.");
-        }
-        // FIXME: Do other PID syntax validation here
     }
 
     /**

@@ -72,7 +72,7 @@ public class PID {
     public static PID fromFilename(String filenameString) 
             throws MalformedPIDException {
         String decoded = filenameString.replaceFirst("_", ":");
-        while (decoded.endsWith("%")) {
+        if (decoded.endsWith("%")) {
             decoded = decoded.substring(0, decoded.length() - 1) + ".";
         }
         return new PID(decoded);
@@ -195,7 +195,7 @@ public class PID {
     public String toFilename() {
         if (m_filename == null) { // lazily convert, since not always needed
             m_filename = m_normalized.replaceAll(":", "_");
-            while (m_filename.endsWith(".")) {
+            if (m_filename.endsWith(".")) {
                 m_filename = m_filename.substring(0, m_filename.length() - 1) + "%";
             }
         }

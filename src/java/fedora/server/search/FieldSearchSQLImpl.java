@@ -156,8 +156,8 @@ public class FieldSearchSQLImpl
                         reader.GetObjectPID());
                 bDefs.add(mechReader.getServiceDSInputSpec(null).bDefPID);
             }
-            dbRowValues[9]=getDbValue(bDefs);
-            dbRowValues[10]=getDbValue(bMechs);
+            dbRowValues[9]=getDbValueCaseSensitive(bDefs);
+            dbRowValues[10]=getDbValueCaseSensitive(bMechs);
             // do dc stuff if needed
             DatastreamXMLMetadata dcmd=null;
             try {
@@ -342,6 +342,21 @@ public class FieldSearchSQLImpl
             String val=(String) dcItem.get(i);
             out.append(" ");
             out.append(val.toLowerCase());
+        }
+        out.append(" .");
+        return out.toString();
+    }
+
+    // same as above, but for case sensitive repeating values
+    public static String getDbValueCaseSensitive(List dcItem) {
+        if (dcItem.size()==0) {
+            return null;
+        }
+        StringBuffer out=new StringBuffer();
+        for (int i=0; i<dcItem.size(); i++) {
+            String val=(String) dcItem.get(i);
+            out.append(" ");
+            out.append(val);
         }
         out.append(" .");
         return out.toString();

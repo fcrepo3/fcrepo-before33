@@ -1,7 +1,11 @@
 package fedora.server.storage.lowlevel;
+
 import java.io.File;
-import fedora.server.errors.LowlevelStorageException;
+
+import fedora.server.Server;
 import fedora.server.errors.InitializationException;
+import fedora.server.errors.LowlevelStorageException;
+import fedora.server.errors.MalformedPidException;
 
 /**
  *
@@ -44,12 +48,20 @@ abstract class PathAlgorithm implements IPathAlgorithm {
 		this.storeBase = storeBase;
 	}
 
-	private static final String encode(String unencoded) {
-		return unencoded.replace(':','_');
+	private static final String encode(String unencoded) throws LowlevelStorageException {
+        try {
+    		return Server.getPID(unencoded).toFilename();
+        } catch (MalformedPidException e) {
+            throw new LowlevelStorageException(true, e.getMessage(), e);
+        }
 	}
 
-	public static final String decode(String encoded) {
-		return encoded.replace('_',':');
+	public static final String decode(String encoded) throws LowlevelStorageException {
+        try {
+    		return Server.pidFromFilename(encoded).toString();
+        } catch (MalformedPidException e) {
+            throw new LowlevelStorageException(true, e.getMessage(), e);
+        }
 	}
 
 	abstract protected String format (String pid) throws LowlevelStorageException;

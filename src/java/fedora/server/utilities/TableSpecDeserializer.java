@@ -45,6 +45,7 @@ public class TableSpecDeserializer
     private String m_table_type;
     private String m_column_name;
     private String m_column_type;
+    private boolean m_column_binary;
     private boolean m_column_autoIncrement;
     private String m_column_index;
     private boolean m_column_notNull;
@@ -87,6 +88,9 @@ public class TableSpecDeserializer
             m_column_type=a.getValue("type");
             if (m_column_type==null) {
                 throw new SAXException("column element must have a type attribute");
+            }
+            if (a.getValue("binary")!=null && a.getValue("binary").equalsIgnoreCase("true")) {
+                m_column_binary = true;
             }
             m_column_autoIncrement=getBoolean(a, "autoIncrement");
             m_column_index=a.getValue("index");
@@ -138,7 +142,7 @@ public class TableSpecDeserializer
             m_table_type=null;
             m_columnSpecList=new ArrayList();
         } else if (localName.equals("column")) {
-            m_columnSpecList.add(new ColumnSpec(m_column_name, m_column_type,
+            m_columnSpecList.add(new ColumnSpec(m_column_name, m_column_type, m_column_binary,
                     m_column_default, m_column_autoIncrement, m_column_index,
                     m_column_unique, m_column_notNull,
                     m_column_foreignKey_foreignTableName,
@@ -146,6 +150,7 @@ public class TableSpecDeserializer
                     m_column_foreignKey_onDeleteAction));
             m_column_name=null;
             m_column_type=null;
+            m_column_binary=false;
             m_column_default=null;
             m_column_autoIncrement=false;
             m_column_index=null;
