@@ -46,6 +46,8 @@ public class DefaultExternalContentManager extends Module
 {
 
   private String m_userAgent;
+  private String fedoraServerHost;
+  private String fedoraServerPort;
 
   /**
    * <p> Creates a new DefaultExternalContentManager.</p>
@@ -83,6 +85,10 @@ public class DefaultExternalContentManager extends Module
         m_userAgent="Fedora";
       }
 
+      fedoraServerPort = s_server.getParameter("fedoraServerPort");
+      fedoraServerHost = s_server.getParameter("fedoraServerHost");
+
+
     } catch (Throwable th)
     {
       throw new ModuleInitializationException("[DefaultExternalContentManager] "
@@ -108,6 +114,7 @@ public class DefaultExternalContentManager extends Module
     InputStream inStream = null;
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     MIMETypedStream httpContent = null;
+    URL = URL.replaceAll("local.fedora.server",fedoraServerHost+":"+fedoraServerPort);
     try
     {
       //URL url = new URL(java.net.URLDecoder.decode(URL, "utf-8"));

@@ -448,6 +448,10 @@ public class DisseminationService
               + "userInputParm values removed from URL: " + dissURL);
       }
 
+      // Replace any occurrences of local.fedora.server with the current
+      // fedoraServerHost and fedoraServerPort
+      dissURL = dissURL.replaceAll("local.fedora.server",fedoraServerHost+":"+fedoraServerPort);
+
       // Resolve content referenced by dissemination result.
       s_server.logFinest("[DisseminationService] ProtocolType: "+protocolType);
       if (protocolType.equalsIgnoreCase("http"))
