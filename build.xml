@@ -42,7 +42,7 @@
 		<mkdir dir="temp/client"/>
 	</target>
 	<target name="clientclasses" depends="clientprep,wsdl2java" description="Compile client java code into temp/client">
-		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/rms.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/rms.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
 		<mkdir dir="temp/client/help"/>
@@ -332,6 +332,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.42  2002/10/10 15:39:03  cwilper
+  added StreamUtility in the same way as previous change re:MethodInvokerThread
+
   Revision 1.41  2002/10/10 15:17:54  cwilper
   Add MethodInvokerThread to "includes" parameter on javac invocation
   for clientclasses target.  This ensures that the MethodInvokerThread
