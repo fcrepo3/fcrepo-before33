@@ -91,7 +91,6 @@ public class MethodParameterResolverServlet extends HttpServlet
     String methodName = null;
     String serverURI = null;
     String versDateTime = null;
-    URLDecoder decoder = new URLDecoder();
     StringBuffer methodParms = new StringBuffer();
     Hashtable h_methodParms = new Hashtable();
     response.setContentType(HTML_CONTENT_TYPE);
@@ -105,13 +104,13 @@ public class MethodParameterResolverServlet extends HttpServlet
       String value = new String(request.getParameter(name));
       if (name.equals("PID"))
       {
-        PID = decoder.decode((String)request.getParameter(name), "UTF-8");
+        PID = URLDecoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("bDefPID"))
       {
-        bDefPID = decoder.decode((String)request.getParameter(name), "UTF-8");
+        bDefPID = URLDecoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("methodName"))
       {
-        methodName = decoder.decode((String)request.getParameter(name), "UTF-8");
+        methodName = URLDecoder.decode((String)request.getParameter(name), "UTF-8");
         } else if (name.equals("asOfDateTime"))
         {
         versDateTime = (String)request.getParameter(name);
@@ -121,8 +120,8 @@ public class MethodParameterResolverServlet extends HttpServlet
       {
         // Any remaining parameters are assumed to be method parameters so
         // decode and place in hashtable.
-        h_methodParms.put(decoder.decode(name, "UTF-8"),
-            decoder.decode((String)request.getParameter(name), "UTF-8"));
+        h_methodParms.put(URLDecoder.decode(name, "UTF-8"),
+            URLDecoder.decode((String)request.getParameter(name), "UTF-8"));
       }
     }
 
@@ -139,7 +138,7 @@ public class MethodParameterResolverServlet extends HttpServlet
           + " -- methodParms: " + methodParms.toString() + "\".  ";
       System.out.println(message);
       response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
     } else
     {
       // Translate parameters into dissemination request.

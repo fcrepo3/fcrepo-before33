@@ -24,14 +24,12 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
 import fedora.server.Context;
-import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
-import fedora.server.storage.DOManager;
 import fedora.server.storage.types.DatastreamDef;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.Logger;
@@ -249,14 +247,14 @@ public class ListDatastreamsServlet extends HttpServlet
       Hashtable h_parms = new Hashtable();
       for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
       {
-          String name = decoder.decode((String)e.nextElement(), "UTF-8");
+          String name = URLDecoder.decode((String)e.nextElement(), "UTF-8");
           if (isListDatastreamsRequest && name.equalsIgnoreCase("xml"))
           {
               xml = new Boolean(request.getParameter(name)).booleanValue();
           }
           else
           {
-              String value = decoder.decode(request.getParameter(name), "UTF-8");
+              String value = URLDecoder.decode(request.getParameter(name), "UTF-8");
               h_parms.put(name,value);
           }
       }
@@ -485,9 +483,5 @@ public class ListDatastreamsServlet extends HttpServlet
    */
   public void destroy()
           {}
-
-  private Server getServer() {
-      return s_server;
-  }
 
 }

@@ -12,8 +12,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import fedora.server.Server;
-import fedora.server.Logging;
 import fedora.server.errors.InitializationException;
+import fedora.server.utilities.Logger;
 
 
 /**
@@ -47,7 +47,7 @@ import fedora.server.errors.InitializationException;
  * @version $Id$
  */
 public class MethodParameterResolverServlet
-    extends HttpServlet implements Logging
+    extends HttpServlet
 {
 
   /** A string constant for the html MIME type */
@@ -58,12 +58,16 @@ public class MethodParameterResolverServlet
 
   /** An instance of the Fedora server. */
   private static Server s_server = null;
+  
+  /** Instance of Logger to log servlet events in Fedora server log */
+  private static Logger logger = null;  
 
   public void init() throws ServletException
   {
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      logger = new Logger();
     } catch (InitializationException ie)
     {
       throw new ServletException("Unable to get Fedora Server instance. -- "
@@ -114,13 +118,13 @@ public class MethodParameterResolverServlet
       String name = new String((String)parms.nextElement());
       if (name.equals("PID"))
       {
-        PID = decoder.decode((String)request.getParameter(name), "UTF-8");
+        PID = URLDecoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("bDefPID"))
       {
-        bDefPID = decoder.decode((String)request.getParameter(name), "UTF-8");
+        bDefPID = URLDecoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("methodName"))
       {
-        methodName = decoder.decode((String)request.getParameter(name), "UTF-8");
+        methodName = URLDecoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("asOfDateTime"))
       {
         versDateTime = ((String)request.getParameter(name)).trim();
@@ -134,8 +138,8 @@ public class MethodParameterResolverServlet
       {
         // Any remaining parameters are assumed to be method parameters so
         // decode and place in hashtable.
-        h_methodParms.put(decoder.decode(name, "UTF-8"),
-            decoder.decode((String)request.getParameter(name), "UTF-8"));
+        h_methodParms.put(URLDecoder.decode(name, "UTF-8"),
+            URLDecoder.decode((String)request.getParameter(name), "UTF-8"));
       }
     }
 
@@ -150,9 +154,9 @@ public class MethodParameterResolverServlet
           + " -- bDefPID: " + bDefPID
           + " -- methodName: " + methodName
           + " -- methodParms: " + methodParms.toString() + "\".  ";
-      logWarning(message);
+      logger.logWarning(message);
       response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
     } else
     {
       // Translate web form parameters into dissemination request.
@@ -206,138 +210,6 @@ public class MethodParameterResolverServlet
 
   //Clean up resources
   public void destroy()
-  {
-  }
-
-  private Server getServer() {
-      return s_server;
-  }
-
-  /**
-   * Logs a SEVERE message, indicating that the server is inoperable or
-   * unable to start.
-   *
-   * @param message The message.
-   */
-  public final void logSevere(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logSevere(m.toString());
-  }
-
-  public final boolean loggingSevere() {
-      return getServer().loggingSevere();
-  }
-
-  /**
-   * Logs a WARNING message, indicating that an undesired (but non-fatal)
-   * condition occured.
-   *
-   * @param message The message.
-   */
-  public final void logWarning(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logWarning(m.toString());
-  }
-
-  public final boolean loggingWarning() {
-      return getServer().loggingWarning();
-  }
-
-  /**
-   * Logs an INFO message, indicating that something relatively uncommon and
-   * interesting happened, like server or module startup or shutdown, or
-   * a periodic job.
-   *
-   * @param message The message.
-   */
-  public final void logInfo(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logInfo(m.toString());
-  }
-
-  public final boolean loggingInfo() {
-      return getServer().loggingInfo();
-  }
-
-  /**
-   * Logs a CONFIG message, indicating what occurred during the server's
-   * (or a module's) configuration phase.
-   *
-   * @param message The message.
-   */
-  public final void logConfig(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logConfig(m.toString());
-  }
-
-  public final boolean loggingConfig() {
-      return getServer().loggingConfig();
-  }
-
-  /**
-   * Logs a FINE message, indicating basic information about a request to
-   * the server (like hostname, operation name, and success or failure).
-   *
-   * @param message The message.
-   */
-  public final void logFine(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logFine(m.toString());
-  }
-
-  public final boolean loggingFine() {
-      return getServer().loggingFine();
-  }
-
-  /**
-   * Logs a FINER message, indicating detailed information about a request
-   * to the server (like the full request, full response, and timing
-   * information).
-   *
-   * @param message The message.
-   */
-  public final void logFiner(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logFiner(m.toString());
-  }
-
-  public final boolean loggingFiner() {
-      return getServer().loggingFiner();
-  }
-
-  /**
-   * Logs a FINEST message, indicating method entry/exit or extremely
-   * verbose information intended to aid in debugging.
-   *
-   * @param message The message.
-   */
-  public final void logFinest(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logFinest(m.toString());
-  }
-
-  public final boolean loggingFinest() {
-      return getServer().loggingFinest();
-  }
+  {}
+  
 }

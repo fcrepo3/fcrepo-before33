@@ -28,7 +28,6 @@ import javax.xml.transform.TransformerFactory;
 
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
-import fedora.server.Logging;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
@@ -312,7 +311,7 @@ public class FedoraAccessServlet extends HttpServlet
         }
     } else if (URIArray.length > 7) {
       // Request is either dissemination request or timestamped get datastream request
-      methodName = decoder.decode(URIArray[7], "UTF-8");
+      methodName = URLDecoder.decode(URIArray[7], "UTF-8");
       if (URIArray.length == 8) {
         if (URIArray[6].indexOf(":")==-1) {
             // If it doesn't contain a colon, they were after a timestamped
@@ -384,14 +383,14 @@ public class FedoraAccessServlet extends HttpServlet
     Hashtable h_userParms = new Hashtable();
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
     {
-      String name = decoder.decode((String)e.nextElement(), "UTF-8");
+      String name = URLDecoder.decode((String)e.nextElement(), "UTF-8");
       if (isGetObjectProfileRequest && name.equalsIgnoreCase("xml"))
       {
         xml = new Boolean(request.getParameter(name)).booleanValue();
       }
       else
       {
-        String value = decoder.decode(request.getParameter(name), "UTF-8");
+        String value = URLDecoder.decode(request.getParameter(name), "UTF-8");
         h_userParms.put(name,value);
       }
     }
@@ -439,7 +438,7 @@ public class FedoraAccessServlet extends HttpServlet
       }
       else if (isGetDisseminationRequest)
       {
-        try {
+       try {
             bDefPID = Server.getPID(URIArray[6]).toString();  // this one too
         } catch (Throwable th) {
             String message = "[FedoraAccessServlet] An error has occured in "

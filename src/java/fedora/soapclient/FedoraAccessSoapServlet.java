@@ -26,7 +26,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
 import com.icl.saxon.expr.StringValue;
@@ -319,7 +318,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
     String PID = null;
     String dsID = null;
     Property[] userParms = null;
-    URLDecoder decoder = new URLDecoder();
     boolean xml = false;
     long servletStartTime = new Date().getTime();
     h_userParms = new Hashtable();
@@ -328,22 +326,22 @@ public class FedoraAccessSoapServlet extends HttpServlet
     Enumeration URLParms = request.getParameterNames();
     while ( URLParms.hasMoreElements())
     {
-      String parm = decoder.decode((String) URLParms.nextElement(), "UTF-8");
+      String parm = URLDecoder.decode((String) URLParms.nextElement(), "UTF-8");
       if (parm.equals("action_"))
       {
         action = request.getParameter(parm);
       } else if (parm.equals("PID_"))
       {
-        PID = decoder.decode(request.getParameter(parm), "UTF-8");
+        PID = URLDecoder.decode(request.getParameter(parm), "UTF-8");
       } else if (parm.equals("bDefPID_"))
       {
-        bDefPID = decoder.decode(request.getParameter(parm), "UTF-8");
+        bDefPID = URLDecoder.decode(request.getParameter(parm), "UTF-8");
       } else if (parm.equals("dsID_"))
       {
-        dsID = decoder.decode(request.getParameter(parm), "UTF-8");
+        dsID = URLDecoder.decode(request.getParameter(parm), "UTF-8");
       } else if (parm.equals("methodName_"))
       {
-        methodName = decoder.decode(request.getParameter(parm), "UTF-8");
+        methodName = URLDecoder.decode(request.getParameter(parm), "UTF-8");
       } else if (parm.equals("asOfDateTime_"))
       {
         asOfDateTime = request.getParameter(parm);
@@ -356,7 +354,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         // Any remaining parameters are assumed to be user-supplied method
         // parameters. Place user-supplied parameters in hashtable for
         // easier access.
-        h_userParms.put(parm, decoder.decode(request.getParameter(parm), "UTF-8"));
+        h_userParms.put(parm, URLDecoder.decode(request.getParameter(parm), "UTF-8"));
       }
     }
 

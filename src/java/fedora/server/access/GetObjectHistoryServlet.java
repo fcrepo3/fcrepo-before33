@@ -145,8 +145,8 @@ public class GetObjectHistoryServlet extends HttpServlet
     Hashtable h_userParms = new Hashtable();
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
     {
-        String name = decoder.decode((String)e.nextElement(), "UTF-8");
-        String value = decoder.decode(request.getParameter(name), "UTF-8");
+        String name = URLDecoder.decode((String)e.nextElement(), "UTF-8");
+        String value = URLDecoder.decode(request.getParameter(name), "UTF-8");
         if (name.equalsIgnoreCase("xml"))
         {
             xml = new Boolean(request.getParameter(name)).booleanValue();
@@ -423,10 +423,6 @@ public class GetObjectHistoryServlet extends HttpServlet
     html.append("</body></html>");
     out.println(html.toString());
     html = null;
-  }
-
-  private Server getServer() {
-      return s_server;
   }
 
 }
