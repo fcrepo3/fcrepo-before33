@@ -1,202 +1,283 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-    "http://www.altova.com/schemas/docbook/docbookx.dtd">
-<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
-<?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
-<book>
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?><?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?><book>
   <bookinfo>
-    <graphic/>
     <title>The Fedora Manual</title>
+
     <subtitle>for Software Release 1.0</subtitle>
+
     <copyright>
       <year>2003, Cornell University and The University of Virginia</year>
     </copyright>
   </bookinfo>
+
   <preface>
     <title>About This Manual</title>
-    <para>This is the official manual for Fedora, an open-source digital 
-        repository management system available at 
-        <ulink url="http://www.fedora.info/">http://www.fedora.info/</ulink>.
-    </para>
-    <para><itemizedlist>
-        <title>There are three parts:</title>
-        <listitem>
-          <para><emphasis>User&apos;s Guide</emphasis>: Provides basic 
-              information about the software and demonstrates how an 
-              end-user interacts with it.
-          </para>
-        </listitem>
-        <listitem>
-          <para><emphasis>Administrator&apos;s Guide</emphasis>: Explains 
-              how to install and configure the server, how to use the GUI and 
-              command-line clients, and how to create your own digital 
-              objects for use within the repository.</para>
-        </listitem>
-        <listitem>
-          <para><emphasis>Developer&apos;s Guide</emphasis>: Gives API 
-              documentation, and tips on modifying the server&apos;s source 
-              code.
-          </para>
-        </listitem>
-      </itemizedlist></para>
-    <para>In this manual, <emphasis>end-user</emphasis> refers to a person 
-        using a web browser or custom client to interact with an existing 
-        repository, <emphasis>administrator</emphasis> refers to a person 
-        responsible for installing, configuring, and maintaining a repository, 
-        and <emphasis>developer</emphasis> refers to a person who writes 
-        programs to extend the functionality of the software or a particular 
-        repository.
-    </para>
+
+    <para>This is the official manual for Fedora, an open-source digital
+    repository management system available at <ulink
+    url="http://www.fedora.info/">http://www.fedora.info/</ulink>.</para>
+
+    <para><itemizedlist><title>There are three parts:</title><listitem><para><emphasis>User&#39;s
+    Guide - </emphasis>Provides basic information about the software and
+    demonstrates how an end-user interacts with it.</para></listitem><listitem><para><emphasis>Administrator&#39;s
+    Guide - </emphasis>Explains how to install and configure the server, how
+    to use the GUI and command-line clients, and how to create your own
+    digital objects for use within the repository.</para></listitem><listitem><para><emphasis>Developer&#39;s
+    Guide - </emphasis>Gives API documentation, and tips on modifying the
+    server&#39;s source code.</para></listitem></itemizedlist></para>
+
+    <para>In this manual, <emphasis>end-user</emphasis> refers to a person
+    using a web browser or custom client to interact with an existing
+    repository, <emphasis>administrator</emphasis> refers to a person
+    responsible for installing, configuring, and maintaining a repository, and
+    <emphasis>developer</emphasis> refers to a person who writes programs to
+    extend the functionality of the software or a particular repository.</para>
   </preface>
+
   <part>
-    <title>User&apos;s Guide</title>
+    <title>User&#39;s Guide</title>
+
     <chapter>
       <title>Introducing Fedora</title>
+
       <sect1>
         <title>Background</title>
-        <para>The Fedora software is based on an architecture known as FEDORA 
-            (Flexible Extensible Digital Object and Repository Architecture) 
-            [<ulink url="http://www.cs.cornell.edu/payette/papers/ECDL98/FEDORA.html">view paper</ulink>].
-            The Fedora architecture was developed by Carl Lagoze and Sandy 
-            Payette at Cornell University, inspired by ideas of the 
-            Kahn/Wilensky Framework [<ulink url="http://www.cnri.reston.va.us/cstr/arch/k-w.html">view paper</ulink>] 
-            and the Warwick Framework [<ulink url="http://www.dlib.org/dlib/july96/lagoze/07lagoze.html">view paper</ulink>].
-        </para>
-        <para>Over the last several years, Cornell University and The 
-            University of Virginia have created promising prototypes of their 
-            own.  This open-source implementation, indended for public release,
-            is the result of a collaborative effort between Cornell and UVA. 
-            The project is funded by a grant from the Andrew W. Mellon 
-            foundation.
-        </para>
-        <para>More information about the project and its history can be found 
-            at <ulink url="http://www.fedora.info/">http://www.fedora.info/</ulink>.
-        </para>
+
+        <para>The Fedora software is based on an architecture known as FEDORA
+        (Flexible Extensible Digital Object and Repository Architecture) [<ulink
+        url="http://www.cs.cornell.edu/payette/papers/ECDL98/FEDORA.html">view
+        paper</ulink>]. The Fedora architecture was developed by Carl Lagoze
+        and Sandy Payette at Cornell University, inspired by ideas of the
+        Kahn/Wilensky Framework [<ulink
+        url="http://www.cnri.reston.va.us/cstr/arch/k-w.html">view paper</ulink>]
+        and the Warwick Framework [<ulink
+        url="http://www.dlib.org/dlib/july96/lagoze/07lagoze.html">view paper</ulink>].</para>
+
+        <para>Over the last several years, Cornell University and The
+        University of Virginia have created promising prototypes of their own.
+        This open-source implementation, indended for public release, is the
+        result of a collaborative effort between Cornell and UVA. The project
+        is funded by a grant from the Andrew W. Mellon foundation.</para>
+
+        <para>More information about the project and its history can be found
+        at <ulink url="http://www.fedora.info/">http://www.fedora.info/</ulink>.</para>
       </sect1>
+
       <sect1>
         <title>Concepts</title>
-        <para>In Fedora, a <emphasis>digital object</emphasis> is a data 
-            structure with a <emphasis>PID</emphasis> (a unique, persistent 
-            identifer), one or more <emphasis>datastreams</emphasis> (typed 
-            sequences of bits), and one or more <emphasis>disseminators.</emphasis> 
-            A disseminator maps an object&apos;s datastreams as input to 
-            a service, enabling the repository to provide disseminations of 
-            the object. A dissemination is simply a representation of an object.
-        </para>
-        <para>A behavior mechanism represents a service that performs functions 
-            on datastreams.  It is the means by which a disseminator binds to a 
-            service.  A behavior mechanism specifies the datastream input 
-            constraints of the service it describes.  It also adheres to a 
-            contract that is specified by its behavior definition.
-        </para>
-        <para>A behavior definition specifies the names of methods that 
-            subscribing mechanisms must implement.  It also specifies the user 
-            parameters that implementing services must accept.  These are the 
-            same user parameters that are used by the disseminating party in 
-            the request to the Fedora repository.
-        </para>
+
+        <para>In Fedora, a <emphasis>digital object</emphasis> is a data
+        structure with a <emphasis>PID</emphasis> (a unique, persistent
+        identifer), one or more <emphasis>datastreams</emphasis> (typed
+        sequences of bits), and one or more <emphasis>disseminators.</emphasis>
+        A disseminator maps an object&#39;s datastreams as input to a service,
+        enabling the repository to provide disseminations of the object. A
+        dissemination is simply a representation of an object.</para>
+
+        <para>A behavior mechanism represents a service that performs
+        functions on datastreams. It is the means by which a disseminator
+        binds to a service. A behavior mechanism specifies the datastream
+        input constraints of the service it describes. It also adheres to a
+        contract that is specified by its behavior definition.</para>
+
+        <para>A behavior definition specifies the names of methods that
+        subscribing mechanisms must implement. It also specifies the user
+        parameters that implementing services must accept. These are the same
+        user parameters that are used by the disseminating party in the
+        request to the Fedora repository.</para>
       </sect1>
     </chapter>
+
     <chapter>
       <title>Features</title>
-      <para>Text for features.</para>
+
+      <para>[some kind of blub here]<itemizedlist><title>Major features:</title><listitem><para><emphasis>Datastreams
+      from disparate sources</emphasis> - Objects in a repository may consist
+      of content and metadata that physically reside inside the repository or
+      outside the repository.</para></listitem><listitem><para><emphasis>Parameterized
+      disseminators</emphasis> - User options may be provided at dissemination
+      time.</para></listitem><listitem><para><emphasis>Object Field Search</emphasis>
+      - A few standard, key metadata fields are indexed along with the primary
+      dublin core datastream for each object. The software provides an
+      interface for a freetext and field-specific queries across these fields.</para></listitem><listitem><para><emphasis>OAI-PMH
+      v2.0</emphasis> - Every object has a primary dublin core record that is
+      made available via the OAI Protocol for Harvesting Metadata, v2.0.</para></listitem></itemizedlist></para>
     </chapter>
+
     <chapter>
       <title>Web Exposure</title>
+
       <sect1>
         <title>Disseminations</title>
-        <para>Text for viewing a dissemination.</para>
+
+        <para>[This should give the HTTP syntax for viewing a dissemination,
+        explaining the URL components, but shouldn&#39;t assume localhost or
+        port 8080].</para>
       </sect1>
+
       <sect1>
         <title>Object Profiles and Dissemination Indexes</title>
-        <para>Text for viewing a dissemination index.</para>
+
+        <para>[Same, but for obj profiles and dissem indexes]</para>
       </sect1>
+
       <sect1>
         <title>Search/Browse</title>
-        <para>http://localhost:8080/fedora/search</para>
+
+        <para>[Same, but for the search interface at
+        http://HOST:PORT/fedora/search]</para>
       </sect1>
     </chapter>
   </part>
+
   <part>
-    <title>Administrator&apos;s Guide</title>
+    <title>Administrator&#39;s Guide</title>
+
     <chapter>
       <title>Server Software</title>
+
       <sect1>
         <title>Overview</title>
-        <para>Overview text. (Directory structure here)
-        </para>
+
+        <sect2>
+          <title>Directory Structure</title>
+
+          <para>The application&#39;s base directory contains several entries
+          you should be aware of.<itemizedlist><title>Key directories:</title><listitem><para><emphasis>bin/</emphasis>
+          - Contains executables for the server and client tools (.bat files
+          for Windows and shell scripts for unix)</para></listitem><listitem><para><emphasis>config/</emphasis>
+          - Contains the server configuration file, fedora.fcfg.</para></listitem><listitem><para><emphasis>demo/</emphasis>
+          - Contains sample digital objects that can be used as examples.</para></listitem><listitem><para><emphasis>doc/</emphasis>
+          - Contains the software documentation.</para></listitem><listitem><para><emphasis>logs/</emphasis>
+          - Contains the logfiles that the server writes to while it&#39;s
+          running.</para></listitem></itemizedlist></para>
+
+          <para>Besides these key directories, you will notice several others.
+          These are important to the server&#39;s operation, but their
+          contents don&#39;t need to be understood in order to administer the
+          server.<itemizedlist><title>Other directories:</title><listitem><para><emphasis>access/</emphasis>
+          - Stylesheets for the default disseminator. All objects in the
+          repository automatically subscribe to this disseminator, which
+          provides methods for listing and retrieving the components of the
+          object.</para></listitem><listitem><para><emphasis>client/</emphasis>
+          - The java classes necessary to run the client applications.</para></listitem><listitem><para><emphasis>mckoi094/</emphasis>
+          - A bundled java-based database that can be used as the underlying
+          RDBMS for the server.</para></listitem><listitem><para><emphasis>pidgen/</emphasis>
+          - Files supporting the PID generator, the component of the server
+          that provides unique ids for new objects.</para></listitem><listitem><para><emphasis>schematron/</emphasis>
+          - Files supporting the validation of serialized digital objects.</para></listitem><listitem><para><emphasis>tomcat41/</emphasis>
+          - The bundled web server, which makes the repository web-accessible.</para></listitem><listitem><para><emphasis>work/</emphasis>
+          - A temporary directory used by to support various server
+          activities.</para></listitem><listitem><para><emphasis>xsd/</emphasis>
+          - W3 XML schemas, for reference and validation support.</para></listitem></itemizedlist></para>
+        </sect2>
       </sect1>
+
       <sect1>
         <title>Installation</title>
+
         <sect2>
           <title>Requirements</title>
+
           <para>Requirements text</para>
         </sect2>
+
         <sect2>
           <title>Process</title>
+
           <para>Process text</para>
         </sect2>
+
         <sect2>
           <title>Stopping</title>
+
           <para>Stopping text</para>
         </sect2>
+
         <sect2>
           <title>Configuration</title>
+
           <para>For server, for modules.</para>
         </sect2>
+
         <sect2>
           <title>Restarting</title>
+
           <para>Restarting text</para>
         </sect2>
       </sect1>
+
       <sect1>
         <title>Client Tools</title>
+
         <sect2>
           <title>Administrator</title>
+
           <para>Administrator text.</para>
         </sect2>
+
         <sect2>
           <title>Batch Ingest</title>
+
           <para>Batch ingest text.</para>
         </sect2>
+
         <sect2>
           <title>Other Command-Line Tools</title>
+
           <para>Other text.</para>
         </sect2>
       </sect1>
     </chapter>
+
     <chapter>
       <title>Digital Object Construction</title>
+
       <sect1>
         <title>Objects</title>
+
         <para>text</para>
       </sect1>
+
       <sect1>
         <title>Behavior Definitions</title>
+
         <para>text</para>
       </sect1>
+
       <sect1>
         <title>Behavior Mechanisms</title>
+
         <para>text</para>
       </sect1>
     </chapter>
   </part>
+
   <part>
-    <title>Developer&apos;s Guide</title>
+    <title>Developer&#39;s Guide</title>
+
     <chapter>
       <title>Public APIs</title>
+
       <sect1>
         <title>Access (API-A)</title>
+
         <para>text</para>
       </sect1>
+
       <sect1>
         <title>Management (API-M)</title>
+
         <para>text</para>
       </sect1>
     </chapter>
+
     <chapter>
       <title>Modifying the Source</title>
+
       <para>Point to javadocs, which include dox on source structure.</para>
     </chapter>
   </part>
