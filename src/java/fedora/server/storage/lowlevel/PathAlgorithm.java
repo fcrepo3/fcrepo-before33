@@ -65,7 +65,7 @@ abstract class PathAlgorithm implements IPathAlgorithm {
         try {
             int i = encoded.indexOf("+");
             if (i != -1) {
-    		    return Server.pidFromFilename(encoded.substring(0, i-1)).toString() 
+    		    return Server.pidFromFilename(encoded.substring(0, i)).toString() 
     		            + encoded.substring(i);
             } else {
     		    return Server.pidFromFilename(encoded).toString();
