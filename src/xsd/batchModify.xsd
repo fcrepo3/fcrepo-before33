@@ -8,12 +8,10 @@
 				<xsd:element ref="purgeDatastream" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="setDatastreamState" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="setDatastreamHarvestable" minOccurs="0" maxOccurs="unbounded"/>
-				<!--
 				<xsd:element ref="addDisseminator" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="modifyDisseminator" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="purgeDisseminator" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="setDisseminatorState" minOccurs="0" maxOccurs="unbounded"/>
-				-->
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -104,32 +102,32 @@
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
-	<!--
 	<xsd:element name="addDisseminator">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="datastreamBinding" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="addDatastreamBinding" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="pid" type="xsd:string" use="required"/>
 			<xsd:attribute name="bDefPid" type="xsd:string" use="required"/>
 			<xsd:attribute name="bMechPid" type="xsd:string" use="required"/>
-			<xsd:attribute name="dissLabel" type="xsd:string"/>
+			<xsd:attribute name="dissLabel" type="xsd:string" use="required"/>
 			<xsd:attribute name="bDefLabel" type="xsd:string"/>
 			<xsd:attribute name="bMechLabel" type="xsd:string"/>
 			<xsd:attribute name="dissState" type="xsd:string"/>
 		</xsd:complexType>
-	</xsd:element>	
+	</xsd:element>
 	<xsd:element name="purgeDisseminator">
 		<xsd:complexType>
 			<xsd:attribute name="pid" type="xsd:string" use="required"/>
-			<xsd:attribute name="disssID" type="xsd:string" use="required"/>
+			<xsd:attribute name="dissID" type="xsd:string" use="required"/>
 			<xsd:attribute name="asOfDate" type="xsd:dateTime"/>
 		</xsd:complexType>
-	</xsd:element>	
+	</xsd:element>
 	<xsd:element name="modifyDisseminator">
 		<xsd:complexType>
 			<xsd:sequence>
-				<xsd:element ref="datastreamBinding" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="removeDatastreamBinding" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="addDatastreamBinding" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
 			<xsd:attribute name="pid" type="xsd:string" use="required"/>
 			<xsd:attribute name="dissID" type="xsd:string" use="required"/>
@@ -146,21 +144,18 @@
 			<xsd:attribute name="dissID" type="xsd:string" use="required"/>
 			<xsd:attribute name="dissState" type="xsd:string"/>
 		</xsd:complexType>
-	</xsd:element>	
-	<xsd:element name="datastreamBinding">
+	</xsd:element>
+	<xsd:element name="addDatastreamBinding">
 		<xsd:complexType>
 			<xsd:attribute name="dsBindKeyName" type="xsd:string" use="required"/>
 			<xsd:attribute name="dsID" type="xsd:string" use="required"/>
 			<xsd:attribute name="dsBindLabel" type="xsd:string"/>
-			<xsd:attribute name="op" use="required">
-				<xsd:simpleType>
-					<xsd:restriction base="xsd:string">
-						<xsd:enumeration value="addBinding"/>
-						<xsd:enumeration value="removeBinding"/>
-					</xsd:restriction>
-				</xsd:simpleType>
-			</xsd:attribute>
+			<xsd:attribute name="seqNo" type="xsd:string"/>
 		</xsd:complexType>
 	</xsd:element>
-	-->
+	<xsd:element name="removeDatastreamBinding">
+		<xsd:complexType>
+			<xsd:attribute name="dsID" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
 </xsd:schema>
