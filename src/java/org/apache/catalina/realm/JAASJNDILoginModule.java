@@ -46,7 +46,7 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 		return callbackHandler;
 	}
 	
-	private boolean loginModuleIsContingent = true; // safest default
+	private boolean attributeStoreOnly = true; // safest default
 
 	protected boolean debug = false;
 
@@ -124,12 +124,12 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 	}
 	
 	private void localInitialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
-		loginModuleIsContingent = true;
+		attributeStoreOnly = "true".equalsIgnoreCase((String) options.get("attributeStoreOnly"));		
 		
 		String connectionURL = ""; //"ldap://ldapvs.itc.virginia.edu:389";
 		String userBase = ""; //"o=University of Virginia,c=US";
 		String userSearch = ""; //"(uid={0})";
-		String userRoleName = ""; //"description,sn,uid";
+		String userRoleName = ""; //"description,sn,uid,edupersonscopedaffiliation";
 		boolean userSubtree = true;
 
 		connectionURL = (String) options.get("connectionURL");
@@ -199,7 +199,11 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 		if (principal != null) {
 			state = ACK;
 		}
-		boolean rc = loginModuleIsContingent ? false : (state == ACK);
+		boolean rc = attributeStoreOnly ? false : (state == ACK);
+		//rc indicates whether this module has logged in
+		//attributeStoreOnly whether this module itself counts toward login
+		//original wording was equiv. to rc = (state == ACK)
+		//attributeStoreOnly == true will be UVa usage; == false may be what Cornell wants
 		log("/login(): " + rc);
 		return rc;
 	}
@@ -213,10 +217,10 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 			log("commit(): namespace=" + namespace);
 			log("commit(): principal=" + principal);
 			log("commit(): no id subject here, chap!!!");
-			if (! loginModuleIsContingent) {
+			if (! attributeStoreOnly) {
 	        	subject.getPrincipals().add(new IdPrincipal(namespace, principal.getName()));				
 			}
-			if (loginModuleIsContingent && subject.getPrincipals().isEmpty()) {
+			if (attributeStoreOnly && subject.getPrincipals().isEmpty()) {
 				log("login():  prev. login modules were not successful; do -not- return roles");
 			} else {
 	           	String[] roles = principal.getRoles();
@@ -226,8 +230,8 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 			}
 			state = IN_SUBJ;
 		}
-		log("/commit(): " + rc);
-		return rc;
+		log("/commit(): true");
+		return true;
 	}
 
 	/**

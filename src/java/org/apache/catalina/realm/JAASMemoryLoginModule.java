@@ -1,6 +1,7 @@
 package org.apache.catalina.realm;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -12,6 +13,7 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import org.apache.catalina.Realm;
 
 public final class JAASMemoryLoginModule extends MemoryRealm implements LoginModule {
 	
@@ -173,7 +175,6 @@ public final class JAASMemoryLoginModule extends MemoryRealm implements LoginMod
 			log("commit(): subject.getPrincipals()=" + subject.getPrincipals());
 			log("commit(): namespace=" + namespace);
 			log("commit(): principal=" + principal);
-			log("commit(): no id subject here, chap!!!");
 			if (! loginModuleIsContingent) {
 	        	subject.getPrincipals().add(new IdPrincipal(namespace, principal.getName()));				
 			}
@@ -187,8 +188,8 @@ public final class JAASMemoryLoginModule extends MemoryRealm implements LoginMod
 			}
 			state = IN_SUBJ;
 		}
-		log("/commit(): " + rc);
-		return rc;
+		log("/commit(): true");
+		return true;
 	}
 
 	/**

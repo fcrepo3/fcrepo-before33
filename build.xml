@@ -103,10 +103,12 @@
 	<path id="serverclasses-lib.path">
 		<pathelement location="${lib.axis}"/>
 		<pathelement location="${lib.catalina}"/>
+		<pathelement location="${lib.catalina-optional}"/>
 		<pathelement location="${lib.commons-logging}"/>
 		<pathelement location="${lib.cos}"/>
 		<pathelement location="${lib.jaxrpc}"/>
 		<pathelement location="${lib.jena}"/>
+		<pathelement location="${lib.jmx}"/>		
 		<pathelement location="${lib.junit}"/>
 		<pathelement location="${lib.kowari-driver}"/>
 		<pathelement location="${lib.trippi}"/>
@@ -717,7 +719,14 @@
 
 		<copy file="src/web-app/fedora/server/web.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/classes">
-			<fileset dir="temp/server/classes"/>
+			<fileset dir="temp/server/classes">
+				<exclude name="org/**"/>
+			</fileset>
+		</copy>
+		<copy todir="${tomcat.common.dir}/classes">
+			<fileset dir="temp/server/classes">
+				<include name="org/**"/>
+			</fileset>
 		</copy>
 		<copy todir="${tomcat.deploy.dir}/ROOT">
 			<fileset dir="src/xsd"/>
@@ -885,7 +894,7 @@
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIAServiceLocator.java"/>
 		<mkdir dir="temp/server/classes"/>
-		<javac srcdir="${java.src.dir}:temp/server/java" destdir="temp/server/classes" classpathref="serverclasses-lib.path" includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**" optimize="${build.optimize}" debug="${build.debug}"/>
+		<javac srcdir="${java.src.dir}:temp/server/java" destdir="temp/server/classes" classpathref="serverclasses-lib.path" includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**,org/apache/catalina/realm/**" optimize="${build.optimize}" debug="${build.debug}"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
