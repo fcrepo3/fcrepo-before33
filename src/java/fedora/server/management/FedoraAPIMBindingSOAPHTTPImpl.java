@@ -11,6 +11,8 @@ import fedora.server.storage.DefinitiveDOWriter;
 import fedora.server.storage.METSDODeserializer;
 import fedora.server.storage.METSDOSerializer;
 import fedora.server.storage.TestFileStreamStorage;
+import fedora.server.storage.lowlevel.ILowlevelStorage;
+import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 import fedora.server.utilities.AxisUtility;
 
 import java.io.File;
@@ -38,6 +40,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     /** This is a temporary hack -- normally DOManager provides these */
     private static DefinitiveDOWriter w;
 
+    private static ILowlevelStorage s_st;
+    
     /** Before fulfilling any requests, make sure we have a server instance. */
     static {
         try {
@@ -51,6 +55,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 s_server=Server.getInstance(new File(fedoraHome));
                 s_initialized=true;
             }
+            s_st=FileSystemLowlevelStorage.getInstance();
         } catch (InitializationException ie) {
             System.err.println(ie.getMessage());
             s_initialized=false;
@@ -110,7 +115,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
         return null;
     }
-    
+
+    // temporarily here
     private void pipeStream(InputStream in, OutputStream out) 
             throws StorageDeviceException {
         try {
@@ -160,6 +166,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public void obtainLock(java.lang.String PID) throws java.rmi.RemoteException {
         assertInitialized();
+        try {
+            ByteArrayInputStream testInputStream=new ByteArrayInputStream(PID.getBytes());
+            s_st.add(PID, testInputStream);
+        } catch (ServerException se) {
+            AxisUtility.throwFault(se);
+        }
     }
 
     public void releaseLock(java.lang.String PID, java.lang.String logMessage, boolean commit) throws java.rmi.RemoteException {
