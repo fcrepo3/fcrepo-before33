@@ -7,6 +7,10 @@
   <param name="port" value="8080"/>
   <param name="admin_email" value="fedora-server-admin@localhost"/>
   <param name="admin_email_public" value="true"/>
+  <param name="log_max_size" value="5242880"/>
+  <param name="log_max_days" value="7"/>
+  <param name="log_dir" value="logs"/>
+  <param name="log_level" value="finest"/>
   <module role="fedora.server.storage.DOManager"
           class="fedora.server.storage.DefaultDOManager">
     <comment>This one comes with Fedora.  It's best not to change
