@@ -8,17 +8,17 @@ set TOMCAT_DIR=@tomcat.basename@
 set TC=%FEDORA_HOME%\server\%TOMCAT_DIR%
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
+set SERVER_CONTROLLER_LIBS=@ServerController.windows.libs@
 
 :undeploy
 
-set C=%TC%\common\lib
-set CP=%C%\saaj.jar;%C%\commons-discovery.jar;%C%\axis.jar;%C%\commons-logging.jar;%C%\jaxrpc.jar;%C%\wsdl4j.jar;%C%\tt-bytecode.jar
+set TC_COMMON=%TC%\common\lib
 
 echo Shutting down Fedora Servers and associated Modules...
-"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;%TC%\common\lib\servlet.jar -Dfedora.home=%FEDORA_HOME% fedora.server.ServerController shutdown
+"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;%SERVER_CONTROLLER_LIBS% -Dfedora.home=%FEDORA_HOME% fedora.server.ServerController shutdown
 
 echo Shutting down Fedora-Server service...
-"%JAVA_HOME%\bin\java" -cp %TC%\bin\bootstrap.jar -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\bin -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp org.apache.catalina.startup.Bootstrap stop
+"%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %TC%\bin\bootstrap.jar -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp org.apache.catalina.startup.Bootstrap stop
 set JAVA_HOME=%OLD_JAVA_HOME%
 
 goto end
