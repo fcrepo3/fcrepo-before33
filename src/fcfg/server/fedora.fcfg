@@ -107,7 +107,7 @@
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
 		<param name="pidNamespace" value="changeme"/>
-		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
+		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" />
 		<param name="storageFormat" value="metslikefedora1"/>
 		<param name="storageCharacterEncoding" value="UTF-8"/>
 	</module>
@@ -259,7 +259,7 @@
         </comment>
 		<param name="maxResults" value="100"/>
 		<param name="maxSecondsPerSession" value="100"/>
-		<param name="connectionPool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
+		<param name="connectionPool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
 	</module>
 	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
 		<comment>
@@ -303,8 +303,8 @@
 	</module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
-		<param name="defaultPoolName" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
-		<param name="poolNames" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
+		<param name="defaultPoolName" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
+		<param name="poolNames" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
 	</module>
 	<module role="fedora.server.validation.DOValidator" class="fedora.server.validation.DOValidatorModule">
 		<comment>
@@ -342,16 +342,6 @@
 		<param name="active" value="false"/>
 		<param name="pollInterval" value="5000"/>
 	</module>
-	<datastore id="remoteMySQLPool">
-		<comment>MySQL database on UVA test host (known to work)</comment>
-		<param name="dbUsername" value="fedoraAdmin"/>
-		<param name="dbPassword" value="fedoraAdmin"/>
-		<param name="jdbcURL" value="jdbc:mysql://icarus.lib.virginia.edu:3306/FedoraObjectsTest?useUnicode=true&amp;characterEncoding=UTF-8"/>
-		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
-		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
-		<param name="minPoolSize" value="10"/>
-		<param name="maxPoolSize" value="100"/>
-	</datastore>
 	<datastore id="localMySQLPool">
 		<comment>MySQL database on localhost</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
