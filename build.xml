@@ -162,7 +162,7 @@
 		<mkdir dir="temp/client"/>
 	</target>
 	<target name="clientclasses" depends="clientprep,wsdl2java" description="Compile client java code into temp/client">
-		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/common/xerces2-2.0.2.jar;lib/client/jhbasic.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
 		<mkdir dir="temp/client/help"/>
@@ -829,6 +829,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.120  2003/05/14 08:53:02  cwilper
+  puts xerces in compile path for client
+
   Revision 1.119  2003/05/13 16:21:10  rlw
   reworked batch-tool.doc into docbook format.
   New file is in src/dbx/userdocs/batchclient.dbx
