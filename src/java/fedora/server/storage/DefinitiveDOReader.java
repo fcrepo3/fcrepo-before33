@@ -79,6 +79,10 @@ public class DefinitiveDOReader implements DOReader
   private String PID = null;
   private String doLabel = null;
   private String doState = null;
+  private String doContentModelId = null;
+  private String doFedoraObjectType = null;
+  private Date doCreateDate = null;
+  private Date doLastModDate = null;
   protected Hashtable datastreamTbl = new Hashtable();
   private Hashtable disseminatorTbl = new Hashtable();
   private Hashtable dissbDefTobMechTbl = new Hashtable();
@@ -186,6 +190,22 @@ public class DefinitiveDOReader implements DOReader
       throw new GeneralException("ERROR_MISC: " + e.getMessage());
     }
   }
+  
+    public String getFedoraObjectType() {
+        return doFedoraObjectType;
+    }
+
+    public String getContentModelId() {
+        return doContentModelId;
+    }
+    
+    public Date getCreateDate() {
+        return doCreateDate;
+    }
+
+    public Date getLastModDate() {
+        return doLastModDate;
+    }
 
    /**
      * Gets the content of the entire digital object as XML.  The object will
@@ -197,7 +217,6 @@ public class DefinitiveDOReader implements DOReader
      * @throws GeneralException If there was any misc exception that we want to
      *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-
     public InputStream GetObjectXML() throws StreamIOException, GeneralException
     {
       // LLSTORE: call to low level storage layer to retrieve object
@@ -774,6 +793,10 @@ public class DefinitiveDOReader implements DOReader
 
       private String h_PID;
       private String h_doLabel;
+      private String h_doContentModelId;
+      private String h_doFedoraObjectType;
+      private Date h_doCreateDate;
+      private Date h_doLastModDate;
       private String h_doState;
       private Vector h_vDatastream;
       private Vector h_vDisseminator;
@@ -808,6 +831,10 @@ public class DefinitiveDOReader implements DOReader
           // OBJECT PID
           PID = h_PID;
           doLabel = h_doLabel;
+          doContentModelId = h_doContentModelId;
+          doFedoraObjectType = h_doFedoraObjectType;
+          doCreateDate = h_doCreateDate;
+          doLastModDate = h_doLastModDate;
           doState = h_doState;
 
           // DATASTREAMS
@@ -900,11 +927,22 @@ public class DefinitiveDOReader implements DOReader
           inMETS = true;
           h_PID = attrs.getValue("OBJID");
           h_doLabel = attrs.getValue("LABEL");
+          h_doContentModelId = attrs.getValue("PROFILE");
+          String objType=attrs.getValue("TYPE");
+          if (objType.equalsIgnoreCase("FedoraBDefObject")) {
+              h_doFedoraObjectType="D";
+          } else if (objType.equalsIgnoreCase("FedoraBMechObject")) {
+              h_doFedoraObjectType="M";
+          } else {
+              h_doFedoraObjectType="O";
+          }
         }
         else if (qName.equalsIgnoreCase("METS:metsHdr"))
         {
           inMETSHDR = true;
           h_doState = attrs.getValue("RECORDSTATUS");
+          h_doCreateDate = convertDate(attrs.getValue("CREATEDATE"));
+          h_doLastModDate = convertDate(attrs.getValue("LASTMODDATE"));
         }
         else if (qName.equalsIgnoreCase("METS:dmdSec"))
         {

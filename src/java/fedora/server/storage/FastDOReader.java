@@ -201,6 +201,34 @@ public class FastDOReader implements DisseminatingDOReader
     }
 
   }
+  
+  public String getContentModelId() throws ServerException {
+      if (doReader==null) {
+          doReader=m_manager.getReader(m_context, PID);
+      }
+      return doReader.getContentModelId();
+  }
+  
+  public String getFedoraObjectType() throws ServerException {
+      if (doReader==null) {
+          doReader=m_manager.getReader(m_context, PID);
+      }
+      return doReader.getFedoraObjectType();
+  }
+
+  public Date getCreateDate() throws ServerException {
+      if (doReader==null) {
+          doReader=m_manager.getReader(m_context, PID);
+      }
+      return doReader.getCreateDate();
+  }
+
+  public Date getLastModDate() throws ServerException {
+      if (doReader==null) {
+          doReader=m_manager.getReader(m_context, PID);
+      }
+      return doReader.getLastModDate();
+  }
 
   /**
    * <p>Gets a list of Behavior Definition object PIDs associated with the
