@@ -31,16 +31,16 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Reads an XML stream that is similar to a METS v1_1 document into a 
+ * Reads an XML stream that is similar to a METS v1_1 document into a
  * Fedora DigitalObject.
  * <p></p>
  * See <a href="METSDOSerializer.html">METSDOSerializer</a> for details on
- * the differences between the XML encoding used here and the 
+ * the differences between the XML encoding used here and the
  * METS schema.
- * 
+ *
  * @author cwilper@cs.cornell.edu
  */
-public class METSDODeserializer 
+public class METSDODeserializer
         extends DefaultHandler
         implements DODeserializer {
 
@@ -49,7 +49,7 @@ public class METSDODeserializer
 
     /** The namespace for XLINK */
     private final static String XLINK_NAMESPACE="http://www.w3.org/TR/xlink";
-    // Mets says the above, but the spec at http://www.w3.org/TR/xlink/ 
+    // Mets says the above, but the spec at http://www.w3.org/TR/xlink/
     // says it's http://www.w3.org/1999/xlink
 
 
@@ -58,12 +58,12 @@ public class METSDODeserializer
 
     /** The object to deserialize to. */
     private DigitalObject m_obj;
-    
-    /** 
-     * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events. 
+
+    /**
+     * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
      */
     private HashMap m_prefixes;
-    
+
     private boolean m_rootElementFound;
     private String m_dsId;
     private String m_dsVersId;
@@ -75,30 +75,31 @@ public class METSDODeserializer
     private long m_dsSize;
     private URL m_dsLocation;
     private String m_dsMimeType;
-    
+    private String m_dsControlGrp;
+
     // key=dsId, value=List of datastream ids (strings)
     private HashMap m_dsAdmIds; // these are saved till end of parse
     private String[] m_dsDmdIds; // these are only saved while parsing cur ds
-    
-    
+
+
     private StringBuffer m_dsXMLBuffer;
-    
-    // are we reading binary in an FContent element? (base64-encoded) 
+
+    // are we reading binary in an FContent element? (base64-encoded)
     private boolean m_readingContent;
-    
+
     /** Namespace prefixes used in the currently scanned datastream */
     private ArrayList m_dsPrefixes;
 
     /** While parsing, are we inside XML metadata? */
     private boolean m_inXMLMetadata;
-    
-    /** 
+
+    /**
      * Used to differentiate between a metadata section in this object
      * and a metadata section in an inline XML datastream that happens
-     * to be a METS document. 
+     * to be a METS document.
      */
     private int m_xmlDataLevel;
-    
+
     /** String buffer for audit element contents */
     private StringBuffer m_auditBuffer;
     private String m_auditProcessType;
@@ -109,39 +110,39 @@ public class METSDODeserializer
 
     /** The most recently seen ID of a fedora:dsBindingMap structMap */
     private String m_bindingMapId;
-    
-    /** 
-     * Never query the server and take it's values for Content-length and 
+
+    /**
+     * Never query the server and take it's values for Content-length and
      * Content-type
      */
     public static int QUERY_NEVER=0;
-    
-    /** 
-     * Query the server and take it's values for Content-length and 
+
+    /**
+     * Query the server and take it's values for Content-length and
      * Content-type if either are undefined.
      */
     public static int QUERY_IF_UNDEFINED=1;
-    
-    /** 
-     * Always query the server and take it's values for Content-length and 
+
+    /**
+     * Always query the server and take it's values for Content-length and
      * Content-type.
      */
     public static int QUERY_ALWAYS=2;
-    
+
     private int m_queryBehavior;
-    
-    public METSDODeserializer() 
+
+    public METSDODeserializer()
             throws FactoryConfigurationError, ParserConfigurationException,
             SAXException, UnsupportedEncodingException {
         this("UTF-8", false, QUERY_NEVER);
     }
-    
+
     /**
      * Initializes by setting up a parser that doesn't validate and never
      * queries the server for values of DSSize and DSMIME.
      */
-    public METSDODeserializer(String characterEncoding) 
-            throws FactoryConfigurationError, ParserConfigurationException, 
+    public METSDODeserializer(String characterEncoding)
+            throws FactoryConfigurationError, ParserConfigurationException,
             SAXException, UnsupportedEncodingException {
         this(characterEncoding, false, QUERY_NEVER);
     }
@@ -159,7 +160,7 @@ public class METSDODeserializer
      */
     public METSDODeserializer(String characterEncoding, boolean validate,
             int queryBehavior)
-            throws FactoryConfigurationError, ParserConfigurationException, 
+            throws FactoryConfigurationError, ParserConfigurationException,
             SAXException, UnsupportedEncodingException {
         m_queryBehavior=queryBehavior;
         // ensure the desired encoding is supported before starting
@@ -167,15 +168,15 @@ public class METSDODeserializer
         m_characterEncoding=characterEncoding;
         StringBuffer buf=new StringBuffer();
         buf.append("test");
-        byte[] temp=buf.toString().getBytes(m_characterEncoding); 
+        byte[] temp=buf.toString().getBytes(m_characterEncoding);
         // then init sax
         SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setValidating(validate);
         spf.setNamespaceAware(true);
         m_parser=spf.newSAXParser();
     }
-    
-    public void deserialize(InputStream in, DigitalObject obj, String encoding) 
+
+    public void deserialize(InputStream in, DigitalObject obj, String encoding)
             throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
         m_obj=obj;
         m_rootElementFound=false;
@@ -236,12 +237,12 @@ public class METSDODeserializer
             }
         }
     }
-    
+
     public void startPrefixMapping(String prefix, String uri) {
         m_prefixes.put(uri, prefix);
     }
-    
-    public void startElement(String uri, String localName, String qName, 
+
+    public void startElement(String uri, String localName, String qName,
             Attributes a) throws SAXException {
         if (uri.equals(M) && !m_inXMLMetadata) {
             // a new mets element is starting
@@ -267,7 +268,7 @@ public class METSDODeserializer
                 m_obj.setState(grab(a, M, "RECORDSTATUS"));
             } else if (localName.equals("amdSec")) {
                 m_dsId=grab(a, M, "ID");
-            } else if (localName.equals("techMD") || localName.equals("dmdSec") 
+            } else if (localName.equals("techMD") || localName.equals("dmdSec")
                     || localName.equals("sourceMD")
                     || localName.equals("rightsMD")
                     || localName.equals("digiprovMD")) {
@@ -308,13 +309,14 @@ public class METSDODeserializer
                 m_dsVersId=null;
                 m_dsCreateDate=null;
                 m_dsMimeType=null;
+                m_dsControlGrp=null;
                 m_dsDmdIds=null;
                 m_dsState=null;
                 m_dsSize=-1;
             } else if (localName.equals("file")) {
-                // ID="DS3.0" 
-                // CREATED="2002-05-20T06:32:00" 
-                // MIMETYPE="image/jpg" 
+                // ID="DS3.0"
+                // CREATED="2002-05-20T06:32:00"
+                // MIMETYPE="image/jpg"
                 // ADMID="TECH3"
                 // OWNERID="E" // ignored this is determinable otherwise
                 // STATUS=""
@@ -323,10 +325,11 @@ public class METSDODeserializer
                 m_dsCreateDate=DateUtility.convertStringToDate(
                         grab(a,M,"CREATED"));
                 m_dsMimeType=grab(a,M,"MIMETYPE");
+                m_dsControlGrp=grab(a,M,"OWNERID");
                 String ADMID=grab(a,M,"ADMID");
                 if ((ADMID!=null) && (!"".equals(ADMID))) {
                     // remember admids for when we're finished...
-                    // we can't reliably determine yet whether they are 
+                    // we can't reliably determine yet whether they are
                     // metadata refs or audit record refs, since we can't
                     // rely on having gone through all audit records yet.
                     ArrayList al=new ArrayList();
@@ -362,7 +365,7 @@ public class METSDODeserializer
                 // inside a "file" element, it's either going to be
                 // FLocat (a reference) or FContent (inline)
             } else if (localName.equals("FLocat")) {
-                // xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" 
+                // xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg"
                 // xlink:title="Saskia high jpg image"/>
                 m_dsLabel=grab(a,XLINK_NAMESPACE,"title");
                 String dsLocation=grab(a,XLINK_NAMESPACE,"href");
@@ -380,12 +383,13 @@ public class METSDODeserializer
                 d.DSLabel=m_dsLabel;
                 d.DSCreateDT=m_dsCreateDate;
                 d.DSMIME=m_dsMimeType;
-                d.DSControlGrp=Datastream.EXTERNAL_REF;
+                d.DSControlGrp=m_dsControlGrp;
+                //d.DSControlGrp=Datastream.EXTERNAL_REF;
                 d.DSInfoType="DATA";
                 d.DSState=m_dsState;
                 d.DSLocation=m_dsLocation;
                 if (m_queryBehavior!=QUERY_NEVER) {
-                    if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null) 
+                    if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null)
                             || (m_dsSize==-1)) {
                         try {
                             InputStream in=d.getContentStream();
@@ -424,7 +428,7 @@ public class METSDODeserializer
 */
             } else if (localName.equals("div")) {
 /*                if (m_inDiv) {
-                  // already should have the label and 
+                  // already should have the label and
                 }
                 // todo:need to remember level
 */
@@ -475,9 +479,9 @@ public class METSDODeserializer
                 if (m_dsId.equals("FEDORA-AUDITTRAIL")) {
                     if (localName.equals("process")) {
                         m_auditProcessType=grab(a, uri, "type");
-                    } else if ( (localName.equals("action")) 
-                            || (localName.equals("responsibility")) 
-                            || (localName.equals("date")) 
+                    } else if ( (localName.equals("action"))
+                            || (localName.equals("responsibility"))
+                            || (localName.equals("date"))
                             || (localName.equals("justification")) ) {
                         m_auditBuffer=new StringBuffer();
                     }
@@ -487,7 +491,7 @@ public class METSDODeserializer
             }
         }
     }
-    
+
     public void characters(char[] ch, int start, int length) {
         if (m_inXMLMetadata) {
             if (m_auditBuffer!=null) {
@@ -502,20 +506,20 @@ public class METSDODeserializer
             // append it to something...
         }
     }
-    
+
     public void endElement(String uri, String localName, String qName) {
         m_readingContent=false;
         if (m_inXMLMetadata) {
-            if (uri.equals(M) && localName.equals("xmlData") 
+            if (uri.equals(M) && localName.equals("xmlData")
                     && m_xmlDataLevel==0) {
                 // finished all xml metadata for this datastream
                 if (m_dsId.equals("FEDORA-AUDITTRAIL")) {
                     // we've been looking at an audit trail...
-                    // m_auditProcessType, m_auditAction, 
+                    // m_auditProcessType, m_auditAction,
                     // m_auditResponsibility, m_auditDate, m_auditJustification
                     // should all be set
                     AuditRecord a=new AuditRecord();
-                    a.id=m_dsVersId; // it's like the FEDORA-AUDITTRAIL is a 
+                    a.id=m_dsVersId; // it's like the FEDORA-AUDITTRAIL is a
                                      // datastream and the records are versions
                     a.processType=m_auditProcessType;
                     a.action=m_auditAction;
@@ -546,7 +550,8 @@ public class METSDODeserializer
                     ds.DSCreateDT=m_dsCreateDate;
                     ds.DSSize=ds.xmlContent.length; // bytes, not chars, but
                                                     // probably N/A anyway
-                    ds.DSControlGrp=Datastream.XML_METADATA;
+                    //ds.DSControlGrp=Datastream.XML_METADATA;
+                    ds.DSControlGrp="X";
                     ds.DSInfoType=m_dsInfoType;
                     ds.DSMDClass=m_dsMDClass;
                     ds.DSState=m_dsState;
@@ -554,10 +559,10 @@ public class METSDODeserializer
                     // add it to the digitalObject
                     m_obj.datastreams(m_dsId).add(ds);
                 }
-                m_inXMLMetadata=false; // other stuff is re-initted upon 
-                                       // startElement for next xml metadata 
+                m_inXMLMetadata=false; // other stuff is re-initted upon
+                                       // startElement for next xml metadata
                                        // element
-                                       
+
             } else {
                 // finished an element in xml metadata... print end tag,
                 // subtracting the level of METS:xmlData elements we're at
@@ -588,13 +593,13 @@ public class METSDODeserializer
                         m_auditBuffer=null;
                     }
                 }
-                
-                
+
+
             }
         }
     }
-    
-    private static String grab(Attributes a, String namespace, 
+
+    private static String grab(Attributes a, String namespace,
             String elementName) {
         String ret=a.getValue(namespace, elementName);
         if (ret==null) {
@@ -602,5 +607,5 @@ public class METSDODeserializer
         }
         return ret;
     }
-    
+
 }

@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A DigitalObject serializer that outputs to a format similar to METS XML v1_1.
  * <p></p>
- * In order to support the following features of Fedora, we don't strictly 
+ * In order to support the following features of Fedora, we don't strictly
  * adhere to the METS schema.
  * <p></p>
  * <h3>Inline XML Datastream Versioning for Descriptive Metadata</h3>
@@ -34,22 +34,22 @@ import java.util.List;
  * are descriptive metadata.  This exception to our use of the METS schema
  * is described below.
  * <p></p>
- * The METS schema doesn't allow for the GROUPID attribute on amdSec or dmdSec 
- * elements.  Now, because of the way we are encoding multi-versioned 
- * _administrative_ metadata[1], we are ok on this front.  But when it comes 
- * to _descriptive_ metadata, we are using a GROUPID attribute[2] that isn't 
+ * The METS schema doesn't allow for the GROUPID attribute on amdSec or dmdSec
+ * elements.  Now, because of the way we are encoding multi-versioned
+ * _administrative_ metadata[1], we are ok on this front.  But when it comes
+ * to _descriptive_ metadata, we are using a GROUPID attribute[2] that isn't
  * METS schema-valid[3,4].
  * <p></p>
- * [1] The amdSec element allows for a set of metadata (where each is of type 
- * techMD, sourceMD, rightsMD, or digiprovMD). We put all versions of one 
- * administrative datastream into a single amdSec, where the ID is the 
+ * [1] The amdSec element allows for a set of metadata (where each is of type
+ * techMD, sourceMD, rightsMD, or digiprovMD). We put all versions of one
+ * administrative datastream into a single amdSec, where the ID is the
  * datastream id, and each version of a specific datastream member is indicated
- * by it's surrounding techMD, sourceMD, rightsMD, or digiprovMD element's ID 
+ * by it's surrounding techMD, sourceMD, rightsMD, or digiprovMD element's ID
  * attribute.
  * <p></p>
- * [2] The dmdSec element may contain only one chunk of METS-element-surrounded 
- * metadata, so we create a separate dmdSec element for each version of a 
- * particular datastream.  Since they are not all grouped together in the METS 
+ * [2] The dmdSec element may contain only one chunk of METS-element-surrounded
+ * metadata, so we create a separate dmdSec element for each version of a
+ * particular datastream.  Since they are not all grouped together in the METS
  * document, we group them via a "GROUPID" attribute in the dmdSec
  * <p></p>
  * [3] The METS schema: (As of 2002-10-13 the version at this URL is 1.1)
@@ -62,40 +62,40 @@ import java.util.List;
  * <h3>Describing Content Datastreams with Inline XML Metadata</h3>
  * <dir>
  * Fedora supports arbitrary content datastreams that can either be repository-
- * managed (internal to the repository) or referenced 
+ * managed (internal to the repository) or referenced
  * (external to the repository).  These datastreams can additionally be
  * described inside the object by one or more inline XML metadata datastreams.
  * <p></p>
- * We represent part of this "is described by" relationship in METS via the 
- * ADMID attribute in the file element for each content datastream.  This 
- * covers a content stream's relationship to administrative metadata, but not 
+ * We represent part of this "is described by" relationship in METS via the
+ * ADMID attribute in the file element for each content datastream.  This
+ * covers a content stream's relationship to administrative metadata, but not
  * descriptive metadata.  We use an additional attribute in this element, DMDID,
  * to similarly represent a content stream's relationship with descriptive
  * metadata.  Used in this location in the METS document, the DMDID attribute
  * is not METS schema-valid.
- * 
+ *
  * </dir>
  *
  * @author cwilper@cs.cornell.edu
  */
-public class METSDOSerializer 
+public class METSDOSerializer
         implements DOSerializer {
 
-    // test object says this.. but it should be 
+    // test object says this.. but it should be
     // http://www.fedora.info/definitions/1/0/auditing/
     private final static String FEDORA_AUDIT_NAMESPACE_URI=
             "http://fedora.comm.nsdlib.org/audit";
-            
+
     /** The namespace for XLINK */
     private final static String METS_XLINK_NAMESPACE="http://www.w3.org/TR/xlink";
-    // Mets says the above, but the spec at http://www.w3.org/TR/xlink/ 
+    // Mets says the above, but the spec at http://www.w3.org/TR/xlink/
     // says it's http://www.w3.org/1999/xlink
     private final static String REAL_XLINK_NAMESPACE="http://www.w3.org/1999/xlink";
-    
+
     private String m_xlinkPrefix;
-    
+
     private String m_characterEncoding;
-    
+
     public METSDOSerializer() {
     System.out.println("Mets do serializer constructed.");
     }
@@ -108,14 +108,14 @@ public class METSDOSerializer
      * @throw UnsupportedEncodingException If the provided encoding is
      *        not supported or recognized.
      */
-    public METSDOSerializer(String characterEncoding) 
+    public METSDOSerializer(String characterEncoding)
             throws UnsupportedEncodingException {
         m_characterEncoding=characterEncoding;
         StringBuffer buf=new StringBuffer();
         buf.append("test");
         byte[] temp=buf.toString().getBytes(m_characterEncoding);
     }
-    
+
     public String getEncoding() {
         return m_characterEncoding;
     }
@@ -128,7 +128,7 @@ public class METSDOSerializer
     /**
      * Serializes the given Fedora object to an OutputStream.
      */
-    public void serialize(DigitalObject obj, OutputStream out, String encoding) 
+    public void serialize(DigitalObject obj, OutputStream out, String encoding)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
         m_characterEncoding=encoding;
@@ -151,7 +151,7 @@ public class METSDOSerializer
             while (nsIter.hasNext()) {
                 String uri=(String) nsIter.next();
                 String prefix=(String) obj.getNamespaceMapping().get(uri);
-                if ( (uri.equals(METS_XLINK_NAMESPACE)) 
+                if ( (uri.equals(METS_XLINK_NAMESPACE))
                         || (uri.equals(REAL_XLINK_NAMESPACE)) ) {
                     m_xlinkPrefix=prefix;
                     didXlink=true;
@@ -198,10 +198,10 @@ public class METSDOSerializer
                     AuditRecord audit=(AuditRecord) iter.next();
                     buf.append("    <digiprovMD ID=\"");
                     buf.append(audit.id);
-                    buf.append("\" CREATED=\""); 
-                    String createDate=DateUtility.convertDateToString(audit.date); 
+                    buf.append("\" CREATED=\"");
+                    String createDate=DateUtility.convertDateToString(audit.date);
                     buf.append(createDate);
-                    buf.append("\" STATUS=\"A\">\n");  // status is always A 
+                    buf.append("\" STATUS=\"A\">\n");  // status is always A
                     buf.append("      <mdWrap MIMETYPE=\"text/xml\" MDTYPE=\"OTHER\" LABEL=\"Fedora Object Audit Trail Record\">\n");
                     buf.append("        <xmlData>\n");
                     buf.append("          <");
@@ -212,7 +212,7 @@ public class METSDOSerializer
                     buf.append(":process type=\"");
                     StreamUtility.enc(audit.processType, buf);
                     buf.append("\"/>\n");
-                    
+
                     buf.append("            <");
                     buf.append(auditPrefix);
                     buf.append(":action>");
@@ -220,7 +220,7 @@ public class METSDOSerializer
                     buf.append("</");
                     buf.append(auditPrefix);
                     buf.append(":action>\n");
-                    
+
                     buf.append("            <");
                     buf.append(auditPrefix);
                     buf.append(":responsibility>");
@@ -228,7 +228,7 @@ public class METSDOSerializer
                     buf.append("</");
                     buf.append(auditPrefix);
                     buf.append(":responsibility>\n");
-                    
+
                     buf.append("            <");
                     buf.append(auditPrefix);
                     buf.append(":date>");
@@ -236,7 +236,7 @@ public class METSDOSerializer
                     buf.append("</");
                     buf.append(auditPrefix);
                     buf.append(":date>\n");
-                    
+
                     buf.append("            <");
                     buf.append(auditPrefix);
                     buf.append(":justification>");
@@ -244,7 +244,7 @@ public class METSDOSerializer
                     buf.append("</");
                     buf.append(auditPrefix);
                     buf.append(":justification>\n");
-                    
+
                     buf.append("          </");
                     buf.append(auditPrefix);
                     buf.append(":record>\n");
@@ -260,10 +260,11 @@ public class METSDOSerializer
             Iterator idIter=obj.datastreamIdIterator();
             while (idIter.hasNext()) {
                 String id=(String) idIter.next();
-                // from the first one with this id, 
-                // first decide if its an inline xml 
+                // from the first one with this id,
+                // first decide if its an inline xml
                 Datastream ds=(Datastream) obj.datastreams(id).get(0);
-                if (ds.DSControlGrp==Datastream.XML_METADATA) {
+                //if (ds.DSControlGrp==Datastream.XML_METADATA) {
+                if (ds.DSControlGrp.equalsIgnoreCase("X")) {
                     //
                     // Serialize inline XML datastream
                     // - dmdSec || amdSec?
@@ -307,7 +308,7 @@ public class METSDOSerializer
                         // Source             ($mdClass$=sourceMD)
                         // Rights             ($mdClass$=rightsMD)
                         // Digital Provenance ($mdClass$=digiprovMD)
-                        // 
+                        //
                         // <amdSec ID=dsId>
                         //   <!-- For each version with this dsId -->
                         //   <$mdClass$      ID=dsVersionId
@@ -364,7 +365,8 @@ public class METSDOSerializer
                 String id=(String) idIter.next();
                 // from the first one in the version group with this id, check its type
                 Datastream ds=(Datastream) obj.datastreams(id).get(0);
-                if (ds.DSControlGrp!=Datastream.XML_METADATA) { // must be ext ref or managed (so needs mets fileSec)
+                //if (ds.DSControlGrp!=Datastream.XML_METADATA) { // must be ext ref or managed (so needs mets fileSec)
+                if (!ds.DSControlGrp.equalsIgnoreCase("X")) { // must be ext ref or managed (so needs mets fileSec)
                     //
                     // Externally-referenced or managed datastreams (fileSec)
                     //
@@ -414,7 +416,10 @@ public class METSDOSerializer
                         // other attrs
                         //
                         buf.append("\">\n");
-                        if (dsc.DSControlGrp==Datastream.EXTERNAL_REF) {
+                        //if (dsc.DSControlGrp==Datastream.EXTERNAL_REF) {
+                        // External (E) or External-Protected (P) Datastreams
+                        if (dsc.DSControlGrp.equalsIgnoreCase("E") ||
+                            dsc.DSControlGrp.equalsIgnoreCase("P")) {
                             DatastreamReferencedContent dsec=(DatastreamReferencedContent) dsc;
                             // xlink:title, xlink:href
                             buf.append("        <FLocat ");
@@ -433,13 +438,13 @@ public class METSDOSerializer
                             // FContent=base64 encoded
                         }
                         buf.append("      </file>\n");
-                    } 
+                    }
                     buf.append("    </fileGrp>\n");
                 }
             }
             if (didFileSec) {
-                buf.append("   </fileGrp>\n"); 
-                buf.append("  </fileSec>\n"); 
+                buf.append("   </fileGrp>\n");
+                buf.append("  </fileSec>\n");
             }
             //
             // Serialization Complete
@@ -455,9 +460,9 @@ public class METSDOSerializer
         } finally {
             try {
                 out.close();
-            } catch (IOException ioe2) { 
+            } catch (IOException ioe2) {
                 throw new StreamIOException("Problem closing outputstream "
-                    + "after attempting to serialize to mets: " 
+                    + "after attempting to serialize to mets: "
                     + ioe2.getMessage());
             }
         }
@@ -482,7 +487,8 @@ try {
             if (datastreams!=null) {
                 Datastream ds=(Datastream) datastreams.get(0);       // this throws ArrayIndexOutOfBoundsException on the sample watermark img.. why?
                 if (ds!=null) {
-                    if (ds.DSControlGrp==Datastream.XML_METADATA) {
+                    //if (ds.DSControlGrp==Datastream.XML_METADATA) {
+                    if (ds.DSControlGrp.equalsIgnoreCase("X")) {
                         DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
                         if (mds.DSMDClass == DatastreamXMLMetadata.DESCRIPTIVE) {
                             if (!adm) {
@@ -498,13 +504,13 @@ try {
                 }
             }
         }
-} catch (Throwable th) { 
+} catch (Throwable th) {
 // ignore so test works..bleh
 }
         return ret;
     }
 
-    private void mdWrap(DatastreamXMLMetadata mds, StringBuffer buf) 
+    private void mdWrap(DatastreamXMLMetadata mds, StringBuffer buf)
             throws StreamIOException {
         buf.append("    <mdWrap MIMETYPE=\"");
         buf.append(mds.DSMIME);
@@ -534,7 +540,7 @@ try {
         buf.append("      </xmlData>\n");
         buf.append("    </mdWrap>\n");
     }
-    
+
     public boolean equals(Object o) {
         if (this==o) { return true; }
         try {
@@ -543,7 +549,7 @@ try {
             return false;
         }
     }
-    
+
     public boolean equals(METSDOSerializer o) {
         return (o.getEncoding().equals(getEncoding())
                 && o.getVersion().equals(getVersion()));
