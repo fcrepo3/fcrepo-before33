@@ -1,5 +1,7 @@
 package fedora.server.oai;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,6 +12,8 @@ import fedora.oai.*; //FIXME:evil
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ServerException;
+import fedora.server.search.DCFields;
+import fedora.server.search.ObjectFields;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
 
@@ -21,13 +25,20 @@ public class FedoraOAIProvider
     private String m_baseURL;
     private Set m_adminEmails;
     private Set m_descriptions;
+    private List m_setInfos;
     private long m_maxSets;
     private long m_maxRecords;
     private long m_maxHeaders;
     private FieldSearch m_fieldSearch;
     private Set m_formats;
     private static Set s_emptySet=new HashSet();
-        
+    private static String[] s_headerFields=new String[] {"pid", "dcmDate", 
+            "fType"};
+    private static String[] s_headerAndDCFields=new String[] {"pid", "dcmDate", 
+            "fType", "title", "creator", "subject", "description", "publisher",
+            "contributor", "date", "type", "format", "identifier", "source",
+            "language", "relation", "coverage", "rights"};
+
     public FedoraOAIProvider(String repositoryName, String baseURL, 
             Set adminEmails, Set friendBaseURLs, String namespaceID, 
             long maxSets, long maxRecords, long maxHeaders, 
@@ -69,89 +80,48 @@ public class FedoraOAIProvider
         m_formats.add(new SimpleMetadataFormat("oai_dc", 
                 "http://www.openarchives.org/OAI/2.0/oai_dc.xsd", 
                 "http://www.openarchives.org/OAI/2.0/oai_dc/"));
+        m_setInfos=new ArrayList();
+        m_setInfos.add(new SimpleSetInfo("Regular Digital Objects", "objects", s_emptySet));
+        m_setInfos.add(new SimpleSetInfo("Behavior Mechanism Objects", "bmechs", s_emptySet));
+        m_setInfos.add(new SimpleSetInfo("Behavior Definition Objects", "bdefs", s_emptySet));
     }
 
-    /**
-     * Get a human readable name for the repository.
-     */
     public String getRepositoryName() {
         return m_repositoryName;
     }
     
-    /**
-     * Get the HTTP endpoint for the OAI-PMH interface.
-     */
     public String getBaseURL() {
         return m_baseURL;
     }
     
-    /**
-     * Get the version of the OAI-PMH supported by the repository.
-     */
     public String getProtocolVersion() {
         return "2.0";
     }
 
-    /**
-     * Get a Date (in UTC) that is the guaranteed lower limit of all datestamps
-     * recording changes, modifications, or deletions in the repository.
-     * A repository must not use datestamps lower than this.
-     */
     public Date getEarliestDatestamp() {
         return new Date();
     }
     
-    /**
-     * Get the manner in which the repository supports the notion of deleted
-     * records.
-     */
     public DeletedRecordSupport getDeletedRecordSupport() {
         return DeletedRecordSupport.NO;
     }
     
-    /**
-     * Get the finest harvesting granularity supported by the repository.
-     */
     public DateGranularitySupport getDateGranularitySupport() {
         return DateGranularitySupport.SECONDS;
     }
     
-    /**
-     * Get the email addresses of administrators of the repository.
-     *
-     * This set must contain at least one item.
-     */
     public Set getAdminEmails() {
         return m_adminEmails;
     }
     
-    /**
-     * Get the compression encodings supported by the repository.
-     *
-     * This set may be empty. Recommended values are those in RFC 2616 Section 
-     * 14.11
-     */
     public Set getSupportedCompressionEncodings() {
         return s_emptySet;
     }
     
-    /**
-     * Get XML descriptions of the repository.
-     *
-     * Each Set element must be a String containing a description according 
-     * to some W3C schema, where the xsi:schemaLocation attribute is used
-     * on the root element.
-     *
-     * See http://www.openarchives.org/OAI/2.0/guidelines.htm for guidelines
-     * regarding these repository-level descriptions.
-     */
     public Set getDescriptions() {
         return m_descriptions;
     }
 
-    /**
-     * Get an individual metadata record from the repository.
-     */
     public Record getRecord(String identifier, String metadataPrefix)
             throws CannotDisseminateFormatException, IDDoesNotExistException, 
             RepositoryException {
@@ -161,15 +131,6 @@ public class FedoraOAIProvider
         throw new RepositoryException("getRecord not impld");
     }
 
-    /**
-     * Get the Records in the repository matching the given criteria.
-     * Any of the arguments (except metadataPrefix) may be null, indicating
-     * "any".
-     *
-     * If the size of the returned list is over getMaxRecords(), the last element
-     * is a resumptionToken (a String) which can be used to get the rest of the 
-     * list.
-     */
     public List getRecords(Date from, Date until, String metadataPrefix,
             String set)
             throws CannotDisseminateFormatException,
@@ -178,33 +139,169 @@ public class FedoraOAIProvider
         if (!metadataPrefix.equals("oai_dc")) {
             throw new CannotDisseminateFormatException("Repository does not provide that format in OAI-PMH responses.");
         }
-        throw new RepositoryException("getRecords not impld");
+        
+        
+        List l=null;
+        try {
+            l=m_fieldSearch.search(s_headerAndDCFields, 
+                    Condition.getConditions("dcmDate~'*T*'" 
+                    + getDatePart(from, until) + getFTypePart(set)));
+        } catch (ServerException se) {
+            throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
+        }
+        if (l.size()==0) {
+            throw new NoRecordsMatchException("No records match the given criteria.");
+        }
+        ArrayList ret=new ArrayList();
+        for (int i=0; i<l.size(); i++) {
+            ObjectFields f=(ObjectFields) l.get(i);
+            String identifier="oai:fedora.info:" + f.getPid();
+            Date datestamp=f.getDCMDate();
+            HashSet setSpecs=new HashSet();
+            String fType=f.getFType();
+            if (fType.equals("D")) {
+                setSpecs.add("bdefs");
+            } else if (fType.equals("M")) {
+                setSpecs.add("bmechs");
+            } else {
+                setSpecs.add("objects");
+            }
+            ret.add(new SimpleRecord(new SimpleHeader(identifier, datestamp, setSpecs, true), getDCXML(f), s_emptySet));
+        }
+        return ret;
+    }
+    
+    private String getDCXML(DCFields dc) {
+        StringBuffer out=new StringBuffer();
+        out.append("        <oai_dc:dc\n");
+        out.append("            xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\"\n");
+        out.append("            xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n"); 
+        out.append("            xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"); 
+        out.append("            xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/\n");
+        out.append("            http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">\n");
+        for (int i=0; i<dc.titles().size(); i++) {
+            out.append("          <dc:title>");
+            out.append((String) dc.titles().get(i));
+            out.append("          </dc:title>\n");
+        }
+        for (int i=0; i<dc.creators().size(); i++) {
+            out.append("          <dc:creator>");
+            out.append((String) dc.creators().get(i));
+            out.append("          </dc:creator>\n");
+        }
+        for (int i=0; i<dc.subjects().size(); i++) {
+            out.append("          <dc:subject>");
+            out.append((String) dc.subjects().get(i));
+            out.append("          </dc:subject>\n");
+        }
+        for (int i=0; i<dc.descriptions().size(); i++) {
+            out.append("          <dc:description>");
+            out.append((String) dc.descriptions().get(i));
+            out.append("          </dc:description>\n");
+        }
+        for (int i=0; i<dc.publishers().size(); i++) {
+            out.append("          <dc:publisher>");
+            out.append((String) dc.publishers().get(i));
+            out.append("          </dc:publisher>\n");
+        }
+        for (int i=0; i<dc.contributors().size(); i++) {
+            out.append("          <dc:contributor>");
+            out.append((String) dc.contributors().get(i));
+            out.append("          </dc:contributor>\n");
+        }
+        for (int i=0; i<dc.dates().size(); i++) {
+            String dateString=(String) dc.dates().get(i);
+            out.append("          <dc:date>");
+            out.append(dateString);
+            out.append("          </dc:date>\n");
+        }
+        for (int i=0; i<dc.types().size(); i++) {
+            out.append("          <dc:type>");
+            out.append((String) dc.types().get(i));
+            out.append("          </dc:type>\n");
+        }
+        for (int i=0; i<dc.formats().size(); i++) {
+            out.append("          <dc:format>");
+            out.append((String) dc.formats().get(i));
+            out.append("          </dc:format>\n");
+        }
+        for (int i=0; i<dc.identifiers().size(); i++) {
+            out.append("          <dc:identifier>");
+            out.append((String) dc.identifiers().get(i));
+            out.append("          </dc:identifier>\n");
+        }
+        for (int i=0; i<dc.sources().size(); i++) {
+            out.append("          <dc:source>");
+            out.append((String) dc.sources().get(i));
+            out.append("          </dc:source>\n");
+        }
+        for (int i=0; i<dc.languages().size(); i++) {
+            out.append("          <dc:language>");
+            out.append((String) dc.languages().get(i));
+            out.append("          </dc:language>\n");
+        }
+        for (int i=0; i<dc.relations().size(); i++) {
+            out.append("          <dc:relation>");
+            out.append((String) dc.relations().get(i));
+            out.append("          </dc:relation>\n");
+        }
+        for (int i=0; i<dc.coverages().size(); i++) {
+            out.append("          <dc:coverage>");
+            out.append((String) dc.coverages().get(i));
+            out.append("          </dc:coverage>\n");
+        }
+        for (int i=0; i<dc.rights().size(); i++) {
+            out.append("          <dc:rights>");
+            out.append((String) dc.rights().get(i));
+            out.append("          </dc:rights>\n");
+        }
+        out.append("        </oai_dc:dc>");
+        return out.toString();
     }
 
-    /**
-     * Get the remaining portion of a set of Records.
-     *
-     * If the size of the returned list is over getMaxRecords(), the last element
-     * is another resumptionToken (a String) which can be used to get the rest 
-     * of the list.
-     */
     public List getRecords(String resumptionToken)
             throws CannotDisseminateFormatException,
             NoRecordsMatchException, NoSetHierarchyException, 
             BadResumptionTokenException, RepositoryException {
-        if (1==2) {
-            return null;
-        }
-        throw new RepositoryException("getRecords not impld");
+        throw new BadResumptionTokenException("Not a known resumptionToken.");
     }
+    
+    private String getFTypePart(String set) 
+            throws NoRecordsMatchException {
+        if (set==null) {
+            return "";
+        }
+        if (set.equals("objects")) {
+            return " fType=O";
+        } else if (set.equals("bdefs")) {
+            return " fType=D";
+        } else if (set.equals("bmechs")) {
+            return " fType=M";
+        } else {
+            throw new NoRecordsMatchException("No such set: " + set);
+        }
+    }
+    
+    private String getDatePart(Date from, Date until) {
+        if (from==null && until==null) {
+            return "";
+        }
+        StringBuffer out=new StringBuffer();
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        if (from!=null) {
+            out.append(" dcmDate>='");
+            out.append(formatter.format(from));
+            out.append("'");
+        }
+        if (until!=null) {
+            out.append(" dcmDate<='");
+            out.append(formatter.format(until));
+            out.append("'");
+        }
+        return out.toString();
+    }
+    
 
-    /**
-     * Just like getRecords, but returns Header objects.
-     *
-     * If the size of the returned list is over getMaxHeaders(), the last element
-     * is a resumptionToken (a String) which can be used to get the rest of the 
-     * list.
-     */
     public List getHeaders(Date from, Date until, String metadataPrefix,
             String set)
             throws CannotDisseminateFormatException, NoRecordsMatchException, 
@@ -212,62 +309,54 @@ public class FedoraOAIProvider
         if (!metadataPrefix.equals("oai_dc")) {
             throw new CannotDisseminateFormatException("Repository does not provide that format in OAI-PMH responses.");
         }
-        throw new RepositoryException("getHeaders not impld");
+        List l=null;
+        try {
+            l=m_fieldSearch.search(s_headerFields, 
+                    Condition.getConditions("dcmDate~'*T*'" 
+                    + getDatePart(from, until) + getFTypePart(set)));
+        } catch (ServerException se) {
+            throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
+        }
+        if (l.size()==0) {
+            throw new NoRecordsMatchException("No records match the given criteria.");
+        }
+        ArrayList ret=new ArrayList();
+        for (int i=0; i<l.size(); i++) {
+            ObjectFields f=(ObjectFields) l.get(i);
+            String identifier="oai:fedora.info:" + f.getPid();
+            Date datestamp=f.getDCMDate();
+            HashSet setSpecs=new HashSet();
+            String fType=f.getFType();
+            if (fType.equals("D")) {
+                setSpecs.add("bdefs");
+            } else if (fType.equals("M")) {
+                setSpecs.add("bmechs");
+            } else {
+                setSpecs.add("objects");
+            }
+            ret.add(new SimpleHeader(identifier, datestamp, setSpecs, true));
+        }
+        return ret;
     }
 
-    /**
-     * Get the remaining portion of a set of Headers.
-     *
-     * If the size of the returned list is over getMaxHeaders() the last element
-     * is another resumptionToken (a String) which can be used to get the rest 
-     * of the list.
-     */
     public List getHeaders(String resumptionToken)
             throws CannotDisseminateFormatException,
             NoRecordsMatchException, NoSetHierarchyException, 
             BadResumptionTokenException, RepositoryException {
-        throw new RepositoryException("getHeaders not impld");
+        throw new BadResumptionTokenException("Not a known resumptionToken.");
     }
             
-    /**
-     * Get the setSpecs, setNames, and setDescriptions of sets in the
-     * repository.  Each set has a setSpec, a name, a zero or more
-     * descriptions, held by a SetInfo object.
-     *
-     * If the size of the returned list is over getMaxSets(), the last element
-     * is a resumptionToken (a String) which can be used to get the rest 
-     * of the list.
-     */
     public List getSets()
             throws NoSetHierarchyException, RepositoryException {
-        if (1==2) {
-            return null;
-        }
-        throw new RepositoryException("getSets not impld");
+        return m_setInfos;
     }
 
-    /**
-     * Get the remaining portion of a set of Sets.
-     *
-     * If the size of the returned list is over getMaxSets(), the last element
-     * is another resumptionToken (a String) which can be used to get the rest 
-     * of the list.
-     */
     public List getSets(String resumptionToken)
             throws BadResumptionTokenException,
             NoSetHierarchyException, RepositoryException {
-        if (1==2) {
-            return null;
-        }
-        throw new RepositoryException("getSets not impld");
+        throw new BadResumptionTokenException("Not a known resumptionToken.");
     }
 
-    /**
-     * Get the MetadataFormats supported across the repository or for an
-     * individual item in the repository.
-     *
-     * @param identifier The item identifier, or null, meaning "the entire repository"
-     */
     public Set getMetadataFormats(String id)
             throws NoMetadataFormatsException, IDDoesNotExistException, 
             RepositoryException {
@@ -302,31 +391,16 @@ public class FedoraOAIProvider
         }
     }
 
-    /**
-     * Get the maximum number of sets that are returned at a time.
-     *
-     * A negative value signifies no maximum.
-     */
     public long getMaxSets()
             throws RepositoryException {
         return m_maxSets;
     }
             
-    /**
-     * Get the maximum number of records that are returned at a time.
-     *
-     * A negative value signifies no maximum.
-     */
     public long getMaxRecords()
             throws RepositoryException {
         return m_maxRecords;
     }
             
-    /**
-     * Get the maximum number of headers that are returned at a time.
-     *
-     * A negative value signifies no maximum.
-     */
     public long getMaxHeaders()
             throws RepositoryException {
         return m_maxHeaders;

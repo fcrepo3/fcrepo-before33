@@ -134,7 +134,81 @@ public class OAIResponder {
                 respondToListMetadataFormats(args, m_provider.getBaseURL(),
                         m_provider.getMetadataFormats(identifier), out);
             } else if (verb.equals("ListRecords")) {
+                String rToken=(String) args.get("resumptionToken");
+                List records;
+                if (rToken!=null) {
+                    if (args.size()>2) {
+                        throw new BadArgumentException("ListRecords request specified resumptionToken with other arguments.");
+                    }
+                    records=m_provider.getRecords(rToken);
+                } else {
+                    Iterator iter=args.keySet().iterator();
+                    boolean badParam=false;
+                    Date from=null;
+                    Date until=null;
+                    String metadataPrefix=null;
+                    String set=null;
+                    while (iter.hasNext()) {
+                        String name=(String) iter.next();
+                        if (name.equals("metadataPrefix")) {
+                            metadataPrefix=(String) args.get(name);
+                        } else if (name.equals("set")) {
+                            set=(String) args.get(name);
+                        } else if (name.equals("from")) {
+                            from=getUTCDate((String) args.get(name));
+                        } else if (name.equals("until")) {
+                            until=getUTCDate((String) args.get(name));
+                        } else if (!name.equals("verb")) {
+                            badParam=true;
+                        }
+                    }
+                    if ((from!=null) && (until!=null)) {
+                        assertSameGranularity((String) args.get("from"), (String) args.get("until"));
+                    }
+                    if (badParam) {
+                        throw new BadArgumentException("ListRecords request specified illegal argument(s).");
+                    }
+                    if (metadataPrefix==null) {
+                        throw new BadArgumentException("ListRecords request did not specify metadataPrefix argument.");
+                    }
+                    records=m_provider.getRecords(from, until, metadataPrefix, set);
+                }
+                if (records.size()==0) {
+                    throw new NoRecordsMatchException("No records match the providied criteria.");
+                }
+                ResumptionToken resumptionToken=null;
+                if (m_provider.getMaxRecords()>0) {
+                    if (records.size()>m_provider.getMaxRecords()) {
+                        resumptionToken=(ResumptionToken) 
+                                records.get(records.size()-1);
+                        records=records.subList(0, records.size()-1);
+                    }
+                }
+                respondToListRecords(args, m_provider.getBaseURL(), 
+                        records, resumptionToken, out);
             } else if (verb.equals("ListSets")) {
+                String rToken=(String) args.get("resumptionToken");
+                List sets;
+                if (rToken==null) {
+                    if (args.size()>1) {
+                        throw new BadArgumentException("ListSets request specified illegal argument(s).");
+                    }
+                    sets=m_provider.getSets();
+                } else {
+                    if (args.size()>2) {
+                        throw new BadArgumentException("ListSets request specified illegal argument(s).");
+                    }
+                    sets=m_provider.getSets(rToken);
+                }
+                ResumptionToken resumptionToken=null;
+                if (m_provider.getMaxSets()>0) {
+                    if (sets.size()>m_provider.getMaxSets()) {
+                        resumptionToken=(ResumptionToken) 
+                                sets.get(sets.size()-1);
+                        sets=sets.subList(0, sets.size()-1);
+                    }
+                }
+                respondToListSets(args, m_provider.getBaseURL(), sets, resumptionToken, out);
             } else {
                 throw new BadVerbException("Unrecognized verb, '" + verb + "'.");
             }
@@ -233,6 +307,10 @@ public class OAIResponder {
         appendTop(out);
         appendRequest(args, baseURL, out);
         out.println("  <ListRecords>");
+        for (int i=0; i<records.size(); i++) {
+            appendRecord("    ", (Record) records.get(i), out);
+        }
+        appendResumptionToken(resumptionToken, out);
         out.println("  </ListRecords>");
         appendBottom(out);
     }
@@ -243,6 +321,20 @@ public class OAIResponder {
         appendTop(out);
         appendRequest(args, baseURL, out);
         out.println("  <ListSets>");
+        for (int i=0; i<sets.size(); i++) {
+            SetInfo s=(SetInfo) sets.get(i);
+            out.println("    <set>");
+            out.println("      <setSpec>" + s.getSpec() + "</setSpec>");
+            out.println("      <setName>" + s.getName() + "</setName>");
+            Iterator iter=s.getDescriptions().iterator();
+            while (iter.hasNext()) {
+                out.println("      <setDescription>\n");
+                out.println((String) iter.next());
+                out.println("      </setDescription>\n");
+            }
+            out.println("    </set>");
+        }
+        appendResumptionToken(resumptionToken, out);
         out.println("  </ListSets>");
         appendBottom(out);
     }

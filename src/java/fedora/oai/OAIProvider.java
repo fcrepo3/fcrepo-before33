@@ -135,7 +135,7 @@ public interface OAIProvider {
             
     /**
      * Get the setSpecs, setNames, and setDescriptions of sets in the
-     * repository.  Each set has a setSpec, a name, a zero or more
+     * repository.  Each set has a setSpec, a name, and zero or more
      * descriptions, held by a SetInfo object.
      *
      * If the size of the returned list is over getMaxSets(), the last element
