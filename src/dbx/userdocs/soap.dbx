@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!--<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>-->
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
-		<title><inlinemediaobject>
+		<title>
+			<inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject></title>
+			</inlinemediaobject>
+		</title>
 		<title>Fedora API-A Sample SOAP Client</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -54,14 +56,18 @@
 		</blockquote>
 		<para>For more information on the method definitions, refer to the API descriptions located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink> . </para>
 		<para>The Fedora API-A sample SOAP client is an example of a java servlet-based client that provides a front end to the Fedora Access API-A SOAP service. The sample client is designed to provide a <emphasis>browser centric</emphasis> view of the Fedora Access interface. Return types from the Fedora Access SOAP service are translated into a form suitable for viewing with a web browser; i.e., MIME-typed streams. Applications that can readily handle SOAP requests and responses would most likely communicate directly with the Fedora Access SOAP service rather than use a java servlet as an intermediary. This servlet is provided as an example of how to construct a client that uses the Fedora Access API via SOAP.</para>
-		<para><emphasis role="bold">Client Syntax</emphasis></para>
+		<para>
+			<emphasis role="bold">Client Syntax</emphasis>
+		</para>
 		<para>Input parameters for the servlet include:</para>
 		<itemizedlist>
 			<listitem>
-				<para><emphasis role="bold">action_</emphasis> - name of Fedora service which must be one of the following:</para>
+				<para>
+					<emphasis role="bold">action_</emphasis> - name of Fedora service which must be one of the following:</para>
 				<itemizedlist>
 					<listitem>
-						<para><emphasis>GetBehaviorDefinitions</emphasis> - gets list of Behavior Defintions</para>
+						<para>
+							<emphasis>GetBehaviorDefinitions</emphasis> - gets list of Behavior Defintions</para>
 						<itemizedlist>
 							<listitem>
 								<para>requires PID_</para>
@@ -69,18 +75,8 @@
 						</itemizedlist>
 					</listitem>
 					<listitem>
-						<para><emphasis>GetBehaviorMethods</emphasis> - gets list of Behavior Methods </para>
-						<itemizedlist>
-							<listitem>
-								<para>requires PID_</para>
-							</listitem>
-							<listitem>
-								<para>requires bDefPID_</para>
-							</listitem>
-						</itemizedlist>
-					</listitem>
-					<listitem>
-						<para><emphasis>GetBehaviorMethodsXML</emphasis> - gets WSDL-defined Behavior Methods definitions as XML</para>
+						<para>
+							<emphasis>GetBehaviorMethods</emphasis> - gets list of Behavior Methods </para>
 						<itemizedlist>
 							<listitem>
 								<para>requires PID_</para>
@@ -91,7 +87,20 @@
 						</itemizedlist>
 					</listitem>
 					<listitem>
-						<para><emphasis>GetDissemination</emphasis> - gets a dissemination result</para>
+						<para>
+							<emphasis>GetBehaviorMethodsXML</emphasis> - gets WSDL-defined Behavior Methods definitions as XML</para>
+						<itemizedlist>
+							<listitem>
+								<para>requires PID_</para>
+							</listitem>
+							<listitem>
+								<para>requires bDefPID_</para>
+							</listitem>
+						</itemizedlist>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>GetDissemination</emphasis> - gets a dissemination result</para>
 						<itemizedlist>
 							<listitem>
 								<para>requires PID_</para>
@@ -105,7 +114,8 @@
 						</itemizedlist>
 					</listitem>
 					<listitem>
-						<para><emphasis>GetObjectmethods</emphasis> - gets a list of all Behavior Methods of an object.</para>
+						<para>
+							<emphasis>GetObjectmethods</emphasis> - gets a list of all Behavior Methods of an object.</para>
 						<itemizedlist>
 							<listitem>
 								<para>requires PID_</para>
@@ -113,7 +123,8 @@
 						</itemizedlist>
 					</listitem>
 					<listitem>
-						<para><emphasis>GetObjectProfile</emphasis> - gets object profile.</para>
+						<para>
+							<emphasis>GetObjectProfile</emphasis> - gets object profile.</para>
 						<itemizedlist>
 							<listitem>
 								<para>requires PID_</para>
@@ -123,22 +134,28 @@
 				</itemizedlist>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">PID_</emphasis> - persistent identifier of the digital object</para>
+				<para>
+					<emphasis role="bold">PID_</emphasis> - persistent identifier of the digital object</para>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">bDefPID_</emphasis> - persistent identifier of the Behavior Definiton object</para>
+				<para>
+					<emphasis role="bold">bDefPID_</emphasis> - persistent identifier of the Behavior Definiton object</para>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">methodName_</emphasis> - name of the method</para>
+				<para>
+					<emphasis role="bold">methodName_</emphasis> - name of the method</para>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">asOfDateTime_</emphasis> - versioning datetime stamp (optional)</para>
+				<para>
+					<emphasis role="bold">asOfDateTime_</emphasis> - versioning datetime stamp (optional)</para>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">xml_</emphasis> - boolean switch used in conjunction with GetBehaviorDefinitions, GetBehaviorMethods, GetObjectMethods, and GetObjectProfile methods that determines whether output is formatted as XML or as HTML; value of "true" indicates that the results are to be returned as XML; value of false or omission indicates display in HTML table format. (optional)</para>
+				<para>
+					<emphasis role="bold">xml_</emphasis> - boolean switch used in conjunction with GetBehaviorDefinitions, GetBehaviorMethods, GetObjectMethods, and GetObjectProfile methods that determines whether output is formatted as XML or as HTML; value of "true" indicates that the results are to be returned as XML; value of false or omission indicates display in HTML table format. (optional)</para>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">userParms</emphasis> - behavior methods may require or provide optional parameters that may be input as arguments to a behavior method; these method parameters are entered as name/value pairs like the other serlvet parameters.(optional)</para>
+				<para>
+					<emphasis role="bold">userParms</emphasis> - behavior methods may require or provide optional parameters that may be input as arguments to a behavior method; these method parameters are entered as name/value pairs like the other serlvet parameters.(optional)</para>
 			</listitem>
 		</itemizedlist>
 		<para>Note that all servlet parameter names that are implementation specific end with the underscore character ("_"). This is done to avoid possible name clashes with user-supplied method parameter names. As a general rule, user-supplied parameters should never contain names that end with the underscore character to prevent possible name conflicts. </para>
@@ -148,13 +165,16 @@
 		<para>The sample client can be run as an integral part of the Fedora server or as a standalone client on a different machine or server. If running outside the Fedora server, its only requirements are a servlet engine using Java Servlet API 2.1 or higher, the endpoint of a functional Fedora Server, and the servlet path mapping used to access the soap client. The endpoint and servlet path info are configured in the soapclient.properties file that is located in the WEB-INF directory of the soapclient webapp module in the Fedora distribution directory tree. The properties file specifies three variables:</para>
 		<itemizedlist>
 			<listitem>
-				<para><emphasis role="bold">fedoraEndpoint</emphasis> - the URL of the Fedora API-A SOAP service; default is "http://localhost:8080/fedora/access/soap"</para>
+				<para>
+					<emphasis role="bold">fedoraEndpoint</emphasis> - the URL of the Fedora API-A SOAP service; default is "http://localhost:8080/fedora/access/soap"</para>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">soapClientServletPath</emphasis> - the servlet path used to access the soapclient; default is "/soapclient/apia"</para>
+				<para>
+					<emphasis role="bold">soapClientServletPath</emphasis> - the servlet path used to access the soapclient; default is "/soapclient/apia"</para>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">soapClientMethodParmResolverServletPath</emphasis> - the servlet mapping used to access the MethodParmResolverServlet which is a utility servlet of the soa client; default is "/soapclient/getAccessParmResolver"</para>
+				<para>
+					<emphasis role="bold">soapClientMethodParmResolverServletPath</emphasis> - the servlet mapping used to access the MethodParmResolverServlet which is a utility servlet of the soa client; default is "/soapclient/getAccessParmResolver"</para>
 			</listitem>
 		</itemizedlist>
 		<para>The web.xml file for the soap client webapp uses these default settings. If the webapp is ported to another servlet engine and any of the serlvet mappings change, the web.xml and the soapclient.properties file must both be updated accordingly. The servlets will dynamically get the values in the soapclient.properties file so no changes should be needed in the source code.</para>
@@ -166,37 +186,37 @@
 			<listitem>
 				<para>Get the BehaviorDefinitions for a data object with a PID of test:3</para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&equals;GetBehaviorDefinitions&amp;PID_&equals;test:3</para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetBehaviorDefinitions&amp;PID_&#61;test:3</para>
 				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get the BehaviorMethods for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1</para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&equals;GetBehaviorMethods&amp;PID_&equals;test:3&amp;bDefPID_&equals;test:1</para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetBehaviorMethods&amp;PID_&#61;test:3&amp;bDefPID_&#61;test:1</para>
 				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get the BehaviorMethodsXML for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1</para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&equals;GetBehaviorMethodsXML&amp;PID_&equals;test:3&amp;bDefPID_&equals;test:1</para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetBehaviorMethodsXML&amp;PID_&#61;test:3&amp;bDefPID_&#61;test:1</para>
 				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get the Dissemination for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1 and methodName of getThumbnail</para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&equals;GetDissemination&amp;PID_&equals;test:3&amp;bDefPID_&equals;test:1&amp;methodName_&equals;getThumbnail </para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetDissemination&amp;PID_&#61;test:3&amp;bDefPID_&#61;test:1&amp;methodName_&#61;getThumbnail </para>
 				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get the ObjectMethods for a data object with a PID of test:3: </para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&equals;GetObjectMethods&amp;PID_&equals;test:3</para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetObjectMethods&amp;PID_&#61;test:3</para>
 				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get the ObjectProfile for a data object with a PID of test:3:</para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&equals;GetObjectProfile&amp;PID_&equals;test:3</para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetObjectProfile&amp;PID_&#61;test:3</para>
 				</blockquote>
 			</listitem>
 		</orderedlist>

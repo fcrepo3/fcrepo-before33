@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!--<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>-->
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
-		<title><inlinemediaobject>
+		<title>
+			<inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject></title>
+			</inlinemediaobject>
+		</title>
 		<title>Fedora Search Interface User Documentation</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -36,13 +38,15 @@
 	<sect1>
 		<title>Introduction</title>
 		<para>The Search Interface provides a mechanism for searching and browsing the Fedora repository.  Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using this interface.  The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the <emphasis>Datastream ID</emphasis> is DC, and the XML conforms to the schema at <ulink url="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</ulink>.  If a Dublin Core metadata datastream is not provided, Fedora will construct a minimal DC datastream consisting of the elements dc:title and dc:identifier. The value for dc:title will be obtained from the object's label (if present in the object) and the value for dc:identifier will be assigned to the object's persistent identifier or PID.</para>
-		<para>The search interface provides both simple and advanced searching via a web form included with the repository software.  All queries are case insensitive.  Simple Search enables queries of words and phrases occurring anywhere in than object's indexed metadata fields.  Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (&nbsp; &equals; and &tilde;&nbsp;) for string fields, and value comparison operators (&nbsp; &equals;, &gt;, &ge;, &lt;, &le; &nbsp;) for date fields (dc:date fields may be treated as both).  The wildcards, &ast; and &quest; may be used in any string-based query.</para>
+		<para>The search interface provides both simple and advanced searching via a web form included with the repository software.  All queries are case insensitive.  Simple Search enables queries of words and phrases occurring anywhere in than object's indexed metadata fields.  Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (&#160; &#061; and &#126;&#160;) for string fields, and value comparison operators (&#160; &#061;, &#62;, &#8805;, &#60;, &#8804; &#160;) for date fields (dc:date fields may be treated as both).  The wildcards, &#42; and &#63; may be used in any string-based query.</para>
 	</sect1>
 	<sect1>
 		<title>Search Interface Syntax</title>
 		<para>The Fedora Search Interface is implemented as a java servlet and can be accessed using the following syntax:</para>
 		<blockquote>
-			<para><emphasis role="bold">http://hostname:port/fedora/search</emphasis></para>
+			<para>
+				<emphasis role="bold">http://hostname:port/fedora/search</emphasis>
+			</para>
 		</blockquote>
 		<blockquote>
 			<itemizedlist>

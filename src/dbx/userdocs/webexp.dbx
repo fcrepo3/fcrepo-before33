@@ -85,7 +85,7 @@
 					</listitem>
 					<listitem>
 						<para>
-							<emphasis>parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1&equals;value1&amp;parm2&equals;value2...</para>
+							<emphasis>parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1&#61;value1&amp;parm2&#61;value2...</para>
 					</listitem>
 				</itemizedlist>
 			</blockquote>
@@ -455,7 +455,7 @@
 		</sect2>
 		<sect2>
 			<title>Search/Browse</title>
-			<para>The Fedora repository system also includes a search interface that enables searching across both System Metadata and user-defined Dublin Core metadata.Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using the search interface. The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the "Datastream ID" is DC, and the XML conforms to the schema at: http://www.openarchives.org/OAI/2.0/oai_dc.xsd. If such a datastream is not provided, Fedora will construct a default Dublin Core record using the label of the object as the dc:title value and the PID of the object as the dc:identifier value. The search interface provides both simple and advanced searching via a web page included with the repository software. All queries are case insensitive. Simple search enables queries of words and phrases occurring anywhere in an object s indexed metadata fields. Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (= and ~) for string fields, and value comparison operators (&equals;, &gt;, &ge;, &lt;, &le;) for date fields (dc:date fields may be treated as both). The wildcards, * and ? may be used in any string-based query.  The search interface can be accessed using the syntax:</para>
+			<para>The Fedora repository system also includes a search interface that enables searching across both System Metadata and user-defined Dublin Core metadata.Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using the search interface. The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the "Datastream ID" is DC, and the XML conforms to the schema at: http://www.openarchives.org/OAI/2.0/oai_dc.xsd. If such a datastream is not provided, Fedora will construct a default Dublin Core record using the label of the object as the dc:title value and the PID of the object as the dc:identifier value. The search interface provides both simple and advanced searching via a web page included with the repository software. All queries are case insensitive. Simple search enables queries of words and phrases occurring anywhere in an object s indexed metadata fields. Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (= and ~) for string fields, and value comparison operators (&#160; &#061;, &#62;, &#8805;, &#60;, &#8804; &#160;) for date fields (dc:date fields may be treated as both). The wildcards, &#42; and &#63; may be used in any string-based query.  The search interface can be accessed using the syntax:</para>
 			<para>
 				<emphasis role="bold">http://hostname:port/fedora/search</emphasis>
 			</para>

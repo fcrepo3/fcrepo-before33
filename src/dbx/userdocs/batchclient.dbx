@@ -32,7 +32,7 @@
 	<sect1>
 		<title>Introduction</title>
 		<para>The <emphasis>fedora-admin</emphasis> client utility includes tools to create and ingest multiple Fedora objects, which are Fedora-specific METS XML documents contained in files outside the repository.</para>
-		<para>It&apos;s simple to ingest objects created by one-up edit or by custom scripting.</para>
+		<para>It&#39;s simple to ingest objects created by one-up edit or by custom scripting.</para>
 		<para>
 			<emphasis>fedora-admin</emphasis> also supports building objects.  This takes a general template common to all objects in a batch and makes object-specific substitutions into the template.  It also substitutes a common datetime stamp for all date attributes.  The template is a Fedora METS XML document, with data common to the objects of the batch.  Separate XML documents hold the per-object substitution values.</para>
 		<para>The relatedness of objects in a batch is defined by what <emphasis>fedora-admin</emphasis> allows to be substituted and by which substitutions you choose to make.  Data from the template are retained, unless replaced per individual object, including XML comments.</para>
