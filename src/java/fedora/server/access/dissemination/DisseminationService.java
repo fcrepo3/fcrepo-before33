@@ -224,6 +224,42 @@ public class DisseminationService
       {
         dissBindInfo = dissBindInfoArray[i];
 
+        // Before doing anything, check whether we can replace any
+        // placeholders in the datastream url with parameter values from
+        // the request.  This supports the special case where a
+        // datastream's URL is dependent on user parameters, such
+        // as when the datastream is actually a dissemination that
+        // takes parameters.
+        if (dissBindInfo.dsLocation!=null 
+                && dissBindInfo.dsLocation.startsWith("http://")) {
+            String[] parts=dissBindInfo.dsLocation.split("=\\("); // regex for =(
+            if (parts.length>1) {
+                StringBuffer replaced=new StringBuffer();
+                replaced.append(parts[0]);
+                for (int x=1; x<parts.length; x++) {
+                    replaced.append('=');
+                    int rightParenPos=parts[x].indexOf(")");
+                    if (rightParenPos!=-1 && rightParenPos>0) {
+                        String key=parts[x].substring(0, rightParenPos);
+                        String val=(String) h_userParms.get(key);
+                        if (val!=null) {
+                            replaced.append(val);
+                            if (rightParenPos<parts[x].length()) {
+                                replaced.append(parts[x].substring(rightParenPos+1));
+                            }
+                        } else {
+                            replaced.append('(');
+                            replaced.append(parts[x]);
+                        }
+                    } else {
+                        replaced.append('(');
+                        replaced.append(parts[x]);
+                    }
+                }
+                dissBindInfo.dsLocation=replaced.toString();
+            }
+        }
+
         // Match DSBindingKey pattern in WSDL which is a string of the form:
         // (DSBindingKey). Rows in DisseminationBindingInfo are sorted
         // alphabetically on binding key.
