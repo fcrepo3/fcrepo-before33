@@ -276,13 +276,13 @@ public class METSDODeserializer
                 // set (check how it's returned by the server, and if that's
                 // the same as how it was given in the METS file, ok ... if
                 // it wasn't given in the mets file, take the server's word
-                // for it)
-                // 1) the mime type and 
-                // 2) the content-length.
-                // 1 is required, 2 isn't because it's not always returned.
-                // these are set by getContentStream() automagically if it succeeds
-                // so all we have to do here is request it and close it
-                // after we've created an instance
+                // for it, and if the server reports something different
+                // than the file, take the file's word for it)
+                // The server also attempts to get the size (in bytes).
+                // If the server doesn't say (no content-length header) in
+                // a HEAD request, request the entire stream to get the
+                // size.  if the mets file specifies a size, make sure
+                // it matches whatever the server has given.
                 DatastreamReferencedContent d=new DatastreamReferencedContent();
                 d.DatastreamID=m_dsId;
                 d.DSVersionID=m_dsVersId;
