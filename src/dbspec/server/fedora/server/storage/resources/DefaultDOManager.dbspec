@@ -344,7 +344,7 @@ If (eDate &gt; iDate &amp;&amp; status==2) {
                 The identifier of the associated Fedora object.
             </comment>
         </column>
-        <column name="status" type="tinyint">
+        <column name="status" type="smallint">
             <comment>
                 Different, but related to the associated object's "state", this
                 indicates the Item's visibility and existence.  A value of 2
