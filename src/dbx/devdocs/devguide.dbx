@@ -207,6 +207,20 @@
             </orderedlist>
         </section>
         <section>
+         <title>Staying Informed about Code Changes</title>
+         <para>If you
+         <ulink url="https://comm.nsdlib.org/mailman/listinfo/fedora-codewatch">subscribe
+         to the fedora-codewatch mailing list</ulink>, you will get email notification
+         of changes to the source of the project as they are checked into CVS.
+         You may prefer not to recieve too many email messages, but still have
+         an interest in code changes.  In that case, don't subscribe
+         (if you're already subscribed, unsubscribe) and periodically have a
+         look at the
+         <ulink url="https://comm.nsdlib.org/mailman/archives/fedora-codewatch/">mailing
+         list archives</ulink>.
+         </para>
+        </section>
+        <section>
             <title>Checking out the Project Files</title>
             <para>When your system is properly configured as specified above,
                   you can type: <userinput>cvs co -P mellon</userinput>, (the
@@ -493,6 +507,9 @@
     <para>Here is the revision history of this guide:</para>
     <literallayout>
     $Log$
+    Revision 1.9  2002/05/17 20:02:00  cwilper
+    Added section on the fedora-codewatch mailing list (automatic updates for project code-related events)
+
     Revision 1.8  2002/05/13 18:39:29  cwilper
     Added a comment on the -d option with "cvs update"
 
