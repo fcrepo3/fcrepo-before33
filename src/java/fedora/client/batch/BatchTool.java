@@ -103,15 +103,15 @@ class BatchTool {
 	public static final void main(String[] args) throws Exception {
 		Properties defaults = new Properties();
 		String defaultsPath = System.getProperty("fedora.home") + "\\..\\batch\\default.properties";
-System.err.println("defaultsPath=[" + defaultsPath + "]");		
+//System.err.println("defaultsPath=[" + defaultsPath + "]");		
 		defaults.load(new FileInputStream(defaultsPath)); //"dist/batch/default.properties"));	
-System.err.println("after loading defaults");		
+//System.err.println("after loading defaults");		
 		Properties miscProperties = new Properties(defaults);
 		Properties datastreamProperties = new Properties();
 		Properties metadataProperties = new Properties();
 		
+		/*
 		Getopt getopt = new Getopt("thispgm",args,"g:d:m:");
-			
 		int c;
 		while ((c = getopt.getopt()) != -1) {
 			switch (c) {
@@ -127,7 +127,8 @@ System.err.println("after loading defaults");
 					break;
 			}			
 		}
-		
+		*/
+		miscProperties.load(new FileInputStream(args[0]));		
 		BatchTool batchTool = new BatchTool(miscProperties,datastreamProperties,metadataProperties);
 		batchTool.prep();
 		batchTool.process();
