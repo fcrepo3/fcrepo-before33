@@ -91,53 +91,52 @@
     </ul>Example:
 
     <blockquote>
-      <p>fedora-dsinfo localhost 8080 fedoraAdmin fedoraAdmin
-      demo:5</p>
+      <p><b>fedora-dsinfo localhost 8080 fedoraAdmin fedoraAdmin demo:5</b></p>
+       <p>Displays key information about each of an object's datastreams.</p>
     </blockquote>
 
-    <p>Displays key information about each of an object's
-    datastreams.</p>
+
   </div>
 
   <div class="sec1">
     <h2><a name="d0e89" id="d0e89">fedora-export</a></h2>
 
-    <p><b>fedora-export</b> HST:PRT USR PSS PID|FTYPS PATH</p>
+    <p><b>fedora-export</b> [HST:PRT] [USR] [PSS] [PID|FTYPS] [FORMAT] [ECONTEXT] [PATH]</p>
 
     <p>Where:</p>
 
     <ul>
-      <li><b>HST</b> - The repository's hostname.</li>
+      <li><b>[HST:PRT]</b> - The repository's hostname and the port separated by colon.</li>
 
-      <li><b>PRT</b> - The repository's port number.</li>
+      <li><b>[USR]</b> - The id of the repository user.</li>
 
-      <li><b>USR</b> - The id of the repository user.</li>
+      <li><b>[PSS]</b> - The password of the repository user.</li>
 
-      <li><b>PSS</b> - The password of the repository user.</li>
-
-      <li><b>PID</b> - The id of the object to export from the
-      repository.</li>
-
-      <li><b>FTYPS</b> - Any combination of the characters O, D,
-      and M, specifying which Fedora object type(s) should be
-      exported. O=regular objects, D=behavior definitions,
-      M=behavior mechanisms.</li>
-
-      <li><b>PATH</b> - The directory to export to.</li>
+      <li><b>[PID|FTYPS]</b> - Either the identifier (PID) of the object to export from the
+      repository OR the types of objects to export (FTYPS).  FTYPS can be any combination 
+      of the characters O, D,  and M, specifying which Fedora object type(s) should be
+      exported. O=regular data objects, D=behavior definitions,  M=behavior mechanisms.</li>
+      
+      <li><b>[FORMAT]</b> - The XML format to export.  Valid options are:
+         <em>foxml1.0 </em>(for FOXML), <em>metslikefedora1</em> (for METS), or 
+         <em>default</em>.</li>
+         
+      <li> <b>[ECONTEXT] </b> - The export context (which indicates what use case
+         the output should be prepared for.  Valid options are: <em>public</em>, <em>migrate</em>, 
+         <em>archive </em>, or <em>default</em>.</li>
+         
+      <li><b>[PATH]</b> - The directory to export to.</li>
     </ul>
 
     <div>
       <p>Examples:</p>
-
       <blockquote>
-        <p>fedora-export example.com:80 fedoraAdmin fedoraAdmin
-        changeme:1 .</p>
-
-        <p>fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO
-        /tmp/fedoradump</p>
+	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin demo:1 foxml1.0 migrate </b></p>
+  	<p>Exports demo:1 for migration in FOXML format  (from example.com:80 to the current directory).</p>
+	<br></br>
+	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO default default /tmp/fedoradump</b></p>
+  	<p>Exports all objects in the default export format and context (from example.com:80 to directory /tmp/fedoradump).</p>
       </blockquote>
-
-      <p>Exports one or more objects from a Fedora repository.</p>
     </div>
 
     <div class="sec1">
@@ -172,8 +171,7 @@
     <p>Example:</p>
 
     <blockquote>
-      <p>fedora-find localhost 8080 "pid fType title description"
-      "fedora"</p>
+      <p><b>fedora-find localhost 8080 "pid fType title description" "fedora"</b></p>
 
       <p>(shows the pid, Fedora object type, title, and description
       fields of each object that has the word fedora somewhere in
@@ -190,61 +188,81 @@
     <h2><a name="d0e164" id="d0e164"></a>fedora-ingest</h2>
 
     <blockquote>
-      <p><b>fedora-ingest</b> f[ile] PATH THST:TPRT TUSR TPSS
+      <p><b>fedora-ingest</b> f[ile] [PATH] [FORMAT] [THST:TPRT] [TUSR] [TPSS]
       [LOG]</p>
 
-      <p><b>fedora-ingest</b> d[ir] PATH FTYPS THST:TPRT TUSR TPSS
-      [LOG]</p>
+      <p><b>fedora-ingest</b> d[ir] [PATH] [FORMAT] [FTYPS] [THST:TPRT] [TUSR] [TPSS]  [LOG]</p>
 
-      <p><b>fedora-ingest</b> r[epos] SHST:SPRT SUSR SPSS PID|FTYPS
-      THST:TPRT TUSR TPSS [LOG]</p>
+      <p><b>fedora-ingest</b> r[epos] [SHST:SPRT] [SUSR] [SPSS] [PID|FTYPS]
+      [THST:TPRT] [TUSR] [TPSS] [LOG]</p>
     </blockquote>
 
     <p>Where:</p>
 
     <ul>
+    	<li>f|[ile] or d[ir] or r[epos] indicates the whether the ingest is from a file, directory, or repository as source.</li>
       <li><b>PATH</b> - the local file or directory name.</li>
+      
+      <li><b>[FORMAT]</b>  - the XML format of the ingest file(s). Valid options are:
+         <em>foxml1.0 </em>(for FOXML), <em>metslikefedora1</em> (for METS)</li>
 
-      <li><b>FTYPS</b> - any combination of the characters O, D,
-      and M, specifying which Fedora object type(s) should be
-      ingested. O=regular objects, D=behavior definitions, and
-      M=behavior mechanisms.</li>
-
-      <li><b>PID</b> - the id of the object to ingest from the
-      source repository.</li>
-
-      <li><b>SHST/THST</b> - the source or target repository's
+      <li><b>[SHST/THST]</b> - the source or target repository's
       hostname.</li>
 
-      <li><b>SPRT/TPRT</b> - the source or target repository's port
+      <li><b>[SPRT/TPRT]</b> - the source or target repository's port
       number.</li>
 
-      <li><b>SUSR/TUSR</b> - the id of the source or target
+      <li><b>[SUSR/TUSR]</b> - the id of the source or target
       repository user.</li>
 
-      <li><b>SPSS/TPSS</b> - the password of the source or target
+      <li><b>[SPSS/TPSS]</b> - the password of the source or target
       repository user.</li>
+      
+      <li><b>[PID|FTYPS]</b> - Either the identifier (PID) of the object to export from the
+      repository OR the types of objects to export (FTYPS).  FTYPS can be any combination 
+      of the characters O, D,  and M, specifying which Fedora object type(s) should be
+      exported. O=regular data objects, D=behavior definitions,  M=behavior mechanisms.</li>
 
-      <li><b>LOG</b> - the optional log message. If unspecified,
+      <li><b>[LOG]</b> - the optional log message. If unspecified,
       the log message will indicate the source of the
       object(s).</li>
     </ul>
 
     <p>Examples:</p>
-
     <blockquote>
-      <p>fedora-ingest file obj1.xml example.com:80 fedoraAdmin
-      fedoraAdmin</p>
+	<p><b>fedora-ingest f obj1.xml foxml1.0 myrepo.com:80 jane jpw</b></p>
 
-      <p>fedora-ingest dir c:\archive M example.com:80 fedoraAdmin
-      fedoraAdmin ""</p>
+  <p>Ingests obj1.xml (encoded in foxml1.0 format) from the
+  current directory into the repository at myrepo.com:80
+  as user 'jane' with password 'jpw'.
+  The logmessage will be system-generated, indicating
+  the source path+filename.</p>
 
-      <p>fedora-ingest dir c:\archive ODM example.com:80
-      fedoraAdmin fedoraAdmin ""</p>
+	<p><b>fedora-ingest d c:\archive foxml1.0 M myrepo.com:80 jane janepw ""</b></p>
+
+  <p>Traverses entire directory structure of c:\archive, and ingests
+  any file that looks like a behavior mechanism object (M).
+  It assumes all files will be in the XML format 'foxml1.0'
+  and will fail on ingests of files that are not of this format.
+  All log messages will be the quoted string.</p>
+
+	<p><b>fedora-ingest d c:\archive foxml1.0 ODM myrepo.com:80 jane janepw "for jane"</b></p>
+
+  <p>Same as above, but ingests all three types of objects (O,D,M).</p>
+
+	<p><b>fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:80 jane jpw ""</b></p>
+
+ <p>Ingests the object whose pid is 'demo:1' from the source repository
+  'srcrepo.com:8081' into the target repository 'myrepo.com:80'.
+  The object will be exported from the source repository in the default
+  export format configured at the source.
+  All log messages will be empty.</p> 
+
+	<p><b>fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:80 jane jpw ""</b></p>
+
+  <p>Same as above, but ingests all data objects (type O).</p>
+    
     </blockquote>
-
-    <p>Ingests one or more objects into the repository, either from
-    disk or from another Fedora repository.</p>
   </div>
 
   <div class="sec1">
@@ -272,8 +290,7 @@
     <p>Example:</p>
 
     <blockquote>
-      <p>fedora-ingest-demos localhost 8080 fedoraAdmin
-      fedoraAdmin</p>
+      <p><b>fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin</b></p>
     </blockquote>
 
     <p>A convenient script to ingest all included demo objects for
@@ -316,8 +333,7 @@
     <p>Example:</p>
 
     <blockquote>
-      <p>fedora-convert-demos localhost 8080 www.fedora.info 80
-      c:\fedora-2.0</p>
+      <p><b>fedora-convert-demos localhost 8080 www.fedora.info 80 c:\fedora-2.0</b></p>
     </blockquote>
 
     <p>Converts URLs in the demo objects from one host/port
@@ -369,8 +385,7 @@
     <p>Example:</p>
 
     <blockquote>
-      <p>fedora-purge localhost 8080 fedoraAdmin fedoraAdmin demo:6
-      "It was just a test object"</p>
+      <p><b>fedora-purge localhost 8080 fedoraAdmin fedoraAdmin demo:6 "It was just a test object"</b></p>
     </blockquote>
 
     <p>Permanently removes an object from the repository. Note:
@@ -385,9 +400,7 @@
     <h2><a name="fedmod" id="fedmod"></a>fedora-modify</h2>
 
     <blockquote>
-      <p><b>fedora-modify</b> [hostname:port]? [user]? [password]?
-      [directives-filepath]
-      [log-filepath]?[validate-only-option]*</p>
+      <p><b>fedora-modify</b> [hostname:port]  [user]  [password]  [directives-filepath]  [log-filepath] [validate-only-option]*</p>
     </blockquote>
 
     <p>Where:</p>
@@ -408,7 +421,7 @@
       <li><b>[log-filepath]</b> - The full path to the file where
       logs will be written.</li>
 
-      <li><b>[validate-only-option]</b> - An optional parameter
+      <li><b>[validate-only-option]</b> - An <em>optional </em> parameter
       indicating whether to only validate the directives file or to
       immediately process the file. The parameter can have any
       non-blank value. If present, the directives file will be
