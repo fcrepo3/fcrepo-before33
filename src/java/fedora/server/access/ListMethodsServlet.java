@@ -377,7 +377,7 @@ public class ListMethodsServlet extends HttpServlet
   }
 
   /**
-   * <p> A Thread to serialize an ObjectProfile object into XML.</p>
+   * <p> A Thread to serialize an ObjectMethodDef object into XML.</p>
    *
    */
   public class ObjectMethodsDefSerializerThread extends Thread

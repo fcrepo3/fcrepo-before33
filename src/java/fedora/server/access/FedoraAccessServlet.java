@@ -462,12 +462,12 @@ public class FedoraAccessServlet extends HttpServlet
           hm.put("application", "apia");
           hm.put("useCachedObject", "false");
           hm.put("userId", "fedoraAdmin");
-          ReadOnlyContext newContext = new ReadOnlyContext(hm);
+          ReadOnlyContext unCachedContext = new ReadOnlyContext(hm);
           logger.logFinest("[FedoraAccessServlet] GetDatastreamDissemination Syntax "
               + "Encountered: "+ requestURI);
           logger.logFinest("PID: " + PID + " dsID: " + dsID
               + " asOfDate: " + versDateTime);
-          getDatastreamDissemination(newContext, PID, dsID, asOfDateTime, response, request);
+          getDatastreamDissemination(unCachedContext, PID, dsID, asOfDateTime, response, request);
           long stopTime = new Date().getTime();
           long interval = stopTime - servletStartTime;
           logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
@@ -579,6 +579,7 @@ public class FedoraAccessServlet extends HttpServlet
     MIMETypedStream dissemination = null;
     dissemination =
         s_access.getDatastreamDissemination(context, PID, dsID, asOfDateTime);
+    System.out.println("disseminationResult: "+dissemination);
     if (dissemination != null)
     {
 

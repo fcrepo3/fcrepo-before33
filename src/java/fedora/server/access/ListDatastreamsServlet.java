@@ -376,7 +376,7 @@ public class ListDatastreamsServlet extends HttpServlet
   }
 
   /**
-   * <p> A Thread to serialize an ObjectProfile object into XML.</p>
+   * <p> A Thread to serialize a DatastreamDef object into XML.</p>
    *
    */
   public class DatastreamDefSerializerThread extends Thread

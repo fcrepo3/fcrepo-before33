@@ -876,17 +876,27 @@ public class DefaultAccess extends Module implements Access
       checkState(context, "Data", reader.GetObjectState(), PID);
       Datastream ds = (Datastream) reader.GetDatastream(dsID, asOfDateTime);
       InputStream inStream = null;
-      if (ds.DSControlGrp.equalsIgnoreCase("E") || ds.DSControlGrp.equalsIgnoreCase("R")) {
-          DatastreamReferencedContent drc = (DatastreamReferencedContent) reader.GetDatastream(dsID, asOfDateTime);
-          inStream = drc.getContentStream();
-      } else if(ds.DSControlGrp.equalsIgnoreCase("M")) {
-          DatastreamManagedContent dmc = (DatastreamManagedContent) reader.GetDatastream(dsID, asOfDateTime);
-          inStream = dmc.getContentStream();
-      } else if(ds.DSControlGrp.equalsIgnoreCase("X")) {
-          DatastreamXMLMetadata dxm =  (DatastreamXMLMetadata) reader.GetDatastream(dsID, asOfDateTime);
-          inStream = dxm.getContentStream();
+      if (ds != null) {
+          if (ds.DSControlGrp.equalsIgnoreCase("E") || ds.DSControlGrp.equalsIgnoreCase("R")) {
+              DatastreamReferencedContent drc = (DatastreamReferencedContent) reader.GetDatastream(dsID, asOfDateTime);
+              inStream = drc.getContentStream();
+          } else if(ds.DSControlGrp.equalsIgnoreCase("M")) {
+              DatastreamManagedContent dmc = (DatastreamManagedContent) reader.GetDatastream(dsID, asOfDateTime);
+              inStream = dmc.getContentStream();
+          } else if(ds.DSControlGrp.equalsIgnoreCase("X")) {
+              DatastreamXMLMetadata dxm =  (DatastreamXMLMetadata) reader.GetDatastream(dsID, asOfDateTime);
+              inStream = dxm.getContentStream();
+          }
+          return new MIMETypedStream(ds.DSMIME, inStream, null);
+      } else {
+          String message = "[DefaulAccess] No datastream could be returned. "
+              + "Either there is no datastream for the digital "
+              + "object \"" + PID + "\" with datastream ID of \"" + dsID
+              + " \"  OR  there are no datastreams that match the specified "
+              + "date/time value of \"" + DateUtility.convertDateToString(asOfDateTime)
+              + " \"  .";
+          throw new DatastreamNotFoundException(message);
       }
-      return new MIMETypedStream(ds.DSMIME, inStream, null);
 
   }
 }
