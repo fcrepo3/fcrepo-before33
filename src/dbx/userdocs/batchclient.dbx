@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!-- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> -->
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
@@ -31,7 +31,7 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
-		<para>The <emphasis>fedora-admin</emphasis> client utility includes tools to create and ingest multiple Fedora objects, represented externally to Fedora in METS XML documents.</para>
+		<para>The <emphasis>fedora-admin</emphasis> client utility includes tools to create and ingest multiple Fedora objects, which are Fedora-specific METS XML documents contained in files outside the repository.</para>
 		<para>It&apos;s simple to ingest objects created by one-up edit or by custom scripting.</para>
 		<para>
 			<emphasis>fedora-admin</emphasis> also supports building objects.  This takes a general template common to all objects in a batch and makes object-specific substitutions into the template.  It also substitutes a common datetime stamp for all date attributes.  The template is a Fedora METS XML document, with data common to the objects of the batch.  Separate XML documents hold the per-object substitution values.</para>
@@ -68,7 +68,7 @@
 					</imageobject>
 				</mediaobject>
 				<para>You can then ingest the created batch as described elsewhere in this document.</para>
-				<para>No subdirectories or files are deleted by <emphasis>fedora-admin</emphasis>.  Setup and cleanup is by using standard operating systems facilities.</para>
+				<para>No subdirectories or files are deleted by <emphasis>fedora-admin</emphasis>.  Setup and cleanup of the files in the batch must be done by you using standard operating systems facilities.</para>
 			</blockquote>
 		</sect2>
 		<sect2>
@@ -122,7 +122,7 @@
 	</sect1>
 	<sect1>
 		<title>Building and ingesting Fedora objects in batch</title>
-		<para>Build a set of Fedora METS XML files from a common Fedora METS template and simple (non-METS) XML <emphasis>object-specs</emphasis>, and continue and ingest this batch into Fedora.
+		<para>This process builds a set of Fedora METS XML files from a common Fedora METS template and simple (non-METS) XML <emphasis>object-specs</emphasis>, then ingests the  resulting batch into Fedora.
 		</para>
 		<sect2>
 			<title>fedora-admin instructions</title>
@@ -142,7 +142,7 @@
 					</imageobject>
 				</mediaobject>
 				<para>There is then no need to separately ingest the created batch.</para>
-				<para>No subdirectories or files are deleted by <emphasis>fedora-admin</emphasis>.  Setup and cleanup is by using standard operating systems facilities.</para>
+				<para>No subdirectories or files are deleted by <emphasis>fedora-admin</emphasis>.  Setup and cleanup of the files in the batch must be done by you using standard operating systems facilities.</para>
 				<para>
 					<emphasis>fedora-admin</emphasis> does not itself validate on <emphasis>Batch Build</emphasis>, but batch ingest into Fedora does.  The batch fails on the first individual object ingest failure.</para>
 				<para>Fedora will not ingest a METS file whose <emphasis role="bold">METS:xmldata</emphasis> elements are empty or contain non-tagged character data.</para>
