@@ -1,6 +1,8 @@
 package fedora.server.access;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -175,6 +177,19 @@ public class DefaultAccess extends Module implements Access
         m_manager.getReader(context, PID);
     behaviorDefs = reader.GetBehaviorDefs(versDateTime);
 
+    // Check Object State
+    String state = reader.GetObjectState();
+    if(state.equalsIgnoreCase("D")) {
+      throw new GeneralException("The requested digital object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged for DELETION "
+          + "by the repository administrator. ");
+
+    } else if(state.equalsIgnoreCase("I")) {
+      throw new GeneralException("The requested digital object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged as INACTIVE "
+          + "by the repository administrator. ");
+    }
+
     // DYNAMIC!! Grab any dynamic behavior definitions and merge them with
     // the statically bound behavior definitions
     String[] behaviorDefsDynamic =
@@ -221,6 +236,20 @@ public class DefaultAccess extends Module implements Access
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     DOReader reader =
         m_manager.getReader(context, PID);
+
+    // Check Object State
+    String state = reader.GetObjectState();
+    if(state.equalsIgnoreCase("D")) {
+      throw new GeneralException("The requested digital object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged for DELETION "
+          + "by the repository administrator. ");
+
+    } else if(state.equalsIgnoreCase("I")) {
+      throw new GeneralException("The requested digital object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged as INACTIVE "
+          + "by the repository administrator. ");
+    }
+
     MethodDef[] methods =
         reader.getObjectMethods(bDefPID, versDateTime);
     return methods;
@@ -252,6 +281,20 @@ public class DefaultAccess extends Module implements Access
       InputStream methodResults = null;
       DOReader reader =
           m_manager.getReader(context, PID);
+
+      // Check Object State
+      String state = reader.GetObjectState();
+      if(state.equalsIgnoreCase("D")) {
+        throw new GeneralException("The requested digital object \""+PID+"\" is no "
+            + "longer available for dissemination. It has been flagged for DELETION "
+            + "by the repository administrator. ");
+
+      } else if(state.equalsIgnoreCase("I")) {
+        throw new GeneralException("The requested digital object \""+PID+"\" is no "
+            + "longer available for dissemination. It has been flagged as INACTIVE "
+            + "by the repository administrator. ");
+    }
+
       methodResults = reader.getObjectMethodsXML(bDefPID, versDateTime);
       if (methodResults != null)
       {
@@ -296,6 +339,21 @@ public class DefaultAccess extends Module implements Access
   {
     long initStartTime = new Date().getTime();
     m_ipRestriction.enforce(context);
+    DOReader reader = m_manager.getReader(context, PID);
+
+    // Check Object State
+    String state = reader.GetObjectState();
+    if(state.equalsIgnoreCase("D")) {
+      throw new GeneralException("The requested digital object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged for DELETION "
+          + "by the repository administrator. ");
+
+    } else if(state.equalsIgnoreCase("I")) {
+      throw new GeneralException("The requested digital object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged as INACTIVE "
+          + "by the repository administrator. ");
+    }
+
 
     long startTime = new Date().getTime();
     // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
@@ -315,8 +373,7 @@ public class DefaultAccess extends Module implements Access
     Hashtable h_userParms = new Hashtable();
     MIMETypedStream dissemination = null;
     MethodParmDef[] defaultMethodParms = null;
-    DOReader reader =
-        m_manager.getReader(context, PID);
+    reader = m_manager.getReader(context, PID);
 
     // SDP: get a bmech reader to get information that is specific to
     // a mechanism.
@@ -419,6 +476,20 @@ public class DefaultAccess extends Module implements Access
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     DOReader reader =
         m_manager.getReader(context, PID);
+
+    // Check Object State
+    String state = reader.GetObjectState();
+    if(state.equalsIgnoreCase("D")) {
+      throw new GeneralException("The requested digital object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged for DELETION "
+          + "by the repository administrator. ");
+
+    } else if(state.equalsIgnoreCase("I")) {
+      throw new GeneralException("The requested digital object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged as INACTIVE "
+          + "by the repository administrator. ");
+    }
+
     ObjectMethodsDef[] methodDefs =
         reader.getObjectMethods(versDateTime);
     long stopTime = new Date().getTime();
@@ -445,19 +516,33 @@ public class DefaultAccess extends Module implements Access
   public ObjectProfile getObjectProfile(Context context, String PID,
     Calendar asOfDateTime) throws ServerException
   {
-      DOReader reader = m_manager.getReader(context, PID);
-      Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
-      ObjectProfile profile = new ObjectProfile();
-      profile.PID = reader.GetObjectPID();
-      profile.objectLabel = reader.GetObjectLabel();
-      profile.objectContentModel = reader.getContentModelId();
-      profile.objectCreateDate = reader.getCreateDate();
-      profile.objectLastModDate = reader.getLastModDate();
-      profile.objectType = reader.getFedoraObjectType();
-      profile.dissIndexViewURL = getDissIndexViewURL(getReposBaseURL(),
-          reader.GetObjectPID(), versDateTime);
-      profile.itemIndexViewURL = getItemIndexViewURL(getReposBaseURL(),
-          reader.GetObjectPID(), versDateTime);
+    DOReader reader = m_manager.getReader(context, PID);
+
+    // Check Object State
+    String state = reader.GetObjectState();
+    if(state.equalsIgnoreCase("D")) {
+      throw new GeneralException("The requested digital object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged for DELETION "
+          + "by the repository administrator. ");
+
+    } else if(state.equalsIgnoreCase("I")) {
+      throw new GeneralException("The requested digital object \""+PID+"\" is no "
+          + "longer available for dissemination. It has been flagged as INACTIVE "
+          + "by the repository administrator. ");
+    }
+
+    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    ObjectProfile profile = new ObjectProfile();
+    profile.PID = reader.GetObjectPID();
+    profile.objectLabel = reader.GetObjectLabel();
+    profile.objectContentModel = reader.getContentModelId();
+    profile.objectCreateDate = reader.getCreateDate();
+    profile.objectLastModDate = reader.getLastModDate();
+    profile.objectType = reader.getFedoraObjectType();
+    profile.dissIndexViewURL = getDissIndexViewURL(getReposBaseURL(),
+        reader.GetObjectPID(), versDateTime);
+    profile.itemIndexViewURL = getItemIndexViewURL(getReposBaseURL(),
+        reader.GetObjectPID(), versDateTime);
       return profile;
   }
 
