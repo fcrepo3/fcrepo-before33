@@ -36,7 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
+//import java.util.TimeZone;
 
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
@@ -303,6 +303,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                      queueLastModifiedDate(tripleQ, rep, diss.dissCreateDT); 
                  }
             } catch (SQLException e) {
+                throw new ResourceIndexException(e.getMessage(), e);
+            } finally {
                 try {
                     if (rs != null) {
                         rs.close();
@@ -310,14 +312,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                     if (select != null) {
                         select.close();
                     }
-                m_cPool.free(m_conn);
+                    if (m_conn != null) {
+                        m_cPool.free(m_conn);
+                    }
                 } catch(SQLException e2) {
                     throw new ResourceIndexException(e2.getMessage(), e2);
                 } finally {
                     rs = null;
                     select = null;
                 }
-                throw new ResourceIndexException(e.getMessage(), e);
             }
 	    }
 
@@ -454,6 +457,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                      m_writer.delete(m_reader.findTriples(TripleMaker.createResource(rep), null, null, 0), false);
                  }
             } catch (SQLException e) {
+                throw new ResourceIndexException(e.getMessage(), e);
+            } catch (IOException e) {
+                throw new ResourceIndexException(e.getMessage(), e);
+            } catch (TrippiException e) {
+                throw new ResourceIndexException(e.getMessage(), e);
+            } finally {
                 try {
                     if (rs != null) {
                         rs.close();
@@ -461,18 +470,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                     if (select != null) {
                         select.close();
                     }
-                m_cPool.free(m_conn);
+                    if (m_conn != null) {
+                        m_cPool.free(m_conn);
+                    }
                 } catch(SQLException e2) {
                     throw new ResourceIndexException(e2.getMessage(), e2);
                 } finally {
                     rs = null;
                     select = null;
                 }
-                throw new ResourceIndexException(e.getMessage(), e);
-            } catch (IOException e) {
-                throw new ResourceIndexException(e.getMessage(), e);
-            } catch (TrippiException e) {
-                throw new ResourceIndexException(e.getMessage(), e);
             }
         }	
 	}
@@ -703,6 +709,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             insertMethod.executeBatch();
             insertPermutation.executeBatch();
         } catch (SQLException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } finally {
             try {
                 if (insertMethod != null) {
                     insertMethod.close();
@@ -710,14 +718,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 if (insertPermutation != null) {
                     insertPermutation.close();
                 }
-                m_cPool.free(m_conn);
+                if (m_conn != null) {
+                    m_cPool.free(m_conn);
+                }
             } catch(SQLException e2) {
                 throw new ResourceIndexException(e2.getMessage(), e2);
             } finally {
                 insertMethod = null;
                 insertPermutation = null;
             }
-            throw new ResourceIndexException(e.getMessage(), e);
         }
 	}
 	
@@ -760,7 +769,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         String bMechPid = digitalObject.getPid();
         DatastreamXMLMetadata wsdlDS = (DatastreamXMLMetadata)ds;
         Map bindings;
-        PreparedStatement insertMethodImpl, insertMethodMimeType;
+        PreparedStatement insertMethodImpl = null;
+        PreparedStatement insertMethodMimeType = null;
         
         try {
             WSDLFactory wsdlFactory = WSDLFactory.newInstance();
@@ -810,33 +820,30 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 }
             }
             
-            try {
-                insertMethodImpl.executeBatch();
-                insertMethodMimeType.executeBatch();
-            } catch (SQLException e) {
-                try {
-                    if (insertMethodImpl != null) {
-                        insertMethodImpl.close();
-                    }
-                    if (insertMethodMimeType != null) {
-                        insertMethodMimeType.close();
-                    }
-                m_cPool.free(m_conn);
-                } catch(SQLException e2) {
-                    throw new ResourceIndexException(e2.getMessage(), e2);
-                } finally {
-                    insertMethodImpl = null;
-                    insertMethodMimeType = null;
-                }
-                throw new ResourceIndexException(e.getMessage(), e);
-            }
+            insertMethodImpl.executeBatch();
+            insertMethodMimeType.executeBatch();
             
         } catch (WSDLException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } catch (SQLException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } finally {
-            m_cPool.free(m_conn);
+            try {
+                if (insertMethodImpl != null) {
+                    insertMethodImpl.close();
+                }
+                if (insertMethodMimeType != null) {
+                    insertMethodMimeType.close();
+                }
+                if (m_conn != null) {
+                    m_cPool.free(m_conn);
+                }
+            } catch(SQLException e2) {
+                throw new ResourceIndexException(e2.getMessage(), e2);
+            } finally {
+                insertMethodImpl = null;
+                insertMethodMimeType = null;
+            }
         }
     }
     
@@ -873,17 +880,20 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             stmt.execute(deleteMP);
             stmt.execute(deleteM);
         } catch (SQLException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } finally {
             try {
                 if (stmt != null) {
                     stmt.close();
                 }
-                m_cPool.free(m_conn);
+                if (m_cPool != null) {
+                    m_cPool.free(m_conn);
+                }
             } catch(SQLException e2) {
                 throw new ResourceIndexException(e2.getMessage(), e2);
             } finally {
                 stmt = null;
             }
-            throw new ResourceIndexException(e.getMessage(), e);
         }
     }
 
@@ -931,17 +941,20 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             stmt.execute(deleteMMT);
             stmt.execute(deleteMI);
         } catch (SQLException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } finally {
             try {
                 if (stmt != null) {
                     stmt.close();
                 }
-                m_cPool.free(m_conn);
+                if (m_cPool != null) {
+                    m_cPool.free(m_conn);
+                }
             } catch(SQLException e2) {
                 throw new ResourceIndexException(e2.getMessage(), e2);
             } finally {
                 stmt = null;
             }
-            throw new ResourceIndexException(e.getMessage(), e);
         }
     }
 
