@@ -40,7 +40,7 @@
 		<servlet-name>FedoraAccessSoapServlet</servlet-name>
 		<display-name>Fedora Access Soap Servlet</display-name>
 		<servlet-class>
-			fedora.server.access.FedoraAccessSoapServlet
+			fedora.server.test.FedoraAccessSoapServlet
 		</servlet-class>
 	</servlet>
 	<!-- end test -->
