@@ -62,62 +62,11 @@
 								<!-- They specifiy a base64Binary format for transmitting datastreams from Fedora repository  -->
 								<!--  to the mechanism using a SOAP message.  -->
 								<!-- ************************************************************************************************************** -->
-								<xsd:complexType name="ThumbImageTransmitType">
+								<xsd:complexType name="MrSIDTransmitType">
 									<xsd:complexContent>
 										<xsd:restriction base="fedora:dsBindBaseType">
 											<xsd:sequence>
-												<xsd:element name="keyName" type="xsd:string" fixed="THUMBRES_IMG"/>
-												<xsd:element name="MIME">
-													<xsd:simpleType>
-														<xsd:restriction base="xsd:string">
-															<xsd:enumeration value="image/x-mrsid-image"/>
-														</xsd:restriction>
-													</xsd:simpleType>
-												</xsd:element>
-												<xsd:element name="content" type="xsd:base64Binary"/>
-											</xsd:sequence>
-										</xsd:restriction>
-									</xsd:complexContent>
-								</xsd:complexType>
-								<xsd:complexType name="MedImageTransmitType">
-									<xsd:complexContent>
-										<xsd:restriction base="fedora:dsBindBaseType">
-											<xsd:sequence>
-												<xsd:element name="keyName" type="xsd:string" fixed="MEDRES_IMG"/>
-												<xsd:element name="MIME">
-													<xsd:simpleType>
-														<xsd:restriction base="xsd:string">
-															<xsd:enumeration value="image/x-mrsid-image"/>
-														</xsd:restriction>
-													</xsd:simpleType>
-												</xsd:element>
-												<xsd:element name="content" type="xsd:base64Binary"/>
-											</xsd:sequence>
-										</xsd:restriction>
-									</xsd:complexContent>
-								</xsd:complexType>
-								<xsd:complexType name="HighImageTransmitType">
-									<xsd:complexContent>
-										<xsd:restriction base="fedora:dsBindBaseType">
-											<xsd:sequence>
-												<xsd:element name="keyName" type="xsd:string" fixed="HIGHRES_IMG"/>
-												<xsd:element name="MIME">
-													<xsd:simpleType>
-														<xsd:restriction base="xsd:string">
-															<xsd:enumeration value="image/x-mrsid-image"/>
-														</xsd:restriction>
-													</xsd:simpleType>
-												</xsd:element>
-												<xsd:element name="content" type="xsd:base64Binary"/>
-											</xsd:sequence>
-										</xsd:restriction>
-									</xsd:complexContent>
-								</xsd:complexType>
-								<xsd:complexType name="VeryHighImageTransmitType">
-									<xsd:complexContent>
-										<xsd:restriction base="fedora:dsBindBaseType">
-											<xsd:sequence>
-												<xsd:element name="keyName" type="xsd:string" fixed="VERYHIGHRES_IMG"/>
+												<xsd:element name="keyName" type="xsd:string" fixed="MRSID"/>
 												<xsd:element name="MIME">
 													<xsd:simpleType>
 														<xsd:restriction base="xsd:string">
@@ -146,16 +95,16 @@
 						<!-- Here we define the messages that will be used by the WSDL operations, defined below.      -->
 						<!-- ******************************************************************************************************************** -->
 						<wsdl:message name="getThumbRequest">
-							<wsdl:part name="THUMBRES_IMG" type="pa:ThumbImageTransmitType"/>
+							<wsdl:part name="MRSID" type="pa:MrSIDTransmitType"/>
 						</wsdl:message>
 						<wsdl:message name="getMedRequest">
-							<wsdl:part name="MEDRES_IMG" type="pa:MedImageTransmitType"/>
+							<wsdl:part name="MRSID" type="pa:MrSIDTransmitType"/>
 						</wsdl:message>
 						<wsdl:message name="getHighRequest">
-							<wsdl:part name="HIGHRES_IMG" type="pa:HighImageTransmitType"/>
+							<wsdl:part name="MRSID" type="pa:MrSIDTransmitType"/>
 						</wsdl:message>
 						<wsdl:message name="getVeryHighRequest">
-							<wsdl:part name="VERYHIGHRES_IMG" type="pa:VeryHighImageTransmitType"/>
+							<wsdl:part name="MRSID" type="pa:MrSIDTransmitType"/>
 						</wsdl:message>
 						<wsdl:message name="singlestream_response">
 							<wsdl:part name="result" type="pa:MIMEStream"/>
@@ -212,7 +161,7 @@
 									<http:urlReplacement/>
 								</wsdl:input>
 								<wsdl:output>
-									<mime:content type="application/java"/>
+									<mime:content type="image/jpg"/>
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getHigh">
@@ -221,7 +170,7 @@
 									<http:urlReplacement/>
 								</wsdl:input>
 								<wsdl:output>
-									<mime:content type="image/jpg"/>
+									<mime:content type="application/java"/>
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getVeryHigh">
@@ -230,7 +179,7 @@
 									<http:urlReplacement/>
 								</wsdl:input>
 								<wsdl:output>
-									<mime:content type="image/jpg"/>
+									<mime:content type="application/java"/>
 								</wsdl:output>
 							</wsdl:operation>
 						</wsdl:binding>
