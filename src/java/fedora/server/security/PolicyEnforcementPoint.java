@@ -179,6 +179,9 @@ System.err.println("***debugging CombinedPolicyModule");
 	
 	private final Set wrapSubjects(String subjectId) {
 		System.err.println("wrapSubjectIdAsSubjects(): " + subjectId);
+		if ((subjectId == null) || ("".equals(subjectId))) {
+			subjectId = Authorization.UNDEFINED;
+		}
 		StringAttribute stringAttribute = new StringAttribute(subjectId);
 		Attribute singleSubjectAttribute = new Attribute(SUBJECT_ID_URI, null, null, stringAttribute);
 		System.err.println("wrapSubjectIdAsSubjects(): singleSubjectAttribute, id=" + singleSubjectAttribute.getId() + ", type=" + singleSubjectAttribute.getType() + ", value=" + singleSubjectAttribute.getValue());

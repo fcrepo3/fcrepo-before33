@@ -131,7 +131,7 @@ public class DescribeRepositoryServlet extends HttpServlet
       }
     }
 
-    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_REST, request, ReadOnlyContext.USE_CACHED_OBJECT);
+    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, ReadOnlyContext.USE_CACHED_OBJECT);
     try {
         describeRepository(context, xml, response);
     } catch (Throwable th)

@@ -1,6 +1,5 @@
 package fedora.server.security;
 
-
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -35,9 +34,6 @@ import fedora.server.storage.types.Datastream;
 		}
 	}
 
-
-
-
 	protected AttributeFinderModule() {
 		
 		URI temp;
@@ -50,37 +46,27 @@ import fedora.server.storage.types.Datastream;
 			e1.printStackTrace();
 		}
 		STRING_ATTRIBUTE_URI = temp;
-		
-
-		
-		
-		
 	}
 	
 	private Boolean instantiatedOk = null;
 	protected final void setInstantiatedOk(boolean value) {
-		System.err.println("setInstantiatedOk() " + value);
+		log("setInstantiatedOk() " + value);
 		if (instantiatedOk == null) {
 			instantiatedOk = new Boolean(value);
 		}
 	}
 	
 	public boolean isDesignatorSupported() {
-		System.err.println("isDesignatorSupported() will return " + iAm() + " " + ((instantiatedOk != null) && instantiatedOk.booleanValue()));
+		log("isDesignatorSupported() will return " + iAm() + " " + ((instantiatedOk != null) && instantiatedOk.booleanValue()));
 		return (instantiatedOk != null) && instantiatedOk.booleanValue();
 	}
 
-	
 	private final boolean parmsOk(
 			URI attributeType,
 			URI attributeId,
-			//URI issuer,
-			//URI resourceCategory,
-			//EvaluationCtx context,
 			int designatorType) {
-		System.err.println("in parmsOk "  + iAm());
+		log("in parmsOk "  + iAm());
 		if (! getSupportedDesignatorTypes().contains(new Integer(designatorType))) {
-		//if (designatorType != AttributeDesignator.RESOURCE_TARGET) {
 			log("AttributeFinder:parmsOk" + iAm() + " exit on " + "target not supported");
 			return false;
 		}
@@ -94,7 +80,7 @@ import fedora.server.storage.types.Datastream;
 			log("AttributeFinder:parmsOk" + iAm() + " exit on " + "null attributeId");
 			return false;		}
 
-		log("AttributeFinder:parmsOk" + iAm() + " considering " + attributeId.toString());
+		log("AttributeFinder:parmsOk" + iAm() + " looking for " + attributeId.toString());
 		showRegisteredAttributes();
 		
 		if (hasAttribute(attributeId.toString())) {
@@ -108,8 +94,7 @@ import fedora.server.storage.types.Datastream;
 				return false;
 			}			
 		}
-		
-		System.err.println("exiting parmsOk normally " + iAm());
+		log("exiting parmsOk normally " + iAm());
 		return true;
 	}
 	
@@ -118,7 +103,6 @@ import fedora.server.storage.types.Datastream;
 	}
 	
 	protected final Object getAttributeFromEvaluationCtx(EvaluationResult attribute /*URI type, URI id, URI category, EvaluationCtx context*/) {
-		
 		if (attribute.indeterminate()) {
 			log("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "indeterminate");
 			return null;			
@@ -161,59 +145,14 @@ import fedora.server.storage.types.Datastream;
 		log("AttributeFinder:getAttributeFromEvaluationCtx " + iAm() + " returning " + element.toString());
 		return element;
 	}
-	
-	/*
-	private final String getResourceId(URI resourceCategory, EvaluationCtx context) {
-		URI resourceIdType = null;
-		URI resourceIdId = null;
-		try {
-			//type = new URI("urn:oasis:names:tc:xacml:1.0:data-type:rfc822Name");
-			resourceIdType = new URI(StringAttribute.identifier);
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			resourceIdId = new URI(EvaluationCtx.RESOURCE_ID);
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Object element = getAttributeFromEvaluationCtx(resourceIdType, resourceIdId, resourceCategory, context);
-		if (element == null) {
-			log("AttributeFinder:getResourceId" + " exit on " + "can't get resource-id on request callback");
-			return null;
-		}
-
-		if (! (element instanceof StringAttribute)) {
-			log("AttributeFinder:getResourceId" + " exit on " + "couldn't get resource-id from xacml request " + "non-string returned");
-			return null;			
-		}
- 
-		String resourceId = ((StringAttribute) element).getValue();			
 		
-		if (resourceId == null) {
-			log("AttributeFinder:getResourceId" + " exit on " + "null resource-id");
-			return null;			
-		}
-
-		if (! validResourceId(resourceId)) {
-			log("AttributeFinder:getResourceId" + " exit on " + "invalid resource-id");
-			return null;			
-		}
-		
-		return resourceId;			
-	}
-	*/
-
-	
 	protected final HashSet attributesDenied = new HashSet();
 	
 	private final Hashtable attributeIdUris = new Hashtable();	
 	private final Hashtable attributeTypes = new Hashtable();
 	private final Hashtable attributeTypeUris = new Hashtable();
 	protected final void registerAttribute(String id, String type) throws URISyntaxException {
-		System.err.println("registering attribute " + iAm() + " " +  id);
+		log("registering attribute " + iAm() + " " +  id);
 		attributeIdUris.put(id, new URI(id));
 		attributeTypeUris.put(id, new URI(type));
 		attributeTypes.put(id, type);			
@@ -231,7 +170,7 @@ import fedora.server.storage.types.Datastream;
 		Iterator it = attributeIdUris.keySet().iterator();
 		while (it.hasNext()) {
 			String key = (String) it.next();
-			log("showing attribute  = " + iAm() + " "  + key);
+			log("another registered attribute  = " + iAm() + " "  + key);
 		}
 	}
 
@@ -247,16 +186,16 @@ import fedora.server.storage.types.Datastream;
 	private static final Set NULLSET = new HashSet();
 	private final Set supportedDesignatorTypes = new HashSet();
 	protected final void registerSupportedDesignatorType(int designatorType) {
-		System.err.println("registerSupportedDesignatorType() "  + iAm());
+		log("registerSupportedDesignatorType() "  + iAm());
 		supportedDesignatorTypes.add(new Integer(designatorType));
 	}
 	
 	public Set getSupportedDesignatorTypes() {
 		if ((instantiatedOk != null) && instantiatedOk.booleanValue()) {
-			System.err.println("getSupportedDesignatorTypes() will return "+ iAm() +" set of elements, n=" + supportedDesignatorTypes.size());
+			log("getSupportedDesignatorTypes() will return "+ iAm() +" set of elements, n=" + supportedDesignatorTypes.size());
 			return supportedDesignatorTypes;			
 		}
-		System.err.println("getSupportedDesignatorTypes() will return "  + iAm() +  "NULLSET");
+		log("getSupportedDesignatorTypes() will return "  + iAm() +  "NULLSET");
 		return NULLSET;
 	}
 
@@ -265,18 +204,18 @@ import fedora.server.storage.types.Datastream;
 	private final boolean willService(URI attributeId) {
 		String temp = attributeId.toString();
 		if (hasAttribute(temp)) {
-			System.err.println("willService() " + iAm() + " accept this known serviced attribute");
+			log("willService() " + iAm() + " accept this known serviced attribute");
 			return true;
 		}
 		if (! canHandleAdhoc()) {
-			System.err.println("willService() " + iAm() + " deny any adhoc attribute");
+			log("willService() " + iAm() + " deny any adhoc attribute");
 			return false;								
 		}
 		if (attributesDenied.contains(temp)) {
-			System.err.println("willService() " + iAm() + " deny this known adhoc attribute");
+			log("willService() " + iAm() + " deny this known adhoc attribute");
 			return false;					
 		}
-		System.err.println("willService() " + iAm() + " allow this unknown adhoc attribute");
+		log("willService() " + iAm() + " allow this unknown adhoc attribute");
 		return true;
 	}
 	
@@ -336,27 +275,14 @@ import fedora.server.storage.types.Datastream;
 				
 	}
 	
-	//protected abstract boolean adhoc();
-	
-	/*
-	private final boolean validResourceId(String resourceId) {
-		if (resourceId == null)
-			return false;		
-		if ("".equals(resourceId))
-			return false;
-		if (" ".equals(resourceId))
-			return false;
-		return true;
-	}
-	*/
-	
 	protected final URI STRING_ATTRIBUTE_URI;
 	
 	abstract protected Object getAttributeLocally(int designatorType, String attributeId, URI resourceCategory, EvaluationCtx context);
 	
-
+	public static boolean log = false; 
 	
 	protected final void log(String msg) {
+		if (! log) return;
 		if (servletContext != null) {
 			servletContext.log(msg);
 		} else {

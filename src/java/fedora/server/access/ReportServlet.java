@@ -116,7 +116,7 @@ public class ReportServlet
 
 		Report report;
 		try {
-		    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_REST, request, ReadOnlyContext.USE_CACHED_OBJECT);
+		    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, ReadOnlyContext.USE_CACHED_OBJECT);
 			report = Report.getInstance(context, remoteAddr, sessionToken, reportName, fieldsArray, query, xslt, maxResults, newBase,
 					prefix, dateRange);
 		} catch (QueryParseException e1) {

@@ -276,7 +276,7 @@ public class ReadOnlyContext
   	    if (request.getContentType() != null) {
   	    	environmentMap.set(Authorization.ENVIRONMENT_REQUEST_CONTENT_TYPE_URI_STRING, request.getContentType());
   	    }
-  	    environmentMap.set(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_URI_STRING, soapOrRest);
+  	    environmentMap.set(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_URI_STRING, soapOrRest);
   	    if (! request.getRemoteHost().matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {	    
   	    	environmentMap.set(Authorization.ENVIRONMENT_CLIENT_FQDN_URI_STRING, request.getRemoteHost().toLowerCase());        
   	    }
@@ -307,27 +307,28 @@ public class ReadOnlyContext
   	}
 
   	try {		
-  		System.err.println("1");
+  		log("1");
   		subjectMap.set(Authorization.SUBJECT_ID_URI_STRING, subjectId);
-  		System.err.println("2");
+  		log("2");
   		for (int i = 0; (roles != null) && (i < roles.length); i++) {
   			String[] parts = parseRole(roles[i]);
-  			System.err.println(parts[0] + "][" + parts[1]);
+  			log(parts[0] + "][" + parts[1]);
   			subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
   		}
-  		System.err.println("3");
+  		log("3");
   	} catch (Exception e) {	
-  		System.err.println("caught exception building subjectMap");
+  		log("caught exception building subjectMap");
   	} finally {
   		subjectMap.lock();
   	}
-  	System.err.println("4");
+  	log("4");
 
   	HashMap commonParams = new HashMap();
   	commonParams.put("useCachedObject", "" + useCachedObject);    
   	commonParams.put("userId", subjectMap.getString(Authorization.SUBJECT_ID_URI_STRING)); //to do: change referring code to access Authorization.SUBJECT_ID, then delete this line   
   	commonParams.put("host", environmentMap.getString(Authorization.ENVIRONMENT_CLIENT_IP_URI_STRING)); //to do:  as above, vis-a-vis Authorization.ENVIRONMENT_CLIENT_IP
       ReadOnlyContext temp = new ReadOnlyContext(commonParams, environmentMap, subjectMap);
+      log("5 returning null? " + (temp == null));
       return temp;
     }
 
@@ -362,5 +363,12 @@ public class ReadOnlyContext
   		}
   		return parts; 
   	}
+  	
+	public static boolean log = false; 
+	
+	protected static final void log(String msg) {
+		if (! log) return;
+		System.err.println(msg);
+	}
     
 }

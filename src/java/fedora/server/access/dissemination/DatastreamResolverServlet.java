@@ -266,7 +266,7 @@ public class DatastreamResolverServlet extends HttpServlet
         dsVersionID = s[2];
         logger.logFinest("[DatastreamResolverServlet] PID: " + PID
             + " -- dsID: " + dsID + " -- dsVersionID: " + dsVersionID);
-        Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+        Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
         DOReader doReader =  m_manager.getReader(context, PID);
         Datastream d =
             (Datastream) doReader.getDatastream(dsID, dsVersionID);

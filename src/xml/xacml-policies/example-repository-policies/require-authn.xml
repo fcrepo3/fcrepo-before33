@@ -20,5 +20,5 @@
       <AnyResource/>
     </Resources>
   </Target>
-  <Rule RuleId="1" Effect="Deny">
+  <Rule RuleId="1" Effect="Deny"/>
 </Policy>

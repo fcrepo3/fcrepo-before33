@@ -14,18 +14,12 @@ import fedora.server.storage.types.Datastream;
 
 /*package*/ class ResourceAttributeFinderModule extends AttributeFinderModule {
 	
-	/*
-	protected String iAm() {
-		System.err.println("+++++ iAm would equal " + this.getClass().getName());
-		return "ResourceAttributeFinder";
-	}
-	*/
-	
 	protected boolean canHandleAdhoc() {
 		return false;
 	}
 
-	
+	//protected boolean adhoc() { return false; }
+
 	static private final ResourceAttributeFinderModule singleton = new ResourceAttributeFinderModule();
  
 	private ResourceAttributeFinderModule() {
@@ -55,11 +49,8 @@ import fedora.server.storage.types.Datastream;
 	private final String getResourceId(EvaluationCtx context) {
 		URI resourceIdType = null;
 		URI resourceIdId = null;
-		//URI resourceCategory = null;
 		try {
-			//type = new URI("urn:oasis:names:tc:xacml:1.0:data-type:rfc822Name");
 			resourceIdType = new URI(StringAttribute.identifier);
-			//resourceCategory = new URI(Authorization.RESOURCE_CATEGORY);
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -102,7 +93,7 @@ import fedora.server.storage.types.Datastream;
 	private final boolean validResourceId(String resourceId) {
 		if (resourceId == null)
 			return false;		
-		// if ("".equals(resourceId)) return false;
+		// "" is a valid resource id, for it represents a don't-care condition
 		if (" ".equals(resourceId))
 			return false;
 		return true;
@@ -163,7 +154,5 @@ import fedora.server.storage.types.Datastream;
 		return values;
 	}
 	
-	protected boolean adhoc() { return false; }
-
 }
 

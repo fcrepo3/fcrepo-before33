@@ -25,6 +25,8 @@ public interface Authorization {
 	public void enforceSearchVisibility(Context context, String pid) 
 	throws NotAuthorizedException;
 	*/
+	
+	public static final String UNDEFINED = "UNDEFINED";
 
 	//subject
 	public static final String SUBJECT_CATEGORY = "urn:oasis:names:tc:xacml:1.0:subject";
@@ -121,16 +123,15 @@ public interface Authorization {
 	public static final String ENVIRONMENT_REQUEST_SESSION_STATUS_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:request-session-status";		
 	public static final String ENVIRONMENT_REQUEST_CONTENT_LENGTH_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:request-content-length";
 	public static final String ENVIRONMENT_REQUEST_CONTENT_TYPE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:request-content-type";
-	public static final String ENVIRONMENT_REQUEST_SOAP_OR_REST_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:request-soap-or-rest";
+	public static final String ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:request-message-protocol";
 	public static final String ENVIRONMENT_CLIENT_FQDN_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:client-fqdn";
 	public static final String ENVIRONMENT_CLIENT_IP_URI_STRING = "info:fedora/fedora-system:def/policy#environment-client-ip";	
 	public static final String ENVIRONMENT_SERVER_FQDN_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:server-fqdn";
 	public static final String ENVIRONMENT_SERVER_IP_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:server-ip";	
 	public static final String ENVIRONMENT_SERVER_PORT_URI_STRING = "urn:oasis:names:tc:xacml:1.0:environment:server-port";	
 	
-	public static final String ENVIRONMENT_REQUEST_SOAP_OR_REST_SOAP = "soap";
-	public static final String ENVIRONMENT_REQUEST_SOAP_OR_REST_REST = "rest";
-
+	public static final String ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_SOAP = "soap";
+	public static final String ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST = "rest";
   	
 
 

@@ -93,7 +93,9 @@
         <param name="REPOSITORY-POLICIES-DIRECTORY" value="config/xacml-policies/repository-policies"/>
         <param name="OBJECT-POLICIES-DIRECTORY" value="config/xacml-policies/object-policies"/>
         <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
-        <param name="ENFORCE-MODE" value="permit-all-requests"/>      
+        <param name="ENFORCE-MODE" value="enforce-requests"/>
+        <!-- param name="ENFORCE-MODE" value="permit-all-requests"/ -->
+        <!-- param name="ENFORCE-MODE" value="deny-all-requests"/ -->
 	</module>
 	
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">

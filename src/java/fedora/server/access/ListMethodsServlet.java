@@ -205,7 +205,7 @@ public class ListMethodsServlet extends HttpServlet
 
       try {
           if (isListMethodsRequest) {
-              Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+              Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
               listMethods(context, PID, asOfDateTime, xml, request, response);
               long stopTime = new Date().getTime();
               long interval = stopTime - servletStartTime;
