@@ -14,6 +14,7 @@
 	<target name="serverdist" depends="server,client,userdocs" description="builds both client and server in dist\server, in a package suitable for distribution">
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
+		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
  		<copy todir="dist/server">
  			<fileset dir="dist/client"/>
  		</copy>
@@ -203,6 +204,16 @@
 			<arg value="-o"/>
 			<arg path="dist/userdocs/release-notes.html"/>
 			<arg path="src/dbx/userdocs/release-notes.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
+		<echo message="Translating installation.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/installation.html"/>
+			<arg path="src/dbx/userdocs/installation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
 	</target>
@@ -439,6 +450,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.57  2002/12/20 20:55:09  cwilper
+  userdocs target does install.html
+
   Revision 1.56  2002/12/20 16:35:17  wdn5e
   batchtool additions
 
