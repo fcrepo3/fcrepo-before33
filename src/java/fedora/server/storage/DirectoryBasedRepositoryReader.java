@@ -74,9 +74,11 @@ public class DirectoryBasedRepositoryReader
         if (!directory.isDirectory()) {
             throw new StorageDeviceException("Repository storage directory not found.");
         }
+        File thisFile=null;
         try {
             for (int i=0; i<files.length; i++) {
-                FileInputStream in=new FileInputStream(files[i]);
+                thisFile=files[i];
+                FileInputStream in=new FileInputStream(thisFile);
                 SimpleDOReader reader=new SimpleDOReader(null, this, m_translator,
                         m_shortExportFormat, m_longExportFormat, m_storageFormat,
                         m_encoding, in, this);
@@ -89,6 +91,9 @@ public class DirectoryBasedRepositoryReader
             }
         } catch (FileNotFoundException fnfe) {
             // naw
+        } catch (NullPointerException npe) {
+            if (thisFile!=null)
+                System.out.println("Error in " + thisFile.getName() + "...skipping");
         }
     }
     
