@@ -76,32 +76,32 @@ public class DatastreamConduit {
 
     public static void modifyDatastreamByReference(FedoraAPIM skeleton,
             String pid, String dsId, String dsLabel, String logMessage,
-            String location)
+            String location, String state)
             throws RemoteException {
         skeleton.modifyDatastreamByReference(pid, dsId, dsLabel, logMessage,
-                location);
+                location, state);
     }
 
     public void modifyDatastreamByReference(String pid, String dsId,
-            String dsLabel, String logMessage, String location)
+            String dsLabel, String logMessage, String location, String state)
             throws RemoteException {
         modifyDatastreamByReference(m_apim, pid, dsId, dsLabel, logMessage,
-                location);
+                location, state);
     }
 
     public static void modifyDatastreamByValue(FedoraAPIM skeleton,
             String pid, String dsId, String dsLabel, String logMessage,
-            byte[] content)
+            byte[] content, String state)
             throws RemoteException {
         skeleton.modifyDatastreamByValue(pid, dsId, dsLabel, logMessage,
-                content);
+                content, state);
     }
 
     public void modifyDatastreamByValue(String pid, String dsId,
-            String dsLabel, String logMessage, byte[] content)
+            String dsLabel, String logMessage, byte[] content, String state)
             throws RemoteException {
         modifyDatastreamByValue(m_apim, pid, dsId, dsLabel, logMessage,
-                content);
+                content, state);
     }
 
     public static void deleteDatastream(FedoraAPIM skeleton,

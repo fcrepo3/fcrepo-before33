@@ -1,6 +1,7 @@
 package fedora.client.datastream;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -79,6 +80,7 @@ public class DatastreamViewer
 
     public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd' at 'hh:mm:ss");
     public static DatastreamConduit CONDUIT;
+    public static String[] datastreamState={"A","D","I","W"};
 
     public DatastreamViewer(String pid)
             throws Exception {
@@ -96,7 +98,7 @@ public class DatastreamViewer
             // CENTER: tabbedPane(datastream panels)
 
             JTabbedPane tabbedPane=new JTabbedPane();
-            String[] dsIDs=CONDUIT.listDatastreamIDs(pid, "A");
+            String[] dsIDs=CONDUIT.listDatastreamIDs(pid, null);
             if ( (dsIDs==null) || (dsIDs.length==0) ) {
                 JPanel noDatastreamsPanel=new JPanel();
                 noDatastreamsPanel.setLayout(new BorderLayout());
@@ -167,16 +169,16 @@ public class DatastreamViewer
                         } else {
                             contentLabel=new JLabel("Location");
                         }
+                        JLabel stateLabel=new JLabel("State");
 
                     JPanel labelPanel=new JPanel();
-                    labelPanel.setLayout(new GridLayout(6, 1));
+                    labelPanel.setLayout(new GridLayout(7, 1, 0, 3));
                     labelPanel.setBorder(BorderFactory.createEmptyBorder(0,6,0,12));
                     labelPanel.add(modifiedLabel);
                     labelPanel.add(mimeTypeLabel);
                     labelPanel.add(infoTypeLabel);
                     labelPanel.add(controlGroupLabel);
                     labelPanel.add(labelLabel);
-                    labelPanel.add(contentLabel);
 
                 JPanel outerLabelPanel=new JPanel();
                 outerLabelPanel.setLayout(new BorderLayout());
@@ -207,7 +209,7 @@ public class DatastreamViewer
                         JLabel controlGroupValueLabel=new JLabel(controlGroupString);
 
                     JPanel singleLineValuePanel=new JPanel();
-                    singleLineValuePanel.setLayout(new GridLayout(4, 1));
+                    singleLineValuePanel.setLayout(new GridLayout(4, 1, 0, 3));
                     singleLineValuePanel.add(modifiedValueLabel);
                     singleLineValuePanel.add(mimeTypeValueLabel);
                     singleLineValuePanel.add(infoTypeValueLabel);
@@ -221,9 +223,20 @@ public class DatastreamViewer
                             labelValueField.setCaretPosition(0);
 
                         JPanel fieldGrid=new JPanel();
+                        GridBagLayout gridbag = new GridBagLayout();
+                        GridBagConstraints c = new GridBagConstraints();
+                        fieldGrid.setLayout(gridbag);
                         int numRows=1;
                         if (!xml) numRows++;
-                        fieldGrid.setLayout(new GridLayout(numRows, 1));
+                        //fieldGrid.setLayout(new GridLayout(numRows, 1));
+                        c.gridx=0; // column 1
+                        c.gridy=0; // row 1
+                        c.weightx=1.0; // use any available horizontal space
+                        c.gridwidth=GridBagConstraints.REMAINDER; // last row
+                        c.insets = new Insets(3,0,0,0); // pad top
+                        c.fill=GridBagConstraints.HORIZONTAL; // fill horizontally
+                        c.anchor=GridBagConstraints.WEST; // align left
+                        gridbag.setConstraints(labelValueField, c);
                         fieldGrid.add(labelValueField);
                         JTextField locationValueField=null;
                         if (!xml) {
@@ -235,7 +248,13 @@ public class DatastreamViewer
                             }
                             locationValueField=new JTextField(locationValue, 15);
                             locationValueField.setCaretPosition(0);
+                            c.gridx=0; // column 1
+                            c.gridy=1; // row 2
+                            c.insets = new Insets(0,0,0,0); // reset to default
+                            gridbag.setConstraints(locationValueField, c);
                             fieldGrid.add(locationValueField);
+                            labelPanel.add(contentLabel);
+                            labelPanel.add(stateLabel);
                         }
 
                     JPanel multiLineValuePanel=new JPanel();
@@ -266,7 +285,24 @@ public class DatastreamViewer
                         }
                         xmlEditor.setCaretPosition(0);
                         multiLineValuePanel.add(new JScrollPane(xmlEditor), BorderLayout.CENTER);
+                        labelPanel.add(stateLabel);
+                        labelPanel.add(contentLabel);
                     }
+
+                    JComboBox stateValueField = new JComboBox(datastreamState);
+                    stateValueField.setEditable(true);
+                    String dsState = ds.getState();
+                    stateValueField.setSelectedItem(dsState);
+                    Dimension dt = stateValueField.getPreferredSize();
+                    stateValueField.setPreferredSize(new Dimension((int)dt.getWidth()-90, (int)
+dt.getHeight()-5));
+                    c.gridx=0; // column 1
+                    c.gridy=2; // row 3
+                    c.gridheight=GridBagConstraints.REMAINDER; // last in column
+                    c.insets=new Insets(0,0,0,0); // reset to default
+                    c.fill=GridBagConstraints.NONE; // reset to default
+                    gridbag.setConstraints(stateValueField, c);
+                    fieldGrid.add(stateValueField);
 
                 JPanel valuePanel=new JPanel();
                 valuePanel.setLayout(new BorderLayout());
@@ -276,16 +312,16 @@ public class DatastreamViewer
                 // EAST: saveButtonPanel(saveButton)
 
                     // NORTH: saveButton
-                    JButton saveButton=new JButton("Modify");
-                    JButton deleteButton=new JButton("Delete");
-                    JButton withdrawButton=new JButton("Withdraw");
+                    JButton saveButton=new JButton("Save");
+                    /*JButton deleteButton=new JButton("Delete");
+                    JButton withdrawButton=new JButton("Withdraw");*/
                     if (xml) {
                         if (ds.getID().equals("METHODMAP")
                                 || ds.getID().equals("DSINPUTSPEC")
                                 || ds.getID().equals("WSDL") ) {
-                           saveButton.setText("Modify - Note");
-                           deleteButton.setText("Delete - Note");
-                           withdrawButton.setText("Withdraw - Note");
+                           saveButton.setText("Note");
+                           /*deleteButton.setText("Delete - Note");
+                           withdrawButton.setText("Withdraw - Note");*/
                            saveButton.addActionListener(new ActionListener() {
                                public void actionPerformed(ActionEvent ae) {
                                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
@@ -294,7 +330,7 @@ public class DatastreamViewer
                                        JOptionPane.INFORMATION_MESSAGE);
                                }
                            });
-                           deleteButton.addActionListener(new ActionListener() {
+                           /*deleteButton.addActionListener(new ActionListener() {
                                public void actionPerformed(ActionEvent ae) {
                                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
                                        "METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified at this time.",
@@ -309,34 +345,35 @@ public class DatastreamViewer
                                        "Note: Unmodifiable Datastream",
                                        JOptionPane.INFORMATION_MESSAGE);
                                }
-                           });
+                           });*/
                         } else {
                            saveButton.addActionListener(
                                    new SaveDatastreamByValueListener(pid,
                                    ds.getID(), labelValueField,
-                                   modifiedValueLabel, xmlEditor));
+                                   modifiedValueLabel, xmlEditor, stateValueField));
                         }
                     } else {
                         saveButton.addActionListener(
                                 new SaveDatastreamByReferenceListener(pid,
                                 ds.getID(), labelValueField,
-                                modifiedValueLabel, locationValueField));
-                        withdrawButton.addActionListener(
+                                modifiedValueLabel, locationValueField, stateValueField));
+                        /*withdrawButton.addActionListener(
                                 new WithdrawDatastreamListener(pid,
                                 ds.getID(), modifiedValueLabel));
                         deleteButton.addActionListener(
                                 new DeleteDatastreamListener(pid,
-                                ds.getID(), modifiedValueLabel));
+                                ds.getID(), modifiedValueLabel));*/
                     }
 
             JPanel saveButtonPanel=new JPanel();
-            //saveButtonPanel.setLayout(new BorderLayout());
-            GridBagLayout gridbag = new GridBagLayout();
-            GridBagConstraints c = new GridBagConstraints();
+            saveButtonPanel.setLayout(new BorderLayout());
+            saveButtonPanel.add(saveButton, BorderLayout.NORTH);
+            /*gridbag = new GridBagLayout();
+            c = new GridBagConstraints();
             saveButtonPanel.setLayout(gridbag);
 
                     // CENTER: saveButton
-            //saveButtonPanel.add(saveButton, BorderLayout.CENTER);
+            saveButtonPanel.add(saveButton, BorderLayout.CENTER);
             c.gridx=0; // column 1
             c.gridy=0; // row 1
             c.gridwidth=GridBagConstraints.REMAINDER; // one column wide
@@ -346,18 +383,16 @@ public class DatastreamViewer
             saveButtonPanel.add(saveButton);
 
                     // NORTH: withdrawButton
-            //saveButtonPanel.add(withdrawButton, BorderLayout.NORTH);
             c.gridx=0; // column 1
             c.gridy=1; // row 2
             gridbag.setConstraints(withdrawButton, c);
             saveButtonPanel.add(withdrawButton);
 
                     // SOUTH: deleteButton
-            //saveButtonPanel.add(deleteButton, BorderLayout.SOUTH);
             c.gridx=0; // column 1
             c.gridy=2; // row 3
             gridbag.setConstraints(deleteButton, c);
-            saveButtonPanel.add(deleteButton);
+            saveButtonPanel.add(deleteButton);*/
 
             setLayout(new BorderLayout());
             setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
@@ -376,15 +411,17 @@ public class DatastreamViewer
         private JTextField m_labelField;
         private JLabel m_modifiedDateLabel;
         private JTextField m_locationField;
+        private JComboBox m_stateValueField;
 
         public SaveDatastreamByReferenceListener(String pid, String dsId,
                 JTextField labelField, JLabel modifiedDateLabel,
-                JTextField locationField) {
+                JTextField locationField, JComboBox stateValueField) {
             m_pid=pid;
             m_dsId=dsId;
             m_labelField=labelField;
             m_modifiedDateLabel=modifiedDateLabel;
             m_locationField=locationField;
+            m_stateValueField=stateValueField;
         }
 
         public void actionPerformed(ActionEvent ae) {
@@ -393,7 +430,7 @@ public class DatastreamViewer
             try {
                 DatastreamViewer.CONDUIT.modifyDatastreamByReference(m_pid, m_dsId,
                         m_labelField.getText(), logMessage,
-                        m_locationField.getText());
+                        m_locationField.getText(), (String)m_stateValueField.getSelectedItem());
                 Date dt=DatastreamViewer.CONDUIT.getDatastream(m_pid, m_dsId, null).
                         getCreateDate().getTime();
                 m_modifiedDateLabel.setText(DatastreamViewer.FORMATTER.format(dt));
@@ -405,7 +442,7 @@ public class DatastreamViewer
             }
         }
     }
-
+/*
 //
     public class DeleteDatastreamListener
             implements ActionListener {
@@ -475,7 +512,7 @@ public class DatastreamViewer
         }
     }
 //
-
+*/
     public class SaveDatastreamByValueListener
             implements ActionListener {
 
@@ -484,15 +521,17 @@ public class DatastreamViewer
         private JTextField m_labelField;
         private JLabel m_modifiedDateLabel;
         private JTextArea m_textArea;
+        private JComboBox m_stateValueField;
 
         public SaveDatastreamByValueListener(String pid, String dsId,
                 JTextField labelField, JLabel modifiedDateLabel,
-                JTextArea textArea) {
+                JTextArea textArea, JComboBox stateValueField) {
             m_pid=pid;
             m_dsId=dsId;
             m_labelField=labelField;
             m_modifiedDateLabel=modifiedDateLabel;
             m_textArea=textArea;
+            m_stateValueField=stateValueField;
         }
 
         public void actionPerformed(ActionEvent ae) {
@@ -501,7 +540,7 @@ public class DatastreamViewer
             try {
                 DatastreamViewer.CONDUIT.modifyDatastreamByValue(m_pid, m_dsId,
                         m_labelField.getText(), logMessage,
-                        m_textArea.getText().getBytes("UTF-8"));
+                        m_textArea.getText().getBytes("UTF-8"), (String)m_stateValueField.getSelectedItem());
                 Date dt=DatastreamViewer.CONDUIT.getDatastream(m_pid, m_dsId, null).
                         getCreateDate().getTime();
                 m_modifiedDateLabel.setText(DatastreamViewer.FORMATTER.format(dt));
