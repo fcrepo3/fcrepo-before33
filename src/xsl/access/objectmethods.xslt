@@ -35,7 +35,7 @@
 </xsl:template>
 
 <xsl:template match="method">
-	<form name="parmResolverForm" method="post" action="http://localhost:8080/fedora/getAccessParmResolver?">
+	<form name="parmResolverForm" method="post" action="/fedora/getAccessParmResolver?">
 	<tr>
 		<td><font color="blue"><xsl:value-of select="../../@pid"/></font></td>
 		<td>&#x00A0;<font color="green"><xsl:value-of select="../../@dateTime"/></font></td>
