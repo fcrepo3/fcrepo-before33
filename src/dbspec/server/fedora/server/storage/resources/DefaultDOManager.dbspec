@@ -290,7 +290,7 @@
 		</comment>
 		<column name="methodId" type="varchar(255)" notNull="true" default="" index="methodID"/>
 		<column name="bDefPid" type="varchar(255)" notNull="true" default="" index="bDefPid"/>
-		<column name="methodName" type="varchar(255)" notNull="true" default="" index="methodName"/>
+		<column name="methodName" type="varchar(255)" notNull="true" default=""/>
 	</table>
 	<table name="riMethodImpl">
 		<comment>
@@ -311,7 +311,7 @@
 		</comment>
 		<column name="mimeTypeId" type="int(11)" notNull="true" index="mimeTypeId" autoIncrement="true"/>
 		<column name="methodImplId" type="varchar(255)" notNull="true" default="0" index="methodImplId"/>
-		<column name="mimeType" type="varchar(255)" notNull="true" default="" index="mimeType"/>
+		<column name="mimeType" type="varchar(255)" notNull="true" default=""/>
 	</table>
 </database>
 

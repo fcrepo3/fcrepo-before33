@@ -849,15 +849,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     }
     
     private void deleteDublinCoreDatastream(DigitalObject digitalObject, Datastream ds) {
-        
+        // So long as deletes are always initiated at the object level
+        // (i.e., deleteDigitalObject(DigitalObject do), we don't actually
+        // need to handle anything here.
     }
     
     private void deleteDSInputSpecDatastream(Datastream ds) {
         // placeholder
-    }
-
-    private void deleteExtPropertiesDatastream(Datastream ds) {
-        
     }
 
     private void deleteMethodMapDatastream(DigitalObject digitalObject, Datastream ds) throws ResourceIndexException {
@@ -890,21 +888,25 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     }
 
     private void deleteRelsDatastream(Datastream ds) throws ResourceIndexException {
-        // FIXME this is not complete
-        DatastreamXMLMetadata rels = (DatastreamXMLMetadata)ds;
-        // Use the SAX2-compliant Xerces parser:
-        System.setProperty(
-                "org.xml.sax.driver",
-                "org.apache.xerces.parsers.SAXParser");
-        Parser parser = new RdfXmlParser();
-        try {
-            TripleIterator it = new RIOTripleIterator(rels.getContentStream(), parser, "http://www.example.org/");
-            m_writer.delete(it, false);
-        } catch (TrippiException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        } catch (IOException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        }
+        // So long as deletes are always initiated at the object level
+        // (i.e., deleteDigitalObject(DigitalObject do), we don't actually
+        // need to handle anything here.
+        
+//        // FIXME this is not complete
+//        DatastreamXMLMetadata rels = (DatastreamXMLMetadata)ds;
+//        // Use the SAX2-compliant Xerces parser:
+//        System.setProperty(
+//                "org.xml.sax.driver",
+//                "org.apache.xerces.parsers.SAXParser");
+//        Parser parser = new RdfXmlParser();
+//        try {
+//            TripleIterator it = new RIOTripleIterator(rels.getContentStream(), parser, "http://www.example.org/");
+//            m_writer.delete(it, false);
+//        } catch (TrippiException e) {
+//            throw new ResourceIndexException(e.getMessage(), e);
+//        } catch (IOException e) {
+//            throw new ResourceIndexException(e.getMessage(), e);
+//        }
     }
 
     private void deleteServiceProfileDatastream(Datastream ds) {
