@@ -51,10 +51,17 @@ public class Ingest {
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = browse.getSelectedFile();
                     Administrator.setLastDir(file);
-                    String fTypes="DMO";
-                    String[] pids=multiFromDirectory(file, fTypes, Administrator.APIM, null);
-                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                        "Ingest succeeded.  Details are in File->Advanced->STDOUT/STDERR window.");
+                    FTypeDialog dlg=new FTypeDialog();
+                    if (dlg.getResult()!=null) {
+                        String fTypes=dlg.getResult();
+                        long st=System.currentTimeMillis();
+                        String[] pids=multiFromDirectory(file, fTypes, Administrator.APIM, null);
+                        long et=System.currentTimeMillis();
+                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                            "Ingest of " + pids.length + " objects finished.\n"
+                            + "Time elapsed: " + getDuration(et-st));  
+                         //   Details are in File->Advanced->STDOUT/STDERR window.");
+                    }
                 }
             } else if (kind==ONE_FROM_REPOS) {
             } else if (kind==MULTI_FROM_REPOS) {
@@ -69,6 +76,29 @@ public class Ingest {
                     "Ingest Failure",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    private static String getDuration(long millis) {
+        long tsec=millis/1000;
+        long h=tsec/60/60;
+        long m=(tsec - (h*60*60))/60;
+        long s=(tsec - (h*60*60) - (m*60));
+        StringBuffer out=new StringBuffer();
+        if (h>0) {
+            out.append(h + " hour");
+            if (h>1) out.append('s');
+        }
+        if (m>0) {
+            if (h>0) out.append(", ");
+            out.append(m + " minute");
+            if (m>1) out.append('s');
+        }
+        if (s>0 || (h==0 && m==0)) {
+            if (h>0 || m>0) out.append(", ");
+            out.append(s + " second");
+            if (s!=1) out.append('s');
+        }
+        return out.toString();
     }
 
     // if logMessage is null, will use original path in logMessage
