@@ -70,7 +70,7 @@
  	2. Changed mdWrap content model, adding xmlData element to eliminate
  		ambiguous content model
  -->
-<xsd:schema targetNamespace="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.loc.gov/METS/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xsd:schema targetNamespace="http://www.loc.gov/METS/" xmlns="http://www.loc.gov/METS/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/TR/xlink" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xsd:import namespace="http://www.w3.org/TR/xlink" schemaLocation="xlink.xsd"/>
 	<xsd:element name="mets">
 		<xsd:annotation>
@@ -203,7 +203,6 @@
 					can be recorded for each separate item within the METS object.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
-			<!-- FEDORA EXTENSION ELEMENT: created dmdSecFedora (1-29-03) -->
 			<xsd:element name="dmdSecFedora" type="dmdSecType" minOccurs="0" maxOccurs="unbounded">
 				<xsd:annotation>
 					<xsd:documentation>dmdSecFedora: Fedora Description Metadata Section.
@@ -244,7 +243,7 @@
 					<xsd:attribute name="ID" type="xsd:ID" use="optional"/>
 				</xsd:complexType>
 			</xsd:element>
-			<xsd:element name="structMap" type="structMapType" maxOccurs="unbounded">
+			<xsd:element name="structMap" type="structMapType" minOccurs="0" maxOccurs="unbounded">
 				<xsd:annotation>
 					<xsd:documentation>structMap: Structural Map.
 					The structural map is the heart of a METS document, defining the 
@@ -256,7 +255,6 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
-			<!-- FEDORA EXTENSION ELEMENT: re-defined behavior section (1-29-03) -->
 			<xsd:element name="behaviorSec" type="behaviorSecType" minOccurs="0" maxOccurs="unbounded">
 				<xsd:annotation>
 					<xsd:documentation>behaviorSec: Behavior Section.  This section records information about a
@@ -264,6 +262,8 @@
 					one or more operations (i.e., methods, behaviors) that can be run on the METS object.</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
+			<!-- FEDORA EXTENSION ELEMENT: created dmdSecFedora (1-29-03) -->
+			<!-- FEDORA EXTENSION ELEMENT: re-defined behavior section (1-29-03) -->
 		</xsd:sequence>
 		<xsd:attribute name="ID" type="xsd:ID" use="optional"/>
 		<xsd:attribute name="OBJID" type="xsd:string" use="optional"/>
@@ -774,37 +774,37 @@
 	</xsd:complexType>
 	<!-- FEDORA EXTENSION:  created new serviceBindingType for the guts of the behaviorSec (1-29-03) -->
 	<xsd:complexType name="serviceBindingType">
-			<xsd:sequence>
-				<xsd:element name="interfaceMD" type="objectType" minOccurs="0">
-					<xsd:annotation>
-						<xsd:documentation>interfaceMD: service interface metadata. 
+		<xsd:sequence>
+			<xsd:element name="interfaceMD" type="objectType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>interfaceMD: service interface metadata. 
 						The interfaceMD element contains a pointer to an object that stores metadata.  This metadata should describe
 						a set of abstract service operations that can be associated with the content of the METS object.    
 						This can be thought of a similar to associating an abstract interface definition with the METS object.
 						The interfaceMD element can point to another METS object, or some other entity such as  a WSDL file. 
 						</xsd:documentation>
-					</xsd:annotation>
-				</xsd:element>
-				<xsd:element name="serviceBindMD" type="objectType" minOccurs="0">
-					<xsd:annotation>
-						<xsd:documentation>serviceMD: service binding metadata.  
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="serviceBindMD" type="objectType" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>serviceMD: service binding metadata.  
 						A serviceMD element contains a pointer to an object that stores metadata about a service that is associated 
 						with this METS object. 	This metadata should specify the means of binding to a network service 
 						(e.g., a web service) and how to run specific operations of the service.  This serviceMD element is 
 						related to the interfaceMD element in that serviceBindMD describes a particular service that it implements the 
 						abstract methods defined by the interfaceMD element.   The serviceBindMD element can point to another METS object,
 						or some other entity such as a WSDL file.  </xsd:documentation>
-					</xsd:annotation>
-				</xsd:element>
-			</xsd:sequence>
-			<xsd:attribute name="ID" type="xsd:ID" use="required"/>
-			<xsd:attribute name="STRUCTID" type="xsd:IDREFS" use="required"/>
-			<xsd:attribute name="BTYPE" type="xsd:string" use="optional"/>
-			<xsd:attribute name="CREATED" type="xsd:dateTime" use="optional"/>
-			<xsd:attribute name="LABEL" type="xsd:string" use="optional"/>
-			<xsd:attribute name="ADMID" type="xsd:IDREFS" use="optional"/>
-			<xsd:attribute name="DMDID" type="xsd:IDREFS" use="optional"/>
-			<xsd:attribute name="STATUS" type="xsd:string" use="optional"/>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="ID" type="xsd:ID" use="required"/>
+		<xsd:attribute name="STRUCTID" type="xsd:IDREFS" use="required"/>
+		<xsd:attribute name="BTYPE" type="xsd:string" use="optional"/>
+		<xsd:attribute name="CREATED" type="xsd:dateTime" use="optional"/>
+		<xsd:attribute name="LABEL" type="xsd:string" use="optional"/>
+		<xsd:attribute name="ADMID" type="xsd:IDREFS" use="optional"/>
+		<xsd:attribute name="DMDID" type="xsd:IDREFS" use="optional"/>
+		<xsd:attribute name="STATUS" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="objectType">
 		<xsd:annotation>
