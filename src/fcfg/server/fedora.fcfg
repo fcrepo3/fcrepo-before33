@@ -386,7 +386,7 @@
 		<comment>MySQL database on localhost with db name of fedora12</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
-		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora12?useUnicode=true&amp;characterEncoding=UTF-8"/>
+		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora12?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
 		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
 		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
