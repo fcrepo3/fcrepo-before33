@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!--<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
@@ -51,6 +51,14 @@ command is safe to use.</para>
 			a result, the Servlet that provides OAI-PMH functionality was not
 			properly encoding the output in UTF-8.</para>
 			</sect3>
+                        <sect3><title>3. API-M Managed Content Modification</title>
+                        <para>It is now possible to change a managed content datastream's
+                        label without changing its content.  Previously, the API-M method,
+                        modifyDatastreamByReference required that something was provided
+                        for the DSLocation.  Now, if DSLocation is passed in a null or empty,
+                        the original datastream content will be used (no change).
+                        </para>
+                        </sect3>
 		</sect2>
 	</sect1>
 	<sect1>
