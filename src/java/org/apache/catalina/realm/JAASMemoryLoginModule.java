@@ -63,6 +63,7 @@ public final class JAASMemoryLoginModule extends MemoryRealm implements LoginMod
 	 *  <code>LoginModule</code> instance
 	 */
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
+		log("JAASMLM init");
 		log("initialize()");
 		principal = null;
 		this.state = UNREADY;		
@@ -101,6 +102,7 @@ public final class JAASMemoryLoginModule extends MemoryRealm implements LoginMod
 	}
 	
 	private void localInitialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
+		log("JAASMLM localInit");
 		loginModuleIsContingent = false;
 		String path = (String) options.get("path");
 		if ((path != null) && ! "".equals(path)) {
@@ -111,6 +113,7 @@ public final class JAASMemoryLoginModule extends MemoryRealm implements LoginMod
 
 
 	private void rollback() {
+		log("JAASMLM rollback");
     	Iterator principals = subject.getPrincipals().iterator();
     	while (principals.hasNext()) {
     		AbstractPrincipal testPrincipal = ((AbstractPrincipal)principals.next());
@@ -132,6 +135,7 @@ public final class JAASMemoryLoginModule extends MemoryRealm implements LoginMod
 	 * @exception LoginException if the authentication fails
 	 */
 	public boolean login() throws LoginException {
+		log("JAASMLM login");
 		log("login()");
 		state = NACK;
 		principal = null;
@@ -168,6 +172,7 @@ public final class JAASMemoryLoginModule extends MemoryRealm implements LoginMod
 	}
 	
 	public boolean commit() throws LoginException {
+		log("JAASMLM commit");
 		log("commit()");
 		boolean rc = (state == ACK);
 		if (rc) {
@@ -204,6 +209,7 @@ public final class JAASMemoryLoginModule extends MemoryRealm implements LoginMod
 	 * @exception LoginException if the abort fails
 	 */
 	public boolean abort() throws LoginException {
+		log("JAASMLM abort");
 		log("abort()");
 		boolean rc = (state == ACK);
 		//clear(); ?
@@ -222,6 +228,7 @@ public final class JAASMemoryLoginModule extends MemoryRealm implements LoginMod
 	 * @exception LoginException if logging out failed
 	 */
 	public boolean logout() throws LoginException {
+		log("JAASMLM logout");
 		log("logout()");		
 		rollback();
 		//clear(); ?
@@ -241,7 +248,7 @@ public final class JAASMemoryLoginModule extends MemoryRealm implements LoginMod
 	 */
 	protected void log(String message) {
 		if (debug) {
-			System.out.print(logN++ + " XXXXXXXXXX> " + this.getClass().getName() + ":  ");
+			System.out.print(logN++ + this.getClass().getName() + ":  ");
 			System.out.println(message);
 		}
 	}

@@ -321,7 +321,7 @@ public class JNDIRealm extends RealmBase {
 		 * The attribute name used to retrieve the user password.
 		 */
 		protected String userPassword = null;
-		public static final String DONTCHECK = "DONTCHECK";
+		public static final String NO_AUTHENTICATION = "NO_AUTHENTICATION";
 
 		/**
 		 * A string of LDAP user patterns or paths, ":"-separated
@@ -471,7 +471,7 @@ public class JNDIRealm extends RealmBase {
 		 * @param connectionURL The new connection URL
 		 */
 		public void setConnectionURL(String connectionURL) {
-			System.err.println("setConnectionURL=" + connectionURL);
+			log("setConnectionURL=" + connectionURL);
 			this.connectionURL = connectionURL;
 
 		}
@@ -546,7 +546,7 @@ public class JNDIRealm extends RealmBase {
 		 * @param userBase The new base element
 		 */
 		public void setUserBase(String userBase) {
-			System.err.println("setUserBase=" + userBase);
+			log("setUserBase=" + userBase);
 			this.userBase = userBase;
 
 		}
@@ -566,7 +566,7 @@ public class JNDIRealm extends RealmBase {
 		 * @param userSearch The new user search pattern
 		 */
 		public void setUserSearch(String userSearch) {
-			System.err.println("setUserSearch=" + userSearch);
+			log("setUserSearch=" + userSearch);
 			this.userSearch = userSearch;
 			if (userSearch == null)
 				userSearchFormat = null;
@@ -590,7 +590,7 @@ public class JNDIRealm extends RealmBase {
 		 * @param userSubtree The new search flag
 		 */
 		public void setUserSubtree(boolean userSubtree) {
-			System.err.println("userSubtree=" + userSubtree);
+			log("userSubtree=" + userSubtree);
 			this.userSubtree = userSubtree;
 
 		}
@@ -609,7 +609,7 @@ public class JNDIRealm extends RealmBase {
 		 * @param userRoleName The new userRole name attribute name
 		 */
 		public void setUserRoleName(String userRoleName) {
-			System.err.println("setUserRoleName=" + userRoleName);
+			log("setUserRoleName=" + userRoleName);
 			this.userRoleName = userRoleName;
 
 		}
@@ -707,15 +707,16 @@ public class JNDIRealm extends RealmBase {
 
 		}
 
+		private boolean authenticate = false;
+		
 		/**
 		 * Set the password attribute used to retrieve the user password.
 		 *
 		 * @param userPassword The new password attribute
 		 */
 		public void setUserPassword(String userPassword) {
-
 			this.userPassword = userPassword;
-
+			authenticate = ! NO_AUTHENTICATION.equalsIgnoreCase(userPassword);
 		}
 
 		/**
@@ -790,23 +791,23 @@ public class JNDIRealm extends RealmBase {
 		 *  authenticating this username
 		 */
 		public Principal authenticate(String username, String credentials) {
-			System.out.println("authenticate() 1:  ");
+			log("authenticate() 1:  ");
 
 			DirContext context = null;
 			Principal principal = null;
 
 			try {
-				System.out.println("authenticate() 2:  ");
+				log("authenticate() 2:  ");
 				// Ensure that we have a directory context available
 				context = open();
-				System.out.println("authenticate() 3:  ");
+				log("authenticate() 3:  ");
 				// Occassionally the directory context will timeout.  Try one more
 				// time before giving up.
 				try {
-					System.out.println("authenticate() 4:  ");
+					log("authenticate() 4:  ");
 					// Authenticate the specified username if possible
 					principal = authenticate(context, username, credentials);
-					System.out.println("authenticate() 5:  ");
+					log("authenticate() 5:  ");
 				} catch (CommunicationException e) {
 
 					// If contains the work closed. Then assume socket is closed.
@@ -829,10 +830,10 @@ public class JNDIRealm extends RealmBase {
 					principal = authenticate(context, username, credentials);
 
 				}
-				System.out.println("authenticate() 6:  ");
+				log("authenticate() 6:  ");
 				// Release this context
 				release(context);
-				System.out.println("authenticate() 7:  ");
+				log("authenticate() 7:  ");
 				// Return the authenticated Principal (if any)
 				return (principal);
 
@@ -870,11 +871,11 @@ public class JNDIRealm extends RealmBase {
 		public synchronized Principal authenticate(DirContext context, String username, String credentials)
 			throws NamingException {
 
-			System.out.println("authenticate*() 1:  [" + username + "] [" + credentials + "]");
+			log("authenticate*() 1:  [" + username + "] [" + credentials + "]");
 				
 			if (username == null || username.equals("") || credentials == null || credentials.equals(""))
 				return (null);
-			System.out.println("authenticate*() 2:  ");
+			log("authenticate*() 2:  ");
 
 			if (userPatternArray != null) {
 				for (curUserPattern = 0; curUserPattern < userPatternFormatArray.length; curUserPattern++) {
@@ -900,21 +901,21 @@ public class JNDIRealm extends RealmBase {
 				}
 				return null;
 			} else {
-				System.out.println("authenticate*() 3:  ");
+				log("authenticate*() 3:  ");
 				// Retrieve user information
 				User user = getUser(context, username);
 				if (user == null)
 					return (null);
-				System.out.println("authenticate*() 4:  ");
+				log("authenticate*() 4:  ");
 
 				// Check the user's credentials
 				if (!checkCredentials(context, user, credentials))
 					return (null);
-				System.out.println("authenticate*() 5:  ");
+				log("authenticate*() 5:  ");
 
 				// Search for additional roles
 				List roles = getRoles(context, user);
-				System.out.println("authenticate*() 6:  " + username + credentials + roles);
+				log("authenticate*() 6:  " + username + credentials + roles);
 
 				// Create and return a suitable Principal for this user
 				return (new GenericPrincipal(this, username, credentials, roles));
@@ -944,7 +945,7 @@ public class JNDIRealm extends RealmBase {
 			// Get attributes to retrieve from user entry
 			ArrayList list = new ArrayList();
 			//2004.06.16 wdn5e vvvv replace	if (userPassword != null) with ...
-			if ((userPassword != null) && !DONTCHECK.equals(userPassword))
+			if ((userPassword != null) && authenticate)
 				list.add(userPassword);
 			if (userRoleName != null) {
 				//2004.05.27 wdn5e vvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -1143,7 +1144,7 @@ public class JNDIRealm extends RealmBase {
 			boolean validated = false;
 
 			//2004.06.16 wdn5e vvvv
-			if (DONTCHECK.equals(userPassword))
+			if (! authenticate)
 				validated = true;
 			else
 			//2004.06.16 wdn5e ^^^^		
