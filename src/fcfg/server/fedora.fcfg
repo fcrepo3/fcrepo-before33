@@ -4,6 +4,7 @@
         class="fedora.server.BasicServer">
 	<comment>Your server comment here.</comment>
 	<param name="label" value="Your Server Label Here"/>
+    <param name="shutdownPassword" value="fedoraAdmin"/>
 	<param name="port" value="8080"/>
 	<param name="admin_email" value="fedora-server-admin@localhost"/>
 	<param name="admin_email_public" value="true"/>
