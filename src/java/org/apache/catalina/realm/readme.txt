@@ -92,3 +92,11 @@ only, after an login module has authenticated)
 to honor the login-module communications password, and so fake authenticatio 
 [ ] 6. to-do:  change JAASMemoryLoginModule to do this, and also JAASJNDILoginModule when used in 
 non-contingent mode (as Cornell and VTLS may choose to use it?) 
+
+JAASRealm
+	instanceof tests
+		GenericPrincipal, IdPasswordPrincipal:  how to extend
+		
+JAAS as a standard to write login modules to
+
+
