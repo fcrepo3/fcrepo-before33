@@ -46,7 +46,7 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 		return callbackHandler;
 	}
 	
-	private boolean attributeStoreOnly = true; // safest default
+	private boolean authenticate = false; // safest default
 
 	protected boolean debug = false;
 
@@ -86,10 +86,12 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 	 *  <code>LoginModule</code> instance
 	 */
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
-		log("initialize()");
+		log("in ldap init() ");
+		log("ldap initialize()");
 		principal = null;
 		this.state = UNREADY;		
 		if ((subject != null) && (callbackHandler != null)) {
+			log("ldap init() ");
 			this.subject = subject;
 			this.callbackHandler = callbackHandler;
 			this.sharedState = sharedState;
@@ -101,6 +103,13 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 				this.options = new Hashtable();
 			}
 			this.debug = "true".equalsIgnoreCase((String) options.get("debug"));
+			log("ldap init(), debug set to " + debug);
+			log("ldap init(), dumping options...");
+			Iterator it = options.keySet().iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				log(key + "=" + options.get(key));
+			}
 			//String realmClassName = "";
 			namespace = this.getClass().getName();
 			try {
@@ -124,26 +133,28 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 	}
 	
 	private void localInitialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
-		attributeStoreOnly = "true".equalsIgnoreCase((String) options.get("attributeStoreOnly"));		
 		
 		String connectionURL = ""; //"ldap://ldapvs.itc.virginia.edu:389";
 		String userBase = ""; //"o=University of Virginia,c=US";
 		String userSearch = ""; //"(uid={0})";
 		String userRoleName = ""; //"description,sn,uid,edupersonscopedaffiliation";
+		String userPassword = "";
 		boolean userSubtree = true;
 
 		connectionURL = (String) options.get("connectionURL");
 		userBase = (String) options.get("userBase");
 		userSearch = (String) options.get("userSearch");
 		userRoleName = (String) options.get("userRoleName");
+		userPassword = (String) options.get("userPassword");
 		userSubtree = "true".equalsIgnoreCase((String) options.get("userSubtree"));
 
 		setConnectionURL(connectionURL);
 		setUserBase(userBase);
 		setUserSubtree(userSubtree);
 		setUserSearch(userSearch);
-		setUserPassword(JNDIRealm.DONTCHECK);
 		setUserRoleName(userRoleName);		
+		setUserPassword(userPassword);
+		authenticate = ! JNDIRealm.NO_AUTHENTICATION.equalsIgnoreCase(userPassword);
 	}
 
 
@@ -199,7 +210,7 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 		if (principal != null) {
 			state = ACK;
 		}
-		boolean rc = attributeStoreOnly ? false : (state == ACK);
+		boolean rc = authenticate ? false : (state == ACK);
 		//rc indicates whether this module has logged in
 		//attributeStoreOnly whether this module itself counts toward login
 		//original wording was equiv. to rc = (state == ACK)
@@ -217,10 +228,10 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 			log("commit(): namespace=" + namespace);
 			log("commit(): principal=" + principal);
 			log("commit(): no id subject here, chap!!!");
-			if (! attributeStoreOnly) {
+			if (! authenticate) {
 	        	subject.getPrincipals().add(new IdPrincipal(namespace, principal.getName()));				
 			}
-			if (attributeStoreOnly && subject.getPrincipals().isEmpty()) {
+			if (authenticate && subject.getPrincipals().isEmpty()) {
 				log("login():  prev. login modules were not successful; do -not- return roles");
 			} else {
 	           	String[] roles = principal.getRoles();
@@ -283,7 +294,7 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 	 */
 	protected void log(String message) {
 		if (debug) {
-			System.out.print(logN++ + " XXXXXXXXXX> " + this.getClass().getName() + ":  ");
+			System.out.print(logN++ + this.getClass().getName() + ":  ");
 			System.out.println(message);
 		}
 	}
