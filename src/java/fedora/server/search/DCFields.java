@@ -45,6 +45,7 @@ public class DCFields
         SAXParser parser=null;
         try {
             SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
             parser=spf.newSAXParser();
         } catch (Exception e) {
             throw new RepositoryConfigurationException("Error getting SAX "
