@@ -216,12 +216,12 @@
           	- running disseminations of dynamic behaviors
         Parameters:
             - fedora-system:1
-              The interface that defines the methods of the bootstrap
+              (future) The interface that defines the methods of the bootstrap
               disseminator.  These methods are "built-in" to the Fedora
               system, and are dynamically associated with every 
               behavior definition and behavior mechanism object.
             - fedora-system:2
-              The class that implements the methods of the bootstrap
+              (future) The class that implements the methods of the bootstrap
               disseminator.  These method implementations are "built-in"
               to the Fedora system, and are dynamically associated with
               every behavior definition and behavior mechanism object.  
@@ -242,8 +242,8 @@
             </comment>
 		<param name="fedora-system:1" value="fedora.server.access.internalservices.Bootstrap"/>
 		<param name="fedora-system:2" value="fedora.server.access.internalservices.BootstrapImpl"/>
-		<param name="fedora-system:3" value="fedora.server.access.internalservices.DefaultBehavior"/>
-		<param name="fedora-system:4" value="fedora.server.access.internalservices.DefaultBehaviorImpl"/>
+		<param name="fedora-system:3" value="fedora.server.access.defaultdisseminator.DefaultDisseminator"/>
+		<param name="fedora-system:4" value="fedora.server.access.defaultdisseminator.DefaultDisseminatorImpl"/>
 	</module>
 	<module role="fedora.server.search.FieldSearch" class="fedora.server.search.FieldSearchSQLModule">
 		<comment>
@@ -336,16 +336,17 @@
 	<module role="fedora.server.validation.DOValidator" class="fedora.server.validation.DOValidatorModule">
 		<comment>
 		Description:  
-		Supports validation of digital objects, including XML Schema validation (to METS schema),
-		Schematron validation (to Fedora Rules schema written in Schematron language), and (in future) other programatic validation 
-		including referential integrity checking of existence and availability of distributed data and/or services.
-		 Parameters:
+		Supports validation of digital objects, including XML Schema validation,
+		Schematron validation (to Fedora Rules schema written in Schematron language), 
+		and other programatic validation including referential integrity checking of existence and availability of distributed data and/or services.
+		Parameters:
+		  - xsd_metslikefedora1: this is local path for the Fedora-METS XML schema used to do XML schema validation of digital objects
+		  - xsd_foxml1.0: this is local path for the Fedora FOXML XML schema used to do XML schema validation of digital objects
+		  - rules_metslikefedora1:  this is the local path to the Fedora Schematron Rules used to do Fedora-specific on Fedora-METS XML files.
+		  - rules_foxml1.0:  this is the local path to the Fedora Schematron Rules used to do Fedora-specific on FOXML XML files.
+		  - schtron_preprocessor:  this is the local path to the "skeleton" style sheet for schematron processing
 		  - tempDir  (required):  this is a directory that the validation module can use as a work space, as when it must
 		  write a temporary file.
-		  - xmlSchema: this is local path for the Fedora-METS XML schema used to do XML schema validation of digital objects
-		  - schematronPreprocessor:  this is the local path to the "skeleton" style sheet for schematron processing
-		  - schematronSchema:  this is the local path to the Fedora Schematron Schema used to do Fedora-specific validation of digital objects.
-		  This schema expresses integrity rules which are not covered by the Fedora-METS XML schema.
         	</comment>
 		<param name="xsd_metslikefedora1" value="xsd/mets-fedora-ext.xsd"/>
 		<param name="xsd_foxml1.0" value="xsd/foxml1-0.xsd"/>
