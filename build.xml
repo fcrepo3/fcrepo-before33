@@ -222,17 +222,16 @@
 		<copy todir="dist/server">
             <fileset dir="license"/>
         </copy>      
-		<copy todir="dist/userdocs/distribution">
+		<copy todir="dist/userdocs/distribution/license">
             <fileset dir="license"/>
         </copy>  
-		<copy todir="${tomcat.deploy.dir}/userdocs/distribution">
+		<copy todir="${tomcat.deploy.dir}/userdocs/distribution/license">
             <fileset dir="license"/>
         </copy>  
-		<copy todir="dist/client">
+		<copy todir="dist/client/license">
             <fileset dir="license"/>
         </copy>  
-		<mkdir dir="dist/server/userdocs"/>
-		<copy todir="dist/server/userdocs">
+		<copy todir="dist/server/userdocs/license">
 			<fileset dir="dist/userdocs"/>
 		</copy>
 	</target>
