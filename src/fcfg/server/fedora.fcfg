@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server xmlns="http://www.fedora.info/definitions/1/0/config/"
+    xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/"
     class="fedora.server.BasicServer">
   <comment>Your server comment here.</comment>
   <param name="label" value="Your Server Label Here"/>
