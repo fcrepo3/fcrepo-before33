@@ -3,18 +3,11 @@ package fedora.server.resourceIndex;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import fedora.server.Logging;
-import fedora.server.StdoutLogging;
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.errors.UnsupportedQueryLanguageException;
 
-import org.jrdf.graph.Triple;
 import org.kowari.itql.ItqlInterpreterBean;
 import org.kowari.query.Answer;
-import org.kowari.query.QueryException;
-import org.kowari.query.rdf.LiteralImpl;
-import org.kowari.query.rdf.TripleImpl;
-import org.kowari.query.rdf.URIReferenceImpl;
 import org.kowari.server.Session;
 import org.kowari.store.jena.KowariQueryEngine;
 import org.kowari.store.jena.RdqlQuery;
@@ -25,7 +18,6 @@ import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdql.*;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
@@ -35,7 +27,7 @@ import java.util.Set;
  * @author eddie
  *  
  */
-public class KowariRIStore extends StdoutLogging implements RIStore {
+public class KowariRIStore implements RIStore {
 	private Session m_session;
 	private Model m_model;
 	private List m_statements;
@@ -50,21 +42,19 @@ public class KowariRIStore extends StdoutLogging implements RIStore {
 	 * @param session
 	 * @param model
 	 */
-	public KowariRIStore(Session session, Model model, Logging target) {
-	    this(session, model, null, target);
+	public KowariRIStore(Session session, Model model) {
+	    this(session, model, null);
 	}
-	
-	public KowariRIStore(Session session, Model model, URI fullTextModelURI,
-	                     Logging target) {
-        super(target);
-		m_session = session;
-		m_model = model;
-		m_statements = new ArrayList();
-		m_fullTextModelURI = fullTextModelURI;
-		m_supportedQueryLanguages = new HashSet();
-		m_supportedQueryLanguages.add("rdql");
-		m_supportedQueryLanguages.add("itql");
-	}
+    
+    public KowariRIStore(Session session, Model model, URI fullTextModelURI) {
+        m_session = session;
+        m_model = model;
+        m_statements = new ArrayList();
+        m_fullTextModelURI = fullTextModelURI;
+        m_supportedQueryLanguages = new HashSet();
+        m_supportedQueryLanguages.add("rdql");
+        m_supportedQueryLanguages.add("itql");
+    }
 	
 	/* (non-Javadoc)
      * @see fedora.server.resourceIndex.RIStore#getSupportedQueryLanguages()
@@ -87,20 +77,13 @@ public class KowariRIStore extends StdoutLogging implements RIStore {
         String queryLanguage = query.getQueryLanguage();
         if (m_supportedQueryLanguages.contains(queryLanguage) && queryLanguage.equals("rdql")) {
             if (query.getRequiresCommitBeforeQuery()) {
-                logFinest("Started pre-query flush (rdql)");
                 flush();
-                logFinest("Finished pre-query flush (rdql)");
             }
-            // start query + iteration
-            logFinest("Started query to resource index (rdql).");
             return executeQuery((RDQLQuery)query);
         } else if (m_supportedQueryLanguages.contains(queryLanguage) && queryLanguage.equals("itql")) {
             if (query.getRequiresCommitBeforeQuery()) {
-                logFinest("Started pre-query flush (rdql)");
                 flush();
-                logFinest("Finished pre-query flush (rdql)");
             }
-            logFinest("Started query to resource index (itql).");
             return executeQuery((ITQLQuery)query);
         } else {
             throw new UnsupportedQueryLanguageException(queryLanguage + " is not supported.");
