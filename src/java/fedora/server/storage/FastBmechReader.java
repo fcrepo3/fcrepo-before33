@@ -77,7 +77,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
   private String bMechLabel = null;
 
   /**
-   * <p>Constructs an instance of FastBMechReader.</p>
+   * <p>Constructs an instance of FastBmechReader.</p>
    *
    * <p>Constructs a new <code>FastBmechReader</code> for the specified bmech
    * object. If the object is found, this constructor initializes the class
@@ -104,7 +104,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
       throw se;
     } catch (Throwable th)
     {
-      s_server.logWarning("[FastBMechReader] Unable to construct FastBmechReader");
+      s_server.logWarning("[FastBmechReader] Unable to construct FastBmechReader");
       throw new GeneralException("[FastBmechReader] An error has occurred. "
           + "The error was a \"" + th.getClass().getName() + "\"  .  "
           + "Reason: \""  + th.getMessage() + "\"  .");
@@ -160,11 +160,11 @@ public class FastBmechReader extends FastDOReader implements BMechReader
           + "bMech.bMechPID='" + bMechPID + "' AND "
           + "method.methodName='"  + methodName + "' ";
 
-      s_server.logFinest("[FastBMechReader] GetBMechDefaultMethodParmQuery=" + query);
+      s_server.logFinest("[FastBmechReader] GetBmechDefaultMethodParmQuery=" + query);
       try
       {
         connection = connectionPool.getConnection();
-        s_server.logFinest("[FastBMechReader] connectionPool = " + connectionPool);
+        s_server.logFinest("[FastBmechReader] connectionPool = " + connectionPool);
         statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -252,24 +252,216 @@ public class FastBmechReader extends FastDOReader implements BMechReader
     return methodParms;
   }
 
+  /**
+   * <p>Gets all method defintiions associated with the specified Behavior
+   * Mechanism. Note the PID of the associated Behavior Mechanism object is
+   * determined via reflection based on the specified PID of the digital object
+   * and the PID of its Behavior Definition object. This method retrieves the
+   * list of available methods based on the assocaited Behavior Mechanism
+   * object and NOT the Behavior Definition object. This is done to insure
+   * that only methods that have been implemented in the mechanism are returned.
+   * This distinction is only important when versioning is enabled
+   * in a later release. When versioning is enabled, it is possible
+   * that a versioned Behavior Definition may have methods that have not
+   * yet been implemented by all of its associated Behavior Mechanisms.
+   * In such a case, only those methods implemented in the mechanism
+   * will be returned.</p>
+   *
+   * @param bDefPID The persistent identifier of Behavior Definition object.
+   * @param versDateTime The versioning datetime stamp.
+   * @return An array of method definitions.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
+   */
   public MethodDef[] getServiceMethods(Date versDateTime) throws ServerException
   {
+    MethodDef[] methodDefs = null;
+    MethodDef methodDef = null;
+    Vector queryResults = new Vector();
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
+    if (isFoundInFastStore && versDateTime == null)
+    {
+      // Requested object exists in Fast storage area and is NOT versioned;
+      // query relational database
+      String  query =
+          "SELECT DISTINCT "
+          + "method.methodName,"
+          + "method.methodLabel "
+          + "FROM "
+          + "bDef,"
+          + "method,"
+          + "bMech,"
+          + "mechImpl "
+          + "WHERE "
+          + "bMech.bMechDbID = mechImpl.bMechDbID AND "
+          + "bDef.bDefDbID = mechImpl.bDefDbID AND "
+          + "method.methodDbID = mechImpl.methodDbID AND "
+          + "method.bDefDbID = bDef.bDefDbID AND "
+          + "bMech.bMechPID = \'" + bMechPID + "\' ;";
+
+      s_server.logFinest("getObjectMethodsQuery: " + query);
+      String[] results = null;
+      try
+      {
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
+        rs = statement.executeQuery(query);
+        ResultSetMetaData rsMeta = rs.getMetaData();
+        int cols = rsMeta.getColumnCount();
+        while (rs.next())
+        {
+          results = new String[cols];
+          methodDef = new MethodDef();
+          for (int i=1; i<=cols; i++)
+          {
+            results[i-1] = rs.getString(i);
+          }
+          methodDef.methodName = results[0];
+          methodDef.methodLabel = results[1];
+          try
+          {
+            methodDef.methodParms = getServiceMethodParms(methodDef.methodName,
+                versDateTime);
+          } catch (Throwable th)
+          {
+            // Failed to get method paramters
+            throw new GeneralException("[FastBmechReader] An error has occured. The "
+                + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+          }
+          queryResults.add(methodDef);
+        }
+        methodDefs = new MethodDef[queryResults.size()];
+        int rowCount = 0;
+        for (Enumeration e = queryResults.elements(); e.hasMoreElements();)
+        {
+          methodDefs[rowCount] = (MethodDef)e.nextElement();
+          rowCount++;
+        }
+        return methodDefs;
+      } catch (Throwable th)
+      {
+        throw new GeneralException("[FastBmechReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("[FastBmechReader] Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
+      }
+    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    {
+      // Requested object exists in Definitive storage area or is versioned;
+      // query Definitive storage area.
+      try
+      {
+        if (bMechReader == null)
+        {
+          bMechReader = m_manager.getBMechReader(m_context, PID);
+        }
+        return bMechReader.getServiceMethods(versDateTime);
+      } catch (ServerException se)
+      {
+        throw se;
+
+      } catch (Throwable th)
+      {
+        throw new GeneralException("[FastbMechReader] Definitive bMechReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+      }
+    }
     return null;
   }
 
   public MethodDefOperationBind[] getServiceMethodBindings(Date versDateTime) throws ServerException
   {
-    return null;
+    try
+    {
+      if (bMechReader == null)
+      {
+        bMechReader = m_manager.getBMechReader(m_context, PID);
+      }
+      return bMechReader.getServiceMethodBindings(versDateTime);
+    } catch (ServerException se)
+    {
+      throw se;
+
+    } catch (Throwable th)
+    {
+      throw new GeneralException("[FastbMechReader] Definitive bMechReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+    }
   }
 
+  /**
+   * <p>Gets XML containing method definitions. Since the XML representation
+   * of digital objects is not stored in the Fast storage area, this method
+   * uses a <code>BMechReader</code> to query the Definitive
+   * storage area.</p>
+   *
+   * @param versDateTime The versioning datetime stamp.
+   * @return A stream of bytes containing XML-encoded representation of
+   *         method definitions from XML in the Behavior Mechanism
+   *         object.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
   public InputStream getServiceMethodsXML(Date versDateTime) throws ServerException
   {
-    return null;
+    try
+    {
+      if (bMechReader == null)
+      {
+        bMechReader = m_manager.getBMechReader(m_context, PID);
+      }
+      return bMechReader.getServiceMethodsXML(versDateTime);
+    } catch (ServerException se)
+    {
+      throw se;
+
+    } catch (Throwable th)
+    {
+      throw new GeneralException("[FastbMechReader] Definitive bMechReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+    }
   }
 
   public BMechDSBindSpec getServiceDSInputSpec(Date versDateTime) throws ServerException
   {
-    return null;
+    try
+    {
+      if (bMechReader == null)
+      {
+        bMechReader = m_manager.getBMechReader(m_context, PID);
+      }
+      return bMechReader.getServiceDSInputSpec(versDateTime);
+    } catch (ServerException se)
+    {
+      throw se;
+
+    } catch (Throwable th)
+    {
+      throw new GeneralException("[FastbMechReader] Definitive bMechReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+    }
   }
 
   /**
@@ -304,7 +496,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
     try
     {
       connection = connectionPool.getConnection();
-      s_server.logFinest("[FastBMechReader] LocateBmechPIDConnectionPool: "
+      s_server.logFinest("[FastBmechReader] LocateBmechPIDConnectionPool: "
           + connectionPool);
       statement = connection.createStatement();
       rs = statement.executeQuery(query);
@@ -350,16 +542,16 @@ public class FastBmechReader extends FastDOReader implements BMechReader
         }
         bMechLabel = doReader.GetObjectLabel();
         isFoundInDefinitiveStore = true;
-        s_server.logFinest("[FastBMechReader] BMECH OBJECT FOUND IN DEFINITIVE "
+        s_server.logFinest("[FastBmechReader] BMECH OBJECT FOUND IN DEFINITIVE "
             + "STORE: " + bMechPID);
       } catch (ServerException se)
       {
         throw se;
       } catch (Throwable th)
       {
-        s_server.logWarning("[FastBMechReader] BMECH OBJECT NOT FOUND IN "
+        s_server.logWarning("[FastBmechReader] BMECH OBJECT NOT FOUND IN "
             + "DEFINITIVE STORE: " + bMechPID);
-        throw new GeneralException("[FastBMechReader] Definitive doReader "
+        throw new GeneralException("[FastBmechReader] Definitive doReader "
             + "returned error. The underlying error was a  \""
             + th.getClass().getName() + "\"  . The message "
             + "was  \"" + th.getMessage() + "\"  .");
@@ -367,7 +559,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
     } else
     {
       isFoundInFastStore = true;
-      s_server.logFinest("[FastBMechReader] BMECH OBJECT FOUND IN FAST STORE: "
+      s_server.logFinest("[FastBmechReader] BMECH OBJECT FOUND IN FAST STORE: "
           + bMechPID);
     }
     return bMechLabel;

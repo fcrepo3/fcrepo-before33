@@ -7,17 +7,20 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import fedora.server.Context;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
+import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MethodDef;
 
 /**
  * <p>Title: FastBdefReader.java</p>
  * <p>Description: BDEF Object Reader that accesses objects located in the
- * "Fast" storage area. It mirros the functionality of SimpleBDefReader for
- * the "Definitive" storage aread. To enhance performance of disseminations,
+ * "Fast" storage area. It mirrors the functionality of SimpleBDefReader for
+ * the "Definitive" storage area. To enhance performance of disseminations,
  * there are two distinct storage areas for digital objects:
  * <ol>
  * <li>
@@ -62,7 +65,7 @@ import fedora.server.storage.types.MethodDef;
 public class FastBdefReader extends FastDOReader implements BDefReader
 {
 
-  /** Instance of BMechReader */
+  /** Instance of BDefReader */
   private BDefReader bDefReader = null;
 
   /** Persistent identifier of behavior definition object */
@@ -106,14 +109,284 @@ public class FastBdefReader extends FastDOReader implements BDefReader
     }
   }
 
+
+  /**
+   * <p>This method retrieves the list of available methods based on
+   * Behavior Definition object.</p>
+   *
+   * @param versDateTime The versioning datetime stamp.
+   * @return An array of method definitions.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
   public MethodDef[] getAbstractMethods(Date versDateTime) throws ServerException
   {
-    return null;
+    MethodDef[] methodDefs = null;
+    MethodDef methodDef = null;
+    Vector queryResults = new Vector();
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
+    if (isFoundInFastStore && versDateTime == null)
+    {
+      // Requested object exists in Fast storage area and is NOT versioned;
+      // query relational database
+      String  query =
+          "SELECT DISTINCT "
+          + "method.methodName,"
+          + "method.methodLabel "
+          + "FROM "
+          + "bDef,"
+          + "method "
+          + "WHERE "
+          + "method.bDefDbID = bDef.bDefDbID AND "
+          + "bDef.bDefPID = \'" + bDefPID + "\';";
+
+      s_server.logFinest("[FastBdefReader] getAbstractMethodsQuery: " + query);
+      String[] results = null;
+      try
+      {
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
+        rs = statement.executeQuery(query);
+        ResultSetMetaData rsMeta = rs.getMetaData();
+        int cols = rsMeta.getColumnCount();
+        while (rs.next())
+        {
+          results = new String[cols];
+          methodDef = new MethodDef();
+          for (int i=1; i<=cols; i++)
+          {
+            results[i-1] = rs.getString(i);
+          }
+          methodDef.methodName = results[0];
+          methodDef.methodLabel = results[1];
+          try
+          {
+            methodDef.methodParms = getAbstractMethodParms(methodDef.methodName,
+                versDateTime);
+          } catch (Throwable th)
+          {
+            // Failed to get method paramters
+            throw new GeneralException("[FastBdefReader] An error has occured. The "
+                + "underlying error was a  \"" + th.getClass().getName()
+                + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+          }
+          queryResults.add(methodDef);
+        }
+        methodDefs = new MethodDef[queryResults.size()];
+        int rowCount = 0;
+        for (Enumeration e = queryResults.elements(); e.hasMoreElements();)
+        {
+          methodDefs[rowCount] = (MethodDef)e.nextElement();
+          rowCount++;
+        }
+      } catch (Throwable th)
+      {
+        throw new GeneralException("[FastBdefReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("[FastBdefReader] Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
+      }
+    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    {
+      // Requested object exists in Definitive storage area or is versioned;
+      // query Definitive storage area.
+      try
+      {
+        if (bDefReader == null)
+        {
+          bDefReader = m_manager.getBDefReader(m_context, PID);
+        }
+        methodDefs = bDefReader.getAbstractMethods(versDateTime);
+      } catch (Throwable th)
+      {
+        throw new GeneralException("[FastBdefReader] Definitive bDefReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+      }
+    }
+    return methodDefs;
   }
 
+  /**
+   * <p>Gets XML containing method definitions. Since the XML representation
+   * of digital objects is not stored in the Fast storage area, this method
+   * uses a <code>BDefReader</code> to query the Definitive
+   * storage area.</p>
+   *
+   * @param versDateTime The versioning datetime stamp.
+   * @return A stream of bytes containing XML-encoded representation of
+   *         method definitions from XML in the Behavior Definition
+   *         object.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
   public InputStream getAbstractMethodsXML(Date versDateTime) throws ServerException
   {
-    return null;
+    try
+    {
+      if (bDefReader == null)
+      {
+        bDefReader = m_manager.getBDefReader(m_context, PID);
+      }
+      return bDefReader.getAbstractMethodsXML(versDateTime);
+    } catch (ServerException se)
+    {
+      throw se;
+
+    } catch (Throwable th)
+    {
+      throw new GeneralException("[FastbDefReader] Definitive bDefReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+    }
+  }
+
+  /**
+   * <p>Gets user method parameters associated with the specified method name.</p>
+   *
+   * @param methodName The name of the method.
+   * @param versDateTime The versioning datetime stamp.
+   * @return An array of method parameter definitions.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
+   */
+  public MethodParmDef[] getAbstractMethodParms(String methodName,
+      Date versDateTime) throws GeneralException
+  {
+    MethodParmDef[] methodParms = null;
+    MethodParmDef methodParm = null;
+    Vector queryResults = new Vector();
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
+
+    if (isFoundInFastStore && versDateTime == null)
+    {
+      // Requested object exists in Fast storage area and is NOT versioned;
+      // query relational database
+      String query =
+          "SELECT DISTINCT "
+          + "parmName,"
+          + "parmDefaultValue,"
+          + "parmDomainValues,"
+          + "parmRequiredFlag,"
+          + "parmLabel,"
+          + "parmType "
+          + " FROM "
+          + "bDef,"
+          + "method,"
+          + "parm "
+          + " WHERE "
+          + "method.bDefDbID=parm.bDefDbID AND "
+          + "method.methodDbID=parm.methodDbID AND "
+          + "bDef.bDefPID='" + bDefPID + "' AND "
+          + "method.methodName='"  + methodName + "';";
+
+      s_server.logFinest("GetBdefMethodParmQuery=" + query);
+      try
+      {
+        connection = connectionPool.getConnection();
+        s_server.logFinest("connectionPool = " + connectionPool);
+        statement = connection.createStatement();
+        rs = statement.executeQuery(query);
+        ResultSetMetaData rsMeta = rs.getMetaData();
+        int cols = rsMeta.getColumnCount();
+
+        // Note: a row is returned for each method parameter
+        while (rs.next())
+        {
+          methodParm = new MethodParmDef();
+          String[] results = new String[cols];
+          for (int i=1; i<=cols; i++)
+          {
+            results[i-1] = rs.getString(i);
+          }
+          methodParm.parmName = results[0];
+          methodParm.parmDefaultValue = results[1];
+          methodParm.parmDomainValues = results[2].split(",");
+          Boolean B = new Boolean(results[3]);
+          methodParm.parmRequired = B.booleanValue();
+          methodParm.parmLabel = results[4];
+          methodParm.parmType = results[5];
+            s_server.logFinest("[FastBdefReader] "
+                + "methodParms: " + methodParm.parmName
+                + "label: " + methodParm.parmLabel
+                + "default: " + methodParm.parmDefaultValue
+                + "required: " + methodParm.parmRequired
+                + "type: " + methodParm.parmType);
+            for (int j=0; j<methodParm.parmDomainValues.length; j++)
+            {
+              s_server.logFinest("[FastBdefReader] domainValues: "
+                  + methodParm.parmDomainValues[j]);
+            }
+          queryResults.addElement(methodParm);
+        }
+        methodParms = new MethodParmDef[queryResults.size()];
+        int rowCount = 0;
+        for (Enumeration e = queryResults.elements(); e.hasMoreElements();)
+        {
+          methodParms[rowCount] = (MethodParmDef)e.nextElement();
+          rowCount++;
+        }
+      } catch (Throwable th)
+      {
+        throw new GeneralException("[FastBdefReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("[FastBdefReader] Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
+      }
+    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    {
+      // Requested object exists in Definitive storage area or is versioned;
+      // query Definitive storage area.
+      try
+      {
+        if (bDefReader == null)
+        {
+          bDefReader = m_manager.getBDefReader(m_context, bDefPID);
+        }
+        methodParms = bDefReader.getObjectMethodParms(bDefPID, methodName,
+            versDateTime);
+      } catch (Throwable th)
+      {
+        throw new GeneralException("[FastBdefReader] Definitive bDefReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+      }
+    }
+    return methodParms;
   }
 
   /**
