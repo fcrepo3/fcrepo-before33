@@ -23,20 +23,61 @@ http://sunxacml.sourceforge.net/javadoc/index.html
 The project's homepage is at http://sunxacml.sourceforge.net/
 
 
-XACML GOTCHAS
-xacml provides attribute values for target evaluation as single values, 
-but provides them for condition evaluation as "bags" (sets), even so 
+XACML QUICKSTART / GOTCHAS
+xacml provides attribute values for <Target> evaluation as single values, 
+but provides them for <Condition> evaluation as "bags" (sets), doing so even 
 for either singleton or empty bags.  Code policies accordingly.
 
-In Targets, multiple <Subject> elements are logically or-ed.  
-Multiple <SubjectMatch> are logically and-ed.  MatchId functions which 
-can be used in Targets are much restricted compared to those available
-for use in Condition FunctionIds. 
+In Targets, multiple <Subject> elements are logically or-ed.  Only one Subject matching
+a request is necessary for that policy to apply.
+  
+Multiple <SubjectMatch> elements are logically and-ed.  All SubjectMatch elements must
+match a request for that Subject to match.
+
+The three higher-level divisions Subjects, Actions, and Resources must -all- match a
+request, for the policy to be applicable.  At least one of its rule must also match, or 
+the policy is deemed not applicable.  [A fourth division at this level, Environments, 
+is apparent in the OASIS xacml spec, but not yet implemented by sunxacml.]
+
+MatchId functions (which are used in Targets) are much restricted in allowed values, 
+compared to the values allowed in the analogous FunctionIds (which are used in Conditions). 
+
+There are no existing functions which are self-contained boolean combinations, like not-equal.
+Since attributes are generally not boolean themselves (and so possibly negated), the not 
+function can't be used as a MatchId, e.g., in a SubjectMatch element.  Since SubjectMatch, e.g.,
+expresses a single binary operation, there is no possibility of introducing negative logic
+into a Target.  [An exception would be an explicit value returned by an attribute finder, which 
+would signify the absence of the attribute.]
 
 <Subjects>, <Actions>, <Resources>, and <Environments> in <Target>s behave
-similarly, in regard to the previous paragraph.  Except . . .
+similarly, in regard to all this.  Except . . .
 despite statements that <Environments> was added to <Target> generally, 
-it doesn't seem to work under sunxacml.
+it doesn't seem to work currently in sunxacml.
+
+Targets can be directly under Policy or PolicySet, or directly under Rule.  Targets directly
+under Policy apply to any contained Rule which doesn't have its own Target.  A Target directly
+under a Rule overrides, for that Rule only, a Target directly under the containing Policy.
+
+Conditions can appear only within a Rule, not directly under Policy or PolicySet.
+
+All this combines to make Targets a appealing, frame-like expression, but with a constrained logic
+which isn't always expressive enough, hence the need for Condition.  And, since Condition cannot 
+apply to the Policy in whole, if Target cannot express a Policy-wide constraint, 
+the Condition expresses this must be repeated under each Rule.
+
+sunxacml has a relaxed parsing of policies; e.g., we have encountered schema violation 
+(e.g., Action omitted between Actions and ActionMatch) which resulted only in the policy not being
+evaluated correctly, as opposed to failing parse.  How widespread this is, we don't know.
+As a precaution, policies should be tested for effect.  This is good practice, anyway, since
+testing is the only check of the policy-writer's understanding of xacml and against the 
+inevitable typ0.
+
+Though sunxacml parsing is relaxed, <Desciption> </Desciption> apparently requires at least one
+character content:  <Desciption/> doesn't do it.
+
+For now, there is no Fedora-based xacml schema checking of policies.  Some policies fail sunxacml parse
+with console errors; with repository-policies, this would be at server startup, with object-policies, 
+only on access to that specific object.  
 
 
 FEDORA
@@ -58,6 +99,7 @@ is in place regardless of the setting for parameter ENFORCE-MODE.
 For now, the Fedora-specific identifiers to use in policies can be found 
 in fedora.server.security.Authorization.java 
 or derived from fedora.common.Constants and the classes under fedora.common.rdf
+We are working to collect this in a single place.
 
 to-do:  provide this list
 
@@ -70,7 +112,29 @@ An object policy named demo-5.xml in that directory will be included in
 evaluating authz for Fedora object demo:5  Or put the object policy in 
 the object's datastream named "POLICY".  It is good practice with object
 policy's to include a check of the pid in the policy:  if the policy mistakenly
-gets put into repository-policies, it has the same effect.
+gets put into repository-policies, it has the same effect.  
+
+And the n repository policies are always in play.  So the number of policies 
+set up by Fedora for the sunacml pdp to consider for a request is:
+
+n	request doesn't refer to an object
+	request refers to an object
+n		no object policy
+n+1		object policy in object
+n+1		object policy in file
+n+2		object policies in both object and file
+
+These policies are combined programmatically dynamically per request into a PolicySet, 
+whose combining algorithm is configured in fedora.fcfg  sunxacml evaluates a request against
+this PolicySet.  
+
+to do:  should one object policy override the other?  if so, what order of preference?
+
+to do:  should there be a way for an object policy to override repository policies?  e.g., 
+we could have 2 named policy datastreams COOPERATING-POLICY (like now) and OVERRIDING-POLICY
+(which would cause the software to ignore a COOPERATING-POLICY datastream -and- all of
+the repository policies.  This would be easy to do in the software.  This is solely a 
+question of how we want this to work.
 
 Duplicate and edit as needed to create your own policy mix.
 Changes to repository-policies requires a server restart.
@@ -82,9 +146,14 @@ The example policies are crafted to be used together, and are of two broad types
 1. "positive" policies can only permit authz
 2. "negative" policies can only deny authz
 
-For a request to succeed authz, 
+We are now discussing an alternate policy-writing approach, which focuses each Policy functionally, 
+but which has it returning Permit or Deny according to several rules.  This is, in fact, the 
+general case. 
+
+Assuming that the configured combining algorithm is com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg
+and that the single-effect approach to writing policies is used, for a request to succeed authz, 
 	1. at least one positive policy must match the request
-	2. no negative can match the request
+	2. no negative policy can match the request
 	3. no policy evaluations can return indeterminate 
 		(an attribute was missing or an error prevented the evaluation)
 	4. no policy evaluations can return an unanticipated result 
@@ -95,3 +164,7 @@ For a request to succeed authz,
 	attribute value (e.g., "" if otherwise absent).
 
 Otherwise, the request fails authz.
+
+to do:  we need to discuss valueless attributes as roles, e.g., administrator
+
+to do:  we need to discuss attribute finder always returning a value 
