@@ -332,7 +332,7 @@
 			<arg value="test"/>
 		</exec>
 	</target>
-	<target name="metstest" description="run fedora.server.test.METSInOutTest on src/mets/test/demo/std-img-bdef.xml">
+	<target name="metstest" description="run fedora.server.test.METSInOutTest on src/mets/test/demo/std-img-bdef.xml... print re-serialized version, then do level 1 and level 2 validation.">
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
@@ -340,6 +340,24 @@
 			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
 			<arg value="fedora.server.test.METSInOutTest"/>
 			<arg value="src/mets/test/demo/std-img-bdef.xml"/>
+		</exec>
+		<exec executable="java">
+			<arg value="-Dfedora.home=dist/server"/>
+			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+			<arg value="-classpath"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
+			<arg value="fedora.server.test.METSInOutTest"/>
+			<arg value="src/mets/test/demo/std-img-bdef.xml"/>
+			<arg value="1"/>
+		</exec>
+		<exec executable="java">
+			<arg value="-Dfedora.home=dist/server"/>
+			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+			<arg value="-classpath"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
+			<arg value="fedora.server.test.METSInOutTest"/>
+			<arg value="src/mets/test/demo/std-img-bdef.xml"/>
+			<arg value="2"/>
 		</exec>
 	</target>
 	<target name="serverclasses" depends="serverprep,wsdl2java" description="Compile server java code into temp/server/classes">
@@ -358,6 +376,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.51  2002/12/11 16:47:01  cwilper
+  metstest target also does level 1 and level 2 validation.
+
   Revision 1.50  2002/12/10 18:58:01  cwilper
   client now uses saxon6.5 in compile classpath, and saxon6.5.jar is
   copied to client dist lib/ dir
