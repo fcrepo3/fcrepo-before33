@@ -2,10 +2,7 @@ package fedora.server.validation;
 
 // Fedora imports
 import fedora.server.errors.ServerException;
-import fedora.server.errors.GeneralException;
-import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.InitializationException;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.storage.ConnectionPool;
@@ -15,6 +12,8 @@ import fedora.server.storage.ConnectionPoolManager;
 import java.util.Map;
 import java.io.InputStream;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  *
@@ -69,29 +68,66 @@ public class DOValidatorModule extends Module implements DOValidator
   public void postInitModule() throws ModuleInitializationException
   {
     try
-    {
-      String tempDir = new File(getServer().getHomeDir(),
-          this.getParameter("tempDir")).getPath();
-      String xmlSchemaPath = new File(getServer().getHomeDir(),
-        this.getParameter("xmlSchema")).getPath();
-      String schematronPreprocessorPath = new File(getServer().getHomeDir(),
-          this.getParameter("schematronPreprocessor")).getPath();
-      String schematronSchemaPath = new File(getServer().getHomeDir(),
-          this.getParameter("schematronSchema")).getPath();
-      ConnectionPool connectionPool=((ConnectionPoolManager)
-          getServer().getModule(
-          "fedora.server.storage.ConnectionPoolManager")).getPool();
-      logFiner("[DOValidatorModule] tempDir set to: "
-                + tempDir);
-      logFiner("[DOValidatorModule] xmlSchemaPath set to: "
-                + xmlSchemaPath);
-      logFiner("[DOValidatorModule] schematronPreprocessorPath set to: "
-                + schematronPreprocessorPath);
-      logFiner("[DOValidatorModule] schematronSchemaPath set to: "
-                + schematronSchemaPath);
-      // instantiate the validation implementation class
-      dov = new DOValidatorImpl(tempDir, xmlSchemaPath, schematronPreprocessorPath,
-            schematronSchemaPath, connectionPool, this);
+    {	
+		HashMap xmlSchemaMap=new HashMap();
+		HashMap ruleSchemaMap=new HashMap();
+		String tempDir=null;
+		String schematronPreprocessorPath=null;
+		Iterator nameIter=parameterNames();
+		while (nameIter.hasNext()) {
+			String paramName=(String) nameIter.next();
+			if (paramName.startsWith("xsd_")) {
+				String xmlSchemaName=paramName.substring(4);
+				try {
+					String xmlSchemaPath = new File(getServer().getHomeDir(),
+						getParameter(paramName)).getPath();
+					xmlSchemaMap.put(xmlSchemaName, xmlSchemaPath);
+					logFiner("[DOValidatorModule] initialized XML Schema "
+							+ "location: " + xmlSchemaPath);
+				} catch (Exception e) {
+					throw new ModuleInitializationException(
+							"Problem configuring XML Schema for format="
+							+ xmlSchemaName + " : " +
+							e.getClass().getName() + ": " + e.getMessage(),
+							getRole());
+				}
+			} else if (paramName.startsWith("rules_")) {
+				String ruleSchemaName=paramName.substring(6);
+				try {
+					String ruleSchemaPath = new File(getServer().getHomeDir(),
+						getParameter(paramName)).getPath();
+					ruleSchemaMap.put(ruleSchemaName, ruleSchemaPath);
+					logFiner("[DOValidatorModule] initialized Schematron schema "
+							+ "location: "  + ruleSchemaPath);
+				} catch (Exception e) {
+					throw new ModuleInitializationException(
+							"Problem configuring Schematron Schema for format="
+							+ ruleSchemaName + " : " +
+							e.getClass().getName() + ": " + e.getMessage(),
+							getRole());
+				}
+			} else if (paramName.equals("tempDir")){
+				tempDir = new File(getServer().getHomeDir(),
+					getParameter(paramName)).getPath();
+				logFiner("[DOValidatorModule] tempDir set to: "
+						+ tempDir);
+			} else if (paramName.equals("schtron_preprocessor")){
+				schematronPreprocessorPath = new File(getServer().getHomeDir(),
+					getParameter(paramName)).getPath();
+				logFiner("[DOValidatorModule] initialized Schematron "
+						+ "preprocessor location: " + schematronPreprocessorPath);
+			}
+		}
+		// instantiate a connection pool to support Level 3 validation
+		ConnectionPool connectionPool=((ConnectionPoolManager)
+			getServer().getModule(
+			"fedora.server.storage.ConnectionPoolManager")).getPool(); 
+			        
+      	// FINALLY, instantiate the validation module implementation class
+      	dov = new DOValidatorImpl(tempDir, xmlSchemaMap, 
+      			schematronPreprocessorPath,
+				ruleSchemaMap, 
+				connectionPool, this);
     }
     catch(Exception e)
     {
@@ -110,7 +146,7 @@ public class DOValidatorModule extends Module implements DOValidator
    *        1 = perform only XML Schema validation
    *        2 = perform only Schematron Rules validation
    *        3 = perform only referential integrity checks for the object
-   * @param workFlowPhase The stage in the work flow for which the
+   * @param phase The stage in the work flow for which the
    *        validation should be contextualized.
    *        "ingest" = the object is in the submission format for the
    *                   ingest stage phase
@@ -118,11 +154,11 @@ public class DOValidatorModule extends Module implements DOValidator
    *                  final storage phase
    * @throws ServerException If validation fails for any reason.
    */
-  public void validate(InputStream objectAsStream, String format, int validationLevel,
-    String workFlowPhase)
+  public void validate(InputStream objectAsStream, String format, 
+  	int validationLevel, String phase)
     throws ServerException
   {
-    dov.validate(objectAsStream, format, validationLevel, workFlowPhase);
+    dov.validate(objectAsStream, format, validationLevel, phase);
     logFiner("[DOValidatorModule] Successful object validation at level: "
               + validationLevel);
   }
@@ -137,7 +173,7 @@ public class DOValidatorModule extends Module implements DOValidator
    *        1 = perform only XML Schema validation
    *        2 = perform only Schematron Rules validation
    *        3 = perform only referential integrity checks for the object
-   * @param workFlowPhase The stage in the work flow for which the validation
+   * @param phase The stage in the work flow for which the validation
    *        should be contextualized.
    *        "ingest" = the object is in the submission format for the
    *                   ingest stage phase
@@ -145,11 +181,11 @@ public class DOValidatorModule extends Module implements DOValidator
    *                  final storage phase
    * @throws ServerException If validation fails for any reason.
    */
-  public void validate(File objectAsFile, String format, int validationLevel,
-    String workFlowPhase)
+  public void validate(File objectAsFile, String format, 
+  	int validationLevel, String phase)
     throws ServerException
   {
-      dov.validate(objectAsFile, format, validationLevel, workFlowPhase);
+      dov.validate(objectAsFile, format, validationLevel, phase);
       logFiner("[DOValidatorModule] Completed object validation at level: "
               + validationLevel);
   }
