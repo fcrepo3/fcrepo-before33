@@ -1,10 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!--
   $Id$
   
   TODO: Add optimized targets (separate output area)
-        Add doc targets
+        Finish doc targets
         Add server targets, similar to client, pulling off common classes
 -->
 
@@ -117,6 +117,31 @@
              use="true"/>
   </target>
 -->
+
+  <target name="devdocs"
+          depends="prep"
+          description="Assemble development/system documentation into dist/devdocs">
+    <mkdir dir="dist"/>
+    <mkdir dir="dist/devdocs"/>
+    <copy todir="dist/devdocs">
+      <fileset dir="src/txt/devdocs"/>
+      <fileset dir="src/doc/devdocs"/>
+      <fileset dir="src/sdr/devdocs"/>
+    </copy>
+    <echo message="Translating devguide.dbx to html"/>
+    <exec executable="java">
+      <arg value="-classpath"/>
+      <arg path="res/xalan/bin/xalan.jar;res/xalan/bin/xercesImpl.jar;res/xalan/bin/xml-apis.jar"/>
+      <arg value="org.apache.xalan.xslt.Process"/>
+      <arg value="-in"/>
+      <arg path="src/dbx/devdocs/devguide.dbx"/>
+      <arg value="-xsl"/>
+      <arg path="res/docbook-xsl/html/docbook.xsl"/>
+      <arg value="-out"/>
+      <arg path="dist/devdocs/devguide.html"/>
+    </exec>
+  </target>
+          
     
   <target name="clean"
           description="Clean up all targets and temp files">
@@ -128,6 +153,9 @@
 
 <!--
   $Log$
+  Revision 1.3  2002/05/03 20:48:54  cwilper
+  Added docbook to html target for devdocs
+
   Revision 1.2  2002/05/03 16:03:32  cwilper
   Client builds now work
 
