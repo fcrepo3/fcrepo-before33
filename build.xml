@@ -346,6 +346,36 @@ if you can confirm.
 			<arg path="src/dbx/userdocs/server.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<echo message="Translating saxon.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/saxon/index.html"/>
+			<arg path="src/dbx/userdocs/saxon.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
+		<echo message="Translating fop.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/fop/index.html"/>
+			<arg path="src/dbx/userdocs/fop.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
+		<echo message="Translating imagemanip.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/imagemanip/index.html"/>
+			<arg path="src/dbx/userdocs/imagemanip.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>						
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
@@ -600,14 +630,14 @@ if you can confirm.
 			<fileset dir="temp/localservices/classes/fedora/localservices/saxon"/>
 		</copy>
 		<copy file="src/web-app/fedora/localservices/saxon/web.xml" todir="dist/server/tomcat41/webapps/saxon/WEB-INF"/>
-		<copy file="src/web-app/fedora/localservices/saxon/index.html" todir="dist/server/tomcat41/webapps/saxon"/>
+		<!--<copy file="src/web-app/fedora/localservices/saxon/index.html" todir="dist/server/tomcat41/webapps/saxon"/>-->
 		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/saxon/WEB-INF/lib"/>
 		<!-- fop service -->
 		<copy todir="dist/server/tomcat41/webapps/fop/WEB-INF/classes/fedora/localservices/fop">
 			<fileset dir="temp/localservices/classes/fedora/localservices/fop"/>
 		</copy>
 		<copy file="src/web-app/fedora/localservices/fop/web.xml" todir="dist/server/tomcat41/webapps/fop/WEB-INF"/>
-		<copy file="src/web-app/fedora/localservices/fop/index.html" todir="dist/server/tomcat41/webapps/fop"/>
+		<!--<copy file="src/web-app/fedora/localservices/fop/index.html" todir="dist/server/tomcat41/webapps/fop"/>-->
 		<copy file="lib/server/avalon-framework.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
 		<copy file="lib/server/batik.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
 		<copy file="lib/server/fop.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
@@ -634,7 +664,7 @@ if you can confirm.
 		<copy file="src/xsl/soapclient/viewObjectProfile.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/behaviordefs.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
-		<copy file="src/web-app/fedora/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient"/>
+		<!--<copy file="src/web-app/fedora/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient"/>-->
 		<!-- userdocs -->
 		<!--<copy todir="dist/server/tomcat41/webapps/userdocs">
 			<fileset dir="src/web-app/userdocs"/>
@@ -746,6 +776,9 @@ if you can confirm.
 </project>
 <!--
   $Log$
+  Revision 1.111  2003/05/10 01:32:26  rlw
+  added transformations for local services dbx docs
+
   Revision 1.110  2003/05/09 16:20:46  rlw
   added screenshots for search interface doc
 
