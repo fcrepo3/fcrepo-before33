@@ -71,7 +71,7 @@
         run tuple queries against the resource index.  A <em>tuple query </em> is
         one that returns a list of named values.
       </p>
-      <img src="images/findTuples.png"/>
+      <img src="images/findTuples.png" alt="" />
       <p>
         When you enter a query and click "Launch", a new browser window will display the
         results.  </p>
@@ -101,6 +101,7 @@ info:fedora/demo:15,2005-01-27T23:07:41.58</pre></div>
       <p>
         Above the query text box, you can alter several settings for a query.  These
         settings are described below.
+      </p>
       <div class="subsect">
         <h4>Language</h4>
         <p>Indicates the query language to use.  Valid options are <strong>iTQL</strong> (a full-featured
@@ -145,7 +146,7 @@ info:fedora/demo:15,2005-01-27T23:07:41.58</pre></div>
         run triple queries against the resource index.  A <em>triple query </em> is
         one that returns a list of RDF statements (aka triples).
       </p>
-      <img src="images/findTriples.png"/>
+      <img src="images/findTriples.png" alt="" />
       <p>
         This tab works in much the same way as the "Find Tuples" tab, but supports
         different response formats and provides a means to convert tuple query 
@@ -188,7 +189,7 @@ Tim Berners-Lee in <a href="http://www.w3.org/DesignIssues/Notation3.html">An RD
         <h4>Using Templates</h4>
         <p>Templates are used to convert tuple query results to triples.
            A template consists of one ore more <em>triple binding patterns</em>
-           that reference the binding variables in an iTQL or RDQL query.</p>
+           that reference the binding variables in an iTQL or RDQL query.
         </p>
         <p>
           The easiest way to understand how this works is by example.
@@ -224,7 +225,7 @@ $b &lt;urn:example:isRelatedTo&gt; $a</pre></div>
     </div>
     <div class="subsect">
       <h3><a name="user.aliases">C. Show Aliases</a></h3>
-      <img src="images/showAliases.png"/>
+      <img src="images/showAliases.png" alt="" />
       <p>
         This tab shows the aliases that can be used in queries
         and what URI prefixes they map to.
@@ -236,12 +237,13 @@ $b &lt;urn:example:isRelatedTo&gt; $a</pre></div>
       </p>
     </div>
   </div>
+  </div>
 
   <div class="sect">
-    <h2><a name="service">3. Application Interface</a></h2>
+    <h2><a name="app">3. Application Interface</a></h2>
     <p>The RISearch service can be programmatically accessed via HTTP GET.  As with the
     user interface, it can be invoked to retrieve tuples or triples.  The syntax is described below while
-    the meaning of each parameter is described in the above section.</p>
+    the meaning of each parameter is described in the above section.
     </p>
     <p>Note:</p>
     <ul>
