@@ -69,9 +69,9 @@
 	<sect1>
 		<title>WSDL API Documentation</title>
 		<simplelist type="vert">
-			<member><ulink url="http://www.fedora.info/definitions/1/0/api">API-A-Lite: HTTP Access Interface</ulink></member>
-			<member><ulink url="http://www.fedora.info/definitions/1/0/api">API-A: SOAP Access Interface</ulink></member>
-			<member><ulink url="http://www.fedora.info/definitions/1/0/api">API-M: SOAP Management Interface</ulink></member>
+			<member><ulink url="http://www.fedora.info/definitions/1/0/api/#apialite">API-A-Lite: HTTP Access Interface</ulink></member>
+			<member><ulink url="http://www.fedora.info/definitions/1/0/api/#apia">API-A: SOAP Access Interface</ulink></member>
+			<member><ulink url="http://www.fedora.info/definitions/1/0/api/#apim">API-M: SOAP Management Interface</ulink></member>
 		</simplelist>
 	</sect1>
 	<sect1>
