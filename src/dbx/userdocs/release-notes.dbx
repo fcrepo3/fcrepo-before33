@@ -12,47 +12,17 @@
         </releaseinfo>
     </articleinfo>
     <section>
-        <title>Beta 1 (Dec 20, 2002)</title>
+        <title>Beta 1 - Dec 20, 2002</title>
         <para>
-12-20-02 - Version beta1
-         - 2 phase validation of objects implemented. Upon ingestion,
-           Fedora objects undergo a two phase validation process to
-           validate against the Fedora METS schema and to validate
-           against a set of rules defined for Fedora objects.
-         - Serialization/Deserialization turned on. Upon ingestion,
-           the XML-encoded object files are serialized into java objects
-           for use within API-M and then deserialized back into XML 
-           before being stored in the repository.
-         - PID generation activated. Upon ingestion, Fedora objects that
-           pass validation are automatically assigned a unique persistent 
-           identifer or PID. The namespace prefix on the PID is determined
-           by the namespace parameter in the fedora.cfg configuration
-           file. 
-         - Special default PID namespace. To simplify initial setup and use 
-           of the repository, the default namespace of "test:" enables 
-           special handling of Fedora object PIDs. If the PID namespace is
-           set to "test:" in the fedora/fcfg configuration file, the ingest
-           method will NOT generate unique PIDs, but will instead use the
-           PID values contained in the Fedora objects. This behavior occurs
-           ONLY for the namespace of "test:". This feature was enabled to
-           allow for easier loadeing of sample objects by novice users of
-           the repository software.
-         - Datastream mediation enabled. To provide better security for
-           the physical location of datastreams, a simple proxy has been
-           implemented to disguise the location of datastreams to external
-           mechanisms.
-         - Method Parameters enabled. Method parameters can now be defined in
-           Behavior Mechanism objects using WSDL providing a way to pass
-           parameters to methods from the end user. For example, an image
-           mechanism might have a method named getImage with parameters X
-           and Y that specify the pixel dimensions of the requested image.
-           Method parameters may be supplied by the end user on a dissemination
-           request to affect the result of the dissemination.
-         - Default Method Parameters enabled. Mechanism designers can now
-           create method parameters that are known only to the mechanism.
-           Default method parameters cannot be altered by the end user and
-           their values must be specified in the Behavior Mechanism object.
-         - Basic Batch Tool implemented. A simple batch tool has been added
+		This release adds several important features to the Fedora software,
+		including a batch ingest tool, parameterized disseminations,
+        and datastream mediation.  Digital object serialization and
+        PID generation are now fully active, and validation has been
+		enhanced.  This is a non-public release.
+        </para>
+        <section>
+		<title>Batch Ingest</title>
+		<para>A simple batch tool has been added,
            enabling the creation of a batch of objects conforming to the
            same content model. The tool consists of a 3 phase process. Phase 1
            will take a directory structure consisting of datastreams and metadata
@@ -64,14 +34,103 @@
            objects. Phase 2 and Phase 3 are implemented in the beta1 release.
            Phase 1 will be implemented in the next release and is NOT available
            in the beta1 release.
-         - Enhancements to the example soap client (FedoraAccessSoapServlet).
+            </para>
+        </section>
+        <section>
+		<title>PID Generation</title>
+		<para>
+         <emphasis>PID generation has been activated.</emphasis> 
+           Upon ingestion, Fedora objects that
+           pass validation are automatically assigned a unique persistent 
+           identifer or PID. The namespace prefix on the PID is determined
+           by the namespace parameter in the fedora.cfg configuration
+           file. 
+		</para>
+		<para>
+         <emphasis>Special default PID namespace.</emphasis>
+          To simplify initial setup and use 
+           of the repository, the default namespace of "test:" enables 
+           special handling of Fedora object PIDs. If the PID namespace is
+           set to "test:" in the fedora/fcfg configuration file, the ingest
+           method will NOT generate unique PIDs, but will instead use the
+           PID values contained in the Fedora objects. This behavior occurs
+           ONLY for the namespace of "test:". This feature was enabled to
+           allow for easier loadeing of sample objects by novice users of
+           the repository software.
+            </para>
+        </section>
+        <section>
+		<title>Serialization</title>
+		<para>
+          Objects are completely deserialized and re-serialed upon ingest.
+          This has the effect that the stored version of the object (in METS form)
+          will not be the same byte-for-byte as the version coming out,
+          but the information will be preserved.  It also enables
+          more complete validation and PID generation.
+            </para>
+        </section>
+        <section>
+		<title>Validation Enhancements</title>
+		<para>
+         Two-phase validation of objects implemented. Upon ingestion,
+           Fedora objects undergo a two phase validation process to
+           validate against the Fedora METS schema and to validate
+           against a set of rules defined for Fedora objects.
+            </para>
+        </section>
+        <section>
+		<title>Parameters</title>
+		<para>
+         <emphasis>Method Parameters enabled</emphasis> Method parameters can now be defined in
+           Behavior Mechanism objects using WSDL providing a way to pass
+           parameters to methods from the end user. For example, an image
+           mechanism might have a method named getImage with parameters X
+           and Y that specify the pixel dimensions of the requested image.
+           Method parameters may be supplied by the end user on a dissemination
+           request to affect the result of the dissemination.
+		</para>
+		 <para>
+         <emphasis>Default Method Parameters enabled</emphasis> Mechanism designers can now
+           create method parameters that are known only to the mechanism.
+           Default method parameters cannot be altered by the end user and
+           their values must be specified in the Behavior Mechanism object.
+		 </para>
+		 <para>
+         <emphasis>Enhancements to the example soap client (FedoraAccessSoapServlet)</emphasis>
            In the alpha1 release, the soap client enabled one to reflect on
            an object using GetBehaviorDefinitions and GetObjectMethods to
            display a list of all methods for a given object and to disseminate
            each of the methods. This interface has been enhanced to now allow
            for user input of method parameters for those methods that define
            parameters.
-         - Sample objects updated. The sample objects in the demo directory
+		 </para>
+		 <para>
+           <emphasis>DB Schema updated</emphasis> A new table named MechDefaultParameter has been
+           added and the datatype and length of some column names have changed.
+          </para>
+        </section>
+        <section>
+		<title>Fedora Public Website</title>
+		<para>
+         Added a <ulink url="http://www.fedora.info/release/">release directory</ulink>
+          for downloading both milestone source builds and nightly binary distributions,
+         and created a <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/WebHome">wiki
+         for user support and FAQs</ulink>.
+            </para>
+        </section>
+        <section>
+		<title>Datastream Mediation</title>
+		<para>
+           To provide better security for
+           the physical location of datastreams, a simple proxy has been
+           implemented to disguise the location of datastreams to external
+           mechanisms.
+            </para>
+        </section>
+		<section>
+		  <title>Sample Objects</title>
+		  <para>
+           The sample objects in the demo directory
            have been renamed for readability. The content of the objects has
            also been updated to reflect new additions like method parameters
            and default method parameters. The WSDL in the mrsid mechanism
@@ -79,85 +138,36 @@
            corrected. There is also a sample directory of image files and
            their associated metadata to create a batch of 10 image objects
            using the new batch tool.
-         - Added download directory to fedora CVS website for downloading
-           both milestone source builds and nightly binary distributions.
-         - Added WIKI to fedora CVS website for user support and FAQ.
-         - Enhanced in-line documentation in code. Ancillary documentation and
+           </para>
+		</section>
+		<section>
+		  <title>Documentation</title>
+		  <para>
+         Enhanced in-line documentation in code. Ancillary documentation and
            diagrams updated.
-         - Master Specification Document updated. The Specification documented
+         Master Specification Document updated. The Specification documented
            distributed in June 2002 has been updated to reflect changes.
-         - DB Schema updated. A new table named MechDefaultParameter has been
-           added and the datatype and length of some column names have changed.
-        </para>
-        <section>
-		<title>Batch Ingest</title>
-		<para>
-Ingesting groups of objects... two stages.
-Talk about sample objects.  Point to user doc..?
-            </para>
-        </section>
-        <section>
-		<title>PID Generation</title>
-		<para>
-Upon ingest, objects are assigned a PID, determined by a configuration value (except those starting with test: inline)
-            </para>
-        </section>
-        <section>
-		<title>Serialization</title>
-		<para>
-Objects are completely deserialized, then re-serialed upon ingest.
-This has the effect that the stored version of the object (in mets form)
-will not be the same byte-for-byte as the version coming out,
-but the information will be preserved.
-            </para>
-        </section>
-        <section>
-		<title>Validation Enhancements</title>
-		<para>
-The validation process also does object relationship integrity checking.
-When a bmech object is ingested, its bdef must be in the repostitory.
-This was true before, but the condition is now sensed explicitly
-and in a more up-front place than before.
-            </para>
-        </section>
-        <section>
-		<title>Dissemination Parameters</title>
-		<para>
-Behavior mechanisms can take user-supplied parameters
-at dissemination time.
-            </para>
-        </section>
-        <section>
-		<title>Schema Changes</title>
-		<para>
-The mets-fedora schema has changed.
-The differences are...(Sandy?)
-            </para>
-        </section>
-        <section>
-		<title>Datastream Mediation</title>
-		<para>
-When datastreams act as input to bmech implementations,
-the href is to the fedora server.  There are a couple kinds.
-(More re: Ross' change)
-            </para>
-        </section>
+          </para>
+		</section>
 	</section>
     <section>
-        <title>Alpha 1 (Oct 31, 2002)</title>
+        <title>Alpha 1 - Oct 31, 2002</title>
         <para>
-This release includes a basic server that can ingest
-objects, view objects in the repository, and export objects.
+         Provided for the first time at the
+         development/deployment team meeting at UVA, this release
+         includes a basic server that can ingest
+         objects, view objects in the repository, and export objects.
+		 This is a non-public release.
          </para>
          <section>
            <title>Management API</title>
            <para>The management API is exposed via SOAP over HTTP and 
                  has the following methods implemented:
             <itemizedlist>
-               <listitem><para>ingestObject</para></listitem>
-               <listitem><para>purgeObject</para></listitem>
-               <listitem><para>listObjectPIDs</para></listitem>
-               <listitem><para>exportObject</para></listitem>
+               <listitem>ingestObject</listitem>
+               <listitem>purgeObject</listitem>
+               <listitem>listObjectPIDs</listitem>
+               <listitem>exportObject</listitem>
              </itemizedlist>
            </para>
          </section>
@@ -213,9 +223,12 @@ objects, view objects in the repository, and export objects.
 	  <para>The history of this document follows.</para>
 	  <literallayout>
 	  $Log$
+	  Revision 1.3  2002/12/20 19:44:01  cwilper
+	  integrated ross' stuff in sections
+
 	  Revision 1.2  2002/12/20 16:14:30  cwilper
 	  put ross' stuff in here... alpha1 info formatted, beta1 needs same
-
+	
 	  Revision 1.1  2002/12/19 21:25:39  cwilper
 	  initial creation
 	  </literallayout>
