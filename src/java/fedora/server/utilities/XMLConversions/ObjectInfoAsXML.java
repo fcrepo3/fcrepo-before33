@@ -13,6 +13,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
+import fedora.server.utilities.DateUtility;
 
 // FIXIT!! This class was copied from fedora.server.search into
 // fedora.server.utilties for more general purpose use.  Decide on one official copy
@@ -39,7 +40,7 @@ public class ObjectInfoAsXML
     {
     }
 
-    public String getObjectProfile(DOReader reader)
+    public String getObjectProfile(String reposBaseURL, DOReader reader)
             throws ServerException {
         StringBuffer out=new StringBuffer();
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
@@ -53,6 +54,12 @@ public class ObjectInfoAsXML
               + " http://www.fedora.info/definitions/1/0/access/objectProfile.xsd\""
               + " PID=\"" + reader.GetObjectPID() + "\">\n");
 
+        String dissIndexURL =
+          getDissIndexURL(reposBaseURL, reader.GetObjectPID(), null);
+        out.append("<dissIndexURL>" + dissIndexURL + "</dissIndexURL>\n");
+        String itemIndexURL =
+          getItemIndexURL(reposBaseURL, reader.GetObjectPID(), null);
+        out.append("<itemIndexURL>" + itemIndexURL + "</itemIndexURL>\n");
         String label=reader.GetObjectLabel();
         if (label==null) label="";
         out.append("<label>" + label + "</label>\n");
@@ -76,6 +83,15 @@ public class ObjectInfoAsXML
         out.append("<contentModel>" + cModel + "</contentModel>\n");
         out.append("<createDate>" + formatter.format(reader.getCreateDate()) + "</createDate>\n");
         out.append("<modDate>" + formatter.format(reader.getLastModDate()) + "</modDate>\n");
+        // FIXIT!! Ideally I do not hard-code the default disseminator
+        out.append("<disseminator>\n");
+        out.append("<bDefPID>" + "fedora-system:3" + "</bDefPID>\n");
+        out.append("<bDefLabel>" + "Default Behavior Definition for Fedora Objects" + "</bDefLabel>\n");
+        out.append("<dissLabel>" + "Fedora's Default Disseminator" + "</dissLabel>\n");
+        out.append("<dissCreateDate>" +
+          DateUtility.convertDateToString(new Date(System.currentTimeMillis()))
+          + "</dissCreateDate>\n");
+        out.append("</disseminator>\n");
         Disseminator[] dissSet = reader.GetDisseminators(null);
         for (int i=0; i<dissSet.length; i++)
         {
@@ -325,6 +341,41 @@ public class ObjectInfoAsXML
         return null;
     }
 
+    private String getDissIndexURL(String reposBaseURL, String PID, Date versDateTime)
+    {
+        String dissIndexURL = null;
+
+        if (versDateTime == null)
+        {
+          dissIndexURL = reposBaseURL + "/fedora/get/" + PID;
+        }
+        else
+        {
+            dissIndexURL = reposBaseURL + "/fedora/get/"
+              + PID + "/" + DateUtility.convertDateToString(versDateTime);
+        }
+        return dissIndexURL;
+    }
+
+    // FIXIT!! Consider implications of hard-coding the default dissemination
+    // aspects of the URL (e.g. fedora-system3 as the PID and viewItemList.
+    private String getItemIndexURL(String reposBaseURL, String PID, Date versDateTime)
+    {
+        String itemIndexURL = null;
+
+        if (versDateTime == null)
+        {
+          itemIndexURL = reposBaseURL + "/fedora/get/" + PID +
+                         "/fedora-system:3/viewItemList";
+        }
+        else
+        {
+            itemIndexURL = reposBaseURL + "/fedora/get/"
+              + PID + "/fedora-system:3/viewItemList/"
+              + DateUtility.convertDateToString(versDateTime);
+        }
+        return itemIndexURL;
+    }
     // returns -1 if can't parse as date
     private long parseDateAsNum(String str) {
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
