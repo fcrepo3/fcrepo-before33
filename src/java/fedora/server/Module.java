@@ -45,7 +45,7 @@ public abstract class Module {
      *                                       for some other reason.
      */
     public abstract void initModule()
-            throws ModuleIntializationException;
+            throws ModuleInitializationException;
 
     /**
      * Gets the value of a named configuration parameter.
@@ -76,7 +76,7 @@ public abstract class Module {
      *                                 method should do everything possible
      *                                 to recover from exceptional situations.
      */
-    public void shutdownModule() 
+    public abstract void shutdownModule() 
             throws ModuleShutdownException;
 
 }
