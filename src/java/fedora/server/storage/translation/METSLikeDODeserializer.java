@@ -642,7 +642,7 @@ public class METSLikeDODeserializer
 				// write attributes with appropriate prefix
                 for (int i=0; i<a.getLength(); i++) {
                     m_dsXMLBuffer.append(' ');
-                    String aPrefix=(String) m_URIToPrefix.get(a.getURI(i));
+                    String aPrefix=(String) m_inlineURIToPrefix.get(a.getURI(i));
                     if (aPrefix!=null && !aPrefix.equals("")) {
 						// hold on to prefixes used in this inline XML
 						if (!m_inlinePrefixList.contains(aPrefix)) {
