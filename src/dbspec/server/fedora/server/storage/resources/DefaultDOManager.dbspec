@@ -105,6 +105,15 @@
 		<column name="parmLabel" type="varchar(255)" notNull="true" default="" index="parmLabel"/>
 		<column name="parmType" type="varchar(32)" notNull="true" default="" index="parmType"/>
 	</table>
+	<table name="pidGen">
+        <comment>For each namespace the DBPIDGenerator keeps track of, 
+        the highestID is the highest known id ever used from that namespace.
+        The PID generation algorithm simply increments this value to get
+        the next id within the namespace.
+        </comment>
+        <column name="namespace" type="varchar(255)" notNull="true"/>
+        <column name="highestID" type="int(11)" notNull="true"/>
+    </table>
 	<table name="policy" primaryKey="policyID">
 		<column name="policyID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="policyName" type="varchar(32)" notNull="true" default="" index="policyName"/>

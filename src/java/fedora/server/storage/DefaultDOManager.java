@@ -845,6 +845,11 @@ public class DefaultDOManager
                                 ) 
                         ) {
                     getServer().logFinest("Stream contained PID with retainable namespace-id... will use PID from stream.");
+                    try {
+                        m_pidGenerator.neverGeneratePID(obj.getPid());
+                    } catch (IOException e) {
+                        throw new GeneralException("Error calling pidGenerator.neverGeneratePID(): " + e.getMessage());
+                    }
                 } else {
                     if (newPid) {
                         getServer().logFinest("Ingesting client wants a new PID.");

@@ -1,21 +1,16 @@
 package fedora.server.management;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 import fedora.server.Module;
 import fedora.server.Server;
+import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.storage.ConnectionPoolManager;
 
 /**
- *
- * <p><b>Title:</b> BasicPIDGenerator.java</p>
- * <p><b>Description:</b> A <code>PIDGenerator</code> that produces ordered
- * PIDs, and keeps track of where it's at using logfiles.</p>
- *
- * <p>Implementation note: This is a wrapper around the PIDGeneration class
- * that casts it as a Module.</p>
+ * A wrapper around the DBPIDGenerator class that casts it as a Module.
  *
  * -----------------------------------------------------------------------------
  *
@@ -40,7 +35,9 @@ import fedora.server.errors.ModuleInitializationException;
 public class BasicPIDGenerator
         extends Module implements PIDGenerator {
 
-    private PIDGeneration m_pidGeneration;
+    private ConnectionPoolManager m_mgr;
+    private DBPIDGenerator m_pidGenerator;
+    private File m_oldPidGenDir;
 
     /**
      * Constructs a BasicPIDGenerator.
@@ -57,62 +54,63 @@ public class BasicPIDGenerator
         super(moduleParameters, server, role);
     }
 
-    public void initModule()
-            throws ModuleInitializationException {
-        try {
-            String pidGenLogDir=getParameter("pidgen_log_dir");
-            if (pidGenLogDir==null) {
-                throw new ModuleInitializationException("pidgen_log_dir must be specified", getRole());
-            }
-            File f=null;
-            if (pidGenLogDir.startsWith("/")
-                    || pidGenLogDir.startsWith("\\")
-                    || pidGenLogDir.substring(1).startsWith(":\\")) {
-                f=new File(pidGenLogDir);
+    public void initModule() {
+        // this parameter is no longer required; but if it's specified,
+        // we can automatically upgrade from a pre-1.2 version of Fedora by 
+        // making sure the old "last pid generated" value is respected later.
+        String dir=getParameter("pidgen_log_dir");
+        if (dir!=null && !dir.equals("")) {
+            if (dir.startsWith("/")
+                    || dir.startsWith("\\")
+                    || dir.substring(1).startsWith(":\\")) {
+                m_oldPidGenDir=new File(dir);
             } else {
-                f=new File(getServer().getHomeDir(), pidGenLogDir);
+                m_oldPidGenDir=new File(getServer().getHomeDir(), dir);
             }
-            if (!f.exists()) {
-                if (!f.mkdir()) {
-                    throw new ModuleInitializationException("pidgen_log_dir could not be created.", getRole());
-                }
-            } else {
-                if (!f.isDirectory()) {
-                    throw new ModuleInitializationException("pidgen_log_dir exists but is not a dir.", getRole());
-                }
-            }
-            m_pidGeneration=new PIDGeneration(f.getAbsolutePath());
-        } catch (ClassNotFoundException cnfe) {
-            // won't happen
-        } catch (IOException ioe) {
-            // maybe...
-            throw new ModuleInitializationException("IOException thrown by PIDGeneration constructor:" + ioe.getMessage(), getRole());
         }
     }
 
     /**
-     * Creates a new PID with the specified namespace as a prefix.
-     *
-     * @param namespaceID The namespace id for the to-be-generated pid.
-     * @return The generated pid.
-     * @throws IOException If the request can't be fulfilled due to an
-     *         unexpected IO condition.
+     * Get a reference to the ConnectionPoolManager so we can give the
+     * instance constructor a ConnectionPool later in initializeIfNeeded().
      */
-    public String generatePID(String namespaceID)
-            throws IOException {
-        return m_pidGeneration.generatePID(namespaceID);
+    public void postInitModule() 
+            throws ModuleInitializationException {
+        m_mgr=(ConnectionPoolManager) getServer()
+                .getModule("fedora.server.storage.ConnectionPoolManager");
+		if (m_mgr==null) {
+            throw new ModuleInitializationException(
+                    "ConnectionPoolManager module not loaded.", getRole());
+		}
     }
 
-    /**
-     * Gets the last generated PID.
-     *
-     * @return the retrieved PID string
-     * @throws IOException If the request can't be fulfilled due to an
-     *         unexpected IO condition.
-     */
+    private void initializeIfNeeded() 
+            throws IOException {
+        try {
+            if (m_pidGenerator==null) {
+                m_pidGenerator=new DBPIDGenerator(m_mgr.getPool(), m_oldPidGenDir);
+            }
+        } catch (ConnectionPoolNotFoundException e) {
+            throw new IOException("Can't get default connection pool!");
+        }
+    }
+
+    public String generatePID(String namespaceID)
+            throws IOException {
+        initializeIfNeeded();
+        return m_pidGenerator.generatePID(namespaceID);
+    }
+
     public String getLastPID()
             throws IOException {
-        return m_pidGeneration.getLastPID();
+        initializeIfNeeded();
+        return m_pidGenerator.getLastPID();
+    }
+
+    public void neverGeneratePID(String pid) 
+            throws IOException {
+        initializeIfNeeded();
+        m_pidGenerator.neverGeneratePID(pid);
     }
 
 }
