@@ -11,6 +11,7 @@ import javax.swing.table.*;
 
 import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.DatastreamBinding;
+import fedora.server.types.gen.DatastreamBindingMap;
 import fedora.server.types.gen.Disseminator;
 
 import fedora.client.Administrator;
@@ -48,11 +49,15 @@ public class DisseminatorPane
     private ObjectEditorFrame m_gramps;
     private boolean m_didSlider;
     private JComboBox m_bMechComboBox;
+    private DisseminatorPane m_editingPane; // me
+    private JTextArea m_dtLabel;
+    private JPanel m_dateLabelAndValue;
 
     public DisseminatorPane(ObjectEditorFrame gramps, String pid, 
             Disseminator[] versions, DisseminatorsPane owner)
             throws Exception {
         super(gramps, owner, versions[0].getID());
+        m_editingPane=this;
         m_gramps=gramps;
         m_pid=pid;
         m_owner=owner;
@@ -238,26 +243,15 @@ public class DisseminatorPane
 
         // set up the version pane, with the slider if needed
         if (versions.length>1) {
-
-// FIXME: this needs to match how the datastream stuff is done now,
-//        with the date to the left of the slider
-
             m_didSlider=true;
             m_versionSlider=new JSlider(JSlider.HORIZONTAL, 0, versions.length-1, 0);
             m_versionSlider.addChangeListener(this);
             m_versionSlider.setMajorTickSpacing(1);
             m_versionSlider.setSnapToTicks(true);
             m_versionSlider.setPaintTicks(true);
-            m_labelTables=new Hashtable[versions.length];
-            for (int i=0; i<versions.length; i++) {
-                Hashtable thisTable=new Hashtable();
-                thisTable.put(new Integer(i), new JLabel("Created " 
-                        + s_formatter.format(versions[i].getCreateDate().getTime())));
-                m_labelTables[i]=thisTable;
-            }
-            m_versionSlider.setLabelTable(m_labelTables[0]);
-            m_versionSlider.setPaintLabels(true);
+            m_versionSlider.setPaintLabels(false);
         }
+
 
         // CENTER: m_valuePane(one card for each version)
         m_valuePane=new JPanel();
@@ -277,7 +271,24 @@ public class DisseminatorPane
         // add it all to the versionPane, putting slider at north if needed
         versionPane.setLayout(new BorderLayout());
         if (versions.length>1) {
-            versionPane.add(m_versionSlider, BorderLayout.NORTH);
+            // Add a panel to versionPane.NORTH
+            // FlowLayout(SwingConstants.LEFT)
+            // Created   Date   m_versionSlider
+            m_dateLabelAndValue=new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
+            JLabel createdLabel=new JLabel("Created");
+            createdLabel.setPreferredSize(m_labelDims);
+            m_dateLabelAndValue.add(createdLabel);
+            m_dateLabelAndValue.add(Box.createHorizontalStrut(0));
+            m_dtLabel=new JTextArea(s_formatter.format(versions[0].getCreateDate().getTime()) + " ");
+            m_dtLabel.setBackground(Administrator.BACKGROUND_COLOR);
+            m_dtLabel.setEditable(false);
+            m_dateLabelAndValue.add(m_dtLabel);
+
+            JPanel stretch=new JPanel(new BorderLayout());
+            stretch.setBorder(BorderFactory.createEmptyBorder(0,0,4,0));
+            stretch.add(m_dateLabelAndValue, BorderLayout.WEST);
+            stretch.add(m_versionSlider, BorderLayout.CENTER);
+            versionPane.add(stretch, BorderLayout.NORTH);
         }
         versionPane.add(m_valuePane, BorderLayout.CENTER);
 
@@ -290,7 +301,9 @@ public class DisseminatorPane
     public void stateChanged(ChangeEvent e) {
        JSlider source=(JSlider)e.getSource();
        if (!source.getValueIsAdjusting()) {
-           m_versionSlider.setLabelTable(m_labelTables[source.getValue()]);
+           // make sure the selected version's date is shown...
+           m_dtLabel.setText(s_formatter.format(m_versions[source.getValue()].getCreateDate().getTime()) + " ");
+           // and that the selected version is shown
            m_versionCardLayout.show(m_valuePane, "" + source.getValue());
            // set the new text of m_bDefLabelTextField
            m_bDefLabelTextField.setText(m_versions[source.getValue()].getBDefLabel());
@@ -373,10 +386,13 @@ public class DisseminatorPane
         private JTextField m_bMechLabelTextField;
         private Map m_bMechLabels;
         private Map m_inputSpecs;
+        private Map m_bindingPanes;
         private String m_lastSelectedBMech;
 
         public CurrentVersionPane(Disseminator diss) throws IOException {
             m_diss=diss;
+
+            m_bindingPanes=new HashMap();
 
             // prepare by getting bmech labels and binding specs
             m_bMechLabels=Util.getBMechLabelMap(m_diss.getBDefPID());
@@ -443,7 +459,7 @@ public class DisseminatorPane
             m_bMechLabelTextField=new JTextField(m_diss.getBMechLabel());
             m_bMechLabelTextField.getDocument().addDocumentListener(dataChangeListener);
             m_bMechLabelTextField.setEditable(true);
-            m_labelTextField.setEnabled(!m_diss.getState().equals("D"));
+            m_bMechLabelTextField.setEnabled(!m_diss.getState().equals("D"));
 
             JPanel bMechInfo=new JPanel(new BorderLayout());
             bMechInfo.add(m_bMechComboBox, BorderLayout.WEST);
@@ -493,8 +509,9 @@ public class DisseminatorPane
                 DatastreamBindingPane dsBindingPane=new DatastreamBindingPane(
                         m_gramps.getInitialCurrentDatastreamVersions(),
                         bindings, 
-                        m_diss.getBMechPID(), spec);
+                        bMechPID, spec, m_editingPane);
                 m_gramps.addDatastreamListener(dsBindingPane);
+                m_bindingPanes.put(bMechPID, dsBindingPane);
                 m_stackedBindingPane.add(dsBindingPane, bMechPID);
             }
             m_bindingsCard.show(m_stackedBindingPane, m_diss.getBMechPID());
@@ -522,7 +539,7 @@ public class DisseminatorPane
         }
 
         public boolean isDirty() {
-            if (!m_bDefLabelTextField.getText().equals(m_diss.getBDefLabel())) {
+            if ((m_versionSlider==null || m_versionSlider.getValue()==0) && !m_bDefLabelTextField.getText().equals(m_diss.getBDefLabel())) {
                 return true;
             }
             if (!m_labelTextField.getText().equals(m_diss.getLabel())) {
@@ -532,20 +549,58 @@ public class DisseminatorPane
                 return true;
             }
             // is the bmech the same?
-
+            String currentBMech=(String) m_bMechComboBox.getSelectedItem();
+            if (currentBMech.equals(m_diss.getBMechPID())) {
                 // if so, is the datastreambindingpane dirty?
+                DatastreamBindingPane pane=
+                        (DatastreamBindingPane) m_bindingPanes.get(currentBMech);
+                if (pane.isDirty()) return true;
+            } else {
+                // nope, so it's dirty
+                return true;
+            }
             return false;
         }
 
         public void saveChanges(String state, String logMessage)
                 throws Exception {
-            throw new IOException("Only state changes can be saved at this time.");
+            String bMechPID=(String) m_bMechComboBox.getSelectedItem();
+            // create the binding map from the model...
+            DatastreamBindingMap bindingMap=new DatastreamBindingMap();
+            bindingMap.setDsBindMapID("hopefully this is set by the server!"); // unnecessary
+            bindingMap.setDsBindMechanismPID(bMechPID);
+            bindingMap.setDsBindMapLabel("Binding map for bMech object: " 
+                    + bMechPID);
+            bindingMap.setState("A");  // unnecessary...
+            bindingMap.setDsBindings( ((DatastreamBindingPane) m_bindingPanes
+                                      .get(bMechPID)).getBindings() );
+            // and send the request
+            Administrator.APIM.modifyDisseminator(
+                    m_pid, 
+                    m_diss.getID(), 
+                    bMechPID, 
+                    m_labelTextField.getText(),
+                    m_bDefLabelTextField.getText(),
+                    m_bMechLabelTextField.getText(),
+                    bindingMap,
+                    logMessage,
+                    state);
         }
 
         public void undoChanges() {
             m_labelTextField.setText(m_diss.getLabel());
             m_bDefLabelTextField.setText(m_diss.getBDefLabel());
             m_bMechLabelTextField.setText(m_diss.getBMechLabel());
+            // switch to the original bmech and reset its binding values
+            m_bMechComboBox.setSelectedItem(m_diss.getBMechPID());
+            m_bindingsCard.show(m_stackedBindingPane, m_diss.getBMechPID());
+            // make sure we remember the selected value for next time
+            m_lastSelectedBMech=m_diss.getBMechPID();
+            // ok, now reset binding values
+            DatastreamBindingPane pane=
+                    (DatastreamBindingPane) m_bindingPanes.get(
+                            m_diss.getBMechPID());
+            pane.undoChanges();
         }
 
     }

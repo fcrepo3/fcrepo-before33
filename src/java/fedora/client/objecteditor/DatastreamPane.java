@@ -88,7 +88,6 @@ public class DatastreamPane
                     JLabel controlGroupLabel=new JLabel("Control Group");
                     JLabel infoTypeLabel=new JLabel("Info Type");
                     JLabel[] leftCommonLabels=new JLabel[] {stateLabel, mimeTypeLabel, controlGroupLabel, infoTypeLabel};
-//                    JLabel[] rightCommonLabels=new JLabel[] {controlGroupLabel, infoTypeLabel};
 
                     // RIGHT: values
                     String[] comboBoxStrings={"Active", "Inactive", "Deleted"};

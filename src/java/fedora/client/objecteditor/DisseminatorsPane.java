@@ -65,7 +65,6 @@ public class DisseminatorsPane
         m_tabbedPane.add("New...", new JLabel("not implemented"));
 
         setLayout(new BorderLayout());
-//        setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
         add(m_tabbedPane, BorderLayout.CENTER);
         doNew(false);
     }

@@ -17,11 +17,14 @@ import fedora.server.types.gen.Disseminator;
 public class DatastreamBindingPane
         extends JPanel
         implements DatastreamListener, 
+                   PotentiallyDirty,
                    TableModelListener {
 
     private Datastream[] m_datastreams;
     private DatastreamInputSpec m_spec;
     private HashMap m_ruleForKey;
+    private HashMap m_perkyPanels;
+    private EditingPane m_owner;
     private static DatastreamBindingComparator s_dsBindingComparator=
             new DatastreamBindingComparator();
 
@@ -31,10 +34,12 @@ public class DatastreamBindingPane
     public DatastreamBindingPane(Datastream[] currentVersions,
                                  DatastreamBinding[] initialBindings,
                                  String bMechPID,
-                                 DatastreamInputSpec spec) {
+                                 DatastreamInputSpec spec,
+                                 EditingPane owner) {  // ok if null
+        m_owner=owner;
         m_datastreams=currentVersions;
         m_spec=spec;
-
+        m_perkyPanels=new HashMap();
         // put rules in a hash by key so they're easy to use later
         m_ruleForKey=new HashMap();
         for (int i=0; i<spec.bindingRules().size(); i++) {
@@ -62,6 +67,7 @@ public class DatastreamBindingPane
                     values, 
                     (DatastreamBindingRule) m_ruleForKey.get(key),
                     this);
+            m_perkyPanels.put(key, p);
             bindingTabbedPane.add(key, p);
             bindingTabbedPane.setBackgroundAt(tabNum, Administrator.DEFAULT_COLOR);
             if (tabNum==0) {
@@ -75,14 +81,52 @@ public class DatastreamBindingPane
 
     }
 
+    public boolean isDirty() {
+        // are any of the table models dirty?
+        Iterator iter=m_perkyPanels.keySet().iterator();
+        while (iter.hasNext()) {
+            String key=(String) iter.next();
+            SingleKeyBindingPanel panel=
+                    (SingleKeyBindingPanel) m_perkyPanels.get(key);
+            if (panel.isDirty()) return true;
+        }
+        return false;
+    }
+
+    public void undoChanges() {
+        // undo all mods to each binding
+        Iterator iter=m_perkyPanels.keySet().iterator();
+        while (iter.hasNext()) {
+            String key=(String) iter.next();
+            SingleKeyBindingPanel panel=
+                    (SingleKeyBindingPanel) m_perkyPanels.get(key);
+            panel.undoChanges();
+        }
+    }
+
+    public DatastreamBinding[] getBindings() {
+        Set set=new HashSet();
+        Iterator iter=m_perkyPanels.keySet().iterator();
+        while (iter.hasNext()) {
+            String key=(String) iter.next();
+            SingleKeyBindingPanel panel=
+                    (SingleKeyBindingPanel) m_perkyPanels.get(key);
+            set.addAll(panel.getBindings());
+        }
+        DatastreamBinding[] result=new DatastreamBinding[set.size()];
+        iter=set.iterator();
+        int i=0;
+        while (iter.hasNext()) {
+            result[i++]=(DatastreamBinding) iter.next();
+        }
+        return result;
+    }
+
     // called when one of the tab's table models changed
     public void tableChanged(TableModelEvent e) {
         DatastreamBindingTableModel model=(DatastreamBindingTableModel) e.getSource();
         String key=model.getBindingKey();
-		// update fulfilled indicator on tabs,
-
-        // then notify parent component that this on
-
+		// TODO: all we really need to do here is update fulfilled indicator on tabs
     }
 
     public void datastreamAdded(Datastream ds) {
@@ -143,7 +187,8 @@ public class DatastreamBindingPane
 
     class SingleKeyBindingPanel
             extends JPanel
-            implements TableModelListener {
+            implements TableModelListener,
+                       PotentiallyDirty {
 
         private DatastreamBindingTableModel m_tableModel;
         private JTable m_table;
@@ -153,12 +198,15 @@ public class DatastreamBindingPane
         private JButton m_removeButton;
         private JButton m_upButton;
         private JButton m_downButton;
+        private boolean m_dirty;
+        private TableModelListener m_listener;
 
         public SingleKeyBindingPanel(String bMechPID,
                                      String bindingKey, 
                                      Set dsBindings, 
                                      DatastreamBindingRule rule,
                                      TableModelListener listener) {
+            m_listener=listener;
             JEditorPane instructionPane=createInstructionPane(bMechPID, rule);
             instructionPane.setBackground(getBackground());
 
@@ -167,7 +215,6 @@ public class DatastreamBindingPane
             JPanel leftify=new JPanel(new BorderLayout());
             leftify.add(m_statusLabel, BorderLayout.WEST);
             statusPane.add(leftify, BorderLayout.NORTH);
-  //          statusPane.add(instructionPane, BorderLayout.SOUTH);
 
             m_tableModel=new DatastreamBindingTableModel(dsBindings, bindingKey);
             m_table=new JTable(m_tableModel);
@@ -235,26 +282,60 @@ public class DatastreamBindingPane
 
             setLayout(new BorderLayout());
             setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-            add(statusPane, BorderLayout.NORTH);
+            add(instructionPane, BorderLayout.NORTH);
             add(bottomPane, BorderLayout.CENTER);
-            add(instructionPane, BorderLayout.SOUTH);
+//            add(instructionPane, BorderLayout.SOUTH);
         }
 
         public void tableChanged(TableModelEvent e) {
 		    DatastreamBindingTableModel model=(DatastreamBindingTableModel) e.getSource();
-			// update button visibility based on the state of the table
+			// update button visibility and status label based on the state of 
+			// the table and send a message to the owner.
 			if (model.isDirty()) {
+                m_dirty=true;
+                
 			} else {
+                m_dirty=false;
 			}
+            fireDataChanged();
 		}
+
+        // get a set of DatastreamBinding objects reflecting the current state
+        // of the model
+        public Set getBindings() {
+            return m_tableModel.getBindings();
+        }
+
+        public void fireDataChanged() {
+            if (m_owner!=null) m_owner.dataChangeListener.dataChanged();
+        }
+
+        public boolean isDirty() {
+            return m_dirty;
+        }
+
+        public void undoChanges() {
+            // undo the changes in the underlying table model by asking
+            // the current one for an unmodified copy
+            m_tableModel=m_tableModel.getOriginal();
+            m_table.setModel(m_tableModel);
+			m_tableModel.addTableModelListener(this);
+			if (m_listener!=null) m_tableModel.addTableModelListener(m_listener);
+            m_table.getColumnModel().getColumn(0).setMinWidth(90);
+            m_table.getColumnModel().getColumn(0).setMaxWidth(90);            
+            m_dirty=false;
+            fireDataChanged();
+        }
 
         private JEditorPane createInstructionPane(String bMechPID,
                                             DatastreamBindingRule rule) {
             StringBuffer buf=new StringBuffer();
             // requires x to y datastreams...
-            buf.append("The <b>");
-            buf.append(rule.getKey());
-            buf.append("</b> binding requires ");
+            buf.append("<b>Binding is incomplete.</b> ");
+            buf.append("Requires ");
+            if (rule.orderMatters()) {
+                buf.append("<i>an ordered list</i> of ");
+            }
             if (rule.getMin()==0) {
                 if (rule.getMax()==-1) {
                     buf.append("<i>any number</i> of datastreams");
@@ -324,11 +405,12 @@ public class DatastreamBindingPane
                     }
                 }
             }
-            // add inputInstruction if available
-            if (rule.getInputInstruction()!=null 
-                    && rule.getInputInstruction().length()>0) {
-                buf.append(" - ");
-                buf.append(rule.getInputInstruction());
+            // add inputLabel if available
+            if (rule.getInputLabel()!=null 
+                    && rule.getInputLabel().length()>0) {
+                buf.append(" (");
+                buf.append(rule.getInputLabel());
+                buf.append(")");
             } else {
                 buf.append(".");
             }
@@ -341,7 +423,8 @@ public class DatastreamBindingPane
     }
 
     class DatastreamBindingTableModel
-            extends AbstractTableModel {
+            extends AbstractTableModel 
+            implements PotentiallyDirty {
 
         public DatastreamBinding[] m_bindings;        
         public DatastreamBinding[] m_originalBindings;        
@@ -368,6 +451,31 @@ public class DatastreamBindingPane
         public String getBindingKey() {
 		    return m_bindingKey;
 		}
+
+        public Set getBindings() {
+            HashSet set=new HashSet();
+            for (int i=0; i<m_bindings.length; i++) {
+                set.add(m_bindings[i]);    
+            }
+            return set;
+        }
+
+
+// TODO: add methods for adding, inserting, and moving rows, which
+//       set all the attributes (including SeqNo) appropriately
+//       and fire the appropriate table change events
+
+
+
+
+
+
+
+
+
+
+
+
 
         /**
 		 * Get a new table model, initialized with the initial values given
