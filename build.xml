@@ -76,6 +76,10 @@
 		</copy>
 	</target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
+       <copy todir="dist/release/server" file="LICENSE.TXT"/>
+       <copy todir="dist/release/server" file="COPYRIGHT.TXT"/>
+       <copy todir="dist/release/client" file="LICENSE.TXT"/>
+       <copy todir="dist/release/client" file="COPYRIGHT.TXT"/>
 	</target>
 	<target name="clientunixstuff" depends="clientmostly" if="buildingOnUnix">
 		<!-- add symlinks for shell scripts in unix -->
@@ -87,9 +91,6 @@
 		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-ingest-demos.sh fedora-ingest-demos"/>
-		</exec>
-		<exec dir="./dist/client/bin" executable="/bin/ln">
-			<arg line="-s fedora-purge-demos.sh fedora-purge-demos"/>
 		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-export.sh fedora-export"/>
@@ -898,6 +899,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.127  2003/05/16 18:04:34  cwilper
+  copied COPYRIGHT.TXT and LICENSE.TXT to binary target root dirs,
+  and removed fedora-purge-demos symlinking, since that's going away.
+
   Revision 1.126  2003/05/16 17:19:07  rlw
   removed creation of dist/server/doc in serverdist
   this is no longer needed
