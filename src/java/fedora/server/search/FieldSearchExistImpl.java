@@ -135,6 +135,8 @@ public class FieldSearchExistImpl
         }
         if (dcmd!=null) {
             logFine("Had DC Metadata datastream for this object.");
+            out.append("<dcmDate>" + formatter.format(dcmd.DSCreateDT) + "</dcmDate>\n");
+            out.append("<dcmDateAsNum>" + dcmd.DSCreateDT.getTime() + "</dcmDateAsNum>\n");
             InputStream in=dcmd.getContentStream();
             DCFields dc=new DCFields(in);
             for (int i=0; i<dc.titles().size(); i++) {
@@ -273,12 +275,18 @@ public class FieldSearchExistImpl
 
     // returns -1 if can't parse as date
     private long parseDateAsNum(String str) {
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         try {
-            Date d=formatter.parse(str);
-            return d.getTime();
+            return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").parse(str).getTime();
         } catch (ParseException pe) {
-            return -1;
+            try {
+                return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'").parse(str).getTime();
+            } catch (ParseException pe2) {
+                try {
+                    return new SimpleDateFormat("yyyy-MM-dd").parse(str).getTime();
+                } catch (ParseException pe3) {
+                    return -1;
+                }
+            }
         }
     }
     
@@ -301,7 +309,7 @@ public class FieldSearchExistImpl
                         if (n==-1) { 
                             throw new QueryParseException("Bad date given with "
                                     + "lt, le, gt, or ge operator.  Dates must "
-                                    + "be given in yyyy-MM-dd hh:mm:ss format.");
+                                    + "be given in yyyy-MM-ddThh:mm:ss[Z] or yyyy-MM-dd format.");
                         }
                         queryPart.append(cond.getProperty());
                         queryPart.append("AsNum");

@@ -22,9 +22,10 @@ public class ObjectFields
     private String m_locker;
     private Date m_cDate;
     private Date m_mDate;
+    private Date m_dcmDate;
 
     private StringBuffer m_currentContent;
-    private boolean[] m_want=new boolean[23];
+    private boolean[] m_want=new boolean[24];
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
     
@@ -51,6 +52,7 @@ public class ObjectFields
     public final static int RELATION=20;
     public final static int COVERAGE=21;
     public final static int RIGHTS=22;
+    public final static int DCMDATE=23;
 
     public ObjectFields() {
     }
@@ -105,6 +107,8 @@ public class ObjectFields
                 m_want[COVERAGE]=true;
             } else if (s.equalsIgnoreCase("rights")) {
                 m_want[RIGHTS]=true;
+            } else if (s.equalsIgnoreCase("dcmDate")) {
+                m_want[DCMDATE]=true;
             } else {
                 throw new UnrecognizedFieldException("Unrecognized field: '" + s + "'");
             }
@@ -140,6 +144,10 @@ public class ObjectFields
         } else if ( (m_want[MDATE]) && (localName.equals("mDate")) ) {
             try {
                 setMDate(m_formatter.parse(m_currentContent.toString()));
+            } catch (ParseException e) { }
+        } else if ( (m_want[DCMDATE]) && (localName.equals("dcmDate")) ) {
+            try {
+                setDCMDate(m_formatter.parse(m_currentContent.toString()));
             } catch (ParseException e) { }
         } else if ( (m_want[TITLE]) && (localName.equals("title")) ) {
             titles().add(m_currentContent.toString());
@@ -236,6 +244,14 @@ public class ObjectFields
 
     public Date getMDate() {
         return m_mDate;
+    }
+
+    public void setDCMDate(Date dcmDate) {
+        m_dcmDate=dcmDate;
+    }
+
+    public Date getDCMDate() {
+        return m_dcmDate;
     }
 
 }    
