@@ -42,4 +42,5 @@ public class RepositoryInfo
   public String sampleSearchURL = null;
   public String sampleAccessURL = null;
   public String sampleOAIURL = null;
+  public String[] retainPIDs = new String[0];
 }

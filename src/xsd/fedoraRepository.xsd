@@ -31,6 +31,7 @@
 				<xs:element ref="PID-namespaceIdentifier"/>
 				<xs:element ref="PID-delimiter"/>
 				<xs:element ref="PID-sample"/>
+				<xs:element ref="retainPID" maxOccurs="unbounded"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -47,4 +48,5 @@
 	<xs:element name="sampleAccess-URL" type="xs:anyURI"/>
 	<xs:element name="sampleOAI-URL" type="xs:anyURI"/>
 	<xs:element name="sampleSearch-URL" type="xs:anyURI"/>
+	<xs:element name="retainPID" type="xs:string"/>
 </xs:schema>

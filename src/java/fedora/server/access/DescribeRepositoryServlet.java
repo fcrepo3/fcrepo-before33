@@ -366,6 +366,11 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
             + "</PID-namespaceIdentifier>");
           pw.write("    <PID-delimiter>" + ":"+ "</PID-delimiter>");
           pw.write("    <PID-sample>" + repositoryInfo.samplePID + "</PID-sample>");
+          String[] retainPIDs = repositoryInfo.retainPIDs;
+          for (int i=0; i<retainPIDs.length; i++)
+          {
+            pw.write("    <retainPID>"+retainPIDs[i]+"</retainPID>");
+          }
           pw.write("</repositoryPID>");
           pw.write("<repositoryOAI-identifier>");
           pw.write("    <OAI-namespaceIdentifier>"

@@ -592,6 +592,7 @@ public class DefaultAccess extends Module implements Access
       + "/get/" + "demo:5";
     repositoryInfo.sampleOAIURL = repositoryInfo.repositoryBaseURL
       + "/oai?verb=Identify";
+    repositoryInfo.retainPIDs = getRetainPIDs();
     return repositoryInfo;
   }
 
@@ -607,6 +608,17 @@ public class DefaultAccess extends Module implements Access
     return (String[])emails.toArray(new String[0]);
   }
 
+  private String[] getRetainPIDs()
+  {
+    String retainPIDsCSV = convertToCSV(getServer().getModule("fedora.server.storage.DOManager").getParameter("retainPIDs"));
+    Vector retainPIDs = new Vector();
+    StringTokenizer st = new StringTokenizer(retainPIDsCSV, ",");
+    while (st.hasMoreElements())
+    {
+      retainPIDs.add(st.nextElement());
+    }
+    return (String[])retainPIDs.toArray(new String[0]);
+  }
   private String convertToCSV(String list)
   {
     // make sure values in the list are comma delimited
