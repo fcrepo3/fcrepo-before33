@@ -46,13 +46,12 @@
 					<uvadesc:subject scheme="other" othertype="keyword">Jefferson</uvadesc:subject>
 					<uvadesc:subject scheme="other" othertype="keyword">Jeffersonian architecture</uvadesc:subject>
 					<uvadesc:title type="main">Pavillion III, University of Virginia</uvadesc:title>
-					<uvadesc:type>image</uvadesc:type>
-					<uvadesc:agent role="publisher">IVA</uvadesc:agent>
-					<uvadesc:agent role="architect">Thomas Jefferson</uvadesc:agent>
-					<uvadesc:genre>architecture</uvadesc:genre>
+               <uvadesc:form>architecture</uvadesc:form>
+               <uvadesc:mediatype type="image"><uvadesc:form>digital</uvadesc:form></uvadesc:mediatype>
+					<uvadesc:agent type="corpname" role="publisher">IVA</uvadesc:agent>
+					<uvadesc:agent type="persname" role="architect">Thomas Jefferson</uvadesc:agent>
 					<uvadesc:culture>Early American</uvadesc:culture>
-					<uvadesc:physloc type="original">Charlottesville, Virginia USA</uvadesc:physloc>
-					<uvadesc:style>Jeffersonian</uvadesc:style>
+					<uvadesc:place type="original"><uvadesc:geogname>Charlottesville, Virginia USA</uvadesc:geogname></uvadesc:place>
 				</uvadesc:desc>
 			</METS:xmlData>
 		</METS:mdWrap>

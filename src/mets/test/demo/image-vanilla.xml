@@ -38,7 +38,7 @@
 		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
 			<METS:xmlData>
 				<uvadesc:desc>
-					<uvadesc:date type="created" certainty="ca." era="bc">13th century</uvadesc:date>
+					<uvadesc:time><uvadesc:date type="created" certainty="ca." era="bc">13th century</uvadesc:date></uvadesc:time>
 					<uvadesc:identifier scheme="URN">uva-lib:2</uvadesc:identifier>
 					<uvadesc:rights type="use">unrestricted</uvadesc:rights>
 					<uvadesc:subject scheme="other" othertype="keyword">Bronze Age, Mycenean</uvadesc:subject>
@@ -46,7 +46,8 @@
 					<uvadesc:subject scheme="other" othertype="keyword">Mycenae</uvadesc:subject>
 					<uvadesc:subject scheme="other" othertype="keyword">Greece, Argolis</uvadesc:subject>
 					<uvadesc:title type="main">Mycenae</uvadesc:title>
-					<uvadesc:type>image</uvadesc:type>
+               <uvadesc:form>architecture</uvadesc:form>
+					<uvadesc:mediatype type="image"><uvadesc:form>digital</uvadesc:form></uvadesc:mediatype>
 					<uvadesc:agent role="publisher">Art Images for College Teaching</uvadesc:agent>
 					<uvadesc:covspace>
 						<uvadesc:geometry>
@@ -60,9 +61,8 @@
 						<uvadesc:date era="bc">1350</uvadesc:date>
 						<uvadesc:date era="bc">1200</uvadesc:date>
 					</uvadesc:covtime>
-					<uvadesc:genre>architecture</uvadesc:genre>
 					<uvadesc:culture>Greek</uvadesc:culture>
-					<uvadesc:physloc type="original">Greece, Mycenae</uvadesc:physloc>
+					<uvadesc:place type="original"><uvadesc:geogname>Greece, Mycenae</uvadesc:geogname></uvadesc:place>
 					<uvadesc:style>Bronze Age, Mycenean</uvadesc:style>
 				</uvadesc:desc>
 			</METS:xmlData>

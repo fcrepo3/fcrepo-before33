@@ -38,25 +38,25 @@
 		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
 			<METS:xmlData>
 				<uvadesc:desc>
- 				     <uvadesc:date type="created" certainty="ca." era="bc">16th century [20th century reconstruction by  Sir Arthur Evans]</uvadesc:date>
+ 				     <uvadesc:time><uvadesc:date type="created" certainty="ca." era="bc">16th century [20th century reconstruction by  Sir Arthur Evans]</uvadesc:date></uvadesc:time>
  				     <uvadesc:identifier scheme="URN">uva-lib:2</uvadesc:identifier>
  				     <uvadesc:rights type="use">unrestricted</uvadesc:rights>
  				     <uvadesc:subject scheme="other" type="keyword">palace</uvadesc:subject>
 				     <uvadesc:subject scheme="other" type="keyword">pillar</uvadesc:subject>
 				     <uvadesc:title type="main">Palace of Minos, Knossos</uvadesc:title>
-				      <uvadesc:type>physical object</uvadesc:type>
-    				      <uvadesc:agent role="publisher">Art Images for College Teaching</uvadesc:agent>				
-				      <uvadesc:covspace>
+                 <uvadesc:form>architecture</uvadesc:form>
+                 <uvadesc:mediatype type="image"><uvadesc:form>digital</uvadesc:form></uvadesc:mediatype>
+                 <uvadesc:agent role="publisher">Art Images for College Teaching</uvadesc:agent>				
+				     <uvadesc:covplace>
 				      	<uvadesc:geometry>
 				      		<uvadesc:point>
 				      			<uvadesc:lat>35.300</uvadesc:lat>
 				      			<uvadesc:long>25.167</uvadesc:long>
 				      		</uvadesc:point>
 				      	</uvadesc:geometry>
-				      </uvadesc:covspace>
-					<uvadesc:genre>architecture</uvadesc:genre>
+				      </uvadesc:covplace>
 					<uvadesc:culture>Crete, Minoan</uvadesc:culture>
-					<uvadesc:physloc type="original">Greece, Crete, Knossos</uvadesc:physloc>
+					<uvadesc:place type="original"><uvadesc:geogname>Greece, Crete, Knossos</uvadesc:geogname></uvadesc:place>
 					<uvadesc:style>Minoan</uvadesc:style>
 				</uvadesc:desc>
 			</METS:xmlData>
