@@ -2,6 +2,7 @@ package fedora.server.management;
 
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Map;
 
 import fedora.server.Context;
@@ -135,7 +136,30 @@ public class DefaultManagement
         getServer().logFinest("Exiting DefaultManagement.releaseLock");
     }
 
-    public ObjectInfo getObjectInfo(Context context, String pid) { return null; }
+    public ObjectInfo getObjectInfo(Context context, String pid) 
+            throws ServerException { 
+        getServer().logFinest("Entered DefaultManagement.getObjectInfo");
+        ObjectInfo inf=new ObjectInfo();
+        DOReader r=m_manager.getReader(context, pid);
+        inf.setLabel(r.GetObjectLabel());
+        inf.setFoType(r.getFedoraObjectType());
+        inf.setContentModelId(r.getContentModelId());
+        inf.setState(r.GetObjectState());
+        String lockedBy=m_manager.getLockingUser(context, pid);
+        if (lockedBy==null) {
+            inf.setLockedBy("");
+        } else {
+            inf.setLockedBy(lockedBy);
+        }
+        GregorianCalendar createDate=new GregorianCalendar();
+        createDate.setTime(r.getCreateDate());
+        inf.setCreateDate(createDate);
+        GregorianCalendar lastModDate=new GregorianCalendar();
+        lastModDate.setTime(r.getLastModDate());
+        inf.setLastModDate(lastModDate);
+        getServer().logFinest("Exiting DefaultManagement.getObjectInfo");
+        return inf;
+    }
 
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
 
