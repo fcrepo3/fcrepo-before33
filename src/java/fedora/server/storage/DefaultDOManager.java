@@ -780,6 +780,10 @@ public class DefaultDOManager
     public DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException {
         getServer().logFinest("Entered DefaultDOManager.newWriter(Context, InputStream, String, String, boolean)");
+        // temporary, unique handle for file storage of inputstream
+        String tempHandle="temp-ingest-" + System.currentTimeMillis() + "-" + in.hashCode();
+        getServer().logFinest("Using temporary handle: " + tempHandle);
+        
         String permPid=null;
         boolean wroteTempIngest=false;
         boolean inPermanentStore=false;
@@ -788,14 +792,13 @@ public class DefaultDOManager
             throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
         } else {
             try {
-                // write it to temp, as "temp-ingest"
-                // FIXME: temp-ingest stuff is temporary, and not threadsafe
-                getTempStore().add("temp-ingest", in);
+                // write it to temp, as "tempHandle"
+                getTempStore().add(tempHandle, in);
                 wroteTempIngest=true;
-                InputStream in2=getTempStore().retrieve("temp-ingest");
+                InputStream in2=getTempStore().retrieve(tempHandle);
 
                 // perform initial validation of the ingest submission format
-                InputStream inV=getTempStore().retrieve("temp-ingest");
+                InputStream inV=getTempStore().retrieve(tempHandle);
                 m_validator.validate(inV, 0, "ingest");
 
                 // deserialize it first
@@ -876,12 +879,12 @@ public class DefaultDOManager
                 // hurt here for now... if it's decided that this isn't necessary,
                 // and this is removed, be sure to change the .replace(...) call
                 // to .add(...) in doCommit()
-                //InputStream in3=getTempStore().retrieve("temp-ingest");
+                //InputStream in3=getTempStore().retrieve(tempHandle);
                 //getObjectStore().add(obj.getPid(), in3);
 
                 permPid=obj.getPid();
                 inPermanentStore=true; // signifies successful perm store addition
-                InputStream in4=getTempStore().retrieve("temp-ingest");
+                InputStream in4=getTempStore().retrieve(tempHandle);
 
                 // now add it to the working area with the *known* pid
                 getTempStore().add(obj.getPid(), in4);
@@ -961,7 +964,7 @@ public class DefaultDOManager
             } finally {
                 if (wroteTempIngest) {
                     // remove this in any case
-                    getTempStore().remove("temp-ingest");
+                    getTempStore().remove(tempHandle);
                 }
                 System.gc();
             }
