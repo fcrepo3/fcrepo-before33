@@ -140,20 +140,20 @@ public class TestResourceIndexImpl extends TestCase {
         
         m_ri.export(new FileOutputStream("/tmp/out.rdf"), RDFFormat.RDF_XML);
         
-//        m_ri.deleteDigitalObject(dataobject);
-//        m_writer.flushBuffer();
-//        int d = m_ri.countTriples(null, null, null, 0);
-//        assertTrue(d == b);
-//        
-//        m_ri.deleteDigitalObject(bmech);
-//        m_writer.flushBuffer();
-//        int e = m_ri.countTriples(null, null, null, 0);
-//        assertTrue(e == a);
-//        
-//        m_ri.deleteDigitalObject(bdef);
-//        m_writer.flushBuffer();
-//        int f = m_ri.countTriples(null, null, null, 0);
-//        assertEquals(m_ri.countTriples(null, null, null, 0), 0);
+        m_ri.deleteDigitalObject(dataobject);
+        m_writer.flushBuffer();
+        int d = m_ri.countTriples(null, null, null, 0);
+        assertTrue(d == b);
+        
+        m_ri.deleteDigitalObject(bmech);
+        m_writer.flushBuffer();
+        int e = m_ri.countTriples(null, null, null, 0);
+        assertTrue(e == a);
+        
+        m_ri.deleteDigitalObject(bdef);
+        m_writer.flushBuffer();
+        int f = m_ri.countTriples(null, null, null, 0);
+        assertEquals(m_ri.countTriples(null, null, null, 0), 0);
     }
 
     //    public void testAddDatastream() {

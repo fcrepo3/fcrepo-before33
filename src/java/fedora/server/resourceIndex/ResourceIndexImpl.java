@@ -45,7 +45,7 @@ import org.openrdf.rio.Parser;
 import org.openrdf.rio.rdfxml.RdfXmlParser;
 
 import org.trippi.RDFFormat;
-import org.trippi.TripleFactory;
+import org.trippi.TripleMaker;
 import org.trippi.TripleIterator;
 import org.trippi.TriplestoreConnector;
 import org.trippi.TriplestoreReader;
@@ -71,7 +71,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     //		- distinct levels or discrete mix & match (e.g., combinations of DC, REP & REP-DEP, RELS, etc.)
     
     private int m_indexLevel;
-	private static final String FEDORA_URI_SCHEME = "info:fedora/";
     
     // For the database
     private ConnectionPool m_cPool;
@@ -86,7 +85,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     private List m_tQueue;
     
     // RDF Prefix and Namespaces
-    private Map namespaces;
+    private Map namespaces; 
     
     public ResourceIndexImpl(int indexLevel, 
                              TriplestoreConnector connector, 
@@ -97,6 +96,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         namespaces = new HashMap();
         namespaces.put("dc", NS_DC);
         namespaces.put("fedora", NS_FEDORA);
+        namespaces.put("fedora-ont", NS_FEDORA_ONT);
         namespaces.put("rdf", NS_RDF);
         m_connector = connector;
         m_reader = m_connector.getReader();
@@ -156,6 +156,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		queuePlainLiteralTriple(doIdentifier, FEDORA_CMODEL, digitalObject.getContentModelId());
 		queuePlainLiteralTriple(doIdentifier, FEDORA_STATE, digitalObject.getState());
 		
+        // Insert ExtProperties
+        Map extProps = digitalObject.getExtProperties();
+        Iterator epIt = extProps.keySet().iterator();
+        String epKey;
+        while (epIt.hasNext()) {
+            epKey = (String)epIt.next();
+            queuePlainLiteralTriple(doIdentifier, epKey, (String)extProps.get(epKey));
+        }
+        
         addQueue(false);
 
 		// handle type specific duties
@@ -205,8 +214,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	        datastreamURI = doURI + "/" + datastreamID;
 	    }
         
-        // TODO new datastream attribute -- need a predicate!
-        //String[] altIDs = ds.DatastreamAltIDs;
+        // Alternate IDs
+        String[] altIDs = ds.DatastreamAltIDs;
+        for (int i = 0; i < altIDs.length; i++) {
+            queuePlainLiteralTriple(datastreamURI, FEDORA_DS_ALT_ID, altIDs[i]);
+        }
         
         // Volatile Datastreams: False for datastreams that are locally managed 
         // (have a control group "M" or "I").
@@ -222,9 +234,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		if (datastreamID.equalsIgnoreCase("DC")) {
 			addDublinCoreDatastream(digitalObject, ds);
         } else if (datastreamID.equalsIgnoreCase("DSINPUTSPEC")) { // which objs have this?
-            addDSInputSpecDatastream(ds);   
-		} else if (datastreamID.equalsIgnoreCase("EXT_PROPERTIES")) { // props
-		    addExtPropertiesDatastream(ds);
+            addDSInputSpecDatastream(ds);
         } else if (datastreamID.equalsIgnoreCase("METHODMAP")) { 
             addMethodMapDatastream(digitalObject, ds);
         } else if (datastreamID.equalsIgnoreCase("RELS-EXT")) {
@@ -249,7 +259,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         String bMechPID = diss.bMechID;
         
         queueTriple(doIdentifier, FEDORA_USES_BMECH, getDOURI(bMechPID));
-	    DSBindingMap m = diss.dsBindMap; // is this needed???
 	    String bDefPID = diss.bDefID;
         String dissState = diss.dissState.equalsIgnoreCase("A") ? FEDORA_STATE_ACTIVE : FEDORA_STATE_INACTIVE;
 	    String dissCreateDT = getDate(diss.dissCreateDT);
@@ -261,11 +270,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                            "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
                            "AND riMethodImpl.methodImplId = riMethodMimeType.methodImplId " +
                            "AND riMethodImpl.bMechPid = '" + bMechPID + "'";
-            Statement select;
-            
+            Statement select = null;
+            ResultSet rs = null;
             try {
                  select = m_conn.createStatement();
-                 ResultSet rs = select.executeQuery(query);
+                 rs = select.executeQuery(query);
                  String permutation, mimeType, rep;
                  while (rs.next()) {
                      permutation = rs.getString("permutation");
@@ -285,15 +294,28 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                              "http://www.w3.org/2001/XMLSchema#date"); 
                  }
             } catch (SQLException e) {
-                throw new ResourceIndexException(e.getMessage(), e);
-            } finally {
+                try {
+                    if (rs != null) {
+                        rs.close();
+                    }
+                    if (select != null) {
+                        select.close();
+                    }
                 m_cPool.free(m_conn);
+                } catch(SQLException e2) {
+                    throw new ResourceIndexException(e2.getMessage(), e2);
+                } finally {
+                    rs = null;
+                    select = null;
+                }
+                throw new ResourceIndexException(e.getMessage(), e);
             }
 	    }
 
 	    // TODO
         //m_store.insert(disseminatorIdentifier, FEDORA_DISS_TYPE, diss.?);
         //m_store.insert(disseminatorIdentifier, FEDORA_VOLATILE, diss.?); // redirect, external, based on diss that depends on red/ext (true/false)
+        
         addQueue(false);
     }
 
@@ -356,7 +378,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // Delete all statements where doURI is the subject
         String doURI = getDOURI(digitalObject);
         try {
-            m_writer.delete(m_reader.findTriples(TripleFactory.createResource(doURI), null, null, 0), true);
+            m_writer.delete(m_reader.findTriples(TripleMaker.createResource(doURI), null, null, 0), true);
         } catch (IOException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } catch (TrippiException e) {
@@ -383,7 +405,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
         // DELETE statements where datastreamURI is subject
         try {
-            m_writer.delete(m_reader.findTriples(TripleFactory.createResource(datastreamURI), null, null, 0), true);
+            m_writer.delete(m_reader.findTriples(TripleMaker.createResource(datastreamURI), null, null, 0), true);
         } catch (IOException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } catch (TrippiException e) {
@@ -395,8 +417,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             deleteDublinCoreDatastream(digitalObject, ds);
         } else if (datastreamID.equalsIgnoreCase("DSINPUTSPEC")) { // which objs have this?
             deleteDSInputSpecDatastream(ds);   
-        } else if (datastreamID.equalsIgnoreCase("EXT_PROPERTIES")) { // props
-            deleteExtPropertiesDatastream(ds);
         } else if (datastreamID.equalsIgnoreCase("METHODMAP")) { 
             deleteMethodMapDatastream(digitalObject, ds);
         } else if (datastreamID.equalsIgnoreCase("RELS-EXT")) {
@@ -424,9 +444,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
         // delete bMech reference: 
         try {
-            m_writer.delete(m_reader.findTriples(TripleFactory.createResource(doIdentifier), 
-                                                 TripleFactory.createResource(FEDORA_USES_BMECH), 
-                                                 TripleFactory.createResource(getDOURI(bMechPID)), 
+            m_writer.delete(m_reader.findTriples(TripleMaker.createResource(doIdentifier), 
+                                                 TripleMaker.createResource(FEDORA_USES_BMECH), 
+                                                 TripleMaker.createResource(getDOURI(bMechPID)), 
                                                  0), 
                             true);
         } catch (IOException e) {
@@ -441,25 +461,38 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                            "FROM riMethodPermutation, riMethodImpl " +
                            "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
                            "AND riMethodImpl.bMechPid = '" + bMechPID + "'";
-            Statement select;
+            Statement select = null;
+            ResultSet rs = null;
             
             try {
                  select = m_conn.createStatement();
-                 ResultSet rs = select.executeQuery(query);
+                 rs = select.executeQuery(query);
                  String permutation, rep;
                  while (rs.next()) {
                      permutation = rs.getString("permutation");
                      rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                     m_writer.delete(m_reader.findTriples(TripleFactory.createResource(rep), null, null, 0), false);
+                     m_writer.delete(m_reader.findTriples(TripleMaker.createResource(rep), null, null, 0), false);
                  }
             } catch (SQLException e) {
+                try {
+                    if (rs != null) {
+                        rs.close();
+                    }
+                    if (select != null) {
+                        select.close();
+                    }
+                m_cPool.free(m_conn);
+                } catch(SQLException e2) {
+                    throw new ResourceIndexException(e2.getMessage(), e2);
+                } finally {
+                    rs = null;
+                    select = null;
+                }
                 throw new ResourceIndexException(e.getMessage(), e);
             } catch (IOException e) {
                 throw new ResourceIndexException(e.getMessage(), e);
             } catch (TrippiException e) {
                 throw new ResourceIndexException(e.getMessage(), e);
-            } finally {
-                m_cPool.free(m_conn);
             }
         }	
 	}
@@ -475,9 +508,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         try {
             TripleIterator it = m_reader.findTriples(null, null, null, 0);
             it.setAliasMap(namespaces);
-            //it.toStream(out, RDFFormat.RDF_XML);
-            
-            it.toStream(out, RDFFormat.TURTLE);
+            it.toStream(out, format);
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
@@ -586,8 +617,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	}
 	
     private void addDSInputSpecDatastream(Datastream ds) {
-        // Placeholder. We don't currently do more than
-        // index the fact that said datastream exists
+        // Placeholder
     }
     
     private void addExtPropertiesDatastream(Datastream ds) {
@@ -624,14 +654,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    String methodName;
 	    boolean noRequiredParms;
         int optionalParms;
-        PreparedStatement insertMethod, insertPermutation;
-
-        try {
-            insertMethod = m_conn.prepareStatement("INSERT INTO riMethod (methodId, bDefPid, methodName) VALUES (?, ?, ?)");
-            insertPermutation = m_conn.prepareStatement("INSERT INTO riMethodPermutation (methodId, permutation) VALUES (?, ?)");
-        } catch (SQLException se) {
-            throw new ResourceIndexException(se.getMessage(), se);
-        }
+        PreparedStatement insertMethod = null, insertPermutation = null;
         
 	    for (int i = 0; i < mdef.length; i++) {
 	    	methodName = mdef[i].methodName;
@@ -668,6 +691,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             // build the batch of sql statements to execute
             String riMethodPK = getRIMethodPrimaryKey(bDefPid, methodName);
             try {
+                insertMethod = m_conn.prepareStatement("INSERT INTO riMethod (methodId, bDefPid, methodName) VALUES (?, ?, ?)");
+                insertPermutation = m_conn.prepareStatement("INSERT INTO riMethodPermutation (methodId, permutation) VALUES (?, ?)");
                 insertMethod.setString(1, riMethodPK);
                 insertMethod.setString(2, bDefPid);
                 insertMethod.setString(3, methodName);
@@ -682,9 +707,21 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 permutations.clear();
             
             } catch (SQLException e) {
-                throw new ResourceIndexException(e.getMessage(), e);
-            } finally {
+                try {
+                    if (insertMethod != null) {
+                        insertMethod.close();
+                    }
+                    if (insertPermutation != null) {
+                        insertPermutation.close();
+                    }
                 m_cPool.free(m_conn);
+                } catch(SQLException e2) {
+                    throw new ResourceIndexException(e2.getMessage(), e2);
+                } finally {
+                    insertMethod = null;
+                    insertPermutation = null;
+                }
+                throw new ResourceIndexException(e.getMessage(), e);
             }
 
 	    	// FIXME do we need passby and type in the graph?
@@ -699,9 +736,21 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             insertMethod.executeBatch();
             insertPermutation.executeBatch();
         } catch (SQLException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        } finally {
+            try {
+                if (insertMethod != null) {
+                    insertMethod.close();
+                }
+                if (insertPermutation != null) {
+                    insertPermutation.close();
+                }
             m_cPool.free(m_conn);
+            } catch(SQLException e2) {
+                throw new ResourceIndexException(e2.getMessage(), e2);
+            } finally {
+                insertMethod = null;
+                insertPermutation = null;
+            }
+            throw new ResourceIndexException(e.getMessage(), e);
         }
 	}
 	
@@ -798,9 +847,21 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 insertMethodImpl.executeBatch();
                 insertMethodMimeType.executeBatch();
             } catch (SQLException e) {
-                throw new ResourceIndexException(e.getMessage(), e);
-            } finally {
+                try {
+                    if (insertMethodImpl != null) {
+                        insertMethodImpl.close();
+                    }
+                    if (insertMethodMimeType != null) {
+                        insertMethodMimeType.close();
+                    }
                 m_cPool.free(m_conn);
+                } catch(SQLException e2) {
+                    throw new ResourceIndexException(e2.getMessage(), e2);
+                } finally {
+                    insertMethodImpl = null;
+                    insertMethodMimeType = null;
+                }
+                throw new ResourceIndexException(e.getMessage(), e);
             }
             
         } catch (WSDLException e) {
@@ -834,13 +895,22 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                         "FROM riMethod, riMethodPermutation " +
                         "WHERE (riMethod.methodId = riMethodPermutation.methodId) " +
                         "AND riMethod.bDefPid = '" + bDefPid + "'";
+        Statement stmt = null;
         try {
-            Statement stmt = m_conn.createStatement();
+            stmt = m_conn.createStatement();
             stmt.execute(delete);
         } catch (SQLException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
             m_cPool.free(m_conn);
+            } catch(SQLException e2) {
+                throw new ResourceIndexException(e2.getMessage(), e2);
+            } finally {
+                stmt = null;
+            }
+            throw new ResourceIndexException(e.getMessage(), e);
         }
     }
 
@@ -876,14 +946,22 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                         "FROM riMethodImpl, riMethodMimeType " +
                         "WHERE (riMethodImpl.methodImplId = riMethodMimeType.methodImplId) " +
                         "AND riMethodImpl.bMechPid = '" + bMechPid + "'";
-
+        Statement stmt = null;
         try {
-            Statement stmt = m_conn.createStatement();
+            stmt = m_conn.createStatement();
             stmt.execute(delete);
         } catch (SQLException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
             m_cPool.free(m_conn);
+            } catch(SQLException e2) {
+                throw new ResourceIndexException(e2.getMessage(), e2);
+            } finally {
+                stmt = null;
+            }
+            throw new ResourceIndexException(e.getMessage(), e);
         }
     }
     
@@ -945,14 +1023,14 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	}
 	
 	private String getDOURI(String pid) {
-	    return FEDORA_URI_SCHEME + pid;
+	    return NS_FEDORA + pid;
 	}
     
     private void queueTriple(String subject, 
                              String predicate, 
                              String object) throws ResourceIndexException {
         try {
-            m_tQueue.add(TripleFactory.create(subject, predicate, object));
+            m_tQueue.add(TripleMaker.create(subject, predicate, object));
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
@@ -962,7 +1040,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                          String predicate, 
                                          String object) throws ResourceIndexException {
         try {
-            m_tQueue.add(TripleFactory.createPlain(subject, predicate, object));
+            m_tQueue.add(TripleMaker.createPlain(subject, predicate, object));
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
@@ -973,7 +1051,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                          String object, 
                                          String language) throws ResourceIndexException {
         try {
-            m_tQueue.add(TripleFactory.createLocal(subject, predicate, object, language));
+            m_tQueue.add(TripleMaker.createLocal(subject, predicate, object, language));
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
@@ -984,7 +1062,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                          String object, 
                                          String datatype) throws ResourceIndexException {
         try {
-            m_tQueue.add(TripleFactory.createTyped(subject, predicate, object, datatype));
+            m_tQueue.add(TripleMaker.createTyped(subject, predicate, object, datatype));
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
