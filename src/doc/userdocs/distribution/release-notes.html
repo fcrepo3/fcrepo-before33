@@ -57,6 +57,9 @@
 
                 <li><a href="#rel2.0.features.report">Repository
                 Administrator Reporting Tools</a></li>
+                
+                <li><a href="#rel2.0.demo.soapclient">Example Client 
+                for Making SOAP calls to Fedora APIs</a></li>
 
                 <li><a href="#rel2.0.features.libs">Third Party
                 Library Upgrades</a></li>
@@ -517,6 +520,27 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
           object counts based on type of object, creation date, and
           pid namespace. Refer to the user documentation for
           additional information.</p>
+        </li>
+        
+        <li>
+          <a name="rel2.0.demo.soapclient"></a><b>Example Client for
+          Making SOAP calls to Fedora APIs</b>
+                  
+        <p>A sample java client application is provided that 
+        demonstrates how to make SOAP calls to API-M and API-A.  
+        This client is written as a single java class that connects to
+        a Fedora repository, and makes a set of successive set of 
+        SOAP calls to ingest an object from a FOXML XML file, then 
+        add datastreams, modify datastreams, export the object, and 
+        several other useful examples.  It is intended as a quick and 
+        easy starting point for Java programmers who want to write
+        their own clients to the Fedora SOAP interfacse. The demo
+        client is found in the Fedora 2.0 distribution at: 
+        {FEDORA_HOME}/client/demo/soapclient.  Programmers should examine the file DemoSOAPClient.java.  
+        To compile the demo, run the script named &quot;compile-demo-soapclient.bat&quot;
+        (or .sh on unix).  To run the demo, run the script named 
+        &quot;run-demo-soapclient.bat&quot; (or .sh on unix).    
+</p>
         </li>
 
         <li>
