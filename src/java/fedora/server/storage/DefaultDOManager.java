@@ -363,8 +363,17 @@ public class DefaultDOManager
         }
     }
 
-    protected void doUnlock(String pid, boolean commit) {
+    public void doUnlock(String pid, boolean commit) {
     }
+
+    /**
+     * Warning: Don't use this method unless from a DOWriter
+     *
+     * This should be called from DOWriter.save()...bleh
+     */
+    public void doDefinitiveSave(DigitalObject obj, Context context) {
+        
+    } 
 
     /**
      * Requests a lock on the object.
