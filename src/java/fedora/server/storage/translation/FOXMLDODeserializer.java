@@ -826,6 +826,7 @@ public class FOXMLDODeserializer
 		// set the attrs common to all datastream versions
 		ds.DatastreamID=m_dsId;
 		ds.DatastreamURI=m_dsURI;
+		ds.DatastreamAltIDs=m_dsAltIds;
 		ds.DSVersionable=m_dsVersionable;
 		ds.DSFormatURI=m_dsFormatURI;
 		ds.DSVersionID=m_dsVersId;
