@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:20" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="BMechObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Behavior Mechanism Object implementing the PDF contract using the Fedora Local FOP Service"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-10T00:21:56Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-10T00:21:57Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
+	</foxml:objectProperties>
+	<foxml:datastream  ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Metadata">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<dc:title>Behavior Mechanism Object implementing the PDF contract using the Fedora Local FOP Service</dc:title>
+					<dc:identifier>demo:20</dc:identifier>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="X" ID="WSDL" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="WSDL1.0" LABEL="WSDL definition for the Fedora Local FOP Service">
+			<foxml:xmlContent>
+				<wsdl:definitions name="Fedora Local FOP Service" targetNamespace="fop" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:this="fop" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+					<wsdl:types>
+						<xsd:schema targetNamespace="fop">
+							<xsd:simpleType name="URLType">
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+						</xsd:schema>
+					</wsdl:types>
+					<wsdl:message name="getPDFRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+					</wsdl:message>
+					<wsdl:message name="response">
+						<wsdl:part name="pdf" type="xsd:base64Binary"/>
+					</wsdl:message>
+					<wsdl:portType name="FedoraFOPPortType">
+						<wsdl:operation name="getPDF">
+							<wsdl:input message="this:getPDFRequest"/>
+							<wsdl:output message="this:response"/>
+						</wsdl:operation>
+					</wsdl:portType>
+					<wsdl:service name="FedoraFOP">
+						<wsdl:port binding="this:FedoraFOP_http" name="FedoraFOP_port">
+							<http:address location="http://localhost:8080/fop/"/>
+						</wsdl:port>
+					</wsdl:service>
+					<wsdl:binding name="FedoraFOP_http" type="this:FedoraFOPPortType">
+						<http:binding verb="GET"/>
+						<wsdl:operation name="getPDF">
+							<http:operation location="FOPServlet?source=(XML_SOURCE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="application/pdf"/>
+							</wsdl:output>
+						</wsdl:operation>
+					</wsdl:binding>
+				</wsdl:definitions>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="SERVICE-PROFILE" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="SERVICE-PROFILE1.0" LABEL="Service Profile - Technical description of the service">
+			<foxml:xmlContent>
+				<fsvp:serviceProfile bDefPID="demo:19" name="FOP Service" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+					<fsvp:serviceDescription>FOP Service Implementing the PDF contract (input fo; outputs PDF)</fsvp:serviceDescription>
+					<fsvp:serviceImplementation>
+						<fsvp:serviceLiveTestURL>http://localhost:8080/fop/</fsvp:serviceLiveTestURL>
+						<fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
+						<fsvp:serviceInputFormats>
+							<fsvp:MIMEType>text/xml</fsvp:MIMEType>
+						</fsvp:serviceInputFormats>
+						<fsvp:serviceOutputFormats>
+							<fsvp:MIMEType>application/pdf</fsvp:MIMEType>
+						</fsvp:serviceOutputFormats>
+						<fsvp:serviceImplDependencies>
+							<fsvp:software license="Apache_Software_License" name="fop" opensource="true" type="Utility_Application" version="0.20.4"/>
+							<fsvp:software license="Apache_Software_License" name="tomcat" opensource="true" type="Server_Application" version="4.1"/>
+							<fsvp:software license="Mozilla_Public_License" name="fedora" opensource="true" type="Server_Application" version="1.2"/>
+						</fsvp:serviceImplDependencies>
+					</fsvp:serviceImplementation>
+				</fsvp:serviceProfile>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream  ID="DSINPUTSPEC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="DSINPUTSPEC1.0" LABEL="Datastream Input Specification Mapping to the Fedora Local FOP Service">
+			<foxml:xmlContent>
+				<fbs:DSInputSpec bDefPID="demo:19" label="Mapping to the Fedora Local FOP Service" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+					<fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="XML_SOURCE">
+						<fbs:DSInputLabel>XML source file</fbs:DSInputLabel>
+						<fbs:DSMIME>text/xml</fbs:DSMIME>
+						<fbs:DSInputInstruction>XML source file to be transformed</fbs:DSInputInstruction>
+					</fbs:DSInput>
+				</fbs:DSInputSpec>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream  ID="METHODMAP" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="METHODMAP1.0" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
+			<foxml:xmlContent>
+				<fmm:MethodMap bDefPID="demo:19" name="MethodMap - PDF BDEF Methods" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+					<fmm:Method operationName="getPDF" wsdlMsgName="getPDF" wsdlMsgOutput="response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF" required="true"/>
+						<fmm:MethodReturnType wsdlMsgName="response" wsdlMsgTOMIME="application/pdf"/>
+					</fmm:Method>
+				</fmm:MethodMap>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="E" ID="DS1" MIMETYPE="text/html" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" LABEL="Programmer documentation">
+			<foxml:contentLocation REF="http://localhost:8080/fop/" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="SERVICE-PROFILE" KEY="SERVICE-PROFILE" LABEL="Service profile metadata"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DSINPUTSPEC" KEY="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service"/>
+				<foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="FEDORA-TO-WSDL-METHODMAP" LABEL="XML data that enables FEDORA to understand how to use the service WSDL"/>
+				<foxml:datastreamBinding DATASTREAM_ID="WSDL" KEY="WSDL" LABEL="Service definitions in WSDL format"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="PROGGUIDE" LABEL="The Programmer's user guide for using the service"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
+</foxml:digitalObject>

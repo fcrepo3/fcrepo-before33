@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ********************************************************************** -->
+<!-- This is a sample modify directives file that performs a variety of     -->
+<!-- modfications on the datastreams and disseminators of two new demo      -->
+<!-- objects (demo:32 and demo:33) that the script will create. In general, -->
+<!-- one should always validate a modify directives file against the        -->
+<!-- modifyBatch.xsd schema prior to processing to catch any syntax errors. -->
+<!-- Processing will halt if the directives file is invalid and a log file  -->
+<!-- is generated summarizing the results of the batch. Refer to the xml    -->
+<!-- schema file (modifyBatch.xsd) for details on the syntax of the modify  -->
+<!-- file.                                                                  -->
+<!--                                                                        -->
+<!-- This file uses behavior definition and behavior mechanism objects that -->
+<!-- are included in the set of demo objects. The set of demo objects MUST  -->
+<!-- be ingested into the repository PRIOR to processing this directives    -->
+<!-- file. If the demo objects are not loaded, the last several directives  -->
+<!-- involving disseminators that use the demo objects will fail.           -->
+<!-- ********************************************************************** -->
+<fbm:batchModify xmlns:fbm="http://www.fedora.info/definitions/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchModify.xsd">
+
+	<!-- ****************************************************************** -->
+	<!-- Add a new empty object to the repository that has no datastreams   -->
+	<!-- or disseminators with PID of demo:32.                              -->
+	<!--                                                                    -->
+	<!-- NOTE: By default each Fedora repository specifies several PID      -->
+	<!-- namespaces (e.g. "demo")that will be retained at ingest by the     -->
+	<!-- repository allowing ingested objects to retain the PID specified   -->
+	<!-- at ingest time. This list of PID namespaces is configurable in     -->
+	<!-- fedora.fcfg using the retainPids config parameter. In this example,-->
+	<!-- demo:32 is specified PID so the generated object will retain this  -->
+	<!-- PID value after ingestion. Leaving the pid attribute empty         -->
+	<!-- (i.e., "") will force the repository to assign a PID to the new    -->
+	<!-- object using the namespace specified by the PidNamespace parameter -->
+	<!-- in the fedora.fcf config file.                                     -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object; leave blank if you want repository to     -->
+	<!--       assign the pid.                                              -->
+	<!-- label - label for the object                                       -->
+	<!-- contentModel - content model of the object                         -->
+	<!-- logMessage - message to be written in audit trail record           -->	
+	<!-- *******************************************************************-->
+	<fbm:addObject pid="demo:32" label="Sample Object Used With Batch Modify Utility" contentModel="Object" logMessage="BatchModify - addObject"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Add a second new empty object to the repository that has no        -->
+	<!-- datastreams or disseminators with a PID of demo:33.                -->
+	<!-- *******************************************************************-->
+	<fbm:addObject pid="demo:33" label="2nd Sample Object Used With Batch Modify Utility" contentModel="Object" logMessage="BatchModify - addObject"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Modify object demo:32 by changing the label on the object.         -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object                                            -->
+	<!-- logMessage - message to be written in audit trail record           -->		
+	<!--                                                                    -->
+	<!-- Optional attributes on directive:                                  -->
+	<!-- label - label for the object                                       -->
+	<!-- state - state of the object                                        -->
+	<!-- *******************************************************************-->
+	<fbm:modifyObject pid="demo:32" label="Object Label was changed" logMessage="BatchModify - modifyObject"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Modify object demo:33 by changing its state to deleted.            -->
+	<!-- *******************************************************************-->
+	<fbm:modifyObject pid="demo:33" state="D" logMessage="BatchModify - modifyObject"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Purge object demo:33 that was just created and modified.           -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object to be purged                               -->
+	<!-- logMessage - message to be written in audit trail record           -->		
+	<!--                                                                    -->
+	<!-- Optional attributes on directive:                                  -->
+	<!-- force - boolean indicating whether to purge the object if any      -->
+	<!-- critical dependencies exist. A value of true will purge the object -->
+	<!-- regardless of any dependencies. A value of false will allow the    -->
+	<!-- purge only if no dependencies exist.                               -->
+	<!-- *******************************************************************-->
+	<fbm:purgeObject pid="demo:33" logMessage="BatchModify - purgeObject"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Add a new datastream to demo:32 object with ID of DS1.             -->
+	<!--                                                                    -->
+	<!-- Note: A dsID of DS1 is assigned by the server since no dsID is     -->
+	<!-- specified on the directive and this is the first datastream in     -->
+	<!-- this object.                                                       -->
+	<!--                                                                    -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object                                            -->
+	<!-- dsLabel - label fo the datastream                                  -->
+	<!-- dsMIME - MIME type of the datastream                               -->
+	<!-- logMessage - message to be written in audit trail record           -->		
+	<!--                                                                    -->
+	<!-- Optional attributes on directive:                                  -->
+	<!-- dsID - ID of the datastream; omit or leave as blank if you want    -->
+	<!--        repository to assign datastream ID.                         -->
+	<!-- formatURI - URI identifying the format of the datastream           -->
+	<!-- versionable - boolean indicating whether datastream is versionable -->
+	<!-- altIDs - space delimited string of alternated identifiers for the  -->
+	<!--          datastream. This info is currently maintained in the      -->
+	<!--          object, but not acted on.                                 -->
+	<!-- dsLocation - location of the datastream                            -->
+	<!-- dsControlGroupType - control group type of the datastream          -->
+	<!-- dsState - state of the object                                      -->
+	<!-- ****************************************************************** -->
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum thumbnail jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Add a 2nd datastream to demo:32 object. The new datastream will be -->
+	<!-- a medium resolution image and will be assigned a dsID of DS2 since -->
+	<!-- no dsID is specified and this is the second datastream for this    -->
+	<!-- object.                                                            -->
+	<!-- ****************************************************************** -->
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum medium jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Add a 3rd datastream to demo:32 object. The new datastream will be -->
+	<!-- a high resolution image and will be assigned a dsID of DS3 since   -->
+	<!-- no dsID is specified and this is the third datastream for this     -->
+	<!-- object.                                                            -->
+	<!-- ****************************************************************** -->
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum high jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="M" dsState="A" logMessage="BatchModify - addDatastream"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Add a 4th datastream to demo:32 object. The new datastream will be -->
+	<!-- a very high resolution image and will be assigned a dsID of DS4    -->
+	<!-- since no dsID is specified and this is the fourth datastream for   -->
+	<!-- this object.                                                       -->
+	<!-- ****************************************************************** -->
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum veryhigh jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg" dsControlGroupType="M" dsState="A" logMessage="BatchModify - addDatastream"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Add a 5th datastream to demo:32 object. The new datastream will be -->
+	<!-- a screen size image and will have dsID of SCREEN. This datastream  -->
+	<!-- will also have values assigned for alternate IDs, formatURI, and   -->
+	<!-- is declared not to be versionable.                                 -->
+	<!-- ****************************************************************** -->
+	<fbm:addDatastream pid="demo:32" dsID="SCREEN" altIDs="AlternateID1 AlternateID2" formatURI="info:fedora/demo/content/JPEG#" versionable="false" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Add a 6th datastream to demo:32 object. The new datastream will be -->
+	<!-- a user-defined inline descriptive metadata datastream and will     -->
+	<!-- have dsID of DESC.                                                 -->
+	<!-- ****************************************************************** -->
+	<fbm:addDatastream pid="demo:32" dsID="DESC" dsLabel="Descriptive metadata for Thorny's Coliseum screen size jpg image" dsMIME="text/xml" dsControlGroupType="X" dsState="A" logMessage="BatchModify - addDatastream">
+		<fbm:xmlData>
+			<uvalibdesc:desc xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
+				<uvalibdesc:time>
+					<uvalibdesc:date type="created" certainty="ca." era="bc">1st century</uvalibdesc:date>
+				</uvalibdesc:time>
+				<uvalibdesc:identifier scheme="URN">uva-lib:2</uvalibdesc:identifier>
+				<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
+				<uvalibdesc:subject scheme="other" othertype="keyword">Roman Empire</uvalibdesc:subject>
+				<uvalibdesc:subject scheme="other" othertype="keyword">Roman</uvalibdesc:subject>
+				<uvalibdesc:subject scheme="other" othertype="keyword">Vespaciano</uvalibdesc:subject>
+				<uvalibdesc:subject scheme="other" othertype="keyword">Amphitheatrum Flavium</uvalibdesc:subject>
+				<uvalibdesc:title type="main">Coliseum -- Rome, Italy</uvalibdesc:title>
+				<uvalibdesc:form>architecture</uvalibdesc:form>
+				<uvalibdesc:mediatype type="image">
+					<uvalibdesc:form>digital</uvalibdesc:form>
+				</uvalibdesc:mediatype>
+				<uvalibdesc:agent role="publisher">Alderman Library</uvalibdesc:agent>
+				<uvalibdesc:covspace>
+					<uvalibdesc:geometry>
+						<uvalibdesc:point>
+							<uvalibdesc:lat>41.54N</uvalibdesc:lat>
+							<uvalibdesc:long>12.27E</uvalibdesc:long>
+						</uvalibdesc:point>
+					</uvalibdesc:geometry>
+				</uvalibdesc:covspace>
+				<uvalibdesc:covtime>
+					<uvalibdesc:date era="bc">72</uvalibdesc:date>
+					<uvalibdesc:date era="bc">80</uvalibdesc:date>
+				</uvalibdesc:covtime>
+				<uvalibdesc:culture>Roman</uvalibdesc:culture>
+				<uvalibdesc:place type="original">
+					<uvalibdesc:geogname>Italy, Rome</uvalibdesc:geogname>
+				</uvalibdesc:place>
+			</uvalibdesc:desc>
+		</fbm:xmlData>
+	</fbm:addDatastream>
+	
+	<!-- ****************************************************************** -->
+	<!-- Add a 7th datastream to demo:32 object. The new datastream will be -->
+	<!-- duplicate of the screen size image that will be deleted later in   -->
+	<!-- this set of directives. It will have a dsID of SCREENDUP.          -->
+	<!-- ****************************************************************** -->
+	<fbm:addDatastream pid="demo:32" dsID="SCREENDUP" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="R" dsState="A" logMessage="BatchModify - addDatastream"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Modify datastream DS1 of demo:5 object by changing its label.      -->
+	<!--                                                                    -->
+	<!-- NOTE: Optional attributes that are omitted or set to "" imply that -->
+	<!-- the original values are to remain unchanged so in this example the -->
+	<!-- datastream location, and state attributes are not modified.        -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object                                            -->
+	<!-- dsID - ID of the datastream                                        -->
+	<!-- dsControlGroupType - control group type of the datastream          -->
+	<!-- logMessage - message to be written in audit trail record           -->		
+	<!--                                                                    -->
+	<!-- Optional attributes on directive:                                  -->
+	<!-- dsLabel - label fo the datastream                                  -->
+	<!-- dsState - state of the object                                      -->
+	<!-- dsLocation - location of the datastream                            -->
+	<!-- dsMIME - MIME type of the datastream                               -->
+	<!-- formatURI - URI identifying the format of the datastream           -->
+	<!-- versionable - boolean indicating whether datastream is versionable -->
+	<!-- altIDs - space delimited string of alternated identifiers for the  -->
+	<!--          datastream. This info is currently maintained in the      -->
+	<!--          object, but not acted on.                                 -->
+	<!-- force - boolean indicating whether to purge the object if any      -->
+	<!--         critical dependencies exist. A value of true will purge    -->
+	<!--         the object regardless of any dependencies. A value of      -->
+	<!--         false will allow the purge only if no dependencies exist.  -->	
+	<!-- ****************************************************************** -->
+	<fbm:modifyDatastream pid="demo:32" dsID="DS1" dsControlGroupType="E" dsLabel="New label for datastream DS1" logMessage="BatchModify - modifyDatastream"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Modify datastream SCREEN of demo:32 object by changing its label   -->
+	<!-- and datastream location so that it points to the same content as   -->
+	<!-- that of datastream DS3 which is a high-res image.                  -->
+	<!--                                                                    -->
+	<!-- NOTE: Optional attributes that are omitted or set to "" imply that -->
+	<!-- the original values are to remain unchanged so in this example the -->
+	<!-- datastream state attribute is not modified.                        -->
+	<!-- ****************************************************************** -->
+	<fbm:modifyDatastream pid="demo:32" dsID="SCREEN" dsControlGroupType="E" dsLabel="Changed label for datastream SCREEN" dsLocation="http://l:8080/fedora/get/demo:5/DS4" logMessage="BatchModify - modifyDatastream"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Modify datastream DC of demo:32 object by changing its label and   -->
+	<!-- its xml content so that its content is replaced by the block of    -->
+	<!-- xml below.                                                         -->
+	<!-- ****************************************************************** -->
+	<fbm:modifyDatastream pid="demo:32" dsID="DC" dsControlGroupType="X" dsLabel="New label for DC datastream" logMessage="BatchModify - modifyDatastream">
+		<fbm:xmlData>
+			<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:my="http//foo.bar.none">
+				<dc:title>Coliseum in Rome</dc:title>
+				<dc:creator>Thornton Staples</dc:creator>
+				<dc:subject>Architecture, Roman</dc:subject>
+				<dc:description>Image of Coliseum in Rome</dc:description>
+				<dc:publisher>University of Virginia Library</dc:publisher>
+				<dc:format>image/jpeg</dc:format>
+				<dc:identifier>demo:5</dc:identifier>
+				<my:this>some text</my:this>
+				<my:that>some more text</my:that>
+				<my:other>even more text</my:other>
+			</oai_dc:dc>
+		</fbm:xmlData>
+	</fbm:modifyDatastream>
+
+	<!-- ****************************************************************** -->
+	<!-- Modify datastream DESC of demo:32 object by changing its label.    -->
+	<!-- Also change its formatURI and set versionable to false.            -->
+	<!-- ****************************************************************** -->
+	<fbm:modifyDatastream pid="demo:32" dsID="DESC" dsControlGroupType="X" dsLabel="New label for DC datastream" formatURI="info:fedora/new/formatURI" versionable="false" logMessage="BatchModify - modifyDatastream"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Purge datastream SCREENDUP from object demo:32                     -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object to be purged                               -->
+	<!-- logMessage - message to be written in audit trail record           -->		
+	<!--                                                                    -->
+	<!-- Optional attributes on directive:                                  -->
+	<!-- force - boolean indicating whether to purge the object if any      -->
+	<!--         critical dependencies exist. A value of true will purge    -->
+	<!--         the object regardless of any dependencies. A value of      -->
+	<!--         false will allow the purge only if no dependencies exist.  -->
+	<!-- ****************************************************************** -->
+	<fbm:purgeDatastream pid="demo:32" dsID="SCREENDUP" logMessage="BatchModify - purgeDatastream"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Change the state of datastream DS1 to deleted                      -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object                                            -->
+	<!-- dsID - ID of the datastream                                        -->
+	<!-- dsState - new value for state of the datastream                    -->
+	<!-- logMessage - message to be written in audit trail record           -->		
+	<!-- ****************************************************************** -->
+	<fbm:setDatastreamState pid="demo:32" dsID="DS1" dsState="D" logMessage="BatchModify - setDatastreamState"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Change the state of datastream DESC to inactive                    -->
+	<!-- ****************************************************************** -->
+	<fbm:setDatastreamState pid="demo:32" dsID="DESC" dsState="I" logMessage="BatchModify - setDatastreamState"/>
+	
+	<!-- ****************************************************************** -->
+	<!-- Add a new disseminator for object demo:32 using the UVA Simple     -->
+	<!-- Image Behavior Definition (demo:1) and Fedora HTTP Getter Service  -->
+	<!-- (demo:2). Binding Key names defined for this mechanism include:    -->
+	<!-- THUMBRES_IMAG, MEDRES_IMG, HIGHRES_IMG, and VERYHIGHRES_IMG.       -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object                                            -->
+	<!-- bDefPid - PID of the associated behavior definition object         -->
+	<!-- bMechPid - PID of the associated behavior mechanism object         -->
+	<!-- dissLabel - label of the disseminator                              -->
+	<!-- logMessage - message to be written in audit trail record           -->		
+	<!--                                                                    -->
+	<!-- Optional attributes on directive:                                  -->
+	<!-- bDefLabel - label of the behavior definition object                -->
+	<!-- bMechLabel - label of the behavior mechanism object                -->
+	<!-- dissState - state of the disseminator                              -->
+	<!--                                                                    -->
+	<!-- Sub-elements on directive:                                         -->
+	<!-- addDatastreamBinding - specifies datastream binding for the        -->
+	<!--                        disseminator                                -->
+	<!-- ****************************************************************** -->
+	<fbm:addDisseminator pid="demo:32" bDefPid="demo:1" bMechPid="demo:2" bDefLabel="" bMechLabel="" dissLabel="HTTP Getter Image Disseminator" dissState="A" logMessage="BatchModify - addDisseminator">
+		<fbm:addDatastreamBinding dsBindKeyName="THUMBRES_IMG" dsID="DS1" dsBindLabel=""/>
+		<fbm:addDatastreamBinding dsBindKeyName="MEDRES_IMG" dsID="DS2" dsBindLabel=""/>
+		<fbm:addDatastreamBinding dsBindKeyName="HIGHRES_IMG" dsID="DS3" dsBindLabel=""/>
+		<fbm:addDatastreamBinding dsBindKeyName="VERYHIGHRES_IMG" dsID="DS4" dsBindLabel=""/>
+	</fbm:addDisseminator>
+	
+	<!-- ****************************************************************** -->
+	<!-- Add a second disseminator to the object demo:32 using the Image    -->
+	<!-- Manipulation Behavior Definition (demo:27) and the Image           -->
+	<!-- Manipulation service (demo:28). The mechanism  specifies a single  -->
+	<!-- Binding Key name of url.                                           -->
+	<!-- ****************************************************************** -->
+	<fbm:addDisseminator pid="demo:32" bDefPid="demo:27" bMechPid="demo:28" bDefLabel="" bMechLabel="" dissLabel="Image Manipulation Disseminator" dissState="A" logMessage="BatchModify - addDisseminator">
+		<fbm:addDatastreamBinding dsBindKeyName="url" dsID="SCREEN" dsBindLabel=""/>
+	</fbm:addDisseminator>
+	
+	<!-- ****************************************************************** -->
+	<!-- Modify the first disseminator by changing its label and also the   -->
+	<!-- label for its associated behavior definition label.  Also remove   -->
+	<!-- the datastream binding for DS3 and replace it with a new binding   -->
+	<!-- that maps to dsID SCREEN for the high resolution image.            -->
+	<!--                                                                    -->
+	<!-- NOTE: Optional attributes that are omitted or set to "" imply that -->
+	<!-- the original values are to remain unchanged so in this example the -->
+	<!-- disseminator bMech label is not modified.                          -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object                                            -->
+	<!-- dissID - disseminator ID                                           -->
+	<!-- bMechPid - PID of the associated behavior mechanism object         -->
+	<!-- logMessage - message to be written in audit trail record           -->	
+	<!--                                                                    -->
+	<!-- Optional attributes on directive:                                  -->
+	<!-- dissLabel - label of the disseminator                              -->
+	<!-- bDefLabel - label of the behavior definition object                -->
+	<!-- bMechLabel - label of the behavior mechanism object                -->
+	<!-- dissState - state of the disseminator                              -->	    
+	<!-- force - boolean indicating whether to purge the object if any      -->
+	<!--         critical dependencies exist. A value of true will purge    -->
+	<!--         the object regardless of any dependencies. A value of      -->
+	<!--         false will allow the purge only if no dependencies exist.  -->
+	<!--                                                                    -->
+	<!-- Sub-elements on directive:                                         -->
+	<!-- addDatastreamBinding - specifies datastream binding for the        -->
+	<!--                        disseminator                                -->		
+	<!-- removeDatastreamBinding - specifies datastream binding for the     -->
+	<!--                           disseminator                             -->	
+	<!-- ****************************************************************** -->
+	<fbm:modifyDisseminator pid="demo:32" dissID="DISS1" bMechPid="demo:2" dissLabel="changed DISS label" bDefLabel="new label for dDef" bMechLabel="" dissState="A" logMessage="BatchModify - modifyDisseminator">
+		<fbm:removeDatastreamBinding dsID="DS3"/>
+		<fbm:addDatastreamBinding dsBindKeyName="HIGHRES_IMG" dsID="SCREEN" dsBindLabel="Label for New Binding"/>
+	</fbm:modifyDisseminator>
+	
+	<!-- ****************************************************************** -->
+	<!-- Modify the second disseminator by changing the label of its        -->
+	<!-- associated behavior mechanism. Also remove the datastream binding  -->
+	<!-- for SCREEN. Note that since no new binding was added to replace    -->
+	<!-- the one deleted, this will generate an error during processing     -->
+	<!-- screen without a binding the existing disseminator would not       -->
+	<!-- function.                                                          -->
+	<!-- ****************************************************************** -->
+	<fbm:modifyDisseminator pid="demo:32" dissID="DISS2" bMechPid="demo:28" bMechLabel="new label for bmech" bDefLabel="" dissState="A" logMessage="BatchModify - modifyDisseminator">
+		<fbm:removeDatastreamBinding dsID="SCREEN"/>
+		<fbm:addDatastreamBinding dsBindKeyName="url" dsID="DS3" dsBindLabel="Label for New Binding"/>
+	</fbm:modifyDisseminator>
+	
+	<!-- ****************************************************************** -->
+	<!-- Change the state of disseminator DISS2 to deleted                  -->
+	<!--                                                                    -->
+	<!-- Required attributes on directive:                                  -->
+	<!-- pid - PID of the object                                            -->
+	<!-- dissID - ID of disseminator                                        -->
+	<!-- dissState - new value for state of the disseminator                -->
+	<!-- ****************************************************************** -->
+	<fbm:setDisseminatorState pid="demo:32" dissID="DISS2" dissState="D" logMessage="BatchModify - setDisseminatorState"/>
+	
+</fbm:batchModify>

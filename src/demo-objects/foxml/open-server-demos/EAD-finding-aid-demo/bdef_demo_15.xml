@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:15" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="BDefObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Behavior Definition Object for UVA Standard EAD Finding Aid Contract"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-16T14:32:20Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-16T14:32:23Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BDEF"/>
+	</foxml:objectProperties>
+	<foxml:datastream  ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Metadata">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<dc:title>Behavior Definition Object for UVA Standard EAD Finding Aid Contract</dc:title>
+					<dc:identifier>demo:15</dc:identifier>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream  ID="METHODMAP" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="METHODMAP1.0" LABEL="Method Map for Fedora Behavior Definition for UVA EAD-encoded Finding Aid">
+			<foxml:xmlContent>
+				<fmm:MethodMap name="Fedora MethodMap for Standard EAD-encoded Finding Aid bDef" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+					<fmm:Method operationName="getTitlePage">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+					<fmm:Method operationName="getAdminInfo">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+					<fmm:Method operationName="getSummaryInfo">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+					<fmm:Method operationName="getBiogHistInfo">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+					<fmm:Method operationName="getScopeContentInfo">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+					<fmm:Method operationName="getComponentInfo">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+					<fmm:Method operationName="getArrangeInfo">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+					<fmm:Method operationName="getOrgInfo">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+					<fmm:Method operationName="getEntireDoc">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+					<fmm:Method operationName="getMenu">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:UserInputParm defaultValue="" parmName="key" passBy="VALUE" required="false"/>
+						<fmm:UserInputParm defaultValue="" parmName="startwith" passBy="VALUE" required="false"/>
+					</fmm:Method>
+					<fmm:Method operationName="viewFindingAid">
+						<fmm:UserInputParm defaultValue="" parmName="objectPID" passBy="VALUE" required="true"/>
+					</fmm:Method>
+					<fmm:Method operationName="getTitle">
+						<fmm:UserInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+					</fmm:Method>
+					<fmm:Method operationName="searchFindingAid">
+						<fmm:UserInputParm defaultValue="" parmName="objectPID" passBy="VALUE" required="true"/>
+						<fmm:UserInputParm defaultValue="" parmName="querystring" passBy="VALUE" required="true"/>
+					</fmm:Method>
+				</fmm:MethodMap>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream  ID="DS1" CONTROL_GROUP="E" MIMETYPE="text/html" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" LABEL="Behavior Def Guide">
+			<foxml:contentLocation REF="http://www.lib.virginia.edu/speccol/vhp/" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:disseminator  ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="BDEF-METHODMAP" LABEL="Abstract behavior definition in Fedora Method Map format"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="BDEF-GUIDE" LABEL="The Official Guide to the UVA EAD-encoded Finding Aid Behavior Definition"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
+</foxml:digitalObject>

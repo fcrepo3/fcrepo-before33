@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---********************************************************************************************-->
+<!-- SAMPLE FEDORA BEHAVIOR MECHANISM OBJECT ENCODED USING METS -->
+<!-- Creator: Sandy Payette -->
+<!-- Custodian: University of Virginia Library -->
+<!-- Note: Demonstration Behavior Mechanism Object.  This Behavior Mechanism Object defines service -->
+<!-- metadata for the UVA ImageZoomer service which returns images wrapped in a Java applet that -->
+<!-- provides Zoom capability.  This Behavior Mechanism Object is a surrogate for a service that fulfills the -->
+<!-- behavior contract defined in the UVA Simple Image Behavior Definition Object (see the Fedora object -->
+<!-- with PID=demo:1). -->
+<!---********************************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:3" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object implementing the Simple Image BDEF contract using the UVA ImageZoomer Service." PROFILE="fedora:BMECH">
+	<!---*******************************************************************************************************************************************-->
+	<!--  INLINE METADATA DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT: -->
+	<!---*******************************************************************************************************************************************-->
+	<!---********************************************************************************************-->
+	<!-- SERVICE PROFILE: -->
+	<!-- This is a Fedora metadata format for describing an external service. The intent is to have some basic "preservation-significant"  -->
+	<!-- metadata that can be helpful in diagnosing potential vulnerabilities with the service over time. -->
+	<!-- NOTE!! The Fedora Service Profile Schema is still a work in progress!!  This is a preliminary metadata format which requires more analysis.-->
+	<!--********************************************************************************************-->
+	<METS:amdSec ID="SERVICE-PROFILE">
+		<METS:techMD ID="SERVICE-PROFILE1.0" STATUS="A">
+			<METS:mdWrap LABEL="Service Profile - Technical description of the service" MDTYPE="OTHER" MIMETYPE="text/xml">
+				<METS:xmlData>
+					<fsvp:serviceProfile xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile" bDefPID="demo:1" name="UVA ImageZoomer Service">
+						<fsvp:serviceDescription>UVA ImageZoomer Service wraps image in Zoomable Java Applet embedded in html page.</fsvp:serviceDescription>
+						<fsvp:serviceImplementation>
+							<fsvp:serviceLiveTestURL>http://icarus.lib.virginia.edu/servlet/ImageSizer?image=http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg</fsvp:serviceLiveTestURL>
+							<fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
+							<fsvp:serviceInputFormats>
+								<fsvp:MIMEType>image/gif</fsvp:MIMEType>
+								<fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
+							</fsvp:serviceInputFormats>
+							<fsvp:serviceOutputFormats>
+								<fsvp:MIMEType>text/html</fsvp:MIMEType>
+								<fsvp:MIMEType>application/java</fsvp:MIMEType>
+							</fsvp:serviceOutputFormats>
+							<fsvp:serviceImplDependencies>
+								<fsvp:software license="Sun_Community_Source_License" name="java" opensource="true" type="Programming_Language" version="1.3"/>
+								<fsvp:software license="Apache_Software_License" name="tomcat" opensource="true" type="Server_Application" version="4.1"/>
+							</fsvp:serviceImplDependencies>
+						</fsvp:serviceImplementation>
+					</fsvp:serviceProfile>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!-- SERVICE DATASTREAM INPUT SPECIFICATION: -->
+	<!-- THIS IS  METADATA DESCRIBING A DATASTREAM CONTRACT BETWEEN A FEDORA DATA OBJECT and the SERVICE. -->
+	<!-- This specifies the what kind of Datastream(s) must be in a Fedora Data Object to serve as runtime input to the external service -->
+	<!-- represented by this Behavior Mechanism Object.   -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="DSINPUTSPEC">
+		<METS:techMD ID="DSINPUTSPEC1.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Input Specification for Image Sizer service">
+				<METS:xmlData>
+					<fbs:DSInputSpec label="Datastream Input Specification" bDefPID="demo:1" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+						<fbs:DSInput wsdlMsgPartName="LOWRES_IMG" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>low resolution image</fbs:DSInputLabel>
+							<fbs:DSMIME>image/gif image/jpeg</fbs:DSMIME>
+							<fbs:DSInputInstruction>image of type image/gif or image/jpeg at 200 dpi</fbs:DSInputInstruction>
+						</fbs:DSInput>
+						<fbs:DSInput wsdlMsgPartName="MEDRES_IMG" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>medium resolution image</fbs:DSInputLabel>
+							<fbs:DSMIME>image/gif image/jpeg</fbs:DSMIME>
+							<fbs:DSInputInstruction>image of type image/gif or image/jpeg at 300 dpi</fbs:DSInputInstruction>
+						</fbs:DSInput>
+						<fbs:DSInput wsdlMsgPartName="HIGHRES_IMG" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>high resolution image</fbs:DSInputLabel>
+							<fbs:DSMIME>image/gif image/jpeg</fbs:DSMIME>
+							<fbs:DSInputInstruction>image of type image/gif or image/jpeg at 600 dpi</fbs:DSInputInstruction>
+						</fbs:DSInput>
+						<fbs:DSInput wsdlMsgPartName="VERYHIGHRES_IMG" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>very high resolution image</fbs:DSInputLabel>
+							<fbs:DSMIME>image/jpeg</fbs:DSMIME>
+							<fbs:DSInputInstruction>image of type image/jpeg at 1200 dpi</fbs:DSInputInstruction>
+						</fbs:DSInput>
+					</fbs:DSInputSpec>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!-- FEDORA-TO-WSDL METHOD MAP: -->
+	<!-- THIS IS  METADATA DESCRIBING HOW THE SERVICE WSDL MAPS TO FEDORA METHOD DEFINITIONS -->
+	<!-- This is how we make a service definition expressed in WSDL play nicely with Fedora. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="METHODMAP">
+		<METS:techMD ID="METHODMAP1.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
+				<METS:xmlData>
+					<fmm:MethodMap name="MethodMap - UVA ImageZoomer BMech for Simple Image BDEF" bDefPID="demo:1" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+						<!-- NOTE: The operationName attribute correlates to WSDL operation in terms of mapping to WSDL definitions -->
+						<fmm:Method operationName="getThumbnail" wsdlMsgName="getThumbRequest" wsdlMsgOutput="image_response">
+							<!-- NOTE: The parmName attribute correlates to WSDL message part name in terms of mapping to WSDL definitions -->
+							<fmm:DatastreamInputParm parmName="LOWRES_IMG" required="true" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="text/html"/>
+						</fmm:Method>
+						<fmm:Method operationName="getMedium" wsdlMsgName="getMedRequest" wsdlMsgOutput="image_response">
+							<!-- NOTE: The parmName attribute correlates to WSDL message part name in terms of mapping to WSDL definitions -->
+							<fmm:DatastreamInputParm parmName="MEDRES_IMG" required="true" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="text/html"/>
+						</fmm:Method>
+						<fmm:Method operationName="getHigh" wsdlMsgName="getHighRequest" wsdlMsgOutput="image_response">
+							<!-- NOTE: The parmName attribute correlates to WSDL message part name in terms of mapping to WSDL definitions -->
+							<fmm:DatastreamInputParm parmName="HIGHRES_IMG" required="true" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="text/html"/>
+						</fmm:Method>
+						<fmm:Method operationName="getVeryHigh" wsdlMsgName="getVeryHighRequest" wsdlMsgOutput="image_response">
+							<!-- NOTE: The parmName attribute correlates to WSDL message part name in terms of mapping to WSDL definitions -->
+							<fmm:DatastreamInputParm parmName="VERYHIGHRES_IMG" required="true" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="text/html"/>
+						</fmm:Method>
+					</fmm:MethodMap>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!-- ****************************************************************************************************************************************** -->
+	<!--  WSDL SERVICE DEFINITION -->
+	<!--  Here we store WSDL as a form of metadata about the external service that is represented by this  -->
+	<!--  Fedora Behavior Definition Object. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="WSDL">
+		<METS:techMD ID="WSDL1.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL definition for UVA ImageZoomer service">
+				<METS:xmlData>
+					<!-- ******************************************************************************************************************************** -->
+					<!-- PRE-EXISTING SERVICE WSDL THAT IS NOT FEDORA-AWARE -->
+					<!-- ******************************************************************************************************************************** -->
+					<wsdl:definitions name="Image Sizer Service" targetNamespace="imgsize" xmlns:this="imgsize" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: Schema Type Definitions used in this WSDL -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:types>
+							<xsd:schema targetNamespace="imgsize">
+								<xsd:simpleType name="imageURLType">
+									<xsd:restriction base="xsd:string"/>
+								</xsd:simpleType>
+							</xsd:schema>
+						</wsdl:types>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: MESSAGE DEFINITIONS -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:message name="getThumbRequest">
+							<wsdl:part name="LOWRES_IMG" type="this:imageURLType"/>
+						</wsdl:message>
+						<wsdl:message name="getMedRequest">
+							<wsdl:part name="MEDRES_IMG" type="this:imageURLType"/>
+						</wsdl:message>
+						<wsdl:message name="getHighRequest">
+							<wsdl:part name="HIGHRES_IMG" type="this:imageURLType"/>
+						</wsdl:message>
+						<wsdl:message name="getVeryHighRequest">
+							<wsdl:part name="VERYHIGHRES_IMG" type="this:imageURLType"/>
+						</wsdl:message>
+						<wsdl:message name="imageApplet_response">
+							<wsdl:part name="imageApplet" type="xsd:base64Binary"/>
+						</wsdl:message>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: ABSTRACT OPERATION  DEFINITIONS (Fedora Behavior Definitions) -->
+						<!-- Here we define the operations the service implements -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:portType name="ImageZoomerPortType">
+							<wsdl:operation name="getThumbnail">
+								<wsdl:input message="this:getThumbRequest"/>
+								<wsdl:output message="this:imageApplet_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="getMedium">
+								<wsdl:input message="this:getMedRequest"/>
+								<wsdl:output message="this:imageApplet_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="getHigh">
+								<wsdl:input message="this:getHighRequest"/>
+								<wsdl:output message="this:imageApplet_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="getVeryHigh">
+								<wsdl:input message="this:getVeryHighRequest"/>
+								<wsdl:output message="this:imageApplet_response"/>
+							</wsdl:operation>
+						</wsdl:portType>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: THE SERVICE DEFINITION -->
+						<!-- Here we define how to bind to operations to run the Service -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:service name="ImageZoomer">
+							<!-- THIS IS THE HTTP PORT -->
+							<wsdl:port name="ImageZoomer_port" binding="this:ImageZoomer_http">
+								<!-- NOTE on http:address:  this is not proper WSDL, but we are setting the http:address location to LOCAL -->
+								<!-- to signify that the WSDL describes an internal Fedora service which has no public end-point. -->
+								<http:address location="http://icarus.lib.virginia.edu/servlet/"/>
+							</wsdl:port>
+						</wsdl:service>
+						<!-- ******************************************************************************************************************** -->
+						<!-- The HTTP Bindings for Service: -->
+						<!-- NOTE: the http:operation location attribute is subject to a URL replacement algorithm.  -->
+						<!-- See the W3C Specification for WSDL Bindings at: http://www.w3.org/TR/2002/WD-wsdl12-bindings-20020709 -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:binding name="ImageZoomer_http" type="this:ImageZoomerPortType">
+							<http:binding verb="GET"/>
+							<wsdl:operation name="getThumbnail">
+								<!-- NOTE on http:operation:  this is not proper WSDL, but we are setting the http:operation location to -->
+								<!-- the message part that, itself, is a URL.  This is done in conjunction with the setting of the http:address -->
+								<!-- to LOCAL in the port definition.  This is done to signify that the WSDL describes an internal Fedora -->
+								<!--service which has no public end-point. -->
+								<http:operation location="ImageSizer?image=(LOWRES_IMG)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="text/html"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="getMedium">
+								<!-- NOTE on http:operation: This is not proper WSDL to have a full URL in the http:operation location.  We are doing this -->
+								<!-- for now as an example of how to override the LOCAL http:address specified in the port definition. -->
+								<http:operation location="ImageSizer?image=(MEDRES_IMG)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="text/html"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="getHigh">
+								<http:operation location="ImageSizer?image=(HIGHRES_IMG)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="text/html"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="getVeryHigh">
+								<http:operation location="ImageSizer?image=(VERYHIGHRES_IMG)"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="text/html"/>
+								</wsdl:output>
+							</wsdl:operation>
+						</wsdl:binding>
+					</wsdl:definitions>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- OTHER DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT -->
+	<!--  This is content that is relevant to describing the external service that this Behavior Mechanism Object represents. -->
+	<!--  These can be schema definitions, debugging tools, documentation, or other resources.  -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<METS:file ID="DS1.0" SEQ="1" MIMETYPE="text/html" OWNERID="E" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href=" http://icarus.lib.virginia.edu/test/ImageSizer/doc/overview.html" xlink:title="Programmer documentation"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--  DATASTREAM BINDING MAP FOR FOR THIS BEHAVIOR MECHANISM OBJECT-->
+	<!-- Since THIS Behavior Mechanism Object is, itself, a Fedora Digital Object, we can disseminate its contents. -->
+	<!-- The Fedora system provides a bootstrap service (built-in to the repository system) that will enable the -->
+	<!-- dissemination of content from a Behavior Mechanism Objects.  What follows is the Datastream Binding Map for that -->
+	<!-- is used by the bootstrap service.  -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="fedora-system:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
+			<METS:div TYPE="SERVICE-PROFILE" LABEL="Service profile metadata">
+				<METS:fptr FILEID="SERVICE-PROFILE"/>
+			</METS:div>
+			<METS:div TYPE="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service">
+				<METS:fptr FILEID="DSINPUTSPEC"/>
+			</METS:div>
+			<METS:div TYPE="FEDORA-TO-WSDL-METHODMAP" LABEL="XML data that enables FEDORA to understand how to use the service WSDL">
+				<METS:fptr FILEID="METHODMAP"/>
+			</METS:div>
+			<METS:div TYPE="WSDL" LABEL="Service definitions in WSDL format">
+				<METS:fptr FILEID="WSDL"/>
+			</METS:div>
+			<METS:div TYPE="PROGGUIDE" LABEL="The Programmer's user guide for using the service">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- BOOTSTRAP  DISSEMINATOR FOR THIS BEHAVIOR MECHANISM OBJECT: -->
+	<!--  This is a disseminator for THIS Behavior Definition Object that lets a client be able to treat it like any other Fedora Object.  -->
+	<!--  Thus, clients can disseminate all this great metadata about the external service that is represented by this -->
+	<!--  Behavior Mechanism Object. -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior -->
+	<!--   Mechanism to run the behaviors. -->
+	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Mechanism Object.   -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" LABEL="Bootstrap Behaviors">
+			<METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="fedora-system:1"/>
+			<METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="fedora-system:2"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
+</METS:mets>

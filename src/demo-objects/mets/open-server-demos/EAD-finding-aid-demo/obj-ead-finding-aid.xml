@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---************************************************************************-->
+<!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
+<!-- Creator: Ross Wayland -->
+<!-- Custodian: University of Virginia Library -->
+<!-- Note: Demonstration Digital Object based on EAD-encoded Finding Aid. -->
+<!---************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:17" TYPE="FedoraObject" LABEL="Rita Brown Papers Finding Aid" PROFILE="UVA_EAD_FINDING_AID">
+	<!---*******************************************************************************************************************************************-->
+	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:dmdSecFedora ID="DC" STATUS="A">
+		<METS:descMD ID="DC1.0">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="DC Record for Rita Mae Brown EAD-encoded Finding Aid object">
+				<METS:xmlData>
+					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
+					<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+						<dc:title>A Guide to the Papers of Rita Mae Brown, 1929-2001</dc:title>
+						<dc:creator>University of Virginia. Library. Special Collections Dept.</dc:creator>
+						<dc:subject>Brown, Rita Mae</dc:subject>
+						<dc:subject>Authors, American -- 20th century</dc:subject>
+						<dc:description>This collection comprises the papers of writer Rita Mae Brown (1944-), of Nelson County, Virginia, ca. 31,550 items 
+							(188 Hollinger boxes, 78 linear feet), ca. 1929-2001, and undated, and includes manuscripts of her novels and other books, poetry, 
+							articles, mysteries, book reviews, screenplays and teleplays; fan mail, personal, family and professional correspondence; calendar 
+							diaries, personal journals, photographs, and memorabilia items; legal papers; and other miscellaneous subject files, reflecting her 
+							interest in her farm, polo, film, foxhunting, feminist and gay rights issues, and her school and college years.
+						</dc:description>
+						<dc:publisher>University of Virginia. Library. Special Collections Dept.</dc:publisher>
+						<dc:source>viu03270</dc:source>
+						<dc:identifier>demo:17</dc:identifier>
+						<dc:rights>copyright, 2003, The Rector and Visitors of the University of Virginia, unrestricted</dc:rights>
+						<dc:rights>usage unrestricted</dc:rights>
+					</oai_dc:dc>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:descMD>
+	</METS:dmdSecFedora>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<!--This is the Finding Aid source XML file -->
+				<METS:file ID="DS1.0" MIMETYPE="text/xml" OWNERID="E" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/xmltext/ead/viu03270" xlink:title="EAD-encoded Finding Aid: Rita Mae Brown Papers"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- FEDORA DATASTREAM BINDING MAPS  -->
+	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="demo:16" LABEL="DS Binding Map for UVA EAD-encoded Finding Aid mechanism">
+			<METS:div TYPE="XML_SOURCE" LABEL="EAD xml source" ORDER="0">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+			<!-- Fedora currently requires that every behavior method bind to at least one datastream.   -->
+			<!-- However, there are cases where a behavior method may not require a datastream to    -->
+			<!-- perform its function; e.g., a method to provide the current date/time. The following          -->
+			<!-- mapping for NULLBIND is an example of how to handle mechanisms that do not bind    -->
+			<!-- to any datastreams in the object. Rather than bind to an arbitrary datastream, a special -->
+			<!-- binding is created named NULLBIND that maps to the Dublin Core datastream which    -->
+			<!-- is present in every object. Any methods in the mechanism that do not require a              -->
+			<!-- datastream can use the NULLBIND binding to satisfy the current Fedora binding            -->
+			<!-- requirement. -->
+			<METS:div TYPE="NULLBIND" LABEL="EAD title stylesheet" ORDER="0">
+				<METS:fptr FILEID="DC"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DISSEMINATORS-->
+	<!-- A disseminator provides a "behavior-centric" view of the object.  It has an attribute STRUCTID -->
+	<!-- which is an IDREF to a mechanism-specific structMap.  The structMap labels datastreams in -->
+	<!-- a manner that is understood by the mechanism defined in the disseminator.  -->
+	<!-- -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:15" LABEL="UVA EAD-encoded Finding Aid Behaviors">
+			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
+			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
+			<!-- the disseminator subscribes -->
+			<METS:interfaceMD LABEL="UVA EAD-encoded Finding Aid Behavior Definition" LOCTYPE="URN" xlink:href="demo:15"/>
+			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
+			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+			<METS:serviceBindMD LABEL="UVA EAD-encoded Finding Aid Behavior Mechanism" LOCTYPE="URN" xlink:href="demo:16"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
+</METS:mets>

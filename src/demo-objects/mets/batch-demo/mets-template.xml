@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<!---************************************************************************-->
+<!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
+<!-- Creator: Ross Wayland -->
+<!-- Custodian: University of Virginia Library -->
+<!-- Note: Sample Template Object used with Batch Utility -->
+<!---************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="template: don't actually use this prefix!! 4444" TYPE="FedoraObject" LABEL="template: AICT Image Collection - Mycenae" PROFILE="UVA_STD_IMAGE">
+	<!---*******************************************************************************************************************************************-->
+	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:dmdSecFedora ID="DESC1" STATUS="A">
+		<METS:descMD ID="DESC1.0">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA descriptive metadata">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:descMD>
+	</METS:dmdSecFedora>
+	<METS:amdSec ID="TECH1">
+		<METS:techMD ID="TECH1.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA technical metadata for THUMBNAIL image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<METS:amdSec ID="TECH2">
+		<METS:techMD ID="TECH2.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA technical metadata for MED res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<METS:amdSec ID="TECH3">
+		<METS:techMD ID="TECH3.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA technical metadata for HIGH res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<METS:amdSec ID="TECH4">
+		<METS:techMD ID="TECH4.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA technical metadata for VERYHIGH res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<METS:amdSec ID="SOURCE1">
+		<METS:sourceMD ID="SOURCE1.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA source metadata for THUMBNAIL res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:sourceMD>
+	</METS:amdSec>
+	<METS:amdSec ID="SOURCE2">
+		<METS:sourceMD ID="SOURCE2.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA source metadata for MEDRES res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:sourceMD>
+	</METS:amdSec>
+	<METS:amdSec ID="SOURCE3">
+		<METS:sourceMD ID="SOURCE3.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA source metadata for HIGH res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:sourceMD>
+	</METS:amdSec>
+	<METS:amdSec ID="SOURCE4">
+		<METS:sourceMD ID="SOURCE4.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA source metadata for VERYHIGH res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:sourceMD>
+	</METS:amdSec>
+	<METS:amdSec ID="DIGIPROV1">
+		<METS:digiprovMD ID="DIGIPROV1.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA digiprov metadata for THUMBNAIL res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:digiprovMD>
+	</METS:amdSec>
+	<METS:amdSec ID="DIGIPROV2">
+		<METS:digiprovMD ID="DIGIPROV2.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA digiprov metadata for MEDRES res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:digiprovMD>
+	</METS:amdSec>
+	<METS:amdSec ID="DIGIPROV3">
+		<METS:digiprovMD ID="DIGIPROV3.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA digiprov metadata for HIGH res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:digiprovMD>
+	</METS:amdSec>
+	<METS:amdSec ID="DIGIPROV4">
+		<METS:digiprovMD ID="DIGIPROV4.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA digiprov metadata for VERYHIGH res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:digiprovMD>
+	</METS:amdSec>
+	<METS:amdSec ID="RIGHTS1">
+		<METS:rightsMD ID="RIGHTS1.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA access rights/policy metadata for THUMBNAIL res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:rightsMD>
+	</METS:amdSec>
+	<METS:amdSec ID="RIGHTS2">
+		<METS:rightsMD ID="RIGHTS2.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA access rights/policy metadata for MEDRES res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:rightsMD>
+	</METS:amdSec>
+	<METS:amdSec ID="RIGHTS3">
+		<METS:rightsMD ID="RIGHTS3.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA access rights/policy metadata for HIGHRES res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:rightsMD>
+	</METS:amdSec>
+	<METS:amdSec ID="RIGHTS4">
+		<METS:rightsMD ID="RIGHTS4.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA access rights/policy metadata for VERYHIGH res image">
+				<METS:xmlData/>
+			</METS:mdWrap>
+		</METS:rightsMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<!--This is the thumbnail sized image -->
+				<METS:file ID="DS1.0" MIMETYPE="image/jpeg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="M" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/thumbs/aict/006-007.jpg" xlink:title="template: AICT thumbnail jpg image"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS2" STATUS="A">
+				<!-- This is the medium sized image -->
+				<METS:file ID="DS2.0" MIMETYPE="image/jpeg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="template: AICT medium jpg image"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS3">
+				<!--This is the high resolution image -->
+				<METS:file ID="DS3.0" MIMETYPE="image/jpeg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/high/006-007.jpg" xlink:title="template: AICT high jpg image"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS4">
+				<!--This is the very high resolution image -->
+				<METS:file ID="DS4.0" MIMETYPE="image/jpeg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/vhigh/006-007.jpg" xlink:title="template: AICT veryhigh jpg image"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- FEDORA DATASTREAM BINDING MAPS  -->
+	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="demo:2" LABEL="template: DS Binding Map for UVA Standard Image mechanism">
+			<METS:div TYPE="THUMBRES_IMG" LABEL="template: thumbnail photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+			<METS:div TYPE="MEDRES_IMG" LABEL="template: medium resolution photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS2"/>
+			</METS:div>
+			<METS:div TYPE="HIGHRES_IMG" LABEL="template: high resolution photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS3"/>
+			</METS:div>
+			<METS:div TYPE="VERYHIGHRES_IMG" LABEL="template: very high resolution photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS4"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DISSEMINATORS-->
+	<!-- A disseminator provides a "behavior-centric" view of the object.  It has an attribute STRUCTID -->
+	<!-- which is an IDREF to a mechanism-specific structMap.  The structMap labels datastreams in -->
+	<!-- a manner that is understood by the mechanism defined in the disseminator.  -->
+	<!-- -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:1" LABEL="template: UVA Std Image Behaviors">
+			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
+			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
+			<!-- the disseminator subscribes -->
+			<METS:interfaceMD LABEL="template: UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="demo:1"/>
+			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
+			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+			<METS:serviceBindMD LABEL="template: UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="demo:2"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
+</METS:mets>

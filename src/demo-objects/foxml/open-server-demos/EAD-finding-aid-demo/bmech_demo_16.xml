@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:16" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="BMechObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Behavior Mechanism Object for EAD-encoded Finding Aid Service implementing EAD-encoded Finding Aid BDEF contract."/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-16T14:32:29Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-16T14:32:30Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
+	</foxml:objectProperties>
+	<foxml:datastream CONTROL_GROUP="X" ID="DC" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion CREATED="2004-12-16T14:32:29Z" ID="DC1.0" LABEL="Dublin Core Metadata" SIZE="319">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<dc:title>Behavior Mechanism Object for EAD-encoded Finding Aid Service implementing EAD-encoded Finding Aid BDEF contract.</dc:title>
+					<dc:identifier>demo:16</dc:identifier>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream  ID="WSDL" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="WSDL1.0" LABEL="WSDL definition for UVA's EAD-encoded Finding Aidservice">
+			<foxml:xmlContent>
+				<wsdl:definitions name="FedoraEAD" targetNamespace="ead" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:this="ead" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+					<wsdl:types>
+						<xsd:schema targetNamespace="ead">
+							<xsd:simpleType name="URLType">
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+							<xsd:simpleType name="CLEAR_CACHEType">
+								<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="yes"/>
+									<xsd:enumeration value="no"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+							<xsd:simpleType name="KEYType">
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+							<xsd:simpleType name="STARTWITHType">
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+							<xsd:simpleType name="OBJECTPIDType">
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+							<xsd:simpleType name="OPType">
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+							<xsd:simpleType name="QUERYSTRINGType">
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+						</xsd:schema>
+					</wsdl:types>
+					<wsdl:message name="getTitlePageRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_TITLE_PAGE" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="getAdminInfoRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_ADMIN_INFO" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="getSummaryInfoRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_SUMMARY_INFO" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="getBiogHistInfoRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_BIOG_HIST_INFO" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="getScopeContentInfoRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_SCOPE_CONTENT_INFO" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="getComponentInfoRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_COMPONENT_INFO" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="getArrangeInfoRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_ARRANGE_INFO" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="getOrgInfoRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_ORG_INFO" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="getEntireDocRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_ENTIRE_DOC" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="getMenuRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_MENU" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+						<wsdl:part name="key" type="this:KEYType"/>
+						<wsdl:part name="startwith" type="this:STARTWITHType"/>
+					</wsdl:message>
+					<wsdl:message name="viewFindingAidRequest">
+						<wsdl:part name="objectPID" type="this:OBJECTPIDType"/>
+					</wsdl:message>
+					<wsdl:message name="getTitleRequest">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_TITLE" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="searchFindingAidRequest">
+						<wsdl:part name="objectPID" type="this:OBJECTPIDType"/>
+						<wsdl:part name="op" type="this:OPType"/>
+						<wsdl:part name="querystring" type="this:QUERYSTRINGType"/>
+					</wsdl:message>
+					<wsdl:message name="xslt_response">
+						<wsdl:part name="text" type="xsd:base64Binary"/>
+					</wsdl:message>
+					<wsdl:portType name="FedoraEADPortType">
+						<wsdl:operation name="getTitlePage">
+							<wsdl:input message="this:getTitlePageRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getAdminInfo">
+							<wsdl:input message="this:getAdminInfoRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getSummaryInfo">
+							<wsdl:input message="this:getSummaryInfoRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getBiogHistInfo">
+							<wsdl:input message="this:getBiogHistInfoRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getScopeContentInfo">
+							<wsdl:input message="this:getScopeContentInfoRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getComponentInfo">
+							<wsdl:input message="this:getComponentInfoRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getArrangeInfo">
+							<wsdl:input message="this:getArrangeInfoRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getOrgInfo">
+							<wsdl:input message="this:getOrgInfoRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getEntireDoc">
+							<wsdl:input message="this:getEntireDocRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getMenu">
+							<wsdl:input message="this:getMenuRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="viewFindingAid">
+							<wsdl:input message="this:viewFindingAidRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getTitle">
+							<wsdl:input message="this:getTitleRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="searchFindingAid">
+							<wsdl:input message="this:searchFindingAidRequest"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+					</wsdl:portType>
+					<wsdl:service name="FedoraEAD">
+						<wsdl:port binding="this:FedoraEAD_http" name="FedoraEAD_port">
+							<http:address location="LOCAL"/>
+						</wsdl:port>
+					</wsdl:service>
+					<wsdl:binding name="FedoraEAD_http" type="this:FedoraEADPortType">
+						<http:binding verb="GET"/>
+						<wsdl:operation name="getTitlePage">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_TITLE_PAGE)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getAdminInfo">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ADMIN_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getSummaryInfo">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_SUMMARY_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getBiogHistInfo">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_BIOG_HIST_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getScopeContentInfo">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_SCOPE_CONTENT_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getComponentInfo">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_COMPONENT_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getArrangeInfo">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ARRANGE_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getOrgInfo">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ORG_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getEntireDoc">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ENTIRE_DOC)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getMenu">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_MENU)&amp;clear-stylesheet-cache=(CLEAR_CACHE)&amp;key=(key)&amp;startwith=(startwith)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="viewFindingAid">
+							<http:operation location="http://dl.lib.virginia.edu/bin/cgi-dl/ead/eaddoc.pl?file=(objectPID)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getTitle">
+							<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_TITLE)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="searchFindingAid">
+							<http:operation location="http://dl.lib.virginia.edu/bin/cgi-dl/ead/findead.pl?file=(objectPID)&amp;op=(op)&amp;querystring=(querystring)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+					</wsdl:binding>
+				</wsdl:definitions>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="SERVICE-PROFILE" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="SERVICE-PROFILE1.0" LABEL="Service Profile - Technical description of the service">
+			<foxml:xmlContent>
+				<fsvp:serviceProfile bDefPID="demo:15" name="EAD Transform Service" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+					<fsvp:serviceDescription>EAD document transformation service delivers multiple views of EAD Finding Aids via XSLT transformations on the EAD xml document. </fsvp:serviceDescription>
+					<fsvp:serviceImplementation>
+						<fsvp:serviceLiveTestURL>http://icarus.lib.virginia.edu:8080/fedora/get/demo:17</fsvp:serviceLiveTestURL>
+						<fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
+						<fsvp:serviceInputFormats>
+							<fsvp:MIMEType>text/xml</fsvp:MIMEType>
+						</fsvp:serviceInputFormats>
+						<fsvp:serviceOutputFormats>
+							<fsvp:MIMEType>text/html</fsvp:MIMEType>
+							<fsvp:MIMEType>text/xml</fsvp:MIMEType>
+						</fsvp:serviceOutputFormats>
+						<fsvp:serviceImplDependencies>
+							<fsvp:software license="Mozilla_Public_License" name="saxon" opensource="true" type="Utility_Application" version="6.5"/>
+							<fsvp:software license="Apache_Software_License" name="tomcat" opensource="true" type="Server_Application" version="4.1"/>
+							<fsvp:software license="Mozilla_Public_License" name="fedora" opensource="true" type="Server_Application" version="1.2"/>
+							<fsvp:software license="GNU_GPL" name="perl" opensource="true" type="Programming_Language" version="5.6"/>
+							<fsvp:software license="GNU_LGPL" name="perl cgi library" opensource="true" type="Software_Library" version="2.14"/>
+							<fsvp:software license="GNU_GPL" name="sgrep" opensource="true" type="Utility_Application" version="1.92a"/>
+						</fsvp:serviceImplDependencies>
+					</fsvp:serviceImplementation>
+				</fsvp:serviceProfile>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="DSINPUTSPEC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="DSINPUTSPEC1.0" LABEL="Datastream Input Specification for EAD Finding Aid service">
+			<foxml:xmlContent>
+				<fbs:DSInputSpec bDefPID="demo:15" label="EAD Finding Aid Service Datastream Input Specification" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+					<fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="XML_SOURCE">
+						<fbs:DSInputLabel>XML source file</fbs:DSInputLabel>
+						<fbs:DSMIME>text/xml</fbs:DSMIME>
+						<fbs:DSInputInstruction>EAD Finding Aid source XML file</fbs:DSInputInstruction>
+					</fbs:DSInput>
+					<fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="NULLBIND">
+						<fbs:DSInputLabel>Virtual Datastream</fbs:DSInputLabel>
+						<fbs:DSMIME>text/xml</fbs:DSMIME>
+						<fbs:DSInputInstruction>Virtual datastream</fbs:DSInputInstruction>
+					</fbs:DSInput>
+				</fbs:DSInputSpec>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="METHODMAP1.0" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
+			<foxml:xmlContent>
+				<fmm:MethodMap bDefPID="demo:15" name="MethodMap - Finding Aid BMech for Finding Aid BDEF" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+					<fmm:Method operationName="getTitlePage" wsdlMsgName="getTitlePageRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="no" parmName="ZOOM" passBy="VALUE" required="true"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/tp.xsl" parmName="XSL_TITLE_PAGE" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getAdminInfo" wsdlMsgName="getAdminInfoRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/admin.xsl" parmName="XSL_ADMIN_INFO" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getSummaryInfo" wsdlMsgName="getSummaryInfoRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/summary.xsl" parmName="XSL_SUMMARY_INFO" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getBiogHistInfo" wsdlMsgName="getBiogHistInfoRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/bioghist.xsl" parmName="XSL_BIOG_HIST_INFO" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getScopeContentInfo" wsdlMsgName="getScopeContentInfoRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/scopecontent.xsl" parmName="XSL_SCOPE_CONTENT_INFO" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getComponentInfo" wsdlMsgName="getComponentInfoRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/component.xsl" parmName="XSL_COMPONENT_INFO" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getArrangeInfo" wsdlMsgName="getArrangeInfoRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/arrangement.xsl" parmName="XSL_ARRANGE_INFO" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getOrgInfo" wsdlMsgName="getOrgInfoRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/organization.xsl" parmName="XSL_ORG_INFO" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getEntireDoc" wsdlMsgName="getEntireDocRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/document.xsl" parmName="XSL_ENTIRE_DOC" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getMenu" wsdlMsgName="getMenuRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/menu.xsl" parmName="XSL_MENU" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:UserInputParm defaultValue="" parmName="key" passBy="VALUE" required="false"/>
+						<fmm:UserInputParm defaultValue="" parmName="startwith" passBy="VALUE" required="false"/>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="viewFindingAid" wsdlMsgName="viewFindingAidRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="NULLBIND" passBy="URL_REF"/>
+						<fmm:UserInputParm defaultValue="" parmName="objectPID" passBy="VALUE" required="true"/>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getTitle" wsdlMsgName="getTitleRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+						<fmm:DefaultInputParm defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/title.xsl" parmName="XSL_TITLE" passBy="URL_REF" required="true"/>
+						<fmm:UserInputParm defaultValue="no" parmName="CLEAR_CACHE" passBy="VALUE" required="false">
+							<fmm:ValidParmValues>
+								<fmm:ValidParm value="yes"/>
+								<fmm:ValidParm value="no"/>
+							</fmm:ValidParmValues>
+						</fmm:UserInputParm>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="searchFindingAid" wsdlMsgName="searchFindingAidRequest" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="NULLBIND" passBy="URL_REF"/>
+						<fmm:UserInputParm defaultValue="" parmName="objectPID" passBy="VALUE" required="true"/>
+						<fmm:UserInputParm defaultValue="" parmName="querystring" passBy="VALUE" required="true"/>
+						<fmm:DefaultInputParm defaultValue="Search+This+Guide" parmName="op" passBy="VALUE" required="true"/>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+				</fmm:MethodMap>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream  ID="DS1" CONTROL_GROUP="E" MIMETYPE="text/html" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" LABEL="Programmer documentation">
+			<foxml:contentLocation REF=" http://localhost:8080/saxon/" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="SERVICE-PROFILE" KEY="SERVICE-PROFILE" LABEL="Service profile metadata"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DSINPUTSPEC" KEY="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service"/>
+				<foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="FEDORA-TO-WSDL-METHODMAP" LABEL="XML data that enables FEDORA to understand how to use the service WSDL"/>
+				<foxml:datastreamBinding DATASTREAM_ID="WSDL" KEY="WSDL" LABEL="Service definitions in WSDL format"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="PROGGUIDE" LABEL="The Programmer's user guide for using the service"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
+</foxml:digitalObject>

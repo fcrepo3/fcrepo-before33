@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:29" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="DataObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Image of Coliseum in Rome"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-10T00:21:59Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-10T00:22:00Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/>
+	</foxml:objectProperties>
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" LABEL="DC Record for Coliseum image object">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<dc:title>Coliseum in Rome</dc:title>
+					<dc:creator>Thornton Staples</dc:creator>
+					<dc:subject>Architecture, Roman</dc:subject>
+					<dc:description>Image of Coliseum in Rome</dc:description>
+					<dc:publisher>University of Virginia Library</dc:publisher>
+					<dc:format>image/jpeg</dc:format>
+					<dc:identifier>demo:29</dc:identifier>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="DS1" CONTROL_GROUP="M" MIMETYPE="image/jpeg" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" LABEL="Thorny's Coliseum high jpg image">
+			<foxml:contentLocation REF="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:27" STATE="A">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:28" LABEL="Image Manipulation Behaviors">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="url" LABEL="Binding to big pic of Coliseum"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
+</foxml:digitalObject>

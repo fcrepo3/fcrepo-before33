@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---********************************************************************************************-->
+<!-- SAMPLE FEDORA BEHAVIOR DEFINITION OBJECT ENCODED USING METS -->
+<!-- Creator: Ross Wayland -->
+<!-- Custodian: University of Virginia Library -->
+<!-- Note: Behavior Definition Object for EAD-encoded Finding Aid, created as a sample object. -->
+<!---********************************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:15" TYPE="FedoraBDefObject" LABEL="Behavior Definition Object for UVA Standard EAD Finding Aid Contract" PROFILE="fedora:BDEF">
+	<!---*******************************************************************************************************************************************-->
+	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!-- ****************************************************************************************************************************************** -->
+	<!--  METHOD MAP: Usage pattern for Behavior Definition Objects.  A Fedora Behavior Definition contains abstract method -->
+	<!--  names and user input parameters.  The method definitions represent what an end user would see as -->
+	<!--  the set of methods that can be run as disseminations.  The method definitions are stripped of any mechanism-specific -->
+	<!--  information.  The method return type  is always a MIME-typed stream. -->
+	<!--  NOTE:  Some elements in the Method Map schema are not appropriate for usage when encoding a Fedora Behavior Definition. -->
+	<!--  These are elements that pertain to mapping a concrete service definition (WSDL)  to Fedora (in a Behavior Mechanism Object). -->
+	<!--  The following Method Map schema entities do NOT apply to Behavior Definitions:  -->
+	<!--  element DefaultInputParm,  element DatastreamInputParm, element MethodReturnType, -->
+	<!--  and attributes wsdlMsgName and wsdlMsgOutput on element Method. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="METHODMAP">
+		<METS:techMD ID="METHODMAP1.0" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Method Map for Fedora Behavior Definition for UVA EAD-encoded Finding Aid">
+				<METS:xmlData>
+					<fmm:MethodMap name="Fedora MethodMap for Standard EAD-encoded Finding Aid bDef" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+						<fmm:Method operationName="getTitlePage">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+						<fmm:Method operationName="getAdminInfo">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+						<fmm:Method operationName="getSummaryInfo">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+						<fmm:Method operationName="getBiogHistInfo">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+						<fmm:Method operationName="getScopeContentInfo">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+						<fmm:Method operationName="getComponentInfo">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+						<fmm:Method operationName="getArrangeInfo">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+						<fmm:Method operationName="getOrgInfo">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+						<fmm:Method operationName="getEntireDoc">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+						<fmm:Method operationName="getMenu">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+							<fmm:UserInputParm parmName="key" required="false" defaultValue="" passBy="VALUE"/>
+							<fmm:UserInputParm parmName="startwith" required="false" defaultValue="" passBy="VALUE"/>
+						</fmm:Method>
+						<fmm:Method operationName="viewFindingAid">
+							<fmm:UserInputParm parmName="objectPID" required="true" defaultValue="" passBy="VALUE"/>
+						</fmm:Method>
+						<fmm:Method operationName="getTitle">
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+						<fmm:Method operationName="searchFindingAid">
+							<fmm:UserInputParm parmName="objectPID" required="true" defaultValue="" passBy="VALUE"/>
+							<fmm:UserInputParm parmName="querystring" required="true" defaultValue="" passBy="VALUE"/>
+						</fmm:Method>
+					</fmm:MethodMap>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
+	<!---*******************************************************************************************************************************************-->
+	<!--  Here we aggregate file(s) that relate to the EAD Finding Aid behavior definition.-->
+	<!--  These can be documentation or other resources.  -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<METS:file ID="DS1.0" SEQ="1" MIMETYPE="text/html" OWNERID="E" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.lib.virginia.edu/speccol/vhp/" xlink:title="Behavior Def Guide"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- FEDORA DATASTREAM BINDING MAPS  -->
+	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR (see METS:behaviorSec).-->
+	<!---*******************************************************************************************************************************************-->
+	<!-- DATASTREAM BINDING MAP FOR THE FEDORA BOOTSTRAP MECHANISM (An internal Fedora service) -->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="fedora-system:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
+			<METS:div TYPE="BDEF-METHODMAP" LABEL="Abstract behavior definition in Fedora Method Map format">
+				<METS:fptr FILEID="METHODMAP"/>
+			</METS:div>
+			<METS:div TYPE="BDEF-GUIDE" LABEL="The Official Guide to the UVA EAD-encoded Finding Aid Behavior Definition">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DISSEMINATORS-->
+	<!---*******************************************************************************************************************************************-->
+	<!--- THE BOOTSTRAP  DISSEMINATOR -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior Mechanism to run the behaviors. -->
+	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Defintion Object.   -->
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" LABEL="Bootstrap Behaviors">
+			<METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="fedora-system:1"/>
+			<METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="fedora-system:2"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
+</METS:mets>

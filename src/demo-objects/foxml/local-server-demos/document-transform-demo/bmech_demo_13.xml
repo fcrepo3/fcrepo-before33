@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:13" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="BMechObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Behavior Mechanism Object implementing the Document Transform BDEF contract using the Fedora Local Saxon Transformation Service"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-10T00:21:55Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-10T00:21:56Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
+	</foxml:objectProperties>
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Metadata">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<dc:title>Behavior Mechanism Object implementing the Document Transform BDEF contract using the Fedora Local Saxon Transformation Service</dc:title>
+					<dc:identifier>demo:13</dc:identifier>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream  ID="WSDL" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="WSDL1.0" LABEL="WSDL definition for Document Transform Mapping to the Fedora Local Saxon Service">
+			<foxml:xmlContent>
+				<wsdl:definitions name="Fedora Local Saxon Service" targetNamespace="saxon" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:this="saxon" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+					<wsdl:types>
+						<xsd:schema targetNamespace="saxon">
+							<xsd:simpleType name="URLType">
+								<xsd:restriction base="xsd:string"/>
+							</xsd:simpleType>
+							<xsd:simpleType name="CLEAR_CACHEType">
+								<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="yes"/>
+									<xsd:enumeration value="no"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:schema>
+					</wsdl:types>
+					<wsdl:message name="getDocumentStyle1Request">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_STYLESHEET1" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="getDocumentStyle2Request">
+						<wsdl:part name="XML_SOURCE" type="this:URLType"/>
+						<wsdl:part name="XSL_STYLESHEET2" type="this:URLType"/>
+						<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
+					</wsdl:message>
+					<wsdl:message name="xslt_response">
+						<wsdl:part name="exhibit" type="xsd:base64Binary"/>
+					</wsdl:message>
+					<wsdl:portType name="FedoraSaxonPortType">
+						<wsdl:operation name="getDocumentStyle1">
+							<wsdl:input message="this:getDocumentStyle1Request"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getDocumentStyle2">
+							<wsdl:input message="this:getDocumentStyle2Request"/>
+							<wsdl:output message="this:xslt_response"/>
+						</wsdl:operation>
+					</wsdl:portType>
+					<wsdl:service name="FedoraSaxon">
+						<wsdl:port binding="this:FedoraSaxon_http" name="FedoraSaxon_port">
+							<http:address location="http://localhost:8080/saxon/"/>
+						</wsdl:port>
+					</wsdl:service>
+					<wsdl:binding name="FedoraSaxon_http" type="this:FedoraSaxonPortType">
+						<http:binding verb="GET"/>
+						<wsdl:operation name="getDocumentStyle1">
+							<http:operation location="SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_STYLESHEET1)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getDocumentStyle2">
+							<http:operation location="SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_STYLESHEET2)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="text/html"/>
+							</wsdl:output>
+						</wsdl:operation>
+					</wsdl:binding>
+				</wsdl:definitions>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream  ID="SERVICE-PROFILE" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="SERVICE-PROFILE1.0" LABEL="Service Profile - Technical description of the service">
+			<foxml:xmlContent>
+				<fsvp:serviceProfile bDefPID="demo:12" name="Saxon Service" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+					<fsvp:serviceDescription>Document transformation via Fedora Local Saxon Service</fsvp:serviceDescription>
+					<fsvp:serviceImplementation>
+						<fsvp:serviceLiveTestURL>http://localhost:8080/saxon/</fsvp:serviceLiveTestURL>
+						<fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
+						<fsvp:serviceInputFormats>
+							<fsvp:MIMEType>text/xml</fsvp:MIMEType>
+						</fsvp:serviceInputFormats>
+						<fsvp:serviceOutputFormats>
+							<fsvp:MIMEType>text/html</fsvp:MIMEType>
+							<fsvp:MIMEType>text/xml</fsvp:MIMEType>
+							<fsvp:MIMEType>text/xhtml</fsvp:MIMEType>
+							<fsvp:MIMEType>text/plain</fsvp:MIMEType>
+						</fsvp:serviceOutputFormats>
+						<fsvp:serviceImplDependencies>
+							<fsvp:software license="Mozilla_Public_License" name="saxon" opensource="true" type="Utility_Application" version="6.5"/>
+							<fsvp:software license="Apache_Software_License" name="tomcat" opensource="true" type="Server_Application" version="4.1"/>
+							<fsvp:software license="Mozilla_Public_License" name="fedora" opensource="true" type="Server_Application" version="1.2"/>
+						</fsvp:serviceImplDependencies>
+					</fsvp:serviceImplementation>
+				</fsvp:serviceProfile>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream ID="DSINPUTSPEC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="DSINPUTSPEC1.0" LABEL="Datastream Input Specification Mapping to the Fedora Local Saxon Service">
+			<foxml:xmlContent>
+				<fbs:DSInputSpec bDefPID="demo:12" label="NSDL Exhibit Mapping to the Fedora Local Saxon Service" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+					<fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="XML_SOURCE">
+						<fbs:DSInputLabel>XML source file</fbs:DSInputLabel>
+						<fbs:DSMIME>text/xml</fbs:DSMIME>
+						<fbs:DSInputInstruction>XML source file to be transformed</fbs:DSInputInstruction>
+					</fbs:DSInput>
+					<fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="XSL_STYLESHEET1">
+						<fbs:DSInputLabel>XSLT Stylesheet 1</fbs:DSInputLabel>
+						<fbs:DSMIME>text/xml</fbs:DSMIME>
+						<fbs:DSInputInstruction>Stylesheet to produce the transformation output in Style 1</fbs:DSInputInstruction>
+					</fbs:DSInput>
+					<fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="XSL_STYLESHEET2">
+						<fbs:DSInputLabel>XSLT Stylesheet 2</fbs:DSInputLabel>
+						<fbs:DSMIME>text/xml</fbs:DSMIME>
+						<fbs:DSInputInstruction>Stylesheet to produce the transformation output in Style 2</fbs:DSInputInstruction>
+					</fbs:DSInput>
+				</fbs:DSInputSpec>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream  ID="METHODMAP" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
+		<foxml:datastreamVersion ID="METHODMAP1.0" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
+			<foxml:xmlContent>
+				<fmm:MethodMap bDefPID="demo:12" name="MethodMap - Document Transform BDEF Methods" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+					<fmm:Method operationName="getDocumentStyle1" wsdlMsgName="getDocumentStyle1Request" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF" required="true"/>
+						<fmm:DatastreamInputParm parmName="XSL_STYLESHEET1" passBy="URL_REF" required="true"/>
+						<fmm:DefaultInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="true"/>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+					<fmm:Method operationName="getDocumentStyle2" wsdlMsgName="getDocumentStyle2Request" wsdlMsgOutput="xslt_response">
+						<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF" required="true"/>
+						<fmm:DatastreamInputParm parmName="XSL_STYLESHEET2" passBy="URL_REF" required="true"/>
+						<fmm:DefaultInputParm defaultValue="yes" parmName="CLEAR_CACHE" passBy="VALUE" required="true"/>
+						<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
+					</fmm:Method>
+				</fmm:MethodMap>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream  ID="DS1" CONTROL_GROUP="E" MIMETYPE="text/html" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" LABEL="Programmer documentation" SIZE="0">
+			<foxml:contentLocation REF="http://localhost:8080/saxon/" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:disseminator  ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
+		<foxml:disseminatorVersion  ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="SERVICE-PROFILE" KEY="SERVICE-PROFILE" LABEL="Service profile metadata"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DSINPUTSPEC" KEY="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service"/>
+				<foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="FEDORA-TO-WSDL-METHODMAP" LABEL="XML data that enables FEDORA to understand how to use the service WSDL"/>
+				<foxml:datastreamBinding DATASTREAM_ID="WSDL" KEY="WSDL" LABEL="Service definitions in WSDL format"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="PROGGUIDE" LABEL="The Programmer's user guide for using the service"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
+</foxml:digitalObject>

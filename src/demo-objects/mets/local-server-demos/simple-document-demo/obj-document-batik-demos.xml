@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---************************************************************************-->
+<!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS    -->
+<!-- Creator: Chris Wilper -->
+<!-- Custodian: Cornell -->
+<!-- Note: Demonstration digital object containing SVG demos from the Batik 1.5 distribution. -->
+<!---************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:31" TYPE="FedoraObject" LABEL="Apache Batik 1.5 Demo Directory" PROFILE="SIMPLE_DOC">
+	<!---*******************************************************************************************************************************************-->
+	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:dmdSecFedora ID="DC" STATUS="A">
+		<METS:descMD ID="DC1.0">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Dublin Core Record">
+				<METS:xmlData>
+					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
+					<!-- TED, make up some metadata to describe the exhibit object. Insert in elements below -->
+					<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+						<dc:title>Apache Batik 1.5 Demo Directory</dc:title>
+						<dc:creator>Chris Wilper</dc:creator>
+						<dc:creator>The Apache Group</dc:creator>
+						<dc:subject>svg</dc:subject>
+						<dc:subject>batik</dc:subject>
+						<dc:subject>apache</dc:subject>
+						<dc:description>Demonstration digital object containing SVG demos from the Batik 1.5 distribution</dc:description>
+						<dc:publisher>The Apache Group</dc:publisher>
+						<dc:format>image/svg+xml</dc:format>
+						<dc:identifier>demo:31</dc:identifier>
+						<dc:relation>http://xml.apache.org/batik/</dc:relation>
+						<dc:rights>The Apache License</dc:rights>
+					</oai_dc:dc>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:descMD>
+	</METS:dmdSecFedora>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<METS:file ID="DS1.0" MIMETYPE="image/svg+xml" OWNERID="M" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.fedora.info/demo/misc/batikBatik.svg" xlink:title="Local copy of batikBatik.svg"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS2" STATUS="A">
+				<METS:file ID="DS2.0" MIMETYPE="image/svg+xml" OWNERID="M" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.fedora.info/demo/misc/sizeOfSun.svg" xlink:title="Local copy of sizeOfSun.svg"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS3" STATUS="A">
+				<METS:file ID="DS3.0" MIMETYPE="text/html" OWNERID="R" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://xml.apache.org/batik/" xlink:title="Homepage for Batik, the software that the demos came with."/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+</METS:mets>

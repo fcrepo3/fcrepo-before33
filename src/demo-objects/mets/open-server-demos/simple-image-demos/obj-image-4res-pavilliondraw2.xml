@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---************************************************************************-->
+<!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
+<!-- Creator: Ross Wayland -->
+<!-- Custodian: University of Virginia Library -->
+<!-- Note: Demonstration Digital Object.  This Fedora data object demonstrates the UVA Simple Image -->
+<!--  behaviors being fulfilled via the Fedora HTTP Image Getter service.  The fulfillment of the behavior -->
+<!-- contract entails the Fedora HTTP Image Getter resolving the URL of the appropriate datastream for -->
+<!-- each of the UVA Simple Image behaviors.  There are no transformations performed on the datastreams. -->
+<!-- There are 4 external datastreams in the object, one for each image resolution specified in the behavior -->
+<!-- definition.  In this example, the datastreams are of type "R" indicating that their external URLs are to be -->
+<!-- redirected by Fedora. Access to the datastreams is also restricted by the external web server that -->
+<!-- contains the datastreams and requires a username and password of "fedora".  When these datastreams -->
+<!-- are disseminated, the user will be prompted to enter the username and password of "fedora" in order -->
+<!-- to view the datastream contents. Note that this access restriction is being provided by the external server -->
+<!-- and not Fedora. Authentication and Access Control Policy will be added to Fedora in a future release -->
+<!-- enabling Fedora to control access rights. This example demonstrates a temporary work around if the user -->
+<!-- has password-protected content that they would like to disseminate using Fedora. -->
+<!---************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:30" TYPE="FedoraObject" LABEL="Image of Coliseum in Rome" PROFILE="UVA_STD_IMAGE">
+	<!---*******************************************************************************************************************************************-->
+	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:dmdSecFedora ID="DC" STATUS="A">
+		<METS:descMD ID="DC1.0">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="DC Record for Pavillion III Architectural image object">
+				<METS:xmlData>
+					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
+					<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+						<dc:title>Architectural Image of Drawing of Pavilion III, University of Virginia</dc:title>
+						<dc:creator>Thomas Jefferson</dc:creator>
+						<dc:subject>Pavilion III</dc:subject>
+						<dc:subject>lawn</dc:subject>
+						<dc:subject>University of Virginia</dc:subject>
+						<dc:subject>Jefferson</dc:subject>
+						<dc:subject>Jeffersonian architecture</dc:subject>
+						<dc:description>Image of architectural drawing of Pavillion III on the lawn at University of Virginia</dc:description>
+						<dc:publisher>IVA</dc:publisher>
+						<dc:format>image/jpeg</dc:format>
+						<dc:identifier>demo:30</dc:identifier>
+						<dc:rights>unrestricted</dc:rights>
+					</oai_dc:dc>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:descMD>
+	</METS:dmdSecFedora>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<!--This is the low resolution sized image -->
+				<METS:file ID="DS1.0" MIMETYPE="image/jpeg" OWNERID="R" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/restricted/archerd01-thumb.jpg" xlink:title="Architectural Drawing Pavilion III (thumbnail res)"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS2" STATUS="A">
+				<!-- This is the medium resolution image -->
+				<METS:file ID="DS2.0" MIMETYPE="image/jpeg" OWNERID="R" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/restricted/archerd01-medium1.jpg" xlink:title="Architectural Drawing Pavilion III (medium res)"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS3">
+				<!--This is the high resolution image -->
+				<METS:file ID="DS3.0" MIMETYPE="image/jpeg" OWNERID="R" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/restricted/archerd01-medium2.jpg" xlink:title="Architectural Drawing Pavilion III (high res)"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS4">
+				<!--This is the very high resolution image -->
+				<METS:file ID="DS4.0" MIMETYPE="image/jpeg" OWNERID="R" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/restricted/archerd01-high.jpg" xlink:title="Architectural Drawing Pavilion III (veryhigh res)"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- FEDORA DATASTREAM BINDING MAPS  -->
+	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="demo:2" LABEL="DS Binding Map for Fedora HTTP Image Getter Mechanism">
+			<METS:div TYPE="THUMBRES_IMG" LABEL="Binding to thumbnail resolution image of Pavillion III architectural drawing" ORDER="0">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+			<METS:div TYPE="MEDRES_IMG" LABEL="Binding to medium resolution image of Pavillion III architectural drawing" ORDER="0">
+				<METS:fptr FILEID="DS2"/>
+			</METS:div>
+			<METS:div TYPE="HIGHRES_IMG" LABEL="Binding to high resolution image of Pavillion III architectural drawing" ORDER="0">
+				<METS:fptr FILEID="DS3"/>
+			</METS:div>
+			<METS:div TYPE="VERYHIGHRES_IMG" LABEL="Binding to very high resolution image of Pavillion III architectural drawing" ORDER="0">
+				<METS:fptr FILEID="DS4"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DISSEMINATORS-->
+	<!-- A disseminator provides a "behavior-centric" view of the object.  It has an attribute STRUCTID -->
+	<!-- which is an IDREF to a mechanism-specific structMap.  The structMap labels datastreams in -->
+	<!-- a manner that is understood by the mechanism defined in the disseminator.  -->
+	<!-- -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:1" LABEL="UVA Simple Image Behaviors">
+			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
+			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
+			<!-- the disseminator subscribes -->
+			<METS:interfaceMD LABEL="UVA Simple Image Behavior Definition" LOCTYPE="URN" xlink:href="demo:1"/>
+			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
+			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+			<METS:serviceBindMD LABEL="Fedora HTTP Image Getter Behavior Mechanism" LOCTYPE="URN" xlink:href="demo:2"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
+</METS:mets>
