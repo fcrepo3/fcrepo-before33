@@ -63,14 +63,6 @@ public class DatastreamXMLMetadata extends Datastream
    */
   public int DSMDClass;
 
-  /**
-   * The namespace prefixes used in the XML encoding of the object.
-   * This can be used to fully qualify the elements in an XML datastream
-   * in conjunction with DigitalObject.getNamespaceMapping, without
-   * requiring that the XML datastream is re-parsed to find these names.
-   */
-  public String[] namespacePrefixes;
-
   private String m_encoding;
 
   public DatastreamXMLMetadata()

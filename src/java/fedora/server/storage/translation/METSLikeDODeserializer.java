@@ -388,13 +388,11 @@ public class METSLikeDODeserializer
         // if we're looking at inline metadata, be sure to save the prefix
         // so we know it's used in that datastream
 
-        // AHA!
-        // m_inXMLMetadata isn't true yet, so it never gets added to the hash
         if (m_inXMLMetadata) {
             if (!m_dsPrefixes.contains(prefix)) {
-                if (!"".equals(prefix)) {
+//                if (!"".equals(prefix)) {
                     m_dsPrefixes.add(prefix);
-                }
+//                }
             }
         }
     }
@@ -748,21 +746,22 @@ public class METSLikeDODeserializer
                 // of METS:xmlData elements we see
                 String prefix=(String) m_prefixes.get(uri);
                 if (m_firstInlineXMLElement) {
+                // deal with root element... buffer it separately so we can 
+                // add namespace stuff after it's known
                     m_firstInlineXMLElement=false;
                     m_dsFirstElementBuffer.append('<');
-                    if (prefix!=null) {
+                    if (prefix!=null && !prefix.equals("")) {
                         if (!m_dsPrefixes.contains(prefix)) {
-                            if (!"".equals(prefix)) {
-                                m_dsPrefixes.add(prefix);
-                            }
+                            m_dsPrefixes.add(prefix);
                         }
                         m_dsFirstElementBuffer.append(prefix);
                         m_dsFirstElementBuffer.append(':');
                     }
                     m_dsFirstElementBuffer.append(localName);
                 } else {
+                // deal with non-root elements
                     m_dsXMLBuffer.append('<');
-                    if (prefix!=null) {
+                    if (prefix!=null && !prefix.equals("")) {
                         if (!m_dsPrefixes.contains(prefix)) {
                             if (!"".equals(prefix)) {
                                 m_dsPrefixes.add(prefix);
@@ -773,10 +772,11 @@ public class METSLikeDODeserializer
                     }
                     m_dsXMLBuffer.append(localName);
                 }
+                // deal with attributes
                 for (int i=0; i<a.getLength(); i++) {
                     m_dsXMLBuffer.append(' ');
                     String aPrefix=(String) m_prefixes.get(a.getURI(i));
-                    if (aPrefix!=null) {
+                    if (aPrefix!=null && !aPrefix.equals("")) {
                         if (!m_dsPrefixes.contains(aPrefix)) {
                             if (!"".equals(aPrefix)) {
                                 m_dsPrefixes.add(aPrefix);
@@ -854,22 +854,22 @@ public class METSLikeDODeserializer
                     m_obj.getAuditRecords().add(a);
                 } else {
                     // create the right kind of datastream and add it to m_obj
-                    String[] prefixes=new String[m_dsPrefixes.size()];
                     for (int i=0; i<m_dsPrefixes.size(); i++) {
-                        String pfx=(String) m_dsPrefixes.get(i);
-                        prefixes[i]=pfx;
                         // now finish writing to m_dsFirstElementBuffer, a series of strings like
                         // ' xmlns:PREFIX="URI"'
+                        String pfx=(String) m_dsPrefixes.get(i);
                         String pfxUri=(String) m_prefixUris.get(pfx);
-                        m_dsFirstElementBuffer.append(" xmlns:");
-                        m_dsFirstElementBuffer.append(pfx);
+                        if (!pfx.equals("")) {
+                            m_dsFirstElementBuffer.append(" xmlns:");
+                            m_dsFirstElementBuffer.append(pfx);
+                        } else {
+                            m_dsFirstElementBuffer.append(" xmlns");
+                        }
                         m_dsFirstElementBuffer.append("=\"");
                         m_dsFirstElementBuffer.append(pfxUri);
                         m_dsFirstElementBuffer.append("\"");
                     }
                     DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
-                    // set the attrs specific to XML_METADATA datastreams
-                    ds.namespacePrefixes=prefixes;
                     try {
                         String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
                         ds.xmlContent=combined.getBytes(
@@ -911,7 +911,7 @@ public class METSLikeDODeserializer
                 // if needed
                 m_dsXMLBuffer.append("</");
                 String prefix=(String) m_prefixes.get(uri);
-                if (prefix!=null) {
+                if (prefix!=null && !prefix.equals("")) {
                     m_dsXMLBuffer.append(prefix);
                     m_dsXMLBuffer.append(':');
                 }

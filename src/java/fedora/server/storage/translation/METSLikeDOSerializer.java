@@ -176,13 +176,15 @@ public class METSLikeDOSerializer
         while (iter.hasNext()) {
             String URI=(String) iter.next();
             String prefix=(String) URIToPrefix.get(URI);
-            if ( (URI.equals(METS_XLINK_NS)) || (URI.equals(REAL_XLINK_NS)) ) {
-                m_XLinkPrefix=prefix;
-            } else if (URI.equals(FEDORA_AUDIT_NS)) {
-                m_fedoraAuditPrefix=prefix;
-            } else if (!URI.equals(METS_NS)) {
-                buf.append(prepend + "xmlns:" + prefix + "=\""
-                        + StreamUtility.enc(URI) + "\"\n");
+            if (!prefix.equals("")) {
+                if ( (URI.equals(METS_XLINK_NS)) || (URI.equals(REAL_XLINK_NS)) ) {
+                    m_XLinkPrefix=prefix;
+                } else if (URI.equals(FEDORA_AUDIT_NS)) {
+                    m_fedoraAuditPrefix=prefix;
+                } else if (!URI.equals(METS_NS)) {
+                    buf.append(prepend + "xmlns:" + prefix + "=\""
+                            + StreamUtility.enc(URI) + "\"\n");
+                }
             }
         }
         buf.append(prepend + "xmlns:" + m_XLinkPrefix + "=\""
