@@ -1,10 +1,7 @@
 package fedora.server.storage;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -13,21 +10,15 @@ import java.sql.Statement;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Properties;
 import java.util.Vector;
 
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
-import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
-import fedora.server.errors.ObjectNotFoundException;
-import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
-import fedora.server.storage.ConnectionPoolManagerImpl;
-import fedora.server.storage.DOManager;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DisseminationBindingInfo;
@@ -35,7 +26,6 @@ import fedora.server.storage.types.DSBindingMapAugmented;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
-import fedora.server.utilities.DateUtility;
 
 /**
  * <p>Title: FastDOReader.java</p>
@@ -86,34 +76,57 @@ import fedora.server.utilities.DateUtility;
  */
 public class FastDOReader implements DisseminatingDOReader
 {
+  /** Debug toggle for testing */
   private static boolean debug;
+
+  /** Database ConnectionPool instance */
   private static ConnectionPool connectionPool = null;
+
+  /** Fedora server instance */
   private static Server s_server = null;
+
+  /** Current Fedora server DOManager instance */
   private static DOManager m_manager = null;
+
+  /** Signals object found in fast storage area */
   private boolean isFoundInFastStore = false;
+
+  /** signals object found in definitive storage area */
   private boolean isFoundInDefinitiveStore = false;
+
+  /** Label of the digital object. */
   private String doLabel = null;
+
+  /** Persistent identifier of the digital object. */
   private String PID = null;
-  private DefinitiveDOReader doReader = null;
-  private DefinitiveBMechReader bMechReader = null;
+
+  /** Instance of DOReader... used to get definitive readers. */
+  private DOReader doReader = null;
+
+  /** Context for cached objects. */
   private Context s_context = null;
+
+  /** Context for uncached objects. */
   private static Context m_context = null;
 
+  /** Make sure we have a server instance. */
   static
   {
     try
     {
-      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      s_server =
+          Server.getInstance(new File(System.getProperty("fedora.home")));
       Boolean B1 = new Boolean(s_server.getParameter("debug"));
       debug = B1.booleanValue();
-      m_manager=(DOManager) s_server.getModule(
-              "fedora.server.storage.DOManager");
+      m_manager = (DOManager) s_server.getModule(
+          "fedora.server.storage.DOManager");
       HashMap h = new HashMap();
       h.put("application", "apia");
       h.put("useCachedObject", "false");
       h.put("userId", "fedoraAdmin");
       m_context = new ReadOnlyContext(h);
-    } catch (InitializationException ie) {
+    } catch (InitializationException ie)
+    {
       System.err.println(ie.getMessage());
     }
   }
@@ -123,20 +136,20 @@ public class FastDOReader implements DisseminatingDOReader
    * object. It initializes the database connection for JDBC access to the
    * relational database and verifies existence of the specified object. If
    * the object is found, this constructor initializes the class variables for
-   * <code>PID</code> and <code>doLabel</code>. If the specified object cannot
-   * be found, <code>ObjectNotFoundException</code> is thrown.</p>
+   * <code>PID</code>, <code>doLabel</code>, and <code>s_context</code>.
    *
+   * @param context The context of this request.
    * @param objectPID The persistent identifier of the digital object.
-   * @throws ObjectNotFoundException If the digital object cannot be found.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
    */
   public FastDOReader(Context context, String objectPID) throws ServerException
   {
     try
     {
       // Get database connection pool
-      ConnectionPoolManager poolManager =
-          (ConnectionPoolManager)s_server.
-          getModule("fedora.server.storage.ConnectionPoolManager");
+      ConnectionPoolManager poolManager = (ConnectionPoolManager)
+          s_server.getModule("fedora.server.storage.ConnectionPoolManager");
       connectionPool = poolManager.getPool();
 
       // Attempt to find object in either Fast or Definitive store
@@ -162,7 +175,11 @@ public class FastDOReader implements DisseminatingDOReader
    * Definitive storage area using <code>DefinitiveDOReader</code>.</p>
    *
    * @return A stream of bytes consisting of the XML-encoded representation
-   * of the digital object.
+   *         of the digital object.
+   * @throws StreamIOException If there is a problem in getting the XML input
+   *         stream.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public InputStream ExportObject() throws StreamIOException, GeneralException
   {
@@ -170,9 +187,9 @@ public class FastDOReader implements DisseminatingDOReader
     {
       if (doReader == null)
       {
-        //doReader = new DefinitiveDOReader(PID);
-        doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        doReader =  m_manager.getReader(m_context, PID);
       }
+      return(doReader.ExportObject());
     } catch (Throwable th)
     {
       throw new GeneralException("Definitive reader returned error. The "
@@ -180,7 +197,7 @@ public class FastDOReader implements DisseminatingDOReader
                                  + th.getClass().getName() + "The message "
                                  + "was \"" + th.getMessage() + "\"");
     }
-    return(doReader.ExportObject());
+
   }
 
   /**
@@ -189,6 +206,8 @@ public class FastDOReader implements DisseminatingDOReader
    *
    * @param versDateTime The versioning datetime stamp.
    * @return An array containing a list of Behavior Definition object PIDs.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public String[] GetBehaviorDefs(Date versDateTime)
       throws GeneralException
@@ -213,7 +232,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) s_server.logInfo("GetBehaviorDefsQuery: " + query);
+      if (debug) s_server.logFinest("GetBehaviorDefsQuery: " + query);
       ResultSet rs = null;
       String results = null;
       try
@@ -256,8 +275,7 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
         behaviorDefs = doReader.GetBehaviorDefs(versDateTime);
       } catch (Throwable th)
@@ -278,8 +296,8 @@ public class FastDOReader implements DisseminatingDOReader
    * @param methodName The name of the method.
    * @param versDateTime The versioning datetime stamp.
    * @return An array of method parameter definitions.
-   * @throws MethodNotFoundException If the specified method name cannot
-   * be found.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public MethodParmDef[] GetBMechMethodParm(String bDefPID, String methodName,
       Date versDateTime) throws GeneralException
@@ -316,11 +334,11 @@ public class FastDOReader implements DisseminatingDOReader
           + "BehaviorDefinition.BDEF_PID='" + bDefPID + "' AND "
           + "Method.METH_Name='"  + methodName + "' ";
 
-      if(debug) s_server.logInfo("GetBMechMethodParmQuery=" + query);
+      if(debug) s_server.logFinest("GetBMechMethodParmQuery=" + query);
       try
       {
         Connection connection = connectionPool.getConnection();
-        if(debug) s_server.logInfo("connectionPool = " + connectionPool);
+        if(debug) s_server.logFinest("connectionPool = " + connectionPool);
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -365,7 +383,10 @@ public class FastDOReader implements DisseminatingDOReader
       // query Definitive storage area.
       try
       {
-        DefinitiveBMechReader bMechReader = new DefinitiveBMechReader(bDefPID);
+        if (doReader == null)
+        {
+          doReader = m_manager.getReader(m_context, bDefPID);
+        }
 
         // FIXME!! - code to get method parameters directly from the
         // XML objects NOT implemented yet.
@@ -398,6 +419,8 @@ public class FastDOReader implements DisseminatingDOReader
    * @param bDefPID The persistent identifier of Behavior Definition object.
    * @param versDateTime The versioning datetime stamp.
    * @return An array of method definitions.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
       throws GeneralException
@@ -435,7 +458,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "BehaviorDefinition.BDEF_PID = \'" + bDefPID + "\' AND "
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) s_server.logInfo("GetBMechMethodsQuery: " + query);
+      if (debug) s_server.logFinest("GetBMechMethodsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -495,8 +518,7 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
         methodDefs = doReader.GetBMechMethods(bDefPID, versDateTime);
       } catch (Throwable th)
@@ -513,13 +535,18 @@ public class FastDOReader implements DisseminatingDOReader
   /**
    * <p>Gets WSDL containing method definitions. Since the XML representation
    * of digital objects is not stored in the Fast storage area, this method
-   * uses <code>DefinitiveDOReader</code> to query the Definitive
+   * uses a <code>DOReader</code> to query the Definitive
    * storage area.</p>
    *
    * @param bDefPID The persistent identifier of Behavior Definition object.
    * @param versDateTime The versioning datetime stamp.
    * @return A stream of bytes containing XML-encoded representation of
-   * method definitions from WSDL in assocaited Behavior Mechanism object.
+   *         method definitions from WSDL in assocaited Behavior Mechanism
+   *         object.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
    */
   public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
       throws GeneralException, ServerException
@@ -528,8 +555,7 @@ public class FastDOReader implements DisseminatingDOReader
     {
       if (doReader == null)
       {
-        //doReader = new DefinitiveDOReader(PID);
-        doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        doReader = m_manager.getReader(m_context, PID);
       }
       return doReader.GetBMechMethodsWSDL(bDefPID, versDateTime);
     } catch (ServerException se)
@@ -551,6 +577,8 @@ public class FastDOReader implements DisseminatingDOReader
    * @param datastreamID The identifier of the requested datastream.
    * @param versDateTime The versioning datetime stamp.
    * @return The specified datastream.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public Datastream GetDatastream(String datastreamID, Date versDateTime)
       throws GeneralException
@@ -575,7 +603,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "DataStreamBinding.DSBinding_DS_ID=\'" + datastreamID +"\' AND "
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) s_server.logInfo("GetDatastreamQuery: " + query);
+      if (debug) s_server.logFinest("GetDatastreamQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -614,7 +642,7 @@ public class FastDOReader implements DisseminatingDOReader
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -624,8 +652,7 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
         datastream = doReader.GetDatastream(datastreamID, versDateTime);
       } catch (Throwable th)
@@ -644,6 +671,8 @@ public class FastDOReader implements DisseminatingDOReader
    *
    * @param versDateTime The versioning datetime stamp.
    * @return An array of datastreams.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public Datastream[] GetDatastreams(Date versDateTime)
       throws GeneralException
@@ -667,7 +696,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) s_server.logInfo("GetDatastreamsQuery: " + query);
+      if (debug) s_server.logFinest("GetDatastreamsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -705,7 +734,7 @@ public class FastDOReader implements DisseminatingDOReader
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -713,18 +742,11 @@ public class FastDOReader implements DisseminatingDOReader
       // Definitive storage area.
       try
       {
-        // FIXME!! - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the
-        // sample objects in DefinitiveBMechReader
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
         datastreamArray = doReader.GetDatastreams(versDateTime);
-        // FIXME!! - need to catch appropriate Exception thrown by
-        // DefinitiveDOReader if the PID cannot be found. For now,
-        // just catch any exception.
       } catch (Throwable th)
       {
         throw new GeneralException("Definitive reader returned error. The "
@@ -741,11 +763,13 @@ public class FastDOReader implements DisseminatingDOReader
    *
    * @param PID The persistent identifier for the digital object.
    * @param bDefPID The persistent identifier for the Behavior Definition
-   * object.
+   *        object.
    * @param methodName The name of the method to be executed.
    * @param versDateTime The versioning datetime stamp.
    * @return A MIME-typed stream containing the dissemination result.
    * @throws ObjectNotFoundException If object cannot be found.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public DisseminationBindingInfo[] getDissemination(String PID,
       String bDefPID, String methodName, Date versDateTime)
@@ -795,13 +819,13 @@ public class FastDOReader implements DisseminatingDOReader
           + " Method.METH_Name=\'"  + methodName + "\' "
           + " ORDER BY DataStreamBindingSpec.DSBindingSpec_Name";
 
-      if(debug) s_server.logInfo("GetDisseminationQuery=" + query);
+      if(debug) s_server.logFinest("GetDisseminationQuery=" + query);
 
       try
       {
         // execute database query and retrieve results
         Connection connection = connectionPool.getConnection();
-        if(debug) s_server.logInfo("DisseminationConnectionPool: "+
+        if(debug) s_server.logFinest("DisseminationConnectionPool: "+
                                      connectionPool);
         Statement statement = connection.createStatement();
         ResultSet rs = statement.executeQuery(query);
@@ -828,7 +852,6 @@ public class FastDOReader implements DisseminatingDOReader
           {
             dissBindInfo.methodParms = this.GetBMechMethodParm(results[1],
                 results[2], versDateTime);
-          //} catch (MethodNotFoundException mpnfe)
           } catch (GeneralException ge)
           {
             dissBindInfo.methodParms = null;
@@ -852,7 +875,7 @@ public class FastDOReader implements DisseminatingDOReader
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+                                   + "was \"" + th.getMessage() + "\"");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -862,23 +885,19 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
 
         // FIXME!! - code to perform disseminations directly from the
-        // XML objects NOT implemented in this release. When implemented
-        // it will go here.
+        // XML objects NOT implemented in Phase 1.
       } catch (Throwable th)
       {
         throw new GeneralException("Definitive reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+                                   + "was \"" + th.getMessage() + "\"");
       }
     }
-    s_server.logFinest("FastDOReader: dissBind: "+dissBindInfoArray+
-                       "size: "+dissBindInfoArray.length);
     return dissBindInfoArray;
   }
 
@@ -888,6 +907,8 @@ public class FastDOReader implements DisseminatingDOReader
    * @param disseminatorID the identifier of the requested disseminator
    * @param versDateTime versioning datetime stamp
    * @return Disseminator
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public Disseminator GetDisseminator(String disseminatorID, Date versDateTime)
       throws GeneralException
@@ -919,7 +940,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "Disseminator.DISS_ID=\'" + disseminatorID + "\' AND "
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) s_server.logInfo("GetDisseminatorQuery: " + query);
+      if (debug) s_server.logFinest("GetDisseminatorQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -960,8 +981,7 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
         disseminator = doReader.GetDisseminator(disseminatorID, versDateTime);
       } catch (Throwable th)
@@ -980,6 +1000,8 @@ public class FastDOReader implements DisseminatingDOReader
    *
    * @param versDateTime versioning datetime stamp
    * @return Disseminator[] array of disseminators
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public Disseminator[] GetDisseminators(Date versDateTime)
       throws GeneralException
@@ -1012,7 +1034,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "DataStreamBindingMap.BMECH_DBID=BehaviorMechanism.BMECH_DBID AND "
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) s_server.logInfo("GetDisseminatorsQuery: " + query);
+      if (debug) s_server.logFinest("GetDisseminatorsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -1061,8 +1083,7 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
         disseminatorArray = doReader.GetDisseminators(versDateTime);
       } catch (Throwable th)
@@ -1081,13 +1102,19 @@ public class FastDOReader implements DisseminatingDOReader
    *
    * @param versDateTime versioning datetime stamp
    * @return DSBindingMapAugmented[] array of datastream binding maps
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
       throws GeneralException
   {
     try
     {
-      if (bMechReader == null) bMechReader = new DefinitiveBMechReader(PID);
+      if (doReader == null)
+      {
+        doReader =  m_manager.getReader(m_context, PID);
+      }
+      return doReader.GetDSBindingMaps(versDateTime);
     } catch (Throwable th)
     {
       throw new GeneralException("Definitive reader returned error. The "
@@ -1095,17 +1122,18 @@ public class FastDOReader implements DisseminatingDOReader
                                  + th.getClass().getName() + "The message "
                                  + "was \"" + th.getMessage() + "\"");
     }
-    return bMechReader.GetDSBindingMaps(versDateTime);
   }
 
   /**
    * <p>Gets the label of the requested object.</p>
    *
    * @return String contining the object label
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public String GetObjectLabel() throws GeneralException
   {
-    if (debug) s_server.logInfo("GetObjectLabel = " + doLabel);
+    if (debug) s_server.logFinest("GetObjectLabel = " + doLabel);
     return doLabel;
   }
 
@@ -1117,8 +1145,10 @@ public class FastDOReader implements DisseminatingDOReader
    * cannot be found, <code>ObjectNotFoundException</code> is thrown.</p>
    *
    * @param PID persistent identifier for the digital object
+   * @param versDateTime The versioning datetime stamp.
    * @return ObjectMethodsDef containing all object methods
-   * @throws ObjectNotFoundException if object cannot be found
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public ObjectMethodsDef[] getObjectMethods(String PID, Date versDateTime)
       throws GeneralException
@@ -1154,7 +1184,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "Method.METH_DBID = MechanismImpl.METH_DBID AND "
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) s_server.logInfo("getObjectMethodsQuery: " + query);
+      if (debug) s_server.logFinest("getObjectMethodsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -1202,8 +1232,7 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
         String[] behaviorDefs = doReader.GetBehaviorDefs(versDateTime);
         Vector results = new Vector();
@@ -1244,10 +1273,12 @@ public class FastDOReader implements DisseminatingDOReader
    * <p>Gets the persistent identifier or PID of the digital object.</p>
    *
    * @return String containing the persistent identifier
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public String GetObjectPID() throws GeneralException
   {
-    if (debug) s_server.logInfo("GetObjectPID = " + PID);
+    if (debug) s_server.logFinest("GetObjectPID = " + PID);
     return this.PID;
   }
 
@@ -1255,6 +1286,8 @@ public class FastDOReader implements DisseminatingDOReader
    * <p>Gets the state on a digital object</p>
    *
    * @return String state of the object
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public String GetObjectState() throws GeneralException
   {
@@ -1262,9 +1295,9 @@ public class FastDOReader implements DisseminatingDOReader
     {
       if (doReader == null)
       {
-        //doReader = new DefinitiveDOReader(PID);
-        doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        doReader =  m_manager.getReader(m_context, PID);
       }
+      return doReader.GetObjectState();
     } catch (Throwable th)
     {
       throw new GeneralException("Definitive reader returned error. The "
@@ -1272,8 +1305,7 @@ public class FastDOReader implements DisseminatingDOReader
                                  + th.getClass().getName() + "The message "
                                  + "was \"" + th.getMessage() + "\"");
     }
-    return doReader.GetObjectState();
-    }
+  }
 
   /**
    * <p>Gets the XML representation of the object. Since the XML representation
@@ -1282,6 +1314,11 @@ public class FastDOReader implements DisseminatingDOReader
    * </p>
    *
    * @return String containing the XML representation of the object.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
+   * @throws StreamIOException If there was a failure in accessing the object
+   *         for any IO reason during retrieval of the object from low-level
+   *         storage. Extends ServerException.
    */
   public InputStream GetObjectXML()
       throws StreamIOException, GeneralException
@@ -1290,9 +1327,9 @@ public class FastDOReader implements DisseminatingDOReader
     {
       if (doReader == null)
       {
-        //doReader = new DefinitiveDOReader(PID);
-        doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+        doReader = m_manager.getReader(m_context, PID);
       }
+      return(doReader.GetObjectXML());
     } catch (Throwable th)
     {
       throw new GeneralException("Definitive reader returned error. The "
@@ -1300,7 +1337,6 @@ public class FastDOReader implements DisseminatingDOReader
                                  + th.getClass().getName() + "The message "
                                  + "was \"" + th.getMessage() + "\"");
     }
-    return(doReader.GetObjectXML());
   }
 
   /**
@@ -1310,8 +1346,10 @@ public class FastDOReader implements DisseminatingDOReader
    * storage area. <code>DefinitiveDOReader</code> should be used instead
    * to list datastream IDs with a given state.</p>
    *
-   * @param state State of the datastreams
-   * @return String[] containing the datastream IDs
+   * @param state State of the datastreams.
+   * @return An array containing the datastream IDs.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public String[] ListDatastreamIDs(String state)
       throws GeneralException
@@ -1333,7 +1371,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) s_server.logInfo("ListDatastreamIDsQuery: " + query);
+      if (debug) s_server.logFinest("ListDatastreamIDsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -1379,8 +1417,7 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
         datastreamIDs = doReader.ListDatastreamIDs("");
       } catch (Throwable th)
@@ -1400,8 +1437,10 @@ public class FastDOReader implements DisseminatingDOReader
    * <code>DefinitiveDOReader</code> should be used to list disseminator IDs
    * when state is specified.
    *
-   * @param state State of the disseminators
-   * @return String[] listing disseminator IDs
+   * @param state State of the disseminators.
+   * @return An array listing disseminator IDs.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public String[] ListDisseminatorIDs(String state)
       throws GeneralException
@@ -1425,7 +1464,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
-      if (debug) s_server.logInfo("ListDisseminatorIDsQuery: " + query);
+      if (debug) s_server.logFinest("ListDisseminatorIDsQuery: " + query);
       ResultSet rs = null;
       String[] results = null;
       try
@@ -1472,8 +1511,7 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
         disseminatorIDs = doReader.ListDisseminatorIDs("A");
       } catch (Throwable th)
@@ -1495,11 +1533,14 @@ public class FastDOReader implements DisseminatingDOReader
    * label is returned. Otherwise, it throws
    * <code>ObjectNotFoundException</code>.</p>
    *
-   * @param PID persistent identifier of the digital object
-   * @return String containing label of the specified digital object
-   * @throws ObjectNotFoundException if object cannot be found
+   * @param PID persistent identifier of the digital object.
+   * @return String containing label of the specified digital object.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
    */
-  public String locatePID(String PID) throws ServerException, GeneralException
+  public String locatePID(String PID) throws GeneralException, ServerException
   {
     ResultSet rs = null;
     String  query =
@@ -1509,12 +1550,12 @@ public class FastDOReader implements DisseminatingDOReader
         + "DigitalObject "
         + "WHERE "
         + "DigitalObject.DO_PID=\'" + PID + "\';";
-    if (debug) s_server.logInfo("LocatPIDQuery: " + query);
+    if (debug) s_server.logFinest("LocatPIDQuery: " + query);
 
     try
     {
       Connection connection = connectionPool.getConnection();
-      if(debug) s_server.logInfo("LocatePIDConnectionPool: "
+      if(debug) s_server.logFinest("LocatePIDConnectionPool: "
                                    + connectionPool);
       Statement statement = connection.createStatement();
       rs = statement.executeQuery(query);
@@ -1543,16 +1584,11 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          //doReader = new DefinitiveDOReader(PID);
-          doReader = (DefinitiveDOReader) m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, PID);
         }
         doLabel = doReader.GetObjectLabel();
         isFoundInDefinitiveStore = true;
-        s_server.logInfo("OBJECT FOUND IN DEFINITIVE STORE: " + PID);
-      //} catch (StreamIOException sioe)
-      //{
-      //  ServerException se = (ServerException) sioe;
-      //  throw se;
+        s_server.logFinest("OBJECT FOUND IN DEFINITIVE STORE: " + PID);
       } catch (ServerException se)
       {
         throw se;
@@ -1567,285 +1603,8 @@ public class FastDOReader implements DisseminatingDOReader
     } else
     {
       isFoundInFastStore = true;
-      s_server.logInfo("OBJECT FOUND IN FAST STORE: " + PID);
+      s_server.logFinest("OBJECT FOUND IN FAST STORE: " + PID);
     }
     return doLabel;
-  }
-
-  /**
-   * <p>Tests the methods of <code>FastDOReader</code>.</p>
-   *
-   * @param args Command line arguments
-   */
-  public static void main(String[] args)
-  {
-    // Test dissemination query against relational database
-    System.out.println("\nBEGIN ----- TEST RESULTS FOR DISSEMINATION:");
-    String PID = "1007.lib.dl.test/text_ead/viu00003";
-    String bDefPID = "web_ead";
-    String methodName = "get_web_default";
-    Date versDateTime = null;
-    FastDOReader fdor = null;
-    DisseminationBindingInfo[] dissem = null;
-    java.util.HashMap h = new java.util.HashMap();
-     h.put("application", "apia");
-     h.put("useCachedObject", "true");
-     h.put("userId", "fedoraAdmin");
-     Context s_context = new fedora.server.ReadOnlyContext(h);
-    try
-    {
-      fdor = new FastDOReader(s_context, PID);
-      dissem = fdor.getDissemination(PID, bDefPID, methodName, versDateTime);
-      for (int i=0; i<dissem.length; i++)
-      {
-          System.out.println("dissemResults[" + i + "] = " + i
-              + "dissemAddress: "    + dissem[i].AddressLocation
-              + "dissemOperation: "  + dissem[i].OperationLocation
-              + "dissemDSLocation: " + dissem[i].DSLocation
-              + "dissemProtocol: "   + dissem[i].ProtocolType
-              + "dissemBindKey: "    + dissem[i].DSBindKey);
-          if (dissem[i].methodParms != null)
-          {
-            MethodParmDef[] methodParms = dissem[i].methodParms;
-            for (int j=0; j<methodParms.length; j++)
-            {
-              System.out.println("Dissem: MethodParms:"
-                  + "parm[" + j + "] = " + methodParms[j]);
-            }
-          } else
-          {
-            System.out.println("Dissem: Method Has NO PARMS");
-          }
-      }
-      System.out.println("END ----- TEST RESULTS FOR DISSEMINATION\n");
-
-      // Test reading method paramters (method has parms)
-      System.out.println("\nBEGIN ----- TEST RESULTS FOR READING METHOD"
-                         + "PARMS:\n (method that has parms)");
-      MethodParmDef[] methodParms = null;
-      PID = "1007.lib.dl.test/text_ead/viu00003";
-      bDefPID = "web_ead";
-      methodName = "get_web_default";
-      fdor = new FastDOReader(s_context, PID);
-      methodParms = fdor.GetBMechMethodParm(bDefPID, methodName,versDateTime);
-      for (int i=0; i<methodParms.length; i++)
-      {
-        System.out.println("methodParmName:" + i + " \n"
-            + methodParms[i].parmName
-            + "\n   methodParmDefaultValue[" + i + "] = "
-            + methodParms[i].parmDefaultValue
-            + "\n   methodParmRequiredFlag[" + i + "] = "
-            + methodParms[i].parmRequired
-            + "\n          methodParmLabel[" + i + "] = "
-            + methodParms[i].parmLabel + "\n");
-      }
-      // Test reading method parameters (method has no parms)
-      System.out.println("(method tha has NO parms)");
-      PID = "1007.lib.dl.test/text_ead/viu00003";
-      bDefPID = "web_ead";
-      methodName = "get_tp";
-      fdor = new FastDOReader(s_context, PID);
-      methodParms = fdor.GetBMechMethodParm(bDefPID, methodName,versDateTime);
-      System.out.println("\n\nTest with method that has NO parms\n");
-      for (int i=0; i<methodParms.length; i++)
-      {
-        System.out.println("methodParmName:" + i + " \n"
-            + methodParms[i].parmName
-            + "\n   methodParmDefaultValue[" + i + "] = "
-            + methodParms[i].parmDefaultValue
-            + "\n   methodParmRequiredFlag[" + i + "] = "
-            + methodParms[i].parmRequired
-            + "\n          methodParmLabel[" + i + "] = "
-            + methodParms[i].parmLabel + "\n");
-      }
-      System.out.println("END ----- TEST RESULTS FOR READING METHOD "
-                         + "PARAMETERS\n");
-
-      // Test reading behavior methods
-      System.out.println("\nBEGIN ----- TEST RESULTS FOR READING ALL METHODS:");
-      MethodDef[] methodDefs = null;
-      PID = "1007.lib.dl.test/text_ead/viu00003";
-      bDefPID = "web_ead";
-      fdor = new FastDOReader(s_context, PID);
-      methodDefs = fdor.GetBMechMethods(bDefPID, versDateTime);
-      for (int i=0; i<methodDefs.length; i++)
-      {
-        System.out.println("methodDefName: " + i + " \n"
-            + methodDefs[i].methodName
-            + "\n   methodDefLabel[" + i + "] = "
-            + methodDefs[i].methodLabel);
-        methodParms = methodDefs[i].methodParms;
-        if (methodParms != null)
-        {
-          System.out.println("\nMETHOD HAS PARMs\n");
-          for (int j=0; j<methodParms.length; j++)
-          {
-            System.out.println("methodParm: " + j + " \n"
-                + methodParms[j].parmName
-                + "\n   methodParmDefaultValue[" + j + "] = "
-                + methodParms[j].parmDefaultValue
-                + "\n   methodParmRequiredFlag[" + j + "] = "
-                + methodParms[j].parmRequired
-                + "\n          methodParmLabel[" + j + "] = "
-                + methodParms[j].parmLabel + "\n");
-          }
-        } else
-        {
-          System.out.println("\nMETHOD HAS NO PARMS\n");
-        }
-      }
-      System.out.println("END ----- TEST RESULTS FOR READING ALL METHODS\n");
-
-      System.out.println("\nBEGIN ----- TEST GET OBJECT METHODS");
-      PID = "1007.lib.dl.test/text_ead/viu00003";
-      fdor = new FastDOReader(s_context, PID);
-      ObjectMethodsDef[] omdArray = fdor.getObjectMethods(PID, versDateTime);
-      System.out.println("size: "+omdArray.length);
-      for (int i=0; i<omdArray.length; i++)
-      {
-        ObjectMethodsDef omd = omdArray[i];
-        System.out.println("omdArray[" + i + "] = "
-                           + "\n        PID: " + omd.PID
-                           + "\n    bDefPID: " + omd.bDefPID
-                           + "\n methodName: " + omd.methodName);
-      }
-      System.out.println("END ----- TEST GET OBJECT METHODS");
-
-      System.out.println("\nBEGIN ----- TEST GET BEAHVIOR DEFS");
-      String[] bDefs = null;
-      PID = "1007.lib.dl.test/text_ead/viu00003";
-      fdor = new FastDOReader(s_context, PID);
-      bDefs = fdor.GetBehaviorDefs(versDateTime);
-      for (int i=0; i<bDefs.length; i++)
-      {
-        System.out.println("bDef[" + i + "] = " + bDefs[i]);
-      }
-      System.out.println("END ----- TEST GET BEAHVIOR DEFS");
-
-      System.out.println("\nBEGIN ----- TEST GET DISSEMINATOR"
-                         + "\n (retro style object)");
-      PID = "1007.lib.dl.test/text_ead/viu00003";
-      fdor = new FastDOReader(s_context, PID);
-      Disseminator diss = fdor.GetDisseminator("web_ead1", versDateTime);
-      System.out.println("dissID: " + diss.dissID
-                         + "\n    bDefPID: " + diss.bDefID
-                         + "\n   bMechPID: " + diss.bMechID
-                         + "\n bBindMapID: " + diss.dsBindMapID);
-      System.out.println("\n(new stle object)");
-      PID = "uva-lib:1225";
-      fdor = new FastDOReader(s_context, PID);
-      diss = fdor.GetDisseminator("DISS1", versDateTime);
-      System.out.println("dissID: " + diss.dissID
-                         + "\n    bDefPID: " + diss.bDefID
-                         + "\n   bMechPID: " + diss.bMechID
-                         + "\n bBindMapID: " + diss.dsBindMapID);
-      System.out.println("END ----- TEST GET DISSEMINATOR");
-
-      System.out.println("\nBEGIN ----- TEST GET DISSEMINATORS"
-                         + "\n(new style object)");
-      PID = "uva-lib:1225";
-      fdor = new FastDOReader(s_context, PID);
-      Disseminator[] diss1 = fdor.GetDisseminators(versDateTime);
-      for (int i=0; i<diss1.length; i++)
-      {
-        System.out.println("dissID: " + diss1[i].dissID
-        + "\n    bDefPID: " + diss1[i].bDefID
-        + "\n   bMechPID: " + diss1[i].bMechID
-        + "\n bBindMapID: " + diss1[i].dsBindMapID);
-      }
-      System.out.println("\n(retro style object)");
-      PID = "1007.lib.dl.test/text_ead/viu00001";
-      fdor = new FastDOReader(s_context, PID);
-      Disseminator[] diss2 = fdor.GetDisseminators(versDateTime);
-      System.out.println("size: "+diss1.length);
-      for (int i=0; i<diss2.length; i++)
-      {
-        System.out.println("dissID: " + diss2[i].dissID
-            + "\n    bDefPID: " + diss2[i].bDefID
-            + "\n   bMechPID: " + diss2[i].bMechID
-            + "\n bBindMapID: " + diss2[i].dsBindMapID);
-      }
-      System.out.println("END ----- TEST GET DISSEMINATORS");
-
-      System.out.println("\nBEGIN ----- TEST LIST DISSEMINATORIDS"
-                         + "\n(retro style object)");
-      PID = "1007.lib.dl.test/text_ead/viu00001";
-      fdor = new FastDOReader(s_context, PID);
-      String[] dissIDs = fdor.ListDisseminatorIDs("");
-      for (int i=0; i<dissIDs.length; i++)
-      {
-        System.out.println("ListdissID: "+dissIDs[i]);
-      }
-      System.out.println("\n(new style object)");
-      PID = "uva-lib:1225";
-      fdor = new FastDOReader(s_context, PID);
-      dissIDs = fdor.ListDisseminatorIDs("");
-      for (int i=0; i<dissIDs.length; i++)
-      {
-        System.out.println("ListdissID: "+dissIDs[i]);
-      }
-      System.out.println("END ----- TEST LIST DISSEMINATORIDS");
-
-      System.out.println("\nBEGIN ----- TEST GET DATASTREAM"+
-                         "\n(new style object)");
-      PID = "uva-lib:1225";
-      fdor = new FastDOReader(s_context, PID);
-      Datastream ds = fdor.GetDatastream("DS1", versDateTime);
-      System.out.println("GetDatastreamLabel: " + ds.DSLabel+"\nMIME: "
-                         + ds.DSMIME+"\nLocation: " + ds.DSLocation);
-      System.out.println("\n(retro style object)");
-      PID = "1007.lib.dl.test/text_ead/viu00001";
-      fdor = new FastDOReader(s_context, PID);
-      ds = fdor.GetDatastream("1", versDateTime);
-      System.out.println("GetDatastreamLabel: " + ds.DSLabel + "\nMIME: "
-                         + ds.DSMIME + "\nLocation: " + ds.DSLocation);
-      System.out.println("END ----- TEST GET DATASTREAM");
-
-      System.out.println("\nBEGIN ----- TEST GET DATASTREAMS"
-                         + "\n(retro style object)");
-      PID = "1007.lib.dl.test/text_ead/viu00001";
-      fdor = new FastDOReader(s_context, PID);
-      Datastream[] dsa = fdor.GetDatastreams(versDateTime);
-      for (int i=0; i<dsa.length; i++)
-      {
-        System.out.println("GetDatastreamsLabel: " + dsa[i].DSLabel
-            + "\n     MIME: " + dsa[i].DSMIME
-            + "\n Location: " + dsa[i].DSLocation);
-      }
-      System.out.println("\n(new style object)");
-      PID = "uva-lib:1225";
-      fdor = new FastDOReader(s_context, PID);
-      dsa = fdor.GetDatastreams(versDateTime);
-      for (int i=0; i<dsa.length; i++)
-      {
-        System.out.println("GetDatastreamLabel: " + dsa[i].DSLabel
-            + "\n     MIME: " + dsa[i].DSMIME
-            + "\n Location: " + dsa[i].DSLocation);
-      }
-      System.out.println("END ----- TEST GET DATASTREAMS");
-
-      System.out.println("\nBEGIN ----- TEST GET OBJECT LABEL");
-      PID = "uva-lib:1225";
-      fdor = new FastDOReader(s_context, PID);
-      System.out.println("ObjectLabel: " + fdor.GetObjectLabel());
-
-      System.out.println("\nBEGIN ----- TEST GET OBJECT PID");
-      PID = "uva-lib:1225";
-      fdor = new FastDOReader(s_context, PID);
-      System.out.println("ObjectLabel: " + fdor.GetObjectPID());
-      System.out.println("END ----- TEST GET OBJECT PID");
-
-      System.out.println("\nBEGIN ----- TEST GET OBJECT PID only in "
-                         + "Definitive Store");
-      PID = "uva-lib:1220";
-      fdor = new FastDOReader(s_context, PID);
-      System.out.println("ObjectLabel: "+fdor.GetObjectPID());
-      System.out.println("END ----- TEST GET OBJECT PID");
-
-    } catch(Exception e)
-    {
-      System.out.println("ObjNotFound"+e.getMessage());
-
-    }
   }
 }
