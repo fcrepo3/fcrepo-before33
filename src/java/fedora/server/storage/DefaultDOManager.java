@@ -629,6 +629,7 @@ public class DefaultDOManager
                     if (m_resourceIndex != null) {
                         logFinest("Passed validation.  Adding to ResourceIndex...");
                         m_resourceIndex.addDigitalObject(obj);
+                        logFinest("Finished adding to ResourceIndex.");
                     }
                     
                     // if ok, write change to perm store here...right before db stuff

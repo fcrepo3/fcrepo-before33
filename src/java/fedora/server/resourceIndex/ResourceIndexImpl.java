@@ -478,6 +478,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 			methods.add(v.getString());
 			System.out.println("*** " + v.getString());
 		}
+        logFinest("Finished query to resource index and iteration of results.");
 		return methods;
 	}
 	

@@ -115,7 +115,7 @@ public class KowariRIModule extends Module implements ResourceIndex {
 			throw new ModuleInitializationException(e3.getMessage(), getRole());
 		}
 		
-		m_kowariRIStore = new KowariRIStore(session, model, fullTextModelURI);
+		m_kowariRIStore = new KowariRIStore(session, model, fullTextModelURI, this);
 		m_resourceIndex = new ResourceIndexImpl(level, m_kowariRIStore, this);
 	}
 
