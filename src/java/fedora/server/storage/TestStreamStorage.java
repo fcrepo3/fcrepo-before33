@@ -1,20 +1,23 @@
 package fedora.server.storage;
 
+import fedora.server.errors.ObjectExistsException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.StorageDeviceException;
+
 import java.io.InputStream;
-import java.io.IOException;
 
 public interface TestStreamStorage {
 
     public void add(String id, InputStream in) 
-            throws IOException;
+            throws ObjectExistsException, StorageDeviceException;
 
     public void replace(String id, InputStream in) 
-            throws IOException;
+            throws ObjectNotFoundException, StorageDeviceException;
 
     public InputStream retrieve(String id)
-            throws IOException;
+            throws ObjectNotFoundException, StorageDeviceException;
 
-    public boolean delete(String id)
-            throws IOException;
+    public void delete(String id)
+            throws ObjectNotFoundException, StorageDeviceException;
 
 }
