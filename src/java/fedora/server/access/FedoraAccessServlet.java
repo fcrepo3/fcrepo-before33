@@ -599,7 +599,9 @@ public class FedoraAccessServlet extends HttpServlet
           Property[] headerArray = dissemination.header;
           if(headerArray != null) {
               for(int i=0; i<headerArray.length; i++) {
-                  if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
+                  if(headerArray[i].name != null &&
+                          !(headerArray[i].name.equalsIgnoreCase("transfer-encoding")) && 
+                          !(headerArray[i].name.equalsIgnoreCase("content-type"))) {                          
                       response.addHeader(headerArray[i].name, headerArray[i].value);
                       if (fedora.server.Debug.DEBUG) System.out.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
                   }
