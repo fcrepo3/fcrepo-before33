@@ -144,35 +144,51 @@
 		<title>fedora-ingest</title>
 		<blockquote>
 			<para>
-				<emphasis role="bold">fedora-ingest</emphasis> &#091;hostname&#093; &#091;port-number&#093; &#091;user&#093; &#091;pass&#093; &#091;file&#093; &#091;logMessage&#093;</para>
+				<emphasis role="bold">fedora-ingest</emphasis> f[ile] PATH THST:TPRT TUSR TPSS [LOG]</para>
+			<para>
+				<emphasis role="bold">fedora-ingest</emphasis> d[ir] PATH FTYPS THST:TPRT TUSR TPSS [LOG]</para>
+			<para>
+				<emphasis role="bold">fedora-ingest</emphasis> r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS [LOG]</para>
 		</blockquote>
 		<para>Where:</para>
 		<itemizedlist>
 			<listitem>
-				<para>&#091;hostname&#093; - The hostname of the Fedora server; default is localhost.</para>
+				<para>PATH - the local file or directory name.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;port-number&#093; - The port number on which the Fedora server is running; default is 8080.</para>
+				<para>FTYPS - any combination of the characters O, D, and M, specifying
+           which Fedora object type(s) should be ingested. O=regular objects,
+           D=behavior definitions, and M=behavior mechanisms.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;user&#093; - The Fedora user (e.g. fedoraAdmin).</para>
+				<para>PID - the id of the object to ingest from the source repository.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;pass&#093; - The Fedora user's password.</para>
+				<para>SHST/THST - the source or target repository's hostname.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;file&#093; - The METS file to ingest.</para>
+				<para>SPRT/TPRT - the source or target repository's port number.</para>
 			</listitem>
 			<listitem>
-				<para>&#091;logMessage&#093; - A log message regarding the ingest.</para>
+				<para>SUSR/TUSR - the id of the source or target repository user.</para>			
+			</listitem>
+			<listitem>
+				<para>SPSS/TPSS - the password of the source or target repository user.</para>
+			</listitem>
+			<listitem>
+				<para>LOG - the optional log message.  If unspecified, the log message
+             will indicate the source of the object(s).</para>
 			</listitem>
 		</itemizedlist>
-		<para>Example:</para>
+		<para>Examples:</para>
 		<blockquote>
-			<para>fedora-ingest localhost 8080 fedoraAdmin fedoraAdmin myfile.xml "My first ingest test"</para>
+			<para>fedora-ingest file obj1.xml example.com:80 fedoraAdmin fedoraAdmin</para>
+			<para>fedora-ingest dir c:\archive M example.com:80 fedoraAdmin fedoraAdmin &quot;&quot;</para>
+			<para>fedora-ingest dir c:\archive ODM example.com:80 fedoraAdmin fedoraAdmin &quot;&quot;</para>
 		</blockquote>
 		<para>
-           Ingests a single METS file into the repository, and outputs the PID. 
+           Ingests one or more objects into the repository, either from disk
+           or from another Fedora repository.
        </para>
 	</sect1>
 	<sect1>
