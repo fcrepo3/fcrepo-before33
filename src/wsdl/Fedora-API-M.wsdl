@@ -81,15 +81,24 @@
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
     </part>
+    <part name="logMessage" type="xsd:string">
+      <documentation>an explanation of the withdrawal.</documentation>
+    </part>
   </message>
   <message name="DeleteObjectRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
     </part>
+    <part name="logMessage" type="xsd:string">
+      <documentation>an explanation of the deletion.</documentation>
+    </part>
   </message>
   <message name="PurgeObjectRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="logMessage" type="xsd:string">
+      <documentation>an explanation of the purge.</documentation>
     </part>
   </message>
   <message name="ObtainLockRequest">
