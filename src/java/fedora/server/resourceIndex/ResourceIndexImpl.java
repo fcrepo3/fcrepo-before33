@@ -160,6 +160,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	        datastreamURI = doURI + "/" + datastreamID;
 	    }
         
+        // TODO new datastream attribute
+        //String[] altIDs = ds.DatastreamAltIDs;
+        
         // Volatile Datastreams: False for datastreams that are locally managed 
         // (have a control group "M" or "I").
         String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
@@ -280,11 +283,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             deleteDisseminator(digitalObject, (String)it.next());          
         }
         
-        // FIXME delete all statements where doURI is subject or object
-        String query = "delete ";
-        
+        // Delete all statements where doURI is the subject
         String doURI = getDOURI(digitalObject);
-
+        try {
+            m_writer.delete(m_reader.findTriples(TripleFactory.createResource(doURI), null, null, 0), true);
+        } catch (IOException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
 	}
 
 	/* (non-Javadoc)
@@ -301,8 +308,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
         
         // DELETE statements where datastreamURI is subject
-        // DELETE statements where datastreamURI is object
-        
+        try {
+            m_writer.delete(m_reader.findTriples(TripleFactory.createResource(datastreamURI), null, null, 0), true);
+        } catch (IOException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
         // FIXME handle special case datastreams, e.g. WSDL, METHODMAP
 		
 	}
@@ -318,10 +330,20 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         String bMechPID = diss.bMechID;
         
         // delete bMech reference: 
-        //(doIdentifier, USES_BMECH_URI, getDOURI(bMechPID));
+        try {
+            m_writer.delete(m_reader.findTriples(TripleFactory.createResource(doIdentifier), 
+                                                 TripleFactory.createResource(USES_BMECH_URI), 
+                                                 TripleFactory.createResource(getDOURI(bMechPID)), 
+                                                 0), 
+                            true);
+        } catch (IOException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
         
         if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_OBJECT) {
-            // delete statement where rep is subject or object
+            // delete statement where rep is the subject
             String query = "SELECT permutation " +
                            "FROM riMethodPermutation, riMethodImpl " +
                            "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
@@ -335,12 +357,14 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                  while (rs.next()) {
                      permutation = rs.getString("permutation");
                      rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                     // TODO delete... or can we use wildcards, e.g. delete where doIdentifier/bDefPID and doIdentifier/bDefPID/*
+                     m_writer.delete(m_reader.findTriples(TripleFactory.createResource(rep), null, null, 0), false);
                  }
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                throw new ResourceIndexException(e.getMessage());
+                throw new ResourceIndexException(e.getMessage(), e);
+            } catch (IOException e) {
+                throw new ResourceIndexException(e.getMessage(), e);
+            } catch (TrippiException e) {
+                throw new ResourceIndexException(e.getMessage(), e);
             }
         }	
 	}
