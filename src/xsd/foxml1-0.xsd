@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="info:fedora/fedora-system:def/foxml#" xmlns="info:fedora/fedora-system:def/foxml#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xsd:schema targetNamespace="info:fedora/fedora-system:def/foxml#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="info:fedora/fedora-system:def/foxml#" elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<!-- the root element for FOXML: digitalObject -->
 	<xsd:element name="digitalObject">
 		<xsd:annotation>
@@ -19,11 +19,8 @@
 			<xsd:element name="disseminator" type="disseminatorType" minOccurs="0" maxOccurs="unbounded"/>
 		</xsd:sequence>
 		<xsd:attribute name="PID" type="pidType" use="optional"/>
-		<xsd:attribute name="URI" type="xsd:string" use="optional"/>
+		<xsd:attribute name="FEDORA_URI" type="xsd:anyURI" use="optional"/>
 		<xsd:anyAttribute namespace="##other" processContents="lax"/>
-		<!-- The anyAttribute declaration lets us temporarily rename the xsi:schemaLocation attribute -->
-		<!-- so attempts to resolve the location during XML validation are ignored. Believe it or not there is -->
-		<!-- no good way to disable schemaLocation resolution attempts via parser properties in Xerces. -->
 	</xsd:complexType>
 	<xsd:complexType name="objectPropertiesType">
 		<xsd:sequence>
@@ -48,10 +45,11 @@
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
-		<xsd:attribute name="URI" type="xsd:string" use="optional"/>
+		<xsd:attribute name="FEDORA_URI" type="xsd:anyURI" use="optional"/>
 		<xsd:attribute name="STATE" type="stateType" use="optional"/>
-		<xsd:attribute name="FORMAT_URI" type="xsd:string" use="optional"/>
+		<xsd:attribute name="FORMAT_URI" type="xsd:anyURI" use="optional"/>
 		<xsd:attribute name="VERSIONABLE" type="versionableType" use="optional" default="YES"/>
+		<xsd:attribute name="ALT_IDS" type="uriListType" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="datastreamVersionType">
 		<xsd:sequence>
@@ -193,8 +191,8 @@
 	<!-- See http://www.fedora.info/definitions/identifiers/ -->
 	<xsd:simpleType name="pidType">
 		<xsd:restriction base="xsd:string">
-			<xsd:pattern value="([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+"/>
 			<xsd:maxLength value="64"/>
+			<xsd:pattern value="([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:simpleType name="nonEmptyStringType">
@@ -206,5 +204,8 @@
 		<xsd:restriction base="xsd:ID">
 			<xsd:maxLength value="64"/>
 		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="uriListType">
+		<xsd:list itemType="xsd:anyURI"/>
 	</xsd:simpleType>
 </xsd:schema>
