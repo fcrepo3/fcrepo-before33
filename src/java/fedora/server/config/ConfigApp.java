@@ -7,17 +7,19 @@ import javax.swing.*;
 public class ConfigApp {
 
     private File m_configFile;
+    private ServerConfiguration m_configuration;
 
-    public ConfigApp(File configFile) {
+    public ConfigApp(File configFile) throws Exception {
         m_configFile = configFile;
+        ServerConfiguration m_configuration = new ServerConfigurationParser(new FileInputStream(configFile)).parse();
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+                initGUI();
             }
         });
     }
 
-    private void createAndShowGUI() {
+    private void initGUI() {
         JFrame frame = new JFrame("Fedora Server Configuration - " + m_configFile.getPath());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

@@ -927,6 +927,9 @@
 			<arg line="-s mysql-drop-db.sh mysql-drop-db"/>
 		</exec>
 		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s fedora-config.sh fedora-config"/>
+		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
 			<arg line="-s fedora-start.sh fedora-start"/>
 		</exec>
 		<exec dir="./dist/server/bin" executable="/bin/ln">
