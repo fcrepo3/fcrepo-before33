@@ -194,8 +194,6 @@ class WSDLParser extends DefaultHandler
   public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
     throws SAXException
   {
-    //System.out.println("WSDLParser: START ELEMENT " + qName);
-
     // Look for things in the WSDL that this parser is not ready to support yet!
     // Exception will be thrown and the parsing will stop if an unsupported
     // pattern is found.
@@ -476,8 +474,6 @@ class WSDLParser extends DefaultHandler
 
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException
   {
-    //System.out.println("WSDLParser: END ELEMENT " + qName);
-
     // Type post-processing
     if (inWSDLTypes)
     {
