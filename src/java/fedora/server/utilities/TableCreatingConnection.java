@@ -3,6 +3,7 @@ package fedora.server.utilities;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 
 /**
  * A ConnectionWrapper that creates tables on the target database
@@ -39,15 +40,20 @@ public class TableCreatingConnection
     /**
      * Creates a table in the target database.
      * <p></p>
-     * This method ignores transaction state and simply calls
-     * executeUpdate() on the session.
+     * This method may execute more than one update
+     * command and it ignores the transaction state of
+     * the connection.
      *
      * @param spec A description of the table to be created.
      */
     public void createTable(TableSpec spec) 
             throws SQLException {
         Statement s=createStatement();
-        s.executeUpdate(m_converter.getDDL(spec));
+        Iterator iter=m_converter.getDDL(spec).iterator();
+        while (iter.hasNext()) {
+            String updateSQL=(String) iter.next();
+            s.executeUpdate(updateSQL);
+        }
     }
 
 }

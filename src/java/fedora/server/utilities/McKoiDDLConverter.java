@@ -2,6 +2,7 @@ package fedora.server.utilities;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class McKoiDDLConverter
         return true;
     }
 
-    public String getDDL(TableSpec spec) {
+    public List getDDL(TableSpec spec) {
         StringBuffer out=new StringBuffer();
         StringBuffer end=new StringBuffer();
         out.append("CREATE TABLE " + spec.getName() + " (\n");
@@ -85,21 +86,9 @@ public class McKoiDDLConverter
         }
         out.append("\n");
         out.append(")");
-        return out.toString();
-    }
-    
-    public static void main(String[] args) {
-        try {
-            McKoiDDLConverter conv=new McKoiDDLConverter();
-            List l=TableSpec.getTableSpecs(new FileInputStream(new File(args[0])));
-            Iterator iter=l.iterator();
-            while (iter.hasNext()) {
-                TableSpec spec=(TableSpec) iter.next();
-                System.out.println(conv.getDDL(spec));
-            }
-        } catch (Exception e) {
-            System.err.println("ERROR: " + e.getMessage());
-        }
+        ArrayList l=new ArrayList();
+        l.add(out.toString());
+        return l;
     }
 
 }

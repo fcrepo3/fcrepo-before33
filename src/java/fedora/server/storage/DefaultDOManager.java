@@ -173,10 +173,16 @@ public class DefaultDOManager
                 nii=nonExisting.iterator();
                 while (nii.hasNext()) {
                     TableSpec spec=(TableSpec) nii.next();
-                    String sqlCmd=tcConn.getDDLConverter().getDDL(spec);
-                    getServer().logConfig("Attempting to creating nonexisting "
-                            + "table '" + spec.getName() + "' with command: "
-                            + sqlCmd);
+                    StringBuffer sqlCmds=new StringBuffer();
+                    Iterator iter=tcConn.getDDLConverter().getDDL(spec).iterator();
+                    while (iter.hasNext()) {
+                        sqlCmds.append("\n");
+                        sqlCmds.append((String) iter.next());
+                        sqlCmds.append(";");
+                    }
+                    getServer().logConfig("Attempting to create nonexisting "
+                            + "table '" + spec.getName() + "' with command(s): "
+                            + sqlCmds.toString());
                     tcConn.createTable(spec);
                 }
             } catch (SQLException sqle) {

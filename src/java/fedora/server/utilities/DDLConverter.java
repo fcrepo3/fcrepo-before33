@@ -1,5 +1,7 @@
 package fedora.server.utilities;
 
+import java.util.List;
+
 /**
  * Interface for a converter of TableSpec objects to RDBMS-specific DDL
  * code.
@@ -14,7 +16,7 @@ public interface DDLConverter {
 
     public abstract boolean supportsTableType();
 
-    public abstract String getDDL(TableSpec tableSpec);
+    public abstract List getDDL(TableSpec tableSpec);
 
 }
 
