@@ -336,6 +336,8 @@ public class DefaultManagement
                 if (dsLocation==null || dsLocation.equals("")) {
                     // if location unspecified, use the location of
                     // the datastream on the system, thus making a copy
+                    // TODO: pass credentials here?  Because if it was
+                    // previously inactive, this won't resolve
                     newds.DSLocation="http://" + m_fedoraServerHost + ":"
                             + m_fedoraServerPort
                             + "/fedora/get/" + pid + "/fedora-system:3/getItem?itemID="
@@ -387,12 +389,20 @@ public class DefaultManagement
             }
             DatastreamXMLMetadata newds=new DatastreamXMLMetadata();
             newds.DSMDClass=((DatastreamXMLMetadata) orig).DSMDClass;
-            ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-            try {
-                StreamUtility.pipeStream(dsContent, bytes, 1024);
-            } catch (Exception ex) {
+            if (dsContent==null) {
+                // If the passed-in dsContent is null, that means "dont change
+                // the content".  Accordingly, here we just make a copy of
+                // the old content.
+                newds.xmlContent=((DatastreamXMLMetadata) orig).xmlContent;
+            } else {
+                // If it's not null, use it
+                ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+                try {
+                    StreamUtility.pipeStream(dsContent, bytes, 1024);
+                } catch (Exception ex) {
+                }
+                newds.xmlContent=bytes.toByteArray();
             }
-            newds.xmlContent=bytes.toByteArray();
             newds.DatastreamID=orig.DatastreamID;
             // make sure it has a different id
             newds.DSVersionID=getNextID(orig.DSVersionID);

@@ -264,8 +264,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public void modifyDatastreamByValue(String PID, String datastreamID, String dsLabel, String logMessage, byte[] dsContent, String dsState) throws java.rmi.RemoteException {
         assertInitialized();
         try {
+            ByteArrayInputStream byteStream=null;
+            if (dsContent!=null && dsContent.length>0) {
+                byteStream=new ByteArrayInputStream(dsContent);
+            }
             s_management.modifyDatastreamByValue(getContext(), PID,
-                    datastreamID, dsLabel, logMessage, new ByteArrayInputStream(dsContent), dsState);
+                    datastreamID, dsLabel, logMessage, byteStream, dsState);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
