@@ -29,12 +29,12 @@
 				<uvalibdesc:desc>
 					<uvalibdesc:identifier scheme="URN">test:7</uvalibdesc:identifier>
 					<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
-					<uvalibdesc:subject scheme="other" othertype="keyword">Pavillion III</uvalibdesc:subject>
+					<uvalibdesc:subject scheme="other" othertype="keyword">Pavilion III</uvalibdesc:subject>
 					<uvalibdesc:subject scheme="other" othertype="keyword">lawn</uvalibdesc:subject>
 					<uvalibdesc:subject scheme="other" othertype="keyword">University of Virginia</uvalibdesc:subject>
 					<uvalibdesc:subject scheme="other" othertype="keyword">Jefferson</uvalibdesc:subject>
 					<uvalibdesc:subject scheme="other" othertype="keyword">Jeffersonian architecture</uvalibdesc:subject>
-					<uvalibdesc:title type="main">Pavillion III, University of Virginia</uvalibdesc:title>
+					<uvalibdesc:title type="main">Pavilion III, University of Virginia</uvalibdesc:title>
 					<uvalibdesc:form>architecture</uvalibdesc:form>
 					<uvalibdesc:mediatype type="image">
 						<uvalibdesc:form>digital</uvalibdesc:form>
@@ -122,7 +122,7 @@
 			<METS:fileGrp ID="DS1" STATUS="">
 				<!--MrSID Wavelet encoded file -->
 				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/x-mrsid-image" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" xlink:title="Pavillion III, University of Virginia"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" xlink:title="Pavilion III, University of Virginia"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>
