@@ -794,19 +794,10 @@
 		<copy todir="dist/server/xsd">
 			<fileset dir="src/xsd"/>
 		</copy>
-		<!--
-		<copy file="src/xsd/fedora-types.xsd" todir="dist/server/xsd"/>
-		<copy file="src/xsd/fedora-auditing.xsd" todir="dist/server/xsd"/>
-		<copy file="src/xsd/fedora-behavior-bind.xsd" todir="dist/server/xsd"/>
-		<copy file="src/xsd/mets-fedora.xsd" todir="dist/server/xsd"/>
-		<copy file="src/xsd/mets-fedora-ext.xsd" todir="dist/server/xsd"/>
-		<copy file="src/xsd/xlink.xsd" todir="dist/server/xsd"/>
-		<copy file="src/xsd/objectMethods.xsd" todir="dist/server/xsd"/>
-		<copy file="src/xsd/behaviorDefs.xsd" todir="dist/server/xsd"/>
-		-->
 		<!-- Schematron:  Fedora rules schema and schematron preprocessor -->
 		<mkdir dir="dist/server/schematron"/>
-		<copy file="src/xml/schematron/fedoraRulesExt.xml" todir="dist/server/schematron"/>
+		<copy file="src/xml/schematron/metsExtRules1-0.xml" todir="dist/server/schematron"/>
+		<copy file="src/xml/schematron/foxmlRules1-0.xml" todir="dist/server/schematron"/>
 		<copy file="src/xsl/schematron/preprocessor.xslt" todir="dist/server/schematron"/>
 		<mkdir dir="dist/server/config"/>
 		<copy file="temp/server/java/fedora/server/management/deploy.wsdd" todir="dist/server/config"/>
