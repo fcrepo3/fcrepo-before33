@@ -297,7 +297,7 @@ public class DefinitiveDOWriter
             a.action="Don't know"; 
             a.responsibility="You"; 
             a.date=new Date();
-            a.responsibility=logMessage; 
+            a.justification=logMessage; 
             m_obj.getAuditRecords().add(a);
             
             // replicate
