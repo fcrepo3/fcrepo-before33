@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:3010" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="*** TESTING:  SUBSTITUTING LABEL FOR OBJECT ***"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2005-03-15T12:57:07.241Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2005-03-15T12:57:07.702Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/>
+	</foxml:objectProperties>
+	<foxml:datastream CONTROL_GROUP="X" ID="DC" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DC1.0" LABEL="template: Dublin Core Metadata" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="DESC" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DESC.0" LABEL="template: UVA descriptive metadata" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="E" ID="DS1" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DS1.0" LABEL="template: THUMBNAIL jpg image" MIMETYPE="image/jpeg" SIZE="0">
+			<foxml:contentLocation REF="url of THUMBNAIL image" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="DIGIPROV1" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DIGIPROV1.0" LABEL="template: UVA digiprov metadata for THUMBNAIL res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="SOURCE1" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="SOURCE1.0" LABEL="template: UVA source metadata for THUMBNAIL res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="TECH1" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="TECH1.0" LABEL="template: UVA technical metadata for THUMBNAIL image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="RIGHTS1" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="RIGHTS1.0" LABEL="template: UVA access rights/policy metadata for THUMBNAIL res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="E" ID="DS2" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DS2.0" LABEL="template: MEDIUM res jpg image" MIMETYPE="image/jpeg">
+			<foxml:contentLocation REF="template: url of MEDIUM res jpg image" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="DIGIPROV2" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="DIGIPROV2.0" LABEL="template: UVA digiprov metadata for MEDRES res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>		
+	<foxml:datastream CONTROL_GROUP="X" ID="SOURCE2" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="SOURCE2.0" LABEL="template: UVA source metadata for MEDIUM res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="TECH2" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="TECH2.0" LABEL="template: UVA technical metadata for MED res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="RIGHTS2" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="RIGHTS2.0" LABEL="template: UVA access rights/policy metadata for MEDRES res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="E" ID="DS3" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DS3.0" LABEL="template: HIGH res jpg image" MIMETYPE="image/jpeg">
+			<foxml:contentLocation REF="template: url of HIGH res jpg image" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="X" ID="DIGIPROV3" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="DIGIPROV3.0" LABEL="template: UVA digiprov metadata for HIGH res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="SOURCE3" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="SOURCE3.0" LABEL="template: UVA source metadata for HIGH res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>		
+	<foxml:datastream CONTROL_GROUP="X" ID="TECH3" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="TECH3.0" LABEL="template: UVA technical metadata for HIGH res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="X" ID="RIGHTS3" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="RIGHTS3.0" LABEL="template: UVA access rights/policy metadata for HIGHRES res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>		
+	<foxml:datastream CONTROL_GROUP="E" ID="DS4" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DS4.0" LABEL="template: VERYHIGH jpg image" MIMETYPE="image/jpeg" SIZE="0">
+			<foxml:contentLocation REF="template: url of VERYHIGH jpg image" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="X" ID="DIGIPROV4" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="DIGIPROV4.0" LABEL="template: UVA digiprov metadata for VERYHIGH res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="SOURCE4" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="SOURCE4.0" LABEL="template: UVA source metadata for VERYHIGH res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>	
+	<foxml:datastream CONTROL_GROUP="X" ID="TECH4" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="TECH4.0" LABEL="template: UVA technical metadata for VERYHIGH res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>		
+	<foxml:datastream CONTROL_GROUP="X" ID="RIGHTS4" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion  ID="RIGHTS4.0" LABEL="template: UVA access rights/policy metadata for VERYHIGH res image" MIMETYPE="text/xml">
+			<foxml:xmlContent/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:disseminator BDEF_CONTRACT_PID="demo:1" ID="DISS1" STATE="A" VERSIONABLE="true">
+		<foxml:disseminatorVersion BMECH_SERVICE_PID="demo:2" ID="DISS1.0" LABEL="UVA Std Image Behaviors">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="THUMBRES_IMG" LABEL="THUMBNAIL res jpg image" ORDER="0"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DS2" KEY="MEDRES_IMG" LABEL="MEDIUM res jpg image" ORDER="0"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DS3" KEY="HIGHRES_IMG" LABEL="HIGH res jpg image" ORDER="0"/>
+				<foxml:datastreamBinding DATASTREAM_ID="DS4" KEY="VERYHIGHRES_IMG" LABEL="VERYHIGH jpg image" ORDER="0"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
+</foxml:digitalObject>
