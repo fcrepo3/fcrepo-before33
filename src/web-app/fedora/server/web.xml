@@ -98,7 +98,7 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
-			<url-pattern>/management/s*</url-pattern>
+			<url-pattern>/management/soap</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>administrator</role-name>
