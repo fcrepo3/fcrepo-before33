@@ -341,23 +341,7 @@ public class DefaultManagement
                     } else {
                         in=m_contentManager.getExternalContent(dsLocation).getStream();
                     }
-                    // parse with xerces... then re-serialize, removing
-                    // processing instructions and ensuring the encoding gets to UTF-8
-                    ByteArrayOutputStream out=new ByteArrayOutputStream();
-                    // use xerces to pretty print the xml, assuming it's well formed
-                    OutputFormat fmt=new OutputFormat("XML", "UTF-8", true);
-                    fmt.setIndent(2);
-                    fmt.setLineWidth(120);
-                    fmt.setPreserveSpace(false);
-                    fmt.setOmitXMLDeclaration(true);
-                    XMLSerializer ser=new XMLSerializer(out, fmt);
-                    DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
-                    factory.setNamespaceAware(true);
-                    DocumentBuilder builder=factory.newDocumentBuilder();
-                    Document doc=builder.parse(in);
-                    ser.serialize(doc);
-                    // now put it in the byte array
-                    ((DatastreamXMLMetadata) ds).xmlContent=out.toByteArray();
+                    ((DatastreamXMLMetadata) ds).xmlContent = getEmbeddableXML(in);
                 } catch (Exception e) {
                     String extraInfo;
                     if (e.getMessage()==null)
@@ -726,15 +710,10 @@ public class DefaultManagement
                 // If the passed-in dsContent is null, that means "dont change
                 // the content".  Accordingly, here we just make a copy of
                 // the old content.
-                newds.xmlContent=((DatastreamXMLMetadata) orig).xmlContent;
+                newds.xmlContent = ((DatastreamXMLMetadata) orig).xmlContent;
             } else {
                 // If it's not null, use it
-                ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-                try {
-                    StreamUtility.pipeStream(dsContent, bytes, 1024);
-                } catch (Exception ex) {
-                }
-                newds.xmlContent=bytes.toByteArray();
+                newds.xmlContent = getEmbeddableXML(dsContent);
             }
             newds.DatastreamID=orig.DatastreamID;
             // make sure it has a different id
@@ -1405,6 +1384,44 @@ public class DefaultManagement
           getServer().logFinest("Exiting DefaultManagement.setDisseminatorState");
       }
    }
+
+    /**
+     * Get a byte array containing an xml chunk that is safe to embed in 
+     * another UTF-8 xml document.
+     * <p>
+     * This will ensure that the xml is:
+     * <ul>
+     *   <li> well-formed. If not, an exception will be raised.</li>
+     *   <li> encoded in UTF-8. It will be converted otherwise.</li>
+     *   <li> devoid of processing instructions. These will be stripped if present.</li>
+     *   <li> devoid of DOCTYPE declarations. These will be stripped if present.</li>
+     *   <li> devoid of internal entity references.  These will be expanded if present.</li>
+     * </ul>
+     * </p>
+     */
+    private byte[] getEmbeddableXML(InputStream in) throws GeneralException {
+        // parse with xerces and re-serialize the fixed xml to a byte array
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            OutputFormat fmt = new OutputFormat("XML", "UTF-8", true);
+            fmt.setIndent(2);
+            fmt.setLineWidth(120);
+            fmt.setPreserveSpace(false);
+            fmt.setOmitXMLDeclaration(true);
+            fmt.setOmitDocumentType(true);
+            XMLSerializer ser = new XMLSerializer(out, fmt);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(in);
+            ser.serialize(doc);
+            return out.toByteArray();
+        } catch (Exception e) {
+            String message = e.getMessage();
+            if (message == null) message = "";
+            throw new GeneralException("XML was not well-formed. " + message, e);
+        }
+    }
 
     /**
      * Get a string indicating whether the associated binding map (or an empty
