@@ -358,7 +358,7 @@ public class DefaultManagement
             ds.DSState= dsState;
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             ds.DSCreateDT=nowUTC;
-            if (dsID==null && dsID.length()==0) {
+            if (dsID==null || dsID.length()==0) {
                 ds.DatastreamID=w.newDatastreamID();
             } else {
                 if (dsID.indexOf(" ")!=-1) {
