@@ -20,12 +20,12 @@
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/server/bin" perm="u+x" includes="**/*"/>
 	</target>
-    <target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
+	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
 		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
 		<copy file="dist/userdocs/demos.html" todir="dist/server/doc"/>
-    </target>
+	</target>
 	<target name="client" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/client"/>
@@ -53,6 +53,7 @@
 		<copy file="lib/client/jhbasic.jar" todir="dist/client/client/lib"/>
 		<copy file="lib/client/gnu-getopt-1.0.9.jar" todir="dist/client/client/lib"/>
 		<copy file="lib/common/saxon6.5.jar" todir="dist/client/client/lib"/>
+		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/client/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/client/lib"/>
@@ -155,7 +156,7 @@
 		<mkdir dir="dist/definitions/1/0/javadoc"/>
 		<copy todir="dist/definitions/1/0/javadoc">
 			<fileset dir="dist/serverdocs"/>
-		</copy>	
+		</copy>
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/serverdocs"/>
@@ -458,14 +459,14 @@
 		<echo message="Finished building server distribution in dist/server"/>
 	</target>
 	<target name="localservices" depends="server, localservicesclasses">
-       <!-- saxon service -->
+		<!-- saxon service -->
 		<copy todir="dist/server/tomcat41/webapps/saxon/WEB-INF/classes/fedora/localservices/saxon">
 			<fileset dir="temp/localservices/classes/fedora/localservices/saxon"/>
 		</copy>
 		<copy file="src/web-app/fedora/localservices/saxon/web.xml" todir="dist/server/tomcat41/webapps/saxon/WEB-INF"/>
 		<copy file="src/web-app/fedora/localservices/saxon/index.html" todir="dist/server/tomcat41/webapps/saxon"/>
 		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/saxon/WEB-INF/lib"/>
-       <!-- fop service -->
+		<!-- fop service -->
 		<copy todir="dist/server/tomcat41/webapps/fop/WEB-INF/classes/fedora/localservices/fop">
 			<fileset dir="temp/localservices/classes/fedora/localservices/fop"/>
 		</copy>
@@ -474,7 +475,7 @@
 		<copy file="lib/server/avalon-framework.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
 		<copy file="lib/server/batik.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
 		<copy file="lib/server/fop.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
-       <!-- soap client -->
+		<!-- soap client -->
 		<copy todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/classes">
 			<fileset dir="temp/soapclient/classes"/>
 		</copy>
@@ -487,7 +488,7 @@
 		<copy file="src/xsl/soapclient/behaviordefs.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
 		<copy file="src/web-app/fedora/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient"/>
-       <!-- userdocs -->
+		<!-- userdocs -->
 		<copy todir="dist/server/tomcat41/webapps/userdocs">
 			<fileset dir="src/web-app/userdocs"/>
 		</copy>
@@ -563,9 +564,7 @@
 		<mkdir dir="temp/localservices/classes"/>
 		<mkdir dir="temp/soapclient/classes"/>
 		<mkdir dir="temp/soapclient/lib"/>
-		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" 
-              classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar;lib/server/avalon-framework.jar;lib/server/batik.jar;lib/server/fop.jar" 
-              optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar;lib/server/avalon-framework.jar;lib/server/batik.jar;lib/server/fop.jar" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 		<exec executable="jar">
 			<arg value="-cf"/>
 			<arg path="temp/soapclient/lib/fedorautilities.jar"/>
@@ -599,6 +598,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.101  2003/04/18 19:38:34  rlw
+  added xerces-2.0.2.jar  to dist/client/lib and dist/server/client/lib
+  This is needed to insure that both client and server use same parser
+
   Revision 1.100  2003/04/10 18:10:41  cwilper
   changed so that serverdist does everything, as before.  now, serverandclient
   target is the shortcut one (that doesn't do docs).  this is better, because
