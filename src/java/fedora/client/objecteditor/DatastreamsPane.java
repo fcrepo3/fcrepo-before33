@@ -168,15 +168,18 @@ public class DatastreamsPane
         for (int i=0; i<m_datastreamPanes.length; i++) {
             newArray[i]=m_datastreamPanes[i];
         }
+        Datastream[] versions=Administrator.APIM.getDatastreamHistory(m_pid, dsID);
         newArray[m_datastreamPanes.length]=new DatastreamPane(m_owner,
-                        m_pid, 
-                        Administrator.APIM.getDatastreamHistory(m_pid, dsID),
-                        this);
+                        m_pid, versions, this);
         // swap the arrays
         m_datastreamPanes=newArray;
         int newIndex=getTabIndex("New...");
         m_tabbedPane.add(m_datastreamPanes[m_datastreamPanes.length-1], newIndex);
         m_tabbedPane.setTitleAt(newIndex, dsID);
+        m_tabbedPane.setToolTipTextAt(newIndex, versions[0].getMIMEType() 
+                + " - " + versions[0].getLabel() + " (" 
+                + versions[0].getControlGroup().toString() + ")");
+        colorTabForState(dsID, versions[0].getState());
         m_tabbedPane.setSelectedIndex(newIndex);
         doNew(ALL_KNOWN_MIMETYPES, false);
     }
@@ -184,6 +187,18 @@ public class DatastreamsPane
     protected void remove(String dsID) {
         int i=getTabIndex(dsID);
         m_tabbedPane.remove(i);
+        // also remove it from the array
+        DatastreamPane[] newArray=new DatastreamPane[m_datastreamPanes.length-1];
+        for (int x=0; x<m_datastreamPanes.length; x++) {
+            if (x<i) {
+                newArray[x]=m_datastreamPanes[x];
+            } else if (x>i) {
+                newArray[x-1]=m_datastreamPanes[x-1]; 
+            }
+        }
+        m_datastreamPanes=newArray;
+        // then make sure dirtiness indicators are corrent
+        m_owner.indicateDirtiness();
     }
 
     public boolean isDirty() {
