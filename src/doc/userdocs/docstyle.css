@@ -7,7 +7,7 @@ body {
   margin:20px;
   font-family:Arial, Helvetica, sans-serif;
   font-size:12px;
-  line-height:13px;
+  line-height:15px;
   color:#666666;
 }
 
@@ -22,14 +22,16 @@ body {
   padding-top: 0px;
   border-bottom: 1px solid;
   white-space: pre;
-  margin: 0px;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 /* FIXME: Make these sort of match the Category4 stuff,
           but still be appropriate for documentation */
 
 h1, h2, h3, h4, h5, h6 {
-  margin: 0px;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 h1 {
@@ -68,7 +70,7 @@ p {
 }
 
 .title, .abstract, .toc, .sec1 {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .title {
