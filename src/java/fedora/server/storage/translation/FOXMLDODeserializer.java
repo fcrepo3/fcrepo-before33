@@ -660,11 +660,8 @@ public class FOXMLDODeserializer
 						m_dsFirstElementBuffer.append("\"");
 						// remove the prefix from the list of prefixes
 						// that we actually encountered within this inline XML block.
-						System.out.println("prefix=" + prefix);
 						if (m_inlinePrefixList.contains(prefix)){
-							System.out.println("inlinePrefixList contains prefix: " + prefix);
 							m_inlinePrefixList.remove(prefix);
-							System.out.println("inlinePrefixList removed prefix: " + prefix);
 						}
 					}					
 					// Then, see if there are any prefixes left over in the list
@@ -676,7 +673,6 @@ public class FOXMLDODeserializer
 					for (int i=0; i<m_inlinePrefixList.size(); i++) {
 						// get a prefix from the list
 						String prefix=(String) m_inlinePrefixList.get(i);
-						System.out.println("left in inlinePrefixList: " + prefix);
 						// get URI for prefix by inquiring into set of
 						// prefixes defined within this block of inline XML
 						String URI=(String) m_prefixToURI.get(prefix);
