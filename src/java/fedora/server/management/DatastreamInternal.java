@@ -25,15 +25,4 @@ public class DatastreamInternal extends Datastream
   {
   }
 
-  public byte[] getContentBytes(int length, int offset)
-  {
-    // get content from internal storage location
-    return(null);
-  }
-
-  public InputStream getContentStream()
-  {
-    // get content from internal storage location
-    return(null);
-  }
 }

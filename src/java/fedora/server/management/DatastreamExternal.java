@@ -24,22 +24,4 @@ public class DatastreamExternal extends Datastream
   public DatastreamExternal()
   {
   }
-
-
-  public String getLocationURL()
-  {
-    return(dsLocationURL);
-  }
-
-  public byte[] getContentBytes(int length, int offset)
-  {
-    // run the external content retriever
-    return(null);
-  }
-
-  public InputStream getContentStream()
-  {
-    // run the external content retriever
-    return(null);
-  }
 }
