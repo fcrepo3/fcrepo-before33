@@ -5,371 +5,408 @@
 <?xml-stylesheet type="text/xsl" 
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
+	<title>Fedora Release Notes</title>
 	<articleinfo>
-		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
-		<title>Fedora Installation and Configuration Guide</title>
-		<subtitle>Software Release 1.0</subtitle>
-		<corpauthor>Fedora Development Team</corpauthor>
-		<copyright>
-			<year>2003</year>
-		</copyright>
-		<publisher>
-			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
-		</publisher>
+		<author>
+			<othername>Fedora Development Team</othername>
+		</author>
+		<edition>$Revision$</edition>
+		<date>$Date$</date>
+		<releaseinfo>
+            $Id$ 
+        </releaseinfo>
 	</articleinfo>
 	<section>
-		<title>Getting Started</title>
+		<title>Release 1.0 - March 7, 2003</title>
+		<para>This release is the first public release of the Fedora repository system. Fedora is licensed under the GNU General Public License. Refer to the README and COPYING files in the distribution for details of the license and restrictions governing copying and redistribution. This release includes some major changes since release 0.9 that include the following additions and enhancements.
+		</para>
 		<section>
-			<title>About This Guide</title>
-			<para>This is the installation guide for Fedora.  It includes instructions for installing the server and client distributions, as well as instructions for installing and compiling the complete source code distribution.</para>
+			<title>Behavior Definition and Behavior Mechanism Object Builder </title>
+			<para>A new tool has been added to the Admin client that facilitates the building of behavior definition and behavior mechanism objects. The bdef/bmech builder provides a graphical user interface that greatly simplifies the task of creating behavior definition and behavior mechanism objects from scratch.</para>
 		</section>
 		<section>
-			<title>Install Prerequisite Software</title>
-			<para>Required:</para>
+			<title>Additional Component Management Method Implemented</title>
+			<para>Several additional methods in API-M have been implemented. The new methods include</para>
 			<itemizedlist>
 				<listitem>
-					<para>
-						<emphasis>Sun's Java Software Development Kit, v1.4.</emphasis>  Whether you are installing a binary or source distribution, you must have the J2SDK v1.4 or above. It should be installed on the machine you intend to use as the Fedora server.  You can download it at http://java.sun.com/</para>
-				</listitem>
-			</itemizedlist>
-			<para>Optional:</para>
-			<itemizedlist>
-				<listitem>
-					<para>
-						<emphasis>MySQL, v3.2.3.</emphasis>  The Fedora server is backed in part by a relational database.  If you decide not to use the included pure java database, McKoi v0.94 (more about that later), you should download and install MySQL v3.2.3 for your platform (or see the "Other Databases" section below).  You can download MySQL at http://www.mysql.com/.  Note that later releases of MySQL might work, but they have not been tested. </para>
-				</listitem>
-			</itemizedlist>
-		</section>
-		<section>
-			<title>Download Fedora</title>
-			<para>The latest version of the software can always be found at http://www.fedora.info/release/</para>
-			<para>	There are multiple distribution packages in a release.  The server binaries, the client binaries, and the entire source code.  Each of these packages is distributed in .tar.gz (for Unix) and .zip (for Windows) archives.</para>
-		</section>
-		<section>
-			<title>Unpack Fedora</title>
-			<para>Server binary distribution:</para>
-			<itemizedlist>
-				<listitem>
-					<para>Decide where you want the Fedora software to reside.  For example, C:\ or /usr/local.</para>
+					<para>GetDatastream – retrieve the specified datastream</para>
 				</listitem>
 				<listitem>
-					<para>Unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.0.  This will be the home directory of Fedora.</para>
+					<para>GetDisseminator – retrieve the specified disseminator</para>
 				</listitem>
 				<listitem>
-					<para>If you're in Unix, you must change the permissions of the files in the server/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.0/server/bin/&ast;</emphasis>
-					</para>
-				</listitem>
-			</itemizedlist>
-			<para>Client binary distribution:</para>
-			<itemizedlist>
-				<listitem>
-					<para>If a server is already unpacked on the machine, put the client in the same place.  That is, if your server is unpacked into C:\fedora-1.0\server\, go to C:\ and unpack the client from there.  It will go into C:\fedora-1.0\client, so that now both the client and server are under one common directory.</para>
+					<para>ListDatastreamIDs – obtain a list of datastream IDs</para>
 				</listitem>
 				<listitem>
-					<para>If the machine you're installing on doesn't have a server, decide where you want the client to reside.  For example, C:\ or /usr/local.  Then unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.0.  This will be the home directory of Fedora.</para>
+					<para>ListDisseminatorIDs – obtain a list of disseminator IDs</para>
 				</listitem>
 				<listitem>
-					<para>If you're in Unix, you must change the permissions of the files in the client/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.0/server/bin/&ast;</emphasis>
-					</para>
+					<para>ModifyDatastreamExternal – change the pointer to a Referenced External Content datastream</para>
 				</listitem>
-			</itemizedlist>
-			<para>Source Code:</para>
-			<itemizedlist>
 				<listitem>
-					<para>Decide where you want to work with the source code and unpack it there.  It will create its own directory, named according to the version... like fedora-1.0-src.  This will be your Fedora development directory.</para>
+					<para>ModifyDatastreamManagedContent – change the contents of a Managed Content datastream</para>
+				</listitem>
+				<listitem>
+					<para>ModifyDatastreamXMLMetadata  - change the contents of an Implementor-Defined XML Metadata datastream</para>
+				</listitem>
+				<listitem>
+					<para>modifyDisseminator  - modify the references to the behavior definition or behavior mechanism associated with the specified disseminator</para>
 				</listitem>
 			</itemizedlist>
 		</section>
 		<section>
-			<title>Prepare Environment Variables</title>
-			<para>For server, client, and source code installations:</para>
+			<title>Batch Utility Enhancements</title>
+			<para>Several enhancements to the Batch Utility have been added to make the batch utility less platform specific. Enhancements include [blurb from Bill here.]</para>
+		</section>
+		<section>
+			<title>Documentation</title>
+			<para>The Fedora documentation now includes revised and enhanced Installation Guide, Release Notes, Manual, and Demos Guide. The Fedora manual includes a general introduction to the architecture, Installation Guide, User’s Guide, and Developer’s Guide. Upon successful installation, all documentation is also available through the userdocs webapp and can be access using the syntax:</para>
+			<para>http://hostname:port/userdocs</para>
 			<itemizedlist>
 				<listitem>
-					<para>JAVA_HOME must point to the base directory of your J2SDK installation.  On Windows, this will usually be something like C:\j2sdk1.4.x\.  On Unix, it could be in several places.  The /usr and /usr/local directory are commonly used for Java installations.</para>
-					<blockquote>
+					<para>hostname - required hostname of the Fedora server.</para>
+				</listitem>
+				<listitem>
+					<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+				</listitem>
+				<listitem>
+					<para>userdocs - a required parameter specifying the Fedora servlet path hostname - required hostname of the Fedora server.</para>
+				</listitem>
+			</itemizedlist>
+			<para>In-line documentation in the source code has also been updated.</para>
+		</section>
+	</section>
+	<section>
+		<title>Release 0.9 - March 7, 2003</title>
+		<para>
+        This release includes major changes since the December Beta1 release 
+        that include the following additions and enhancements.
+        </para>
+		<section>
+			<title>Repository-Managed Content Datastreams</title>
+			<para>
+            The implementation of Repository-Managed Content datastreams has been added. Repository-Managed Content is used for datastreams that are to be under the complete control of the Fedora repository. Upon ingestion, content that is referenced in the Fedora-METS "file" element is copied to an internal storage location in the Fedora server and the external pointer in the Fedora-METS object is updated to reflect the new internal storage location. Repository-Managed Content should be used in cases where it is desirable for datastream content to be stored and managed locally within the Fedora server. The repository manager must insure that there is sufficient disk space allocated to accommodate the ingestion of objects containing Repository-Managed Content.
+            </para>
+		</section>
+		<section>
+			<title>Implementor-Defined XML Metadata Datastreams</title>
+			<para>
+            The implementation of Implementor-Defined XML Metadata datastreams has been added. XMLMetadata datastreams represent user-defined XML-encoded metadata that is included in-line in the "amdSec" and "dmdSec" elements of the Fedora-Mets object. Although these datastreams are included in the metadata section of the Fedora-METS object, they can be disseminated just like the regular datastreams included in the "fileSec" element. Implementor-Defined XML Metadata datastreams should be used in cases where it is desirable to include user-defined metadata in-line in the Fedora-METS object. The Dublin Core metadata datastream is an example of an Implementor-Defined XML Metadata datastream (see Search Interface note).
+            </para>
+		</section>
+		<section>
+			<title>API-A-Lite Interface</title>
+			<para>
+            A new Fedora Access interface has been implemented known as API-A-Lite. API-A-Lite provides a streamlined implementation of the Fedora Access API over HTTP. The new interface provides two methods: GetDissemination, and GetObjectProfile. GetDissemination is used to request disseminations using HTTP. GetObjectProfile uses object reflection to provide a description of an object and its components. 
+            </para>
+		</section>
+		<section>
+			<title>Search Interface</title>
+			<para>
+            The implementation of a new search interface has been added. Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using this interface. The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the "Datastream ID" is DC, and the XML conforms to the schema at: http://www.openarchives.org/OAI/2.0/oai_dc.xsd. If such a datastream is not provided, only the System Metadata will be indexed for that object. The search interface provides both simple and advanced searching via a web page included with the repository software. All queries are case insensitive. Simple search enables queries of words and phrases occurring anywhere in an object s indexed metadata fields. 
+            Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (= and ~) for string fields, and value comparison operators (=, &gt;, &gt;=, &lt;, &lt;=) for date fields (dc:date fields may be treated as both). The wildcards, * and ? may be used in any string-based query. 
+            </para>
+		</section>
+		<section>
+			<title>OAI Provider Interface</title>
+			<para>
+The implementation of an OAI-PMH2.0 Provider interface has been added. OAI-PMH is a standard for sharing metadata across repositories. Currently, only the Dublin Core metadata for each object may be disseminated via this interface. 
+            </para>
+		</section>
+		<section>
+			<title>Access Control and Authentication</title>
+			<para>
+Although Access Control is not slated until year two of the project, the implementation of a simple form of access control has been added to provide a minimal level of security. IP range restriction is supported at both the Management API and the Access API exposures. The fedora.fcfg configuration file contains two new optional parameters in the Access and Management Modules named "allowhosts" and "denyhost" that are used to provide a comma delimited set of IP ranges. By default, the Management API is restricted to the IP address of the local host and the Access API is unrestricted. In addition, basic authentication is supported for API-M client-to-server communication. The client scripts and fedora-admin GUI have been modified to take a username and password at startup. Only one user, the super user "fedoraAdmin", is supported at this time. The password for fedoraAdmin is configured in fedora.fcfg.
+            </para>
+		</section>
+		<section>
+			<title>Server Port Configuration</title>
+			<para>
+Server administrators can now more easily configure the port on which the Fedora server is exposed. The port is set in fedora.fcfg. Its default is 8080.
+            </para>
+		</section>
+		<section>
+			<title>METS Extension</title>
+			<para>
+To accommodate some of the new functionality in Fedora, it was necessary to extend the METS schema. Fedora-METS objects are now validated against this extended version of METS. The extended schema, mets-fedora-ext.xsd, is available at dist/server/xsd/ and contains inline comments where changes were made. Other constraints for the objects, expressed in schematron, are available in the dist/server/schematron/ directory. The demonstration objects act as useful examples in understanding this schema. 
+            </para>
+		</section>
+		<section>
+			<title>Default Disseminator</title>
+			<para>
+The implementation of a new Default Disseminator has been added. Prior to this release, a data object could not be disseminated without first constructing and ingesting a behavior definition and behavior mechanism object. The Default Disseminator is a built-in internal disseminator on every object that provides an internal behavior mechanism for disseminating the basic contents of an object. The Default Disseminator does not replace Behavior Definition and Behavior Mechanism object. Instead, it provides a simple way for viewing the contents of an object without having to construct a separate Behavior Definition and Behavior Mechanism object. Behavior Definition and Behavior Mechanism objects are still required for creating disseminations that provide more complex sets of behaviors.
+            </para>
+		</section>
+		<section>
+			<title>Storage Subsystem Enhancements</title>
+			<para>
+The code supporting the Java instantiation of Fedora Digital Objects inside the server has been re-worked so that serialization and deserialization are completely de-coupled from the Java interfaces to the objects: the DOReaders and DOWriters. Method names have also been changed to be more meaningful and consistent. The serialization and deserialization code has been modified to support the new version of the Fedora METS extension schema (described above). Overall, the code in this portion of the server is more compact and robust than in the previous version of the software.
+            </para>
+		</section>
+		<section>
+			<title>Batch Ingest Tool Enhancements</title>
+			<para>
+The functionality to create and ingest batches of objects has been moved under the fedora-admin client tool. This consolidates administrative functions into a single tool and provides a readily accessible user interface. There are now more attributes which can be substituted, per-object, into the batch template. These include object label; datastream labels, both general and specific to a disseminator; and datastream title. An object comment can also be inserted.
+            </para>
+		</section>
+		<section>
+			<title>New Demo Objects</title>
+			<para>
+This includes new demonstration objects. These objects can be loaded into the repository in one of two ways. The xml source files can be "ingested" into the repository via the Fedora Admin GUI client (from the command prompt, run: fedora-admin). Otherwise, they can be loaded with all other demos by running the demo load script (from the command prompt, run: fedora-demoall [hostname] [port] [username] [password]). The demo object source xml files for the demo objects can be found in the following directory: [FEDORA_HOME]/dist/server/demo
+            </para>
+			<para>
+There are two categories of demonstrations:
+                <itemizedlist>
+					<listitem>
 						<para>
-							<emphasis>Note: If you would rather not set your JAVA_HOME to point to the version required by Fedora (for instance, if you run other applications using java1.3) you can instead set the FEDORA_JAVA_HOME environment variable.  This way, Fedora's java installation won't conflict with your other java applications.</emphasis>
-						</para>
-					</blockquote>
-				</listitem>
-				<listitem>
-					<para>PATH must contain the executable (bin) directory of the J2SDK installation.  This is usally just under JAVA_HOME.</para>
-				</listitem>
-			</itemizedlist>
-			<para>For server and client installations:</para>
-			<itemizedlist>
-				<listitem>
-					<para>FEDORA_HOME must point to the base directory of your Fedora installation.  You will choose this directory when you unpack a binary distribution.</para>
-				</listitem>
-			</itemizedlist>
-			<para>For server installations:</para>
-			<itemizedlist>
-				<listitem>
-					<para>PATH must contain the executable directory of the Fedora server software installation.  This will be $FEDORA_HOME/server/bin on Unix, or %FEDORA_HOME%\server\bin in Windows.</para>
-				</listitem>
-			</itemizedlist>
-			<para>For client installations:</para>
-			<itemizedlist>
-				<listitem>
-					<para>PATH must contain the executable directory of the Fedora client software installation.  This will be $FEDORA_HOME/client/bin on Unix, or %FEDORA_HOME%\client\bin in Windows. </para>
-				</listitem>
-			</itemizedlist>
-			<para>For source code installations:</para>
-			<itemizedlist>
-				<listitem>
-					<para>FEDORA_DEV should contain the directory under which the source was unpacked, including the version part of the path.  For instance, if you installed the source in C:\ and it unpacked into C:\fedora-src-1.0\, FEDORA_DEV should be C:\fedora-src-1.0</para>
-				</listitem>
-				<listitem>
-					<para>•	PATH should contain the bin directory of Ant.  If you don't already have ant installed, a version comes with the Fedora source distribution in under %FEDORA_DEV%\res\ant\bin (in Windows) or $FEDORA_DEV/res/ant/bin (in Unix).  Note: If you opt to use the ant binaries included with the source, and you're in Unix, be sure to change the permissions on the files in the bin directory so that you can execute ant.  This can be done with the command: <emphasis>EDORA_DEV/res/ant/bin/&ast;</emphasis>
-					</para>
-				</listitem>
-			</itemizedlist>
+							<emphasis>Local Server Demos -</emphasis> These demos can be run under any conditions. They are intended to work when the Fedora repository server is in a stand-alone condition, for example, if the repository is running without a network connection, or if the repository is behind a firewall and not set up to received outside connections.</para>
+					</listitem>
+					<listitem>
+						<para>
+							<emphasis>Open Server Demos -</emphasis> These demos can only be run if the Fedora repository server is running as a network accessible server, meaning that it can make outgoing connections AND accept incoming connections. If the repository server is running behind a firewall, the firewall must be configured to allow incoming connections on the port that the repository server is running. The Open Server Demos use distributed content and services that are remote to the repository server.</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+			<para>
+            Once demo objects are ingested into the repository, they can be viewed via a web browser using API-A-LITE or API-A. Remember the URL syntax to get the object profile via API-A-LITE is: http://{hostname}:{port}/fedora/get/{objectPID}
+            </para>
+			<para>
+				<emphasis>Example:</emphasis> http://localhost:8080/fedora/get/demo:5
+            </para>
+			<para>
+For additional information refer to the demos.html file in the userdocs directory.
+            </para>
+		</section>
+		<section>
+			<title>Documentation</title>
+			<para>
+            After you have installed the software and started the server, you can access the documentation at http://localhost:8080/userdocs (substitute your own hostname and port number if using something other than the default).
+            </para>
 		</section>
 	</section>
 	<section>
-		<title>Compiling a Source Distribution</title>
+		<title>Beta 1 - Dec 20, 2002</title>
+		<para>
+		This release adds several important features to the Fedora software,
+		including a batch ingest tool, parameterized disseminations,
+        and datastream mediation.  Digital object serialization and
+        PID generation are now fully active, and validation has been
+		enhanced.  This is a non-public release.
+        </para>
 		<section>
-			<title>It's Easy</title>
-			<para>Provided that you've followed all the appropriate instructions above, you can now go to the $FEDORA_DEV directory and type:</para>
-			<blockquote>
-				<para>
-					<emphasis>ant serverdist</emphasis>
-				</para>
-			</blockquote>
-			<para>and everything necessary for a server and client distribution will be put in $FEDORA_DEV/dist</para>
-			<para>If you want to run the server and client straight from where it was compiled, be sure to set your FEDORA_HOME to $FEDORA_DEV/dist, and add $FEDORA_HOME/server/bin and $FEDORA_HOME/client/bin to your PATH environment variable.</para>
-			<para>For other targets, see the build.xml file or type ant -projecthelp for a brief description of each.</para>
-			<para>To erase all temporary and compiled files created by a build, first ensure that your database and Fedora server are stopped, and type ant clean.  If you're not using McKoi, you should also drop the FedoraObjects (or whatever you named it) database from your RDBMS if you want to start fresh.</para>
+			<title>Batch Ingest</title>
+			<para>A simple batch tool has been added,
+           enabling the creation of a batch of objects conforming to the
+           same content model. The tool consists of a 3 phase process. Phase 1
+           will take a directory structure consisting of datastreams and metadata
+           and convert that information into an XML-encoded file. Phase 2 will
+           then take the XML-encoded file and merge that with a object template
+           file that specifies the content model being used to produce a Fedora
+           METS-encoded file. Phase 3 of the process then ingests the METS-encoded
+           files and returns a list of the PIDs that were assigned to the new
+           objects. Phase 2 and Phase 3 are implemented in the beta1 release.
+           Phase 1 will be implemented in the next release and is NOT available
+           in the beta1 release.
+            </para>
+		</section>
+		<section>
+			<title>PID Generation</title>
+			<para>
+				<emphasis>PID generation has been activated.</emphasis> 
+           Upon ingestion, Fedora objects that
+           pass validation are automatically assigned a unique persistent 
+           identifer or PID. The namespace prefix on the PID is determined
+           by the namespace parameter in the fedora.cfg configuration
+           file. 
+		</para>
+			<para>
+				<emphasis>Special default PID namespace.</emphasis>
+          To simplify initial setup and use 
+           of the repository, the default namespace of "test:" enables 
+           special handling of Fedora object PIDs. If the PID namespace is
+           set to "test:" in the fedora/fcfg configuration file, the ingest
+           method will NOT generate unique PIDs, but will instead use the
+           PID values contained in the Fedora objects. This behavior occurs
+           ONLY for the namespace of "test:". This feature was enabled to
+           allow for easier loadeing of sample objects by novice users of
+           the repository software.
+            </para>
+		</section>
+		<section>
+			<title>Serialization</title>
+			<para>
+          Objects are completely deserialized and re-serialed upon ingest.
+          This has the effect that the stored version of the object (in METS form)
+          will not be the same byte-for-byte as the version coming out,
+          but the information will be preserved.  It also enables
+          more complete validation and PID generation.
+            </para>
+		</section>
+		<section>
+			<title>Validation Enhancements</title>
+			<para>
+         Two-phase validation of objects implemented. Upon ingestion,
+           Fedora objects undergo a two phase validation process to
+           validate against the Fedora METS schema and to validate
+           against a set of rules defined for Fedora objects.
+            </para>
+		</section>
+		<section>
+			<title>Parameters</title>
+			<para>
+				<emphasis>Method Parameters enabled</emphasis> Method parameters can now be defined in
+           Behavior Mechanism objects using WSDL providing a way to pass
+           parameters to methods from the end user. For example, an image
+           mechanism might have a method named getImage with parameters X
+           and Y that specify the pixel dimensions of the requested image.
+           Method parameters may be supplied by the end user on a dissemination
+           request to affect the result of the dissemination.
+		</para>
+			<para>
+				<emphasis>Default Method Parameters enabled</emphasis> Mechanism designers can now
+           create method parameters that are known only to the mechanism.
+           Default method parameters cannot be altered by the end user and
+           their values must be specified in the Behavior Mechanism object.
+		 </para>
+			<para>
+				<emphasis>Enhancements to the example soap client (FedoraAccessSoapServlet)</emphasis>
+           In the alpha1 release, the soap client enabled one to reflect on
+           an object using GetBehaviorDefinitions and GetObjectMethods to
+           display a list of all methods for a given object and to disseminate
+           each of the methods. This interface has been enhanced to now allow
+           for user input of method parameters for those methods that define
+           parameters.
+		 </para>
+			<para>
+				<emphasis>DB Schema updated</emphasis> A new table named MechDefaultParameter has been
+           added and the datatype and length of some column names have changed.
+          </para>
+		</section>
+		<section>
+			<title>Fedora Public Website</title>
+			<para>
+         Added a <ulink url="http://www.fedora.info/release/">release directory</ulink>
+          for downloading both milestone source builds and nightly binary distributions,
+         and created a <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/WebHome">wiki
+         for user support and FAQs</ulink>.
+            </para>
+		</section>
+		<section>
+			<title>Datastream Mediation</title>
+			<para>
+           To provide better security for
+           the physical location of datastreams, a simple proxy has been
+           implemented to disguise the location of datastreams to external
+           mechanisms.
+            </para>
+		</section>
+		<section>
+			<title>Sample Objects</title>
+			<para>
+           The sample objects in the demo directory
+           have been renamed for readability. The content of the objects has
+           also been updated to reflect new additions like method parameters
+           and default method parameters. The WSDL in the mrsid mechanism
+           object in the alpha1 version contained errors that have been
+           corrected. There is also a sample directory of image files and
+           their associated metadata to create a batch of 10 image objects
+           using the new batch tool.
+           </para>
+		</section>
+		<section>
+			<title>Documentation</title>
+			<para>
+         Enhanced in-line documentation in code. Ancillary documentation and
+           diagrams updated.
+         Master Specification Document updated. The Specification documented
+           distributed in June 2002 has been updated to reflect changes.
+          </para>
 		</section>
 	</section>
 	<section>
-		<title>Setting up the Server</title>
+		<title>Alpha 1 - Oct 31, 2002</title>
+		<para>
+         Provided for the first time at the
+         development/deployment team meeting at UVA, this release
+         includes a basic server that can ingest
+         objects, view objects in the repository, and export objects.
+		 This is a non-public release.
+         </para>
 		<section>
-			<title>Initialize the Database</title>
-			<para>Fedora is designed to be RDBMS-independent, but comes with a pure java database called McKoi.  It has been tested and works with both McKoi and MySQL.  If you choose to use MySQL, we assume here that it is already installed.</para>
-			<para>Follow the below instructions for the RDBMS of your choice in order to create the user and tablespace so that the Fedora software can use the database.</para>
-				<section>
-					<title>McKoi</title>
-					<para>Execute the command:</para>
-					<blockquote>
-						<para>mckoi-init <emphasis>fedoraDBUser fedoraDBUser</emphasis></para>
-					</blockquote>
-					<para>...where the first parameter is the username you'd like to use for the database, and the second parameter is the password you'd like to use.  Remember this information, as it will be needed later when configuring Fedora.</para>
-					<para>Note: This command resolves to a batch file (mckoi-init.bat) in Windows, and a shell script (mckoi-init.sh) in Unix.  These reside in the server's bin directory.</para>
-				</section>
-				<section>
-					<title>MySQL</title>
-					<para>Execute the command:</para>
-					<blockquote>
-						<para>mysql-config <emphasis>installDir dbaUser dbaPass fedoraDBUser fedoraDBPass dbName</emphasis></para>
-					</blockquote>
-					<para>Where:</para>
-					<itemizedlist>
-						<listitem>
-							<para><emphasis>installDir</emphasis> is the location where MySQL is installed.  In Unix, this might be /usr/local/mysql.  In Windows, it might be C:\mysql</para>
-						</listitem>
-						<listitem>
-							<para><emphasis>dbaUser</emphasis> is the name of the MySQL user with dba privileges.  In a default MySQL installation, this will be root.</para>
-						</listitem>
-						<listitem>
-							<para><emphasis>dbaPass</emphasis> is the password of the MySQL user with dba privileges.  In a default MySQL installation,  if you're running MySQL on the same machine as Fedora, you can usually pass "" for this argument.</para>
-						</listitem>
-						<listitem>
-							<para><emphasis>fedoraDBUser</emphasis> is the username you'd like to use for the Fedora software's database access. (e.g., fedoraAdmin)</para>
-						</listitem>
-						<listitem>
-							<para><emphasis>fedoraDBPass</emphasis> is the password you'd like to use for the above user.  (e.g., fedoraAdmin)</para>
-						</listitem>
-						<listitem>
-							<para><emphasis>dbName</emphasis> is the name you'd like to use for the Fedora database.  (e.g., FedoraObjects) </para>
-						</listitem>
-					</itemizedlist>
-					<para>Note: This command resolves to a batch file (mysql-config.bat) in Windows, and a shell script (mysql-config.sh) in Unix.  These reside in the server's bin directory.</para>
-				</section>
-				<section>
-					<title>Other Databases</title>
-					<para>If you want to use a different database, it's an option, but it will take some extra work.  Here's how it can be done:</para>
-					<itemizedlist>
-						<listitem>
-							<para>The database needs to be JDBC-compliant and must support common SQL-92 syntax.  The driver will need to be put in the server's tomcat41/common/lib directory so that Fedora picks it up, and the JDBC url will need to be configured appropriately in the server's config/fedora.fcfg file.</para>
-						</listitem>
-					</itemizedlist>
-					<para>	Upon startup, Fedora checks the database for all required tables.  If they don't exist, it creates them.  Creation of tables is a much less standardized task across RDBMSs than regular SQL queries.  Thus, you must either</para> 
-					<orderedlist>
-						<listitem>
-							<para>create the tables and indexes and auto-increments yourself in your own database (see the file: src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec in the source distribution for the RDBMS-neutral table specifications),</para>
-						</listitem>
-						<listitem>
-							<para>write your own subclass of fedora.utilities.DDLConverter for your database software, include it in a jar file in server/tomcat41/common/lib, and associate it with the JDBC driver inside the server/config/fedora.fcfg file (see how it's done by looking at the MySQLDDLConverter and McKoiDDLConverter associations with their respective drivers in the fedora.fcfg file, and the classes' implementations in the source distribution).</para>
-						</listitem>
-					</orderedlist> 
-					<para>If you choose option #2, please tell us about it, as it will be useful for other users of Fedora!  Option 2 is harder, but it will make future installations of new versions of Fedora (where the db schema will likely change) much easier for you if you plan on using that database later.</para>
-				</section>
+			<title>Management API</title>
+			<para>The management API is exposed via SOAP over HTTP and 
+                 has the following methods implemented:
+            <itemizedlist>
+					<listitem>
+						<para>ingestObject</para>
+					</listitem>
+					<listitem>
+						<para>purgeObject</para>
+					</listitem>
+					<listitem>
+						<para>listObjectPIDs</para>
+					</listitem>
+					<listitem>
+						<para>exportObject</para>
+					</listitem>
+				</itemizedlist>
+			</para>
 		</section>
 		<section>
-			<title>Modify Fedora’s Configuration</title>
-			<para>Before starting for the first time, you will want to make some changes in Fedora’s main configuration file, server/config/fedora.cfg.</para>
-				<section>
-					<title>Introducing fedora.fcfg</title>
-					<para>The configuration file has a simple schema.  It starts with a server element, under which a series of param elements occur, followed by a series of module elements, followed by a series of datastore elements.</para>
-					<para>The param elements directly following the root server element are used to control what are considered generic server functionality.  Examples include the level of logging to do, the port on which the server should be exposed, and the superuser password.</para>
-					<para>The module elements are used to configure specific parts of Fedora.  For instance, the module with the role attribute, “fedora.server.search.FieldSearch”  is used to configure the field-searching component of the server.  Inside the module element, several param elements are included.  These are specific to that module’s implementation.  Descriptions of each parameter can currently be found in the configuration file itself.  Important ones will be listed below.</para>
-					<para>The datastore elements are used to configure various databases that might be used by the system.  Although the sample configuration file holds several, you will typically only need one.  The datastore elements are associated with the modules by means of a parameter inside the associated module.  In the sample configuration file, for example, the poolNames param of the fedora.server.storage.ConnectionPoolManager module refers to one of the datastore elements in it’s value.</para>
-				</section>
-				<section>
-					<title>Important Parameters</title>
-					<para>You will probably want to change the values of the following parameters for you own installation.</para>
-					<variablelist>
-						<varlistentry>
-							<term>adminPassword</term>
-							<listitem>
-								<para>This is where you set the value of the administrative user, “fedoraAdmin”’s password.  This is used when authenticating remote requests for performing administrative functions.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>object_store_base</term>
-							<listitem>
-								<para>A directory where XML serializations of the digital objects will be stored.  This will be created if it doesn’t already exist.  This parameter must be given as an absolute path.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>fedora_temp</term>
-							<listitem>
-								<para>A temporary directory.  This will be created if it doesn’t already exist.  This parameter must be given as an absolute path.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>fedora_datastreams</term>
-							<listitem>
-								<para>A directory where datastreams of digital objects will be stored.  This will be created if it doesn’t already exist.  This parameter must be given as an absolute path.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>fedoraServerPort</term>
-							<listitem>
-								<para>The port on which the server should run.  8080 is often used, but this can be anything your OS / user privleges will allow.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>fedoraServerHost</term>
-							<listitem>
-								<para>The host name of the machine on which Fedora runs.  If the machine has aliases, use the alias that will be used by people connecting to the server (be it via a web browser or one of the SOAP API exposures).</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>DOManager/pidNamespace</term>
-							<listitem>
-								<para>This is the namespace id part of newly generated PIDs for objects.  This should be a short string consisting of the characters [a-z][0-9].  When objects are first ingested or created in the repository, this will be the first part of the identifier used for them.  (Note: the pid namespace won’t be used for objects that are ingested with a “demo:” pid)</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>DOManager/storagePool</term>
-							<listitem>
-								<para>This specifies the database connection pool to be used for the storage subsystem.  Normally this will just identify ConnectionPoolManager’s default connection pool.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>Management/allowHosts </term>
-							<listitem>
-								<para>A comma-separated list of IP ranges (for example, “200.200.0.0-255.255.0.0,100.0.0.0-180.0.0.0”) that the client’s address is compared to for Management API access.  If this is specified, the remote address must match for any Management request in order to be accepted.  If this is not specified, all requests will be accepted unless the remote address matches a deny pattern (see below).</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>Management/denyHosts</term>
-							<listitem>
-								<para>IP Ranges to deny.  If specified, the remote address must not match for any Management request in order to be accepted.  If this is not specified, request acceptance is governed solely by the allowHosts parameter.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>Access/allowHosts</term>
-							<listitem>
-								<para>Same as Management/allowHosts, except this controls access to the Access API.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>Access/denyHosts</term>
-							<listitem>
-								<para>Same as Management/denyHosts, except this controls access to the Access API.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>Access/doMediateDatastreams</term>
-							<listitem>
-								<para>This is for additional repository security.  If true, all datastreams (even those that are referenced) will be piped through Fedora when they are sent to behavior services.  See the description of this parameter inside fedora.fcfg for more detail on this option.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>FieldSearch/connectionPool</term>
-							<listitem>
-								<para>Specifies the database connection pool to be used for the fielded search functionality.  Normally this will be ConnectionPoolManager’s default pool.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>OAIProvider/repositoryName</term>
-							<listitem>
-								<para>How you want your repository to be named in the OAI-PMH interface’s Identify request.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>OAIProvider/adminEmails</term>
-							<listitem>
-								<para>Who the OAI-PMH interface identifies as administrators to harvesters.  This is a space-separated list.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>OAIProvider/friends</term>
-							<listitem>
-								<para>A space separated list of OAI-PMH provider endpoints identifying other providers that you associate with.  OAI harvesters use this for discovery purposes.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>fedoraServerPort</term>
-							<listitem>
-								<para>The port on which the server should run.  8080 is often used, but this can be anything your OS / user privleges will allow.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>ConnectionPoolManager/defaultPoolName</term>
-							<listitem>
-								<para>The pool to be provided to modules that request the default connection pool.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>ConnectionPoolManager/poolNames</term>
-							<listitem>
-								<para>A comma delimited list of pools to make available.  These should be identified by the id attribute of one of the datastore elements.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>datastore/dbUsername</term>
-							<listitem>
-								<para>The username for database access.  This should match the username used previously when setting up the database for Fedora.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>datastore/dbPassword</term>
-							<listitem>
-								<para>The password for the database user.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>datastore/jdbcURL</term>
-							<listitem>
-								<para>A JDBC URL that can be used to connect to your database.  The syntax must match that required by the driver.  Working examples for MySQL and McKoi are included.</para>
-							</listitem>
-						</varlistentry>
-						<varlistentry>
-							<term>datastore/jdbcDriverClass</term>
-							<listitem>
-								<para>Identifies the driver to use for connecting to the database.  This is RDBMS-specific.  If you need to use a driver that isn’t already included, put the .jar file in server/tomcat41/common/lib./</para>
-							</listitem>
-						</varlistentry>
-					</variablelist>
-				</section>
-				<section>
-					<title>Other Settings</title>
-					<para>There are many other parameters you can configure with Fedora.  See the fedora.fcfg file for documentation on all the parameters.</para>
-				</section>
+			<title>Management Client</title>
+			<para>The included GUI, Fedora Administrator, can be used
+                 to ingest objects, purge objects, view objects, and
+                 export objects.  It also includes diagnostic consoles
+                 for API-M and API-A.
+           </para>
+		</section>
+		<section>
+			<title>Access API</title>
+			<para>The access API is exposed via SOAP over HTTP and
+                 has the following methods implemented:
+             <itemizedlist>
+					<listitem>
+						<para>getBehaviorDefinitions</para>
+					</listitem>
+					<listitem>
+						<para>getBehaviorMethods</para>
+					</listitem>
+					<listitem>
+						<para>getBehaviorMethodsAsWSDL</para>
+					</listitem>
+					<listitem>
+						<para>getObjectMethods</para>
+					</listitem>
+					<listitem>
+						<para>getDissemination</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section>
+			<title>Access Client</title>
+			<para>
+             A java servlet is included with the server distribution
+             that translates from pure HTTP requests to SOAP requests
+             and provides an HTML interface so that object methods
+             may be browsed and getDissemination requests can be
+             provided without the need to send/recieve SOAP envelopes.
+           </para>
+		</section>
+		<section>
+			<title>Object Validation</title>
+			<para>Objects must be validated according to METS schema rules,
+                 Fedora-imposed schema rules, and object integrity rules.
+                 For this release, the validation module implements the
+                 first two, but only METS schema validation has been
+                 activated.
+           </para>
+		</section>
+		<section>
+			<title>Storage Subsystem</title>
+			<para>This has been implemented on top of a filesystem and a
+             partially redundant database.
+           </para>
 		</section>
 	</section>
 </article>
