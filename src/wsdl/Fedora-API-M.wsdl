@@ -1304,6 +1304,7 @@
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
+    </operation>
     <operation name="WithdrawDisseminator">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#WithdrawDisseminator"/>
