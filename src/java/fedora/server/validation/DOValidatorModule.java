@@ -62,14 +62,12 @@ public class DOValidatorModule extends Module implements DOValidator
   {
     try
     {
-      Server s_server = this.getServer();
       dov.tempDir = System.getProperty("fedora.home") + this.getParameter("tempDir");
       dov.xmlSchemaURL = this.getParameter("xmlSchemaURL");
       dov.xmlSchemaLocalPath = System.getProperty("fedora.home") + this.getParameter("xmlSchemaLocalPath");
       dov.schematronPreprocessorID = System.getProperty("fedora.home") + this.getParameter("schematronPreprocessor");
       dov.schematronSchemaID = System.getProperty("fedora.home") + this.getParameter("schematronSchema");
       dov.schematronValidatingXslID = System.getProperty("fedora.home") + this.getParameter("schematronValidatingXsl");
-
     }
     catch(Exception e)
     {
@@ -78,12 +76,12 @@ public class DOValidatorModule extends Module implements DOValidator
           e.getMessage(),"fedora.server.validation.DOValidatorModule");
     }
   }
-  
+
   public void postInitModule() throws ModuleInitializationException
   {
-      // Get a connection pool manager for the validator module
     try
     {
+        // Get a connection pool manager for the validator module
         dov.connectionPool=((ConnectionPoolManager) getServer().getModule(
             "fedora.server.storage.ConnectionPoolManager")).getPool();
     }
