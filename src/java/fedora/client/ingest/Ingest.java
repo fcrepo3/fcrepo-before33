@@ -13,7 +13,6 @@ import fedora.client.FTypeDialog;
 import fedora.client.export.AutoExporter;
 import fedora.client.search.AutoFinder;
 
-import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 
 import fedora.server.types.gen.Condition;
@@ -85,7 +84,8 @@ public class Ingest {
                         // looks ok... do the request
                         String fTypes=dlg.getResult();
                         long st=System.currentTimeMillis();
-                        String[] pids=multiFromRepository(sdlg.getAPIA(),
+                        String[] pids=multiFromRepository(sdlg.getHost(),
+                                                          sdlg.getPort(),
                                                           sdlg.getAPIM(),
                                                           fTypes,
                                                           Administrator.APIM,
@@ -247,18 +247,15 @@ public class Ingest {
                                                FedoraAPIM targetRepos,
                                                String logMessage)
             throws Exception {
-        FedoraAPIA sourceAccess=APIAStubFactory.getStub(sourceHost,
-                                                        sourcePort,
-                                                        sourceUser,
-                                                        sourcePass);
         FedoraAPIM sourceRepos=APIMStubFactory.getStub(sourceHost,
                                                         sourcePort,
                                                         sourceUser,
                                                         sourcePass);
-        return multiFromRepository(sourceAccess, sourceRepos, fTypes, targetRepos, logMessage);
+        return multiFromRepository(sourceHost, sourcePort, sourceRepos, fTypes, targetRepos, logMessage);
    }
    
-   public static String[] multiFromRepository(FedoraAPIA sourceAccess,
+   public static String[] multiFromRepository(String sourceHost,
+                                              int sourcePort,
                                               FedoraAPIM sourceRepos,
                                               String fTypes,
                                               FedoraAPIM targetRepos,
@@ -267,21 +264,24 @@ public class Ingest {
         String tps=fTypes.toUpperCase();
         Set pidSet=new HashSet();
         if (tps.indexOf("D")!=-1) {
-            pidSet.addAll(ingestAll(sourceAccess,
-                                      sourceRepos,
+            pidSet.addAll(ingestAll(sourceHost,
+                                    sourcePort,
+                                    sourceRepos,
                                       "D",
                                       targetRepos,
                                       logMessage));
         }
         if (tps.indexOf("M")!=-1) {
-            pidSet.addAll(ingestAll(sourceAccess,
+            pidSet.addAll(ingestAll(sourceHost,
+                                    sourcePort,
                                       sourceRepos,
                                       "M",
                                       targetRepos,
                                       logMessage));
         }
         if (tps.indexOf("O")!=-1) {
-            pidSet.addAll(ingestAll(sourceAccess,
+            pidSet.addAll(ingestAll(sourceHost,
+                                    sourcePort,
                                       sourceRepos,
                                       "O",
                                       targetRepos,
@@ -296,7 +296,8 @@ public class Ingest {
         return pids;
     }
 
-    private static Set ingestAll(FedoraAPIA sourceAccess,
+    private static Set ingestAll(String sourceHost,
+                                 int sourcePort,
                                  FedoraAPIM sourceRepos,
                                  String fType,
                                  FedoraAPIM targetRepos,
@@ -306,6 +307,9 @@ public class Ingest {
         // then singleFromRepository(sourceRepos, pid, targetRepos, logMessage)
         // for each, then return the set
         HashSet set=new HashSet();
+        String[] res=AutoFinder.getPIDs(sourceHost, sourcePort, "fType=" + fType); 
+        for (int i=0; i<res.length; i++) set.add(res[i]);
+/*
         Condition cond=new Condition();
         cond.setProperty("fType");
         cond.setOperator(ComparisonOperator.fromValue("eq"));
@@ -334,6 +338,7 @@ public class Ingest {
                 exhausted=true;
             }
         }
+*/
         String friendlyName="data objects";
         if (fType.equals("D"))
             friendlyName="behavior definitions";

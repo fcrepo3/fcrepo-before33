@@ -58,6 +58,9 @@ public class SourceRepoDialog
     private static String s_lastServer;
     private static String s_lastUsername;
     private static String s_lastPassword;
+
+    private String m_host;
+    private int m_port;
         
     public SourceRepoDialog() {
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Source Repository", true);
@@ -99,7 +102,9 @@ public class SourceRepoDialog
                     if (hp.length==2) {
                         try {
                             String host=hp[0];
+                            m_host=host;
                             int port=Integer.parseInt(hp[1]);
+                            m_port=port;
                             m_apia=APIAStubFactory.getStub(host, 
                                                            port, 
                                                            m_usernameField.getText(),
@@ -188,6 +193,14 @@ public class SourceRepoDialog
 
     public FedoraAPIA getAPIA() {
         return m_apia;
+    }
+
+    public String getHost() {
+        return m_host;
+    }
+
+    public int getPort() {
+        return m_port;
     }
 
     public FedoraAPIM getAPIM() {
