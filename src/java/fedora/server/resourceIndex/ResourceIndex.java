@@ -56,7 +56,7 @@ public interface ResourceIndex {
 	
 	public void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
 	
-	public void modifyDigitalObject(DigitalObject digitalObject) ;
+	public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
 	
 	/*
 	 * TODO not clear if modify component requests should take the form of
