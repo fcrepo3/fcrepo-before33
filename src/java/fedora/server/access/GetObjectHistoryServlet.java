@@ -339,7 +339,7 @@ public class GetObjectHistoryServlet extends HttpServlet
       fedoraServerHost = s_server.getParameter("fedoraServerHost");
       fedoraServerPort = s_server.getParameter("fedoraServerPort");
       s_access = (Access) s_server.getModule("fedora.server.access.Access");
-      Logger logger = new Logger();
+      logger = new Logger();
     } catch (InitializationException ie)
     {
       throw new ServletException("Unable to get Fedora Server instance."
