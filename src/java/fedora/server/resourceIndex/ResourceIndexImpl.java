@@ -1058,6 +1058,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                          String object, 
                                          String language) throws ResourceIndexException {
         try {
+            if (object == null) {
+                object = "";
+            }
             m_tQueue.add(TripleMaker.createLocal(subject, predicate, object, language));
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
@@ -1069,6 +1072,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                          String object, 
                                          String datatype) throws ResourceIndexException {
         try {
+            if (object == null) {
+                object = "";
+            }
             m_tQueue.add(TripleMaker.createTyped(subject, predicate, object, datatype));
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
