@@ -35,6 +35,13 @@
 	</servlet>
 	<!-- end test -->
 	<servlet>
+		<servlet-name>FedoraAccessServlet</servlet-name>
+		<display-name>Fedora Access Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.FedoraAccessServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>DatastreamResolverServlet</servlet-name>
 		<display-name>Fedora Access Datastream Locator</display-name>
 		<servlet-class>
@@ -46,6 +53,13 @@
 		<display-name>Fedora Access Datastream Locator</display-name>
 		<servlet-class>
 			fedora.server.test.MethodParameterResolverServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>MethodParameterResolverServlet2</servlet-name>
+		<display-name>Fedora Access Datastream Locator</display-name>
+		<servlet-class>
+			fedora.server.access.MethodParameterResolverServlet
 		</servlet-class>
 	</servlet>
 	<servlet-mapping>
@@ -63,12 +77,20 @@
 	</servlet-mapping>
 	<!-- end test -->
 	<servlet-mapping>
+		<servlet-name>FedoraAccessServlet</servlet-name>
+		<url-pattern>/get/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>DatastreamResolverServlet</servlet-name>
 		<url-pattern>/getDS</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>MethodParameterResolverServlet</servlet-name>
 		<url-pattern>/getParmResolver</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MethodParameterResolverServlet2</servlet-name>
+		<url-pattern>/getAccessParmResolver</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
