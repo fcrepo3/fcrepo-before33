@@ -49,6 +49,8 @@ public class DefinitiveDOReader implements DOReader
       {"uva-bmech-image-w:112", "photo-w-mech.xml"},
       {"uva-bdef-stdimg:8", "std-img-bdef.xml"},
       {"uva-bmech-stdimg:10", "std-img-mech.xml"},
+      {"uva-bmech-test:00", "testmech.xml"},
+      {"uva-lib:99", "testobj.xml"},
   };
   // TEMPORARY: static method to load the Fake DO Registry
   static
@@ -64,6 +66,7 @@ public class DefinitiveDOReader implements DOReader
   protected XMLReader xmlreader;
   private String PID = null;
   private String doLabel = null;
+  private String doState = null;
   protected Hashtable datastreamTbl = new Hashtable();
   private Hashtable disseminatorTbl = new Hashtable();
   private Hashtable dissbDefTobMechTbl = new Hashtable();
@@ -79,20 +82,22 @@ public class DefinitiveDOReader implements DOReader
 
     debug = (args[0].equalsIgnoreCase("true")) ? true : false;
 
-    // FOR TESTING...
-    DefinitiveDOReader doReader = new DefinitiveDOReader(args[1]);
-    doReader.GetObjectPID();
-    doReader.GetObjectLabel();
-    doReader.ListDatastreamIDs("A");
-    doReader.ListDisseminatorIDs("A");
-    doReader.GetDatastreams(null);
-    doReader.GetDatastream("DS1", null);
-    doReader.GetDisseminators(null);
-    doReader.GetBehaviorDefs(null);
-    Disseminator d = doReader.GetDisseminator("DISS1", null);
-    doReader.GetBMechMethods(d.bDefID, null);
-    doReader.GetDSBindingMaps(null);
-
+    if (debug)
+    {
+      // FOR TESTING...
+      DefinitiveDOReader doReader = new DefinitiveDOReader(args[1]);
+      doReader.GetObjectPID();
+      doReader.GetObjectLabel();
+      doReader.GetObjectState();
+      doReader.ListDatastreamIDs("A");
+      doReader.ListDisseminatorIDs("A");
+      Datastream[] dsArray = doReader.GetDatastreams(null);
+      doReader.GetDatastream(dsArray[0].DatastreamID, null);
+      doReader.GetDisseminators(null);
+      String[] bdefArray = doReader.GetBehaviorDefs(null);
+      doReader.GetBMechMethods(bdefArray[0], null);
+      doReader.GetDSBindingMaps(null);
+    }
   }
 
   public DefinitiveDOReader()
@@ -154,6 +159,12 @@ public class DefinitiveDOReader implements DOReader
     {
       if (debug) System.out.println("GetObjectLabel = " + doLabel);
       return(doLabel);
+    }
+
+    public String GetObjectState()
+    {
+      if (debug) System.out.println("GetObjectState = " + doState);
+      return(doState);
     }
 
     public String[] ListDatastreamIDs(String state)
@@ -233,6 +244,7 @@ public class DefinitiveDOReader implements DOReader
           System.out.println("  dissID[" + i + "]=" + disseminators[i].dissID);
           System.out.println("  versID[" + i + "]=" + disseminators[i].dissVersionID);
           System.out.println("  createDT[" + i + "]=" + disseminators[i].dissCreateDT);
+          System.out.println("  state[" + i + "]=" + disseminators[i].dissState);
           System.out.println("  label[" + i + "]=" + disseminators[i].dissLabel);
           System.out.println("  bDefID[" + i + "]=" + disseminators[i].bDefID);
           System.out.println("  bMechID[" + i + "]=" + disseminators[i].bMechID);
@@ -315,27 +327,22 @@ public class DefinitiveDOReader implements DOReader
     {
       // TODO! dateTime filter not implemented in this release!!
 
-      // FIXIT! Put some code in to catch the case of the bootstrap mechanisms
-      // which are not stored as digital objects!!
+      // FIXIT! Put some code in to report default methods of the internal fedora
+      // bootstrap mechanism which is not stored as digital object!  The bootstrap
+      // mechanism enables a client to get disseminations of the actual contents
+      // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
       if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
       {
         System.out.println("Suppressing report of methods for bootstrap mechanism!");
         return null;
       }
 
-      DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
-      MethodDef[] methods = mechRead.GetBehaviorMethods(null);
-      /*
       if (debug)
       {
-        System.out.println("Methods for mechanism that implements: " + bDefPID);
-        for (int i = 0; i < methods.length; i++)
-        {
-          System.out.println(">>>>>method[" + i + "]=" + methods[i].methodName);
-        }
-
+        System.out.println("Behavior Methods for BDEF: " + bDefPID);
       }
-      */
+      DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
+      MethodDef[] methods = mechRead.GetBehaviorMethods(null);
       return(methods);
     }
 
@@ -350,7 +357,6 @@ public class DefinitiveDOReader implements DOReader
       // TODO! dateTime filter not implemented in this release!!
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
       InputStream instream = mechRead.GetBehaviorMethodsWSDL(null);
-      //return(mechRead.GetBehaviorMethodsWSDL(null));
       return(instream);
     }
 
@@ -372,6 +378,7 @@ public class DefinitiveDOReader implements DOReader
         // to which it refers.  Retrieve the associated Datastream object
         // via the datastreamID that's recorded in the DSBinding object.
         // Instantiate an augmented DSBinding object (DSBindingAugmented).
+
         DSBinding[] dsbindings = diss.dsBindMap.dsBindings;
         DSBindingAugmented[] augmentedBindings = new DSBindingAugmented[dsbindings.length];
         for (int j=0; j < dsbindings.length; j++)
@@ -418,8 +425,7 @@ public class DefinitiveDOReader implements DOReader
     // private methods
 
     private File locateObject(String PID) {
-      // FIXIT! insert code to locate object using the real digital object
-      // registory when it exists!
+      // FIXIT! insert code to locate object using data store layer when it's ready
 
       String filePath = (String)DefinitiveDOReader.fakeDORegistry.get(PID);
       return(new File(filePath));
@@ -449,6 +455,7 @@ public class DefinitiveDOReader implements DOReader
       private boolean isXMLDatastream = false;
 
       private boolean inMETS = false;
+      private boolean inMETSHDR = false;
       private boolean inDMDSec = false;
       private boolean inAMDSec = false;
       private boolean inMDSec = false;
@@ -460,6 +467,7 @@ public class DefinitiveDOReader implements DOReader
       private boolean inFile = false;
       private boolean inFLocat = false;
       private boolean inStructMap = false;
+      private boolean isBindingMap = false;
       private boolean inBindDivRoot = false;
       private boolean inBindDiv = false;
       private boolean inFilePtr = false;
@@ -469,6 +477,7 @@ public class DefinitiveDOReader implements DOReader
 
       private String h_PID;
       private String h_doLabel;
+      private String h_doState;
       private Vector h_vDatastream;
       private Vector h_vDisseminator;
       private Vector h_vDsBinding;
@@ -484,6 +493,7 @@ public class DefinitiveDOReader implements DOReader
       private final Pattern ltRegexp = Pattern.compile("<");
       private final Pattern gtRegexp = Pattern.compile(">");
       private final Pattern quotRegexp = Pattern.compile("\"");
+      private final Pattern aposRegexp = Pattern.compile("'");
 
       public void startDocument() throws SAXException
       {
@@ -501,6 +511,7 @@ public class DefinitiveDOReader implements DOReader
           // OBJECT PID
           PID = h_PID;
           doLabel = h_doLabel;
+          doState = h_doState;
 
           // DATASTREAMS
           int dsCount = h_vDatastream.size();
@@ -530,9 +541,18 @@ public class DefinitiveDOReader implements DOReader
       {
         if (isXMLDatastream && getAsStream)
         {
-          // FIXIT! PROBLEM WHEN HAS ENTITY REF LIKE &amp; &lt; !!!!!
+          // FIXIT! DO THE STRING REPLACEMENT THING FOR ENTITY REFS LIKE &amp; &lt; !!!!!
           // The parser will resolve these, and we want to write them out unresolved.
-          h_xmlstream.write(ch, start, length);
+
+          String s = new String(ch, start, length);
+          s = stringReplace(s, ampRegexp, "&amp;");
+          s = stringReplace(s, ltRegexp, "&lt;");
+          s = stringReplace(s, gtRegexp, "&gt;");
+          s = stringReplace(s, quotRegexp, "&quot;");
+          s = stringReplace(s, aposRegexp, "&apos;");
+          h_xmlstream.write(s);
+
+         // h_xmlstream.write(ch, start, length);
         }
       }
 
@@ -551,13 +571,19 @@ public class DefinitiveDOReader implements DOReader
         throws SAXException
       {
 
-        // FIXIT! EVALUATE BEST WAY TO DEAL WITH ATTRIBUTE VALUE
-        // THAT HAS ENTITY REF LIKE &amp; &lt; &gt; &quot; &apos;  !!!!!
-        // The parser will resolve these, and we want to write them out unresolved.
+        // We want hold on to blocks of XML as datastream content.  These blocks
+        // of XML must be valid XML.  The SAX parser will resolve internal entity
+        // references such as &amp; &lt; &gt; &quot; &apos; that it encounters in
+        // the XML block.  For the XML block to remain valid, we must convert these
+        // back to their internal entity reference syntax.  There is no SAX config
+        // variable that tells parser not to resolve these.  Thus, I have created
+        // a string replacement function to convert them back.
+
         if (isXMLDatastream && getAsStream)
         {
           h_xmlstream.write("<" + qName);
 
+          // Do the string replace thing on the attribute values
           int attrCount = attrs.getLength();
           for (int i = 0; i < attrCount; i++)
           {
@@ -566,6 +592,7 @@ public class DefinitiveDOReader implements DOReader
             s = stringReplace(s, ltRegexp, "&lt;");
             s = stringReplace(s, gtRegexp, "&gt;");
             s = stringReplace(s, quotRegexp, "&quot;");
+            s = stringReplace(s, aposRegexp, "&apos;");
             h_xmlstream.write(" " + attrs.getLocalName(i) + "=\"" + s + "\"");
           }
           h_xmlstream.write(">");
@@ -576,8 +603,11 @@ public class DefinitiveDOReader implements DOReader
           inMETS = true;
           h_PID = attrs.getValue("OBJID");
           h_doLabel = attrs.getValue("LABEL");
-          if (debug) System.out.println("the OBJID attr = " + h_PID);
-          if (debug) System.out.println("the LABEL attr = " + h_doLabel);
+        }
+        else if (qName.equalsIgnoreCase("METS:metsHdr"))
+        {
+          inMETSHDR = true;
+          h_doState = attrs.getValue("RECORDSTATUS");
         }
         else if (qName.equalsIgnoreCase("METS:dmdSec"))
         {
@@ -599,13 +629,13 @@ public class DefinitiveDOReader implements DOReader
           int attrCount = attrs.getLength();
           for (int i = 0; i < attrCount; i++)
           {
+            // Get all EXCEPT the Fedora Audit Trail metadata
             String dsid;
             if (!((dsid = attrs.getValue("ID")).equalsIgnoreCase("FEDORA-AUDITTRAIL")))
             {
                 isXMLDatastream = true;
                 h_datastream = new DatastreamXMLMetadata();
                 h_datastream.DatastreamID = dsid;
-                h_datastream.DSControlGrp = 2;
             }
           }
         }
@@ -619,6 +649,8 @@ public class DefinitiveDOReader implements DOReader
           if (isXMLDatastream)
           {
             h_datastream.DSInfoType = localName;
+            h_datastream.DSControlGrp = 2;
+            h_datastream.DSVersionID = attrs.getValue("ID");
             h_datastream.DSCreateDT = convertDate(attrs.getValue("CREATED"));
             h_datastream.DSState = attrs.getValue("STATUS");
           }
@@ -652,8 +684,8 @@ public class DefinitiveDOReader implements DOReader
           inFileGrp = true;
 
           // Get the datastreamIDs off of ID attribute, excepting root fileGrp
-          // ISSUE: we must enforce the ID value for root METS:fileGrp to be
-          // "DATASTREAMS" for this to work reliably.
+          // NOTE: the validatioin module will enforce that the ID value for root
+          // METS:fileGrp is "DATASTREAMS".
           String dsid;
           if (!(dsid = attrs.getValue("ID")).equalsIgnoreCase("DATASTREAMS"))
           {
@@ -697,31 +729,28 @@ public class DefinitiveDOReader implements DOReader
         else if (qName.equalsIgnoreCase("METS:structMap"))
         {
           inStructMap = true;
-          h_dsBindMap = new DSBindingMap();
-          h_vDsBinding = new Vector();
 
-          // ISSUE: we must enforce the value of TYPE attribute on METS:structMap
-          // to be "fedora:dsBindingMap" for this to work reliably.
-          // Ignore structMap if it's not a Fedora datastream binding map
-          // TODO:  test when non-fedora structmaps exist
+          // NOTE: the validation module will enforce the value of TYPE attribute
+          // on METS:structMap to be "fedora:dsBindingMap".
+
+          // NOTE: We ignore the structMap if it's not a Fedora datastream binding map
 
           if ((attrs.getValue("TYPE")).equalsIgnoreCase("fedora:dsBindingMap"))
           {
+            isBindingMap = true;
+            h_dsBindMap = new DSBindingMap();
+            h_vDsBinding = new Vector();
             h_dsBindMap.dsBindMapID = attrs.getValue("ID");
             h_dsBindMap.state = attrs.getValue("STATUS");
           }
-          else
-          {
-            h_dsBindMap = null;
-          }
         }
-        else if (qName.equalsIgnoreCase("METS:div") && !inBindDivRoot && !inBindDiv)
+        else if (qName.equalsIgnoreCase("METS:div") && isBindingMap && !inBindDivRoot && !inBindDiv)
         {
           inBindDivRoot = true;
           h_dsBindMap.dsBindMechanismPID = attrs.getValue("TYPE");
           h_dsBindMap.dsBindMapLabel = attrs.getValue("LABEL");
         }
-        else if (qName.equalsIgnoreCase("METS:div") && inBindDivRoot && !inBindDiv)
+        else if (qName.equalsIgnoreCase("METS:div") && isBindingMap && inBindDivRoot && !inBindDiv)
         {
           inBindDiv = true;
           h_dsBinding = new DSBinding();
@@ -729,7 +758,7 @@ public class DefinitiveDOReader implements DOReader
           h_dsBinding.seqNo = attrs.getValue("ORDER");
           h_dsBinding.bindLabel = attrs.getValue("LABEL");
         }
-        else if (qName.equalsIgnoreCase("METS:fptr") && inBindDivRoot && inBindDiv && !inFilePtr)
+        else if (qName.equalsIgnoreCase("METS:fptr") && isBindingMap && inBindDivRoot && inBindDiv && !inFilePtr)
         {
           inFilePtr = true;
 
@@ -751,6 +780,7 @@ public class DefinitiveDOReader implements DOReader
           h_diss.dissCreateDT = convertDate(attrs.getValue("CREATED"));
           h_diss.dissLabel = attrs.getValue("LABEL");
           h_diss.dissVersionID = attrs.getValue("ID");
+          h_diss.dissState = attrs.getValue("STATUS");
         }
         else if (qName.equalsIgnoreCase("METS:interfaceDef"))
         {
@@ -781,6 +811,10 @@ public class DefinitiveDOReader implements DOReader
         if (qName.equalsIgnoreCase("METS:mets") && inMETS)
         {
           inMETS = false;
+        }
+        else if (qName.equalsIgnoreCase("METS:metsHdr") && inMETSHDR)
+        {
+          inMETSHDR = false;
         }
         else if (qName.equalsIgnoreCase("METS:dmdSec") && inDMDSec)
         {
@@ -841,25 +875,30 @@ public class DefinitiveDOReader implements DOReader
         else if (qName.equalsIgnoreCase("METS:structMap") && inStructMap)
         {
           inStructMap = false;
-          h_dsBindMap.dsBindings = (DSBinding[]) h_vDsBinding.toArray(new DSBinding[0]);
-          h_vDsBinding = null;
+
+          if (isBindingMap)
+          {
+            isBindingMap = false;
+            h_dsBindMap.dsBindings = (DSBinding[]) h_vDsBinding.toArray(new DSBinding[0]);
+            h_vDsBinding = null;
 
           // put the complete datastream binding map in hash table so it can
           // later be matched up with the disseminator it's associated with
-          h_dsBindMapTbl.put(h_dsBindMap.dsBindMapID, h_dsBindMap);
-          h_dsBindMap = null;
+            h_dsBindMapTbl.put(h_dsBindMap.dsBindMapID, h_dsBindMap);
+            h_dsBindMap = null;
+          }
         }
-        else if (qName.equalsIgnoreCase("METS:div") && inStructMap && inBindDivRoot && !inBindDiv && !inFilePtr)
+        else if (qName.equalsIgnoreCase("METS:div") && isBindingMap && inBindDivRoot && !inBindDiv && !inFilePtr)
         {
           inBindDivRoot = false;
         }
-        else if (qName.equalsIgnoreCase("METS:div") && inStructMap && inBindDivRoot && inBindDiv && !inFilePtr)
+        else if (qName.equalsIgnoreCase("METS:div") && isBindingMap && inBindDivRoot && inBindDiv && !inFilePtr)
         {
           inBindDiv = false;
           h_vDsBinding.addElement(h_dsBinding);
           h_dsBinding = null;
         }
-        else if (qName.equalsIgnoreCase("METS:fptr") && inFilePtr)
+        else if (qName.equalsIgnoreCase("METS:fptr") && isBindingMap && inFilePtr)
         {
           inFilePtr = false;
         }

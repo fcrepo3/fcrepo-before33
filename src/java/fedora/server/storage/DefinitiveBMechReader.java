@@ -12,6 +12,7 @@ package fedora.server.storage;
 import fedora.server.storage.types.*;
 import java.util.Date;
 import java.util.Vector;
+import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
@@ -24,7 +25,7 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
 {
 
   //private MethodDef[] behaviorDefs;
-  private MethodDef[] behaviorBindings;
+  private MethodDefOperationBind[] behaviorBindings;
   private BMechDSBindSpec dsBindSpec;
 
   public static void main(String[] args)
@@ -44,16 +45,14 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
     doReader.ListDatastreamIDs("A");
     doReader.ListDisseminatorIDs("A");
     doReader.GetDatastreams(null);
-    doReader.GetDatastream("DS1", null);
+    Datastream[] dsArray = doReader.GetDatastreams(null);
+    doReader.GetDatastream(dsArray[0].DatastreamID, null);
     doReader.GetDisseminators(null);
-    doReader.GetDisseminator("DISS1", null);
-    doReader.GetBehaviorDefs(null);
+    String[] bdefArray = doReader.GetBehaviorDefs(null);
+    doReader.GetBMechMethods(bdefArray[0], null);
+    doReader.GetDSBindingMaps(null);
     doReader.GetBehaviorMethods(null);
     doReader.GetBehaviorMethodsWSDL(null);
-    doReader.GetDSBindingSpec(null);
-    Disseminator d = doReader.GetDisseminator("DISS1", null);
-    doReader.GetBMechMethods(d.bDefID, null);
-    doReader.GetDSBindingMaps(null);
   }
 
   public DefinitiveBMechReader(String objectPID)
@@ -74,17 +73,18 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       xmlreader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
       xmlreader.parse(wsdlXML);
 
-      if (debug)
-      {
+      //if (debug)
+      //{
         for (int i = 0; i < behaviorBindings.length; i++)
         {
           System.out.println("GetBehaviorMethods: ");
           System.out.println("  method[" + i + "]=" + behaviorBindings[i].methodName);
-          System.out.println("  http binding URL[" + i + "]=" + behaviorBindings[i].httpBindingURL);
-          System.out.println("  http binding address[" + i + "]=" + behaviorBindings[i].httpBindingAddress);
-          System.out.println("  http binding operation loc[" + i + "]=" + behaviorBindings[i].httpBindingOperationLocation);
+          System.out.println("  protocol[" + i + "]=" + behaviorBindings[i].protocolType);
+          System.out.println("  service address[" + i + "]=" + behaviorBindings[i].serviceBindingAddress);
+          System.out.println("  operation loc[" + i + "]=" + behaviorBindings[i].operationLocation);
+          System.out.println("  operation URL[" + i + "]=" + behaviorBindings[i].operationURL);
         }
-      }
+      //}
     }
     catch (Exception e)
     {
@@ -140,39 +140,44 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
 
     private boolean inDefinitions = false;
     private boolean inPortType = false;
-    private boolean inOperation = false;
     private boolean inService = false;
     private boolean inPort = false;
     private boolean inHTTPAddress = false;
+    private boolean inSOAPAddress = false;
     private boolean inBinding = false;
-    private boolean inHTTPBinding = false;
+    private boolean isHTTPBinding = false;
+    private boolean isSOAPBinding = false;
     private boolean doGET = false;
-    private boolean inBindOperation = false;
+    private boolean inWSDLOperation = false;
     private boolean inHTTPOperation = false;
+    private boolean inSOAPOperation = false;
+
+    private String portBindingName = null;
+    private String bindingName = null;
+    private Hashtable portTbl;
 
     private String h_nameWSDL;
     private String h_portType;
     private String h_operation;
-    //private Vector h_vOperations;
-    //private MethodDef h_methodDef;
-    private MethodDef h_methodBind;
+    private MethodDefOperationBind h_methodBind;
     private Vector h_vMethodBindings;
     private String h_httpAddress;
+    private String h_soapAddress;
 
     public void startDocument() throws SAXException
     {
       //initialize the event handler variables
 
-      //h_vOperations = new Vector();
       h_vMethodBindings = new Vector();
+      portTbl = new Hashtable();
     }
 
     public void endDocument() throws SAXException
     {
-        //behaviorDefs = (MethodDef[]) h_vOperations.toArray(new MethodDef[0]);
-        behaviorBindings = (MethodDef[]) h_vMethodBindings.toArray(new MethodDef[0]);
-        //h_vOperations = null;
+        System.out.println("methodDef vector cnt: " + h_vMethodBindings.size());
+        behaviorBindings = (MethodDefOperationBind[])h_vMethodBindings.toArray(new MethodDefOperationBind[0]);
         h_vMethodBindings = null;
+        portTbl = null;
     }
 
     public void skippedEntity(String name) throws SAXException
@@ -207,28 +212,54 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       else if (qName.equalsIgnoreCase("wsdl:port"))
       {
         inPort = true;
+        portBindingName = attrs.getValue("binding");
       }
       else if (qName.equalsIgnoreCase("http:address") && inService && inPort)
       {
         inHTTPAddress = true;
-        h_httpAddress = attrs.getValue("location");
+        portTbl.put(portBindingName, attrs.getValue("location"));
+      }
+      else if (qName.equalsIgnoreCase("soap:address") && inService && inPort)
+      {
+        inSOAPAddress = true;
+        portTbl.put(portBindingName, attrs.getValue("location"));
       }
       else if (qName.equalsIgnoreCase("wsdl:binding"))
       {
         inBinding = true;
+        bindingName = attrs.getValue("name");
+      }
+      else if (qName.equalsIgnoreCase("http:binding"))
+      {
+        isHTTPBinding = true;
+      }
+      else if (qName.equalsIgnoreCase("soap:binding"))
+      {
+        isSOAPBinding = true;
       }
       else if (qName.equalsIgnoreCase("wsdl:operation") && inBinding)
       {
-        inBindOperation = true;
-        h_methodBind = new MethodDef();
+        inWSDLOperation = true;
+        h_methodBind = new MethodDefOperationBind();
         h_methodBind.methodName = attrs.getValue("name");
       }
-      else if (qName.equalsIgnoreCase("http:operation") && inBindOperation)
+      else if (qName.equalsIgnoreCase("http:operation") && inWSDLOperation && isHTTPBinding )
       {
         inHTTPOperation = true;
-        h_methodBind.httpBindingURL = h_httpAddress.concat(attrs.getValue("location"));
-        h_methodBind.httpBindingAddress = h_httpAddress;
-        h_methodBind.httpBindingOperationLocation = attrs.getValue("location");
+        h_methodBind.protocolType = "HTTP";
+        h_httpAddress = (String)portTbl.get(bindingName);
+        h_methodBind.serviceBindingAddress = h_httpAddress;
+        h_methodBind.operationLocation = attrs.getValue("location");
+        h_methodBind.operationURL = h_httpAddress.concat(attrs.getValue("location"));
+      }
+      else if (qName.equalsIgnoreCase("soap:operation") && inWSDLOperation && isSOAPBinding )
+      {
+        inSOAPOperation = true;
+        h_methodBind.protocolType = "SOAP";
+        h_soapAddress = (String)portTbl.get(bindingName);
+        h_methodBind.serviceBindingAddress = h_soapAddress;
+        h_methodBind.operationLocation = attrs.getValue("soapAction");
+        h_methodBind.operationURL = attrs.getValue("soapAction");
       }
     }
 
@@ -245,24 +276,38 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       else if (qName.equalsIgnoreCase("wsdl:port") && inPort)
       {
         inPort = false;
+        portBindingName = null;
       }
       else if (qName.equalsIgnoreCase("http:address") && inHTTPAddress)
       {
         inHTTPAddress = false;
       }
+      else if (qName.equalsIgnoreCase("soap:address") && inSOAPAddress)
+      {
+        inSOAPAddress = false;
+      }
       else if (qName.equalsIgnoreCase("wsdl:binding") && inBinding)
       {
         inBinding = false;
+        bindingName = null;
+        h_httpAddress = null;
+        h_soapAddress = null;
+        isHTTPBinding = false;
+        isSOAPBinding = false;
       }
-      else if (qName.equalsIgnoreCase("wsdl:operation") && inBindOperation)
+      else if (qName.equalsIgnoreCase("wsdl:operation") && inWSDLOperation)
       {
-        inBindOperation = false;
+        inWSDLOperation = false;
         h_vMethodBindings.addElement(h_methodBind);
         h_methodBind = null;
       }
       else if (qName.equalsIgnoreCase("http:operation") && inHTTPOperation)
       {
         inHTTPOperation = false;
+      }
+      else if (qName.equalsIgnoreCase("soap:operation") && inSOAPOperation)
+      {
+        inSOAPOperation = false;
       }
     }
   }
