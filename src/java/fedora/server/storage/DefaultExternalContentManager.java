@@ -56,11 +56,11 @@ public class DefaultExternalContentManager implements ExternalContentManager
 
   public static void main(String[] args)
   {
-    HttpService hs = new HttpService();
+    DefaultExternalContentManager hs = new DefaultExternalContentManager();
     String url = "http://icarus.lib.virginia.edu/test/dummy.html";
     try
     {
-      MIMETypedStream content = hs.getHttpContent(url);
+      MIMETypedStream content = hs.getExternalContent(url);
       System.out.println("MIME: "+content.MIMEType);
       System.out.write(content.stream);
     } catch (Exception e)
