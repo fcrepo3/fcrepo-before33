@@ -35,6 +35,7 @@ import fedora.server.storage.types.*;
 public class ResourceIndexModule extends Module 
                                 implements ResourceIndex {
 
+    private int m_level;
     private TriplestoreConnector m_conn;
     private ResourceIndex m_resourceIndex;
 
@@ -46,20 +47,23 @@ public class ResourceIndexModule extends Module
 	public void postInitModule() throws ModuleInitializationException {
 		logConfig("ResourceIndexModule: loading...");
 		// Parameter validation
-		int level;
 		if (getParameter("level")==null) {
 			throw new ModuleInitializationException(
                     "level parameter must be specified.", getRole());
         } else {
         	try {
-                level = Integer.parseInt(getParameter("level"));
-                if (level < 0 || level > 2) {
+                m_level = Integer.parseInt(getParameter("level"));
+                if (m_level < 0 || m_level > 2) {
                 	throw new NumberFormatException();
                 }
     		} catch (NumberFormatException nfe) {
     			throw new ModuleInitializationException(
                         "level parameter must have value 0, 1, or 2.", getRole());
     		}
+            // If level == 0, we don't want to proceed further.
+            if (m_level == 0) {
+                return;
+            }
         }
         
         //
@@ -110,7 +114,7 @@ public class ResourceIndexModule extends Module
             m_conn = TriplestoreConnector.init(connectorClassName,
                                                map);
             try {
-                m_resourceIndex = new ResourceIndexImpl(level, m_conn, cPool, this);
+                m_resourceIndex = new ResourceIndexImpl(m_level, m_conn, cPool, this);
             } catch (ResourceIndexException e) {
                 throw new ModuleInitializationException("Error initializing "
                        + "connection pool.", getRole(), e);
@@ -135,7 +139,12 @@ public class ResourceIndexModule extends Module
     
     /* from ResourceIndex interface */
     public int getIndexLevel() {
-        return m_resourceIndex.getIndexLevel();   // do this, it's easy!!!
+        // if m_level is 0, we never instantiated the ResourceIndex in the first place
+        if (m_level == 0) {
+            return m_level;
+        } else {
+            return m_resourceIndex.getIndexLevel();
+        }
     }
     
     /* (non-Javadoc)

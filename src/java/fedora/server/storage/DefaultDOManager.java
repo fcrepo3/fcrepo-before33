@@ -237,13 +237,9 @@ public class DefaultDOManager
         m_resourceIndex=(ResourceIndex) getServer().
         		getModule("fedora.server.resourceIndex.ResourceIndex");
         if (m_resourceIndex==null) {
-            // FIXME should throw exception when not loaded.
-            // but until ResourceIndex supports discrete indexing levels
-            // we don't force loading of the module for cases where
-            // we don't want to use it.
             logFinest("ResourceIndex not loaded");
-            //throw new ModuleInitializationException(
-            //        "ResourceIndex not loaded", getRole());
+            throw new ModuleInitializationException(
+                    "ResourceIndex not loaded", getRole());
         }
         
         // now get the connectionpool
@@ -808,11 +804,13 @@ public class DefaultDOManager
             
             // RESOURCE INDEX:
             // remove digital object from the resourceIndex
-            try {
-                logInfo("COMMIT: Deleting from ResourceIndex...");
-                m_resourceIndex.deleteDigitalObject(obj);
-            } catch (ServerException se) {
-                logWarning("COMMIT: Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+            if (m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
+                try {
+                    logInfo("COMMIT: Deleting from ResourceIndex...");
+                    m_resourceIndex.deleteDigitalObject(obj);
+                } catch (ServerException se) {
+                    logWarning("COMMIT: Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+                }
             }
             
 		// OBJECT INGEST (ADD) OR MODIFY...
@@ -904,13 +902,15 @@ public class DefaultDOManager
 				}                     	
                     
                 // RESOURCE INDEX:
-                logFinest("COMMIT: Adding to ResourceIndex...");
-                if (obj.isNew()) {
-                    m_resourceIndex.addDigitalObject(obj);
-                } else {
-                    m_resourceIndex.modifyDigitalObject(obj);
+                if (m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
+                    logFinest("COMMIT: Adding to ResourceIndex...");
+                    if (obj.isNew()) {
+                        m_resourceIndex.addDigitalObject(obj);
+                    } else {
+                        m_resourceIndex.modifyDigitalObject(obj);
+                    }
+                    logFinest("COMMIT: Finished adding to ResourceIndex.");
                 }
-                logFinest("COMMIT: Finished adding to ResourceIndex.");
                 
                 // STORAGE: 
                 // write XML serialization of object to persistent storage
