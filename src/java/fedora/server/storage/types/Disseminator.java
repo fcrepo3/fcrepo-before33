@@ -59,6 +59,8 @@ public class Disseminator
   public Date dissCreateDT;
 
   public String dissState;
+  
+  public String dissVersionable;
 
   public Disseminator()
   {
