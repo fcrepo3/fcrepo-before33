@@ -48,8 +48,8 @@ public class SimpleDOReader
     private String m_shortExportFormat;
     private String m_longExportFormat;
     private String m_encoding;
-    
-    private static SimpleDateFormat s_formatter=
+
+    private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     
     public SimpleDOReader(Context context, RepositoryReader repoReader, 
@@ -356,7 +356,7 @@ public class SimpleDOReader
     
     protected String getWhenString(Date versDateTime) {
         if (versDateTime==null) {
-            return s_formatter.format(versDateTime);
+            return m_formatter.format(versDateTime);
         } else {
             return "the current time";
         }
