@@ -48,20 +48,20 @@
 		to be the escape character (token beginning an escape sequence).  This is needed to correctly
 		store and retrieve filepaths from the registry tables, if running under Windows/DOS.
 	</comment>
-	<param name="object_store_base" value="C:\fedora_objects"/>
+	<param name="object_store_base" value="C:\fedora1_2_objects"/>
 	<comment>Defines the root directory for the internal storage of Fedora objects. 
 		This value should be adjusted based on your installation environment; 
-		default assumes a Windows installation of C:\fedora_objects.
+		default assumes a Windows installation of C:\fedora1_2_objects.
 	</comment>
 	<param name="temp_store_base" value="C:\fedora_temp"/>
 	<comment>Defines the root directory for Fedora temporary storage. 
 		This value should be adjusted based on your installation environment; 
 		default assumes a Windows installation of C:\fedora_temp.
 	</comment>
-	<param name="datastream_store_base" value="C:\fedora_datastreams"/>
+	<param name="datastream_store_base" value="C:\fedora1_2_datastreams"/>
 	<comment>Defines the root directory for the internal storage of Managed Content datastreams. 
 		This value should be adjusted based on your installation environment; 
-		default assumes a Windows installation of C:\fedora_datastreams.
+		default assumes a Windows installation of C:\fedora1_2_datastreams.
 	</comment>
 	<param name="debug" value="false"/>
 	<comment>A boolean toggle used to turn off/on internal debugging in the code.</comment>
