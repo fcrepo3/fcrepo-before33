@@ -19,7 +19,7 @@
 	<!--  FEDORA RESERVED DATASTREAM: DUBLIN CORE METADATA FOR OBJECT -->
 	<!--  Note use of the new FORMAT_URI attribute for datastreams.  Fedora will retain it, but not do anything with it now. -->
 	<!---*******************************************************************************************************************************************-->
-	<foxml:datastream ID="DC" STATE="A"  CONTROL_GROUP="X" VERSIONABLE="true">
+	<foxml:datastream ID="DC" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="DC.0" MIMETYPE="text/xml" LABEL="Default Dublin Core Record" CREATED="2004-08-18T06:32:00" FORMAT_URI="http://www.openarchives.org/OAI/2.0/oai_dc/">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -38,7 +38,7 @@
 	<!--  The RELS-EXT datastream is validated by Fedora. -->
 	<!--*******************************************************************************************************************************************-->
 	<foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X">
-		<foxml:datastreamVersion ID="RELS-EXT.0"  MIMETYPE="text/xml" LABEL="Fedora Relationship Metadata">
+		<foxml:datastreamVersion ID="RELS-EXT.0" MIMETYPE="text/xml" LABEL="Fedora Relationship Metadata">
 			<foxml:xmlContent>
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<rdf:Description rdf:about="info:fedora/test:100">
@@ -100,7 +100,7 @@
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<!-- This datastream demonstrates "Inlined XML Content" (X) and user-provided datastream ID -->
-	<foxml:datastream ID="UVATECH" STATE="A"  CONTROL_GROUP="X" VERSIONABLE="true">
+	<foxml:datastream ID="UVATECH" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="UVATECH.0" MIMETYPE="text/xml" FORMAT_URI="info:fedora/format:xml:mets:techMD:OTHER:uvalibadmin" LABEL="UVA Technical Metadata Record">
 			<foxml:xmlContent>
 				<uvalibadmin:admin xmlns:uvalibadmin="http://virginia.lib.edu/uvalibadmin:tech">
