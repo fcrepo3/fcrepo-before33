@@ -55,10 +55,17 @@
 					<para>Copy your old config/fedora.fcfg over the new one.</para>
                 </listitem>
                 <listitem>
+                    <para>If you were using the bundled mckoi database with your previous installation, stop it with mckoi-stop.  Then go to the mckoi094 directory in the new release and create a directory there called "data".  Next, copy all mckoi094/data files from your previous installation to the NEW mckoi094/data directory.  (If you previously modified the db.conf file, copy that over to the new mckoi094 directory, too)
+                    </para>
+                </listitem>
+                <listitem>
 					<para>Update your FEDORA_HOME environment variable to point to the new installation's location.</para>
                 </listitem>
                 <listitem>
 					<para>Update your PATH to point to the new FEDORA_HOME/client/bin and FEDORA_HOME/server/bin directories.</para>
+                </listitem>
+                <listitem>
+                    <para>If you are using mckoi, start it now with mckoi-start.</para>
                 </listitem>
                 <listitem>
 					<para>Start the server as you normally would, with fedora-start.</para>
