@@ -400,7 +400,6 @@ public class DefaultAccess extends Module implements Access
   {
     long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
-    Date versDateTime = asOfDateTime;
     DOReader reader =
         m_manager.getReader(context, PID);
 
@@ -408,7 +407,7 @@ public class DefaultAccess extends Module implements Access
     checkState(context, "Data", reader.GetObjectState(), PID);
 
     ObjectMethodsDef[] methodDefs =
-        reader.getObjectMethods(versDateTime);
+        reader.getObjectMethods(asOfDateTime);
     long stopTime = new Date().getTime();
     long interval = stopTime - startTime;
     logFiner("[DefaultAccess] Roundtrip GetObjectMethods: "
@@ -443,12 +442,6 @@ public class DefaultAccess extends Module implements Access
     checkState(context, "Data", reader.GetObjectState(), PID);
 
     Datastream[] datastreams = reader.GetDatastreams(asOfDateTime, null);
-    /*if (datastreams.length == 0) {
-        String message = "[DefaultAccess] The digital object with PID of \""
-            + PID + "\" contains no datastreams that match the datetimestamp "
-            + " of \"" + DateUtility.convertDateToString(asOfDateTime) + "\" .";
-        throw new DatastreamNotFoundException(message);
-    }*/
     DatastreamDef[] dsDefs = new DatastreamDef[datastreams.length];
     for (int i=0; i<datastreams.length; i++) {
         DatastreamDef dsDef = new DatastreamDef();

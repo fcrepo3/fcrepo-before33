@@ -317,46 +317,38 @@ public class ListDatastreamsServlet extends HttpServlet
           pw = new PipedWriter();
           pr = new PipedReader(pw);
           dsDefs = s_access.listDatastreams(context, PID, asOfDateTime);
-          if (dsDefs.length > 0)
-          {
-              // Object Profile found.
-              // Serialize the ObjectProfile object into XML
-              new DatastreamDefSerializerThread(PID, dsDefs, versDateTime, pw).start();
-              if (xml)
-              {
-                  // Return results as raw XML
-                  response.setContentType(CONTENT_TYPE_XML);
 
-                  // Insures stream read from PipedReader correctly translates utf-8
-                  // encoded characters to OutputStreamWriter.
-                  out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
-                  int bufSize = 4096;
-                  char[] buf=new char[bufSize];
-                  int len=0;
-                  while ( (len = pr.read(buf, 0, bufSize)) != -1) {
-                      out.write(buf, 0, len);
-                  }
-                  out.flush();
-              } else
-              {
-                  // Transform results into an html table
-                  response.setContentType(CONTENT_TYPE_HTML);
-                  out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
-                  File xslFile = new File(s_server.getHomeDir(), "access/listDatastreams.xslt");
-                  TransformerFactory factory = TransformerFactory.newInstance();
-                  Templates template = factory.newTemplates(new StreamSource(xslFile));
-                  Transformer transformer = template.newTransformer();
-                  Properties details = template.getOutputProperties();
-                  transformer.transform(new StreamSource(pr), new StreamResult(out));
+          // Object Profile found.
+          // Serialize the ObjectProfile object into XML
+          new DatastreamDefSerializerThread(PID, dsDefs, versDateTime, pw).start();
+          if (xml)
+          {
+              // Return results as raw XML
+              response.setContentType(CONTENT_TYPE_XML);
+
+              // Insures stream read from PipedReader correctly translates utf-8
+              // encoded characters to OutputStreamWriter.
+              out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
+              int bufSize = 4096;
+              char[] buf=new char[bufSize];
+              int len=0;
+              while ( (len = pr.read(buf, 0, bufSize)) != -1) {
+                  out.write(buf, 0, len);
               }
               out.flush();
-
           } else
           {
-              // listDatastreams request returned nothing.
-              String message = "[ListDatastreamsServlet] No Datastreams returned.";
-              logger.logInfo(message);
+              // Transform results into an html table
+              response.setContentType(CONTENT_TYPE_HTML);
+              out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
+              File xslFile = new File(s_server.getHomeDir(), "access/listDatastreams.xslt");
+              TransformerFactory factory = TransformerFactory.newInstance();
+              Templates template = factory.newTemplates(new StreamSource(xslFile));
+              Transformer transformer = template.newTransformer();
+              Properties details = template.getOutputProperties();
+              transformer.transform(new StreamSource(pr), new StreamResult(out));
           }
+          out.flush();
           } catch (Throwable th)
           {
               String message = "[ListDatastreamsServlet] An error has occured. "
