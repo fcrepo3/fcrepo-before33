@@ -50,6 +50,10 @@ public class DefaultManagement
     
     public void initModule()
             throws ModuleInitializationException {
+    }
+
+    public void postInitModule()
+            throws ModuleInitializationException {
         m_manager=(DOManager) getServer().getModule(
                 "fedora.server.storage.DOManager");
         if (m_manager==null) {
