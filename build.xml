@@ -11,10 +11,9 @@
 	<property name="javaClassOptimize" value="off"/>
 	<property name="javaSourceDir" value="src/java"/>
 	<property name="docDir" value="apidoc"/>
-	<target name="serverdist" depends="server,client" description="builds both client and server in dist\server, in a package suitable for distribution">
-		<copy todir="dist/server">
-			<fileset dir="dist/client"/>
-		</copy>
+	<target name="serverdist" depends="server,client,userdocs" description="builds both client and server in dist\server, in a package suitable for distribution">
+		<mkdir dir="dist/server/doc"/>
+		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
 	</target>
 	<target name="client" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
 		<mkdir dir="dist"/>
@@ -146,6 +145,20 @@
 			<arg value="-o"/>
 			<arg path="dist/devdocs/namespaces.html"/>
 			<arg path="src/dbx/devdocs/namespaces.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
+	</target>
+	<target name="userdocs" depends="prep" description="Assemble user documentation into dist/userdocs">
+		<mkdir dir="dist"/>
+		<mkdir dir="dist/userdocs"/>
+		<echo message="Translating release-notes.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/release-notes.html"/>
+			<arg path="src/dbx/userdocs/release-notes.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
 	</target>
@@ -382,6 +395,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.54  2002/12/19 21:26:53  cwilper
+  added "userdocs" target, can run standalone but is also
+  a dependency of "serverdist".... puts docs in dist/server/doc
+
   Revision 1.53  2002/12/18 21:25:41  rlw
   added fedora.server.access.dissemination to package list
 
