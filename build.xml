@@ -13,6 +13,7 @@
     <property name="dev.doc.dir" location="${doc.dir}/devdocs"/>
     <property name="user.doc.dir" location="${doc.dir}/userdocs"/>
 	<property name="build.dir" location="build"/>
+    <property name="license.dir" location="license"/>
 	<property name="test.build.dir" location="${build.dir}"/>
 	<property name="junit.build.dir" location="${test.build.dir}/junit"/>
 	<property name="dist.dir" location="dist"/>
@@ -220,13 +221,13 @@
 	</target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
 		<copy todir="dist/server/license">
-            <fileset dir="license"/>
+            <fileset dir="${license.dir}"/>
         </copy>
         <copy todir="dist/client/license">
-            <fileset dir="license"/>
+            <fileset dir="${license.dir}"/>
         </copy>
 		<copy todir="dist/userdocs/distribution/license">
-            <fileset dir="license"/>
+            <fileset dir="${license.dir}"/>
         </copy>  
 		<copy todir="${tomcat.deploy.dir}/userdocs">
             <fileset dir="dist/userdocs"/>
