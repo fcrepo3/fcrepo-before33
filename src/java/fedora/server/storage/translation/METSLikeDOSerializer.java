@@ -412,7 +412,7 @@ public class METSLikeDOSerializer
                         + StreamUtility.enc(audit.responsibility) + " at "
                         + m_formatter.format(audit.date) + "\">\n");
                 buf.append("        <" + METS_PREFIX + ":xmlData>\n");
-                buf.append("          <" + m_fedoraAuditPrefix + ":record>\n");
+				buf.append("            <" + m_fedoraAuditPrefix + ":record>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":process type=\""
                         + StreamUtility.enc(audit.processType) + "\"/>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":action>"
