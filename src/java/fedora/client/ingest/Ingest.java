@@ -602,64 +602,67 @@ public class Ingest {
         return "Ingested from local file " + file.getPath();
     }
 
-    /**
-     * Print error message and show usage for command-line interface.
-     */
-    public static void badArgs(String msg) {
-        System.err.println("Command: fedora-ingest");
-        System.err.println();
-        System.err.println("Summary: Ingests one or more objects into a Fedora repository, from either");
-        System.err.println("         the local filesystem or another Fedora repository.");
-        System.err.println();
-        System.err.println("Syntax:");
-        System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS [LOG]");
-        System.err.println("  fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]");
-        System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS [LOG]");
-        System.err.println();
-        System.err.println("Where:");
-        System.err.println("  INPATH     is the local file or directory name that is ingest source.");
+	/**
+	 * Print error message and show usage for command-line interface.
+	 */
+	public static void badArgs(String msg) {
+		System.err.println("Command: fedora-ingest");
+		System.err.println();
+		System.err.println("Summary: Ingests one or more objects into a Fedora repository, from either");
+		System.err.println("         the local filesystem or another Fedora repository.");
+		System.err.println();
+		System.err.println("Syntax:");
+		System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS [LOG]");
+		System.err.println("  fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]");
+		System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS [LOG]");
+		System.err.println();
+		System.err.println("Where:");
+		System.err.println("  INPATH     is the local file or directory name that is ingest source.");
 		System.err.println("  FORMAT     is a string value (either 'foxml1.0' or 'metslikefedora1')");
 		System.err.println("             which indicates the XML format of the ingest file(s)");
-        System.err.println("  FTYPS      is any combination of the characters O, D, and M, specifying");
-        System.err.println("             which Fedora object type(s) should be ingested. O=data objects,");
-        System.err.println("             D=behavior definitions, and M=behavior mechanisms.");
-        System.err.println("  PID        is the id of the object to ingest from the source repository.");
-        System.err.println("  SHST/THST  is the source or target repository's hostname.");
-        System.err.println("  SPRT/TPRT  is the source or target repository's port number.");
-        System.err.println("  SUSR/TUSR  is the id of the source or target repository user.");
-        System.err.println("  SPSS/TPSS  is the password of the source or target repository user.");
-        System.err.println("  LOG        is the optional log message.  If unspecified, the log message");
-        System.err.println("             will indicate the source filename or repository of the object(s).");
-        System.err.println();
-        System.err.println("Examples:");
-        System.err.println("fedora-ingest file obj1.xml foxml1.0 myrepo.com:80 fedoraAdmin fedoraAdmin");
-        System.err.println();
-        System.err.println("  Ingests obj1.xml (which is encoded in foxml1.0 format) from the");
-        System.err.println("  current directory into the repository at myrepo.com:80");
-        System.err.println("  as user 'fedoraAdmin' with password 'fedoraAdmin'.");
-        System.err.println("  The logmessage will be system-generated, indicating the source path+filename.");
-        System.err.println();
-        System.err.println("fedora-ingest dir metslikefedora1 c:\\archive M myrepo.com:80 fedoraAdmin fedoraAdmin \"\"");
-        System.err.println();
-        System.err.println("  Traverses entire directory structure of c:\\archive, and ingests any file that");
-        System.err.println("  looks like a behavior mechanism object ('M'). It assumes all files will be in the");
-        System.err.println("  XML format 'metslikefedora1' and will fail on ingests of files that are not");
-        System.err.println("  of this format. All log messages will be empty.");
-        System.err.println();
-        System.err.println("fedora-ingest dir metslikefedora1 c:\\archive ODM myrepo.com:80 fedoraAdmin fedoraAdmin \"\"");
-        System.err.println();
-        System.err.println("  Same as above, but ingests all data and behavior definition objects, too.");
-        System.err.println();
-		System.err.println("fedora-ingest repos sourcerepo.com:8081 john jpass demo:1 myrepo.com:80 fedoraAdmin fedoraAdmin \"\"");
+		System.err.println("  FTYPS      is any combination of the characters O, D, and M, specifying");
+		System.err.println("             which Fedora object type(s) should be ingested. O=data objects,");
+		System.err.println("             D=behavior definitions, and M=behavior mechanisms.");
+		System.err.println("  PID        is the id of the object to ingest from the source repository.");
+		System.err.println("  SHST/THST  is the source or target repository's hostname.");
+		System.err.println("  SPRT/TPRT  is the source or target repository's port number.");
+		System.err.println("  SUSR/TUSR  is the id of the source or target repository user.");
+		System.err.println("  SPSS/TPSS  is the password of the source or target repository user.");
+		System.err.println("  LOG        is the optional log message.  If unspecified, the log message");
+		System.err.println("             will indicate the source filename or repository of the object(s).");
 		System.err.println();
-		System.err.println("  Exports the object whose pid is 'demo:1' from the source repository 'sourcerepo.com:8081'");
-		System.err.println("  and ingests it into the target repository 'myrepo.com:80'.  The object will be exported");
-		System.err.println("  from the source repository in whatever the source has configured as its default export format.");
+		System.err.println("Examples:");
+		System.err.println("fedora-ingest f obj1.xml foxml1.0 myrepo.com:80 jane jpw");
+		System.err.println();
+		System.err.println("  Ingests obj1.xml (encoded in foxml1.0 format) from the");
+		System.err.println("  current directory into the repository at myrepo.com:80");
+		System.err.println("  as user 'jane' with password 'jpw'.");
+		System.err.println("  The logmessage will be system-generated, indicating");
+		System.err.println("  the source path+filename.");
+		System.err.println();
+		System.err.println("fedora-ingest d c:\\archive foxml1.0 M myrepo.com:80 jane janepw \"\"");
+		System.err.println();
+		System.err.println("  Traverses entire directory structure of c:\\archive, and ingests ");
+		System.err.println("  any file that looks like a behavior mechanism object (M). ");
+		System.err.println("  It assumes all files will be in the XML format 'foxml1.0'");
+		System.err.println("  and will fail on ingests of files that are not of this format.");
+		System.err.println("  All log messages will be empty.");
+		System.err.println();
+		System.err.println("fedora-ingest d c:\\archive foxml1.0 ODM myrepo.com:80 jane janepw \"\"");
+		System.err.println();
+		System.err.println("  Same as above, but ingests all three types of objects (O,D,M).");
+		System.err.println();
+		System.err.println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:80 jane jpw \"\"");
+		System.err.println();
+		System.err.println("  Exports the object whose pid is 'demo:1' from the source repository");
+		System.err.println("  'srcrepo.com:8081' and ingests it into the target repository 'myrepo.com:80'.");
+		System.err.println("  The object will be exported from the source repository in whatever format");
+		System.err.println("  the source has configured as its default export format.");
 		System.err.println("  All log messages will be empty.");
 		System.err.println();
 		System.err.println("ERROR  : " + msg);
-        System.exit(1);
-    }
+		System.exit(1);
+	}
 
     /**
      * Command-line interface for doing ingests.
@@ -671,7 +674,6 @@ public class Ingest {
             }
             char kind=args[0].toLowerCase().charAt(0);
             if (kind=='f') {
-				System.out.println("Doing file in Ingest.java. ");
 				// USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS [LOG]
                 if (args.length<6 || args.length>7) {
                     Ingest.badArgs("Wrong number of arguments for file ingest.");
@@ -695,9 +697,14 @@ public class Ingest {
                                                 Integer.parseInt(hp[1]),
                                                 args[4],
                                                 args[5]);
-				Ingest.openLog("ingest-from-file");
                 String pid = Ingest.oneFromFile(f, ingestFormat, targetRepoAPIA, targetRepoAPIM, logMessage);
-                System.out.println("Ingested PID: " + pid);
+                if (pid==null){
+					System.out.print("ERROR: No object ingested.  Check log for errors.");
+					System.out.println();
+					System.out.println("A detailed log is at " + Ingest.s_logPath);
+                } else {
+					System.out.println("Ingested PID: " + pid);                	
+                }
             } else if (kind=='d') {
 				// USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]
                 if (args.length<7 || args.length>8) {
@@ -729,16 +736,18 @@ public class Ingest {
                                                         targetRepoAPIA,
                                                         targetRepoAPIM,
                                                         logMessage);
-                System.out.println("Ingested PID(s):");
                 if (pids.length>0) {
                     for (int i=0; i<pids.length; i++) {
-                        System.out.print(" " + pids[i]);
+						System.out.println("Ingested PID: " + pids[i]);
                     }
                 } else {
-                    System.out.print(" None.");
+					System.out.print("ERROR: No objects ingested.  Check log for errors.");
                 }
+				Ingest.closeLog();
                 System.out.println();
-                System.out.println("A detailed report is at " + Ingest.s_logPath);
+                System.out.println("WARNING: check log for possible ingest failures.");
+				System.out.println();
+                System.out.println("A detailed log is at " + Ingest.s_logPath);
             } else if (kind=='r') {
             	// USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS [LOG]
                 if (args.length<8 || args.length>9) {
@@ -787,9 +796,7 @@ public class Ingest {
 				
                 if (args[4].indexOf(":")!=-1) {
                     // single object
-					Ingest.openLog("ingest-from-repository");
-                    System.out.println("Ingested PID: "
-                            + Ingest.oneFromRepository(hp[0],
+                    String successfulPID = Ingest.oneFromRepository(hp[0],
                                                        Integer.parseInt(hp[1]),
 													   sourceRepoAPIA,
                                                        sourceRepoAPIM,
@@ -797,7 +804,14 @@ public class Ingest {
                                                        args[4],
                                                        targetRepoAPIA,
                                                        targetRepoAPIM,
-                                                       logMessage));
+                                                       logMessage);
+					if (successfulPID==null){
+						System.out.print("ERROR: No object ingested.  Check log for errors.");
+						System.out.println();
+						System.out.println("A detailed log is at " + Ingest.s_logPath);
+					} else {
+						System.out.println("Ingested PID: " + successfulPID);
+					}
                 } else {
                     // multi-object
                     hp=args[1].split(":");
@@ -811,17 +825,20 @@ public class Ingest {
 													  targetRepoAPIA,
 													  targetRepoAPIM,
 													  logMessage);
-                    System.out.println("Ingested PID(s):");
                     if (pids.length>0) {
                         for (int i=0; i<pids.length; i++) {
-                            System.out.print(" " + pids[i]);
+							System.out.println("Ingested PID: " + pids[i]);
                         }
                     } else {
-                        System.out.print(" None.");
+                        System.out.print("ERROR: No objects ingested.  Check log for errors.");
                     }
+					Ingest.closeLog();
                     System.out.println();
-                    System.out.println("A detailed report is at " + Ingest.s_logPath);
+					System.out.println("WARNING: check log for possible ingest failures.");
+					System.out.println();
+                    System.out.println("A detailed log is at " + Ingest.s_logPath);
                 }
+
             } else {
                 Ingest.badArgs("First argument must start with f, d, or r.");
             }
