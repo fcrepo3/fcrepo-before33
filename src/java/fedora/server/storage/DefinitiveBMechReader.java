@@ -56,7 +56,7 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       doReader.GetDatastream(dsArray[0].DatastreamID, null);
       doReader.GetDisseminators(null);
       String[] bdefArray = doReader.GetBehaviorDefs(null);
-      doReader.GetBMechMethods(bdefArray[0], null);
+      doReader.getObjectMethods(bdefArray[0], null);
       doReader.GetDSBindingMaps(null);
       // BMech reader methods
       doReader.getServiceMethods(null);
@@ -113,6 +113,23 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       new InputSource(new ByteArrayInputStream(
           ((DatastreamXMLMetadata)datastreamTbl.get("METHODMAP")).xmlContent)));
   }
+
+   public MethodParmDef[] getServiceMethodParms(String methodName, Date versDateTime)
+        throws GeneralException, ServerException
+    {
+      MethodDef[] methods = this.getServiceMethods(versDateTime);
+      MethodParmDef[] methodParms = null;
+      for (int i=0; i<methods.length; i++)
+      {
+        if (methods[i].methodName.equalsIgnoreCase(methodName))
+        {
+          methodParms = methods[i].methodParms;
+          break;
+        }
+      }
+      return(methodParms);
+    }
+
 
   /**
    * Get the datastream input specification that defines the datastream requirements
