@@ -531,15 +531,14 @@ public class DefinitiveDOReader implements DOReader
     {
       // TODO! dateTime filter not implemented in this release!!
 
-      // FIXIT! Put some code in to report default methods of the internal fedora
-      // bootstrap mechanism which is not stored as digital object!  The bootstrap
-      // mechanism enables a client to get disseminations of the actual contents
-      // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
-      if (bDefPID.equalsIgnoreCase("fedora-system:1"))
-      {
-        System.out.println("getObjectMethods: Suppressing report of methods for bootstrap mechanism!");
-        return null;
-      }
+        // FIXIT! Consider what to do if the request comes in with a dynamic
+        // behavior definition PID.
+        if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
+             bDefPID.equalsIgnoreCase("fedora-system:3"))
+        {
+          System.out.println("getObjectMethods: Suppressing report of dynamic method parms!");
+          return null;
+        }
 
       if (debug)
       {
@@ -564,9 +563,12 @@ public class DefinitiveDOReader implements DOReader
     public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime)
       throws GeneralException, ServerException
     {
-      if (bDefPID.equalsIgnoreCase("fedora-system:1"))
+      // FIXIT! Consider what to do if the request comes in with a dynamic
+      // behavior definition PID.
+      if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
+           bDefPID.equalsIgnoreCase("fedora-system:3"))
       {
-        System.out.println("getObjectMethodsXML: Suppressing report of methods for bootstrap mechanism!");
+        System.out.println("getObjectMethods: Suppressing report of dynamic method parms!");
         return null;
       }
       // TODO! dateTime filter not implemented in this release!!
@@ -595,13 +597,12 @@ public class DefinitiveDOReader implements DOReader
     {
       // TODO! dateTime filter not implemented in this release!!
 
-      // FIXIT! Put some code in to report default methods of the internal fedora
-      // bootstrap mechanism which is not stored as digital object!  The bootstrap
-      // mechanism enables a client to get disseminations of the actual contents
-      // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
-      if (bDefPID.equalsIgnoreCase("fedora-system:1"))
+      // FIXIT! Consider what to do if the request comes in with a dynamic
+      // behavior definition PID.
+      if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
+           bDefPID.equalsIgnoreCase("fedora-system:3"))
       {
-        System.out.println("getObjectMethodParms: Suppressing report of methods for bootstrap mechanism!");
+        System.out.println("getObjectMethods: Suppressing report of dynamic method parms!");
         return null;
       }
 
