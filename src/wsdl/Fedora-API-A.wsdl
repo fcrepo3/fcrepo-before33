@@ -174,12 +174,12 @@
       <input>
         <soap:body use="encoded" 
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+          namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+          namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetBehaviorMethods">
@@ -188,12 +188,12 @@
       <input>
         <soap:body use="encoded" 
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+          namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+          namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetDissemination">
@@ -202,21 +202,21 @@
       <input>
         <soap:body use="encoded" 
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+          namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
           encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
-          namespace="http://www.fedora.info/definitions/1/0/types/"/>
+          namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
   </binding>
   <service name="Fedora-API-A-Service">
     <port name="Fedora-API-A-Port-HTTPGET" binding="fedora-api:Fedora-API-A-Binding-HTTPGET">
-      <http:address location="http://$$HOSTNAME$$:$$PORT$$/$$MOUNTPOINT$$access/"/>
+      <http:address location="http://www.hostname.com:8088/fedora/access/"/>
     </port>
     <port name="Fedora-API-A-Port-SOAPHTTP" binding="fedora-api:Fedora-API-A-Binding-SOAPHTTP">
-      <soap:address location="http://$$HOSTNAME$$:$$PORT$$/$$MOUNTPOINT$$access/"/>
+      <soap:address location="http://www.hostname.com:8088/fedora/access/"/>
     </port>
   </service>
 </definitions>
