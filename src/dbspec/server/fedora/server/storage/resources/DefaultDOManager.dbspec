@@ -66,7 +66,7 @@
 		<column name="protocolType" type="varchar(32)" notNull="true" default="" index="protocolType"/>
 		<column name="returnType" type="varchar(32)" notNull="true" default="" index="returnType"/>
 		<column name="addressLocation" type="varchar(255)" notNull="true" default="" index="addressLocation"/>
-		<column name="OperationLocation" type="varchar(255)" notNull="true" default="" index="OperationLocation"/>
+		<column name="operationLocation" type="varchar(255)" notNull="true" default="" index="operationLocation"/>
 		<column name="policyDbID" type="int(11)" notNull="true" default="0" index="policyID"/>
 	</table>
 	<table name="method" primaryKey="methodDbID,bDefDbID">
