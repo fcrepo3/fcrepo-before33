@@ -7,13 +7,6 @@
   <param name="port" value="8080"/>
   <param name="admin_email" value="fedora-server-admin@localhost"/>
   <param name="admin_email_public" value="true"/>
-  <module role="fedora.server.modules.Logging" 
-          class="fedora.server.modules.Logger">
-    <comment>We're using the basic logging module.</comment>
-    <param name="dbtable" value="mysql1#test1log">
-        <comment>Bob administers this, too.</comment>
-    </param>
-  </module>
   <module role="fedora.server.storage.DOManager"
           class="fedora.server.storage.DefaultDOManager">
     <comment>This one comes with Fedora.  It's best not to change
