@@ -5,25 +5,10 @@ import fedora.server.errors.ServerException;
 
 import java.io.InputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.io.StringWriter;
-import java.io.PrintWriter;
-import java.util.Properties;
 import java.net.URL;
 
-// DOM classes
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 
 // TrAX classes
 import javax.xml.transform.stream.StreamSource;
@@ -32,7 +17,6 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.*;
 
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  *
