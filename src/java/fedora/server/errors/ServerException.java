@@ -52,7 +52,7 @@ public abstract class ServerException
     private boolean m_wasServer;
     
     /** An empty string array */
-    private static String[] s_emptyString=new String[] {};
+    private static String[] s_emptyStringArray=new String[] {};
 
     /** 
      * Constructs a new ServerException.
@@ -63,7 +63,7 @@ public abstract class ServerException
      *        placeholders are of the form {num} where num starts at 0,
      *        indicating the 0th (1st) item in this array.
      * @param details Identifiers for messages which provide detail on the
-     *        error.  This may be an empty array.
+     *        error.  This may empty or null.
      * @param cause The underlying exception if known, null meaning unknown or 
      *        none.
      */
@@ -152,7 +152,7 @@ public abstract class ServerException
      */
     public String[] getDetails(Locale locale) {
         if (m_details==null || m_details.length==0) {
-            return s_emptyString;
+            return s_emptyStringArray;
         }
         String[] ret=new String[m_details.length];
         for (int i=0; i<m_details.length; i++) {
@@ -174,7 +174,10 @@ public abstract class ServerException
      */
     private static String getLocalizedOrCode(String bundleName, Locale locale,
             String code, String[] values) {
-        ResourceBundle bundle=ResourceBundle.getBundle(bundleName, locale);
+        ResourceBundle bundle=null;
+        if (bundleName!=null) {
+            bundle=ResourceBundle.getBundle(bundleName, locale);
+        }
         if (bundle==null) {
             return code;
         }
