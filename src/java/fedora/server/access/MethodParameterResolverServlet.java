@@ -123,7 +123,11 @@ public class MethodParameterResolverServlet
         methodName = decoder.decode((String)request.getParameter(name), "UTF-8");
       } else if (name.equals("asOfDateTime"))
       {
-        versDateTime = (String)request.getParameter(name);
+        versDateTime = ((String)request.getParameter(name)).trim();
+        if (versDateTime.equalsIgnoreCase("null") || versDateTime.equalsIgnoreCase(""))
+        {
+        	versDateTime = null;
+        }
       } else if (name.equals("Submit")) {
         // Submit parameter is ignored.
       } else
@@ -157,7 +161,7 @@ public class MethodParameterResolverServlet
           + PID + "/"
           + bDefPID + "/"
           + methodName);
-
+          
       // Add method parameters.
       int i = 0;
       for (Enumeration e = h_methodParms.keys() ; e.hasMoreElements(); )
