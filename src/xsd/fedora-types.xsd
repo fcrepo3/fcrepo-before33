@@ -5,10 +5,10 @@
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
     
-  <import namespace="http://schemas.xmlsoap.org/wsdl/" 
+<!--  <import namespace="http://schemas.xmlsoap.org/wsdl/" 
       schemaLocation="wsdl.xsd"/>
   <import namespace="http://schemas.xmlsoap.org/soap/encoding/" 
-      schemaLocation="soapenc.xsd"/>
+      schemaLocation="soapenc.xsd"/> -->
    
   <complexType name="ArrayOfComponentInfo">
     <annotation>
