@@ -474,7 +474,7 @@ public class Administrator extends JFrame {
             + "modify directives specified in a file on disk.");
         toolsBatchModify.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new BatchModify(APIM);
+                new BatchModify(INSTANCE);
             }
         });
         // rlw
