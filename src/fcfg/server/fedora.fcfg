@@ -434,7 +434,7 @@
         <param name="poolInitialSize" value="3"/>
         <param name="serverName" value="fedora"/>
         <param name="readOnly" value="false"/>
-        <param name="textModelName" value="resourceIndex-fullText"/>
+        <param name="autoTextIndex" value="false"/>
         <param name="autoFlushBufferSize" value="20000"/>
         <param name="remote" value="false"/>
         <param name="memoryBuffer" value="true"/>
