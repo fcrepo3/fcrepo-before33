@@ -22,7 +22,7 @@
     </Resources>
   </Target>
   <Rule RuleId="1" Effect="Permit">
-    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
       <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#owner" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 	  <SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:subject:subject-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
     </Condition>

@@ -41,11 +41,11 @@
   <Rule RuleId="1" Effect="Deny">
     <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:or">
-        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <SubjectAttributeDesignator AttributeId="administrator" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">UNDEFINED</AttributeValue>
+          <SubjectAttributeDesignator AttributeId="administrator" DataType="http://www.w3.org/2001/XMLSchema#string"/>
         </Apply>
-        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
           <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#owner" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 	      <SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:subject:subject-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
         </Apply>
