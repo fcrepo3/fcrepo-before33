@@ -25,7 +25,7 @@ public abstract class DOManager
      */
     public DOManager(Map moduleParameters)
             throws ModuleInitializationException {
-        super(moduleParameters);
+        super(moduleParameters, "fedora.server.storage.DOManager");
     }
     
     /**
