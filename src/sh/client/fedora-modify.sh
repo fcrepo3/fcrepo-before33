@@ -36,7 +36,7 @@ if [ ! -f "$THIS_JAVA_HOME/bin/orbd" ]; then
   exit 1
 fi
 
-echo "Starting Fedora Purger..."
+echo "Starting Fedora Batch Modifier..."
 
 OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
