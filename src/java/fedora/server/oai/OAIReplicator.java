@@ -265,7 +265,7 @@ public class OAIReplicator
                                 logAndExecuteUpdate(st, "UPDATE oRecord SET iDate="
                                         + nowUTC
                                         + " WHERE itemDbID=" + itemDbID.get()
-                                        + " AND repID='" + dsID + "'");
+                                        + " AND formatDbID=" + getFormatDbID(newDS.DSFormatURI));
                             }
                             // else eligibility didn't change
                         } else {
@@ -280,12 +280,13 @@ public class OAIReplicator
                             // YES, so add/update it
                             ResultSet results=logAndExecuteQuery(st, "SELECT itemDbID FROM "
                                     + "oRecord WHERE itemDbID="
-                                    + itemDbID.get() + " AND repID='" + dsID + "'");
+                                    + itemDbID.get() + " AND formatDbID=" + getFormatDbID(newDS.DSFormatURI));
                             boolean wasEverEligible=results.next();
                             results.close();
                             if (!wasEverEligible) {
                                 // it was never eligible, so add as new
-                                logFinest("Record " + dsID + " was never eligible for harvest, but "
+                                logFinest("In this object, a Record with formatURI " + newDS.DSFormatURI 
+                                        + " was never eligible for harvest, but "
                                         + "now is.  Adding new Record row.");
                                 addRecord(st,
                                           itemDbID.get(),
@@ -294,13 +295,14 @@ public class OAIReplicator
                                           nowUTC);
                             } else {
                                 // it was previously eligible, so do update
-                                logFinest("Record " + dsID + " was not eligible for harvest before, but "
+                                logFinest("In this object, the Record with formatURI " + newDS.DSFormatURI 
+                                        + " was not eligible for harvest before, but "
                                         + "now is.  *Updating* Record row since at one point in the past"
                                         + " it was eligible.");
                                 logAndExecuteUpdate(st, "UPDATE oRecord SET eDate=" + 
                                         + nowUTC
                                         + " WHERE itemDbID=" + itemDbID.get()
-                                        + " AND repID='" + dsID + "'");
+                                        + " AND formatDbID=" + getFormatDbID(newDS.DSFormatURI));
                             }
                         }
                         // else eligibility didn't change
@@ -449,6 +451,20 @@ public class OAIReplicator
                                    long formatDbID,
                                    long ceDate)
             throws SQLException {
+            
+/*
+I think I need to add a check on insert, and REPLACE the record row if that happens
+(because, if all has gone right, we can assume it could have only gotten to this point
+if it was a "purge")
+
+...and only do the replacement by DSID if the target format is the same as the previously existing one!
+
+mod this method to use formatDbID.... ALSO, check all queries in here for repID,
+as their assumptions might also need changing!
+
+*/
+
+            
         ResultSet results=logAndExecuteQuery(st, "SELECT itemDbID from oRecord "
                 + "WHERE itemDbID=" + itemDbID + " AND repID='" + repID + "'");
         if (results.next()) {
