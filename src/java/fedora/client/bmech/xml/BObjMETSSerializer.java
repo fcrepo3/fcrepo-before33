@@ -49,7 +49,7 @@ public abstract class BObjMETSSerializer
 {
   protected static final String METS = "http://www.loc.gov/METS/";
 
-  protected static final String AUDIT = "http://fedora.comm.nsdlib.org/audit";
+  protected static final String AUDIT = "http://www.fedora.info/definitions/audit";
 
   protected static final String DESC = "http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd";
 
