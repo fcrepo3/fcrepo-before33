@@ -103,7 +103,9 @@ public class DefinitiveDOWriter
                 try {
                     InputStream in=m_tempStorage.retrieve(pid + "-pendingRemoval");
                     // it was found, and it's pending removal...init it as such
+                    try {
                     in.close();
+                    } catch (IOException ioe) { }
                     m_removed=false;
                     m_pendingRemoval=true;
                     makeDirty();
