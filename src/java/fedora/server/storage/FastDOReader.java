@@ -1865,14 +1865,10 @@ public class FastDOReader implements DisseminatingDOReader
       System.out.println("ObjectLabel: "+fdor.GetObjectPID());
       System.out.println("END ----- TEST GET OBJECT PID");
 
-    } catch(ObjectNotFoundException onfe)
+    } catch(Exception e)
     {
-      System.out.println("ObjNotFound"+onfe.getMessage());
-    //} catch(MethodNotFoundException mnfe)
-    } catch (GeneralException ge)
-    {
-      //System.out.println("MethodNotFound"+mnfe.getMessage());
-      System.out.println("ObjectIntegrityException"+ge.getMessage());
+      System.out.println("ObjNotFound"+e.getMessage());
+
     }
   }
 }

@@ -1272,14 +1272,18 @@ public class FedoraAccessSoapServlet extends HttpServlet
       methodParms = fdor.GetBMechMethodParm(bDefPID, methodName, versDateTime);
 
       // FIXME!! Decide on Exception handling
-    } catch(MethodNotFoundException mpnfe)
+    //} catch(MethodNotFoundException mpnfe)
+    //{
+    //  System.out.println(mpnfe.getMessage());
+    //  this.getServletContext().log(mpnfe.getMessage(), mpnfe.getCause());
+    //} catch (ObjectNotFoundException onfe)
+    //{
+    //  System.out.println(onfe.getMessage());
+    //  this.getServletContext().log(onfe.getMessage(), onfe.getCause());
+    //}
+    } catch (Exception e)
     {
-      System.out.println(mpnfe.getMessage());
-      this.getServletContext().log(mpnfe.getMessage(), mpnfe.getCause());
-    } catch (ObjectNotFoundException onfe)
-    {
-      System.out.println(onfe.getMessage());
-      this.getServletContext().log(onfe.getMessage(), onfe.getCause());
+      System.err.println(e.getMessage());
     }
 
     // Put valid method parameters and their attributes into hashtable
