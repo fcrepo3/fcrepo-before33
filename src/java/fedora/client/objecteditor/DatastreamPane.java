@@ -234,6 +234,9 @@ public class DatastreamPane
            state="I";
         if (i==2)
            state="D";
+        // how we save it depends on the control group
+        // and whether the content has been edited
+        // X = by value, and we always send the content along with it
 //        Administrator.APIM.modifyObject(m_pid, state, 
 //                m_labelTextField.getText(), logMessage);
     }

@@ -52,7 +52,12 @@ public static FedoraAPIA getStub(String host, int port, String username, String 
         nurl.append('#');
         nurl.append(ourl.getRef());
     }
-    return new APIAStubWrapper(locator.getFedoraAPIAPortSOAPHTTP(new URL(nurl.toString())));
+    if (Administrator.INSTANCE==null) {
+        // if running without Administrator, don't wrap it with the statusbar stuff
+        return locator.getFedoraAPIAPortSOAPHTTP(new URL(nurl.toString()));
+    } else {
+        return new APIAStubWrapper(locator.getFedoraAPIAPortSOAPHTTP(new URL(nurl.toString())));
+    }
 }
 
 }

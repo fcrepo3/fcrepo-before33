@@ -113,7 +113,7 @@ public class Administrator extends JFrame {
     public static FedoraAPIA APIA=null;
     public static FedoraAPIM APIM=null;
     public static File BASE_DIR;
-    public static Administrator INSTANCE;
+    public static Administrator INSTANCE=null;
 
     public Administrator() {
         super("Fedora Administrator");
