@@ -113,6 +113,9 @@
 		<part name="MDType" type="xsd:string">
 			<documentation>the metadata type.  This is only required if the controlGroup is "X", and it should be a well-accepted string that indicates the type of metadata.</documentation>
 		</part>
+		<part name="dsState" type="xsd:string">
+			<documentation>the initial state of the datastream.</documentation>
+		</part>
 	</message>
 	<message name="addDatastreamResponse">
 		<part name="response" type="xsd:string">
@@ -140,6 +143,9 @@
 	    </part>
 	    <part name="bindingMap" type="fedora-types:DatastreamBindingMap">
 	      <documentation>the binding map.</documentation>
+	    </part>
+	    <part name="dissState" type="xsd:string">
+			<documentation>the initial state of the disseminator.</documentation>
 	    </part>
 	  </message>
 	  <message name="addDisseminatorResponse">
