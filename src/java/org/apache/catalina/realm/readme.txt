@@ -21,6 +21,8 @@ new JAASJNDILoginModule
 	b. otherwise == this login module provides a source for both subject and additional attributes 
 		its operation not conditional on success of an earlier module
 		return subject and roles
+5. JNDI not tested against another backend than LDAP
+6. not tested in either authenticating scenario
 	
 	
 JNDIRealm (changed from Tomcat source)
@@ -35,7 +37,8 @@ JNDIRealm (changed from Tomcat source)
 		otherwise, userPassword taken as name of LDAP attribute which contains user password
 			after fetch from backend, LDAP realm matches user credentials with that LDAP attribute
 4. not tested as such, i.e., without subclassing to a login module
-5. not tested in either authenticating scenario
+5. JNDI not tested against another backend than LDAP
+6. not tested in either authenticating scenario
 
 
 JAASMemoryLoginModule
