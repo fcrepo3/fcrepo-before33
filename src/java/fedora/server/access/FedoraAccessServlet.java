@@ -20,7 +20,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 //import java.util.Vector;
 
-import fedora.server.access.localservices.HttpService;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.InitializationException;
@@ -147,7 +146,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * @param request  The servlet request.
    * @param response servlet The servlet response.
    * @throws ServletException If an error occurs that effects the servlet's
-   * basic operation.
+   *         basic operation.
    * @throws IOException If an error occurrs with an input or output operation.
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -635,7 +634,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * @param bDefPID The persistent identifier of Behavior Definition object.
    * @param asOfDate The versioning datetime stamp.
    * @return MIME-typed stream containing XML-encoded method definitions
-   * from WSDL.
+   *         from WSDL.
    */
   public MIMETypedStream GetBehaviorMethodsAsWSDL(String PID, String bDefPID,
       Calendar asOfDate)
@@ -679,6 +678,8 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * @param asOfDate The version datetime stamp of the digital object.
    * @param userParms An array of user-supplied method parameters and values.
    * @return A MIME-typed stream containing the dissemination result.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
    */
   public MIMETypedStream GetDissemination(String PID, String bDefPID,
        String methodName, Property[] userParms, Calendar asOfDate)
@@ -699,132 +700,6 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
            versDateTime);
        DisseminationService dissService = new DisseminationService();
        dissemination = dissService.assembleDissemination(userParms, dissResults);
-       /*
-       String replaceString = null;
-       int numElements = dissResults.length;
-
-       // Get row(s) of WSDL results and perform string substitution
-       // on DSBindingKey and method parameter values in WSDL
-       // Note: In case where more than one datastream matches the
-       // DSBindingKey or there are multiple DSBindingKeys for the
-       // method, multiple rows will be returned; otherwise
-       // a single row is returned.
-       for (int i=0; i<dissResults.length; i++)
-       {
-         dissResult = dissResults[i];
-
-         // If AddressLocation has a value of "LOCAL", this is a flag to
-         // indicate the associated OperationLocation requires no
-         // AddressLocation. i.e., the OperationLocation contains all
-         // information necessary to perform the dissemination request.
-         if (dissResult.AddressLocation.equalsIgnoreCase(LOCAL_ADDRESS_LOCATION))
-         {
-           dissResult.AddressLocation = "";
-         }
-
-         // Match DSBindingKey pattern in WSDL
-         String bindingKeyPattern = "\\("+dissResult.DSBindKey+"\\)";
-         if (i == 0)
-         {
-           operationLocation = dissResult.OperationLocation;
-           dissURL = dissResult.AddressLocation+dissResult.OperationLocation;
-           protocolType = dissResult.ProtocolType;
-         }
-         if (debug) System.out.println("counter: "+i+" numelem: "+numElements);
-         String currentKey = dissResult.DSBindKey;
-         String nextKey = "";
-         if (i != numElements-1)
-         {
-           // Except for last row, get the value of the next binding key
-           // to compare with the value of the current binding key.
-           if (debug) System.out.println("currentKey: '"+currentKey+"'");
-           nextKey = dissResults[i+1].DSBindKey;
-           if (debug) System.out.println("' nextKey: '"+nextKey+"'");
-         }
-
-         // In most cases, there is only a single datastream that matches a
-         // given DSBindingKey so the substitution process is to just replace
-         // the occurence of (BINDING_KEY) with the value of the datastream
-         // location. However, when multiple datastreams match the same
-         // DSBindingKey, the occurrence of (BINDING_KEY) is replaced with the
-         // value of the datastream location and the value +(BINDING_KEY) is
-         // appended so that subsequent datastreams matching the binding key
-         // will be substituted. The end result is that the binding key will
-         // be replaced by a string datastream locations separated by a plus(+)
-         // sign. e.g.,
-         //
-         // file=(PHOTO) becomes
-         // file=dslocation1+dslocation2+dslocation3
-         //
-         // It is the responsibility of the Behavior Mechanism to know how to
-         // handle an input parameter with multiple datastreams.
-         //
-         // In the case of a method containing multiple binding keys,
-         // substitutions are performed on each binding key. e.g.,
-         //
-         // image=(PHOTO)&watermark=(WATERMARK) becomes
-         // image=dslocation1&watermark=dslocation2
-         //
-         // In the case with mutliple binding keys and multiple datastreams,
-         // the substitution might appear like the following:
-         //
-         // image=(PHOTO)&watermark=(WATERMARK) becomes
-         // image=dslocation1+dslocation2&watermark=dslocation3
-         if (nextKey.equalsIgnoreCase(currentKey) & i != numElements)
-         {
-           replaceString = dissResult.DSLocation+"+("+dissResult.DSBindKey+")";
-         } else
-         {
-           replaceString = dissResult.DSLocation;
-         }
-         if (debug) System.out.println("replaceString: "+replaceString);
-         dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
-         if (debug) System.out.println("replaced dissURL = "+
-                                      dissURL.toString()+
-                                      " counter = "+i);
-       }
-
-       // User-supplied parameters have already been validated.
-       // Substitute user-supplied parameter values in dissemination URL
-       Enumeration e = h_userParms.keys();
-       while (e.hasMoreElements())
-       {
-         String name = (String)e.nextElement();
-         String value = (String)h_userParms.get(name);
-         String pattern = "\\("+name+"\\)";
-         dissURL = substituteString(dissURL, pattern, value);
-         if (debug) System.out.println("UserParmSubstitution dissURL: "+
-                                       dissURL);
-       }
-
-       // Resolve content referenced by dissemination result
-       if (debug) System.out.println("ProtocolType = "+protocolType);
-       if (protocolType.equalsIgnoreCase("http"))
-       {
-         // FIXME!! need to implement Access Policy control.
-         // If access is based on restrictions to content,
-         // this is the last chance to apply those restrictions
-         // before returnign dissemination result to client.
-         HttpService httpService = new HttpService();
-         try
-         {
-           dissemination = httpService.getHttpContent(dissURL);
-         } catch (HttpServiceNotFoundException onfe)
-         {
-           // FIXME!! -- Decide on Exception handling
-           System.out.println(onfe.getMessage());
-         }
-       } else if (protocolType.equalsIgnoreCase("soap"))
-       {
-         // FIXME!! future handling by soap interface
-         System.out.println("Protocol type specified: "+protocolType);
-         dissemination = null;
-       } else
-       {
-         System.out.println("Unknown protocol type: "+protocolType);
-         dissemination = null;
-       }
-       */
      } catch (ServerException se)
      {
        throw se;
@@ -889,13 +764,16 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * of "yes". The cache is also flushed when it reaches the limit
    * specified by <code>DISS_CACHE_SIZE</code>.</p>
    *
-   * @param dissRequestID The originating URI request used as hash key.
+   * @param action The Fedora service requested.
    * @param PID The persistent identifier of the Digital Object.
    * @param bDefPID The persistent identifier of the Behavior Definition object.
    * @param methodName The method name.
    * @param userParms An array of user-supplied method parameters.
    * @param asOfDate The version datetime stamp of the digital object.
+   * @param clearCache The dissemination cache flag.
+   * @param response The servlet response.
    * @return The MIME-typed stream containing dissemination result.
+   * @throws IOException If an error occurrs with an input or output operation.
    */
   private synchronized MIMETypedStream getDisseminationFromCache(String action,
       String PID, String bDefPID, String methodName,
@@ -960,8 +838,8 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * @param PID The persistent identifier of the Digital Object.
    * @param bDefPID The persistent identifier of the Behavior Definition object.
    * @param methodName The method name.
-   * @param versDate The version datetime stamp of the digital object.
-   * @param userParms An array of user-supplied method parameters.
+   * @param versDateTime The version datetime stamp of the digital object.
+   * @param h_userParms A hashtable of user-supplied method parameters.
    * @param clearCache A boolean flag to clear dissemination cache.
    * @param response The servlet response.
    * @return True if required parameters are valid; false otherwise.
@@ -1316,9 +1194,12 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * @param PID The persistent identifier of the digital object.
    * @param bDefPID The persistent identifier of the Behavior Definition object.
    * @param methodName The name of the method.
-   * @param A hashtable of user-supplied method parameter name/value.
-   *                      pairs
+   * @param h_userParms A hashtable of user-supplied method parameter name/value.
+   *        pairs
+   * @param versDateTime The version datetime stamp of the digital object.
+   * @param response The servlet response.
    * @return True if method parameters are valid; false otherwise.
+   * @throws IOException If an error occurrs with an input or output operation.
    *
    */
   private boolean isValidUserParms(String PID, String bDefPID,
