@@ -48,6 +48,8 @@ import fedora.client.console.management.ManagementConsole;
 import fedora.client.export.AutoExporter;
 import fedora.client.ingest.AutoIngestor;
 import fedora.client.purge.AutoPurger;
+import fedora.client.search.ResultFrame;
+import fedora.server.types.gen.FieldSearchQuery;
 
 // wdn >
 import fedora.client.BatchBuildGUI;
@@ -91,12 +93,11 @@ public class Administrator extends JFrame {
         cl=this.getClass().getClassLoader();
 
         m_aboutPic=new JLabel(new ImageIcon(cl.getResource("images/fedora/aboutadmin.gif")));
-        m_aboutText=new JLabel("<html>Copyright 2002 University of "
-                + "Virginia and Cornell University.<p>This software was "
-                + "made possible by a grant from the<p>Andrew W. Mellon "
-                + "Foundation.<p><p>Version: 0.9<p>Release Date: "
-                + "March 7, 2003<p><p>Note: This is a pre-release version "
-                + "of Fedora<P>See http://www.fedora.info/ for "
+        m_aboutText=new JLabel("<html>Copyright 2003<p>- The Rector and Visitors "
+                + "of the University of Virginia<p>- Cornell University<p><p>"
+                + "Version: 1.0<p>Release Date: "
+                + "May 16, 2003<p>"
+                + "See http://www.fedora.info/ for "
                 + "more information.");
         m_aboutText.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JPanel splashPicAndText=new JPanel();
@@ -491,7 +492,15 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
     }
     
     protected void createSearchRepository() {
-        Search frame=new Search();
+        //Search frame=new Search();
+        FieldSearchQuery query=new FieldSearchQuery();
+        query.setTerms("*");
+        String[] fields=new String[4];
+        fields[0]="pid";
+        fields[1]="mDate";
+        fields[2]="bDef";
+        fields[3]="title";
+        ResultFrame frame=new ResultFrame("Search Results", fields, 10, query);
         frame.setVisible(true);
         s_desktop.add(frame);
         try {
