@@ -129,15 +129,14 @@ public class DatastreamConduit {
     }
 
     public static Calendar[] purgeDatastream(FedoraAPIM skeleton,
-            String pid, String dsId, Calendar startDT, Calendar endDT)
+            String pid, String dsId, Calendar endDT)
             throws RemoteException {
-        return skeleton.purgeDatastream(pid, dsId, startDT, endDT);
+        return skeleton.purgeDatastream(pid, dsId, endDT);
     }
 
-    public Calendar[] purgeDatastream(String pid, String dsId,
-            Calendar startDT, Calendar endDT)
+    public Calendar[] purgeDatastream(String pid, String dsId, Calendar endDT)
             throws RemoteException {
-        return purgeDatastream(m_apim, pid, dsId, startDT, endDT);
+        return purgeDatastream(m_apim, pid, dsId, endDT);
     }
 
     public static Calendar[] getDatastreamHistory(FedoraAPIM skeleton,
