@@ -2,6 +2,7 @@ package fedora.server.access;
 
 import java.util.Calendar;
 import java.util.Vector;
+import javax.servlet.ServletException;
 
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.MethodDef;
@@ -76,7 +77,8 @@ public interface FedoraAccess
    * @return A MIME-typed stream containing the result of the dissemination.
    */
   public MIMETypedStream GetDissemination (String PID, String bDefPID,
-      String methodName, Property[] userParms, Calendar asOfDateTime);
+      String methodName, Property[] userParms, Calendar asOfDateTime)
+      throws ServerException;
 
   /**
    * <p>Gets a list of all Behavior Definition object PIDs and method names
