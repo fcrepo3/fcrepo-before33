@@ -377,6 +377,7 @@ public class DefaultAccess extends Module implements Access
     {
       if (dissSet[i].bDefID.equalsIgnoreCase(bDefPID))
       {
+        checkState(context, "disseminator (\""+dissSet[i].dissID+"\") for the data ", dissSet[i].dissState, PID);
         bmechreader = m_manager.getBMechReader(context, dissSet[i].bMechID);
         break;
       }
