@@ -3,6 +3,8 @@ package fedora.server.storage;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.ResultSet;
 import java.util.Vector;
 
 import fedora.server.utilities.DDLConverter;
@@ -165,19 +167,26 @@ public class ConnectionPool implements Runnable
         (Connection)availableConnections.lastElement();
       int lastIndex = availableConnections.size() - 1;
       availableConnections.removeElementAt(lastIndex);
-      // If connection on available list is closed (e.g.,
-      // it timed out), then remove it from available list
-      // and repeat the process of obtaining a connection.
+      // Try executing a simple query to ascertain if
+      // the connection is still valid. Some databases
+      // will time out idle connections so this checks
+      // to be sure that the connection is still valid.
       // Also wake up threads that were waiting for a
       // connection because maxConnection limit was reached.
-      if (existingConnection.isClosed())
-      {
-        notifyAll(); // Freed up a spot for anybody waiting
-        return(getConnection());
-      } else {
-        busyConnections.addElement(existingConnection);
-        return(existingConnection);
+      Statement s = null;
+      ResultSet rs = null;
+      try {
+          s = existingConnection.createStatement();
+          rs = s.executeQuery("SELECT 1");
+      } catch (SQLException sqle) {
+          notifyAll(); // Freed up a spot for anybody waiting
+          return(getConnection());
+      } finally {
+          if (s != null)   s.close();
+          if (rs != null) rs.close();
       }
+      busyConnections.addElement(existingConnection);
+      return(existingConnection);
     } else {
 
       // Three possible cases:
