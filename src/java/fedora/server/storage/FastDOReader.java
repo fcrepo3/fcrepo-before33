@@ -1318,10 +1318,10 @@ private static final String dbPropsFile = "db.properties";
       //System.out.println("id: "+id);
       Server s_server =
           Server.getInstance(new File(System.getProperty("fedora.home")));
-      ConnectionPoolManagerImpl poolManager =
-          (ConnectionPoolManagerImpl)s_server.
+      ConnectionPoolManager poolManager =
+          (ConnectionPoolManager)s_server.
           getModule("fedora.server.storage.ConnectionPoolManager");
-      connectionPool = poolManager.getPool("poolOne");
+      connectionPool = poolManager.getPool();
     } catch (Exception e)
     {
       System.out.println("Failed to get Pool: "+e.getMessage());
