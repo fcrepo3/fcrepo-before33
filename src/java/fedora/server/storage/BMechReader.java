@@ -16,10 +16,11 @@ import java.util.Date;
 
 public interface BMechReader extends DOReader
 {
+  public MethodDef[] getServiceMethods(Date versDateTime) throws ServerException;
 
-  public MethodDef[] GetBehaviorMethods(Date versDateTime) throws ServerException;
+  public MethodDefOperationBind[] getServiceMethodBindings(Date versDateTime) throws ServerException;
 
-  public InputStream GetBehaviorMethodsWSDL(Date versDateTime) throws ServerException;
+  public InputStream getServiceMethodsXML(Date versDateTime) throws ServerException;
 
-  public BMechDSBindSpec GetDSBindingSpec(Date versDateTime) throws ServerException;
+  public BMechDSBindSpec getServiceDSInputSpec(Date versDateTime) throws ServerException;
 }
