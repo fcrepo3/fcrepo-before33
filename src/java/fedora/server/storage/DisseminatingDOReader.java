@@ -15,13 +15,14 @@ import java.util.Vector;
 
 // fedora imports
 import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.errors.ObjectNotFoundException;
-import fedora.server.storage.types.Dissemination;
+import fedora.server.storage.types.DisseminationBindingInfo;
 
 
 public interface DisseminatingDOReader extends DOReader
 {
-  public Dissemination[] getDissemination(String PID, String bDefPID, String methodName,
+  public DisseminationBindingInfo[] getDissemination(String PID, String bDefPID, String methodName,
                                  Date versDateTime) throws ObjectNotFoundException;
-  public Vector getObject(String PID, Date versDateTime) throws ObjectNotFoundException;
+  public ObjectMethodsDef[] getObjectMethods(String PID, Date versDateTime) throws ObjectNotFoundException;
 }
