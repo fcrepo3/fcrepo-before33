@@ -80,15 +80,18 @@
         </comment>
 		<param name="testName" value="testValue"/>
 	</module>
-	<module role="fedora.server.storage.DOTranslator" class="fedora.server.storage.DefaultDOTranslator">
+	<module role="fedora.server.storage.translation.DOTranslator"
+               class="fedora.server.storage.translation.DefaultDOTranslator">
 		<comment>Supports translation from DigitalObject to a stream of 
         some format, and vice-versa.  The parameters below specify 
         serializer/deserializer classes to be used for a given format.
         Those classes must implement the DOSerializer/DODeserializer
         interfaces.
         </comment>
-		<param name="serializer_mets11fedora1" value="fedora.server.storage.METSDOSerializer"/>
-		<param name="deserializer_mets11fedora1" value="fedora.server.storage.METSDODeserializer"/>
+		<param name="serializer_mets11fedora1" 
+                      value="fedora.server.storage.translation.METSDOSerializer"/>
+		<param name="deserializer_mets11fedora1" 
+                      value="fedora.server.storage.translation.METSDODeserializer"/>
 	</module>
 	<module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
 		<comment>The pid generator.</comment>
