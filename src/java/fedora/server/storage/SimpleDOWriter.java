@@ -128,6 +128,34 @@ public class SimpleDOWriter
         }
     }
 
+    public void setDatastreamAltIDs(String datastreamID, String[] altIDs) 
+            throws ServerException {
+      assertNotInvalidated();
+      assertNotPendingRemoval();
+      List allVersions = m_obj.datastreams(datastreamID);
+      Iterator dsIter = allVersions.iterator();
+
+      // Set all versions of this datastreamID to the specified altIDs
+      while (dsIter.hasNext()) {
+          Datastream ds = (Datastream) dsIter.next();
+          ds.DatastreamAltIDs = altIDs;
+      }
+    }
+
+    public void setDatastreamFormatURI(String datastreamID, String formatURI) 
+            throws ServerException {
+      assertNotInvalidated();
+      assertNotPendingRemoval();
+      List allVersions = m_obj.datastreams(datastreamID);
+      Iterator dsIter = allVersions.iterator();
+
+      // Set all versions of this datastreamID to the specified formatURI
+      while (dsIter.hasNext()) {
+          Datastream ds = (Datastream) dsIter.next();
+          ds.DSFormatURI = formatURI;
+      }
+    }
+
     public void setDisseminatorState(String disseminatorID, String dissState)
            throws ServerException {
       assertNotInvalidated();

@@ -542,6 +542,7 @@ public class DefaultManagement
                     newds.DatastreamID=orig.DatastreamID;
                     // make sure it has a different id
                     newds.DSVersionID=w.newDatastreamID(datastreamId);
+                    if (altIDs == null) altIDs = orig.DatastreamAltIDs;
                     newds.DatastreamAltIDs = altIDs;
                     newds.DSLabel=dsLabel;
                     if (versionable) {
@@ -550,6 +551,7 @@ public class DefaultManagement
                         newds.DSVersionable = "NO";
                     }
                     newds.DSMIME = mimeType;
+                    if (formatURI == null) formatURI = orig.DSFormatURI;
                     newds.DSFormatURI=formatURI;
                     nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                     newds.DSCreateDT=nowUTC;
@@ -583,6 +585,10 @@ public class DefaultManagement
                     // if mimeType was changed, set new mimeType
                     if (!orig.DSMIME.equals(newds.DSMIME)) {
                         w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
+                    // set new formatURI across all versions
+                    w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
+                    // set new altIDs across all versions
+                    w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
                     // add the audit record
                     fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                     audit.id=w.newAuditRecordID();
@@ -603,6 +609,7 @@ public class DefaultManagement
                 // make sure it has a different id
                 newds.DSVersionID=w.newDatastreamID(datastreamId);
                 newds.DSLabel=dsLabel;
+                if (altIDs == null) altIDs = orig.DatastreamAltIDs;
                 newds.DatastreamAltIDs = altIDs;
                 if (versionable) {
                     newds.DSVersionable = "YES";
@@ -610,6 +617,7 @@ public class DefaultManagement
                     newds.DSVersionable = "NO";
                 }
                 newds.DSMIME = mimeType;
+                if (formatURI == null) formatURI = orig.DSFormatURI;
                 newds.DSFormatURI=formatURI;
                 nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                 newds.DSCreateDT=nowUTC;
@@ -642,6 +650,10 @@ public class DefaultManagement
                 // if mimeType was changed, set new mimeType
                 if (!orig.DSMIME.equals(newds.DSMIME)) {
                     w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
+                // set new formatURI across all versions
+                w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
+                // set new altIDs across all versions
+                w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
                 // add the audit record
                 fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                 audit.id=w.newAuditRecordID();
@@ -739,6 +751,7 @@ public class DefaultManagement
             // make sure it has a different id
             newds.DSVersionID=w.newDatastreamID(datastreamId);
             newds.DSLabel=dsLabel;
+            if (altIDs == null) altIDs = orig.DatastreamAltIDs;
             newds.DatastreamAltIDs = altIDs;
             if (versionable) {
                 newds.DSVersionable = "YES";
@@ -746,6 +759,7 @@ public class DefaultManagement
                 newds.DSVersionable = "NO";
             }
             newds.DSMIME = mimeType;
+            if (formatURI == null) formatURI = orig.DSFormatURI;
             newds.DSFormatURI = formatURI;
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             newds.DSCreateDT=nowUTC;
@@ -771,6 +785,10 @@ public class DefaultManagement
             // if mimeType was changed, set new mimeType
             if (!orig.DSMIME.equals(newds.DSMIME)) {
                 w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
+            // set new formatURI across all versions
+            w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
+            // set new altIDs across all versions
+            w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();

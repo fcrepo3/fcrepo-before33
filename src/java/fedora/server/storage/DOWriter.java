@@ -82,6 +82,9 @@ public interface DOWriter
      */
     public void setDatastreamMimeType(String id, String mimeType) throws ServerException;
 
+    public void setDatastreamAltIDs(String id, String[] altIDs) throws ServerException;
+    public void setDatastreamFormatURI(String id, String formatURI) throws ServerException;
+
     /**
      * Sets the state for all versions of the specified disseminator.
      *
