@@ -626,7 +626,7 @@ public class DatastreamsPane
                     String trimmed = m_altIDsTextField.getText().trim();
                     String[] altIDs;
                     if (trimmed.length() == 0) {
-                        altIDs = null;
+                        altIDs = new String[0];
                     } else if (trimmed.indexOf(" ") == -1) {
                         altIDs = new String[] { trimmed };
                     } else {
@@ -665,6 +665,7 @@ public class DatastreamsPane
                                        "DatastreamsPane generated this logMessage."); // DEFAULT_LOGMESSAGE
                     addDatastreamTab(newID);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     String msg = e.getMessage();
                     if (msg.indexOf("Content is not allowed in prolog") != -1) {
                       msg = "Text entered is not valid XML.\n"
