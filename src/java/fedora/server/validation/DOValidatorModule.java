@@ -5,8 +5,6 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.Module;
 import fedora.server.Server;
-import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.ConnectionPoolManager;
 
 // Java imports
 import java.util.Map;
@@ -117,17 +115,12 @@ public class DOValidatorModule extends Module implements DOValidator
 				logFiner("[DOValidatorModule] initialized Schematron "
 						+ "preprocessor location: " + schematronPreprocessorPath);
 			}
-		}
-		// instantiate a connection pool to support Level 3 validation
-		ConnectionPool connectionPool=((ConnectionPoolManager)
-			getServer().getModule(
-			"fedora.server.storage.ConnectionPoolManager")).getPool(); 
+		} 
 			        
       	// FINALLY, instantiate the validation module implementation class
       	dov = new DOValidatorImpl(tempDir, xmlSchemaMap, 
       			schematronPreprocessorPath,
-				ruleSchemaMap, 
-				connectionPool, this);
+				ruleSchemaMap, this);
     }
     catch(Exception e)
     {
@@ -140,12 +133,11 @@ public class DOValidatorModule extends Module implements DOValidator
    * <p>Validates a digital object.</p>
    *
    * @param objectAsStream The digital object provided as a bytestream.
-   * @param validationLevel The level of validation to perform on the digital
-   *        object. This is an integer from 0-3 with the following meanings:
-   *        0 = do all validation levels
-   *        1 = perform only XML Schema validation
-   *        2 = perform only Schematron Rules validation
-   *        3 = perform only referential integrity checks for the object
+   * @param validationType The level of validation to perform on the digital
+   *        object. This is an integer from 0-2 with the following meanings:
+   *        0 = VALIDATE_ALL (do all validation levels)
+   *        1 = VALIDATE_XML_SCHEMA (perform only XML Schema validation)
+   *        2 = VALIDATE_SCHEMATRON (perform only Schematron Rules validation)
    * @param phase The stage in the work flow for which the
    *        validation should be contextualized.
    *        "ingest" = the object is in the submission format for the
@@ -155,24 +147,21 @@ public class DOValidatorModule extends Module implements DOValidator
    * @throws ServerException If validation fails for any reason.
    */
   public void validate(InputStream objectAsStream, String format, 
-  	int validationLevel, String phase)
+  	int validationType, String phase)
     throws ServerException
   {
-    dov.validate(objectAsStream, format, validationLevel, phase);
-    logFiner("[DOValidatorModule] Successful object validation at level: "
-              + validationLevel);
+    dov.validate(objectAsStream, format, validationType, phase);
   }
 
   /**
    * <p>Validates a digital object.</p>
    *
    * @param objectAsFile The digital object provided as a file.
-   * @param validationLevel The level of validation to perform on the digital
-   *        object. This is an integer from 0-3 with the following meanings:
-   *        0 = do all validation levels
-   *        1 = perform only XML Schema validation
-   *        2 = perform only Schematron Rules validation
-   *        3 = perform only referential integrity checks for the object
+   * @param validationType The level of validation to perform on the digital
+   *        object. This is an integer from 0-2 with the following meanings:
+   *        0 = VALIDATE_ALL (do all validation levels)
+   *        1 = VALIDATE_XML_SCHEMA (perform only XML Schema validation)
+   *        2 = VALIDATE_SCHEMATRON (perform only Schematron Rules validation)
    * @param phase The stage in the work flow for which the validation
    *        should be contextualized.
    *        "ingest" = the object is in the submission format for the
@@ -182,11 +171,9 @@ public class DOValidatorModule extends Module implements DOValidator
    * @throws ServerException If validation fails for any reason.
    */
   public void validate(File objectAsFile, String format, 
-  	int validationLevel, String phase)
+  	int validationType, String phase)
     throws ServerException
   {
-      dov.validate(objectAsFile, format, validationLevel, phase);
-      logFiner("[DOValidatorModule] Completed object validation at level: "
-              + validationLevel);
+      dov.validate(objectAsFile, format, validationType, phase);
   }
 }
