@@ -137,7 +137,7 @@
               only for testing or cases where this security issue is not a concern. The 
               default value of doMediateDatastreams is true.
             </comment>
-		<param name="doMediateDatastreams" value="true"/>
+		<param name="doMediateDatastreams" value="false"/>
 	</module>
 	<module role="fedora.server.access.DynamicAccess" class="fedora.server.access.DynamicAccessModule">
 		<comment>
@@ -248,7 +248,6 @@
 		<param name="xmlSchemaURL" value="http://localhost:8080/mets-fedora-ext.xsd"/>
 		<param name="schematronPreprocessor" value="schematron/preprocessor.xslt"/>
 		<param name="schematronSchema" value="schematron/fedoraRulesExt.xml"/>
-		<param name="schematronValidatingXsl" value="schematron/fedoraValidator.xslt"/>
 	</module>
 	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
 		<comment>This module facilitates obtaining external content via HTTP</comment>
