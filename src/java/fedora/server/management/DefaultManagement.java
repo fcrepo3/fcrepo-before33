@@ -190,6 +190,26 @@ public class DefaultManagement
         }
     }
 
+    public void modifyObject(Context context, String pid, String state,
+            String label, String logMessage)
+            throws ServerException {
+        logFinest("Entered DefaultManagement.modifyObject");
+        m_ipRestriction.enforce(context);
+        DOWriter w=m_manager.getWriter(context, pid);
+        try {
+            if (state!=null)
+                w.setState(state);
+            if (label!=null)
+                w.setLabel(label);
+            w.commit(logMessage);
+        } finally {
+            m_manager.releaseWriter(w);
+            Runtime r=Runtime.getRuntime();
+            getServer().logFinest("Memory: " + r.freeMemory() + " bytes free of " + r.totalMemory() + " available.");
+            getServer().logFinest("Exiting DefaultManagement.ingestObject");
+        }
+    }
+
     public InputStream getObjectXML(Context context, String pid, String format, String encoding) throws ServerException {
         logFinest("Entered DefaultManagement.getObjectXML");
         m_ipRestriction.enforce(context);

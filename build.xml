@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
 <project name="Fedora" default="all" basedir=".">
-	<property name="fedoraVersion" value="1.1"/>
+	<property name="fedoraVersion" value="1.1.1"/>
 	<property name="javaClassDebug" value="on"/>
 	<property name="javaClassOptimize" value="off"/>
 	<property name="javaSourceDir" value="src/java"/>
@@ -965,6 +965,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.145  2003/09/01 17:54:42  cwilper
+  added modifyObject(pid, state, label, logMessage) to API-M
+
   Revision 1.144  2003/08/30 20:14:54  cwilper
   Added support for upload of files via POST at http://host:port/fedora/management/upload
   This can be used in conjuction with modifyDatastreamByReference to support

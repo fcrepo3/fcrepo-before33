@@ -38,6 +38,10 @@ public interface Management {
 
     public String ingestObject(Context context, InputStream serialization, String logMessage, String format, String encoding, boolean newPid) throws ServerException;
 
+    public void modifyObject(Context context, String pid, String state,
+            String label, String logMessage)
+            throws ServerException;
+
     public InputStream getObjectXML(Context context, String pid, String format, String encoding) throws ServerException;
 
     public InputStream exportObject(Context context, String pid, String format, String encoding) throws ServerException;

@@ -149,6 +149,23 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
+    public void modifyObject(String PID, String state, String label, 
+            String logMessage)
+            throws RemoteException {
+        assertInitialized();
+        try {
+            s_management.modifyObject(getContext(), PID, state, label,
+                    logMessage);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            logStackTrace(e);
+            throw AxisUtility.getFault(e);
+        }
+    }
+
+
     public byte[] getObjectXML(String PID)
             throws RemoteException {
         assertInitialized();

@@ -37,6 +37,20 @@
 			<documentation>the PID of the newly created object.</documentation>
 		</part>
 	</message>
+        <message name="modifyObjectRequest">
+            <part name="pid" type="xsd:string">
+                <documentation>the PID of the object.</documentation>
+            </part>
+            <part name="label" type="xsd:string">
+                <documentation>the new label.  Null means leave unchanged.</documentation>
+            </part>
+            <part name="state" type="xsd:string">
+                <documentation>the new state, A, I or D.  Null means leave unchanged.</documentation>
+            </part>
+            <part name="logMessage" type="xsd:string">
+                <documentation>a log message.</documentation>
+            </part>
+        </message>
 	<message name="getObjectXMLRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -385,6 +399,10 @@
 			<input message="fedora-api:ingestObjectRequest"/>
 			<output message="fedora-api:ingestObjectResponse"/>
 		</operation>
+                <operation name="modifyObject">
+                    <documentation>Changes the state and/or label of the object.</documentation>
+                    <input message="fedora-api:modifyObjectRequest"/>
+                </operation>
 		<operation name="getObjectXML">
 			<documentation>Gets the XML portion of the entire METS-encoded 
       digital object for external use (viewing, editing, moving to another 
@@ -528,6 +546,13 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
+                <operation name="modifyObject">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyObject"/>
+                     
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+                </operation>
 		<operation name="getObjectXML">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectXML"/>
 			<input>
