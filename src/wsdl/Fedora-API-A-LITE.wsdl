@@ -57,15 +57,76 @@
 			</documentation>
 		</part>
 	</message>
-    <message name="getDatastreamRequest">
+	<message name="getObjectMethodsRequest">
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:string">
+			<documentation>the date/time stamp specifying the desired view of the 
+			      object.  If null, the current view of the object (the most recent time) 
+			      is assumed.
+			</documentation>
+		</part>
+	</message>
+	<message name="getObjectMethodsResponse">
+		<part name="response" type="fedora-types:ArrayOfObjectMethodsDef">
+			<documentation>A set of method definitions that represent 
+				all possible disseminations that can be run on the object.
+			</documentation>
+		</part>
+	</message>	
+	<message name="listMethodsRequest">
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:string">
+			<documentation>the date/time stamp specifying the desired view of the 
+			      object.  If null, the current view of the object (the most recent time) 
+			      is assumed.
+			</documentation>
+		</part>
+	</message>
+	<message name="listMethodsResponse">
+		<part name="response" type="fedora-types:ArrayOfObjectMethodsDef">
+			<documentation>A set of method definitions that represent 
+				all possible disseminations that can be run on the object.
+			</documentation>
+		</part>
+	</message>	
+	<message name="listDatastreamsRequest">
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:string">
+			<documentation>the date/time stamp specifying the desired view of the 
+			      object.  If null, the current view of the object (the most recent time) 
+			      is assumed.
+			</documentation>
+		</part>
+	</message>
+	<message name="listDatastreamsResponse">
+		<part name="response" type="fedora-types:ArrayOfDatastreamDef">
+			<documentation>A set of method definitions that represent 
+				all possible disseminations that can be run on the object.
+			</documentation>
+		</part>
+	</message>		
+    <message name="getDatastreamDisseminationRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the persistent identifier of the object.</documentation>
 		</part>
 		<part name="dsID" type="xsd:string">
 			<documentation>the identifier of the datastream to get.</documentation>
 		</part>
+		<part name="asOfDateTime" type="xsd:string">
+			<documentation>the date/time stamp specifying that the dissemination should reflect
+				what the object looked like at a certain date and time.  If this part is not present 
+				in the request, or if it is empty,  the current view of the object (the most recent time)
+				 is assumed.
+			</documentation>
+		</part>		
     </message>
-	<message name="getDatastreamResponse">
+	<message name="getDatastreamDisseminationResponse">
 		<part name="response" type="fedora-types:MIMETypedStream">
 			<documentation>the datastream as a mime-typed stream.</documentation>
 		</part>
@@ -275,6 +336,30 @@
 			<input message="fedora-api:getObjectProfileRequest"/>
 			<output message="fedora-api:getObjectProfileResponse"/>
 		</operation>
+		<operation name="getObjectMethods">
+			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition pids,
+				and methodNames supported by a digital object.  This returns a set of method definitions
+				that represent all possible disseminations that can be run on the object.
+			</documentation>
+			<input message="fedora-api:getObjectMethodsRequest"/>
+			<output message="fedora-api:getObjectMethodsResponse"/>
+		</operation>		
+		<operation name="listMethods">
+			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition pids,
+				and methodNames supported by a digital object.  This returns a set of method definitions
+				that represent all possible disseminations that can be run on the object.
+			</documentation>
+			<input message="fedora-api:listMethodsRequest"/>
+			<output message="fedora-api:listMethodsResponse"/>
+		</operation>		
+		<operation name="listDatastreams">
+			<documentation>Inquires upon all object Datastreams to obtain datastreams contained
+				by a digital object.  This returns a set of datastream locations
+				that represent all possible datastreams available in the object.
+			</documentation>
+			<input message="fedora-api:listDatastreamsRequest"/>
+			<output message="fedora-api:listDatastreamsResponse"/>
+		</operation>				
 		<operation name="getDissemination">
 			<documentation>Gets a MIME-typed view of the digital object, given the 
 				behavior definition id, the behavior method name and any parameters to the 
@@ -287,7 +372,7 @@
 			<input message="fedora-api:getDisseminationRequest"/>
 			<output message="fedora-api:getDisseminationResponse"/>
 		</operation>
-        <operation name="getDatastream">
+        <operation name="getDatastreamDissemination">
             <documentation>Gets a datastream in the digital object.  This is
             a shorter, convenience method for getDissemination 
             http://hostname:port/fedora/get/pid/fedora-system:3/getItem?itemID=dsID.
@@ -296,8 +381,8 @@
             links to datastreams within web pages or applications, this
             syntax is recommended.
             </documentation>
-			<input message="fedora-api:getDatastreamRequest"/>
-			<output message="fedora-api:getDatastreamResponse"/>
+			<input message="fedora-api:getDatastreamDisseminationRequest"/>
+			<output message="fedora-api:getDatastreamDisseminationResponse"/>
         </operation>
 		<operation name="findObjects">
 			<documentation>
@@ -439,19 +524,99 @@ It asks for up to 50 results at a time from the server, and requests that the re
 				<mime:content type="text/html"/>
 			</output>
 		</operation>
-        <operation name="getDatastream">
-			<http:operation location="get/(pid)/(dsID)"/>
-            <input>
-                <documentation>
-                  - pid : a required parameter.  The pid of the digital object.
-                  - dsID : a required parameter.  The ID of the datastream in the object.
-                </documentation>
+		<operation name="getObjectMethods">
+			<http:operation location="get/(pid)/fedora-system:3/getMethodIndex[/(asOfDateTime)][?xml=(boolean)]"/>
+			<input>
+				<documentation>  This URL replacement syntax is used to request the object profile.
+					When putting together a proper URL, the client should replace parenthesized
+					parts of the operation location URL with actual values.  For example, "(pid)" 
+					should be replaced with an actual pid of an object for which the client wants 
+					to get information about (e.g. uva-lib:10).	Parts of the operation location URL that
+					are surrounded by brackets ("[ ]") are optional.  To construct a proper URL the
+					client must replace the following variables with real information:
+						- pid : a required parameter. Client must provide the persistent identifier of the object.
+					 	- asOfDateTime : an optional parameter.  Client can specifiy a dateTime value 
+					 	  indicating that the client wants the object profile to reflect how the object looked 
+					 	  as of a particular date and time.
+					 	- boolean : an optional parameter.  Client can specify that the output of 
+					 	  the operation be HTML or XML.   A value of "true" indicates a return type of 
+					 	  text/xml; the absence of the boolean parameter or a value of "false" indicates 
+					 	  format is to be text/html.
+				</documentation>
 				<http:urlReplacement/>
-            </input>
+			</input>
+			<output>
+				<mime:content type="text/xml"/>
+				<mime:content type="text/html"/>
+			</output>
+		</operation>	
+		<operation name="listMethods">
+			<http:operation location="listMethods/(pid)[/(asOfDateTime)][?xml=(boolean)]"/>
+			<input>
+				<documentation>  This URL replacement syntax is used to request the list of all
+				    methods within a digital  object.	
+				    When putting together a proper URL, the client should replace parenthesized
+					parts of the operation location URL with actual values.  For example, "(pid)" 
+					should be replaced with an actual pid of an object for which the client wants 
+					to get information about (e.g. uva-lib:10).	Parts of the operation location URL that
+					are surrounded by brackets ("[ ]") are optional.  To construct a proper URL the
+					client must replace the following variables with real information:
+						- pid : a required parameter. Client must provide the persistent identifier of the object.
+					 	- asOfDateTime : an optional parameter.  Client can specifiy a dateTime value 
+					 	  indicating that the client wants the object profile to reflect how the object looked 
+					 	  as of a particular date and time.
+					 	- boolean : an optional parameter.  Client can specify that the output of 
+					 	  the operation be HTML or XML.   A value of "true" indicates a return type of 
+					 	  text/xml; the absence of the boolean parameter or a value of "false" indicates 
+					 	  format is to be text/html.
+				</documentation>
+				<http:urlReplacement/>
+			</input>
+			<output>
+				<mime:content type="text/xml"/>
+				<mime:content type="text/html"/>
+			</output>
+		</operation>		
+		<operation name="listDatastreams">
+			<http:operation location="listDatastreams/(pid)[/(asOfDateTime)][?xml=(boolean)]"/>
+			<input>
+				<documentation>  This URL replacement syntax is used to request a list of all
+				     datastream in a digital object.
+					When putting together a proper URL, the client should replace parenthesized
+					parts of the operation location URL with actual values.  For example, "(pid)" 
+					should be replaced with an actual pid of an object for which the client wants 
+					to get information about (e.g. uva-lib:10).	Parts of the operation location URL that
+					are surrounded by brackets ("[ ]") are optional.  To construct a proper URL the
+					client must replace the following variables with real information:
+						- pid : a required parameter. Client must provide the persistent identifier of the object.
+					 	- asOfDateTime : an optional parameter.  Client can specifiy a dateTime value 
+					 	  indicating that the client wants the object profile to reflect how the object looked 
+					 	  as of a particular date and time.
+					 	- boolean : an optional parameter.  Client can specify that the output of 
+					 	  the operation be HTML or XML.   A value of "true" indicates a return type of 
+					 	  text/xml; the absence of the boolean parameter or a value of "false" indicates 
+					 	  format is to be text/html.
+				</documentation>
+				<http:urlReplacement/>
+			</input>
+			<output>
+				<mime:content type="text/xml"/>
+				<mime:content type="text/html"/>
+			</output>
+		</operation>				
+	     <operation name="getDatastreamDissemination">
+			<http:operation location="get/(pid)/(dsID)"/>
+            	<input>
+               	<documentation>
+                  		- pid : a required parameter.  The pid of the digital object.
+                  		- dsID : a required parameter.  The ID of the datastream in the object.
+                	</documentation>
+				<http:urlReplacement/>
+            	</input>
 			<output>
 				<mime:content type="*/*"/>
-            </output>
-        </operation>
+            	</output>
+        	</operation>
 		<operation name="getDissemination">
 			<http:operation location="get/(pid)/(bDefPid)/(methodName)[/(asOfDateTime)][?(parameters)]"/>
 			<input>

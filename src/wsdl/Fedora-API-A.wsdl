@@ -66,7 +66,63 @@
 				all possible disseminations that can be run on the object.
 			</documentation>
 		</part>
-	</message>
+	</message>	
+	<message name="listMethodsRequest">
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:string">
+			<documentation>the date/time stamp specifying the desired view of the 
+			      object.  If null, the current view of the object (the most recent time) 
+			      is assumed.
+			</documentation>
+		</part>
+	</message>	
+	<message name="listMethodsResponse">
+		<part name="response" type="fedora-types:ArrayOfObjectMethodsDef">
+			<documentation>A set of method definitions that represent 
+				all possible disseminations that can be run on the object.
+			</documentation>
+		</part>
+	</message>					
+	<message name="listDatastreamsRequest">
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:string">
+			<documentation>the date/time stamp specifying the desired view of the 
+			      object.  If null, the current view of the object (the most recent time) 
+			      is assumed.
+			</documentation>
+		</part>
+	</message>		
+	<message name="listDatastreamsResponse">
+		<part name="response" type="fedora-types:ArrayOfDatastreamDef">
+			<documentation>A set of method definitions that represent 
+				all possible disseminations that can be run on the object.
+			</documentation>
+		</part>
+	</message>		
+    <message name="getDatastreamDisseminationRequest">
+		<part name="pid" type="xsd:string">
+			<documentation>the persistent identifier of the object.</documentation>
+		</part>
+		<part name="dsID" type="xsd:string">
+			<documentation>the identifier of the datastream to get.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:string">
+			<documentation>the date/time stamp specifying that the dissemination should reflect
+				what the object looked like at a certain date and time.  If this part is not present 
+				in the request, or if it is empty,  the current view of the object (the most recent time)
+				 is assumed.
+			</documentation>
+		</part>		
+    </message>
+	<message name="getDatastreamDisseminationResponse">
+		<part name="response" type="fedora-types:MIMETypedStream">
+			<documentation>the datastream as a mime-typed stream.</documentation>
+		</part>
+	</message>    
 	<message name="getDisseminationRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -90,66 +146,6 @@
 	<message name="getDisseminationResponse">
 		<part name="response" type="fedora-types:MIMETypedStream">
 			<documentation>the desired view of the object as a mime-typed stream.</documentation>
-		</part>
-	</message>
-	<message name="getBehaviorDefinitionsRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-				object.  If null, the current view of the object (the most recent time)
-				is assumed.
-			</documentation>
-		</part>
-	</message>
-	<message name="getBehaviorDefinitionsResponse">
-		<part name="response" type="fedora-types:ArrayOfString">
-			<documentation>the pids of the behavior definitions, in no particular order.</documentation>
-		</part>
-	</message>
-	<message name="getBehaviorMethodsRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="bDefPid" type="xsd:string">
-			<documentation>the pid of the behavior definition.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-			object.  If null, the current view of the object (the most recent time) 
-			is assumed.
-			</documentation>
-		</part>
-	</message>
-	<message name="getBehaviorMethodsResponse">
-		<part name="response" type="fedora-types:ArrayOfMethodDef">
-			<documentation>pre-bound WSDL that the client may use to formulate 
-			dissemination requests for the given digital object and behavior 
-			definition.
-			</documentation>
-		</part>
-	</message>
-	<message name="getBehaviorMethodsXMLRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="bDefPid" type="xsd:string">
-			<documentation>the pid of the behavior definition.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-			object.  If null, the current view of the object (the most recent time) 
-			is assumed.
-		</documentation>
-		</part>
-	</message>
-	<message name="getBehaviorMethodsXMLResponse">
-		<part name="response" type="fedora-types:MIMETypedStream">
-			<documentation>pre-bound WSDL that the client may use to formulate 
-				dissemination requests for the given digital object and behavior 
-				definition.
-			</documentation>
 		</part>
 	</message>
 	<message name="findObjectsRequest">
@@ -231,6 +227,34 @@
 			<input message="fedora-api:getObjectMethodsRequest"/>
 			<output message="fedora-api:getObjectMethodsResponse"/>
 		</operation>
+		<operation name="listMethods">
+			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition pids,
+				and methodNames supported by a digital object.  This returns a set of method definitions
+				that represent all possible disseminations that can be run on the object.
+			</documentation>
+			<input message="fedora-api:listMethodsRequest"/>
+			<output message="fedora-api:listMethodsResponse"/>
+		</operation>
+		<operation name="listDatastreams">
+			<documentation>Inquires upon all object Datastreams to obtain datastreams contained
+				by a digital object.  This returns a set of datastream locations
+				that represent all possible datastreams available in the object.
+			</documentation>
+			<input message="fedora-api:listDatastreamsRequest"/>
+			<output message="fedora-api:listDatastreamsResponse"/>
+		</operation>
+        <operation name="getDatastreamDissemination">
+            <documentation>Gets a datastream in the digital object.  This is
+            a shorter, convenience method for getDissemination 
+            http://hostname:port/fedora/get/pid/fedora-system:3/getItem?itemID=dsID.
+            Note that if a particular date/timestamped view of a datastream is
+            needed, getDissemination still must be used.  When making direct 
+            links to datastreams within web pages or applications, this
+            syntax is recommended.
+            </documentation>
+			<input message="fedora-api:getDatastreamDisseminationRequest"/>
+			<output message="fedora-api:getDatastreamDisseminationResponse"/>
+        </operation>		
 		<operation name="getDissemination">
 			<documentation>Gets a MIME-typed view of a digital object,
 				given the behavior definition id, a behavior method name, and any behavior 
@@ -245,28 +269,6 @@
 			</documentation>
 			<input message="fedora-api:getDisseminationRequest"/>
 			<output message="fedora-api:getDisseminationResponse"/>
-		</operation>
-		<operation name="getBehaviorDefinitions">
-			<documentation>Gets a list of behavior definitions supported by a
-				digital object.  This is a set of pids, one for each behavior
-				definition type associated with the object's disseminator(s).
-			</documentation>
-			<input message="fedora-api:getBehaviorDefinitionsRequest"/>
-			<output message="fedora-api:getBehaviorDefinitionsResponse"/>
-		</operation>
-		<operation name="getBehaviorMethods">
-			<documentation>Gets a list of the method descriptions for a given
-      			behavior definition type associated with the digital object.
-      		</documentation>
-			<input message="fedora-api:getBehaviorMethodsRequest"/>
-			<output message="fedora-api:getBehaviorMethodsResponse"/>
-		</operation>
-		<operation name="getBehaviorMethodsXML">
-			<documentation>Gets a list of the method descriptions for a given
-      			behavior definition type associated with the digital object.
-      		</documentation>
-			<input message="fedora-api:getBehaviorMethodsXMLRequest"/>
-			<output message="fedora-api:getBehaviorMethodsXMLResponse"/>
 		</operation>
 		<operation name="findObjects">
 			<documentation>Gets the requested ObjectFields on all objects in the
@@ -317,36 +319,36 @@
 			<output>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
-		</operation>
+		</operation>		
+		<operation name="listMethods">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listMethods"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>		
+		<operation name="listDatastreams">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listDatastreams"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>				
+		<operation name="getDatastreamDissemination">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamDissemination"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>		
 		<operation name="getDissemination">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDissemination"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="getBehaviorDefinitions">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getBehaviorDefinitions"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="getBehaviorMethods">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getBehaviorMethods"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="getBehaviorMethodsXML">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getBehaviorMethodsXML"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
