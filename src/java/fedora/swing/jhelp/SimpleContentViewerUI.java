@@ -28,7 +28,12 @@ import javax.help.Map.ID;
 
 /**
  * Based on SimpleContentViewerUI in javax.help.plaf.basic,
- * which comes with jhelp.  But this version doesn't call
+ * which comes with JavaHelp, which comes with Java1.4,
+ * and is written by Sun Microsystems.
+ * More information on JavaHelp can be found at
+ * http://java.sun.com/products/javahelp/faq.html
+ *
+ * But this version doesn't call
  * <code>setBackingStoreEnable(true)</code>, which is a
  * deprecated method (as of java1.4) anyway.
  * <p>

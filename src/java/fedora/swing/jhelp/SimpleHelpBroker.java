@@ -27,6 +27,9 @@ import java.lang.reflect.*;
  * This is based on <code>DefaultHelpBroker</code> v1.33 (01/25/99) that 
  * comes with JavaHelp, originally written by Roger Brinkley and Eduardo 
  * Pelegri-Llopart.
+ * JavaHelp comes with Java, and is written by Sun Microsystems.
+ * More information on JavaHelp can be found at
+ * http://java.sun.com/products/javahelp/faq.html
  *
  * I've added a new constructor, which takes an Image (the icon you want to
  * use for the window), and also a little more intelligent size tracking.

@@ -160,24 +160,25 @@ public class METSLikeDOSerializer
         }
     }
 
-    private void appendHdr(DigitalObject obj, StringBuffer buf)
-            throws ObjectIntegrityException {
+    private void appendHdr(DigitalObject obj, StringBuffer buf) {
+        buf.append("  <" + METS_PREFIX + ":metsHdr");
         Date cDate=obj.getCreateDate();
-        if (cDate==null) {
-            throw new ObjectIntegrityException("Object must have a create date.");
+        if (cDate!=null) {
+            buf.append(" CREATEDATE=\"");
+            buf.append(m_formatter.format(cDate));
+            buf.append("\"");
         }
-        buf.append("  <" + METS_PREFIX + ":metsHdr CREATEDATE=\""
-                + m_formatter.format(cDate) + "\" LASTMODDATE=\"");
         Date mDate=obj.getLastModDate();
-        if (mDate==null) {
-            throw new ObjectIntegrityException("Object must have a last modified date.");
+        if (mDate!=null) {
+            buf.append(" LASTMODDATE=\"");
+            buf.append(m_formatter.format(mDate) + "\"");
         }
-        buf.append(m_formatter.format(mDate) + "\" RECORDSTATUS=\"");
         String state=obj.getState();
-        if (state==null) {
-            throw new ObjectIntegrityException("Object must have a state.");
+        if (state!=null) {
+            buf.append(" RECORDSTATUS=\"");
+            buf.append(state + "\"");
         }
-        buf.append(state + "\"/>\n");
+        buf.append("/>\n");
     }
 
     private void appendDescriptiveMD(DigitalObject obj, StringBuffer buf,
