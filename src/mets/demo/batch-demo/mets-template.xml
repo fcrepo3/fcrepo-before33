@@ -45,60 +45,60 @@
 		</METS:techMD>
 	</METS:amdSec>
 	<METS:amdSec ID="SOURCE1">
-		<METS:techMD ID="SOURCE1.0" CREATED="1800-01-01T06:32:00" STATUS="">
+		<METS:sourceMD ID="SOURCE1.0" CREATED="1800-01-01T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA source metadata for THUMBNAIL res image">
 				<METS:xmlData/>
 			</METS:mdWrap>
-		</METS:techMD>
+		</METS:sourceMD>
 	</METS:amdSec>
 	<METS:amdSec ID="SOURCE2">
-		<METS:techMD ID="SOURCE2.0" CREATED="1800-01-01T06:32:00" STATUS="">
+		<METS:sourceMD ID="SOURCE2.0" CREATED="1800-01-01T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA source metadata for MEDRES res image">
 				<METS:xmlData/>
 			</METS:mdWrap>
-		</METS:techMD>
+		</METS:sourceMD>
 	</METS:amdSec>
 	<METS:amdSec ID="SOURCE3">
-		<METS:techMD ID="SOURCE3.0" CREATED="1800-01-01T06:32:00" STATUS="">
+		<METS:sourceMD ID="SOURCE3.0" CREATED="1800-01-01T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA source metadata for HIGH res image">
 				<METS:xmlData/>
 			</METS:mdWrap>
-		</METS:techMD>
+		</METS:sourceMD>
 	</METS:amdSec>
 	<METS:amdSec ID="SOURCE4">
-		<METS:techMD ID="SOURCE4.0" CREATED="1800-01-01T06:32:00" STATUS="">
+		<METS:sourceMD ID="SOURCE4.0" CREATED="1800-01-01T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA source metadata for VERYHIGH res image">
 				<METS:xmlData/>
 			</METS:mdWrap>
-		</METS:techMD>
+		</METS:sourceMD>
 	</METS:amdSec>
 	<METS:amdSec ID="DIGIPROV1">
-		<METS:techMD ID="DIGIPROV1.0" CREATED="1800-01-01T06:32:00" STATUS="">
+		<METS:digiprovMD ID="DIGIPROV1.0" CREATED="1800-01-01T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA digiprov metadata for THUMBNAIL res image">
 				<METS:xmlData/>
 			</METS:mdWrap>
-		</METS:techMD>
+		</METS:digiprovMD>
 	</METS:amdSec>
 	<METS:amdSec ID="DIGIPROV2">
-		<METS:techMD ID="DIGIPROV2.0" CREATED="1800-01-01T06:32:00" STATUS="">
+		<METS:digiprovMD ID="DIGIPROV2.0" CREATED="1800-01-01T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA digiprov metadata for MEDRES res image">
 				<METS:xmlData/>
 			</METS:mdWrap>
-		</METS:techMD>
+		</METS:digiprovMD>
 	</METS:amdSec>
 	<METS:amdSec ID="DIGIPROV3">
-		<METS:techMD ID="DIGIPROV3.0" CREATED="1800-01-01T06:32:00" STATUS="">
+		<METS:digiprovMD ID="DIGIPROV3.0" CREATED="1800-01-01T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA digiprov metadata for HIGH res image">
 				<METS:xmlData/>
 			</METS:mdWrap>
-		</METS:techMD>
+		</METS:digiprovMD>
 	</METS:amdSec>
 	<METS:amdSec ID="DIGIPROV4">
-		<METS:techMD ID="DIGIPROV4.0" CREATED="1800-01-01T06:32:00" STATUS="">
+		<METS:digiprovMD ID="DIGIPROV4.0" CREATED="1800-01-01T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: UVA digiprov metadata for VERYHIGH res image">
 				<METS:xmlData/>
 			</METS:mdWrap>
-		</METS:techMD>
+		</METS:digiprovMD>
 	</METS:amdSec>
 	<METS:amdSec ID="RIGHTS1">
 		<METS:rightsMD ID="RIGHTS1.0" CREATED="1800-01-01T06:32:00" STATUS="">
