@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+<article>
+	<articleinfo>
+		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<title>Fedora Search Interface User Documentation</title>
+		<corpauthor>Fedora Development Team</corpauthor>
+		<copyright>
+			<year>2003</year>
+		</copyright>
+		<publisher>
+			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
+		</publisher>
+	</articleinfo>
+	<sect1>
+		<title>Introduction</title>
+		<para>The Search Interface provides a mechanism for searching and browsing the Fedora repository.  Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using this interface.  The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the <emphasis>Datastream ID</emphasis> is DC, and the XML conforms to the scheam at <ulink url="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</ulink>.  If such a datastream is not provided, only the System Metadata will be indexed for that object.</para>
+		<para>The search interface provides both simple and advanced searching via a web page included with the repository software.  All queries are case insensitive.  Simple Search enables queries of words and pharses occuring anywhere in than object's indexed metadata fields.  Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (&equals; and &tilde;) for string fields, and value comparison operators (&equals;, &gt;, &ge;, &lt;, &le;) for date fields (dc:date fields may be treated as both).  The wildcards, &ast; and &quest; may be used in any string-based query.</para>
+	</sect1>
+</article>
