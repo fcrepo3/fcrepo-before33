@@ -105,15 +105,6 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
   /** Instance of DOManager. */
   private static DOManager m_manager = null;
 
-  /** userInputParm hashtable */
-  private Hashtable h_userParms = new Hashtable();
-
-  /** Initial URL request by client */
-  private String requestURL = null;
-
-  /** Portion of initial request URL from protocol up to query string */
-  private String requestURI = null;
-
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
@@ -137,10 +128,6 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
-    String action = null;
-    Property[] userParms = null;
-    long servletStartTime = new Date().getTime();
-    boolean isDescribeRequest = false;
     boolean xml = false;
 
     HashMap h=new HashMap();
@@ -150,81 +137,24 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
     h.put("host", request.getRemoteAddr());
     ReadOnlyContext context = new ReadOnlyContext(h);
 
-    requestURI = request.getRequestURL().toString() + "?"
-        + request.getQueryString();
+    logFinest("[DescribeRepositoryServlet] Describe Repository Syntax "
+        + "Encountered: "+ request.getRequestURL().toString() + "?"
+        + request.getQueryString());
 
-    // Parse servlet URL.
-    String[] URIArray = request.getRequestURL().toString().split("/");
-    if (URIArray.length == 5)
-    {
-      if (URIArray[4].equalsIgnoreCase("describe"))
-      {
-        logFinest("[DescribeRepositoryServlet] Describe Repository Syntax "
-            + "Encountered: "+ requestURI);
-        isDescribeRequest = true;
-      }
-      else if (URIArray.length > 5)
-      {
-        String message = "Request Syntax Error: The expected "
-            + "syntax for Describe requests is: \""
-            + URIArray[0] + "//" + URIArray[2] + "/"
-            + URIArray[3] + "/" + URIArray[4]
-            + "[?ENCODE_XML] \"  "
-            + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
-        logWarning(message);
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-        return;
-      }
-      logFinest("[DescribeRepositoryServlet] Describe Repository Syntax "
-          + "Encountered");
-      isDescribeRequest = true;
-    } else
-    {
-      // Bad syntax; redirect to syntax documentation page.
-      response.sendRedirect("/userdocs/client/browser/apialite/index.html");
-      return;
-    }
-
-    // Separate out servlet parameters from method parameters
-    Hashtable h_userParms = new Hashtable();
+    // Check for xml parameter.
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
     {
       String name = decoder.decode((String)e.nextElement(), "UTF-8");
-      if (isDescribeRequest && name.equalsIgnoreCase("xml"))
+      if (name.equalsIgnoreCase("xml"))
       {
         xml = new Boolean(request.getParameter(name)).booleanValue();
       }
-      else
-      {
-        String value = decoder.decode(request.getParameter(name), "UTF-8");
-        h_userParms.put(name,value);
-      }
-    }
-
-    // API-A interface requires user-supplied parameters to be of type
-    // Property[] so create Property[] from hashtable of user parameters.
-    int userParmCounter = 0;
-    userParms = new Property[h_userParms.size()];
-    for ( Enumeration e = h_userParms.keys(); e.hasMoreElements();)
-    {
-      Property userParm = new Property();
-      userParm.name = (String)e.nextElement();
-      userParm.value = (String)h_userParms.get(userParm.name);
-      userParms[userParmCounter] = userParm;
-      userParmCounter++;
     }
 
     try
     {
-      if (isDescribeRequest)
-      {
         describeRepository(context, xml, response);
-        long stopTime = new Date().getTime();
-        long interval = stopTime - servletStartTime;
-        logFiner("[DescribeRepositoryServlet] Servlet Roundtrip "
-            + "describe: " + interval + " milliseconds.");
-      }
+
     } catch (Throwable th)
       {
         String message = "[DescribeRepositoryServlet] An error has occured in "
@@ -232,9 +162,7 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
             + th.getClass().getName()
             + " \". Reason: "  + th.getMessage()
             + "  Input Request was: \"" + request.getRequestURL().toString();
-        showURLParms("", "", "", null, new Property[0], response, message);
         logWarning(message);
-        th.printStackTrace();
     }
   }
 
@@ -299,7 +227,6 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
                      + th.getClass().getName()
                      + " \". Reason: "  + th.getMessage();
       logWarning(message);
-      th.printStackTrace();
       throw new GeneralException(message);
     } finally
     {
@@ -446,103 +373,6 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
    */
   public void destroy()
   {}
-
-  /**
-   * <p>Displays a list of the servlet input parameters. This method is
-   * generally called when a service request returns no data. Usually
-   * this is a result of an incorrect spelling of either a required
-   * URL parameter or in one of the user-supplied parameters. The output
-   * from this method can be used to help verify the URL parameters
-   * sent to the servlet and hopefully fix the problem.</p>
-   *
-   * @param PID The persistent identifier of the digital object.
-   * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param methodName the name of the method.
-   * @param asOfDateTime The version datetime stamp of the digital object.
-   * @param userParms An array of user-supplied method parameters and values.
-   * @param response The servlet response.
-   * @param message The message text to include at the top of the output page.
-   * @throws IOException If an error occurrs with an input or output operation.
-   */
-  private void showURLParms(String PID, String bDefPID,
-                           String methodName, Calendar asOfDateTime,
-                           Property[] userParms,
-                           HttpServletResponse response,
-                           String message)
-      throws IOException
-  {
-    String versDate = DateUtility.convertCalendarToString(asOfDateTime);
-    response.setContentType(CONTENT_TYPE_HTML);
-    ServletOutputStream out = response.getOutputStream();
-
-    // Display servlet input parameters
-    StringBuffer html = new StringBuffer();
-    html.append("<html>");
-    html.append("<head>");
-    html.append("<title>FedoraAccessServlet</title>");
-    html.append("</head>");
-    html.append("<body>");
-    html.append("<br></br><font size='+2'>" + message + "</font>");
-    html.append("<br></br><font color='red'>Request Parameters</font>");
-    html.append("<br></br>");
-    html.append("<table cellpadding='5'>");
-    html.append("<tr>");
-    html.append("<td><font color='red'>PID</td>");
-    html.append("<td> = <td>" + PID + "</td>");
-    html.append("</tr>");
-    html.append("<tr>");
-    html.append("<td><font color='red'>bDefPID</td>");
-    html.append("<td> = </td>");
-    html.append("<td>" + bDefPID + "</td>");
-    html.append("</tr>");
-    html.append("<tr>");
-    html.append("<td><font color='red'>methodName</td>");
-    html.append("<td> = </td>");
-    html.append("<td>" + methodName + "</td>");
-    html.append("</tr>");
-    html.append("<tr>");
-    html.append("<td><font color='red'>asOfDateTime</td>");
-    html.append("<td> = </td>");
-    html.append("<td>" + versDate + "</td>");
-    html.append("</tr>");
-    html.append("<tr>");
-    html.append("</tr>");
-    html.append("<tr>");
-    html.append("<td colspan='5'><font size='+1' color='blue'>"+
-                "Other Parameters Found:</font></td>");
-    html.append("</tr>");
-    html.append("<tr>");
-    html.append("</tr>");
-
-    // List user-supplied parameters if any
-    if (userParms != null)
-    {
-    for (int i=0; i<userParms.length; i++)
-    {
-      html.append("<tr>");
-      html.append("<td><font color='red'>" + userParms[i].name
-                  + "</font></td>");
-      html.append("<td> = </td>");
-      html.append("<td>" + userParms[i].value + "</td>");
-        html.append("</tr>");
-    }
-    }
-    html.append("</table></center></font>");
-    html.append("</body></html>");
-    out.println(html.toString());
-
-    logFinest("PID: " + PID + " bDefPID: " + bDefPID
-              + " methodName: " + methodName);
-    if (userParms != null)
-    {
-      for (int i=0; i<userParms.length; i++)
-      {
-        logFinest("userParm: " + userParms[i].name
-        + " userValue: "+userParms[i].value);
-      }
-    }
-    html = null;
-  }
 
   private Server getServer() {
       return s_server;
