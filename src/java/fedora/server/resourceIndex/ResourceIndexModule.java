@@ -93,8 +93,8 @@ public class ResourceIndexModule extends Module
         }
 
         //
-        // get anything starting with alias: and put the following name
-        // and it's value in the alias map.
+        // Get anything starting with alias: and put the following name
+        // and its value in the alias map.
         //
         HashMap aliasMap = new HashMap();
         Iterator iter = parameterNames();
