@@ -54,10 +54,11 @@ import fedora.client.bmech.data.*;
  */
 public class MethodsPane extends JPanel {
 
-    private BMechBuilder parent;
+    //private BMechBuilder parent;
+    protected JInternalFrame parent;
     private JRadioButton rb_baseURL;
     private JRadioButton rb_noBaseURL;
-    private final ButtonGroup rb_buttonGroup;
+    private final ButtonGroup rb_buttonGroup = new ButtonGroup();
     protected String rb_chosen;
     private JTextField baseURL;
     private JTable methodTable;
@@ -69,16 +70,19 @@ public class MethodsPane extends JPanel {
     private HashMap methodMap = new HashMap();
     //private Vector dsBindingKeys = new Vector();
 
+    public MethodsPane(BDefBuilder parent)
+    {
+      this.parent = parent;
+      JPanel methodsPanel = setMethodsPanel();
+      methodsPanel.setBorder(new TitledBorder("Abstract Method Definitions:"));
+      add(methodsPanel, BorderLayout.CENTER);
+      setVisible(true);
+    }
+
     public MethodsPane(BMechBuilder parent)
     {
-        //setSize(600, 400);
         this.parent = parent;
         setLayout(new BorderLayout());
-
-        // Radio Buttons Panel
-        //JPanel rb_buttonPanel = new JPanel();
-        //rb_buttonPanel.setBorder(new TitledBorder("Method Binding"));
-        //rb_buttonPanel.setLayout(new GridLayout(3,2));
         ActionListener rb_listen = new BaseURLActionListener();
         rb_baseURL = new JRadioButton("Base URL: ", true);
         rb_baseURL.setActionCommand("baseURL");
@@ -87,7 +91,6 @@ public class MethodsPane extends JPanel {
         rb_noBaseURL = new JRadioButton("No Base URL (Fedora Multi-server mechanism)", false);
         rb_noBaseURL.setActionCommand("noBaseURL");
         rb_noBaseURL.addActionListener(rb_listen);
-        rb_buttonGroup = new ButtonGroup();
         rb_buttonGroup.add(rb_baseURL);
         rb_buttonGroup.add(rb_noBaseURL);
 
@@ -106,6 +109,15 @@ public class MethodsPane extends JPanel {
         gbc.gridx = 0;
         serviceBasePanel.add(rb_noBaseURL, gbc);
 
+        JPanel methodsPanel = setMethodsPanel();
+        methodsPanel.setBorder(new TitledBorder("Service Method Definitions:"));
+        add(serviceBasePanel, BorderLayout.NORTH);
+        add(methodsPanel, BorderLayout.CENTER);
+        setVisible(true);
+    }
+
+    private JPanel setMethodsPanel()
+    {
         // Table Panel
         methodTableModel = new DefaultTableModel();
         // Create a JTable that disallow edits (edits done via dialog box only)
@@ -176,16 +188,10 @@ public class MethodsPane extends JPanel {
         t_buttonPanel.add(jb4);
 
         JPanel methodsPanel = new JPanel(new BorderLayout());
-        methodsPanel.setBorder(new TitledBorder("Service Method Definitions:"));
+        //methodsPanel.setBorder(new TitledBorder("Service Method Definitions:"));
         methodsPanel.add(scrollpane, BorderLayout.CENTER);
         methodsPanel.add(t_buttonPanel, BorderLayout.EAST);
-
-        add(serviceBasePanel, BorderLayout.NORTH);
-        add(methodsPanel, BorderLayout.CENTER);
-        //add(scrollpane, BorderLayout.CENTER);
-        //add(t_buttonPanel, BorderLayout.EAST);
-
-        setVisible(true);
+        return methodsPanel;
     }
 
     // Action Listener for button group
@@ -194,7 +200,6 @@ public class MethodsPane extends JPanel {
       public void actionPerformed(ActionEvent e)
       {
         rb_chosen = rb_buttonGroup.getSelection().getActionCommand();
-        System.out.println("Button selected is: " + rb_chosen);
       }
     }
 
@@ -216,12 +221,12 @@ public class MethodsPane extends JPanel {
       return null;
     }
 
-    public HashMap getBMechMethodMap()
+    public HashMap getMethodMap()
     {
       return methodMap;
     }
 
-    public Method[] getBMechMethods()
+    public Method[] getMethods()
     {
       Vector v_methods = new Vector();
       Collection c = methodMap.values();
@@ -267,7 +272,7 @@ public class MethodsPane extends JPanel {
       }
     }
 
-    public void setBMechMethodProperties(String methodName, MethodProperties mproperties)
+    public void setMethodProperties(String methodName, MethodProperties mproperties)
     {
       Method method = (Method)methodMap.get(methodName);
       method.methodProperties = mproperties;
@@ -276,12 +281,12 @@ public class MethodsPane extends JPanel {
       String[] dsParmNames = method.methodProperties.dsBindingKeys;
       for (int i=0; i<dsParmNames.length; i++)
       {
-        Vector dsBindingKeys = parent.getBMechTemplate().getDSBindingKeys();
+        Vector dsBindingKeys = ((BMechBuilder)parent).getBMechTemplate().getDSBindingKeys();
         if (!dsBindingKeys.contains(dsParmNames[i]))
         {
           dsBindingKeys.add(dsParmNames[i]);
         }
-        parent.getBMechTemplate().setDSBindingKeys(dsBindingKeys);
+        ((BMechBuilder)parent).getBMechTemplate().setDSBindingKeys(dsBindingKeys);
       }
     }
 
@@ -328,7 +333,6 @@ public class MethodsPane extends JPanel {
       {
         int currentRowIndex = methodTable.getSelectedRow();
         String methodName = (String)methodTable.getValueAt(currentRowIndex,0);
-        System.out.println("methodname=" + methodName);
         if (methodName == null || methodName.trim().equals(""))
         {
           assertNoMethodMsg("You must enter a method name before entering properties");
