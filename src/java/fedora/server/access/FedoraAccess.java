@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.Vector;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
+import fedora.server.storage.types.MethodDef;
 
 public interface FedoraAccess
 {
@@ -32,7 +33,7 @@ public interface FedoraAccess
     * @param bDefPID
     * @return
     */
-   public MIMETypedStream GetBehaviorMethods( String PID, String bDefPID, Calendar asOfDate );
+   public MethodDef[] GetBehaviorMethods( String PID, String bDefPID, Calendar asOfDate );
 
    /** API-A Dissemination Method
     *
