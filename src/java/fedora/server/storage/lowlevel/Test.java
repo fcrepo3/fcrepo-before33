@@ -34,15 +34,27 @@ class Test {
 					System.err.println("enter action (pid (path)), separated only by whitespace");
 				} else {
 				String action = parts[0];
-				if (action.equals("audit")) {
-					if (parts.length != 1) {
-						System.err.println("enter audit");
-					} else {
-						try {
-							lowlevelStorage.audit();
-						} catch (Exception e) {
-							System.out.println("error " + e.getMessage());
+				if (action.equals("audit") || action.equals("rebuild")) {
+					if (action.equals("audit")) {
+						if (parts.length != 1) {
+							System.err.println("enter audit");
+						} else {
+							try {
+								lowlevelStorage.audit();
+							} catch (Exception e) {
+								System.out.println("error " + e.getMessage());
+							}
 						}
+					} else if (action.equals("rebuild")) {
+						if (parts.length != 1) {
+							System.err.println("enter rebuild");
+						} else {
+							try {
+								lowlevelStorage.rebuild();
+							} catch (Exception e) {
+								System.out.println("error " + e.getMessage());
+							}
+						}			
 					}
 				} else {
 					if (parts.length < 2) {
