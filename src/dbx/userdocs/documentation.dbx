@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+<article>
+	<articleinfo>
+		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<title>Fedora System Documentation</title>
+		<subtitle>Software Release 1.0</subtitle>
+		<corpauthor>Fedora Development Team</corpauthor>
+		<copyright>
+			<year>2003</year>
+		</copyright>
+		<publisher>
+			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
+		</publisher>
+	</articleinfo>
+	<sect1>
+		<title>Introduction</title>
+		<para>This page provides a quick reference to some of the Fedora System Documentation.  Additional information about the Fedora project can be found at the project web site at <ulink url="http://www.fedora.info">http://www.fedora.info</ulink></para>
+	</sect1>
+	<sect1>
+		<title>Server and Distribution Package Documentation</title>
+		<simplelist type="vert">
+			<member><ulink url="/userdocs/server/installation.html">Installation Instructions</ulink></member>
+			<member><ulink url="/userdocs/server/release-notes.html">Release Notes</ulink></member>
+			<member><ulink url="/userdocs/server/manual.html">Manual</ulink></member>
+			<member><ulink url="/userdocs/server/demos.html">Demos</ulink></member>
+		</simplelist>
+	</sect1>
+	<sect1>
+		<title>Component Documentation</title>
+		<simplelist type="vert">
+			<member><ulink url="/userdocs/apialite/apialite.html">API-A-Lite HTTP Client</ulink></member>
+			<member><ulink url="/userdocs/apim/apimadmingui.html">API-M Admin GUI Client</ulink></member>
+			<member><ulink url="/userdocs/search/search.html">Search Interface</ulink></member>
+			<member><ulink url="/userdocs/batch/batchclient.html">Admin Client Batch Utility</ulink></member>
+			<member><ulink url="/userdocs/oai/oaiprovider.html">OAI Provider Interface</ulink></member>
+			<member><ulink url="/userdocs/server/server.html">Fedora Server</ulink></member>
+		</simplelist>
+	</sect1>
+	<sect1>
+		<title>API Documentation</title>
+		<simplelist type="vert">
+			<member><ulink url="http://www.fedora.info/definitions/1/0/api">API-A SOAP Access Interface</ulink></member>
+			<member><ulink url="http://www.fedora.info/definitions/1/0/api">API-A-Lite HTTP Access Interface</ulink></member>
+			<member><ulink url="http://www.fedora.info/definitions/1/0/api">API-M SOAP Management Interface</ulink></member>
+		</simplelist>
+	</sect1>
+	<sect1>
+		<title>Licensing and Use Information</title>
+		<simplelist type="vert">
+			<member><ulink url="/userdocs/server/license.html">License Information</ulink></member>
+		</simplelist>
+	</sect1>
+</article>
