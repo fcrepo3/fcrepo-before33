@@ -114,7 +114,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
     public byte[] getObjectXML(String PID) throws java.rmi.RemoteException {
-        assertInitialized();
+        assertInitialized(); /**
         try {
             InputStream in=w.GetObjectXML();
             ByteArrayOutputStream out=new ByteArrayOutputStream();
@@ -124,7 +124,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             AxisUtility.throwFault(se);
         } catch (Exception e) {
             AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
-        }
+        } */
         return null;
     }
 

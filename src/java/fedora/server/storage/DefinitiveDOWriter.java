@@ -103,12 +103,13 @@ public class DefinitiveDOWriter
         boolean initialized=false;
         if (workingCopy) {
             try {
-                m_storageDeserializer.deserialize(m_storage.retrieve(pid + "-pendingCommit"), m_obj);
+                m_storageDeserializer.deserialize(m_storage.retrieve(pid + "-pendingCommit"), m_obj, "UTF-8");
                 // it was found, and it's pending commit...init it as such
                 m_removed=false;
                 m_pendingRemoval=false;
                 makeDirty();
                 initialized=true;
+            } catch (UnsupportedEncodingException uee) {
             } catch (ObjectNotInLowlevelStorageException onfe) {
                 try {
                     InputStream in=m_storage.retrieve(pid + "-pendingRemoval");
@@ -128,7 +129,9 @@ public class DefinitiveDOWriter
             }
         }
         if (!initialized) {
-            m_storageDeserializer.deserialize(m_storage.retrieve(pid), m_obj);
+            try {
+            m_storageDeserializer.deserialize(m_storage.retrieve(pid), m_obj, "UTF-8");
+            } catch (UnsupportedEncodingException uee) { }
             m_pendingCommit=false;
             m_pendingSave=false;
             m_pendingRemoval=false;
@@ -177,7 +180,9 @@ public class DefinitiveDOWriter
             StreamReadException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        m_importDeserializer.deserialize(content, m_obj);
+        try {
+        m_importDeserializer.deserialize(content, m_obj, "UTF-8");
+        } catch (UnsupportedEncodingException uee) { }
         makeDirty();
     }
 
@@ -327,7 +332,9 @@ public class DefinitiveDOWriter
         assertNotRemoved();
         assertNotPendingRemoval();
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-        m_exportSerializer.serialize(m_obj, bytes);
+        try {
+        m_exportSerializer.serialize(m_obj, bytes, "UTF-8");
+        } catch (UnsupportedEncodingException uee) { }
         return new ByteArrayInputStream(bytes.toByteArray());
     }
 
@@ -500,7 +507,7 @@ public class DefinitiveDOWriter
                    try {
                        in=new PipedInputStream();
                        out=new PipedOutputStream(in);
-                       m=m_storageSerializer.getClass().getMethod("serialize", new Class[] {m_obj.getClass(), Class.forName("java.io.OutputStream")});
+                       m=m_storageSerializer.getClass().getMethod("serialize", new Class[] {m_obj.getClass(), Class.forName("java.io.OutputStream"), Class.forName("java.lang.String")});
                    } catch (Throwable wontHappen) { }
                    MethodInvokerThread serThread=new MethodInvokerThread(m_storageSerializer, m, new Object[] {m_obj, out});
                    serThread.start();
@@ -518,7 +525,7 @@ public class DefinitiveDOWriter
                    try {
                        in=new PipedInputStream();
                        out=new PipedOutputStream(in);
-                       m=m_storageSerializer.getClass().getMethod("serialize", new Class[] {m_obj.getClass(), Class.forName("java.io.OutputStream")});
+                       m=m_storageSerializer.getClass().getMethod("serialize", new Class[] {m_obj.getClass(), Class.forName("java.io.OutputStream"), Class.forName("java.lang.String")});
                    } catch (Throwable wontHappen) { }
                    MethodInvokerThread serThread=new MethodInvokerThread(m_storageSerializer, m, new Object[] {m_obj, out});
                    serThread.start();

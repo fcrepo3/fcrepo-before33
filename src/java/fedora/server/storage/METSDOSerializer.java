@@ -124,9 +124,8 @@ public class METSDOSerializer
     /**
      * Serializes the given Fedora object to an OutputStream.
      */
-    public void serialize(DigitalObject obj, OutputStream out) 
-            throws ObjectIntegrityException, StreamIOException, 
-            StreamWriteException {
+    public void serialize(DigitalObject obj, OutputStream out, String encoding) 
+            throws ObjectIntegrityException, StreamIOException {
         try {
             StringBuffer buf=new StringBuffer();
             m_xlinkPrefix="xlink"; // default if can't figger it

@@ -1,6 +1,7 @@
 package fedora.server.storage;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,8 +16,10 @@ import fedora.server.Module;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
+import fedora.server.errors.InvalidContextException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
 
@@ -40,6 +43,7 @@ public class DefaultDOManager
         
     private String m_osrPoolName;
     private String m_osrTableName;
+    private String m_storageCharacterEncoding;
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
     
@@ -78,8 +82,28 @@ public class DefaultDOManager
         if (m_osrTableName.length()==0) {
             throw new ModuleInitializationException("Parameter object_state_registry must be in the form poolName#tableName, where tableName is not empty.", getRole());
         }
+        // storage_character_encoding (optional, default=UTF-8)
+        m_storageCharacterEncoding=getParameter("storage_character_encoding");
+        if (m_storageCharacterEncoding!=null) {
+            try {
+                String test="test";
+                test.getBytes(m_storageCharacterEncoding);
+                getServer().logConfig("Parameter storage_character_encoding "
+                    + "given: " + m_storageCharacterEncoding + " is supported"
+                    + " by the server, ok.");
+            } catch (UnsupportedEncodingException uee) {
+                throw new ModuleInitializationException("Parameter "
+                        + "storage_character_encoding given: " 
+                        + m_storageCharacterEncoding + " is not supported by "
+                        + "the server.", getRole());
+            }
+        } else {
+            getServer().logConfig("Parameter storage_character_encoding "
+                + "not given, using UTF-8");
+            m_storageCharacterEncoding="UTF-8";
+        }
     }
-
+    
     public void postInitModule()
             throws ModuleInitializationException {
         ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().getModule("fedora.server.storage.ConnectionPoolManager");
@@ -135,14 +159,33 @@ public class DefaultDOManager
     public String[] getRequiredModuleRoles() {
         return new String[] {"fedora.server.storage.ConnectionPoolManager"};
     }
+    
+    public String getStorageCharacterEncoding() {
+        return m_storageCharacterEncoding;
+    }
 
     /** pid will always be non-null, context will always be non-null */
-    public DOReader getReader(Context context, String pid) {
-        return null;
+    public DOReader getReader(Context context, String pid)
+            throws ServerException {
+        if (context.get("application").equals("apim")) {
+            return null;
+        } else if (context.get("application").equals("apia")) {
+            return null;
+        } else {
+            throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
+        }
     }
 
     /** nulls not allowed */
-    public DOWriter getWriter(Context context, String pid) {
+    public DOWriter getWriter(Context context, String pid)
+            throws ServerException {
+        if (context.get("application").equals("apim")) {
+            return null;
+        } else if (context.get("application").equals("apia")) {
+            return null;
+        } else {
+            throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
+        }
             // create a new, empty object, giving it a DEFAULT_STATE
 //            DefinitiveDOWriter writer=new DefinitiveDOWriter(newPid, DEFAULT_STATE,
             
@@ -155,21 +198,38 @@ public class DefaultDOManager
 */
 
  //           );
-        return null;
     }
     
     /** nulls not allowed */
-    public DOWriter newWriter(Context context, InputStream in, boolean newPid) {
-        return null; 
+    public DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid) 
+            throws ServerException {
+        if (context.get("application").equals("apim")) {
+            return null;
+        } else if (context.get("application").equals("apia")) {
+            return null;
+        } else {
+            throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
+        }
     }
     
     /** nulls not allowed */
-    public DOWriter newWriter(Context context) {
-        return null;
+    public DOWriter newWriter(Context context) 
+            throws ServerException {
+        if (context.get("application").equals("apim")) {
+            return null;
+        } else if (context.get("application").equals("apia")) {
+            return null;
+        } else {
+            throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
+        }
     }
     
     public String[] listObjectPIDs(Context context, String state) 
-            throws StorageDeviceException {
+            throws StorageDeviceException, InvalidContextException {
+        if ( (!context.get("application").equals("apim")) 
+                && (!context.get("application").equals("apia")) ) {
+            throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
+        }
         String wherePredicate;
         if (state==null) {
             wherePredicate="";

@@ -166,7 +166,7 @@ public class METSDODeserializer
         m_parser=spf.newSAXParser();
     }
     
-    public void deserialize(InputStream in, DigitalObject obj) 
+    public void deserialize(InputStream in, DigitalObject obj, String encoding) 
             throws ObjectIntegrityException, StreamIOException {
         m_obj=obj;
         m_rootElementFound=false;

@@ -64,15 +64,15 @@ public class DefaultManagement
         return "hi"; //return w.GetObjectPID();
     }
 
-    public String ingestObject(Context context, InputStream serialization, boolean newPid) 
+    public String ingestObject(Context context, InputStream serialization, String format, String encoding, boolean newPid) 
             throws ServerException {
-        DOWriter w=m_manager.newWriter(context, serialization, newPid);
+        DOWriter w=m_manager.newWriter(context, serialization, format, encoding, newPid);
         return w.GetObjectPID();
     }
 
-    public InputStream getObjectXML(Context context, String pid) { return null; }
+    public InputStream getObjectXML(Context context, String pid, String format, String encoding) { return null; }
 
-    public InputStream exportObject(Context context, String pid) { return null; }
+    public InputStream exportObject(Context context, String pid, String format, String encoding) { return null; }
 
     public void withdrawObject(Context context, String pid) { }
 

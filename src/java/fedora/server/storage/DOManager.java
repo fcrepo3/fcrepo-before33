@@ -53,12 +53,13 @@ public interface DOManager {
      * with either a new PID or the PID indicated by the InputStream.
      *
      * @param context The context of this request.
-     * @param InputStream A serialization of the digital object.
+     * @param in A serialization of the digital object.
+     * @param format The format of the serialization.
      * @param newPid Whether a new PID should be generated or the one indicated
      *        by the InputStream should be used.
      * @throws ServerException If anything went wrong.
      */
-    public abstract DOWriter newWriter(Context context, InputStream in, boolean newPid)
+    public abstract DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException;
 
     /**
