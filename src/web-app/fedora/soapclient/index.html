@@ -34,29 +34,59 @@
   <li><font color="#33802F"><b>action_</b></font> - name of Fedora service which 
     must be one of the following: 
     <ul>
-      <li><b>GetBehaviorDefinitions</b> - Gets list of Behavior Defintions </li>
-      <li><b>GetBehaviorMethods</b> - Gets list of Behavior Methods </li>
-      <li><b>GetBehaviorMethodsXML</b> - Gets Behavior Methods as XML </li>
-      <li><b>GetDissemination</b> - Gets a dissemination result </li>
-      <li><b>GetObjectmethods</b> - Gets a list of all Behavior Methods of an 
-        object.</li>
-      <li><b>GetObjectProfile</b> - Gets object profile.</li>
+      <li><b>GetBehaviorDefinitions</b> - gets list of Behavior Defintions 
+        <ul>
+          <li>requires PID_</li>
+        </ul>
+      </li>
+      <li><b>GetBehaviorMethods</b> - gets list of Behavior Methods 
+        <ul>
+          <li>requires PID_</li>
+          <li>requires bDefPID_</li>
+        </ul>
+      </li>
+      <li><b>GetBehaviorMethodsXML</b> - gets WSDL-defined Behavior Methods definitions 
+        as XML 
+        <ul>
+          <li>requires PID_</li>
+          <li>requires bDefPID_</li>
+        </ul>
+      </li>
+      <li><b>GetDissemination</b> - gets a dissemination result 
+        <ul>
+          <li>requires PID_</li>
+          <li>requires bDefPID_</li>
+          <li>requires methodName_</li>
+        </ul>
+      </li>
+      <li><b>GetObjectmethods</b> - gets a list of all Behavior Methods of an 
+        object. 
+        <ul>
+          <li>requires PID_</li>
+        </ul>
+      </li>
+      <li><b>GetObjectProfile</b> - gets object profile.
+        <ul>
+          <li>require PID_</li>
+        </ul>
+      </li>
     </ul>
   <li><b><font color="#33802F">PID_</font></b> - persistent identifier of the 
     digital object 
   <li><b><font color="#33802F">bDefPID_</font></b> - persistent identifier of 
     the Behavior Definiton object 
-  <li><font color="#33802F"><b>methodName_</b></font> - name of the method 
+  <li><font color="#33802F"><b>methodName_</b></font> - name of the method
   <li><font color="#33802F"><b>asOfDateTime_</b></font> - versioning datetime 
-    stamp 
-  <li><font color="#33802F"><b>xmlEncode_</b></font> - boolean switch used in 
-    conjunction with GetObjectMethods that determines whether output is formatted 
-    as XML or as HTML; value of &quot;true&quot; indicates XML format; value of 
-    false or omission indicates HTML format. 
+    stamp (optional) 
+  <li><font color="#33802F"><b>xml_</b></font> - boolean switch used in conjunction 
+    with GetBehaviorDefinitions, GetBehaviorMethods, GetObjectMethods, and GetObjectProfile 
+    methods that determines whether output is formatted as XML or as HTML; value 
+    of &quot;true&quot; indicates that the results are to be returned as XML; 
+    value of false or omission indicates display in HTML table format. (optional)
   <li><font color="#33802F"><b>userParms</b></font> - behavior methods may require 
-    or provide optional parameters that may be input as arguments to the method; 
-    these method parameters are entered as name/value pairs like the other serlvet 
-    parameters.(optional) 
+    or provide optional parameters that may be input as arguments to a behavior 
+    method; these method parameters are entered as name/value pairs like the other 
+    serlvet parameters.(optional) 
 </ul>
 <p> Note that all servlet parameter names that are implementation specific end 
   with the underscore character (&quot;_&quot;). This is done to avoid possible 
@@ -71,37 +101,45 @@
   path mapping used to access the soap client. The endpoint and servlet path info 
   are configured in the soapclient.properties file that is located in the WEB-INF 
   directory of the soapclient webapp module in the Fedora distribution directory 
-  tree. The properties file specifies two variables:
+  tree. The properties file specifies three variables: 
 <ul>
   <li><b><font color="#33802F">fedoraEndpoint</font></b> - the URL of the Fedora 
     API-A SOAP service; default is &quot;http://localhost:8080/fedora/access/soap&quot;</li>
   <li><b><font color="#33802F">soapClientServletPath</font></b> - the servlet 
-    path used to access the soapclient; default is &quot;/soapclient/apia</li>
+    path used to access the soapclient; default is &quot;/soapclient/apia&quot;</li>
+  <li><font color="#33802F"><b>soapClientMethodParmResolverServletPath</b></font> 
+    - the servlet mapping used to access the MethodParmResolverServlet which is 
+    a utility servlet of the soa client; default is &quot;/soapclient/getAccessParmResolver&quot;</li>
 </ul>
+<p>The web.xml file for the soap client webapp uses these default settings. If 
+  the webapp is ported to another servlet engine and any of the serlvet mappings 
+  change, the web.xml and the soapclient.properties file must both be updated 
+  accordingly. The servlets will dynamically get the values in the soapclient.properties 
+  file so no changes should be needed in the source code.</p>
 <p>When the Fedora server is built, it will automatically create the soapclient 
-  webapp module and place it in the Fedora distribution directory. The SOAP type 
-  libraries that are bundled with the client are tied to the WSDL type definitions 
-  defined for Fedora API-A. Any changes made to the WSDL for API-A will require 
-  rebuilding of the Fedora server and the soap client webapp module.</p>
+  webapp module and place it in the Fedora distribution directory. The generated 
+  SOAP type libraries that are bundled with the client are tied to the WSDL type 
+  definitions defined for Fedora API-A. Any changes made to the WSDL for API-A 
+  will require rebuilding of the Fedora server and the soap client webapp module.</p>
 <p><b>Examples</b> 
-<p>Get the ObjectProfile for a data object with a PID of test:3:
-<p><a href="http://localhost:8080/soapclient/apia?action_=GetObjectProfile&amp;PID_=test:3"> 
-  http://localhost:8080/soapclient/apia?action_=GetObjectProfile&amp;PID_=test:3</a>
-<p>Get the ObjectMethods for a data object with a PID of test:3:
-<p><a href="http://localhost:8080/soapclient/apia?action_=GetObjectMethods&amp;PID_=test:3"> 
-  http://localhost:8080/soapclient/apia?action_=GetObjectMethods&amp;PID_=test:3</a>
-<p>Get the BehaviorMethods for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1
-<p><a href="http://localhost:8080/soapclient/apia?action_=GetBehaviorMethods&amp;PID_=test:3&amp;bDefPID_=test:1"> 
-  http://localhost:8080/soapclient/apia?action_=GetBehaviorMethods&amp;PID_=test:3&amp;bDefPID_=test:1</a>
-<p>Get the BehaviorMethodsXML for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1
-<p><a href="http://localhost:8080/soapclient/apia?action_=GetBehaviorMethodsXML&amp;PID_=test:3&amp;bDefPID_=test:1"> 
-  http://localhost:8080/soapclient/apia?action_=GetBehaviorMethodsXML&amp;PID_=test:3&amp;bDefPID_=test:1</a>
-<p>Get the BehaviorDefinitions for a data object with a PID of test:3
-<p><a href="http://localhost:8080/soapclient/apia?action_=GetBehaviorDefinitions&amp;PID_=test:3"> 
-  http://localhost:8080/soapclient/apia?action_=GetBehaviorDefinitions&amp;PID_=test:3</a>
-<p>Get the Dissemination for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1 and methodName of getThumbnail
-<p><a href="http://localhost:8080/soapclient/apia?action_=GetDissemination&amp;PID_=test:3&amp;bDefPID_=test:1&amp;methodName_=getThumbnail">
-http://localhost:8080/soapclient/apia?action_=GetDissemination&amp;PID_=test:3&amp;bDefPID_=test:1&amp;methodName_=getThumbnail</a> 
+<ol>
+  <li>Get the BehaviorDefinitions for a data object with a PID of test:3 <a href="http://localhost:8080/soapclient/apia?action_=GetBehaviorDefinitions&amp;PID_=test:3">http://localhost:8080/soapclient/apia?action_=GetBehaviorDefinitions&amp;PID_=test:3</a> 
+  </li>
+  <li>Get the BehaviorMethods for a data object with a PID of test:3 and associated 
+    behavior definition object with a PID of test:1 <a href="http://localhost:8080/soapclient/apia?action_=GetBehaviorMethods&amp;PID_=test:3&amp;bDefPID_=test:1">http://localhost:8080/soapclient/apia?action_=GetBehaviorMethods&amp;PID_=test:3&amp;bDefPID_=test:1</a> 
+  </li>
+  <li>Get the BehaviorMethodsXML for a data object with a PID of test:3 and associated 
+    behavior definition object with a PID of test:1 <a href="http://localhost:8080/soapclient/apia?action_=GetBehaviorMethodsXML&amp;PID_=test:3&amp;bDefPID_=test:1">http://localhost:8080/soapclient/apia?action_=GetBehaviorMethodsXML&amp;PID_=test:3&amp;bDefPID_=test:1</a> 
+  </li>
+  <li>Get the Dissemination for a data object with a PID of test:3 and associated 
+    behavior definition object with a PID of test:1 and methodName of getThumbnail 
+    <a href="http://localhost:8080/soapclient/apia?action_=GetDissemination&amp;PID_=test:3&amp;bDefPID_=test:1&amp;methodName_=getThumbnail">http://localhost:8080/soapclient/apia?action_=GetDissemination&amp;PID_=test:3&amp;bDefPID_=test:1&amp;methodName_=getThumbnail</a> 
+  </li>
+  <li>Get the ObjectMethods for a data object with a PID of test:3: <a href="http://localhost:8080/soapclient/apia?action_=GetObjectMethods&amp;PID_=test:3">http://localhost:8080/soapclient/apia?action_=GetObjectMethods&amp;PID_=test:3</a> 
+  </li>
+  <li>Get the ObjectProfile for a data object with a PID of test:3: <a href="http://localhost:8080/soapclient/apia?action_=GetObjectProfile&amp;PID_=test:3">http://localhost:8080/soapclient/apia?action_=GetObjectProfile&amp;PID_=test:3</a> 
+  </li>
+</ol>
 <p>&nbsp;
 <p>&nbsp;
 <p>&nbsp;
