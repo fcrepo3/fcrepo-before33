@@ -5,6 +5,8 @@
 		<documentation>
 			<wsdldoc:type name="xsd:string" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
 			<wsdldoc:type name="xsd:dateTime" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#dateTime"/>
+			<wsdldoc:type name="xsd:nonNegativeInteger" url="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger
+"/>
 			<wsdldoc:type name="wsdl:tDefinitions" url="http://www.w3.org/TR/2001/NOTE-wsdl-20010315#_document-s"/>
 			<wsdldoc:type name="fedora-types:ArrayOfCondition" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfCondition"/>
 			<wsdldoc:type name="fedora-types:ArrayOfString" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfString"/>
@@ -14,6 +16,9 @@
 			<wsdldoc:type name="fedora-types:ArrayOfMethodDef" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfMethodDef"/>
 			<wsdldoc:type name="fedora-types:ObjectProfile" url="http://www.fedora.info/definitions/1/0/types/#ObjectProfile"/>
 			<wsdldoc:type name="fedora-types:RepositoryInfo" url="http://www.fedora.info/definitions/1/0/types/#RepositoryInfo"/>
+			<wsdldoc:type name="fedora-types:FieldSearchResult" url="http://www.fedora.info/definitions/1/0/types/#FieldSearchResult"/>
+			<wsdldoc:type name="fedora-types:FieldSearchQuery" url="http://www.fedora.info/definitions/1/0/types/#FieldSearchQuery"/>
+			<wsdldoc:type name="fedora-types:ArrayOfObjectMethodsDef" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfObjectMethodsDef"/>
 		</documentation>
 	</types>
 	<message name="describeRepositoryRequest">
