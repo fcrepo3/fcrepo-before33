@@ -163,9 +163,13 @@ public class WSDLGenerator
     port.appendChild(httpAddr);
     service.appendChild(port);
 
-    // add label information to the http service binding
+    // create wsdl:binding
+    // FIXIT!! assumes only an HTTP binding at this time!!
     binding.setAttribute("name", (bMechName + "_http"));
     binding.setAttribute("type", ("this:" + bMechName + "PortType"));
+    Element httpBinding = document.createElementNS(HTTP, "http:binding");
+    httpBinding.setAttribute("verb", "GET");
+    binding.appendChild(httpBinding);
   }
 
   private void processMethods(String bMechName, boolean hasBaseURL, Method[] methods)
@@ -173,6 +177,7 @@ public class WSDLGenerator
     Element schema = (Element)document.createElementNS(XSD, "xsd:schema");
     schema.setAttribute("targetNamespace", THIS);
     HashMap parmUnion = new HashMap();
+
     for (int m=0; m<methods.length; m++)
     {
       // create wsdl:message
@@ -234,10 +239,6 @@ public class WSDLGenerator
       operation.appendChild(output);
       portType.appendChild(operation);
 
-      // create wsdl:binding
-      // FIXIT!! assumes only an HTTP binding at this time!!
-      Element httpBinding = document.createElementNS(HTTP, "http:binding");
-      httpBinding.setAttribute("verb", "GET");
       Element wsdlOperation = document.createElementNS(WSDL, "wsdl:operation");
       wsdlOperation.setAttribute("name", methods[m].methodName);
       Element httpOperation = document.createElementNS(HTTP, "http:operation");
@@ -264,7 +265,6 @@ public class WSDLGenerator
       wsdlOperation.appendChild(httpOperation);
       wsdlOperation.appendChild(wsdlInput);
       wsdlOperation.appendChild(wsdlOutput);
-      binding.appendChild(httpBinding);
       binding.appendChild(wsdlOperation);
     }
     // end methods loop
