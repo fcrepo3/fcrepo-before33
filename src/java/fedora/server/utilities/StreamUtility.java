@@ -41,8 +41,12 @@ public abstract class StreamUtility {
      * @return A new, encoded String.
      */
     public static String enc(String in) {
+    	String inStr=in;
+    	if (inStr==null){
+    		inStr="";
+    	}
         StringBuffer out=new StringBuffer();
-        enc(in, out);
+        enc(inStr, out);
         return out.toString();
     }
 
