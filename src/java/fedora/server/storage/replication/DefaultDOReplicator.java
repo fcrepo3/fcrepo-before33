@@ -554,7 +554,7 @@ public class DefaultDOReplicator
                         // Get all binding maps that are in db for this object
                         HashSet dsBindMapIds = new HashSet();
                         results=logAndExecuteQuery(st, "SELECT DISTINCT dsBindMapDbID "
-                            + " FROM dsbind WHERE doDbID=" + doDbID + ";");
+                            + " FROM dsBind WHERE doDbID=" + doDbID + ";");
                         while (results.next()) {
                           Integer id = new Integer(results.getInt("dsBindMapDbID"));
                           dsBindMapIds.add(id);
