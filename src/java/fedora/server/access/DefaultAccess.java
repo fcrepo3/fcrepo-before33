@@ -10,6 +10,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import fedora.server.Context;
 import fedora.server.Module;
@@ -422,30 +424,26 @@ public class DefaultAccess extends Module implements Access
     {
       methodList.add(dynamicMethodDefs[j]);
     }
-System.out.println("EXAMINE OBJECT METHODS DEF: (before return from DefaultAccess)");
-ObjectMethodsDef[] methods = (ObjectMethodsDef[])methodList.toArray(new ObjectMethodsDef[0]);
-System.out.println(">>>>> CNT METHOD ARRAY: " + methods.length);
-for (int k=0; k<methods.length; k++)
-{
-  System.out.println(">> PID= " + methods[k].PID);
-  System.out.println(">> bdefpid= " + methods[k].bDefPID);
-  System.out.println(">> asOfDate= " + methods[k].asOfDate);
-  System.out.println(">> methodname= " + methods[k].methodName);
-  System.out.println(">>>>> CNT PARM ARRAY: " + methods[k].methodParmDefs.length);
-  for (int m=0; m<methods[k].methodParmDefs.length; m++)
-  {
-    System.out.println(">> parmName = " + methods[k].methodParmDefs[m].parmName);
-    System.out.println(">> parmLabel = " + methods[k].methodParmDefs[m].parmLabel);
-    System.out.println(">> parmDefVal = " + methods[k].methodParmDefs[m].parmDefaultValue);
-    System.out.println(">>>>> CNT DOM VAL ARRAY: " + methods[k].methodParmDefs[m].parmDomainValues.length);
-    System.out.println(">> parmDomVal[] = " + methods[k].methodParmDefs[m].parmDomainValues);
-    System.out.println(">> parmPassby = " + methods[k].methodParmDefs[m].parmPassBy);
-    System.out.println(">> parmReq = " + methods[k].methodParmDefs[m].parmRequired);
-    System.out.println(">> parmType = " + methods[k].methodParmDefs[m].parmType);
+    return (ObjectMethodsDef[])methodList.toArray(new ObjectMethodsDef[0]);
   }
-}
-return methods;
-    //return (ObjectMethodsDef[])methodList.toArray(new ObjectMethodsDef[0]);
+
+  public ObjectProfile getObjectProfile(Context context, String PID,
+    Calendar asOfDateTime) throws ServerException
+  {
+      DOReader reader = m_manager.getReader(context, PID);
+      Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+      ObjectProfile profile = new ObjectProfile();
+      profile.PID = reader.GetObjectPID();
+      profile.objectLabel = reader.GetObjectLabel();
+      profile.objectContentModel = reader.getContentModelId();
+      profile.objectCreateDate = DateUtility.convertDateToString(reader.getCreateDate());
+      profile.objectLastModDate = DateUtility.convertDateToString(reader.getLastModDate());
+      profile.objectType = reader.getFedoraObjectType();
+      profile.dissIndexViewURL = getDissIndexViewURL(getReposBaseURL(),
+          reader.GetObjectPID(), versDateTime);
+      profile.itemIndexViewURL = getItemIndexViewURL(getReposBaseURL(),
+          reader.GetObjectPID(), versDateTime);
+      return profile;
   }
 
   public List search(Context context, String[] resultFields,
@@ -656,5 +654,63 @@ return methods;
           + sb.toString());
     }
     return;
+  }
+
+  private String getDissIndexViewURL(String reposBaseURL, String PID, Date versDateTime)
+  {
+      String dissIndexURL = null;
+
+      if (versDateTime == null)
+      {
+        dissIndexURL = reposBaseURL + "/fedora/get/" + PID +
+                      "/fedora-system:3/viewMethodIndex";
+      }
+      else
+      {
+          dissIndexURL = reposBaseURL + "/fedora/get/"
+            + PID + "/fedora-system:3/viewMethodIndex/"
+            + DateUtility.convertDateToString(versDateTime);
+      }
+      return dissIndexURL;
+  }
+
+  // FIXIT!! Consider implications of hard-coding the default dissemination
+  // aspects of the URL (e.g. fedora-system3 as the PID and viewItemIndex.
+  private String getItemIndexViewURL(String reposBaseURL, String PID, Date versDateTime)
+  {
+      String itemIndexURL = null;
+
+      if (versDateTime == null)
+      {
+        itemIndexURL = reposBaseURL + "/fedora/get/" + PID +
+                       "/fedora-system:3/viewItemIndex";
+      }
+      else
+      {
+          itemIndexURL = reposBaseURL + "/fedora/get/"
+            + PID + "/fedora-system:3/viewItemIndex/"
+            + DateUtility.convertDateToString(versDateTime);
+      }
+      return itemIndexURL;
+  }
+
+  private String getReposBaseURL()
+  {
+    String reposBaseURL = null;
+    InetAddress hostIP = null;
+    try
+    {
+      hostIP = InetAddress.getLocalHost();
+    } catch (UnknownHostException uhe)
+    {
+      System.err.println("[DefaultAccess] was unable to "
+          + "resolve the IP address of the Fedora Server: "
+          + " The underlying error was a "
+          + uhe.getClass().getName() + "The message "
+          + "was \"" + uhe.getMessage() + "\"");
+    }
+    String fedoraServerPort = getServer().getParameter("fedoraServerPort");
+    reposBaseURL = "http://" + hostIP.getHostAddress() + ":" + fedoraServerPort;
+    return reposBaseURL;
   }
 }

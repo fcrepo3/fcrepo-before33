@@ -42,10 +42,11 @@ import fedora.server.storage.types.Property;
 public class DynamicAccessImpl
 {
 
+  private Access m_access;
   private ServiceMethodDispatcher dispatcher;
   private String reposBaseURL = null;
   private File reposHomeDir = null;
-  public Hashtable dynamicBDefToMech = null;
+  private Hashtable dynamicBDefToMech = null;
 
   /**
    * <p>Creates and initializes the Access Module. When the server is starting
@@ -58,11 +59,14 @@ public class DynamicAccessImpl
    * @throws ModuleInitializationException If initilization values are
    *         invalid or initialization fails for some other reason.
    */
-  public DynamicAccessImpl(String repositoryBaseURL, File repositoryHomeDir)
+  public DynamicAccessImpl(Access m_access, String reposBaseURL,
+    File reposHomeDir, Hashtable dynamicBDefToMech)
   {
     dispatcher = new ServiceMethodDispatcher();
-    reposBaseURL = repositoryBaseURL;
-    reposHomeDir = repositoryHomeDir;
+    this.m_access = m_access;
+    this.reposBaseURL = reposBaseURL;
+    this.reposHomeDir = reposHomeDir;
+    this.dynamicBDefToMech = dynamicBDefToMech;
   }
 
   /**
@@ -154,7 +158,8 @@ public class DynamicAccessImpl
     if (bDefPID.equalsIgnoreCase("fedora-system:3"))
     {
       Object result = dispatcher.invokeMethod(
-          new DefaultBehaviorImpl(reader, reposBaseURL, reposHomeDir), methodName, userParms);
+          new DefaultBehaviorImpl(context, asOfDateTime,
+            reader, m_access, reposBaseURL, reposHomeDir), methodName, userParms);
       if (result.getClass().getName().equalsIgnoreCase(
         "fedora.server.storage.types.MIMETypedStream"))
       {
@@ -215,6 +220,12 @@ public class DynamicAccessImpl
 
     }
     return (ObjectMethodsDef[])objectMethods.toArray(new ObjectMethodsDef[0]);
+  }
+
+  public ObjectProfile getObjectProfile(Context context, String PID,
+    Calendar asOfDateTime) throws ServerException
+  {
+    return null;
   }
 
   // FIXIT! What do these serach methods mean in dynamic access context???
