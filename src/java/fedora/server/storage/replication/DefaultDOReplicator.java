@@ -157,13 +157,14 @@ public class DefaultDOReplicator
             }
             int doDbID=results.getInt("doDbID");
             results.close();
-            results=logAndExecuteQuery(st, "SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID "
+            results=logAndExecuteQuery(st, "SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID, dsState "
                     + "FROM dsBind WHERE doDbID=" + doDbID);
             ArrayList updates=new ArrayList();
             while (results.next()) {
                 String dsID=results.getString("dsID");
                 String dsLabel=results.getString("dsLabel");
                 String dsCurrentVersionID=results.getString("dsCurrentVersionID");
+                String dsState=results.getString("dsState");
                 // sdp - local.fedora.server conversion
                 String dsLocation=unencodeLocalURL(results.getString("dsLocation"));
                 // compare the latest version of the datastream to what's in the db...
@@ -171,12 +172,14 @@ public class DefaultDOReplicator
                 Datastream ds=reader.GetDatastream(dsID, null);
                 if (!ds.DSLabel.equals(dsLabel)
                         || !ds.DSLocation.equals(dsLocation)
-                        || !ds.DSVersionID.equals(dsCurrentVersionID)) {
+                        || !ds.DSVersionID.equals(dsCurrentVersionID)
+                        || !ds.DSState.equals(dsState)) {
                     updates.add("UPDATE dsBind SET dsLabel='"
                             + SQLUtility.aposEscape(ds.DSLabel) + "', dsLocation='"
                             // sdp - local.fedora.server conversion
                             + SQLUtility.aposEscape(encodeLocalURL(ds.DSLocation))
-                            + "', dsCurrentVersionID='" + ds.DSVersionID + "'"
+                            + "', dsCurrentVersionID='" + ds.DSVersionID + "', "
+                            + "dsState='" + ds.DSState + "' "
                             + " WHERE doDbID=" + doDbID + " AND dsID='" + dsID + "'");
                 }
             }
@@ -193,6 +196,51 @@ public class DefaultDOReplicator
             } else {
                 logFinest("No datastream labels or locations changed.");
             }
+/* this section not tested yet.....
+            results=logAndExecuteQuery(st, "SELECT dissDbID FROM do,doDissAssoc WHERE "
+                    + "do.doPID='" + reader.GetObjectPID() + "' AND do.doDbID=doDissAssoc.doDbID");
+            if (!results.next()) {
+                logFinest("DefaultDOReplication.updateComponents: Object is "
+                        + "new; components dont need updating.");
+                return false;
+            }
+            int dissDbID=results.getInt("dissDbID");
+            results.close();
+            results=logAndExecuteQuery(st, "SELECT bDefDbID, bMechDbID, dissID, dissLabel, dissState "
+                    + "FROM diss WHERE dissDbID=" + dissDbID);
+            updates=new ArrayList();
+            while (results.next()) {
+                int bDefDbID = results.getInt("bDefDbID");
+                int bMechDbID = results.getInt("bMechDbID");
+                String dissID=results.getString("dissID");
+                String dissLabel=results.getString("dsLabel");
+                String dissState=results.getString("dissState");
+                // compare the latest version of the datastream to what's in the db...
+                // if different, add to update list
+                Disseminator diss=reader.GetDisseminator(dissID, null);
+                if (!diss.dissLabel.equals(dissLabel)
+                        || !diss.dissState.equals(dissState)) {
+                    updates.add("UPDATE diss SET dissLabel='"
+                            + SQLUtility.aposEscape(diss.dissLabel)
+                            + "', dissID='" + diss.dissID + "', "
+                            + "dissState='" + diss.dissState + "' "
+                            + " WHERE dissDbID=" + dissDbID + " AND bDefDbID=" + bDefDbID + " AND bMechDbID=" + bMechDbID);
+                }
+            }
+            results.close();
+            // do any required updates via a transaction
+            if (updates.size()>0) {
+                connection.setAutoCommit(false);
+                triedUpdate=true;
+                for (int i=0; i<updates.size(); i++) {
+                    String update=(String) updates.get(i);
+                    logAndExecuteUpdate(st, update);
+                }
+                connection.commit();
+            } else {
+                logFinest("No datastream labels or locations changed.");
+            }
+*/
         } catch (SQLException sqle) {
             failed=true;
             throw new ReplicationException("An error has occurred during "
@@ -377,7 +425,7 @@ public class DefaultDOReplicator
                 // Insert Behavior Definition row
                 bDefPID = bDefReader.GetObjectPID();
                 bDefLabel = bDefReader.GetObjectLabel();
-                insertBehaviorDefinitionRow(connection, bDefPID, bDefLabel);
+                insertBehaviorDefinitionRow(connection, bDefPID, bDefLabel, bDefReader.GetObjectState());
 
                 // Insert method rows
                 bDefDBID = lookupBehaviorDefinitionDBID(connection, bDefPID);
@@ -494,7 +542,7 @@ public class DefaultDOReplicator
                 bMechLabel = bMechReader.GetObjectLabel();
 
                 insertBehaviorMechanismRow(connection, bDefDBID, bMechPID,
-                        bMechLabel);
+                        bMechLabel, bMechReader.GetObjectState());
 
                 // Insert dsBindSpec rows
                 bMechDBID = lookupBehaviorMechanismDBID(connection, bMechPID);
@@ -688,7 +736,7 @@ public class DefaultDOReplicator
                 doPID = doReader.GetObjectPID();
                 doLabel = doReader.GetObjectLabel();
 
-                insertDigitalObjectRow(connection, doPID, doLabel);
+                insertDigitalObjectRow(connection, doPID, doLabel, doReader.GetObjectState());
 
                 doDBID = lookupDigitalObjectDBID(connection, doPID);
                 if (doDBID == null) {
@@ -718,7 +766,7 @@ public class DefaultDOReplicator
                     if (dissDBID == null) {
                         // Disseminator row doesn't exist, add it.
                         insertDisseminatorRow(connection, bDefDBID, bMechDBID,
-                        disseminators[i].dissID, disseminators[i].dissLabel);
+                        disseminators[i].dissID, disseminators[i].dissLabel, disseminators[i].dissState);
                         dissDBID = lookupDisseminatorDBID(connection, bDefDBID,
                                 bMechDBID, disseminators[i].dissID);
                         if (dissDBID == null) {
@@ -789,7 +837,8 @@ public class DefaultDOReplicator
                                     encodeLocalURL(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
                                     allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
                                     allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
-                                    "1");
+                                    "1",
+                                    "A");
 
                         }
                     }
@@ -1243,9 +1292,9 @@ public class DefaultDOReplicator
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertBehaviorDefinitionRow(Connection connection, String bDefPID, String bDefLabel) throws SQLException {
+	public void insertBehaviorDefinitionRow(Connection connection, String bDefPID, String bDefLabel, String bDefState) throws SQLException {
 
-		String insertionStatement = "INSERT INTO bDef (bDefPID, bDefLabel) VALUES ('" + bDefPID + "', '" + SQLUtility.aposEscape(bDefLabel) + "')";
+		String insertionStatement = "INSERT INTO bDef (bDefPID, bDefLabel, bDefState) VALUES ('" + bDefPID + "', '" + SQLUtility.aposEscape(bDefLabel) + "', '" + bDefState + "')";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -1261,9 +1310,9 @@ public class DefaultDOReplicator
         *
         * @throws SQLException JDBC, SQL error
         */
-	public void insertBehaviorMechanismRow(Connection connection, String bDefDbID, String bMechPID, String bMechLabel) throws SQLException {
+	public void insertBehaviorMechanismRow(Connection connection, String bDefDbID, String bMechPID, String bMechLabel, String bMechState) throws SQLException {
 
-		String insertionStatement = "INSERT INTO bMech (bDefDbID, bMechPID, bMechLabel) VALUES ('" + bDefDbID + "', '" + bMechPID + "', '" + SQLUtility.aposEscape(bMechLabel) + "')";
+		String insertionStatement = "INSERT INTO bMech (bDefDbID, bMechPID, bMechLabel, bMechState) VALUES ('" + bDefDbID + "', '" + bMechPID + "', '" + SQLUtility.aposEscape(bMechLabel) + "', '" + bMechState + "')";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -1287,9 +1336,9 @@ public class DefaultDOReplicator
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertDataStreamBindingRow(Connection connection, String doDbID, String dsBindKeyDbID, String dsBindMapDbID, String dsBindKeySeq, String dsID, String dsLabel, String dsMIME, String dsLocation, String dsControlGroupType, String dsCurrentVersionID, String policyDbID) throws SQLException {
+	public void insertDataStreamBindingRow(Connection connection, String doDbID, String dsBindKeyDbID, String dsBindMapDbID, String dsBindKeySeq, String dsID, String dsLabel, String dsMIME, String dsLocation, String dsControlGroupType, String dsCurrentVersionID, String policyDbID, String dsState) throws SQLException {
 
-		String insertionStatement = "INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID) VALUES ('" + doDbID + "', '" + dsBindKeyDbID + "', '" + dsBindMapDbID + "', '" + dsBindKeySeq + "', '" + dsID + "', '" + SQLUtility.aposEscape(dsLabel) + "', '" + dsMIME + "', '" + dsLocation + "', '" + dsControlGroupType + "', '" + dsCurrentVersionID + "', '" + policyDbID + "')";
+		String insertionStatement = "INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID, dsState) VALUES ('" + doDbID + "', '" + dsBindKeyDbID + "', '" + dsBindMapDbID + "', '" + dsBindKeySeq + "', '" + dsID + "', '" + SQLUtility.aposEscape(dsLabel) + "', '" + dsMIME + "', '" + dsLocation + "', '" + dsControlGroupType + "', '" + dsCurrentVersionID + "', '" + policyDbID + "', '" + dsState + "')";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -1358,9 +1407,9 @@ public class DefaultDOReplicator
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertDigitalObjectRow(Connection connection, String doPID, String doLabel) throws SQLException {
+	public void insertDigitalObjectRow(Connection connection, String doPID, String doLabel, String doState) throws SQLException {
 
-		String insertionStatement = "INSERT INTO do (doPID, doLabel) VALUES ('" + doPID + "', '" +  SQLUtility.aposEscape(doLabel) + "')";
+		String insertionStatement = "INSERT INTO do (doPID, doLabel, doState) VALUES ('" + doPID + "', '" +  SQLUtility.aposEscape(doLabel) + "', '" + doState + "')";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -1393,9 +1442,9 @@ public class DefaultDOReplicator
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertDisseminatorRow(Connection connection, String bDefDbID, String bMechDbID, String dissID, String dissLabel) throws SQLException {
+	public void insertDisseminatorRow(Connection connection, String bDefDbID, String bMechDbID, String dissID, String dissLabel, String dissState) throws SQLException {
 
-		String insertionStatement = "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel) VALUES ('" + bDefDbID + "', '" + bMechDbID + "', '" + dissID + "', '" + SQLUtility.aposEscape(dissLabel) + "')";
+		String insertionStatement = "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel, dissState) VALUES ('" + bDefDbID + "', '" + bMechDbID + "', '" + dissID + "', '" + SQLUtility.aposEscape(dissLabel) + "', '" + dissState +"')";
 		insertGen(connection, insertionStatement);
 	}
 
