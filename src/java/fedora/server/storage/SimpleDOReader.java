@@ -641,6 +641,7 @@ public class SimpleDOReader
             bindingInfo[i].dsControlGroupType=ds.DSControlGrp;
             bindingInfo[i].dsID=dsID;
             bindingInfo[i].dsVersionID=ds.DSVersionID;
+            bindingInfo[i].dsState=ds.DSState;
             // these will be the same for all elements of the array
             bindingInfo[i].methodParms=methodParms;
             bindingInfo[i].AddressLocation=addressLocation;
