@@ -2,57 +2,14 @@
 <schema targetNamespace="http://www.fedora.info/definitions/1/0/binding/" 
     xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:fedora-binding="http://www.fedora.info/definitions/1/0/binding/">
-    
- <!-- This contains the schema for binding specifications, not binding maps.
-      Binding maps are covered in fedora-types. -->
-    
-  <element name="datastreamBindingSpec" 
-      type="DatastreamBindingSpec" 
-      abstract="true"/>
-  <element name="datastreamBindingMap" 
-      type="DatatstreamBindingBase" 
-      abstract="true"/>
 
-  <!-- The complex types will NOT define attributes because this is not 
-       allowed with SOAP -->
+  <element name="bindingSpec" 
+      type="BindingSpec"/>
 
-  <complexType name="dsBindingSpecType"/>
-    <complexType name="dsBindBaseType">
-      <choice>
-        <sequence>
-          <element name="keyName" type="string"/>
-          <element name="bindingInstructions" type="string"/>
-          <element name="seqNo" type="string" minOccurs="0"/>
-          <element name="MIME" type="string" minOccurs="0"/>
-          <element name="techMetadata" minOccurs="0">
-            <annotation>
-              <documentation>
-                 The techMetadata element is a work in progress.
-                 The concept is to allow some specification of other attributes 
-                 that may be important for binding, such as DPI for images
-                 The next choice type are used only in the context of 
-                 transmitting datastreams, not for the binding specification
-              </documentation>
-            </annotation>
-            <complexType>
-              <sequence>
-                <any namespace="##any" minOccurs="0"/>
-              </sequence>
-            </complexType>
-          </element>
-          <choice>
-            <element name="fileLocation" type="string"/>
-            <element name="URL" type="string"/>
-            <element name="content" type="base64Binary"/>
-          </choice>
-        </sequence>
-        <element ref="fedora:dsBinding" minOccurs="0" maxOccurs="unbounded">
-          <annotation>
-            <documentation>
-			   Allow the option for nested bindings
-            </documentation>
-          </annotation>
-        </element>
-      </choice>
-    </complexType>
-  </complexType>
+  <simpleType name="BindingSpec">
+    <annotation>
+      <documentation>Placeholder for the actual binding spec schema.</documentation>
+    </annotation>
+    <restriction base="string"/>
+  </simpleType>
+</schema>
