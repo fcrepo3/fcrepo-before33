@@ -44,12 +44,12 @@ public interface DOValidator {
    *        1 = perform only XML Schema validation
    *        2 = perform only Schematron Rules validation
    *        3 = perform only referential integrity checks for the object
-   * @param workFlowPhase The stage in the work flow for which the validation should be contextualized.
+   * @param phase The stage in the work flow for which the validation should be contextualized.
    *        "ingest" = the object is in the submission format for the ingest stage phase
    *        "store" = the object is in the authoritative format for the final storage phase
    * @throws ServerException If validation fails for any reason.
    */
-    public void validate(InputStream in, String format, int validationLevel, String workFlowPhase)
+    public void validate(InputStream in, String format, int validationLevel, String phase)
         //throws ObjectValidityException, GeneralException;
         throws ServerException;
 
@@ -63,12 +63,12 @@ public interface DOValidator {
    *        1 = perform only XML Schema validation
    *        2 = perform only Schematron Rules validation
    *        3 = perform only referential integrity checks for the object
-   * @param workFlowPhase The stage in the work flow for which the validation should be contextualized.
+   * @param phase The stage in the work flow for which the validation should be contextualized.
    *        "ingest" = the object is in the submission format for the ingest stage phase
    *        "store" = the object is in the authoritative format for the final storage phase
    * @throws ServerException If validation fails for any reason.
    */
-    public void validate(File in, String format, int validationLevel, String workFlowPhase)
+    public void validate(File in, String format, int validationLevel, String phase)
         //throws ObjectValidityException, GeneralException;
         throws ServerException;
 
