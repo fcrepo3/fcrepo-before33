@@ -3,6 +3,7 @@ package fedora.server.storage;
 import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
+import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.DisseminatorNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
@@ -91,7 +92,7 @@ public class SimpleDOReader
 		m_storageFormat=storageFormat;
         m_encoding=encoding;
         m_obj=new BasicDigitalObject();
-        m_translator.deserialize(serializedObject, m_obj, m_storageFormat, 
+        m_translator.deserialize(serializedObject, m_obj, m_storageFormat,
         	encoding, DOTranslationUtility.DESERIALIZE_INSTANCE);
     }
 
@@ -154,7 +155,7 @@ public class SimpleDOReader
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-        m_translator.serialize(m_obj, bytes, m_storageFormat, 
+        m_translator.serialize(m_obj, bytes, m_storageFormat,
 			"UTF-8", DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
         return new ByteArrayInputStream(bytes.toByteArray());
     }
@@ -163,20 +164,20 @@ public class SimpleDOReader
 	 * Return the object as an XML input stream in the "move/migrate"
 	 * export format in which all relative repository URLs are converted
 	 * to the Fedora local URL syntax ("http://local.fedora.server/...")
-	 * and all internal identifiers are converted to public callback URLs.  
-	 * 
-	 * For External (E) and Redirected (R) datastreams, the datastream 
-	 * location will be evaluated, and if it represents a relative 
+	 * and all internal identifiers are converted to public callback URLs.
+	 *
+	 * For External (E) and Redirected (R) datastreams, the datastream
+	 * location will be evaluated, and if it represents a relative
 	 * repository URL, it will be returned with the Fedora local URL syntax.
 	 * For Managed Content (M) Datastreams, the datastream location will
 	 * be converted from an internal identifier to a public dissemination
 	 * URL that can be used to callback to the repository to obtain the
 	 * datastream content bytestream.
-	 * 
-	 * For certain inline XML datastreams (WSDL and SERVICE_PROFILE in 
+	 *
+	 * For certain inline XML datastreams (WSDL and SERVICE_PROFILE in
 	 * BMech objects), any instances of URLs relative to the local
 	 * repository will be converted to use the Fedora local URL syntax.
-	 * 
+	 *
 	 * These conversions are intended to preserve the "relative" nature
 	 * of these URLs when objects are moved or migrated to other repositories.
 	 * The Fedora local URL syntax will be recognized by repositories upon
@@ -190,14 +191,14 @@ public class SimpleDOReader
 		if (format==null || format.equals("") || format.equalsIgnoreCase("default")) {
 			if (fedora.server.Debug.DEBUG) System.out.println("SimpleDOReader.ExportObject using default format: " + m_exportFormat);
 			if (fedora.server.Debug.DEBUG) System.out.println("SimpleDOReader.ExportObject transContext: ");
-			m_translator.serialize(m_obj, bytes, m_exportFormat, 
+			m_translator.serialize(m_obj, bytes, m_exportFormat,
 				"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE);
 				//"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE);
 		}
 		else {
 			if (fedora.server.Debug.DEBUG) System.out.println("SimpleDOReader.ExportObject with format arg of " + format);
 			m_translator.serialize(m_obj, bytes, format,
-				"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE); 
+				"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE);
 				//"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE);
 		}
 
@@ -707,6 +708,14 @@ public class SimpleDOReader
             bindingInfo[i].DSBindKey=dsBindings[i].bindKeyName;
             // get key info about the datastream and put it here
             Datastream ds=GetDatastream(dsID, versDateTime);
+            if (ds == null) {
+                String message = "The object \""+GetObjectPID()+"\" "
+                    + "contains no datastream for dsID \""+dsID+"\" "
+                    + "that was created on or before the specified date/timestamp "
+                    + " of \"" + DateUtility.convertDateToString(versDateTime)
+                    + "\" .";
+                throw new DatastreamNotFoundException(message);
+            }
             bindingInfo[i].dsLocation=ds.DSLocation;
             bindingInfo[i].dsControlGroupType=ds.DSControlGrp;
             bindingInfo[i].dsID=dsID;
