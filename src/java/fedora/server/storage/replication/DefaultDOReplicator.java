@@ -172,8 +172,8 @@ public class DefaultDOReplicator
             // Check if label has changed for the digital object.
             String objLabel = reader.GetObjectLabel();
             if (!doLabel.equalsIgnoreCase(objLabel)) {
-                updates.add("UPDATE do SET doLabel='" + objLabel + "' WHERE doDbID=" + doDbID);
-                updates.add("UPDATE doRegistry SET label='" + objLabel + "' WHERE doPID='" + reader.GetObjectPID() + "'");
+                updates.add("UPDATE do SET doLabel='" + SQLUtility.aposEscape(objLabel) + "' WHERE doDbID=" + doDbID);
+                updates.add("UPDATE doRegistry SET label='" + SQLUtility.aposEscape(objLabel) + "' WHERE doPID='" + reader.GetObjectPID() + "'");
             }
 
             // check if any mods to datastreams for this digital object
