@@ -112,8 +112,9 @@
 					<para>JAVA_HOME must point to the base directory of your J2SDK installation.  On Windows, this will usually be something like C:\j2sdk1.4.x\.  On Unix, it could be in several places.  The /usr and /usr/local directory are commonly used for Java installations.</para>
 					<blockquote>
 						<para>
-							<emphasis>Note: If you would rather not set your JAVA_HOME to point to the version required by Fedora (for instance, if you run other applications using java1.3) you can instead set the FEDORA_JAVA_HOME environment variable.  This way, Fedora's java installation won't conflict with your other java applications.</emphasis>
+							<emphasis>Note for server and client installations: If you would rather not set your JAVA_HOME to point to the version required by Fedora (for instance, if you run other applications using java1.3) you can instead set the FEDORA_JAVA_HOME environment variable.  This way, Fedora's java installation won't conflict with your other java applications.</emphasis>
 						</para>
+						<para>Note for source installations: JAVA_HOME must be set to the values stated above, since ant requires this environment variable.</para>
 					</blockquote>
 				</listitem>
 				<listitem>
