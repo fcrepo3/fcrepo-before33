@@ -13,13 +13,33 @@ package fedora.server.management;
  * @version 1.0
  */
 
+import java.io.InputStream;
+
 public class DatastreamExternal extends Datastream
 {
 
-  public String dsURL;
+  private String dsLocationURL;
 
 
   public DatastreamExternal()
   {
+  }
+
+
+  public String getLocationURL()
+  {
+    return(dsLocationURL);
+  }
+
+  public byte[] getContentBytes(int length, int offset)
+  {
+    // run the external content retriever
+    return(null);
+  }
+
+  public InputStream getContentStream()
+  {
+    // run the external content retriever
+    return(null);
   }
 }
