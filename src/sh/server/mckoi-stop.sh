@@ -5,9 +5,19 @@ if [ "$FEDORA_HOME" = "" ]; then
   exit 1
 fi
 
-if [ ! -f "$JAVA_HOME/bin/java" ]; then
-  echo "ERROR: java was not found in $JAVA_HOME"
-  echo "Make sure JAVA_HOME is set correctly."
+if [ "$FEDORA_JAVA_HOME" = "" ]; then
+  if [ "$JAVA_HOME" = "" ]; then
+    echo "ERROR: FEDORA_JAVA_HOME was not defined, nor was (the fallback) JAVA_HOME."
+    exit 1
+  fi
+  THIS_JAVA_HOME=$JAVA_HOME
+else
+  THIS_JAVA_HOME="$FEDORA_JAVA_HOME"
+fi
+
+if [ ! -f "$THIS_JAVA_HOME/bin/java" ]; then
+  echo "ERROR: java was not found in $THIS_JAVA_HOME"
+  echo "Make sure FEDORA_JAVA_HOME or JAVA_HOME is set correctly."
   exit 1
 fi
 
@@ -27,7 +37,14 @@ if [ $# -lt 2 ]; then
   exit 1
 fi
 
+OLD_JAVA_HOME=$JAVA_HOME
+JAVA_HOME=$THIS_JAVA_HOME
+export JAVA_HOME
+
 (exec $JAVA_HOME/bin/java -cp $FEDORA_HOME/server/mckoi094/gnu-regexp-1.1.4.jar -jar $FEDORA_HOME/server/mckoi094/mckoidb.jar -conf $FEDORA_HOME/server/mckoi094/db.conf -shutdown "$1" "$2")
+
+JAVA_HOME=$OLD_JAVA_HOME
+export JAVA_HOME
 
 echo "Finished."
 
