@@ -19,7 +19,7 @@
     <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:or">
         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
-          <EnvironmentAttributeDesignator AttributeId="info:fedora/fedora-system:def/policy-environment#client-ip-address" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <EnvironmentAttributeDesignator AttributeId="info:fedora/fedora-system:def/policy-environment#request-client-ip-address" DataType="http://www.w3.org/2001/XMLSchema#string"/>
           <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
             <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">127.0.0.1</AttributeValue>
           </Apply>
@@ -27,7 +27,7 @@
         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:regexp-string-match">
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">127\.\d{1,3}\.\d{1,3}\.\d{1,3}</AttributeValue>
           <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
-            <EnvironmentAttributeDesignator AttributeId="info:fedora/fedora-system:def/policy-environment#client-ip-address" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+            <EnvironmentAttributeDesignator AttributeId="info:fedora/fedora-system:def/policy-environment#request-client-ip-address" DataType="http://www.w3.org/2001/XMLSchema#string"/>
           </Apply>
         </Apply>
       </Apply>
