@@ -333,7 +333,7 @@ public class DefinitiveDOReader implements DOReader
           System.out.println("  controlGrp[" + i + "]=" + datastreams[i].DSControlGrp);
           System.out.println("  infoType[" + i + "]=" + datastreams[i].DSInfoType);
 
-          if (datastreams[i].DSControlGrp == 2)
+          if (datastreams[i].DSControlGrp.equalsIgnoreCase("X"))
           {
             System.out.println("  xmldata[" + i + "]=");
             String s = new String(((DatastreamXMLMetadata)datastreams[i]).xmlContent);
@@ -591,6 +591,8 @@ public class DefinitiveDOReader implements DOReader
           augmentedBinding.seqNo = dsbindings[j].seqNo;
           // variables from the Datastream itself...
           Datastream ds = (Datastream)datastreamTbl.get(dsbindings[j].datastreamID);
+          augmentedBinding.DSVersionID = ds.DSVersionID;
+          augmentedBinding.DSControlGrp = ds.DSControlGrp;
           augmentedBinding.DSLabel = ds.DSLabel;
           augmentedBinding.DSMIME = ds.DSMIME;
           augmentedBinding.DSLocation = ds.DSLocation;
@@ -816,7 +818,7 @@ public class DefinitiveDOReader implements DOReader
           isXMLDatastream = true;
           h_datastream = new DatastreamXMLMetadata();
           h_datastream.DSInfoType = localName;
-          h_datastream.DSControlGrp = 2;
+          h_datastream.DSControlGrp = "X";
           h_datastream.DSCreateDT = convertDate(attrs.getValue("CREATED"));
           h_datastream.DSState = attrs.getValue("STATUS");
 
@@ -850,7 +852,7 @@ public class DefinitiveDOReader implements DOReader
           if (isXMLDatastream)
           {
             h_datastream.DSInfoType = localName;
-            h_datastream.DSControlGrp = 2;
+            h_datastream.DSControlGrp = "X";
             h_datastream.DSVersionID = attrs.getValue("ID");
             h_datastream.DSCreateDT = convertDate(attrs.getValue("CREATED"));
             h_datastream.DSState = attrs.getValue("STATUS");
@@ -916,13 +918,17 @@ public class DefinitiveDOReader implements DOReader
 
             String owner = attrs.getValue("OWNERID");
             if (owner != null && owner.equalsIgnoreCase("E"))
-              h_datastream.DSControlGrp = 3;
-            else if (owner != null && owner.equalsIgnoreCase("I"))
-              h_datastream.DSControlGrp = 1;
+              h_datastream.DSControlGrp = "E";
+            else if (owner != null && owner.equalsIgnoreCase("P"))
+              h_datastream.DSControlGrp = "P";
+            else if (owner != null && owner.equalsIgnoreCase("M"))
+              h_datastream.DSControlGrp = "M";
             else
             {
-              // technically, this is an invalid fedora mets object
-              h_datastream.DSControlGrp = 0;
+              // technically, this is an invalid fedora mets object and this
+              // should have been caught earlier during digital object validation.
+                throw new SAXException("Datastream must have a control group code."
+                        + "(Missing OWNERID attribute on METS <file>.)");
             }
           }
         }
