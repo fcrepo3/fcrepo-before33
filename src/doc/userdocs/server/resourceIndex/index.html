@@ -55,8 +55,7 @@
             <li><a href="#impl">Implementation</a>
                 <ol>
                     <li><a href="#impl.system">System Relationships &amp; Properties</a></li>
-                    <li>User-defined Relationships</li>
-                    <li>Services</li>
+                    <li><a href="#impl.user">User-defined Relationships</a></li>
                 </ol>
             </li>
             <li><a href="#config">Configuration</a>
@@ -99,7 +98,8 @@ providing a rich information foundation for external services
 graph, consisting of <em>internal</em> arcs that relate digital object nodes to 
 their dissemination nodes and <em>external</em> arcs between digital objects. 
 The Resource Index is a Fedora service that allows storage and query of this 
-graph.</p>
+graph. The Resource Index is automatically updated whenever an object is added 
+or modified.</p>
 
 <p>The Resource Index builds on the RDF primitives build within the semantic 
 web community. Fedora supplies a base relationship ontology 
@@ -509,12 +509,26 @@ repository.</p>
 
 <div class="sect">
 <h2><a name="#search">4. Search Interface</a></h2>
-<p>Please see the <a href="../webservices/risearch/index.html">Resource Index Search documentation</a>.</p>
+<p>The Resource Index Search interface is exposed in a REST architectural style, 
+providing a stateless query interface that accepts queries by value or by 
+reference [<a href="#ref.rels" class="reference">Fedora Relationships</a>].</p>
+    
+<p>The query interface to the Resource Index currently supports three RDF query 
+languages, RDQL, iTQL, and SPO. Both RDQL and iTQL share a superficially similar 
+syntax to SQL, with RDQL enjoying broader implementation support, but iTQL 
+providing a richer feature set. Support for SPARQL is planned for a future 
+release.</p>
+
+<p>Please consult the <a href="../webservices/risearch/index.html">Resource 
+Index Search documentation</a> for more information.</p>
 </div>
 
 <div class="sect">
 <h2><a name="demo">5. Resource Index Demo</a></h2>
-<p>Please see the <a href="../../distribution/demos.html#imageCollection">Demo documentation</a>.</p>
+<p>Demonstration objects that utilize the Resource Index are included in the 
+Fedora distribution. Please see the 
+<a href="../../distribution/demos.html#imageCollection">Demo documentation</a> 
+for more information.</p>
 </div>
 
 <div id="references" class="sect">
