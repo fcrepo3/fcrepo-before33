@@ -58,6 +58,8 @@ public class DefaultManagement
 
     private DOManager m_manager;
     private IPRestriction m_ipRestriction;
+    private String m_fedoraServerHost;
+    private String m_fedoraServerPort;
 
     /**
      * Creates and initializes the Management Module.
@@ -98,6 +100,8 @@ public class DefaultManagement
             throw new ModuleInitializationException("Can't get a DOManager "
                     + "from Server.getModule", getRole());
         }
+        m_fedoraServerHost=getServer().getParameter("fedoraServerHost");
+        m_fedoraServerPort=getServer().getParameter("fedoraServerPort");
     }
 
 /*
@@ -262,7 +266,8 @@ public class DefaultManagement
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
             if (orig.DSControlGrp.equals("M")) {
                     // copy the original datastream, replacing its DSLocation with
-                    // the new location, triggering to doCommit that it needs to
+                    // the new location (or the old datastream's default dissemination location, if empty or null), 
+                    // triggering to doCommit that it needs to
                     // be loaded from a new remote location
                     DatastreamManagedContent newds=new DatastreamManagedContent();
                     newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
@@ -277,7 +282,16 @@ public class DefaultManagement
                     newds.DSControlGrp="M";
                     newds.DSInfoType=orig.DSInfoType;
                     newds.DSState=orig.DSState;
-                    newds.DSLocation=dsLocation;
+                    if (dsLocation==null || dsLocation.equals("")) {
+                        // if location unspecified, use the location of
+                        // the datastream on the system, thus making a copy
+                        newds.DSLocation="http://" + m_fedoraServerHost + ":" 
+                                + m_fedoraServerPort 
+                                + "/fedora/get/" + pid + "/fedora-system:3/getItem?itemID="
+                                + datastreamId;
+                    } else {
+                        newds.DSLocation=dsLocation;
+                    }
                     newds.auditRecordIdList().addAll(orig.auditRecordIdList());
                     // just add the datastream
                     w.addDatastream(newds);
@@ -308,7 +322,16 @@ public class DefaultManagement
                 newds.DSControlGrp=orig.DSControlGrp;
                 newds.DSInfoType=orig.DSInfoType;
                 newds.DSState=orig.DSState;
-                newds.DSLocation=dsLocation;
+                if (dsLocation==null || dsLocation.equals("")) {
+                    // if location unspecified, use the location of
+                    // the datastream on the system, thus making a copy
+                    newds.DSLocation="http://" + m_fedoraServerHost + ":" 
+                            + m_fedoraServerPort 
+                            + "/fedora/get/" + pid + "/fedora-system:3/getItem?itemID="
+                            + datastreamId;
+                } else {
+                    newds.DSLocation=dsLocation;
+                }
                 newds.auditRecordIdList().addAll(orig.auditRecordIdList());
                 // just add the datastream
                 w.addDatastream(newds);
