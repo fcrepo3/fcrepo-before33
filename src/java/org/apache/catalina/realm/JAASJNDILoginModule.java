@@ -142,7 +142,7 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 		setUserBase(userBase);
 		setUserSubtree(userSubtree);
 		setUserSearch(userSearch);
-		setUserPassword(JndiRealm.DONTCHECK);
+		setUserPassword(JNDIRealm.DONTCHECK);
 		setUserRoleName(userRoleName);		
 	}
 
