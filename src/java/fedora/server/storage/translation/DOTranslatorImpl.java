@@ -64,7 +64,6 @@ public class DOTranslatorImpl
                         + "for format: " + format);
             }
             DODeserializer newDes=des.getInstance();
-            //newDes.deserialize(in, out, encoding);
 			newDes.deserialize(in, out, encoding, transContext);
         } catch (UnsupportedEncodingException uee) {
             throw new UnsupportedTranslationException("Deserializer for format: "
@@ -85,7 +84,6 @@ public class DOTranslatorImpl
 					"No serializer exists for format: " + format);
             }
             DOSerializer newSer=ser.getInstance();
-            //newSer.serialize(in, out, encoding, encodeForExport);
 			newSer.serialize(in, out, encoding, transContext);
         } catch (UnsupportedEncodingException uee) {
             throw new UnsupportedTranslationException("Serializer for format: "
