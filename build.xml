@@ -1019,14 +1019,11 @@
 			<fileset refid="server-libs.fileset"/>    
 		</copy>
 		<mkdir dir="dist/server/access"/>
-		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
-		<copy file="src/xsl/access/objectMethods.xslt" todir="dist/server/access"/>
-		<!--ObjectProfile xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
-		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/access"/>
-		<!--ItemIndex xsl stylesheet used by Default Disseminator (DefaultBehaviorImpl) -->
-		<copy file="src/xsl/access/viewItemIndex.xslt" todir="dist/server/access"/>
-		<!--DublinCore xsl stylesheet used by Default Disseminator (DefaultBehaviorImpl) -->
-		<copy file="src/xsl/access/viewDublinCore.xslt" todir="dist/server/access"/>
+        <!-- Stylesheets used by the Default Disseminator-->
+        <copy file="src/xsl/access/viewObjectMethods.xslt" todir="dist/server/access"/>
+        <copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/access"/>
+        <copy file="src/xsl/access/viewItemIndex.xslt" todir="dist/server/access"/>
+        <copy file="src/xsl/access/viewDublinCore.xslt" todir="dist/server/access"/>   
 		<!--Repository Info xsl stylesheet used by API-A-LITE  -->
 		<copy file="src/xsl/access/viewRepositoryInfo.xslt" todir="dist/server/access"/>
 		<!--Object History xsl stylesheet used by API-A-LITE  -->
