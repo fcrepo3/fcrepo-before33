@@ -276,6 +276,8 @@ public class DatastreamsPane
 
         JTextField m_labelTextField;
         JTextField m_idTextField;
+        JTextField m_formatURITextField;
+        JTextField m_altIDsTextField;
         JTextField m_referenceTextField;
         JTextArea m_controlGroupTextArea;
         JComboBox m_mimeComboBox;
@@ -320,6 +322,8 @@ public class DatastreamsPane
                                                  new JLabel("ID"),
                                                  new JLabel("Label"),
                                                  new JLabel("MIME Type"),
+                                                 new JLabel("Format URI"),
+                                                 new JLabel("Alternate IDs"),
                                                  new JLabel("Control Group") };
 
             m_stateComboBox=new JComboBox(new String[] {"Active",
@@ -344,6 +348,8 @@ public class DatastreamsPane
             m_labelTextField=new JTextField("Enter a label here.");
 
             m_idTextField=new JTextField("");
+            m_formatURITextField = new JTextField("");
+            m_altIDsTextField = new JTextField("");
 
             m_mimeComboBox=new JComboBox(dropdownMimeTypes);
             Administrator.constrainHeight(m_mimeComboBox);
@@ -380,7 +386,13 @@ public class DatastreamsPane
 
             controlGroupOuterPanel.add(m_controlGroupTextArea, BorderLayout.CENTER);
 
-            JComponent[] right=new JComponent[] { m_stateComboBox, m_idTextField, m_labelTextField, m_mimeComboBox, controlGroupOuterPanel };
+            JComponent[] right=new JComponent[] { m_stateComboBox, 
+                                                  m_idTextField, 
+                                                  m_labelTextField, 
+                                                  m_mimeComboBox, 
+                                                  m_formatURITextField,
+                                                  m_altIDsTextField,
+                                                  controlGroupOuterPanel };
 
             JPanel commonPane=new JPanel();
             GridBagLayout grid=new GridBagLayout();
@@ -609,7 +621,21 @@ public class DatastreamsPane
                 try {
                     // try to save... first set common values for call
                     String pid=m_pid;
-                    String dsID=m_idTextField.getText();
+                    String dsID=m_idTextField.getText().trim();
+                    if (dsID.equals("")) dsID = null;
+                    String trimmed = m_altIDsTextField.getText().trim();
+                    String[] altIDs;
+                    if (trimmed.length() == 0) {
+                        altIDs = null;
+                    } else if (trimmed.indexOf(" ") == -1) {
+                        altIDs = new String[] { trimmed };
+                    } else {
+                        altIDs = trimmed.split("\\s");
+                    }
+                    String formatURI = m_formatURITextField.getText().trim();
+                    if (formatURI.length() == 0) {
+                        formatURI = null;
+                    }
                     String label=m_labelTextField.getText();
                     String mimeType=(String) m_mimeComboBox.getSelectedItem();
                     String location=null;
@@ -628,11 +654,11 @@ public class DatastreamsPane
                     String newID = Administrator.APIM.addDatastream(
                                        pid, 
                                        dsID, 
-                                       new String[0], // DEFAULT_ALTIDS
+                                       altIDs,
                                        label,
                                        true, // DEFAULT_VERSIONABLE
                                        mimeType, 
-                                       null, // DEFAULT_FORMATURI
+                                       formatURI,
                                        location, 
                                        m_controlGroup, 
                                        m_initialState,
