@@ -13,6 +13,8 @@ import java.util.*;
 import java.sql.*;
 import java.io.*;
 
+import fedora.server.errors.StorageDeviceException;
+
 /**
 *
 * Description: Looks up and returns the DBID for a row that matches the column
@@ -34,7 +36,7 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupBehaviorDefinitionDBID(Connection connection, String bDefPID) throws SQLException {
+	public String lookupBehaviorDefinitionDBID(Connection connection, String bDefPID) throws StorageDeviceException {
 		return lookupDBID1(connection, "bDefDbID", "bDef", "bDefPID", bDefPID);
 	}
 
@@ -49,7 +51,7 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupBehaviorMechanismDBID(Connection connection, String bMechPID) throws SQLException {
+	public String lookupBehaviorMechanismDBID(Connection connection, String bMechPID) throws StorageDeviceException {
 		return lookupDBID1(connection, "bMechDbID", "bMech", "bMechPID", bMechPID);
 	}
 
@@ -65,7 +67,7 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDataStreamBindingMapDBID(Connection connection, String bMechDBID, String dsBindingMapID) throws SQLException {
+	public String lookupDataStreamBindingMapDBID(Connection connection, String bMechDBID, String dsBindingMapID) throws StorageDeviceException {
 		return lookupDBID2FirstNum(connection, "dsBindMapDbID", "dsBindMap", "bMechDbID", bMechDBID, "dsBindMapID", dsBindingMapID);
 	}
 
@@ -81,7 +83,7 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDataStreamBindingSpecDBID(Connection connection, String bMechDBID, String dsBindingSpecName) throws SQLException {
+	public String lookupDataStreamBindingSpecDBID(Connection connection, String bMechDBID, String dsBindingSpecName) throws StorageDeviceException {
 		return lookupDBID2FirstNum(connection, "dsBindKeyDbID", "dsBindSpec", "bMechDbID", bMechDBID, "dsBindSpecName", dsBindingSpecName);
 	}
 
@@ -96,7 +98,7 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDigitalObjectDBID(Connection connection, String doPID) throws SQLException {
+	public String lookupDigitalObjectDBID(Connection connection, String doPID) throws StorageDeviceException {
 		return lookupDBID1(connection, "doDbID", "do", "doPID", doPID);
 	}
 
@@ -113,12 +115,13 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDisseminatorDBID(Connection connection, String bDefDBID, String bMechDBID, String dissID) throws SQLException {
-		String query = null;
-		String ID = null;
-		Statement statement = null;
-		ResultSet rs = null;
-
+	public String lookupDisseminatorDBID(Connection connection, String bDefDBID, String bMechDBID, String dissID) throws StorageDeviceException {
+            Statement statement = null;
+            ResultSet rs = null;
+            String query = null;
+            String ID = null;
+            try
+            {
 		query = "SELECT dissDbID FROM diss WHERE ";
 		query += "bDefDbID = " + bDefDBID + " AND ";
 		query += "bMechDbID = " + bMechDBID + " AND ";
@@ -133,10 +136,26 @@ public class DBIDLookup {
 		while (rs.next())
 			ID = rs.getString(1);
 
-		statement.close();
-		rs.close();
+            } catch (Throwable th)
+            {
+              throw new StorageDeviceException("[DBIDLookup] An error has "
+                  + "occurred. The error was \" " + th.getClass().getName()
+                  + " \". The cause was \" " + th.getMessage() + " \"");
+            } finally
+            {
+                try
+                {
+                    if (rs != null) rs.close();
+                    if (statement != null) statement.close();
 
-		return ID;
+                } catch (SQLException sqle)
+                {
+                    throw new StorageDeviceException("[DBIDLookup] An error has "
+                        + "occurred. The error was \" " + sqle.getClass().getName()
+                        + " \". The cause was \" " + sqle.getMessage() + " \"");
+                }
+            }
+            return ID;
 	}
 
         /**
@@ -151,7 +170,7 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupMethodDBID(Connection connection, String bDefDBID, String methName) throws SQLException {
+	public String lookupMethodDBID(Connection connection, String bDefDBID, String methName) throws StorageDeviceException {
 		return lookupDBID2FirstNum(connection, "methodDbID", "method", "bDefDbID", bDefDBID, "methodName", methName);
 	}
 
@@ -169,27 +188,47 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDBID1(Connection connection, String DBIDName, String tableName, String lookupColumnName, String lookupColumnValue) throws SQLException {
+	public String lookupDBID1(Connection connection, String DBIDName, String tableName, String lookupColumnName, String lookupColumnValue) throws StorageDeviceException {
 		String query = null;
 		String ID = null;
 		Statement statement = null;
 		ResultSet rs = null;
 
-		query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
-		query += lookupColumnName + " = '" + lookupColumnValue + "';";
+                try
+                {
 
-		// Debug statement
-		// System.out.println("lookupDBID1, query = " + query);
+    		    query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
+		    query += lookupColumnName + " = '" + lookupColumnValue + "';";
 
-		statement = connection.createStatement();
-		rs = statement.executeQuery(query);
+                    // Debug statement
+                    // System.out.println("lookupDBID1, query = " + query);
 
-		while (rs.next())
+                    statement = connection.createStatement();
+                    rs = statement.executeQuery(query);
+
+                    while (rs.next())
 			ID = rs.getString(1);
-		statement.close();
-		rs.close();
 
-		return ID;
+                } catch (Throwable th)
+                {
+                    throw new StorageDeviceException("[DBIDLookup] An error has "
+                        + "occurred. The error was \" " + th.getClass().getName()
+                        + " \". The cause was \" " + th.getMessage() + " \"");
+                } finally
+                {
+                    try
+                    {
+                        if (rs != null) rs.close();
+                        if (statement != null) statement.close();
+
+                    } catch (SQLException sqle)
+                    {
+                        throw new StorageDeviceException("[DBIDLookup] An error has "
+                            + "occurred. The error was \" " + sqle.getClass().getName()
+                            + " \". The cause was \" " + sqle.getMessage() + " \"");
+                    }
+                }
+                return ID;
 	}
 
         /**
@@ -208,53 +247,91 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDBID2(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws SQLException {
+	public String lookupDBID2(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws StorageDeviceException {
 		String query = null;
 		String ID = null;
 		Statement statement = null;
 		ResultSet rs = null;
 
-		query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
-		query += lookupColumnName1 + " = '" + lookupColumnValue1 + "' AND ";
-		query += lookupColumnName2 + " = '" + lookupColumnValue2 + "';";
+                try
+                {
 
-		// Debug statement
-		// System.out.println("lookupDBID2, query = " + query);
+		    query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
+                    query += lookupColumnName1 + " = '" + lookupColumnValue1 + "' AND ";
+                    query += lookupColumnName2 + " = '" + lookupColumnValue2 + "';";
 
-		statement = connection.createStatement();
-		rs = statement.executeQuery(query);
+                    // Debug statement
+                    // System.out.println("lookupDBID2, query = " + query);
 
-		while (rs.next())
+                    statement = connection.createStatement();
+                    rs = statement.executeQuery(query);
+
+                    while (rs.next())
 			ID = rs.getString(1);
 
-		statement.close();
-		rs.close();
+                } catch (Throwable th)
+                {
+                    throw new StorageDeviceException("[DBIDLookup] An error has "
+                        + "occurred. The error was \" " + th.getClass().getName()
+                        + " \". The cause was \" " + th.getMessage() + " \"");
+                } finally
+                {
+                    try
+                    {
+                        if (rs != null) rs.close();
+                        if (statement != null) statement.close();
 
-		return ID;
+                    } catch (SQLException sqle)
+                    {
+                        throw new StorageDeviceException("[DBIDLookup] An error has "
+                            + "occurred. The error was \" " + sqle.getClass().getName()
+                            + " \". The cause was \" " + sqle.getMessage() + " \"");
+                    }
+                }
+                return ID;
 	}
 
-	public String lookupDBID2FirstNum(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws SQLException {
+	public String lookupDBID2FirstNum(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws StorageDeviceException {
 		String query = null;
 		String ID = null;
 		Statement statement = null;
 		ResultSet rs = null;
 
-		query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
-		query += lookupColumnName1 + " =" + lookupColumnValue1 + " AND ";
-		query += lookupColumnName2 + " = '" + lookupColumnValue2 + "';";
+                try
+                {
+		    query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
+                    query += lookupColumnName1 + " =" + lookupColumnValue1 + " AND ";
+                    query += lookupColumnName2 + " = '" + lookupColumnValue2 + "';";
 
-		// Debug statement
-		//System.out.println("lookupDBID2FirstNum, query = " + query);
+                    // Debug statement
+                    //System.out.println("lookupDBID2FirstNum, query = " + query);
 
-		statement = connection.createStatement();
-		rs = statement.executeQuery(query);
+                    statement = connection.createStatement();
+                    rs = statement.executeQuery(query);
 
-		while (rs.next())
+                    while (rs.next())
 			ID = rs.getString(1);
-		statement.close();
-		rs.close();
 
-		return ID;
+                } catch (Throwable th)
+                {
+                    throw new StorageDeviceException("[DBIDLookup] An error has "
+                        + "occurred. The error was \" " + th.getClass().getName()
+                        + " \". The cause was \" " + th.getMessage() + " \"");
+                } finally
+                {
+                    try
+                    {
+                        if (rs != null) rs.close();
+                        if (statement != null) statement.close();
+
+                    } catch (SQLException sqle)
+                    {
+                        throw new StorageDeviceException("[DBIDLookup] An error has "
+                            + "occurred. The error was \" " + sqle.getClass().getName()
+                            + " \". The cause was \" " + sqle.getMessage() + " \"");
+                    }
+                }
+                return ID;
 	}
 
 }

@@ -82,7 +82,6 @@ public class DefaultDOReplicator
 
             // Insert Behavior Definition row
             bDefPID = bDefReader.GetObjectPID();
-            System.out.println("bdefPID: "+bDefPID);
             bDefLabel = bDefReader.GetObjectLabel();
             m_ri.insertBehaviorDefinitionRow(connection, bDefPID, bDefLabel);
 
@@ -386,7 +385,6 @@ public class DefaultDOReplicator
 
             connection = m_pool.getConnection();
             connection.setAutoCommit(false);
-System.out.println("insert do");
             // Insert Digital Object row
             doPID = doReader.GetObjectPID();
             doLabel = doReader.GetObjectLabel();
@@ -415,7 +413,6 @@ System.out.println("insert do");
                             + "doesn't exist for PID: "
                             + disseminators[i].bMechID);
                 }
-System.out.println("insert diss");
                 // Insert Disseminator row if it doesn't exist.
                 dissDBID = m_dl.lookupDisseminatorDBID(connection, bDefDBID,
                         bMechDBID, disseminators[i].dissID);
@@ -431,7 +428,6 @@ System.out.println("insert diss");
                                 + disseminators[i].dissID);
                     }
                 }
-System.out.println("insert dodissassoc");
                 // Insert doDissAssoc row
                 m_ri.insertDigitalObjectDissAssocRow(connection, doDBID,
                         dissDBID);
@@ -450,7 +446,6 @@ System.out.println("insert dodissassoc");
                             + allBindingMaps[i].dsBindMechanismPID);
                 }
 
-System.out.println("insert dsbindingmap");
                 // Insert dsBindMap row if it doesn't exist.
                 bindingMapDBID = m_dl.lookupDataStreamBindingMapDBID(connection,
                         bMechDBID, allBindingMaps[i].dsBindMapID);
@@ -484,7 +479,7 @@ System.out.println("insert dsbindingmap");
                                 dsBindingsAugmented[j].bindKeyName + "i=" + i
                                 + " j=" + j);
                     }
-System.out.println("insert dsbinding");
+
                     // Insert DataStreamBinding row
                     m_ri.insertDataStreamBindingRow(connection, doDBID,
                             dsBindingKeyDBID,

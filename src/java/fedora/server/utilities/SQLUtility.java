@@ -18,15 +18,15 @@ import fedora.server.storage.ConnectionPool;
 
 public abstract class SQLUtility {
 
-    public static void replaceInto(Connection conn, String tableName, 
-            String[] columns, String[] values, String uniqueColumn) 
+    public static void replaceInto(Connection conn, String tableName,
+            String[] columns, String[] values, String uniqueColumn)
             throws SQLException {
         replaceInto(conn, tableName, columns, values, uniqueColumn, null, null);
     }
-    
-    public static void replaceInto(Connection conn, String tableName, 
+
+    public static void replaceInto(Connection conn, String tableName,
             String[] columns, String[] values, String uniqueColumn,
-            boolean[] isNumeric, Logging log) 
+            boolean[] isNumeric, Logging log)
             throws SQLException {
         // figure out if we need to escape an apostrophe
         for (int i=0; i<values.length; i++) {
@@ -136,9 +136,9 @@ public abstract class SQLUtility {
             }
         }
     }
-    
+
     public static void createNonExistingTables(ConnectionPool cPool,
-            InputStream dbSpec, Logging log) 
+            InputStream dbSpec, Logging log)
             throws IOException, InconsistentTableSpecException, SQLException {
         List nonExisting=null;
         Connection conn=null;
@@ -169,15 +169,19 @@ public abstract class SQLUtility {
             }
         }
     }
-    
+
     public static List getNonExistingTables(Connection conn,
-            List tSpecs) 
+            List tSpecs)
             throws SQLException {
-        ArrayList nonExisting=new ArrayList();
-        DatabaseMetaData dbMeta=conn.getMetaData();
-        Iterator tSpecIter=tSpecs.iterator();
-        // Get a list of tables that don't exist, if any
-        ResultSet r=dbMeta.getTables(null, null, "%", null);
+
+      ArrayList nonExisting=new ArrayList();
+      DatabaseMetaData dbMeta=conn.getMetaData();
+      Iterator tSpecIter=tSpecs.iterator();
+      ResultSet r = null;
+      // Get a list of tables that don't exist, if any
+      try
+      {
+        r=dbMeta.getTables(null, null, "%", null);
         HashSet existingTableSet=new HashSet();
         while (r.next()) {
             existingTableSet.add(r.getString("TABLE_NAME").toLowerCase());
@@ -189,11 +193,18 @@ public abstract class SQLUtility {
                 nonExisting.add(spec);
             }
         }
-        return nonExisting;
+      } catch (SQLException sqle)
+      {
+        throw new SQLException(sqle.getMessage());
+      } finally
+      {
+        if (r != null) r.close();
+      }
+      return nonExisting;
     }
-    
+
     public static void createTables(TableCreatingConnection tcConn, List tSpecs,
-            Logging log) 
+            Logging log)
             throws SQLException {
         Iterator nii=tSpecs.iterator();
         while (nii.hasNext()) {
@@ -213,5 +224,5 @@ public abstract class SQLUtility {
             tcConn.createTable(spec);
         }
     }
-    
+
 }
