@@ -719,22 +719,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
         
         String bDefPid = digitalObject.getPid();
-        String selectPermutation = "SELECT riMethodPermutation.permutationId FROM riMethodPermutation, riMethod WHERE riMethodPermutation.methodId = riMethod.methodId AND bDefPid = '" + bDefPid + "'";
-        String deleteMethod = "DELETE FROM riMethod WHERE bDefPid = '" + bDefPid + "'";
-        
-        PreparedStatement deletePermutation;
-
+        String delete = "DELETE riMethod.*, riMethodPermutation.* " +
+                        "FROM riMethod, riMethodPermutation " +
+                        "WHERE (riMethod.methodId = riMethodPermutation.methodId) " +
+                        "AND riMethod.bDefPid = '" + bDefPid + "'";
         try {
             Statement stmt = m_conn.createStatement();
-            ResultSet rs = stmt.executeQuery(selectPermutation);
-            deletePermutation = m_conn.prepareStatement("DELETE FROM riMethodPermutation WHERE permutationId = ?");
-            
-            while (rs.next()) {
-                deletePermutation.setString(1, rs.getString("permutationId"));
-                deletePermutation.addBatch();
-            }
-            deletePermutation.executeBatch();
-            stmt.execute(deleteMethod);
+            stmt.execute(delete);
         } catch (SQLException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
@@ -756,22 +747,14 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
         
         String bMechPid = digitalObject.getPid();
-        String selectMimeType = "SELECT riMethodMimeType.mimeTypeId FROM riMethodMimeType, riMethodImpl WHERE riMethodMimeType.methodImplId = riMethodImpl.methodImplId AND riMethodImpl.bMechPid = '" + bMechPid + "'";
-        String deleteMethodImpl = "DELETE FROM riMethodImpl WHERE bMechPid = '" + bMechPid + "'";
-        
-        PreparedStatement deleteMimeType;
+        String delete = "DELETE riMethodImpl.*, riMethodMimeType.* " +
+                        "FROM riMethodImpl, riMethodMimeType " +
+                        "WHERE (riMethodImpl.methodImplId = riMethodMimeType.methodImplId) " +
+                        "AND riMethodImpl.bMechPid = '" + bMechPid + "'";
 
         try {
             Statement stmt = m_conn.createStatement();
-            ResultSet rs = stmt.executeQuery(selectMimeType);
-            deleteMimeType = m_conn.prepareStatement("DELETE FROM riMethodMimeType WHERE mimeTypeId = ?");
-            
-            while (rs.next()) {
-                deleteMimeType.setInt(1, rs.getInt("mimeTypeId"));
-                deleteMimeType.addBatch();
-            }
-            deleteMimeType.executeBatch();
-            stmt.execute(deleteMethodImpl);
+            stmt.execute(delete);
         } catch (SQLException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
