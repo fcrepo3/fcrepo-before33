@@ -7,7 +7,7 @@ public class BMechTemplate {
 
     private String bDefPID = null;
     private String bMechLabel = null;
-    private HashMap dcRecordMap = new HashMap();
+    private DCElement[] dcRecord = new DCElement[0];
     private boolean hasBaseURL;
     private String serviceBaseURL;
     private Method[] methods;
@@ -39,14 +39,14 @@ public class BMechTemplate {
         this.bMechLabel = bMechLabel;
     }
 
-    public HashMap getDCRecord()
+    public DCElement[] getDCRecord()
     {
-        return dcRecordMap;
+        return dcRecord;
     }
 
-    public void setDCRecord(HashMap dcRecordMap)
+    public void setDCRecord(DCElement[] dcRecord)
     {
-        this.dcRecordMap = dcRecordMap;
+        this.dcRecord = dcRecord;
     }
 
     public HashMap getBMechMethodMap()
