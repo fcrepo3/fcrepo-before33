@@ -10,7 +10,8 @@
 			</inlinemediaobject>
 		</title>
 		<title>Fedora API-M Admin GUI Client User Documentation</title>
-		<corpauthor>Fedora Development Team</corpauthor>
+		<subtitle>Software Release 1.1</subtitle>
+ 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -33,9 +34,9 @@
 	</sect1>
 	<sect1>
 		<title>Using the GUI</title>
-		<para>To start Fedora Administrator, type</para> 
-            <para>fedora-admin [hostname] [port] [user] [pass]</para>  
-            <para>For example,
+		<para>To start Fedora Administrator, type</para>
+		<para>fedora-admin [hostname] [port] [user] [pass]</para>
+		<para>For example,
             <emphasis>fedora-admin localhost 8080 fedoraAdmin fedoraAdmin</emphasis> will start
             the GUI for a server running on the local machine, port 8080,
             where fedoraAdmin's password is simply, "fedoraAdmin".

@@ -10,7 +10,7 @@
 			</inlinemediaobject>
 		</title>
 		<title>Digital Object Construction Guide</title>
-		<subtitle>Software Release 1.0</subtitle>
+		<subtitle>Software Release 1.1</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -29,16 +29,20 @@
 		<para>All Fedora objects conform to the Fedora digital object model which is described in detail elsewhere (<ulink url="http://www.fedora.info/pubs.shtml#pubs">Fedora publications</ulink>).  Briefly, the Fedora object model consists of:</para>
 		<itemizedlist>
 			<listitem>
-				<para><emphasis role="bold">PID</emphasis> - a persistent, unique identifier for the object</para>
+				<para>
+					<emphasis role="bold">PID</emphasis> - a persistent, unique identifier for the object</para>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">Datastream(s)</emphasis> –  the component in a Fedora object that represents MIME-typed content.  An object can have one or more Datastreams. The content of a Datastream can be either data or metadata, and this content can either be stored internally in the Fedora repository, or stored remotely (in which case Fedora holds a pointer to the content in the form of a URL).</para>
+				<para>
+					<emphasis role="bold">Datastream(s)</emphasis> –  the component in a Fedora object that represents MIME-typed content.  An object can have one or more Datastreams. The content of a Datastream can be either data or metadata, and this content can either be stored internally in the Fedora repository, or stored remotely (in which case Fedora holds a pointer to the content in the form of a URL).</para>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">System Metadata</emphasis> – a set of system-defined attributes that are necessary to manage and track the object in the repository.</para>
+				<para>
+					<emphasis role="bold">System Metadata</emphasis> – a set of system-defined attributes that are necessary to manage and track the object in the repository.</para>
 			</listitem>
 			<listitem>
-				<para><emphasis role="bold">Disseminator(s)</emphasis> -  the component in a Fedora object that associates a service with the object for the purpose of transforming or presenting the content represented by Datastreams.  An object can have zero or more Disseminators.  Each Disseminator points to a <emphasis>Behavior Definition</emphasis> and a <emphasis>Behavior Mechanism</emphasis>.  A <emphasis>Behavior Definition</emphasis> defines an abstract set of methods to which the object is said to “subscribe.”  A <emphasis>Behavior Mechanism</emphasis> defines the concrete bindings to a service that implements the abstract methods of the <emphasis>Behavior Definition</emphasis>. </para>
+				<para>
+					<emphasis role="bold">Disseminator(s)</emphasis> -  the component in a Fedora object that associates a service with the object for the purpose of transforming or presenting the content represented by Datastreams.  An object can have zero or more Disseminators.  Each Disseminator points to a <emphasis>Behavior Definition</emphasis> and a <emphasis>Behavior Mechanism</emphasis>.  A <emphasis>Behavior Definition</emphasis> defines an abstract set of methods to which the object is said to “subscribe.”  A <emphasis>Behavior Mechanism</emphasis> defines the concrete bindings to a service that implements the abstract methods of the <emphasis>Behavior Definition</emphasis>. </para>
 			</listitem>
 		</itemizedlist>
 	</sect1>
@@ -96,13 +100,17 @@
 					<para>c. Clients for ingest</para>
 					<itemizedlist>
 						<listitem>
-							<para><emphasis>Admin GUI</emphasis>  - From the menu select File/Ingest.  You will be prompted to select a file from the file system so make sure your submission package XML file is on a drive that is visible from the machine on which the Admin GUI is running.  For more details, see the guide entitled “Java Application: Admin GUI – Object Creation and Repository Management via API-M” in the Client Documentation. </para>
+							<para>
+								<emphasis>Admin GUI</emphasis>  - From the menu select File/Ingest.  You will be prompted to select a file from the file system so make sure your submission package XML file is on a drive that is visible from the machine on which the Admin GUI is running.  For more details, see the guide entitled “Java Application: Admin GUI – Object Creation and Repository Management via API-M” in the Client Documentation. </para>
 						</listitem>
 						<listitem>
-							<para><emphasis>Batch Loader via Admin GUI</emphasis> – From the menu, select Tool/Batch/IngestBatch.  This will provide a means to select a target directory where one or more METS submission packages reside.  Multiple objects can be loaded via this utility.  See the guide entitled “Admin GUI -- Batch Utility for Object Creation” in the Client Documentation. </para>
+							<para>
+								<emphasis>Batch Loader via Admin GUI</emphasis> – From the menu, select Tool/Batch/IngestBatch.  This will provide a means to select a target directory where one or more METS submission packages reside.  Multiple objects can be loaded via this utility.  See the guide entitled “Admin GUI -- Batch Utility for Object Creation” in the Client Documentation. </para>
 						</listitem>
 						<listitem>
-							<para><emphasis>AutoIngester Script</emphasis></para>
+							<para>
+								<emphasis>AutoIngester Script</emphasis>
+							</para>
 						</listitem>
 					</itemizedlist>
 				</listitem>
@@ -110,7 +118,7 @@
 		</sect2>
 		<sect2>
 			<title>
-				<emphasis> Interactive Building  (not available in Release 1.0 of Fedora)</emphasis>
+				<emphasis> Interactive Building  (not available in Release 1.1 of Fedora)</emphasis>
 			</title>
 			<itemizedlist>
 				<listitem>
@@ -120,7 +128,8 @@
 					<para>b. Clients for interactive building</para>
 					<itemizedlist>
 						<listitem>
-							<para><emphasis>Admin GUI</emphasis>  - From the menu, select Builders/DataObjectBuilder.  This will open up a wizard for creating new data objects. </para>
+							<para>
+								<emphasis>Admin GUI</emphasis>  - From the menu, select Builders/DataObjectBuilder.  This will open up a wizard for creating new data objects. </para>
 						</listitem>
 					</itemizedlist>
 				</listitem>
@@ -138,7 +147,8 @@
 					<para>b. Clients for batch loading</para>
 					<itemizedlist>
 						<listitem>
-							<para><emphasis>Admin GUI</emphasis> – From the menu, select Tools/Batch.  For more information see the guide entitled “Java Application: Admin GUI -- Batch Utility for Object Creation” in the Client Documentation. </para>
+							<para>
+								<emphasis>Admin GUI</emphasis> – From the menu, select Tools/Batch.  For more information see the guide entitled “Java Application: Admin GUI -- Batch Utility for Object Creation” in the Client Documentation. </para>
 						</listitem>
 					</itemizedlist>
 				</listitem>
@@ -160,23 +170,31 @@
 					<itemizedlist>
 						<listitem>
 							<para>Fedora Method Map [for Behavior Def and Mech]</para>
-							<blockquote><para>Namespace: http://fedora.comm.nsdlib.org/service/methodmap</para>
-							<para>Schema Loc: %FEDORA_HOME%\dist\server\xsd\methodmap.xsd</para></blockquote>
+							<blockquote>
+								<para>Namespace: http://fedora.comm.nsdlib.org/service/methodmap</para>
+								<para>Schema Loc: %FEDORA_HOME%\dist\server\xsd\methodmap.xsd</para>
+							</blockquote>
 						</listitem>
 						<listitem>
 							<para>OAI Dublin Core [for Behavior Def and Mech]</para>
-							<blockquote><para>Namespace:"http://www.openarchives.org/OAI/2.0/oai_dc/</para>
-							<para>Schema Loc:  http://www.openarchives.org/OAI/openarchivesprotocol.html</para></blockquote>
+							<blockquote>
+								<para>Namespace:"http://www.openarchives.org/OAI/2.0/oai_dc/</para>
+								<para>Schema Loc:  http://www.openarchives.org/OAI/openarchivesprotocol.html</para>
+							</blockquote>
 						</listitem>
 						<listitem>
 							<para>Web Services Description Language (WSDL)  [for Behavior Mech]</para>
-							<blockquote><para>Namespace: http://schemas.xmlsoap.org/wsdl/</para>
-							<para>Schema Loc: http://www.w3.org/TR/wsdl</para></blockquote>
+							<blockquote>
+								<para>Namespace: http://schemas.xmlsoap.org/wsdl/</para>
+								<para>Schema Loc: http://www.w3.org/TR/wsdl</para>
+							</blockquote>
 						</listitem>
 						<listitem>
 							<para>Fedora Datastream Input Spec [for Behavior Mech]</para>
-							<blockquote><para>Namespace: http://fedora.comm.nsdlib.org/service/bindspec</para>
-							<para>Schema Loc: %FEDORA_HOME%\dist\server\xsd\bindspec.xsd</para></blockquote>
+							<blockquote>
+								<para>Namespace: http://fedora.comm.nsdlib.org/service/bindspec</para>
+								<para>Schema Loc: %FEDORA_HOME%\dist\server\xsd\bindspec.xsd</para>
+							</blockquote>
 						</listitem>
 					</itemizedlist>
 				</listitem>
@@ -197,10 +215,13 @@
 					<para>b. Clients for interactive building</para>
 					<itemizedlist>
 						<listitem>
-							<para><emphasis>Admin GUI</emphasis>  - From the menu, select Builders/BDefBuilder or Builders/BMechBuilder.  These will open up a respective wizard for creating new objects.  For more details see the guide 	entitled “Java Application: Admin GUI -- Behavior Definition and Mechanism Builders” in the Client Documentation.</para>
+							<para>
+								<emphasis>Admin GUI</emphasis>  - From the menu, select Builders/BDefBuilder or Builders/BMechBuilder.  These will open up a respective wizard for creating new objects.  For more details see the guide 	entitled “Java Application: Admin GUI -- Behavior Definition and Mechanism Builders” in the Client Documentation.</para>
 						</listitem>
 						<listitem>
-							<para><emphasis>AutoIngester Script</emphasis></para>
+							<para>
+								<emphasis>AutoIngester Script</emphasis>
+							</para>
 						</listitem>
 					</itemizedlist>
 				</listitem>
@@ -255,7 +276,7 @@
 							<para>b.   Datastreams that are encoded in the METS:fileSec must follow the following pattern to establish proper version groups and datastream IDs.  Each datastream has its own 	METS:fileGrp whose ID attribute is the official datastream ID.  The recommended convention is ID=”DSn” where n is a number (for example ID=”DS1” or ID=”DS2).” </para>
 						</listitem>
 						<listitem>
-							<para>c.  Within a METS:fileGrp, there can be one or more METS:file elements to represent different versions of a datastream.  In Fedora 1.0, only one version will be supported.  The 	METS:file element for the datastream must have and ID attribute that represent the version number relative to the datastream ID set in the METS:fileGrp.  The recommended convention is ID=”DSn.v”  where n is the 	number of the datastream and v is the version number (for example ID=DS1.0 or ID=DS1.1). </para>
+							<para>c.  Within a METS:fileGrp, there can be one or more METS:file elements to represent different versions of a datastream.  In Fedora 1.1, only one version will be supported.  The METS:file element for the datastream must have and ID attribute that represent the version number relative to the datastream ID set in the METS:fileGrp.  The recommended convention is ID=”DSn.v”  where n is the 	number of the datastream and v is the version number (for example ID=DS1.0 or ID=DS1.1). </para>
 						</listitem>
 						<listitem>
 							<para>d. The METS:file element for a datastream must have a CREATED attribute whose value is populated with a date in the following format:        “YYYY-MM-DDThh:mm:ss”.  </para>
@@ -311,10 +332,10 @@
 					<para>Disseminators</para>
 					<itemizedlist>
 						<listitem>
-							<para>a.  Each Disseminator is encoded in its own METS:behaviorSec element.  The METS:behaviorSec element acts as a version container for different versions of the Disseminator.  In Fedora 1.0, only one version is supported.  Each Disseminator must have a disseminator ID which is encode in the ID attribute of the METS:behaviorSec.  The recommended convention is ID=”DISSn” where n is a 	number (for example ID=”DISS1” or ID=”DISS2).”  </para>
+							<para>a.  Each Disseminator is encoded in its own METS:behaviorSec element.  The METS:behaviorSec element acts as a version container for different versions of the Disseminator.  In Fedora 1.1, only one version is supported.  Each Disseminator must have a disseminator ID which is encode in the ID attribute of the METS:behaviorSec.  The recommended convention is ID=”DISSn” where n is a 	number (for example ID=”DISS1” or ID=”DISS2).”  </para>
 						</listitem>
 						<listitem>
-							<para>b.  The METS:serviceBinding element represents a particular version of the disseminator.  Again, in Fedora 1.0 only one version is supported.  The element must have and ID attribute that represent the version number relative to the Disseminator ID that is set in the METS:behaviorSec.  The recommended convention is ID=”DISSn.v”  where n is the number of the Disseminator and v is the version number (for example ID=DISS1.0 or ID=DISS1.1). </para>
+							<para>b.  The METS:serviceBinding element represents a particular version of the disseminator.  Again, in Fedora 1.1 only one version is supported.  The element must have and ID attribute that represent the version number relative to the Disseminator ID that is set in the METS:behaviorSec.  The recommended convention is ID=”DISSn.v”  where n is the number of the Disseminator and v is the version number (for example ID=DISS1.0 or ID=DISS1.1). </para>
 						</listitem>
 						<listitem>
 							<para>c.  The METS:serviceBinding element must have a CREATED attribute whose value is populated with a date in the following format: “YYYY-MM-DDThh:mm:ss”. </para>
@@ -391,7 +412,7 @@
 					<para>	Disseminators</para>
 					<itemizedlist>
 						<listitem>
-							<para>a.  Behavior Definition Objects use what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  It’s purpose is to allow the contents of Behavior Definition Objects to be disseminated via the Fedora Access API.  In Fedora 1.0, the Bootstrap Disseminator functionality it not turned on.  However, it must still be encoded in the METS submission package.:</para>
+							<para>a.  Behavior Definition Objects use what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  It’s purpose is to allow the contents of Behavior Definition Objects to be disseminated via the Fedora Access API.  In Fedora 1.1, the Bootstrap Disseminator functionality is not turned on.  However, it must still be encoded in the METS submission package.:</para>
 						</listitem>
 						<listitem>
 							<para>b.  In terms of encoding the bootstrap disseminator, follow the examples in the demo objects.  The METS:behaviorSec and the METS:structMap are static, meaning that they will be the same in every Behavior Definition Object.  It is recommended that these sections just be copied into new objects from a demo object.</para>
@@ -461,7 +482,7 @@
 					<para>Disseminators</para>
 					<itemizedlist>
 						<listitem>
-							<para>a.  Behavior Mechanism Objects uses what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  It’s purpose is to allow the contents of Behavior Mechanism Objects to be disseminated via the Fedora Access API.  In Fedora 1.0, the Bootstrap Disseminator functionality it not turned on.  However, it must still be encoded in the METS submission package.</para>
+							<para>a.  Behavior Mechanism Objects uses what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  It’s purpose is to allow the contents of Behavior Mechanism Objects to be disseminated via the Fedora Access API.  In Fedora 1.1, the Bootstrap Disseminator functionality it not turned on.  However, it must still be encoded in the METS submission package.</para>
 						</listitem>
 						<listitem>
 							<para>b.  In terms of encoding the bootstrap disseminator, follow the examples in the demo objects.  The METS:behaviorSec and the METS:structMap are static, meaning that they will be the same in every Behavior Mechanism object.  It is recommended that these sections just be copied into new objects from a demo object.</para>

@@ -6,15 +6,16 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>-->
 <article>
 	<articleinfo>
-		<title><inlinemediaobject>
+		<title>
+			<inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject></title>
+			</inlinemediaobject>
+		</title>
 		<title>Fedora Known Issues</title>
-		<author>
-			<othername>Fedora Development Team</othername>
-		</author>
+		<subtitle>Software Release 1.1</subtitle>
+		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>

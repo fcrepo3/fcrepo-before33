@@ -2,12 +2,15 @@
 <article>
 	<articleinfo>
 		<graphic fileref="images//newlogo2.jpg"/>
-		<title><inlinemediaobject>
+		<title>
+			<inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject></title>
+			</inlinemediaobject>
+		</title>
 		<title>Admin GUI - Behavior Definition and Behavior Mechanism Builders User Documentation</title>
+		<subtitle>Software Release 1.1</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -24,11 +27,15 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
-		<para><emphasis>Behavior Definition Builder:</emphasis></para>
+		<para>
+			<emphasis>Behavior Definition Builder:</emphasis>
+		</para>
 		<para>This is available in the Fedora Administration client application (Admin GUI).  See the Help facilities in the builder tool.</para>
 	</sect1>
-    <sect1>
-		<para><emphasis>Behavior Mechanism Builder</emphasis></para>
+	<sect1>
+		<para>
+			<emphasis>Behavior Mechanism Builder</emphasis>
+		</para>
 		<para>This is available in the Fedora Administration client application (Admin GUI).  See the Help facilities in the builder tool.</para>
 	</sect1>
 </article>

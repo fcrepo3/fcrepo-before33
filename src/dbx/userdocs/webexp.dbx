@@ -15,6 +15,7 @@
 			</inlinemediaobject>
 		</title>
 		<title>Web Exposure</title>
+		<subtitle>Software Release 1.1</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -81,7 +82,7 @@
 					</listitem>
 					<listitem>
 						<para>
-							<emphasis>dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
+							<emphasis>dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.1.)</para>
 					</listitem>
 					<listitem>
 						<para>
@@ -132,7 +133,7 @@
 					</listitem>
 					<listitem>
 						<para>
-							<emphasis>dateTime</emphasis> - an optional dateTime parameter indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.).</para>
+							<emphasis>dateTime</emphasis> - an optional dateTime parameter indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.1.).</para>
 					</listitem>
 					<listitem>
 						<para>

@@ -7,12 +7,15 @@
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
-		<title><inlinemediaobject>
+		<title>
+			<inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject></title>
+			</inlinemediaobject>
+		</title>
 		<title>Fedora Server User Documentation</title>
+		<subtitle>Software Release 1.1</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -33,7 +36,9 @@
 	</sect1>
 	<sect1>
 		<title>Code Documentation</title>
-		<para><ulink url="serverdocs/index.html">Javadocs</ulink></para>
+		<para>
+			<ulink url="serverdocs/index.html">Javadocs</ulink>
+		</para>
 	</sect1>
 	<sect1>
 		<title>Access Control and Authentication</title>

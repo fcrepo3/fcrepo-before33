@@ -14,7 +14,7 @@
 			</inlinemediaobject>
 		</title>
 		<title>The Demo Manual - Description of Demonstration Objects</title>
-		<subtitle>for Software Release 1.0</subtitle>
+		<subtitle>for Software Release 1.1</subtitle>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -30,7 +30,8 @@
 	</bookinfo>
 	<preface>
 		<title>About This Manual</title>
-		<para>This manual describes the demonstration objects that are distributed with the Fedora open-source repository software.  These objects can be loaded into the repository in one of two ways.  The xml source files can be "ingested" into the repository via the Fedora Admin GUI  client (from the command prompt, run: fedora-admin).  Otherwise, they can be loaded with all other demos by running the demo load script (from the command prompt, run: fedora-ingest-demos [hostname] [port] [username] [password]). The demo object source xml files for the demo objects can be found in the following directory:  <emphasis role="bold">[FEDORA_HOME]/client/demo</emphasis></para>
+		<para>This manual describes the demonstration objects that are distributed with the Fedora open-source repository software.  These objects can be loaded into the repository in one of two ways.  The xml source files can be "ingested" into the repository via the Fedora Admin GUI  client (from the command prompt, run: fedora-admin).  Otherwise, they can be loaded with all other demos by running the demo load script (from the command prompt, run: fedora-ingest-demos [hostname] [port] [username] [password]). The demo object source xml files for the demo objects can be found in the following directory:  <emphasis role="bold">[FEDORA_HOME]/client/demo</emphasis>
+		</para>
 		<para>
 			<itemizedlist>
 				<title>There are two categories of demonstrations:</title>

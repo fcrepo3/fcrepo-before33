@@ -15,7 +15,7 @@
 			</inlinemediaobject>
 		</title>
 		<title>Fedora Installation and Configuration Guide</title>
-		<subtitle>Software Release 1.0</subtitle>
+		<subtitle>Software Release 1.1</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -66,30 +66,30 @@
 					<para>Decide where you want the Fedora software to reside.  For example, C:\ or /usr/local.</para>
 				</listitem>
 				<listitem>
-					<para>Unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.0.  This will be the home directory of Fedora.</para>
+					<para>Unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.1.  This will be the home directory of Fedora.</para>
 				</listitem>
 				<listitem>
-					<para>If you're in Unix, you must change the permissions of the files in the server/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.0/server/bin/*</emphasis>
+					<para>If you're in Unix, you must change the permissions of the files in the server/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.1/server/bin/*</emphasis>
 					</para>
 				</listitem>
 			</itemizedlist>
 			<para>Client binary distribution:</para>
 			<itemizedlist>
 				<listitem>
-					<para>If a server is already unpacked on the machine, put the client in the same place.  That is, if your server is unpacked into C:\fedora-1.0\server\, go to C:\ and unpack the client from there.  It will go into C:\fedora-1.0\client, so that now both the client and server are under one common directory.</para>
+					<para>If a server is already unpacked on the machine, put the client in the same place.  That is, if your server is unpacked into C:\fedora-1.1\server\, go to C:\ and unpack the client from there.  It will go into C:\fedora-1.1\client, so that now both the client and server are under one common directory.</para>
 				</listitem>
 				<listitem>
-					<para>If the machine you're installing on doesn't have a server, decide where you want the client to reside.  For example, C:\ or /usr/local.  Then unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.0.  This will be the home directory of Fedora.</para>
+					<para>If the machine you're installing on doesn't have a server, decide where you want the client to reside.  For example, C:\ or /usr/local.  Then unpack the archive in that directory.  It will create its own directory, named according to the version... like fedora-1.1.  This will be the home directory of Fedora.</para>
 				</listitem>
 				<listitem>
-					<para>If you're in Unix, you must change the permissions of the files in the client/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.0/client/bin/*</emphasis>
+					<para>If you're in Unix, you must change the permissions of the files in the client/bin directory so that you can execute them.  For instance, if you installed in /usr/local, this can be done with the command <emphasis>chmod 755 /usr/local/fedora-1.1/client/bin/*</emphasis>
 					</para>
 				</listitem>
 			</itemizedlist>
 			<para>Source Code:</para>
 			<itemizedlist>
 				<listitem>
-					<para>Decide where you want to work with the source code and unpack it there.  It will create its own directory, named according to the version... like fedora-1.0-src.  This will be your Fedora development directory.</para>
+					<para>Decide where you want to work with the source code and unpack it there.  It will create its own directory, named according to the version... like fedora-1.1-src.  This will be your Fedora development directory.</para>
 				</listitem>
 			</itemizedlist>
 		</section>
@@ -130,7 +130,7 @@
 			<para>For source code installations:</para>
 			<itemizedlist>
 				<listitem>
-					<para>FEDORA_DEV should contain the directory under which the source was unpacked, including the version part of the path.  For instance, if you installed the source in C:\ and it unpacked into C:\fedora-src-1.0\, FEDORA_DEV should be C:\fedora-src-1.0</para>
+					<para>FEDORA_DEV should contain the directory under which the source was unpacked, including the version part of the path.  For instance, if you installed the source in C:\ and it unpacked into C:\fedora-src-1.1\, FEDORA_DEV should be C:\fedora-src-1.1</para>
 				</listitem>
 				<listitem>
 					<para>PATH should contain the bin directory of Ant.  If you don't already have Ant installed, or you have a version before v1.4.1, you can use the version that comes with the Fedora source distribution in under %FEDORA_DEV%\res\ant\bin (in Windows) or $FEDORA_DEV/res/ant/bin (in Unix).  IMPORTANT: If you use your own version of Ant, be sure it's v1.4.1+ or the build may not work. You can verify this by typing "ant -version" at the command prompt.  Note: If you opt to use the ant binaries included with the source, and you're in Unix, be sure to change the permissions on the files in the bin directory so that you can execute ant.  This can be done with the command: <emphasis>EDORA_DEV/res/ant/bin/*</emphasis>

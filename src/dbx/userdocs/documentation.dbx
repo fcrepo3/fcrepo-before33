@@ -15,7 +15,7 @@
 			</inlinemediaobject>
 		</title>
 		<title>Fedora System Documentation</title>
-		<subtitle>Software Release 1.0</subtitle>
+		<subtitle>Software Release 1.1</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -44,7 +44,7 @@
 			<member>
 				<ulink url="distribution/release-notes.html">Release Notes</ulink>
 			</member>
-<!--			<member>
+			<!--			<member>
 				<ulink url="distribution/known-issues.html">Known Issues</ulink>
 			</member>-->
 			<member>
@@ -90,7 +90,7 @@
 			<member>
 				<ulink url="client/admin-gui/apim/index.html">Java Application: Admin GUI -- for API-M</ulink>
 			</member>
-<!--			<member>
+			<!--			<member>
 				<ulink url="client/admin-gui/apim/do-const.html">Java Application: Admin GUI - Object Creation and Repository Management via API-M</ulink>
 			</member>-->
 			<member>
