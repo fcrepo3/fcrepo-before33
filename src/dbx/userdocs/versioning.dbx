@@ -1,9 +1,9 @@
 <!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Ronda A. Grizzle (University of Virginia) -->
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!-- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> -->
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
@@ -35,6 +35,138 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
-		<para>Release 1.2 of Fedora includes content versioning functionality. This document will explain how content versioning works both server side and as a function of search results.</para>
+		<para>Fedora v1.2 for the first time includes content versioning functionality. Using this new capability, Fedora repository managers can provide preservation capabilities to repository content owners.</para>
+		<para>All components of data objects can be versioned in Fedora v1.2. Versioning of behavior objects (Behavior Definitions and Behavior Mechanisms) is in scope for future releases of the software.</para>
+	</sect1>
+	<sect1>
+		<title>How It Works in the XML</title>
+		<para>In a Fedora data object, datastreams are represented in fedora:mets by &lt;filegrp&gt; elements. When a modification is made to a datastream, a new &lt;file&gt; element is added to the &lt;filegrp&gt;. Disseminators are defined in the &lt;mets:behaviorSec&gt; element. As disseminators in the object are modified, new &lt;mets:serviceBinding&gt; elements are added to the &lt;mets:behaviorSec&gt;.</para>
+	</sect1>
+	<sect1>
+		<title>Fedora Administrator</title>
+		<para>Any component of an object that may be modified is shown in Fedora Administrator as either an editable text box or by means of an Edit button on the active pane. Any modification to a data object component results in a new version of that component being created and stored in the xml of the data object.</para>
+		<para>Previous versions of an edited datastream or disseminator may be viewed, but cannot be edited. A slider bar is provided to indicate that previous versions of a datastream or disseminator exist. Versions are represented on this timeline by small vertical lines. Clicking on the bar will move the slider to the points on the timeline. Additionally the slider may be dragged along the timeline to show all versions.</para>
+		<para>The following screen shots show a versioned image datastream:</para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="images/dsversion1.jpg"/>
+			</imageobject>
+		</mediaobject>
+		<para/>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="images/dsversion2.jpg"/>
+			</imageobject>
+		</mediaobject>
+	</sect1>
+	<sect1>
+		<title>Search and Retrieval in Fedora Administrator</title>
+		<para>Retrieval of a specific version of a datastream requires using the Advanced Search tab on the Search Repository dialog and entering a specific date/time stamp as a search criteria.</para>
+		<para>All components are given a created date (cDate) value at ingest. Whenever the component is modified, the modified date (mDate) value is updated. By searching on the modified date, it is possible to retrieve a previous version of a datastream. Wild card values are allowed in the date/time search criteria. For example</para>
+		<blockquote>
+			<para>mDate&lt;=2003-08-28T*</para>
+		</blockquote>
+		<para>and</para>
+		<blockquote>
+			<para>mDate&lt;=2003-08-28T23:59:59</para>
+		</blockquote>
+		<para>are both valid search criteria.</para>
+		<para>In the case of Dublin Core Metadata datastreams, the modified date is stored in the dcmDate element. To retrieve a version of Dublin Core metadata, the user must search using this element.</para>
+		<para>If no date/time stamp is entered as a search criteria, the most current version of a data object is always returned as the result of a search.</para>
+	</sect1>
+	<sect1>
+		<title>API-A-Lite Web Interface</title>
+		<para>Retrieval of specific versions of objects via API-A-Lite also depends on entering date/time parameter values. This section gives the syntax for the getDissemination and getObjectSyntax methods.</para>
+		<para>If no date/time value is used in the URL, the most current version of a data object is always returned as the result of a search.</para>
+		<variablelist>
+			<title>getDissemination syntax:</title>
+			<varlistentry>
+				<term>http://hostname:port/fedora/get/PID/bDefPID/methodName<emphasis role="bold">[/dateTime][?parmArray]</emphasis>
+				</term>
+				<listitem>
+					<para>This syntax requests a dissemination of the specified object using the specified method of the associated behavior definition object. The result is returned as a MIME-typed stream. </para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<blockquote>
+			<itemizedlist>
+				<listitem>
+					<para>hostname - required hostname of the Fedora server. </para>
+				</listitem>
+				<listitem>
+					<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+				</listitem>
+				<listitem>
+					<para>fedora - a required parameter specifying the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>get - a required parameter specifying the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>PID - required persistent identifier of the digital object.</para>
+				</listitem>
+				<listitem>
+					<para>bDefPID - required persistent identifier of the behavior definition object to which the digital object subscribes.</para>
+				</listitem>
+				<listitem>
+					<para>methodName - required name of the method to be executed.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS
+where HH is 24-hour clock.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1=value1&amp;parm2=value2...</para>
+				</listitem>
+			</itemizedlist>
+		</blockquote>
+		<para>For example</para>
+		<blockquote>
+			<para>http://localhost:8080/fedora/get/ronda:2/demo:1/getDissemination/2003-08-28T00:01:01</para>
+		</blockquote>
+		<variablelist>
+			<title>getObjectProfile syntax:</title>
+			<varlistentry>
+				<term>http://hostname:port/fedora/get/PID<emphasis role="bold">[/dateTime][?xml=BOOLEAN]</emphasis>
+				</term>
+				<listitem>
+					<para>This syntax requests an object profile for the specified digital object. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of &quot;false&quot;, a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is &quot;true&quot;, then a MIME-typed stream consisting of XML is returned.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<blockquote>
+			<itemizedlist>
+				<listitem>
+					<para>hostname - required hostname of the Fedora server. </para>
+				</listitem>
+				<listitem>
+					<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+				</listitem>
+				<listitem>
+					<para>fedora - a required parameter specifying the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>get - a required parameter specifying the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>PID - required persistent identifier of the digital object.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS
+where HH is 24-hour clock.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;true&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;false&quot; indicates format is to be text/html.</para>
+				</listitem>
+			</itemizedlist>
+		</blockquote>
+		<para>For example</para>
+		<blockquote>
+			<para>http://localhost:8080/fedora/get/ronda:2/2003-08-28T00:01:01</para>
+		</blockquote>
 	</sect1>
 </article>
