@@ -19,23 +19,11 @@ import java.io.InputStream;
 public abstract class Datastream
 {
 
-  /** ControlGrp "Fedora Content" (internal) datastreams */
-  public final static int INTERNAL = 0;
-
-  /** ControlGrp "Fedora User Metadata" (internal/inline) datastreams */
-  public final static int INTERNAL_INLINE = 1;
-
-  /** ControlGrp for "External Referenced Content" (external) datastreams */
-  public final static int EXTERNAL = 2;
-
-  /** Future(?): ControlGrp "External Service Request" (external/request) datastreams */
-  public final static int EXTERNAL_REQUEST = 3;
-
   public String parentPID;
 
   public String datastreamID;
 
-  /** Control Group: INTERNAL/INLINEMETA/EXTERNAL/EXREQUEST  */
+  /** Control Group: INTERNAL=0/INLINEMETA=1/EXTERNAL=2/EXREQUEST=3  */
   public int dsControlGrp;
 
   public String dsLabel;
@@ -54,10 +42,5 @@ public abstract class Datastream
   public Datastream()
   {
   }
-
-  public abstract InputStream getContentStream();
-
-  public abstract byte[] getContentBytes(int length, int offset);
-
 
 }
