@@ -79,29 +79,36 @@ public abstract class DOTranslationUtility {
 
 	/**
 	 *
-	 * 	SERIALIZE_EXPORT_ABSOLUTE:  Serialize java object to XML appropriate
-	 *  for "public" export (absolute URLs). This gives a "public" export of an
-	 *  object in which all relative repository URLs AND internal identifiers
-	 *  are converted to public callback URLs.  For External (E) and
-	 *  Redirected (R) datastreams, any URLs that are relative to the
-	 *  local repository are converted to absolute URLs using the currently
-	 *  configured hostname:port of the repository. For Managed Content (M)
-	 *  datastreams, the internal identifiers in dsLocation are converted
-	 *  to default dissemination URLs so they can serve as callbacks
-	 *  to the repository to obtain the internally managed content.  Also,
-	 *  selected inline XML datastreams (i.e., WSDL and SERVICE_PROFILE)
+	 * 	SERIALIZE_EXPORT_PUBLIC:  Serialize digital object to XML appropriate
+	 *  for "public" external use. This is context is appropriate 
+	 *  when the exporting repository will continue to exist and will continue 
+	 *  to support callback URLs for datastream content and disseminations.
+	 *  This gives a "public" export of an object in which all relative repository 
+	 *  URLs AND internal identifiers are converted to absolute callback URLs.  
+	 * 
+	 *  For External (E) and Redirected (R) datastreams, any URLs that are 
+	 *  relative to the local repository are converted to absolute URLs using 
+	 *  the currently configured hostname:port of the repository. 
+	 *  For Managed Content (M) datastreams, the internal identifiers in 
+	 *  dsLocation are converted to default dissemination URLs so they can 
+	 *  serve as callbacks to the repository to obtain the internally managed content.  
+	 *  Also, selected inline XML datastreams (i.e., WSDL and SERVICE_PROFILE)
 	 *  are searched for relative repository URLs and they are made absolute.
 	 */
-	public static final int SERIALIZE_EXPORT_ABSOLUTE=1;
+	public static final int SERIALIZE_EXPORT_PUBLIC=1;
 
 	/**
 	 *
-	 * 	SERIALIZE_EXPORT_RELATIVE:  Serialize java object to XML
-	 *  appropriate for migrating or moving objects from one repository
-	 *  to another.  For External (E) and Redirected (R)datastreams,
-	 *  any URLs that are relative to the local repository will be expressed
-	 *  with the Fedora local URL syntax (which consists of the string
-	 *  "local.fedora.server" standing in place of the actual "hostname:port").
+	 * 	SERIALIZE_EXPORT_MIGRATE:  Serialize digital object to XML
+	 *  in a manner appropriate for migrating or moving objects from 
+	 *  one repository to another.  This context is appropriate when the local 
+	 *  repository will NOT be available after objects have been migrated 
+	 *  to a new repository. 
+	 * 
+	 *  For External (E) and Redirected (R)datastreams, any URLs that are 
+	 *  relative to the local repository will be expressed with the Fedora 
+	 *  local URL syntax (which consists of the string "local.fedora.server" 
+	 *  standing in place of the actual "hostname:port").
 	 *  This enables a new repository to ingest the serialization and maintain
 	 *  the relative nature of the URLs (they will become relative to the *new*
 	 *  repository.  Also, for Managed Content (M) datastreams, the internal
@@ -110,9 +117,9 @@ public abstract class DOTranslationUtility {
 	 *  to obtain the content bytestream to be stored in the new repository.
 	 *  Also, within selected inline XML datastreams (i.e., WSDL and
 	 *  SERVICE_PROFILE) any URLs that are relative to the local repository
-	 *  will also be expressed with the Fedora local URL syntax.
+	 *  will also be expressed with the Fedora local URL syntax. 
 	 */
-	public static final int SERIALIZE_EXPORT_RELATIVE=2;
+	public static final int SERIALIZE_EXPORT_MIGRATE=2;
 
 	/**
 	 * 	SERIALIZE_STORAGE_INTERNAL:   Serialize java object to XML appropriate
@@ -356,8 +363,8 @@ public abstract class DOTranslationUtility {
 	 *             deserialization context.  Valid values are defined as constants
 	 *             in fedora.server.storage.translation.DOTranslationUtility:
 	 *             0=DOTranslationUtility.DESERIALIZE_INSTANCE
-	 *             1=DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE
-	 *             2=DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE
+	 *             1=DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC
+	 *             2=DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE
 	 *             3=DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL
 	 *
 	 * @return
@@ -369,7 +376,7 @@ public abstract class DOTranslationUtility {
 				// MAKE ABSOLUTE REPO URLs
 				ds.DSLocation = makeFedoraAbsoluteURLs(ds.DSLocation);
 			}
-		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE) {
+		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC) {
 			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
 				// MAKE ABSOLUTE REPO URLs
 				ds.DSLocation = makeFedoraAbsoluteURLs(ds.DSLocation);
@@ -389,7 +396,7 @@ public abstract class DOTranslationUtility {
 						+ DateUtility.convertDateToString(ds.DSCreateDT);
 				}
 			}
-		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE) {
+		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE) {
 			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")){
 				// MAKE FEDORA LOCAL REPO URLs
 				ds.DSLocation=makeFedoraLocalURLs(ds.DSLocation);
@@ -438,8 +445,8 @@ public abstract class DOTranslationUtility {
 	 *             deserialization context.  Valid values are defined as constants
 	 *             in fedora.server.storage.translation.DOTranslationUtility:
 	 *             0=DOTranslationUtility.DESERIALIZE_INSTANCE
-	 *             1=DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE
-	 *             2=DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE
+	 *             1=DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC
+	 *             2=DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE
 	 *             3=DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL
 	 * @return   the inline XML contents with appropriate conversions.
 	 */
@@ -447,10 +454,10 @@ public abstract class DOTranslationUtility {
 		if (transContext==DOTranslationUtility.DESERIALIZE_INSTANCE) {
 			// MAKE ABSOLUTE REPO URLs
 			return makeFedoraAbsoluteURLs(xml);
-		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE) {
+		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC) {
 			// MAKE ABSOLUTE REPO URLs
 			return makeFedoraAbsoluteURLs(xml);
-		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE) {
+		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE) {
 			// MAKE FEDORA LOCAL REPO URLs
 			return makeFedoraLocalURLs(xml);
 		} else if (transContext==DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL) {
