@@ -17,8 +17,6 @@ public class DatastreamManagedContent
     public DatastreamManagedContent() {
     }
     
-    URL DSLocation;  // so it compiles, for now..
-    
     /**
      * Gets an InputStream to the content of this managed content
      * datastream.
@@ -27,7 +25,7 @@ public class DatastreamManagedContent
             throws StreamIOException {
         try {
             HttpURLConnection conn=(HttpURLConnection) 
-                    DSLocation.openConnection();
+                    new URL(DSLocation).openConnection();
             if (conn.getResponseCode()!=HttpURLConnection.HTTP_OK) {
                 throw new StreamIOException(
                         "Server returned a non-200 response code ("
@@ -45,7 +43,7 @@ public class DatastreamManagedContent
             DSMIME=conn.getContentType();
             if (DSMIME==null) {
                 DSMIME=HttpURLConnection.guessContentTypeFromName(
-                        DSLocation.getFile());
+                        DSLocation);
             }
             return ret;
         } catch (IOException ioe) {

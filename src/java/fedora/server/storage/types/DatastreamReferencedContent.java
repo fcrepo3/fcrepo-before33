@@ -17,8 +17,6 @@ public class DatastreamReferencedContent
     public DatastreamReferencedContent() {
     }
     
-    public URL DSLocation;  // only here.. not in Datastream.java
-
     /**
      * Gets an InputStream to the content of this externally-referenced
      * datastream.
@@ -38,7 +36,7 @@ public class DatastreamReferencedContent
             throws StreamIOException {
         try {
             HttpURLConnection conn=(HttpURLConnection) 
-                    DSLocation.openConnection();
+                    new URL(DSLocation).openConnection();
             if (conn.getResponseCode()!=HttpURLConnection.HTTP_OK) {
                 throw new StreamIOException(
                         "Server returned a non-200 response code ("
@@ -56,7 +54,7 @@ public class DatastreamReferencedContent
             DSMIME=conn.getContentType();
             if (DSMIME==null) {
                 DSMIME=HttpURLConnection.guessContentTypeFromName(
-                        DSLocation.getFile());
+                        DSLocation);
             }
             return ret;
         } catch (IOException ioe) {
