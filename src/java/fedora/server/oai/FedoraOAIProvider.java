@@ -426,17 +426,20 @@ public class FedoraOAIProvider
 
     public long getMaxSets()
             throws RepositoryException {
-        return m_maxSets;
+        return -1;
+        //return m_maxSets;
     }
             
     public long getMaxRecords()
             throws RepositoryException {
-        return m_maxRecords;
+        return -1;
+        //return m_maxRecords;
     }
             
     public long getMaxHeaders()
             throws RepositoryException {
-        return m_maxHeaders;
+        return -1;
+        //return m_maxHeaders;
     }
     
 }
