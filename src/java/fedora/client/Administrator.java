@@ -43,6 +43,7 @@ import fedora.swing.mdi.WindowMenu;
 import fedora.client.actions.ExportObject;
 import fedora.client.actions.PurgeObject;
 import fedora.client.actions.ViewObjectXML;
+import fedora.client.actions.ViewDatastreams;
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
 import fedora.client.export.AutoExporter;
@@ -226,6 +227,12 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
 
 
 */
+        JMenuItem fileViewDatastreams=new JMenuItem(new ViewDatastreams());
+        fileViewDatastreams.setMnemonic(KeyEvent.VK_D);
+        fileViewDatastreams.setToolTipText("Launches a viewer/editor for the datastreams of an object.");
+        fileViewDatastreams.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D,
+                ActionEvent.CTRL_MASK));
+
         JMenuItem fileView=new JMenuItem(new ViewObjectXML());
         fileView.setMnemonic(KeyEvent.VK_V);
         fileView.setToolTipText("Launches an XML viewer for an object.");
@@ -270,6 +277,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
 //        fileMenu.add(fileNew);
         fileMenu.add(fileIngest);
         fileMenu.add(fileView);
+        fileMenu.add(fileViewDatastreams);
 //        fileMenu.add(fileClose);
 //        fileMenu.addSeparator();
         fileMenu.add(fileExport);
@@ -658,8 +666,8 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         System.out.println("Using Fedora server at " + host + ":" + port + " with userId=" + user + " and password=[not displayed].");
         Administrator administrator=new Administrator(host, port, user, pass);
 
-        int xSize=710;
-        int ySize=580;
+        int xSize=810;
+        int ySize=630;
         Dimension screenSize=administrator.getToolkit().getScreenSize();
         int xLoc=(screenSize.width/2) - (xSize/2);
         int yLoc=(screenSize.height/2) - (ySize/2);

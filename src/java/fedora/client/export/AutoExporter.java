@@ -1,6 +1,7 @@
 package fedora.client.export;
 
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,7 +10,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
+
 import javax.xml.rpc.ServiceException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
 
 import fedora.client.APIMStubFactory;
 import fedora.server.management.FedoraAPIM;
@@ -56,10 +65,18 @@ public class AutoExporter {
     public static void export(FedoraAPIM skeleton, String pid, OutputStream outStream)
             throws RemoteException, IOException {
         byte[] bytes=skeleton.getObjectXML(pid);
-        for (int i=0; i<bytes.length; i++) {
-            outStream.write(bytes[i]);
+        try {
+            // use xerces to pretty print the xml, assuming it's well formed
+            OutputFormat fmt=new OutputFormat("XML", "UTF-8", true);
+            XMLSerializer ser=new XMLSerializer(outStream, fmt);
+            DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            DocumentBuilder builder=factory.newDocumentBuilder();
+            Document doc=builder.parse(new ByteArrayInputStream(bytes));
+            ser.serialize(doc);
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getClass().getName() + " : " + e.getMessage());
         }
-        outStream.close();
     }
 
     public static void showUsage(String errMessage) {

@@ -95,6 +95,7 @@ public class ViewObjectXML
                     JTextComponent textEditor=new JTextArea();
                     textEditor.setFont(new Font("monospaced", Font.PLAIN, 12));
                     textEditor.setText(new String(out.toByteArray()));
+                    textEditor.setCaretPosition(0);
                     viewFrame.getContentPane().add(new JScrollPane(textEditor));
                     viewFrame.setSize(600,400);
                     viewFrame.setVisible(true);
