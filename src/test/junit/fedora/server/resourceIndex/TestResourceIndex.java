@@ -54,7 +54,7 @@ public abstract class TestResourceIndex extends TestCase implements Constants {
         
         Map riMP = cl.getModuleParameters("fedora.server.resourceIndex.ResourceIndex");
         int level = Integer.parseInt((String)riMP.get("level"));
-        String datastoreId = (String)riMP.get("datastoreId");
+        String datastore = (String)riMP.get("datastore");
         
         Map cpMP = cl.getModuleParameters("fedora.server.storage.ConnectionPoolManager");
         String cPoolName = (String)cpMP.get("defaultPoolName");
@@ -84,7 +84,7 @@ public abstract class TestResourceIndex extends TestCase implements Constants {
         }
         SQLUtility.createNonExistingTables(m_cPool, specIn, new TestLogging());
         
-        Parameterized tsConf = cl.getDatastoreConfig(datastoreId);
+        Parameterized tsConf = cl.getDatastoreConfig(datastore);
         Map tsP = tsConf.getParameters();
         String connectorClassName = (String) tsP.get("connectorClassName");
         m_triplestorePath = (String)tsP.get("path");
