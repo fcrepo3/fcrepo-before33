@@ -37,30 +37,16 @@ public class Datastream
 
   private ArrayList m_auditRecordIdList;
 
-  public Datastream() {
-      m_auditRecordIdList=new ArrayList();
-  }
-
   public boolean isNew=false;
   
-  public String isVersionable;
+  public String DatastreamID;
   
   public String DatastreamURI;
+ 
+  public String DSFormatURI;
   
-  public String FormatURI;
-
-  public String DatastreamID;
-
-  public String DSVersionID;
-
-  public String DSLabel;
-
   public String DSMIME;
-
-  public Date DSCreateDT;
-
-  public long DSSize;
-
+  
   /** Datastream Control Group:
    *  This indicates the nature of the repository's control over the
    *  datastream content.  Values are:
@@ -75,17 +61,17 @@ public class Datastream
    *      cannot be piped through Fedora, or the datastream is an
    *      HTML document with relative hyperlinks to the server on
    *      which is is normally hosted.
-   *  E = ExternalRef.  The datastream content is external to the repository
+   *  E = External Referenced.  The datastream content is external to the repository
    *      and referenced by URL.  The content is not under the direct
    *      custodianship of the repository.  The URL is considered public
    *      so the repository does not worry about whether it exposes the
    *      datastream location to collaborating services.
-   *  M = Managed-Internal.  The datastream content is stored and managed
+   *  M = Managed Content.  The datastream content is stored and managed
    *      by the repository.  The content is considered under the direct
    *      custodianship of the repository.  The repository does not expose
    *      the underlying storage location to collaborating services and
    *      it mediates all access to the content by collaborating services.
-   *  X = Inline-XML-User-Metadata.  The datastream content is user-defined
+   *  X = Inline XML Metadata.  The datastream content is user-defined
    *      XML metadata that is stored within the digital object XML file itself.
    *      As such, it is intrinsically bound to the digital object, and by
    *      implication, it is stored and managed by the repository.  The content
@@ -98,9 +84,23 @@ public class Datastream
   public String DSInfoType;
 
   public String DSState;
-
+  
+  public String DSVersionable;
+  
+  public String DSCurrent;
+  
+  // Version-level attributes:
+  public String DSVersionID;
+  public String DSLabel;
+  public Date DSCreateDT;
+  public long DSSize;
   public String DSLocation;
 
+
+  public Datastream() {
+	  m_auditRecordIdList=new ArrayList();
+  }
+  
   public List auditRecordIdList()
   {
       return m_auditRecordIdList;
