@@ -159,13 +159,6 @@ public class FOXMLDOSerializer
         }
         buf.append(indent + "PID=\"" + obj.getPid() + "\" ");
 		buf.append(indent + "URI=\"" + "info:fedora/" + obj.getPid()+ "\"");
-		//buf.append(indent + "URI=\"" + obj.getURI()+ "\"");
-		/*
-		buf.append(indent + "STATE=\"" + obj.getState());
-		buf.append(indent + "TYPE=\"" + getTypeAttribute(obj));
-		buf.append(indent + "CREATED=\"" + m_formatter.format(obj.getCreateDate()));
-		buf.append(indent + "MODIFIED=\"" + m_formatter.format(obj.getLastModDate()));
-		*/
         buf.append(">\n");
     }
 
@@ -194,19 +187,40 @@ public class FOXMLDOSerializer
     
 	private void appendProperties(DigitalObject obj, StringBuffer buf, String encoding) 
 			throws ObjectIntegrityException {
+		
+		String ftype = getTypeAttribute(obj);
+		String state = obj.getState();
+		String label = obj.getLabel();
+		Date cdate = obj.getCreateDate();
+		Date mdate = obj.getLastModDate();
+		String cmodel = obj.getContentModelId();
+		
 		buf.append("  <" + FOXML_PREFIX + ":objectProperties>\n");
-		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:type" + "\">" 
-			+ getTypeAttribute(obj) + "</" + FOXML_PREFIX + ":property>\n");
-		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:state" + "\">" 
-			+ obj.getState() + "</" + FOXML_PREFIX + ":property>\n");
-		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:label" + "\">" 
-			+ obj.getLabel() + "</" + FOXML_PREFIX + ":property>\n");
-		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:created" + "\">" 
-			+ m_formatter.format(obj.getCreateDate()) + "</" + FOXML_PREFIX + ":property>\n");
-		buf.append("    <" + FOXML_PREFIX  + ":property NAME=\"" + "info:fedora/def:dobj:modified" + "\">" 
-		+ m_formatter.format(obj.getLastModDate()) + "</" + FOXML_PREFIX + ":property>\n");
-		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cmodel" + "\">" 
-			+ obj.getContentModelId() + "</" + FOXML_PREFIX + ":property>\n");	
+			
+		if (ftype!=null) {
+			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:type" + "\">" 
+			+ ftype + "</" + FOXML_PREFIX + ":property>\n");
+		}
+		if (state!=null) {
+			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:state" + "\">" 
+			+ state + "</" + FOXML_PREFIX + ":property>\n");
+		}
+		if (label!=null) {
+			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:label" + "\">" 
+			+ label + "</" + FOXML_PREFIX + ":property>\n");
+		}
+		if (cdate!=null) {
+			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:created" + "\">" 
+			+ m_formatter.format(cdate) + "</" + FOXML_PREFIX + ":property>\n");
+		}
+		if (mdate!=null) {
+			buf.append("    <" + FOXML_PREFIX  + ":property NAME=\"" + "info:fedora/def:dobj:modified" + "\">" 
+			+ m_formatter.format(mdate) + "</" + FOXML_PREFIX + ":property>\n");
+		}
+		if (cmodel!=null) {
+			buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cmodel" + "\">" 
+			+ cmodel + "</" + FOXML_PREFIX + ":property>\n");	
+		}
 		Iterator iter = obj.getExtProperties().keySet().iterator();
 		while (iter.hasNext()){
 			String name = (String)iter.next();
@@ -347,9 +361,9 @@ public class FOXMLDOSerializer
 		throws ObjectIntegrityException, UnsupportedEncodingException, StreamIOException {
 			
 		buf.append("        <" + FOXML_PREFIX + ":xmlContent>\n");
-        if (fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT) {
-        	if (ds.DatastreamID.equals("SERVICE-PROFILE") || 
-				ds.DatastreamID.equals("WSDL")) {
+        if ( fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT &&
+             (ds.DatastreamID.equals("SERVICE-PROFILE") || 
+			  ds.DatastreamID.equals("WSDL")) ) {
 	            // If WSDL or SERVICE-PROFILE datastream (in BMech) 
 	            // and it contains a service URL that's local, 
 	            // then modify the URL with a machine-neutral
@@ -370,7 +384,6 @@ public class FOXMLDOSerializer
 	            } catch (UnsupportedEncodingException uee) {
 	                // wont happen, java always supports UTF-8
 	            }
-			}
         } else {
             appendXMLStream(ds.getContentStream(), buf, encoding);
         }
@@ -526,6 +539,12 @@ public class FOXMLDOSerializer
 
 	private Datastream validateDatastream(Datastream ds) throws ObjectIntegrityException {
 		// check on some essentials
+		if (ds.DatastreamID==null || ds.DatastreamID.equals("")) {
+			throw new ObjectIntegrityException("Datastream must have an id.");
+		}
+		if (ds.DSState==null || ds.DSState.equals("")) {
+			throw new ObjectIntegrityException("Datastream must have a state indicator.");
+		}
 		if (ds.DSVersionID==null || ds.DSVersionID.equals("")) {
 			throw new ObjectIntegrityException("Datastream must have a version id.");
 		}
