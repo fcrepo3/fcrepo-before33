@@ -318,6 +318,41 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     return null;
   }
 
+  /**
+   * <p>Gets the object profile which included key metadata about the object
+   * and URLs for the Dissemination Index and Item Index of the object.</p>
+   *
+   * @param PID The persistent identifier for the digital object.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return The object profile data structure.
+   * @throws java.rmi.RemoteException
+   */
+  public fedora.server.types.gen.ObjectProfile
+      getObjectProfile(java.lang.String PID,
+      java.util.Calendar asOfDateTime) throws java.rmi.RemoteException
+  {
+    Context context=getContext();
+    try
+    {
+      fedora.server.access.ObjectProfile objectProfile =
+          s_access.getObjectProfile(context, PID, asOfDateTime);
+      fedora.server.types.gen.ObjectProfile genObjectProfile =
+          TypeUtility.convertObjectProfileToGenObjectProfile(
+          objectProfile);
+      return genObjectProfile;
+    } catch (ServerException se)
+    {
+      logStackTrace(se);
+      AxisUtility.throwFault(se);
+    } catch (Exception e) {
+      logStackTrace(e);
+      AxisUtility.throwFault(
+          new ServerInitializationException(e.getClass().getName() + ": "
+          + e.getMessage()));
+    }
+    return null;
+  }
+
   private void logStackTrace(Exception e)
   {
     StackTraceElement[] ste = e.getStackTrace();
