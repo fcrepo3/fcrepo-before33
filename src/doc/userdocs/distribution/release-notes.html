@@ -1794,7 +1794,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
           <p>2. initialize a new database for Fedora 1.2 using the
           database configuration scripts which are set up with new
           defaults. If using MySQL, run mysql-config.bat (.sh for
-          unix) with the new default database name of â€œfedora12â€?
+          unix) with the new default database name of "€œfedora12"
           (or your own new database name that differs from the name
           used in your pre-existing Fedora installation. For McKoi,
           run the mkoi-init.bat (.sh for unix) which has a new
@@ -1906,7 +1906,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         <div class="titlepage">
           <div>
             <h4 class="title"><a name="d0e261" id="d0e261"></a>3.
-            Fedora Administrator â€“ Object Editor and Version
+            Fedora Administrator - Object Editor and Version
             Viewer.</h4>
           </div>
         </div>
@@ -1948,10 +1948,10 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         "_top">WSDL API documents.</a></p>
 
         <p>The algorithm Fedora uses to evaluate date-time-stamped
-        requests is an â€œas of dateâ€? approach, meaning that the
-        repository will return a view of content as it looked â€œas
-        ofâ€? a particular date-time. The date-time stamp provided by
-        the client is interpreted by Fedora as a â€œceilingâ€?
+        requests is an "as of date" approach, meaning that the
+        repository will return a view of content as it looked "as
+        of" a particular date-time. The date-time stamp provided by
+        the client is interpreted by Fedora as a "ceiling"
         threshold. As such, the repository will evaluate the
         version dates on Datastreams and Disseminators and return
         the view of content that is as close to the requested
@@ -1996,9 +1996,9 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
 
         <p>A Fedora repository will now accept PIDs that are
         externally generated. To enable this feature, the
-        repository administrator must modify the â€œretainPIDsâ€?
+        repository administrator must modify the "retainPIDs"
         configuration variable in the Fedora repository
-        configuration file (fedora.fcfg). The â€œretainPIDsâ€? variable
+        configuration file (fedora.fcfg). The "retainPIDs" variable
         is a configurable parameter on the DOManager module. It
         defines the set of PID namespaces that the repository will
         retain during digital object ingest. If the repository
@@ -2043,7 +2043,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         <div class="titlepage">
           <div>
             <h4 class="title"><a name="d0e309" id="d0e309"></a>8.
-            Fedora Administrator â€“ Behavior Definition/Mechanism
+            Fedora Administrator - Behavior Definition/Mechanism
             Builders.</h4>
           </div>
         </div>
@@ -2154,14 +2154,14 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         <div class="titlepage">
           <div>
             <h4 class="title"><a name="d0e350" id="d0e350"></a>1.
-            Ingest exception â€œunknown protocol câ€? in Windows
+            Ingest exception "unknown protocol c" in Windows
             XP.</h4>
           </div>
         </div>
 
         <p>Under rare conditions in some Windows XP installations,
         an obscure exception is thrown during object ingest that
-        reports â€œunknown protocol c.â€? This bug was traced to the
+        reports "unknown protocol c." This bug was traced to the
         digital object validation module, specifically in the
         Schematron validation phase (see
         DOValidatorSchematron.java). The problem had to do with
@@ -2196,8 +2196,8 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         configuration time, and loaded into the MySQL system
         tables. However, MySQL then creates the actual database
         directory on the filesystem with all lower case. Thus, at
-        runtime, there is a mismatch between whatâ€™s listed in the
-        MySQL system table and whatâ€™s on the file system. In these
+        runtime, there is a mismatch between what's listed in the
+        MySQL system table and what's on the file system. In these
         offending versions of MySQL, the database is not found due
         to this case sensitivity problem. The work-around for this
         is to use all lower case characters in the database name
@@ -2238,8 +2238,8 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         into a repository, an ingest failure would occur if the
         ingest requests hit the repository at exactly the same
         time. The exception reported by Fedora was that
-        â€œtemp-ingest already existsâ€? which means that the temporary
-        PID named â€œtemp-ingestâ€? was already in use. The problem was
+        "temp-ingest already exists" which means that the temporary
+        PID named "temp-ingest" was already in use. The problem was
         fixed by having all temporary PIDS appended with a
         date-time stamp, rendering them unique within a running
         repository instance. Now multiple concurrent client
@@ -2295,7 +2295,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         or deleted datastreams are not intended to be exposed via
         the Fedora Access interfaces. However, inactive datastreams
         are always discoverable via the Fedora Management
-        interface. In this new release, only active (state=â€?Aâ€?)
+        interface. In this new release, only active (state="A")
         datastreams will be exposed via API-A and API-A-Lite. If a
         dissemination is run that involves a non-active datastream,
         the repository will throw an exception and provide a
@@ -2441,7 +2441,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         encoded on the RECORDSTATUS attribute of the METS header
         element. If this value is populated on the ingest file, the
         Fedora repository will accept it as is. Therefore, if the
-        value of RECORDSTATUS is set to anything other than â€œAâ€?
+        value of RECORDSTATUS is set to anything other than "A"
         (Active), the object will NOT be accessible via the Fedora
         Access interface. In other words, the object will not be
         considered active, and it will not be able to be
@@ -2470,7 +2470,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         cache. Internal to the Fedora code, an SQL delete query is
         run via JDBC. The bug occurred when a the delete query was
         run. The query uses a where clause that should dependably
-        evaluate to FALSE (i.e., â€œWHERE 1=2â€?), but in this
+        evaluate to FALSE (i.e., "WHERE 1=2"), but in this
         particular version of MySQL under Linux, the query
         curiously and erroneously evaluates to TRUE. This
         particular query is intended to prevent certain rows from
@@ -2500,11 +2500,11 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         fedora-types:FieldSearchResult (which is an array of
         fedora-types:ObjectFields). Formerly,
         fedora-types:ObjectFields defined an element named
-        â€œlocker.â€? In Fedora 1.2, that element is now defined as
-        â€œowner.â€? Such interface changes are not accommodated by the
+        "locker." In Fedora 1.2, that element is now defined as
+        "owner." Such interface changes are not accommodated by the
         Apache Axis library used to process SOAP requests. Fedora
         does not currently maintain different versions of its WSDL,
-        so the change occurs in the â€œofficialâ€? WSDL for the Fedora
+        so the change occurs in the "official" WSDL for the Fedora
         Access service. The problem can be bypassed by clients
         using the REST-oriented binding for the findObjects
         operation (see API-A-Lite in Fedora 1.2). The REST-oriented
@@ -2611,7 +2611,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
 
     <p>Fedora 1.1 provides fixes to several bugs that were detected
     by users of Fedora 1.0. It also provides a new API-A method
-    (â€œdescribeRepositoryâ€?) that enables a client to obtain
+    ("describeRepository") that enables a client to obtain
     information about the repository server.</p>
 
     <p>The new release is backward compatible with Fedora 1.0, with
@@ -2648,7 +2648,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         </div>
 
         <p>The API-A and API-A-LITE interfaces now define and
-        implement the â€œdescribeRepositoryâ€? request. This request
+        implement the "describeRepository" request. This request
         will provide information about the repository server
         including repository name, version, base URL, and other
         attributes. The repository information can be obtained in
@@ -2674,7 +2674,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         contained URLs that referred to a previous host and port
         configuration. There are two places where self-referential
         URLs may exist: (1) in Behavior Mechanism Objects, where
-        service bindings refer to a â€œlocal serviceâ€? that runs
+        service bindings refer to a "local service" that runs
         within the repository server, and (2) in objects that
         contain a Datastream that references a dissemination of a
         digital object that is stored in the local repository.</p>
@@ -2787,23 +2787,23 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         http://localhost:8080/demo/batch-demo/thumb/americanacademy.jpg"</p>
 
         <p>FIX: There are two kinds of demos that are affected:
-        â€œbatch demosâ€? that are loaded via the batch tool and â€œlocal
-        server demos.â€? The content for the batch demos has been
+        "batch demos" that are loaded via the batch tool and "local
+        server demos." The content for the batch demos has been
         moved to www.fedora.info where it will always be available.
         The METS xml files for the batch demo objects now have URLs
         that point to the demo content at this stable location. The
-        â€œlocal server demosâ€? are intended to be run completely
+        "local server demos" are intended to be run completely
         within the local server context (meaning a network
         connection is not necessary to run them). The content for
         these objects must, therefore, remain local to the Fedora
         server. A new command line utility called
-        â€œfedora-convert-demosâ€? is provided to convert demo object
+        "fedora-convert-demos" is provided to convert demo object
         xml files to reference the currently configured host and
         port. If the Fedora repository is configured to a host and
         port other than the default of localhost:8080, the
-        â€œfedora-convert-demosâ€? utility should be run before
+        "fedora-convert-demos" utility should be run before
         ingesting local demo objects into the repository. The
-        â€œfedora-convert-demosâ€? is found in the
+        "fedora-convert-demos" is found in the
         FEDORA_HOME/client/bin/ directory. Instructions on running
         the utility can be found in the Client Documentation
         section of the system documentation.</p>
@@ -2833,7 +2833,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         a dependent module (DOManager) that has not yet been loaded
         by the server. The problem is that server modules are not
         loaded in any particular order on server startup. Within
-        any particular moduleâ€™s initModule method, you can't assume
+        any particular module's initModule method, you can't assume
         that ANY other modules are available from the server via
         the getModule(...) call. The solution is to move chunks of
         code like this to the postInitModule(...) method of the
@@ -2859,7 +2859,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
 
         <p>There were several places in the Fedora 1.0 code base
         where the default host and port of the server was
-        hard-coded as â€œlocalhost:8080â€?. This required the
+        hard-coded as "localhost:8080". This required the
         repository administrator to make multiple changes when
         configuring a Fedora server to run on a different host or
         port.</p>
@@ -2882,7 +2882,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
 
         <p>The Fedora server shutdown and redirect ports were not
         configurable. They were hard-coded in the Tomcat
-        server_template.xml file as â€œ8005â€? and â€œ8443â€?
+        server_template.xml file as "8005" and "8443"
         respectively.</p>
 
         <p>FIX: These are now configurable in the Fedora server
@@ -2898,7 +2898,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         </div>
 
         <p>The repository domain name part of the OAI identifier
-        was not configurable. It was hard-wired to be â€œfedora.infoâ€?
+        was not configurable. It was hard-wired to be "fedora.info"
         which is not unique to a repository.</p>
 
         <p>FIX: The Fedora server configuration file (fedora.fcfg)
@@ -3011,32 +3011,32 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
       <div class="itemizedlist">
         <ul type="disc">
           <li>
-            <p>GetDatastream â€“ retrieve the specified
+            <p>GetDatastream - retrieve the specified
             datastream</p>
           </li>
 
           <li>
-            <p>GetDisseminator â€“ retrieve the specified
+            <p>GetDisseminator - retrieve the specified
             disseminator</p>
           </li>
 
           <li>
-            <p>ListDatastreamIDs â€“ obtain a list of datastream
+            <p>ListDatastreamIDs - obtain a list of datastream
             IDs</p>
           </li>
 
           <li>
-            <p>ListDisseminatorIDs â€“ obtain a list of disseminator
+            <p>ListDisseminatorIDs - obtain a list of disseminator
             IDs</p>
           </li>
 
           <li>
-            <p>ModifyDatastreamExternal â€“ change the pointer to a
+            <p>ModifyDatastreamExternal - change the pointer to a
             Referenced External Content datastream</p>
           </li>
 
           <li>
-            <p>ModifyDatastreamManagedContent â€“ change the contents
+            <p>ModifyDatastreamManagedContent - change the contents
             of a Managed Content datastream</p>
           </li>
 
@@ -3080,8 +3080,8 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
       <p>The Fedora documentation now includes revised and enhanced
       Installation Guide, Release Notes, Manual, and Demos Guide.
       The Fedora manual includes a general introduction to the
-      architecture, Installation Guide, Userâ€™s Guide, and
-      Developerâ€™s Guide. Upon successful installation, all
+      architecture, Installation Guide, User's Guide, and
+      Developer's Guide. Upon successful installation, all
       documentation is also available through the userdocs webapp
       and can be access using the syntax:</p>
 
@@ -3214,8 +3214,8 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
       anywhere in an object s indexed metadata fields. Advanced
       Search enables fielded searching across any combination of
       metadata elements using string comparison operators (= and ~)
-      for string fields, and value comparison operators (&nbsp; =,
-      &gt;, â‰¥, &lt;, â‰¤ &nbsp;) for date fields (dc:date fields may
+      for string fields, and value comparison operators (&nbsp; =, &gt;, &#8805;, &lt;, &#8804; &nbsp;) 
+      for date fields (dc:date fields may
       be treated as both). The wildcards, * and ? may be used in
       any string-based query.</p>
     </div>
@@ -3766,7 +3766,7 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
 
   <div id="footer">
     <div id="copyright">
-      Copyright Â© 2005 Fedora Project
+      Copyright &copy; 2005 Fedora Project
     </div>
 
     <div id="lastModified">
