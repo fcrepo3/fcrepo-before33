@@ -11,7 +11,7 @@ package fedora.server.storage.types;
 
 public class DSBindingMapAugmented extends DSBindingMap
 {
-  public DSBindingAugmented[] dsBindingsAugmented;
+  public DSBindingAugmented[] dsBindingsAugmented = new DSBindingAugmented[0];
 
   public DSBindingMapAugmented()
   {

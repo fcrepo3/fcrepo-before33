@@ -11,16 +11,15 @@ package fedora.server.storage.types;
 
 public class DSBindingMap
 {
-  public String dsBindMapID;
+  public String dsBindMapID = null;
 
-  public String dsBindMechanismPID;
+  public String dsBindMechanismPID = null;
 
-  public String dsBindMapLabel;
+  public String dsBindMapLabel = null;
 
-  // TODO: Does binding map really have state, by design?
-  public String state;
+  public String state = null;
 
-  public DSBinding[] dsBindings;
+  public DSBinding[] dsBindings = new DSBinding[0];
 
   public DSBindingMap()
   {

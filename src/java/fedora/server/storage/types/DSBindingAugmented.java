@@ -11,17 +11,15 @@ package fedora.server.storage.types;
 
 public class DSBindingAugmented extends DSBinding
 {
-  //public Datastream datastream;
+  public String DSVersionID = null;
 
-  public String DSVersionID;
+  public String DSLabel = null;
 
-  public String DSLabel;
+  public String DSMIME = null;
 
-  public String DSMIME;
+  public String DSControlGrp = null;
 
-  public String DSControlGrp;
-
-  public String DSLocation;
+  public String DSLocation = null;
 
   public DSBindingAugmented()
   {

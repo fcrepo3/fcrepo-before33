@@ -12,9 +12,9 @@ package fedora.server.storage.types;
 public class MethodDef
 {
 
-    public String methodName;
-    public String methodLabel;
-    public MethodParmDef[] methodParms;
+    public String methodName = null;
+    public String methodLabel = null;
+    public MethodParmDef[] methodParms = new MethodParmDef[0];
 
     public MethodDef()
     {

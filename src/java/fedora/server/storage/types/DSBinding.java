@@ -11,13 +11,13 @@ package fedora.server.storage.types;
 
 public class DSBinding
 {
-  public String bindKeyName;
+  public String bindKeyName = null;
 
-  public String bindLabel;
+  public String bindLabel = null;
 
-  public String datastreamID;
+  public String datastreamID = null;
 
-  public String seqNo;
+  public String seqNo = null;
 
   public DSBinding()
   {

@@ -12,12 +12,12 @@ package fedora.server.storage.types;
 public class MethodDefOperationBind extends MethodDef
 {
 
-    public String protocolType;
-    public String serviceBindingAddress;
-    public String operationLocation;
-    public String operationURL;
+    public String protocolType = null;
+    public String serviceBindingAddress = null;
+    public String operationLocation = null;
+    public String operationURL = null;
 
-    public String[] dsBindingKeys;
+    public String[] dsBindingKeys = new String[0];
 
     public MethodDefOperationBind()
     {

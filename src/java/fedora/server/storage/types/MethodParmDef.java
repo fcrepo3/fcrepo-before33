@@ -12,12 +12,12 @@ package fedora.server.storage.types;
 public class MethodParmDef
 {
 
-    public String parmName;
-    public String parmType;
-    public String parmDefaultValue;
-    public String[] parmDomainValues;
-    public boolean parmRequired;
-    public String parmLabel;
+    public String parmName = null;
+    public String parmType = null;
+    public String parmDefaultValue = null;
+    public String[] parmDomainValues = new String[0];
+    public boolean parmRequired = true;
+    public String parmLabel = null;
 
     public MethodParmDef()
     {
