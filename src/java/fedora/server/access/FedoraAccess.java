@@ -3,6 +3,7 @@ package fedora.server.access;
 import java.util.Calendar;
 import java.util.Vector;
 
+import fedora.server.errors.ServerException;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.ObjectMethodsDef;
@@ -24,69 +25,70 @@ import fedora.server.storage.types.Property;
 public interface FedoraAccess
 {
 
-   /**
-    * <p>Gets the persistent identifiers or PIDs of all Behavior Definition
-    * objects associated with the specified digital object.</p>
-    *
-    * @param PID persistent identifier of the digitla object
-    * @param Calendar versioning datetime stamp
-    * @return String[] containing the list of Behavior Definition object PIDs
-    */
-   public String[] GetBehaviorDefinitions(String PID, Calendar asOfDate);
+  /**
+   * <p>Gets the persistent identifiers or PIDs of all Behavior Definition
+   * objects associated with the specified digital object.</p>
+   *
+   * @param PID The persistent identifier of the digitla object.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return An Array containing the list of Behavior Definition object PIDs.
+   */
+  public String[] GetBehaviorDefinitions(String PID, Calendar asOfDateTime)
+      throws ServerException;
 
-   /**
-    * <p>Gets the method definitions associated with the specified Behavior
-    * Definition object.</p>
-    *
-    * @param PID persistent identifier of the digital object
-    * @param bDefPID persistent identifier of the Behavior Definition object
-    * @param Calendar versioning datetime stamp
-    * @return MethodDef[] containing the list of method definitions
-    */
-   public MethodDef[] GetBehaviorMethods(String PID, String bDefPID,
-       Calendar asOfDate);
+  /**
+   * <p>Gets the method definitions associated with the specified Behavior
+   * Definition object.</p>
+   *
+   * @param PID The persistent identifier of the digital object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return An Array containing the list of method definitions.
+   */
+  public MethodDef[] GetBehaviorMethods(String PID, String bDefPID,
+       Calendar asOfDateTime) throws ServerException;
 
-   /**
-    * <p>Gets the method definitions associated with the specified Behavior
-    * Definition object.</p>
-    *
-    * @param PID persistent identifier of the digital object
-    * @param bDefPID persistent identifier of the Behavior Definition object
-    * @param asOfDate versioning datetime stamp
-    * @return MIMETypedStream a MIME-typed stream containing the method
-    * definitions in the form of an XML fragment obtained from the WSDL in
-    * the associated Behavior Mechanism object
-    */
-   public MIMETypedStream GetBehaviorMethodsAsWSDL(String PID, String bDefPID,
-       Calendar asOfDate);
+  /**
+   * <p>Gets the method definitions associated with the specified Behavior
+   * Definition object.</p>
+   *
+   * @param PID The persistent identifier of the digital object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return A MIME-typed stream containing the method definitions in the form
+   * of an XML fragment obtained from the WSDL in the associated Behavior
+   * Mechanism object.
+   */
+  public MIMETypedStream GetBehaviorMethodsAsWSDL(String PID, String bDefPID,
+       Calendar asOfDateTime) throws ServerException;
 
 
-    /**
-     * <p>Disseminates the content produced by executing the specified method
-     * of the associated Behavior Mechanism object of the specified digital
-     * object.</p>
-     *
-     * @param PID persistent identifier of the digital object
-     * @param bDefPID persistent identifier of the Behavior Definition object
-     * @param methodName the name of the method to be executed
-     * @param userParms an array of user-supplied method parameters consisting
-     * of name/value pairs
-     * @param asOfDate versioning datetime stamp
-     * @return MIMETypedStream a MIME-typed stream containing the result of
-     * the dissemination
-     */
-    public MIMETypedStream GetDissemination (String PID, String bDefPID,
-        String methodName, Property[] userParms, Calendar asOfDate);
+  /**
+   * <p>Disseminates the content produced by executing the specified method
+   * of the associated Behavior Mechanism object of the specified digital
+   * object.</p>
+   *
+   * @param PID The persistent identifier of the digital object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName The name of the method to be executed.
+   * @param userParms An array of user-supplied method parameters consisting
+   * of name/value pairs.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return A MIME-typed stream containing the result of the dissemination.
+   */
+  public MIMETypedStream GetDissemination (String PID, String bDefPID,
+      String methodName, Property[] userParms, Calendar asOfDateTime)
+      throws ServerException;
 
-    /**
-     * <p>Gets a list of all method names associated with the specified digital
-     * object.</p>
-     *
-     * @param PID PID persistent identifier of the digital object
-     * @param asOfDate versioning datetime stamp
-     * @return ObjectMethodsDef[] array of all methods assocaited with the
-     * specified digital object
-     */
-    public ObjectMethodsDef[] GetObjectMethods (String PID, Calendar asOfDate);
-
+  /**
+   * <p>Gets a list of all Behavior Definition object PIDs and method names
+   * associated with the specified digital object.</p>
+   *
+   * @param PID The persistent identifier of the digital object
+   * @param asOfDateTime The versioning datetime stamp
+   * @return An array of all methods associated with the specified
+   * digital object.
+   */
+  public ObjectMethodsDef[] GetObjectMethods (String PID,
+        Calendar asOfDateTime) throws ServerException;
 }
