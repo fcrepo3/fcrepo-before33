@@ -63,7 +63,7 @@
         </comment>
 		<param name="testName" value="testValue"/>
 	</module>
-	<module role="fedora.server.management.Access" class="fedora.server.access.DefaultAccess">
+	<module role="fedora.server.access.Access" class="fedora.server.access.DefaultAccess">
 		<comment>
         Description:
           The access subsystem.
@@ -77,7 +77,7 @@
           None.
         </comment>
 		<param name="testName" value="testValue"/>
-	</module>	
+	</module>
 	<module role="fedora.server.storage.DOTranslator" class="fedora.server.storage.DefaultDOTranslator">
 		<comment>Supports translation from DigitalObject to a stream of 
         some format, and vice-versa.  The parameters below specify 
