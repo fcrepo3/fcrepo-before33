@@ -194,7 +194,7 @@ public abstract class TypeUtility
       convertMethodDefArrayToGenMethodDefArray(
       fedora.server.storage.types.MethodDef[] methodDefs)
   {
-    if (methodDefs != null && methodDefs.length > 0)
+    if (methodDefs != null)
     {
       fedora.server.types.gen.MethodDef[] genMethodDefs =
           new fedora.server.types.gen.MethodDef[methodDefs.length];
@@ -206,9 +206,8 @@ public abstract class TypeUtility
         genMethodDef.setMethodName(methodDefs[i].methodName);
         fedora.server.storage.types.MethodParmDef[] methodParmDefs =
             methodDefs[i].methodParms;
-        //fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = null;
         fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = new fedora.server.types.gen.MethodParmDef[0];
-        if (methodParmDefs != null && methodParmDefs.length > 0)
+        if (methodParmDefs != null)
         {
           genMethodParmDefs =
               new fedora.server.types.gen.MethodParmDef[methodParmDefs.length];
@@ -250,11 +249,10 @@ public abstract class TypeUtility
       genMethodDef.setMethodName(methodDef.methodName);
       fedora.server.storage.types.MethodParmDef[] methodParmDefs =
           methodDef.methodParms;
-      //fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = null;
       fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = new fedora.server.types.gen.MethodParmDef[0];
       genMethodParmDefs = convertMethodParmDefArrayToGenMethodParmDefArray(
           methodParmDefs);
-      if (methodParmDefs != null && methodParmDefs.length > 0)
+      if (methodParmDefs != null)
       {
         genMethodParmDefs =
             new fedora.server.types.gen.MethodParmDef[methodParmDefs.length];
@@ -284,7 +282,7 @@ public abstract class TypeUtility
       convertGenMethodDefArrayToMethodDefArray(
       fedora.server.types.gen.MethodDef[] genMethodDefs)
   {
-    if (genMethodDefs != null && genMethodDefs.length > 0)
+    if (genMethodDefs != null)
     {
       fedora.server.storage.types.MethodDef[] methodDefs =
           new fedora.server.storage.types.MethodDef[genMethodDefs.length];
@@ -296,9 +294,8 @@ public abstract class TypeUtility
         methodDef.methodName = genMethodDefs[i].getMethodName();
         fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
             genMethodDefs[i].getMethodParms();
-        //fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
         fedora.server.storage.types.MethodParmDef[] methodParmDefs = new fedora.server.storage.types.MethodParmDef[0];
-        if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
+        if (genMethodParmDefs != null)
         {
           methodParmDefs =
               new fedora.server.storage.types.MethodParmDef[
@@ -339,9 +336,8 @@ public abstract class TypeUtility
       methodDef.methodName = genMethodDef.getMethodName();
       fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
           genMethodDef.getMethodParms();
-      //fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
       fedora.server.storage.types.MethodParmDef[] methodParmDefs = new fedora.server.storage.types.MethodParmDef[0];
-      if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
+      if (genMethodParmDefs != null)
       {
         methodParmDefs = convertGenMethodParmDefArrayToMethodParmDefArray(
             genMethodParmDefs);
@@ -366,7 +362,7 @@ public abstract class TypeUtility
       convertMethodParmDefArrayToGenMethodParmDefArray(
       fedora.server.storage.types.MethodParmDef[] methodParmDefs)
   {
-    if (methodParmDefs != null && methodParmDefs.length > 0)
+    if (methodParmDefs != null)
     {
       fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
           new fedora.server.types.gen.MethodParmDef[methodParmDefs.length];
@@ -428,7 +424,7 @@ public abstract class TypeUtility
       convertGenMethodParmDefArrayToMethodParmDefArray(
       fedora.server.types.gen.MethodParmDef[] genMethodParmDefs)
   {
-    if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
+    if (genMethodParmDefs != null)
     {
       fedora.server.storage.types.MethodParmDef[] methodParmDefs =
           new fedora.server.storage.types.MethodParmDef[
@@ -559,7 +555,7 @@ public abstract class TypeUtility
       convertGenObjectMethodsDefArrayToObjectMethodsDefArray(
       fedora.server.types.gen.ObjectMethodsDef[] genObjectMethodDefs)
   {
-    if (genObjectMethodDefs != null && genObjectMethodDefs.length > 0)
+    if (genObjectMethodDefs != null)
     {
       fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs =
           new fedora.server.storage.types.ObjectMethodsDef[
@@ -574,9 +570,8 @@ public abstract class TypeUtility
 
         fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
             genObjectMethodDefs[i].getMethodParmDefs();
-        //fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
         fedora.server.storage.types.MethodParmDef[] methodParmDefs = new fedora.server.storage.types.MethodParmDef[0];
-        if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
+        if (genMethodParmDefs != null)
         {
           methodParmDefs =
               new fedora.server.storage.types.MethodParmDef[
@@ -612,8 +607,6 @@ public abstract class TypeUtility
   {
     if (genObjectMethodDef != null)
     {
-      //fedora.server.storage.types.ObjectMethodsDef objectMethodDefs =
-      //    new fedora.server.storage.types.ObjectMethodsDef();
       fedora.server.storage.types.ObjectMethodsDef objectMethodDef =
           new fedora.server.storage.types.ObjectMethodsDef();
       objectMethodDef.PID = genObjectMethodDef.getPID();
@@ -621,9 +614,8 @@ public abstract class TypeUtility
       objectMethodDef.methodName = genObjectMethodDef.getMethodName();
       fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
           genObjectMethodDef.getMethodParmDefs();
-      //fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
       fedora.server.storage.types.MethodParmDef[] methodParmDefs = new fedora.server.storage.types.MethodParmDef[0];
-      if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
+      if (genMethodParmDefs != null)
       {
         methodParmDefs = convertGenMethodParmDefArrayToMethodParmDefArray(
             genMethodParmDefs);
@@ -649,7 +641,7 @@ public abstract class TypeUtility
       convertObjectMethodsDefArrayToGenObjectMethodsDefArray(
       fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs)
   {
-    if (objectMethodDefs != null && objectMethodDefs.length > 0)
+    if (objectMethodDefs != null)
     {
       fedora.server.types.gen.ObjectMethodsDef[] genObjectMethodDefs =
           new fedora.server.types.gen.ObjectMethodsDef[objectMethodDefs.length];
@@ -662,9 +654,8 @@ public abstract class TypeUtility
         genObjectMethodDef.setMethodName(objectMethodDefs[i].methodName);
         fedora.server.storage.types.MethodParmDef[] methodParmDefs =
             objectMethodDefs[i].methodParmDefs;
-        //fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = null;
         fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = new fedora.server.types.gen.MethodParmDef[0];
-        if (methodParmDefs != null && methodParmDefs.length > 0)
+        if (methodParmDefs != null)
         {
           genMethodParmDefs =
               new fedora.server.types.gen.MethodParmDef[methodParmDefs.length];
@@ -808,7 +799,7 @@ public abstract class TypeUtility
       convertGenPropertyArrayToPropertyArray(
       fedora.server.types.gen.Property[] genProperties)
   {
-    if (genProperties != null && genProperties.length > 0)
+    if (genProperties != null)
     {
       fedora.server.storage.types.Property[] properties =
           new fedora.server.storage.types.Property[genProperties.length];
@@ -860,7 +851,7 @@ public abstract class TypeUtility
       convertPropertyArrayToGenPropertyArray(
       fedora.server.storage.types.Property[] properties)
   {
-    if (properties != null && properties.length > 0)
+    if (properties != null)
     {
       fedora.server.types.gen.Property[] genProperties =
           new fedora.server.types.gen.Property[properties.length];
@@ -1016,7 +1007,7 @@ public abstract class TypeUtility
         fedora.server.storage.types.DSBinding[] dsBindings)
     {
 
-      if (dsBindings != null && dsBindings.length > 0)
+      if (dsBindings != null)
       {
         fedora.server.types.gen.DatastreamBinding[] genDatastreamBindings =
             new fedora.server.types.gen.DatastreamBinding[dsBindings.length];
@@ -1040,7 +1031,7 @@ public abstract class TypeUtility
       fedora.server.types.gen.DatastreamBinding[] genDatastreamBindings)
   {
 
-    if (genDatastreamBindings != null && genDatastreamBindings.length > 0)
+    if (genDatastreamBindings != null)
     {
       fedora.server.storage.types.DSBinding[] dsBindings =
           new fedora.server.storage.types.DSBinding[genDatastreamBindings.length];
@@ -1131,7 +1122,7 @@ public abstract class TypeUtility
       "\nparms:\n");
       fedora.server.storage.types.MethodParmDef[] methodParmDef = null;
       methodParmDef = methodDef[i].methodParms;
-      if (methodParmDef != null && methodParmDef.length > 0)
+      if (methodParmDef != null)
       {
         methodParmDef = methodDef[i].methodParms;
         for (int j=0; j<methodParmDef.length; j++)
@@ -1170,7 +1161,7 @@ public abstract class TypeUtility
       "\nparms:\n");
       fedora.server.types.gen.MethodParmDef[] methodParmDef = null;
       methodParmDef = genMethodDef[i].getMethodParms();
-      if (methodParmDef != null && methodParmDef.length > 0)
+      if (methodParmDef != null)
       {
         methodParmDef = genMethodDef[i].getMethodParms();
         for (int j=0; j<methodParmDef.length; j++)
@@ -1195,7 +1186,7 @@ public abstract class TypeUtility
       "\nparms:\n");
       fedora.server.storage.types.MethodParmDef[] methodParmDef = null;
       methodParmDef = methodDef[i].methodParms;
-      if (methodParmDef != null && methodParmDef.length > 0)
+      if (methodParmDef != null)
       {
         methodParmDef = methodDef[i].methodParms;
         for (int j=0; j<methodParmDef.length; j++)
@@ -1217,13 +1208,9 @@ public abstract class TypeUtility
     byte[] stream = baos.toByteArray();
     InputStream is = new ByteArrayInputStream(stream);
     fedora.server.storage.types.MIMETypedStream mimeTypedStream =
-        //new fedora.server.storage.types.MIMETypedStream("text/plain", stream);
         new fedora.server.storage.types.MIMETypedStream("text/plain", is);
     System.out.println("MIMEType: " + mimeTypedStream.MIMEType);
-    //ByteArrayInputStream bais =
-    //    new ByteArrayInputStream(mimeTypedStream.stream);
     int byteStream = 0;
-    //while ((byteStream = bais.read()) >= 0)
     byte[] buffer = new byte[255];
     while ((byteStream = is.read()) >= 0)
     {
@@ -1249,9 +1236,7 @@ public abstract class TypeUtility
         genMIMETypedStream);
     System.out.println("MIMEType: " + mimeTypedStream.MIMEType);
     is = mimeTypedStream.getStream();
-    //bais = new ByteArrayInputStream(mimeTypedStream.stream);
     byteStream = 0;
-    //while ((byteStream = bais.read()) >= 0)
     while ((byteStream = is.read(buffer)) >= -1)
     {
       System.out.write(buffer, 0, byteStream);
