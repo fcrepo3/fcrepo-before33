@@ -107,19 +107,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return new ReadOnlyContext(h);
     }
 
-/*
-    public String createObject()
-            throws RemoteException {
-        assertInitialized();
-        try {
-            return s_management.createObject(getContext());
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-        }
-    }
-*/
-
     private void logStackTrace(Exception e) {
         StackTraceElement[] els=e.getStackTrace();
         StringBuffer lines=new StringBuffer();
@@ -150,6 +137,21 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(e);
         }
     }
+    
+	public String ingest(byte[] XML, String format, String logMessage) throws java.rmi.RemoteException {
+		assertInitialized();
+		try {
+		  // always gens pid, unless pid in stream starts with "test: or demo:"
+			return s_management.ingestObject(getContext(),
+					new ByteArrayInputStream(XML), logMessage, format, "UTF-8", true);
+		} catch (ServerException se) {
+			logStackTrace(se);
+			throw AxisUtility.getFault(se);
+		} catch (Exception e) {
+			logStackTrace(e);
+			throw AxisUtility.getFault(e);
+		}
+	}
 
     public void modifyObject(String PID, String state, String label,
             String logMessage)
@@ -183,7 +185,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throws RemoteException {
         assertInitialized();
         try {
-            InputStream in=s_management.getObjectXML(getContext(), PID, "metslikefedora1", "UTF-8");
+            InputStream in=s_management.getObjectXML(getContext(), PID, "UTF-8");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
@@ -208,6 +210,21 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
     }
+    
+	public byte[] export(String PID, String format)
+			throws RemoteException {
+		assertInitialized();
+		try {
+			InputStream in=s_management.exportObject(getContext(), PID, format, "UTF-8");
+			ByteArrayOutputStream out=new ByteArrayOutputStream();
+			pipeStream(in, out);
+			return out.toByteArray();
+		} catch (ServerException se) {
+			throw AxisUtility.getFault(se);
+		} catch (Exception e) {
+			throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+		}
+	}
 
     // temporarily here
     private void pipeStream(InputStream in, OutputStream out)
@@ -242,21 +259,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
 /*
     public fedora.server.types.gen.AuditRecord[] getObjectAuditTrail(String PID) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-
-    public String addDatastreamExternal(String PID, String dsLabel, String dsLocation) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-
-    public String addDatastreamManagedContent(String PID, String dsLabel, String MIMEType, byte[] dsContent) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-
-    public String addDatastreamXMLMetadata(String PID, String dsLabel, String MDType, byte[] dsInlineMetadata) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
