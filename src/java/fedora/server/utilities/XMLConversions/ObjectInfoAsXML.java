@@ -8,30 +8,32 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fedora.server.access.ObjectProfile;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.server.storage.types.MethodParmDef;
 import fedora.server.utilities.DateUtility;
 
-// FIXIT!! This class was copied from fedora.server.search into
+// FIXIT!! This DCFields was copied from fedora.server.search into
 // fedora.server.utilties for more general purpose use.  Decide on one official copy
 // in one of these two packages, and use throughout the system.
-import fedora.server.utilities.DCFields;
-
-// FIXIT!  Note that the method implementation of this class was taken
+// FIXIT!  Note that the some of the methods of this class were taken
 // from fedora.search.FieldSearchExistingImpl.java.  The method can be of
 // general use in the system, thus it is in this class.  Looks towards
 // eliminating the method from FieldSearchExistingImpl.java and calling
 // this one from the utilities package.
+import fedora.server.utilities.DCFields;
+
 
 /**
- * Use an object reader to get descriptive metadata out of the object
- * and encode the metadata in XML in accordance with objectinfo.xsd.
+ * Provide an XML encoding of various object components.
  * <p></p>
  *
- * @author cwilper@cs.cornell.edu
+ * @author Sandy Payette payette@cs.cornell.edu
  */
 public class ObjectInfoAsXML
 {
@@ -40,31 +42,24 @@ public class ObjectInfoAsXML
     {
     }
 
-    public String getObjectProfile(String reposBaseURL, DOReader reader)
+    public String getObjectProfile(String reposBaseURL, ObjectProfile objProfile)
             throws ServerException {
-        StringBuffer out=new StringBuffer();
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-
-        out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        out.append("<objectProfile"
+        StringBuffer out = new StringBuffer();
+        out.append("<?xml version=\"1.0\"?>");
+        out.append("<objectProfile "
               + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-              + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-              + " http://www.fedora.info/definitions/1/0/access/objectProfile.xsd\""
-              + " PID=\"" + reader.GetObjectPID() + "\">\n");
+              + " pid=\"" + objProfile.PID + "\" >");
+        out.append("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+              + " location=\"objectProfile.xsd\"/>");
 
-        String dissIndexURL =
-          getDissIndexURL(reposBaseURL, reader.GetObjectPID(), null);
-        out.append("<dissIndexURL>" + dissIndexURL + "</dissIndexURL>\n");
-        String itemIndexURL =
-          getItemIndexURL(reposBaseURL, reader.GetObjectPID(), null);
-        out.append("<itemIndexURL>" + itemIndexURL + "</itemIndexURL>\n");
-        String label=reader.GetObjectLabel();
-        if (label==null) label="";
-        out.append("<label>" + label + "</label>\n");
-        String objType = reader.getFedoraObjectType();
-        out.append("<objectType>");
+        // PROFILE FIELDS SERIALIZATION
+        out.append("<objLabel>" + objProfile.objectLabel + "</objLabel>");
+        out.append("<objContentModel>" + objProfile.objectContentModel + "</objContentModel>");
+        out.append("<objCreateDate>" + objProfile.objectCreateDate + "</objCreateDate>");
+        out.append("<objLastModDate>" + objProfile.objectLastModDate + "</objLastModDate>");
+        String objType = objProfile.objectType;
+        out.append("<objType>");
         if (objType.equalsIgnoreCase("O"))
         {
           out.append("Fedora Data Object");
@@ -77,45 +72,69 @@ public class ObjectInfoAsXML
         {
           out.append("Fedora Behavior Mechanism Object");
         }
-        out.append("</objectType>\n");
-        String cModel=reader.getContentModelId();
-        if (cModel==null) cModel="";
-        out.append("<contentModel>" + cModel + "</contentModel>\n");
-        out.append("<createDate>" + formatter.format(reader.getCreateDate()) + "</createDate>\n");
-        out.append("<modDate>" + formatter.format(reader.getLastModDate()) + "</modDate>\n");
-        // FIXIT!! Ideally I do not hard-code the default disseminator
-        out.append("<disseminator>\n");
-        out.append("<bDefPID>" + "fedora-system:3" + "</bDefPID>\n");
-        out.append("<bDefLabel>" + "Default Behavior Definition for Fedora Objects" + "</bDefLabel>\n");
-        out.append("<dissLabel>" + "Fedora's Default Disseminator" + "</dissLabel>\n");
-        out.append("<dissCreateDate>" +
-          DateUtility.convertDateToString(new Date(System.currentTimeMillis()))
-          + "</dissCreateDate>\n");
-        out.append("</disseminator>\n");
-        Disseminator[] dissSet = reader.GetDisseminators(null);
-        for (int i=0; i<dissSet.length; i++)
-        {
-          out.append("<disseminator>\n");
-          out.append("<bDefPID>" + dissSet[i].bDefID + "</bDefPID>\n");
-          out.append("<bDefLabel>" +dissSet[i].bDefLabel + "</bDefLabel>\n");
-          out.append("<dissLabel>" +dissSet[i].dissLabel + "</dissLabel>\n");
-          out.append("<dissCreateDate>" +dissSet[i].dissCreateDT + "</dissCreateDate>\n");
-          out.append("</disseminator>\n");
-        }
-        out.append("</objectProfile>\n");
+        out.append("</objType>");
+        out.append("<objDissIndexViewURL>" + objProfile.dissIndexViewURL + "</objDissIndexViewURL>");
+        out.append("<objItemIndexViewURL>" + objProfile.itemIndexViewURL + "</objItemIndexViewURL>");
+        out.append("</objectProfile>");
         return out.toString();
     }
 
-    public String getOAIDublinCore(DOReader reader) throws ServerException
+    public String getMethodIndex(String reposBaseURL, String PID, ObjectMethodsDef[] methods)
+            throws ServerException {
+        StringBuffer out=new StringBuffer();
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+
+        out.append("<?xml version=\"1.0\"?>");
+        out.append("<object "
+            + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            + " pid=\"" + PID + "\" >");
+        out.append("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            + " location=\"objectmethods.xsd\"/>");
+
+        String nextBdef = "null";
+        String currentBdef = "";
+        for (int i=0; i<methods.length; i++)
+        {
+          currentBdef = methods[i].bDefPID;
+          if (!currentBdef.equalsIgnoreCase(nextBdef))
+          {
+            if (i != 0) out.append("</bdef>");
+            out.append("<bdef pid=\"" + methods[i].bDefPID + "\" >");
+          }
+          out.append("<method name=\"" + methods[i].methodName + "\" >");
+          MethodParmDef[] methodParms = methods[i].methodParmDefs;
+          for (int j=0; j<methodParms.length; j++)
+          {
+            out.append("<parm parmName=\"" + methodParms[j].parmName
+                + "\" parmDefaultValue=\"" + methodParms[j].parmDefaultValue
+                + "\" parmRequired=\"" + methodParms[j].parmRequired
+                + "\" parmType=\"" + methodParms[j].parmType
+                + "\" parmLabel=\"" + methodParms[j].parmLabel + "\" >");
+            if (methodParms[j].parmDomainValues.length > 0 )
+            {
+              out.append("<parmDomainValues>");
+              for (int k=0; k<methodParms[j].parmDomainValues.length; k++)
+              {
+                out.append("<value>" + methodParms[j].parmDomainValues[k]
+                    + "</value>");
+              }
+              out.append("</parmDomainValues>");
+            }
+            out.append("</parm>");
+          }
+
+          out.append("</method>");
+          nextBdef = currentBdef;
+        }
+        out.append("</bdef>");
+        out.append("</object>");
+        return out.toString();
+    }
+
+    public String getOAIDublinCore(DatastreamXMLMetadata dublinCore) throws ServerException
     {
       StringBuffer out = new StringBuffer();
-      DatastreamXMLMetadata dcmd = null;
-      try {
-          dcmd = (DatastreamXMLMetadata) reader.GetDatastream("DC", null);
-      } catch (ClassCastException cce) {
-          throw new ObjectIntegrityException("Object " + reader.GetObjectPID()
-                  + " has a DC datastream, but it's not inline XML.");
-      }
       out.append("<oai_dc:dc xmlns:oai_dc=\""
         + "http://www.openarchives.org/OAI/2.0/oai_dc/\""
         + " xmlns:dc=\"http://purl.org/dc/elements/1.1/\""
@@ -123,8 +142,8 @@ public class ObjectInfoAsXML
         + " xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/"
         + " http://www.openarchives.org/OAI/2.0/oai_dc.xsd\"" + ">\n");
 
-        if (dcmd!=null) {
-          InputStream in=dcmd.getContentStream();
+        if (dublinCore!=null) {
+          InputStream in=dublinCore.getContentStream();
           DCFields dc=new DCFields(in);
           for (int i=0; i<dc.titles().size(); i++) {
               out.append("<dc:title>");
@@ -358,7 +377,7 @@ public class ObjectInfoAsXML
     }
 
     // FIXIT!! Consider implications of hard-coding the default dissemination
-    // aspects of the URL (e.g. fedora-system3 as the PID and viewItemList.
+    // aspects of the URL (e.g. fedora-system3 as the PID and viewItemIndex.
     private String getItemIndexURL(String reposBaseURL, String PID, Date versDateTime)
     {
         String itemIndexURL = null;
@@ -366,12 +385,12 @@ public class ObjectInfoAsXML
         if (versDateTime == null)
         {
           itemIndexURL = reposBaseURL + "/fedora/get/" + PID +
-                         "/fedora-system:3/viewItemList";
+                         "/fedora-system:3/viewItemIndex";
         }
         else
         {
             itemIndexURL = reposBaseURL + "/fedora/get/"
-              + PID + "/fedora-system:3/viewItemList/"
+              + PID + "/fedora-system:3/viewItemIndex/"
               + DateUtility.convertDateToString(versDateTime);
         }
         return itemIndexURL;
