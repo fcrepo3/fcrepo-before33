@@ -179,8 +179,14 @@ public class ConnectionPool implements Runnable
           s = existingConnection.createStatement();
           rs = s.executeQuery("SELECT 1");
       } catch (SQLException sqle) {
-          notifyAll(); // Freed up a spot for anybody waiting
-          return(getConnection());
+          String msg = sqle.getMessage();
+          if (msg == null || !msg.startsWith("ORA-00923")) {
+              // if it's not an oracle syntax problem ("no FROM", which will always happen
+              // here when using oracle), assume the error can be rectified by 
+              // simply getting another connection.
+              notifyAll(); // Freed up a spot for anybody waiting
+              return(getConnection());
+          }
       } finally {
           if (s != null)   s.close();
           if (rs != null) rs.close();
