@@ -10,7 +10,7 @@
 #   mysql_home      - the path where MySQL is installed (e.g., /usr/local/mysql)
 #   mysql_dba_user  - the name of the MySQL user with dba privileges (e.g.,  root)
 #   mysql_dba_pass  - the password for the MySQL user with dba privileges
-#   fedora_db_name  - the name of the Fedora database to be removed (e.g., FedoraObjects)
+#   fedora_db_name  - the name of the Fedora database to be removed (e.g., fedora12)
 #
 
 # check for four input arguments
@@ -21,7 +21,7 @@ if [ "$#" != 4 ]; then
   echo "mysql_dba_user  - the name of the MySQL user with dba privileges (e.g.,  root)"
   echo "mysql_dba_pass  - the password for the MySQL user with dba privileges"
   echo "fedora_dba_pass - the password of MySQL user admin for Fedora database (default: fedoraAdmin)"
-  echo "fedora_db_name  - the name of the Fedora database (e.g., FedoraObjects)"
+  echo "fedora_db_name  - the name of the Fedora database (e.g., fedora12)"
   exit 1
 fi
 
