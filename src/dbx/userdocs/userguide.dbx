@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article>
+    <title>Fedora User Guide</title>
+    <subtitle>Release 1.0</subtitle>
+    <articleinfo>
+        <author>
+            <othername>Fedora Development Team</othername>
+        </author>
+        <edition>$Revision$</edition>
+        <date>$Date$</date>
+        <releaseinfo>
+            $Id$
+        </releaseinfo>
+    </articleinfo>
+    <section>
+      <title>Object Metadata</title>
+      <para></para>
+      <section>
+          <title>System Metadata</title>
+          <para>Metadata that relates the object to the system.</para>
+          <section>
+              <title>Hidden</title>
+              <para>Metadata that is used to manage the object but is
+                    not exposed to the user.</para>
+          </section>
+          <section>
+              <title>Key</title>
+              <para>Metadata describing the object's basic properties 
+                    as an entity in a repository.</para>
+          </section>
+          <section>
+              <title>Audit</title>
+              <para>Metadata about the object's changes in the repository.</para>
+          </section>
+      </section>
+      <section>
+          <title>User Metadata</title>
+          <para>Arbitrary, internally-managed XML metadata that is under
+                the direct control of the user.</para>
+          <section>
+              <title>Primary Dublin Core Record</title>
+              <para>Every object in the repository has a primary Dublin Core
+                    datastream with a special datastream identifier, 'DC'.
+                    This datastream is an XML dublin core record which
+                    includes at least one dc:title, and any number of any
+                    of the basic 15 dublin core elements.</para>
+              <para>While an object is ingested or newly created in the
+                    repository, the system checks for this datastream.
+                    If it does not exist, it is automatically created.
+                    If it does not have at least one dc:title, the
+                    value of the dc:title is set to the value of the
+                    object label.  If the object label is missing or
+                    empty, it is automatically created as "New Object PID",
+                    where PID is the actual PID of the object.</para>
+          </section>
+    </section>
+      
+<!-- 
+itemizedlist
+  listitem
+
+literallayout 
+-->
+	<appendix>
+	  <title>Revision History</title>
+	  <para>The history of this document follows.</para>
+	  <literallayout>
+	  $Log$
+	  Revision 1.1  2003/01/11 22:40:05  cwilper
+	  just a first hack at this... currently it's got an explanation of
+	  system vs. user metadata, including what behavior the user can
+	  expect in regard to the primary dublin core metadata.
+
+	  </literallayout>
+    </appendix>
+</article>
