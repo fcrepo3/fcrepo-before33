@@ -13,11 +13,16 @@ package fedora.server.access;
 import fedora.server.access.localservices.HttpService;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.MethodParmNotFoundException;
 import fedora.server.storage.DefinitiveBMechReader;
 import fedora.server.storage.DefinitiveDOReader;
 import fedora.server.storage.FastDOReader;
+import fedora.server.storage.FastDOReader;
 import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.Dissemination;
+import fedora.server.storage.types.Property;
+import fedora.server.storage.types.MethodParmDef;
 import fedora.server.utilities.DateUtility;
 
 // Java imports
@@ -34,6 +39,7 @@ import javax.servlet.ServletException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,7 +60,9 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
   private static final String YES = "yes";
   private static final int DISS_CACHE_SIZE = 100;
-  private Hashtable v_userParms = new Hashtable();
+  private Hashtable h_userParms = new Hashtable();
+  private String requestURL = null;
+  private String requestURI = null;
 
   // For Testing
   private static final boolean debug = true;
@@ -69,7 +77,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   {}
 
   /**
-   * Process Post request.
+   * For now, treat a HTTP POST request just like a GET request.
    *
    * @param request
    * @param response
@@ -94,71 +102,73 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
-    String action = "";
+    String action = null;
     String PID = null;
     String bDefPID = null;
     String methodName = null;
     Calendar asOfDate = null;
-    String versDate = null;
-    String clearCache = "";
-    String requestURI = null;
-    Vector userParms = new Vector();
-    this.getServletContext().log("message", new Exception());
+    Date versDateTime = null;
+    String clearCache = null;
+    Property[] userParms = null;
 
-    Enumeration params = request.getParameterNames();
-    requestURI = request.getServerName()+":"+request.getServerPort()+
-                 request.getRequestURI()+"?"+request.getQueryString();
+    requestURL = request.getRequestURL().toString()+"?";
+    requestURI = requestURL+request.getQueryString();
     session = request.getSession(true);
     PrintWriter out = response.getWriter();
-    if (debug) System.out.println("RequestURI: "+requestURI+
+    if (debug) System.out.println("RequestURL: "+requestURL+
+                                  "RequestURI: "+requestURI+
                                   "Session: "+session);
 
-    while ( params.hasMoreElements())
+    Enumeration URLParms = request.getParameterNames();
+    while ( URLParms.hasMoreElements())
     {
-      String param = (String) params.nextElement();
-      if (param.equals("action_"))
+      String parm = (String) URLParms.nextElement();
+      if (parm.equals("action_"))
       {
-        action = request.getParameter(param);
-      } else if (param.equals("PID_"))
+        action = request.getParameter(parm);
+      } else if (parm.equals("PID_"))
       {
-        PID = request.getParameter(param);
-      } else if (param.equals("bDefPID_"))
+        PID = request.getParameter(parm);
+      } else if (parm.equals("bDefPID_"))
       {
-        bDefPID = request.getParameter(param);
-      } else if (param.equals("methodName_"))
+        bDefPID = request.getParameter(parm);
+      } else if (parm.equals("methodName_"))
       {
-        methodName = request.getParameter(param);
-      } else if (param.equals("asOfDate_"))
+        methodName = request.getParameter(parm);
+      } else if (parm.equals("asOfDate_"))
       {
-        versDate = request.getParameter(param);
-        asOfDate = DateUtility.convertStringToCalendar(versDate);
-      } else if (param.equals("clear-cache_"))
+        asOfDate = DateUtility.
+                   convertStringToCalendar(request.getParameter(parm));
+      } else if (parm.equals("clearCache_"))
       {
-        clearCache = request.getParameter(param);
+        clearCache = request.getParameter(parm);
       } else
       {
-        // get any user-supplied parameters
-        String parmvalue = request.getParameter(param);
-        userParms.addElement(param);
-        userParms.addElement(parmvalue);
-        v_userParms.put(param, parmvalue);
+        // get any user-supplied parameters and place in hashtable
+        Property UserParm = new Property();
+        UserParm.Name = parm;
+        UserParm.Value =request.getParameter(parm);
+        h_userParms.put(parm, UserParm);
       }
     }
 
     // Check for required URL parameters
     // Perform requested acton if required parameters are present
-    if (checkURLParams(action, PID, bDefPID, methodName, versDate,
-                      userParms, clearCache, response))
+    if (checkURLParams(action, PID, bDefPID, methodName, versDateTime,
+                      h_userParms, clearCache, response))
     {
-      // FIXME!! Session management code needs to go here
+      // Have valid request.
+      // FIXME!! Deal with session management
       if (action.equals(GET_DISSEMINATION))
       {
         // See if dissemination request is in local cache
         MIMETypedStream dissemination = null;
-        dissemination = checkCache(requestURI, action, PID, bDefPID, methodName,
+        dissemination = checkCache(action, PID, bDefPID, methodName,
                                    userParms, asOfDate, clearCache, response);
         if (dissemination != null)
         {
+          // Dissemination was successful;
+          // Return MIMETypedStream back to browser client
           response.setContentType(dissemination.MIMEType);
           int byteStream = 0;
           ByteArrayInputStream dissemResult =
@@ -170,13 +180,15 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         }
       } else if (action.equals(GET_BEHAVIOR_DEFINITIONS))
       {
-        String servletURL = "http://"+request.getServerName()+":"+
-                                    request.getServerPort()+
-                                    request.getRequestURI()+"?";
-        if(debug) System.out.println("servletURL: "+servletURL);
+        //String servletURL = "http://"+request.getServerName()+":"+
+        //                            request.getServerPort()+
+        //                            request.getRequestURI()+"?";
+        //if(debug) System.out.println("servletURL: "+servletURL);
         response.setContentType(CONTENT_TYPE_HTML);
-        // FIXME!! versioning based on datetime stamp not yet implemented
         String[] bDefs = GetBehaviorDefinitions(PID, asOfDate);
+
+        // Return HTML table containing results;
+        // Include links to digital object PID to further explore object.
         out.println("<br><table border='1' cellspacing='2' cellpadding='5'>");
         out.println("<tr>");
         out.println("<td><b><font size='+2'><b>PID</font></td></b>");
@@ -184,16 +196,25 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         out.println("<td><b><font size='+2'>Behavior Definitions</font>"+
                     "</b></td");
         out.println("</tr>");
-
+        int rows = bDefs.length - 1;
         for (int i=0; i<bDefs.length; i++)
         {
           out.println("<tr>");
-          out.println("<td><font color='blue'><a href='"+servletURL+
-                      "action_=ViewObject&PID_="+PID+"'>"+PID+
-                      "</a></font></td>");
-          out.flush();
-          out.println("<td><font color='blue'>"+versDate+"</font></td>");
-          out.println("<td><font color='red'>"+bDefs[i]+"</font></td></tr>");
+          if (i == 0)
+          {
+            out.println("<td><font color='blue'><a href='"+requestURL+
+                        "action_=ViewObject&PID_="+PID+"'>"+PID+
+                        "</a></font></td>");
+            out.flush();
+            out.println("<td><font color='blue'>"+DateUtility.convertDateToString(versDateTime)+"</font></td>");
+            out.println("<td><font color='red'>"+bDefs[i]+"</font></td></tr>");
+          } else if (i ==1)
+          {
+            out.println("<td colspan='2' rowspan='"+rows+"'></td><td><font color='red'>"+bDefs[i]+"</font></td></tr>");
+          } else
+          {
+            out.println("<td><font color='red'>"+bDefs[i]+"</font></td></tr>");
+          }
         }
         out.println("</table><br>");
         out.println("</body></html>");
@@ -201,7 +222,6 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       {
         try
         {
-          // FIXME!! versioning based on datetime stamp not yet implemented
           MIMETypedStream bDefMethods = GetBehaviorMethods(PID, bDefPID, asOfDate);
           if (bDefMethods == null)
           {
@@ -255,10 +275,17 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    */
   public String[] GetBehaviorDefinitions(String PID, Calendar asOfDate)
   {
-    DefinitiveDOReader doReader = new DefinitiveDOReader(PID);
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
-    // FIXME!! versioning based on datetime not yet implemented
-    return doReader.GetBehaviorDefs(versDateTime);
+    //DefinitiveDOReader doReader = new DefinitiveDOReader(PID);
+    try
+    {
+      FastDOReader fastReader = new FastDOReader(PID);
+      Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
+      return fastReader.GetBehaviorDefs(versDateTime);
+    } catch (ObjectNotFoundException onfe)
+    {
+      // FIXME!! - need to decide on exception handling
+      return null;
+    }
   }
 
   /**
@@ -274,13 +301,17 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   public MIMETypedStream GetBehaviorMethods(String PID, String bDefPID,
       Calendar asOfDate)
   {
+    Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
     ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
     MIMETypedStream bDefMethods = null;
     try
     {
-      DefinitiveBMechReader doReader = new DefinitiveBMechReader(bDefPID);
-      // FIXME!! versioning based on datetime not yet implemented
-      InputStream methodResults = doReader.GetBehaviorMethodsWSDL(null);
+      FastDOReader fastReader = new FastDOReader(PID);
+      InputStream methodResults = fastReader.GetBMechMethodsWSDL(bDefPID,
+          versDateTime);
+      // FIXME!! Need to implement something similar to what's done in
+      // GetBehaviorDefinitions to handle presentation of methods in
+      // an HTML table format.....
       int byteStream = 0;
       while ((byteStream = methodResults.read()) >= 0)
       {
@@ -290,6 +321,10 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     {
       System.out.println(ioe);
       this.getServletContext().log(ioe.getMessage(), ioe.getCause());
+    } catch (ObjectNotFoundException onfe)
+    {
+      // FIXME!! - need to decide on exception handling
+      return null;
     }
     bDefMethods = new MIMETypedStream(CONTENT_TYPE_XML,baos.toByteArray());
 
@@ -310,82 +345,80 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * @return - MIMETypedStream containing the dissemination result
    */
   public MIMETypedStream GetDissemination(String PID, String bDefPID,
-       String methodName, Vector userParms, Calendar asOfDate)
+       String methodName, Property[] userParms, Calendar asOfDate)
    {
      String protocolType = null;
-     Vector dissResult = null;
+     Dissemination[] dissResults = null;
+     Dissemination dissResult = null;
      String dissURL = null;
      String operationLocation = null;
      MIMETypedStream dissemination = null;
-     Date versDateTime = null;
-     if (!(asOfDate == null))
-     {
-       versDateTime = DateUtility.convertCalendarToDate(asOfDate);
-     }
+     Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
      FastDOReader fastReader = null;
      try
      {
-       fastReader = new FastDOReader(PID, bDefPID, methodName,
-           versDateTime);
-       dissResult = fastReader.getDissemination(PID, bDefPID, methodName,
+       fastReader = new FastDOReader(PID);
+       dissResults = fastReader.getDissemination(PID, bDefPID, methodName,
            versDateTime);
        String replaceString = null;
        DissResultSet results = new DissResultSet();
        // Build a hashtable of the dissemination result sets to be used
        // as a way of indexing the different result sets.
-       Enumeration e = dissResult.elements();
+       //Enumeration e = dissResult.elements();
        Hashtable h = new Hashtable();
        int index = 1;
        Integer key = new Integer(index);
-       while (e.hasMoreElements())
+       //while (e.hasMoreElements())
+       for (int i=0; i<dissResults.length; i++)
        {
-         results = new DissResultSet((String[])e.nextElement());
-         if (debug) System.out.println("KEY: "+key+" VALUE: "+results.dsBindingKey);
-         h.put(key,results);
+         dissResult = dissResults[i];
+         if (debug) System.out.println("KEY: "+key+" VALUE: "+dissResult.DSBindKey);
+         h.put(key,dissResult);
          index++;
          key = new Integer(index);
        }
        int counter = 1;
-       int numElements = dissResult.size();
-       e = dissResult.elements();
+       int numElements = dissResults.length;
+       //e = dissResult.elements();
        // Get row(s) of WSDL results and perform string substitution
        // on DSBindingKey and method parameter values in WSDL
        // Note: In case where more than one datastream matches the
        // DSBindingKey or there are multiple DSBindingKeys for the
        // method, multiple rows will be returned; otherwise
        // a single row is returned.
-       while (e.hasMoreElements())
+       //while (e.hasMoreElements())
+       for (int i=0; i<dissResults.length; i++)
        {
-         results = new DissResultSet((String[])e.nextElement());
+         dissResult = dissResults[i];
          // If AddressLocation is LOCAL, this is a flag to indicate
          // the associated OperationLocation requires no AddressLocation.
          // i.e., the OperationLocation contains all information necessary
          // to perform the dissemination request.
-         if (results.addressLocation.equals(LOCAL_ADDRESS_LOCATION))
+         if (dissResult.AddressLocation.equalsIgnoreCase(LOCAL_ADDRESS_LOCATION))
          {
-           results.addressLocation = "";
+           dissResult.AddressLocation = "";
          }
          // Match DSBindingKey pattern in WSDL
-         String bindingKeyPattern = "\\("+results.dsBindingKey+"\\)";
-         if (counter == 1)
+         String bindingKeyPattern = "\\("+dissResult.DSBindKey+"\\)";
+         if (i == 0)
          {
-           operationLocation = results.operationLocation;
-           dissURL = results.addressLocation+operationLocation;
-           protocolType = results.protocolType;
+           operationLocation = dissResult.OperationLocation;
+           dissURL = dissResult.AddressLocation+dissResult.OperationLocation;
+           protocolType = dissResult.ProtocolType;
          }
          if (debug) System.out.println("counter: "+counter+" numelem: "+numElements);
-         String currentKey = results.dsBindingKey;
+         String currentKey = dissResult.DSBindKey;
          Integer hashKey = null;
          String nextKey = "";
-         if (counter != numElements)
+         if (i != numElements-1)
          {
            // Except for last row, get the value of the next binding key
            // out of the hashtable to compare with the value of the current
            // binding key.
            hashKey = new Integer(counter+1);
            if (debug) System.out.println("hashKey: '"+hashKey+"' currentKey: '"+currentKey+"'");
-           DissResultSet result2 = (DissResultSet)h.get(hashKey);
-           nextKey = result2.dsBindingKey;
+           //DissResultSet result2 = (DissResultSet)h.get(hashKey);
+           nextKey = dissResults[i+1].DSBindKey;
            if (debug) System.out.println("' nextKey: '"+nextKey+"'");
          }
          // In most cases, there is only a single datastream that matches a given
@@ -415,30 +448,40 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
          //
          // image=(PHOTO)&watermark=(WATERMARK) becomes
          // image=dslocation1+dslocation2&watermark=dslocation3
-         if (nextKey.equalsIgnoreCase(currentKey) & counter != numElements)
+         if (nextKey.equalsIgnoreCase(currentKey) & i != numElements)
          {
-           replaceString = results.dsLocation+"+("+results.dsBindingKey+")";
+           replaceString = dissResult.DSLocation+"+("+dissResult.DSBindKey+")";
          } else
          {
-           replaceString = results.dsLocation;
+           replaceString = dissResult.DSLocation;
          }
          if (debug) System.out.println("replaceString: "+replaceString);
          dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
-         counter++;
+         //counter++;
          if (debug) System.out.println("replaced dissURL = "+
                                       dissURL.toString()+
-                                      " counter = "+counter);
+                                      " counter = "+i);
        }
-       // FIXME!! need to implement handling of user-supplied method parameters
-       // Would need to validate user-supplied parameters and then substitute
-       // values in operationLocation.
 
-       // FIXME!! need to implement Access Policy control
+       // Substitute user-supplied parameter values in dissemination URL
+       Enumeration e = h_userParms.keys();
+       while (e.hasMoreElements())
+       {
+         String name = (String)e.nextElement();
+         String value = (String)h_userParms.get(name);
+         String pattern = "\\("+name+"\\)";
+         dissURL = substituteString(dissURL, pattern, value);
+         if (debug) System.out.println("UserParmSubstitution dissURL: "+dissURL);
+       }
 
        // Resolve content referenced by dissemination result
        if (debug) System.out.println("ProtocolType = "+protocolType);
        if (protocolType.equalsIgnoreCase("http"))
        {
+         // FIXME!! need to implement Access Policy control.
+         // If access is based on restrictions to content,
+         // this is the last chance to apply those restrictions
+         // before returnign dissemination result to client.
          HttpService httpService = new HttpService(dissURL);
          try
          {
@@ -469,13 +512,15 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   public void viewObject(String PID, String bDefPID, String methodName,
                          Calendar asOfDate, HttpServletRequest request, PrintWriter out) throws IOException
   {
+    // FIXME!! If we decide to keep this method, need to implement
+    // a Datastructure for viewObject other than just simple vector.
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
     FastDOReader fastReader = null;
     Vector queryResults = null;
 
     try
     {
-      fastReader = new FastDOReader(PID, bDefPID, methodName, versDateTime);
+      fastReader = new FastDOReader(PID);
       queryResults = fastReader.getObject(PID, versDateTime);
       String servletURL = request.getServerName()+":"+request.getServerPort()+
                    request.getRequestURI();
@@ -509,6 +554,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         }
       }
       out.println("</tr>");
+      int rowCount = 0;
       while (e.hasMoreElements())
       {
         String[] results = (String[])e.nextElement();
@@ -579,15 +625,18 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    *
    */
   private boolean validateUserParms(String PID, String bDefPID, String methodName,
-                                   Hashtable v_userParms, Date versDateTime)
+                                   Hashtable h_userParms, Date versDateTime)
+  //private boolean validateUserParms(String PID, String bDefPID, String methodName, Date versDateTime, Hashtable params)
   {
     boolean valid = true;
     FastDOReader fdor = null;
-    Vector methodParms = new Vector();
+    //Vector methodParms = new Vector();
+    MethodParmDef[] methodParms = null;
+    MethodParmDef methodParm = null;
     try
     {
-      fdor = new FastDOReader(PID, bDefPID, methodName, versDateTime);
-      methodParms = fdor.getMethodParms(bDefPID, methodName, versDateTime);
+      fdor = new FastDOReader(PID);
+      methodParms = fdor.GetBMechMethodParm(bDefPID, methodName, versDateTime);
     } catch(MethodParmNotFoundException mpnfe)
     {
       System.out.println(mpnfe.getMessage());
@@ -598,58 +647,56 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       this.getServletContext().log(onfe.getMessage(), onfe.getCause());
     }
     // Put valid method parameters and their attributes into hashtable
-    Enumeration e = methodParms.elements();
     Hashtable v_validParms = new Hashtable();
-    while (e.hasMoreElements())
+    for (int i=0; i<methodParms.length; i++)
     {
-      ParmResultSet prs = new ParmResultSet((String[])e.nextElement());
-      v_validParms.put(prs.name,prs);
+      methodParm = methodParms[i];
+      v_validParms.put(methodParm.parmName,methodParm);
     }
     // check if no user supplied parameters
-    if (!v_userParms.isEmpty())
+    if (!h_userParms.isEmpty())
     {
       // Iterate over each user supplied parameter name
-      Enumeration parmNames = v_userParms.keys();
+      Enumeration parmNames = h_userParms.keys();
       while (parmNames.hasMoreElements())
       {
-        ParmResultSet prs = null;
         String name = (String)parmNames.nextElement();
-        prs = (ParmResultSet)v_validParms.get(name);
-        if (prs != null && prs.name != null)
+        methodParm = (MethodParmDef)v_validParms.get(name);
+
+        if (methodParm != null && methodParm.parmName != null)
         {
           // Method has at least one parameter and name matches userParm
-          if (prs.requiredFlag.equalsIgnoreCase("Y"))
+          if (methodParm.parmRequired)
           {
             // Method parm is required
-            if (v_userParms.get(prs.name) == null)
+            if (h_userParms.get(methodParm.parmName) == null)
             {
               // Error: required method parameter not in user-supplied list
-              System.out.println("REQUIRED PARAMETER:" + prs.name + " NOT FOUND");
+              System.out.println("REQUIRED PARAMETER:" + methodParm.parmName + " NOT FOUND");
               valid = false;
             } else
             {
               // Required parameter found
-              if (debug) System.out.println("Required parameter FOUND: "+prs.name);
+              if (debug) System.out.println("Required parameter FOUND: "+methodParm.parmName);
             }
           }
           // Method parameter is not required
           // Check for default value if user-supplied value is null(empty string)
-          String value = (String)v_userParms.get(prs.name);
+          String value = (String)h_userParms.get(methodParm.parmName);
           if (value != null && value.equalsIgnoreCase(""))
           {
-            if(prs.defaultValue != null)
+            if(methodParm.parmDefaultValue != null)
             {
-              v_userParms.put(prs.name,prs.defaultValue);
-              if (debug) System.out.println("SET DEFAULT VALUE: "+prs.defaultValue);
+              h_userParms.put(methodParm.parmName, methodParm.parmDefaultValue);
+              if (debug) System.out.println("SET DEFAULT VALUE: "+methodParm.parmDefaultValue);
             }
           } else
           {
             if (debug) System.out.println("NO DEFAULT VALUES");
           }
-          String s = (String)v_userParms.get(prs.name);
-          if (!v_userParms.isEmpty() && v_userParms.get(prs.name) == null)
+          if (!h_userParms.isEmpty() && h_userParms.get(methodParm.parmName) == null)
           {
-            System.out.println("USER SUPPLIED PARAMETER NOT VALID FOR THIS METHOD: "+prs.name);
+            System.out.println("USER SUPPLIED PARAMETER NOT VALID FOR THIS METHOD: "+methodParm.parmName);
             valid = false;
           }
         } else
@@ -661,16 +708,15 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     {
       // There were no user supplied parameters.
       // Check if this method has any required parameters.
-      e = methodParms.elements();
-      while (e.hasMoreElements())
+      for (int i=0; i<methodParms.length; i++)
       {
-        ParmResultSet prs = new ParmResultSet((String[])e.nextElement());
-        if (prs.requiredFlag.equalsIgnoreCase("Y"))
+        methodParm = methodParms[i];
+        if (methodParm.parmRequired)
         {
-          if (debug) System.out.println("emptyREQUIRED PARAM NAME NOT FOUND: "+prs.name);
+          if (debug) System.out.println("emptyREQUIRED PARAM NAME NOT FOUND: "+methodParm.parmName);
         } else
         {
-          if (debug) System.out.println("emptyNON-REQUIRED PARAM FOUND: "+prs.name);
+          if (debug) System.out.println("emptyNON-REQUIRED PARAM FOUND: "+methodParm.parmName);
         }
       }
     }
@@ -679,18 +725,12 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
 
   private void emptyResult(String action, String PID, String bDefPID,
                            String methodName, Calendar asOfDate,
-                           Vector userParms, String clearCache, HttpServletResponse response)
+                           Property[] userParms, String clearCache, HttpServletResponse response)
       throws IOException
   {
 
     String versDate = DateUtility.convertCalendarToString(asOfDate);
-    //String versDate = "";
-    //if (asOfDate != null)
-    //{
-      //Date date = asOfDate.getTime();
-      //versDate = formatter.format(date);
     if (debug) System.out.println("versdate: "+versDate);
-    //}
     PrintWriter out = response.getWriter();
     response.setContentType(CONTENT_TYPE_HTML);
     out.println("<html>");
@@ -708,13 +748,17 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                 "<tr><td><font color='red'>methodName_</td><td> = </td>"+
                 "<td>"+methodName+"</td></tr></font><tr><td><font color='red'>"+
                 "AsOfDate_</td><td> = </td><td>"+versDate+"</td></tr></font>"+
-                "<tr><td><font color='red'>clear-cache_</td><td> = </td>");
+                "<tr><td><font color='red'>clearCache_</td><td> = </td>"+
+                "<td>"+clearCache+"</td></tr>");
     out.println("<tr></tr><tr><td colspan='5'><font color='blue'>"+
                 "Other-Parameters:</font></td></tr><tr></tr>");
-    for (Enumeration e = userParms.elements() ; e.hasMoreElements(); )
+    if (userParms != null)
     {
-      out.println("<tr><td><font color='red'>"+e.nextElement()+" </td>"+
-      "<td>= </td><td>"+e.nextElement()+"</td></tr></font>");
+      for (int i=0; i<userParms.length; i++)
+      {
+        out.println("<tr><td><font color='red'>"+userParms[i].Name+" </td>"+
+        "<td>= </td><td>"+userParms[i].Value+"</td></tr></font>");
+      }
     }
     out.println("</table></font>");
     out.println("</body></html>");
@@ -722,10 +766,13 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     if (debug)
     {
       System.out.println("PID: "+PID+"bDEF: "+bDefPID+"methodName: "+methodName);
-      for (Enumeration e = userParms.elements() ; e.hasMoreElements(); )
+      if (userParms != null)
       {
-        System.out.println("<p>userParm: "+e.nextElement()+
-        " userValue: "+e.nextElement());
+        for (int i=0; i<userParms.length; i++)
+        {
+          System.out.println("<p>userParm: "+userParms[i].Name+
+          " userValue: "+userParms[i].Value);
+        }
       }
     }
     System.out.println("REQUEST Returned NO Data");
@@ -747,13 +794,14 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * @throws IOException
    */
   private boolean checkURLParams(String action, String PID, String bDefPID,
-                          String methodName, String versDate, Vector userParms,
+                          String methodName, Date versDateTime, Hashtable userParms,
                           String clearCache, HttpServletResponse response)
       throws IOException
   {
-    // check for missing required parameters
+    // check for missing parameters required by the interface definition
     boolean checkOK = true;
-    if (action.equals(GET_DISSEMINATION))
+    String versDate = DateUtility.convertDateToString(versDateTime);
+    if (action != null && action.equals(GET_DISSEMINATION))
     {
       if (PID == null || bDefPID == null || methodName == null)
       {
@@ -778,7 +826,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                     "</font><tr><td><font color='red'>AsOfDate_</td>"+
                     "<td> = </td><td>"+versDate+"</td><td>"+
                     "<font color='green'>(OPTIONAL)</font></td></tr></font>"+
-                    "<tr><td><font color='red'>clear-cache_</td><td> = </td>"+
+                    "<tr><td><font color='red'>clearCache_</td><td> = </td>"+
                     "<td>"+clearCache+"</td><td><font color='green'>"+
                     "(OPTIONAL)</font></td></tr></font>");
         out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td>"+
@@ -792,7 +840,17 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         out.println("</body></html>");
         checkOK = false;
       }
-    } else if (action.equals(GET_BEHAVIOR_DEFINITIONS))
+      // Check user supplied method parms:
+      //   1) For all parameters required by the method
+      //   2) For any parameters with null values for which the method
+      //      defines default values
+      //   3) For any parameters not definined by the method
+      if(!validateUserParms(PID, bDefPID, methodName, h_userParms, versDateTime))
+      {
+        checkOK = false;
+      }
+
+    } else if (action != null && action.equals(GET_BEHAVIOR_DEFINITIONS))
     {
       if (PID == null)
       {
@@ -819,7 +877,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                     "<font color='red'>AsOfDate_</td><td> = </td><td>"+
                     versDate+"</td><td><font color='green'>(OPTIONAL)"+
                     "</font></td></tr></font><tr><td><font color='red'>"+
-                    "clear-cache_</td><td> = </td><td>"+clearCache+
+                    "clearCache_</td><td> = </td><td>"+clearCache+
                     "</td><td><font color='green'>(OPTIONAL)"+
                     "</font></td></tr></font>");
         out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td>"+
@@ -833,7 +891,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         out.println("</body></html>");
         checkOK = false;
       }
-    } else if (action.equals(GET_BEHAVIOR_METHODS))
+    } else if (action != null && action.equals(GET_BEHAVIOR_METHODS))
     {
       if (PID == null || bDefPID == null)
       {
@@ -858,7 +916,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                     "</tr></font><tr><td><font color='red'>AsOfDate_</td>"+
                     "<td> = </td><td>"+versDate+"</td><td>"+
                     "<font color='green'>(OPTIONAL)</font></td></tr></font>"+
-                    "<tr><td><font color='red'>clear-cache_</td><td> = </td>"+
+                    "<tr><td><font color='red'>clearCache_</td><td> = </td>"+
                     "<td>"+clearCache+"</td><td><font color='green'>"+
                     "(OPTIONAL)</font></td></tr></font>");
         out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td></tr>"+
@@ -873,7 +931,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         out.println("</body></html>");
         checkOK = false;
       }
-    } else if (action.equals(VIEW_OBJECT))
+    } else if (action != null && action.equals(VIEW_OBJECT))
     {
       if (PID == null)
       {
@@ -900,7 +958,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                     "<font color='red'>AsOfDate_</td><td> = </td><td>"+
                     versDate+"</td><td><font color='green'>(OPTIONAL)"+
                     "</font></td></tr></font><tr><td><font color='red'>"+
-                    "clear-cache_</td><td> = </td><td>"+clearCache+
+                    "clearCache_</td><td> = </td><td>"+clearCache+
                     "</td><td><font color='green'>(OPTIONAL)"+
                     "</font></td></tr></font>");
         out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td>"+
@@ -934,7 +992,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                     "<tr><td><font color='red'>methodName_</td><td> = </td>"+
                     "<td>"+methodName+"</td></tr></font><tr><td><font color='red'>"+
                     "AsOfDate_</td><td> = </td><td>"+versDate+"</td></tr>"+
-                    "</font><tr><td><font color='red'>clear-cache_</td>"+
+                    "</font><tr><td><font color='red'>clearCache_</td>"+
                     "<td> = </td><td>"+clearCache+"</td></tr></font>");
       out.println("<tr></tr><tr><td colspan='5'><font color='blue'>"+
                   "Other-Parameters:</font></td></tr><tr></tr>");
@@ -975,21 +1033,21 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * @param asOfDate - version datetime stamp of the digital object
    * @return - MIMETypedStream containing dissemination result
    */
-  private synchronized MIMETypedStream checkCache(String dissRequestID,
-      String action, String PID, String bDefPID, String methodName,
-      Vector userParms, Calendar asOfDate, String clearCache,
+  private synchronized MIMETypedStream checkCache(String action,
+      String PID, String bDefPID, String methodName,
+      Property[] userParms, Calendar asOfDate, String clearCache,
       HttpServletResponse response) throws IOException
   {
     // Clear cache if size gets larger than DISS_CACHE_SIZE
     if (disseminationCache.size() > DISS_CACHE_SIZE ||
-        clearCache.equalsIgnoreCase(YES))
+        (clearCache == null || clearCache.equalsIgnoreCase(YES)))
     {
       clearDisseminationCache();
     }
     MIMETypedStream disseminationResult = null;
     // See if dissemination request is in local cache
     disseminationResult =
-        (MIMETypedStream)disseminationCache.get(dissRequestID);
+        (MIMETypedStream)disseminationCache.get(requestURI);
     if (disseminationResult == null)
     {
       // Dissemination request NOT in local cache.
@@ -999,11 +1057,12 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       if (disseminationResult != null)
       {
         // Dissemination request succeeded, so add to local cache
-        disseminationCache.put(dissRequestID, disseminationResult);
-         if (debug) System.out.println("ADDED to CACHE: "+dissRequestID);
+        disseminationCache.put(requestURI, disseminationResult);
+         if (debug) System.out.println("ADDED to CACHE: "+requestURI);
       } else
       {
         // Dissemination request failed
+        // FIXME!! need to decide on exception handling
         emptyResult(action, PID, bDefPID, methodName, asOfDate, userParms,
                     clearCache, response);
         System.out.println("Dissemination Result: NULL");
