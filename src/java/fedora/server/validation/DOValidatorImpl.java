@@ -52,6 +52,8 @@ package fedora.server.validation;
  * @version $Id$
  */
 // Fedora imports
+import fedora.server.Logging;
+import fedora.server.StdoutLogging;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectValidityException;
@@ -77,7 +79,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
-public class DOValidatorImpl implements DOValidator
+public class DOValidatorImpl extends StdoutLogging implements DOValidator
 {
     protected static boolean debug = true;
 
@@ -107,7 +109,7 @@ public class DOValidatorImpl implements DOValidator
      *  It is transformed into a validating stylesheet by the Schematron
      *  preprocessing stylesheet.
      */
-    protected static String schematronSchemaPath = "schematron/fedoraRules.xml";
+    protected static String schematronSchemaPath = "schematron/fedoraRulesExt.xml";
 
     /**
      * Configuration variable: connectionPool is a database connection
@@ -196,6 +198,7 @@ public class DOValidatorImpl implements DOValidator
    */
     public DOValidatorImpl() throws ServerException
     {
+      super(null);
     }
 
 
@@ -221,9 +224,11 @@ public class DOValidatorImpl implements DOValidator
    */
     public DOValidatorImpl(String tempDir, String xmlSchemaPath,
             String schematronPreprocessorPath, String schematronSchemaPath,
-            ConnectionPool connectionPool)
+            ConnectionPool connectionPool, Logging logTarget)
             throws ServerException
     {
+        super(logTarget);
+        logFinest("[DOValidatorImpl]: initializing object validation...");
         if (tempDir!=null)
           this.tempDir=tempDir;
         if (xmlSchemaPath!=null)
@@ -268,7 +273,6 @@ public class DOValidatorImpl implements DOValidator
       // disk so I can read it multiple times.
       try
       {
-        System.out.println("TEMP FILE DIR:" + tempDir);
         File objectAsFile = streamtoFile(tempDir, objectAsStream);
         validate(objectAsFile, validationLevel, workFlowPhase);
       }
@@ -282,9 +286,6 @@ public class DOValidatorImpl implements DOValidator
       }
       catch (Exception e)
       {
-        System.out.println("DOValidatorImpl caught Exception. "
-          + "Re-throwing as GeneralException: "
-          + e.getMessage());
         throw new GeneralException(e.getMessage());
       }
     }
@@ -312,6 +313,7 @@ public class DOValidatorImpl implements DOValidator
       String workFlowPhase)
       throws ObjectValidityException, GeneralException
     {
+      logFinest("Object valiation for lifecycle phase: " + workFlowPhase);
       switch ( validationLevel )
       {
       // ALL forms of validation
@@ -323,6 +325,7 @@ public class DOValidatorImpl implements DOValidator
         // schemaLocation element.  Here, level 1 is run *after* L2,
         // so that L1 won't load schemas from schemaLocation attributes.
         // (L2 ensures that there are no non-root schemaLocation elements)
+        logFinest("Case 0: prepare to run validation levels 1, 2, and 3");
         validate_L2(objectAsFile, schematronSchemaPath,
                     schematronPreprocessorPath, workFlowPhase);
         validate_L1(objectAsFile);
@@ -334,22 +337,26 @@ public class DOValidatorImpl implements DOValidator
         // FIXME: For the time being, this shouldn't be run without having
         // first run L2 validation, or you risk hanging the running thread.
         // This is due to the schemaLocation problem mentioned above.
+        logFinest("Case 1: prepare to run validation level 1 only");
         validate_L1(objectAsFile);
         break;
 
       // Schematron Rules Validation only
       case 2:
+        logFinest("Case 2: prepare to run validation level 2 only");
         validate_L2(objectAsFile, schematronSchemaPath,
                     schematronPreprocessorPath, workFlowPhase);
         break;
 
       // Referential Integrity Checks only
       case 3:
+        logFinest("Case 3: prepare to run validation level 3 only");
         validate_L3(objectAsFile);
         break;
 
       // Default: if no validation level specified, throw exception
       default:
+        logFiner("DOValidatorImpl.validate has missing or invalid validationLevel");
         cleanUp(objectAsFile);
         throw new GeneralException(
             "DOValidatorImpl.validate has invalid validationLevel: "
@@ -369,7 +376,6 @@ public class DOValidatorImpl implements DOValidator
       throws ObjectValidityException, GeneralException
     {
       // Level 1: METS rules validation using XML Schema
-      System.out.println("Validating object to Level 1 (METS/XML SCHEMA) ...");
       try
       {
         DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaPath);
@@ -378,20 +384,24 @@ public class DOValidatorImpl implements DOValidator
       }
       catch (ObjectValidityException e)
       {
+        logFiner("[DOValidatorImpl]: object failed Level 1 validation (METS/XMLSchema)");
         cleanUp(objectAsFile);
         throw e;
       }
       catch (GeneralException e)
       {
+        logFiner("[DOValidatorImpl]: object failed Level 1 validation (METS/XMLSchema)");
         cleanUp(objectAsFile);
         throw e;
       }
       catch (Exception e)
       {
+        logFiner("[DOValidatorImpl]: object failed Level 1 validation (METS/XMLSchema)");
         cleanUp(objectAsFile);
         throw new GeneralException(e.getMessage());
       }
-      System.out.println("Level 1 Validation OK (METS/XMLSchema).");
+      logFinest("[DOValidatorImpl]: Object is valid at Level 1:(METS/XMLSchema)");
+      //System.out.println("Object validated to Level 1:(METS/XMLSchema)");
     }
 
     /**
@@ -412,7 +422,6 @@ public class DOValidatorImpl implements DOValidator
       throws ObjectValidityException, GeneralException
     {
       // Level 2: Fedora rules validation using Schematron
-      System.out.println("Validating object to Level 2 (FEDORA/SCHEMATRON) ...");
       try
       {
         DOValidatorSchematron validator =
@@ -421,20 +430,24 @@ public class DOValidatorImpl implements DOValidator
       }
       catch (ObjectValidityException e)
       {
+        logFiner("[DOValidatorImpl]: object failed Level 2 validation (FEDORA/SCHEMATRON)");
         cleanUp(objectAsFile);
         throw e;
       }
       catch (GeneralException e)
       {
+        logFiner("[DOValidatorImpl]: object failed Level 2 validation (FEDORA/SCHEMATRON)");
         cleanUp(objectAsFile);
         throw e;
       }
       catch (Exception e)
       {
+        logFiner("[DOValidatorImpl]: object failed Level 2 validation (FEDORA/SCHEMATRON)");
         cleanUp(objectAsFile);
         throw new GeneralException(e.getMessage());
       }
-      System.out.println("Level 2 Validation OK (FEDORA/SCHEMATRON).");
+      logFinest("[DOValidatorImpl]: Object is valid at Level 2:(FEDORA/SCHEMATRON)");
+      //System.out.println("Object validated to Level 2: (FEDORA/SCHEMATRON)");
     }
 
     /**
@@ -451,7 +464,6 @@ public class DOValidatorImpl implements DOValidator
     private void validate_L3(File objectAsFile)
       throws ObjectValidityException, GeneralException
     {
-      System.out.println("Validating object to Level 3 (INTEGRITY) ...");
       DOValidatorIntegrityCheck iChecker = null;
       Connection dbConnection = dbConnect(connectionPool);
       try
@@ -470,23 +482,27 @@ public class DOValidatorImpl implements DOValidator
       }
       catch (ObjectValidityException e)
       {
+        logFiner("[DOValidatorImpl]: object failed Level 3 validation (INTEGRITY)");
         cleanUp(objectAsFile);
         throw e;
       }
       catch (GeneralException e)
       {
+        logFiner("[DOValidatorImpl]: object failed Level 3 validation (INTEGRITY)");
         cleanUp(objectAsFile);
         throw e;
       }
       catch (Exception e)
       {
+        logFiner("[DOValidatorImpl]: object failed Level 3 validation (INTEGRITY)");
         cleanUp(objectAsFile);
         throw new GeneralException(e.getMessage());
       }
       finally {
         connectionPool.free(dbConnection);
       }
-      System.out.println("Level 3 Validation OK (INTEGRITY).");
+      logFinest("[DOValidatorImpl]: Object is valid at Level 3: (INTEGRITY)");
+      //System.out.println("Object validated to Level 3: (INTEGRITY)");
       return;
     }
 
@@ -573,7 +589,7 @@ public class DOValidatorImpl implements DOValidator
         if (((new File(tempDir)).getAbsolutePath()).equalsIgnoreCase(
             ((f.getParentFile()).getAbsolutePath())))
         {
-          System.out.println("Deleting temporary file: " + f.getAbsolutePath());
+          //System.out.println("Deleting temporary file: " + f.getAbsolutePath());
           f.delete();
         }
       }

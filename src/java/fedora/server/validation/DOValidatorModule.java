@@ -91,12 +91,10 @@ public class DOValidatorModule extends Module implements DOValidator
                 + schematronSchemaPath);
       // instantiate the validation implementation class
       dov = new DOValidatorImpl(tempDir, xmlSchemaPath, schematronPreprocessorPath,
-            schematronSchemaPath, connectionPool);
+            schematronSchemaPath, connectionPool, this);
     }
     catch(Exception e)
     {
-      System.out.println("Unable to postInitialize validation module: "
-        + e.getMessage());
       throw new ModuleInitializationException(
           e.getMessage(),"fedora.server.validation.DOValidatorModule");
     }
@@ -125,7 +123,7 @@ public class DOValidatorModule extends Module implements DOValidator
     throws ServerException
   {
     dov.validate(objectAsStream, validationLevel, workFlowPhase);
-    logFiner("[DOValidatorModule] Completed object validation at level: "
+    logFiner("[DOValidatorModule] Successful object validation at level: "
               + validationLevel);
   }
 
