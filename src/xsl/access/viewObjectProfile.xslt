@@ -17,19 +17,19 @@
 							<td width="643" valign="top">
 								<center>
 									<h2>Fedora Digital Object</h2>
-									<h3>Default Disseminator - Object Profile View</h3>
+									<h3>Object Profile View</h3>
 								</center>
 							</td>
 						</tr>
 					</table>
 					<hr/>
 					<xsl:variable name="dissIndex-url">
-						<xsl:value-of select="dissIndexURL"/>
+						<xsl:value-of select="objDissIndexViewURL"/>
 					</xsl:variable>
 					<a href="{$dissIndex-url}">View the Dissemination Index for this Object</a>
 					<p/>
 					<xsl:variable name="itemIndex-url">
-						<xsl:value-of select="itemIndexURL"/>
+						<xsl:value-of select="objItemIndexViewURL"/>
 					</xsl:variable>
 					<a href="{$itemIndex-url}">View the Item Index for this Object</a>
 					<hr/>
@@ -40,7 +40,7 @@
 							<font color="blue">Object Identifier (PID): </font>
 						</td>
 						<td align="left">
-							<xsl:value-of select="@PID"/>
+							<xsl:value-of select="@pid"/>
 						</td>
 					</tr>
 					<tr>
@@ -48,7 +48,7 @@
 							<font color="blue">Object Label: </font>
 						</td>
 						<td align="left">
-							<xsl:value-of select="label"/>
+							<xsl:value-of select="objLabel"/>
 						</td>
 					</tr>
 					<tr>
@@ -56,7 +56,7 @@
 							<font color="blue">Object Content Model: </font>
 						</td>
 						<td align="left">
-							<xsl:value-of select="contentModel"/>
+							<xsl:value-of select="objContentModel"/>
 						</td>
 					</tr>
 					<tr>
@@ -64,7 +64,7 @@
 							<font color="blue">Object Type: </font>
 						</td>
 						<td align="left">
-							<xsl:value-of select="objectType"/>
+							<xsl:value-of select="objType"/>
 						</td>
 					</tr>
 					<tr>
@@ -72,7 +72,7 @@
 							<font color="blue">Object Creation Date: </font>
 						</td>
 						<td align="left">
-							<xsl:value-of select="createDate"/>
+							<xsl:value-of select="objCreateDate"/>
 						</td>
 					</tr>
 					<tr>
@@ -80,22 +80,9 @@
 							<font color="blue">Object Last Modified: </font>
 						</td>
 						<td align="left">
-							<xsl:value-of select="modDate"/>
+							<xsl:value-of select="objLastModDate"/>
 						</td>
 					</tr>
-					<xsl:for-each select="//disseminator">
-						<tr>
-							<td align="right">
-								<font color="blue">Disseminator: </font>
-							</td>
-							<td align="left">
-								<xsl:value-of select="dissLabel"/>
-								 (Behavior Definition PID:
-								<xsl:value-of select="bDefPID"/>
-								)
-							</td>
-						</tr>
-					</xsl:for-each>
 					</table>
 				</center>
 			</body>
