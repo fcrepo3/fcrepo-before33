@@ -276,11 +276,23 @@ System.out.println("rowCount = " + rowCount);
 		DbmsConnection db;
 		String returnString;
 
+		String pid;
+		String usage = "Usage (deletes a DigitalObject row): java rowDeletion pid";
+
+    		if (args.length != 1) {
+			System.out.println(usage);
+			System.exit(1);
+		}
+
+		pid = args[0];
+
+		System.out.println("pid=" + pid);
+
 		db = new DbmsConnection();
 		connection = db.getConnection();
 
 		RowDeletion rd = new RowDeletion();
-		rd.deleteDigitalObjectRow(connection, "x");
+		rd.deleteDigitalObjectRow(connection, pid);
 		System.out.println("deleteDigitalObject returned");
 
 		db.freeConnection(connection);
