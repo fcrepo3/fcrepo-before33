@@ -640,7 +640,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                     + "\" parmRequired=\"" + methodParms[j].isParmRequired()
                     + "\" parmType=\"" + methodParms[j].getParmType()
                     + "\" parmLabel=\"" + methodParms[j].getParmLabel() + "\" >");
-                if (!methodParms[j].getParmDomainValues()[0].equalsIgnoreCase("null"))
+                if (methodParms[j].getParmDomainValues().length >0)
                 {
                   pw.write("<parmDomainValues>");
                   for (int k=0; k<methodParms[j].getParmDomainValues().length; k++)
