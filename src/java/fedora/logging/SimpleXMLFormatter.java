@@ -13,28 +13,28 @@ import java.nio.charset.Charset;
  * save information about sequence, logger, class, or method,
  * and the time of the error is given only in milliseconds since the epoch.
  * It also uses the name of the log level instead of a record element,
- * and (if desired) will parse the messages if they start with [...], and use 
- * the inner text as a 'mid', or message id, and the remaining text for the 
- * text of the message (until non-whitespace after ]).  SimpleXMLFormatter 
- * does not handle keys and params for resource bundles -- when using this 
- * class, you buy into the strategy of pre-localizing your messages, and 
+ * and (if desired) will parse the messages if they start with [...], and use
+ * the inner text as a 'mid', or message id, and the remaining text for the
+ * text of the message (until non-whitespace after ]).  SimpleXMLFormatter
+ * does not handle keys and params for resource bundles -- when using this
+ * class, you buy into the strategy of pre-localizing your messages, and
  * providing a key in the message itself (before the ']' character), if wanted.
  * <p></p>
  * Default encoding is the string representing the encoding of the output
  * XML *if* the handler doesn't identify it's own encoding.  It is not
  * a flag for saying what kind of output you want!
  * <p></p>
- * Like <code>XMLFormatter</code>, this can be used with arbitrary character 
+ * Like <code>XMLFormatter</code>, this can be used with arbitrary character
  * encodings.
  *
  * @author cwilper@cs.cornell.edu
  */
-public class SimpleXMLFormatter 
+public class SimpleXMLFormatter
         extends Formatter {
 
     /** Whether to log mids or not */
     private boolean m_logMids;
-    
+
     /** Default encoding for XML 'encoding' attribute */
     private String m_defaultEncoding;
 
@@ -128,7 +128,7 @@ public class SimpleXMLFormatter
             if (formatted.charAt(0)=='[') {
                 int i=formatted.indexOf(']');
                 if (i!=-1) {
-                    sb.append(" mid=\"");
+                    sb.append("\" mid=\"");
                     sb.append(formatted.substring(1,i));
                     try {
                         StringBuffer t=new StringBuffer();
@@ -158,7 +158,7 @@ public class SimpleXMLFormatter
 
     /**
      * Gets the header string for a set of XML formatted records.
-     * 
+     *
      * @param   h  The target handler.
      * @return  header string
      */
@@ -175,7 +175,7 @@ public class SimpleXMLFormatter
             encoding = cs.name();
         } catch (Exception ex) {
             // prob getting canonical name, use raw
-        }	
+        }
 
         sb.append(" encoding=\"");
         sb.append(encoding);
@@ -187,7 +187,7 @@ public class SimpleXMLFormatter
 
     /**
      * Gets the tail string for a set of XML formatted records.
-     * 
+     *
      * @param   h  The target handler.
      * @return  tail string
      */
