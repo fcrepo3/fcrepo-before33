@@ -458,9 +458,6 @@ public class FOXMLDOSerializer
 		if (audit.responsibility==null || audit.responsibility.equals("")) {
 			throw new ObjectIntegrityException("Audit record must have responsibility.");
 		}
-		if (audit.justification==null || audit.justification.equals("")) {
-			throw new ObjectIntegrityException("Audit record must have justification.");
-		}
 	}
 	
 	private String getTypeAttribute(DigitalObject obj)
