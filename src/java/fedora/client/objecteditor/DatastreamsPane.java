@@ -217,7 +217,7 @@ public class DatastreamsPane
                 + versions[0].getControlGroup().toString() + ")");
         colorTabForState(dsID, versions[0].getState());
         m_tabbedPane.setSelectedIndex(newIndex);
-        doNew(ALL_KNOWN_MIMETYPES, false);
+        doNew(XML_MIMETYPE, false);
         fireDatastreamAdded(versions[0]);
     }
 
@@ -405,12 +405,12 @@ public class DatastreamsPane
             outerFormatPane.add(m_formatURITextField, BorderLayout.NORTH);
             formatPane.add(outerFormatPane, BorderLayout.CENTER);
             Administrator.constrainHeight(formatPane);
-            
+
 /*            GridBagLayout formatGrid=new GridBagLayout();
             formatPane.setLayout(formatGrid);
-            addRows(new JComponent[] {structFormatLabel}, 
-                    new JComponent[] {m_formatURITextField}, 
-                    formatGrid, 
+            addRows(new JComponent[] {structFormatLabel},
+                    new JComponent[] {m_formatURITextField},
+                    formatGrid,
                     formatPane);
 */
 
@@ -686,7 +686,7 @@ public class DatastreamsPane
                         throw new IOException("If the datastream should be harvestable, it must have a Format URI.");
                     }
                     String newID=Administrator.APIM.addDatastream(pid, label,
-                            mimeType, fmturi, location, m_controlGroup, 
+                            mimeType, fmturi, location, m_controlGroup,
                             mdClass, mdType, m_initialState, hvstable);
                     addDatastreamTab(newID);
                 } catch (Exception e) {
