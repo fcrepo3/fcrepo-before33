@@ -78,6 +78,11 @@
     <column name="PID" type="varchar(32)" notNull="true" default="" unique="true"/>
     <column name="Location" type="varchar(255)" notNull="true" default=""/>
   </table>
+  <table name="TempRegistry" primaryKey="PID_DBID">
+    <column name="PID_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="PID" type="varchar(32)" notNull="true" default="" unique="true"/>
+    <column name="Location" type="varchar(255)" notNull="true" default=""/>
+  </table>
   <table name="Parameter">
     <column name="METH_DBID" type="int(11)" notNull="true" default="0" index="METH_DBID"/>
     <column name="BDEF_DBID" type="int(11)" notNull="true" default="0" index="BDEF_DBID"/>
@@ -128,6 +133,9 @@
                This is signified by "M" or "D", respectively. When
                no change is pending, the value is "N".
       </comment>
+    </column>
+    <column name="ObjectState" type="char(1)" notNull="true" default="A">
+      <comment>The state of the object (currently unused)</comment>
     </column>
   </table>
   <table name="ObjectReplicationJob">
