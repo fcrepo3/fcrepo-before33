@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -16,7 +15,6 @@ import fedora.server.errors.StreamWriteException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
@@ -74,6 +72,7 @@ public class METSLikeDOSerializer
     
     private int m_transContext;
 
+
     public METSLikeDOSerializer() {
     }
 
@@ -86,7 +85,9 @@ public class METSLikeDOSerializer
             UnsupportedEncodingException {
 		if (fedora.server.Debug.DEBUG) System.out.println("Serializing METS (Fedora extension)...");
 		m_transContext=transContext;
-        StringBuffer buf=new StringBuffer();
+        StringBuffer buf=new StringBuffer();    
+        
+        // Append sections to METS serialization buffer
         appendXMLDeclaration(obj, encoding, buf);
         appendRootElementStart(obj, buf);
         appendHdr(obj, buf);
@@ -301,7 +302,8 @@ public class METSLikeDOSerializer
     private void appendAuditRecordAdminMD(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
         if (obj.getAuditRecords().size()>0) {
-            buf.append("  <" + METS_PREFIX + ":amdSec ID=\"FEDORA-AUDITTRAIL\">\n");
+			buf.append("  <" + METS_PREFIX + ":amdSec ID=\"AUDIT\"" 
+				+ " STATUS=\"A\">\n");
             for (int i=0; i<obj.getAuditRecords().size(); i++) {
                 AuditRecord audit=(AuditRecord) obj.getAuditRecords().get(i);
                 // The audit record is created by the system, so programmatic
@@ -325,14 +327,11 @@ public class METSLikeDOSerializer
                 if (audit.responsibility==null || audit.responsibility.equals("")) {
                     throw new ObjectIntegrityException("Audit record must have responsibility.");
                 }
-                if (audit.justification==null || audit.justification.equals("")) {
-                    throw new ObjectIntegrityException("Audit record must have justification.");
-                }
                 buf.append("    <" + METS_PREFIX + ":digiprovMD ID=\"" + audit.id
                         + "\" CREATED=\"" + DateUtility.convertDateToString(audit.date)
-                        + "\" STATUS=\"A\">\n");
+                        + "\">\n");
                 buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"text/xml\" "
-                        + "MDTYPE=\"OTHER\" OTHERMDTYPE=\"FEDORA-AUDITTRAIL\""
+                        + "MDTYPE=\"OTHER\" OTHERMDTYPE=\"FEDORA-AUDIT\""
                         + " LABEL=\"Audit record for '"
                         + StreamUtility.enc(audit.action) + "' action by "
                         + StreamUtility.enc(audit.responsibility) + " at "
@@ -430,15 +429,11 @@ public class METSLikeDOSerializer
 						dateAttr=" CREATED=\"" + DateUtility.convertDateToString(dsc.DSCreateDT) + "\"";
 					}
                     String sizeAttr=" SIZE=\"" + dsc.DSSize + "\"";
-                    String admIDAttr=getIdString(obj, (DatastreamContent)dsc, true);
-                    String dmdIDAttr=getIdString(obj, (DatastreamContent)dsc, false);
 
                     buf.append("        <" + METS_PREFIX + ":file ID=\"" + dsc.DSVersionID + "\"" 
                     		+ dateAttr
                             + " MIMETYPE=\"" + dsc.DSMIME + "\"" 
                             + sizeAttr
-                            + admIDAttr 
-                            + dmdIDAttr 
                             + " OWNERID=\"" + dsc.DSControlGrp 
                             + "\">\n");
                     buf.append("          <" + METS_PREFIX + ":FLocat" + labelAttr
@@ -457,54 +452,7 @@ public class METSLikeDOSerializer
             buf.append("    </" + METS_PREFIX + ":fileGrp>\n");
             buf.append("  </" + METS_PREFIX + ":fileSec>\n");
         }
-    }
-
-    private String getIdString(DigitalObject obj, DatastreamContent content,
-            boolean adm)
-            throws ObjectIntegrityException {
-        ArrayList ret;
-        if (adm) {
-            ret=new ArrayList(content.auditRecordIdList());
-        } else {
-            ret=new ArrayList();
-        }
-        Iterator mdIdIter=content.metadataIdList().iterator();
-        while (mdIdIter.hasNext()) {
-            String mdId=(String) mdIdIter.next();
-            List datastreams=obj.datastreams(mdId);
-            if (datastreams.size()==0) {
-                throw new ObjectIntegrityException("Object's content datastream"
-                        + " points to an invalid inline metadata datastream id.");
-            }
-            Datastream ds=(Datastream) datastreams.get(0);
-            if (ds.DSControlGrp.equalsIgnoreCase("X")) {
-                DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
-                if (mds.DSMDClass == DatastreamXMLMetadata.DESCRIPTIVE) {
-                    if (!adm) ret.add(mdId);
-                }
-                else {
-                    if (adm) ret.add(mdId);
-                }
-            }
-        }
-        StringBuffer out=new StringBuffer();
-        for (int i=0; i<ret.size(); i++) {
-            if (i>0) {
-                out.append(' ');
-            } else {
-                if (adm) {
-                    out.append(" ADMID=\"");
-                } else {
-                    out.append(" DMDID=\"");
-                }
-            }
-            out.append((String) ret.get(i));
-            if (i==ret.size()-1) {
-                out.append("\"");
-            }
-        }
-        return out.toString();
-    }
+    }   
 
     private void appendStructMaps(DigitalObject obj, StringBuffer buf)
             throws ObjectIntegrityException {
