@@ -25,6 +25,120 @@ import org.w3c.dom.NodeList;
 
 public abstract class Server 
         extends ParameterizedComponent {
+
+    /** 
+     * The ResourceBundle that provides access to constants from
+     * fedora/server/resources/Server.properties.
+     */
+    private static ResourceBundle s_const =
+            ResourceBundle.getBundle("fedora.server.resources.Server");
+
+    /** The major version of this release. */
+    public static String VERSION_MAJOR=s_const.getString("version.major");
+    
+    /** The minor version of this release. */
+    public static String VERSION_MINOR=s_const.getString("version.minor");
+    
+    /** The name of the property that tells the server where it's based. */
+    public static String HOME_PROPERTY=s_const.getString("home.property");
+
+    /** The directory where server configuration is stored, relative to home. */
+    public static String CONFIG_DIR=s_const.getString("config.dir");
+
+    /** The configuration filename. */
+    public static String CONFIG_FILE=s_const.getString("config.file");
+
+    /** 
+     * The prefix to all fedora-defined namespaces for this version.
+     * 0={version.major}, 1={version.minor}
+     */
+    public static String NAMESPACE_PREFIX=s_const.getString("namespace.prefix");
+
+    /** The configuration file elements' namespace. 0={namespace.prefix} */
+    public static String CONFIG_NAMESPACE=s_const.getString("config.namespace");
+
+    /** The configuration file root element's name. */
+    public static String CONFIG_ELEMENT_ROOT=
+            s_const.getString("config.element.root");
+
+    /** 
+     * The configuration file's class-specifying attribute for server and module 
+     * elements.
+     */
+    public static String CONFIG_ATTRIBUTE_CLASS=
+            s_const.getString("config.attribute.class");
+
+    /** The name of the DOManager class (a Fedora server module "role"). */
+    public static String DOMANAGER_CLASS=s_const.getString("domanager.class");
+
+    /** Indicates that an XML parser could not be found. */
+    public static String INIT_XMLPARSER_FATAL_MISSING=
+            s_const.getString("init.xmlparser.fatal.missing");
+
+    /** 
+     * Indicates that the config file could not be read. 0=config file full 
+     * path, 1=additional info from underlying exception
+     */
+    public static String INIT_CONFIG_FATAL_UNREADABLE=
+            s_const.getString("init.config.fatal.unreadable");
+
+    /**
+     * Indicates that the config file has malformed XML. 0=config file full 
+     * path, 1=additional info from underlying exception
+     */
+    public static String INIT_CONFIG_FATAL_MALFORMEDXML=
+            s_const.getString("init.config.fatal.malformedxml");
+
+    /**
+     * Indicates that the config file has a mis-named root element. 0=config 
+     * file full path, 1={config.element.root}, 2=actual root element name
+     */
+    public static String INIT_CONFIG_FATAL_BADROOTELEMENT=
+            s_const.getString("init.config.fatal.badrootelement");
+
+    /**
+     * Indicates that the config file's element's namespace does not match
+     * {config.namespace}. 0=config file full path, 1={config.namespace}
+     */
+    public static String INIT_CONFIG_FATAL_BADNAMESPACE=
+            s_const.getString("init.config.fatal.badnamespace");
+
+    /**
+     * Indicates that the server class could not be found. 0=server class 
+     * specified in config root element
+     */
+    public static String INIT_CONFIG_FATAL_CLASSNOTFOUND=
+            s_const.getString("init.server.fatal.classnotfound");
+
+    /**
+     * Indicates that the server class couldn't be accessed due to security
+     * misconfiguration. 0=server class specified in config root element
+     */
+    public static String INIT_CONFIG_FATAL_ILLEGALACCESS=
+            s_const.getString("init.server.fatal.illegalaccess");
+
+    /**
+     * Indicates that the server class constructor was invoked improperly
+     * due to programmer error. 0=server class specified in config root element
+     */
+    public static String INIT_CONFIG_FATAL_BADARGS=
+            s_const.getString("init.server.fatal.badargs");
+
+    /**
+     * Indicates that the server class doesn't have a constructor
+     * matching Server(NodeList, File), but needs one. 0=server class specified 
+     * in config root element.
+     */
+    public static String INIT_CONFIG_FATAL_MISSINGCONSTRUCTOR=
+            s_const.getString("init.server.fatal.missingconstructor");
+
+    /**
+     * Indicates that the server class was abstract, but shouldn't be. 0=server 
+     * class specified in config root element
+     */
+    public static String INIT_CONFIG_FATAL_ISABSTRACT=
+            s_const.getString("init.server.fatal.isabstract");
+ 
         
     // FIXME: All messages and other locale-sensitive constants should be set 
     // in a resource bundle
@@ -35,19 +149,6 @@ public abstract class Server
     
     public static String ERROR_PARSING_FILE="Error parsing file: ";
     
-    public static String CONFIG_DIR="config";
-    
-    public static String CONFIG_FILE="fedora.fcfg";
-    
-    public static String MAJOR_VERSION="1";
-    
-    public static String MINOR_VERSION="0";
-    
-    public static String NAMESPACE_START="http://www.fedora.info/definitions/" 
-            + MAJOR_VERSION + "/" + MINOR_VERSION + "/";
-    
-    public static String CONFIG_NAMESPACE=NAMESPACE_START + "config/";
-
     public static String CONFIG_ROOT_ELEMENT_NAME="server";
     public static String BAD_ROOT_ELEMENT="Root element must be \""
             + CONFIG_ROOT_ELEMENT_NAME + "\".";
@@ -115,16 +216,14 @@ public abstract class Server
             DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder=factory.newDocumentBuilder();
-            configFile=new File(fedoraHomeDir + File.separator
-                    + CONSTANTS.getString("config.dir") + File.separator 
-                    + CONSTANTS.getString("config.file"));
+            configFile=new File(fedoraHomeDir + File.separator + CONFIG_DIR 
+                    + File.separator + CONFIG_FILE);
             // suck it in
             Element rootElement=builder.parse(configFile).getDocumentElement();
             // ensure root element name ok
-            if (!rootElement.getLocalName().equals(CONSTANTS.getString(
-                    "config.element.root"))) {
-                throw new ServerInitializationException(ERROR_PARSING_FILE
-                        + configFile + " - " + BAD_ROOT_ELEMENT);
+            if (!rootElement.getLocalName().equals(CONFIG_ELEMENT_ROOT)) {
+                throw new ServerInitializationException(
+                        INIT_CONFIG_FATAL_BADROOTELEMENT); // fixme:do replacements
             }
             // ensure namespace specified properly
             if (!rootElement.getNamespaceURI().equals(CONFIG_NAMESPACE)) {
@@ -219,11 +318,6 @@ public abstract class Server
         return m_fedoraHome;
     }
     
-    public final static String getVersion() {
-        return CONSTANTS.getString("version.major") + "." + 
-                CONSTANTS.getString("version.minor");
-    }
-
     /**
      * Gets the names of the roles that are required to be fulfilled by
      * modules specified in this server's configuration file.
