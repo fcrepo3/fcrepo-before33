@@ -425,9 +425,14 @@ public class DefaultAccess extends Module implements Access
       if (!defaultMethodParms[i].parmType.equals(MethodParmDef.DATASTREAM_INPUT)) {
           if (!h_userParms.containsKey(defaultMethodParms[i].parmName)) {
             this.getServer().logFinest("addedDefaultName: "+defaultMethodParms[i].parmName);
-            this.getServer().logFinest("addedDefaultValue: "+defaultMethodParms[i].parmDefaultValue);
-            h_userParms.put(defaultMethodParms[i].parmName,
-                            defaultMethodParms[i].parmDefaultValue);
+            String pdv=defaultMethodParms[i].parmDefaultValue;
+            if (pdv.equalsIgnoreCase("$pid")) {
+                pdv=PID;
+            } else if (pdv.equalsIgnoreCase("$objuri")) {
+                pdv="info:fedora/" + PID;
+            }
+            this.getServer().logFinest("addedDefaultValue: "+pdv);
+            h_userParms.put(defaultMethodParms[i].parmName, pdv);
           }
       }
     }
