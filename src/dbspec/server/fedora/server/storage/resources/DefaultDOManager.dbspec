@@ -162,7 +162,7 @@
                  All dublin core fields start and end with a space, and are
                  in a normalized form (all lowercase letters) so that case
                  insensitive searching may be done.</comment>
-		<column name="pid" type="varchar(64)" notNull="true">
+		<column name="pid" type="varchar(64)" notNull="true" index="pid">
 			<comment>The PID of the object</comment>
 		</column>
 		<column name="label" type="varchar(255)" notNull="false">
