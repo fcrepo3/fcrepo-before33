@@ -12,7 +12,6 @@ import org.apache.axis.types.NonNegativeInteger;
 
 import fedora.client.APIAStubFactory;
 import fedora.server.access.FedoraAPIA;
-import fedora.server.search.Condition;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ListSession;
@@ -73,7 +72,7 @@ public class AutoFinder {
                 new NonNegativeInteger("" + maxResults), query);
     }
 
-    public FieldSearchResult resumeFindObjects(FedoraAPIA skeleton,
+    public static FieldSearchResult resumeFindObjects(FedoraAPIA skeleton,
             String sessionToken)
             throws RemoteException {
         return skeleton.resumeFindObjects(sessionToken);

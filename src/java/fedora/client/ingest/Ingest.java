@@ -4,10 +4,20 @@ import java.io.*;
 import java.util.*;
 
 import fedora.client.Administrator;
+import fedora.client.APIAStubFactory;
 import fedora.client.APIMStubFactory;
 import fedora.client.export.AutoExporter;
+import fedora.client.search.AutoFinder;
 
+import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
+
+import fedora.server.types.gen.Condition;
+import fedora.server.types.gen.ComparisonOperator;
+import fedora.server.types.gen.FieldSearchQuery;
+import fedora.server.types.gen.FieldSearchResult;
+import fedora.server.types.gen.ListSession;
+import fedora.server.types.gen.ObjectFields;
 
 public class Ingest {
 
@@ -130,13 +140,107 @@ public class Ingest {
     }
     
     // if logMessage is null, will make informative one up
-    public static String[] multiFromRepository(FedoraAPIM sourceRepository,
+    public static String[] multiFromRepository(String sourceHost,
+                                               int sourcePort,
+                                               String sourceUser,
+                                               String sourcePass,
                                                String fTypes,
-                                               FedoraAPIM targetRepository,
+                                               FedoraAPIM targetRepos,
                                                String logMessage)
             throws Exception {
-        // do a search for each fType, adding it to the list
-        return null;
+        FedoraAPIA sourceAccess=APIAStubFactory.getStub(sourceHost,
+                                                        sourcePort,
+                                                        sourceUser,
+                                                        sourcePass);
+        FedoraAPIM sourceRepos=APIMStubFactory.getStub(sourceHost,
+                                                        sourcePort,
+                                                        sourceUser,
+                                                        sourcePass);
+        String tps=fTypes.toUpperCase();
+        Set pidSet=new HashSet();
+        if (tps.indexOf("D")!=-1) {
+            pidSet.addAll(ingestAll(sourceAccess,
+                                      sourceRepos,
+                                      "D",
+                                      targetRepos,
+                                      logMessage));
+        }
+        if (tps.indexOf("M")!=-1) {
+            pidSet.addAll(ingestAll(sourceAccess,
+                                      sourceRepos,
+                                      "M",
+                                      targetRepos,
+                                      logMessage));
+        }
+        if (tps.indexOf("O")!=-1) {
+            pidSet.addAll(ingestAll(sourceAccess,
+                                      sourceRepos,
+                                      "O",
+                                      targetRepos,
+                                      logMessage));
+        }
+        Iterator iter=pidSet.iterator();
+        String[] pids=new String[pidSet.size()];
+        int i=0;
+        while (iter.hasNext()) {
+            pids[i++]=(String) iter.next(); 
+        }
+        return pids;
+    }
+
+    private static Set ingestAll(FedoraAPIA sourceAccess,
+                                 FedoraAPIM sourceRepos,
+                                 String fType,
+                                 FedoraAPIM targetRepos,
+                                 String logMessage) 
+            throws Exception {
+        // get pids with fType='$fType', adding all to set at once,
+        // then singleFromRepository(sourceRepos, pid, targetRepos, logMessage)
+        // for each, then return the set
+        HashSet set=new HashSet();
+        Condition cond=new Condition();
+        cond.setProperty("fType");
+        cond.setOperator(ComparisonOperator.fromValue("eq"));
+        cond.setValue(fType);
+        Condition[] conds=new Condition[1];
+        conds[0]=cond;
+        FieldSearchQuery query=new FieldSearchQuery();
+        query.setConditions(conds);
+        query.setTerms(null);
+        String[] fields=new String[1];
+        fields[0]="pid";
+        FieldSearchResult res=AutoFinder.findObjects(sourceAccess,
+                                                     fields,
+                                                     1000,
+                                                     query);
+        boolean exhausted=false;
+        while (res!=null && !exhausted) {
+            ObjectFields[] ofs=res.getResultList();
+            for (int i=0; i<ofs.length; i++) {
+                set.add(ofs[i].getPid());
+            }
+            if (res.getListSession()!=null && res.getListSession().getToken()!=null) {
+                res=AutoFinder.resumeFindObjects(sourceAccess, 
+                                                 res.getListSession().getToken());
+            } else {
+                exhausted=true;
+            }
+        }
+        String friendlyName="regular objects";
+        if (fType.equals("D"))
+            friendlyName="behavior definitions";
+        if (fType.equals("M"))
+            friendlyName="behavior mechanisms";
+        System.out.println("Found " + set.size() + " " + friendlyName + " to ingest.");
+        Iterator iter=set.iterator();
+        while (iter.hasNext()) {
+            String pid=(String) iter.next();
+            oneFromRepository(sourceRepos,
+                              pid,
+                              targetRepos,
+                              logMessage);
+        }
+        return set;
     }
     
     private static String getMessage(String logMessage, File file) {
@@ -275,7 +379,11 @@ public class Ingest {
                                                        logMessage));
                 } else {
                     // multi-object
-                    String[] pids=Ingest.multiFromRepository(sourceRepos,
+                    hp=args[1].split(":");
+                    String[] pids=Ingest.multiFromRepository(hp[0],
+                                                             Integer.parseInt(hp[1]),
+                                                             args[2],
+                                                             args[3],
                                                              args[4],
                                                              targetRepos,
                                                              logMessage);
@@ -299,10 +407,10 @@ public class Ingest {
             } else {
                 System.err.print(e.getMessage());
             }
-            if (Ingest.LAST_PATH!=null) {
-                System.out.println("Last attempted file: " + Ingest.LAST_PATH);
-            }
             System.err.println();
+            if (Ingest.LAST_PATH!=null) {
+                System.out.println("(Last attempted file was " + Ingest.LAST_PATH + ")");
+            }
         }
     }
 
