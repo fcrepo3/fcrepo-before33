@@ -610,6 +610,10 @@ public class FieldSearchResultSQLImpl
             if (needLike) {
                 out.insert(0, " LIKE ");
             } else {
+                // replace any \% and \_ in value string with % or _
+                String fixedString = out.toString().replaceAll("\\\\%", "%").replaceAll("\\\\_", "_");
+                out = new StringBuffer();
+                out.append(fixedString);
                 out.insert(0, " = ");
             }
             out.insert(0, name);
@@ -651,6 +655,10 @@ public class FieldSearchResultSQLImpl
             if (needLike) {
                 out.insert(0, " LIKE ");
             } else {
+                // replace any \% and \_ in value string with % or _
+                String fixedString = out.toString().replaceAll("\\\\%", "%").replaceAll("\\\\_", "_");
+                out = new StringBuffer();
+                out.append(fixedString);
                 out.insert(0, " = ");
             }
             out.insert(0, name);
