@@ -300,11 +300,9 @@
 		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes"/>
 		</copy>
-		<!-- temporary fix for testing until we have objects in a real database and config files setup -->
-		<copy todir="dist/server/tomcat41">
-			<fileset dir="src/mets"/>
+		<copy todir="dist/server/tomcat41/webapps/ROOT">
+			<fileset dir="src/xsd"/>
 		</copy>
-		<!-- end testing -->
 		<mkdir dir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
 		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
 			<fileset dir="src/properties/server"/>
@@ -357,6 +355,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.46  2002/11/04 22:14:05  cwilper
+  copying xsd files to tomcat/webapps/ROOT so they're available at localhost:8080/
+
   Revision 1.45  2002/10/30 15:29:20  cwilper
   client dist now goes in dist/client/client, and includes bat files and demo objects.
   and there is a new serverdist target (use this one!)
