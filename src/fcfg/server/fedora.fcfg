@@ -40,7 +40,10 @@
 		default is fedora.server.storage.lowlevel.DBPathRegistry.
 	</comment>
 	<param name="backslash_is_escape" value="yes" oraclevalue="no"/>
-	<comment>Defines the escape character used by LowLevelStorage; default is backslash (‘\’).</comment>
+	<comment>Defines whether the backing database (which include registry tables) the backslash character
+		to be the escape character (token beginning an escape sequence).  This is needed to correctly
+		store and retrieve filepaths from the registry tables, if running under Windows/DOS.
+	</comment>
 	<param name="object_store_base" value="C:\fedora_objects"/>
 	<comment>Defines the root directory for the internal storage of Fedora objects. 
 		This value should be adjusted based on your installation environment; 
