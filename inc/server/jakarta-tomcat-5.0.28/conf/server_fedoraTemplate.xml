@@ -43,7 +43,7 @@
 
 <Realm className="org.apache.catalina.realm.JAASRealm" 
 	appName="fedora" 
-	userClassNames="org.apache.catalina.realm.IdPrincipal" 
+	userClassNames="org.apache.catalina.realm.IdPasswordPrincipal" 
 	roleClassNames="org.apache.catalina.realm.RolePrincipal" /> 
       
       <Host name="localhost" appBase="webapps" debug="0"
