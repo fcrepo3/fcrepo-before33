@@ -343,6 +343,29 @@ public class DefinitiveDOWriter
         } catch (UnsupportedEncodingException uee) { }
         return new ByteArrayInputStream(bytes.toByteArray());
     }
+    
+    public String getContentModelId()
+            throws ObjectIntegrityException {
+        assertNotRemoved();
+        assertNotInvalidated();
+        assertNotPendingRemoval();
+        return m_obj.getContentModelId();
+    }
+
+    public String getFedoraObjectType()
+            throws ObjectIntegrityException {
+        assertNotRemoved();
+        assertNotInvalidated();
+        assertNotPendingRemoval();
+        int ot=m_obj.getFedoraObjectType();
+        if (ot==DigitalObject.FEDORA_BDEF_OBJECT) {
+            return "D";
+        }
+        if (ot==DigitalObject.FEDORA_BMECH_OBJECT) {
+            return "M";
+        }
+        return "O";
+    }
 
     public String GetObjectState()
             throws ObjectIntegrityException {
@@ -350,6 +373,22 @@ public class DefinitiveDOWriter
         assertNotInvalidated();
         assertNotPendingRemoval();
         return m_obj.getState();
+    }
+    
+    public Date getCreateDate()
+            throws ObjectIntegrityException {
+        assertNotRemoved();
+        assertNotInvalidated();
+        assertNotPendingRemoval();
+        return m_obj.getCreateDate();
+    }
+    
+    public Date getLastModDate()
+            throws ObjectIntegrityException {
+        assertNotRemoved();
+        assertNotInvalidated();
+        assertNotPendingRemoval();
+        return m_obj.getLastModDate();
     }
 
     public InputStream ExportObject()
