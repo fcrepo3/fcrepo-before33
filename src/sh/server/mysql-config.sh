@@ -48,13 +48,13 @@ if [ "$#" -lt 6 ] || [ "$#" -gt 7 ]; then
   echo "fedoradba_user  - the name of MySQL user admin for Fedora database (e.g., fedoraAdmin)"
   echo "fedora_dba_pass - the password of MySQL user admin for Fedora database (e.g., fedoraAdmin)"
   echo "mysql_db_name   - the name of the Fedora database (e.g., fedora20)"
-  echo "mysql_version   - the version of MySQL server (must be 3.23, 4.0, or 4.1)"
+  echo "mysql41_flag    - optional MySQL 4.1 flag. Any string value will indicate that you are running MySQL 4.1.x"
   echo
   exit 1
 elif [ "$#" = 6 ]; then
-  mysql_version=""
+  mysql41_flag=""
 else
-  mysql_version=$7
+  mysql41_flag=$7
 fi
 
 echo
@@ -64,7 +64,7 @@ echo "Mysql dba password: $3"
 echo "Fedora dba username: $4"
 echo "Fedora dba password: $5"
 echo "Fedora database name:$6"
-if [ "$mysql_version" = "" ]; then
+if [ "$mysql41_flag" = "" ]; then
   echo "MySQL 4.1 flag is: OFF"
 else
   echo "MySQL 4.1 flag is: ON"
@@ -96,7 +96,7 @@ echo "#" >>mysqlConfig.sql
 echo "select * from user;" >>mysqlConfig.sql
 echo "select * from db;" >>mysqlConfig.sql
 
-if [ "$mysql_version" != "" ]; then
+if [ "$mysql41_flag" != "" ]; then
   echo
   echo "MySQL 4.1 flag is ON."
   echo "Adding default character set and collation changes for MySQL 4.1.x databases:"
