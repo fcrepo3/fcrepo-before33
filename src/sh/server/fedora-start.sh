@@ -49,9 +49,9 @@ fi
 
 (exec $JAVA_HOME/bin/java -cp $TC/webapps/fedora/WEB-INF/classes -Dfedora.home=$FEDORA_HOME fedora.server.BasicServer)
 if [ "$1" = "" ]; then
-  (exec  nohup $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $TC/bin/bootstrap.jar  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=$FEDORA_HOME -Dclasspath=$TC/bin/bootstrap.jar -Djava.endorsed.dirs=$TC/bin -Djava.security.manager -Djava.security.policy=$TC/conf/catalina.policy -Dcatalina.base=$TC -Dcatalina.home=$TC -Djava.io.tmpdir=$TC/temp org.apache.catalina.startup.Bootstrap start &)
+  (exec  nohup $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $TC/bin/bootstrap.jar -Djava.awt.headless=true -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=$FEDORA_HOME -Dclasspath=$TC/bin/bootstrap.jar -Djava.endorsed.dirs=$TC/bin -Dcatalina.base=$TC -Dcatalina.home=$TC -Djava.io.tmpdir=$TC/temp org.apache.catalina.startup.Bootstrap start &)
 else
-  (exec  nohup $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $TC/bin/bootstrap.jar  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=$FEDORA_HOME -Dfedora.serverProfile=$1 -Dclasspath=$TC/bin/bootstrap.jar -Djava.endorsed.dirs=$TC/bin -Djava.security.manager -Djava.security.policy=$TC/conf/catalina.policy -Dcatalina.base=$TC -Dcatalina.home=$TC -Djava.io.tmpdir=$TC/temp org.apache.catalina.startup.Bootstrap start &)
+  (exec  nohup $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $TC/bin/bootstrap.jar -Djava.awt.headless=true -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=$FEDORA_HOME -Dfedora.serverProfile=$1 -Dclasspath=$TC/bin/bootstrap.jar -Djava.endorsed.dirs=$TC/bin -Dcatalina.base=$TC -Dcatalina.home=$TC -Djava.io.tmpdir=$TC/temp org.apache.catalina.startup.Bootstrap start &)
 fi
 
 C=$TC/common/lib
