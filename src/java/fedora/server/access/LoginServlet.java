@@ -60,6 +60,7 @@ public class LoginServlet
 		    notUser="guest";
 		}
         String userId=getAuthenticatedUser(request.getHeader("Authorization"));
+        response.setHeader("Cache-control", "no-cache, must-revalidate");
         if (userId==null || userId.equals(notUser)) {
             // send challenge
 			response.setHeader("WWW-Authenticate", "Basic realm=\"" 

@@ -217,7 +217,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     		h.put("canUseDeletedDatastream", "true");
 		}
 	} else {
-	    h.put.("userId", "guest");
+	    h.put("userId", "guest");
 	}
     h.put("host", request.getRemoteAddr());
     ReadOnlyContext context = new ReadOnlyContext(h);
