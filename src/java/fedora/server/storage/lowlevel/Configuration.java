@@ -18,8 +18,8 @@ class Configuration {
 
 	private final String registryClass;
 
-	private final String objectRegistryTableName = "objectpaths";
-	private final String datastreamRegistryTableName = "datastreampaths";
+	private final String objectRegistryTableName = "objectPaths";
+	private final String datastreamRegistryTableName = "datastreamPaths";
 	private final String tempRegistryTableName = "tempPaths";
 
 	private final String fileSystemClass;
@@ -97,7 +97,7 @@ class Configuration {
 
 		/*
 		{
-			String tableName = testConfig ? "objectpaths" :
+			String tableName = testConfig ? "objectPaths" :
 				s_server.getParameter(FCFG_OBJECT_TABLE_NAME);
 			if ((tableName == null) || tableName.equals("")) {
 				throw new LowlevelStorageException(true,"must configure " + FCFG_OBJECT_TABLE_NAME);
@@ -115,7 +115,7 @@ class Configuration {
 		}
 
 		{
-			String tableName = testConfig ? "datastreampaths" :
+			String tableName = testConfig ? "datastreamPaths" :
 				s_server.getParameter(FCFG_DATASTREAM_TABLE_NAME);
 			if ((tableName == null) || tableName.equals("")) {
 				throw new LowlevelStorageException(true,"must configure " + FCFG_DATASTREAM_TABLE_NAME);
