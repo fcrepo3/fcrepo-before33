@@ -52,9 +52,9 @@ public interface DOReader
     public String[] GetBehaviorDefs(Date versDateTime);
 
     // Returns list of methods that Behavior Mechanism implements for a BDef
-    public MethodDef[] GetBMechMethods(String BdefPID, Date versDateTime);
+    public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime);
 
     // Overloaded method: returns InputStream as alternative
-    public InputStream GetBMechMethodsWSDL(String BdefID, Date versDateTime);
+    public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime);
 
 }

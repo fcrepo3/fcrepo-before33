@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.Collection;
 import java.util.Iterator;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.FileInputStream;
 import java.io.StringWriter;
 import java.io.File;
@@ -29,6 +30,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.ext.LexicalHandler;
+import java.util.regex.*;
 
 public class DefinitiveDOReader implements DOReader
 {
@@ -40,7 +43,10 @@ public class DefinitiveDOReader implements DOReader
   {
       {"uva-lib:1225", "image-w.xml"},
       {"uva-lib:1220", "image-test.xml"},
+      {"uva-bdef-image-w:101", "photo-w-bdef.xml"},
       {"uva-bmech-image-w:112", "photo-w-mech.xml"},
+      {"uva-bdef-stdimg:8", "std-img-bdef.xml"},
+      {"uva-bmech-stdimg:10", "std-img-mech.xml"},
   };
   // TEMPORARY: static method to load the Fake DO Registry
   static
@@ -52,11 +58,12 @@ public class DefinitiveDOReader implements DOReader
     }
   }
 
-  private DOReaderSAXErrorHandler doErrorHandler;
+  protected DOReaderSAXErrorHandler doErrorHandler;
   protected XMLReader xmlreader;
   private String PID = null;
   protected Hashtable datastreamTbl = new Hashtable();
   private Hashtable disseminatorTbl = new Hashtable();
+  private Hashtable dissbDefTobMechTbl = new Hashtable();
 
 
   public static void main(String[] args)
@@ -79,6 +86,8 @@ public class DefinitiveDOReader implements DOReader
     doReader.GetDisseminators(null);
     doReader.GetDisseminator("DISS1", null);
     doReader.GetBehaviorDefs(null);
+    // be sure to put a behavior def that's in the test object being run!!!
+    doReader.GetBMechMethods("uva-bdef-stdimg:8", null);
 
   }
 
@@ -99,14 +108,16 @@ public class DefinitiveDOReader implements DOReader
       SAXParserFactory saxfactory = SAXParserFactory.newInstance();
       saxfactory.setValidating(false);
       saxfactory.setNamespaceAware(true);
-
       SAXParser parser = saxfactory.newSAXParser();
-      //parser.parse(doFile, new METSEventHandler());
-      //XMLReader xmlreader = parser.getXMLReader();
       xmlreader = parser.getXMLReader();
       xmlreader.setContentHandler(new METSEventHandler());
       xmlreader.setErrorHandler(doErrorHandler);
+      long startparseTime = System.currentTimeMillis();
       xmlreader.parse(doXML);
+      long endparseTime = System.currentTimeMillis();
+      long runTime = endparseTime - startparseTime;
+      System.out.println("PARSE RUN TIME (in millisec): " + runTime);
+
     }
     catch (Exception e)
     {
@@ -274,7 +285,6 @@ public class DefinitiveDOReader implements DOReader
       Collection c = disseminatorTbl.values();
       String[] bdefIDs = new String[c.size()];
       Iterator it = c.iterator();
-
       for (int i = 0; i < c.size(); i++)
       {
         Disseminator diss = (Disseminator) it.next();
@@ -291,17 +301,32 @@ public class DefinitiveDOReader implements DOReader
     }
 
     // Returns list of methods that Behavior Mechanism implements for a BDef
-    public MethodDef[] GetBMechMethods(String BdefPID, Date versDateTime)
+    public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
     {
       // TODO! dateTime filter not implemented in this release!!
-      return(null);
+      DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
+      MethodDef[] methods = mechRead.GetBehaviorMethods(null);
+      if (debug)
+      {
+        System.out.println("Methods for mechanism that implements: " + bDefPID);
+        for (int i = 0; i < methods.length; i++)
+        {
+          System.out.println(">>>>>method[" + i + "]=" + methods[i].methodName);
+        }
+
+      }
+      return(methods);
+      //return(mechRead.GetBehaviorMethods(null));
     }
 
     // Overloaded method: returns InputStream as alternative
-    public InputStream GetBMechMethodsWSDL(String BdefID, Date versDateTime)
+    public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
     {
       // TODO! dateTime filter not implemented in this release!!
-      return(null);
+      DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
+      InputStream instream = mechRead.GetBehaviorMethodsWSDL(null);
+      //return(mechRead.GetBehaviorMethodsWSDL(null));
+      return(instream);
     }
 
 
@@ -369,8 +394,12 @@ public class DefinitiveDOReader implements DOReader
       private String h_xmlData;
       private StringWriter h_xmlstream;
 
+      private final Pattern ampRegexp = Pattern.compile("&");
+      private final Pattern ltRegexp = Pattern.compile("<");
+      private final Pattern gtRegexp = Pattern.compile(">");
+      private final Pattern quotRegexp = Pattern.compile("\"");
 
-      public void startDocument()
+      public void startDocument() throws SAXException
       {
         //initialize the event handler variables
 
@@ -379,7 +408,7 @@ public class DefinitiveDOReader implements DOReader
         h_dsBindMapTbl = new Hashtable();
       }
 
-      public void endDocument()
+      public void endDocument() throws SAXException
       {
           // Set the main class variables from the event handler variables
 
@@ -402,6 +431,7 @@ public class DefinitiveDOReader implements DOReader
               Disseminator diss = (Disseminator) h_vDisseminator.get(i);
               diss.dsBindMap = (DSBindingMap)h_dsBindMapTbl.get(diss.dsBindMapID);
               //disseminators[i] = diss;
+              dissbDefTobMechTbl.put(diss.bDefID, diss.bMechID);
               disseminatorTbl.put(diss.dissID, diss);
           }
 
@@ -410,10 +440,12 @@ public class DefinitiveDOReader implements DOReader
           h_dsBindMapTbl = null;
       }
 
-      public void characters(char ch[], int start, int length)
+      public void characters(char ch[], int start, int length) throws SAXException
       {
         if (isXMLDatastream && getAsStream)
         {
+          // FIXIT! PROBLEM WHEN HAS ENTITY REF LIKE &amp; &lt; !!!!!
+          // The parser will resolve these, and we want to write them out unresolved.
           h_xmlstream.write(ch, start, length);
         }
       }
@@ -433,7 +465,9 @@ public class DefinitiveDOReader implements DOReader
         throws SAXException
       {
 
-        // FIXIT! PROBLEM WHEN ATTRIBUTE VALUE HAS ENTITY REF LIKE &amp; &lt; !!!!!
+        // FIXIT! EVALUATE BEST WAY TO DEAL WITH ATTRIBUTE VALUE
+        // THAT HAS ENTITY REF LIKE &amp; &lt; &gt; &quot; &apos;  !!!!!
+        // The parser will resolve these, and we want to write them out unresolved.
         if (isXMLDatastream && getAsStream)
         {
           h_xmlstream.write("<" + qName);
@@ -442,6 +476,10 @@ public class DefinitiveDOReader implements DOReader
           for (int i = 0; i < attrCount; i++)
           {
             String s = attrs.getValue(i);
+            s = stringReplace(s, ampRegexp, "&amp;");
+            s = stringReplace(s, ltRegexp, "&lt;");
+            s = stringReplace(s, gtRegexp, "&gt;");
+            s = stringReplace(s, quotRegexp, "&quot;");
             h_xmlstream.write(" " + attrs.getLocalName(i) + "=\"" + s + "\"");
           }
           h_xmlstream.write(">");
@@ -547,13 +585,15 @@ public class DefinitiveDOReader implements DOReader
             h_datastream.DSSize = attrs.getValue("SIZE");
             h_datastream.DSState = attrs.getValue("STATUS");
 
-            if (attrs.getValue("OWNERID").equalsIgnoreCase("E"))
+            String owner = attrs.getValue("OWNERID");
+            if (owner != null && owner.equalsIgnoreCase("E"))
               h_datastream.DSControlGrp = 3;
-            else if (attrs.getValue("OWNERID").equalsIgnoreCase("I"))
+            else if (owner != null && owner.equalsIgnoreCase("I"))
               h_datastream.DSControlGrp = 1;
             else
             {
-              // throw error
+              // technically, this is an invalid fedora mets object
+              h_datastream.DSControlGrp = 0;
             }
           }
         }
@@ -749,6 +789,24 @@ public class DefinitiveDOReader implements DOReader
         {
           inMechanism = false;
         }
+      }
+
+      private String stringReplace(String input, Pattern p, String replacement)
+      {
+        // Take regexp pattern (Pattern) and create a matcher with the input string
+        Matcher m = p.matcher(input);
+        StringBuffer sb = new StringBuffer();
+
+        // Loop through and create a new String with the replacements
+        boolean result = m.find();
+        while(result)
+        {
+           m.appendReplacement(sb, replacement);
+           result = m.find();
+        }
+        // Add the last segment of input to the new String
+        m.appendTail(sb);
+        return(sb.toString());
       }
     }
 }
