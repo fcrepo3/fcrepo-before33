@@ -810,8 +810,12 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  	resourceAttributes.put("asOfDate", dateAsString(asOfDate));
 	  }
 	  
+	  private boolean log = false;
+	  
 	  private final void log(String msg) {
-	  	System.err.println(msg);
+	  	if (log) {
+		  	System.err.println(msg);	  		
+	  	}
 	  }
 
 	  private final String logged(String msg) {
