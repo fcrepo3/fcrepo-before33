@@ -174,7 +174,6 @@ public class DynamicAccessModule extends Module implements Access
       }
       catch(Exception e)
       {
-        System.out.println("Unable to initialize module parameters: " + e.getMessage());
         throw new ModuleInitializationException(
             e.getMessage(),"fedora.server.validation.DOValidatorModule");
       }

@@ -48,7 +48,6 @@ public class ServiceMethodDispatcher {
     public Object invokeMethod(Object service_object, String methodName,
         Property[] userParms) throws ServerException
     {
-        System.out.println("invokeMethod: composing method request...");
         Method method = null;
         if (userParms == null)
         {

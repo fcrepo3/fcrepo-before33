@@ -153,7 +153,6 @@ class WSDLParser extends DefaultHandler
 
   public void startDocument() throws SAXException
   {
-    System.out.println("WSDLParser: START DOC");
     nsPrefixMap = new HashMap();
     wsdlTypeTbl = new Hashtable();
     wsdlMessageTbl = new Hashtable();
@@ -170,7 +169,6 @@ class WSDLParser extends DefaultHandler
     wsdlPortBindingTbl = null;
     wsdlBindingTbl = null;
     wsdlAbstrOperTbl = null;
-    System.out.println("WSDLParser: END DOC");
   }
 
   public void startPrefixMapping(String prefix, String uri) throws SAXException

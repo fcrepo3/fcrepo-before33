@@ -185,7 +185,6 @@ public class ServiceMapper
         String msg = "ServiceMapper returned parser error. "
                   + "The underlying exception was a " + e.getClass().getName() + ".  "
                   + "The message was "  + "\"" + e.getMessage() + "\"";
-        System.out.println(msg);
         throw new RepositoryConfigurationException(msg);
       }
       catch (SAXException e)
@@ -193,7 +192,6 @@ public class ServiceMapper
         String msg = "ServiceMapper returned SAXException. "
                   + "The underlying exception was a " + e.getClass().getName() + ".  "
                   + "The message was "  + "\"" + e.getMessage() + "\"";
-        System.out.println(msg);
         throw new ObjectIntegrityException(msg);
       }
       catch (Exception e)
@@ -201,7 +199,6 @@ public class ServiceMapper
         String msg = "ServiceMapper returned error. "
                   + "The underlying error was a " + e.getClass().getName() + ".  "
                   + "The message was "  + "\"" + e.getMessage() + "\"";
-        System.out.println(msg);
         e.printStackTrace();
         throw new GeneralException(msg);
       }

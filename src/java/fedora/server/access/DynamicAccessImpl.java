@@ -303,7 +303,6 @@ public class DynamicAccessImpl
   {
     if (dynamicBDefToMech.containsKey(bDefPID))
     {
-      System.out.println("DETECTED A DYNAMIC BEHAVIOR DEF: " + bDefPID);
       return true;
     }
     return false;

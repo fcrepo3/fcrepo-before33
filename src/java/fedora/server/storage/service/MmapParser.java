@@ -124,14 +124,12 @@ class MmapParser extends DefaultHandler
 
   public void startDocument() throws SAXException
   {
-    System.out.println("MmapParser: START DOC");
     nsPrefixMap = new HashMap();
     wsdlOperationToMethodDefTbl = new Hashtable();
   }
 
   public void endDocument() throws SAXException
   {
-    System.out.println("MmapParser: END DOC");
     nsPrefixMap = null;
   }
 
