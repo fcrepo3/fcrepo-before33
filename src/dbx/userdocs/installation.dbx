@@ -126,10 +126,13 @@ Initial setup:
 		<section>
 			<title>Ingest Sample Objects</title>
 			<para>
-        Type fedora-demo-ingest
+        Type fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin
         </para>
         <para>
-        This installs all the demo objects from the
+        ...where localhost and 8080 are your server hostname and port, and fedoraAdmin and fedoraAdmin are the super user name and password.  (The superuser name is always fedoraAdmin; the superuser password is configured in fedora.fcfg, and defaults to the value, "fedoraAdmin")
+</para>
+        <para>
+This installs all the demo objects from the
         demo/ directory.  
         </para>
 		</section>
