@@ -643,7 +643,6 @@ public class DefaultDOManager
                 // deserialize it first
                 BasicDigitalObject obj=new BasicDigitalObject();
                 m_translator.deserialize(in2, obj, format, encoding);
-                InputStream in3=getTempStore().retrieve("temp-ingest");
                 // do we need to generate a pid?
                 if (newPid) {
                    getServer().logFinest("Ingesting client wants a new PID.");
@@ -675,8 +674,9 @@ public class DefaultDOManager
                 ByteArrayOutputStream out=new ByteArrayOutputStream();
                 m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
                 ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
-                // getPermanentStore().add(obj.getPid(), newIn);
-                getPermanentStore().add(obj.getPid(), in3);
+                getPermanentStore().add(obj.getPid(), newIn);
+                // InputStream in3=getTempStore().retrieve("temp-ingest");
+                // getPermanentStore().add(obj.getPid(), in3);
                 permPid=obj.getPid();
                 inPermanentStore=true; // signifies successful perm store addition
                 InputStream in4=getTempStore().retrieve("temp-ingest");
