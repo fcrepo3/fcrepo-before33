@@ -730,7 +730,7 @@ public class DefaultDOManager
                     }
                 }
                 // do we need to generate a pid?
-                if (obj.getPid().startsWith("test:")) {
+                if (obj.getPid()!=null && obj.getPid().startsWith("test:")) {
                     getServer().logFinest("Stream contained PID with 'test' namespace-id... will use PID from stream.");
                 } else {
                     if (newPid) {
