@@ -28,29 +28,33 @@ package fedora.client.batch.types;
 public class Datastream
 {
 
-  public String DatastreamID;
+  public String dsID;
 
-  public String DSVersionID;
+  public String dsVersionID;
 
-  public String DSLabel;
+  public String dsLabel;
 
-  public String DSMIME;
+  public String dsMIME;
 
   public String asOfDate;
 
-  public String DSControlGrp;
+  public String dsControlGrp;
 
-  public String DSInfoType;
+  public String dsInfoType;
 
-  public String DSState;
+  public String dsState;
 
-  public String DSLocation;
+  public String dsLocation;
 
   public String mdClass;
 
   public String mdType;
 
   public String objectPID;
+  
+  public boolean versionable;
+  
+  public String formatURI;
 
   public byte[] xmlContent;
 

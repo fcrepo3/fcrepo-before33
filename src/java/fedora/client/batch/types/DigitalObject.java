@@ -29,7 +29,7 @@ public class DigitalObject {
 
     public String pid;
     public String label;
-    public String contentModel;
+    public String cModel;
 
     public DigitalObject()
     {}
