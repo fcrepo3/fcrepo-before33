@@ -17,12 +17,7 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 set C=%TC%\common\lib
 set CP=%C%\saaj.jar;%C%\commons-discovery.jar;%C%\axis.jar;%C%\commons-logging.jar;%C%\jaxrpc.jar;%C%\wsdl4j.jar;%C%\tt-bytecode.jar
 
-echo Un-Deploying API-M and API-A and sending shutdown request...
-%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\undeployAPI-A.wsdd "http://localhost:8080/fedora/AdminService" 15 "http://localhost:8080/fedora/management/shutdown?password=%1"
-
-%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\undeploy.wsdd "http://localhost:8080/fedora/AdminService" 15 
-
-echo Shutting down Tomcat...
+echo Shutting down Fedora-Server service...
 %JAVA_HOME%\bin\java -cp %TC%\bin\bootstrap.jar -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\bin -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp org.apache.catalina.startup.Bootstrap stop
 set JAVA_HOME=%OLD_JAVA_HOME%
 
