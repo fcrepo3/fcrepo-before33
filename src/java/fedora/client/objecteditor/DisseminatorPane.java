@@ -40,7 +40,7 @@ import fedora.client.objecteditor.types.ParameterDefinition;
  * -----------------------------------------------------------------------------
  */
 public class DisseminatorPane
-        extends EditingPane 
+        extends EditingPane
         implements ChangeListener {
 
     private static SimpleDateFormat s_formatter=
@@ -58,7 +58,7 @@ public class DisseminatorPane
     private CardLayout m_versionCardLayout;
     private CurrentVersionPane m_currentVersionPane;
     private PurgeButtonListener m_purgeButtonListener;
-    private JPanel m_valuePane; 
+    private JPanel m_valuePane;
     private JPanel m_methodCard;
     private CardLayout m_methodCardLayout;
     private JPanel m_methodDescCard;
@@ -72,7 +72,7 @@ public class DisseminatorPane
     private JTextArea m_dtLabel;
     private JPanel m_dateLabelAndValue;
 
-    public DisseminatorPane(ObjectEditorFrame gramps, String pid, 
+    public DisseminatorPane(ObjectEditorFrame gramps, String pid,
             Disseminator[] versions, DisseminatorsPane owner)
             throws Exception {
         super(gramps, owner, versions[0].getID());
@@ -86,7 +86,7 @@ public class DisseminatorPane
         // set up the common pane
         // first get width and height we'll use for the labels on the left
         m_labelDims=new JLabel("Mechanism").getPreferredSize();
-        JLabel label1=new JLabel("State"); 
+        JLabel label1=new JLabel("State");
         label1.setPreferredSize(m_labelDims);
         JLabel label2=new JLabel("Behavior");
         label2.setPreferredSize(m_labelDims);
@@ -236,7 +236,7 @@ public class DisseminatorPane
            }
        }
     }
- 
+
     public boolean isDirty() {
         if (m_done) return false;
         int stateIndex=0;
@@ -278,7 +278,7 @@ public class DisseminatorPane
      */
     public void changesSaved() {
         m_owner.refresh(m_mostRecent.getID());
-        m_done=true; 
+        m_done=true;
     }
 
     public void undoChanges() {
@@ -359,7 +359,7 @@ public class DisseminatorPane
                 public void actionPerformed(ActionEvent evt) {
                     // put the currently-entered label into m_bMechLabels,
                     m_bMechLabels.put(m_lastSelectedBMech, m_bMechLabelTextField.getText());
-                    // then switch to the appropriate panel and set the 
+                    // then switch to the appropriate panel and set the
                     // label text
                     String bMechPID=(String) m_bMechComboBox.getSelectedItem();
                     m_bindingsCard.show(m_stackedBindingPane, bMechPID);
@@ -402,7 +402,7 @@ public class DisseminatorPane
                 cDateArea.setBackground(Administrator.BACKGROUND_COLOR);
                 cDateArea.setEditable(false);
                 right=new JComponent[] {cDateArea,
-                                        m_labelTextField, 
+                                        m_labelTextField,
                                         bMechInfo};
             }
             GridBagLayout topGridBag=new GridBagLayout();
@@ -432,7 +432,7 @@ public class DisseminatorPane
                 }
                 DatastreamBindingPane dsBindingPane=new DatastreamBindingPane(
                         m_gramps.getCurrentDatastreamVersions(),
-                        bindings, 
+                        bindings,
                         bMechPID, spec, null, m_editingPane);
                 m_gramps.addDatastreamListener(dsBindingPane);
                 m_bindingPanes.put(bMechPID, dsBindingPane);
@@ -493,16 +493,16 @@ public class DisseminatorPane
             DatastreamBindingMap bindingMap=new DatastreamBindingMap();
             bindingMap.setDsBindMapID("hopefully this is set by the server!"); // unnecessary
             bindingMap.setDsBindMechanismPID(bMechPID);
-            bindingMap.setDsBindMapLabel("Binding map for bMech object: " 
+            bindingMap.setDsBindMapLabel("Binding map for bMech object: "
                     + bMechPID);
             bindingMap.setState("A");  // unnecessary...
             bindingMap.setDsBindings( ((DatastreamBindingPane) m_bindingPanes
                                       .get(bMechPID)).getBindings() );
             // and send the request
             Administrator.APIM.modifyDisseminator(
-                    m_pid, 
-                    m_diss.getID(), 
-                    bMechPID, 
+                    m_pid,
+                    m_diss.getID(),
+                    bMechPID,
                     m_labelTextField.getText(),
                     m_bDefLabelTextField.getText(),
                     m_bMechLabelTextField.getText(),
@@ -688,14 +688,16 @@ public class DisseminatorPane
                         "Yes"); //default button title
                 if (n==0) {
                     try {
-                        Administrator.APIM.purgeDisseminator(m_pid, 
+                        Administrator.APIM.purgeDisseminator(m_pid,
                                 m_versions[sIndex].getID(),
                                 m_versions[sIndex].getCreateDate());
                         if (removeAll) {
                             m_owner.remove(m_versions[0].getID());
+                            m_owner.doNew(false);
                             m_done=true;
                         } else {
                             m_owner.refresh(m_versions[0].getID());
+                            m_owner.doNew(false);
                             m_done=true;
                         }
                     } catch (Exception e) {
