@@ -328,6 +328,11 @@ public class DefaultManagement
             if (!orig.DSControlGrp.equals("X")) {
                 throw new GeneralException("Only inline XML datastreams may be replaced by value.");
             }
+            if (orig.DatastreamID.equals("METHODMAP")
+                    || orig.DatastreamID.equals("DSINPUTSPEC")
+                    || orig.DatastreamID.equals("WSDL")) {
+                throw new GeneralException("METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified.");
+            }
             DatastreamXMLMetadata newds=new DatastreamXMLMetadata();
             newds.DSMDClass=((DatastreamXMLMetadata) orig).DSMDClass;
             ByteArrayOutputStream bytes=new ByteArrayOutputStream();

@@ -47,7 +47,6 @@ import fedora.server.errors.ModuleInitializationException;
 public class DefaultDOReplicator
         extends Module
         implements DOReplicator {
-    //FIXME: recast sqlexceptions as replicationexceptions here and in interface
     private ConnectionPool m_pool;
     private RowInsertion m_ri;
     private DBIDLookup m_dl;
@@ -136,6 +135,122 @@ public class DefaultDOReplicator
                 connection.commit();
             } else {
                 logFinest("No datastream labels or locations changed.");
+            }
+        } catch (SQLException sqle) {
+            failed=true;
+            throw new ReplicationException("An error has occurred during "
+                + "Replication. The error was \" " + sqle.getClass().getName()
+                + " \". The cause was \" " + sqle.getMessage());
+        } catch (ServerException se) {
+            failed=true;
+            throw new ReplicationException("An error has occurred during "
+                + "Replication. The error was \" " + se.getClass().getName()
+                + " \". The cause was \" " + se.getMessage());
+        } finally {
+            if (connection!=null) {
+                try {
+                    if (triedUpdate && failed) connection.rollback();
+                } catch (Throwable th) {
+                    logWarning("While rolling back: " +  th.getClass().getName()
+                            + ": " + th.getMessage());
+                } finally {
+                    try {
+                        if (results != null) results.close();
+                        if (st!=null) st.close();
+                        connection.setAutoCommit(true);
+                    } catch (SQLException sqle) {
+                        logWarning("While cleaning up: " +  sqle.getClass().getName()
+                            + ": " + sqle.getMessage());
+                    } finally {
+                        m_pool.free(connection);
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * If the object has already been replicated, update the components
+     * and return true.  Otherwise, return false.
+     *
+     * Currently bdef components cannot be updated, so this will
+     * simply return true if the bDef has already been replicated.
+     */
+    private boolean updateComponents(BDefReader reader)
+            throws ReplicationException {
+        Connection connection=null;
+        Statement st=null;
+        ResultSet results=null;
+        boolean triedUpdate=false;
+        boolean failed=false;
+        try {
+            connection=m_pool.getConnection();
+            st=connection.createStatement();
+            results=logAndExecuteQuery(st, "SELECT bDefDbID FROM bDef WHERE "
+                    + "bDefPID='" + reader.GetObjectPID() + "'");
+            if (!results.next()) {
+                logFinest("DefaultDOReplication.updateComponents: Object is "
+                        + "new; components dont need updating.");
+                return false;
+            }
+        } catch (SQLException sqle) {
+            failed=true;
+            throw new ReplicationException("An error has occurred during "
+                + "Replication. The error was \" " + sqle.getClass().getName()
+                + " \". The cause was \" " + sqle.getMessage());
+        } catch (ServerException se) {
+            failed=true;
+            throw new ReplicationException("An error has occurred during "
+                + "Replication. The error was \" " + se.getClass().getName()
+                + " \". The cause was \" " + se.getMessage());
+        } finally {
+            if (connection!=null) {
+                try {
+                    if (triedUpdate && failed) connection.rollback();
+                } catch (Throwable th) {
+                    logWarning("While rolling back: " +  th.getClass().getName()
+                            + ": " + th.getMessage());
+                } finally {
+                    try {
+                        if (results != null) results.close();
+                        if (st!=null) st.close();
+                        connection.setAutoCommit(true);
+                    } catch (SQLException sqle) {
+                        logWarning("While cleaning up: " +  sqle.getClass().getName()
+                            + ": " + sqle.getMessage());
+                    } finally {
+                        m_pool.free(connection);
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * If the object has already been replicated, update the components
+     * and return true.  Otherwise, return false.
+     *
+     * Currently bmech components cannot be updated, so this will
+     * simply return true if the bMech has already been replicated.
+     */
+    private boolean updateComponents(BMechReader reader)
+            throws ReplicationException {
+        Connection connection=null;
+        Statement st=null;
+        ResultSet results=null;
+        boolean triedUpdate=false;
+        boolean failed=false;
+        try {
+            connection=m_pool.getConnection();
+            st=connection.createStatement();
+            results=logAndExecuteQuery(st, "SELECT bMechDbID FROM bMech WHERE "
+                    + "bMechPID='" + reader.GetObjectPID() + "'");
+            if (!results.next()) {
+                logFinest("DefaultDOReplication.updateComponents: Object is "
+                        + "new; components dont need updating.");
+                return false;
             }
         } catch (SQLException sqle) {
             failed=true;
