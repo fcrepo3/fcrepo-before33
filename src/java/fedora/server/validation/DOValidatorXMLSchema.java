@@ -57,7 +57,8 @@ public class DOValidatorXMLSchema
     {
       if (args.length < 2)
       {
-        System.err.println("usage: java DOValidatorXMLSchema schemaLocation objectLocation" + "\n" +
+        System.err.println("usage: java DOValidatorXMLSchema schemaLocation " +
+          "objectLocation" + "\n" +
           "  schemaLocation: the file path of the XML schema to validate against" + "\n" +
           "  objectLocation: the file path of the object to be validated");
         System.exit(1);
@@ -81,30 +82,18 @@ public class DOValidatorXMLSchema
       }
     }
 
-    public DOValidatorXMLSchema(String schemaID) throws GeneralException
+    public DOValidatorXMLSchema(String schemaPath) throws GeneralException
     {
       try
       {
-        System.out.println("XML Schema location: " + schemaID);
-        schemaURI = new URI(schemaID);
+        System.out.println("XML Schema Path: " + schemaPath);
+        schemaURI = (new File(schemaPath)).toURI();
+        System.out.println("XML Schema URI: " + schemaURI);
       }
       catch (Exception e)
       {
-        System.err.println("DOValidatorXMLSchema says caught ERROR in Constructor: " + e.getMessage());
-        throw new GeneralException(e.getMessage());
-      }
-    }
-
-    public DOValidatorXMLSchema(File schema) throws GeneralException
-    {
-      try
-      {
-        File schemaFile = schema;
-        schemaURI = schemaFile.toURI();
-      }
-      catch (Exception e)
-      {
-        System.err.println("DOValidatorXMLSchema says caught ERROR in Constructor: " + e.getMessage());
+        System.err.println("DOValidatorXMLSchema caught ERROR in Constructor: "
+          + e.getMessage());
         throw new GeneralException(e.getMessage());
       }
     }
@@ -146,8 +135,9 @@ public class DOValidatorXMLSchema
       sp.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
 
       // JAXP property for schema location
-      sp.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaURI.toString());
-      //sp.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaFile);
+      sp.setProperty(
+        "http://java.sun.com/xml/jaxp/properties/schemaSource",
+        schemaURI.toString());
 
       iHandler = new DOIntegrityHandler(); // new
       XMLReader xmlreader = sp.getXMLReader();

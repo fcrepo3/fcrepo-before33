@@ -95,10 +95,11 @@ import fedora.server.errors.InitializationException;
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
-  public DOValidatorIntegrityCheck(File objectAsFile, String xmlSchemaURL, Connection c)
+  //public DOValidatorIntegrityCheck(File objectAsFile, String xmlSchemaURL, Connection c)
+  public DOValidatorIntegrityCheck(File objectAsFile, String xmlSchemaPath, Connection c)
       throws ObjectValidityException, GeneralException
   {
-      DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaURL);
+      DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaPath);
       xsv.validate(objectAsFile);
       objectInfo = xsv.getDOIntegrityVariables();
       connection = c;
