@@ -166,19 +166,19 @@
 						<!-- ******************************************************************************************************************** -->
 						<!-- WSDL: MESSAGE DEFINITIONS -->
 						<!-- ******************************************************************************************************************** -->
-						<wsdl:message name="getUvaDescMeta">
+						<wsdl:message name="getUvaDescMetaRequest">
 							<wsdl:part name="UVADESC_META" type="this:metadataURLType"/>
 						</wsdl:message>
-						<wsdl:message name="getUvaTechMeta">
+						<wsdl:message name="getUvaTechMetaRequest">
 							<wsdl:part name="UVATECH_META" type="this:metadataURLType"/>
 						</wsdl:message>
-						<wsdl:message name="getUvaDigiprovMeta">
+						<wsdl:message name="getUvaDigiprovMetaRequest">
 							<wsdl:part name="UVADIGIPROV_META" type="this:metadataURLType"/>
 						</wsdl:message>
-						<wsdl:message name="getUvaRightsMeta">
+						<wsdl:message name="getUvaRightsMetaRequest">
 							<wsdl:part name="UVARIGHTS_META" type="this:metadataURLType"/>
 						</wsdl:message>
-						<wsdl:message name="getUvaSourceMeta">
+						<wsdl:message name="getUvaSourceMetaRequest">
 							<wsdl:part name="UVASOURCE_META" type="this:metadataURLType"/>
 						</wsdl:message>
 						<wsdl:message name="meta_response">
