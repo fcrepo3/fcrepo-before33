@@ -120,9 +120,9 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
             // delete the currently selected item from m_model
             javax.swing.SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
-                    m_ignoreValueChanged = true;
                     int i = m_paramList.getSelectedIndex();
                     if ( i >= 0 ) {
+                        m_ignoreValueChanged = true;
                         Parameter param = (Parameter) m_paramList.getSelectedValue();
                         m_model.remove(i);
                         m_ignoreValueChanged = false;
@@ -157,6 +157,8 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         private JTextField m_valueText;
         private String m_name;
 
+        private JPanel m_valuePanel;
+
         public String getName() {
             return m_name;
         }
@@ -179,7 +181,10 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
             JLabel descriptionLabel = new JLabel("Description:");
             // d1
             m_profileList = new JComboBox(new String[] { "Primary value", "'mckoi' value", "'oracle' value", "Add Profile...", "Delete Profile..." });
-            // each value gets it's own card
+            //
+            // TODO: each value gets it's own card
+            //
+            m_valuePanel = new JPanel(new CardLayout());
             m_valueText = new JTextField(param.getValue());
 
             //
@@ -204,7 +209,7 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
             c2.add(c3, BorderLayout.CENTER);
             c2.add(w3, BorderLayout.WEST);
             s1.add(c2, BorderLayout.CENTER);
-            add(s1, BorderLayout.SOUTH);
+
         }
 
         public Parameter getParameter() {
