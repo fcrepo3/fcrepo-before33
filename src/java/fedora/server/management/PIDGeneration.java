@@ -7,6 +7,7 @@
  * @version 1.0
  */
 
+package fedora.server.management;
 
 import java.io.*;
 import java.math.*;

@@ -6,6 +6,8 @@
  * @author Paul Charlton
  * @version 1.0
  */
+ 
+package fedora.server.management;
 
 import java.io.*;
 
