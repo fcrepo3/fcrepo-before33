@@ -174,6 +174,8 @@ public abstract class BObjMETSSerializer
     root.setAttributeNS(XSI, "xsi:schemaLocation", SCHEMALOC);
     String pid = (bObjData.getbObjPID() == null) ? "" : bObjData.getbObjPID();
     root.setAttribute("OBJID", pid);
+    String label = (bObjData.getbObjLabel() == null) ? "" : bObjData.getbObjLabel();
+    root.setAttribute("LABEL", label);
     Attr[] attrSet = getVariableRootAttrs();
     for (int i=0; i<attrSet.length; i++)
     {
@@ -291,6 +293,26 @@ public abstract class BObjMETSSerializer
     serviceBinding.appendChild(bmech);
 
     bObjBehaviorSec.appendChild(serviceBinding);
+  }
+
+  protected Element setDC(Element dc) throws BMechBuilderException
+  {
+    Element dcNode = document.createElementNS(METS, "METS:dmdSecFedora");
+    dcNode.setAttribute("ID", "DC");
+    Element descMD = document.createElementNS(METS, "METS:descMD");
+    descMD.setAttribute("ID", "DC1.0");
+    descMD.setAttribute("STATUS", "A");
+    Element mdWrap = document.createElementNS(METS, "METS:mdWrap");
+    mdWrap.setAttribute("MIMETYPE", "text/xml");
+    mdWrap.setAttribute("MDTYPE", "OTHER");
+    mdWrap.setAttribute("LABEL", "Dublin Core Metadata for Service");
+    Element xmlData = document.createElementNS(METS, "METS:xmlData");
+    Node importDC = document.importNode(dc, true);
+    xmlData.appendChild(importDC);
+    mdWrap.appendChild(xmlData);
+    descMD.appendChild(mdWrap);
+    dcNode.appendChild(descMD);
+    return dcNode;
   }
 
   public void printMETS()

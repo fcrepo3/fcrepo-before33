@@ -35,12 +35,14 @@ import fedora.client.bmech.BMechBuilderException;
 
 public class BDefMETSSerializer extends BObjMETSSerializer
 {
+  private Element in_dc;
   private Element in_methodMap;
 
-  public BDefMETSSerializer(BObjTemplate bDefData, Element methodMap)
+  public BDefMETSSerializer(BObjTemplate bDefData, Element dc, Element methodMap)
     throws BMechBuilderException
   {
     super((BObjTemplate)bDefData);
+    in_dc = dc;
     in_methodMap = methodMap;
     serialize();
   }
@@ -71,6 +73,7 @@ public class BDefMETSSerializer extends BObjMETSSerializer
   protected Element[] getInlineMD() throws BMechBuilderException
   {
     Vector v_elements = new Vector();
+    v_elements.add(setDC(in_dc));
     v_elements.add(setMethodMap(in_methodMap));
     return (Element[])v_elements.toArray(new Element[0]);
   }
@@ -85,7 +88,7 @@ public class BDefMETSSerializer extends BObjMETSSerializer
     Element mdWrap = document.createElementNS(METS, "METS:mdWrap");
     mdWrap.setAttribute("MIMETYPE", "text/xml");
     mdWrap.setAttribute("MDTYPE", "OTHER");
-    mdWrap.setAttribute("LABEL", "Mapping of WSDL to Fedora notion of Method Definitions");
+    mdWrap.setAttribute("LABEL", "Abstract Method Definitions");
     Element xmlData = document.createElementNS(METS, "METS:xmlData");
     Node importMethodMap = document.importNode(methodMap, true);
     xmlData.appendChild(importMethodMap);

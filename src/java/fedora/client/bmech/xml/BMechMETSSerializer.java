@@ -35,15 +35,18 @@ import fedora.client.bmech.BMechBuilderException;
 
 public class BMechMETSSerializer extends BObjMETSSerializer
 {
+  private Element in_dc;
   private Element in_dsInputSpec;
   private Element in_methodMap;
   private Element in_wsdl;
 
 
-  public BMechMETSSerializer(BMechTemplate bMechData, Element dsInputSpec,
-    Element methodMap, Element wsdl) throws BMechBuilderException
+  public BMechMETSSerializer(BMechTemplate bMechData, Element dc,
+    Element dsInputSpec, Element methodMap, Element wsdl)
+    throws BMechBuilderException
   {
     super((BObjTemplate)bMechData);
+    in_dc = dc;
     in_dsInputSpec = dsInputSpec;
     in_methodMap = methodMap;
     in_wsdl = wsdl;
@@ -90,6 +93,7 @@ public class BMechMETSSerializer extends BObjMETSSerializer
   protected Element[] getInlineMD() throws BMechBuilderException
   {
     Vector v_elements = new Vector();
+    v_elements.add(setDC(in_dc));
     v_elements.add(setDSInputSpec(in_dsInputSpec));
     v_elements.add(setMethodMap(in_methodMap));
     v_elements.add(setWSDL(in_wsdl));
