@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                              xmlns:s="http://www.w3.org/2001/sw/DataAccess/rf1/result">
 
 <xsl:template match="/">
-<xsl:variable name="collTitle" select="/dawg-result/results/result/collTitle"/>
-<xsl:variable name="collDesc" select="/dawg-result/results/result/collDesc"/>
+<xsl:variable name="collTitle" select="/s:sparql/s:results/s:result/s:collTitle"/>
+<xsl:variable name="collDesc" select="/s:sparql/s:results/s:result/s:collDesc"/>
 <html>
   <head><title><xsl:value-of select="$collTitle"/></title></head>
   <body bgcolor="#bbddbb">
@@ -17,8 +18,8 @@
     <hr size="1"/>
     <center>
     <table border="0" cellpadding="5">
-      <xsl:for-each select="/dawg-result/results/result">
-        <xsl:variable name="pid" select="substring-after(member/@href, '/')"/>
+      <xsl:for-each select="/s:sparql/s:results/s:result">
+        <xsl:variable name="pid" select="substring-after(s:member/@uri, '/')"/>
         <tr>
           <td>
           <center>
@@ -40,8 +41,8 @@
             </center>
           </td>
           <td>
-            <b><xsl:value-of select="memberTitle"/></b><br/>
-            <xsl:value-of select="memberDesc"/>
+            <b><xsl:value-of select="s:memberTitle"/></b><br/>
+            <xsl:value-of select="s:memberDesc"/>
           </td>
         </tr>
       </xsl:for-each>

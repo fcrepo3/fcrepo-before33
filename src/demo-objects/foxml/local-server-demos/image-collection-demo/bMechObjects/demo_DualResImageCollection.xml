@@ -169,7 +169,7 @@
             <fmm:DefaultInputParm defaultValue="tuples" label="" parmName="TYPE" passBy="VALUE" required="true"/>
             <fmm:DatastreamInputParm defaultValue="" label="" parmName="QUERY" passBy="URL_REF" required="true"/>
             <fmm:DefaultInputParm defaultValue="itql" label="" parmName="LANG" passBy="VALUE" required="true"/>
-            <fmm:DefaultInputParm defaultValue="Dawg" label="" parmName="FORMAT" passBy="VALUE" required="true"/>
+            <fmm:DefaultInputParm defaultValue="Sparql" label="" parmName="FORMAT" passBy="VALUE" required="true"/>
             <fmm:MethodReturnType wsdlMsgName="dissemResponse" wsdlMsgTOMIME="text/xml"/>
           </fmm:Method>
         </fmm:MethodMap>
