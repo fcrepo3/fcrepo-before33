@@ -179,7 +179,7 @@
 		<column name="label" type="varchar(255)" notNull="false">
 			<comment>The label of the object</comment>
 		</column>
-		<column name="foType" type="char(1)" notNull="true" default="O">
+		<column name="fType" type="char(1)" notNull="true" default="O">
 			<comment>The Fedora Object Type of the object.  This indicates
                whether it's a regular object (O), behavior definition object 
                (D), or behavior mechanism object (M).
