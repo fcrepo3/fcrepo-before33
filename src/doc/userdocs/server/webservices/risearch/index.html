@@ -33,7 +33,12 @@
             <li> <a href="#user.aliases">Show Aliases</a></li>
           </ol>
         </li>
-        <li> <a href="#app">Application Interface</a></li>
+        <li> <a href="#app">Application Interface</a>
+          <ol type="A">
+            <li> <a href="#app.tuples">Syntax for Requesting Tuples</a></li>
+            <li> <a href="#app.triples">Syntax for Requesting Triples</a></li>
+          </ol>
+        </li>
       </ol>
     </div>
   </div>
@@ -56,23 +61,166 @@
        under <code>/fedora/risearch</code>.  For example:</p>
     <div class="code"><pre>http://localhost:8080/fedora/risearch</pre></div>
     <p>
-      The user interface consists of three tabs:
+      The user interface consists of three tabs: Find Tuples, Find Triples, and Show Aliases.
+      A detailed description of each of these tabs follows.
     </p>
     <div class="subsect">
       <h3><a name="user.tuples">A. Find Tuples</a></h3>
+      <p>
+        The "Find Tuples" tab shown below is used to
+        run tuple queries against the resource index.  A <em>tuple query </em> is
+        one that returns a list of named values.
+      </p>
       <img src="images/findTuples.png"/>
       <p>
-        This tab is used to perform <em>tuple queries</em> against the 
-        resource index.
+        When you enter a query and click "Launch", a new browser window will display the
+        results.  </p>
+      <p>To get an idea of how it works, try the following iTQL query, which asks for information about all Behavior
+        Definition objects in the repository:
       </p>
+      <div class="code"><pre>select $object $modified from &lt;#ri&gt;
+where  $object &lt;rdf:type&gt; &lt;fedora-model:FedoraBDefObject&gt;
+and    $object &lt;fedora-view:lastModifiedDate&gt; $modified</pre></div>
+      <p>
+        In response, you should see something like this:
+      </p>
+      <div class="code" style="background: white;"><pre>"object","modified"
+info:fedora/demo:DualResImage,2005-01-27T23:06:54.399
+info:fedora/demo:22,2005-01-27T23:06:57.449
+info:fedora/demo:12,2005-01-27T23:06:56.662
+info:fedora/demo:1,2005-01-27T23:07:00.528
+info:fedora/demo:27,2005-01-27T23:07:01.513
+info:fedora/demo:Collection,2005-01-27T23:06:58.42
+info:fedora/demo:19,2005-01-27T23:06:59.673
+info:fedora/demo:8,2005-01-27T23:07:38.978
+info:fedora/demo:15,2005-01-27T23:07:41.58</pre></div>
+      <p>
+        This is a list of comma-separated values, each row representing the URI and modified
+        date of the objects that matched the query.
+      </p>
+      <p>
+        Above the query text box, you can alter several settings for a query.  These
+        settings are described below.
+      <div class="subsect">
+        <h4>Language</h4>
+        <p>Indicates the query language to use.  Valid options are <strong>iTQL</strong> (a full-featured
+           RDF query language supported by the <a href="http://kowari.org/">Kowari Metastore</a>),
+           and <a href="http://www.hpl.hp.com/semweb/doc/tutorial/RDQL/"><strong>RDQL</strong></a>, 
+           (a less powerful, but more widely supported query language popularized
+           by the <a href="http://jena.sourceforge.net/">Jena Framework</a>).</p>
+      </div>
+      <div class="subsect">
+        <h4>Response</h4>
+        <p>Indicates the desired response format.  Valid options include:</p>
+        <ul>
+          <li> <strong>CSV</strong> - Comma-separated values</li>
+          <li> <strong>Simple</strong> - A simple easy-to-read text format that shows datatype information, when present.</li>
+          <li> <a href="http://www.w3.org/TR/2004/WD-rdf-sparql-XMLres-20041221/"><strong>Sparql</strong></a> - An XML format for query responses designed by the <a href="http://www.w3.org/2001/sw/DataAccess/">RDF Data Access Working Group</a></li>
+          <li> <strong>TSV</strong> - Tab-separated values</li>
+        </ul>
+      </div>
+      <div class="subsect">
+        <h4>Limit</h4>
+        <p>The maximum number of results to return.  It is useful to set this low when testing queries.</p>
+      </div>
+      <div class="subsect">
+        <h4>Advanced</h4>
+        <ul>
+          <li> <strong>Force Distinct</strong> - Whether to force duplicate results to be dropped.
+               This is only useful for certain RDQL queries (iTQL never returns duplicates).</li>
+          <li> <strong>Fake Media-Types</strong> - Whether to send incorrect <code>Content-Type</code>
+               HTTP response headers with the responses (to trick browsers into displaying
+               the results instead of popping up a "Save As/Open With" window).</li>
+          <li> <strong>Stream Immediately</strong> - Whether to stream the results right away (faster), or
+               to save them to a temporary file before sending them to the client.  The default behavior (to
+               save the results before streaming) will give a more informative error message if
+               a query fails.</li>
+        </ul>
+      </div>
     </div>
     <div class="subsect">
       <h3><a name="user.triples">B. Find Triples</a></h3>
+      <p>
+        The "Find Triples" tab shown below is used to
+        run triple queries against the resource index.  A <em>triple query </em> is
+        one that returns a list of RDF statements (aka triples).
+      </p>
       <img src="images/findTriples.png"/>
       <p>
-        This tab is used to perform <em>triple queries</em> against the 
-        resource index.
+        This tab works in much the same way as the "Find Tuples" tab, but supports
+        different response formats and provides a means to convert tuple query 
+        results to triples.  It also exposes another query language: SPO.</p>
+      <div class="subsect">
+        <h4>SPO</h4>
+      <p>This is a very simple RDF query language, where queries consist of a
+      specific subject (or an asterisk, indicating "any"), a specific
+      predicate (or an asterisk), and a specific object (or an asterisk).
+      The easiest way to learn SPO is by example:</p>
+      <div class="code"><pre>Get all triples in the repository
+
+    <strong>* * *</strong>
+
+Get all triples where the object is demo:1
+
+    <strong>* * &lt;info:fedora/demo:1&gt;</strong>
+
+Get all triples where the subject is demo:1 and the object is demo:2
+
+    <strong>&lt;info:fedora/demo:1&gt; * &lt;info:fedora/demo:2&gt;</strong></pre></div>
+      </div>
+      <div class="subsect">
+        <h4>Response Formats</h4>
+        <p>A variety of RDF formats are supported:</p>
+        <ul>
+          <li> <strong>N-Triples</strong> - A subset of Notation 3 defined in the
+<a href="http://www.w3.org/TR/rdf-testcases/#ntriples">RDF Test Cases</a> document.</li>
+          <li> <strong>Notation 3</strong> - The original RDF text format, defined by 
+Tim Berners-Lee in <a href="http://www.w3.org/DesignIssues/Notation3.html">An RDF language 
+     for the Semantic Web</a>.</li>
+          <li> <strong>RDF/XML</strong> - The "RDF/XML" format, defined in the
+     <a href="http://www.w3.org/TR/rdf-syntax-grammar/">RDF/XML Syntax Specification</a>.</li>
+          <li> <strong>Turtle</strong> - A newer subset of Notation 3, defined in 
+               Dave Beckett's <a href="http://www.ilrt.bris.ac.uk/discovery/2004/01/turtle/">Turtle -
+     Terse RDF Triple Language</a>.</li>
+        </ul>
+      </div>
+      <div class="subsect">
+        <h4>Using Templates</h4>
+        <p>Templates are used to convert tuple query results to triples.
+           A template consists of one ore more <em>triple binding patterns</em>
+           that reference the binding variables in an iTQL or RDQL query.</p>
+        </p>
+        <p>
+          The easiest way to understand how this works is by example.
+        </p>
+        <p>
+          In this example, we'll show how to extract a subgraph from the resource
+          index using iTQL.  Enter the following query text:
+        </p>
+        <div class="code"><pre>select $a $r $b from &lt;#ri&gt;
+where  $a &lt;rdf:type&gt; &lt;fedora-model:FedoraObject&gt;
+and    $a $r $b
+and    $b &lt;rdf:type&gt; &lt;fedora-model:FedoraObject&gt;</pre></div>
+        <p>This query by itself returns all relationships between
+        data objects in a repository. The binding variables are $a,
+        $r, and $b.  Now enter the following in the template text box:</p>
+        <div class="code"><pre>$a $r $b</pre></div>
+      <p>
+        When you launch the query, you'll see a list of triples: the sub-graph
+        of all object-to-object relationships in the repository.  (If you don't
+        see anything, you should ingest the demo objects which include some
+        sample relationships).
       </p>
+      <p>
+        Now try the following template instead.  This demonstrates how to derive
+        new statements from those in the resource index:
+      </p>
+      <div class="code"><pre>$a &lt;urn:example:isRelatedTo&gt; $b
+$b &lt;urn:example:isRelatedTo&gt; $a</pre></div>
+      <p>Running the query will now show <em>two</em> statements for every
+      object-to-object relationship in the resource index graph.</p>
+      <p>Note: When using templates to transform tuples to triples, some
+      duplicates may be returned.  These can be avoided by checking "Force Distinct".</p>
     </div>
     <div class="subsect">
       <h3><a name="user.aliases">C. Show Aliases</a></h3>
@@ -91,7 +239,31 @@
 
   <div class="sect">
     <h2><a name="service">3. Application Interface</a></h2>
-    <p>The RISearch service can be programmatically accessed via HTTP.</p>
+    <p>The RISearch service can be programmatically accessed via HTTP GET.  As with the
+    user interface, it can be invoked to retrieve tuples or triples.</p>
+    <div class="subsect">
+      <h3><a name="app.tuples">Syntax for Requesting Tuples</a></h3>
+      <div class="code"><pre>
+http://localhost:8080/fedora/risearch?type=tuples
+                                     &amp;lang=<strong>iTQL|RDQL</strong>
+                                     &amp;format=<strong>CSV|Simple|Sparql|TSV</strong>
+                                     &amp;limit=[<strong>1</strong> or more]
+                                     &amp;distinct=[<strong>on</strong>]
+                                     &amp;stream=[<strong>on</strong>]
+                                     &amp;query=<strong>QUERY_TEXT_OR_URL</strong></pre></div>
+    </div>
+    <div class="subsect">
+      <h3><a name="app.triples">Syntax for Requesting Triples</a></h3>
+      <div class="code"><pre>
+http://localhost:8080/fedora/risearch?type=triples
+                                     &amp;lang=<strong>SPO|iTQL|RDQL</strong>
+                                     &amp;format=<strong>N-Triples|Notation 3|RDF/XML|Turtle</strong>
+                                     &amp;limit=[<strong>1</strong> or more]
+                                     &amp;distinct=[<strong>on</strong>]
+                                     &amp;stream=[<strong>on</strong>]
+                                     &amp;query=<strong>QUERY_TEXT_OR_URL</strong>
+                                     &amp;template=[<strong>TEMPLATE_TEXT_OR_URL</strong>]</pre></div>
+    </div>
   </div>
 
   <div id="footer">
