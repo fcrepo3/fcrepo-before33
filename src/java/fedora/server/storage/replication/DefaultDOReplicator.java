@@ -223,10 +223,25 @@ public class DefaultDOReplicator
                                     + bMechDBID + ", binding key name: "
                                     + dsBindSpec.dsBindRules[j].bindingKeyName);
                     }
-                    m_ri.insertMechanismImplRow(connection, bMechDBID, bDefDBID,
-                            methodDBID, dsBindingKeyDBID, "http", "text/html",
+                    for (int k=0; k<behaviorBindingsEntry.dsBindingKeys.length;
+                         k++)
+                    {
+                      // A row is added to the MechanismImpl table for each
+                      // method with a different BindingKeyName. In cases where
+                      // a single method may have multiple binding keys,
+                      // multiple rows are added for each different
+                      // BindingKeyName for that method.
+                      if (behaviorBindingsEntry.dsBindingKeys[k].
+                          equalsIgnoreCase(
+                          dsBindSpec.dsBindRules[j].bindingKeyName))
+                      {
+                        m_ri.insertMechanismImplRow(connection, bMechDBID,
+                            bDefDBID, methodDBID, dsBindingKeyDBID,
+                            "http", "text/html",
                             behaviorBindingsEntry.serviceBindingAddress,
                             behaviorBindingsEntry.operationLocation, "1");
+                      }
+                    }
                 }
             }
             connection.commit();
