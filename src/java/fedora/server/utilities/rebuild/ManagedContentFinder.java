@@ -6,6 +6,7 @@ public interface ManagedContentFinder {
 
     /**
      * Prepare for use.
+     * Index things, set up needed connections, etc.
      */
     public void init() throws Exception;
 
@@ -17,5 +18,10 @@ public interface ManagedContentFinder {
     public InputStream find(String pid,
                             String dsID,
                             String dsVersionID) throws Exception;
+
+    /**
+     * Release any resources used.
+     */
+    public void finish() throws Exception;
 
 }

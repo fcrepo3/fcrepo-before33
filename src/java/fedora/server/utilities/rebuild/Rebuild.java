@@ -43,15 +43,7 @@ public class Rebuild {
             System.out.println();
             System.out.println(rebuilder.getAction());
             System.out.println();
-
-//            ManagedContentFinder FileSystemManagedContentFinder(serverConfig.getParameter());
-            //
-            //
-            //
-            ManagedContentFinder finder = null; //
-            //
-            //
-            //
+            ManagedContentFinder finder = getManagedContentFinder(serverConfig);
             Map options = getOptions(rebuilder.init(serverDir, serverConfig, finder));
             if (options != null) {
                 System.out.println();
@@ -70,7 +62,18 @@ public class Rebuild {
         }
     }
 
-    public void addAllObjects(Rebuilder rebuilder,
+    private ManagedContentFinder getManagedContentFinder(ServerConfiguration serverConfig) throws Exception {
+        // Determine the datastream path, then pass it to the FileA
+
+
+
+return null;
+
+
+
+    }
+
+    private void addAllObjects(Rebuilder rebuilder,
                               File serverDir,
                               ServerConfiguration serverConfig) {
         // Determine which deserializers are supported, and get an
@@ -230,7 +233,7 @@ public class Rebuild {
             String msg = th.getMessage();
             if (msg == null) msg = th.getClass().getName();
             fail(msg, false, false);
-            th.printStackTrace();
+//            th.printStackTrace();
         }
     }
 
