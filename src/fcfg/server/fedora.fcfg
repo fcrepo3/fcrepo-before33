@@ -133,6 +133,16 @@
            class="fedora.server.search.FieldSearchExistModule">
         <comment>Supports the API-A simpleSearch and advancedSearch methods.</comment>
     </module>
+    <module role="fedora.oai.OAIProvider"
+           class="fedora.server.oai.FedoraOAIProviderModule">
+        <comment>Exposes the repository for OAI harvesters.</comment>
+        <param name="repositoryName" value="Your Fedora Repository Name Here"/>
+        <param name="adminEmails" value="oai-admin@yourco.com bob@yourco.com"/>
+        <param name="friends" value="http://arXiv.org/oai2 http://memory.loc.gov/cgi-bin/oai2_0"/>
+        <param name="maxSets" value="100"/>
+        <param name="maxRecords" value="100"/>
+        <param name="maxHeaders" value="100"/>
+    </module>
 	<module role="fedora.server.storage.translation.DOTranslator"
            class="fedora.server.storage.translation.DOTranslatorModule">
 		<comment>Supports translation from DigitalObject to a stream of 
