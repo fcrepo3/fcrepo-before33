@@ -327,6 +327,15 @@ public class SimpleDOReader
 
     public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime)
             throws DisseminatorNotFoundException, ServerException {
+
+        // FIXIT! Consider what to do if the request comes in with a dynamic
+        // behavior definition PID.
+        if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
+             bDefPID.equalsIgnoreCase("fedora-system:3"))
+        {
+          System.out.println("getObjectMethods: Suppressing report of dynamic methods!");
+          return null;
+        }
         String mechPid=getBMechPid(bDefPID, versDateTime);
         if (mechPid==null) {
             return null;
@@ -337,6 +346,15 @@ public class SimpleDOReader
 
     public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime)
             throws DisseminatorNotFoundException, ServerException {
+
+        // FIXIT! Consider what to do if the request comes in with a dynamic
+        // behavior definition PID.
+        if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
+             bDefPID.equalsIgnoreCase("fedora-system:3"))
+        {
+          System.out.println("getObjectMethodsXML: Suppressing report of dynamic methods!");
+          return null;
+        }
         String mechPid=getBMechPid(bDefPID, versDateTime);
         if (mechPid==null) {
             return null;
@@ -385,6 +403,15 @@ public class SimpleDOReader
             String methodName, Date versDateTime)
             throws DisseminatorNotFoundException, MethodNotFoundException,
             ServerException {
+
+        // FIXIT! Consider what to do if the request comes in with a dynamic
+        // behavior definition PID.
+        if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
+             bDefPID.equalsIgnoreCase("fedora-system:3"))
+        {
+          System.out.println("getObjectMethods: Suppressing report of dynamic method parms!");
+          return null;
+        }
         // The parms are expressed in the abstract method definitions
         // of the WSDL datastream in the behavior DEFINITION object.
         String mechPid=getBMechPid(bDefPID, versDateTime);
