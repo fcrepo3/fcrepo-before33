@@ -191,17 +191,6 @@ public class MethodsPane extends JPanel {
 
     public HashMap getBMechMethodMap()
     {
-      Collection c = methodMap.values();
-      Iterator methods = c.iterator();
-      while (methods.hasNext())
-      {
-         Method m = (Method)methods.next();
-         if (m.methodProperties == null)
-         {
-            this.assertMethodPropertiesMsg("You must enter properties " +
-              "for method: " + m.methodName);
-         }
-      }
       return methodMap;
     }
 
@@ -213,11 +202,6 @@ public class MethodsPane extends JPanel {
       while (methods.hasNext())
       {
          Method m = (Method)methods.next();
-         if (m.methodProperties == null)
-         {
-            this.assertMethodPropertiesMsg("You must enter properties " +
-              "for method: " + m.methodName);
-         }
          v_methods.add(m);
       }
       return (Method[])v_methods.toArray(new Method[0]);
@@ -333,13 +317,12 @@ public class MethodsPane extends JPanel {
         this, new String(msg), "Method Exists Message",
         JOptionPane.INFORMATION_MESSAGE);
     }
-
+/*
     protected void assertMethodPropertiesMsg(String msg)
     {
       JOptionPane.showMessageDialog(
         this, new String(msg), "No Method Properties Message",
         JOptionPane.INFORMATION_MESSAGE);
     }
-
-
+    */
 }

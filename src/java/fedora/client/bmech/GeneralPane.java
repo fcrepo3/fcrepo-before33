@@ -16,7 +16,10 @@ import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashMap;
+//import java.util.HashMap;
+import java.util.Vector;
+
+import fedora.client.bmech.data.DCElement;
 
 public class GeneralPane
         extends JPanel {
@@ -124,23 +127,30 @@ public class GeneralPane
       return bMechLabel.getText();
     }
 
-    public HashMap getDCElements()
+    public DCElement[] getDCElements()
     {
       if (dcTable.isEditing())
       {
         dcTable.getCellEditor().stopCellEditing();
       }
-      HashMap elements = new HashMap();
+      //HashMap elements = new HashMap();
+      Vector elements = new Vector();
       int rowcount = dcTable.getModel().getRowCount();
       System.out.println("dcTable rowcount=" + rowcount);
       for (int i=0; i<rowcount; i++)
       {
-        if (dcTable.getValueAt(i,0) != null && dcTable.getValueAt(i,0) != "")
+        DCElement dcElement = new DCElement();
+        dcElement.elementName = (String)dcTable.getValueAt(i,0);
+        dcElement.elementValue = (String)dcTable.getValueAt(i,1);
+        if ((dcElement.elementName != null) &&
+          !(dcElement.elementName.trim().equals("")) &&
+           (dcElement.elementValue != null) &&
+          !(dcElement.elementValue.trim().equals("")))
         {
-          elements.put(dcTable.getValueAt(i,0), dcTable.getValueAt(i,1));
+          elements.add(dcElement);
         }
       }
-      return elements;
+      return (DCElement[])elements.toArray(new DCElement[0]);
     }
 
     private void addTableRow()
@@ -157,17 +167,5 @@ public class GeneralPane
     private void deleteTableRow()
     {
       model.removeRow(dcTable.getSelectedRow());
-    }
-
-    private int[] getSelectedRows(JTable table)
-    {
-        // Ensure that Row selection is enabled
-        if (!table.getColumnSelectionAllowed()
-              && table.getRowSelectionAllowed())
-        {
-          // Get the indices of the selected rows
-          return table.getSelectedRows();
-        }
-        return new int[0];
     }
 }

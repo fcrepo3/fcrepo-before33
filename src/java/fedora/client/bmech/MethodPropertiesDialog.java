@@ -333,7 +333,7 @@ public class MethodPropertiesDialog extends JDialog
     {
       if (mimeTypes.length <= 0)
       {
-          parent.assertMethodPropertiesMsg("You must enter an at least one return MIME type for method!");
+          assertMethodPropertiesMsg("You must enter an at least one return MIME type for method!");
           return false;
       }
       System.out.println("Method Return Type is valid.");
@@ -347,19 +347,19 @@ public class MethodPropertiesDialog extends JDialog
       {
         if (mp.methodFullURL.equalsIgnoreCase("") || mp.methodFullURL == null)
         {
-          parent.assertMethodPropertiesMsg("You must enter an HTTP binding URL for method!");
+          assertMethodPropertiesMsg("You must enter an HTTP binding URL for method!");
           return false;
         }
         else if (!(parmsInURL(mp.methodFullURL, mp.methodParms)))
         {
-          parent.assertMethodPropertiesMsg("A parm from the parm table is not "
+          assertMethodPropertiesMsg("A parm from the parm table is not "
             + "encoded in the HTTP URL. See Help for URL replacement syntax.");
           return false;
         }
       }
       else if (mp.protocolType.equalsIgnoreCase(mp.SOAP_MESSAGE_PROTOCOL))
       {
-          parent.assertMethodPropertiesMsg("Sorry, the SOAP bindings are not supported yet."
+          assertMethodPropertiesMsg("Sorry, the SOAP bindings are not supported yet."
             + " Please select HTTP binding.");
           return false;
 
@@ -384,25 +384,31 @@ public class MethodPropertiesDialog extends JDialog
 
     private boolean validMethodParm(MethodParm parm)
     {
-        if ((parm.parmType == null) || (parm.parmType.equalsIgnoreCase("")))
-        {
-          parent.assertMethodPropertiesMsg("Parm Type must be selected for parm "
-            + parm.parmName);
-          return false;
-        }
-        else if ( parm.parmType.equalsIgnoreCase(parm.DATASTREAM_INPUT)
-          && parm.parmPassBy.equalsIgnoreCase(parm.PASS_BY_VALUE))
-        {
-          parent.assertMethodPropertiesMsg("'Pass By' must be URL_REF "
-            + "when 'Parm Type' is fedora:datastreamInputType.");
-          return false;
-        }
-        else if ((parm.parmPassBy == null) || (parm.parmPassBy.equalsIgnoreCase("")))
-        {
-          parent.assertMethodPropertiesMsg("A value for 'Pass By' must be selected for parm "
-            + parm.parmName);
-          return false;
-        }
+      if ((parm.parmType == null) || (parm.parmType.equalsIgnoreCase("")))
+      {
+        assertMethodPropertiesMsg("A value for 'Parm Type' must be selected for parm "
+          + parm.parmName);
+        return false;
+      }
+      else if ((parm.parmRequired == null) || (parm.parmRequired.equals("")))
+      {
+        assertMethodPropertiesMsg("A value for 'Required?' must be selected for parm "
+          + parm.parmName);
+        return false;
+      }
+      else if ((parm.parmPassBy == null) || (parm.parmPassBy.equalsIgnoreCase("")))
+      {
+        assertMethodPropertiesMsg("A value for 'Pass By' must be selected for parm "
+          + parm.parmName);
+        return false;
+      }
+      else if ( parm.parmType.equalsIgnoreCase(parm.DATASTREAM_INPUT)
+        && parm.parmPassBy.equalsIgnoreCase(parm.PASS_BY_VALUE))
+      {
+        assertMethodPropertiesMsg("'Pass By' must be URL_REF "
+          + "when 'Parm Type' is fedora:datastreamInputType.");
+        return false;
+      }
       System.out.println("Method parm " + parm.parmName + " is valid.");
       return true;
     }
@@ -555,10 +561,10 @@ public class MethodPropertiesDialog extends JDialog
       }
     }
 
-    protected void assertInvalidEntryMsg(String msg)
+    private void assertMethodPropertiesMsg(String msg)
     {
       JOptionPane.showMessageDialog(
-        this, new String(msg), "Invalid Entry",
+        this, new String(msg), "Method Properties Message",
         JOptionPane.INFORMATION_MESSAGE);
     }
 }
