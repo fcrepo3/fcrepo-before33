@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Vector;
 import fedora.client.bmech.data.*;
 
 public class MethodsPane extends JPanel {
@@ -36,6 +37,7 @@ public class MethodsPane extends JPanel {
     private JTable methodTable;
     protected DefaultTableModel methodTableModel;
     protected MethodDialog methodDialog;
+    private boolean editMethodMode = false;
 
     // Method Map: key=methodData.methodName, value=methodData
     private HashMap methodMap = new HashMap();
@@ -77,15 +79,6 @@ public class MethodsPane extends JPanel {
         gbc.gridx = 0;
         serviceBasePanel.add(rb_noBaseURL, gbc);
 
-
-
-        //rb_buttonPanel.add(new JLabel("Does the service have a base URL?: "));
-        //rb_buttonPanel.add(new JLabel(""));
-        //rb_buttonPanel.add(rb_baseURL);
-        //rb_buttonPanel.add(baseURL = new JTextField());
-        //rb_buttonPanel.add(rb_noBaseURL);
-        //rb_buttonPanel.add(new JLabel(""));
-
         // Table Panel
         methodTableModel = new DefaultTableModel();
         // Create a JTable that disallow edits (edits done via dialog box only)
@@ -94,7 +87,6 @@ public class MethodsPane extends JPanel {
             return false;
           }
         };
-
 
         methodTable.setColumnSelectionAllowed(false);
         methodTable.setRowSelectionAllowed(true);
@@ -113,6 +105,14 @@ public class MethodsPane extends JPanel {
         jb1.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             addMethod();
+          }
+        } );
+        JButton jb1b = new JButton("Edit");
+        jb1b.setMinimumSize(new Dimension(100,30));
+        jb1b.setMaximumSize(new Dimension(100,30));
+        jb1b.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            editMethod();
           }
         } );
         JButton jb2 = new JButton("Delete");
@@ -143,8 +143,9 @@ public class MethodsPane extends JPanel {
         //t_buttonPanel.setLayout(new GridLayout(3,1));
         t_buttonPanel.setLayout(new BoxLayout(t_buttonPanel, BoxLayout.Y_AXIS));
         t_buttonPanel.add(jb1);
-        t_buttonPanel.add(jb3);
+        t_buttonPanel.add(jb1b);
         t_buttonPanel.add(jb2);
+        t_buttonPanel.add(jb3);
         t_buttonPanel.add(jb4);
 
         JPanel methodsPanel = new JPanel(new BorderLayout());
@@ -204,18 +205,55 @@ public class MethodsPane extends JPanel {
       return methodMap;
     }
 
+    public Method[] getBMechMethods()
+    {
+      Vector v_methods = new Vector();
+      Collection c = methodMap.values();
+      Iterator methods = c.iterator();
+      while (methods.hasNext())
+      {
+         Method m = (Method)methods.next();
+         if (m.methodProperties == null)
+         {
+            this.assertMethodPropertiesMsg("You must enter properties " +
+              "for method: " + m.methodName);
+         }
+         v_methods.add(m);
+      }
+      return (Method[])v_methods.toArray(new Method[0]);
+    }
+
     public void setBMechMethod(String methodName, String methodDesc)
       throws BMechBuilderException
     {
-      if (methodMap.containsKey(methodName))
+      if (editMethodMode)
       {
-        throw new BMechBuilderException("MethodsPane.setBMechMethod: Method name exists already");
+        int currentRowIndex = methodTable.getSelectedRow();
+        String oldMethodName = (String)methodTable.getValueAt(currentRowIndex,0);
+        Method methodData = (Method)methodMap.get(oldMethodName);
+        if (!(oldMethodName.equalsIgnoreCase(methodName)))
+        {
+          methodMap.remove(oldMethodName);
+        }
+        methodData.methodName = methodName;
+        methodData.methodLabel = methodDesc;
+        methodMap.put(methodData.methodName, methodData);
+
+        methodTable.setValueAt(methodData.methodName, currentRowIndex,0);
+        methodTable.setValueAt(methodData.methodLabel, currentRowIndex,1);
       }
-      methodTableModel.addRow(new Object[]{methodName, methodDesc});
-      Method methodData = new Method();
-      methodData.methodName = methodName;
-      methodData.methodLabel = methodDesc;
-      methodMap.put(methodName, methodData);
+      else
+      {
+        if (methodMap.containsKey(methodName))
+        {
+          throw new BMechBuilderException("MethodsPane.setBMechMethod: Method name exists already");
+        }
+        methodTableModel.addRow(new Object[]{methodName, methodDesc});
+        Method methodData = new Method();
+        methodData.methodName = methodName;
+        methodData.methodLabel = methodDesc;
+        methodMap.put(methodName, methodData);
+      }
     }
 
     public void setBMechMethodProperties(String methodName, MethodProperties mproperties)
@@ -228,6 +266,17 @@ public class MethodsPane extends JPanel {
     private void addMethod()
     {
       methodDialog = new MethodDialog(this, "Add Method", true);
+    }
+
+    private void editMethod()
+    {
+      editMethodMode = true;
+      int currentRowIndex = methodTable.getSelectedRow();
+      methodDialog = new MethodDialog(
+        this, "Edit Method", true,
+        (String)methodTable.getValueAt(currentRowIndex,0),
+        (String)methodTable.getValueAt(currentRowIndex,1));
+      editMethodMode = false;
     }
 
     private void deleteMethod()
