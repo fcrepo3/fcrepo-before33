@@ -3,7 +3,7 @@ package edu.cornell.dlrg.oai;
 /**
  * An indicator of the level of granularity in dates a repository supports.
  */
-public abstract class DateGranularitySupport {
+public class DateGranularitySupport {
 
     /**
      * Indicates that the repository supports timestamp granularity in days.

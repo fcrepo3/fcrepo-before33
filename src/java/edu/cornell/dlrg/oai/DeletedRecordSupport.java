@@ -3,7 +3,7 @@ package edu.cornell.dlrg.oai;
 /**
  * An indicator of the kind of deletion support a repository has.
  */
-public abstract class DeletedRecordSupport {
+public class DeletedRecordSupport {
 
     /**
      * Indicates that the repository does not maintain information about 
