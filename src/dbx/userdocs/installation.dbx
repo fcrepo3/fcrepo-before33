@@ -329,9 +329,12 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 						</listitem>
 					</varlistentry>
 					<varlistentry>
-						<term>Management/allowHosts </term>
+						<term><emphasis role="bold">Management/allowHosts</emphasis></term>
 						<listitem>
-							<para>A comma-separated list of IP ranges (for example, “200.200.0.0-255.255.0.0,100.0.0.0-180.0.0.0”) that the client’s address is compared to for Management API access.  If this is specified, the remote address must match for any Management request in order to be accepted.  If this is not specified, all requests will be accepted unless the remote address matches a deny pattern (see below).</para>
+							<para>A comma-separated list of IP ranges (for example, “200.200.0.0-255.255.0.0,100.0.0.0-180.0.0.0”) that the client’s address is compared to for Management API access.  If this is specified, the remote address must match for any Management request in order to be accepted.  If this is not specified, all requests will be accepted unless the remote address matches a deny pattern (see below).
+							<emphasis>Important: </emphasis> The fedora.fcfg file that comes with Fedora allows access to 127.0.0.1 (this is the loopback IP, meaning that the only host that can connect for write operations is the server).
+							You need to also put your server's real IP address in this value, to take care of cases where your server, when acting as a client to itself, identifies itself
+							with it's real IP address.  If you don't do this, you may run into access restriction errors when trying to connect to the server from the same machine.</para>
 						</listitem>
 					</varlistentry>
 					<varlistentry>
