@@ -7,6 +7,7 @@ import java.util.*;
 import javax.swing.*;
 
 import fedora.client.Administrator;
+import fedora.client.actions.ViewObject;
 import fedora.client.objecteditor.types.DatastreamInputSpec;
 import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.DatastreamBinding;
@@ -23,6 +24,7 @@ public class MechanismInputPanel
     private String m_bDefPID;
     private String m_bMechPID;
     private String m_bMechLabel;
+    private JButton m_openButton;
 
     private Map m_bindingPanelMap;
 
@@ -162,9 +164,11 @@ public class MechanismInputPanel
                         if (parts.length==1) {
                             pid=null;
                             m_bMechLabel=null;
+                            m_openButton.setEnabled(false);
                         } else {
                             pid=parts[0];
                             m_bMechLabel=parts[1];
+                            m_openButton.setEnabled(true);
                         }
                         bindingPanel.setBMech(pid);
                     } catch (Exception e) {
@@ -178,15 +182,24 @@ public class MechanismInputPanel
                 }
             });
 
-            // EAST: openButton
-            JButton openButton=new JButton("Open");
-            Administrator.constrainHeight(openButton);
+            // EAST: m_openButton
+            m_openButton=new JButton("Open");
+            m_openButton.setEnabled(false);
+            Administrator.constrainHeight(m_openButton);
+            m_openButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    String pid=bindingPanel.getBMechPID();
+                    if (pid!=null) {
+                        new ViewObject(pid).launch();
+                    }
+                }
+            });
 
         JPanel mechChoicePanel=new JPanel(new BorderLayout(4, 0));
         mechChoicePanel.setBorder(BorderFactory.createEmptyBorder(0,0,0,4));
         mechChoicePanel.add(labelPanel, BorderLayout.WEST);
         mechChoicePanel.add(bMechComboBox, BorderLayout.CENTER);
-        mechChoicePanel.add(openButton, BorderLayout.EAST);
+        mechChoicePanel.add(m_openButton, BorderLayout.EAST);
 
 
         JPanel panel=new JPanel(new BorderLayout());
@@ -209,6 +222,10 @@ public class MechanismInputPanel
             if (bMechPID!=null) {
                 setBMech(bMechPID);
             }
+        }
+
+        public String getBMechPID() {
+            return m_bMechPID;
         }
 
         public void setBMech(String bMechPID) 
