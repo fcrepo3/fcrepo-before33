@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server xmlns="http://www.fedora.info/definitions/1/0/config/" 
-        xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" 
-        class="fedora.server.BasicServer">
-    <param name="shutdownPassword" value="fedoraAdmin"/>
-    
+<server xmlns="http://www.fedora.info/definitions/1/0/config/" xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" class="fedora.server.BasicServer">
+	<param name="shutdownPassword" value="fedoraAdmin"/>
 	<param name="log_max_size" value="5242880"/>
 	<param name="log_max_days" value="7"/>
 	<param name="log_dir" value="logs"/>
 	<param name="log_level" value="finest"/>
 	<param name="log_flush_threshold" value="1"/>
-
 	<param name="path_algorithm" value="fedora.server.storage.lowlevel.TimestampPathAlgorithm"/>
 	<param name="file_system" value="fedora.server.storage.lowlevel.GenericFileSystem"/>
 	<param name="backslash_is_escape" value="yes" oraclevalue="no"/>
@@ -17,11 +13,9 @@
 	<param name="temp_store_base" value="C:\fedora_temp"/>
 	<param name="pid_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
 	<param name="temp_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
-    
 	<param name="disseminationCacheSize" value="100"/>
-	<param name="debug" value="true"/>	
-	<module role="fedora.server.storage.DOManager" 
-          class="fedora.server.storage.DefaultDOManager">
+	<param name="debug" value="true"/>
+	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
 		<comment>
         Description:
           The interface to the storage subsystem.  This provides
@@ -49,17 +43,13 @@
         - storageCharacterEncoding [default=UTF-8]
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
-        <param name="pidNamespace" value="changeme"/>
-        <param name="storagePool" value="localMySQLPool" 
-                             mckoivalue="localMcKoiPool" 
-                            oraclevalue="localOracle9iPool"
-                            icarusvalue="remoteMySQLPool"/>
-        <param name="storageFormat" value="mets11fedora1"/>
-        <param name="storageCharacterEncoding" value="UTF-8"/>
-    </module>
-    <module role="fedora.server.management.Management" 
-            class="fedora.server.management.DefaultManagement">
-        <comment>
+		<param name="pidNamespace" value="changeme"/>
+		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
+		<param name="storageFormat" value="mets11fedora1"/>
+		<param name="storageCharacterEncoding" value="UTF-8"/>
+	</module>
+	<module role="fedora.server.management.Management" class="fedora.server.management.DefaultManagement">
+		<comment>
         Description:
           The management subsystem.
           This implements the methods necessary to fulfill API-M 
@@ -71,35 +61,42 @@
         Parameters:
           None.
         </comment>
-        <param name="testName" value="testValue"/>
-    </module>
-    <module role="fedora.server.storage.DOTranslator"
-            class="fedora.server.storage.DefaultDOTranslator">
-        <comment>Supports translation from DigitalObject to a stream of 
+		<param name="testName" value="testValue"/>
+	</module>
+	<module role="fedora.server.management.Access" class="fedora.server.access.DefaultAccess">
+		<comment>
+        Description:
+          The access subsystem.
+          This implements the methods necessary to fulfill API-A
+          requests without regard to:
+            - how the service is exposed
+            - how bytestreams and java types might be marshalled/demarshalled 
+              over the wire
+            - how the storage subsystem is implemented.
+        Parameters:
+          None.
+        </comment>
+		<param name="testName" value="testValue"/>
+	</module>	
+	<module role="fedora.server.storage.DOTranslator" class="fedora.server.storage.DefaultDOTranslator">
+		<comment>Supports translation from DigitalObject to a stream of 
         some format, and vice-versa.  The parameters below specify 
         serializer/deserializer classes to be used for a given format.
         Those classes must implement the DOSerializer/DODeserializer
         interfaces, and must have a public constructor that takes no parameters.
         </comment>
-        <param name="defaultFormat" value="mets11fedora1"/>
-        <param name="serializer_mets11fedora1" value="fedora.server.storage.METSDOSerializer"/>
-        <param name="deserializer_mets11fedora1" value="fedora.server.storage.METSDODeserializer"/>
-    </module>
-    <module role="fedora.server.management.PIDGenerator" 
-            class="fedora.server.management.BasicPIDGenerator">
-        <comment>The pid generator.</comment>
-        <param name="pidgen_log_dir" value="pidgen"/>
-    </module>
+		<param name="defaultFormat" value="mets11fedora1"/>
+		<param name="serializer_mets11fedora1" value="fedora.server.storage.METSDOSerializer"/>
+		<param name="deserializer_mets11fedora1" value="fedora.server.storage.METSDODeserializer"/>
+	</module>
+	<module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
+		<comment>The pid generator.</comment>
+		<param name="pidgen_log_dir" value="pidgen"/>
+	</module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
-		<param name="defaultPoolName" value="localMySQLPool"
-                                      mckoivalue="localMcKoiPool"
-                                      oraclevalue="localOracle9iPool"
-                                      icarusvalue="remoteMySQLPool"/>
-		<param name="poolNames" value="localMySQLPool"
-                                mckoivalue="localMcKoiPool"
-                                oraclevalue="localOracle9iPool"
-                                icarusvalue="remoteMySQLPool"/>
+		<param name="defaultPoolName" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
+		<param name="poolNames" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
 	</module>
 	<datastore id="remoteMySQLPool">
 		<comment>MySQL database on UVA test host (known to work)</comment>
@@ -107,17 +104,17 @@
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mysql://icarus.lib.virginia.edu:3306/FedoraObjects"/>
 		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
-        <param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
+		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
 	<datastore id="localMySQLPool">
 		<comment>MySQL database on localhost</comment>
-       <param name="dbUsername" value="fedoraAdmin"/>
+		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mysql://localhost/FedoraObjects"/>
 		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
-       <param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
+		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
@@ -127,7 +124,7 @@
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mckoi://localhost/"/>
 		<param name="jdbcDriverClass" value="com.mckoi.JDBCDriver"/>
-        <param name="ddlConverter" value="fedora.server.utilities.McKoiDDLConverter"/>
+		<param name="ddlConverter" value="fedora.server.utilities.McKoiDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
@@ -137,7 +134,7 @@
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:Fedora"/>
 		<param name="jdbcDriverClass" value="oracle.jdbc.driver.OracleDriver"/>
-        <param name="ddlConverter" value="fedora.server.utilities.OracleDDLConverter"/>
+		<param name="ddlConverter" value="fedora.server.utilities.OracleDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
