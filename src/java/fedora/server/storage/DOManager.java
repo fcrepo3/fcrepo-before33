@@ -7,34 +7,15 @@ import fedora.server.errors.ServerException;
 import fedora.server.Context;
 
 /**
- * Provides context-appropriate digital object readers and writers
- * and repository query facilities.
+ * A RepositoryReader that provides facilities for creating
+ * and modifying objects within the repository, as well as 
+ * a query facility.
  *
  * @author cwilper@cs.cornell.edu
  */
-public interface DOManager {
+public interface DOManager 
+        extends RepositoryReader {
         
-    /**
-     * Gets a digital object reader.
-     *
-     * @param context The context of this request.
-     * @param pid The PID of the object.
-     * @return A reader.
-     * @throws ServerException If anything went wrong.
-     */
-    public abstract DOReader getReader(Context context, String pid)
-            throws ServerException;
-            
-    public abstract DisseminatingDOReader getDisseminatingReader(
-            Context context, String pid) 
-            throws ServerException;
-
-    public abstract BMechReader getBMechReader(Context context, String pid)
-            throws ServerException;
-
-    public abstract BDefReader getBDefReader(Context context, String pid)
-            throws ServerException;
-
     /**
      * Relinquishes control of a DOWriter back to the DOManager.
      * <p></p>
@@ -92,7 +73,7 @@ public interface DOManager {
      */
     public abstract DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException;
-
+        
     /**
      * Gets a list of object PIDs (accessible in the given context) with the 
      * given criteria.  Any parameter whose name ends with "Pattern" may
