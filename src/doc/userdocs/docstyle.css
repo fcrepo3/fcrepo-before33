@@ -1,116 +1,127 @@
 /* 
-  Stylesheet for Fedora documentation.
-*/
+ * Stylesheet for Fedora documentation.
+ */
 
 body { 
-  background-color: #FFFFFF;
-  margin:20px;
-  font-family:Arial, Helvetica, sans-serif;
-  font-size:12px;
-  line-height:15px;
-  color:#666666;
+    background-color: #ffffff;
+    margin: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    line-height: 15px;
+    color: #000000;
 }
 
-.code {
-  background: #ddddff;
-  font-family:Courier, monospace;
-  border-right: 1px solid;
-  padding-right: 4px;
-  border-top: 1px solid;
-  padding-left: 4px;
-  padding-bottom: 0px;
-  border-left: 1px solid;
-  padding-top: 0px;
-  border-bottom: 1px solid;
-  white-space: pre;
-  margin-top: 4px;
-  margin-bottom: 4px;
-  margin-left: 16px;
-  margin-right: 16px;
+#header {
+    border-bottom: 1px solid;
+    clear: both;
+    margin-bottom: 10px;
+    min-height: 70px;
+    width: 100%;
+}
+
+#logo {
+    /*
+    background-image: url('images/logo_44x60.gif');
+    background-repeat: no-repeat;
+    background-position: top left;
+    */
+    float: left;
+    height: 60px;
+    width: 44px;
+    visibility: visible;
+}
+
+#logo img {
+    border-style: none;
+    height: 60px;
+    width: 44px;
+}
+
+#title {
+    text-align: center; 
+}
+
+#toc {
+    width: 50%;
+    margin-bottom: 5px;
+}
+
+#tocbox {
+    border: 1px solid;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+#introduction, .sec1 {
+    margin-bottom: 4px;
+}
+
+#footer {
+    border-top: 1px solid;
+    padding-top: 8px;
+}
+
+#footer #copyright, #lastModified {
+    color: #4C7C8E;
+}
+
+#footer #copyright {
+    float: left;
+}
+
+#footer #lastModified {
+    float: right;
 }
 
 /* FIXME: Make these sort of match the Category4 stuff,
           but still be appropriate for documentation */
 
-h1, h2, h3, h4, h5, h6 {
-  margin-top: 4px;
-  margin-bottom: 4px;
+h1, h2, h3, h4, h5 {
+    color: #4C7C8E;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 h1 {
-  font-size: 24px;
-  line-height: 110%;
-  color: #4C7C8E;
-  padding-top: 8px;
-  padding-bottom: 4px;
+    font-size: 24px;
+    line-height: 110%;
+    padding-top: 8px;
+    padding-bottom: 4px;
 }
 
 h2 {
-  font-size: 18px;
+    font-size: 18px;
 }
 
 h3 {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 h4 {
-  font-size: 13px;
+    font-size: 13px;
 }
 
 h5 {
-  font-size: 12px;
+    font-size: 12px;
 }
 
 h2, h3, h4, h5 {
-  color: #4C7C8E;
-  padding-top: 4px;
-  padding-bottom: 4px;
+    padding-top: 4px;
+    padding-bottom: 4px;
 }
 
 p {
-  padding-top: 4px;
-  padding-bottom: 4px;
-  margin: 0px;
-}
-/*
-.sec2, .sec3, .sec4, .sec5 {
-  padding-left: 8px;
-} */
-
-.toc {
-  margin: 0px;
-  width: 50%;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin: 0px;
 }
 
-.footer {
-  border-top: 1px solid;
-  padding-top: 8px;
-}
-
-.tocbox {
-  border-right: 1px solid;
-  border-top: 1px solid;
-  border-left: 1px solid;
-  border-bottom: 1px solid;
-  padding-right: 4px;
-  padding-left: 4px;
-}
-
-.abstract, .toc, .sec1 {
-  margin-bottom: 4px;
-}
-
-#title {
-text-align: center; height:100%;
-}
-
-#logo {
-float:left; height:100%; margin-right: 8px; visibility: visible;
-}
-
-#header {
-  border-bottom: 1px solid;
-  clear: both;
-  margin-bottom: 8px;
-  width: 100%;
+.code {
+    background: #ddddff;
+    border: thin solid #000000;
+    font-family: Lucida Console, Courier New, Courier, monospace;
+    margin: 5px 5px 5px 5px;
+    min-width: 600px;
+    padding: 5px;
+    white-space: pre;
 }
