@@ -92,7 +92,7 @@
 	</table>
 	<table name="datastreamPaths" primaryKey="tokenDbID">
 		<column name="tokenDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="token" type="varchar(32)" notNull="true" default="" unique="true"/>
+		<column name="token" type="varchar(103)" notNull="true" default="" unique="true"/>
 		<column name="path" type="varchar(255)" notNull="true" default="" index="path"/>
 	</table>
 	<table name="parm">
