@@ -311,7 +311,8 @@ public class DefaultDOManager
     public BDefReader getBDefReader(Context context, String pid)
             throws ServerException {
         if (cachedObjectRequired(context)) {
-            throw new InvalidContextException("A BDefReader is unavailable in a cached context.");
+            return new FastBdefReader(context, pid);
+            //throw new InvalidContextException("A BDefReader is unavailable in a cached context.");
         } else {
             return new SimpleBDefReader(context, this, m_translator,
                     m_storageFormat, m_storageFormat, m_storageFormat,
