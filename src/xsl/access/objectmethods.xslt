@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
 <xsl:output method="html" indent="yes"/> 
-<xsl:param name="serverURI">http://localhost:8080/fedora/get/</xsl:param>
 <xsl:template match="/">
 	<html>
 		<head>
@@ -56,11 +55,6 @@
 				<xsl:attribute name="type">hidden</xsl:attribute>
 				<xsl:attribute name="name">methodName</xsl:attribute>
 				<xsl:attribute name="value"><xsl:value-of select="@name"/></xsl:attribute>			
-			</input>
-			<input>
-				<xsl:attribute name="type">hidden</xsl:attribute>
-				<xsl:attribute name="name">serverURI</xsl:attribute>
-				<xsl:attribute name="value"><xsl:value-of select="$serverURI"/></xsl:attribute>
 			</input>
 			<input type="submit" name="Submit" value="RunDissemination"></input>
 		</td>
