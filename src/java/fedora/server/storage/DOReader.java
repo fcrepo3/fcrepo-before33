@@ -183,4 +183,7 @@ public interface DOReader
      */
     public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime) throws ServerException;
 
+    public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
+          throws ServerException;
+
 }
