@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
-<body bgcolor="#CCCCCC" text="#000000">
+<body bgcolor="#DADADA" text="#000000">
 <h3>Welcome to the Fedora API-A Sample SOAP Client</h3>
 <p>The Fedora API-A interface is implemented as a SOAP service that consists of 
   the following methods: 
@@ -28,8 +28,8 @@
   directly with the Fedora Access SOAP service rather than use a java servlet 
   as an intermediary. This servlet is provided as an example of how to construct 
   a client that uses the Fedora Access API via SOAP.
-<p><b>Client Syntax</b> Input parameters for the servlet include:<br>
-	
+<p><b>Client Syntax</b> 
+<p>Input parameters for the servlet include:<br>
 <ul>
   <li><font color="#33802F"><b>action_</b></font> - name of Fedora service which 
     must be one of the following: 
@@ -63,7 +63,27 @@
   name clashes with user-supplied method parameter names. As a general rule, user-supplied 
   parameters should never contain names that end with the underscore character 
   to prevent possible name conflicts. 
-<p>Examples
+<p><b>Configuration</b> 
+<p>The sample client can be run as an integral part of the Fedora server or as 
+  a standalone client on a different machine or server. If running outside the 
+  Fedora server, its only requirements are a servlet engine using Java Servlet 
+  API 2.1 or higher, the endpoint of a functional Fedora Server, and the servlet 
+  path mapping used to access the soap client. The endpoint and servlet path info 
+  are configured in the soapclient.properties file that is located in the WEB-INF 
+  directory of the soapclient webapp module in the Fedora distribution directory 
+  tree. The properties file specifies two variables:
+<ul>
+  <li><b><font color="#33802F">fedoraEndpoint</font></b> - the URL of the Fedora 
+    API-A SOAP service; default is &quot;http://localhost:8080/fedora/access/soap&quot;</li>
+  <li><b><font color="#33802F">soapClientServletPath</font></b> - the servlet 
+    path used to access the soapclient; default is &quot;/soapclient/apia</li>
+</ul>
+<p>When the Fedora server is built, it will automatically create the soapclient 
+  webapp module and place it in the Fedora distribution directory. The SOAP type 
+  libraries that are bundled with the client are tied to the WSDL type definitions 
+  defined for Fedora API-A. Any changes made to the WSDL for API-A will require 
+  rebuilding of the Fedora server and the soap client webapp module.</p>
+<p><b>Examples</b> 
 <p>Get the ObjectProfile for a data object with a PID of test:3:
 <p><a href="http://localhost:8080/soapclient/apia?action_=GetObjectProfile&amp;PID_=test:3"> 
   http://localhost:8080/soapclient/apia?action_=GetObjectProfile&amp;PID_=test:3</a>
