@@ -21,8 +21,10 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 import fedora.server.security.IPRestriction;
 import fedora.server.storage.DOReader;
+import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.DisseminationBindingInfo;
+import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MIMETypedStream;
@@ -182,7 +184,7 @@ public class DefaultAccess extends Module implements Access
     DOReader reader =
         m_manager.getReader(context, PID);
     MethodDef[] methods =
-        reader.GetBMechMethods(bDefPID, versDateTime);
+        reader.getObjectMethods(bDefPID, versDateTime);
     return methods;
   }
 
@@ -213,7 +215,7 @@ public class DefaultAccess extends Module implements Access
       InputStream methodResults = null;
       DOReader reader =
           m_manager.getReader(context, PID);
-      methodResults = reader.GetBMechMethodsXML(bDefPID, versDateTime);
+      methodResults = reader.getObjectMethodsXML(bDefPID, versDateTime);
       int byteStream = 0;
       while ((byteStream = methodResults.read()) >= 0)
       {
@@ -282,6 +284,19 @@ public class DefaultAccess extends Module implements Access
     DOReader reader =
         m_manager.getReader(context, PID);
 
+    // SDP: get a bmech reader to get information that is specific to
+    // a mechanism.
+    BMechReader bmechreader = null;
+    Disseminator[] dissSet = reader.GetDisseminators(versDateTime);
+    for (int i=0; i<dissSet.length; i++)
+    {
+      if (dissSet[i].bDefID.equalsIgnoreCase(bDefPID))
+      {
+        bmechreader = m_manager.getBMechReader(context, dissSet[i].bMechID);
+        break;
+      }
+    }
+
     // Put any user-supplied method parameters into hash table
     if (userParms != null)
     {
@@ -295,9 +310,10 @@ public class DefaultAccess extends Module implements Access
     validateUserParms(context, PID, bDefPID, methodName,
                       h_userParms, versDateTime);
 
+    // SDP: GET INFO FROM BMECH READER:
     // Add any default method parameters to validated user parm list
-    defaultMethodParms = reader.GetBMechDefaultMethodParms(bDefPID,
-        methodName, versDateTime);
+    //defaultMethodParms = reader.GetBMechDefaultMethodParms(bDefPID,
+    defaultMethodParms = bmechreader.getServiceMethodParms(methodName, versDateTime);
     for (int i=0; i<defaultMethodParms.length; i++)
     {
       this.getServer().logFinest("addedDefaultName: "+defaultMethodParms[i].parmName);
@@ -344,7 +360,7 @@ public class DefaultAccess extends Module implements Access
     DOReader reader =
         m_manager.getReader(context, PID);
     ObjectMethodsDef[] methodDefs =
-        reader.getObjectMethodsDef(versDateTime);
+        reader.getObjectMethods(versDateTime);
     long stopTime = new Date().getTime();
     long interval = stopTime - startTime;
     System.out.println("[DefaultAccess] Roundtrip GetObjectMethods: "
@@ -440,7 +456,7 @@ return methods;
 
     DOReader reader =
       m_manager.getReader(context, PID);
-    methodParms = reader.GetBMechMethodParms(bDefPID,
+    methodParms = reader.getObjectMethodParms(bDefPID,
         methodName, versDateTime);
 
     // Put valid method parameters and their attributes into hashtable
