@@ -104,6 +104,20 @@ public interface Access
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
       Calendar asOfDateTime) throws ServerException;
 
+  /**
+   * <p>Gets object profile</p>
+   *
+   * @param context The context of this request.
+   * @param PID The persistent identifier of the digital object
+   * @param asOfDateTime The versioning datetime stamp
+   * @return An array of all methods associated with the specified
+   *         digital object.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
+  public ObjectProfile getObjectProfile(Context context, String PID,
+      Calendar asOfDateTime) throws ServerException;
+
   public List search(Context context, String[] resultFields,
           String terms)
           throws ServerException;
