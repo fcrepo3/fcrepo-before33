@@ -34,15 +34,11 @@
 		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Method Map for Fedora Behavior Definition for UVA Simple Image">
 				<METS:xmlData>
-					<fmm:MethodMap name="Fedora MethodMap for Simple Image BDef" bDefPID="demo:1" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
-						<fmm:Method operationName="getThumbnail">
-						</fmm:Method>
-						<fmm:Method operationName="getMedium">
-						</fmm:Method>
-						<fmm:Method operationName="getHigh">
-						</fmm:Method>
-						<fmm:Method operationName="getVeryHigh">
-						</fmm:Method>
+					<fmm:MethodMap name="Fedora MethodMap for Simple Image BDef" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+						<fmm:Method operationName="getThumbnail"/>
+						<fmm:Method operationName="getMedium"/>
+						<fmm:Method operationName="getHigh"/>
+						<fmm:Method operationName="getVeryHigh"/>
 					</fmm:MethodMap>
 				</METS:xmlData>
 			</METS:mdWrap>

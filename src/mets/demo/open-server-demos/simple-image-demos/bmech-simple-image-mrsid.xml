@@ -30,10 +30,7 @@
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
 				<METS:xmlData>
 					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
-					<!-- bMechPID is the PID of THIS Behavior Mechanism Object (self-referential) which is a surrogate for an external service-->
-					<fsvp:serviceProfile bDefPID="demo:1" bMechPID="demo:4" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
-						<!-- The URI for the namespace that Fedora will use to refer to the service.  Fedora convention is to use the value of behaviorMechPID. -->
-						<fsvp:serviceNamespaceURI>demo:4</fsvp:serviceNamespaceURI>
+					<fsvp:serviceProfile bDefPID="demo:1" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
 						<fsvp:serviceName>MrSID</fsvp:serviceName>
 						<fsvp:serviceLabel>MrSID service for providing different image resolutions from a wavelet encoded file</fsvp:serviceLabel>
 						<fsvp:serviceImplementation>
@@ -70,7 +67,7 @@
 		<METS:techMD ID="DSINPUTSPEC1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Input Specification for UVA MrSID service">
 				<METS:xmlData>
-					<fbs:DSInputSpec label="UVA MrSID Service Datastream Input Specification" bDefPID="demo:1" bMechPID="demo:4" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+					<fbs:DSInputSpec label="UVA MrSID Service Datastream Input Specification" bDefPID="demo:1" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
 						<fbs:DSInput wsdlMsgPartName="MRSID" DSMin="1" DSMax="1" DSOrdinality="false">
 							<fbs:DSInputLabel>MrSid file</fbs:DSInputLabel>
 							<fbs:DSMIME>image/x-mrsid-image</fbs:DSMIME>
@@ -90,7 +87,7 @@
 		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
 				<METS:xmlData>
-					<fmm:MethodMap name="MethodMap - MrSID BMech for UVA Simple Image BDEF" bDefPID="demo:1" bMechPID="demo:4" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+					<fmm:MethodMap name="MethodMap - MrSID BMech for UVA Simple Image BDEF" bDefPID="demo:1" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 						<!-- NOTE: The operationName attribute correlates to WSDL operation in terms of mapping to WSDL definitions -->
 						<fmm:Method operationName="getThumbnail" wsdlMsgName="getThumbRequest" wsdlMsgOutput="mrsid_response">
 							<fmm:DefaultInputParm parmName="THUMBRES_SIZE" required="true" defaultValue="thumbnail" passBy="VALUE"/>

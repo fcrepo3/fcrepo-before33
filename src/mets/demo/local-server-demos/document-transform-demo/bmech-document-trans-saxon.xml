@@ -10,7 +10,7 @@
 	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name> Sandy Payette </METS:name>
-			<METS:note> </METS:note>
+			<METS:note/>
 		</METS:agent>
 		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
 			<METS:name>NSDL </METS:name>
@@ -31,10 +31,7 @@
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
 				<METS:xmlData>
 					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
-					<!-- bMechPID is the PID of THIS Behavior Mechanism Object (self-referential) which is a surrogate for an external service-->
-					<fsvp:serviceProfile bDefPID="demo:12" bMechPID="demo:13" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
-						<!-- The URI for the namespace that Fedora will use to refer to the service.  Fedora convention is to use the value of behaviorMechPID. -->
-						<fsvp:serviceNamespaceURI>demo:13</fsvp:serviceNamespaceURI>
+					<fsvp:serviceProfile bDefPID="demo:12" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
 						<fsvp:serviceName>NSDL Exhibit Mapping to the Fedora Local Saxon Service</fsvp:serviceName>
 						<fsvp:serviceLabel>XSLT service for providing transformation of an xml file using one of two stylesheets, or a user-supplied stylesheet</fsvp:serviceLabel>
 						<fsvp:serviceImplementation>
@@ -73,7 +70,7 @@
 		<METS:techMD ID="DSINPUTSPEC1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Input Specification Mapping to the Fedora Local Saxon Service">
 				<METS:xmlData>
-					<fbs:DSInputSpec label="NSDL Exhibit Mapping to the Fedora Local Saxon Service" bDefPID="demo:12" bMechPID="demo:13" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+					<fbs:DSInputSpec label="NSDL Exhibit Mapping to the Fedora Local Saxon Service" bDefPID="demo:12" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
 						<fbs:DSInput wsdlMsgPartName="XML_SOURCE" DSMin="1" DSMax="1" DSOrdinality="false">
 							<fbs:DSInputLabel>XML source file</fbs:DSInputLabel>
 							<fbs:DSMIME>text/xml</fbs:DSMIME>
@@ -103,7 +100,7 @@
 		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
 				<METS:xmlData>
-					<fmm:MethodMap name="MethodMap - Document Transform BDEF Methods" bDefPID="demo:12" bMechPID="demo:13" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+					<fmm:MethodMap name="MethodMap - Document Transform BDEF Methods" bDefPID="demo:12" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 						<!-- NOTE: The operationName attribute correlates to WSDL operation in terms of mapping to WSDL definitions -->
 						<fmm:Method operationName="getDocumentStyle1" wsdlMsgName="getDocumentStyle1Request" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" required="true" passBy="URL_REF"/>

@@ -2,23 +2,14 @@
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR MECHANISM OBJECT ENCODED USING METS -->
 <!---********************************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" 
-           xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" 
-           xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" 
-           xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" 
-           xmlns:xlink="http://www.w3.org/TR/xlink" 
-           xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" 
-           OBJID="demo:20" 
-           TYPE="FedoraBMechObject" 
-           LABEL="Behavior Mechanism Object implementing the PDF contract using the Fedora Local FOP Service" 
-           PROFILE="fedora:BMECH">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:20" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object implementing the PDF contract using the Fedora Local FOP Service" PROFILE="fedora:BMECH">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name>Chris Wilper</METS:name>
-			<METS:note> </METS:note>
+			<METS:note/>
 		</METS:agent>
 		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
 			<METS:name>Cornell</METS:name>
@@ -39,11 +30,7 @@
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
 				<METS:xmlData>
 					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
-					<!-- bMechPID is the PID of THIS Behavior Mechanism Object (self-referential) which is a surrogate for an external service-->
-					<fsvp:serviceProfile bDefPID="demo:19" bMechPID="demo:20" 
-                                         xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
-						<!-- The URI for the namespace that Fedora will use to refer to the service.  Fedora convention is to use the value of behaviorMechPID. -->
-						<fsvp:serviceNamespaceURI>demo:20</fsvp:serviceNamespaceURI>
+					<fsvp:serviceProfile bDefPID="demo:19" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
 						<fsvp:serviceName>FOP Service Implementing the PDF contract</fsvp:serviceName>
 						<fsvp:serviceLabel>FOP Service Implementing the PDF contract</fsvp:serviceLabel>
 						<fsvp:serviceImplementation>
@@ -79,7 +66,7 @@
 		<METS:techMD ID="DSINPUTSPEC1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Input Specification Mapping to the Fedora Local FOP Service">
 				<METS:xmlData>
-					<fbs:DSInputSpec label="Mapping to the Fedora Local FOP Service" bDefPID="demo:19" bMechPID="demo:20" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+					<fbs:DSInputSpec label="Mapping to the Fedora Local FOP Service" bDefPID="demo:19" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
 						<fbs:DSInput wsdlMsgPartName="XML_SOURCE" DSMin="1" DSMax="1" DSOrdinality="false">
 							<fbs:DSInputLabel>XML source file</fbs:DSInputLabel>
 							<fbs:DSMIME>text/xml</fbs:DSMIME>
@@ -99,7 +86,7 @@
 		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
 				<METS:xmlData>
-					<fmm:MethodMap name="MethodMap - PDF BDEF Methods" bDefPID="demo:19" bMechPID="demo:20" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+					<fmm:MethodMap name="MethodMap - PDF BDEF Methods" bDefPID="demo:19" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 						<!-- NOTE: The operationName attribute correlates to WSDL operation in terms of mapping to WSDL definitions -->
 						<fmm:Method operationName="getPDF" wsdlMsgName="getPDF" wsdlMsgOutput="response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" required="true" passBy="URL_REF"/>

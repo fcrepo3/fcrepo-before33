@@ -30,10 +30,7 @@
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
 				<METS:xmlData>
 					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
-					<!-- bMechPID is the PID of THIS Behavior Mechanism Object (self-referential) which is a surrogate for an external service-->
-					<fsvp:serviceProfile bDefPID="demo:15" bMechPID="demo:16" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
-						<!-- The URI for the namespace that Fedora will use to refer to the service.  Fedora convention is to use the value of behaviorMechPID. -->
-						<fsvp:serviceNamespaceURI>demo:16</fsvp:serviceNamespaceURI>
+					<fsvp:serviceProfile bDefPID="demo:15" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
 						<fsvp:serviceName>EADFindingAid</fsvp:serviceName>
 						<fsvp:serviceLabel>EAD Finding Aid service for delivering Finding Aids</fsvp:serviceLabel>
 						<fsvp:serviceImplementation>
@@ -75,66 +72,24 @@
 		<METS:techMD ID="DSINPUTSPEC1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Input Specification for EAD Finding Aid service">
 				<METS:xmlData>
-					<fbs:DSInputSpec label="EAD Finding Aid Service Datastream Input Specification" bDefPID="demo:15" bMechPID="demo:16" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+					<fbs:DSInputSpec label="EAD Finding Aid Service Datastream Input Specification" bDefPID="demo:15" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
 						<fbs:DSInput wsdlMsgPartName="XML_SOURCE" DSMin="1" DSMax="1" DSOrdinality="false">
 							<fbs:DSInputLabel>XML source file</fbs:DSInputLabel>
 							<fbs:DSMIME>text/xml</fbs:DSMIME>
 							<fbs:DSInputInstruction>EAD Finding Aid source XML file</fbs:DSInputInstruction>
 						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_TITLE_PAGE" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render title page</fbs:DSInputLabel>
+						<!-- Fedora currently requires that every behavior method bind to at least one datastream. -->
+						<!-- However, there are cases where a behavior method may not require a datastream to  -->
+						<!-- perform its function; e.g., a method to provide the current date/time. The following -->
+						<!-- DSInput for NULLBIND is an example of how to handle mechanisms that do not bind -->
+						<!-- to any datastreams in the object. Rather than bind to an arbitrary datastream, a special -->
+						<!-- is created using the name NULLBIND that binds to the Dublin Core datastream in the -->
+						<!-- data object. Any methods in the mechanism that do not require a datastream can use -->
+						<!-- the special NULLBIND binding to satisfy the current Fedora  binding requirement. -->
+						<fbs:DSInput wsdlMsgPartName="NULLBIND" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>Virtual Datastream</fbs:DSInputLabel>
 							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
-						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_ADMIN_INFO" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render admin info</fbs:DSInputLabel>
-							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
-						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_SUMMARY_INFO" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render admin info</fbs:DSInputLabel>
-							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
-						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_BIOG_HIST_INFO" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render admin info</fbs:DSInputLabel>
-							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
-						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_SCOPE_CONTENT_INFO" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render admin info</fbs:DSInputLabel>
-							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
-						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_COMPONENT_INFO" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render admin info</fbs:DSInputLabel>
-							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
-						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_ARRANGE_INFO" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render admin info</fbs:DSInputLabel>
-							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
-						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_ORG_INFO" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render admin info</fbs:DSInputLabel>
-							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
-						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_ENTIRE_DOC" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render admin info</fbs:DSInputLabel>
-							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
-						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_TITLE" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render admin info</fbs:DSInputLabel>
-							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
-						</fbs:DSInput>
-						<fbs:DSInput wsdlMsgPartName="XSL_MENU" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSInputLabel>XSL stylesheet file to render admin info</fbs:DSInputLabel>
-							<fbs:DSMIME>text/xml</fbs:DSMIME>
-							<fbs:DSInputInstruction>XSL stylesheet  file</fbs:DSInputInstruction>
+							<fbs:DSInputInstruction>Virtual datastream</fbs:DSInputInstruction>
 						</fbs:DSInput>
 					</fbs:DSInputSpec>
 				</METS:xmlData>
@@ -149,17 +104,26 @@
 	<!-- Each method defined in the assocaited Behavior Definition object must have a corresponding definition here. -->
 	<!-- The two MethodMaps are almost identical except for some additional mechanism-specific elements that are -->
 	<!-- not present in the Behavior Definition object. -->
+	<!-- -->
+	<!-- NOTE: This mechanism provides methods that apply XSL stylesheets to an XML source document. There   -->
+	<!-- are a variety of ways this could be modelled. Stylesheets could be considered as content and stored as datastreams -->
+	<!-- in the data object and referenced here in the mechanism as DatastreamInputParms. The stylesheets could also -->
+	<!-- be treated as independent data objects themselves and their content referenced through a dissemination request. -->
+	<!-- A third model is to treat the stylesheets as code and include them here in the mechanism object. This example -->
+	<!-- uses the third model where the XSL stylesheets are considered as code and are included here in the mechanism -->
+	<!-- object as DefaultInputParms in each method. -->
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="METHODMAP">
 		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
 				<METS:xmlData>
-					<fmm:MethodMap name="MethodMap - Finding Aid BMech for Finding Aid BDEF" bDefPID="demo:15" bMechPID="demo:16" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+					<fmm:MethodMap name="MethodMap - Finding Aid BMech for Finding Aid BDEF" bDefPID="demo:15" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 						<!-- NOTE: The operationName attribute correlates to WSDL operation in terms of mapping to WSDL definitions -->
 						<fmm:Method operationName="getTitlePage" wsdlMsgName="getTitlePageRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_TITLE_PAGE" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="ZOOM" required="true" defaultValue="no" passBy="VALUE"/>
+							<fmm:DefaultInputParm parmName="XSL_TITLE_PAGE" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/tp.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -169,8 +133,8 @@
 						</fmm:Method>
 						<fmm:Method operationName="getAdminInfo" wsdlMsgName="getAdminInfoRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_ADMIN_INFO" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="XSL_ADMIN_INFO" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/admin.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -180,8 +144,8 @@
 						</fmm:Method>
 						<fmm:Method operationName="getSummaryInfo" wsdlMsgName="getSummaryInfoRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_SUMMARY_INFO" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="XSL_SUMMARY_INFO" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/summary.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -191,8 +155,8 @@
 						</fmm:Method>
 						<fmm:Method operationName="getBiogHistInfo" wsdlMsgName="getBiogHistInfoRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_BIOG_HIST_INFO" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="XSL_BIOG_HIST_INFO" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/bioghist.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -202,8 +166,8 @@
 						</fmm:Method>
 						<fmm:Method operationName="getScopeContentInfo" wsdlMsgName="getScopeContentInfoRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_SCOPE_CONTENT_INFO" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="XSL_SCOPE_CONTENT_INFO" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/scopecontent.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -213,8 +177,8 @@
 						</fmm:Method>
 						<fmm:Method operationName="getComponentInfo" wsdlMsgName="getComponentInfoRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_COMPONENT_INFO" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="XSL_COMPONENT_INFO" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/component.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -224,8 +188,8 @@
 						</fmm:Method>
 						<fmm:Method operationName="getArrangeInfo" wsdlMsgName="getArrangeInfoRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_ARRANGE_INFO" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="XSL_ARRANGE_INFO" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/arrangement.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -235,8 +199,8 @@
 						</fmm:Method>
 						<fmm:Method operationName="getOrgInfo" wsdlMsgName="getOrgInfoRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_ORG_INFO" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="XSL_ORG_INFO" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/organization.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -246,8 +210,8 @@
 						</fmm:Method>
 						<fmm:Method operationName="getEntireDoc" wsdlMsgName="getEntireDocRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_ENTIRE_DOC" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="XSL_ENTIRE_DOC" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/document.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -257,8 +221,8 @@
 						</fmm:Method>
 						<fmm:Method operationName="getMenu" wsdlMsgName="getMenuRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_MENU" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="XSL_MENU" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/menu.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -268,15 +232,18 @@
 							<fmm:UserInputParm parmName="startwith" required="false" defaultValue="" passBy="VALUE"/>
 							<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
 						</fmm:Method>
+						<!-- Note that the viewFindingAid method requires no datastream. It's underlying mechanism -->
+						<!-- is a program that only requires the PID of the Finding Aid to function. This method binds  -->
+						<!-- to the special binding named NULLBIND defined earlier in the DSInput section. -->
 						<fmm:Method operationName="viewFindingAid" wsdlMsgName="viewFindingAidRequest" wsdlMsgOutput="xslt_response">
-							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+							<fmm:DatastreamInputParm parmName="NULLBIND" passBy="URL_REF"/>
 							<fmm:UserInputParm parmName="objectPID" required="true" defaultValue="" passBy="VALUE"/>
 							<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
 						</fmm:Method>
 						<fmm:Method operationName="getTitle" wsdlMsgName="getTitleRequest" wsdlMsgOutput="xslt_response">
 							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_TITLE" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
+							<fmm:DefaultInputParm parmName="XSL_TITLE" required="true" defaultValue="http://dl.lib.virginia.edu/bin/xsl/ead/title.xsl" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="no" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
 									<fmm:ValidParm value="no"/>
@@ -284,8 +251,12 @@
 							</fmm:UserInputParm>
 							<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
 						</fmm:Method>
+						<!-- Note that the searchFindingAid method requires no datastream. It's underlying mechanism -->
+						<!-- is a program that only requires the PID of the Finding Aid and the search query string to       -->
+						<!-- function. This method binds to the special binding named NULLBIND defined earlier in         -->
+						<!-- the DSInput section. -->
 						<fmm:Method operationName="searchFindingAid" wsdlMsgName="searchFindingAidRequest" wsdlMsgOutput="xslt_response">
-							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
+							<fmm:DatastreamInputParm parmName="NULLBIND" passBy="URL_REF"/>
 							<fmm:UserInputParm parmName="objectPID" required="true" defaultValue="" passBy="VALUE"/>
 							<fmm:UserInputParm parmName="querystring" required="true" defaultValue="" passBy="VALUE"/>
 							<fmm:DefaultInputParm parmName="op" required="true" defaultValue="Search+This+Guide" passBy="VALUE"/>
@@ -396,7 +367,6 @@
 							<wsdl:part name="startwith" type="this:STARTWITHType"/>
 						</wsdl:message>
 						<wsdl:message name="viewFindingAidRequest">
-							<wsdl:part name="XML_SOURCE" type="this:URLType"/>
 							<wsdl:part name="objectPID" type="this:OBJECTPIDType"/>
 						</wsdl:message>
 						<wsdl:message name="getTitleRequest">
@@ -405,7 +375,6 @@
 							<wsdl:part name="CLEAR_CACHE" type="this:CLEAR_CACHEType"/>
 						</wsdl:message>
 						<wsdl:message name="searchFindingAidRequest">
-							<wsdl:part name="XML_SOURCE" type="this:URLType"/>
 							<wsdl:part name="objectPID" type="this:OBJECTPIDType"/>
 							<wsdl:part name="op" type="this:OPType"/>
 							<wsdl:part name="querystring" type="this:QUERYSTRINGType"/>
@@ -579,7 +548,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="viewFindingAid">
-								<http:operation location="http://dl.lib.virginia.edu/cgi-dl/ead/eaddoc.pl?file=(objectPID)"/>
+								<http:operation location="http://dl.lib.virginia.edu/bin/cgi-dl/ead/eaddoc.pl?file=(objectPID)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -597,7 +566,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="searchFindingAid">
-								<http:operation location="http://dl.lib.virginia.edu/cgi-dl/ead/findead.pl?file=(objectPID)&amp;op=(op)&amp;querystring=(querystring)"/>
+								<http:operation location="http://dl.lib.virginia.edu/bin/cgi-dl/ead/findead.pl?file=(objectPID)&amp;op=(op)&amp;querystring=(querystring)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>

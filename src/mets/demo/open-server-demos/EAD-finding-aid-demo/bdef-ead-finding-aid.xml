@@ -33,7 +33,7 @@
 		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Method Map for Fedora Behavior Definition for UVA EAD-encoded Finding Aid">
 				<METS:xmlData>
-					<fmm:MethodMap name="Fedora MethodMap for Standard EAD-encoded Finding Aid bDef" bDefPID="demo:15" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+					<fmm:MethodMap name="Fedora MethodMap for Standard EAD-encoded Finding Aid bDef" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 						<fmm:Method operationName="getTitlePage">
 							<fmm:UserInputParm parmName="CLEAR_CACHE" required="false" defaultValue="yes" passBy="VALUE">
 								<fmm:ValidParmValues>

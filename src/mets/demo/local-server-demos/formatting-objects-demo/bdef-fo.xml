@@ -2,15 +2,14 @@
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR DEFINITION OBJECT ENCODED USING METS -->
 <!---********************************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" 
-           OBJID="demo:22" TYPE="FedoraBDefObject" LABEL="Behavior Definition Object for FOs" PROFILE="fedora:BDEF">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="demo:22" TYPE="FedoraBDefObject" LABEL="Behavior Definition Object for FOs" PROFILE="fedora:BDEF">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name>Chris Wilper</METS:name>
-			<METS:note></METS:note>
+			<METS:note/>
 		</METS:agent>
 		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
 			<METS:name>Cornell</METS:name>
@@ -32,13 +31,10 @@
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="METHODMAP">
 		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
-			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" 
-                         LABEL="Method Map for Fedora Behavior Definition for FOs">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Method Map for Fedora Behavior Definition for FOs">
 				<METS:xmlData>
-					<fmm:MethodMap name="Fedora MethodMap for FOs" bDefPID="demo:22" 
-                                   xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
-						<fmm:Method operationName="getFO">
-						</fmm:Method>
+					<fmm:MethodMap name="Fedora MethodMap for FOs" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+						<fmm:Method operationName="getFO"/>
 					</fmm:MethodMap>
 				</METS:xmlData>
 			</METS:mdWrap>

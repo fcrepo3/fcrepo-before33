@@ -41,7 +41,7 @@
 						</dc:description>
 						<dc:publisher>University of Virginia. Library. Special Collections Dept.</dc:publisher>
 						<dc:source>viu03270</dc:source>
-						<dc:identifier>demo:17</dc:identifier> 	
+						<dc:identifier>demo:17</dc:identifier>
 						<dc:rights>copyright, 2003, The Rector and Visitors of the University of Virginia, unrestricted</dc:rights>
 						<dc:rights>usage unrestricted</dc:rights>
 					</oai_dc:dc>
@@ -60,72 +60,6 @@
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/xmltext/ead/viu03270" xlink:title="EAD-encoded Finding Aid: Rita Mae Brown Papers"/>
 				</METS:file>
 			</METS:fileGrp>
-			<METS:fileGrp ID="DS2" STATUS="">
-				<!-- This is the title page stylesheet -->
-				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/tp.xsl" xlink:title="EAD TitlePage stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS3">
-				<!--This is the administrative Info stylesheet -->
-				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/admin.xsl" xlink:title="EAD AdminInfo stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS4">
-				<!--This is the summary Info stylesheet -->
-				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/summary.xsl" xlink:title="EAD SummaryInfo stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS5">
-				<!--This is the biographical and historical Info stylesheet -->
-				<METS:file ID="DS5.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/bioghist.xsl" xlink:title="EAD BiogHistInfo stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS6">
-				<!--This is the scope and content Info stylesheet -->
-				<METS:file ID="DS6.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/scopecontent.xsl" xlink:title="EAD ScopeContentInfo stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS7">
-				<!--This is the component Info stylesheet -->
-				<METS:file ID="DS7.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/component.xsl" xlink:title="EAD ComponentInfo stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS8">
-				<!--This is the arrangement Info stylesheet -->
-				<METS:file ID="DS8.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/arrangement.xsl" xlink:title="EAD ArrangeInfo stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS9">
-				<!--This is the organization Info stylesheet -->
-				<METS:file ID="DS9.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/organization.xsl" xlink:title="EAD OrgInfo stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS10">
-				<!--This is the entire document  stylesheet -->
-				<METS:file ID="DS10.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/document.xsl" xlink:title="EAD EntireDoc stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS11">
-				<!--This is the  menu stylesheet -->
-				<METS:file ID="DS11.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/menu.xsl" xlink:title="EAD Menu stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS12">
-				<!--This is the title stylesheet -->
-				<METS:file ID="DS12.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/title.xsl" xlink:title="EAD Title stylesheet"/>
-				</METS:file>
-			</METS:fileGrp>
 		</METS:fileGrp>
 	</METS:fileSec>
 	<!---*******************************************************************************************************************************************-->
@@ -137,38 +71,17 @@
 			<METS:div TYPE="XML_SOURCE" LABEL="EAD xml source" ORDER="0">
 				<METS:fptr FILEID="DS1"/>
 			</METS:div>
-			<METS:div TYPE="XSL_TITLE_PAGE" LABEL="EAD title page stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS2"/>
-			</METS:div>
-			<METS:div TYPE="XSL_ADMIN_INFO" LABEL="EAD administrative Info stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS3"/>
-			</METS:div>
-			<METS:div TYPE="XSL_SUMMARY_INFO" LABEL="EAD summary Info stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS4"/>
-			</METS:div>
-			<METS:div TYPE="XSL_BIOG_HIST_INFO" LABEL="EAD biographical and historical Info stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS5"/>
-			</METS:div>
-			<METS:div TYPE="XSL_SCOPE_CONTENT_INFO" LABEL="EAD scope and content Info stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS6"/>
-			</METS:div>
-			<METS:div TYPE="XSL_COMPONENT_INFO" LABEL="EAD component Info stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS7"/>
-			</METS:div>
-			<METS:div TYPE="XSL_ARRANGE_INFO" LABEL="EAD arrangement Info stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS8"/>
-			</METS:div>
-			<METS:div TYPE="XSL_ORG_INFO" LABEL="EAD organization Info stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS9"/>
-			</METS:div>
-			<METS:div TYPE="XSL_ENTIRE_DOC" LABEL="EAD entire doc stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS10"/>
-			</METS:div>
-			<METS:div TYPE="XSL_MENU" LABEL="EAD menu stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS11"/>
-			</METS:div>
-			<METS:div TYPE="XSL_TITLE" LABEL="EAD title stylesheet" ORDER="0">
-				<METS:fptr FILEID="DS12"/>
+			<!-- Fedora currently requires that every behavior method bind to at least one datastream.   -->
+			<!-- However, there are cases where a behavior method may not require a datastream to    -->
+			<!-- perform its function; e.g., a method to provide the current date/time. The following          -->
+			<!-- mapping for NULLBIND is an example of how to handle mechanisms that do not bind    -->
+			<!-- to any datastreams in the object. Rather than bind to an arbitrary datastream, a special -->
+			<!-- binding is created named NULLBIND that maps to the Dublin Core datastream which    -->
+			<!-- is present in every object. Any methods in the mechanism that do not require a              -->
+			<!-- datastream can use the NULLBIND binding to satisfy the current Fedora binding            -->
+			<!-- requirement. -->
+			<METS:div TYPE="NULLBIND" LABEL="EAD title stylesheet" ORDER="0">
+				<METS:fptr FILEID="DC"/>
 			</METS:div>
 		</METS:div>
 	</METS:structMap>
