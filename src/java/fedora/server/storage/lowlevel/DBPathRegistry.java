@@ -18,78 +18,51 @@ import fedora.server.utilities.SQLUtility;
 class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	//private static final IPathAlgorithm pathAlgorithm = new CNullPathAlgorithm();
 
+	private static LowlevelStorageException staticException = null;
 	private static final Configuration conf = Configuration.getInstance();
-
-	private static Server s_server;
+	private static ConnectionPool commonConnectionPool = null;
 	static {
-		 try {
-		     s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
-		 } catch (InitializationException ie) {
-		     System.err.println(ie.getMessage());
-		 }
+		if (conf.getTestConfig()) {
+			try {
+				commonConnectionPool = new ConnectionPool("org.gjt.mm.mysql.Driver", 
+					"jdbc:mysql://localhost/FedoraObjects",
+					"fedoraAdmin", "fedoraAdmin", 10, 100, true);
+			} catch (SQLException sqlException) {
+				System.out.println("\n*****didn't make connectionPool*****[[[[[");
+				System.out.println(sqlException.getMessage() + "\n]]]]]*****");		
+			}			
+		} else {
+			Server s_server = null;
+			try {
+				s_server = Server.getInstance(new File(System.getProperty("fedora.home")));
+			} catch (InitializationException ie) {
+				System.err.println(ie.getMessage());				
+			}
+			ConnectionPoolManager cpmgr=(ConnectionPoolManager) s_server.getModule(
+				"fedora.server.storage.ConnectionPoolManager");
+			if (cpmgr==null) {
+				staticException = new LowlevelStorageException(true,
+					"Server module not loaded: "
+					+ "fedora.server.storage.ConnectionPoolManager");
+			} else {
+				try {
+					commonConnectionPool=cpmgr.getPool();
+				} catch (ConnectionPoolNotFoundException cpnfe) {
+					staticException = new LowlevelStorageException(true,
+						"Lowlevel storage can't get default pool.", cpnfe);
+				}
+			}
+		}
 	}
+	
 	private ConnectionPool connectionPool = null;
-//"objectRegistry"
-	public DBPathRegistry(String registryName, String[] storeBases) throws LowlevelStorageException{
+
+	public DBPathRegistry(String registryName, String[] storeBases) throws LowlevelStorageException {
 		super(registryName,storeBases);
-
-
-        ConnectionPoolManager cpmgr=(ConnectionPoolManager) s_server.getModule(
-                "fedora.server.storage.ConnectionPoolManager");
-        if (cpmgr==null) {
-            throw new LowlevelStorageException(true,
-                    "Server module not loaded: "
-                    + "fedora.server.storage.ConnectionPoolManager");
-        } else {
-            try {
-                connectionPool=cpmgr.getPool();
-            } catch (ConnectionPoolNotFoundException cpnfe) {
-                throw new LowlevelStorageException(true,
-                        "Lowlevel storage can't get default pool.", cpnfe);
-            }
-        }
-
-
-
-
-
-
-/*
-		String username = s_server.getParameter("dbuser");
-		if (username == null) {
-			throw new LowlevelStorageException(true,"must configure dbuser");
+		if (commonConnectionPool == null) {
+			throw staticException;
 		}
-		String password = s_server.getParameter("dbpass");
-		if (password == null) {
-			throw new LowlevelStorageException(true,"must configure dbpass");
-		}
-		String url = s_server.getParameter("connect_string");
-		if (url == null) {
-			throw new LowlevelStorageException(true,"must configure connect_string");
-		}
-		int minConnections; {
-			String minConnectionsString = s_server.getParameter("pool_min");
-			if (minConnectionsString == null) {
-				throw new LowlevelStorageException(true,"must configure pool_min");
-			}
-			minConnections = Integer.parseInt(minConnectionsString);
-		}
-		int maxConnections; {
-			String maxConnectionsString = s_server.getParameter("pool_max");
-			if (maxConnectionsString == null) {
-				throw new LowlevelStorageException(true,"must configure pool_max");
-			}
-			maxConnections = Integer.parseInt(maxConnectionsString);
-		}
-		try {
-			String driver = "org.gjt.mm.mysql.Driver";
-      			connectionPool = new ConnectionPool(driver, url, username, password, */
-//				minConnections, /*initConnections,*/ maxConnections, true);
-/*
-		} catch (SQLException e) {
-			throw new LowlevelStorageException(true,"sql pool init failure", e);
-		}
-*/
+		connectionPool = commonConnectionPool;
 	}
 
 	public String get(String pid) throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException {

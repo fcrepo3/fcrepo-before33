@@ -63,11 +63,14 @@ abstract class PathRegistry implements IPathRegistry {
 					}
 				}
 				if (path != null) {
+					/* drop .xml file suffix; code was:					
 					int j = filename.lastIndexOf(".xml");
 					String pid = null;
 					if (j >= 0) {
 						pid = PathAlgorithm.decode(filename.substring(0,j));
 					}
+					*/
+					String pid = PathAlgorithm.decode(filename);					
 					if (pid == null) {
 						if (report != NO_REPORT) {							
 							System.err.println("unexpected file at [" + path + "]");

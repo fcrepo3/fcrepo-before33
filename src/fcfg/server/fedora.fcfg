@@ -8,13 +8,15 @@
 	<param name="log_dir" value="logs"/>
 	<param name="log_level" value="finest"/>
 	<param name="log_flush_threshold" value="1"/>
+	
 	<param name="path_algorithm" value="fedora.server.storage.lowlevel.TimestampPathAlgorithm"/>
 	<param name="file_system" value="fedora.server.storage.lowlevel.GenericFileSystem"/>
+	<param name="registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>	
 	<param name="backslash_is_escape" value="yes" oraclevalue="no"/>
-	<param name="store_base" value="C:\fedora_perm"/>
+	<param name="object_store_base" value="C:\fedora_objects"/>
 	<param name="temp_store_base" value="C:\fedora_temp"/>
-	<param name="pid_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
-	<param name="temp_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
+	<param name="datastream_store_base" value="C:\fedora_datastreams"/>
+	
 	<param name="disseminationCacheSize" value="100"/>
 	<param name="debug" value="true"/>
 	<param name="datastreamExpirationLimit" value="300"/>
