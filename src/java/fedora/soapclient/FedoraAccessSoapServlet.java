@@ -462,6 +462,18 @@ public class FedoraAccessSoapServlet extends HttpServlet
           methodDefs = getBehaviorMethodsXML(PID, bDefPID, asOfDateTime);
           if (methodDefs != null)
           {
+            // testing to see what's in request header that might be of interest
+            for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
+                String name = (String)e.nextElement();
+                Enumeration headerValues =  request.getHeaders(name);
+                StringBuffer sb = new StringBuffer();
+                while (headerValues.hasMoreElements()) {
+                    sb.append((String) headerValues.nextElement());
+                }
+                String value = sb.toString();
+                System.out.println("FEDORASERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
+                response.setHeader(name,value);
+            }
             // Method Definitions found; output resutls as XML.
             //
             // Note that what is returned by the Fedora Access SOAP service is
@@ -473,6 +485,15 @@ public class FedoraAccessSoapServlet extends HttpServlet
             // step.
             methodResults = new ByteArrayInputStream(methodDefs.getStream());
             response.setContentType(methodDefs.getMIMEType());
+            Property[] headerArray = methodDefs.getHeader();
+            if(headerArray != null) {
+              for(int i=0; i<headerArray.length; i++) {
+                  if(headerArray[i].getName() != null && !(headerArray[i].getName().equalsIgnoreCase("content-type"))) {
+                      response.addHeader(headerArray[i].getName(), headerArray[i].getValue());
+                      System.out.println("THIS WAS ADDED TO FEDORASOAPSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].getName()+" : "+headerArray[i].getValue());
+                  }
+              }
+            }
             int byteStream = 0;
             byte[] buffer = new byte[255];
             while ((byteStream = methodResults.read(buffer)) >= 0)
@@ -530,6 +551,18 @@ public class FedoraAccessSoapServlet extends HttpServlet
               userParms, asOfDateTime);
           if (dissemination != null)
           {
+            // testing to see what's in request header that might be of interest
+            for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
+                String name = (String)e.nextElement();
+                Enumeration headerValues =  request.getHeaders(name);
+                StringBuffer sb = new StringBuffer();
+                while (headerValues.hasMoreElements()) {
+                    sb.append((String) headerValues.nextElement());
+                }
+                String value = sb.toString();
+                System.out.println("FEDORASOAPSERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
+                response.setHeader(name,value);
+            }
             // Dissemination found. Output the mime-typed stream.
             //
             // Note that what is returned by the Fedora Access SOAP service is
@@ -563,6 +596,15 @@ public class FedoraAccessSoapServlet extends HttpServlet
             } else
             {
               response.setContentType(dissemination.getMIMEType());
+              Property[] headerArray = dissemination.getHeader();
+              if(headerArray != null) {
+                for(int i=0; i<headerArray.length; i++) {
+                    if(headerArray[i].getName() != null && !(headerArray[i].getName().equalsIgnoreCase("content-type"))) {
+                        response.addHeader(headerArray[i].getName(), headerArray[i].getValue());
+                        System.out.println("THIS WAS ADDED TO FEDORASOAPSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].getName()+" : "+headerArray[i].getValue());
+                  }
+                }
+              }
               int byteStream = 0;
               dissemResult = new ByteArrayInputStream(dissemination.getStream());
               byte[] buffer = new byte[255];

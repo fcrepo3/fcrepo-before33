@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
+import fedora.server.storage.types.Property;
 
 /**
  * <p><b>Title: </b>DatastreamResolverServlet.java</p>
@@ -208,6 +210,19 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
 
       if (dsControlGroupType.equalsIgnoreCase("E"))
       {
+          // testing to see what's in request header that might be of interest
+          for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
+              String name = (String)e.nextElement();
+              Enumeration headerValues =  request.getHeaders(name);
+              StringBuffer sb = new StringBuffer();
+              while (headerValues.hasMoreElements()) {
+                  sb.append((String) headerValues.nextElement());
+              }
+              String value = sb.toString();
+              System.out.println("DATASTREAMRESOLVERSERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
+              response.setHeader(name,value);
+        }
+
         // Datastream is ReferencedExternalContent so dsLocation is a URL string
         ExternalContentManager externalContentManager =
             (ExternalContentManager)getServer().getModule(
@@ -216,6 +231,15 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
             externalContentManager.getExternalContent(dsPhysicalLocation);
         outStream = response.getOutputStream();
         response.setContentType(mimeTypedStream.MIMEType);
+        Property[] headerArray = mimeTypedStream.header;
+        if(headerArray != null) {
+          for(int i=0; i<headerArray.length; i++) {
+              if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
+                  response.addHeader(headerArray[i].name, headerArray[i].value);
+                  System.out.println("THIS WAS ADDED TO DATASTREAMRESOLVERSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
+              }
+          }
+        }
         int byteStream = 0;
         byte[] buffer = new byte[255];
         while ( (byteStream = mimeTypedStream.getStream().read(buffer)) != -1)

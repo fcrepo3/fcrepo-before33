@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.Date;
+import java.util.HashMap;
 
 import fedora.server.Context;
 import fedora.server.access.Access;
@@ -122,7 +123,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
           + "The error was a \"" + uee.getClass().getName() + "\"  . The "
           + "Reason was \"" + uee.getMessage() + "\"  .");
     }
-    return new MIMETypedStream("text/xml", in);
+    return new MIMETypedStream("text/xml", in, null);
   }
 
   /**
@@ -147,7 +148,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       Properties details = template.getOutputProperties();
       transformer.transform(new StreamSource(in), new StreamResult(out));
       in = new ByteArrayInputStream(out.toByteArray());
-      return new MIMETypedStream("text/html", in);
+      return new MIMETypedStream("text/html", in, null);
     } catch (TransformerException e)
     {
       throw new DisseminationException("[DefaultBehaviorImpl] had an error "
@@ -189,7 +190,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
           + "The error was a \"" + uee.getClass().getName() + "\"  . The "
           + "Reason was \"" + uee.getMessage() + "\"  .");
     }
-    return new MIMETypedStream("text/xml", in);
+    return new MIMETypedStream("text/xml", in, null);
   }
 
   private MIMETypedStream noMethodIndexMsg() throws GeneralException
@@ -221,7 +222,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
             + "The error was a \"" + uee.getClass().getName() + "\"  . The "
             + "Reason was \"" + uee.getMessage() + "\"  .");
       }
-      return new MIMETypedStream("text/html", in);
+      return new MIMETypedStream("text/html", in, null);
   }
 
   /**
@@ -255,7 +256,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       Properties details = template.getOutputProperties();
       transformer.transform(new StreamSource(in), new StreamResult(out));
       in = new ByteArrayInputStream(out.toByteArray());
-      return new MIMETypedStream("text/html", in);
+      return new MIMETypedStream("text/html", in, null);
     } catch (TransformerException e)
     {
       throw new DisseminationException("[DefaultBehaviorImpl] had an error "
@@ -281,7 +282,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       new DatastreamsAsXML().getItemIndex(
       reposBaseURL, reader, asOfDateTime).getBytes("UTF-8"));
     } catch (Exception e) {}
-    return new MIMETypedStream("text/xml", is);
+    return new MIMETypedStream("text/xml", is, null);
   }
 
   /**
@@ -306,7 +307,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       Properties details = template.getOutputProperties();
       transformer.transform(new StreamSource(in), new StreamResult(out));
       in = new ByteArrayInputStream(out.toByteArray());
-      return new MIMETypedStream("text/html", in);
+      return new MIMETypedStream("text/html", in, null);
     } catch (TransformerException e)
     {
       throw new DisseminationException("[DefaultBehaviorImpl] had an error "
@@ -341,7 +342,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       {
         // Can never occur since Java fully supports UTF-8
       }
-      return new MIMETypedStream("application/fedora-redirect",in);
+      return new MIMETypedStream("application/fedora-redirect",in, null);
     } else if ( ds.DSState.equals("D") &&
                 ( context.get("canUseDeletedDatastream")==null
                   || (!context.get("canUseDeletedDatastream").equals("true")) )
@@ -384,7 +385,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       {
         // Can never occur since Java fully supports UTF-8
       }
-      return new MIMETypedStream("text/html",in);
+      return new MIMETypedStream("text/html",in, null);
 
     } else if ( ds.DSState.equals("I") &&
                 ( context.get("canUseInactiveDatastream")==null
@@ -428,7 +429,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       {
         // Can never occur since Java fully supports UTF-8
       }
-      return new MIMETypedStream("text/html",in);
+      return new MIMETypedStream("text/html",in, null);
 
     } else
     {
@@ -476,9 +477,9 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
           {
             // Can never occur since Java fully supports UTF-8
           }
-          return new MIMETypedStream("text/html",in);
+          return new MIMETypedStream("text/html",in, null);
         }
-        return new MIMETypedStream(ds.DSMIME, in);
+        return new MIMETypedStream(ds.DSMIME, in, null);
     }
   }
 
@@ -508,7 +509,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
             + "The error was a \"" + uee.getClass().getName() + "\"  . The "
             + "Reason was \"" + uee.getMessage() + "\"  .");
     }
-    return new MIMETypedStream("text/xml", is);
+    return new MIMETypedStream("text/xml", is, null);
   }
 
   /**
@@ -530,7 +531,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       Properties details = template.getOutputProperties();
       transformer.transform(new StreamSource(in), new StreamResult(out));
       in = new ByteArrayInputStream(out.toByteArray());
-      return new MIMETypedStream("text/html", in);
+      return new MIMETypedStream("text/html", in, null);
     } catch (TransformerException e)
     {
       throw new DisseminationException("[DefaultBehaviorImpl] had an error "

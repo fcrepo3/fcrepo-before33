@@ -544,13 +544,14 @@ public class DisseminationService
             s_server.logFinest(message);
             throw new GeneralException(message);
           }
-          dissemination = new MIMETypedStream("application/fedora-redirect",is);
+          dissemination = new MIMETypedStream("application/fedora-redirect",is, null);
         } else
         {
           // For all non-redirected disseminations, Fedora captures and returns
           // the MIMETypedStream resulting from the dissemination request.
           ExternalContentManager externalContentManager = (ExternalContentManager)
               s_server.getModule("fedora.server.storage.ExternalContentManager");
+          System.out.println("URL: "+dissURL);
           dissemination = externalContentManager.getExternalContent(dissURL);
         }
         long stopTime = new Date().getTime();

@@ -5,6 +5,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.List;
 
 import fedora.server.Module;
 import fedora.server.Server;
@@ -13,6 +19,7 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.StreamIOException;
+import fedora.server.storage.types.Property;
 
 /**
  *
@@ -126,6 +133,23 @@ public class DefaultExternalContentManager extends Module
                   + URL);
       }
       connection.setInstanceFollowRedirects(true);
+      Map header = connection.getHeaderFields();
+      Property[] headerArray = new Property[header.size()];
+      Set headerSet = header.keySet();
+      Iterator iter = headerSet.iterator();
+      int i = 0;
+      while(iter.hasNext()) {
+          headerArray[i] = new Property();
+          headerArray[i].name = (String) iter.next();
+          List list = (List) header.get(headerArray[i].name);
+          Iterator listIter = list.iterator();
+          StringBuffer sb = new StringBuffer();
+          while(listIter.hasNext()) {
+              sb.append((String)listIter.next());
+          }
+          headerArray[i].value = sb.toString();
+          i++;
+      }
       String contentType = connection.getContentType();
       inStream = connection.getInputStream();
       if(contentType == null)
@@ -134,11 +158,12 @@ public class DefaultExternalContentManager extends Module
           connection.guessContentTypeFromStream(connection.getInputStream());
         if (contentType == null) contentType = "text/plain";
       }
-      httpContent = new MIMETypedStream(contentType, inStream);
+      httpContent = new MIMETypedStream(contentType, inStream, headerArray);
       return(httpContent);
 
     } catch (Throwable th)
     {
+        th.printStackTrace();
       throw new HttpServiceNotFoundException("[DefaultExternalContentManager] "
           + "returned an error.  The underlying error was a "
           + th.getClass().getName() + "  The message "

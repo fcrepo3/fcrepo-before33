@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -536,14 +537,14 @@ public class DefaultDOManager
                         // if it's a url, we need to grab content for this version
                         MIMETypedStream mimeTypedStream;
 						if (dmc.DSLocation.startsWith("uploaded://")) {
-						    mimeTypedStream=new MIMETypedStream(null, m_management.getTempStream(dmc.DSLocation));
+						    mimeTypedStream=new MIMETypedStream(null, m_management.getTempStream(dmc.DSLocation), null);
                             logInfo("Retrieving ManagedContent datastream from internal uploaded "
                                 + "location: " + dmc.DSLocation);
 						} else if (dmc.DSLocation.startsWith("copy://"))  {
                             // make a copy of the pre-existing content
                             mimeTypedStream=new MIMETypedStream(null,
                                     getDatastreamStore().retrieve(
-                                            dmc.DSLocation.substring(7)));
+                                            dmc.DSLocation.substring(7)), null);
 						} else {
                             mimeTypedStream = m_contentManager.
                                 getExternalContent(dmc.DSLocation.toString());
@@ -616,7 +617,7 @@ public class DefaultDOManager
                 logFinest("Validating (storage phase)...");
                     m_validator.validate(inV, m_defaultStorageFormat, 0, "store");
                     // TODO: DELTA-MODULE:
-                    // After validating for storage, but before saving to definitive store, 
+                    // After validating for storage, but before saving to definitive store,
                     // tell the Delta Module about new or modified objects
                     /*
                     if (obj.isNew()) {

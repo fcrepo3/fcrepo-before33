@@ -479,6 +479,8 @@ public abstract class TypeUtility
       fedora.server.types.gen.MIMETypedStream genMIMETypedStream =
           new fedora.server.types.gen.MIMETypedStream();
       genMIMETypedStream.setMIMEType(mimeTypedStream.MIMEType);
+      fedora.server.storage.types.Property[] header = mimeTypedStream.header;
+      genMIMETypedStream.setHeader(convertPropertyArrayToGenPropertyArray(header));
       ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
       InputStream is = mimeTypedStream.getStream();
       int byteStream = 0;
@@ -518,9 +520,10 @@ public abstract class TypeUtility
     if (genMIMETypedStream != null)
     {
       InputStream is = new ByteArrayInputStream(genMIMETypedStream.getStream());
+      fedora.server.types.gen.Property[] header = genMIMETypedStream.getHeader();
       fedora.server.storage.types.MIMETypedStream mimeTypedStream =
               new fedora.server.storage.types.MIMETypedStream(
-          genMIMETypedStream.getMIMEType(), is);
+          genMIMETypedStream.getMIMEType(), is, convertGenPropertyArrayToPropertyArray(header));
       return mimeTypedStream;
 
     } else
@@ -1191,7 +1194,7 @@ public abstract class TypeUtility
     byte[] stream = baos.toByteArray();
     InputStream is = new ByteArrayInputStream(stream);
     fedora.server.storage.types.MIMETypedStream mimeTypedStream =
-        new fedora.server.storage.types.MIMETypedStream("text/plain", is);
+        new fedora.server.storage.types.MIMETypedStream("text/plain", is, null);
     System.out.println("MIMEType: " + mimeTypedStream.MIMEType);
     int byteStream = 0;
     byte[] buffer = new byte[255];

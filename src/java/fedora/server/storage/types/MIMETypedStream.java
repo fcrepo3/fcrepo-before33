@@ -1,6 +1,7 @@
 package fedora.server.storage.types;
 
 import java.io.InputStream;
+import java.util.Properties;
 
 /**
  *
@@ -31,6 +32,7 @@ public class MIMETypedStream
 {
     public String MIMEType;
     private InputStream stream;
+    public Property[] header;
 
     /**
      * <p>Constructs a MIMETypedStream.</p>
@@ -38,9 +40,10 @@ public class MIMETypedStream
      * @param MIMEType The MIME type of the byte stream.
      * @param stream The byte stream.
      */
-    public MIMETypedStream(String MIMEType, InputStream stream)
+    public MIMETypedStream(String MIMEType, InputStream stream, Property[] header)
     {
         this.MIMEType = MIMEType;
+        this.header = header;
         this.setStream(stream);
     }
 

@@ -249,13 +249,14 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                 userParms=new Property[] { itemID };
                 asOfDateTime=null;
                 try {
-                    getDissemination(context, 
-                                     PID, 
-                                     bDefPID, 
-                                     methodName, 
+                    getDissemination(context,
+                                     PID,
+                                     bDefPID,
+                                     methodName,
                                      userParms,
-                                     asOfDateTime, 
-                                     response);
+                                     asOfDateTime,
+                                     response,
+                                     request);
                     long stopTime = new Date().getTime();
                     long interval = stopTime - servletStartTime;
                     logFiner("[FedoraAccessServlet] Servlet Roundtrip "
@@ -306,29 +307,83 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
             isGetObjectProfileRequest = true;
         }
     } else if (URIArray.length > 7) {
-      // Request appears to be a Dissemination Request.
+      // Request is either dissemination request or timestamped get datastream request
       PID = decoder.decode(URIArray[5],"UTF-8");
       bDefPID = decoder.decode(URIArray[6],"UTF-8");
       methodName = decoder.decode(URIArray[7], "UTF-8");
-      if (URIArray.length > 8) {
-        versDateTime = DateUtility.convertStringToDate(URIArray[8]);
-        if (versDateTime == null) {
-          String message = "Dissemination Request Syntax Error: DateTime value "
-              + "of \"" + URIArray[8] + "\" is not a valid DateTime format. "
-              + " ----- The expected format for DateTime is \""
-              + "YYYY-MM-DDTHH:MM:SSZ\".  "
-              + " ----- The expected syntax for Dissemination requests is: \""
-              + URIArray[0] + "//" + URIArray[2] + "/"
-              + URIArray[3] + "/" + URIArray[4]
-              + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+      if (URIArray.length == 8) {
+        if (URIArray[6].indexOf(":")==-1) {
+            // If it doesn't contain a colon, they were after a timestamped
+            // datastream, so use the default disseminator.
+            bDefPID = "fedora-system:3";
+            methodName = "getItem";
+            Property itemID = new Property();
+            itemID.name = "itemID";
+            itemID.value = URIArray[6];
+            userParms=new Property[] { itemID };
+            versDateTime = DateUtility.convertStringToDate(URIArray[7]);
+            if (versDateTime == null) {
+                String message = "Dissemination Request Syntax Error: DateTime value "
+                    + "of \"" + URIArray[7] + "\" is not a valid DateTime format. "
+                    + " ----- The expected format for DateTime is \""
+                    + "YYYY-MM-DDTHH:MM:SSZ\".  "
+                    + " ----- The expected syntax for Dissemination requests is: \""
+                    + URIArray[0] + "//" + URIArray[2] + "/"
+                    + URIArray[3] + "/" + URIArray[4]
+                    + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
               + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
-          logWarning(message);
-          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-          return;
-        } else {
-          asOfDateTime=versDateTime;
+                logWarning(message);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+                return;
+            } else {
+                asOfDateTime=versDateTime;
+            }
+            try {
+                getDissemination(context,
+                                 PID,
+                                 bDefPID,
+                                 methodName,
+                                 userParms,
+                                 asOfDateTime,
+                                 response,
+                                 request);
+                long stopTime = new Date().getTime();
+                long interval = stopTime - servletStartTime;
+                logFiner("[FedoraAccessServlet] Servlet Roundtrip "
+                    + "GetDatastream: " + interval + " milliseconds.");
+            } catch (Throwable th) {
+                String message = "[FedoraAccessServlet] An error has occured in "
+                        + "accessing the Fedora Access Subsystem. The error was \" "
+                        + th.getClass().getName()
+                        + " \". Reason: "  + th.getMessage()
+                        + "  Input Request was: \"" + request.getRequestURL().toString();
+                showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms, response, message);
+                logWarning(message);
+                th.printStackTrace();
+            }
+            return;
         }
+      } else if(URIArray.length == 9) {
+          versDateTime = DateUtility.convertStringToDate(URIArray[8]);
+            if (versDateTime == null) {
+                String message = "Dissemination Request Syntax Error: DateTime value "
+                    + "of \"" + URIArray[8] + "\" is not a valid DateTime format. "
+                    + " ----- The expected format for DateTime is \""
+                    + "YYYY-MM-DDTHH:MM:SS\".  "
+                    + " ----- The expected syntax for Dissemination requests is: \""
+                    + URIArray[0] + "//" + URIArray[2] + "/"
+                    + URIArray[3] + "/" + URIArray[4]
+                    + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+                    + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+                logWarning(message);
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+                return;
+            } else {
+                asOfDateTime=versDateTime;
+            }
+
       }
       if (URIArray.length > 9) {
         String message = "Dissemination Request Syntax Error: The expected "
@@ -395,7 +450,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       }
       else if (isGetDisseminationRequest)
       {
-        getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime, response);
+        getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime, response, request);
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
         logFiner("[FedoraAccessServlet] Servlet Roundtrip "
@@ -513,7 +568,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
    * @throws ServerException If an error occurs in the Access Subsystem.
    */
   public void getDissemination(Context context, String PID, String bDefPID, String methodName,
-      Property[] userParms, Date asOfDateTime, HttpServletResponse response)
+      Property[] userParms, Date asOfDateTime, HttpServletResponse response, HttpServletRequest request)
       throws IOException, ServerException
   {
     ServletOutputStream out = null;
@@ -523,6 +578,20 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                                   userParms, asOfDateTime);
     if (dissemination != null)
     {
+
+        // testing to see what's in request header that might be of interest
+        for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
+            String name = (String)e.nextElement();
+            Enumeration headerValues =  request.getHeaders(name);
+            StringBuffer sb = new StringBuffer();
+            while (headerValues.hasMoreElements()) {
+                sb.append((String) headerValues.nextElement());
+            }
+            String value = sb.toString();
+            System.out.println("FEDORASERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
+            response.setHeader(name,value);
+        }
+
       // Dissemination was successful;
       // Return MIMETypedStream back to browser client
       if (dissemination.MIMEType.equalsIgnoreCase("application/fedora-redirect"))
@@ -549,7 +618,17 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         response.sendRedirect(sb.toString());
       } else
       {
+
         response.setContentType(dissemination.MIMEType);
+        Property[] headerArray = dissemination.header;
+        if(headerArray != null) {
+            for(int i=0; i<headerArray.length; i++) {
+                if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
+                    response.addHeader(headerArray[i].name, headerArray[i].value);
+                    System.out.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
+                }
+            }
+        }
         out = response.getOutputStream();
         long startTime = new Date().getTime();
         int byteStream = 0;

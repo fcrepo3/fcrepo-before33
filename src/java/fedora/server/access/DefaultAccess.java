@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Map;
@@ -281,7 +282,7 @@ public class DefaultAccess extends Module implements Access
       if (methodResults != null)
       {
         MIMETypedStream methodDefs =
-            new MIMETypedStream(CONTENT_TYPE_XML, methodResults);
+            new MIMETypedStream(CONTENT_TYPE_XML, methodResults, null);
         long stopTime = new Date().getTime();
         long interval = stopTime - startTime;
         logFiner("[DefaultAccess] Roundtrip GetBehaviorMethodsXML: "
