@@ -24,6 +24,7 @@ public class ByteArrayInputPanel
     private JTextField m_fileField;
     private JFileChooser m_browse;
     private JRadioButton m_fromTextRadioButton;
+    private static File s_lastDir;
         
     public ByteArrayInputPanel(boolean primitive) {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -51,9 +52,12 @@ public class ByteArrayInputPanel
         g.add(m_fromTextRadioButton);
         g.add(fromFileRadioButton);
         add(fromFile);
-        
-        m_browse=new JFileChooser();
-        
+
+        if (s_lastDir==null) {
+            m_browse=new JFileChooser();
+        } else {
+            m_browse=new JFileChooser(s_lastDir);
+        }
     }
     
     public void actionPerformed(ActionEvent e) {
@@ -61,6 +65,7 @@ public class ByteArrayInputPanel
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = m_browse.getSelectedFile();
+            s_lastDir=file.getParentFile(); // remember the dir for next time
             m_fileField.setText(file.getAbsolutePath());
         }
     }
