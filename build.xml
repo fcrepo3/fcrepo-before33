@@ -210,16 +210,17 @@
   </target>
   
   <target name="wsdl2java"
-      depends="serverprep"
+      depends="prep"
       description="Generate java classes for API-M and API-A in temp/server/java">
     <echo message="Generating java classes for API-M and API-A in temp/server/java"/>
-    <mkdir dir="temp/server/wsdl2java"/>
-    <copy file="inc/server/xsd/wsdl.xsd" todir="temp/server/wsdl2java"/>
-    <copy file="inc/server/xsd/soapenc.xsd" todir="temp/server/wsdl2java"/>
-    <copy file="src/xsd/fedora-types.xsd" todir="temp/server/wsdl2java"/>
-    <copy file="src/xsd/fedora-binding.xsd" todir="temp/server/wsdl2java"/>
+    <mkdir dir="temp/wsdl2java"/>
+    <copy file="inc/server/xsd/wsdl.xsd" todir="temp/wsdl2java"/>
+    <copy file="inc/server/xsd/soapenc.xsd" todir="temp/wsdl2java"/>
+    <copy file="src/xsd/fedora-types.xsd" todir="temp/wsdl2java"/>
+    <copy file="src/xsd/fedora-binding.xsd" todir="temp/wsdl2java"/>
     <echo message="API-M..."/>
-    <copy file="src/wsdl/Fedora-API-M.wsdl" todir="temp/server/wsdl2java"/>
+    <copy file="src/xsd/fedora-auditing.xsd" todir="temp/wsdl2java"/>
+    <copy file="src/wsdl/Fedora-API-M.wsdl" todir="temp/wsdl2java"/>
     <mkdir dir="temp/server/java"/>
     <exec executable="java">
       <arg value="-classpath"/>
@@ -230,7 +231,7 @@
       <arg value="fedora.management"/>
       <arg value="-o"/>
       <arg value="temp/server/java"/>
-      <arg path="src/wsdl/Fedora-API-M.wsdl"/>
+      <arg path="temp/wsdl2java/Fedora-API-M.wsdl"/>
     </exec>
   </target>
     
@@ -282,6 +283,9 @@
 
 <!--
   $Log$
+  Revision 1.14  2002/07/30 12:50:22  cwilper
+  fixed wsdl2java to work off temp copy of api-m.wsdl
+
   Revision 1.13  2002/07/29 18:52:35  cwilper
   modified wsdl2java target to 1) output to a temp dir, 2) put code in the
   fedora.server.management package, and 3) copy the schemas and wsdl all
