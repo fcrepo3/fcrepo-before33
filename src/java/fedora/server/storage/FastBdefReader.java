@@ -188,19 +188,15 @@ public class FastBdefReader extends FastDOReader implements BDefReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastBdefReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastBdefReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -352,19 +348,15 @@ public class FastBdefReader extends FastDOReader implements BDefReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastBdefReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastBdefReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -435,23 +427,18 @@ public class FastBdefReader extends FastDOReader implements BDefReader
           + "underlying error was a  \"" + th.getClass().getName()
           + "\"  . The message was  \"" + th.getMessage() + "\"  .");
     } finally
+    {
+      try
       {
-        if (connection != null)
-        {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastBdefReader] Unexpected error "
-                + "from SQL " + "database. The error was  \""
-                + sqle.getMessage() + "\"  .");
-          }
-        }
+        if (rs != null) rs.close();
+        if (statement != null) statement.close();
+        connectionPool.free(connection);
+      } catch (SQLException sqle)
+      {
+        throw new GeneralException("[FastBdefReader] Unexpected error from SQL "
+            + "database. The error was: " + sqle.getMessage());
       }
+    }
     if (bDefLabel == null || bDefLabel.equalsIgnoreCase(""))
     {
       // Empty result means that the bdef object could not be found in the

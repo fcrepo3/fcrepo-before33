@@ -214,20 +214,16 @@ public class FastBmechReader extends FastDOReader implements BMechReader
                                    + "was \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastBmechReader] Unexpected error "
-                + "from SQL database. The error was \"" + sqle.getMessage()
-                + "\"  .");
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastBmechReader] Unexpected error "
+              + "from SQL database. The error was \"" + sqle.getMessage()
+              + "\"  .");
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -348,19 +344,16 @@ public class FastBmechReader extends FastDOReader implements BMechReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastBmechReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastBmechReader] Unexpected error "
+              + "from SQL database. The error was \"" + sqle.getMessage()
+              + "\"  .");
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -511,20 +504,16 @@ public class FastBmechReader extends FastDOReader implements BMechReader
           + "\"  . The message was  \"" + th.getMessage() + "\"  .");
     } finally
       {
-        if (connection != null)
-        {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastBmechReader] Unexpected error "
-                + "from SQL " + "database. The error was  \""
-                + sqle.getMessage() + "\"  .");
-          }
+      try
+      {
+        if (rs != null) rs.close();
+        if (statement != null) statement.close();
+        connectionPool.free(connection);
+      } catch (SQLException sqle)
+      {
+        throw new GeneralException("[FastBmechReader] Unexpected error "
+            + "from SQL database. The error was \"" + sqle.getMessage()
+            + "\"  .");
         }
       }
     if (bMechLabel == null || bMechLabel.equalsIgnoreCase(""))

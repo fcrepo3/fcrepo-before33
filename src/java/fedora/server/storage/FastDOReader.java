@@ -287,19 +287,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -427,19 +423,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -570,19 +562,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -714,19 +702,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -860,19 +844,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -965,19 +945,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -1116,19 +1092,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -1225,19 +1197,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -1340,19 +1308,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -1498,26 +1462,22 @@ public class FastDOReader implements DOReader
           objectMethodsDefArray[rowCount] = (ObjectMethodsDef)e.nextElement();
           rowCount++;
         }
-     } catch (Throwable th)
-     {
-       throw new GeneralException("[FastDOReader] An error has occured. The "
-           + "underlying error was a  \"" + th.getClass().getName()
-            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
-     } finally
+      } catch (Throwable th)
       {
-        if (connection != null)
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+      } finally
+      {
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
@@ -1726,19 +1686,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore)
@@ -1833,19 +1789,15 @@ public class FastDOReader implements DOReader
             + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
-        if (connection != null)
+        try
         {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+          if (rs != null) rs.close();
+          if (statement != null) statement.close();
+          connectionPool.free(connection);
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+              + "database. The error was: " + sqle.getMessage());
         }
       }
     } else if (isFoundInDefinitiveStore)
@@ -1915,22 +1867,18 @@ public class FastDOReader implements DOReader
           + "underlying error was a  \"" + th.getClass().getName()
           + "\"  . The message was  \"" + th.getMessage() + "\"  .");
     } finally
+    {
+      try
       {
-        if (connection != null)
-        {
-          try
-          {
-            rs.close();
-            statement.close();
-            connectionPool.free(connection);
-            connection.close();
-          } catch (SQLException sqle)
-          {
-            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
-                + "database. The error was: " + sqle.getMessage());
-          }
+        if (rs != null) rs.close();
+        if (statement != null) statement.close();
+        connectionPool.free(connection);
+      } catch (SQLException sqle)
+      {
+        throw new GeneralException("[FastDOReader] Unexpected error from SQL "
+            + "database. The error was: " + sqle.getMessage());
         }
-      }
+    }
     if (doLabel == null || doLabel.equalsIgnoreCase(""))
     {
       // Empty result means that the digital object could not be found in the
