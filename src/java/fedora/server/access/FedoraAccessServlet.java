@@ -744,21 +744,22 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     html.append("<br></br>");
     html.append("<table cellpadding='5'>");
     html.append("<tr>");
-    html.append("<td><font color='red'>PID</td>");
-    html.append("<td> = <td>" + PID + "</td>");
+    html.append("<td><font color='red'>PID</font></td>");
+    html.append("<td> = </td>");
+    html.append("<td>" + PID + "</td>");
     html.append("</tr>");
     html.append("<tr>");
-    html.append("<td><font color='red'>bDefPID</td>");
+    html.append("<td><font color='red'>bDefPID</font></td>");
     html.append("<td> = </td>");
     html.append("<td>" + bDefPID + "</td>");
     html.append("</tr>");
     html.append("<tr>");
-    html.append("<td><font color='red'>methodName</td>");
+    html.append("<td><font color='red'>methodName</font></td>");
     html.append("<td> = </td>");
     html.append("<td>" + methodName + "</td>");
     html.append("</tr>");
     html.append("<tr>");
-    html.append("<td><font color='red'>asOfDateTime</td>");
+    html.append("<td><font color='red'>asOfDateTime</font></td>");
     html.append("<td> = </td>");
     html.append("<td>" + versDate + "</td>");
     html.append("</tr>");
@@ -784,7 +785,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         html.append("</tr>");
     }
     }
-    html.append("</table></center></font>");
+    html.append("</table>");
     html.append("</body></html>");
     out.println(html.toString());
 

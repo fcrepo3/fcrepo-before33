@@ -332,7 +332,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         {
           String message = "[FedoraAccessSoapServlet] Failed to get Behavior "
               + "Definitions <br > Exception: "
-              + e.getClass().getName() + " <br> Reason: "
+              + e.getClass().getName() + "  Reason: "
               + e.getMessage();
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
@@ -423,8 +423,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         } catch (Exception e)
         {
           String message = "[FedoraAccessSoapServlet] No Behavior Methods "
-              + "returned. <br> Exception: " + e.getClass().getName()
-              + " <br> Reason: "  + e.getMessage();
+              + "returned.   Exception: " + e.getClass().getName()
+              + "  Reason: "  + e.getMessage();
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, response, message);
@@ -491,8 +491,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         {
           // FIXME!! Needs more refined Exception handling.
           String message = "[FedoraAccessSoapServlet] No Behavior Methods "
-              + "returned as XML. <br> Exception: " + e.getClass().getName()
-              + " <br> Reason: "  + e.getMessage();
+              + "returned as XML.  Exception: " + e.getClass().getName()
+              + "  Reason: "  + e.getMessage();
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, response, message);
@@ -574,7 +574,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
           {
             // Dissemination request returned nothing.
             String message = "[FedoraAccessSoapServlet] No Dissemination "
-                + "result returned. <br> See server logs for additional info";
+                + "result returned.  See server logs for additional info";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                          userParms, response, message);
@@ -584,10 +584,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
           // FIXME!! Needs more refined Exception handling.
           e.printStackTrace();
           String message = "[FedoraAccessSoapServlet] No Dissemination "
-              + "result returned. <br> Exception: "
+              + "result returned.  Exception: "
               + e.getClass().getName()
-              + " <br> Reason: "  + e.getMessage()
-              + " <br> See server logs for additional info";
+              + "  Reason: "  + e.getMessage()
+              + "  See server logs for additional info";
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, response, message);
@@ -2164,26 +2164,27 @@ public class FedoraAccessSoapServlet extends HttpServlet
     html.append("<br></br>");
     html.append("<table cellpadding='5'>");
     html.append("<tr>");
-    html.append("<td><font color='red'>action_</td>");
+    html.append("<td><font color='red'>action_</font></td>");
     html.append("<td> = </td>");
     html.append("<td>" + action + "</td>");
     html.append("</tr>");
     html.append("<tr>");
-    html.append("<td><font color='red'>PID_</td>");
-    html.append("<td> = <td>" + PID + "</td>");
+    html.append("<td><font color='red'>PID_</font></td>");
+    html.append("<td> = </td>");
+    html.append("<td>" + PID + "</td>");
     html.append("</tr>");
     html.append("<tr>");
-    html.append("<td><font color='red'>bDefPID_</td>");
+    html.append("<td><font color='red'>bDefPID_</font></td>");
     html.append("<td> = </td>");
     html.append("<td>" + bDefPID + "</td>");
     html.append("</tr>");
     html.append("<tr>");
-    html.append("<td><font color='red'>methodName_</td>");
+    html.append("<td><font color='red'>methodName_</font></td>");
     html.append("<td> = </td>");
     html.append("<td>" + methodName + "</td>");
     html.append("</tr>");
     html.append("<tr>");
-    html.append("<td><font color='red'>asOfDateTime_</td>");
+    html.append("<td><font color='red'>asOfDateTime_</font></td>");
     html.append("<td> = </td>");
     html.append("<td>" + versDate + "</td>");
     html.append("</tr>");
@@ -2209,7 +2210,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         html.append("</tr>");
     }
     }
-    html.append("</table></center></font>");
+    html.append("</table>");
     html.append("</body></html>");
     out.println(html.toString());
 
