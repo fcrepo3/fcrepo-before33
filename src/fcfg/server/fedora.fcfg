@@ -144,13 +144,13 @@
               over the wire
             - how the storage subsystem is implemented.
         Parameters:
-            - allowHosts (optional)
+            - allowHosts (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string)
               A comma-separated list of IP ranges that the client's address 
               is compared to. If this is specified, the remote address 
               must match for any Management request to be accepted. 
               If this is not specified, all requests will be accepted unless 
               the remote address matches a deny pattern.
-            - denyHosts (optional)
+            - denyHosts (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string)
               A comma-separated list of IP ranges that the client's address 
               is compared to. If this is specified, the remote address 
               must not match for any Management request to be accepted. 
@@ -170,13 +170,13 @@
               over the wire
             - how the storage subsystem is implemented.
         Parameters:
-            - allowHosts (optional)
+            - allowHosts (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string)
               A comma-separated list of IP ranges that the client's address 
               is compared to. If this is specified, the remote address 
               must match for any Management request to be accepted. 
               If this is not specified, all requests will be accepted unless 
               the remote address matches a deny pattern.
-            - denyHosts (optional)
+            - denyHosts (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string)
               A comma-separated list of IP ranges that the client's address 
               is compared to. If this is specified, the remote address 
               must not match for any Management request to be accepted. 
@@ -263,7 +263,7 @@
             search results may be obtained.  This is only used in cases where
             the number of results is greater than maxResults (as specified
             by the server [above] or the client [in the search request])
-          - connectionPool (optional, default=ConnectionPoolManager's default)
+          - connectionPool (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string, default=ConnectionPoolManager's default)
             The connectionPool providing the connection to the database to
             be used.
          Warning:
@@ -298,12 +298,12 @@
 			http://www.openarchives.org/OAI/2.0/guidelines-oai-identifier.htm
           - adminEmails (required)
             One or more space-separated email addresses, to be given to OAI harvesters.
-          - friends (optional)
+          - friends (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string)
             A space-separated list of URLs to known OAI provider baseURLs.
             This is OAI's provider discovery enabler.  Harvesters can use these to crawl OAI providers.
-          - maxRecords (optional, default=FieldSearch:maxResults, imposed maximum=FieldSearch:maxResults)
+          - maxRecords (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string, default=FieldSearch:maxResults, imposed maximum=FieldSearch:maxResults)
             The maximum number of results to return at a time for ListRecords requests.
-          - maxHeaders (optional, default=FieldSearch:maxResults, imposed maximum=FieldSearch:maxResults)
+          - maxHeaders (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string, default=FieldSearch:maxResults, imposed maximum=FieldSearch:maxResults)
             The maximum number of results to return at a time for ListIdentifiers requests.
 		<param name="repositoryName" value="Your Fedora Repository Name Here"/>
 		<param name="repositoryDomainName" value="example.org"/>
@@ -359,7 +359,7 @@
 	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
 		<comment>This module facilitates obtaining external content via HTTP
                 Parameters:
-                - userAgent (optional, default=Fedora): How to identify the
+                - userAgent (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string, default=Fedora): How to identify the
                   Fedora server in HTTP requests.  This defaults to something
                   reasonable, but if you want to provide more information
                   (such as an admin email address) in the User-Agent HTTP
@@ -371,8 +371,8 @@
             log periodically for diagnostic purposes.
 
             Parameters:
-             - active (optional, default=no): whether to activate this module.  "yes" or "true" activates it.
-             - pollInterval (optional, default=10000): how many milliseconds to wait between each polling.
+             - active (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string, default=no): whether to activate this module.  "yes" or "true" activates it.
+             - pollInterval (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string, default=10000): how many milliseconds to wait between each polling.
             </comment>
 		<param name="active" value="false"/>
 		<param name="pollInterval" value="5000"/>
