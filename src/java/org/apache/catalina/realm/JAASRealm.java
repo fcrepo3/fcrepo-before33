@@ -372,34 +372,59 @@ public class JAASRealm
      */
     protected Principal createPrincipal(String username, Subject subject) {
         // Prepare to scan the Principals for this Subject
-        String password = null; // Will not be carried forward
+        String password = null; // -will- be carried forward
         ArrayList roles = new ArrayList();
 
         // Scan the Principals for this Subject
         Iterator principals = subject.getPrincipals().iterator();
         while (principals.hasNext()) {
             Principal principal = (Principal) principals.next();
+            /* commenting out this existing code, as it prevents tomcat login modules 
+             * from cooperating with additional login modules:
             // No need to look further - that's our own stuff
             if( principal instanceof GenericPrincipal ) {
                 if( log.isDebugEnabled() )
                     log.debug("Found old GenericPrincipal " + principal );
                 return principal;
             }
+            */
             String principalClass = principal.getClass().getName();
             if( log.isDebugEnabled() )
                 log.info("Principal: " + principalClass + " " + principal);
+            log.debug("Principal: " + principalClass + " " + principal);
 
-            if (userClasses.contains(principalClass)) {
-                // Override the default - which is the original user, accepted by
-                // the friendly LoginManager
+            //a generic principal now contributes without shortcircuiting method
+            if (userClasses.contains(principalClass) || (principal instanceof GenericPrincipal)) {
+            	log.debug("principal is either in userClasses or a tomcat generic principal");
                 username = principal.getName();
-                if (principal instanceof IdPasswordPrincipal) {
-                	password = ((IdPasswordPrincipal) principal).getPassword(); //wdn                	
+                if (principal instanceof GenericPrincipal) {                	
+                	password = ((GenericPrincipal) principal).getPassword();
+                	log.debug("JAASRealm got password from generic principal, password=" + password);
+                } else if (principal instanceof IdPasswordPrincipal) {
+                	password = ((IdPasswordPrincipal) principal).getPassword();
+                	log.debug("JAASRealm got password from generic idpasswordprincipal, password=" + password);
+                } else {
+                	log.debug("JAASRealm in neglected else");
+                	log.debug("JAASRealm distributed by Fedora needs fixup");
+                	/* if execution reaches here, you probably added a new principal 
+                	 * if that principal conveys a password needed by a backend call,
+                	 * add another else-if in the code above for that principal.
+                	 * leave this final else intact and in place.    
+                	*/            	
                 }
             }
-            if (roleClasses.contains(principalClass)) {
+            
+            //a generic principal now contributes roles, as opposed to supplies all of them
+            if (principal instanceof GenericPrincipal) {
+            	String[]  tempRoles = ((GenericPrincipal) principal).getRoles();
+            	for (int i = 0; i < tempRoles.length; i++) {
+                    roles.add(tempRoles[i]);            		
+            	}
+            } else if (roleClasses.contains(principalClass)) {
                 roles.add(principal.getName());
             }
+            
+            // following code left intact:
             // Same as Jboss - that's a pretty clean solution
             if( (principal instanceof Group) &&
                  "Roles".equals( principal.getName())) {
@@ -409,16 +434,23 @@ public class JAASRealm
                     Principal roleP=(Principal)en.nextElement();
                     roles.add( roleP.getName());
                 }
-
             }
+            
         }
 
-        // Create the resulting Principal for our authenticated user
+        GenericPrincipal tomcatSeesOnlyThisPrincipal = null;
         if (username != null) {
-            return (new GenericPrincipal(this, username, password, roles));
-        } else {
-            return (null);
+        	log.debug("JAASRealm creating generic principal, username=" 
+                	+ username 
+        			+ ", password=" 
+        			+ password);
+        	tomcatSeesOnlyThisPrincipal = new GenericPrincipal(this, username, password, roles);
+        	log.debug("JAASRealm created generic principal, username=" 
+        	+ tomcatSeesOnlyThisPrincipal.getName() 
+			+ ", password=" 
+			+ tomcatSeesOnlyThisPrincipal.getPassword());
         }
+        return tomcatSeesOnlyThisPrincipal;
     }
 
 
