@@ -7,15 +7,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.Server;
-import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
 class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	//private static final IPathAlgorithm pathAlgorithm = new CNullPathAlgorithm();
+	
+	private static final Configuration conf = Configuration.getInstance();
+	
 	private static Server s_server;
 	static {
 		 try {
@@ -25,23 +26,43 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		 }
 	}
 	private ConnectionPool connectionPool = null;
-
-	public DBPathRegistry() throws LowlevelStorageException{
-		super();
-        ConnectionPoolManager cpmgr=(ConnectionPoolManager) s_server.getModule(
-                "fedora.server.storage.ConnectionPoolManager");        
-        if (cpmgr==null) {
-            throw new LowlevelStorageException(true, 
-                    "Server module not loaded: " 
-                    + "fedora.server.storage.ConnectionPoolManager");
-        } else {
-            try {
-                connectionPool=cpmgr.getPool();
-            } catch (ConnectionPoolNotFoundException cpnfe) {
-                throw new LowlevelStorageException(true, 
-                        "Lowlevel storage can't get default pool.", cpnfe);
-            }
-        }
+//"PIDRegistry"
+	public DBPathRegistry(String registryName, String[] storeBases) throws LowlevelStorageException{
+		super(registryName,storeBases);
+		
+		String username = s_server.getParameter("dbuser");
+		if (username == null) {
+			throw new LowlevelStorageException(true,"must configure dbuser");
+		}
+		String password = s_server.getParameter("dbpass");
+		if (password == null) {
+			throw new LowlevelStorageException(true,"must configure dbpass");
+		}
+		String url = s_server.getParameter("connect_string");
+		if (url == null) {
+			throw new LowlevelStorageException(true,"must configure connect_string");
+		}
+		int minConnections; {
+			String minConnectionsString = s_server.getParameter("pool_min");
+			if (minConnectionsString == null) {
+				throw new LowlevelStorageException(true,"must configure pool_min");
+			}
+			minConnections = Integer.parseInt(minConnectionsString);
+		}
+		int maxConnections; {
+			String maxConnectionsString = s_server.getParameter("pool_max");
+			if (maxConnectionsString == null) {
+				throw new LowlevelStorageException(true,"must configure pool_max");
+			}
+			maxConnections = Integer.parseInt(maxConnectionsString);
+		}
+		try {
+			String driver = "org.gjt.mm.mysql.Driver";
+      			connectionPool = new ConnectionPool(driver, url, username, password,
+				minConnections, /*initConnections,*/ maxConnections, true);
+		} catch (SQLException e) {
+			throw new LowlevelStorageException(true,"sql pool init failure", e);
+		}
 	}
 	
 	public String get(String pid) throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException {
@@ -53,7 +74,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			int paths = 0;
 			connection = connectionPool.getConnection();
 			statement = connection.createStatement();
-			rs = statement.executeQuery("SELECT Location FROM PIDRegistry WHERE PID='" + pid + "'");
+			rs = statement.executeQuery("SELECT Location FROM " + getRegistryName() + " WHERE PID='" + pid + "'");
 			for (; rs.next(); paths++) {
 				path = rs.getString(1);
 			}
@@ -110,8 +131,21 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	}
 
 	public void put (String pid, String path)  throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException  {
+		if (conf.getBackslashIsEscape()) {
+			StringBuffer buffer = new StringBuffer();
+			String backslash = "\\"; //Java quotes will interpolate this as 1 backslash
+			String escapedBackslash = "\\\\"; //Java quotes will interpolate these as 2 backslashes
+			/* Escape each backspace so that DB will correctly record a single backspace,
+			   instead of incorrectly escaping the following character.
+			 */
+			for (int i = 0; i < path.length(); i++) {
+				String s = path.substring(i,i+1);
+				buffer.append(s.equals(backslash) ? escapedBackslash : s);
+			}
+			path = buffer.toString();
+		}
 		try {
-			executeSql("REPLACE INTO PIDRegistry (PID, Location) VALUES ('" + pid + "','" + path + "')");
+			executeSql("REPLACE INTO " + getRegistryName() +" (PID, Location) VALUES ('" + pid + "','" + path + "')");
 		} catch (ObjectNotInLowlevelStorageException e1) {
 			throw new ObjectNotInLowlevelStorageException("put into db registry failed for [" + pid + "]", e1);
 		} catch (LowlevelStorageInconsistencyException e2) {
@@ -121,7 +155,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 
 	public void remove (String pid) throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException {
 		try {
-			executeSql("DELETE FROM PIDRegistry WHERE PIDRegistry.PID='" + pid + "'");
+			executeSql("DELETE FROM " + getRegistryName() + " WHERE " + getRegistryName() + ".PID='" + pid + "'");
 		} catch (ObjectNotInLowlevelStorageException e1) {
 			throw new ObjectNotInLowlevelStorageException("[" + pid + "] not in db registry to delete", e1);
 		} catch (LowlevelStorageInconsistencyException e2) {
@@ -129,9 +163,9 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		}
 	}
 
-	public void auditFiles () throws LowlevelStorageException {
+	public void auditFiles (/*String[] storeBases*/) throws LowlevelStorageException {
 		System.err.println("\nbegin audit:  files-against-registry");
-		traverseFiles(configuration.getStoreBases(), AUDIT_FILES, false, FULL_REPORT);
+		traverseFiles(storeBases, AUDIT_FILES, false, FULL_REPORT);
 		System.err.println("end audit:  files-against-registry (ending normally)");
 	}
 
@@ -143,7 +177,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			try {
 				connection = connectionPool.getConnection();
 				statement = connection.createStatement();
-				rs = statement.executeQuery("SELECT PID FROM PIDRegistry");
+				rs = statement.executeQuery("SELECT PID FROM " + getRegistryName());
 				while (rs.next()) {
 					String pid = rs.getString(1);
 					if ((null == pid) || (0 == pid.length())) {
@@ -167,8 +201,23 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		return hashtable.keys();
 	}
 
-	public void rebuild () throws LowlevelStorageException {
-		// to be done
+	public void rebuild (/*String[] storeBases*/) throws LowlevelStorageException {
+		int report = FULL_REPORT;
+		try {
+			executeSql("DELETE FROM " + getRegistryName() + " WHERE 1");
+		} catch (ObjectNotInLowlevelStorageException e1) {
+		} catch (LowlevelStorageInconsistencyException e2) {
+		}
+		try {
+			System.err.println("\nbegin rebuilding registry from files");
+			traverseFiles(storeBases, REBUILD, false, report); // continues, ignoring bad files
+			System.err.println("end rebuilding registry from files (ending normally)");
+		} catch (Exception e) {
+			if (report != NO_REPORT) {
+				System.err.println("ending rebuild unsuccessfully: " + e.getMessage());
+			}
+			throw new LowlevelStorageException(true, "ending rebuild unsuccessfully", e); //<<====
+		}
 	}
 
 }

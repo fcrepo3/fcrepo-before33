@@ -18,13 +18,21 @@ abstract class PathRegistry implements IPathRegistry {
 	protected static final int AUDIT_FILES = 1;
 	protected static final int REBUILD = 2;
 	
-	protected static final Configuration configuration = Configuration.getInstance();
+	//protected static final Configuration configuration = Configuration.getInstance();
 	
 	public void init () throws LowlevelStorageException {
 	}
-
+	
+	protected final String registryName;
+	protected final String[] storeBases;
 	//private static final IPathAlgorithm pathAlgorithm = new CNullPathAlgorithm();
-	public PathRegistry() {
+	public PathRegistry(String registryName, String storeBases[]) {
+		this.registryName = registryName;
+		this.storeBases = storeBases;
+	}
+	
+	protected final String getRegistryName() {
+		return registryName;
 	}
 	
 	public static final boolean stringNull(String string) {
@@ -58,7 +66,7 @@ abstract class PathRegistry implements IPathRegistry {
 					int j = filename.lastIndexOf(".xml");
 					String pid = null;
 					if (j >= 0) {
-						pid = filename.substring(0,j);
+						pid = PathAlgorithm.decode(filename.substring(0,j));
 					}
 					if (pid == null) {
 						if (report != NO_REPORT) {							
@@ -119,19 +127,26 @@ abstract class PathRegistry implements IPathRegistry {
 		traverseFiles(files, operation, stopOnError, report);
 	}
 	
-	public abstract void rebuild () throws LowlevelStorageException;
-	public abstract void auditFiles () throws LowlevelStorageException;
+	public abstract void rebuild (/*String[] storeBases*/) throws LowlevelStorageException;
+	public abstract void auditFiles (/*String[] storeBases*/) throws LowlevelStorageException;
 	//public abstract void auditRegistry () throws FOSExecutionException, FOSBadParmException;	
 	
 	public void auditRegistry () throws LowlevelStorageException {
 		System.err.println("\nbegin audit:  registry-against-files");
+		System.err.println("aR0");
 		Enumeration keys = keys();
+		System.err.println("aR1");
 		while (keys.hasMoreElements()) {
+		System.err.println("aR2");
 			String pid = (String) keys.nextElement();
+		System.err.println("aR3");
 			try {
 				String path = get(pid);
+		System.err.println("aR4");
 				File file = new File(path);
+		System.err.println("aR5");
 				boolean fileExists = file.exists();
+		System.err.println("aR6");
 				System.err.println((fileExists ? "" : "ERROR: ") +
 					"registry has [" + pid + "] => [" + path + "] " +
 					(fileExists ? "and" : "BUT") +

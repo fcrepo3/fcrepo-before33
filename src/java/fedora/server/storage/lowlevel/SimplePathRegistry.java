@@ -7,11 +7,15 @@ import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
 class SimplePathRegistry extends PathRegistry implements IPathRegistry {
-	private Hashtable  hashtable = null;
+	private Hashtable hashtable = null;
 
-	public SimplePathRegistry() throws LowlevelStorageException {
-		super();
-		rebuild();
+	
+	/** encapsulates all configuration data for this package */
+	private static final Configuration conf = Configuration.getInstance();
+	
+	public SimplePathRegistry(String registryName, String[] storeBases) throws LowlevelStorageException {
+		super(registryName, storeBases);
+		rebuild(); //<<<===!!!
 	}
 	
 	/*
@@ -51,9 +55,9 @@ class SimplePathRegistry extends PathRegistry implements IPathRegistry {
 		}
 	}
 
-	public void auditFiles () throws LowlevelStorageException {
+	public void auditFiles (/*String[] storeBases*/) throws LowlevelStorageException {
 		System.err.println("\nbegin audit:  files-against-registry");
-		traverseFiles(configuration.getStoreBases(), AUDIT_FILES, false, FULL_REPORT);
+		traverseFiles(storeBases, AUDIT_FILES, false, FULL_REPORT);
 		System.err.println("end audit:  files-against-registry (ending normally)");
 	}
 	
@@ -61,13 +65,13 @@ class SimplePathRegistry extends PathRegistry implements IPathRegistry {
 		return hashtable.keys();
 	}
 
-	public void rebuild () throws LowlevelStorageException {
+	public void rebuild (/*String[] storeBases*/) throws LowlevelStorageException {
 		int report = FULL_REPORT;
 		Hashtable temp = this.hashtable;
 		this.hashtable = new Hashtable();
 		try {
 			System.err.println("\nbegin rebuilding registry from files");
-			traverseFiles(configuration.getStoreBases(), REBUILD, false, report); // allows bad files
+			traverseFiles(storeBases, REBUILD, false, report); // allows bad files
 			System.err.println("end rebuilding registry from files (ending normally)");
 		} catch (Exception e) {
 			this.hashtable = temp;

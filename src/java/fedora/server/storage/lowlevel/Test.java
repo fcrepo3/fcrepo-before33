@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 class Test {
-	private static final ILowlevelStorage lowlevelStorage = FileSystemLowlevelStorage.getInstance();
+	private static final ILowlevelStorage lowlevelStorage = FileSystemLowlevelStorage.getPermanentStore();
 	private Test() {
 	}
 	
@@ -40,9 +40,11 @@ class Test {
 							System.err.println("enter audit");
 						} else {
 							try {
+								if (lowlevelStorage == null) System.out.println("no store");
 								lowlevelStorage.audit();
 							} catch (Exception e) {
-								System.out.println("error " + e.getMessage());
+								System.out.println("error1 " + e.getMessage());
+								System.out.println("error1 " + e.getClass());
 							}
 						}
 					} else if (action.equals("rebuild")) {
@@ -52,7 +54,7 @@ class Test {
 							try {
 								lowlevelStorage.rebuild();
 							} catch (Exception e) {
-								System.out.println("error " + e.getMessage());
+								System.out.println("error2 " + e.getMessage());
 							}
 						}			
 					}
@@ -68,7 +70,7 @@ class Test {
 						try {
 							lowlevelStorage.remove(pid);
 						} catch (Exception e) {
-							System.out.println("error: " + e.getMessage());
+							System.out.println("error3: " + e.getMessage());
 						}
 						}
 					} else {
@@ -76,6 +78,7 @@ class Test {
 							System.err.println("enter action (pid (path)), separated only by whitespace");
 						} else {
 						File f = new File(parts[2]);
+						System.out.println("f is null:  " + (f == null));
 						if (action.equals("retrieve")) {
 							FileOutputStream fos = new FileOutputStream(f);
 							try {
@@ -84,7 +87,7 @@ class Test {
 								is.close();
 								fos.close();
 							} catch (Exception e) {
-								System.out.println("error " + e.getMessage());
+								System.out.println("error4 " + e.getMessage());
 							}
 						} else if (action.equals("add") || action.equals("replace")) {
 							FileInputStream fis = new FileInputStream(f);
@@ -92,13 +95,13 @@ class Test {
 								try {
 									lowlevelStorage.add(pid,fis);
 								} catch (Exception e) {
-									System.out.println("error " + e.getMessage());
+									System.out.println("error5 " + e.getMessage());
 								}
 							} else if (action.equals("replace")) {
 								try {
 									lowlevelStorage.replace(pid,fis);
 								} catch (Exception e) {
-									System.out.println("error " + e.getMessage());
+									System.out.println("error6 " + e.getMessage());
 								}				
 							}
 						} else {
@@ -118,7 +121,7 @@ class Test {
 		} catch (IOException e0) {
 			System.err.println("problem reading System.in");
 		}
-			
+		/*	
 		System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!");
 		byte[] bytes = new byte[1];
 		bytes[0] = 32;
@@ -157,6 +160,6 @@ class Test {
 		} catch (Exception e) {
 			System.out.println("7 " + e.getMessage());
 		}
-
+*/
 	}
 }
