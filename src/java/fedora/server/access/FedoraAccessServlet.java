@@ -63,7 +63,7 @@ import fedora.server.utilities.DateUtility;
  * <li>methodName - required name of the method to be executed.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a
  *                version of the digital object at the specified point in time.
- *                (NOT implemented in release 1.0.)
+ *                (NOT currently implemented.)
  * <li>parmArray - optional array of method parameters consisting of name/value
  *                 pairs in the form parm1=value1&parm2=value2...</li>
  * </ul>
@@ -83,7 +83,7 @@ import fedora.server.utilities.DateUtility;
  * <li>PID - required persistent identifier of the digital object.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a
  *                version of the digital object at the specified point in time.
- *                (NOT implemented in release 1.0.)
+ *                (NOT currently implemented.)
  * <li>xml - an optional parameter indicating the requested output format.
  *           A value of "true" indicates a return type of text/xml; the
  *           absence of the xml parameter or a value of "false"
