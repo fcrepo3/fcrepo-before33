@@ -321,9 +321,11 @@ public class FOXMLDODeserializer
 			// DATASTREAMS...
 			//===============
 			} else if (localName.equals("datastream")) {
-				// get datastream attributes...
+				// get datastream container-level attributes...
+				// These are common for all versions of the datastream. 
 				m_dsId=grab(a, F, "ID");
 				m_dsState=grab(a, F, "STATE");
+				/*
                 String altIDsString = grab(a, F, "ALT_IDS");
                 if (altIDsString.length() == 0) {
                     m_dsAltIds = new String[0];
@@ -335,6 +337,7 @@ public class FOXMLDODeserializer
                     m_dsFormatURI = null;
                 }
 				m_dsMimeType=grab(a, F, "MIMETYPE");
+				*/
 				m_dsControlGrp=grab(a, F, "CONTROL_GROUP");
 				String versionable =grab(a, F, "VERSIONABLE");
 				// If dsVersionable is null or missing, default to true.
@@ -355,6 +358,17 @@ public class FOXMLDODeserializer
 				m_dsVersId=grab(a, F, "ID");
 				m_dsLabel=grab(a, F, "LABEL");
 				m_dsCreateDate=DateUtility.convertStringToDate(grab(a, F, "CREATED"));
+				String altIDsString = grab(a, F, "ALT_IDS");
+				if (altIDsString.length() == 0) {
+					m_dsAltIds = new String[0];
+				} else {
+					m_dsAltIds = altIDsString.split(" ");
+				}
+				m_dsFormatURI=grab(a, F, "FORMAT_URI");
+				if (m_dsFormatURI.length() == 0) {
+					m_dsFormatURI = null;
+				}
+				m_dsMimeType=grab(a, F, "MIMETYPE");
 				String sizeString=grab(a, F, "SIZE");
 				if (sizeString!=null && !sizeString.equals("")) {
 					try {
@@ -746,6 +760,9 @@ public class FOXMLDODeserializer
 			m_dsVersId="";
 			m_dsLabel="";
 			m_dsCreateDate=null;
+			m_dsAltIds=new String[0];
+			m_dsFormatURI="";
+			m_dsMimeType="";
 			m_dsSize=-1;
 			//m_dsAdmIds=new HashMap();
 			//m_dsDmdIds=null;
@@ -754,8 +771,8 @@ public class FOXMLDODeserializer
 			m_dsId="";
 			m_dsVersionable=true;
 			m_dsState="";
-			m_dsAltIds=new String[0];
-			m_dsFormatURI="";
+			//m_dsAltIds=new String[0];
+			//m_dsFormatURI="";
 			m_dsInfoType="";
 			m_dsOtherInfoType="";
 			m_dsMDClass=0;

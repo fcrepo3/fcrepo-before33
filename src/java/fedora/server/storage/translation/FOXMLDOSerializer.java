@@ -209,8 +209,9 @@ public class FOXMLDOSerializer
 			List dsList = obj.datastreams(dsid);
 			for (int i=0; i<dsList.size(); i++) {
 				Datastream vds = DOTranslationUtility.setDatastreamDefaults((Datastream) dsList.get(i));
-				// insert the ds elements common to all versions.
+				// insert the ds attributes common to all versions.
 				if (i==0) {
+					/*
 					String altIdsAttr="";
 					String altIds=oneString(vds.DatastreamAltIDs);
 					if (altIds!=null && !altIds.equals("")) {
@@ -220,6 +221,7 @@ public class FOXMLDOSerializer
 					if (vds.DSFormatURI!=null && !vds.DSFormatURI.equals("")) {
 						formatURIAttr=" FORMAT_URI=\"" + vds.DSFormatURI + "\"";
 					}
+					*/
 					String dsURIAttr="";
 					if (m_transContext==DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC){
 						dsURIAttr=" FEDORA_URI=\"" + "info:fedora/" 
@@ -228,14 +230,23 @@ public class FOXMLDOSerializer
 					buf.append("    <" + FOXML_PREFIX 
 						+ ":datastream ID=\"" + vds.DatastreamID + "\""
 						+ dsURIAttr 
-						+ altIdsAttr
+						//+ altIdsAttr
 						+ " STATE=\"" + vds.DSState + "\""
-						+ " MIMETYPE=\"" + vds.DSMIME + "\""
-						+ formatURIAttr
+						//+ " MIMETYPE=\"" + vds.DSMIME + "\""
+						//+ formatURIAttr
 						+ " CONTROL_GROUP=\"" + vds.DSControlGrp + "\""
 						+ " VERSIONABLE=\"" + vds.DSVersionable + "\">\n");
 				}
-				// insert the ds version-level elements
+				// insert the ds version elements
+				String altIdsAttr="";
+				String altIds=oneString(vds.DatastreamAltIDs);
+				if (altIds!=null && !altIds.equals("")) {
+					altIdsAttr=" ALT_IDS=\"" + altIds + "\"";
+				}
+				String formatURIAttr="";
+				if (vds.DSFormatURI!=null && !vds.DSFormatURI.equals("")) {
+					formatURIAttr=" FORMAT_URI=\"" + vds.DSFormatURI + "\"";
+				}
 				String dateAttr="";
 				if (vds.DSCreateDT!=null) {
 					dateAttr=" CREATED=\"" + DateUtility.convertDateToString(vds.DSCreateDT) + "\"";
@@ -244,6 +255,9 @@ public class FOXMLDOSerializer
 					+ ":datastreamVersion ID=\"" + vds.DSVersionID + "\"" 
 					+ " LABEL=\"" + StreamUtility.enc(vds.DSLabel) + "\""
 					+ dateAttr
+					+ altIdsAttr
+					+ " MIMETYPE=\"" + vds.DSMIME + "\""
+					+ formatURIAttr
 					+ " SIZE=\"" + vds.DSSize +  "\">\n");
 			
 				// if E or R insert ds content location as URL
@@ -304,15 +318,17 @@ public class FOXMLDOSerializer
 				+ ":datastream ID=\"" + "AUDIT" + "\"" 
 				+ dsURIAttr
 				+ " STATE=\"" + "A" + "\""
-				+ " MIMETYPE=\"" + "text/xml" + "\""
-				+ " FORMAT_URI=\"" + "info:fedora/fedora-system:format/xml.fedora.audit" + "\""
+				//+ " MIMETYPE=\"" + "text/xml" + "\""
+				//+ " FORMAT_URI=\"" + "info:fedora/fedora-system:format/xml.fedora.audit" + "\""
 				+ " CONTROL_GROUP=\"" + "X" + "\""
 				+ " VERSIONABLE=\"" + "false" + "\">\n");
 			// insert the ds version-level elements
 			buf.append("        <" + FOXML_PREFIX 
 				+ ":datastreamVersion ID=\"" + "AUDIT.0" + "\"" 
 				+ " LABEL=\"" + "Fedora Object Audit Trail" + "\""
-				+ " CREATED=\"" + DateUtility.convertDateToString(obj.getCreateDate()) +  "\">\n");
+				+ " CREATED=\"" + DateUtility.convertDateToString(obj.getCreateDate()) +  "\""
+				+ " MIMETYPE=\"" + "text/xml" + "\""
+				+ " FORMAT_URI=\"" + "info:fedora/fedora-system:format/xml.fedora.audit" + "\">\n");
 			buf.append("            <" + FOXML_PREFIX + ":xmlContent>\n");
 			buf.append("            <" + m_fedoraAuditPrefix + ":auditTrail xmlns:" 
 						+ m_fedoraAuditPrefix + "=\"" + FEDORA_AUDIT_NS + "\">\n");
@@ -343,9 +359,10 @@ public class FOXMLDOSerializer
 			buf.append("            </" + m_fedoraAuditPrefix + ":auditTrail" + ">\n");
 			buf.append("            </" + FOXML_PREFIX + ":xmlContent>\n");
 			// FUTURE: Add digest of datastream content 
-			// (to be calculated in DefaultManagement).
+			/*
 			buf.append("            <" + FOXML_PREFIX + ":contentDigest TYPE=\"MD5\""
 				+ " DIGEST=\"future: hash of content goes here\"/>\n"); 
+			*/
 			buf.append("        </" + FOXML_PREFIX + ":datastreamVersion>\n");				
 			buf.append("    </" + FOXML_PREFIX + ":datastream>\n");
 		}

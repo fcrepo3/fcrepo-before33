@@ -367,19 +367,14 @@ public class DefaultManagement
             }
             ds.isNew=true;
             ds.DSControlGrp=controlGroup;
-            ds.DSLabel=dsLabel;
-            ds.DSLocation=dsLocation;
-            ds.DSFormatURI=formatURI;
-            ds.DSVersionable=versionable;
-            ds.DSMIME=MIMEType;
+			ds.DSVersionable=versionable;
             if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
                 throw new InvalidStateException("The datastream state of \"" + dsState
                         + "\" is invalid. The allowed values for state are: "
                         + " A (active), D (deleted), and I (inactive).");
             }            
             ds.DSState= dsState;
-            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-            ds.DSCreateDT=nowUTC;
+			// set new datastream id if not provided...
             if (dsID==null || dsID.length()==0) {
                 ds.DatastreamID=w.newDatastreamID();
             } else {
@@ -395,8 +390,16 @@ public class DefaultManagement
                     ds.DatastreamID=dsID;
                 }
             }
+			// add version level attributes and
+			// create new ds version id ...
             ds.DSVersionID=ds.DatastreamID + ".0";
-            ds.DatastreamAltIDs = altIDs;
+			ds.DSLabel=dsLabel;
+			ds.DSLocation=dsLocation;
+			ds.DSFormatURI=formatURI;
+			ds.DatastreamAltIDs = altIDs;
+			ds.DSMIME=MIMEType;
+			Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+			ds.DSCreateDT=nowUTC;
             AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
@@ -502,7 +505,7 @@ public class DefaultManagement
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
 
-            // If force is false and the mime type changed, validate the
+            // If "force" is false and the mime type changed, validate the
             // original datastream with respect to any disseminators it is
             // involved in, and keep a record of that information for later
             // (so we can determine whether the mime type change would cause
@@ -515,29 +518,22 @@ public class DefaultManagement
             }
 
             if (orig.DSState.equals("D")) {
-                throw new GeneralException("Can only change state on deleted datastreams.");
+                throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
             }
-            Date nowUTC;  // datastream modified date
+            Date nowUTC;  // variable for ds modified date
             if (orig.DSControlGrp.equals("M")) {
-                    // copy the original datastream, replacing its DSLocation with
-                    // the new location (or the old datastream's default dissemination location, if empty or null),
-                    // triggering to doCommit that it needs to
-                    // be loaded from a new remote location
                     DatastreamManagedContent newds=new DatastreamManagedContent();
+                    // FIXME:  should we consider null input values an
+                    // indication that a ds attribute is NOT changed
+                    // and take previous value?
+                    /*
+					if (altIDs == null) altIDs = orig.DatastreamAltIDs;
+					if (formatURI == null) formatURI = orig.DSFormatURI;
+					*/
+					// update ds attributes that are common to all versions...
                     newds.DatastreamID=orig.DatastreamID;
-                    // make sure it has a different id
-                    newds.DSVersionID=w.newDatastreamID(datastreamId);
-                    if (altIDs == null) altIDs = orig.DatastreamAltIDs;
-                    newds.DatastreamAltIDs = altIDs;
-                    newds.DSLabel=dsLabel;
-                    newds.DSVersionable=versionable;
-                    newds.DSMIME = mimeType;
-                    if (formatURI == null) formatURI = orig.DSFormatURI;
-                    newds.DSFormatURI=formatURI;
-                    nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-                    newds.DSCreateDT=nowUTC;
-                    //newds.DSSize will be computed later
-                    newds.DSControlGrp="M";
+					newds.DSVersionable=versionable;
+					newds.DSControlGrp=orig.DSControlGrp;
                     newds.DSInfoType=orig.DSInfoType;
                     if(dsState==null || dsState.equals("")) {
                       // If reference unspecified leave state unchanged
@@ -550,7 +546,17 @@ public class DefaultManagement
                                   + " A (active), D (deleted), and I (inactive).");
                       }                           
                       newds.DSState = dsState;
-                    }                     
+                    } 
+					// update ds version level attributes, and
+					// make sure ds gets a new version id
+					newds.DSVersionID=w.newDatastreamID(datastreamId);
+					newds.DSLabel=dsLabel;
+					newds.DSMIME = mimeType;
+					newds.DSFormatURI=formatURI;
+					newds.DatastreamAltIDs = altIDs;
+					nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+					newds.DSCreateDT=nowUTC;
+					//newds.DSSize will be computed later                    
                     if (dsLocation==null || dsLocation.equals("")) {
                         // if location unspecified, cause a copy of the
                         // prior content to be made at commit-time
@@ -564,12 +570,12 @@ public class DefaultManagement
                     if (!orig.DSState.equals(newds.DSState)) {
                         w.setDatastreamState(datastreamId, newds.DSState); }
                     // if mimeType was changed, set new mimeType
-                    if (!orig.DSMIME.equals(newds.DSMIME)) {
-                        w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
+                    //if (!orig.DSMIME.equals(newds.DSMIME)) {
+                    //    w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
                     // set new formatURI across all versions
-                    w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
+                    //w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
                     // set new altIDs across all versions
-                    w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
+                    //w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
                     // set new versionable across all versions
                     w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
                     // add the audit record
@@ -588,18 +594,9 @@ public class DefaultManagement
                     throw new GeneralException("Inline XML datastreams must be modified by value, not by reference.");
                 }
                 DatastreamReferencedContent newds=new DatastreamReferencedContent();
+				// update ds attributes that are common to all versions...
                 newds.DatastreamID=orig.DatastreamID;
-                // make sure it has a different id
-                newds.DSVersionID=w.newDatastreamID(datastreamId);
-                newds.DSLabel=dsLabel;
-                if (altIDs == null) altIDs = orig.DatastreamAltIDs;
-                newds.DatastreamAltIDs = altIDs;
                 newds.DSVersionable=versionable;
-                newds.DSMIME = mimeType;
-                if (formatURI == null) formatURI = orig.DSFormatURI;
-                newds.DSFormatURI=formatURI;
-                nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-                newds.DSCreateDT=nowUTC;
                 newds.DSControlGrp=orig.DSControlGrp;
                 newds.DSInfoType=orig.DSInfoType;
                 if(dsState==null || dsState.equals("")) {
@@ -613,7 +610,16 @@ public class DefaultManagement
                               + " A (active), D (deleted), and I (inactive).");
                   }                           
                   newds.DSState = dsState;
-                }                
+                } 
+				// update ds version level attributes, and
+				// make sure ds gets a new version id
+				newds.DSVersionID=w.newDatastreamID(datastreamId);
+				newds.DSLabel=dsLabel;
+				newds.DatastreamAltIDs=altIDs;
+				newds.DSMIME=mimeType;
+				newds.DSFormatURI=formatURI;
+				nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+				newds.DSCreateDT=nowUTC;               
                 if (dsLocation==null || dsLocation.equals("")) {
                     // if location unspecified for referenced or external,
                     // just use the old location
@@ -627,13 +633,14 @@ public class DefaultManagement
                 if (!orig.DSState.equals(newds.DSState)) {
                         w.setDatastreamState(datastreamId, newds.DSState); }
                 // if mimeType was changed, set new mimeType
-                if (!orig.DSMIME.equals(newds.DSMIME)) {
-                    w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
+                //if (!orig.DSMIME.equals(newds.DSMIME)) {
+                //    w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
                 // set new formatURI across all versions
-                w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
+                //w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
                 // set new altIDs across all versions
-                w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
+                //w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
                 // add the audit record
+				w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
                 fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                 audit.id=w.newAuditRecordID();
                 audit.processType="Fedora API-M";
@@ -687,7 +694,7 @@ public class DefaultManagement
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
 
-            // If force is false and the mime type changed, validate the
+            // If "force" is false and the mime type changed, validate the
             // original datastream with respect to any disseminators it is
             // involved in, and keep a record of that information for later
             // (so we can determine whether the mime type change would cause
@@ -700,10 +707,12 @@ public class DefaultManagement
             }
 
             if (orig.DSState.equals("D")) {
-                throw new GeneralException("Can only change state on deleted datastreams.");
+				throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
             }
             if (!orig.DSControlGrp.equals("X")) {
-                throw new GeneralException("Only inline XML datastreams may be modified by value.");
+                throw new GeneralException("Only content of inline XML datastreams may"
+                	+ " be modified by value.\n"
+                	+ "Use modifyDatastreamByReference instead.");
             }
             if (orig.DatastreamID.equals("METHODMAP")
                     || orig.DatastreamID.equals("DSINPUTSPEC")
@@ -726,18 +735,10 @@ public class DefaultManagement
 						((DatastreamXMLMetadata) newds).xmlContent));
 				}
             }
+			//if (altIDs == null) altIDs = orig.DatastreamAltIDs;
+			//if (formatURI == null) formatURI = orig.DSFormatURI;
             newds.DatastreamID=orig.DatastreamID;
-            // make sure it has a different id
-            newds.DSVersionID=w.newDatastreamID(datastreamId);
-            newds.DSLabel=dsLabel;
-            if (altIDs == null) altIDs = orig.DatastreamAltIDs;
-            newds.DatastreamAltIDs = altIDs;
-            newds.DSVersionable=versionable;
-            newds.DSMIME = mimeType;
-            if (formatURI == null) formatURI = orig.DSFormatURI;
-            newds.DSFormatURI = formatURI;
-            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-            newds.DSCreateDT=nowUTC;
+			newds.DSVersionable=versionable;
             newds.DSControlGrp=orig.DSControlGrp;
             newds.DSInfoType=orig.DSInfoType;
             if(dsState==null || dsState.equals("")) {
@@ -752,18 +753,27 @@ public class DefaultManagement
               }                           
               newds.DSState = dsState;
             }
+			// update ds version level attributes, and
+			// make sure ds gets a new version id
+			newds.DSVersionID=w.newDatastreamID(datastreamId);
+			newds.DSLabel=dsLabel;
+			newds.DatastreamAltIDs=altIDs;
+			newds.DSMIME=mimeType;
+			newds.DSFormatURI=formatURI;
+			Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+			newds.DSCreateDT=nowUTC;
             // just add the datastream
             w.addDatastream(newds);
             // if state was changed, set new state
             if (!orig.DSState.equals(newds.DSState)) {
-                        w.setDatastreamState(datastreamId, newds.DSState); }
+            	w.setDatastreamState(datastreamId, newds.DSState); }
             // if mimeType was changed, set new mimeType
-            if (!orig.DSMIME.equals(newds.DSMIME)) {
-                w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
+            //if (!orig.DSMIME.equals(newds.DSMIME)) {
+            //    w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
             // set new formatURI across all versions
-            w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
+            //w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
             // set new altIDs across all versions
-            w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
+            //w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
             // set new versionable across all versions
             w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
             // add the audit record
