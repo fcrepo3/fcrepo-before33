@@ -19,7 +19,7 @@ public class BMechDSBindSpec
 
   public String state;
 
-  public BMechDSBindRule[] dsBindRule;
+  public BMechDSBindRule[] dsBindRules;
 
   public BMechDSBindSpec()
   {
