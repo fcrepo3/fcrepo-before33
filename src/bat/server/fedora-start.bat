@@ -29,7 +29,7 @@ echo Deploying API-M and API-A...
 %JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deployAPI-A.wsdd "http://localhost:8080/fedora/AdminService" 15
 if errorlevel 1 goto deployError
 
-%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deploy.wsdd "http://localhost:8080/fedora/AdminService" 15
+%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deploy.wsdd "http://localhost:8080/fedora/AdminService" 15 "http://localhost:8080/fedora/access/http"
 if errorlevel 1 goto deployError
 
 echo Finished.  To stop the server, use fedora-stop.

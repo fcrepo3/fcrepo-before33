@@ -69,7 +69,7 @@ public abstract class AxisUtility {
     
     public static void showDeployUsage() {
         System.out.println("Usage:");
-        System.out.println("    AxisUtility deploy wsdd_file admin_url timeout_seconds");
+        System.out.println("    AxisUtility deploy wsdd_file admin_url timeout_seconds [finished_url]");
     }
     
     public static boolean serverActive(URL url, int timeoutSeconds) {
@@ -102,7 +102,7 @@ public abstract class AxisUtility {
     public static void main(String args[]) {
         if (args.length>0) {
            if (args[0].equals("deploy")) {
-               if (args.length!=4) {
+               if ((args.length!=4) && (args.length!=5)) {
                    showDeployUsage();
                } else {
                    File wsddFile=new File(args[1]);
@@ -121,7 +121,15 @@ public abstract class AxisUtility {
                            String[] parms=new String[] {"-l" + args[2], wsddFile.toString()};
                            int timeoutSeconds=Integer.parseInt(args[3]);
                            if (serverActive(mainUrl, timeoutSeconds)) {
-                               AdminClient.main(parms); 
+                               AdminClient.main(parms);
+                               if (args.length==5) {
+                                   try {
+                                       serverActive(new URL(args[4]), 2);
+                                   } catch (MalformedURLException murle) {
+                                       System.out.println("finished_url " + args[4] + " was malformed.");
+                                       System.exit(1);
+                                   }
+                               }
                            } else {
                                System.out.println("Giving up deployment... no response from server after " + timeoutSeconds + " seconds.");
                                System.exit(1);
