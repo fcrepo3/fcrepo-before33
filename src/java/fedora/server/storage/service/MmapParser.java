@@ -2,12 +2,18 @@ package fedora.server.storage.service;
 
 /**
  * <p>Title: MmapParser.java</p>
- * <p>Description:  </p>
+ * <p>Description: A class for parsing the special XML format in Fedora
+ * for a Method Map. A DSInputSpec exists within a Behavior Mechanism
+ * Object (bmech) and a Behavior Definition Object (bdef).  The Method Map
+ * defines abstract methods definitions.  In a bdef these are the "behavior
+ * contract."  In a bmech, these are abstract definitions that are then
+ * implemented by the service represented by the bmech.</p>
+ *
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
- * @author Sandy Payette  payette@cs.cornell.edu
- * @version 1.0
- */
+ * @author Sandy Payette
+ * @version 1.
+ **/
 
 import fedora.server.errors.*;
 import fedora.server.storage.types.MethodDef;
@@ -42,6 +48,7 @@ class MmapParser extends DefaultHandler
   private Mmap methodMap;
   private MmapMethodDef methodMapMethod;
   private MmapMethodParmDef methodMapParm;
+  private String behaviorObjectPID;
 
   //private Hashtable wsdlMsgToMethodTbl;
   private Hashtable wsdlOperationToMethodDefTbl;
@@ -56,16 +63,18 @@ class MmapParser extends DefaultHandler
   /**
    *   Constructor to enable another class to initiate the parsing
    */
-  public MmapParser()
+  public MmapParser(String parentPID)
   {
+    behaviorObjectPID = parentPID;
   }
 
   /**
    *   Constructor allows this class to initiate the parsing
    */
-  public MmapParser(InputStream in)
+  public MmapParser(String parentPID, InputStream in)
     throws RepositoryConfigurationException, ObjectIntegrityException
   {
+      behaviorObjectPID = parentPID;
       XMLReader xmlReader = null;
       try
       {
