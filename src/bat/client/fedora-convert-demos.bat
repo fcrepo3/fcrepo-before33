@@ -18,7 +18,7 @@ goto end
 
 :checkEnv
 if "%FEDORA_HOME%" == "" goto noFedoraHome
-if not exist %FEDORA_HOME%\server\config\fedora.fcfg goto configNotFound
+if not exist %FEDORA_HOME%\client\client.jar goto configNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 :checkJava
@@ -37,7 +37,7 @@ goto end
 
 :configNotFound
 echo ERROR: FEDORA_HOME does not appear correctly set.
-echo Configuration cannot be found at %FEDORA_HOME%\server\config\fedora.fcfg
+echo Client directory cannot be found at %FEDORA_HOME%\client
 goto end
 
 :noJavaHome
