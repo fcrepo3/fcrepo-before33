@@ -343,7 +343,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   public fedora.server.types.gen.DatastreamDef[] listDatastreams(String PID, String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getCachedContext();
+    Context context=getUncachedContext();
     try
     {
       fedora.server.storage.types.DatastreamDef[] datastreamDefs =
