@@ -10,9 +10,11 @@ import java.net.MalformedURLException;
 import javax.xml.rpc.ServiceException;
 
 import fedora.client.APIMStubFactory;
+import fedora.client.APIAStubFactory;
 import fedora.client.batch.BatchModifyParser;
 import fedora.client.Uploader;
 import fedora.server.management.FedoraAPIM;
+import fedora.server.access.FedoraAPIA;
 import fedora.server.utilities.StreamUtility;
 
 
@@ -61,6 +63,7 @@ public class AutoModify
   private static String s_rootName = null;
   private static PrintStream s_log = null;
   private static FedoraAPIM s_APIM = null;
+  private static FedoraAPIA s_APIA = null;
   private static Uploader s_UPLOADER = null;
 
   /**
@@ -82,6 +85,7 @@ public class AutoModify
   {
 
     this.s_APIM=APIMStubFactory.getStub(host, port, user, pass);
+    this.s_APIA=APIAStubFactory.getStub(host, port, user, pass);
     this.s_UPLOADER = new Uploader(host, port, user, pass);
 
   }
@@ -118,7 +122,7 @@ public class AutoModify
     {
         in = new FileInputStream(directivesFilePath);
         openLog(logFilePath, "modify-batch");
-        bmp = new BatchModifyParser(s_UPLOADER, s_APIM, in, s_log);
+        bmp = new BatchModifyParser(s_UPLOADER, s_APIM, s_APIA, in, s_log);
 
     } catch (Exception e)
     {

@@ -91,7 +91,7 @@ public class BatchModify
           in = new FileInputStream(file);
           st=System.currentTimeMillis();
           bmp = new BatchModifyParser(Administrator.UPLOADER,
-              Administrator.APIM, in, s_log);
+              Administrator.APIM, Administrator.APIA, in, s_log);
         }
       }
     } catch (Exception e)
