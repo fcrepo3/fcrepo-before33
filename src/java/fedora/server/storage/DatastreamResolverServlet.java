@@ -8,15 +8,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Hashtable;
 
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.DatastreamMediation;
+import fedora.server.access.DisseminationService;
 
 /**
  * <p>Title: DatastreamResolverServlet.java</p>
@@ -37,6 +38,9 @@ public class DatastreamResolverServlet extends HttpServlet
 
   private static Server s_server;
   private static ConnectionPool connectionPool;
+  private static Hashtable dsRegistry;
+  private static int datastreamExpirationLimit;
+  private static final String HTML_CONTENT_TYPE = "text/html";
 
   static
   {
@@ -67,6 +71,21 @@ public class DatastreamResolverServlet extends HttpServlet
       ConnectionPoolManager poolManager = (ConnectionPoolManager)
           s_server.getModule("fedora.server.storage.ConnectionPoolManager");
       connectionPool = poolManager.getPool();
+      String expireLimit = s_server.getParameter("datastreamExpirationLimit");
+      if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
+      {
+        s_server.logWarning("DisseminationService was unable to "
+            + "resolve the datastream expiration limit from the configuration "
+            + "file. The expiration limit has been set to 5 minutes.");
+        datastreamExpirationLimit = 5;
+      } else
+      {
+        Integer I1 =
+            new Integer(expireLimit);
+        datastreamExpirationLimit = I1.intValue();
+        s_server.logFinest("datastreamExpirationLimit: "
+                           + datastreamExpirationLimit);
+      }
     } catch (Throwable th)
     {
       System.err.println("Unable to init DatastreamREsolverServlet. The "
@@ -89,87 +108,92 @@ public class DatastreamResolverServlet extends HttpServlet
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
-    String id = request.getParameter("id");
+    String id = request.getParameter("id").replaceAll("T"," ");
+    System.out.println("[DatastreamResolverServlet] tempID: "+id);
     String dsPhysicalLocation = null;
     String dsControlGroupType = null;
-    Connection connection = null;
-
-    // check for required id parameter
-    if (id == null || id.equalsIgnoreCase(""))
-    {
-      PrintWriter out = response.getWriter();
-      response.setContentType("text/html");
-      out.println("<br>DatastreamResolverServlet: No datastream id specified "
-                  + "in servlet request: " + request.getRequestURI() + "</br>");
-      return;
-    }
+    MIMETypedStream mimeTypedStream = null;
+    DisseminationService ds = null;
+    Timestamp keyTimestamp = null;
+    Timestamp currentTimestamp = null;
+    PrintWriter out = null;
+    ServletOutputStream outStream = null;
 
     try
     {
-      connection = connectionPool.getConnection();
-      String query = "SELECT DS_Physical_Location, DS_Control_Group_Type "
-          + "FROM DatastreamLocation WHERE DS_Temp_ID = '" + id + "';";
-      System.err.println("DatastreamResolverQuery: " + query);
-      Statement statement = connection.createStatement();
-      ResultSet rs = statement.executeQuery(query);
-      ResultSetMetaData rsMeta = rs.getMetaData();
-      int cols = rsMeta.getColumnCount();
-
-      while (rs.next())
+      // Check for required id parameter.
+      if (id == null || id.equalsIgnoreCase(""))
       {
-        String[] results = new String[cols];
-        for (int i=1; i<=cols; i++)
-        {
-          results[i-1] = rs.getString(i);
-        }
-        dsPhysicalLocation = results[0];
-        dsControlGroupType = results[1];
+        out = response.getWriter();
+        response.setContentType(HTML_CONTENT_TYPE);
+        out.println("<br>DatastreamResolverServlet: No datastream id specified "
+            + "in servlet request: " + request.getRequestURI() + "</br>");
+        out.close();
+        return;
       }
 
-      if (dsControlGroupType.equalsIgnoreCase("M"))
+      // Get in-memory hashtable of mappings from Fedora server.
+      ds = new DisseminationService();
+      dsRegistry = ds.dsRegistry;
+      DatastreamMediation dm = (DatastreamMediation)dsRegistry.get(id);
+      dsPhysicalLocation = dm.dsLocation;
+      dsControlGroupType = dm.dsControlGroupType;
+      keyTimestamp = keyTimestamp.valueOf(ds.extractTimestamp(id));
+      currentTimestamp = new Timestamp(new Date().getTime());
+
+      // Deny mechanism requests that fall outside the specified time interval.
+      if (currentTimestamp.getTime() - keyTimestamp.getTime() >
+          datastreamExpirationLimit*1000)
       {
-        // Not yet implemented
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/html");
-        out.println("<br>DatastreamResolverServlet: "
-                    + "Repository Managed Datastreams not yet "
-                   + "supported</br>");
-        s_server.logWarning("DatastreamResolverServlet: "
-            + "Repository Managed Datastreams not yet "
-                   + "supported");
+        out = response.getWriter();
+        response.setContentType(HTML_CONTENT_TYPE);
+        out.println("<br><b>DatastreamResolverServlet Error:</b>"
+                    + "<font color=\"red\"> Mechanism has failed to respond "
+                    + "to the DatastreamResolverServlet within the specified "
+                    + "time limit of \"" + datastreamExpirationLimit + "\""
+                    + "seconds. Datastream access denied.");
         out.close();
-      } else if (dsControlGroupType.equalsIgnoreCase("P"))
+        return;
+      }
+
+      if (dsControlGroupType.equalsIgnoreCase("E"))
         {
-          ExternalContentManager externalContentManager = (ExternalContentManager)
-              s_server.getModule("fedora.server.storage.ExternalContentManager");
-          System.err.println("dsLocationRealURL: "+dsPhysicalLocation);
-          MIMETypedStream mimeTypedStream =
+          ExternalContentManager externalContentManager =
+              (ExternalContentManager)s_server.getModule(
+              "fedora.server.storage.ExternalContentManager");
+          mimeTypedStream =
               externalContentManager.getExternalContent(dsPhysicalLocation);
-          System.err.println("dsLocationMIME: "+mimeTypedStream.MIMEType);
-          ServletOutputStream out = response.getOutputStream();
+          outStream = response.getOutputStream();
           response.setContentType(mimeTypedStream.MIMEType);
-          s_server.logFinest("dsLocationMIME: "+mimeTypedStream.MIMEType);
-          out.write(mimeTypedStream.stream);
-        out.close();
+          outStream.write(mimeTypedStream.stream);
+        } else if (dsControlGroupType.equalsIgnoreCase("M"))
+        {
+          // Not yet implemented. Flag as an error.
+          out = response.getWriter();
+          response.setContentType(HTML_CONTENT_TYPE);
+          out.println("<br>DatastreamResolverServlet: "
+                      + "Repository Managed Datastreams not yet "
+                     + "supported</br>");
+          s_server.logWarning("DatastreamResolverServlet: "
+              + "Repository Managed Datastreams not yet "
+                     + "supported");
       } else if (dsControlGroupType.equalsIgnoreCase("X"))
       {
         // Not yet implemented
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/html");
+        out = response.getWriter();
+        response.setContentType(HTML_CONTENT_TYPE);
         out.println("<br>DatastreamResolverServlet: "
                     + "Repository-Defined XML Metadata Datastreams not yet "
                     + "supported</br>");
         s_server.logWarning("DatastreamResolverServlet: "
                             + "Repository-Defined XML Metadata Datastreams "
                             + "not yet supported</br>");
-        out.close();
       } else
       {
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/html");
+        out = response.getWriter();
+        response.setContentType(HTML_CONTENT_TYPE);
         out.println("<br>DatastreamResolverServlet: Unknown "
                     + "dsControlGroupType: " + dsControlGroupType + "</br>");
-        out.close();
         s_server.logWarning("DatastreamResolverServlet: Unknown "
                             + "dsControlGroupType: " + dsControlGroupType);
       }
@@ -183,12 +207,14 @@ public class DatastreamResolverServlet extends HttpServlet
                                  + "underlying error was a "
                                  + th.getClass().getName() + "The message "
                                  + "was \"" + th.getMessage() + "\"");
+      throw new ServletException("DatastreamResolverServlet returned an error. "
+                                 + "The underlying error was a "
+                                 + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
     } finally
     {
-      if (connection != null)
-      {
-        connectionPool.free(connection);
-      }
+      if (out != null) out.close();
+      if (outStream != null) outStream.close();
     }
 
   }
