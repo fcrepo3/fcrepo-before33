@@ -1137,7 +1137,10 @@ public abstract class Server
             }
         }
     }
-    
+
+    public final static boolean hasInstance(File homeDir) {
+        return (s_instances.get(homeDir)!=null);
+    }
     
     /**
      * Provides an instance of the server specified in the configuration
@@ -1357,6 +1360,9 @@ public abstract class Server
      * have a reference.  In this case, if there is no other reference
      * to the object in the VM, finalization will be called (but you will
      * be unable to catch <code>ShutdownException</code> variants, if thrown).
+     * <p></p>
+     * Right before this is finished, the instance is removed from the server
+     * instances map.
      *
      * @throws ServerShutdownException If a severe server shutdown-related error
      *         occurred.
@@ -1377,6 +1383,7 @@ public abstract class Server
         }
         logFinest("Shutting down server instance.");
         shutdownServer();
+        s_instances.remove(getHomeDir());
     }
 
     /**
