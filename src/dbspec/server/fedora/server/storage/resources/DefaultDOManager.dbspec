@@ -171,7 +171,6 @@
                  word from all corresponding elements in the most recent DC
                  datastream for the object, if any.  Otherwise, they are null.
                  All dublin core fields start and end with a space.</comment>
-		<column name="doDbID" type="int(11)" notNull="true" default="0"/>
 		<column name="pid" type="varchar(32)" notNull="true">
 			<comment>The PID of the object</comment>
 		</column>
@@ -252,7 +251,9 @@
 			When greater-than, greater-than or equal, less-than, less-than or equal,
 			or equals operators are used when querying of the dc:date, the values
 			here are checked.</comment>
-		<column name="doDbID" type="int(11)" notNull="true" default="0" index="doDbID"/>
+		<column name="pid" type="varchar(32)" notNull="true">
+			<comment>The PID of the object</comment>
+		</column>
 		<column name="dcDate" type="timestamp" notNull="true">
 			<comment>A dc:date that was successfully parsed as a date.</comment>
 		</column>
