@@ -186,7 +186,9 @@ public class METSDOSerializer
                 buf.append("FedoraObject");
             }
             buf.append("\"\n    PROFILE=\"");
-            StreamUtility.enc(obj.getContentModelId(), buf);
+            if (obj.getContentModelId()!=null) {
+                StreamUtility.enc(obj.getContentModelId(), buf);
+            }
             buf.append("\">\n  <METS:metsHdr CREATEDATE=\"");
             buf.append(DateUtility.convertDateToString(obj.getCreateDate()));
             buf.append("\" LASTMODDATE=\"");
