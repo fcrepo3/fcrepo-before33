@@ -454,7 +454,37 @@
             <para><userinput>cvs edit
                   MyFile.java</userinput></para>
             <para>Signals that you intend to edit this file.  This creates
-                  what is called a "temporary watch" on </para>
+                  what is called a "temporary watch" on the file, which
+                  signifies to other developers that you are working
+                  on the file.  It also has the effect of "watch" until you
+                  "unedit" the file.</para>
+        </section>
+        <section><title>unedit</title>
+            <para><userinput>cvs unedit MyFile.java</userinput></para>
+            <para>Cancels the effect of a cvs "edit".  This doesn't
+                  revert your changes -- it just signals to the repository
+                  that you are not an editor of this file.  This is typically
+                  done after you have made changes and committed a file
+                  and are moving on to something else, or you've decided that
+                  you're no longer interested in changing the file.</para>
+        </section>
+        <section><title>watch</title>
+            <para><userinput>cvs watch [add|remove]</userinput></para>
+            <para>Adds you to (or removes you from) the list of "watchers" for
+                  all actions on this file.  If the repository is configured to
+                  do email notification (currently not the case), you will get
+                  an email any time someone does something with the file in
+                  the repository.</para>
+        </section>
+        <section><title>watchers</title>
+            <para><userinput>cvs watchers MyFile.java</userinput></para>
+            <para>Lists the people who are watching the file.
+                  This will include anyone who has a temporary watch, too
+                  (someone who is editing the file).  It is a good idea to do
+                  this before editing a file to make sure nobody else is working
+                  on it at the same time. (Unless you've co-ordinated with someone
+                  to do concurrent mods on separate sections of the file, in which
+                  case CVS will do the merging for you at commit-time)</para>
         </section>
       </section>
     </appendix>
@@ -462,6 +492,9 @@
     <para>Here is the revision history of this guide:</para>
     <literallayout>
     $Log$
+    Revision 1.7  2002/05/09 21:24:44  cwilper
+    Finished locking section
+
     Revision 1.6  2002/05/09 16:09:03  cwilper
     Re-formatted xml and added userinput elements in a couple needed places
 
