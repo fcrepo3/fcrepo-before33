@@ -170,7 +170,7 @@ public class BasicDigitalObject
     }
 
     public Iterator disseminatorIdIterator() {
-        return m_disseminators.keySet().iterator();
+        return copyOfKeysForNonEmptyLists(m_disseminators).iterator();
     }
 
     public List disseminators(String id) {
