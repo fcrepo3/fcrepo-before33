@@ -369,9 +369,9 @@ public abstract class DOTranslationUtility {
 	 */
 	public static Datastream normalizeDSLocationURLs(String PID, Datastream ds, int transContext) {
 
-		System.out.println("normalizeDSLocationURLs: ds.DatastreamID=" + ds.DatastreamID);	
-		System.out.println("normalizeDSLocationURLs: ds.DSControlGrp=" + ds.DSControlGrp);
-		System.out.println("normalizeDSLocationURLs: BEFORE DSLocation=" + ds.DSLocation);
+		//System.out.println("normalizeDSLocationURLs: ds.DatastreamID=" + ds.DatastreamID);	
+		//System.out.println("normalizeDSLocationURLs: ds.DSControlGrp=" + ds.DSControlGrp);
+		//System.out.println("normalizeDSLocationURLs: BEFORE DSLocation=" + ds.DSLocation);
 			
 		if (transContext==DOTranslationUtility.DESERIALIZE_INSTANCE) {
 			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
@@ -426,8 +426,8 @@ public abstract class DOTranslationUtility {
 				ds.DSLocation = PID + "+" + ds.DatastreamID + "+" + ds.DSVersionID;
 			}
 		}
-		System.out.println("normalizeDSLocationURLs: AFTER DSLocation=" + ds.DSLocation);
-		System.out.println("normalizeDSLocationURLs: ==================================");	
+		//System.out.println("normalizeDSLocationURLs: AFTER DSLocation=" + ds.DSLocation);
+		//System.out.println("normalizeDSLocationURLs: ==================================");	
 		return ds;
 	}
 
