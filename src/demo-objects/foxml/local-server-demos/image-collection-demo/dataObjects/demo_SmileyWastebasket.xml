@@ -20,7 +20,7 @@
   <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT">
     <foxml:datastreamVersion ID="RELS-EXT.0"  MIMETYPE="text/xml" LABEL="Relationships to other objects">
       <foxml:xmlContent>
-        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/rel#">
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/relations-external#">
           <rdf:Description rdf:about="info:fedora/demo:SmileyWastebasket">
             <rel:isMemberOf rdf:resource="info:fedora/demo:SmileyStuff"/>
           </rdf:Description>
