@@ -324,6 +324,24 @@
 			<!-- missing bDefLabel and bMechLabel-->
 		</sequence>
 	</complexType>
+   <complexType name="FieldSearchQuery">
+       <annotation>
+           <documentation>a full text or field-based query</documentation>
+       </annotation>
+       <choice>
+           <element name="conditions" type="fedora-types:ArrayOfCondition"/>
+           <element name="terms" type="string"/>
+       </choice>
+   </complexType>
+   <complexType name="FieldSearchResult">
+       <annotation>
+           <documentation>the result of a single field search request.</documentation>
+       </annotation>
+       <sequence>
+           <element name="listSession" type="fedora-types:ListSession" minOccurs="0"/>
+           <element name="resultList" type="fedora-types:ArrayOfObjectFields"/>
+       </sequence>
+   </complexType>
 	<complexType name="MethodDef">
 		<annotation>
 			<documentation>method definitions</documentation>
@@ -458,6 +476,20 @@
 		<sequence>
 			<element name="name" type="string"/>
 			<element name="value" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType name="ListSession">
+		<annotation>
+			<documentation>
+               a temporary session, used when client-server communication 
+               involves multiple steps while retrieving a list.
+           </documentation>
+		</annotation>
+		<sequence>
+			<element name="token" type="string"/>
+			<element name="cursor" type="nonNegativeInteger" minOccurs="0"/>
+			<element name="completeListSize" type="nonNegativeInteger" minOccurs="0"/>
+			<element name="expirationDate" type="dateTime" minOccurs="0"/>
 		</sequence>
 	</complexType>
 </schema>
