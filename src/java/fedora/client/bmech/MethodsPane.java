@@ -265,7 +265,13 @@ public class MethodsPane extends JPanel {
 
     private void deleteMethod()
     {
-      methodTableModel.removeRow(methodTable.getSelectedRow());
+      int currentRowIndex = methodTable.getSelectedRow();
+      String methodName = (String)methodTable.getValueAt(currentRowIndex,0);
+      methodTableModel.removeRow(currentRowIndex);
+      if (methodMap.containsKey(methodName))
+      {
+        methodMap.remove(methodName);
+      }
     }
 
     private void addMethodProperties()
