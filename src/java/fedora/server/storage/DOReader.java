@@ -23,22 +23,22 @@ public interface DOReader
      * M=FEDORA_BMECH_OBJECT) this is a handle on.
      */
     public String getFedoraObjectType() throws ServerException;
-    
+
     /**
      * Gets the content model of the object.
      */
     public String getContentModelId() throws ServerException;
-    
+
     /**
      * Gets the date of creation of this object.
      */
     public Date getCreateDate() throws ServerException;
-    
+
     /**
      * Gets the date of the last modification of this object.
      */
     public Date getLastModDate() throws ServerException;
-    
+
     /**
      * Gets the userid of the user with a write lock on this object.
      */
@@ -126,8 +126,8 @@ public interface DOReader
 
    /**
      * Gets a particular Datastream in the digital object.
-     * If the date given is null, the most recent version of the datastream is 
-     * given.  If the date is non-null, the closest version of the Datastream 
+     * If the date given is null, the most recent version of the datastream is
+     * given.  If the date is non-null, the closest version of the Datastream
      * to the specified date/time (without going over) is given.
      * If no datastreams match the given criteria, null is returned.
      *
@@ -190,7 +190,7 @@ public interface DOReader
      * Finally, method implementation information can be found in the
      * Behavior Mechanism object to which that Disseminator refers.
      *
-     * @param bDefPID The PID of a Behavior Definition to which the object 
+     * @param bDefPID The PID of a Behavior Definition to which the object
      *        subscribes.  If this is the special bootstrap bdef,
      *        this method returns null.
      * @param versDateTime The date-time stamp to get appropriate version.
@@ -201,16 +201,17 @@ public interface DOReader
     public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime) throws ServerException;
 
     /**
-     * Same as GetBMechMethods, except it's returned as WSDL.
+     * Same as GetBMechMethods, except it's returned as XML encoded to the
+     * Fedora Method Map schema.
      *
-     * @param bDefPID The PID of a Behavior Definition to which the object 
+     * @param bDefPID The PID of a Behavior Definition to which the object
      *        subscribes.  If this is the special bootstrap bdef,
      *        this method returns null.
      * @param versDateTime The date-time stamp to get appropriate version
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime) throws ServerException;
+    public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime) throws ServerException;
 
     /**
      * Gets list of method parameter definitions that are available on a
@@ -253,7 +254,7 @@ public interface DOReader
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
           throws ServerException;
-          
+
     public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
           String methodName, Date versDateTime) throws ServerException;
 
