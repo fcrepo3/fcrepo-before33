@@ -567,6 +567,8 @@
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/servlet/soapclient/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/distribution/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/images/"/>
+		<copy file="src/jpg/server/version1.jpg" todir="dist/userdocs/server/images/"/>
+		<copy file="src/jpg/server/version2.jpg" todir="dist/userdocs/server/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/fop/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/imagemanip/images/"/>
