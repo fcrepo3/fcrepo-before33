@@ -106,7 +106,8 @@ public class PurgeObject
                     if (!failed) {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
                                 "Purge succeeded.");
-                        m_parent.dispose();
+                        if(m_parent!=null)
+                          m_parent.dispose();
                     }
                 }
             } else {
