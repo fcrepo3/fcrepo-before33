@@ -1127,7 +1127,13 @@ public class FastDOReader implements DisseminatingDOReader
   public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
       throws GeneralException
   {
-    if (bMechReader == null) bMechReader = new DefinitiveBMechReader(PID);
+    try
+    {
+      if (bMechReader == null) bMechReader = new DefinitiveBMechReader(PID);
+    } catch (ServerException se)
+    {
+      System.err.println("GetDSBindingMaps: Can't create DefinitiveBMechReader");
+    }
     return bMechReader.GetDSBindingMaps(versDateTime);
   }
 
