@@ -164,8 +164,11 @@ for (int i=0; i<1; ++i) {
 				dsBindingKeyDBID,
 				"http", 
 				"text/html", 
-				behaviorBindings[i].httpBindingAddress, 
-				behaviorBindings[i].httpBindingOperationLocation, 
+"","",   
+// fedora.server.storage.types.MethodDef has the below two public fields
+// commented out, so for now we put empty strings for these so it compiles.
+//				behaviorBindings[i].httpBindingAddress, 
+//				behaviorBindings[i].httpBindingOperationLocation, 
 				"1");
 		}
 	}	
