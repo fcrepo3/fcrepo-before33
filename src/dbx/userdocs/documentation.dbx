@@ -7,11 +7,13 @@
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
-		<title><inlinemediaobject>
+		<title>
+			<inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject></title>
+			</inlinemediaobject>
+		</title>
 		<title>Fedora System Documentation</title>
 		<subtitle>Software Release 1.0</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
@@ -30,55 +32,104 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
-		<para>This page provides a quick reference to some of the Fedora System Documentation.  Additional information about the Fedora project can be found at the project web site at <ulink url="http://www.fedora.info">http://www.fedora.info</ulink></para>
+		<para>This page provides a quick reference to some of the Fedora System Documentation.  Additional information about the Fedora project can be found at the project web site at <ulink url="http://www.fedora.info">http://www.fedora.info</ulink>
+		</para>
 	</sect1>
 	<sect1>
 		<title>Distribution Package Documentation</title>
 		<simplelist type="vert">
-			<member><ulink url="distribution/installation.html">Installation Guide</ulink></member>
-			<member><ulink url="distribution/release-notes.html">Release Notes</ulink></member>
-			<member><ulink url="distribution/known-issues.html">Known Issues</ulink></member>
-			<member><ulink url="distribution/diststruct.html">Distribution Structure</ulink></member>
-			<member><ulink url="server/serverdocs/index.html">Java Doc</ulink></member>
+			<member>
+				<ulink url="distribution/installation.html">Installation Guide</ulink>
+			</member>
+			<member>
+				<ulink url="distribution/release-notes.html">Release Notes</ulink>
+			</member>
+<!--			<member>
+				<ulink url="distribution/known-issues.html">Known Issues</ulink>
+			</member>-->
+			<member>
+				<ulink url="distribution/diststruct.html">Distribution Structure</ulink>
+			</member>
+			<member>
+				<ulink url="server/serverdocs/index.html">Java Doc</ulink>
+			</member>
 		</simplelist>
 	</sect1>
 	<sect1>
 		<title>Server Documentation</title>
 		<simplelist type="vert">
-			<member><ulink url="server/introduction.html">Introduction to Fedora</ulink></member>
-			<member><ulink url="server/features.html">Features</ulink></member>
-			<member><ulink url="server/webexp.html">Web Exposure</ulink></member>
-			<member><ulink url="server/do-const.html">Digital Object Construction</ulink></member>
-			<member><ulink url="server/localservices/index.html">Fedora Local Services</ulink></member>
+			<member>
+				<ulink url="server/introduction.html">Introduction to Fedora</ulink>
+			</member>
+			<member>
+				<ulink url="server/features.html">Features</ulink>
+			</member>
+			<member>
+				<ulink url="server/webexp.html">Web Exposure</ulink>
+			</member>
+			<member>
+				<ulink url="server/do-const.html">Digital Object Construction</ulink>
+			</member>
+			<member>
+				<ulink url="server/localservices/index.html">Fedora Local Services</ulink>
+			</member>
 		</simplelist>
 	</sect1>
 	<sect1>
 		<title>Client Documentation</title>
 		<simplelist type="vert">
-			<member><ulink url="client/browser/apialite/index.html">Web Browser: Repository Access via API-A-Lite</ulink></member>
-			<member><ulink url="client/browser/search/index.html">Repository Search Interface</ulink></member>
-			<member><ulink url="client/admin-gui/apim/index.html">API-M Admin GUI Client</ulink></member>
-			<member><ulink url="client/browser/oai/index.html">OAI Provider Interface</ulink></member>
-			<member><ulink url="client/admin-gui/apim/do-const.html">Java Application: Admin GUI -- Object Creation and Repository Management via API-M</ulink></member>
-			<member><ulink url="client/admin-gui/batch/index.html">Java Application: Admin GUI -- Batch Utility for Object Creation</ulink></member>
-			<member><ulink url="client/admin-gui/builder/index.html">Java Application: Admin GUI - Behavior Definition and Mechanism Builders</ulink></member>
-			<member><ulink url="client/servlet/soapclient/index.html">Java Servlet: SOAP Access via API-A</ulink></member>
-			<member><ulink url="client/cmd-line/index.html">Command-Line Utilities</ulink></member>
+			<member>
+				<ulink url="client/browser/apialite/index.html">Web Browser: Repository Access via API-A-Lite</ulink>
+			</member>
+			<member>
+				<ulink url="client/browser/search/index.html">Repository Search Interface</ulink>
+			</member>
+			<member>
+				<ulink url="client/admin-gui/apim/index.html">API-M Admin GUI Client</ulink>
+			</member>
+			<member>
+				<ulink url="client/browser/oai/index.html">OAI Provider Interface</ulink>
+			</member>
+<!--			<member>
+				<ulink url="client/admin-gui/apim/do-const.html">Java Application: Admin GUI - Object Creation and Repository Management via API-M</ulink>
+			</member>-->
+			<member>
+				<ulink url="client/admin-gui/batch/index.html">Java Application: Admin GUI -- Batch Utility for Object Creation</ulink>
+			</member>
+			<member>
+				<ulink url="client/admin-gui/builder/index.html">Java Application: Admin GUI - Behavior Definition and Mechanism Builders</ulink>
+			</member>
+			<member>
+				<ulink url="client/servlet/soapclient/index.html">Java Servlet: SOAP Access via API-A</ulink>
+			</member>
+			<member>
+				<ulink url="client/cmd-line/index.html">Command-Line Utilities</ulink>
+			</member>
 		</simplelist>
 	</sect1>
 	<sect1>
 		<title>WSDL API Documentation</title>
 		<simplelist type="vert">
-			<member><ulink url="http://www.fedora.info/definitions/1/0/api/#apialite">API-A-Lite: HTTP Access Interface</ulink></member>
-			<member><ulink url="http://www.fedora.info/definitions/1/0/api/#apia">API-A: SOAP Access Interface</ulink></member>
-			<member><ulink url="http://www.fedora.info/definitions/1/0/api/#apim">API-M: SOAP Management Interface</ulink></member>
+			<member>
+				<ulink url="http://www.fedora.info/definitions/1/0/api/#apialite">API-A-Lite: HTTP Access Interface</ulink>
+			</member>
+			<member>
+				<ulink url="http://www.fedora.info/definitions/1/0/api/#apia">API-A: SOAP Access Interface</ulink>
+			</member>
+			<member>
+				<ulink url="http://www.fedora.info/definitions/1/0/api/#apim">API-M: SOAP Management Interface</ulink>
+			</member>
 		</simplelist>
 	</sect1>
 	<sect1>
 		<title>Licensing and Use Information</title>
 		<simplelist type="vert">
-			<member><ulink url="distribution/license.html">License Information</ulink></member>
-			<member><ulink url="distribution/copyright.html">Copyright Information</ulink></member>
+			<member>
+				<ulink url="distribution/license.html">License Information</ulink>
+			</member>
+			<member>
+				<ulink url="distribution/copyright.html">Copyright Information</ulink>
+			</member>
 		</simplelist>
 	</sect1>
 </article>
