@@ -15,10 +15,10 @@ public class ServiceConsoleCommandFactory {
         for (int i=0; i<methods.length; i++) {
         /*
             public ConsoleCommand(Method method, String methodDescription, 
-            String[] paramNames, String[] paramDescriptions, String returnName, 
+            String[] paramNames, String[] paramDescriptions, 
             String returnDescription) {
         */
-            commands[i]=new ConsoleCommand(methods[i], null, null, null, null, null);
+            commands[i]=new ConsoleCommand(methods[i], null, null, null, null);
         }
         return commands;
     }

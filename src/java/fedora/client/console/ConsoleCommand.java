@@ -12,11 +12,10 @@ public class ConsoleCommand {
     String m_methodDescription;
     String[] m_paramNames;
     String[] m_paramDescriptions;
-    String m_returnName;
     String m_returnDescription;
 
     public ConsoleCommand(Method method, String methodDescription, 
-            String[] paramNames, String[] paramDescriptions, String returnName, 
+            String[] paramNames, String[] paramDescriptions, 
             String returnDescription) {
         m_method=method;
         m_methodDescription=methodDescription;
@@ -28,20 +27,36 @@ public class ConsoleCommand {
             }
         }
         m_paramDescriptions=paramDescriptions;
-        m_returnName=returnName;
         m_returnDescription=returnDescription;
+    }
+    
+    public String getName() {
+        return m_method.getName();
+    }
+    
+    public Class[] getParameterTypes() {
+        return m_method.getParameterTypes();
+    }
+    
+    public String[] getParameterNames() {
+        return m_paramNames;
+    }
+    
+    public String[] getParameterDescriptions() {
+        return m_paramDescriptions;
+    }
+    
+    public String getMethodDescription() {
+        return m_methodDescription;
+    }
+    
+    public Class getReturnType() {
+        return m_method.getReturnType();
     }
     
     public Object invoke(Object instance, Object[] paramValues)
             throws Throwable {
         return m_method.invoke(instance, paramValues);
-    }
-    
-    public JPanel getInvokerPanel() {
-        JPanel panel=new JPanel();
-        panel.setLayout(new BorderLayout());
-        panel.add(new JLabel(toString()));
-        return panel;
     }
     
     public String toString() {
@@ -63,7 +78,7 @@ public class ConsoleCommand {
         return ret.toString();
     }
     
-    private String getUnqualifiedName(Class cl) {
+    public String getUnqualifiedName(Class cl) {
         if (cl==null) {
             return "void";
         }
