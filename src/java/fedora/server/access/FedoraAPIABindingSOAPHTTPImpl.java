@@ -98,7 +98,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     }
   }
 
-  private Context getContext() {
+  private Context getCachedContext() {
       HashMap h=new HashMap();
       h.put("application", "apia");
       h.put("useCachedObject", "true");
@@ -110,10 +110,22 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       return new ReadOnlyContext(h);
   }
 
+  private Context getUncachedContext() {
+      HashMap h=new HashMap();
+      h.put("application", "apia");
+      h.put("useCachedObject", "false");
+      h.put("userId", "fedoraAdmin");
+      HttpServletRequest req=(HttpServletRequest) MessageContext.
+              getCurrentContext().getProperty(
+              HTTPConstants.MC_HTTP_SERVLETREQUEST);
+      h.put("host", req.getRemoteAddr());
+      return new ReadOnlyContext(h);
+  }
+
   public java.lang.String[] getObjectHistory(java.lang.String PID)
           throws java.rmi.RemoteException
   {
-    Context context=getContext();
+    Context context=getCachedContext();
     assertInitialized();
     try
     {
@@ -162,7 +174,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                                   String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getContext();
+    Context context=getCachedContext();
     try
     {
       fedora.server.storage.types.Property[] properties =
@@ -197,7 +209,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                                   String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getContext();
+    Context context=getUncachedContext();
     try
     {
 
@@ -226,7 +238,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   public FieldSearchResult findObjects(String[] resultFields,
           NonNegativeInteger maxResults, FieldSearchQuery query)
           throws RemoteException {
-      Context context=getContext();
+      Context context=getCachedContext();
       assertInitialized();
       try {
           fedora.server.search.FieldSearchResult result=s_access.
@@ -261,7 +273,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
 
   public FieldSearchResult resumeFindObjects(String sessionToken)
           throws java.rmi.RemoteException {
-      Context context=getContext();
+      Context context=getCachedContext();
       assertInitialized();
       try {
           fedora.server.search.FieldSearchResult result=s_access.
@@ -288,7 +300,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                                                                      String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getContext();
+    Context context=getCachedContext();
     try
     {
       fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs =
@@ -317,7 +329,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                                                                      String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getContext();
+    Context context=getCachedContext();
     try
     {
       fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs =
@@ -344,7 +356,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   public fedora.server.types.gen.DatastreamDef[] listDatastreams(String PID, String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getContext();
+    Context context=getCachedContext();
     try
     {
       fedora.server.storage.types.DatastreamDef[] datastreamDefs =
@@ -381,7 +393,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                                                                 String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getContext();
+    Context context=getCachedContext();
     try
     {
       fedora.server.access.ObjectProfile objectProfile =
@@ -414,7 +426,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   public fedora.server.types.gen.RepositoryInfo
       describeRepository() throws java.rmi.RemoteException
   {
-    Context context=getContext();
+    Context context=getCachedContext();
     try
     {
       fedora.server.access.RepositoryInfo repositoryInfo =
