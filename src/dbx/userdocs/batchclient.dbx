@@ -159,70 +159,72 @@
 		<para>The <emphasis>object-processing-map</emphasis> file has one of the following formats, depending on the value of configurable property <emphasis>pids-format</emphasis>.  (This property defaults to <emphasis role="bold">xml</emphasis>)  <emphasis>Batch Build</emphasis> processing results in an <emphasis>object processing map</emphasis> whose individual maps have only <emphasis role="bold">path2spec</emphasis> and <emphasis role="bold">path2object</emphasis> attributes or fields.  Batch ingest processing results in an object processing map whose individual maps have only <emphasis role="bold">path2object</emphasis> and <emphasis role="bold">pid</emphasis> attributes or fields.  <emphasis>Batch build and Ingest</emphasis> processing results in an <emphasis>object processing map</emphasis> whose individual maps have all three <emphasis role="bold">path2spec</emphasis>, <emphasis role="bold">path2object</emphasis> and <emphasis role="bold">pid</emphasis> attributes or fields.</para>
 		<sect2>
 			<title>pids-format=xml</title>
-			<blockquote>
-				<para>&lt;object-processing-map&gt;</para>
-				<para>&lt;map</para>
-				<para>path2spec="/mellon/dist/client/demo/batch-demo/object-specifics/americanacademy.xml" </para>
-				<para>path2object=" /mellon/dist/client/demo/batch-demo/objects/americanacademy.xml"</para>
-				<para>pid="demo:3010" /&gt;</para>
-				<para>	. . .</para>
-				<para>&lt;map</para>
-				<para>path2spec="/mellon/dist/client/demo/batch-demo/object-specifics/vaticanlibrary.xml" </para>
-				<para>path2object="/mellon/dist/client/demo/batch-demo/objects/vaticanlibrary.xml" </para>
-				<para>pid="demo:3019" /&gt;</para>
-				<para>&lt;/object-processing-map&gt;</para>
-				<para></para>
-				<para>pids-format=text</para>
-				<para>(field separator is tab; relative paths used for practical illustration)</para>
-				<para></para>
-				<para>object-specifics/americanacademy.xml	objects/americanacademy.xml	demo:3010</para>
-				<para>. . .</para>
-				<para>object-specifics/vaticanlibrary.xml	objects/vaticanlibrary.xml	demo:3019</para>
-			</blockquote>
+			<programlisting>
+&lt;object-processing-map&gt;
+	&lt;map
+	path2spec="/mellon/dist/client/demo/batch-demo/object-specifics/americanacademy.xml"
+	path2object=" /mellon/dist/client/demo/batch-demo/objects/americanacademy.xml"
+	pid="demo:3010" /&gt;
+	. . .
+	&lt;map
+	path2spec="/mellon/dist/client/demo/batch-demo/object-specifics/vaticanlibrary.xml" 
+	path2object="/mellon/dist/client/demo/batch-demo/objects/vaticanlibrary.xml" 
+	pid="demo:3019" /&gt;
+&lt;/object-processing-map&gt;
+			</programlisting>
 		</sect2>
 		<sect2>
-			<title>object-specifics</title>
-			<para><emphasis>Object-specifics</emphasis> are coded in XML files.  These data include:  object ID, label, and comment; datastream and object metadata and accompanying label; datastream URLs, titles, and labels; disseminator-specific datastream labels.  Where possible, attribute names are the same as in the Fedora METS schema, and so correspond to like-named attributes in the Fedora METS template.  How these map is described below and by running the demo and viewing the results for one of the objects.</para>
-			<para>Any individual substitution is optional.  When absent as a substitution, the value in the template will be used for the resulting Fedora METS object.  (Demo template and <emphasis>object-specific</emphasis> contents are chosen instructively to highlight substitutions made.)  Datastream URLs will generally be specific to an object; practice will show which other substitutions are generally made.</para>
-			<para>All non-METS namespaces used in your own metadata must be declared, as in <emphasis role="bold">xmlns:uvalibadmin</emphasis> in the demo.    </para>
-			<para>Metadata IDs here map to those found in the Fedora <emphasis role="bold">METS:amdSec</emphasis> and Fedora METS:dmdSecFedora element.  The associated metadata is substituted as the content of <emphasis role="bold">METS:xmlData</emphasis> element, which is nested within that Fedora <emphasis role="bold">METS:amdSec</emphasis> or Fedora <emphasis role="bold">METS:dmdSecFedora element</emphasis>.</para>
-			<para>Datastream IDs here map to those found in the Fedora <emphasis role="bold">METS:fileGrp</emphasis> element (the nested, not the nesting, one).  The associated <emphasis role="bold">xlink:href</emphasis> and <emphasis role="bold">xlink:title</emphasis> attributes are substituted into the Fedora <emphasis role="bold">METS:Flocat</emphasis> element, which is nested within that Fedora <emphasis role="bold">METS:fileGrp</emphasis> element.  </para>
-			<para>Datastream labels substitute instead into <emphasis role="bold">METS:structMap</emphasis>  If a datastream label is given specific to a disseminator, it is what’s substituted; otherwise the general datastream label is used.</para>
-			<para>Case matters in attribute and element names.</para>
-			<para>Fedora will retain as PIDs only <emphasis role="bold">OBJIDs</emphasis> prefixed &quot;test:&quot; or &quot;demo:&quot;.  Other <emphasis role="bold">OBJIDs</emphasis> will be replaced by Fedora-generated PIDs.</para>
-			<para><emphasis>object-specs</emphasis> in a given batch should meet the structural requirements of that batch’s template:  same number and tagging of datastreams, same number and tagging of metadata elements.  Since substitutions are optional, individual <emphasis>object-specs</emphasis> cannot have &quot;missing&quot; data:  the resulting object simply retains the template&apos;s value.  Neither can <emphasis>object-specs</emphasis> have &quot;extra&quot; data:  the resulting object simply lacks the <emphasis>object-spec&apos;s</emphasis> data -- because the template isn&apos;t designed to use it.  In either case, the batch goes on.</para>
-			<para>The following <emphasis>object-spec</emphasis> fragment illustrates some of this.</para>
-			<blockquote>
-				<para>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;</para>
-				<para>&lt;input OBJID="test:2800" LABEL="my object" xmlns:METS="http://www.loc.gov/METS/" </para>
-				<para>xmlns:uvalibadmin="http://www.lib.virginia.edu/uvalibadmin/" &gt;</para>
-				<para>&lt;metadata&gt;</para>
-				<para>&lt;metadata ID="RIGHTS1" LABEL=""&gt;</para>
-				<para>&lt;!-- include comment optionally --&gt;</para>				
-				<para>&lt;uvalibadmin:admin&gt;</para>
-				<para>&lt;uvalibadmin:adminrights&gt;</para>
-				<para>&lt;uvalibadmin:policy&gt;</para>
-         		  	<para>&lt;uvalibadmin:access&gt;unrestricted&lt;/uvalibadmin:access&gt;</para>
-		          <para>&lt;uvalibadmin:use&gt;educational&lt;/uvalibadmin:use&gt;</para>
-          		<para>&lt;/uvalibadmin:policy&gt;</para>
-				<para>&lt;/uvalibadmin:adminrights&gt;</para>
-				<para>&lt;/uvalibadmin:admin&gt;</para>
-				<para>&lt;/metadata&gt;</para>
-				<para>. . .</para>
-				<para>other metadata</para>
-				<para>. . .</para>
-				<para>&lt;/metadata&gt;</para>
-				<para>&lt;datastreams&gt;</para>
-				<para>&lt;datastream ID="DS1" xlink:href="http://localhost:8080/demo/batch-demo/thumb/4868090.jpg" xlink:title="" LABEL="copied into every disseminator’s label for this datastream"/&gt;</para>
-				<para>&lt;datastream ID="DS2" xlink:href="http://localhost:8080/demo/batch-demo/thumb/4868090.jpg" xlink:title="" LABEL=" copied into a disseminator’s label for this datastream, unless the disseminator has a nested node with a label herein "&gt;</para>
-				<para>&lt;disseminator ID="" LABEL=" copied into only this disseminator’s label for this datastream " /&gt;</para>
-				<para>&lt;/datastream&gt;</para>
-				<para>. . .</para>
-				<para>other datastreams</para>
-				<para>. . .</para>
-				<para>&lt;/datastreams&gt;</para>
-				<para>&lt;/input&gt;</para>
-			</blockquote>
+			<title>pids-format=text</title>
+			<para>(field separator is tab; relative paths used for practical illustration)</para>
+			<programlisting>
+object-specifics/americanacademy.xml	objects/americanacademy.xml	demo:3010
+. . .
+object-specifics/vaticanlibrary.xml	objects/vaticanlibrary.xml	demo:3019
+			</programlisting>
 		</sect2>
+	</sect1>
+	<sect1>
+		<title>object-specifics</title>
+		<para><emphasis>Object-specifics</emphasis> are coded in XML files.  These data include:  object ID, label, and comment; datastream and object metadata and accompanying label; datastream URLs, titles, and labels; disseminator-specific datastream labels.  Where possible, attribute names are the same as in the Fedora METS schema, and so correspond to like-named attributes in the Fedora METS template.  How these map is described below and by running the demo and viewing the results for one of the objects.</para>
+		<para>Any individual substitution is optional.  When absent as a substitution, the value in the template will be used for the resulting Fedora METS object.  (Demo template and <emphasis>object-specific</emphasis> contents are chosen instructively to highlight substitutions made.)  Datastream URLs will generally be specific to an object; practice will show which other substitutions are generally made.</para>
+		<para>All non-METS namespaces used in your own metadata must be declared, as in <emphasis role="bold">xmlns:uvalibadmin</emphasis> in the demo.    </para>
+		<para>Metadata IDs here map to those found in the Fedora <emphasis role="bold">METS:amdSec</emphasis> and Fedora METS:dmdSecFedora element.  The associated metadata is substituted as the content of <emphasis role="bold">METS:xmlData</emphasis> element, which is nested within that Fedora <emphasis role="bold">METS:amdSec</emphasis> or Fedora <emphasis role="bold">METS:dmdSecFedora element</emphasis>.</para>
+		<para>Datastream IDs here map to those found in the Fedora <emphasis role="bold">METS:fileGrp</emphasis> element (the nested, not the nesting, one).  The associated <emphasis role="bold">xlink:href</emphasis> and <emphasis role="bold">xlink:title</emphasis> attributes are substituted into the Fedora <emphasis role="bold">METS:Flocat</emphasis> element, which is nested within that Fedora <emphasis role="bold">METS:fileGrp</emphasis> element.  </para>
+		<para>Datastream labels substitute instead into <emphasis role="bold">METS:structMap</emphasis>  If a datastream label is given specific to a disseminator, it is what’s substituted; otherwise the general datastream label is used.</para>
+		<para>Case matters in attribute and element names.</para>
+		<para>Fedora will retain as PIDs only <emphasis role="bold">OBJIDs</emphasis> prefixed &quot;test:&quot; or &quot;demo:&quot;.  Other <emphasis role="bold">OBJIDs</emphasis> will be replaced by Fedora-generated PIDs.</para>
+		<para><emphasis>object-specs</emphasis> in a given batch should meet the structural requirements of that batch’s template:  same number and tagging of datastreams, same number and tagging of metadata elements.  Since substitutions are optional, individual <emphasis>object-specs</emphasis> cannot have &quot;missing&quot; data:  the resulting object simply retains the template&apos;s value.  Neither can <emphasis>object-specs</emphasis> have &quot;extra&quot; data:  the resulting object simply lacks the <emphasis>object-spec&apos;s</emphasis> data -- because the template isn&apos;t designed to use it.  In either case, the batch goes on.</para>
+		<para>The following <emphasis>object-spec</emphasis> fragment illustrates some of this.</para>
+		<programlisting>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;input OBJID="test:2800" LABEL="my object" xmlns:METS="http://www.loc.gov/METS/" 
+xmlns:uvalibadmin="http://www.lib.virginia.edu/uvalibadmin/" &gt;
+    &lt;metadata&gt;
+        &lt;metadata ID="RIGHTS1" LABEL=""&gt;
+            &lt;!-- include comment optionally --&gt;
+            &lt;uvalibadmin:admin&gt;
+                &lt;uvalibadmin:adminrights&gt;
+                    &lt;uvalibadmin:policy&gt;
+                        &lt;uvalibadmin:access&gt;unrestricted&lt;/uvalibadmin:access&gt;
+                        &lt;uvalibadmin:use&gt;educational&lt;/uvalibadmin:use&gt;
+                    &lt;/uvalibadmin:policy&gt;
+                &lt;/uvalibadmin:adminrights&gt;
+            &lt;/uvalibadmin:admin&gt;
+        &lt;/metadata&gt;
+        . . .
+        other metadata
+        . . .
+    &lt;/metadata&gt;
+    &lt;datastreams&gt;
+        &lt;datastream ID="DS1" xlink:href="http://localhost:8080/demo/batch-demo/thumb/4868090.jpg" xlink:title="" LABEL="copied into every disseminator’s label for this datastream"/&gt;
+        &lt;datastream ID="DS2" xlink:href="http://localhost:8080/demo/batch-demo/thumb/4868090.jpg" xlink:title="" LABEL=" copied into a disseminator’s label for this datastream, unless the disseminator has a nested node with a label herein "&gt;
+            &lt;disseminator ID="" LABEL=" copied into only this disseminator’s label for this datastream " /&gt;
+        &lt;/datastream&gt;
+        . . .
+        other datastreams
+        . . .
+    &lt;/datastreams&gt;
+&lt;/input&gt;
+		</programlisting>
 	</sect1>
 </article>
