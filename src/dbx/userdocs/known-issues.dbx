@@ -13,11 +13,13 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title><trademark class="trade">Fedora</trademark> Known Issues</title>
+		<title>
+			<trademark class="trade">Fedora</trademark> Known Issues</title>
 		<subtitle>Software Release 1.1</subtitle>
-		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
-			<year>2003</year>
+			<year>2002-2004</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
 		<publisher>

@@ -7,20 +7,16 @@
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
-		<title>
-			<inlinemediaobject>
+		<title><inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
-		<title>
-			<trademark class="trade">Fedora</trademark> API-M-Lite Interface Client User Documentation</title>
+			</inlinemediaobject></title>
+		<title><trademark class="trade">Fedora</trademark> API-M-Lite Interface Client User Documentation</title>
 		<subtitle>Software Release 1.2.1</subtitle>
-		<corpauthor>
-			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
-			<year>2003</year>
+			<year>2002-2004</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
 		<publisher>
@@ -49,16 +45,14 @@
 			</listitem>
 		</itemizedlist>
 		<para>For more information on the method definitions, refer to the API descriptions 
-  located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink>
-		</para>
+  located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink></para>
 	</sect1>
 	<sect1>
 		<title>Client Syntax</title>
 		<variablelist>
 			<title>getNextPID syntax:</title>
 			<varlistentry>
-				<term>http://hostname:port/fedora/mgmt/getNextPID?<emphasis role="bold">[numPIDs=NUMPIDS&amp;][namespace=NAMESPACE&amp;][xml=BOOLEAN&amp;]</emphasis>
-				</term>
+				<term>http://hostname:port/fedora/mgmt/getNextPID?<emphasis role="bold">[numPIDs=NUMPIDS&amp;][namespace=NAMESPACE&amp;][xml=BOOLEAN&amp;]</emphasis></term>
 				<listitem>
 					<para>This syntax requests a list of the next available PIDs. The result is returned as a MIME-typed stream. Items enclosed in square brackets are optional.</para>
 				</listitem>

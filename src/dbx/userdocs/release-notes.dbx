@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-"http://www.altova.com/schemas/docbook/docbookx.dtd"> -->
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> -->
 <article>
 	<articleinfo>
 		<title>
@@ -19,7 +19,7 @@
 			<trademark class="trade">Fedora</trademark> Development Team
 		</corpauthor>
 		<copyright>
-			<year>2003</year>
+			<year>2002-2004</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
 		<publisher>
@@ -44,7 +44,8 @@
 			<sect3>
 				<title>1.  Errors in installation document regarding source installations. (Bugzilla # 3)</title>
 				<para>The installation document has been updated to say that the JAVA_HOME environment variable must be set prior to installing the source distribution since ant requires this environment variable to perform the build. A typographical error regarding changing the permissions on the ant executables has been corrected to read: "This can be done with the command: chmod 755 $FEDORA_DEV/res/ant/bin/*." </para>
-			</sect3>			<sect3>
+			</sect3>
+			<sect3>
 				<title>2. Admin GUI client - Purge Failure error message text does not wrap. (Bugzilla # 5)</title>
 				<para>When an error is encountered while attempting to purge an object, the error message displayed in the message pane does not properly wrap and scrolls off the edge of the window. This has been modified to properly wrap the message text so the complete message is visible regardless of length.</para>
 			</sect3>
@@ -56,83 +57,83 @@
 			<sect3>
 				<title>4. Admin GUI client - New Dialog Enhancement Request . (Bugzilla # 7)</title>
 				<para>In the New object creation dialog, one enters label text and content model text and clicks "create" to ingest the object. Pressing the ENTER key instead of clicking the "create" button has no affect. This has been changed so pressing the ENTER key now has the same result as clicking the  "create" button on NewObjectDialog pane.</para>
-			</sect3>			
+			</sect3>
 			<sect3>
 				<title>5. OAI day-granular "until" parm taken as midnight beginning that date. (Bugzilla # 9)</title>
 				<para>For OAI requests, the code interprets both "from" and "until" parms (which both have day-granularity) as meaning <emphasis>midnight beginning that date</emphasis>.  This is correct for the "from" parm only. The day-granularity "until" parm should be interpreted as "23:59:59pm ending that date".  That way, an OAI request with equal day-granular "from" and "until" parms will return records for that date. Changes have been made regarding the way that the OAI "until" date parm is handled when using "Day" granularity. If Day granularity is being used, the date value for the Until date parm is modified to be Day + 23:59:59. This means that when using Day granualrity, specifying the same Day for both "from" and "until" date parms will result in matching all dates between 00:00:00 and 23:59:59 on that day.</para>
-			</sect3>						
+			</sect3>
 			<sect3>
 				<title>6. Admin GUI client - Export dialogs are incomplete under MAC OSX implementation. (Bugzilla # 10)</title>
 				<para>This problem shows up only on MACs in exports from an opened object. In contrast, the dialogs from both File and Export submenus (export one object, export by type) do work correctly, as with Windows.  These correct cases are where the filename is selected programmatically (i.e., pid.xml). Exports from an opened object (either to export the object as xml or to export a datastream of the object) give dialog boxes which lack filename fields so the user has no opportunity to select the filename. Navigating with the dialogue to a directory with an existing file needs to match the needed mimetype, and selecting that file will result in overwriting that file's contents with either the object xml or the datastream contents, but without changing the filename. The JFileChooser dialog was not allowing entry of filenames in cases where that should be possible.  The workaround was to, for these specific cases, default to the platform's native file dialog by using java.awt.FileDialog.  Note that using the platform's native dialog is not a solution for all file dialog-related actions.
 JFileChooser still needs to be used in some cases because it has an option to only allow the choosing of directories, whereas FileDialog is limited in this regard.</para>
-			</sect3>									
+			</sect3>
 			<sect3>
 				<title>7. Admin GUI client - Log file generated when ingesting objects by type is incorrectly persistent. (Bugzilla # 11)
 				</title>
 				<para>When performing multiple ingest objects by type operations in the same admin client session, the log file displayed for subsequent ingest objects all show the log file from the initial ingest object operation. Closing the admin client between ingest object operations produces the expected results. This behavior is a result of the code checking to see if the log PrintStream is null to decide if a new log file is to be generated. If null, a new log is generated, otherwise it assumes there is an existing log to be displayed. Although the closeLog method in fedora.client.ingest.Ingest closes the log PrintStream(s_log), it does not get immediatley garbage collected so can have a non-null value for some time period after being closed. The code has been modified to explicitly set the PrintStream to null after being closed to resolve this issue.</para>
-			</sect3>							
+			</sect3>
 			<sect3>
 				<title>8. Admin GUI client - After deleting disseminator using ObjectEditor, the bdef drop down list is not refreshed. (Bugzilla # 12)</title>
 				<para>If you open an existing object, delete a disseminator, then try to re-build the disseminator in the same session, the drop down list of behavior definitions does not include the bdef that was associated with the disseminator that was just deleted.  If you exist the object editor after deleting the disseminator, then re-open the object in the editor, then the bdef becomes available again in the drop down. The code has been updated to refresh NewDisseminatorPane after a purge so the bdef used by the purged disseminator is visible once again in the drop down list of bdefs.
 </para>
-			</sect3>						
+			</sect3>
 			<sect3>
 				<title>9. Fedora search not accepting underscores. (Bugzilla # 13)</title>
 				<para>The use of the underscore (_) character in Fedora searches generates an error that varies depending on the sql database being used. There was some obsolete code involving the syntax of the WHERE clause for Search queries where a special string " { escape '/'} " was appended to the end of any WHERE clause search string containing special characters that required escaping according to the SQL92 syntax rules. This code is no longer required and has been removed so underscores in searches no longer produce an error.
 </para>
-			</sect3>									
+			</sect3>
 			<sect3>
 				<title>10. WSDL documentation - Inline wsdl docs for api-m.ingestObject mention incorrect state. (Bugzilla # 14)</title>
 				<para>The wsdl docs inside the Fedora-API-M.wsdl file say that upon ingest, an object's original state is "N", which is wrong.  It should be "A". The comments in API-M.wsdl  for ingestObject and createObject have been updated to reflect that the initial state of object is set to "A".</para>
-			</sect3>				
+			</sect3>
 			<sect3>
 				<title>11. API-M addDisseminator method - addDisseminator method fails to update sql db when more than one pre-existing disseminator. (Bugzilla # 16)</title>
 				<para>When creating an object using the admin GUI client that has one or more existing disseminators, adding a new disseminator adds the disseminator to the object xml, but fails to properly replicate the disseminator in the sql database. This was a bug in DefaultDOReplicator that caused improper updating of the sql database in the case where a new disseminator was added to a data object, via the addDisseminator method of API-M, where the object had one or more pre-existing disseminator(s). The result was a mismatch between the xml representation of the object and the sql database representation. This problem has been corrected.
 </para>
-			</sect3>							
+			</sect3>
 			<sect3>
 				<title>12.Admin GUI client - List of MIME types for XMLMetadata displays types other than text/xml when adding multiple datastreams. (Bugzilla # 17)</title>
 				<para>In the Admin GUI client, the MIME type drop down menu should only list text/xml when the XMLMetadata radio button is checked. This is true when the "new Datastream" button is clicked for the first datastream. However, if the datastream is saved, and another new datastream added, the MIME type list shows 
 MIME types other than text/xml when the XMLMetadata radio button is checked. The code has been modified so that only MIME tpyes of text/xml are displayed for datastreams of type XMLMetadata.
 </para>
-			</sect3>										
+			</sect3>
 			<sect3>
 				<title>14. Demo Objects - Label for DC datastream of demo object obj-ead-finding-aid.xml incorrect. (Bugzilla # 20)
 				</title>
 				<para>The demo object (demo:17) for the Rita Mae Brown finding aid has an incorrect label when you do a viewItemIndex.  The DC record's label is shown as "DC Record for Pavillion III Architectural image object" which is wrong. However, when you click on that link, the underlying xml looks correct. The label for demo object demo:17 has been corrected.</para>
-			</sect3>													
+			</sect3>
 			<sect3>
 				<title>15. Search - resumeFindObjects skips next result in sequence. (Bugzilla # 21)
 				</title>
 				<para>When displaying search results that spanned more than one screen, the search interface will skip over the first entry on the next screen. For example, if the maximum number of search hits to display is 10 and there are 30 hits, the search will display hits 1-10, then 12-21, and then 23-30 omitting hits 11 and 22. This was a bug in fedora.server.search.FiledSearchResultSQLImpl where the cursor in the ResultSet was being positioned incorrectly when there are more results to display than the specified maxResults value. The cursor is now correctly positioned and all hits are displayed.</para>
-			</sect3>																
+			</sect3>
 			<sect3>
 				<title>16. Admin GUI client - Adding/removing datastream bindings in Admin GUI client result in broken disseminations. (Bugzilla # 24)
 				</title>
 				<para>Removing and then re-adding a datastream binding in admin gui for a disseminator breaks the dissemination for that disseminator. XML representation of the object appears correct, but disseminations handled through sql database are broken. This was a bug in fedora.server.storage.DefaultDOReplicator that had to do with the improper updating of dsBind table when the binding map of an existing object was altered. The xml was correct after the update, but replication was incomplete on the sql database. The end result before the fix was an incomplete update of the dsBind table which had the effect of breaking disseminations for that  object because of missing bindings in dsBind table. This has been corrected.</para>
-			</sect3>														
+			</sect3>
 			<sect3>
 				<title>17. Admin GUI client -The state of datastreams is reset to Active in sql db when binding datastreams to a disseminator. (Bugzilla # 25)
 				</title>
 				<para>If a datastream has a state other than Active and it is bound to a disseminator or if already bound and the binding is removed/re-added, the state of the associated datastream is reset in the sql db to Active. This was a bug in fedora.server.storage.DefaultDOReplicator that had to do with the updating of dsBind table when creating or modifying datastream bindings. The datastream state is correct in the xml, but the replication is incorrect in the sql database. Before the fix, the state of the updated bindings was always being set to "A" so if the state of a datastream was other than "A" and a binding that used that datastream was created/modified, the state in the sql database was reset to "A". The state of the datastream in the xml is now used to set the state when creating or updating a binding map. This guarantees that the state in dsBind table will always be the sameas that of datastream in xml.</para>
-			</sect3>																	
+			</sect3>
 			<sect3>
 				<title>18. Batch Utiltity - Sample mets-template.xml used in batch utility demo contains metadata wrapper errors. (Bugzilla # 25)
 				</title>
 				<para>Some of the METS metadata wrapper elements in the mets-template.xml example file used with the batch utility are incorrect. e.g., administrative source metadata is in a techMD wrapper element. The typographical errors have been corrected in the sample template file.</para>
-			</sect3>															
+			</sect3>
 			<sect3>
 				<title>19. Oracle open_cursor limit exceeded (Bugzilla # 29)
 				</title>
 				<para>Users implementing Fedora with Oracle reported that the database would hang when attempting deletes of large numbers of objects. The database hang was the result of exceeding the open_cursor limit set by the database. This problem has only been reported with Oracle. There are apparently some subtle differences between the various JDBC drivers and how they handle cleanup when a ResultSet or Statement is closed. The JDBC code has been modified to better handle these variations and address the open_cursor problem for Oracle users.</para>
-			</sect3>																		
+			</sect3>
 			<sect3>
 				<title>20. FedoraMets ID lengths - ID lengths silently ignored. (Bugzilla # 30)
 				</title>
 				<para>Fedora stores the definitive copy of objects as xml, but for performance also replicates a copy of objects in an sql database. With xml, there are no limitations on the length of attribute values or content. However, the sql database does impose field lengths which restrict the length of identifiers and labels. Users reported the truncation of some identifers in the sql database as a result of having identifier strings in the xml that exceeded the database schema field lengths. The xml validation code has been modified to verify the length of Fedora identifiers.  Exceptions are now thrown at ingest time if any identifiers in the xml exceed the field lengths specified for those fields in the database schema. Currently, the validation is only applied to identifiers. Descriptive fields like labels, will be be truncated if they exceed the database schema field lengths. We will consider extending the validation checking to labels in the next release.</para>
-			</sect3>																			
+			</sect3>
 		</sect2>
-	</sect1>	
+	</sect1>
 	<sect1 id="rel1.2">
 		<title id="rel1.2.title">Release 1.2 - December 15, 2003</title>
 		<para>This new release contains a number of significant new features, including content versioning, the complete implementation of the Fedora Management interface, and major additions to the Fedora Administrator client to enable object creation and editing.  With the advent of content versioning, the Fedora Access interfaces now support date-time stamped requests, so that a client can "go back in time" and see a digital object as it looked in the past.  Additionally, this release provides a migration utility for mass export and mass ingest of objects from either directories or other repositories.  The migration utility enables the moving of objects from older versions of Fedora repositories into the lastest version.  It also is of general utility for copying or moving objects among repositories, for unloading repositories, and for bulk ingest of objects.</para>

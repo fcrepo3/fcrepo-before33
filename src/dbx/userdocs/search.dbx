@@ -20,7 +20,7 @@
 		<corpauthor>
 			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
-			<year>2003</year>
+			<year>2002-2004</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
 		</copyright>
 		<publisher>
@@ -32,7 +32,7 @@
             $Id$ 
         </releaseinfo>
 		<copyright>
-			<year>2003</year>
+			<year>2002-2004</year>
 		</copyright>
 		<publisher>
 			<publishername>Cornell University and The Rector and Visitors of The University of Virginia</publishername>
