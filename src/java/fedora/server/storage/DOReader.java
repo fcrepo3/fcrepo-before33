@@ -18,16 +18,26 @@ import java.io.InputStream;
 public interface DOReader
 {
 
-    public static int FEDORA_OBJECT=0;
-    public static int FEDORA_BDEF_OBJECT=1;
-    public static int FEDORA_BMECH_OBJECT=2;
-
     /**
-     * Gets the type of fedora object (FEDORA_OBJECT, FEDORA_BDEF_OBJECT,
-     * FEDORA_BMECH_OBJECT) this is a handle on.
+     * Gets the type of fedora object (O=FEDORA_OBJECT, D=FEDORA_BDEF_OBJECT,
+     * M=FEDORA_BMECH_OBJECT) this is a handle on.
      */
-//    public int getFedoraObjectType();
-// uncomment when impl'd across all readers
+    public String getFedoraObjectType() throws ServerException;
+    
+    /**
+     * Gets the content model of the object.
+     */
+    public String getContentModelId() throws ServerException;
+    
+    /**
+     * Gets the date of creation of this object.
+     */
+    public Date getCreateDate() throws ServerException;
+    
+    /**
+     * Gets the date of the last modification of this object.
+     */
+    public Date getLastModDate() throws ServerException;
 
     /**
      * Gets the content of the entire digital object as XML.  The object will
