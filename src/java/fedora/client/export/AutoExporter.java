@@ -81,12 +81,19 @@ public class AutoExporter {
             bytes=apim.getObjectXML(pid);
         } else {
         	// For backward compatibility:
-        	// For pre-2.0 repositories, use the "exportObject" APIM method
-        	// and assume the export format of "metslikefedora1".
-        	// For 2.0+ repositories use the "export" method which takes a format.
+        	// For pre-2.0 repositories, use the "exportObject" APIM method. 
+        	// Also pre-2.0 repositories will only export "metslikefedora1".
+        	// For 2.0+ repositories use the "export" method which takes a format arg.
 			StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
 			if (new Integer(stoken.nextToken()).intValue() < 2){
-				bytes=apim.exportObject(pid);
+				if (format==null ||
+					format.equals("metslikefedora1") ||
+					format.equals("default")) {
+					bytes=apim.exportObject(pid);					
+				} else {
+					throw new IOException("You are connected to a pre-2.0 Fedora repository " +
+						"which will only export the format \"metslikefedora1\".");
+				}
 			} else {
 				validateFormat(format);				
 				bytes=apim.export(pid, format);
@@ -115,7 +122,8 @@ public class AutoExporter {
 	public static void validateFormat(String format)
 		throws IOException {
 			if (!format.equals("foxml1.0") && !format.equals("metslikefedora1")) {
-				throw new IOException("Invalid export format. Valid FORMAT values are: 'foxml1.0' or 'metslikefedora1'");
+				throw new IOException("Invalid export format. Valid FORMAT values are: " +
+					"'foxml1.0' or 'metslikefedora1'");
 			}
 		}
 

@@ -265,17 +265,18 @@ public class Export {
 			if ((!exportFormat.equals("metslikefedora1")) &&
 			    (!exportFormat.equals("foxml1.0")) &&
 				(!exportFormat.equals("default"))) {
-					Export.badArgs("FORMAT arg must be 'metslikefedora1', 'foxml1.0, or 'default'");			   
-				}
-            if (exportFormat.equals("default")){
-            	exportFormat=null;           	
-            }
+					Export.badArgs("FORMAT arg must be 'metslikefedora1', 'foxml1.0', or 'default'");			   
+			}
             
 			RepositoryInfo repoinfo = sourceRepoAPIA.describeRepository();
 			StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
 			if (new Integer(stoken.nextToken()).intValue() < 2 // pre-2.0 repo
-				&&	!exportFormat.equals("metslikefedora1")){
-					Export.badArgs("FORMAT arg must be 'metslikefedora1' for pre-2.0 repositories.");				
+				&& ((!exportFormat.equals("metslikefedora1") && 
+					 !exportFormat.equals("default"))))
+					Export.badArgs("FORMAT arg must be 'metslikefedora1' or 'default' for pre-2.0 repository.");				
+			
+			if (exportFormat.equals("default")){
+				exportFormat=null;		
 			}
             if (args[3].indexOf(":")==-1) {
                 // assume args[3] is FTYPS... so multi-export
