@@ -44,7 +44,9 @@ import fedora.server.storage.replication.DOReplicator;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableCreatingConnection;
@@ -447,6 +449,32 @@ public class DefaultDOManager
             // We'll just be conservative for now and call all levels both times.
             // First, serialize the digital object into an Inputstream to be passed to validator.
             
+            // set object status to "A" if "I".  other status changes should occur elsewhere!
+            if (obj.getState().equals("I")) {
+                obj.setState("A");
+            }
+            // set datastream statuses to "A" if "I".  other status changes should occur elsewhere!
+            Iterator dsIter=obj.datastreamIdIterator();
+            while (dsIter.hasNext()) {
+                List dsList=(List) obj.datastreams((String) dsIter.next());
+                for (int i=0; i<dsList.size(); i++) {
+                    Datastream ds=(Datastream) dsList.get(i);
+                    if (ds.DSState.equals("I")) {
+                        ds.DSState="A";
+                    }
+                }
+            }
+            // same thing, but with disseminators
+            Iterator dissIter=obj.disseminatorIdIterator();
+            while (dissIter.hasNext()) {
+                List dissList=(List) obj.disseminators((String) dissIter.next());
+                for (int i=0; i<dissList.size(); i++) {
+                    Disseminator diss=(Disseminator) dissList.get(i);
+                    if (diss.dissState.equals("I")) {
+                        diss.dissState="A";
+                    }
+                }
+            }
             // set last mod date, in UTC
             obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
             // Set useSerializer to false to disable the serializer (for debugging/testing).
@@ -671,6 +699,28 @@ public class DefaultDOManager
                 // deserialize it first
                 BasicDigitalObject obj=new BasicDigitalObject();
                 m_translator.deserialize(in2, obj, format, encoding);
+                // then, before doing anything, change the object status to I,
+                // and all datastreams and disseminators' statuses to I.
+                // objects,
+                obj.setState("I");
+                // datastreams,
+                Iterator dsIter=obj.datastreamIdIterator();
+                while (dsIter.hasNext()) {
+                    List dsList=(List) obj.datastreams((String) dsIter.next());
+                    for (int i=0; i<dsList.size(); i++) {
+                        Datastream ds=(Datastream) dsList.get(i);
+                        ds.DSState="I";
+                    }
+                }
+                // ...finally, disseminators
+                Iterator dissIter=obj.disseminatorIdIterator();
+                while (dissIter.hasNext()) {
+                    List dissList=(List) obj.disseminators((String) dissIter.next());
+                    for (int i=0; i<dissList.size(); i++) {
+                        Disseminator diss=(Disseminator) dissList.get(i);
+                        diss.dissState="I";
+                    }
+                }
                 // do we need to generate a pid?
                 if (obj.getPid().startsWith("test:")) {
                     getServer().logFinest("Stream contained PID with 'test' namespace-id... will use PID from stream.");
