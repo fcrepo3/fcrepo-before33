@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
@@ -69,10 +70,19 @@ public class METSLikeDOSerializer
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
 
-    private static String s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
-    private static String s_localServerUrlStartWithoutPort; // "http://actual.hostname/"
+    private static Pattern s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
+    private static Pattern s_localServerUrlStartWithoutPort; // "http://actual.hostname/"
 
     public METSLikeDOSerializer() {
+    }
+
+    public DOSerializer getInstance() {
+        return new METSLikeDOSerializer();
+    }
+
+    public void serialize(DigitalObject obj, OutputStream out, String encoding)
+            throws ObjectIntegrityException, StreamIOException,
+            UnsupportedEncodingException {
         // get the host info in a static var so search/replaces are quicker later
         if (s_localServerUrlStartWithPort==null) {
             String fedoraHome=System.getProperty("fedora.home");
@@ -96,19 +106,12 @@ public class METSLikeDOSerializer
                     System.exit(1);
                 }
             }
-            s_localServerUrlStartWithPort="http://" + fedoraServerHost + ":" 
-                    + fedoraServerPort + "/";
-            s_localServerUrlStartWithoutPort="http://" + fedoraServerHost + "/"; 
+            s_localServerUrlStartWithPort=Pattern.compile("http://" 
+                    + fedoraServerHost + ":" + fedoraServerPort + "/");
+            s_localServerUrlStartWithoutPort=Pattern.compile("http://" 
+                    + fedoraServerHost + "/"); 
         }
-    }
-
-    public DOSerializer getInstance() {
-        return new METSLikeDOSerializer();
-    }
-
-    public void serialize(DigitalObject obj, OutputStream out, String encoding)
-            throws ObjectIntegrityException, StreamIOException,
-            UnsupportedEncodingException {
+        // now do serialization stuff
         StringBuffer buf=new StringBuffer();
         appendXMLDeclaration(obj, encoding, buf);
         appendRootElementStart(obj, buf);
@@ -288,8 +291,10 @@ public class METSLikeDOSerializer
                 // host identifier.
                 try {
                     String xml=new String(ds.xmlContent, "UTF-8");
-                    xml.replaceAll(s_localServerUrlStartWithPort, "http://local.fedora.server/");
-                    xml.replaceAll(s_localServerUrlStartWithoutPort, "http://local.fedora.server/");
+                    xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
+                            "http://local.fedora.server/");
+                    xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
+                            "http://local.fedora.server/");
                     buf.append(xml);
                 } catch (UnsupportedEncodingException uee) {
                     // wont happen, java always supports UTF-8
@@ -464,8 +469,8 @@ public class METSLikeDOSerializer
                     }
                     // replace any local machine+port-specific urls to
                     // machine-neutral ones
-                    dsc.DSLocation.replaceAll(s_localServerUrlStartWithPort, "http://local.fedora.server/");
-                    dsc.DSLocation.replaceAll(s_localServerUrlStartWithoutPort, "http://local.fedora.server/");
+                    dsc.DSLocation=s_localServerUrlStartWithPort.matcher(dsc.DSLocation).replaceAll("http://local.fedora.server/");
+                    dsc.DSLocation=s_localServerUrlStartWithoutPort.matcher(dsc.DSLocation).replaceAll("http://local.fedora.server/");
                     String sizeString=" SIZE=\"" + dsc.DSSize + "\"";
                     String admIDString=getIdString(obj, dsc, true);
                     String dmdIDString=getIdString(obj, dsc, false);

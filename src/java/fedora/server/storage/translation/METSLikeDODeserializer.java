@@ -30,6 +30,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -174,6 +175,9 @@ public class METSLikeDODeserializer
 
     private int m_queryBehavior;
 
+    private static Pattern s_localPattern; // "http://local.fedora.server/"
+    private static String s_hostInfo; // "http://actual.hostname:8080/"
+
     public METSLikeDODeserializer()
             throws FactoryConfigurationError, ParserConfigurationException,
             SAXException, UnsupportedEncodingException {
@@ -301,32 +305,35 @@ public class METSLikeDODeserializer
 
         // Lastly, if any urls user fedora.local.server, change them
         // to the ACTUAL fedoraServerHost and fedoraServerPort
-        String fedoraHome=System.getProperty("fedora.home");
-        String fedoraServerHost=null;
-        String fedoraServerPort=null;
-        if (fedoraHome==null || fedoraHome.equals("")) {
-            // if fedora.home is undefined or empty, assume we're testing,
-            // in which case the host and port will be taken from system
-            // properties
-            fedoraServerHost=System.getProperty("fedoraServerHost");
-            fedoraServerPort=System.getProperty("fedoraServerPort");
-        } else {
-            try {
-                Server s=Server.getInstance(new File(fedoraHome));
-                fedoraServerHost=s.getParameter("fedoraServerHost");
-                fedoraServerPort=s.getParameter("fedoraServerPort");
-            } catch (InitializationException ie) {
-                // can only possibly happen during failed testing, in which 
-                // case it's ok to do a System.exit
-                System.err.println("STARTUP ERROR: " + ie.getMessage());
-                System.exit(1);
+        if (s_hostInfo==null) {
+            String fedoraHome=System.getProperty("fedora.home");
+            String fedoraServerHost=null;
+            String fedoraServerPort=null;
+            if (fedoraHome==null || fedoraHome.equals("")) {
+                // if fedora.home is undefined or empty, assume we're testing,
+                // in which case the host and port will be taken from system
+                // properties
+                fedoraServerHost=System.getProperty("fedoraServerHost");
+                fedoraServerPort=System.getProperty("fedoraServerPort");
+            } else {
+                try {
+                    Server s=Server.getInstance(new File(fedoraHome));
+                    fedoraServerHost=s.getParameter("fedoraServerHost");
+                    fedoraServerPort=s.getParameter("fedoraServerPort");
+                } catch (InitializationException ie) {
+                    // can only possibly happen during failed testing, in which 
+                    // case it's ok to do a System.exit
+                    System.err.println("STARTUP ERROR: " + ie.getMessage());
+                    System.exit(1);
+                }
             }
+            s_hostInfo="http://" + fedoraServerHost;
+            if (!fedoraServerPort.equals("80")) {
+                s_hostInfo=s_hostInfo + ":" + fedoraServerPort;
+            }
+            s_hostInfo=s_hostInfo + "/";
+            s_localPattern=Pattern.compile("http://local.fedora.server/");
         }
-        String hostInfo="http://" + fedoraServerHost;
-        if (!fedoraServerPort.equals("80")) {
-            hostInfo=hostInfo + ":" + fedoraServerPort;
-        }
-        hostInfo=hostInfo + "/";
         // There are two places where these need to be replaced.
         // 1) In datastream that are references, and
         dsIdIter=obj.datastreamIdIterator();
@@ -338,7 +345,7 @@ public class METSLikeDODeserializer
                 if (ds.DSLocation!=null && 
                         ds.DSLocation.startsWith("http://local.fedora.server/")) {
                     // That's our cue.. do the change
-                    ds.DSLocation=hostInfo + ds.DSLocation.substring(27);
+                    ds.DSLocation=s_hostInfo + ds.DSLocation.substring(27);
                 }
             }
         }
@@ -349,7 +356,7 @@ public class METSLikeDODeserializer
                 DatastreamXMLMetadata ds=(DatastreamXMLMetadata) datastreams.get(i);
                 try {
                     String xml=new String(ds.xmlContent, "UTF-8");
-                    xml.replaceAll("http://local.fedora.server/", hostInfo);
+                    xml=s_localPattern.matcher(xml).replaceAll(s_hostInfo);
                     ds.xmlContent=xml.getBytes("UTF-8");
                 } catch (UnsupportedEncodingException uee) {
                     // wont happen, java always supports UTF-8
