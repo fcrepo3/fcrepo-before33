@@ -5,8 +5,11 @@ import javax.xml.parsers.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -103,7 +106,7 @@ public class DOValidatorXMLSchema
     {
       try
       {
-        validate(new InputSource(new FileInputStream(objectAsFile)));
+        validate(new InputSource(getInputStreamWithoutSchemaLocations(new FileInputStream(objectAsFile))));
       }
       catch (IOException e)
       {
@@ -114,13 +117,42 @@ public class DOValidatorXMLSchema
       }
     }
 
+    /**
+     * This is necessary so that the XML schema validation doesn't take into account
+     * the schema locations specified via xsi:schemaLocation and xsi:noNamespaceSchemaLocation
+     * in the file.  They should be ignored because we explicitly tell the parser what
+     * schema to validate with, and if other schema locations are specified, it could
+     * cause the server to hang for a long time if they can't be resolved...and they're 
+     * not even needed.
+     */
+    private InputStream getInputStreamWithoutSchemaLocations(InputStream in) 
+            throws GeneralException {
+        try {
+            BufferedReader rdr = new BufferedReader(
+                      new InputStreamReader(in, "UTF-8"));
+            StringBuffer buf=new StringBuffer();
+            String line=rdr.readLine();
+            while (line!=null) {
+                buf.append(line.replaceAll("schemaLocation", "schemaNoitacol")
+                        .replaceAll("SchemaLocation", "SchemaNoitacol")
+                        + "\n"); 
+                line = rdr.readLine();
+            }
+            rdr.close();
+            return new ByteArrayInputStream(buf.toString().getBytes("UTF-8"));
+        } catch (Exception e) {
+            throw new GeneralException("Error during getInputStreamWithoutSchemaLocations: " 
+                    + e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
     public void validate(InputStream objectAsStream)
       throws ObjectValidityException, GeneralException
     {
-      validate(new InputSource(objectAsStream));
+      validate(new InputSource(getInputStreamWithoutSchemaLocations(objectAsStream)));
     }
 
-    public void validate(InputSource objectAsSource)
+    private void validate(InputSource objectAsSource)
       throws ObjectValidityException, GeneralException
     {
       InputSource doXML = objectAsSource;
