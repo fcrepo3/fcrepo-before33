@@ -129,7 +129,7 @@ status() {
 case "$1" in
 	admin)
 		shift
-		init "$@"
+		admin "$@"
 		;;
 	init)
 		shift
