@@ -132,7 +132,7 @@
 		<comment>MySQL database on UVA test host (known to work)</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
-		<param name="jdbcURL" value="jdbc:mysql://icarus.lib.virginia.edu:3306/FedoraObjects"/>
+		<param name="jdbcURL" value="jdbc:mysql://icarus.lib.virginia.edu:3306/FedoraObjectsTest"/>
 		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
 		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
