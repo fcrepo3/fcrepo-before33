@@ -199,6 +199,9 @@
 		<column name="mDate" type="timestamp" notNull="true">
 			<comment>The date the object was last modified.</comment>
 		</column>
+		<column name="dcmDate" type="timestamp" notNull="false">
+			<comment>The date the primary dublin core record was last modified.</comment>
+		</column>
 		<column name="dcTitle" type="text" notNull="false">
 			<comment>All unique words from the dc:title values, delimited by space.</comment>
 		</column>
