@@ -27,6 +27,10 @@ public class IdPasswordPrincipal extends IdPrincipal {
 	public String getPassword() {
 		return password;
 	}
+	
+	public String toString() {
+		return super.toString() + ": password=" + password;  
+	}
 
 	public static void main(String[] args) {
 	}
