@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import java.util.Iterator;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import javax.xml.parsers.SAXParser;
@@ -75,14 +76,19 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
 
       //if (debug)
       //{
+        System.out.println("GetBehaviorMethods: ");
         for (int i = 0; i < behaviorBindings.length; i++)
         {
-          System.out.println("GetBehaviorMethods: ");
+          System.out.println("METHOD: " + i);
           System.out.println("  method[" + i + "]=" + behaviorBindings[i].methodName);
           System.out.println("  protocol[" + i + "]=" + behaviorBindings[i].protocolType);
           System.out.println("  service address[" + i + "]=" + behaviorBindings[i].serviceBindingAddress);
           System.out.println("  operation loc[" + i + "]=" + behaviorBindings[i].operationLocation);
           System.out.println("  operation URL[" + i + "]=" + behaviorBindings[i].operationURL);
+          for (int j = 0; j < behaviorBindings[i].dsBindingKeys.length; j++)
+          {
+            System.out.println("  dsBindingKey[" + j + "]=" + behaviorBindings[i].dsBindingKeys[j]);
+          }
         }
       //}
     }
@@ -139,6 +145,10 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
   {
 
     private boolean inDefinitions = false;
+    private boolean inMessage = false;
+    private boolean inMessagePart = false;
+    private boolean inAbstractOperation = false;
+    private boolean inAbstractInput = false;
     private boolean inPortType = false;
     private boolean inService = false;
     private boolean inPort = false;
@@ -156,6 +166,14 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
     private String bindingName = null;
     private Hashtable portTbl;
 
+    //========================new
+    private Hashtable tmp_messageTbl;
+    private String tmp_messageName;
+    private String tmp_methodName;
+    private Vector tmp_vMessageParts;
+    private Hashtable tmp_methodTbl;
+    //========================end new
+
     private String h_nameWSDL;
     private String h_portType;
     private String h_operation;
@@ -170,12 +188,24 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
 
       h_vMethodBindings = new Vector();
       portTbl = new Hashtable();
+      tmp_messageTbl = new Hashtable();
+      tmp_methodTbl = new Hashtable();
     }
 
     public void endDocument() throws SAXException
     {
-        System.out.println("methodDef vector cnt: " + h_vMethodBindings.size());
-        behaviorBindings = (MethodDefOperationBind[])h_vMethodBindings.toArray(new MethodDefOperationBind[0]);
+        int cnt = h_vMethodBindings.size();
+        behaviorBindings = new MethodDefOperationBind[cnt];
+        Iterator it = h_vMethodBindings.iterator();
+        for (int i = 0; i < cnt; i++)
+        {
+          MethodDefOperationBind mbind = (MethodDefOperationBind) it.next();
+          // Look up the message parts (dsBindingKeys) that go with the method
+          Vector messageParts = (Vector)tmp_messageTbl.get(tmp_methodTbl.get(mbind.methodName));
+          mbind.dsBindingKeys = (String[])messageParts.toArray(new String[0]);
+          behaviorBindings[i] = mbind;
+        }
+        //behaviorBindings = (MethodDefOperationBind[])h_vMethodBindings.toArray(new MethodDefOperationBind[0]);
         h_vMethodBindings = null;
         portTbl = null;
     }
@@ -205,6 +235,34 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
         h_nameWSDL = attrs.getValue("name");
         if (debug) System.out.println("wsdl name= " + h_nameWSDL);
       }
+      // ===============================new
+
+      else if (qName.equalsIgnoreCase("wsdl:message"))
+      {
+        inMessage = true;
+        tmp_messageName = attrs.getValue("name");
+        tmp_vMessageParts = new Vector();
+      }
+      else if (qName.equalsIgnoreCase("wsdl:part") && inMessage)
+      {
+        inMessagePart = true;
+        tmp_vMessageParts.add(attrs.getValue("name"));
+      }
+      else if (qName.equalsIgnoreCase("wsdl:portType"))
+      {
+        inPortType = true;
+      }
+      else if (qName.equalsIgnoreCase("wsdl:operation") && inPortType)
+      {
+        inAbstractOperation = true;
+        tmp_methodName = attrs.getValue("name");
+      }
+      else if (qName.equalsIgnoreCase("wsdl:input") && inAbstractOperation)
+      {
+        inAbstractInput = true;
+        tmp_methodTbl.put(tmp_methodName, attrs.getValue("message"));
+      }
+      //===============================end new
       else if (qName.equalsIgnoreCase("wsdl:service"))
       {
         inService = true;
@@ -268,6 +326,30 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       if (qName.equalsIgnoreCase("wsdl:definitions") && inDefinitions)
       {
         inDefinitions = false;
+      }
+      else if (qName.equalsIgnoreCase("wsdl:message"))
+      {
+        inMessage = false;
+        tmp_messageTbl.put(tmp_messageName, tmp_vMessageParts);
+        tmp_messageName = null;
+        tmp_vMessageParts = null;
+      }
+      else if (qName.equalsIgnoreCase("wsdl:part") && inMessage)
+      {
+        inMessagePart = false;
+      }
+      else if (qName.equalsIgnoreCase("wsdl:portType"))
+      {
+        inPortType = false;
+      }
+      else if (qName.equalsIgnoreCase("wsdl:operation") && inPortType)
+      {
+        inAbstractOperation = false;
+        tmp_methodName = null;
+      }
+      else if (qName.equalsIgnoreCase("wsdl:input") && inAbstractOperation)
+      {
+        inAbstractInput = false;
       }
       else if (qName.equalsIgnoreCase("wsdl:service") && inService)
       {
