@@ -81,10 +81,9 @@ public class FedoraAPIABindingSOAPHTTPImpl implements fedora.server.access.Fedor
       FastDOReader fastReader = null;
       try
       {
-        fastReader = new FastDOReader(PID, bDefPID, methodName,
-            versDateTime);
-        dissResult = fastReader.getDissemination(PID, bDefPID, methodName,
-            versDateTime);
+        fastReader = new FastDOReader(PID);
+        //dissResult = fastReader.getDissemination(PID, bDefPID, methodName,
+        //    versDateTime);
         String replaceString = null;
         DissResultSet results = new DissResultSet();
         // Build a hashtable of the dissemination result sets to be used
@@ -241,7 +240,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements fedora.server.access.Fedor
       PrintWriter out = new PrintWriter(baos);
       try
       {
-        fastReader = new FastDOReader(PID, null, null, versDateTime);
+        fastReader = new FastDOReader(PID);
         queryResults = fastReader.getObject(PID, versDateTime);
       } catch (ObjectNotFoundException onfe)
       {
