@@ -56,42 +56,11 @@ public class DOValidatorXMLSchema
     private URI schemaURI = null;
     private DOIntegrityHandler iHandler = null; // new
 
-    public static void main(String[] args)
-    {
-      if (args.length < 2)
-      {
-        System.err.println("usage: java DOValidatorXMLSchema schemaLocation " +
-          "objectLocation" + "\n" +
-          "  schemaLocation: the file path of the XML schema to validate against" + "\n" +
-          "  objectLocation: the file path of the object to be validated");
-        System.exit(1);
-      }
-
-      try
-      {
-        DOValidatorXMLSchema dov = new DOValidatorXMLSchema(args[0]);
-        dov.validate(new File(args[1]));
-      }
-      catch (ServerException e)
-      {
-        System.out.println("DOValidatorXMLSchema caught ServerException in main().");
-        System.out.println("Suppressing message since not attached to Server.");
-      }
-      catch (Throwable th)
-      {
-        System.out.println("DOValidatorXMLSchema returned error in main(). "
-                  + "The underlying error was a " + th.getClass().getName()
-                  + "The message was "  + "\"" + th.getMessage() + "\"");
-      }
-    }
-
     public DOValidatorXMLSchema(String schemaPath) throws GeneralException
     {
       try
       {
-        //System.out.println("XML Schema Path: " + schemaPath);
         schemaURI = (new File(schemaPath)).toURI();
-        //System.out.println("XML Schema URI: " + schemaURI);
       }
       catch (Exception e)
       {
@@ -106,7 +75,8 @@ public class DOValidatorXMLSchema
     {
       try
       {
-        validate(new InputSource(getInputStreamWithoutSchemaLocations(new FileInputStream(objectAsFile))));
+        //validate(new InputSource(getInputStreamWithoutSchemaLocations(new FileInputStream(objectAsFile))));
+		validate(new InputSource(new FileInputStream(objectAsFile)));
       }
       catch (IOException e)
       {
@@ -117,39 +87,13 @@ public class DOValidatorXMLSchema
       }
     }
 
-    /**
-     * This is necessary so that the XML schema validation doesn't take into account
-     * the schema locations specified via xsi:schemaLocation and xsi:noNamespaceSchemaLocation
-     * in the file.  They should be ignored because we explicitly tell the parser what
-     * schema to validate with, and if other schema locations are specified, it could
-     * cause the server to hang for a long time if they can't be resolved...and they're 
-     * not even needed.
-     */
-    private InputStream getInputStreamWithoutSchemaLocations(InputStream in) 
-            throws GeneralException {
-        try {
-            BufferedReader rdr = new BufferedReader(
-                      new InputStreamReader(in, "UTF-8"));
-            StringBuffer buf=new StringBuffer();
-            String line=rdr.readLine();
-            while (line!=null) {
-                buf.append(line.replaceAll("schemaLocation", "schemaNoitacol")
-                        .replaceAll("SchemaLocation", "SchemaNoitacol")
-                        + "\n"); 
-                line = rdr.readLine();
-            }
-            rdr.close();
-            return new ByteArrayInputStream(buf.toString().getBytes("UTF-8"));
-        } catch (Exception e) {
-            throw new GeneralException("Error during getInputStreamWithoutSchemaLocations: " 
-                    + e.getClass().getName() + ": " + e.getMessage());
-        }
-    }
+
 
     public void validate(InputStream objectAsStream)
       throws ObjectValidityException, GeneralException
     {
-      validate(new InputSource(getInputStreamWithoutSchemaLocations(objectAsStream)));
+      //validate(new InputSource(getInputStreamWithoutSchemaLocations(objectAsStream)));
+	  validate(new InputSource(objectAsStream));
     }
 
     private void validate(InputSource objectAsSource)
@@ -198,6 +142,49 @@ public class DOValidatorXMLSchema
         throw new GeneralException(msg);
       }
     }
+    
+	/**
+	 * This is necessary so that the XML schema validation doesn't take into account
+	 * the schema locations specified via xsi:schemaLocation and xsi:noNamespaceSchemaLocation
+	 * in the file.  They should be ignored because we explicitly tell the parser what
+	 * schema to validate with, and if other schema locations are specified, it could
+	 * cause the server to hang for a long time if they can't be resolved...and they're 
+	 * not even needed.
+	 */
+	// SDP:  Commented out since it is fragile.  For some reason, validation with
+	// the fake attribute xsi:schemaNoitacol does not always work.  For example,
+	// using a FOXML instance with foxml1-0.xsd causes a SAX exception that
+	// rejects xsi:schemaNoitacol as an invalid attribute on root element.  
+	// There are no setting in the METS vs. FOXML schemas that should cause
+	// validation to perform differently in one context vs. the other.  
+	// In general, this seems dangerous since there is no such attribute
+	// (xsi:schemaNoitacol) in the xsi namespace.  I'd expect it to fail, as
+	// it does in the FOXML case.  For now, schemaLocation attributes within
+	// inline XML will be forbidden via Schematron validation check.
+	/*
+	private InputStream getInputStreamWithoutSchemaLocations(InputStream in) 
+			throws GeneralException {
+		try {
+			BufferedReader rdr = new BufferedReader(
+					  new InputStreamReader(in, "UTF-8"));
+			StringBuffer buf=new StringBuffer();
+			String line=rdr.readLine();
+			while (line!=null) {
+				buf.append(line.replaceAll("schemaLocation", "schemaNoitacol")
+						.replaceAll("SchemaLocation", "SchemaNoitacol")
+						+ "\n"); 
+				line = rdr.readLine();
+			}
+			System.out.println("LOOK! schemaLocation replacement: ");
+			System.out.println(buf);
+			rdr.close();
+			return new ByteArrayInputStream(buf.toString().getBytes("UTF-8"));
+		} catch (Exception e) {
+			throw new GeneralException("Error during getInputStreamWithoutSchemaLocations: " 
+					+ e.getClass().getName() + ": " + e.getMessage());
+		}
+	}
+	*/
 
     public DOIntegrityVariables getDOIntegrityVariables()
     {
