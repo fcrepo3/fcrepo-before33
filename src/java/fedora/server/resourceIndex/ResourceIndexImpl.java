@@ -92,7 +92,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         namespaces = new HashMap();
         namespaces.put("dc", NS_DC);
         namespaces.put("fedora", NS_FEDORA);
-        namespaces.put("fedora-ont", NS_FEDORA_MODEL);
+        namespaces.put("fedora-model", NS_FEDORA_MODEL);
+        namespaces.put("fedora-view", NS_FEDORA_VIEW);
         namespaces.put("rdf", NS_RDF);
         namespaces.put("xml-schema", NS_XSD);
         m_connector = connector;
@@ -138,7 +139,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		// Insert basic system metadata
         queuePlainLiteralTriple(doIdentifier, MODEL_LABEL, digitalObject.getLabel());
         queueTypedLiteralTriple(doIdentifier, MODEL_DATE_CREATED, getDate(digitalObject.getCreateDate()), XSD_DATETIME);
-        queueTypedLiteralTriple(doIdentifier, MODEL_DATE_MODIFIED, getDate(digitalObject.getLastModDate()), XSD_DATETIME);
+        queueTypedLiteralTriple(doIdentifier, VIEW_DATE_MODIFIED, getDate(digitalObject.getLastModDate()), XSD_DATETIME);
 		
 		if (digitalObject.getOwnerId() != null) {
 		    queuePlainLiteralTriple(doIdentifier, MODEL_OWNER, digitalObject.getOwnerId());
@@ -201,21 +202,25 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	        datastreamURI = doURI + "/" + datastreamID;
 	    }
         
+        // TODO a distinct URI for datastreams-as-datastreams,
+        // as opposed to datastreams-as-representations/disseminations
+        // Only datastreams-as-datastreams have alternate ids.
+        
         // Alternate IDs
-        String[] altIDs = ds.DatastreamAltIDs;
-        for (int i = 0; i < altIDs.length; i++) {
-            queuePlainLiteralTriple(datastreamURI, MODEL_ALT_ID, altIDs[i]);
-        }
+        //String[] altIDs = ds.DatastreamAltIDs;
+        //for (int i = 0; i < altIDs.length; i++) {
+        //    queuePlainLiteralTriple(datastreamURI, MODEL_ALT_ID, altIDs[i]);
+        //}
         
         // TODO not needed till we do dependency analysis
         // Volatile Datastreams: False for datastreams that are locally managed 
         // (have a control group "M" or "I").
         //String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
-        //queuePlainLiteralTriple(datastreamURI, REP_DIRECT, "true");
-        //queuePlainLiteralTriple(datastreamURI, REP_VOLATILE, isVolatile);
+        //queuePlainLiteralTriple(datastreamURI, VIEW_DIRECT, "true");
+        //queuePlainLiteralTriple(datastreamURI, VIEW_VOLATILE, isVolatile);
 
-        queueTriple(doURI, REP_REPRESENTATION, datastreamURI);
-        queueTypedLiteralTriple(datastreamURI, MODEL_DATE_MODIFIED, getDate(ds.DSCreateDT), XSD_DATETIME);
+        queueTriple(doURI, VIEW_DISSEMINATES, datastreamURI);
+        queueTypedLiteralTriple(datastreamURI, VIEW_DATE_MODIFIED, getDate(ds.DSCreateDT), XSD_DATETIME);
         addQueue(false);
         
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
@@ -260,21 +265,21 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             try {
                  select = m_conn.createStatement();
                  rs = select.executeQuery(query);
-                 String permutation, mimeType, rep;
+                 String permutation, mimeType, rep, repType;
                  while (rs.next()) {
                      permutation = rs.getString("permutation");
                      mimeType = rs.getString("mimeType");
                      rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                     queueTriple(doIdentifier, REP_REPRESENTATION, rep);
-                     queueTriple(rep, MODEL_STATE, dissState);
+                     queueTriple(doIdentifier, VIEW_DISSEMINATES, rep);
+                     queueTriple(rep, VIEW_TYPE, getRepType(bDefPID, permutation));
                      queuePlainLiteralTriple(rep, 
-                                             REP_MEDIATYPE, 
+                                             VIEW_MEDIATYPE, 
                                              mimeType);
                      //queuePlainLiteralTriple(rep, 
-                     //                        REP_DIRECT, 
+                     //                        VIEW_DIRECT, 
                      //                        "false"); 
                      queueTypedLiteralTriple(rep, 
-                                             MODEL_DATE_MODIFIED, 
+                                             VIEW_DATE_MODIFIED, 
                                              dissCreateDT,
                                              XSD_DATETIME); 
                  }
@@ -298,7 +303,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    }
 
 	    // TODO
-        //m_store.insert(disseminatorIdentifier, MODEL_DISS_TYPE, diss.?);
+        //m_store.insert(disseminatorIdentifier, VIEW_TYPE, diss.?);
         //m_store.insert(disseminatorIdentifier, FEDORA_VOLATILE, diss.?); // redirect, external, based on diss that depends on red/ext (true/false)
         
         addQueue(false);
@@ -961,8 +966,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     }
     
 	private String getDOURI(DigitalObject digitalObject) {
-        String identifier;
-        logFinest("ResourceIndex digitalObject.getPid(): " + digitalObject.getPid());
         if (digitalObject.getURI() != null && !digitalObject.getURI().equals("")) {
             return digitalObject.getURI();
         } else {
@@ -1010,8 +1013,20 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    }
 	}
     
-    private String getStateURI(String state) {
-        return state.equalsIgnoreCase("A") ? MODEL_ACTIVE : MODEL_INACTIVE;
+    private String getRepType(String bDefPID, String permutation) {
+        return NS_FEDORA + "*" + "/" + bDefPID + "/" + permutation;
+    }
+    
+    private String getStateURI(String state) throws ResourceIndexException {
+        if (state.equalsIgnoreCase("A")) {
+            return MODEL_ACTIVE;
+        } else if (state.equalsIgnoreCase("I")) {
+            return MODEL_INACTIVE;
+        } else if (state.equalsIgnoreCase("D")) {
+            return MODEL_DELETED;
+        } else {
+            throw new ResourceIndexException("Unknown state: " + state);
+        }
     }
 
     private void queueTriple(String subject, 
