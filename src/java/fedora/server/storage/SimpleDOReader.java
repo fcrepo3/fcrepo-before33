@@ -191,7 +191,8 @@ public class SimpleDOReader
 			transContext=DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE;
 		} else if (exportContext.equalsIgnoreCase("archive")){
 			throw new UnsupportedTranslationException("Export context of 'archive' " +
-				"is not supported in Fedora 2.0. Will be available in future.");
+				"is not supported in Fedora 2.0.\n" +
+				"This option will be available a future release.\n");
         } else {
 			throw new UnsupportedTranslationException("Export context " +
 				exportContext + " is not valid.");       	
