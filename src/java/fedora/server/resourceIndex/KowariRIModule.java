@@ -19,8 +19,11 @@ import com.hp.hpl.jena.shared.ReificationStyle;
 
 import fedora.server.Module;
 import fedora.server.Server;
+import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ResourceIndexException;
+import fedora.server.storage.ConnectionPool;
+import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
@@ -114,8 +117,34 @@ public class KowariRIModule extends Module implements ResourceIndex {
 		} catch (QueryException e3) {
 			throw new ModuleInitializationException(e3.getMessage(), getRole());
 		}
+        
+        //
+        // get connectionPool from ConnectionPoolManager
+        //
+        ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().
+                getModule("fedora.server.storage.ConnectionPoolManager");
+        if (cpm==null) {
+            throw new ModuleInitializationException(
+                "ConnectionPoolManager module was required, but apparently has "
+                + "not been loaded.", getRole());
+        }
+        String cPoolName=getParameter("connectionPool");
+        ConnectionPool cPool=null;
+        try {
+            if (cPoolName==null) {
+                logConfig("connectionPool unspecified; using default from "
+                        + "ConnectionPoolManager.");
+                cPool=cpm.getPool();
+            } else {
+                logConfig("connectionPool specified: " + cPoolName);
+                cPool=cpm.getPool(cPoolName);
+            }
+        } catch (ConnectionPoolNotFoundException cpnfe) {
+            throw new ModuleInitializationException("Could not find requested "
+                    + "connectionPool.", getRole());
+        }
 		
-		m_kowariRIStore = new KowariRIStore(session, model, fullTextModelURI, this);
+		m_kowariRIStore = new KowariRIStore(session, model, fullTextModelURI);
 		m_resourceIndex = new ResourceIndexImpl(level, m_kowariRIStore, this);
 	}
 
@@ -157,7 +186,7 @@ public class KowariRIModule extends Module implements ResourceIndex {
     /* (non-Javadoc)
      * @see fedora.server.resourceIndex.ResourceIndex#modifyDigitalObject(fedora.server.storage.types.DigitalObject)
      */
-    public void modifyDigitalObject(DigitalObject digitalObject) {
+    public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
         m_resourceIndex.modifyDigitalObject(digitalObject);
     }
 
