@@ -52,7 +52,8 @@ public class DOTranslatorImpl
     }
 
     public void deserialize(InputStream in, DigitalObject out,
-            String format, String encoding)
+			String format, String encoding, int transContext)
+            //String format, String encoding)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         try {
@@ -63,7 +64,8 @@ public class DOTranslatorImpl
                         + "for format: " + format);
             }
             DODeserializer newDes=des.getInstance();
-            newDes.deserialize(in, out, encoding);
+            //newDes.deserialize(in, out, encoding);
+			newDes.deserialize(in, out, encoding, transContext);
         } catch (UnsupportedEncodingException uee) {
             throw new UnsupportedTranslationException("Deserializer for format: "
                     + format + " does not support encoding: " + encoding);
@@ -71,7 +73,8 @@ public class DOTranslatorImpl
     }
 
     public void serialize(DigitalObject in, OutputStream out,
-            String format, String encoding, boolean encodeForExport)
+			String format, String encoding, int transContext)
+            //String format, String encoding, boolean encodeForExport)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         try {
@@ -82,7 +85,8 @@ public class DOTranslatorImpl
 					"No serializer exists for format: " + format);
             }
             DOSerializer newSer=ser.getInstance();
-            newSer.serialize(in, out, encoding, encodeForExport);
+            //newSer.serialize(in, out, encoding, encodeForExport);
+			newSer.serialize(in, out, encoding, transContext);
         } catch (UnsupportedEncodingException uee) {
             throw new UnsupportedTranslationException("Serializer for format: "
                     + format + " does not support encoding: " + encoding);

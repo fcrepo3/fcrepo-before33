@@ -93,17 +93,19 @@ public class DOTranslatorModule
     }
 
     public void deserialize(InputStream in, DigitalObject out,
-            String format, String encoding)
+            String format, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
-        m_wrappedTranslator.deserialize(in, out, format, encoding);
+        m_wrappedTranslator.deserialize(in, out, format, encoding, transContext); 
     }
 
     public void serialize(DigitalObject in, OutputStream out,
-            String format, String encoding, boolean encodeForExport)
+            //String format, String encoding, boolean encodeForExport)
+			String format, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
-        m_wrappedTranslator.serialize(in, out, format, encoding, encodeForExport);
+        //m_wrappedTranslator.serialize(in, out, format, encoding, encodeForExport);
+		m_wrappedTranslator.serialize(in, out, format, encoding, transContext);
     }
 
 }

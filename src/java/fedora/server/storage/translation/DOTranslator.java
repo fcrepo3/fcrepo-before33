@@ -37,12 +37,14 @@ import fedora.server.storage.types.DigitalObject;
 public interface DOTranslator {
 
     public abstract void deserialize(InputStream in, DigitalObject out,
-            String format, String encoding)
+			String format, String encoding, int transContext)
+			//String format, String encoding)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException;
 
     public abstract void serialize(DigitalObject in, OutputStream out,
-            String format, String encoding, boolean encodeForExport)
+			String format, String encoding, int transContext)
+            //String format, String encoding, boolean encodeForExport)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException;
 
