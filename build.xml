@@ -419,7 +419,8 @@
 			<arg path="dist/server/exist09"/>
 		</exec>
 	</target>
-	<target name="metstest" description="run fedora.server.test.METSInOutTest on src/mets/test/demo/bdef-simple-image.xml... print re-serialized version, then do level 1 and level 2 validation.">
+	<target name="metstest" 
+    description="run fedora.server.test.METSInOutTest on src/mets/test/demo/obj-definitive-test.xml... print re-serialized version, then do level 1 and level 2 validation.">
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
@@ -428,8 +429,9 @@
 			<arg value="-classpath"/>
 			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/saxon6.5.jar"/>
 			<arg value="fedora.server.test.METSInOutTest"/>
-			<arg value="src/mets/test/demo/bdef-simple-image.xml"/>
+			<arg value="src/mets/test/demo/obj-definitive-test.xml"/>
 		</exec>
+       <!--
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
@@ -451,7 +453,7 @@
 			<arg value="fedora.server.test.METSInOutTest"/>
 			<arg value="src/mets/test/demo/bdef-simple-image.xml"/>
 			<arg value="2"/>
-		</exec>
+		</exec> -->
 	</target>
 	<target name="serverclasses" depends="serverprep,wsdl2java" description="Compile server java code into temp/server/classes">
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPImpl.java"/>
@@ -475,6 +477,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.67  2003/02/04 23:10:33  cwilper
+  changed to test METSLikeDODeserializer...looks like it works!
+
   Revision 1.66  2003/02/04 00:25:50  cwilper
   added conversion of manual dbx to html for userdocs target
 
