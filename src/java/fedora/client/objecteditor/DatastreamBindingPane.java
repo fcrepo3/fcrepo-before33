@@ -305,7 +305,6 @@ public class DatastreamBindingPane
             m_table.getColumnModel().getColumn(0).setMinWidth(90);
             m_table.getColumnModel().getColumn(0).setMaxWidth(90);            
 			m_tableModel.addTableModelListener(this);
-            System.out.println("Rowcount for the table is " + m_table.getRowCount());
             if (m_table.getRowCount()>0) {
                 m_table.addRowSelectionInterval(0, 0);
             }
