@@ -36,7 +36,7 @@ if [ ! -f "$THIS_JAVA_HOME/bin/orbd" ]; then
   exit 1
 fi
 
-echo "Starting Fedora server..."
+echo "Starting Fedora Administrative Client..."
 
 OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
