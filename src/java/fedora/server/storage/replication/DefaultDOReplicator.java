@@ -301,13 +301,29 @@ public class DefaultDOReplicator
               results.close();
               String newDSBindMapID=diss.dsBindMapID;
               if (!newDSBindMapID.equals(origDSBindMapID)) {
-                // dsBindingMap was modified so remove existing bindingMap
-                int rowCount = logAndExecuteUpdate(st,"DELETE FROM dsBind WHERE dsBindMapDbID=" + origDSBindMapDbID + ";");
-                logFinest("deleted "+rowCount+" rows from dsBindMapDbID");
-                rowCount = logAndExecuteUpdate(st, "DELETE FROM dsBindMap WHERE dsBindMapDbID=" + origDSBindMapDbID + ";");
-                logFinest("deleted "+rowCount+" rows from dsBindMapDbID");
+                // dsBindingMap was modified so remove original bindingMap and datastreams.
+                // BindingMaps can be shared by other objects so first check to see if
+                // the orignial bindingMap is bound to datastreams of any other objects.
+                Statement st2 = connection.createStatement();
+                results=logAndExecuteQuery(st2,"SELECT DISTINCT doDbId,dsBindMapDbId FROM dsBind WHERE dsBindMapDbId="+origDSBindMapDbID+";");
+                int numRows = 0;
+                while (results.next()) {
+                  numRows++;
+                }
+                st2.close();
+                results.close();
+                if(numRows == 1) {
+                  // The bindingMap is NOT shared by any other objects and can be removed.
+                  int rowCount = logAndExecuteUpdate(st, "DELETE FROM dsBindMap WHERE dsBindMapDbID=" + origDSBindMapDbID + ";");
+                  logFinest("deleted "+rowCount+" rows from dsBindMapDbID");
+                } else {
+                  // The bindingMap IS shared by other objects so leave bindingMap untouched.
+                  logFinest("dsBindMapID: "+origDSBindMapID+" is shared by other objects; it will NOT be deleted");
+                }
+                int rowCount = logAndExecuteUpdate(st,"DELETE FROM dsBind WHERE doDbID=" + doDbID + ";");
+                logFinest("deleted "+rowCount+" rows from dsBind");
 
-                // now add back new dsBindMap for this disseminator
+                // now add back new datastreams and dsBindMap associated with this disseminator
                 DSBindingMapAugmented[] allBindingMaps;
                 Disseminator disseminators[];
                 String bDefDBID;
