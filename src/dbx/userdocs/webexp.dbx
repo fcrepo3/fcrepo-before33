@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!-- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> -->
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
-		<title><inlinemediaobject>
+		<title>
+			<inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject></title>
+			</inlinemediaobject>
+		</title>
 		<title>Web Exposure</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -44,7 +46,8 @@
 			<variablelist>
 				<title>getDissemination syntax:</title>
 				<varlistentry>
-					<term>http://hostname:port/fedora/get/PID/bDefPID/methodName<emphasis>[/dateTime][?parmArray]</emphasis></term>
+					<term>http://hostname:port/fedora/get/PID/bDefPID/methodName<emphasis>[/dateTime][?parmArray]</emphasis>
+					</term>
 					<listitem>
 						<para>This syntax requests a dissemination of the specified object using the specified method of the associated behavior definition object. The result is returned as a MIME-typed stream. </para>
 					</listitem>
@@ -56,7 +59,10 @@
 						<para>hostname - required hostname of the Fedora server. </para>
 					</listitem>
 					<listitem>
-						<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+						<para>port - required port number on which the Fedora server is running.</para>
+					</listitem>
+					<listitem>
+						<para>fedora - required name of the Fedora access service. </para>
 					</listitem>
 					<listitem>
 						<para>fedora - a required parameter specifying the Fedora servlet path.</para>
@@ -71,13 +77,15 @@
 						<para>bDefPID - required persistent identifier of the behavior definition object to which the digital object subscribes.</para>
 					</listitem>
 					<listitem>
-						<para>methodName - required name of the method to be executed. dateTime - optional.</para>
+						<para>methodName - required name of the method to be executed.</para>
 					</listitem>
 					<listitem>
-						<para><emphasis>dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
+						<para>
+							<emphasis>dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
 					</listitem>
 					<listitem>
-						<para><emphasis>parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1&equals;value1&amp;parm2&equals;value2...</para>
+						<para>
+							<emphasis>parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1&equals;value1&amp;parm2&equals;value2...</para>
 					</listitem>
 				</itemizedlist>
 			</blockquote>
@@ -98,9 +106,10 @@
 			<variablelist>
 				<title>GetObjectProfile syntax:</title>
 				<varlistentry>
-					<term>http://hostname:port/fedora/get/PID<emphasis>[/dateTime][?xml=BOOLEAN]</emphasis></term>
+					<term>http://hostname:port/fedora/get/PID<emphasis>[/dateTime][?xml=BOOLEAN]</emphasis>
+					</term>
 					<listitem>
-						<para>This syntax requests an object profile for the specified digital object. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of "no", a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is "yes", then a MIME-typed stream consisting of XML is returned.</para>
+						<para>This syntax requests an object profile for the specified digital object. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of "false", a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is "true", then a MIME-typed stream consisting of XML is returned.</para>
 					</listitem>
 				</varlistentry>
 			</variablelist>
@@ -122,10 +131,12 @@
 						<para>PID - a required parameter specifying the persistent identifier of the digital object. </para>
 					</listitem>
 					<listitem>
-						<para><emphasis>dateTime</emphasis> - an optional dateTime parameter indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.).</para>
+						<para>
+							<emphasis>dateTime</emphasis> - an optional dateTime parameter indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.).</para>
 					</listitem>
 					<listitem>
-						<para><emphasis>xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;true&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;false&quot; indicates format is to be text/html.</para>
+						<para>
+							<emphasis>xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;true&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;false&quot; indicates format is to be text/html.</para>
 					</listitem>
 				</itemizedlist>
 			</blockquote>
@@ -143,7 +154,7 @@
 					<term>Get the ObjectProfile for a data object with a PID of demo:5 as XML:</term>
 					<listitem>
 						<blockquote>
-							<para>http://localhost:8080/fedora/get/demo:5?xml=yes</para>
+							<para>http://localhost:8080/fedora/get/demo:5?xml=true</para>
 						</blockquote>
 					</listitem>
 				</varlistentry>
@@ -169,7 +180,7 @@
 						<para>hostname - required hostname of the Fedora server. </para>
 					</listitem>
 					<listitem>
-						<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+						<para>port - required port number on which the Fedora server is running.</para>
 					</listitem>
 					<listitem>
 						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
@@ -213,7 +224,7 @@
 						<para>hostname - required hostname of the Fedora server. </para>
 					</listitem>
 					<listitem>
-						<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+						<para>port - required port number on which the Fedora server is running.</para>
 					</listitem>
 					<listitem>
 						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
@@ -253,6 +264,12 @@
 			<blockquote>
 				<itemizedlist>
 					<listitem>
+						<para>hostname - required hostname of the Fedora server. </para>
+					</listitem>
+					<listitem>
+						<para>port - required port number on which the Fedora server is running.</para>
+					</listitem>
+					<listitem>
 						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
 					</listitem>
 					<listitem>
@@ -290,6 +307,12 @@
 			<blockquote>
 				<itemizedlist>
 					<listitem>
+						<para>hostname - required hostname of the Fedora server. </para>
+					</listitem>
+					<listitem>
+						<para>port - required port number on which the Fedora server is running.</para>
+					</listitem>
+					<listitem>
 						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
 					</listitem>
 					<listitem>
@@ -318,6 +341,12 @@
 			<blockquote>
 				<itemizedlist>
 					<listitem>
+						<para>hostname - required hostname of the Fedora server. </para>
+					</listitem>
+					<listitem>
+						<para>port - required port number on which the Fedora server is running.</para>
+					</listitem>
+					<listitem>
 						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
 					</listitem>
 					<listitem>
@@ -345,6 +374,12 @@
 			</variablelist>
 			<blockquote>
 				<itemizedlist>
+					<listitem>
+						<para>hostname - required hostname of the Fedora server. </para>
+					</listitem>
+					<listitem>
+						<para>port - required port number on which the Fedora server is running.</para>
+					</listitem>
 					<listitem>
 						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
 					</listitem>
@@ -383,6 +418,12 @@
 			<blockquote>
 				<itemizedlist>
 					<listitem>
+						<para>hostname - required hostname of the Fedora server. </para>
+					</listitem>
+					<listitem>
+						<para>port - required port number on which the Fedora server is running.</para>
+					</listitem>
+					<listitem>
 						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
 					</listitem>
 					<listitem>
@@ -415,20 +456,23 @@
 		<sect2>
 			<title>Search/Browse</title>
 			<para>The Fedora repository system also includes a search interface that enables searching across both System Metadata and user-defined Dublin Core metadata.Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using the search interface. The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the "Datastream ID" is DC, and the XML conforms to the schema at: http://www.openarchives.org/OAI/2.0/oai_dc.xsd. If such a datastream is not provided, Fedora will construct a default Dublin Core record using the label of the object as the dc:title value and the PID of the object as the dc:identifier value. The search interface provides both simple and advanced searching via a web page included with the repository software. All queries are case insensitive. Simple search enables queries of words and phrases occurring anywhere in an object s indexed metadata fields. Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (= and ~) for string fields, and value comparison operators (&equals;, &gt;, &ge;, &lt;, &le;) for date fields (dc:date fields may be treated as both). The wildcards, * and ? may be used in any string-based query.  The search interface can be accessed using the syntax:</para>
-			<para><emphasis role="bold">http://hostname:port/fedora/search</emphasis></para>
+			<para>
+				<emphasis role="bold">http://hostname:port/fedora/search</emphasis>
+			</para>
 			<blockquote>
 				<itemizedlist>
 					<listitem>
 						<para>hostname - required hostname of the Fedora server.</para>
 					</listitem>
 					<listitem>
-						<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+						<para>port - required port number on which the Fedora server is running. </para>
 					</listitem>
 					<listitem>
 						<para>fedora - a required parameter specifying the Fedora servlet path.</para>
 					</listitem>
 					<listitem>
 						<para>search - a required parameter specifying the Fedora servlet path</para>
+						<para/>
 					</listitem>
 				</itemizedlist>
 			</blockquote>
