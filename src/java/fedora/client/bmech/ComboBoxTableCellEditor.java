@@ -33,8 +33,7 @@ import javax.swing.table.TableCellEditor;
      * @version $Id$
      */
     public class ComboBoxTableCellEditor extends AbstractCellEditor implements TableCellEditor {
-        // This is the component that will handle the editing of the
-        // cell value
+        // This is the component that will handle the editing of the cell value
         JComponent component;
 
 

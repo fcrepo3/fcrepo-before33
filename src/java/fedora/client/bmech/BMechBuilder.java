@@ -103,17 +103,20 @@ public class BMechBuilder extends JInternalFrame
         tabpane.addTab("Datastream Input", createDSInputPane());
         tabpane.addTab("Documentation", createDocPane());
         tabpane.addTab("Service Profile", createProfilePane());
+
 /*
         // set up listener for JTabbedPane object
         tabpane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
+				// everytime a tab changes, update the bmech template object in memory
+				updateBMechTemplate();
                 currentTabIndex = tabpane.getSelectedIndex();
                 currentTabName = tabpane.getTitleAt(currentTabIndex);
                 if (currentTabIndex == 2)
                 {
                   DatastreamInputPane dsip =
                     (DatastreamInputPane)tabpane.getComponentAt(2);
-                  dsip.setDSBindingKeys(newBMech.getDSBindingKeys());
+                  dsip.renderDSBindingKeys(newBMech.getDSBindingKeys());
                 }
             }
         });
@@ -171,7 +174,7 @@ public class BMechBuilder extends JInternalFrame
 				{
 				  DatastreamInputPane dsip =
 					(DatastreamInputPane)tabpane.getComponentAt(2);
-				  dsip.setDSBindingKeys(newBMech.getDSBindingKeys());
+				  dsip.renderDSBindingKeys(newBMech.getDSBindingKeys());
 				}
 			}
 		});
@@ -326,13 +329,27 @@ public class BMechBuilder extends JInternalFrame
 			  }
 			  newBMech.setMethodsHashMap(mp.getMethodMap());
 			  newBMech.setMethods(mp.getMethods());
+			  
+			  // we need to update the BMechTemplate object with the latest
+			  // datastream binding keys that are defined as method parms
+			  Vector dsBindingKeys = new Vector();
+			  Method[] methods = newBMech.getMethods();
+			  for (int m=0; m<methods.length; m++)
+			  {
+			  	MethodProperties props = methods[m].methodProperties;
+				for (int j=0; j<methods[m].methodProperties.dsBindingKeys.length; j++)
+				{
+				  dsBindingKeys.add(methods[m].methodProperties.dsBindingKeys[j]);
+				}
+			  }
+			  newBMech.setDSBindingKeys(dsBindingKeys);
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
 		  {
 			  // set the datastream input rules
 			  DatastreamInputPane dsp = (DatastreamInputPane)tabs[i];
 			  newBMech.setDSInputSpec(dsp.getDSInputRules());
-			  
+/*			  
 			  // set the datastream binding keys
 			  Vector dsBindingKeys = new Vector();
 			  DSInputRule[] dsrules = newBMech.getDSInputSpec();
@@ -341,6 +358,7 @@ public class BMechBuilder extends JInternalFrame
 				dsBindingKeys.add(dsrules[j].bindingKeyName);
 			  }
 			  newBMech.setDSBindingKeys(dsBindingKeys);
+*/
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
 		  {
@@ -750,6 +768,7 @@ public class BMechBuilder extends JInternalFrame
             + " on Datastream Input Tab."), dsp.getName());
           return false;
         }
+        /*
         else if (rules[i].bindingInstruction == null)
         {
           assertTabPaneMsg(new String("You must enter Binding Instruction for"
@@ -757,6 +776,7 @@ public class BMechBuilder extends JInternalFrame
             + " on Datastream Input Tab."), dsp.getName());
           return false;
         }
+        */
       }
       return true;
     }

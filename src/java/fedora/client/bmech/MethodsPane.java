@@ -313,7 +313,7 @@ public class MethodsPane extends JPanel {
       Method method = (Method)methodMap.get(methodName);
       method.methodProperties = mproperties;
       methodMap.put(methodName, method);
-
+/*
 	  // we need to update the BMechTemplate object with the latest
 	  // datastream binding keys
 	  Vector dsBindingKeys = new Vector();
@@ -322,6 +322,7 @@ public class MethodsPane extends JPanel {
 	  	dsBindingKeys.add(mproperties.dsBindingKeys[i]);
 	  }
 	  ((BMechBuilder)parent).getBMechTemplate().setDSBindingKeys(dsBindingKeys);
+*/
     }
 
     private void addMethod()

@@ -5,6 +5,8 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
@@ -105,9 +107,9 @@ public class DatastreamInputPane extends JPanel
         // Set the Order Matters column to be rendered and edited with JComboBox
         TableColumn tc4 = dsinputTable.getColumnModel().getColumn(4);
         tc4.setHeaderValue("Ordered?");
-        String[] orderReq = (String[])ordinalityTbl.keySet().toArray(new String[0]);
-        tc4.setCellRenderer(new ComboBoxRenderer(orderReq));
-        tc4.setCellEditor(new ComboBoxTableCellEditor(orderReq));
+		String[] orderReq = (String[])ordinalityTbl.keySet().toArray(new String[0]);
+		tc4.setCellRenderer(new ComboBoxRenderer(orderReq));
+		tc4.setCellEditor(new ComboBoxTableCellEditor(orderReq));
         TableColumn tc5 = dsinputTable.getColumnModel().getColumn(5);
         tc5.setHeaderValue("Pretty Label");
         tc5.sizeWidthToFit();
@@ -128,8 +130,10 @@ public class DatastreamInputPane extends JPanel
         setVisible(true);
     }
 
-    public void setDSBindingKeys(Vector dsBindingKeys)
+    public void renderDSBindingKeys(Vector dsBindingKeys)
+	//public void setDSBindingKeys()
     {
+      //String[] keys = (String[])parent.newBMech.getDSBindingKeys().toArray(new String[0]);
       String[] keys = (String[])dsBindingKeys.toArray(new String[0]);
       // make sure we have enough rows in the table
       int freeRows = dsinputTable.getRowCount();
@@ -145,6 +149,10 @@ public class DatastreamInputPane extends JPanel
       for (int i=0; i<keys.length; i++)
       {
         dsinputTable.setValueAt(keys[i], i, 0);
+		dsinputTable.setValueAt("1", i, 2);
+		dsinputTable.setValueAt("1", i, 3);
+		dsinputTable.setValueAt("NO", i, 4);
+        dsinputTable.setValueAt(keys[i] + " Binding", i, 5);     
       }
     }
 
@@ -156,12 +164,7 @@ public class DatastreamInputPane extends JPanel
       }
       Vector rules = new Vector();
       int rowcount = dsinputTable.getModel().getRowCount();
-      if ((rowcount <=0) && (parent.newBMech.getDSBindingKeys().size() > 0))
-      {
-        this.assertDSInputMsg("You must enter information about "
-          + "datastream input parms in the Datastream Input Tab.");
-        return null;
-      }
+
       for (int i=0; i<rowcount; i++)
       {
         DSInputRule dsRule = new DSInputRule();

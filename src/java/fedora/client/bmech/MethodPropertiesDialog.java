@@ -477,7 +477,7 @@ public class MethodPropertiesDialog extends JDialog
       {
         if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
         {
-          mp.dsBindingKeys = setDSBindingKeys(properties.methodParms);
+          mp.dsBindingKeys = filterDSBindingKeys(properties.methodParms);
         }
         parent.setMethodProperties(methodName, mp);
         setVisible(false);
@@ -519,14 +519,12 @@ public class MethodPropertiesDialog extends JDialog
       for (int i=0; i<parms.length; i++)
       {
         tableParms.add(parms[i].parmName);
-        //System.out.println("Parm name in table: " + parms[i].parmName);
       }
       // find the encoded parm names in the HTTP binding URL
       StringTokenizer st1 = new StringTokenizer(http_URL, "(");
       while (st1.hasMoreTokens())
       {
         String fpt = st1.nextToken();
-        //System.out.println("First pass token " + fpt);
         firstPassTokens.add(fpt);
       }
       Iterator it = firstPassTokens.iterator();
@@ -720,7 +718,7 @@ public class MethodPropertiesDialog extends JDialog
       return;
     }
 
-    private String[] setDSBindingKeys(MethodParm[] parms)
+    private String[] filterDSBindingKeys(MethodParm[] parms)
     {
       Vector dsbindkeys = new Vector();
       for (int i=0; i<parms.length; i++)

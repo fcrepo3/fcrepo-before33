@@ -39,8 +39,11 @@ import javax.swing.table.TableCellRenderer;
   public class ComboBoxRenderer extends JComboBox
             implements TableCellRenderer {
 
+	 JComboBox component; 
+	 
      public ComboBoxRenderer(String[] items) {
         super(items);
+		component = new JComboBox(items);
      }
 
      public Component getTableCellRendererComponent(JTable table,
@@ -55,8 +58,7 @@ import javax.swing.table.TableCellRenderer;
             setBackground(table.getBackground());
         }
 
-        // Select the current value
-        setSelectedItem(value);
-        return this;
+        component.setSelectedItem(value);
+        return component;
       }
    }
