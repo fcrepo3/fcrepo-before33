@@ -446,9 +446,12 @@ public class FedoraAccessSoapServlet extends HttpServlet
               // FIXME!! Should these be added automatically in
               // the class DefinitiveBMechReader
               out.println("<?xml version=\"1.0\"?>");
-              out.println("<definitions xmlns:xsd=\"http://www.w3.org/2000/10/"+
-                          "XMLSchema-instance\" xmlns:wsdl=\"http://schemas."+
-                          "xmlsoap.org/wsdl/\">");
+              out.println("<definitions " +
+                  "xmlns:xsd=\"http://www.w3.org/2000/10/XMLSchema-instance\" "+
+                  "xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" "+
+                  "xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" "+
+                  "xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" "+
+                  "xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\">");
               int byteStream = 0;
               while ((byteStream = methodResults.read()) >= 0)
               {
