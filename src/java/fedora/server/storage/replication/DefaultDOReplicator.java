@@ -3,6 +3,10 @@ package fedora.server.storage.replication;
 import java.util.*;
 import java.sql.*;
 import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import fedora.server.errors.*;
 import fedora.server.errors.*;
@@ -51,6 +55,25 @@ public class DefaultDOReplicator
     private RowInsertion m_ri;
     private DBIDLookup m_dl;
 
+    /**
+     * Server instance to work with in this module.
+     */
+    private Server server;
+
+    /** Port number on which the Fedora server is running; determined from
+     * fedora.fcfg config file.
+     */
+    private static String fedoraServerPort = null;
+
+    /** Hostname of the Fedora server determined from
+     * fedora.fcfg config file, or (fallback) by hostIP.getHostName()
+     */
+    private static String fedoraServerHost = null;
+
+    /** The IP address of the local host; determined dynamically. */
+    private static InetAddress hostIP = null;
+
+
     public DefaultDOReplicator(Map moduleParameters, Server server, String role)
             throws ModuleInitializationException {
         super(moduleParameters, server, role);
@@ -66,9 +89,24 @@ public class DefaultDOReplicator
                     getServer().getModule(
                     "fedora.server.storage.ConnectionPoolManager");
             m_pool=mgr.getPool();
+
+            // sdp: insert new
+            hostIP = null;
+            fedoraServerPort = getServer().getParameter("fedoraServerPort");
+            getServer().logFinest("fedoraServerPort: " + fedoraServerPort);
+            hostIP = InetAddress.getLocalHost();
+            fedoraServerHost = getServer().getParameter("fedoraServerHost");
+            if (fedoraServerHost==null || fedoraServerHost.equals("")) {
+                fedoraServerHost=hostIP.getHostName();
+            }
+            //
         } catch (ServerException se) {
             throw new ModuleInitializationException(
                     "Error getting default pool: " + se.getMessage(),
+                    getRole());
+        } catch (UnknownHostException se) {
+            throw new ModuleInitializationException(
+                    "Error determining hostIP address: " + se.getMessage(),
                     getRole());
         }
     }
@@ -113,7 +151,8 @@ public class DefaultDOReplicator
             while (results.next()) {
                 String dsID=results.getString("dsID");
                 String dsLabel=results.getString("dsLabel");
-                String dsLocation=results.getString("dsLocation");
+                // sdp - local.fedora.server conversion
+                String dsLocation=unencodeLocalURL(results.getString("dsLocation"));
                 // compare the datastream to what's in the db...
                 // if different, add to update list
                 Datastream ds=reader.GetDatastream(dsID, null);
@@ -121,7 +160,8 @@ public class DefaultDOReplicator
                         || !ds.DSLocation.equals(dsLocation)) {
                     updates.add("UPDATE dsBind SET dsLabel='"
                             + SQLUtility.aposEscape(ds.DSLabel) + "', dsLocation='"
-                            + SQLUtility.aposEscape(ds.DSLocation)
+                            // sdp - local.fedora.server conversion
+                            + SQLUtility.aposEscape(encodeLocalURL(ds.DSLocation))
                             + "' WHERE dsID='" + dsID + "'");
                 }
             }
@@ -570,8 +610,9 @@ public class DefaultDOReplicator
                             insertMechanismImplRow(connection, bMechDBID,
                                 bDefDBID, methodDBID, dsBindingKeyDBID,
                                 "http", "text/html",
-                                behaviorBindingsEntry.serviceBindingAddress,
-                                behaviorBindingsEntry.operationLocation, "1");
+                                // sdp - local.fedora.server conversion
+                                encodeLocalURL(behaviorBindingsEntry.serviceBindingAddress),
+                                encodeLocalURL(behaviorBindingsEntry.operationLocation), "1");
                           }
                         }
                     }
@@ -729,7 +770,8 @@ public class DefaultDOReplicator
                                     datastreamID,
                                     allBindingMaps[i].dsBindingsAugmented[j].DSLabel,
                                     allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
-                                    allBindingMaps[i].dsBindingsAugmented[j].DSLocation,
+                                    // sdp - local.fedora.server conversion
+                                    encodeLocalURL(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
                                     allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
                                     allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
                                     "1");
@@ -1771,4 +1813,30 @@ public class DefaultDOReplicator
                 return ID;
 	}
 
+        private String encodeLocalURL(String hostPortString)
+        {
+          // Replace any occurences of the host:port of the local Fedora
+          // server with the internal serialization string "local.fedora.server."
+          // This will make sure that local URLs (self-referential to the
+          // local server) will be recognizable if the server host and
+          // port configuration changes after an object is stored in the
+          // repository.
+          String s = hostPortString.replaceAll(
+            fedoraServerHost+":"+fedoraServerPort, "local.fedora.server");
+          System.out.println("LOCAL URL serialized: " + s);
+          return s;
+        }
+
+        private String unencodeLocalURL(String serializedLocationString)
+        {
+          // Replace any occurrences of the internal serialization string
+          // "local.fedora.server" with the current host and port of the
+          // local Fedora server.  This translates local URLs (self-referential
+          // to the local server) back into resolvable URLs that reflect
+          // the currently configured host and port for the server.
+          String s = serializedLocationString.replaceAll(
+            "local.fedora.server", fedoraServerHost+":"+fedoraServerPort);
+          System.out.println("LOCAL URL deserialized: " + s);
+          return s;
+        }
 }
