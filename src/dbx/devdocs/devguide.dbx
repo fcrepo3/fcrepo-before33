@@ -395,10 +395,11 @@
               (and sub-directories) if needed.  You only need to do this once
               per working copy.</para>
       </section>
-      <section><title>Get the Latest Copy of a File from the Repository</title>
-        <para><userinput>cvs update YourFile.java</userinput></para>
+      <section><title>Getting the Latest Copy of a File from the Repository</title>
+        <para><userinput>cvs update -d YourFile.java</userinput></para>
         <para>You can also do this recursively on entire directories by
-              specifying a directory instead of a file.</para>
+              specifying a directory instead of a file. The -d tells it to
+              get newly created directories, which is usually what you want.</para>
       </section>
       <section><title>Checking in (committing) a changed file.</title>
         <para><userinput>cvs ci -m "I changed that one part"
@@ -492,6 +493,9 @@
     <para>Here is the revision history of this guide:</para>
     <literallayout>
     $Log$
+    Revision 1.8  2002/05/13 18:39:29  cwilper
+    Added a comment on the -d option with "cvs update"
+
     Revision 1.7  2002/05/09 21:24:44  cwilper
     Finished locking section
 
