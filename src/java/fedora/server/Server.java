@@ -5,6 +5,7 @@ import fedora.server.errors.ServerShutdownException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.storage.DOManager;
+import fedora.server.utilities.MethodInvokerThread;
 
 import java.io.IOException;
 import java.io.File;
@@ -698,6 +699,18 @@ public abstract class Server
                 logSevere(mse.getRole() + ": " + mse.getMessage());
             }
             throw mie;
+        }
+        try {
+            MethodInvokerThread shutdownHook=new MethodInvokerThread(this, 
+                    this.getClass().getMethod("shutdown", new Class[0]),
+                    new Object[0], "Fedora Shutdown Hook");
+            Runtime.getRuntime().addShutdownHook(shutdownHook);
+        } catch (Throwable th) {
+            String warn="Failed to register shutdown hook "
+                    + "for Fedora: " + th.getClass().getName() + ": "
+                    + th.getMessage();
+            System.err.println(warn);
+            logWarning(warn);
         }
     }
 
