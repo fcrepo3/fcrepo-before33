@@ -1,49 +1,5 @@
 package fedora.server.storage;
 
-/**
- * <p>Title: FastDOReader.java</p>
- * <p>Description: Digital Object Reader that access objects located in the
- * "fast" storage area. For performance reasons, there are two distinct storage
- * areas for digital objects:
- * <ol>
- * <li>
- * "Fast" storage area - storage area containing a subset of digital
- * objects that is optimized for performance. Both the composition of the
- * subset and storage area are implementation specific. For Phase 1, this
- * object subset consists of a partial replication of the most current version
- * of each object and is used as the primary source for resolving dissemination
- * requests. The replication is partial since not all information about a
- * digital object is required to disseminate the object. For Phase 1, the fast
- * storage area is implemented as a relational database that is accessed via
- * JDBC. <i>Note that objects in the fast storage area are optimized for
- * dissemination and may <b>NOT</b> contain information about the object that
- * is not required for dissemination. <code>DefinitiveDOReader</code> should
- * always be used to obtain the most complete information about a specific
- * object</i>.
- * </li>
- * <li>
- * Definitive storage area - storage area containing all digital objects
- * in the repository. This storage area is used as a primary source for
- * reading complete information about a digital object. This storage area is
- * used as a secondary source for resolving dissemination requests.
- * </li>
- * </ol>
- * <p>This reader is designed to read objects from the "fast" storage area that
- * is implemented as a relational database. If the object cannot be found in
- * the relational database, this reader will attempt to read the object
- * from the Definitive storage area using <code>DefinitiveDOReader</code>.
- * When the object exists in both storage areas, preference is given to the
- * Fast storage area since this reader is designed to read primarily from the
- * Fast Storage area. <code>DefinitiveDOReader</code> should always be used
- * to read the authoritative version of an object.</p>
- * <p></p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Ross Wayland
- * @version 1.0
- */
-
-// java imports
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -59,8 +15,8 @@ import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Vector;
 
-// Fedora imports
 import fedora.server.Server;
+import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
@@ -74,23 +30,73 @@ import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.utilities.DateUtility;
 
+/**
+ * <p>Title: FastDOReader.java</p>
+ * <p>Description: Digital Object Reader that accesses objects located in the
+ * "Fast" storage area. To enhance performance of disseminations, there are
+ * two distinct storage areas for digital objects:
+ * <ol>
+ * <li>
+ * "Fast" storage area - The storage area containing a subset of digital
+ * objects that is optimized for performance. Both the composition of the
+ * subset of objects and storage area are implementation specific. For Phase 1,
+ * this object subset consists of a partial replication of the most current
+ * version of each object and is used as the primary source for resolving
+ * dissemination requests. The replication is partial since only information
+ * required to disseminate the object is replicated in the Fast storage area.
+ * For Phase 1, the Fast storage area is implemented as a relational database
+ * that is accessed via JDBC. <i>Note that an appropriate definitve reader
+ * should always be used to obtain the most complete information about a
+ * specific object. A fast reader is used primarily for dissemination
+ * requests.</i>.
+ * </li>
+ * <li>
+ * Definitive storage area - The storage area containing complete information on
+ * all digital objects in the repository. This storage area is used as the
+ * authoritative source for reading complete information about a digital object.
+ * This storage area is used as a secondary source for resolving dissemination
+ * requests when the specified object does not exist in the Fast storage area.
+ * </li>
+ * </ol>
+ * <p>This reader is designed to read objects from the "Fast" storage area that
+ * is implemented as a relational database. If the object cannot be found in
+ * the relational database, this reader will attempt to read the object
+ * from the Definitive storage area using the appropriate definitive reader.
+ * When the object exists in both storage areas, preference is given to the
+ * Fast storage area since this reader is designed to read primarily from the
+ * Fast Storage area. <code>DefinitiveDOReader</code>,
+ * <code>DefinitveBMechReader</code>, or <code>DefinitiveBDefReader</code>
+ * should always be used to read the authoritative version of an object.</p>
+ * <i><b>Note that versioning is not implemented in Phase 1. Methods in
+ * <code>FastDOReader</code> that contain arguments related to versioning date
+ * such as <code>versDateTime</code> or <code>asOfDate</code> will be ignored
+ * in Phase 1.</p>
+ * <p></p>
+ * <p>Copyright: Copyright (c) 2002</p>
+ * <p>Company: </p>
+ * @author Ross Wayland
+ * @version 1.0
+ */
 public class FastDOReader implements DisseminatingDOReader
 {
+  private static boolean debug = true;
+  private static ConnectionPool connectionPool = null;
+  private static Server s_server = null;
+  private boolean isFoundInFastStore = false;
+  private boolean isFoundInDefinitiveStore = false;
+  private String doLabel = null;
+  private String PID = null;
+  private DefinitiveDOReader doReader = null;
+  private DefinitiveBMechReader bMechReader = null;
 
-private DefinitiveDOReader doReader = null;
-private DefinitiveBMechReader bMechReader = null;
-private String PID = null;
-private String doLabel = null;
-private static ConnectionPool connectionPool = null;
-private static boolean debug = true;
-private boolean isFoundInFastStore = false;
-private boolean isFoundInDefinitiveStore = false;
-
-//FIXME!! need to decide where to locate the db.properties file
-private static final String dbPropsFile = "db.properties";
-
-  public FastDOReader()
+  static
   {
+    try
+    {
+      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+    } catch (InitializationException ie) {
+      System.err.println(ie.getMessage());
+    }
   }
 
   /**
@@ -101,26 +107,34 @@ private static final String dbPropsFile = "db.properties";
    * <code>PID</code> and <code>doLabel</code>. If the specified object cannot
    * be found, <code>ObjectNotFoundException</code> is thrown.</p>
    *
-   * @param objectPID persistent identifier of the digital object
-   * @throws ObjectNotFoundException if the digital object cannot be found
+   * @param objectPID The persistent identifier of the digital object.
+   * @throws ObjectNotFoundException If the digital object cannot be found.
    */
   public FastDOReader(String objectPID) throws ObjectNotFoundException
   {
     try
     {
-      initDB();
+      // Get database connection pool
+      ConnectionPoolManager poolManager =
+          (ConnectionPoolManager)s_server.
+          getModule("fedora.server.storage.ConnectionPoolManager");
+      connectionPool = poolManager.getPool();
+
+      // Attempt to find object in either Fast or Definitive store
       this.doLabel = locatePID(objectPID);
       this.PID = objectPID;
-    } catch (ObjectNotFoundException onfe)
+
+    } catch (ConnectionPoolNotFoundException cpnfe)
     {
-      System.out.println("ObjectNotFoundException - Object Cannot Be Found");
-      throw onfe;
+      throw new ObjectNotFoundException("Object not found: " +
+                                        objectPID + "\n" +
+                                        cpnfe.getMessage() + "\n");
     } catch (Exception e)
     {
       // FIXME!! - Decide on Exception handling
-      System.out.println("Unable to Initialize Database");
-      ObjectNotFoundException onfe = new ObjectNotFoundException("");
-      onfe.initCause(e);
+      throw new ObjectNotFoundException("Object not found:" +
+                                        objectPID + "\n" +
+                                        e.getMessage() + "\n");
     }
   }
 
@@ -129,7 +143,8 @@ private static final String dbPropsFile = "db.properties";
    * not stored in the Fast storage area, this method always queries the
    * Definitive storage area using <code>DefinitiveDOReader</code>.</p>
    *
-   * @return String containing the exported object
+   * @return A stream of bytes consisting of the XML-encoded representation
+   * of the digital object.
    */
   public InputStream ExportObject()
   {
@@ -141,8 +156,8 @@ private static final String dbPropsFile = "db.properties";
    * <p>Gets a list of Behavior Definition object PIDs associated with the
    * specified digital object.</p>
    *
-   * @param versDateTime versioning datetime stamp
-   * @return String[] array containing list of Behavior Definition object PIDs
+   * @param versDateTime The versioning datetime stamp.
+   * @return An array containing a list of Behavior Definition object PIDs.
    */
   public String[] GetBehaviorDefs(Date versDateTime)
   {
@@ -184,13 +199,13 @@ private static final String dbPropsFile = "db.properties";
           }
           queryResults.add(results);
         }
-           behaviorDefs = new String[queryResults.size()];
-           int rowCount = 0;
-           for (Enumeration e = queryResults.elements(); e.hasMoreElements();)
-           {
-             behaviorDefs[rowCount] = (String)e.nextElement();
-             rowCount++;
-      }
+        behaviorDefs = new String[queryResults.size()];
+        int rowCount = 0;
+        for (Enumeration e = queryResults.elements(); e.hasMoreElements();)
+        {
+          behaviorDefs[rowCount] = (String)e.nextElement();
+          rowCount++;
+        }
         connectionPool.free(connection);
         connection.close();
         statement.close();
@@ -198,9 +213,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // FIXME!! - Decide on Exception handling
         // Problem with the relational database or query
-        ObjectNotFoundException onfe = new ObjectNotFoundException("");
-        onfe.initCause(sqle);
-        //throw onfe;
+        System.out.println("Object not found: " +
+            sqle.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " +
+        //    sqle.getMessage() + "\n");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -208,21 +224,24 @@ private static final String dbPropsFile = "db.properties";
       // query Definitive storage area.
       try
       {
-        // FIXME - until xml storage code is implemented, the call below
+        // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         behaviorDefs = doReader.GetBehaviorDefs(versDateTime);
-        // FIXME - need to catch appropriate Exception thrown by
+
+        // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetBehaviorDefs: OBJECT NOT FOUND --\n PID: "+
-                         PID+"\n asOfDate: "+
-                         DateUtility.convertDateToString(versDateTime)+"\n";
-        //throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: \n PID: " +
+                         PID + "\n asOfDate: " +
+                         DateUtility.convertDateToString(versDateTime) + "\n");
+        //throw new ObjectNotFoundException("Object not found: \n PID: " +
+        //    PID + "\n asOfDate: " +
+        //    DateUtility.convertDateToString(versDateTime) + "\n");
       }
     }
     return behaviorDefs;
@@ -231,11 +250,12 @@ private static final String dbPropsFile = "db.properties";
   /**
    * <p>Gets method parameters associated with the specified method name.</p>
    *
-   * @param bDefPID persistent identifer of Behavior Definition object
-   * @param methodName the name of the method
-   * @param versDateTime versioning datetime stamp
-   * @return MethodParmDef[] array of method parameter definitions
-   * @throws MethodNotFoundException
+   * @param bDefPID The persistent identifer of Behavior Definition object.
+   * @param methodName The name of the method.
+   * @param versDateTime The versioning datetime stamp.
+   * @return An array of method parameter definitions.
+   * @throws MethodNotFoundException If the specified method name cannot
+   * be found.
    */
   public MethodParmDef[] GetBMechMethodParm(String bDefPID, String methodName,
       Date versDateTime) throws MethodNotFoundException
@@ -244,42 +264,33 @@ private static final String dbPropsFile = "db.properties";
     MethodParmDef methodParm = null;
     Vector queryResults = new Vector();
 
-    // Note that the query retrieves the list of available methods
-    // based on Behavior Mechanism object and NOT the Behavior
-    // Definition object. This is done to insure that only methods
-    // that have been implemented in the mechanism are returned.
-    // This distinction is only important when versioning is enabled
-    // in a later release. When versioning is enabled, it is possible
-    // that a given Behavior Definition may have methods that have not
-    // yet been implemented by all of its associated Behavior Mechanisms.
-    // In such a case, only those methods implemented in the mechanism
-    // will be returned.
     if (isFoundInFastStore && versDateTime == null)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
-      String query = "SELECT DISTINCT "+
-              "PARM_Name,"+
-              "PARM_Default_Value,"+
-              "PARM_Required_Flag,"+
-              "PARM_Label "+
-              " FROM "+
-              "DigitalObject,"+
-              "BehaviorDefinition,"+
-              "BehaviorMechanism,"+
-              "MechanismImpl,"+
-              "Method,"+
-              "Parameter "+
-              " WHERE "+
-              "BehaviorMechanism.BDEF_DBID=Parameter.BDEF_DBID AND "+
-              "Method.BDEF_DBID=Parameter.BDEF_DBID AND "+
-              "Method.METH_DBID=Parameter.METH_DBID AND "+
-              "BehaviorMechanism.BDEF_DBID=Method.BDEF_DBID AND "+
-              "MechanismImpl.METH_DBID=Method.METH_DBID AND " +
-              "BehaviorMechanism.BDEF_DBID=BehaviorDefinition.BDEF_DBID AND "+
-              "DigitalObject.DO_PID=\'" + PID + "\' AND "+
-              "BehaviorDefinition.BDEF_PID='" + bDefPID + "' AND "+
-              "Method.METH_Name='"  + methodName + "' ";
+      String query =
+          "SELECT DISTINCT "+
+          "PARM_Name,"+
+          "PARM_Default_Value,"+
+          "PARM_Required_Flag,"+
+          "PARM_Label "+
+          " FROM "+
+          "DigitalObject,"+
+          "BehaviorDefinition,"+
+          "BehaviorMechanism,"+
+          "MechanismImpl,"+
+          "Method,"+
+          "Parameter "+
+          " WHERE "+
+          "BehaviorMechanism.BDEF_DBID=Parameter.BDEF_DBID AND "+
+          "Method.BDEF_DBID=Parameter.BDEF_DBID AND "+
+          "Method.METH_DBID=Parameter.METH_DBID AND "+
+          "BehaviorMechanism.BDEF_DBID=Method.BDEF_DBID AND "+
+          "MechanismImpl.METH_DBID=Method.METH_DBID AND " +
+          "BehaviorMechanism.BDEF_DBID=BehaviorDefinition.BDEF_DBID AND "+
+          "DigitalObject.DO_PID=\'" + PID + "\' AND "+
+          "BehaviorDefinition.BDEF_PID='" + bDefPID + "' AND "+
+          "Method.METH_Name='"  + methodName + "' ";
 
       if(debug) System.out.println("MethodParmQuery="+query+"\n");
       try
@@ -290,7 +301,7 @@ private static final String dbPropsFile = "db.properties";
         ResultSet rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
-        //int rowCount = 0;
+
         // Note: a row is returned for each method parameter
         while (rs.next())
         {
@@ -306,7 +317,6 @@ private static final String dbPropsFile = "db.properties";
           methodParm.parmRequired = B.booleanValue();
           methodParm.parmLabel = results[3];
           queryResults.addElement(methodParm);
-          //rowCount++;
         }
         methodParms = new MethodParmDef[queryResults.size()];
         int rowCount = 0;
@@ -322,9 +332,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // Problem with the relational database or query
         // FIXME!! - Decide on Exception handling
-        MethodNotFoundException mpnfe = new MethodNotFoundException("");
-        mpnfe.initCause(sqle);
-        throw mpnfe;
+        System.out.println("Object not found: " +
+            PID + "\n" + sqle.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " +
+        //    PID + "\n" + sqle.getMessage() + "\n");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -332,23 +343,29 @@ private static final String dbPropsFile = "db.properties";
       // query Definitive storage area.
       try
       {
-        // FIXME - until xml storage code is implemented, the call below
+        // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
         DefinitiveBMechReader bMechReader = new DefinitiveBMechReader(bDefPID);
-        // FIXME - code to get method parameters directly from the
+        // FIXME!! - code to get method parameters directly from the
         // XML objects NOT implemented yet.
         return methodParms;
-        // FIXME - need to catch appropriate Exception thrown by
+        // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "METHOD PARM NOT FOUND --\n bDefPID: "+bDefPID+
-                         "\n methodName: "+methodName+"\n asOfDate: "+
-                         DateUtility.convertDateToString(versDateTime)+"\n";
-        throw new MethodNotFoundException(message);
+        System.out.println("Method parameter not found: " +
+           "\n bDefPID: " + bDefPID +
+           "\n methodName: "+methodName +
+           "\n asOfDate: " + DateUtility.convertDateToString(versDateTime) +
+           "\n");
+        throw new MethodNotFoundException("Method parameter not found: " +
+           "\n bDefPID: " + bDefPID +
+           "\n methodName: "+methodName +
+           "\n asOfDate: " + DateUtility.convertDateToString(versDateTime) +
+           "\n" + e.getMessage() + "\n");
       }
     }
     return methodParms;
@@ -358,11 +375,20 @@ private static final String dbPropsFile = "db.properties";
    * <p>Gets all method defintiions associated with the specified Behavior
    * Mechanism. Note the PID of the associated Behavior Mechanism object is
    * determined via reflection based on the specified PID of the digital object
-   * and the PID of its Behavior Definition object.</p>
+   * and the PID of its Behavior Definition object. This method retrieves the
+   * list of available methods based on the assocaited Behavior Mechanism
+   * object and NOT the Behavior Definition object. This is done to insure
+   * that only methods that have been implemented in the mechanism are returned.
+   * This distinction is only important when versioning is enabled
+   * in a later release. When versioning is enabled, it is possible
+   * that a versioned Behavior Definition may have methods that have not
+   * yet been implemented by all of its associated Behavior Mechanisms.
+   * In such a case, only those methods implemented in the mechanism
+   * will be returned.</p>
    *
-   * @param bDefPID persistent identifier of Behavior Definition object
-   * @param versDateTime versioning datetime stamp
-   * @return MethodDef[] array of method definitions
+   * @param bDefPID The persistent identifier of Behavior Definition object.
+   * @param versDateTime The versioning datetime stamp.
+   * @return An array of method definitions.
    */
   public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
   {
@@ -375,29 +401,29 @@ private static final String dbPropsFile = "db.properties";
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
       String  query =
-          "SELECT DISTINCT "+
-          "Method.METH_Name,"+
-          "Method.METH_Label,"+
-          "MechanismImpl.MECHImpl_Address_Location,"+
-          "MechanismImpl.MECHImpl_Operation_Location "+
-          "FROM "+
-          "BehaviorDefinition,"+
-          "Disseminator,"+
-          "Method,"+
-          "DigitalObject,"+
-          "DigitalObjectDissAssoc,"+
-          "BehaviorMechanism,"+
-          "MechanismImpl "+
-          "WHERE "+
-          "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "+
-          "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "+
-          "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "+
-          "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "+
-          "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND "+
-          "BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND "+
-          "Method.METH_DBID = MechanismImpl.METH_DBID AND "+
-          "Method.BDEF_DBID = BehaviorDefinition.BDEF_DBID AND "+
-          "BehaviorDefinition.BDEF_PID = \'" + bDefPID + "\' AND "+
+          "SELECT DISTINCT " +
+          "Method.METH_Name," +
+          "Method.METH_Label," +
+          "MechanismImpl.MECHImpl_Address_Location," +
+          "MechanismImpl.MECHImpl_Operation_Location " +
+          "FROM " +
+          "BehaviorDefinition," +
+          "Disseminator," +
+          "Method," +
+          "DigitalObject," +
+          "DigitalObjectDissAssoc," +
+          "BehaviorMechanism," +
+          "MechanismImpl " +
+          "WHERE " +
+          "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND " +
+          "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND " +
+          "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND " +
+          "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND " +
+          "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND " +
+          "BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND " +
+          "Method.METH_DBID = MechanismImpl.METH_DBID AND " +
+          "Method.BDEF_DBID = BehaviorDefinition.BDEF_DBID AND " +
+          "BehaviorDefinition.BDEF_PID = \'" + bDefPID + "\' AND " +
           "DigitalObject.DO_PID=\'" + PID + "\';";
 
       if (debug) System.out.println("ObjectQuery: "+query);
@@ -410,7 +436,6 @@ private static final String dbPropsFile = "db.properties";
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
-        //int rowCount = 0;
         while (rs.next())
         {
           results = new String[cols];
@@ -419,13 +444,9 @@ private static final String dbPropsFile = "db.properties";
           {
             results[i-1] = rs.getString(i);
             System.out.println("method[+"+i+"] = "+results[i-1]);
-
           }
           methodDef.methodName = results[0];
           methodDef.methodLabel = results[1];
-          //methodDef.httpBindingURL = null;
-          //methodDef.httpBindingAddress = results[2];
-          //methodDef.httpBindingOperationLocation = results[3];
           try
           {
             methodDef.methodParms = this.GetBMechMethodParm(bDefPID,
@@ -433,11 +454,11 @@ private static final String dbPropsFile = "db.properties";
           } catch (MethodNotFoundException mpnfe)
           {
             // FIXME!! - Decide on Exception handling
-            //throw mpnfe;
-            //System.out.println("MethodParmNotFoundException");
+            System.out.println("Method not found: " + methodDef.methodName);
+            //throw new MethodNotFoundException("Method not found: " +
+            //    methodDef.methodName +"\n");
           }
           queryResults.add(methodDef);
-          //rowCount++;
         }
         methodDefs = new MethodDef[queryResults.size()];
         int rowCount = 0;
@@ -453,9 +474,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // Problem with the relational database or query
         // FIXME!! - Decide on Exception handling
-        ObjectNotFoundException onfe = new ObjectNotFoundException("");
-        onfe.initCause(sqle);
-        //throw onfe;
+        System.out.println("Object not found: " + PID +
+                           "\n" + sqle.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    "\n" + sqle.getMessage() + "\n");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -463,21 +485,27 @@ private static final String dbPropsFile = "db.properties";
       // query Definitive storage area.
       try
       {
-        // FIXME - until xml storage code is implemented, the call below
+        // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         methodDefs = doReader.GetBMechMethods(bDefPID, versDateTime);
-        // FIXME - need to catch appropriate Exception thrown by
+        // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetBehaviormethods: OBJECT NOT FOUND --\n PID: "+
-                         PID+"\n asOfDate: "+
-                         DateUtility.convertDateToString(versDateTime)+"\n";
-        //throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: " + PID +
+                           "\n bDefPID: " + bDefPID +
+                           "\n asOfDate: "+
+                           DateUtility.convertDateToString(versDateTime) +
+                           "\n" + e.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //                   "\n bDefPID: " + bDefPID +
+        //                   "\n asOfDate: "+
+        //                   DateUtility.convertDateToString(versDateTime) +
+        //                   "\n" + e.getMessage() + "\n");
       }
     }
     return methodDefs;
@@ -489,10 +517,10 @@ private static final String dbPropsFile = "db.properties";
    * uses <code>DefinitiveDOReader</code> to query the Definitive
    * storage area.</p>
    *
-   * @param bDefPID persistent identifier of Behavior Definition object
-   * @param versDateTime versioning datetime stamp
-   * @return InputStream containing XML fragment consisting of method
-   * definitions from WSDL in assocaited Behavior Mechanism object
+   * @param bDefPID The persistent identifier of Behavior Definition object.
+   * @param versDateTime The versioning datetime stamp.
+   * @return A stream of bytes containing XML-encoded representation of
+   * method definitions from WSDL in assocaited Behavior Mechanism object.
    */
   public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
   {
@@ -503,9 +531,9 @@ private static final String dbPropsFile = "db.properties";
   /**
    * <p>Gets a datastream specified by the datastream ID.</p>
    *
-   * @param datastreamID the identifier of requested datastream
-   * @param versDateTime versioning datetime stamp
-   * @return Datastream
+   * @param datastreamID The identifier of the requested datastream.
+   * @param versDateTime The versioning datetime stamp.
+   * @return The specified datastream.
    */
   public Datastream GetDatastream(String datastreamID, Date versDateTime)
   {
@@ -539,7 +567,6 @@ private static final String dbPropsFile = "db.properties";
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
-        //int rowCount = 0;
         while (rs.next())
         {
           results = new String[cols];
@@ -552,7 +579,6 @@ private static final String dbPropsFile = "db.properties";
           datastream.DSMIME = results[1];
           datastream.DSLocation = results[2];
           queryResults.addElement(datastream);
-          //rowCount++;
         }
 
         datastreams = new Datastream[queryResults.size()];
@@ -568,9 +594,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // Problem with the relational database or query
         // FIXME!! - Decide on Exception handling
-        ObjectNotFoundException onfe = new ObjectNotFoundException("");
-        onfe.initCause(sqle);
-        //throw onfe;
+        System.out.println("Object not found: " + PID +
+            sqle.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    sqle.getMessage() + "\n");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -578,21 +605,25 @@ private static final String dbPropsFile = "db.properties";
       // query Definitive storage area.
       try
       {
-        // FIXME - until xml storage code is implemented, the call below
+        // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         datastream = doReader.GetDatastream(datastreamID, versDateTime);
-        // FIXME - need to catch appropriate Exception thrown by
+        // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDatastream: OBJECT NOT FOUND --\n PID: "+
-                         PID+"\n asOfDate: "+
-                         DateUtility.convertDateToString(versDateTime)+"\n";
-        //throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: " + PID +
+            "\n asOfDate: " +
+            DateUtility.convertDateToString(versDateTime) +
+            "\n" + e.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    "\n asOfDate: " +
+        //    DateUtility.convertDateToString(versDateTime) +
+        //    "\n" + e.getmessage() + "\n");
       }
     }
     return datastream;
@@ -601,8 +632,8 @@ private static final String dbPropsFile = "db.properties";
   /**
    * <p>Gets all the datastreams of a digital object.</p>
    *
-   * @param versDateTime versioning datetime stamp
-   * @return Datastream[] array of datastreams
+   * @param versDateTime The versioning datetime stamp.
+   * @return An array of datastreams.
    */
   public Datastream[] GetDatastreams(Date versDateTime)
   {
@@ -635,7 +666,6 @@ private static final String dbPropsFile = "db.properties";
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
-        //int rowCount = 0;
         while (rs.next())
         {
           results = new String[cols];
@@ -648,7 +678,6 @@ private static final String dbPropsFile = "db.properties";
           datastream.DSMIME = results[1];
           datastream.DSLocation = results[2];
           queryResults.addElement(datastream);
-          //rowCount++;
         }
         datastreams = new Datastream[queryResults.size()];
         int rowCount = 0;
@@ -664,9 +693,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // Problem with the relational database or query
         // FIXME!! - Decide on Exception handling
-        ObjectNotFoundException onfe = new ObjectNotFoundException("");
-        onfe.initCause(sqle);
-        //throw onfe;
+        System.out.println("Object not found: " + PID +
+            sqle.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    sqle.getMessage() + "\n");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -674,21 +704,25 @@ private static final String dbPropsFile = "db.properties";
       // Definitive storage area.
       try
       {
-        // FIXME - until xml storage code is implemented, the call below
+        // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         datastreams = doReader.GetDatastreams(versDateTime);
-        // FIXME - need to catch appropriate Exception thrown by
+        // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDatastreams: OBJECT NOT FOUND --\n PID: "+
-                         PID+"\n asOfDate: "+
-                         DateUtility.convertDateToString(versDateTime)+"\n";
-        //throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: " + PID +
+            "\n asOfDate: " +
+            DateUtility.convertDateToString(versDateTime) +
+            "\n" + e.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    "\n asOfDate: " +
+        //    DateUtility.convertDateToString(versDateTime) +
+        //    "\n" + e.getmessage() + "\n");
       }
     }
     return datastreams;
@@ -697,15 +731,16 @@ private static final String dbPropsFile = "db.properties";
   /**
    * <p>Gets a dissemination result.</p>
    *
-   * @param PID persistent identifier for the digital object
-   * @param bDefPID persistent identifier for the Behavior Definition object
-   * @param methodName name of the method to be executed
-   * @param versDateTime versioning datetime stamp
-   * @return MIMETypedStream containing the dissemination result
-   * @throws ObjectNotFoundException if object cannot be found.
+   * @param PID The persistent identifier for the digital object.
+   * @param bDefPID The persistent identifier for the Behavior Definition
+   * object.
+   * @param methodName The name of the method to be executed.
+   * @param versDateTime The versioning datetime stamp.
+   * @return A MIME-typed stream containing the dissemination result.
+   * @throws ObjectNotFoundException If object cannot be found.
    */
-  public DisseminationBindingInfo[] getDissemination(String PID, String bDefPID,
-      String methodName, Date versDateTime)
+  public DisseminationBindingInfo[] getDissemination(String PID,
+      String bDefPID, String methodName, Date versDateTime)
       throws ObjectNotFoundException
   {
     DisseminationBindingInfo dissBindInfo = null;
@@ -715,7 +750,8 @@ private static final String dbPropsFile = "db.properties";
     {
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
-      String query = "SELECT DISTINCT "+
+      String query =
+          "SELECT DISTINCT "+
           "DigitalObject.DO_PID,"+
           "BehaviorDefinition.BDEF_PID,"+
           "Method.METH_Name,"+
@@ -763,7 +799,6 @@ private static final String dbPropsFile = "db.properties";
         ResultSetMetaData rsMeta = rs.getMetaData();
         String[] results = null;
         int cols = rsMeta.getColumnCount();
-        //int rowCount = 0;
         // Note: When more than one datastream matches the DSBindingKey
         // or there are multiple DSBindingKeys associated with the method
         // in the dissemination query, multiple rows are returned.
@@ -790,7 +825,6 @@ private static final String dbPropsFile = "db.properties";
           }
           // Add each row of returned data
           queryResults.addElement(dissBindInfo);
-          //rowCount++;
         }
         dissBindInfoArray = new DisseminationBindingInfo[queryResults.size()];
         int rowCount = 0;
@@ -807,10 +841,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // Problem with the relational database or query
         // FIXME!! - Decide on Exception handling
-        ObjectNotFoundException onfe = new ObjectNotFoundException("");
-        onfe.initCause(sqle);
-        throw onfe;
-
+        System.out.println("Object not found: " + PID +
+            sqle.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    sqle.getMessage() + "\n");
     }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -828,11 +862,18 @@ private static final String dbPropsFile = "db.properties";
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDissemination: OBJECT NOT FOUND --\nPID: "+PID+
-                         "\n bDefPID: "+bDefPID+
-                         "\n methodName: "+methodName+"\n asOfDate: "+
-                         DateUtility.convertDateToString(versDateTime)+"\n";
-        throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: " + PID +
+                           "\n bDefPID: " + bDefPID +
+                           "\n methodName: " + methodName +
+                           "\n asOfDate: "+
+                           DateUtility.convertDateToString(versDateTime) +
+                           "\n" + e.getMessage() + "\n");
+        throw new ObjectNotFoundException("Object not found: " + PID +
+                           "\n bDefPID: " + bDefPID +
+                           "\n methodName: " + methodName +
+                           "\n asOfDate: "+
+                           DateUtility.convertDateToString(versDateTime) +
+                           "\n" + e.getMessage() + "\n");
       }
     }
     return dissBindInfoArray;
@@ -904,9 +945,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // Problem with the relational database or query
         // FIXME!! - Decide on Exception handling
-        ObjectNotFoundException onfe = new ObjectNotFoundException("");
-        onfe.initCause(sqle);
-        //throw onfe;
+        System.out.println("Object not found: " + PID +
+            sqle.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    sqle.getMessage() + "\n");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -914,21 +956,25 @@ private static final String dbPropsFile = "db.properties";
       // query Definitive storage area.
       try
       {
-        // FIXME - until xml storage code is implemented, the call below
+        // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         disseminator = doReader.GetDisseminator(disseminatorID, versDateTime);
-        // FIXME - need to catch appropriate Exception thrown by
+        // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = ":GetDisseminator: OBJECT NOT FOUND --\n PID: "+PID+
-                         "\n asOfDate: "+
-                         DateUtility.convertDateToString(versDateTime)+"\n";
-        //throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: " + PID +
+            "\n asOfDate: " +
+            DateUtility.convertDateToString(versDateTime) +
+            "\n" + e.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    "\n asOfDate: " +
+        //    DateUtility.convertDateToString(versDateTime) +
+        //    "\n" + e.getmessage() + "\n");
       }
     }
     return disseminator;
@@ -980,7 +1026,6 @@ private static final String dbPropsFile = "db.properties";
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
-        //int rowCount = 0;
         while (rs.next())
         {
           results = new String[cols];
@@ -994,7 +1039,6 @@ private static final String dbPropsFile = "db.properties";
           disseminator.bMechID = results[2];
           disseminator.dsBindMapID = results[3];
           queryResults.addElement(disseminator);
-          //rowCount++;
         }
         disseminators = new Disseminator[queryResults.size()];
         int rowCount = 0;
@@ -1010,9 +1054,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // Problem with the relational database or query
         // FIXME!! - Decide on Exception handling
-        ObjectNotFoundException onfe = new ObjectNotFoundException("");
-        onfe.initCause(sqle);
-        //throw onfe;
+        System.out.println("Object not found: " + PID +
+            sqle.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    sqle.getMessage() + "\n");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -1020,21 +1065,25 @@ private static final String dbPropsFile = "db.properties";
       // query Definitive storage area.
       try
       {
-        // FIXME - until xml storage code is implemented, the call below
+        // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         disseminators = doReader.GetDisseminators(versDateTime);
-        // FIXME - need to catch appropriate Exception thrown by
+        // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDisseminators: OBJECT NOT FOUND --\n PID: "+PID+
-                         "\n asOfDate: "+
-                         DateUtility.convertDateToString(versDateTime)+"\n";
-        //throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: " + PID +
+            "\n asOfDate: " +
+            DateUtility.convertDateToString(versDateTime) +
+            "\n" + e.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    "\n asOfDate: " +
+        //    DateUtility.convertDateToString(versDateTime) +
+        //    "\n" + e.getmessage() + "\n");
       }
     }
     return disseminators;
@@ -1087,9 +1136,7 @@ private static final String dbPropsFile = "db.properties";
       String  query =
           "SELECT DISTINCT "+
           "DigitalObject.DO_PID,"+
-          //"Disseminator.DISS_ID,"+
           "BehaviorDefinition.BDEF_PID,"+
-          //"BehaviorMechanism.BMECH_PID,"+
           "Method.METH_Name "+
           "FROM "+
           "BehaviorDefinition,"+
@@ -1119,7 +1166,6 @@ private static final String dbPropsFile = "db.properties";
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
-        //int rowCount = 0;
         while (rs.next())
         {
           results = new String[cols];
@@ -1132,7 +1178,6 @@ private static final String dbPropsFile = "db.properties";
           objectMethodsDef.bDefPID = results[1];
           objectMethodsDef.methodName = results[2];
           queryResults.add(objectMethodsDef);
-          //rowCount++;
         }
         objectMethodsDefArray = new ObjectMethodsDef[queryResults.size()];
         int rowCount = 0;
@@ -1148,9 +1193,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // Problem with the relational database or query
         // FIXME!! - Decide on Exception handling
-        ObjectNotFoundException onfe = new ObjectNotFoundException("");
-        onfe.initCause(sqle);
-        throw onfe;
+        System.out.println("Object not found: " + PID +
+            sqle.getMessage() + "\n");
+        throw new ObjectNotFoundException("Object not found: " + PID +
+            sqle.getMessage() + "\n");
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -1158,7 +1204,7 @@ private static final String dbPropsFile = "db.properties";
       // query Definitve storage area.
       try
       {
-        // FIXME - until xml storage code is implemented, the call below
+        // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
@@ -1185,18 +1231,22 @@ private static final String dbPropsFile = "db.properties";
           objectMethodsDefArray[rowCount] = (ObjectMethodsDef)e.nextElement();
           rowCount++;
         }
-        // FIXME - need to add code to get object info from XML objects
+        // FIXME!! - need to add code to get object info from XML objects
         return objectMethodsDefArray;
-        // FIXME - need to catch appropriate Exception thrown by
+        // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetObjectMethods: OBJECT NOT FOUND --\n PID: "+PID+
-                         "\n asOfDate: "+
-                         DateUtility.convertDateToString(versDateTime)+"\n";
-        throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: " + PID +
+            "\n asOfDate: " +
+            DateUtility.convertDateToString(versDateTime) +
+            "\n" + e.getMessage() + "\n");
+        throw new ObjectNotFoundException("Object not found: " + PID +
+            "\n asOfDate: " +
+            DateUtility.convertDateToString(versDateTime) +
+            "\n" + e.getMessage() + "\n");
         }
     }
     return objectMethodsDefArray;
@@ -1238,111 +1288,6 @@ private static final String dbPropsFile = "db.properties";
   }
 
   /**
-   * Initializes the relational database connection.
-   *
-   * @throws Exception if unable to establish database connection
-   */
-  public static void initDB() throws Exception
-  {
-    try
-    {
-      // read database properties file and init connection pool
-/*
-      FileInputStream fis = new FileInputStream(dbPropsFile);
-      Properties dbProps = new Properties();
-      dbProps.load(fis);
-      String driver = dbProps.getProperty("drivers");
-      String username = dbProps.getProperty("username");
-      String password = dbProps.getProperty("password");
-      String url = dbProps.getProperty("url");
-      Integer i1 = new Integer(dbProps.getProperty("initConnections"));
-      int initConnections = i1.intValue();
-      Integer i2 = new Integer(dbProps.getProperty("maxConnections"));
-      int maxConnections = i2.intValue();
-*/
-      // FIXME!! above section of code to be replaced with the following
-      // section when Server.java is functional
-
-
-      //String id = s_server.getModule("fedora.server.storage.DOManager").
-      //            getParameter("fast_db");
-      //FIXME!! - temporary fix until problem with above line is resolved
-      /*
-      String id = "mysql1";
-      System.out.println("id: "+id);
-      System.out.flush();
-      String driv = s_server.getDatastoreConfig("mysql1").
-                    getParameter("jdbc_driver_class");
-      System.out.println("driver: "+driv);
-      String label = s_server.getParameter("label");
-      System.out.println("label: "+label);
-      System.out.flush();
-      String driver = s_server.getDatastoreConfig(id).
-                      getParameter("jdbc_driver_class");
-      String username = s_server.getDatastoreConfig(id).
-                        getParameter("dbuser");
-      String password = s_server.getDatastoreConfig(id).
-                        getParameter("dbpass");
-      String url = s_server.getDatastoreConfig(id).
-                   getParameter("connect_string");
-      Integer i1 = new Integer(s_server.getDatastoreConfig(id).
-                               getParameter("pool_min"));
-      int initConnections = i1.intValue();
-      Integer i2 = new Integer(s_server.getDatastoreConfig(id).
-                               getParameter("pool_max"));
-      int maxConnections = i2.intValue();
-      System.out.println("id: "+id+"\ndriver: "+driver+"\nuser"+username+
-                         "\npass: "+password+"\nurl: "+url+"\nmin: "+
-                         initConnections+"\nmax: "+maxConnections);
-      System.out.flush();
-      if(debug) System.out.println("\nurl = "+url);
-
-      // initialize connection pool
-      connectionPool = new ConnectionPool(driver, url, username, password,
-          initConnections, maxConnections, true);
-    } catch (SQLException sqle)
-    {
-      // Problem with connection pool and/or database
-      System.out.println("Unable to create connection pool: "+sqle);
-      ConnectionPool connectionPool = null;
-      connectionPool = null;
-      // FIXME!! - Decide on Exception handling
-      Exception e = new Exception("");
-      e.initCause(sqle);
-      throw e; */
-      //ConnectionPoolManager cpm = s_server.getConnectionPoolManager("pool");
-      //System.out.println("cpm: "+cpm);
-      //ConnectionPool connectionPool = cpm.getPool("poolOne");
-      //String id = s_server.getModule("fedora.server.storage.ConnectionDOManager").
-      //            getParameter("fast_db");
-      //System.out.println("id: "+id);
-      Server s_server =
-          Server.getInstance(new File(System.getProperty("fedora.home")));
-      ConnectionPoolManager poolManager =
-          (ConnectionPoolManager)s_server.
-          getModule("fedora.server.storage.ConnectionPoolManager");
-      connectionPool = poolManager.getPool();
-    } catch (Exception e)
-    {
-      System.out.println("Failed to get Pool: "+e.getMessage());
-    }
-    //} catch (FileNotFoundException fnfe)
-    //{
-    //  System.out.println("Unable to read the properties file: " +
-    //      dbPropsFile);
-    //  Exception e = new Exception("");
-    //  e.initCause(fnfe);
-    //  throw e;
-    //} catch (IOException ioe)
-    //{
-    //  System.out.println(ioe);
-    //  Exception e = new Exception("");
-    //  e.initCause(ioe);
-    //  throw e;
-    //}
-  }
-
-  /**
    * <p>Lists the datastream IDs of the requested object having the
    * specified <code>state</code>. Note that the Fast storage area does NOT
    * contain state information so state is ignored when querying the Fast
@@ -1381,7 +1326,6 @@ private static final String dbPropsFile = "db.properties";
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
-        //int rowCount = 0;
         while (rs.next())
         {
           results = new String[cols];
@@ -1392,7 +1336,6 @@ private static final String dbPropsFile = "db.properties";
           datastream = new Datastream();
           datastream.DatastreamID = results[0];
           queryResults.addElement(datastream);
-          //rowCount++;
         }
         datastreamIDs = new String[queryResults.size()];
         int rowCount = 0;
@@ -1408,9 +1351,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // Problem with the relational database or query
         // FIXME!! - Decide on Exception handling
-        Exception e = new Exception("");
-        e.initCause(sqle);
-        //throw e;
+        System.out.println("Object not found: " + PID +
+            sqle.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    sqle.getMessage() + "\n");
       }
     } else if (isFoundInDefinitiveStore)
     {
@@ -1418,20 +1362,21 @@ private static final String dbPropsFile = "db.properties";
       // query Definitive storage area.
       try
       {
-        // FIXME - until xml storage code is implemented, the call below
+        // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         datastreamIDs = doReader.ListDatastreamIDs("");
-        // FIXME - need to catch appropriate Exception thrown by
+        // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDatastreamIDs: OBJECT NOT FOUND --\n PID: "+
-                         PID+"\n";
-        //throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: " + PID +
+            "\n" + e.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    "\n" + e.getmessage() + "\n");
       }
     }
     return datastreamIDs;
@@ -1477,7 +1422,6 @@ private static final String dbPropsFile = "db.properties";
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
-        //int rowCount = 0;
         while (rs.next())
         {
           results = new String[cols];
@@ -1488,7 +1432,6 @@ private static final String dbPropsFile = "db.properties";
           disseminator = new Disseminator();
           disseminator.dissID = results[0];
           queryResults.addElement(disseminator);
-          //rowCount++;
         }
         disseminatorIDs = new String[queryResults.size()];
         int rowCount = 0;
@@ -1505,9 +1448,10 @@ private static final String dbPropsFile = "db.properties";
       {
         // Problem with the relational database or query
         // FIXME!! - Decide on Exception handling
-        ObjectNotFoundException onfe = new ObjectNotFoundException("");
-        onfe.initCause(sqle);
-        //throw onfe;
+        System.out.println("Object not found: " + PID +
+            sqle.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    sqle.getMessage() + "\n");
       }
     } else if (isFoundInDefinitiveStore)
     {
@@ -1515,20 +1459,21 @@ private static final String dbPropsFile = "db.properties";
       // query Definitive storage area.
       try
       {
-        // FIXME - until xml storage code is implemented, the call below
+        // FIXME!! - until xml storage code is implemented, the call below
         // will throw a FileNotFound exception unless the object is one of the
         // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         disseminatorIDs = doReader.ListDisseminatorIDs("A");
-        // FIXME - need to catch appropriate Exception thrown by
+        // FIXME!! - need to catch appropriate Exception thrown by
         // DefinitiveDOReader if the PID cannot be found. For now,
         // just catch any exception.
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDisseminatorIDs: OBJECT NOT FOUND --\n PID: "+
-                         PID+"\n";
-        //throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: " + PID +
+            "\n" + e.getMessage() + "\n");
+        //throw new ObjectNotFoundException("Object not found: " + PID +
+        //    "\n" + e.getmessage() + "\n");
       }
     }
     return disseminatorIDs;
@@ -1576,9 +1521,10 @@ private static final String dbPropsFile = "db.properties";
     {
       // Problem with the relational database or query
       // FIXME!! Decide on Exception handling
-      ObjectNotFoundException onfe = new ObjectNotFoundException("");
-      onfe.initCause(sqle);
-      throw onfe;
+      System.out.println("Object not found: " + PID +
+          sqle.getMessage() + "\n");
+      throw new ObjectNotFoundException("Object not found: " + PID +
+                                        "\n" + sqle.getMessage() + "\n");
     }
     if (doLabel == null || doLabel.equalsIgnoreCase(""))
     {
@@ -1607,9 +1553,10 @@ private static final String dbPropsFile = "db.properties";
         // exist in the repository. In either case, this is a nonfatal
         // error that is passed back up the line.
         // FIXME!! - Decide on Exception handling
-        String message = "OBJECT -NOT- FOUND IN DEFINITIVE STORE\n PID: "+
-                         PID+"\n";
-        throw new ObjectNotFoundException(message);
+        System.out.println("Object not found: " + PID +
+            "\n" + e.getMessage() + "\n");
+        throw new ObjectNotFoundException("Object not found: " + PID +
+            "\n" + e.getMessage() + "\n");
       }
     } else
     {
@@ -1879,20 +1826,4 @@ private static final String dbPropsFile = "db.properties";
       System.out.println("MethodNotFound"+mnfe.getMessage());
     }
   }
-
-
-/*  private static Server s_server;
-
-  static
-  {
-    try
-    {
-      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
-    } catch (InitializationException ie)
-    {
-      System.err.println(ie.getMessage());
-      System.err.flush();
-    }
-  }
-*/
 }
