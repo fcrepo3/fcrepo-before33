@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:METS="http://www.loc.gov/METS/" 
+    xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" 
+    xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" 
+    xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" 
+    xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" 
+    xmlns:xlink="http://www.w3.org/TR/xlink" 
+    xsi:schemaLocation="http://www.loc.gov/standards/METS/ 
+    http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" 
+    OBJID="test:831" 
+    TYPE="FedoraBMechObject" 
+    LABEL="BMech for Pages at www.fedora.info" 
+    PROFILE="fedora:BMECH">
+  <METS:dmdSecFedora ID="DC" STATUS="A">
+    <METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+      <METS:mdWrap MIMETYPE="text/xml" MDTYPE="DC" 
+          LABEL="Dublin Core Metadata">
+        <METS:xmlData>
+          <oai_dc:dc
+              xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+              xmlns:dc="http://purl.org/dc/elements/1.1/">
+            <dc:title>Fedora BMech for Pages at www.fedora.info</dc:title>
+            <dc:creator>Chris Wilper</dc:creator>
+            <dc:subject>content management</dc:subject>
+            <dc:subject>xml</dc:subject>
+            <dc:subject>html</dc:subject>
+            <dc:description>This is a Behavior Mechanism object that can
+            be used to disseminate pages at www.fedora.info according to
+            the semantics set out in test:830 (the Behavior Definition).
+            </dc:description>
+            <dc:contributor>Sandy</dc:contributor>
+            <dc:contributor>Ross</dc:contributor>
+            <dc:date>Feb. 13, 2003</dc:date>
+            <dc:type>Fedora BMech Object</dc:type>
+            <dc:format>METS with Fedora Extensions</dc:format>
+            <dc:identifier>test:831</dc:identifier>
+            <dc:language>English</dc:language>
+          </oai_dc:dc>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:descMD>
+  </METS:dmdSecFedora>
+  <METS:amdSec ID="SERVICE-PROFILE">
+    <METS:techMD ID="SERVICE-PROFILE1.0" CREATED="2002-02-17T06:32:00">
+      <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" 
+          OTHERMDTYPE="FedoraServiceProfile"
+          LABEL="Technical description of the service">
+        <METS:xmlData>
+          <fsvp:serviceProfile bDefPID="test:830" bMechPID="test:831" 
+              xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+            <fsvp:serviceNamespaceURI>test:14</fsvp:serviceNamespaceURI>
+            <fsvp:serviceName>MrSID</fsvp:serviceName>
+            <fsvp:serviceLabel>MrSID service for providing different image 
+                resolutions from a wavelet encoded file, along with zoom 
+                capability</fsvp:serviceLabel>
+            <fsvp:serviceImplementation>
+              <fsvp:serviceTransportProtocol>HTTP</fsvp:serviceTransportProtocol>
+              <fsvp:serviceMessagingtProtocol>HTTP GET</fsvp:serviceMessagingtProtocol>
+              <fsvp:serviceInputFormats>
+                <fsvp:MIMEType>image/jpg</fsvp:MIMEType>
+                <fsvp:MIMEType>text/xml</fsvp:MIMEType>
+              </fsvp:serviceInputFormats>
+              <fsvp:serviceOutputFormats>
+                <fsvp:MIMEType>text/xml</fsvp:MIMEType>
+                <fsvp:MIMEType>text/html</fsvp:MIMEType>
+              </fsvp:serviceOutputFormats>
+              <fsvp:serviceImplDependencies>
+                <fsvp:tool name="java" version="4" 
+                    type="programming language"/>
+                <fsvp:tool name="Saxon servlet" version="1" 
+                    type="software application"/>
+              </fsvp:serviceImplDependencies>
+              <fsvp:serviceLiveTestURL>http://whats.this.for/hmmm</fsvp:serviceLiveTestURL>
+            </fsvp:serviceImplementation>
+          </fsvp:serviceProfile>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:amdSec ID="DSINPUTSPEC">
+    <METS:techMD ID="DSINPUTSPEC1.0" CREATED="2002-02-17T06:32:00">
+      <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" 
+          OTHERMDTYPE="FedoraDSInputSpec" 
+          LABEL="Input Datastream Requirements">
+        <METS:xmlData>
+          <fbs:DSInputSpec label="Input Datastream Requirements" 
+              bDefPID="test:830" bMechPID="test:831" 
+              xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+            <fbs:DSInput wsdlMsgPartName="SITE_ICON" DSMin="1" DSMax="1" 
+                DSOrdinality="false">
+              <fbs:DSInputLabel>Site Icon</fbs:DSInputLabel>
+              <fbs:DSMIME>image/jpg</fbs:DSMIME>
+              <fbs:DSInputInstruction>Medium-to-large squarish icon visible on 
+              all pages.</fbs:DSInputInstruction>
+            </fbs:DSInput>
+            <fbs:DSInput wsdlMsgPartName="SITE_DC" DSMin="1" DSMax="1" 
+                DSOrdinality="false">
+              <fbs:DSInputLabel>Basic Info about the Site</fbs:DSInputLabel>
+              <fbs:DSMIME>image/jpg</fbs:DSMIME>
+              <fbs:DSInputInstruction>A dublin core record describing the site.
+              At least title and description should be populated (with one 
+              value each).  
+              </fbs:DSInputInstruction>
+            </fbs:DSInput>
+            <fbs:DSInput wsdlMsgPartName="SITE_ADMIN_INFO" DSMin="1" DSMax="1" 
+                DSOrdinality="false">
+              <fbs:DSInputLabel>Administrative Information about the site.
+              </fbs:DSInputLabel>
+              <fbs:DSMIME>text/xml</fbs:DSMIME>
+              <fbs:DSInputInstruction>An xml chunk with one (root) element:
+              adminInfo, and two required attributes: name and email.  The
+              root element MAY contain a textual description or notes for
+              the site, useful for administrative purposes.
+              </fbs:DSInputInstruction>
+            </fbs:DSInput>
+            <fbs:DSInput wsdlMsgPartName="PAGE_DC" DSMin="1" DSMax="1" 
+                DSOrdinality="false">
+              <fbs:DSInputLabel>Basic Info about the Page</fbs:DSInputLabel>
+              <fbs:DSMIME>text/xml</fbs:DSMIME>
+              <fbs:DSInputInstruction>A dublin core record describing the
+              page.  At least title must be populated (with one value).
+              </fbs:DSInputInstruction>
+            </fbs:DSInput>
+            <fbs:DSInput wsdlMsgPartName="PAGE_CONTENT" DSMin="1" DSMax="1"   
+                DSOrdinality="false">
+              <fbs:DSInputLabel>The xhtml content of the page.</fbs:DSInputLabel>
+              <fbs:DSMIME>text/xml</fbs:DSMIME>
+              <fbs:DSInputInstruction>An xhtml chunk of formatted content for
+              the page.  The body portion will be used inside a wrapped
+              page for the getXML and getHTML disseminations of the page.  
+              It will be used standalone for the getContent dissemination.
+              </fbs:DSInputInstruction>
+            </fbs:DSInput>
+          </fbs:DSInputSpec>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+
+<!-- FIXME:  CONINUE HERE -->
+
+  <METS:amdSec ID="METHODMAP">
+    <METS:techMD ID="METHODMAP1.0" CREATED="2002-10-23T12:34:22">
+      <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" OTHERMDTYPE="FedoraMethodMap"
+          LABEL="Methods BMechs Implement">
+        <METS:xmlData>
+          <fmm:MethodMap name="Methods BMechs Implement" 
+              bDefPID="test:830" 
+              xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+            <fmm:Method operationName="getContent"/>
+            <fmm:Method operationName="getHTML"/>
+            <fmm:Method operationName="getXML"/>
+          </fmm:MethodMap>
+        </METS:xmlData>
+      </METS:mdWrap>
+    </METS:techMD>
+  </METS:amdSec>
+  <METS:fileSec>
+    <METS:fileGrp ID="DATASTREAMS">
+      <METS:fileGrp ID="DS1" STATUS="">
+        <METS:file ID="DS1.0" MIMETYPE="text/html" OWNERID="E" 
+            CREATED="2002-10-23T12:34:22">
+          <METS:FLocat LOCTYPE="URL" 
+              xlink:href="http://www.fedora.info/wiki/bin/view/Main/WWWFedoraInfoBDefGuide" 
+              xlink:title="Guide to this BDef"/>
+        </METS:file>
+      </METS:fileGrp>
+    </METS:fileGrp>
+  </METS:fileSec>
+  <METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+    <METS:div TYPE="fedora-system:2" 
+        LABEL="Binding Map for Bootstrap Mechanism">
+      <METS:div TYPE="BDEF-METHODMAP" 
+          LABEL="Methods BMechs Implement">
+        <METS:fptr FILEID="METHODMAP"/>
+      </METS:div>
+      <METS:div TYPE="BDEF-GUIDE" 
+          LABEL="Guide to this BDef">
+        <METS:fptr FILEID="DS1"/>
+      </METS:div>
+    </METS:div>
+  </METS:structMap>
+  <METS:behaviorSec ID="DISS1"> 
+    <METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="fedora-system:1" 
+        LABEL="Bootstrap Behaviors" CREATED="2002-10-23T12:34:22">
+      <METS:interfaceMD LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" 
+          xlink:href="fedora-system:1"/>
+      <METS:serviceBindMD LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" 
+          xlink:href="fedora-system:2"/>
+    </METS:serviceBinding>
+  </METS:behaviorSec>
+</METS:mets>
