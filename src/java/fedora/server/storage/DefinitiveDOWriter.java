@@ -321,17 +321,13 @@ public class DefinitiveDOWriter
         m_pendingSave=false; // i think
     }
     
-    public String GetObjectXML()
+    public InputStream GetObjectXML()
             throws ObjectIntegrityException, StreamIOException {
         assertNotRemoved();
         assertNotPendingRemoval();
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
         m_exportSerializer.serialize(m_obj, bytes);
-        try {
-            return bytes.toString("UTF-8");
-        } catch (UnsupportedEncodingException uee) {
-            throw new ObjectIntegrityException("unsupported encoding: UTF-8... couldn't convert serialization to string");
-        }
+        return new ByteArrayInputStream(bytes.toByteArray());
     }
 
     public String GetObjectState()
@@ -341,11 +337,11 @@ public class DefinitiveDOWriter
         return m_obj.getState();
     }
 
-    public String ExportObject()
-            throws ObjectIntegrityException {
+    public InputStream ExportObject()
+            throws ObjectIntegrityException, StreamIOException {
         assertNotRemoved();
         assertNotPendingRemoval();
-        return null;
+        return GetObjectXML();
     }
 
     public String GetObjectPID()
