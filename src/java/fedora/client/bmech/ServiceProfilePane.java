@@ -101,10 +101,14 @@ public class ServiceProfilePane
 		tc1.sizeWidthToFit();
 		TableColumn tc2 = dependencyTable.getColumnModel().getColumn(2);
 		tc2.setHeaderValue("Software Type");
-		String[] swtype = {ServiceSoftware.SW_PROGLANG, 
-						   ServiceSoftware.SW_OS, 
-						   ServiceSoftware.SW_UTILITY, 
-						   ServiceSoftware.SW_APPLIC, 
+		String[] swtype = {ServiceSoftware.SW_APPLIC_SVR,
+						   ServiceSoftware.SW_APPLIC_CL,
+						   ServiceSoftware.SW_APPLIC_UTIL,
+						   ServiceSoftware.SW_LIB, 
+						   ServiceSoftware.SW_SCRIPT,
+						   ServiceSoftware.SW_PROGRAM,
+						   ServiceSoftware.SW_OS,
+						   ServiceSoftware.SW_PROGLANG,  
 						   ServiceSoftware.SW_OTHER};
 		tc2.setCellRenderer(new ComboBoxRenderer(swtype));
 		tc2.setCellEditor(new ComboBoxTableCellEditor(swtype));
@@ -117,7 +121,10 @@ public class ServiceProfilePane
 							ServiceSoftware.L_LGPL,
 							ServiceSoftware.L_MPL, 
 							ServiceSoftware.L_BSD, 
-							ServiceSoftware.L_CPL, 
+							ServiceSoftware.L_CPL,
+							ServiceSoftware.L_APACHE, 
+						    ServiceSoftware.L_SUN, 
+						    ServiceSoftware.L_PUBLIC,
 							ServiceSoftware.L_OTHER};
 		tc3.setCellRenderer(new ComboBoxRenderer(license));
 		tc3.setCellEditor(new ComboBoxTableCellEditor(license));
