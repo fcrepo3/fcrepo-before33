@@ -12,6 +12,7 @@
 			<wsdldoc:type name="xsd:string" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
 			<wsdldoc:type name="wsdl:tDefinitions" url="http://www.w3.org/TR/2001/NOTE-wsdl-20010315#_document-s"/>
 			<wsdldoc:type name="fedora-types:MIMETypedStream" url="http://www.fedora.info/definitions/1/0/types/#MIMETypedStream"/>
+			<wsdldoc:type name="fedora-types:FieldSearchResult" url="http://www.fedora.info/definitions/1/0/types/#FieldSearchResult"/>
 		</documentation>
 	</types>
 	<message name="getObjectProfileRequest">
@@ -226,7 +227,9 @@
 		<operation name="findObjects">
 			<documentation>
            <p>Gets the requested ObjectFields on all objects in the 
-            repository matching the given criteria.</p>
+            repository matching the given criteria.  This is like a SQL query on a table that
+            indexes all objects in the repository with key fields, including unqualified dublin core
+            metadata.</p>
            <p>URL Syntax:</p>
            <p><b>http://<font color="#22cc22">host:port</font>/fedora/search?{<font color="#22cc22">terms=TERMS</font>|<font color="#22cc22">query=QUERY</font>}<font color="#cc2222">&amp;maxResults=MAXRESULTS<br />
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;xml=true&amp;pid=true&amp;label=true&amp;fType=true&amp;cModel=true&amp;state=true&amp;locker=true<br />
@@ -235,7 +238,19 @@
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;date=true&amp;type=true&amp;format=true&amp;identifier=true&amp;source=true&amp;language=true<br />
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;relation=true&amp;coverage=true&amp;rights=true</font></b>
            </p>
-           <p>At least one of the object fields should be specified as true.  Object fields are the optional fields
+<p> A couple complete example URLs conforming to this syntax, are:</p>
+<p><i>http://localhost:8080/fedora/search?terms=fedora&amp;pid=true</i></p>
+<dir>
+This example requests that the server provide the pids of objects where any of the indexed fields contain the word fedora.
+Since maxResults and xml aren't specified, the maxResults the server uses will be a small number, and the result will
+be provided in html.
+</dir>
+<p><i>http://localhost:8080/fedora/search?query=pid~*1&amp;maxResults=50&amp;xml=true&amp;pid=true&amp;creator=true</i></p>
+<dir>
+This example requests that the server provide the pids and dc:creators of objects where the pid ends with the number 1.
+It asks for up to 50 results at a time from the server, and requests that the result is provided in xml.
+</dir>
+	           <p>At least one of the object fields should be specified as true.  Object fields are the optional fields
             beginning with <b>pid</b>, above.  The result of the search will be a simple HTML document if
             the xml parameter is not specified.  If it is, the result will look like:
 </p>
@@ -259,13 +274,22 @@
   &lt;/resultList&gt;
 &lt;/result&gt;
 </pre>
+<p>...where dots indicate possible repeating elements in the xml.  The listSession element is only provided if the result is a partial result. (See resumeFindObjects below)</p>
 			</documentation>
 			<input message="fedora-api:findObjectsRequest"/>
 			<output message="fedora-api:findObjectsResponse"/>
 		</operation>
 		<operation name="resumeFindObjects">
 			<documentation>Gets the next list of results from a truncated
-                findObjects response.
+                findObjects response.  When a call to findObjects returns
+                only part of a result, it will provide a session token
+                that can be used to get the next chunk of results.  Repeated
+                calls to resumeFindObjects can then be made, until no listSession
+                element is given in the response.  When the result is requested in
+                html format, the &quot;next&quot; button causes this method to
+                be invoked.  The url syntax for this method is the same as
+                that for findObjects, but with the parameters below.  sessionToken
+                is required and xml is optional.
 			</documentation>
 			<input message="fedora-api:resumeFindObjectsRequest"/>
 			<output message="fedora-api:findObjectsResponse"/>
@@ -343,17 +367,7 @@
                Parentheses around a string indicate that the value of that part of the url should be replaced with the
                value of the named parameter.  Square brackets indicate optional text.
                Descriptions of each named parameter can be found in the appropriate message part documentation above.
-               A couple complete example URLs conforming to this syntax, are:
-              
-               http://localhost:8080/fedora/search?terms=fedora&amp;pid=true
-                   This example requests that the server provide the pids of objects where any of the indexed fields contain the word fedora.
-                   Since maxResults and xml aren't specified, the maxResults the server uses will be a small number, and the result will
-                   be provided in html.
-
-               http://localhost:8080/fedora/search?query=pid~*1&amp;maxResults=50&amp;xml=true&amp;pid=true&amp;creator=true
-                   This example requests that the server provide the pids and dc:creators of objects where the pid ends with the number 1.
-                   It asks for up to 50 results at a time from the server, and requests that the result is provided in xml.
-				</documentation>
+			</documentation>
 			</input>
 			<output>
 				<mime:content type="text/xml"/>
