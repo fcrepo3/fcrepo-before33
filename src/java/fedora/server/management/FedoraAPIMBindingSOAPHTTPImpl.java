@@ -33,7 +33,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                     "Server failed to initialize: The 'fedora.home' "
                     + "system property was not set.");
             } else {
-                s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+                s_server=Server.getInstance(new File(fedoraHome));
                 s_initialized=true;
             }
         } catch (InitializationException ie) {
@@ -45,7 +45,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public java.lang.String createObject() throws java.rmi.RemoteException {
         assertInitialized();
-        return "This would be a PID if this operation implementation wasn't a stub.  BTW, the scope of this service (as defined by the scope property in the wsdd file) is '" 
+        return "This would be a PID if this operation implementation wasn't "
+                + "a stub.  BTW, the scope of this service (as defined by the "
+                + "scope property in the wsdd file) is '" 
                 + AxisEngine.getCurrentMessageContext().getStrProp("scope") + "'. Also, fedora.home=" + System.getProperty("fedora.home");
         //return null;
     }
