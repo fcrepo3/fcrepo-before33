@@ -1280,9 +1280,16 @@ public class DefaultManagement
         // then generate an id
 		int id=getNextTempId();
 		// and attempt to save the stream
+        File outFile = new File(m_tempDir, "" + id);
+        FileOutputStream out = null;
 	    try {
-		    StreamUtility.pipeStream(in, new FileOutputStream(new File(m_tempDir, "" + id)), 8192);
+            out = new FileOutputStream(outFile);
+		    StreamUtility.pipeStream(in, out, 32768);
 		} catch (Exception e) {
+            if (out != null) {
+                try { out.close(); } catch (Exception ex) { }
+                outFile.delete();
+            }
 		    throw new StreamWriteException(e.getMessage());
 		}
 		// if we got this far w/o an exception, add to hash with current time
