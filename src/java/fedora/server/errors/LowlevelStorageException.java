@@ -1,13 +1,11 @@
 package fedora.server.errors;
-public class LowlevelStorageException extends /* Storage*/ Exception {
+public class LowlevelStorageException extends StorageException {
 	public LowlevelStorageException(boolean serverCaused, String bundleName, String code, String[] values,
 			String[] details, Throwable cause) {
-		super(/*bundleName,*/ code, /*values, details,*/ cause);
-		/*
+		super(null, code, null, null, cause);
 		if (serverCaused) {
 			setWasServer();
 		}
-		*/
 	}
 	public LowlevelStorageException(boolean serverCaused, String message, Throwable cause) {
 		this(serverCaused, null, message, null, null, cause);
