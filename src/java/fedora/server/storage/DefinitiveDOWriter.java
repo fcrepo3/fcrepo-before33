@@ -513,7 +513,7 @@ public class DefinitiveDOWriter
     }
 
     // Overloaded method: returns InputStream as alternative
-    public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
+    public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotInvalidated();

@@ -767,7 +767,7 @@ public class FastDOReader implements DOReader
   }
 
   /**
-   * <p>Gets WSDL containing method definitions. Since the XML representation
+   * <p>Gets XML containing method definitions. Since the XML representation
    * of digital objects is not stored in the Fast storage area, this method
    * uses a <code>DOReader</code> to query the Definitive
    * storage area.</p>
@@ -775,14 +775,14 @@ public class FastDOReader implements DOReader
    * @param bDefPID The persistent identifier of Behavior Definition object.
    * @param versDateTime The versioning datetime stamp.
    * @return A stream of bytes containing XML-encoded representation of
-   *         method definitions from WSDL in assocaited Behavior Mechanism
+   *         method definitions from XML in assocaited Behavior Mechanism
    *         object.
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
-  public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
+  public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime)
       throws GeneralException, ServerException
   {
     try
@@ -791,7 +791,7 @@ public class FastDOReader implements DOReader
       {
         doReader = m_manager.getReader(m_context, PID);
       }
-      return doReader.GetBMechMethodsWSDL(bDefPID, versDateTime);
+      return doReader.GetBMechMethodsXML(bDefPID, versDateTime);
     } catch (ServerException se)
     {
       throw se;
