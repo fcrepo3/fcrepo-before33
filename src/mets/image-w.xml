@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<!---************************************************************************-->
+<!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
+<!---************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvadesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/" xmlns:uvadigiprov="http://dl.lib.virginia.edu/bin/admin/digiprov/" xmlns:uvasource="http://dl.lib.virginia.edu/bin/admin/source/" xmlns:uvarights="http://dl.lib.virginia.edu/bin/admin/rights/" xmlns:uvatech="http://dl.lib.virginia.edu/bin/admin/tech/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="uva-lib:1225" TYPE="FedoraObject" LABEL="Saskia/AICT Image Collection - Mycenae" PROFILE="fedora:IMAGE-W">
+	<!---*******************************************************************************************************************************************-->
+	<!--  FEDORA SYSTEM METADATA: -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-22T06:32:00" RECORDSTATUS="A">
+		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
+			<METS:name> Sandy Payette </METS:name>
+			<METS:note> Digital Object based on Sakia image and created as the official Fedora sample object </METS:note>
+		</METS:agent>
+		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
+			<METS:name> University of Virginia Library </METS:name>
+			<METS:note> Object owned by UVA </METS:note>
+		</METS:agent>
+	</METS:metsHdr>
+	<!---*******************************************************************************************************************************************-->
+	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:dmdSec ID="DESC1.0" CREATED="2002-05-20T06:32:00" GROUPID="DESC1" STATUS="A">
+		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
+			<METS:xmlData>
+				<uvadesc:desc>
+					<uvadesc:date type="created" certainty="ca." era="bc">13th century</uvadesc:date>
+					<uvadesc:identifier scheme="URN">uva-lib:1225</uvadesc:identifier>
+					<uvadesc:rights type="use">unrestricted></uvadesc:rights>
+					<uvadesc:subject scheme="other" othertype="keyword">Bronze &amp; Age, Mycenean</uvadesc:subject>
+					<uvadesc:subject scheme="other" othertype="keyword">Greek</uvadesc:subject>
+					<uvadesc:subject scheme="other" othertype="keyword">Mycenae</uvadesc:subject>
+					<uvadesc:subject scheme="other" othertype="keyword">Greece, Argolis</uvadesc:subject>
+					<uvadesc:title type="main">Mycenae</uvadesc:title>
+					<uvadesc:type>image</uvadesc:type>
+					<uvadesc:agent role="publisher">Art Images for College Teaching</uvadesc:agent>
+					<uvadesc:covspace>
+						<uvadesc:geometry>
+							<uvadesc:point>
+								<uvadesc:lat>37.750</uvadesc:lat>
+								<uvadesc:long>22.733</uvadesc:long>
+							</uvadesc:point>
+						</uvadesc:geometry>
+					</uvadesc:covspace>
+					<uvadesc:covtime>
+						<uvadesc:date era="bc">1350</uvadesc:date>
+						<uvadesc:date era="bc">1200</uvadesc:date>
+					</uvadesc:covtime>
+					<uvadesc:genre>architecture</uvadesc:genre>
+					<uvadesc:culture>Greek</uvadesc:culture>
+					<uvadesc:physloc type="original">Greece, Mycenae</uvadesc:physloc>
+					<uvadesc:style>Bronze Age, Mycenean</uvadesc:style>
+				</uvadesc:desc>
+			</METS:xmlData>
+		</METS:mdWrap>
+	</METS:dmdSec>
+	<METS:amdSec ID="TECH1">
+		<METS:techMD ID="TECH1.0" CREATED="2002-05-22T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for saskia image">
+				<METS:xmlData>
+					<uvatech:tech>
+						<uvatech:format>image/jpg</uvatech:format>
+						<uvatech:compression>LZW</uvatech:compression>
+						<uvatech:bitDepth BITS="8"/>
+						<uvatech:colorSpace>RBG</uvatech:colorSpace>
+						<uvatech:colorProfile CPLOCAT="FILE" CPFILE="UNKNOWN"/>
+						<uvatech:resolution>600</uvatech:resolution>
+					</uvatech:tech>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- FEDORA SYSTEM METADATA: OBJECT AUDIT TRAIL-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:amdSec ID="FEDORA-AUDITTRAIL">
+		<METS:digiprovMD ID="AUDREC1" CREATED="2002-05-20T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Fedora Object Audit Trail Record">
+				<METS:xmlData>
+					<fedoraAudit:record>
+						<fedoraAudit:process type="api-M"/>
+						<fedoraAudit:action>ingestObject</fedoraAudit:action>
+						<fedoraAudit:responsibility>payette</fedoraAudit:responsibility>
+						<fedoraAudit:date>2002-05-20TO6:32:00</fedoraAudit:date>
+						<fedoraAudit:justification>add digital object to repository</fedoraAudit:justification>
+					</fedoraAudit:record>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:digiprovMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="A">
+				<!--High resolution image -->
+				<METS:file ID="DS1.0" SEQ="1" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH1 AUDREC1" DMDID="DESC1.0" OWNERID="E" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/image/saskia/006-007c.jpg" xlink:title="Saskia high jpg image"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS2" STATUS="A">
+				<!-- Watermark file-->
+				<METS:file ID="DS2.0" SEQ="1" CREATED="2002-05-25T08:32:00" MIMETYPE="image/gif" ADMID="AUDREC1" OWNERID="E" STATUS="A">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/image/watermark1.gif" xlink:title="watermark file"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- FEDORA DATASTREAM BINDING MAPS  -->
+	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="uva-bmech-image-w:112" LABEL="DS Binding Map for image watermarking mechanism">
+			<METS:div TYPE="WATERMARK" LABEL="Watermark image of type image/gif">
+				<METS:fptr FILEID="DS2"/>
+			</METS:div>
+			<METS:div TYPE="PHOTO" LABEL="Image of Mycenae">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DISSEMINATORS-->
+	<!-- A disseminator provides a "behavior-centric" view of the object.  It has an attribute STRUCTID -->
+	<!-- which is an IDREF to a mechanism-specific structMap.  The structMap labels datastreams in -->
+	<!-- a manner that is understood by the mechanism defined in the disseminator.  -->
+	<!-- -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- THE IMAGE  WATERMARKING DISSEMINATOR -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="uva-bdef-image-w:101" CREATED="2002-05-25T08:32:00" LABEL="Watermark Behaviors" GROUPID="DISS1" ADMID="AUDREC1" STATUS="A">
+		<METS:interfaceDef LABEL="Photo Watermark Behavior Definition" LOCTYPE="URN" xlink:href="uva-bdef-image-w:101"/>
+		<METS:mechanism LABEL="Watermarking Behavior Mechanism for Images" LOCTYPE="URN" xlink:href="uva-bmech-image-w:112"/>
+	</METS:behaviorSec>
+</METS:mets>
