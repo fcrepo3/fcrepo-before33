@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd">
+<web-app>
+	<display-name>Fedora</display-name>
+	<servlet>
+		<servlet-name>AxisServlet</servlet-name>
+		<display-name>Apache-Axis Servlet</display-name>
+		<servlet-class>
+	        org.apache.axis.transport.http.AxisServlet
+	    </servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>AdminServlet</servlet-name>
+		<display-name>Axis Admin Servlet</display-name>
+		<servlet-class>
+	        org.apache.axis.transport.http.AdminServlet
+	    </servlet-class>
+		<load-on-startup>100</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>ControlServlet</servlet-name>
+		<display-name>Fedora Control Servlet</display-name>
+		<servlet-class>
+        fedora.server.ServerController
+    </servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>FedoraAccessSoapServlet</servlet-name>
+		<display-name>Fedora Access Soap Servlet</display-name>
+		<servlet-class>
+			fedora.server.test.FedoraAccessSoapServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>FedoraFieldSearchServlet</servlet-name>
+		<display-name>Fedora FieldSearch Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.FieldSearchServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>FedoraOAIProviderServlet</servlet-name>
+		<display-name>Fedora OAI Provider Servlet</display-name>
+		<servlet-class>
+			fedora.server.oai.FedoraOAIProviderServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>FedoraAccessServlet</servlet-name>
+		<display-name>Fedora Access Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.FedoraAccessServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DatastreamResolverServlet</servlet-name>
+		<display-name>Fedora Access Datastream Locator</display-name>
+		<servlet-class>
+			fedora.server.access.dissemination.DatastreamResolverServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>MethodParameterResolverServlet</servlet-name>
+		<display-name>Fedora Access Datastream Locator</display-name>
+		<servlet-class>
+			fedora.server.test.MethodParameterResolverServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>MethodParameterResolverServlet2</servlet-name>
+		<display-name>Fedora Access Datastream Locator</display-name>
+		<servlet-class>
+			fedora.server.access.MethodParameterResolverServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ControlServlet</servlet-name>
+		<url-pattern>/management/control</url-pattern>
+	</servlet-mapping>
+	<!-- Testing soap access via a java servlet -->
+	<servlet-mapping>
+		<servlet-name>FedoraAccessSoapServlet</servlet-name>
+		<url-pattern>/access/soapservlet</url-pattern>
+	</servlet-mapping>
+	<!-- end test -->
+	<servlet-mapping>
+		<servlet-name>FedoraFieldSearchServlet</servlet-name>
+		<url-pattern>/search</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FedoraOAIProviderServlet</servlet-name>
+		<url-pattern>/oai</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FedoraAccessServlet</servlet-name>
+		<url-pattern>/get/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DatastreamResolverServlet</servlet-name>
+		<url-pattern>/getDS</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MethodParameterResolverServlet</servlet-name>
+		<url-pattern>/getParmResolver</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MethodParameterResolverServlet2</servlet-name>
+		<url-pattern>/getAccessParmResolver</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>*.jws</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list id="WelcomeFileList_1">
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+        <security-constraint>
+            <web-resource-collection>
+                <web-resource-name>Fedora Management Interface</web-resource-name>
+                <url-pattern>/management/s*</url-pattern>
+            </web-resource-collection>
+            <auth-constraint>
+                <role-name>administrator</role-name>
+            </auth-constraint>
+        </security-constraint>
+        <login-config>
+            <auth-method>BASIC</auth-method>
+            <realm-name>Fedora Management Interface</realm-name>
+        </login-config>
+</web-app>
