@@ -45,6 +45,8 @@ public class DemoObjectConverter
   private static String fromPortNum = "8080";
   private static String toHostName = "localhost";
   private static String toPortNum = "8080";
+  private static String fromName = "localhost:8080";
+  private static String toName = "localhost:8080";
 
   /**
    * <p> Constructor for DemoObjectConverter. Initializes class variables for
@@ -64,6 +66,8 @@ public class DemoObjectConverter
     this.fromHostName = fromHostName;
     this.fromPortNum = fromPortNum;
     this.fedoraHome = fedoraHome;
+    this.fromName = fromHostName+":"+fromPortNum;
+    this.toName = toHostName+":"+toPortNum;
   }
 
   /**
@@ -148,8 +152,39 @@ public class DemoObjectConverter
         nextLine=in.readLine();
         if (nextLine!=null)
         {
-           nextLine = nextLine.replaceAll(fromHostName+":", toHostName+":");
-           nextLine = nextLine.replaceAll(":"+fromPortNum, ":"+toPortNum);
+           if (nextLine.indexOf(fromHostName) != -1)
+           {
+             // Line has host name in it.
+             if (nextLine.indexOf(fromHostName+":") != -1)
+             {
+               // Host name specifies a port number.
+               if (toPortNum.equalsIgnoreCase("80") ||
+                   toPortNum.equalsIgnoreCase(""))
+               {
+                 // If requested port to change to is 80 or the empty string,
+                 // omit port number in substitution.
+                 nextLine = nextLine.replaceAll(fromName, toHostName);
+               } else
+               {
+                 // Otherwise, just replace the port number.
+                 nextLine = nextLine.replaceAll(fromName, toName);
+               }
+             } else
+             {
+               // Host name does not specify a port number.
+               if (toPortNum.equalsIgnoreCase("80") ||
+                   toPortNum.equalsIgnoreCase(""))
+               {
+                 // If requested port to change to is 80 or the empty string,
+                 // omit port number in substitution.
+                 nextLine = nextLine.replaceAll(fromHostName, toHostName);
+               } else
+               {
+                 // Otherwise, add colon and port number.
+                 nextLine = nextLine.replaceAll(fromHostName, toName);
+               }
+             }
+           }
            out.write(nextLine+"\n");
         }
       }
