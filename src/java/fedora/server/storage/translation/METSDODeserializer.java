@@ -691,7 +691,7 @@ public class METSDODeserializer
                     ds.DSInfoType=m_dsInfoType;
                     ds.DSMDClass=m_dsMDClass;
                     ds.DSState=m_dsState;
-                    ds.DSLocation=m_obj.getPid() + "+" m_dsId;
+                    ds.DSLocation=m_obj.getPid() + "+" + m_dsId;
                     // add it to the digitalObject
                     m_obj.datastreams(m_dsId).add(ds);
                 }
