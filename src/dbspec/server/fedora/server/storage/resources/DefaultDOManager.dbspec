@@ -299,6 +299,13 @@
 		<column name="bMechPid" type="varchar(255)" notNull="true" default="" index="bMechPid"/>
 		<column name="methodId" type="varchar(255)" notNull="true" default="" index="methodId"/>
 	</table>
+	<table name="riMethodImplBinding" primaryKey="methodImplBindingId">
+		<comment>
+		</comment>
+		<column name="methodImplBindingId" type="int(11)" notNull="true" index="methodImplBindingId" autoIncrement="true"/>
+		<column name="methodImplId" type="varchar(255)" notNull="true" default="" index="methodImplId"/>
+		<column name="dsBindKey" type="varchar(255)" notNull="true" default="" index="dsBindKey"/>
+	</table>
 	<table name="riMethodPermutation" primaryKey="permutationId">
 		<comment>
 		</comment>
