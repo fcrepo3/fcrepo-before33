@@ -44,10 +44,10 @@ export JAVA_HOME
 
 echo "Ingesting Demonstration Objects..."
 
-DO_FORMAT=metslikefedora1
+DO_FORMAT=foxml1.0
 
-(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d $FEDORA_HOME/client/demo/local-server-demos $DO_FORMAT DMO $1:$2 $3 $4)
-(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d $FEDORA_HOME/client/demo/open-server-demos $DO_FORMAT DMO $1:$2 $3 $4)
+(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d $FEDORA_HOME/client/demo/foxml/local-server-demos $DO_FORMAT DMO $1:$2 $3 $4)
+(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d $FEDORA_HOME/client/demo/foxml/open-server-demos $DO_FORMAT DMO $1:$2 $3 $4)
 
 echo "Finished."
 
