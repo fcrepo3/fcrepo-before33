@@ -270,17 +270,20 @@
         Description:
           Supports the ResourceIndex.
         Parameters:
-          - level
-            Index level. Currently, only 0 and 1 are supported levels.
-            0 = off (i.e., do not use the ResourceIndex)
-            1 = on
+          - level (required)
+            Index level. Currently, only 0, 1 and 2 are supported levels.
+            0 = off: do not load the ResourceIndex
+            1 = basic: system metadata, RELS-EXT, disseminations
+            2 = basic + method permutations
+            WARNING: changing the level (except to 0) requires a full dump-and-load 
+            of the repository.
           - datastoreId (required)
             Name of the triplestore to use.
-            Warning: changing the triplestore requires a full dump-and-load
+            WARNING: changing the triplestore requires a full dump-and-load
             of the repository.
         </comment>
 		<param name="level" value="1"/>
-		<param name="datastoreId" value="localKowariTriplestore"/>
+		<param name="datastore" value="localKowariTriplestore"/>
 	</module>
 	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
 		<comment>
@@ -393,19 +396,19 @@
     <datastore id="localKowariTriplestore">
         <comment>local Kowari Triplestore used by the Resource Index</comment>
         <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
-        <param name="modelName" value="ri"/>
-        <param name="poolMaxGrowth" value="-1"/>
-        <param name="path" value="/opt/fedora/testStore/resourceIndex"/>
-        <param name="bufferFlushBatchSize" value="20000"/>
-        <param name="autoCreate" value="true"/>
-        <param name="bufferSafeCapacity" value="40000"/>
-        <param name="autoFlushDormantSeconds" value="5"/>
-        <param name="poolInitialSize" value="3"/>
-        <param name="serverName" value="fedora"/>
-        <param name="readOnly" value="false"/>
-        <param name="autoTextIndex" value="false"/>
-        <param name="autoFlushBufferSize" value="20000"/>
         <param name="remote" value="false"/>
+        <param name="path" value="C:\fedora2_0_resourceIndex"/>
+        <param name="serverName" value="fedora"/>
+        <param name="modelName" value="ri"/>
+        <param name="poolInitialSize" value="3"/>
+        <param name="poolMaxGrowth" value="-1"/>
+        <param name="readOnly" value="false"/>
+        <param name="autoCreate" value="true"/>
+        <param name="autoTextIndex" value="false"/>
         <param name="memoryBuffer" value="true"/>
+        <param name="autoFlushDormantSeconds" value="5"/>
+        <param name="autoFlushBufferSize" value="20000"/>
+        <param name="bufferFlushBatchSize" value="20000"/>
+        <param name="bufferSafeCapacity" value="40000"/>
     </datastore>
 </server>
