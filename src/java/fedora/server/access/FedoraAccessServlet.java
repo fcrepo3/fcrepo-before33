@@ -1038,6 +1038,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         out.println("<td><font color='blue'>(REQUIRED)</font></td>");
         out.println("</tr>");
         out.println("<tr>");
+        /*
         out.println("<td><font color='red'>bDefPID_</td>");
         out.println("<td> = </td>");
         out.println("<td>"+bDefPID+"</td>");
@@ -1049,6 +1050,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         out.println("<td>"+methodName+"</td>");
         out.println("<td><font color='green'>(OPTIONAL)</font></td>");
         out.println("</tr>");
+        */
         out.println("<tr>");
         out.println("<td><font color='red'>AsOfDate_</td>");
         out.println("<td> = </td>");
@@ -1119,12 +1121,14 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         out.println("<td>"+bDefPID+"</td>");
         out.println("<td><font color='blue'>(REQUIRED)</font></td>");
         out.println("</tr>");
+        /*
         out.println("<tr>");
         out.println("<td><font color='red'>methodName_</td>");
         out.println("<td> = </td>");
         out.println("<td>"+methodName+"</td>");
         out.println("<td><font color='green'>(OPTIONAL)</font></td>");
         out.println("</tr>");
+        */
         out.println("<tr>");
         out.println("<td><font color='red'>AsOfDate_</td>");
         out.println("<td> = </td>");
