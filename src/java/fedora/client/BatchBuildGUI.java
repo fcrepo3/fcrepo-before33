@@ -7,6 +7,8 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -31,10 +33,15 @@ public class BatchBuildGUI
         extends JInternalFrame {
         
         private static File s_lastDir;	
-	private JTextField m_templateField=new JTextField("*", 10);
-	private JTextField m_specsField=new JTextField("*", 10);
-	private JTextField m_objectsField=new JTextField("*", 10);	
-    
+	private JTextField m_templateField=new JTextField("", 10);
+	private JTextField m_specsField=new JTextField("", 10);
+	private JTextField m_objectsField=new JTextField("", 10);
+	private JTextField m_pidsField=new JTextField("", 10);	
+
+	private JRadioButton m_xmlMap = new JRadioButton("xml");
+	private JRadioButton m_textMap = new JRadioButton("text");
+	private ButtonGroup buttonGroup = new ButtonGroup(); 
+
     
 	private Dimension unitDimension = null;    
 	private Dimension browseMin = null;    
@@ -83,7 +90,7 @@ public class BatchBuildGUI
 		}
 	}
 	unitDimension = new Dimension((new Float(1.5 * maxWidth)).intValue(),fmTemp.getHeight());
-	browseMin = new Dimension(9*unitDimension.width,unitDimension.height);		
+	browseMin = new Dimension(12*unitDimension.width,unitDimension.height); //9*unitDimension.width		
 	browseMax = new Dimension(2 * browseMin.width,2 * browseMin.height);
 	browsePref = browseMin;
 	
@@ -128,6 +135,32 @@ public class BatchBuildGUI
             }
         });
 	labelPanel.add(sized (objectsBtn, browseMin, browsePref, browseMax));
+	
+	buttonGroup.add(m_xmlMap);
+	m_xmlMap.setSelected(true);
+	buttonGroup.add(m_textMap);
+	JPanel jPanel = new JPanel();
+	
+	jPanel.setLayout(new BorderLayout());
+	jPanel.add(m_xmlMap, BorderLayout.WEST);
+	jPanel.add(new JLabel("object processing map (output file)"), BorderLayout.NORTH);
+	jPanel.add(m_textMap, BorderLayout.CENTER);	
+	labelPanel.add(sized (jPanel, browseMin, browsePref, browseMax));
+	
+        labelPanel.add(sized (m_pidsField, textMin, textPref, textMax));
+        JButton pidsBtn=new JButton("browse...");
+        pidsBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                pidsAction();
+            }
+        });
+	labelPanel.add(sized (pidsBtn, browseMin, browsePref, browseMax));
+	
+
+	
+
+	//labelPanel.add(sized (m_textMap, browseMin, browsePref, browseMax));
+
 
         entryPanel.add(labelPanel, BorderLayout.WEST);
         getContentPane().setLayout(new BorderLayout());
@@ -167,9 +200,10 @@ public class BatchBuildGUI
     
     public void buildBatch() {
 	try {
-        if (!m_templateField.getText().equals("*")
-		&& !m_specsField.getText().equals("*")
-		&& !m_objectsField.getText().equals("*")		
+        if (!m_templateField.getText().equals("")
+		&& !m_specsField.getText().equals("")
+		&& !m_objectsField.getText().equals("")
+		&& !m_pidsField.getText().equals("")		
 	) {
 	    Properties properties; {
 		    Properties defaults = new Properties(); {
@@ -182,6 +216,9 @@ public class BatchBuildGUI
 	    properties.setProperty("template",m_templateField.getText());
 	    properties.setProperty("specifics",m_specsField.getText());
 	    properties.setProperty("objects",m_objectsField.getText());
+	    properties.setProperty("ingested-pids",m_pidsField.getText());
+	    properties.setProperty("pids-format",m_xmlMap.isSelected()? "xml" : "text");
+	    
 	    try {
 		    mdiDesktopPane.add(batchOutput);
 	    } catch (Exception eee) {  //illegal component position occurs ~ every other time ?!?
@@ -255,4 +292,15 @@ public class BatchBuildGUI
 			   m_objectsField.setText("");
 	}
     }
+    protected void pidsAction () {
+	try {
+		   File temp = selectFile(s_lastDir,false);
+		   if (temp != null) {
+			   m_pidsField.setText(temp.getPath());
+		   }
+	} catch (Exception e) {
+			   m_pidsField.setText("");
+	}
+    }    
+    
 }
