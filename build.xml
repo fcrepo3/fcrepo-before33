@@ -35,6 +35,7 @@
 		<mkdir dir="dist/client/client/lib"/>
 		<copy file="lib/client/jhbasic.jar" todir="dist/client/client/lib"/>
 		<copy file="lib/client/rms.jar" todir="dist/client/client/lib"/>
+		<copy file="lib/client/gnu-getopt-1.0.9.jar" todir="dist/client/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/client/lib"/>
@@ -58,7 +59,7 @@
 		<mkdir dir="temp/client"/>
 	</target>
 	<target name="clientclasses" depends="clientprep,wsdl2java" description="Compile client java code into temp/client">
-		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/rms.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/rms.jar;lib/client/gnu-getopt-1.0.9.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
 		<mkdir dir="temp/client/help"/>
@@ -355,6 +356,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.48  2002/11/11 20:15:03  cwilper
+  added classpathing of gnu getopt during client compilation
+  and copying of the jar to the lib dir in the client distribution
+
   Revision 1.47  2002/11/06 12:50:42  rlw
   fixed typo related to WEB-INF directory name.
   It was lowercase which was putting saxon.jar file in web-inf/lib
