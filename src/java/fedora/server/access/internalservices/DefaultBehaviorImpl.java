@@ -197,7 +197,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   {
       String msg = new String("The Dissemination Index is not available"
         + " for Behavior Definition or Behavior Mechanism objects."
-        + " This will be activated in the next release of Fedora.");
+        + " The addition of this feature is not currently scheduled.");
       StringBuffer sb = new StringBuffer();
       sb.append("<html><head><title>Dissemination Index Not Available</title></head>");
       sb.append("<body><center>");
