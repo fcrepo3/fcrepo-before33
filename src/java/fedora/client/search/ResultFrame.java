@@ -160,6 +160,7 @@ public class ResultFrame
     
     public String getValue(ObjectFields o, String name) {
         if (name.equals("pid")) return o.getPid();
+        if (name.equals("label")) return o.getLabel();
         if (name.equals("fType")) return o.getFType();
         if (name.equals("cModel")) return o.getCModel();
         if (name.equals("state")) return o.getState();
