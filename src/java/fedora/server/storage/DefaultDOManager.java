@@ -65,9 +65,30 @@ import fedora.server.utilities.TableSpec;
 import fedora.server.validation.DOValidator;
 
 /**
- * Provides access to digital object readers and writers.
+ *
+ * <p><b>Title:</b> DefaultDOManager.java</p>
+ * <p><b>Description:</b> Provides access to digital object readers and writers.
+ * </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
 public class DefaultDOManager
         extends Module implements DOManager {
@@ -459,7 +480,7 @@ public class DefaultDOManager
                   {
                     List allVersions = obj.datastreams(dsID);
                     Iterator dsIter = allVersions.iterator();
-    
+
                     // iterate over all versions of this dsID
                     while (dsIter.hasNext())
                     {
@@ -484,9 +505,9 @@ public class DefaultDOManager
                       }
                       //getDatastreamStore().add(id, bais);
                       // RLW: change required by conversion fom byte[] to InputStream
-    
+
                       // Make new audit record.
-    
+
                       /*
                       // SDP: commented out since audit record id is not yet
                       // auto-incremented and we get XML validation error when
@@ -505,7 +526,7 @@ public class DefaultDOManager
                       a.justification = logMessage;
                       obj.getAuditRecords().add(a);
                       */
-    
+
                       // Reset dsLocation in object to new internal location.
                       dmc.DSLocation = id;
                       logInfo("Replacing ManagedContent datastream with "
@@ -517,7 +538,7 @@ public class DefaultDOManager
 
                 // save to definitive store, validating beforehand
                 // update the system version (add one) and reflect that the object is no longer locked
-    
+
                 // Validation:
                 // Perform FINAL validation before saving the object to persistent storage.
                 // For now, we'll request all levels of validation (level=0), but we can
@@ -525,7 +546,7 @@ public class DefaultDOManager
                 // at time of ingest, then again, here, at time of storage.
                 // We'll just be conservative for now and call all levels both times.
                 // First, serialize the digital object into an Inputstream to be passed to validator.
-    
+
                 // set object status to "A" if "I".  other status changes should occur elsewhere!
                 if (obj.getState().equals("I")) {
                     obj.setState("A");
@@ -878,7 +899,7 @@ public class DefaultDOManager
                 DOWriter w=new SimpleDOWriter(context, this, m_translator,
                         m_storageFormat, m_storageFormat,
                         m_storageCharacterEncoding, obj, this);
-                        
+
                 Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                 // ...set the create and last modified dates as the current
                 // server date/time... in UTC (considering the local timezone
@@ -886,7 +907,7 @@ public class DefaultDOManager
                 obj.setCreateDate(nowUTC);
                 obj.setLastModDate(nowUTC);
 
-                
+
                 // if there's no DC record, add one using PID for identifier.
                 // and Label for dc:title.
                 //
@@ -909,7 +930,7 @@ public class DefaultDOManager
                     if (obj.getLabel()!=null && !(obj.getLabel().equals(""))) {
                         dcf.titles().add(obj.getLabel());
                     }
-                    
+
                 } else {
                     dcf=new DCFields(new ByteArrayInputStream(dc.xmlContent));
                 }
