@@ -1025,7 +1025,6 @@ public class FastDOReader implements DisseminatingDOReader
   /**
    * <p>Gets a dissemination result.</p>
    *
-   * @param PID The persistent identifier for the digital object.
    * @param bDefPID The persistent identifier for the Behavior Definition
    *        object.
    * @param methodName The name of the method to be executed.
@@ -1035,9 +1034,9 @@ public class FastDOReader implements DisseminatingDOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public DisseminationBindingInfo[] getDissemination(String PID,
-      String bDefPID, String methodName, Date versDateTime)
-      throws GeneralException
+  public DisseminationBindingInfo[] getDissemination(String bDefPID, 
+          String methodName, Date versDateTime)
+          throws GeneralException
   {
     DisseminationBindingInfo dissBindInfo = null;
     DisseminationBindingInfo[] dissBindInfoArray = null;
@@ -1084,7 +1083,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "DataStreamBindingSpec.DSBindingKey_DBID = "
           + "MechanismImpl.DSBindingKey_DBID AND "
           + "MechanismImpl.METH_DBID = Method.METH_DBID AND "
-          + "DigitalObject.DO_PID='" + PID + "' AND "
+          + "DigitalObject.DO_PID='" + GetObjectPID() + "' AND "
           + " BehaviorDefinition.BDEF_PID=\'" + bDefPID + "\' AND "
           + " Method.METH_Name=\'"  + methodName + "\' "
           + " ORDER BY DataStreamBindingSpec.DSBindingSpec_Name";
@@ -1171,7 +1170,7 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          doReader = m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, GetObjectPID());
         }
 
         // FIXME!! - code to perform disseminations directly from the
@@ -1466,7 +1465,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public ObjectMethodsDef[] getObjectMethods(String PID, Date versDateTime)
+  public ObjectMethodsDef[] getObjectMethods(Date versDateTime)
       throws GeneralException
   {
     ObjectMethodsDef[] objectMethodsDefArray = null;
@@ -1501,7 +1500,7 @@ public class FastDOReader implements DisseminatingDOReader
           + "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND "
           + "BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND "
           + "Method.METH_DBID = MechanismImpl.METH_DBID AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\';";
+          + "DigitalObject.DO_PID=\'" + GetObjectPID() + "\';";
 
       if (debug) s_server.logFinest("getObjectMethodsQuery: " + query);
       String[] results = null;
@@ -1566,7 +1565,7 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          doReader = m_manager.getReader(m_context, PID);
+          doReader = m_manager.getReader(m_context, GetObjectPID());
         }
         String[] behaviorDefs = doReader.GetBehaviorDefs(versDateTime);
         Vector results = new Vector();
@@ -1582,14 +1581,14 @@ public class FastDOReader implements DisseminatingDOReader
           // here.
           if(methodDefs == null)
           {
-            throw new GeneralException("The object: " + PID + " is not a "
+            throw new GeneralException("The object: " + GetObjectPID() + " is not a "
                 + "data object. Behavior Definition and Behavior Mechanism "
                 + "objects cannot be disseminated in the current release.");
           }
           for (int j=0; j<methodDefs.length; j++)
           {
             objectMethodsDef = new ObjectMethodsDef();
-            objectMethodsDef.PID = PID;
+            objectMethodsDef.PID = GetObjectPID();
             objectMethodsDef.bDefPID = behaviorDefs[i];
             objectMethodsDef.methodName = methodDefs[j].methodName;
             System.out.println("methodName: "+methodDefs[j].methodName);

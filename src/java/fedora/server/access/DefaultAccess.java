@@ -227,7 +227,7 @@ public class DefaultAccess extends Module implements Access
 
     // Get dissemination binding info.
     DisseminationBindingInfo[] dissBindInfo =
-        reader.getDissemination(PID, bDefPID, methodName, versDateTime);
+        reader.getDissemination(bDefPID, methodName, versDateTime);
 
     // Assemble and execute the dissemination request from the binding info.
     DisseminationService dissService = new DisseminationService();
@@ -255,7 +255,7 @@ public class DefaultAccess extends Module implements Access
     DisseminatingDOReader reader =
         m_manager.getDisseminatingReader(context, PID);
     ObjectMethodsDef[] methodDefs =
-        reader.getObjectMethods(PID, versDateTime);
+        reader.getObjectMethods(versDateTime);
     return methodDefs;
   }
 

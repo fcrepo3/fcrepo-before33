@@ -17,9 +17,9 @@ import fedora.server.storage.types.ObjectMethodsDef;
  */
 public interface DisseminatingDOReader extends DOReader
 {
-  public DisseminationBindingInfo[] getDissemination(String PID, String bDefPID,
+  public DisseminationBindingInfo[] getDissemination(String bDefPID,
       String methodName, Date versDateTime) throws GeneralException;
 
-  public ObjectMethodsDef[] getObjectMethods(String PID, Date versDateTime)
+  public ObjectMethodsDef[] getObjectMethods(Date versDateTime)
       throws GeneralException;
 }
