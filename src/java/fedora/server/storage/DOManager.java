@@ -4,6 +4,7 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.StorageException;
 import fedora.server.Module;
+import fedora.server.Server;
 
 import java.util.Map;
 
@@ -23,9 +24,9 @@ public abstract class DOManager
     /**
      * Creates a new DOManager.
      */
-    public DOManager(Map moduleParameters)
+    public DOManager(Map moduleParameters, Server server, String role)
             throws ModuleInitializationException {
-        super(moduleParameters, "fedora.server.storage.DOManager");
+        super(moduleParameters, server, role);
     }
     
     /**
