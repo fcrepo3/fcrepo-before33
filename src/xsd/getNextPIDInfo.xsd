@@ -7,11 +7,5 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="pid">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:pattern value="[-\w]+:[-\w]+"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
+	<xs:element name="pid" type="xs:string"/>
 </xs:schema>

@@ -34,35 +34,11 @@
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="adminEmail">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:pattern value="[-\w_]+@[\w\.]+"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="PID-namespaceIdentifier">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:pattern value="[\w-]+"/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
-	<xs:element name="OAI-delimiter">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:pattern value="."/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
+	<xs:element name="adminEmail" type="xs:string"/>
+	<xs:element name="PID-namespaceIdentifier" type="xs:string"/>
+	<xs:element name="OAI-delimiter" type="xs:string"/>
 	<xs:element name="OAI-namespaceIdentifier" type="xs:string"/>
-	<xs:element name="PID-delimiter">
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:pattern value="."/>
-			</xs:restriction>
-		</xs:simpleType>
-	</xs:element>
+	<xs:element name="PID-delimiter" type="xs:string"/>
 	<xs:element name="OAI-sample" type="xs:string"/>
 	<xs:element name="PID-sample" type="xs:string"/>
 	<xs:element name="repositoryBaseURL" type="xs:anyURI"/>
