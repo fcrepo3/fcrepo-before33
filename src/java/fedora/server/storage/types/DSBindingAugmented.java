@@ -13,9 +13,13 @@ public class DSBindingAugmented extends DSBinding
 {
   //public Datastream datastream;
 
+  public String DSVersionID;
+
   public String DSLabel;
 
   public String DSMIME;
+
+  public String DSControlGrp;
 
   public String DSLocation;
 
