@@ -256,7 +256,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     } else
     {
       // Bad syntax; redirect to syntax documentation page.
-      response.sendRedirect("/userdocs/apialite/index.html");
+      response.sendRedirect("/userdocs/client/browser/apialite/index.html");
       return;
     }
 
