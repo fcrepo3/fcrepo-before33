@@ -46,10 +46,11 @@ public class DatastreamsPane
     private Datastream[] m_currentVersions;
     private Map m_currentVersionMap;
 
-    public String[] ALL_KNOWN_MIMETYPES = new String[] {"text/xml", "text/xml",
+    public String[] ALL_KNOWN_MIMETYPES = new String[] {"text/xml",
             "text/plain", "text/html", "text/html+xml", "text/svg+xml",
             "image/jpeg", "image/gif", "image/bmp", "application/postscript",
             "application/ms-word", "application/pdf", "application/zip"};
+    public String[] XML_MIMETYPE = new String[] {"text/xml"};
 
     static ImageIcon newIcon=new ImageIcon(Administrator.cl.getResource("images/standard/general/New16.gif"));
 
@@ -75,7 +76,7 @@ public class DatastreamsPane
                 m_currentVersionMap.put(m_currentVersions[i].getID(), m_currentVersions[i]);
                 m_datastreamPanes[i]=new DatastreamPane(
                         owner,
-                        pid, 
+                        pid,
                         Administrator.APIM.getDatastreamHistory(
                                 pid,
                                 m_currentVersions[i].getID()),
@@ -83,8 +84,8 @@ public class DatastreamsPane
                 StringBuffer tabLabel=new StringBuffer();
                 tabLabel.append(m_currentVersions[i].getID());
                 m_tabbedPane.add(tabLabel.toString(), m_datastreamPanes[i]);
-                m_tabbedPane.setToolTipTextAt(i, m_currentVersions[i].getMIMEType() 
-                        + " - " + m_currentVersions[i].getLabel() + " (" 
+                m_tabbedPane.setToolTipTextAt(i, m_currentVersions[i].getMIMEType()
+                        + " - " + m_currentVersions[i].getLabel() + " ("
                         + m_currentVersions[i].getControlGroup().toString() + ")");
                 colorTabForState(m_currentVersions[i].getID(), m_currentVersions[i].getState());
             }
@@ -93,7 +94,7 @@ public class DatastreamsPane
         setLayout(new BorderLayout());
         add(m_tabbedPane, BorderLayout.CENTER);
 
-        doNew(ALL_KNOWN_MIMETYPES, false);
+        doNew(XML_MIMETYPE, false);
     }
 
     public Map getCurrentVersionMap() {
@@ -155,15 +156,15 @@ public class DatastreamsPane
             DatastreamPane replacement=new DatastreamPane(m_owner, m_pid, versions, this);
             m_datastreamPanes[i]=replacement;
             m_tabbedPane.setComponentAt(i, replacement);
-            m_tabbedPane.setToolTipTextAt(i, versions[0].getMIMEType() 
-                    + " - " + versions[0].getLabel() + " (" 
+            m_tabbedPane.setToolTipTextAt(i, versions[0].getMIMEType()
+                    + " - " + versions[0].getLabel() + " ("
                     + versions[0].getControlGroup().toString() + ")");
             colorTabForState(dsID, versions[0].getState());
             setDirty(dsID, false);
             fireDatastreamModified(versions[0]);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    e.getMessage() + "\nTry re-opening the object viewer.", 
+                    e.getMessage() + "\nTry re-opening the object viewer.",
                     "Error while refreshing",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -211,8 +212,8 @@ public class DatastreamsPane
         int newIndex=getTabIndex("New...");
         m_tabbedPane.add(m_datastreamPanes[m_datastreamPanes.length-1], newIndex);
         m_tabbedPane.setTitleAt(newIndex, dsID);
-        m_tabbedPane.setToolTipTextAt(newIndex, versions[0].getMIMEType() 
-                + " - " + versions[0].getLabel() + " (" 
+        m_tabbedPane.setToolTipTextAt(newIndex, versions[0].getMIMEType()
+                + " - " + versions[0].getLabel() + " ("
                 + versions[0].getControlGroup().toString() + ")");
         colorTabForState(dsID, versions[0].getState());
         m_tabbedPane.setSelectedIndex(newIndex);
@@ -230,7 +231,7 @@ public class DatastreamsPane
             if (x<i) {
                 newArray[x]=m_datastreamPanes[x];
             } else if (x>i) {
-                newArray[x-1]=m_datastreamPanes[x-1]; 
+                newArray[x-1]=m_datastreamPanes[x-1];
             }
         }
         m_datastreamPanes=newArray;
@@ -271,7 +272,7 @@ public class DatastreamsPane
 
     }
 
-    public class NewDatastreamPane 
+    public class NewDatastreamPane
             extends JPanel implements ActionListener {
 
         JTextField m_labelTextField;
@@ -318,8 +319,8 @@ public class DatastreamsPane
         public NewDatastreamPane(String[] dropdownMimeTypes) {
 
             JComponent[] left=new JComponent[] { new JLabel("State"),
-                                                 new JLabel("Label"), 
-                                                 new JLabel("MIME Type"), 
+                                                 new JLabel("Label"),
+                                                 new JLabel("MIME Type"),
                                                  new JLabel("Control Group") };
 
             m_stateComboBox=new JComboBox(new String[] {"Active",
@@ -445,8 +446,13 @@ public class DatastreamsPane
                         try {
                             m_xEditor.setContent(new FileInputStream(imp.file));
                         } catch (Exception e) {
+                            String msg=e.getMessage();
+                            if( msg.indexOf("Error parsing as XML") != -1) {
+                              msg = "Imported text does not contain valid XML.\n"
+                                  + "Inline XML Metadata datastreams must contain valid XML.";
+                            }
                             JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                    e.getMessage(), "Import Error",
+                                    msg, "Import Error",
                                     JOptionPane.ERROR_MESSAGE);
                         }
                     }
@@ -475,7 +481,7 @@ public class DatastreamsPane
                             String curMime=(String) m_mimeComboBox.getSelectedItem();
                             if (ContentHandlerFactory.hasViewer(curMime)) {
                                 ContentViewer viewer=ContentHandlerFactory.
-                                        getViewer(curMime, 
+                                        getViewer(curMime,
                                         new FileInputStream(imp.file));
                                 newCenter=viewer.getComponent();
                             } else {
@@ -511,7 +517,7 @@ public class DatastreamsPane
             m_mPane.add(mBottomPane, BorderLayout.SOUTH);
 
             // External Referenced or Redirect Datastream....
-            // 
+            //
             // NORTH: Location  __________________
             // SOUTH:        [View]
             // preview button's actionlistener will only pull up a viewer
@@ -528,7 +534,7 @@ public class DatastreamsPane
                 public void actionPerformed(ActionEvent evt) {
                     // get a viewer and put it in the middle of m_erPane
                     // we assume we can get a viewer here because
-                    // the view button wouldn't be enabled if that weren't 
+                    // the view button wouldn't be enabled if that weren't
                     // the case
                     try {
                         String mimeType=(String) m_mimeComboBox.getSelectedItem();
@@ -587,18 +593,28 @@ public class DatastreamsPane
                 m_controlGroupTextArea.setText(X_DESCRIPTION);
                 m_contentCard.show(m_specificPane, "X");
                 m_controlGroup="X";
+                this.removeMIMETypeItems();
             } else if (cmd.equals("M")) {
                 m_controlGroupTextArea.setText(M_DESCRIPTION);
                 m_contentCard.show(m_specificPane, "M");
                 m_controlGroup="M";
+                if(this.m_mimeComboBox.getItemCount() == 1) {
+                   this.addMIMETypeItems();
+                }
             } else if (cmd.equals("E")) {
                 m_controlGroupTextArea.setText(E_DESCRIPTION);
                 m_contentCard.show(m_specificPane, "ER");
                 m_controlGroup="E";
+                if(this.m_mimeComboBox.getItemCount() == 1) {
+                   this.addMIMETypeItems();
+                }
             } else if (cmd.equals("R")) {
                 m_controlGroupTextArea.setText(R_DESCRIPTION);
                 m_contentCard.show(m_specificPane, "ER");
                 m_controlGroup="R";
+                if(this.m_mimeComboBox.getItemCount() == 1) {
+                   this.addMIMETypeItems();
+                }
             } else if (cmd.equals("Save")) {
                 try {
                     // try to save... first set common values for call
@@ -624,15 +640,34 @@ public class DatastreamsPane
                     } else { // must be E/R
                         location=m_referenceTextField.getText();
                     }
-                    String newID=Administrator.APIM.addDatastream(pid, label, 
+                    String newID=Administrator.APIM.addDatastream(pid, label,
                             mimeType, location, m_controlGroup, mdClass, mdType, m_initialState);
                     addDatastreamTab(newID);
                 } catch (Exception e) {
+                    String msg = e.getMessage();
+                    if (msg.indexOf("Content is not allowed in prolog") != -1) {
+                      msg = "Text entered is not valid XML.\n"
+                          + "Internal XML Metadata datastreams must contain valid XML.";
+                    }
                     JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            e.getMessage(), "Error saving new datastream",
+                            msg, "Error saving new datastream",
                             JOptionPane.ERROR_MESSAGE);
                 }
             }
+        }
+
+        public void addMIMETypeItems() {
+          for (int i=1; i<ALL_KNOWN_MIMETYPES.length; i++) {
+            this.m_mimeComboBox.addItem(ALL_KNOWN_MIMETYPES[i]);
+          }
+          this.m_mimeComboBox.setPreferredSize(new Dimension(150,20));
+        }
+
+        public void removeMIMETypeItems() {
+          for (int i=1; i<ALL_KNOWN_MIMETYPES.length; i++) {
+            this.m_mimeComboBox.removeItem(ALL_KNOWN_MIMETYPES[i]);
+          }
+          this.m_mimeComboBox.setPreferredSize(new Dimension(150,20));
         }
     }
 
