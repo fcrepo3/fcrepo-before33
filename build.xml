@@ -124,13 +124,13 @@
 		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-batch-build.sh fedora-admin"/>
-		</exec>		
+		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-batch-ingest.sh fedora-admin"/>
-		</exec>		
+		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-batch-buildingest.sh fedora-admin"/>
-		</exec>						
+		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="u+x" includes="**/*"/>
 	</target>
@@ -843,13 +843,10 @@
 			<fileset dir="lib/server"/>
 		</copy>
 		<mkdir dir="dist/server/access"/>
-		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
-		<copy file="src/xsl/access/objectMethods.xslt" todir="dist/server/access"/>
-		<!--ObjectProfile xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
+		<!-- Stylesheets used by the Default Disseminator-->
+		<copy file="src/xsl/access/viewObjectMethods.xslt" todir="dist/server/access"/>
 		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/access"/>
-		<!--ItemIndex xsl stylesheet used by Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/access/viewItemIndex.xslt" todir="dist/server/access"/>
-		<!--DublinCore xsl stylesheet used by Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/access/viewDublinCore.xslt" todir="dist/server/access"/>
 		<!--Repository Info xsl stylesheet used by API-A-LITE  -->
 		<copy file="src/xsl/access/viewRepositoryInfo.xslt" todir="dist/server/access"/>
