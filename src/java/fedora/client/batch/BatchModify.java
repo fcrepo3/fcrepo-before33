@@ -16,7 +16,6 @@ import javax.swing.text.JTextComponent;
 
 import fedora.client.Administrator;
 import fedora.client.batch.BatchModifyParser;
-import fedora.client.batch.BatchModThread;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.management.FedoraAPIM;
 
@@ -81,6 +80,7 @@ private static FedoraAPIM APIM = null;
             long st=System.currentTimeMillis();
             long et=System.currentTimeMillis();
             in = new FileInputStream(file);
+
             //Parser deactivated for now.
             //BatchModifyParser bmp = new BatchModifyParser(APIM, in, s_log);
             JOptionPane.showMessageDialog(Administrator.getDesktop(),

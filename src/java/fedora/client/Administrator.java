@@ -701,15 +701,6 @@ public class Administrator extends JFrame {
     }
     // < wdn
 
-    protected void createBatchModifyConsole() {
-    BatchModifyGUI frame=new BatchModifyGUI(this, s_desktop, s_host, s_port, s_user, s_pass);
-    frame.setVisible(true);
-    s_desktop.add(frame);
-    try {
-        frame.setSelected(true);
-    } catch (java.beans.PropertyVetoException e) {}
-    }
-
     public Point getCenteredPos(int xSize, int ySize) {
         Dimension screenSize=getToolkit().getScreenSize();
         int maxXPos=screenSize.width-xSize;
