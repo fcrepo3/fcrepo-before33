@@ -106,14 +106,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		while (it.hasNext()) {
 		    addDisseminator(digitalObject, (String)it.next());		    
 		}
-		
-		// just for testing
-		//try {
-		//    m_store.write(new FileOutputStream("/tmp/rdf/" + pid + ".xml"));
-		//} catch (Exception e) {
-		//    e.printStackTrace();
-		//}
-		
 	}
 
 	/* (non-Javadoc)
@@ -135,40 +127,19 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
 		if (datastreamID.equalsIgnoreCase("DC")) {
 			addDublinCoreDatastream(digitalObject, ds);
-		} else if (datastreamID.equalsIgnoreCase("METHODMAP")) { 
-			addMethodMapDatastream(digitalObject, ds);
-		} else if (datastreamID.equalsIgnoreCase("RELS-EXT")) {
-		    addRelsDatastream(ds);
+        } else if (datastreamID.equalsIgnoreCase("DSINPUTSPEC")) { // which objs have this?
+            addDSInputSpecDatastream(ds);   
 		} else if (datastreamID.equalsIgnoreCase("EXT_PROPERTIES")) { // props
-		    // Do nothing
-		} else if (datastreamID.equalsIgnoreCase("DSINPUTSPEC")) { // which objs have this?
-//		    // representationURI = doURI + "/" + bdefPID + "/" + bdefmethodname
-//		    // doURI, represents, representationURI
-//		    // mimetype = 
-//		    // representationURI, hasMimeType, mimetype
-//		    DatastreamXMLMetadata dsInSpecDS = (DatastreamXMLMetadata)ds;
-//		    ServiceMapper serviceMapper = new ServiceMapper(digitalObject.getPid());
-//		    BMechDSBindSpec dsBindSpec;
-//		    try {
-//		        dsBindSpec = serviceMapper.getDSInputSpec(new InputSource(new ByteArrayInputStream(dsInSpecDS.xmlContent)));
-//		    } catch (Throwable t) {
-//		        throw new ResourceIndexException(t.getMessage());
-//		    }
-//		    String bDefPID = dsBindSpec.bDefPID;
-//		    
-//		    String bMechPID = dsBindSpec.bMechPID;
-//		    
-//		    BMechDSBindRule[] x = dsBindSpec.dsBindRules;
-//		    
-//		    
+		    addExtPropertiesDatastream(ds);
+        } else if (datastreamID.equalsIgnoreCase("METHODMAP")) { 
+            addMethodMapDatastream(digitalObject, ds);
+        } else if (datastreamID.equalsIgnoreCase("RELS-EXT")) {
+            addRelsDatastream(ds);
+        } else if (datastreamID.equalsIgnoreCase("SERVICE-PROFILE")) { 
+            addServiceProfileDatastream(ds);
 		} else if (datastreamID.equalsIgnoreCase("WSDL")) { 
-		    
-		} else if (datastreamID.equalsIgnoreCase("SERVICE-PROFILE")) { 
-		    
-		} else {
-
-		}
-		
+		    addWSDLDatastream(digitalObject, ds);
+		}		
 	}
 
 	/* (non-Javadoc)
@@ -193,21 +164,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		    }
 	    }
 	    
-	    // for what object types are we going to query
-	    
-
-	    //digitalObject.
-		//m_store.insert(doIdentifier, HAS_REPRESENTATION_URI, disseminatorIdentifier);
-		
-		
+	    // TODO
 		//m_store.insert(disseminatorIdentifier, DISSEMINATION_DIRECT_URI, diss.?); // not going against a service, i.e. datastreams (true/false)
 		//m_store.insertLiteral(disseminatorIdentifier, DATE_LAST_MODIFIED_URI, getDate(diss.dissCreateDT));
 		//m_store.insert(disseminatorIdentifier, DISSEMINATION_MEDIA_TYPE_URI, diss.?);
 		//m_store.insertLiteral(disseminatorIdentifier, STATE_URI, diss.dissState); // change to uri #active/#inactive
 		//m_store.insert(disseminatorIdentifier, DISSEMINATION_TYPE_URI, diss.?);
 		//m_store.insert(disseminatorIdentifier, DISSEMINATION_VOLATILE_URI, diss.?); // redirect, external, based on diss that depends on red/ext (true/false)
-		
-		//m_store.insert("info:fedora/" + diss.bMechID, IMPLEMENTS_BDEF_URI, "info:fedora/" + diss.bDefID);
 	}
 
 	/* (non-Javadoc)
@@ -283,16 +246,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	
 	private void addDataObject(DigitalObject digitalObject) {
 		String identifier = getDOURI(digitalObject);
-		m_store.insert(identifier, RDF_TYPE_URI, DATA_OBJECT_RDF_TYPE_URI);
-		
-//		Datastream ds = getLatestDatastream(digitalObject.datastreams("METHODMAP"));
-//		MethodDef[] mdef = getMethodDefs(digitalObject.getPid(), ds);
-//		List methodNames = new ArrayList();
-//		for (int i = 0; i < mdef.length; i++) {
-//	        methodNames.add(mdef[i].methodName);
-//	    }
-		
-		
+		m_store.insert(identifier, RDF_TYPE_URI, DATA_OBJECT_RDF_TYPE_URI);	
 	}
 	
 	private void addDublinCoreDatastream(DigitalObject digitalObject, Datastream ds) throws ResourceIndexException {
@@ -367,12 +321,27 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		}
 	}
 	
-	private void addRelsDatastream(Datastream ds) {
-    	// TODO ristore can take the rdfxml straight... need test case for this method
-	    DatastreamXMLMetadata rels = (DatastreamXMLMetadata)ds;
-	    m_store.read(rels.getContentStream(), "");
-	    
-	}
+    private void addDSInputSpecDatastream(Datastream ds) {
+        // Placeholder. We don't currently do more than
+        // index the fact that there is said datastream
+        //      DatastreamXMLMetadata dsInSpecDS = (DatastreamXMLMetadata)ds;
+        //      ServiceMapper serviceMapper = new ServiceMapper(digitalObject.getPid());
+        //      BMechDSBindSpec dsBindSpec;
+        //      try {
+        //          dsBindSpec = serviceMapper.getDSInputSpec(new InputSource(new ByteArrayInputStream(dsInSpecDS.xmlContent)));
+        //      } catch (Throwable t) {
+        //          throw new ResourceIndexException(t.getMessage());
+        //      }
+        //      String bDefPID = dsBindSpec.bDefPID;
+        //      
+        //      String bMechPID = dsBindSpec.bMechPID;
+        //      
+        //      BMechDSBindRule[] x = dsBindSpec.dsBindRules;
+    }
+    
+    private void addExtPropertiesDatastream(Datastream ds) {
+        // Placeholder
+    }
 	
 	private void addMethodMapDatastream(DigitalObject digitalObject, Datastream ds) throws ResourceIndexException {
 	    // only bdefs & bmechs have mmaps, and we only add when we see bdefs.
@@ -395,53 +364,80 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    // 2. disseminations with fixed parameters
 	    String methodName;
 	    boolean noRequiredParms;
+        int optionalParms;
 	    for (int i = 0; i < mdef.length; i++) {
 	    	methodName = mdef[i].methodName;
 	    	MethodParmDef[] mparms = mdef[i].methodParms;
 	    	if (mparms.length == 0) { // no method parameters
 	    		m_store.insertLiteral(doURI, DEFINES_METHOD_URI, methodName);
 	    	} else {
-	    	    Arrays.sort(mparms, new MethodParmDefParmNameComparator());
 	    		noRequiredParms = true;
+                optionalParms = 0;
+                List parms = new ArrayList();
 	    		for (int j = 0; j < mparms.length; j++) {
 	    			if (noRequiredParms && mparms[j].parmRequired) {
 	    			    noRequiredParms = false;
     			    }
+                    if (!mparms[j].parmRequired) {
+                        optionalParms++;
+                    }
 	    		}
 	    		if (noRequiredParms) {
 	    			m_store.insertLiteral(doURI, DEFINES_METHOD_URI, methodName);
 	    		} else {
-	    		    // FIXME need to get methods with fixed parameters
-	    		    m_store.insertLiteral(doURI, DEFINES_METHOD_URI, mdef[i].methodName);
-	    		    
-	    		    
-	    		    
+	    		    // add methods with their required, fixed parameters
+                    parms.addAll(getMethodParameterCombinations(mparms, true));
 	    		}
+                if (optionalParms > 0) {
+                    parms.addAll(getMethodParameterCombinations(mparms, false));
+                }
+                Iterator it = parms.iterator();
+                while (it.hasNext()) {
+                    m_store.insertLiteral(doURI, DEFINES_METHOD_URI, methodName + "?" + it.next());
+                }
 	    		
 	    	}
-	    	
-	    	
-	    	// FIXME just for testing
-	        // get method parms
+
+	    	// FIXME 
+	    	// do we need passby and type in the graph?
 //	        for (int j = 0; j < mparms.length; j++) {
 //	            System.out.println(methodName + " *parmName: " + mparms[j].parmName);
 //	            System.out.println(methodName + " *parmPassBy: " + mparms[j].parmPassBy);
 //	            System.out.println(methodName + " *parmType: " + mparms[j].parmType);
-//	            System.out.print(methodName + " *parmDomainValues: ");
-//	            for (int k = 0; k < mparms[j].parmDomainValues.length; k++) {
-//	            	System.out.print(mparms[j].parmDomainValues[k]);
-//	            	if (k < mparms[j].parmDomainValues.length -1) {
-//	            		System.out.print(", ");
-//	            	}
-//	            }
-//	            System.out.print("\n");
-//	            System.out.println(methodName + " *parmRequired: " + mparms[j].parmRequired);
-//	            System.out.println(methodName + " *parmDefaultValue: " + mparms[j].parmDefaultValue);
 //	        }
 	    }
-		
 	}
 	
+    private void addRelsDatastream(Datastream ds) {
+        // TODO ristore can take the rdfxml straight... need test case for this method
+        DatastreamXMLMetadata rels = (DatastreamXMLMetadata)ds;
+        m_store.read(rels.getContentStream(), "");
+    }
+    
+    private void addServiceProfileDatastream(Datastream ds) {
+        // Placeholder
+    }
+    
+    private void addWSDLDatastream(DigitalObject digitalObject, Datastream ds) throws ResourceIndexException {
+        // for the moment, we're only interested in WSDL Datastreams
+        // in BMechs, so that we can extract mimetypes.
+        if (digitalObject.getFedoraObjectType() != DigitalObject.FEDORA_BMECH_OBJECT) {
+            return;
+        }
+        
+        String doURI = getDOURI(digitalObject);
+        DatastreamXMLMetadata wsdlDS = (DatastreamXMLMetadata)ds;
+        ServiceMapper serviceMapper = new ServiceMapper(digitalObject.getPid());
+        
+        MethodDefOperationBind[] mdefbind;
+//        try {
+//            mdefbind = serviceMapper.getMethodDefBindings(new InputSource(new ByteArrayInputStream(wsdlDS.xmlContent)), 
+//                                                          new InputSource(new ByteArrayInputStream(mmapDS.xmlContent)));
+//        } catch (Throwable t) {
+//            throw new ResourceIndexException(t.getMessage());
+//        }
+    }
+    
 	private Datastream getLatestDatastream(List datastreams) {
 	    Iterator it = datastreams.iterator();
 	    long latestDSCreateDT = -1;
@@ -467,8 +463,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	
 	private List getMethodNames(String bdefPID) throws ResourceIndexException {
 		RDQLQuery query = new RDQLQuery("SELECT ?o WHERE (<" + getDOURI(bdefPID) + "> <" + DEFINES_METHOD_URI + "> ?o)");
-		
-		System.out.println("*** query: " + query.getQuery());
 		JenaResultIterator results = (JenaResultIterator)executeQuery(query);
 		
 		Value v;
@@ -476,7 +470,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		while (results.hasNext()) {
 			v = (Value)results.next().get("o");
 			methods.add(v.getString());
-			System.out.println("*** " + v.getString());
 		}
         logFinest("Finished query to resource index and iteration of results.");
 		return methods;
@@ -530,20 +523,64 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    df.setTimeZone(TimeZone.getTimeZone("GMT"));
 	    return df.format(date);
 	}
+    
+    /**
+     * Returns a List of Strings, representing the cross product of possible
+     * method parameters and their values, e.g. 
+     * ( "arg1=val1&arg2=val2", "foo=bar&baz=quux" )
+     * 
+     */
+    private List getMethodParameterCombinations(MethodParmDef[] mparms, boolean isRequired) {
+        List combinations = new ArrayList();
+        
+        Arrays.sort(mparms, new MethodParmDefParmNameComparator());
+        List parms = new ArrayList();
+        for (int j = 0; j < mparms.length; j++) {
+            List parm = new ArrayList();
+            for (int k = 0; k < mparms[j].parmDomainValues.length; k++) {
+                if (isRequired) {
+                    if (mparms[j].parmRequired) {
+                        parm.add(mparms[j].parmName + "=" + mparms[j].parmDomainValues[k]);
+                    }
+                } else {
+                    parm.add(mparms[j].parmName + "=" + mparms[j].parmDomainValues[k]);
+                }
+            }
+            parms.add(parm);
+        }
+        
+        CrossProduct cp = new CrossProduct(parms);
+        List results = cp.getCrossProduct();
+        Iterator it = results.iterator();
+        while (it.hasNext()) {
+            List cpParms = (List)it.next();
+            Iterator it2 = cpParms.iterator();
+            StringBuffer sb = new StringBuffer();
+            while (it2.hasNext()) {
+                sb.append(it2.next());
+                if (it2.hasNext()) {
+                    sb.append("&");
+                }
+            }
+            combinations.add(sb.toString());
+        }
+        return combinations;
+    }
 
     /* (non-Javadoc)
      * @see fedora.server.resourceIndex.ResourceIndex#getIndexLevel()
+     * 
+     * Levels:
+     *  B
+     *  R
+     *  P
+     *  D
+     * 
+     * Marking for latent indexing
      */
     public int getIndexLevel() {
         return m_indexLevel;
     }
-	
-	/*
-	Notes:
-
-	called from out of DefaultDOManager.doCommit()
-
-	*/
     
     /**
      * 
@@ -558,4 +595,43 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
     }
     
+    protected class CrossProduct {
+        public List crossProduct;
+        public List lol;
+        
+        public CrossProduct(List listOfLists) {
+            this.lol = listOfLists;
+            this.crossProduct = new ArrayList();
+        }
+        
+        public List getCrossProduct() {
+            generateCrossProduct(new ArrayList());
+            return crossProduct;
+        }
+        
+        private void generateCrossProduct(List productList) {
+            if (productList.size() == lol.size()) {
+                addCopy(productList);
+            } else {
+                int idx = productList.size();
+                List elementList = (List)lol.get(idx);
+                Iterator it = elementList.iterator();
+                if (it.hasNext()) {
+                    productList.add(it.next());
+                    generateCrossProduct(productList);
+                    while (it.hasNext()) {
+                        productList.set(idx, it.next());
+                        generateCrossProduct(productList);
+                    }
+                    productList.remove(idx);
+                }
+            }
+        }
+        
+        private void addCopy(List result) {
+            List copy = new ArrayList();
+            copy.addAll(result);
+            crossProduct.add(copy);
+        }
+    }
 }
