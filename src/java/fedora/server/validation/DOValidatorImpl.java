@@ -1,39 +1,5 @@
 package fedora.server.validation;
 
-/**
- * <p>Title: DOValidatorImpl.java </p>
- * <p>Description: The implementation of the digital object validation
- * module (see DOValidator.class and DOValidatorModule.class).  Digital
- * object validation is implemented as three levels:
- *   - Level 1:  XML Schema Validation - the digital object will be
- *   validated against the METS XML Schema.  An ObjectValidityException
- *   will be thrown if the object fails the schema test.
- *   - Level 2: Schematron Rules Validation - the digital object
- *   will be validated against a set of rules express by a Schematron
- *   schema.  These rules are Fedora-specific and are beyond what
- *   is expressed in the METS XML Schema.  The Schematron schema expressed
- *   rules for different phases of the object lifecycle.  There are rules
- *   appropriate to a digital object when it is first ingested into the
- *   repository (essentially rules for a valid "ingest package."  There are
- *   additional rules that must be met before a digital object is considered
- *   valid to be stored in the repository.  These rules pertain to aspects
- *   of the object that are system assigned, such as created dates and
- *   state codes. An ObjectValidityException will be thrown if the object
- *   fails the Fedora rules test.
- *   - Level 3:  Referential Integrity Checking - the digital object
- *   will be validated programmatically to check that certain relationships
- *   expressed in the object are valid.  Disseminators will be checked to
- *   make sure that Behavior Defintion and Behavior Mechanism objects that
- *   are referred to actually exist in the local repository.  (In the future
- *   some degree of link checking may be performed on datastreasm, plus
- *   other TBD checks.) An ObjectValidityException will be thrown if the
- *   object fails the integrity checks.</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Sandy Payette, payette@cs.cornell.edu
- * @version 1.0
- */
-
 // Fedora imports
 import fedora.server.errors.ServerException;
 import fedora.server.errors.GeneralException;
@@ -60,7 +26,43 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 
-
+/**
+ * <p>Title: DOValidatorImpl.java </p>
+ * <p>Description: The implementation of the digital object validation
+ * module (see DOValidator.class and DOValidatorModule.class).  Digital
+ * object validation is implemented as three levels:
+ * <pre>
+ *   - Level 1:  XML Schema Validation - the digital object will be
+ *   validated against the METS XML Schema.  An ObjectValidityException
+ *   will be thrown if the object fails the schema test.
+ 
+ *   - Level 2: Schematron Rules Validation - the digital object
+ *   will be validated against a set of rules express by a Schematron
+ *   schema.  These rules are Fedora-specific and are beyond what
+ *   is expressed in the METS XML Schema.  The Schematron schema expressed
+ *   rules for different phases of the object lifecycle.  There are rules
+ *   appropriate to a digital object when it is first ingested into the
+ *   repository (essentially rules for a valid "ingest package."  There are
+ *   additional rules that must be met before a digital object is considered
+ *   valid to be stored in the repository.  These rules pertain to aspects
+ *   of the object that are system assigned, such as created dates and
+ *   state codes. An ObjectValidityException will be thrown if the object
+ *   fails the Fedora rules test.
+ 
+ *   - Level 3:  Referential Integrity Checking - the digital object
+ *   will be validated programmatically to check that certain relationships
+ *   expressed in the object are valid.  Disseminators will be checked to
+ *   make sure that Behavior Defintion and Behavior Mechanism objects that
+ *   are referred to actually exist in the local repository.  (In the future
+ *   some degree of link checking may be performed on datastreasm, plus
+ *   other TBD checks.) An ObjectValidityException will be thrown if the
+ *   object fails the integrity checks.</p>
+ * </pre>
+ * <p>Copyright: Copyright (c) 2002</p>
+ * <p>Company: </p>
+ * @author Sandy Payette, payette@cs.cornell.edu
+ * @version 1.0
+ */
 public class DOValidatorImpl implements DOValidator
 {
    // FOR TESTING: The configuration variables are normally set via
@@ -183,12 +185,51 @@ public class DOValidatorImpl implements DOValidator
 
   /**
    * <p>Constructs a new DOValidatorImpl to support all forms of
-   * digital object validation.</p>
+   * digital object validation, using defaults for all configuration 
+   * values.</p>
    *
    * @throws ServerException If construction fails for any reason.
    */
     public DOValidatorImpl() throws ServerException
     {
+    }
+    
+  /**
+   * <p>Constructs a new DOValidatorImpl to support all forms of
+   * digital object validation, using specified values for
+   * configuration values.</p>
+   * <p>
+   * Any parameter may be given as null, in which case the default
+   * value is assumed.
+   * </p>
+   * @param tempDir Working area for validation, default is <i>temp/</i>
+   * @param xmlSchemaURL URL to METS-Fedora WXS (W3 Schema), default is 
+   *        <i>http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd</i>
+   * @param xmlSchemaLocalPath Local location of METS-Fedora WXS, default is
+   *        <i>c:/mellon-test/work/xsd/mets-fedora.xsd</i>
+   * @param schematronPreprocessorID Local location of Schematron 
+   *        rules-to-stylesheet stylesheet, default is 
+   *        <i>schematron/preprocessor.xslt</i>
+   * @param schematronSchemaID Local location of Fedora Schematron rules, 
+   *        default is <i>schematron/fedoraRules.xml</i>
+   * @param schematronValidatingXslID Local location for temporary stylesheet 
+   *        used during processing, default is <i>schematron/fedoraValidator.xslt</i>
+   * @param connectionPool For level3 validation, connectionpool to db holding 
+   *        Fedora objects, default is null.
+   * @throws ServerException If construction fails for any reason.
+   */
+    public DOValidatorImpl(String tempDir, String xmlSchemaURL, 
+            String xmlSchemaLocalPath, String schematronPreprocessorID,
+            String schematronSchemaID, String schematronValidatingXslID,
+            ConnectionPool connectionPool) throws ServerException
+    {
+        if (tempDir!=null) this.tempDir=tempDir;
+        if (xmlSchemaURL!=null) this.xmlSchemaURL=xmlSchemaURL;
+        if (xmlSchemaLocalPath!=null) this.xmlSchemaLocalPath=xmlSchemaLocalPath;
+        if (schematronPreprocessorID!=null) this.schematronPreprocessorID=schematronPreprocessorID;
+        if (schematronSchemaID!=null) this.schematronSchemaID=schematronSchemaID;
+        if (schematronValidatingXslID!=null) this.schematronValidatingXslID=schematronValidatingXslID;
+        if (connectionPool!=null) this.connectionPool=connectionPool;
     }
 
   /**
