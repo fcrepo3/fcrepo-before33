@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="pidList">
+		<xs:complexType name="">
+			<xs:sequence>
+				<xs:element ref="pid" minOccurs="1" maxOccurs="unbounded"></xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="pid">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+			<xs:pattern value="[-_A-Za-z0-9]+:[-_A-Za-z0-9]+" />
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>	
+</xs:schema>
