@@ -452,10 +452,9 @@ public class METSLikeExportDOSerializer
                         // url for the datastream
                         dsc.DSLocation=s_localServerDissemUrlStart 
                                 + obj.getPid() 
-                                + "/fedora-system:3/getItem?itemID=" + dsc.DatastreamID;
-                        // FIXME: this doesn't take into account the version of the
-                        // datastream in the dissem request.  If it were to do so,
-                        // it would have the date encoded in the dissemination url.
+                                + "/fedora-system:3/getItem/"
+                                + m_formatter.format(dsc.DSCreateDT)
+                                + "?itemID=" + dsc.DatastreamID;
                     }
                     buf.append("        <" + METS_PREFIX + ":file ID=\""
                             + dsc.DSVersionID + "\" CREATED=\"" + m_formatter.format(dsc.DSCreateDT)
