@@ -16,7 +16,8 @@
 		</title>
 		<title>Web Exposure of the <trademark class="trade">Fedora</trademark> Access Service</title>
 		<subtitle>Software Release 1.2</subtitle>
-		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -75,7 +76,8 @@
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis>dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time.</para>
+						<emphasis>dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS
+where HH is 24-hour clock.</para>
 				</listitem>
 				<listitem>
 					<para>
@@ -126,7 +128,7 @@
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis>dateTime</emphasis> - an optional dateTime parameter indicating dissemination of a version of the digital object at the specified point in time.</para>
+						<emphasis>dateTime</emphasis> - an optional dateTime parameter indicating dissemination of a version of the digital object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS where HH is 24-hour clock.</para>
 				</listitem>
 				<listitem>
 					<para>

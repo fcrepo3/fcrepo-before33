@@ -14,9 +14,11 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title><trademark class="trade">Fedora</trademark> API-A Sample SOAP Client</title>
+		<title>
+			<trademark class="trade">Fedora</trademark> API-A Sample SOAP Client</title>
 		<subtitle>Software Release 1.2</subtitle>
-		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -185,7 +187,7 @@
 			</listitem>
 			<listitem>
 				<para>
-					<emphasis role="bold">asOfDateTime_</emphasis> - versioning datetime stamp (optional)</para>
+					<emphasis role="bold">asOfDateTime_</emphasis> - versioning datetime stamp (optional). Proper syntax is YYYY-MM-DDTHH:MM:SS where HH is 24-hour clock.</para>
 			</listitem>
 			<listitem>
 				<para>

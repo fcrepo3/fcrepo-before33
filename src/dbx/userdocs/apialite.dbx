@@ -14,9 +14,11 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title><trademark class="trade">Fedora</trademark> API-A-Lite Interface Client User Documentation</title>
+		<title>
+			<trademark class="trade">Fedora</trademark> API-A-Lite Interface Client User Documentation</title>
 		<subtitle>Software Release 1.2</subtitle>
-		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -87,11 +89,12 @@
 					<para>bDefPID - required persistent identifier of the behavior definition object to which the digital object subscribes.</para>
 				</listitem>
 				<listitem>
-					<para>methodName - required name of the method to be executed. dateTime - optional.</para>
+					<para>methodName - required name of the method to be executed.</para>
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time.</para>
+						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS
+where HH is 24-hour clock.</para>
 				</listitem>
 				<listitem>
 					<para>
@@ -128,7 +131,8 @@
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time.</para>
+						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. Proper syntax is YYYY-MM-DDTHH:MM:SS
+where HH is 24-hour clock.</para>
 				</listitem>
 				<listitem>
 					<para>
