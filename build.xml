@@ -156,9 +156,6 @@
 	<target name="release" depends="srcrelease,binrelease,checksumrelease" description="puts all source and binary distributable packages in dist/release">
 	</target>
 	<target name="srcrelease" depends="clean" description="puts source distributable packages in dist/release">
-		<mkdir dir="${dist.dir}"/>
-		<mkdir dir="${release.dir}"/>
-		<mkdir dir="${release.dir}/fedora-${fedora.version}-src"/>
 		<copy todir="${release.dir}/fedora-${fedora.version}-src">
 			<fileset dir="."/>
 		</copy>
