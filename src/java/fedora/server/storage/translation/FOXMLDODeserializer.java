@@ -298,7 +298,7 @@ public class FOXMLDODeserializer
 					m_obj.setLastModDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
 				} else if (m_objPropertyName.equals("info:fedora/def:dobj:fType")){
 					m_objType = grab(a, F, "VALUE");
-					if (m_objType==null) { m_objType="FedoraObject"; }
+					if (m_objType==null || m_objType.equals("")) { m_objType="FedoraObject"; }
 					if (m_objType.equalsIgnoreCase("FedoraBDefObject")) {
 						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
 					} else if (m_objType.equalsIgnoreCase("FedoraBMechObject")) {
@@ -600,12 +600,12 @@ public class FOXMLDODeserializer
 					// add the audit records to the digital object
 					m_obj.getAuditRecords().add(m_auditRec);
 					// reinit variables for next audit record
-					m_auditProcessType=null;
-					m_auditAction=null;
-					m_auditComponentID=null;
-					m_auditResponsibility=null;
-					m_auditDate=null;
-					m_auditJustification=null;
+					m_auditProcessType="";
+					m_auditAction="";
+					m_auditComponentID="";
+					m_auditResponsibility="";
+					m_auditDate="";
+					m_auditJustification="";
 				} else if (localName.equals("auditTrail")) {
 					m_gotAudit=false;
 				}
@@ -670,21 +670,21 @@ public class FOXMLDODeserializer
 			m_readingBinaryContent=false;
 		} else if (uri.equals(F) && localName.equals("datastreamVersion")) {
 			// reinitialize datastream version-level attributes...
-			m_dsVersId=null;
-			m_dsLabel=null;
+			m_dsVersId="";
+			m_dsLabel="";
 			m_dsCreateDate=null;
 			m_dsSize=-1;
 			//m_dsAdmIds=new HashMap();
 			//m_dsDmdIds=null;
         } else if (uri.equals(F) && localName.equals("datastream")) {
 			// reinitialize datastream attributes ...
-			m_dsId=null;
-			m_dsURI=null;
-			m_dsVersionable=null;
-			m_dsState=null;
-			m_dsFormatURI=null;
-			m_dsInfoType=null;
-			m_dsOtherInfoType=null;
+			m_dsId="";
+			m_dsURI="";
+			m_dsVersionable="";
+			m_dsState="";
+			m_dsFormatURI="";
+			m_dsInfoType="";
+			m_dsOtherInfoType="";
 			m_dsMDClass=0;
 		} else if (localName.equals("serviceInputMap")) {
 			m_diss.dsBindMap.dsBindings=(DSBinding[])m_dsBindings.toArray(new DSBinding[0]);
@@ -693,10 +693,10 @@ public class FOXMLDODeserializer
 			m_obj.disseminators(m_diss.dissID).add(m_diss);
 			m_diss=null;
         } else if (uri.equals(F) && localName.equals("disseminator")) {
-			m_dissID=null;
-			m_bDefID=null;
-			m_dissState=null;
-			m_dissVersionable=null;
+			m_dissID="";
+			m_bDefID="";
+			m_dissState="";
+			m_dissVersionable="";
         }
 
     }
@@ -706,6 +706,12 @@ public class FOXMLDODeserializer
         String ret=a.getValue(namespace, elementName);
         if (ret==null) {
             ret=a.getValue(elementName);
+        }
+        // set null attribute value to empty string since it's
+        // generally helpful in the code to avoid null pointer exception
+        // when operations are performed on attributes values.
+        if (ret==null) {
+        	ret="";
         }
         return ret;
     }
@@ -725,7 +731,7 @@ public class FOXMLDODeserializer
 		ds.DSState=m_dsState;
 		ds.DSLocation=m_dsLocation;
 		ds.DSLocationType=m_dsLocationType;
-		ds.DSInfoType=null; // METS legacy
+		ds.DSInfoType=""; // METS legacy
 		
 		// Normalize the dsLocation for the deserialization context
 		ds.DSLocation=
@@ -739,6 +745,7 @@ public class FOXMLDODeserializer
 		if (m_queryBehavior!=QUERY_NEVER) {
 			if ((m_queryBehavior==QUERY_ALWAYS)	
 				|| (m_dsMimeType==null)
+				|| (m_dsMimeType.equals(""))
 				|| (m_dsSize==-1)) {
 				try {
 					InputStream in=ds.getContentStream();
@@ -773,7 +780,7 @@ public class FOXMLDODeserializer
 		ds.DSVersionID=m_dsVersId;
 		ds.DSLabel=m_dsLabel;
 		ds.DSCreateDT=m_dsCreateDate;
-		if (m_dsMimeType==null) {
+		if (m_dsMimeType==null || m_dsMimeType.equals("")) {
 			ds.DSMIME="text/xml";
 		} else {
 			ds.DSMIME=m_dsMimeType;
@@ -813,31 +820,32 @@ public class FOXMLDODeserializer
 	}	
 	
 	private void checkMETSFormat(String formatURI) {
-		//"info:fedora/format:xml:mets:"
-		//Pattern p=Pattern.compile("info:fedora/format:xml:mets:");
-		Matcher m = metsPattern.matcher(formatURI);
-		//Matcher m = metsURI.matcher(formatURI);
-		if (m.lookingAt()) {
-			int index = m.end();
-			StringTokenizer st = 
-				new StringTokenizer(formatURI.substring(index), ":");
-			String mdClass = st.nextToken();
-			if (st.hasMoreTokens()){
-				m_dsInfoType = st.nextToken();
+		if (formatURI!=null && !formatURI.equals("")) {
+			Matcher m = metsPattern.matcher(formatURI);
+			//Matcher m = metsURI.matcher(formatURI);
+			if (m.lookingAt()) {
+				int index = m.end();
+				StringTokenizer st = 
+					new StringTokenizer(formatURI.substring(index), ":");
+				String mdClass = st.nextToken();
+				if (st.hasMoreTokens()){
+					m_dsInfoType = st.nextToken();
+				}
+				if (st.hasMoreTokens()){
+					m_dsOtherInfoType = st.nextToken();
+				}
+				if (mdClass.equals("techMD")) { m_dsMDClass = 1;
+				} else if (mdClass.equals("sourceMD")) { m_dsMDClass = 2;
+				} else if (mdClass.equals("rightsMD")) { m_dsMDClass = 3;
+				} else if (mdClass.equals("digiprovMD")) { m_dsMDClass = 4;
+				} else if (mdClass.equals("descMD")) { m_dsMDClass = 5; }
+				if (m_dsInfoType.equals("OTHER")) {
+					m_dsInfoType = m_dsOtherInfoType;
+				}			
 			}
-			if (st.hasMoreTokens()){
-				m_dsOtherInfoType = st.nextToken();
-			}
-			if (mdClass.equals("techMD")) { m_dsMDClass = 1;
-			} else if (mdClass.equals("sourceMD")) { m_dsMDClass = 2;
-			} else if (mdClass.equals("rightsMD")) { m_dsMDClass = 3;
-			} else if (mdClass.equals("digiprovMD")) { m_dsMDClass = 4;
-			} else if (mdClass.equals("descMD")) { m_dsMDClass = 5; }
-			if (m_dsInfoType.equals("OTHER")) {
-				m_dsInfoType = m_dsOtherInfoType;
-			}			
 		}		
 	}
+	
 	private Datastream getCurrentDS(List allVersions){
 		if (allVersions.size()==0) {
 			return null;
@@ -855,7 +863,7 @@ public class FOXMLDODeserializer
 		}
 		return mostRecentDS;
 	}
-	
+/*
 	private void initialize(){
 
 		// temporary variables and state variables
@@ -908,5 +916,60 @@ public class FOXMLDODeserializer
 		m_auditResponsibility=null;
 		m_auditDate=null;
 		m_auditJustification=null;
+	}	
+*/
+
+	private void initialize(){
+
+		// temporary variables and state variables
+		m_rootElementFound=false;
+		m_objPropertyName=null;
+		m_readingBinaryContent=false; // indicates reading base64-encoded content
+		m_firstInlineXMLElement=false;
+		m_inXMLMetadata=false;
+
+		// temporary variables for processing datastreams		
+		m_dsId="";
+		m_dsURI="";
+		m_dsVersionable="";
+		m_dsVersId="";
+		m_dsCreateDate=null;
+		m_dsState="";
+		m_dsFormatURI="";
+		m_dsSize=-1;
+		m_dsLocationType="";
+		m_dsLocationURL=null;
+		m_dsLocation="";
+		m_dsMimeType="";
+		m_dsControlGrp="";
+		m_dsInfoType="";
+		m_dsOtherInfoType="";
+		m_dsMDClass=0;
+		m_dsLabel="";
+		m_dsXMLBuffer=null;
+		m_prefixes=new HashMap();
+		m_prefixUris=new HashMap();
+		//m_dsAdmIds=new HashMap();
+		//m_dsDmdIds=null;
+		
+		// temporary variables for processing disseminators
+		m_diss=null;
+		m_dissID="";
+		m_bDefID="";
+		m_dissState="";
+		m_dissVersionable="";
+		m_dsBindMap=null;
+		m_dsBindings=null;
+		
+		// temporary variables for processing audit records
+		m_auditRec=null;	
+		m_gotAudit=false;
+		//m_auditRecordID=null;
+		m_auditComponentID="";
+		m_auditProcessType="";
+		m_auditAction="";
+		m_auditResponsibility="";
+		m_auditDate="";
+		m_auditJustification="";
 	}
   }

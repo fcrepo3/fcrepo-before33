@@ -350,7 +350,7 @@ public class METSLikeDODeserializer
                 m_obj.setLabel(grab(a, M, "LABEL"));
                 m_obj.setContentModelId(grab(a, M, "PROFILE"));
                 String objType=grab(a, M, "TYPE");
-                if (objType==null) { objType="FedoraObject"; }
+                if (objType==null || objType.equals("")) { objType="FedoraObject"; }
                 if (objType.equalsIgnoreCase("FedoraBDefObject")) {
                     m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
                 } else if (objType.equalsIgnoreCase("FedoraBMechObject")) {
@@ -410,10 +410,10 @@ public class METSLikeDODeserializer
             } else if (localName.equals("fileGrp")) {
                 m_dsId=grab(a, M, "ID");
                 // reset the values for the next file
-                m_dsVersId=null;
+                m_dsVersId="";
                 m_dsCreateDate=null;
-                m_dsMimeType=null;
-                m_dsControlGrp=null;
+                m_dsMimeType="";
+                m_dsControlGrp="";
                 m_dsDmdIds=null;
                 m_dsState=grab(a,M,"STATUS");
                 m_dsSize=-1;
@@ -809,9 +809,9 @@ public class METSLikeDODeserializer
 
 		// set datastream variables with values grabbed from the SAX parse     	  	
 		ds.DatastreamID=m_dsId;
-		ds.DatastreamURI=null; // FOXML only. In METS it's null;
-		ds.DSVersionable=null; // FOXML only. In METS it's null;
-		ds.DSFormatURI=null;   // FOXML only. In METS it's null;
+		ds.DatastreamURI=""; // FOXML only. In METS it's null;
+		ds.DSVersionable=""; // FOXML only. In METS it's null;
+		ds.DSFormatURI="";   // FOXML only. In METS it's null;
 		ds.DSVersionID=m_dsVersId;
 		ds.DSLabel=m_dsLabel;
 		ds.DSCreateDT=m_dsCreateDate;
@@ -835,6 +835,7 @@ public class METSLikeDODeserializer
 		if (m_queryBehavior!=QUERY_NEVER) {
 			if ((m_queryBehavior==QUERY_ALWAYS)	
 				|| (m_dsMimeType==null)
+				|| (m_dsMimeType.equals(""))
 				|| (m_dsSize==-1)) {
 				try {
 					InputStream in=ds.getContentStream();
@@ -870,13 +871,13 @@ public class METSLikeDODeserializer
 		
 		// set the attrs common to all datastream versions
 		ds.DatastreamID=m_dsId;
-		ds.DatastreamURI=null; // FOXML only. In METS it's null;
-		ds.DSVersionable=null; // FOXML only. In METS it's null;
-		ds.DSFormatURI=null;   // FOXML only. In METS it's null;
+		ds.DatastreamURI=""; // FOXML only. In METS it's null;
+		ds.DSVersionable=""; // FOXML only. In METS it's null;
+		ds.DSFormatURI="";   // FOXML only. In METS it's null;
 		ds.DSVersionID=m_dsVersId;
 		ds.DSLabel=m_dsLabel;
 		ds.DSCreateDT=m_dsCreateDate;
-		if (m_dsMimeType==null) {
+		if (m_dsMimeType==null || m_dsMimeType.equals("")) {
 			ds.DSMIME="text/xml";
 		} else {
 			ds.DSMIME=m_dsMimeType;
@@ -921,9 +922,64 @@ public class METSLikeDODeserializer
         if (ret==null) {
             ret=a.getValue(elementName);
         }
+		// set null attribute value to empty string since it's
+		// generally helpful in the code to avoid null pointer exception
+		// when operations are performed on attributes values.
+		if (ret==null) {
+			ret="";
+		}
         return ret;
     }
-    
+
+	private void initialize(){		
+		//NOTE: variables that are commented out exist in FOXML but not METS
+		
+		// temporary variables and state variables
+		m_rootElementFound=false;
+		//m_objPropertyName=null;
+		//m_readingBinaryContent=false; // indicates reading base64-encoded content
+		m_firstInlineXMLElement=false;
+		m_inXMLMetadata=false;
+
+		// temporary variables for processing datastreams		
+		m_dsId="";
+		//m_dsURI="";
+		//m_dsVersionable="";
+		m_dsVersId="";
+		m_dsCreateDate=null;
+		m_dsState="";
+		//m_dsFormatURI="";
+		m_dsSize=-1;
+		m_dsLocationType="";
+		m_dsLocationURL=null;
+		m_dsLocation="";
+		m_dsMimeType="";
+		m_dsControlGrp="";
+		m_dsInfoType="";
+		m_dsOtherInfoType="";
+		m_dsMDClass=0;
+		m_dsLabel="";
+		m_dsXMLBuffer=null;
+		m_prefixes=new HashMap();
+		m_prefixUris=new HashMap();
+		m_dsAdmIds=new HashMap();
+		m_dsDmdIds=null;
+		
+		// temporary variables for processing disseminators
+		m_diss=null;
+		m_dissems=new HashMap();
+	
+		// temporary variables for processing audit records
+		m_auditBuffer=null;
+		m_auditComponentID="";
+		m_auditProcessType="";
+		m_auditAction="";
+		m_auditResponsibility="";
+		m_auditDate="";
+		m_auditJustification="";
+		m_auditIdToComponentId=new HashMap();
+	}
+/*   
 	private void initialize(){		
 		//NOTE: variables that are commented out exist in FOXML but not METS
 		
@@ -972,5 +1028,5 @@ public class METSLikeDODeserializer
 		m_auditJustification=null;
 		m_auditIdToComponentId=new HashMap();
 	}
-
+	*/
 }

@@ -484,27 +484,35 @@ public abstract class DOTranslationUtility {
 		throws ObjectIntegrityException {
 
 		// FIXME:  Can we get rid of these checks?  Trace validation code at ingest
-		// and API-M to see which of these cases can never happen due to other checks.			
+		// and API-M to see which of these cases can never happen due to other checks.
+		/*			
 		if (ds.DatastreamID==null) {
 			ds.DatastreamID="";
 		}
 		if (ds.DatastreamURI==null) {
 			ds.DatastreamURI="";
-		}		
-		if (ds.DSMIME==null && ds.DSControlGrp.equalsIgnoreCase("X")) {
-			ds.DSMIME="text/xml";
-		} else if (ds.DSMIME==null) {
+		}	
+		*/	
+		if ((ds.DSMIME==null || ds.DSMIME.equals("")) 
+			&& ds.DSControlGrp.equalsIgnoreCase("X")) {
+				ds.DSMIME="text/xml";
+		}
+		/*
+		} else if (ds.DSMIME==null || ds.DSMIME.equals("")) {
 			ds.DSMIME="";
 		}
 		if (ds.DSFormatURI==null) {
 			ds.DSFormatURI="";	
 		}
+		*/
 		if (ds.DSVersionable==null || ds.DSVersionable.equals("")) {
 			ds.DSVersionable="YES";
 		}
+		/*
 		if (ds.DSLabel==null) {
 			ds.DSLabel="";
 		}
+		*/
 		// For METS backward compatibility
 		if (ds.DSInfoType==null || ds.DSInfoType.equals("")
 				|| ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
@@ -546,7 +554,8 @@ public abstract class DOTranslationUtility {
 	public static Disseminator setDisseminatorDefaults(Disseminator diss) throws ObjectIntegrityException {
 
 		// FIXME:  Can we get rid of these checks?  Trace validation code at ingest
-		// and API-M to see which of these cases can never happen due to other checks.		
+		// and API-M to see which of these cases can never happen due to other checks.
+		/*		
 		if (diss.dissID==null) {
 			diss.dissID="";
 		}
@@ -565,8 +574,9 @@ public abstract class DOTranslationUtility {
 		if (diss.dsBindMapID==null) {
 			diss.dsBindMapID="";
 		}
+		*/
 		// Until future when we implement selective versioning,
-		// set default to YES.
+		// set default to YES.		
 		if (diss.dissVersionable==null || diss.dissVersionable.equals("")) {
 			diss.dissVersionable="YES";
 		}

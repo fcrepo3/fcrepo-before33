@@ -121,16 +121,16 @@ public class METSLikeDOSerializer
         appendNamespaceDeclarations(indent,obj.getNamespaceMapping(),buf);
         // hardcode xsi:schemaLocation to definitive location for such.
         buf.append(indent + xsiPrefix + ":schemaLocation=\"" + StreamUtility.enc(METS_NS) + " http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
-        if (obj.getPid()==null) {
+        if (obj.getPid()==null || obj.getPid().equals("")) {
             throw new ObjectIntegrityException("Object must have a pid.");
         }
         buf.append(indent + "OBJID=\"" + obj.getPid() + "\" TYPE=\""
                 + getTypeAttribute(obj) + "\"");
-        if (obj.getLabel()!=null) {
+        if (obj.getLabel()!=null && !obj.getLabel().equals("")) {
             buf.append("\n" + indent + "LABEL=\"" + StreamUtility.enc(
                     obj.getLabel()) + "\"");
         }
-        if (obj.getContentModelId()!=null) {
+        if (obj.getContentModelId()!=null && !obj.getContentModelId().equals("")) {
             buf.append("\n" + indent + "PROFILE=\"" + StreamUtility.enc(
                     obj.getContentModelId()) + "\"");
         }
@@ -188,7 +188,7 @@ public class METSLikeDOSerializer
             buf.append(m_formatter.format(mDate) + "\"");
         }
         String state=obj.getState();
-        if (state!=null) {
+        if (state!=null && !state.equals("")) {
             buf.append(" RECORDSTATUS=\"");
             buf.append(state + "\"");
         }
@@ -309,26 +309,25 @@ public class METSLikeDOSerializer
                 // The audit record is created by the system, so programmatic
                 // validation here is o.k.  Normally, validation takes place
                 // via XML Schema and Schematron.
-                if (audit.id==null) {
+                if (audit.id==null || audit.id.equals("")) {
                     throw new ObjectIntegrityException("Audit record must have id.");
                 }
-                if (audit.date==null) {
+                if (audit.date==null || audit.date.equals("")) {
                     throw new ObjectIntegrityException("Audit record must have date.");
                 }
-                if (audit.processType==null) {
+                if (audit.processType==null || audit.processType.equals("")) {
                     throw new ObjectIntegrityException("Audit record must have processType.");
                 }
-                if (audit.action==null) {
+                if (audit.action==null || audit.action.equals("")) {
                     throw new ObjectIntegrityException("Audit record must have action.");
                 }
 				if (audit.componentID==null) {
 					audit.componentID = ""; // for backwards compatibility, no error on null
-					// throw new ObjectIntegrityException("Audit record must have componentID.");
 				}
-                if (audit.responsibility==null) {
+                if (audit.responsibility==null || audit.responsibility.equals("")) {
                     throw new ObjectIntegrityException("Audit record must have responsibility.");
                 }
-                if (audit.justification==null) {
+                if (audit.justification==null || audit.justification.equals("")) {
                     throw new ObjectIntegrityException("Audit record must have justification.");
                 }
                 buf.append("    <" + METS_PREFIX + ":digiprovMD ID=\"" + audit.id
@@ -382,7 +381,9 @@ public class METSLikeDOSerializer
                     && (((DatastreamXMLMetadata) firstDS).DSMDClass!=
                     DatastreamXMLMetadata.DESCRIPTIVE)) {
                 DatastreamXMLMetadata md=(DatastreamXMLMetadata) firstDS;
-                String mdClass=null;
+                // Default mdClass to techMD when a valid one does not appear
+                // (say because the object was born as FOXML)
+                String mdClass="techMD";
                 if (md.DSMDClass==DatastreamXMLMetadata.TECHNICAL) {
                     mdClass="techMD";
                 } else if (md.DSMDClass==DatastreamXMLMetadata.SOURCE) {
@@ -391,11 +392,6 @@ public class METSLikeDOSerializer
                     mdClass="rightsMD";
                 } else if (md.DSMDClass==DatastreamXMLMetadata.DIGIPROV) {
                     mdClass="digiprovMD";
-                } else {
-                	// if we don't have a METS mdClass (say because the
-                	// (object was always encoded as FOXML), then default
-                	// to techMD, since it's the most generic category.
-                	mdClass="techMD";
                 }
                 // Then, pass everything along to do the actual serialization
                 appendMDSec(obj, "amdSec", mdClass, obj.datastreams(id),
@@ -435,7 +431,6 @@ public class METSLikeDOSerializer
 					if (dsc.DSCreateDT!=null) {
 						dateAttr=" CREATED=\"" + m_formatter.format(dsc.DSCreateDT) + "\"";
 					}
-					//if (dsc.DSMIME==null) dsc.DSMIME="";
                     String sizeAttr=" SIZE=\"" + dsc.DSSize + "\"";
                     String admIDAttr=getIdString(obj, (DatastreamContent)dsc, true);
                     String dmdIDAttr=getIdString(obj, (DatastreamContent)dsc, false);
@@ -547,7 +542,7 @@ public class METSLikeDOSerializer
                         buf.append("\" LABEL=\"");
                         buf.append(StreamUtility.enc(bindings[i].bindLabel));
                     }
-                    if (bindings[i].seqNo!=null) {
+                    if (bindings[i].seqNo!=null && !bindings[i].seqNo.equals("")) {
                         buf.append("\" ORDER=\"");
                         buf.append(bindings[i].seqNo);
                     }

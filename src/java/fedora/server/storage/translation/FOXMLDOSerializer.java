@@ -116,7 +116,7 @@ public class FOXMLDOSerializer
         	StreamUtility.enc(FOXML_NS) + " "  + 
         	StreamUtility.enc(FOXML_XSD_LOCATION) + "\"\n");
         	
-        if (obj.getPid()==null) {
+        if (obj.getPid()==null || obj.getPid().equals("")) {
             throw new ObjectIntegrityException("Object must have a pid.");
         }
 		String uri = "info:fedora/" + obj.getPid();
@@ -156,15 +156,15 @@ public class FOXMLDOSerializer
 		
 		buf.append("    <" + FOXML_PREFIX + ":objectProperties>\n");
 			
-		if (ftype!=null) {
+		if (ftype!=null && !ftype.equals("")) {
 			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:fType" + "\"" 
 			+ " VALUE=\"" + ftype + "\"/>\n");
 		}
-		if (state!=null) {
+		if (state!=null && !state.equals("")) {
 			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:state" + "\"" 
 			+ " VALUE=\"" + state + "\"/>\n");
 		}
-		if (label!=null) {
+		if (label!=null && !label.equals("")) {
 			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:label" + "\""
 			+ " VALUE=\"" + StreamUtility.enc(label) + "\"/>\n"); 
 		}
@@ -176,7 +176,7 @@ public class FOXMLDOSerializer
 			buf.append("        <" + FOXML_PREFIX  + ":property NAME=\"" + "info:fedora/def:dobj:mDate" + "\""
 			+ " VALUE=\"" + m_formatter.format(mdate) + "\"/>\n"); 
 		}
-		if (cmodel!=null) {
+		if (cmodel!=null && !cmodel.equals("")) {
 			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cModel" + "\"" 
 			+ " VALUE=\"" + StreamUtility.enc(cmodel) + "\"/>\n");	
 		}
@@ -441,26 +441,26 @@ public class FOXMLDOSerializer
     }
 	
 	private void validateAudit(AuditRecord audit) throws ObjectIntegrityException {
-		if (audit.id==null) {
+		if (audit.id==null || audit.id.equals("")) {
 			throw new ObjectIntegrityException("Audit record must have id.");
 		}
-		if (audit.date==null) {
+		if (audit.date==null || audit.date.equals("")) {
 			throw new ObjectIntegrityException("Audit record must have date.");
 		}
-		if (audit.processType==null) {
+		if (audit.processType==null || audit.processType.equals("")) {
 			throw new ObjectIntegrityException("Audit record must have processType.");
 		}
-		if (audit.action==null) {
+		if (audit.action==null || audit.action.equals("")) {
 			throw new ObjectIntegrityException("Audit record must have action.");
 		}
 		if (audit.componentID==null) {
 			audit.componentID = ""; // for backwards compatibility, no error on null
 			// throw new ObjectIntegrityException("Audit record must have componentID.");
 		}
-		if (audit.responsibility==null) {
+		if (audit.responsibility==null || audit.responsibility.equals("")) {
 			throw new ObjectIntegrityException("Audit record must have responsibility.");
 		}
-		if (audit.justification==null) {
+		if (audit.justification==null || audit.justification.equals("")) {
 			throw new ObjectIntegrityException("Audit record must have justification.");
 		}
 	}
