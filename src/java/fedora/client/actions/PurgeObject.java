@@ -10,6 +10,8 @@ import javax.swing.JOptionPane;
 import fedora.client.Administrator;
 import fedora.client.purge.AutoPurger;
 
+import fedora.server.utilities.StringUtility;
+
 /**
  *
  * <p><b>Title:</b> PurgeObject.java</p>
@@ -72,7 +74,7 @@ public class PurgeObject
             purger=new AutoPurger(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    e.getClass().getName() + ": " + e.getMessage(),
+                    StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null),
                     "Purge Failure",
                     JOptionPane.ERROR_MESSAGE);
         }
@@ -87,7 +89,7 @@ public class PurgeObject
                         purger.purge(pid, reason);
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                e.getClass().getName() + ": " + e.getMessage(),
+                                StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null),
                                 "Purge Failure",
                                 JOptionPane.ERROR_MESSAGE);
                         failed=true;
@@ -107,7 +109,7 @@ public class PurgeObject
                             purger.purge(pid, reason);
                         } catch (Exception e) {
                             JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                    e.getClass().getName() + ": " + e.getMessage(),
+                                    StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null),
                                     "Purge Failure",
                                     JOptionPane.ERROR_MESSAGE);
                             failed=true;
