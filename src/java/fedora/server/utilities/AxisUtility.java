@@ -67,6 +67,14 @@ public abstract class AxisUtility {
         return fault;
     }
     
+    public static AxisFault getFault(Exception e) {
+        AxisFault fault=new AxisFault(new QName(SOAP_FAULT_CODE_NAMESPACE,
+                "Uncaught"), 
+                e.getClass().getName() + ":" + e.getMessage(), SOAP_ULTIMATE_RECEIVER,
+                null);
+        return fault;
+    }
+    
     public static void showDeployUsage() {
         System.out.println("Usage:");
         System.out.println("    AxisUtility deploy wsdd_file admin_url timeout_seconds [finished_url]");
