@@ -118,11 +118,11 @@ public class WSDLGenerator
     // The data we gathered via the GUI
     boolean hasBaseURL = newBMech.getHasBaseURL();
     String baseURL = newBMech.getServiceBaseURL();
-    String bDefPID = newBMech.getbDefPID();
-    String bMechLabel = newBMech.getbMechLabel();
+    String bDefPID = newBMech.getbDefContractPID();
+    String bMechLabel = newBMech.getbObjLabel();
     // FIXIT!! make sure there are no spaces in middle of bMechName
-    String bMechName = newBMech.getbMechName();
-    Method[] methods = newBMech.getBMechMethods();
+    String bMechName = newBMech.getbObjName();
+    Method[] methods = newBMech.getMethods();
 
     String name = (bMechLabel == null) ? "" : bMechLabel;
     root.setAttribute("name", name);

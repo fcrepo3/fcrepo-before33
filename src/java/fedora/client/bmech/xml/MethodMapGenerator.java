@@ -48,6 +48,12 @@ public class MethodMapGenerator
     genMethodMap(newBMech);
   }
 
+  public MethodMapGenerator(BObjTemplate newBDef)
+  {
+    createDOM();
+    genMethodMap(newBDef);
+  }
+
   private void createDOM()
   {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -64,22 +70,64 @@ public class MethodMapGenerator
     }
   }
 
-  private void genMethodMap(BMechTemplate newBMech)
+  private void genMethodMap(BObjTemplate newBDef)
   {
-    Method[] methods = newBMech.getBMechMethods();
-
+    Method[] methods = newBDef.getMethods();
     Element root = (Element)document.createElementNS(FMM, "fmm:MethodMap");
-    String bmlabel = (newBMech.getbMechLabel() == null) ? "" : newBMech.getbMechLabel();
-    root.setAttribute("name", ("MethodMap - " + bmlabel));
-    String bDefPID = (newBMech.getbDefPID() == null) ? "" : newBMech.getbDefPID();
-    root.setAttribute("bDefPID", bDefPID);
+    String bdeflabel = (newBDef.getbObjLabel() == null) ? "fix me" : newBDef.getbObjLabel();
+    root.setAttribute("name", ("MethodMap - " + bdeflabel));
     document.appendChild(root);
 
     for (int i=0; i<methods.length; i++)
     {
       Element method = document.createElementNS(FMM, "fmm:Method");
-      String mname = (methods[i].methodName == null) ? "" : methods[i].methodName;
-      String mlabel = (methods[i].methodLabel == null) ? "" : methods[i].methodLabel;
+      String mname = methods[i].methodName;
+      String mlabel = (methods[i].methodLabel == null) ? "fix me" : methods[i].methodLabel;
+      method.setAttribute("operationName", mname.trim());
+      root.appendChild(method);
+
+      // Append Method Parm elements
+      MethodParm[] parms = methods[i].methodProperties.methodParms;
+      for (int j=0; j<parms.length; j++)
+      {
+        Element parm = null;
+        if (parms[j].parmType.equalsIgnoreCase(MethodParm.USER_INPUT))
+        {
+          parm = document.createElementNS(FMM, "fmm:UserInputParm");
+        }
+        else
+        {
+          //FIXIT!  throw error on invalid parm type.
+        }
+        String name = (parms[j].parmName == null) ? "" : parms[j].parmName;
+        parm.setAttribute("parmName", name);
+        String passby = (parms[j].parmPassBy == null) ? "" : parms[j].parmPassBy;
+        parm.setAttribute("passBy", passby);
+        String req = (parms[j].parmRequired == null) ? "" : parms[j].parmRequired;
+        parm.setAttribute("required", req);
+        String def = (parms[j].parmDefaultValue == null) ? "" : parms[j].parmDefaultValue;
+        parm.setAttribute("defaultValue", def);
+        String label = (parms[j].parmLabel == null) ? "" : parms[j].parmLabel;
+        parm.setAttribute("label", label);
+        method.appendChild(parm);
+      }
+    }
+  }
+
+  private void genMethodMap(BMechTemplate newBMech)
+  {
+    Method[] methods = newBMech.getMethods();
+    Element root = (Element)document.createElementNS(FMM, "fmm:MethodMap");
+    String bmlabel = (newBMech.getbObjLabel() == null) ? "fix me" : newBMech.getbObjLabel();
+    root.setAttribute("name", ("MethodMap - " + bmlabel));
+    root.setAttribute("bDefPID", newBMech.getbDefContractPID());
+    document.appendChild(root);
+
+    for (int i=0; i<methods.length; i++)
+    {
+      Element method = document.createElementNS(FMM, "fmm:Method");
+      String mname = methods[i].methodName;
+      String mlabel = (methods[i].methodLabel == null) ? "fix me" : methods[i].methodLabel;
       method.setAttribute("operationName", mname.trim());
       method.setAttribute("operationLabel", mlabel.trim());
       method.setAttribute("wsdlMsgName", (mname.trim() + "Request"));

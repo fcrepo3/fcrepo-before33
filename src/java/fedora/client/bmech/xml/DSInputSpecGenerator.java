@@ -69,9 +69,9 @@ public class DSInputSpecGenerator
     DSInputRule[] rules = newBMech.getDSInputSpec();
 
     Element root = (Element)document.createElementNS(FBS, "fbs:DSInputSpec");
-    String bmlabel = (newBMech.getbMechLabel() == null) ? "" : newBMech.getbMechLabel();
+    String bmlabel = (newBMech.getbObjLabel() == null) ? "" : newBMech.getbObjLabel();
     root.setAttribute("label", ("Datastream Input Specification for " + bmlabel));
-    String bDefPID = (newBMech.getbDefPID() == null) ? "" : newBMech.getbDefPID();
+    String bDefPID = (newBMech.getbDefContractPID() == null) ? "" : newBMech.getbDefContractPID();
     root.setAttribute("bDefPID", bDefPID);
     document.appendChild(root);
 
