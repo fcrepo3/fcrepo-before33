@@ -1,0 +1,11 @@
+#AUTOMATICALLY GENERATED
+#Mon May 13 08:04:34 EDT 2002
+secure=false
+soTimeout=20000
+port=8009
+jkHome=c\:\\tomcat41
+shm.file=/tmp/jk2.shm
+maxThreads=75
+backlog=10
+timeout=20000
+tcpNoDelay=true
