@@ -52,11 +52,11 @@
 			<sect3>
 				<title>3. Admin GUI client - Purging object does not close object paneI in ObjectEditor. (Bugzilla # 6)
 				</title>
-				<para>When viewing an object using the ObjectEditor and then clicking the purge button, the object is removed from the repository, the object pane remains onthe screen. The admin GUI client has been modified so that the object pane is now closed when the object is purged.</para>
+				<para>When viewing an object using the ObjectEditor and then clicking the purge button, the object is removed from the repository, the object pane remains on the screen. The admin GUI client has been modified so that the object pane is now closed when the object is purged.</para>
 			</sect3>
 			<sect3>
 				<title>4. Admin GUI client - New Dialog Enhancement Request . (Bugzilla # 7)</title>
-				<para>In the New object creation dialog, one enters label text and content model text and clicks "create" to ingest the object. Pressing the ENTER key instead of clicking the "create" button has no affect. This has been changed so pressing the ENTER key now has the same result as clicking the  "create" button on NewObjectDialog pane.</para>
+				<para>In the New object creation dialog, one enters label text and content model text and clicks "create" to ingest the object. Pressing the ENTER key instead of clicking the "create" button has no affect. This has been changed so pressing the ENTER key now has the same result as clicking the "create" button on NewObjectDialog pane.</para>
 			</sect3>
 			<sect3>
 				<title>5. OAI day-granular "until" parm taken as midnight beginning that date. (Bugzilla # 9)</title>
@@ -74,7 +74,7 @@ JFileChooser still needs to be used in some cases because it has an option to on
 			</sect3>
 			<sect3>
 				<title>8. Admin GUI client - After deleting disseminator using ObjectEditor, the bdef drop down list is not refreshed. (Bugzilla # 12)</title>
-				<para>If you open an existing object, delete a disseminator, then try to re-build the disseminator in the same session, the drop down list of behavior definitions does not include the bdef that was associated with the disseminator that was just deleted.  If you exist the object editor after deleting the disseminator, then re-open the object in the editor, then the bdef becomes available again in the drop down. The code has been updated to refresh NewDisseminatorPane after a purge so the bdef used by the purged disseminator is visible once again in the drop down list of bdefs.
+				<para>If you open an existing object, delete a disseminator, then try to re-build the disseminator in the same session, the drop down list of behavior definitions does not include the bdef that was associated with the disseminator that was just deleted.  If you exit the object editor after deleting the disseminator, then re-open the object in the editor, then the bdef becomes available again in the drop down. The code has been updated to refresh NewDisseminatorPane after a purge so the bdef used by the purged disseminator is visible once again in the drop down list of bdefs.
 </para>
 			</sect3>
 			<sect3>
