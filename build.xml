@@ -76,11 +76,6 @@
 		</copy>
 	</target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
-		<mkdir dir="dist/server/doc"/>
-		<!-- need to check w/ Chris whether these are still needed -->
-		<copy file="dist/userdocs/distribution/release-notes.html" todir="dist/server/doc"/>
-		<copy file="dist/userdocs/distribution/installation.html" todir="dist/server/doc"/>
-		<copy file="dist/userdocs/distribution/demos.html" todir="dist/server/doc"/>
 	</target>
 	<target name="clientunixstuff" depends="clientmostly" if="buildingOnUnix">
 		<!-- add symlinks for shell scripts in unix -->
@@ -903,6 +898,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.126  2003/05/16 17:19:07  rlw
+  removed creation of dist/server/doc in serverdist
+  this is no longer needed
+
   Revision 1.125  2003/05/16 11:35:29  rlw
   missed a place in definitions where serverdocs directory location changed
 
