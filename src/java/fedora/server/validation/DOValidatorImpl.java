@@ -94,15 +94,6 @@ public class DOValidatorImpl implements DOValidator
     protected static String schematronSchemaID = "schematron/fedoraRules.xml";
 
     /**
-     *  Configuration variable: schematronValidatingXslID is path identifier
-     *  for the Schematron validating stylesheet that is created dynamically
-     *  by the preprocessing stylesheet's transformation of the Fedora-specific
-     *  Schematron schema.  This is basically a temporary file location since
-     *  a validating stylesheet is created for each validation run.
-     */
-    protected static String schematronValidatingXslID = "schematron/fedoraValidator.xslt";
-
-    /**
      * Configuration variable: connectionPool is a database connection
      *  pool to be used by the validation module for miscellaneous lookups.
      */
@@ -203,22 +194,19 @@ public class DOValidatorImpl implements DOValidator
    *        <i>schematron/preprocessor.xslt</i>
    * @param schematronSchemaID Local location of Fedora Schematron rules,
    *        default is <i>schematron/fedoraRules.xml</i>
-   * @param schematronValidatingXslID Local location for temporary stylesheet
-   *        used during processing, default is <i>schematron/fedoraValidator.xslt</i>
    * @param connectionPool For level3 validation, connectionpool to db holding
    *        Fedora objects, default is null.
    * @throws ServerException If construction fails for any reason.
    */
     public DOValidatorImpl(String tempDir, String xmlSchemaURL,
             String schematronPreprocessorID, String schematronSchemaID,
-            String schematronValidatingXslID, ConnectionPool connectionPool)
+            ConnectionPool connectionPool)
             throws ServerException
     {
         if (tempDir!=null) this.tempDir=tempDir;
         if (xmlSchemaURL!=null) this.xmlSchemaURL=xmlSchemaURL;
         if (schematronPreprocessorID!=null) this.schematronPreprocessorID=schematronPreprocessorID;
         if (schematronSchemaID!=null) this.schematronSchemaID=schematronSchemaID;
-        if (schematronValidatingXslID!=null) this.schematronValidatingXslID=schematronValidatingXslID;
         if (connectionPool!=null) this.connectionPool=connectionPool;
     }
 
@@ -296,8 +284,8 @@ public class DOValidatorImpl implements DOValidator
         // schemaLocation element.  Here, level 1 is run *after* L2,
         // so that L1 won't load schemas from schemaLocation attributes.
         // (L2 ensures that there are no non-root schemaLocation elements)
-        validate_L2(objectAsFile, schematronSchemaID, schematronPreprocessorID,
-                   schematronValidatingXslID, workFlowPhase);
+        validate_L2(objectAsFile, schematronSchemaID,
+                    schematronPreprocessorID, workFlowPhase);
         validate_L1(objectAsFile);
         validate_L3(objectAsFile);
         break;
@@ -312,8 +300,8 @@ public class DOValidatorImpl implements DOValidator
 
       // Schematron Rules Validation only
       case 2:
-        validate_L2(objectAsFile, schematronSchemaID, schematronPreprocessorID,
-                   schematronValidatingXslID, workFlowPhase);
+        validate_L2(objectAsFile, schematronSchemaID,
+                    schematronPreprocessorID, workFlowPhase);
         break;
 
       // Referential Integrity Checks only
@@ -330,6 +318,13 @@ public class DOValidatorImpl implements DOValidator
       cleanUp(objectAsFile);
     }
 
+    /**
+     * Do the Level 1 validation of a Fedora object.  Level 1 is XML Schema
+     * validation using the Fedora extension of the METS XML schema.
+     * @param objectAsFile
+     * @throws ObjectValidityException
+     * @throws GeneralException
+     */
     private void validate_L1(File objectAsFile)
       throws ObjectValidityException, GeneralException
     {
@@ -359,8 +354,20 @@ public class DOValidatorImpl implements DOValidator
       System.out.println("Level 1 Validation OK (METS/XMLSchema).");
     }
 
+    /**
+     * Do Level 2 Validation on the Fedora object.  Level 2 is Schematron
+     * validation using a set of rules expressed in a Schematron schema for
+     * Fedora objects.
+     *
+     * @param objectAsFile
+     * @param schemaID
+     * @param preprocessorID
+     * @param phase
+     * @throws ObjectValidityException
+     * @throws GeneralException
+     */
     private void validate_L2(File objectAsFile, String schemaID,
-      String preprocessorID, String validatingXslID, String phase)
+      String preprocessorID, String phase)
       throws ObjectValidityException, GeneralException
     {
       // Level 2: Fedora rules validation using Schematron
@@ -368,7 +375,7 @@ public class DOValidatorImpl implements DOValidator
       try
       {
         DOValidatorSchematron validator =
-          new DOValidatorSchematron(schemaID, preprocessorID, validatingXslID, phase);
+          new DOValidatorSchematron(schemaID, preprocessorID, phase);
         validator.validate(objectAsFile);
       }
       catch (ObjectValidityException e)
@@ -389,6 +396,17 @@ public class DOValidatorImpl implements DOValidator
       System.out.println("Level 2 Validation OK (FEDORA/SCHEMATRON).");
     }
 
+    /**
+     * Do Level 3 Validation on the Fedora object.  Level 3 is programmatic
+     * validation that will perform various referential integrity checks.
+     * Currently, the only checks that are implemented are ensuring that
+     * a data object references behavior definition and mechanisms objects
+     * that already exist in the repository.  Other checks will be implemented
+     * in the future.
+     * @param objectAsFile
+     * @throws ObjectValidityException
+     * @throws GeneralException
+     */
     private void validate_L3(File objectAsFile)
       throws ObjectValidityException, GeneralException
     {

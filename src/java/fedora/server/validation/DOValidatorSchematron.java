@@ -2,7 +2,13 @@ package fedora.server.validation;
 
 /**
  * <p>Title: DOValidatorSchematron.java</p>
- * <p>Description: Schematron validation with FedoraRules schema as default.</p>
+ * <p>Description: Schematron validation for fedora objects encoded in the
+ * Fedora extension of METS.  The schematron schema (fedoraRules.xml)
+ * expresses a set of rules using XPATH that enable us to check for things
+ * that are either not expressed in the METS XML schema, or that cannot be
+ * expressed with XML Schema language.  Generally we will look for things
+ * that are requirements of Fedora objects, which are not requirements for
+ * METS objects in general.</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
  * @author Sandy Payette, payette@cs.cornell.edu
@@ -44,20 +50,16 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class DOValidatorSchematron
 {
-
   /**
-   * FOR TESTING: Configuration variables for Schematron Validation
-   * (These are set via Server configuration and provided in constructors.)
-   * These values are used for stand-alone testing via main();
-   *
+   * preprocessorID: Configuration variable for Schematron Validation
+   * (This is normally set via Server configuration and provided in constructors.)
+   * This value are used for stand-alone testing via main();
    */
   private static final String preprocessorID = "schematron/preprocessor.xslt";
-  private static final String validatingStyleSheetID = "schematron/fedoraValidator.xslt";
 
   private StreamSource rulesSource;
   private StreamSource preprocessorSource;
   private StreamSource validatingStyleSheet;
-
   private StringBuffer string = new StringBuffer();
 
   public static void main(String[] args)
@@ -89,48 +91,94 @@ public class DOValidatorSchematron
     }
   }
 
-  public DOValidatorSchematron(String schemaID, String preprocessorID, String validatingStyleSheetID, String workFlowPhase)
+  /**
+   * Constructs a DOValidatorSchematron instance with a Schematron preprocessor
+   * that is provided by the calling class.  This will allow the DOValidator module
+   * to pass in the preprocessor that is configured with the Fedora repository.
+   * @param schemaID  the URL of the Schematron schema
+   * @param preprocessorID the location of the Schematron preprocessor
+   * @param workFlowPhase  the phase in the fedora object lifecycle to which
+   * validation should pertain.  (Currently options are "ingest" and "store"
+   * @throws ObjectValidityException
+   */
+  public DOValidatorSchematron(String schemaID, String preprocessorID, String workFlowPhase)
       throws ObjectValidityException
   {
-    validatingStyleSheet = setUp(preprocessorID, schemaID, validatingStyleSheetID, workFlowPhase);
+    validatingStyleSheet = setUp(preprocessorID, schemaID, workFlowPhase);
   }
 
+  /**
+   * Constructs a DOValidatorSchematron instance and use the Schematron preprocessor
+   * that is set as default in this class.
+   * @param schemaID  the URL of the Schematron schema
+   * @param workFlowPhase  the phase in the fedora object lifecycle to which
+   * validation should pertain.  (Currently options are "ingest" and "store"
+   * @throws ObjectValidityException
+   */
   public DOValidatorSchematron(String schemaID, String workFlowPhase)
       throws ObjectValidityException
   {
-    validatingStyleSheet = setUp(preprocessorID, schemaID, validatingStyleSheetID, workFlowPhase);
+    validatingStyleSheet = setUp(preprocessorID, schemaID, workFlowPhase);
   }
 
+   /**
+   * Constructs a DOValidatorSchematron instance and use the Schematron preprocessor
+   * that is set as default in this class.  Constructor also allows
+   * the Schematron schema to be passed in as InputStream.
+   * @param schemaID  the URL of the Schematron schema
+   * @param workFlowPhase  the phase in the fedora object lifecycle to which
+   * validation should pertain.  (Currently options are "ingest" and "store"
+   * @throws ObjectValidityException
+   */
   public DOValidatorSchematron(InputStream schema, String workFlowPhase)
       throws ObjectValidityException
   {
-    validatingStyleSheet = setUp(preprocessorID, schema, validatingStyleSheetID, workFlowPhase);
+    validatingStyleSheet = setUp(preprocessorID, schema, workFlowPhase);
   }
 
+  /**
+   * Run the Schematron validation on a Fedora object.
+   * @param objectAsFile  the Fedora object as a File
+   * @throws ServerException
+   */
   public void validate(File objectAsFile) throws ServerException
   {
     validate(new StreamSource(objectAsFile));
   }
 
+  /**
+   * Run the Schematron validation on a Fedora object.
+   * @param objectAsStream  the Fedora object as an Inputstream
+   * @throws ServerException
+   */
   public void validate(InputStream objectAsStream) throws ServerException
   {
     validate(new StreamSource(objectAsStream));
   }
 
+  /**
+   * Run the Schematron validation on a Fedora object.
+   * @param objectAsSource  the Fedora object as an StreamSource
+   * @throws ServerException
+   */
   public void validate(StreamSource objectSource) throws ServerException
   {
     DOValidatorSchematronResult result = null;
     try
     {
-      // Create a transformer that uses the validating stylesheet
+      // Create a transformer that uses the validating stylesheet.
+      // Run the Schematron validation of the Fedora object and
+      // output results in DOM format.
       TransformerFactory tfactory = TransformerFactory.newInstance();
       Transformer vtransformer = tfactory.newTransformer(validatingStyleSheet);
-
-      // Run the Schematron validation of the Fedora object and output results in DOM format
       DOMResult validationResult = new DOMResult();
       vtransformer.transform(objectSource, validationResult);
-      //vtransformer.transform(objectSource, new StreamResult(System.out));
       result = new DOValidatorSchematronResult(validationResult);
+
+      // Examine the validation results
+      //String sr2 = result.serializeResult(new FileWriter("c:/mellon/work/schematron.out"));
+      //System.out.println("SCHEMATRON RESULT:");
+      //System.out.println(sr2);
     }
     catch(TransformerException e)
     {
@@ -142,12 +190,6 @@ public class DOValidatorSchematron
        System.err.println("Schematron validation: " + e.getMessage()) ;
        throw new ObjectValidityException(e.getMessage());
     }
-
-    // Examine the validation results
-
-    //String sr2 = result.serializeResult(new FileWriter("c:/mellon-test/work/test.out"));
-    //System.out.println("MY SERIALIZE RESULT:");
-    //System.out.println(sr2);
 
     if (!result.isValid())
     {
@@ -167,40 +209,69 @@ public class DOValidatorSchematron
     }
   }
 
-  private StreamSource setUp(String preprocessorID, String fedoraSchemaID, String validatingStyleSheetID, String workFlowPhase)
+  /**
+   * Run setup to prepare for Schematron validation.  This entails dynamically
+   * creating the validating stylesheet using the preprocessor and the schema.
+   * @param preprocessorID
+   * @param fedoraSchemaID
+   * @param workFlowPhase
+   * @return
+   * @throws ObjectValidityException
+   */
+  private StreamSource setUp(String preprocessorID, String fedoraSchemaID, String workFlowPhase)
     throws ObjectValidityException
   {
-
     rulesSource = new StreamSource(fedoraSchemaID);
     preprocessorSource = new StreamSource(preprocessorID);
-    return(createValidatingStyleSheet(rulesSource, preprocessorSource, validatingStyleSheetID, workFlowPhase));
+    return(createValidatingStyleSheet(rulesSource, preprocessorSource, workFlowPhase));
   }
 
-  private StreamSource setUp(String preprocessorID, InputStream fedoraSchema, String validatingStyleSheetID, String workFlowPhase)
+  /**
+   * Run setup to prepare for Schematron validation.  This entails dynamically
+   * creating the validating stylesheet using the preprocessor and the schema.
+   * @param preprocessorID
+   * @param fedoraSchema
+   * @param workFlowPhase
+   * @return
+   * @throws ObjectValidityException
+   */
+  private StreamSource setUp(String preprocessorID, InputStream fedoraSchema, String workFlowPhase)
     throws ObjectValidityException
   {
-
     rulesSource = new StreamSource(fedoraSchema);
     preprocessorSource = new StreamSource(preprocessorID);
-    return(createValidatingStyleSheet(rulesSource, preprocessorSource, validatingStyleSheetID, workFlowPhase));
+    return(createValidatingStyleSheet(rulesSource, preprocessorSource, workFlowPhase));
   }
 
+  /**
+   * Create the validating stylesheet which will be used to perform the actual
+   * Schematron validation.  The validating stylesheet is created dynamically
+   * using the preprocessor stylesheet and the Schematron schema for Fedora.
+   * The workFlowPhase is key.  The stylesheet is created for the appropriate
+   * phase as specified in the fedoraRules.xml schema.  Valid work flow phases
+   * are currently "ingest" and "store."  Different schematron rules apply to
+   * different phases of the object lifecycle.  Some rules are applied when
+   * an object is first being ingested into the repository.  Other rules apply
+   * before the object is put into permanent storage.
+   * @param rulesSource
+   * @param preprocessorSource
+   * @param workFlowPhase
+   * @return
+   * @throws ObjectValidityException
+   */
   private StreamSource createValidatingStyleSheet(
-    StreamSource rulesSource, StreamSource preprocessorSource, String validatingStyleSheetID, String workFlowPhase)
+    StreamSource rulesSource, StreamSource preprocessorSource, String workFlowPhase)
     throws ObjectValidityException
   {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     try
     {
-      System.out.println("CREATING NEW VALIDATING STYLESHEET FOR WORKFLOW PHASE: " + workFlowPhase);
       // Create a transformer for that uses the Schematron preprocessor stylesheet.
+      // Transform the Schematron schema (rules) into a validating stylesheet.
+      System.out.println("CREATING NEW VALIDATING STYLESHEET FOR WORKFLOW PHASE: " + workFlowPhase);
       TransformerFactory tfactory = TransformerFactory.newInstance();
       Transformer ptransformer = tfactory.newTransformer(preprocessorSource);
       ptransformer.setParameter("phase", workFlowPhase);
-
-      // Transform the Schematron schema (rules) into a validating stylesheet
-      // that will be written to a file in the system-configured location
-      //ptransformer.transform(rulesSource, new StreamResult(new File(validatingStyleSheetID)));
       ptransformer.transform(rulesSource, new StreamResult(out));
     }
     catch(TransformerException e)
@@ -208,7 +279,6 @@ public class DOValidatorSchematron
        System.err.println("Schematron validation: " + e.getMessage()) ;
        throw new ObjectValidityException(e.getMessage());
     }
-    //return(new StreamSource(new File(validatingStyleSheetID)));
     return(new StreamSource(new ByteArrayInputStream(out.toByteArray())));
   }
 }
