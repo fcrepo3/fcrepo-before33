@@ -204,6 +204,16 @@
 			<arg path="src/dbx/userdocs/installation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<echo message="Translating manual.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/manual.html"/>
+			<arg path="src/dbx/userdocs/manual.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A and API-M wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
@@ -465,6 +475,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.66  2003/02/04 00:25:50  cwilper
+  added conversion of manual dbx to html for userdocs target
+
   Revision 1.65  2003/01/23 20:45:02  cwilper
   added line to delete auto-generated API-M ServiceLocator class... this
   previously auto-generated class is now under revision control, instead of
