@@ -194,18 +194,18 @@ import com.sun.xacml.ctx.Status;
 	private final boolean willService(URI attributeId) {
 		String temp = attributeId.toString();
 		if (hasAttribute(temp)) {
-			log("willService() " + iAm() + " accept this known serviced attribute");
+			log("willService() " + iAm() + " accept this known serviced attribute " + attributeId.toString());
 			return true;
 		}
 		if (! canHandleAdhoc()) {
-			log("willService() " + iAm() + " deny any adhoc attribute");
+			log("willService() " + iAm() + " deny any adhoc attribute " + attributeId.toString());
 			return false;								
 		}
 		if (attributesDenied.contains(temp)) {
-			log("willService() " + iAm() + " deny this known adhoc attribute");
+			log("willService() " + iAm() + " deny this known adhoc attribute " + attributeId.toString());
 			return false;					
 		}
-		log("willService() " + iAm() + " allow this unknown adhoc attribute");
+		log("willService() " + iAm() + " allow this unknown adhoc attribute " + attributeId.toString());
 		return true;
 	}
 	

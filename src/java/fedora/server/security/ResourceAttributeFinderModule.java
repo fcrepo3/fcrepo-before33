@@ -27,10 +27,10 @@ import fedora.server.storage.types.Datastream;
 	private ResourceAttributeFinderModule() {
 		super();
 		try {
-			registerAttribute(Constants.MODEL.OBJECT_STATE.uri, StringAttribute.identifier);
-			registerAttribute(Constants.MODEL.DATASTREAM_STATE.uri, StringAttribute.identifier);			
-			registerAttribute(Constants.MODEL.OWNER.uri, StringAttribute.identifier);
-			registerAttribute(Constants.MODEL.CONTENT_MODEL.uri, StringAttribute.identifier);			
+			registerAttribute(Constants.OBJECT.STATE.uri, StringAttribute.identifier);
+			registerAttribute(Constants.DATASTREAM.STATE.uri, StringAttribute.identifier);			
+			registerAttribute(Constants.OBJECT.OWNER.uri, StringAttribute.identifier);
+			registerAttribute(Constants.OBJECT.CONTENT_MODEL.uri, StringAttribute.identifier);			
 			registerSupportedDesignatorType(AttributeDesignator.RESOURCE_TARGET);
 			setInstantiatedOk(true);
 		} catch (URISyntaxException e1) {

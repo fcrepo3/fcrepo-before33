@@ -86,12 +86,14 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private final URI ENVIRONMENT_SERVER_PORT_URI;		
 	//private final URI RESOURCE_STATE_URI; 
 	 */
-	
-	private String repositoryPoliciesDirectory = ""; //"/fedora-repository-policies";
-	private String objectPoliciesDirectory = ""; //"/fedora-object-policies";
+
+	private String surrogatePoliciesDirectory = "";
+	private String repositoryPoliciesDirectory = "";
+	private String objectPoliciesDirectory = "";
 	private String combiningAlgorithm = ""; //"com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg";
 	private String enforceMode = "";
 
+	private final String SURROGATE_POLICIES_DIRECTORY = "SURROGATE-POLICIES-DIRECTORY";
 	private final String REPOSITORY_POLICIES_DIRECTORY = "REPOSITORY-POLICIES-DIRECTORY";
 	private final String OBJECT_POLICIES_DIRECTORY = "OBJECT-POLICIES-DIRECTORY";
 	private final String COMBINING_ALGORITHM = "XACML-COMBINING-ALGORITHM";
@@ -120,7 +122,13 @@ public class DefaultAuthorization extends Module implements Authorization {
 	} catch (IOException e1) {
 		throw new ModuleInitializationException("couldn't get server home", role, e1);
 	}
-    
+
+    if (moduleParameters.containsKey(SURROGATE_POLICIES_DIRECTORY)) {
+    	surrogatePoliciesDirectory = 
+    		((String) moduleParameters.get(SURROGATE_POLICIES_DIRECTORY)).startsWith(File.separator) ? "" : serverHome 
+		+ (String) moduleParameters.get(SURROGATE_POLICIES_DIRECTORY);
+    	System.err.println("surrogatePoliciesDirectory=" + surrogatePoliciesDirectory);
+    }
     if (moduleParameters.containsKey(REPOSITORY_POLICIES_DIRECTORY)) {
     	repositoryPoliciesDirectory = 
     		((String) moduleParameters.get(REPOSITORY_POLICIES_DIRECTORY)).startsWith(File.separator) ? "" : serverHome 
@@ -231,10 +239,10 @@ public class DefaultAuthorization extends Module implements Authorization {
     	ModuleInitializationException e2 = new ModuleInitializationException(e1.getMessage(), getRole());
     	throw e2;
     }
-    File surrogatePolicyDirectory = new File(repositoryPoliciesDirectory);    
-    if (surrogatePolicyDirectory.isDirectory() && surrogatePolicyDirectory.canRead()) {
+    File surrogatePolicyDirectoryFile = new File(surrogatePoliciesDirectory);    
+    if (surrogatePolicyDirectoryFile.isDirectory() && surrogatePolicyDirectoryFile.canRead()) {
         Transom.getInstance().setAllowSurrogate(true);
-        Transom.getInstance().setSurrogatePolicyDirectory(surrogatePolicyDirectory);
+        Transom.getInstance().setSurrogatePolicyDirectory(surrogatePolicyDirectoryFile);
     }
   }
 
@@ -776,6 +784,25 @@ public class DefaultAuthorization extends Module implements Authorization {
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", "", context);
 	}
+	
+	public void enforceServerShutdown(Context context)
+	throws NotAuthorizedException {
+		String target = Constants.ACTION.SERVER_SHUTDOWN.uri;
+		log("enforcing " + target);
+		context.setActionAttributes(null);
+		context.setResourceAttributes(null);
+		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", "", context);
+	}
+	
+	public void enforceServerStatus(Context context)
+	throws NotAuthorizedException {
+		String target = Constants.ACTION.SERVER_STATUS.uri;
+		log("enforcing " + target);
+		context.setActionAttributes(null);
+		context.setResourceAttributes(null);
+		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", "", context);
+	}	
+
 	
 	  private static final String pad(int n, int length) throws Exception {
 	  	String asString = Integer.toString(n);

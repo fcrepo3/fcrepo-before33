@@ -173,5 +173,11 @@ public interface Authorization {
 	
 	public void enforceAdminPing(Context context) 
 	throws NotAuthorizedException;
+	
+	public void enforceServerShutdown(Context context)
+	throws NotAuthorizedException;
+	
+	public void enforceServerStatus(Context context)
+	throws NotAuthorizedException;
 
 }
