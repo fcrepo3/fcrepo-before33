@@ -8,6 +8,10 @@
     xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" 
     xmlns:fedora-auditing="http://www.fedora.info/definitions/1/0/auditing/" 
     name="Fedora-API-M-WSDL">
+  <import namespace="http://www.fedora.info/definitions/1/0/types/"
+      location="fedora-types.xsd"/>
+  <import namespace="http://www.fedora.info/definitions/1/0/auditing/"
+      location="fedora-auditing.xsd"/>
   <types>
     <documentation>
       <wsdldoc:type name="xsd:string" 

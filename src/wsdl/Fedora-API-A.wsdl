@@ -8,13 +8,15 @@
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
   xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/"
   name="Fedora-API-A-WSDL">
+  <import namespace="http://www.fedora.info/definitions/1/0/types/"
+      location="fedora-types.xsd"/>
   <types>
     <documentation>
       <wsdldoc:type name="xsd:string" 
           url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
       <wsdldoc:type name="xsd:dateTime" 
           url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#dateTime"/>
-      <wsdldoc:type name="wsdl:definitions" 
+      <wsdldoc:type name="wsdl:definitionsType" 
           url="http://www.w3.org/TR/2001/NOTE-wsdl-20010315#_document-s"/>
       <wsdldoc:type name="fedora-types:ArrayOfString" 
           url="http://www.fedora.info/definitions/1/0/types/#ArrayOfString"/>
@@ -53,7 +55,7 @@
     </part>
   </message>
   <message name="GetBehaviorMethodsResponse">
-    <part name="response" type="wsdl:definitions">
+    <part name="response" type="wsdl:definitionsType">
       <documentation>pre-bound WSDL that the client may use to formulate
       dissemination requests for the given digital object and behavior 
       definition.</documentation>
