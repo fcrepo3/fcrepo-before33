@@ -39,6 +39,10 @@ import java.util.TimeZone;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
+
+import org.openrdf.rio.Parser;
+import org.openrdf.rio.rdfxml.RdfXmlParser;
+
 import org.trippi.TripleFactory;
 import org.trippi.TripleIterator;
 import org.trippi.TriplestoreConnector;
@@ -46,6 +50,8 @@ import org.trippi.TriplestoreReader;
 import org.trippi.TriplestoreWriter;
 import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
+import org.trippi.io.RIOTripleIterator;
+
 import org.xml.sax.InputSource;
 
 /**
@@ -618,8 +624,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     /**
      * The WSDL datastream is only parsed to obtain the mime types of
      * disseminations. As this is only available in bMech objects,
-     * we cache this information to a relational database table for later
-     * querying when data objects are ingested.
+     * we cache this information in a relational database table for future
+     * queries when data objects are ingested.
      * 
      * @param digitalObject
      * @param ds
@@ -731,10 +737,22 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
     }
 
-    private void deleteRelsDatastream(Datastream ds) {
-        // FIXME
-        
-        // see RIOTripleWriter to iterate triples from rdf/xml
+    private void deleteRelsDatastream(Datastream ds) throws ResourceIndexException {
+        // FIXME this is not complete
+        DatastreamXMLMetadata rels = (DatastreamXMLMetadata)ds;
+        // Use the SAX2-compliant Xerces parser:
+        System.setProperty(
+                "org.xml.sax.driver",
+                "org.apache.xerces.parsers.SAXParser");
+        Parser parser = new RdfXmlParser();
+        TripleIterator it = new RIOTripleIterator(rels.getContentStream(), parser, null);
+        try {
+            m_writer.delete(it, false);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } catch (IOException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
     }
 
     private void deleteServiceProfileDatastream(Datastream ds) {
