@@ -81,7 +81,7 @@ public class FOXMLDeserializeTest
 			System.out.println("Writing file to... " + outFile.getPath());
 			FileOutputStream out = new FileOutputStream(outFile);
 			//ByteArrayOutputStream out=new ByteArrayOutputStream();
-			trans.serialize(obj, out, "foxml1.0", "UTF-8");
+			trans.serialize(obj, out, "foxml1.0", "UTF-8", false);
 			System.out.println("Done.");
 			//System.out.println("Here it is:");
 			//System.out.println(out.toString("UTF-8"));

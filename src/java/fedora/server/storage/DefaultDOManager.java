@@ -609,7 +609,7 @@ public class DefaultDOManager
                 // set last mod date, in UTC
                 obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    m_translator.serialize(obj, out, m_defaultStorageFormat, m_storageCharacterEncoding);
+                    m_translator.serialize(obj, out, m_defaultStorageFormat, m_storageCharacterEncoding, false);
                     ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
                     m_validator.validate(inV, m_defaultStorageFormat, 0, "store");
                     // TODO: DELTA-MODULE:

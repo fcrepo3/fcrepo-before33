@@ -64,16 +64,16 @@ public class METSInOutTest {
             METSLikeDOSerializer ser=new METSLikeDOSerializer();
             HashMap desers=new HashMap();
             HashMap sers=new HashMap();
-            desers.put("mets11fedora1", deser);
-            sers.put("mets11fedora1", ser);
+            desers.put("metslikefedora1", deser);
+            sers.put("metslikefedora1", ser);
             DOTranslatorImpl trans=new DOTranslatorImpl(sers, desers, null);
             DigitalObject obj=new BasicDigitalObject();
             System.out.println("Deserializing...");
-            trans.deserialize(in, obj, "mets11fedora1", "UTF-8");
+            trans.deserialize(in, obj, "metslikefedora1", "UTF-8");
             System.out.println("Done.");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             System.out.println("Re-serializing...");
-            trans.serialize(obj, out, "mets11fedora1", "UTF-8");
+            trans.serialize(obj, out, "metslikefedora1", "UTF-8", false);
             System.out.println("Done.");
             if (args.length>1) {
                 ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
@@ -82,11 +82,11 @@ public class METSInOutTest {
                         "dist/server/schematron/preprocessor.xslt",
                         "dist/server/schematron/fedoraRulesExt.xml", null, null);
                 if (args[1].equals("1")) {
-                    v.validate(newIn, "metsf1.0", 1, "ingest");
+                    v.validate(newIn, "metslikefedora1", 1, "ingest");
                     System.out.println("Level 1 validation: PASSED!");
                 } else {
                     if (args[1].equals("2")) {
-                        v.validate(newIn, "metsf1.0", 2, "ingest");
+                        v.validate(newIn, "metslikefedora1", 2, "ingest");
                         System.out.println("Level 2 validation: PASSED!");
                     } else {
                         System.out.println("Unrecognized validation level, '" + args[1] + "'");
