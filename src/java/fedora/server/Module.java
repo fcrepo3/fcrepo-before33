@@ -1,23 +1,26 @@
 package fedora.server;
 
 import java.util.Map;
-import java.util.Iterator;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 
 /**
  * The base class for Fedora server modules.
  *
- * A server module is a parameterized component of the system that can
- * be configured via a &lt;module&gt; element in conf/fedora.fcfc.  
+ * A ParameterizedComponent with initModule() and shutdownModule()
+ * methods.
+ *
+ * Modules are configured via a &lt;module&gt; element in conf/fedora.fcfc.  
  * The schema for this element is in fedora-config.xsd.
+ *
+ * Modules are instantiated during server start-up.
  *
  * @author cwilper@cs.cornell.edu
  */
-public abstract class Module {
+public abstract class Module 
+        extends ParameterizedComponent {
 
-    /** a reference to the provided params for this module (see constructor) */
-    private Map m_moduleParameters;
+    private String m_role;
 
     /**
      * Creates and initializes the Module.
@@ -27,14 +30,25 @@ public abstract class Module {
      *
      * @param moduleParameters A pre-loaded Map of name-value pairs comprising
      *                         the intended configuration of this Module.
+     * @param role The role this module fulfills, a java class name.
      * @throws ModuleInitializationException If initilization values are
      *                                       invalid or initialization fails
      *                                       for some other reason.
      */
-    public Module(Map moduleParameters)
+    public Module(Map moduleParameters, String role)
             throws ModuleInitializationException {
-        m_moduleParameters=moduleParameters;
+        super(moduleParameters);
+        m_role=role;
         initModule();
+    }
+
+    /**
+     * Gets the role this module fulfills, as given in the constructor.
+     *
+     * @returns String The role.
+     */
+    public final String getRole() {
+        return m_role;
     }
 
     /**
@@ -46,25 +60,6 @@ public abstract class Module {
      */
     public abstract void initModule()
             throws ModuleInitializationException;
-
-    /**
-     * Gets the value of a named configuration parameter.
-     *
-     * @param name The parameter name.
-     * @returns String The value, null if undefined.
-     */
-    public final String getParameter(String name) {
-        return (String) m_moduleParameters.get(name);
-    }
-
-    /**
-     * Gets an Iterator over the names of parameters for this Module.
-     *
-     * @returns Iterator The names
-     */
-    public final Iterator parameterNames() {
-        return m_moduleParameters.keySet().iterator();
-    }
 
     /**
      * Frees system resources allocated by this Module.
