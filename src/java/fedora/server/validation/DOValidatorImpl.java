@@ -45,7 +45,7 @@ public class DOValidatorImpl implements DOValidator
    */
     protected static String tempDir = "temp/";
     protected static String xmlSchemaURL = "http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd";
-    protected static String xmlSchemaLocalPath = "xsd/mets-fedora.xsd";
+    protected static String xmlSchemaLocalPath = "c:/mellon-test/work/xsd/mets-fedora.xsd";
     protected static String schematronPreprocessorID = "schematron/preprocessor.xslt";
     protected static String schematronSchemaID = "schematron/fedoraRules.xml";
     protected static String schematronValidatingXslID = "schematron/fedoraValidator.xslt";
@@ -244,8 +244,8 @@ public class DOValidatorImpl implements DOValidator
       System.out.println("Validating object to Level 1 (METS/XML SCHEMA) ...");
       try
       {
-        DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaLocalPath);
-        //DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaURL);
+        //DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaLocalPath);
+        DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaURL);
         xsv.validate(objectAsFile);
       }
       catch (SAXException e)
