@@ -19,6 +19,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Vector;
+import java.util.StringTokenizer;
 import fedora.client.bmech.data.DCElement;
 
 /**
@@ -232,7 +233,11 @@ public class GeneralPane extends JPanel
 
     public String getBObjectName()
     {
-      return bObjectName.getText();
+      String s = bObjectName.getText();
+      StringTokenizer st = new StringTokenizer(s," ",false);
+      String nameNoSpaces = "";
+      while (st.hasMoreElements()) nameNoSpaces += st.nextElement();
+      return nameNoSpaces;
     }
 
     public DCElement[] getDCElements()

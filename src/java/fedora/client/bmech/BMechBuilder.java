@@ -62,6 +62,7 @@ public class BMechBuilder extends JInternalFrame
     private int s_port = 0;
     private String s_user = null;
     private String s_pass = null;
+    private File s_lastDir = null;
 
 
     public static void main(String[] args)
@@ -71,20 +72,22 @@ public class BMechBuilder extends JInternalFrame
           public void windowClosing(WindowEvent e) {System.exit(0);}
       });
 
+      File dir = null;
       frame.getContentPane().add(
-        new BMechBuilder("localhost", 8080, "test", "test"),
+        new BMechBuilder("localhost", 8080, "test", "test", dir),
           BorderLayout.CENTER);
       frame.setSize(700, 500);
       frame.setVisible(true);
   }
 
-    public BMechBuilder(String host, int port, String user, String pass)
+    public BMechBuilder(String host, int port, String user, String pass, File dir)
     {
         super("Behavior Mechanism Builder");
         s_host = host;
         s_port = port;
         s_user = user;
         s_pass = pass;
+        s_lastDir = dir;
         setClosable(true);
         setMaximizable(true);
         setSize(700, 500);
@@ -168,13 +171,14 @@ public class BMechBuilder extends JInternalFrame
       File file = null;
       if (mets != null)
       {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(s_lastDir);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         XMLFileChooserFilter filter = new XMLFileChooserFilter();
         chooser.setFileFilter(filter);
         if (chooser.showSaveDialog(tabpane) == JFileChooser.APPROVE_OPTION)
         {
           file = chooser.getSelectedFile();
+          s_lastDir = file.getParentFile(); // remember the dir for next time
           String ext = filter.getExtension(file);
           if (ext == null || !(ext.equalsIgnoreCase("xml")))
           {
@@ -322,17 +326,56 @@ public class BMechBuilder extends JInternalFrame
         }
       }
       printBMech();
-      DSInputSpecGenerator dsg = new DSInputSpecGenerator(newBMech);
-      //dsg.printDSInputSpec();
-      MethodMapGenerator mmg = new MethodMapGenerator(newBMech);
-      //mmg.printMethodMap();
-      WSDLGenerator wsdlg = new WSDLGenerator(newBMech);
-      //wsdlg.printWSDL();
+      DCGenerator dcg = null;
+      DSInputSpecGenerator dsg = null;
+      MethodMapGenerator mmg = null;
+      WSDLGenerator wsdlg = null;
+      try
+      {
+        dcg = new DCGenerator(newBMech);
+        //dcg.printDC();
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        assertTabPaneMsg("BMechBuilder: error generating dc record", null);
+      }
+      try
+      {
+        dsg = new DSInputSpecGenerator(newBMech);
+        //dsg.printDSInputSpec();
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        assertTabPaneMsg("BMechBuilder: error generating ds input spec", null);
+      }
+      try
+      {
+        mmg = new MethodMapGenerator(newBMech);
+        //mmg.printMethodMap();
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        assertTabPaneMsg("BMechBuilder: error generating method map", null);
+      }
+      try
+      {
+        wsdlg = new WSDLGenerator(newBMech);
+        //wsdlg.printWSDL();
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        assertTabPaneMsg("BMechBuilder: error generating wsdl", null);
+      }
+
       BMechMETSSerializer mets = null;
       try
       {
-        mets = new BMechMETSSerializer(newBMech, dsg.getRootElement(),
-          mmg.getRootElement(), wsdlg.getRootElement());
+        mets = new BMechMETSSerializer(newBMech, dcg.getRootElement(),
+          dsg.getRootElement(), mmg.getRootElement(), wsdlg.getRootElement());
       }
       catch (Exception e)
       {
@@ -435,7 +478,13 @@ public class BMechBuilder extends JInternalFrame
 
     private boolean validGeneralTab(GeneralPane gp)
     {
-      if (gp.getBDefContractPID() == null || gp.getBDefContractPID().trim().equals(""))
+      if (gp.rb_chosen.equalsIgnoreCase("testPID") &&
+         (gp.getBObjectPID() == null || gp.getBObjectPID().trim().equals("")))
+      {
+        assertTabPaneMsg("The test PID value is missing on General Tab.", gp.getName());
+        return false;
+      }
+      else if (gp.getBDefContractPID() == null || gp.getBDefContractPID().trim().equals(""))
       {
         assertTabPaneMsg("BDefPID is missing on General Tab.", gp.getName());
         return false;

@@ -63,6 +63,7 @@ public class BDefBuilder extends JInternalFrame
     private int s_port = 0;
     private String s_user = null;
     private String s_pass = null;
+    private File s_lastDir = null;
 
 
     public static void main(String[] args)
@@ -71,21 +72,22 @@ public class BDefBuilder extends JInternalFrame
       frame.addWindowListener(new WindowAdapter() {
           public void windowClosing(WindowEvent e) {System.exit(0);}
       });
-
+      File dir = null;
       frame.getContentPane().add(
-        new BDefBuilder("localhost", 8080, "test", "test"),
+        new BDefBuilder("localhost", 8080, "test", "test", dir),
           BorderLayout.CENTER);
       frame.setSize(700, 500);
       frame.setVisible(true);
   }
 
-    public BDefBuilder(String host, int port, String user, String pass)
+    public BDefBuilder(String host, int port, String user, String pass, File dir)
     {
         super("Behavior Definition Builder");
         s_host = host;
         s_port = port;
         s_user = user;
         s_pass = pass;
+        s_lastDir = dir;
         setClosable(true);
         setMaximizable(true);
         setSize(700, 500);
@@ -160,13 +162,14 @@ public class BDefBuilder extends JInternalFrame
       File file = null;
       if (mets != null)
       {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(s_lastDir);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         XMLFileChooserFilter filter = new XMLFileChooserFilter();
         chooser.setFileFilter(filter);
         if (chooser.showSaveDialog(tabpane) == JFileChooser.APPROVE_OPTION)
         {
           file = chooser.getSelectedFile();
+          s_lastDir = file.getParentFile(); // remember the dir for next time
           String ext = filter.getExtension(file);
           if (ext == null || !(ext.equalsIgnoreCase("xml")))
           {
@@ -290,13 +293,34 @@ public class BDefBuilder extends JInternalFrame
           }
         }
       }
-      printBDef();
-      MethodMapGenerator mmg = new MethodMapGenerator(newBDef);
-      mmg.printMethodMap();
+      //printBDef();
+      DCGenerator dcg = null;
+      MethodMapGenerator mmg = null;
+      try
+      {
+        dcg = new DCGenerator(newBDef);
+        //dcg.printDC();
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        assertTabPaneMsg("BDefBuilder: error generating dc record.", null);
+      }
+      try
+      {
+        mmg = new MethodMapGenerator(newBDef);
+        //mmg.printMethodMap();
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        assertTabPaneMsg("BDefBuilder: error generating method map.", null);
+      }
       BDefMETSSerializer mets = null;
       try
       {
-        mets = new BDefMETSSerializer(newBDef, mmg.getRootElement());
+        mets = new BDefMETSSerializer(
+          newBDef, dcg.getRootElement(), mmg.getRootElement());
       }
       catch (Exception e)
       {
@@ -371,9 +395,10 @@ public class BDefBuilder extends JInternalFrame
 
     private boolean validGeneralTab(GeneralPane gp)
     {
-      if (gp.getBObjectPID() == null || gp.getBObjectPID().trim().equals(""))
+      if (gp.rb_chosen.equalsIgnoreCase("testPID") &&
+         (gp.getBObjectPID() == null || gp.getBObjectPID().trim().equals("")))
       {
-        assertTabPaneMsg("BDefPID is missing on General Tab.", gp.getName());
+        assertTabPaneMsg("The test PID value is missing on General Tab.", gp.getName());
         return false;
       }
       else if (gp.getBObjectLabel() == null || gp.getBObjectLabel().trim().equals(""))

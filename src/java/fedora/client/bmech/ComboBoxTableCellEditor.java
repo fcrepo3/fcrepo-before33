@@ -7,15 +7,6 @@ import javax.swing.event.*;
 import java.util.*;
 import javax.swing.table.TableCellEditor;
 
-/*
-    public class ComboBoxTableCellEditor extends DefaultCellEditor
-    {
-        public ComboBoxTableCellEditor(String[] items) {
-            super(new JComboBox(items));
-        }
-    }
-  */
-
     /**
      *
      * <p><b>Title:</b> ComboBoxTableCellEditor.java</p>
