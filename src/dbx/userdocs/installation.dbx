@@ -1,51 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <article>
-    <title>Fedora Installation Guide</title>
-    <subtitle>Beta 1 Release</subtitle>
-    <articleinfo>
-        <author>
-            <othername>Fedora Development Team</othername>
-        </author>
-        <edition>$Revision$</edition>
-        <date>$Date$</date>
-        <releaseinfo>
+	<title>Fedora Installation Guide</title>
+	<subtitle>Release 0.9</subtitle>
+	<articleinfo>
+		<author>
+			<othername>Fedora Development Team</othername>
+		</author>
+		<edition>$Revision$</edition>
+		<date>$Date$</date>
+		<releaseinfo>
             $Id$
         </releaseinfo>
-    </articleinfo>
-    <section>
-      <title>Migrating From Alpha 1</title>
-      <para>
-      The beta1 release includes some changes to the relational database DBSchema 
-      and has considerably more functionality than that available in the alpha1 release. 
-      Because of these changes, there is no direct migration path from alpha1 to beta1. 
-      If you have sample data loaded in the alpha1 release that you want to migrate, 
-      you will need to delete the objects and re-ingest them in the new release. 
+	</articleinfo>
+	<section>
+		<title>Migrating From Beta 1</title>
+		<para>
+      The 0.9 release includes some changes to the relational database DBSchema 
+      and has considerably more functionality than that available in the beta1 release. 
+      Because of these changes, there is no direct migration path from beta1 to release 0.9. 
+      If you have sample data loaded in the beta1 release that you want to migrate, 
+      you will need to delete the objects and re-ingest them in the new ingest schema (see
+      release notes).
       </para>
-      <para>
-      You will need to complete the following two tasks prior to installing the beta1 release:
+		<para>
+      You will need to complete the following two tasks prior to installing the 0.9 release:
         <itemizedlist>
-          <listitem>Remove any existing objects from the Fedora alpha1 repository.</listitem>
-          <listitem>Drop and recreate an empty Fedora relational database. 
+				<listitem>Remove any existing objects from the Fedora beta1 repository.</listitem>
+				<listitem>Drop and recreate an empty Fedora relational database. 
           The default name in the fedora.fcfg config file for this database 
-          is FedoraObjects. When you install and start the beta1 release,
+          is FedoraObjects. When you install and start the 0.9 release,
           it will create the new tables in the empty database.</listitem>
-        </itemizedlist>
-      </para>
-      <para>The recommended manner in which to accomplish these tasks is as follows:
+			</itemizedlist>
+		</para>
+		<para>The recommended manner in which to accomplish these tasks is as follows:
         <itemizedlist>
-<listitem>Start Fedora alpha1 server if not already running; dist\server\bin\fedora-start</listitem>
-<listitem>Start Fedora GUI admin client; dist\server\bin\fedora-admin</listitem>
-<listitem>Open Management Console and use listObjectPIDs method to obtain a list of all object PIDs</listitem>
-<listitem>Use purgeObject method to delete all objects</listitem>
-<listitem>Exit Fedora Admin GUI</listitem>
-<listitem>Shutdown the Fedora alpha1 server; dist\server\bin\fedora-stop {password}
+				<listitem>Start Fedora beta1 server if not already running; dist\server\bin\fedora-start</listitem>
+				<listitem>Start Fedora GUI admin client; dist\server\bin\fedora-admin</listitem>
+				<listitem>Open Management Console and use listObjectPIDs method to obtain a list of all object PIDs</listitem>
+				<listitem>Use purgeObject method to delete all objects</listitem>
+				<listitem>Exit Fedora Admin GUI</listitem>
+				<listitem>Shutdown the Fedora alpha1 server; dist\server\bin\fedora-stop {password}
 <para>
 At this point, the objects have been physically removed from the filesystem and from the
 relational database. The remaining step is to remove the tables from the Fedora database.
 The manner in which you accomplish this will vary depending on which database you are using.
 </para>
-</listitem>
-<listitem>If using MySQL.
+				</listitem>
+				<listitem>If using MySQL.
 Drop and then recreate the MySQL database being used by Fedora. The default database name
    used in the fedora.fcfg config file is "FedoraObjects". e.g.,<literallayout>
    {mysql-install}\bin\mysqladmin -u {mysql-dba-user} -p drop FedoraObjects
@@ -58,76 +59,80 @@ Drop and then recreate the MySQL database being used by Fedora. The default data
      {mysql-dba-admin} - username of the mysql user with dba privileges (e.g., root);
                          you will be prompted for the password.
 </literallayout>
-</listitem>
-<listitem>If using McKoi.
+				</listitem>
+				<listitem>If using McKoi.
 Stop the McKoi database if it is running; dist\server\bin\mckoi-stop username password
 </listitem>
-<listitem>Delete or remove the alpha1 installation directory tree.</listitem>
-<listitem>You are now ready to install the Fedora beta1 release.</listitem>
-        </itemizedlist>
-      </para>
-    </section>
-    <section>
-      <title>Installing From Scratch</title>
-      <section>
-        <title>Prepare</title>
-        <para>Make sure you have a jdk1.4 installed and
+				<listitem>Delete or remove the beta1 installation directory tree.</listitem>
+				<listitem>You are now ready to install the Fedora 0.9 release.</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+	<section>
+		<title>Installing From Scratch</title>
+		<section>
+			<title>Prepare</title>
+			<para>Make sure you have a jdk1.4 installed and
         in your PATH before you attempt to compile.
-  Unjar in C:\mellon
+        </para>
+        <para>
+  Unjar in C:\mellon (jar -xvf filename.jar)
     If you choose a different directory, be sure to change
     the FEDORA_DEV value in initenv.bat appropriately.
+    </para>
+    <para>
   Run C:\mellon\initenv
     This sets your environment up for running/compiling the server.
+    If you're using a Unix variant, look at initenv.bat and set your
+    environment variables similarly.
         </para>
-      </section>
-      <section>
-        <title>Compile</title>
-        <para>
+		</section>
+		<section>
+			<title>Compile</title>
+			<para>
 Compiling:
+</para>
+<para>
   Go to C:\mellon and type "ant serverdist"
     This builds everything in C:\mellon\dist\server
     For other targets, see build.xml
         </para>
-      </section>
-      <section>
-        <title>Initial Setup</title>
-      <para>
+		</section>
+		<section>
+			<title>Initial Setup</title>
+			<para>
 Initial setup:
-  Install the database (mysql, see installer at C:\mellon\res\)
-  Start the database
-  Run mySQLConfig (with no params to see usage)
-  Change fedora.fcfg if needed (db host, user, pass)
+</para>
+<para>
+<literallayout>
+  1) Install the database (if using mysql, run the installer at C:\mellon\res\)
+  2) Start the database
+  3) Run mySQLConfig (with no params to see usage)
+  4) Change fedora.fcfg if needed (db host, user, pass)
+     See comments therein for more configuration options.
+</literallayout>
       </para>
-      </section>
-      <section>
-        <title>Start The Server</title>
-        <para>
+		</section>
+		<section>
+			<title>Start The Server</title>
+			<para>
   Type fedora-start
-    This starts the server.
-    If it fails, type "fedora-stop fedoraAdmin"
-      * fedoraAdmin is the default shutdown password
+  </para>
+  <para>
+    This starts the server.  It will take a few seconds to initialize.
+    If it fails, type "fedora-stop".  Logs are kept at dist/server/logs/
       </para>
-      </section>
-      <section>
-        <title>Ingest Sample Objects</title>
-        <para>
-        Type fedora-demoall
-        This installs the demo objects from the
-        demo/ directory.  A delay of fifteen seconds
-        or so is expected before this process begins.
-        When it runs, you should see a list -- one
-        pid per ingested object.
+		</section>
+		<section>
+			<title>Ingest Sample Objects</title>
+			<para>
+        Type fedora-demo-ingest
         </para>
-      </section>
-    </section>
-	<appendix>
-	  <title>Revision History</title>
-	  <para>The history of this document follows.</para>
-	  <literallayout>
-	  $Log$
-	  Revision 1.1  2002/12/20 20:55:32  cwilper
-	  install guide
-
-	  </literallayout>
-    </appendix>
+        <para>
+        This installs all the demo objects from the
+        demo/ directory.  
+        </para>
+		</section>
+	</section>
 </article>
+
