@@ -11,11 +11,19 @@ package fedora.server.storage.types;
 
 import fedora.server.errors.StreamIOException;
 
-import java.util.Date;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class Datastream
 {
+
+  private ArrayList m_auditRecordIdList;
+  
+  public Datastream() {
+      m_auditRecordIdList=new ArrayList();
+  }
 
   /** ControlGrp for "Repository Managed Content" datastreams (internal) */
   public final static int MANAGED_CONTENT = 1;
@@ -50,6 +58,10 @@ public class Datastream
   public String DSState;
 
   public String DSLocation;
+  
+  public List auditRecordIdList() {
+      return m_auditRecordIdList;
+  }
   
   public InputStream getContentStream() 
           throws StreamIOException {

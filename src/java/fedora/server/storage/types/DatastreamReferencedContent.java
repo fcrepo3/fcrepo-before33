@@ -12,7 +12,7 @@ import java.net.HttpURLConnection;
  * Referenced content.
  */
 public class DatastreamReferencedContent
-        extends Datastream {
+        extends DatastreamContent {
  
     public DatastreamReferencedContent() {
     }
