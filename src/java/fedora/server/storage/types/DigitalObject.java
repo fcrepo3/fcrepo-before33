@@ -22,15 +22,18 @@ public interface DigitalObject {
 
     public String getPid();
     public void setPid(String pid);
+
+    public String getState();
+    public void setState(String state);
     
     public String getLabel();
     public void setLabel(String label);
     
     public Date getCreateDate();
-    public void setCreateDate();
+    public void setCreateDate(Date createDate);
     
     public Date getLastModDate();
-    public void setLastModDate();
+    public void setLastModDate(Date lastModDate);
     
     public AuditRecord[] getAuditRecords();
     public void setAuditRecords(AuditRecord[] auditRecords);
