@@ -66,7 +66,7 @@ echo "Deploying API-M and API-A..."
 
 trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 
-(exec $JAVA_HOME/bin/java -cp $CP:$TC/webapps/fedora/WEB-INF/classes  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy $FEDORA_HOME/config/deploy.wsdd "http://localhost:8080/fedora/AdminService" 15 "http://localhost:8080/fedora/access/http")
+(exec $JAVA_HOME/bin/java -cp $CP:$TC/webapps/fedora/WEB-INF/classes  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy $FEDORA_HOME/config/deploy.wsdd "http://localhost:8080/fedora/AdminService" 15 "http://localhost:8080/fedora/access/soapservlet")
 
 trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 

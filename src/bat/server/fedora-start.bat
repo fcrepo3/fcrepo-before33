@@ -37,7 +37,7 @@ echo Deploying API-M and API-A...
 %JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deployAPI-A.wsdd "http://localhost:8080/fedora/AdminService" 15
 if errorlevel 1 goto deployError
 
-%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deploy.wsdd "http://localhost:8080/fedora/AdminService" 15 "http://localhost:8080/fedora/access/http"
+%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deploy.wsdd "http://localhost:8080/fedora/AdminService" 15 "http://localhost:8080/fedora/access/soapservlet"
 if errorlevel 1 goto deployError
 
 echo Finished.  To stop the server, use fedora-stop.
