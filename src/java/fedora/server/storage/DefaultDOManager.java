@@ -985,6 +985,7 @@ public class DefaultDOManager
             } catch (IOException e) {
                 String message = e.getMessage();
                 if (message == null) message = e.getClass().getName();
+                e.printStackTrace();
                 throw new GeneralException("Error reading/writing temporary ingest file: " + message);
             } catch (Exception e) {
                 // something failed.  Before throwing the exception, which

@@ -4,11 +4,11 @@ if "%FEDORA_HOME%" == "" goto envErr
 
 rem McKoi environment variables
 set MCKOI_BASENAME=@mckoi.basename@
-set MCKOI_HOME="%FEDORA_HOME%"/server/"%MCKOI_BASENAME%"
-set MCKOI_CLASSPATH="%MCKOI_HOME%"/gnu-regexp-1.1.4.jar
-set MCKOIDB_JAR="%MCKOI_HOME%"/mckoidb.jar
-set MCKOI_CONF="%MCKOI_HOME%"/db.conf
-set MCKOI_DB="%MCKOI_HOME%"/data/DefaultDatabase_sf.koi
+set MCKOI_HOME=%FEDORA_HOME%/server/%MCKOI_BASENAME%
+set MCKOI_CLASSPATH=%MCKOI_HOME%/gnu-regexp-1.1.4.jar
+set MCKOIDB_JAR=%MCKOI_HOME%/mckoidb.jar
+set MCKOI_CONF=%MCKOI_HOME%/db.conf
+set MCKOI_DB=%MCKOI_HOME%/data/DefaultDatabase_sf.koi
 set MCKOI_PORT=9157
 
 if not exist "%MCKOIDB_JAR%" goto mckoiNotFound
@@ -20,7 +20,7 @@ if "%2" == "" goto showUsage
 
 echo Launching McKoi SQL interface...
 
-java -cp "%MCKOI_DB%" com.mckoi.tools.JDBCQueryTool -u "%1" -p "%2" -url "jdbc:mckoi://127.0.0.1:%MCKOI_PORT%/"
+java -cp "%MCKOIDB_JAR%" com.mckoi.tools.JDBCQueryTool -u "%1" -p "%2" -url "jdbc:mckoi://127.0.0.1:%MCKOI_PORT%/"
 
 echo Finished.
 
