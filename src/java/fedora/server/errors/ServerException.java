@@ -7,67 +7,82 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 /**
- * The superclass for all Fedora server exceptions.
- * <p></p>
- * This class encourages the use of resource bundles as message (and detail
- * text) sources so that localization may easily be implemented.
- * <p></p>
- * Methods that return text will attempt to find the message by
+ * <p><b>Title: </b>ServerException.java</p>
+ * <p><b>Description: </b>The superclass for all Fedora server exceptions.</p>
+ * <p>This class encourages the use of resource bundles as message (and detail
+ * text) sources so that localization may easily be implemented.</p>
+ * <p>Methods that return text will attempt to find the message by
  * code in the ResourceBundle, but will fall back to simply returning
  * the code if no such message can be found in the ResourceBundle, or
  * no such ResourceBundle exists or the bundleName given in the constructor
- * is null.
- * <p></p>
- * This enables developers to temporarily construct exceptions with 
- * something like:
+ * is null.</p>
+ * <p>This enables developers to temporarily construct exceptions with
+ * something like:</p>
  * <p></p>
  * <pre>
  *     throw new MyException(null, "myMessageId", null, null, null);
  * </pre>
- * <p></p>
- * Exceptions of this type have the benefit that they can be easily converted
- * to informative, localized SOAP Fault envelopes.
+ * <p>Exceptions of this type have the benefit that they can be easily converted
+ * to informative, localized SOAP Fault envelopes.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
-public abstract class ServerException 
+public abstract class ServerException
         extends Exception {
-        
+
     /** The bundle in which the message, identified by m_code, resides. */
     private String m_bundleName;
-    
+
     /** The identifier for the message in the bundle. */
     private String m_code;
-    
+
     /** The message in the default locale, if it's already been determined. */
     private String m_defaultMessage;
-    
+
     /** Replacements for placeholders in the message, starting at {0}. */
     private String[] m_values;
 
     /** Identifiers for messages that provide detail on the error */
     private String[] m_details;
-    
+
     /** Whether the error was internal to the server, returned by wasServer() */
     private boolean m_wasServer;
-    
+
     /** An empty string array */
     private static String[] s_emptyStringArray=new String[] {};
 
-    /** 
+    /**
      * Constructs a new ServerException.
      *
      * @param bundleName The bundle in which the message resides.
      * @param code The identifier for the message in the bundle, aka the key.
-     * @param values Replacements for placeholders in the message, where 
+     * @param values Replacements for placeholders in the message, where
      *        placeholders are of the form {num} where num starts at 0,
      *        indicating the 0th (1st) item in this array.
      * @param details Identifiers for messages which provide detail on the
      *        error.  This may empty or null.
-     * @param cause The underlying exception if known, null meaning unknown or 
+     * @param cause The underlying exception if known, null meaning unknown or
      *        none.
      */
-    public ServerException(String bundleName, String code, String[] values, 
+    public ServerException(String bundleName, String code, String[] values,
             String[] details, Throwable cause) {
         super(code, cause);
         m_bundleName=bundleName;
@@ -79,20 +94,20 @@ public abstract class ServerException
 
     /**
      * Gets the identifier for the message.
-     * 
+     *
      * @return The code, which is also the key in the <code>MessageBundle</code>
      *         for this exception.
      */
     public String getCode() {
         return m_code;
     }
-    
+
     /**
-     * Tells whether the error occurred because of an unexpected error in the 
+     * Tells whether the error occurred because of an unexpected error in the
      * server, likely requiring action on the part of the server administrator.
      * <p></p>
      * If it's not an error in the server, it means that the client made
-     * a mistake, which is the more likely case. 
+     * a mistake, which is the more likely case.
      */
     public boolean wasServer() {
         return m_wasServer;
@@ -104,50 +119,50 @@ public abstract class ServerException
     public void setWasServer() {
         m_wasServer=true;
     }
-     
+
     /**
      * Gets the message, preferring the <code>Server</code> locale.
      *
-     * @return The message, with {num}-indexed placeholders populated, if 
+     * @return The message, with {num}-indexed placeholders populated, if
      *         needed.
      */
     public String getMessage() {
         if (m_defaultMessage==null) {
-            m_defaultMessage=getLocalizedOrCode(m_bundleName, 
+            m_defaultMessage=getLocalizedOrCode(m_bundleName,
                     Server.getLocale(), m_code, m_values);
         }
         return m_defaultMessage;
     }
-    
+
     /**
      * Gets the message, preferring the provided locale.
      * <p></p>
-     * When a message in the desired locale is not found, the locale selection 
+     * When a message in the desired locale is not found, the locale selection
      * logic described by <a href="http://java.sun.com/j2se/1.4/docs/api/java/util/ResourceBundle.html">the
      * java.util.ResourceBundle</a> class javadoc is used.
-     * 
+     *
      * @param locale The preferred locale.
-     * @return The message, with {num}-indexed placeholders populated, if 
+     * @return The message, with {num}-indexed placeholders populated, if
      *         needed.
      */
     public String getMessage(Locale locale) {
         return getLocalizedOrCode(m_bundleName, locale, m_code, m_values);
     }
-    
+
     /**
      * Gets any detail messages, preferring the <code>Server</code> locale.
      *
-     * @return The detail messages, with {num}-indexed placeholders populated, 
+     * @return The detail messages, with {num}-indexed placeholders populated,
      *         if needed.
      */
     public String[] getDetails() {
         return getDetails(Server.getLocale());
     }
-    
+
     /**
      * Gets any detail messages, preferring the provided locale.
      *
-     * @return The detail messages, with {num}-indexed placeholders populated, 
+     * @return The detail messages, with {num}-indexed placeholders populated,
      *         if needed.
      */
     public String[] getDetails(Locale locale) {
@@ -169,7 +184,7 @@ public abstract class ServerException
      * @param locale The preferred locale.
      * @param code The message key.
      * @param values The replacement values, assumed empty if null.
-     * @return The detail messages, with {num}-indexed placeholders populated, 
+     * @return The detail messages, with {num}-indexed placeholders populated,
      *         if needed.
      */
     private static String getLocalizedOrCode(String bundleName, Locale locale,
