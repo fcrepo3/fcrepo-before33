@@ -32,7 +32,7 @@ import java.util.List;
 public class Disseminator
 {
 
-  private ArrayList m_auditRecordIdList;
+  //private ArrayList m_auditRecordIdList;
 
   public String parentPID;
 
@@ -64,11 +64,11 @@ public class Disseminator
 
   public Disseminator()
   {
-    m_auditRecordIdList=new ArrayList();
+    //m_auditRecordIdList=new ArrayList();
   }
 
-  public List auditRecordIdList()
-  {
-    return m_auditRecordIdList;
-  }
+  //public List auditRecordIdList()
+  //{
+  //  return m_auditRecordIdList;
+  //}
 }
