@@ -60,11 +60,11 @@ import fedora.server.utilities.StreamUtility;
 public class AutoModify
 {
 
-  private static String s_rootName = null;
-  private static PrintStream s_log = null;
-  private static FedoraAPIM s_APIM = null;
-  private static FedoraAPIA s_APIA = null;
-  private static Uploader s_UPLOADER = null;
+    private static String s_rootName = null;
+    private static PrintStream s_log = null;
+    private static FedoraAPIM s_APIM = null;
+    private static FedoraAPIA s_APIA = null;
+    private static Uploader s_UPLOADER = null;
 
   /**
    * <p> Constructor for the class.</p>
@@ -84,9 +84,9 @@ public class AutoModify
       throws MalformedURLException, ServiceException, IOException
   {
 
-    AutoModify.s_APIM=APIMStubFactory.getStub(host, port, user, pass);
-    AutoModify.s_APIA=APIAStubFactory.getStub(host, port, user, pass);
-    AutoModify.s_UPLOADER = new Uploader(host, port, user, pass);
+      AutoModify.s_APIM=APIMStubFactory.getStub(host, port, user, pass);
+      AutoModify.s_APIA=APIAStubFactory.getStub(host, port, user, pass);
+      AutoModify.s_UPLOADER = new Uploader(host, port, user, pass);
 
   }
 
@@ -97,9 +97,9 @@ public class AutoModify
    *                             the modify directives.
    * @param logFilePath - the absolute file path of the log file.
    */
-  public void modify(String directivesFilePath, String logFilePath, boolean validateOnly)
+  public void modify(String directivesFilePath, String logFilePath, boolean isValidateOnly)
   {
-      modify(s_APIM, s_UPLOADER, directivesFilePath, logFilePath, validateOnly);
+      modify(s_APIM, s_UPLOADER, s_APIA, directivesFilePath, logFilePath, isValidateOnly);
   }
 
   /**
@@ -111,111 +111,113 @@ public class AutoModify
    *                             the modify directives.
    * @param logFilePath - the absolute file path of the log file.
    */
-    public static void modify(FedoraAPIM APIM, Uploader UPLOADER,
-        String directivesFilePath, String logFilePath, boolean validateOnly)
-    {
-
+  public static void modify(FedoraAPIM APIM, Uploader UPLOADER, FedoraAPIA APIA,
+          String directivesFilePath, String logFilePath, boolean isValidateOnly) {
+      
       InputStream in = null;
       BatchModifyParser bmp = null;
       BatchModifyValidator bmv = null;
-      long st=System.currentTimeMillis();
-      long et=0;
-    try
-    {
-        in = new FileInputStream(directivesFilePath);
-        if (validateOnly) {
-            openLog(logFilePath, "validate-modify-directives");
-            bmv = new BatchModifyValidator(in, s_log);
-        } else {
-            openLog(logFilePath, "modify-batch");
-            bmp = new BatchModifyParser(s_UPLOADER, s_APIM, s_APIA, in, s_log);
-        }
-
-    } catch (Exception e)
-    {
-      System.out.println(e.getClass().getName() + " - "
-            + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
-
-    }  finally
-    {
-      try
-      {
-        if (in != null)
-        {
-          in.close();
-        }
-        if (s_log!=null)
-        {
-          et=System.currentTimeMillis();
-          if (bmp!=null) {
-          if(bmp.getFailedCount()==-1)
-          {
-            System.out.println("\n\n"
-                + bmp.getSucceededCount() + " modify directives successfully processed.\n"
-                + "Parser error encountered.\n"
-                + "An unknown number of modify directives were not processed.\n"
-                + "See log file for details of those directives processed before the error.\n"
-                + "Time elapsed: " + getDuration(et-st));
-            s_log.println("  <summary>");
-            s_log.println("    "+StreamUtility.enc(bmp.getSucceededCount()
-                + " modify directives successfully processed.\n"
-                + "    Parser error encountered.\n"
-                + "    An unknown number of modify directives were not processed.\n"
-                + "    Time elapsed: " + getDuration(et-st)));
-            s_log.println("  </summary>");
-          } else
-          {
-            System.out.println("\n\n"
-                + bmp.getSucceededCount() + " modify directives successfully processed.\n"
-                + bmp.getFailedCount() + " modify directives failed.\n"
-                + "See log file for details.\n"
-                + "Time elapsed: " + getDuration(et-st));
-            s_log.println("  <summary>");
-            s_log.println("    "+StreamUtility.enc(bmp.getSucceededCount()
-                + " modify directives successfully processed.\n    "
-                + bmp.getFailedCount() + " modify directives failed.\n"
-                + "    Time elapsed: " + getDuration(et-st)));
-            s_log.println("  </summary>");
-          }
-          } else if (bmv!=null) {
-              et=System.currentTimeMillis();
-              if (bmv.isValid()) {
-                  System.out.println("Modify Directives File in \n"
-                      +directivesFilePath
-                      + "\n is Valid !"
-                      + "\nTime elapsed: " + getDuration(et-st));
-                  s_log.println("  <summary>");
-                  s_log.println("    Modify Directives File: \n    "
-                      +directivesFilePath
-                      + "\n    is Valid !"
-                      + "\n    Time elapsed: " + getDuration(et-st));
-                  s_log.println("  </summary>");
+      long st = System.currentTimeMillis();
+      long et = 0;
+      try {
+          in = new FileInputStream(directivesFilePath);
+          if (isValidateOnly) {
+              openLog(logFilePath, "validate-modify-directives");
+              bmv = new BatchModifyValidator(in, s_log);
+          } else {
+              openLog(logFilePath, "modify-batch");
+              bmp = new BatchModifyParser(UPLOADER, APIM, APIA, in, s_log);
+          }	
+          
+      } catch (Exception e) {
+          System.out.println(e.getClass().getName()
+                  + " - "
+                  + (e.getMessage() == null ? "(no detail provided)" : e.getMessage()));
+          
+      } finally {
+          try {
+              if (in != null)
+                  in.close();
+              if (s_log != null) {
+                  et = System.currentTimeMillis();
+                  if (bmp != null) {
+                      if (bmp.getFailedCount() == -1) {
+                          System.out.println("\n\n"
+                                  + bmp.getSucceededCount()
+                                  + " modify directives successfully processed.\n"
+                                  + "Parser error encountered.\n"
+                                  + "An unknown number of modify directives were not processed.\n"
+                                  + "See log file for details of those directives processed before the error.\n"
+                                  + "Time elapsed: "
+                                  + getDuration(et - st));
+                          s_log.println("  <summary>");
+                          s_log.println("    "
+                                  + StreamUtility.enc(bmp.getSucceededCount()
+                                  + " modify directives successfully processed.\n"
+                                  + "    Parser error encountered.\n"
+                                  + "    An unknown number of modify directives were not processed.\n"
+                                  + "    Time elapsed: "
+                                  + getDuration(et - st)));
+                          s_log.println("  </summary>");
+                      } else {
+                          System.out.println("\n\n"
+                                  + bmp.getSucceededCount()
+                                  + " modify directives successfully processed.\n"
+                                  + bmp.getFailedCount()
+                                  + " modify directives failed.\n"
+                                  + "See log file for details.\n"
+                                  + "Time elapsed: "
+                                  + getDuration(et - st));
+                          s_log.println("  <summary>");
+                          s_log.println("    "
+                                  + StreamUtility.enc(bmp.getSucceededCount()
+                                  + " modify directives successfully processed.\n    "
+                                  + bmp.getFailedCount()
+                                  + " modify directives failed.\n"
+                                  + "    Time elapsed: "
+                                  + getDuration(et - st)));
+                          s_log.println("  </summary>");
+                      }
+                  } else if (bmv != null) {
+                      et = System.currentTimeMillis();
+                      if (bmv.isValid()) {
+                          System.out.println("Modify Directives File in \n"
+                                  + directivesFilePath
+                                  + "\n is Valid !"
+                                  + "\nTime elapsed: "
+                                  + getDuration(et - st));
+                          s_log.println("  <summary>");
+                          s_log.println("    Modify Directives File: \n    "
+                                  + directivesFilePath + "\n    is Valid !"
+                                  + "\n    Time elapsed: "
+                                  + getDuration(et - st));
+                          s_log.println("  </summary>");
+                      } else {
+                          System.out.println(bmv.getErrorCount()
+                                  + " XML validation Errors found in Modify Directives file.\n"
+                                  + "See log file for details.\n"
+                                  + "Time elapsed: "
+                                  + getDuration(et - st));
+                          s_log.println("  <summary>");
+                          s_log.println("    "
+                                  + StreamUtility.enc(bmv.getErrorCount()
+                                  + " XML validation Errors found in Modify Directives file.\n"
+                                  + "    See log file for details.\n"
+                                  + "    Time elapsed: "
+                                  + getDuration(et - st)));
+                          s_log.println("  </summary>");
+                      }
+                  }
                   closeLog();
-                  return;
-              } else {
-                  System.out.println(bmv.getErrorCount()
-                      +" XML validation Errors found in Modify Directives file.\n"
-                      + "See log file for details.\n"
-                      + "Time elapsed: " + getDuration(et-st));
-                  s_log.println("  <summary>");
-                  s_log.println("    "+StreamUtility.enc(bmv.getErrorCount()
-                      + " XML validation Errors found in Modify Directives file.\n"
-                      + "    See log file for details.\n"
-                      + "    Time elapsed: " + getDuration(et-st)));
-                  s_log.println("  </summary>");
+                  System.out.println("A detailed log file was created at\n"
+                          + logFilePath + "\n\n");
               }
+          } catch (Exception e) {
+              System.out.println(e.getClass().getName()
+                      + " - "
+                      + (e.getMessage() == null ? "(no detail provided)" : e.getMessage()));
           }
-          closeLog();
-          System.out.println(
-              "A detailed log file was created at\n"
-              + logFilePath + "\n\n");
-        }
-      } catch (Exception e)
-      {
-        System.out.println(e.getClass().getName() + " - "
-            + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
       }
-    }
   }
 
   /**
@@ -289,56 +291,62 @@ public class AutoModify
     {
         System.out.println("Error: " + errMessage);
         System.out.println("");
-        System.out.println("Usage: AutoModify host port username password "
-            + "directives-filepath log-filepath validate-only-option");
+        System.out.println("Usage: AutoModify host:port username password "
+            + "directives-filepath log-filepath [validate-only-option]");
     }
 
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
 
-      String logFilePath = null;
-      String directivesFilePath = null;
-      String hostName = null;
-      String username = null;
-      String password = null;
-      int portNum = 8080;
-      boolean validateOnly = true;
+        String logFilePath = null;
+        String directivesFilePath = null;
+        String hostName = null;
+        String username = null;
+        String password = null;
+        int portNum = 8080;
+        boolean isValidateOnly = true;
 
-        try
-        {
-            if (args.length!=7)
-            {
-                AutoModify.showUsage("You must provide seven arguments.");
-            } else
-            {
-                hostName = args[0];
-                portNum = Integer.parseInt(args[1]);
-                username = args[2];
-                password = args[3];
-                directivesFilePath = args[4];
-                logFilePath = args[5];
-                validateOnly = new Boolean(args[6]).booleanValue();
-                if (new File(directivesFilePath).exists())
-                {
-                  System.out.println("\nCONNECTING to Fedora server....");
-                  AutoModify am = new AutoModify(hostName, portNum, username, password);
-                  if(validateOnly) {
-                      System.out.println("\n----- VALIDATING DIRECTIVES FILE ONLY -----\n");
-                  } else {
-                      System.out.println("\n----- PROCESSING DIRECTIVES FILE -----\n");
-                  }
-                  am.modify(directivesFilePath, logFilePath, validateOnly);
-                } else
-                {
-                  AutoModify.showUsage("Directives input file does not exist: "
-                      + directivesFilePath + " .");
+        try {
+            if (args.length < 5 || args.length > 6) {
+                AutoModify.showUsage("You must provide either 5 or 6 arguments.");
+            } else {
+                String[] hostPort = args[0].split(":");
+                if (hostPort.length!=2) {
+                    AutoModify.showUsage("First argument must contain target"
+                            + " Fedora server hostname and port using the syntax"
+                            + " \"hostname:port\"");
+                }
+                hostName = hostPort[0];
+                portNum = Integer.parseInt(hostPort[1]);
+                username = args[1];
+                password = args[2];
+                directivesFilePath = args[3];
+                logFilePath = args[4];
+                if (args.length == 5) {
+                    isValidateOnly = false;
+                } else {
+                    isValidateOnly = new Boolean(args[5]).booleanValue();
+                }
+                if (new File(directivesFilePath).exists()) {
+                    System.out.println("\nCONNECTING to Fedora server....");
+                    AutoModify am = new AutoModify(hostName, portNum, username,
+                            password);
+                    if (isValidateOnly) {
+                        System.out.println("\n----- VALIDATING DIRECTIVES FILE ONLY -----\n");
+                    } else {
+                        System.out.println("\n----- PROCESSING DIRECTIVES FILE -----\n");
+                    }
+                    am.modify(directivesFilePath, logFilePath, isValidateOnly);
+                } else {
+                    AutoModify.showUsage("Directives input file does not exist: "
+                            + directivesFilePath + " .");
                 }
             }
-        } catch (Exception e)
-        {
-            AutoModify.showUsage(e.getClass().getName() + " - "
-                + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
+        } catch (Exception e) {
+            AutoModify.showUsage(e.getClass().getName()
+                    + " - "
+                    + (e.getMessage() == null ? "(no detail provided)" : e
+                            .getMessage()));
         }
     }
 

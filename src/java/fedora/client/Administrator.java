@@ -462,7 +462,7 @@ public class Administrator extends JFrame {
         executeBatchModify.setToolTipText("Run the Batch Modify Utility.");
         executeBatchModify.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new BatchModify(INSTANCE);
+                new BatchModify();
             }
         });
         toolsBatchModify.add(executeBatchModify);
@@ -471,7 +471,7 @@ public class Administrator extends JFrame {
         validateBatchModify.setToolTipText("Validate the modify directives file against the batchModify XML Schema.");
         validateBatchModify.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new BatchModifyValidate(INSTANCE);
+                new BatchModifyValidate();
             }
         });
 

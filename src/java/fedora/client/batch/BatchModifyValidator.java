@@ -48,7 +48,7 @@ import org.xml.sax.XMLReader;
  */
 public class BatchModifyValidator extends DefaultHandler
 {
-    private InputStream in;
+    //private InputStream in;
     private static PrintStream out;
     private boolean isValid = false;
     private static int errorCount = 0;
@@ -65,7 +65,7 @@ public class BatchModifyValidator extends DefaultHandler
      */
     public BatchModifyValidator(InputStream in, PrintStream out) throws Exception
     {
-        this.in = in;
+        //this.in = in;
         BatchModifyValidator.out = out;
         BatchModifyValidator.errorCount = 0;
         XMLReader xmlReader = null;
@@ -141,10 +141,6 @@ public class BatchModifyValidator extends DefaultHandler
 
     public static void main(String[] args)
     {
-        String host = "localhost";
-        int port = 8080;
-        String user = "fedoraAdmin";
-        String pass = "fedoraAdmin";
 
         try {
             PrintStream log = new PrintStream(new FileOutputStream("c:\\zlogfile.txt"));
