@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.Vector;
 
 import fedora.server.Context;
@@ -125,8 +126,11 @@ public class FastDOReader implements DOReader
   /** Host name of the Fedora server **/
   protected static String fedoraServerHost = null;
 
-  /** Port number on which the Fedora server is running **/
+  /** Port number on which the Fedora server is running. **/
   protected static String fedoraServerPort = null;
+
+  /** Compiled pattern used to match Fedora LocalURL identifier. */
+  private Pattern serializedLocalURLPattern = null;
 
   /** Make sure we have a server instance. */
   static
@@ -174,6 +178,7 @@ public class FastDOReader implements DOReader
       // Attempt to find object in either Fast or Definitive store
       this.doLabel = locatePID(objectPID);
       this.PID = objectPID;
+      this.serializedLocalURLPattern = Pattern.compile("local.fedora.server");
     } catch (ServerException se)
     {
       throw se;
@@ -710,7 +715,7 @@ public class FastDOReader implements DOReader
           datastream = new Datastream();
           datastream.DSLabel = results[0];
           datastream.DSMIME = results[1];
-          datastream.DSLocation = dereferenceToken(results[2]);
+          datastream.DSLocation = unencodeLocalURL(results[2]);
           queryResults.addElement(datastream);
         }
 
@@ -812,7 +817,7 @@ public class FastDOReader implements DOReader
           datastream = new Datastream();
           datastream.DSLabel = results[0];
           datastream.DSMIME = results[1];
-          datastream.DSLocation = dereferenceToken(results[2]);
+          datastream.DSLocation = unencodeLocalURL(results[2]);
           queryResults.addElement(datastream);
         }
         datastreamArray = new Datastream[queryResults.size()];
@@ -950,10 +955,10 @@ public class FastDOReader implements DOReader
           {
             results[i-1] = rs.getString(i);
           }
-          dissBindInfo.AddressLocation = dereferenceToken(results[3]);
-          dissBindInfo.OperationLocation = dereferenceToken(results[4]);
+          dissBindInfo.AddressLocation = unencodeLocalURL(results[3]);
+          dissBindInfo.OperationLocation = unencodeLocalURL(results[4]);
           dissBindInfo.ProtocolType = results[5];
-          dissBindInfo.dsLocation = dereferenceToken(results[6]);
+          dissBindInfo.dsLocation = unencodeLocalURL(results[6]);
           dissBindInfo.dsControlGroupType = results[7];
           dissBindInfo.dsID = results[8];
           dissBindInfo.dsVersionID = results[9];
@@ -1772,24 +1777,27 @@ public class FastDOReader implements DOReader
     return doLabel;
   }
 
-  /**
-   * <p> Dereferences the local Fedora token of "local.fedora.server"
-   * and replaces it with the current Fedora host name and port defined
-   * in the fedora.fcfg configuration file.
-   *
-   * @param str An input string to be searched for all occurrences of the token.
-   * @return A string with the dereferenced token.
-   */
-  private String dereferenceToken(String str)
+
+
+  private String unencodeLocalURL(String storedLocationString)
   {
+    // Replace any occurrences of the internal serialization string
+    // "local.fedora.server" with the current host and port of the
+    // local Fedora server.  This translates local URLs (self-referential
+    // to the local server) back into resolvable URLs that reflect
+    // the currently configured host and port for the server.
+
     if (fedoraServerPort.equalsIgnoreCase("80"))
     {
-      // don't include port number for port 80
-      return str.replaceAll("local.fedora.server",fedoraServerHost);
-    } else
+      return serializedLocalURLPattern.matcher(
+        storedLocationString).replaceAll(fedoraServerHost);
+    }
+    else
     {
-      return str.replaceAll("local.fedora.server",fedoraServerHost+":"
-          +fedoraServerPort);
+      return serializedLocalURLPattern.matcher(
+        storedLocationString).replaceAll(
+        fedoraServerHost+":"+fedoraServerPort);
     }
   }
+
 }
