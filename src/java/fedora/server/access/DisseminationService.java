@@ -14,6 +14,8 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.storage.types.DisseminationBindingInfo;
+import fedora.server.storage.ExternalContentManager;
+import fedora.server.storage.DefaultExternalContentManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
 
@@ -199,10 +201,14 @@ public class DisseminationService
       if (protocolType.equalsIgnoreCase("http"))
       {
         // FIXME!! need to implement Access Policy control.
-        HttpService httpService = new HttpService();
+        ExternalContentManager externalContentManager = (ExternalContentManager)
+          s_server.getModule("fedora.server.storage.ExternalContentManager");
+
+        //HttpService httpService = new HttpService();
         try
         {
-          dissemination = httpService.getHttpContent(dissURL);
+          //dissemination = httpService.getHttpContent(dissURL);
+          dissemination = externalContentManager.getExternalContent(dissURL);
         } catch (HttpServiceNotFoundException hsnfe)
         {
           s_server.logWarning("Unable to establish HTTP service for URL: "
