@@ -179,12 +179,6 @@
 		<part name="dissLabel" type="xsd:string">
 			<documentation>the label of the disseminator.</documentation>
 		</part>
-		<part name="bDefLabel" type="xsd:string">
-			<documentation>the label assigned to the behavior definition of the disseminator.</documentation>
-		</part>
-		<part name="bMechLabel" type="xsd:string">
-			<documentation>the label assigned to the behavior mechanism of the disseminator.</documentation>
-		</part>
 		<part name="bindingMap" type="fedora-types:DatastreamBindingMap">
 			<documentation>the binding map.</documentation>
 		</part>
@@ -307,12 +301,6 @@
 		</part>
 		<part name="dissLabel" type="xsd:string">
 			<documentation>the label of the disseminator.</documentation>
-		</part>
-		<part name="bDefLabel" type="xsd:string">
-			<documentation>the label assigned to the bDef of the disseminator.</documentation>
-		</part>
-		<part name="bMechLabel" type="xsd:string">
-			<documentation>the label assigned to the bMech of the disseminator.</documentation>
 		</part>
 		<part name="bindingMap" type="fedora-types:DatastreamBindingMap">
 			<documentation>the binding map.</documentation>
