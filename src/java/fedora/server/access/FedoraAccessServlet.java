@@ -652,6 +652,7 @@ public class FedoraAccessServlet extends HttpServlet
     dissemination =
         s_access.getDissemination(context, PID, bDefPID, methodName,
                                   userParms, asOfDateTime);
+    out = response.getOutputStream();
     if (dissemination != null)
     {
 
@@ -705,7 +706,6 @@ public class FedoraAccessServlet extends HttpServlet
                 }
             }
         }
-        out = response.getOutputStream();
         long startTime = new Date().getTime();
         int byteStream = 0;
         InputStream dissemResult = dissemination.getStream();
