@@ -241,7 +241,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       isGetDisseminationRequest = true;
     } else
     {
-      String message = "Request Syntax Error: The expected syntax "
+      response.sendRedirect("/userdocs/apialite/index.html");
+        /*String message = "Request Syntax Error: The expected syntax "
           + "for Dissemination requests is: \""
           + URIArray[0] + "//" + URIArray[2] + "/"
           + URIArray[3] + "/" + URIArray[4]
@@ -254,6 +255,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       logWarning(message);
       response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+      */
       return;
     }
 
