@@ -18,13 +18,12 @@ goto EndOfComment
 set KOWARI_HOSTNAME=localhost
 set KOWARI_HTTP_PORT=8081
 set KOWARI_RMI_PORT=1099
+set KOWARI_HOME=%FEDORA_HOME%\server\kowari
+set KOWARI_JAR=kowari-1.0.4.jar
 
 goto checkEnv
 
 :envOk
-set KOWARI_HOME=%FEDORA_HOME%\server\kowari
-SET KOWARI_JAR=kowari-1.0.4.jar
-if not exist %KOWARI_HOME%\%KOWARI_JAR% goto kowariNotFound
 
 echo Starting Kowari Server...
 
@@ -48,6 +47,7 @@ if "%FEDORA_HOME%" == "" goto noFedoraHome
 if not exist %FEDORA_HOME%\server\config\fedora.fcfg goto configNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
+if not exist %KOWARI_HOME%\%KOWARI_JAR% goto kowariNotFound
 
 :tryJavaHome
 if "%JAVA_HOME%" == "" goto noJavaHome
