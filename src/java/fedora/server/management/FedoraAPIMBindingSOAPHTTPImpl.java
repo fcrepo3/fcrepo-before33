@@ -123,12 +123,17 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         s_server.logFiner("Error carried up to API-M level: " + e.getClass().getName() + "\n" + lines.toString());
     }
 
+	// This remains in Fedora 2.0 for backward compatibility.  It assumes METS-Fedora 
+	// as the ingest format.  It will be deprecated in a future version.
     public String ingestObject(byte[] METSXML, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
+		return ingest(METSXML, "metslikefedora1", logMessage);
+		/**
         try {
           // always gens pid, unless pid in stream starts with "test: or demo:"
-            return s_management.ingestObject(getContext(),
-                    new ByteArrayInputStream(METSXML), logMessage, "metsf1.0", "UTF-8", true);
+          return s_management.ingestObject(getContext(),
+                   new ByteArrayInputStream(METSXML), logMessage, "metslikefedora1", "UTF-8", true);
+
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -136,6 +141,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             logStackTrace(e);
             throw AxisUtility.getFault(e);
         }
+        **/
     }
     
 	public String ingest(byte[] XML, String format, String logMessage) throws java.rmi.RemoteException {
@@ -201,7 +207,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throws RemoteException {
         assertInitialized();
         try {
-            //InputStream in=s_management.exportObject(getContext(), PID, "metsf1.0export", "UTF-8");
 			InputStream in=s_management.exportObject(getContext(), PID, null, "UTF-8");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
