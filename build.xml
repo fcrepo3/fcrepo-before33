@@ -11,12 +11,12 @@
 	<property name="javaClassOptimize" value="off"/>
 	<property name="javaSourceDir" value="src/java"/>
 	<property name="docDir" value="apidoc"/>
-        <target name="copyclient" depends="client" description="copies client to server dist area">
+	<target name="copyclient" depends="client" description="copies client to server dist area">
 		<copy todir="dist/server">
 			<fileset dir="dist/client"/>
 		</copy>
-        </target>
-	<target name="serverdist" depends="server,client,userdocs,copyclient" description="builds both client and server in dist\server, in a package suitable for distribution">
+	</target>
+	<target name="serverdist" depends="server,client,localservices,userdocs,copyclient" description="builds both client and server in dist\server, in a package suitable for distribution">
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
 		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
@@ -371,7 +371,7 @@
 		<replace file="dist/server/config/deployAPI-A.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
 		<replace file="dist/server/config/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management/soap"/>
 		<replace file="dist/server/config/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access/soap"/>
-		<copy file="src/web-app/web.xml" todir="dist/server/tomcat41/webapps/fedora/WEB-INF"/>
+		<copy file="src/web-app/fedora/web.xml" todir="dist/server/tomcat41/webapps/fedora/WEB-INF"/>
 		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes"/>
 		</copy>
@@ -395,11 +395,18 @@
 		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/fedora/WEB-INF/lib"/>
 		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/lib">
 			<fileset dir="lib/server"/>
-        </copy>
+		</copy>
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE: local copy packaged with repository distribution -->
 		<mkdir dir="dist/server/access"/>
 		<copy file="src/xsl/access/objectmethods.xslt" todir="dist/server/access"/>
 		<echo message="Finished building server distribution in dist/server"/>
+	</target>
+	<target name="localservices" depends="server, localservicesclasses">
+		<copy todir="dist/server/tomcat41/webapps/saxon/WEB-INF/classes">
+			<fileset dir="temp/localservices/classes"/>
+		</copy>
+		<copy file="src/web-app/fedora/localservices/saxon/web.xml" todir="dist/server/tomcat41/webapps/saxon/WEB-INF"/>
+		<copy file="src/web-app/fedora/localservices/saxon/index.html" todir="dist/server/tomcat41/webapps/saxon"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
 		<exec executable="java">
@@ -419,12 +426,11 @@
 			<arg value="-Djavax.xml.transform.TransformerFactory=com.icl.saxon.TransformerFactoryImpl"/>
 			<arg value="-classpath"/>
 			<arg path="dist/server/tomcat41/common/lib/log4j-1.2.4.jar;dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/saxon6.5.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/exist.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/jakarta-oro-2.0.6.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/antlr.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/excalibur-cli-1.0.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/resolver-20020130.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/trove.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/xalan-2.3.1.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/xmldb.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/xmlrpc-1.1.jar"/>
-            <arg value="fedora.server.search.FieldSearchExistImpl"/>
+			<arg value="fedora.server.search.FieldSearchExistImpl"/>
 			<arg path="dist/server/exist09"/>
 		</exec>
 	</target>
-	<target name="metstest" 
-    description="run fedora.server.test.METSInOutTest on src/mets/test/demo/obj-definitive-test.xml... print re-serialized version, then do level 1 and level 2 validation.">
+	<target name="metstest" description="run fedora.server.test.METSInOutTest on src/mets/test/demo/obj-definitive-test.xml... print re-serialized version, then do level 1 and level 2 validation.">
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
@@ -435,7 +441,7 @@
 			<arg value="fedora.server.test.METSInOutTest"/>
 			<arg value="src/mets/test/demo/obj-definitive-test.xml"/>
 		</exec>
-       <!--
+		<!--
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
@@ -464,15 +470,20 @@
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMServiceLocator.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<mkdir dir="temp/server/classes"/>
-		<javac srcdir="${javaSourceDir}:temp/server/java" 
-               destdir="temp/server/classes" 
-               classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar;lib/common/junit.jar"
-               includes="fedora/server/**,fedora/logging/**,fedora/oai/**" 
-               optimize="${javaClassOptimize}" 
-               debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/server/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar;lib/common/junit.jar" includes="fedora/server/**,fedora/logging/**,fedora/oai/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
+	</target>
+	<target name="localservicesclasses" depends="localservicesprep" description="Generate java classes for local services">
+		<mkdir dir="temp/localservices/classes"/>
+		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+	</target>
+	<target name="localservicesprep" depends="prep" description="Prepare a temporary build area for localservices-related targets">
+		<mkdir dir="temp/localservices"/>
+		<copy todir="temp/localservices/java/fedora/localservices">
+			<fileset dir="src/java/fedora/localservices"/>
+		</copy>
 	</target>
 	<target name="clean" description="Clean up all targets and temp files">
 		<delete dir="temp"/>
@@ -481,6 +492,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.73  2003/02/13 20:37:43  rlw
+  adds changes for saxon localservice
+
   Revision 1.72  2003/02/13 12:54:51  cwilper
   put client copy stuff in separate target
 
