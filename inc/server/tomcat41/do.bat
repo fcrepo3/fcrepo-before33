@@ -1,3 +1,3 @@
 set BASE=.
 set CLASSPATH=%JAVA_HOME%\lib\tools.jar;%BASE%\bin\bootstrap.jar
-java -Dfedora.home=%BASE%\.. -Dclasspath=%CLASSPATH% -Djava.endorsed.dirs=%BASE%\bin -Djava.security.manager -Djava.security.policy=%BASE%\conf\catalina.policy -Dcatalina.base=%BASE% -Dcatalina.home=%BASE% -Djava.io.tmpdir=%BASE%\temp org.apache.catalina.startup.Bootstrap start
+java -Dfedora.home=%BASE%\.. -Dclasspath=%CLASSPATH% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Djava.endorsed.dirs=%BASE%\bin -Djava.security.manager -Djava.security.policy=%BASE%\conf\catalina.policy -Dcatalina.base=%BASE% -Dcatalina.home=%BASE% -Djava.io.tmpdir=%BASE%\temp org.apache.catalina.startup.Bootstrap start
