@@ -35,6 +35,14 @@
       </description>
 		</init-param>
 	</servlet>
+	<servlet>
+		<servlet-name>ShutdownServlet</servlet-name>
+		<display-name>Fedora Shutdown Servlet</display-name>
+		<servlet-class>
+        fedora.server.management.ShutdownServlet
+    </servlet-class>
+	</servlet>
+    
 	<!-- Testing servlet to experiment with soap access via a java servlet -->
 	<servlet>
 		<servlet-name>FedoraAccessSoapServlet</servlet-name>
@@ -51,6 +59,10 @@
 	<servlet-mapping>
 		<servlet-name>FedoraAccessServlet</servlet-name>
 		<url-pattern>/access/http</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ShutdownServlet</servlet-name>
+		<url-pattern>/management/shutdown</url-pattern>
 	</servlet-mapping>
 	<!-- Testing soap access via a java servlet -->
 	<servlet-mapping>
