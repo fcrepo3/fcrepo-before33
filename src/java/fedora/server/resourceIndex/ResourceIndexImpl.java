@@ -154,7 +154,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		    queuePlainLiteralTriple(doIdentifier, FEDORA_OWNER_ID, digitalObject.getOwnerId());
 		}
 		queuePlainLiteralTriple(doIdentifier, FEDORA_CMODEL, digitalObject.getContentModelId());
-		queuePlainLiteralTriple(doIdentifier, FEDORA_STATE, digitalObject.getState());
+		queueTriple(doIdentifier, FEDORA_STATE, getStateURI(digitalObject.getState()));
 		
         // Insert ExtProperties
         Map extProps = digitalObject.getExtProperties();
@@ -260,7 +260,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
         queueTriple(doIdentifier, FEDORA_USES_BMECH, getDOURI(bMechPID));
 	    String bDefPID = diss.bDefID;
-        String dissState = diss.dissState.equalsIgnoreCase("A") ? FEDORA_STATE_ACTIVE : FEDORA_STATE_INACTIVE;
+        String dissState = getStateURI(diss.dissState);
 	    String dissCreateDT = getDate(diss.dissCreateDT);
         
 	    // insert representations
@@ -964,19 +964,57 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             throw new ResourceIndexException(e.getMessage(), e);
         }
     }
+
+    private BMechDSBindSpec getDSBindSpec(String pid, Datastream ds) throws ResourceIndexException {
+        DatastreamXMLMetadata dsInSpecDS = (DatastreamXMLMetadata)ds;
+        ServiceMapper serviceMapper = new ServiceMapper(pid);
+        BMechDSBindSpec dsBindSpec;
+        try {
+            return serviceMapper.getDSInputSpec(new InputSource(new ByteArrayInputStream(dsInSpecDS.xmlContent)));
+        } catch (Throwable t) {
+            throw new ResourceIndexException(t.getMessage());
+        }
+    }
     
-	private Datastream getLatestDatastream(List datastreams) {
-	    Iterator it = datastreams.iterator();
-	    long latestDSCreateDT = -1;
-	    Datastream ds, latestDS = null;
-	    while (it.hasNext()) {
-	        ds = (Datastream)it.next();
-	        if (ds.DSCreateDT.getTime() > latestDSCreateDT) {
-	            latestDS = ds;
-	        }
-	    }
-	    return latestDS;
-	}
+	private String getDOURI(DigitalObject digitalObject) {
+        String identifier;
+        logFinest("ResourceIndex digitalObject.getPid(): " + digitalObject.getPid());
+        if (digitalObject.getURI() != null && !digitalObject.getURI().equals("")) {
+            return digitalObject.getURI();
+        } else {
+            return getDOURI(digitalObject.getPid());
+        }
+    }
+
+    private String getDOURI(String pid) {
+        return NS_FEDORA + pid;
+    }
+
+    private Datastream getLatestDatastream(List datastreams) {
+        Iterator it = datastreams.iterator();
+        long latestDSCreateDT = -1;
+        Datastream ds, latestDS = null;
+        while (it.hasNext()) {
+            ds = (Datastream)it.next();
+            if (ds.DSCreateDT.getTime() > latestDSCreateDT) {
+                latestDS = ds;
+            }
+        }
+        return latestDS;
+    }
+
+    private Disseminator getLatestDisseminator(List disseminators) {
+        Iterator it = disseminators.iterator();
+        long latestDISSCreateDT = -1;
+        Disseminator diss, latestDISS = null;
+        while (it.hasNext()) {
+            diss = (Disseminator)it.next();
+            if (diss.dissCreateDT.getTime() > latestDISSCreateDT) {
+                latestDISS = diss;
+            }
+        }
+        return latestDISS;
+    }
 	
 	private MethodDef[] getMethodDefs(String pid, Datastream ds) throws ResourceIndexException {
 	    DatastreamXMLMetadata mmapDS = (DatastreamXMLMetadata)ds;
@@ -987,45 +1025,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	        throw new ResourceIndexException(t.getMessage());
 	    }
 	}
-	
-	private BMechDSBindSpec getDSBindSpec(String pid, Datastream ds) throws ResourceIndexException {
-	    DatastreamXMLMetadata dsInSpecDS = (DatastreamXMLMetadata)ds;
-	    ServiceMapper serviceMapper = new ServiceMapper(pid);
-	    BMechDSBindSpec dsBindSpec;
-	    try {
-	        return serviceMapper.getDSInputSpec(new InputSource(new ByteArrayInputStream(dsInSpecDS.xmlContent)));
-	    } catch (Throwable t) {
-	        throw new ResourceIndexException(t.getMessage());
-	    }
-	}
-	
-	private Disseminator getLatestDisseminator(List disseminators) {
-	    Iterator it = disseminators.iterator();
-	    long latestDISSCreateDT = -1;
-	    Disseminator diss, latestDISS = null;
-	    while (it.hasNext()) {
-	        diss = (Disseminator)it.next();
-	        if (diss.dissCreateDT.getTime() > latestDISSCreateDT) {
-	            latestDISS = diss;
-	        }
-	    }
-	    return latestDISS;
-	}
-	
-	private String getDOURI(DigitalObject digitalObject) {
-	    String identifier;
-	    logFinest("ResourceIndex digitalObject.getPid(): " + digitalObject.getPid());
-	    if (digitalObject.getURI() != null && !digitalObject.getURI().equals("")) {
-	        return digitalObject.getURI();
-	    } else {
-	        return getDOURI(digitalObject.getPid());
-	    }
-	}
-	
-	private String getDOURI(String pid) {
-	    return NS_FEDORA + pid;
-	}
     
+    private String getStateURI(String state) {
+        return state.equalsIgnoreCase("A") ? FEDORA_STATE_ACTIVE : FEDORA_STATE_INACTIVE;
+    }
+
     private void queueTriple(String subject, 
                              String predicate, 
                              String object) throws ResourceIndexException {
@@ -1040,6 +1044,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                          String predicate, 
                                          String object) throws ResourceIndexException {
         try {
+            if (object == null) {
+                object = "";
+            }
             m_tQueue.add(TripleMaker.createPlain(subject, predicate, object));
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
