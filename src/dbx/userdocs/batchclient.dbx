@@ -7,11 +7,13 @@
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
-		<title><inlinemediaobject>
+		<title>
+			<inlinemediaobject>
 				<imageobject>
 					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject></title>
+			</inlinemediaobject>
+		</title>
 		<title>Fedora Admin Client Batch Utility</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -31,9 +33,11 @@
 		<title>Introduction</title>
 		<para>The <emphasis>fedora-admin</emphasis> client utility includes tools to create and ingest multiple Fedora objects, represented externally to Fedora in METS XML documents.</para>
 		<para>It&apos;s simple to ingest objects created by one-up edit or by custom scripting.</para>
-		<para><emphasis>fedora-admin</emphasis> also supports building objects.  This takes a general template common to all objects in a batch and makes object-specific substitutions into the template.  It also substitutes a common datetime stamp for all date attributes.  The template is a Fedora METS XML document, with data common to the objects of the batch.  Separate XML documents hold the per-object substitution values.</para>
+		<para>
+			<emphasis>fedora-admin</emphasis> also supports building objects.  This takes a general template common to all objects in a batch and makes object-specific substitutions into the template.  It also substitutes a common datetime stamp for all date attributes.  The template is a Fedora METS XML document, with data common to the objects of the batch.  Separate XML documents hold the per-object substitution values.</para>
 		<para>The relatedness of objects in a batch is defined by what <emphasis>fedora-admin</emphasis> allows to be substituted and by which substitutions you choose to make.  Data from the template are retained, unless replaced per individual object, including XML comments.</para>
-		<para><emphasis>fedora-admin</emphasis> provides for three modes of object batch processing:  <emphasis>batch build</emphasis>, <emphasis>batch ingest</emphasis>, and a combined <emphasis>batch build and ingest</emphasis>. </para>
+		<para>
+			<emphasis>fedora-admin</emphasis> provides for three modes of object batch processing:  <emphasis>batch build</emphasis>, <emphasis>batch ingest</emphasis>, and a combined <emphasis>batch build and ingest</emphasis>. </para>
 		<para>This phased processing is shown in the following diagram.</para>
 		<mediaobject>
 			<imageobject>
@@ -45,7 +49,9 @@
 		<title>Building Fedora objects in batch</title>
 		<para>Build a set of Fedora METS XML files from a common Fedora METS template and simple (non-METS) XML <emphasis>object-specs</emphasis>.  The resulting objects are then ready for ingesting into Fedora.</para>
 		<sect2>
-			<title><emphasis>fedora-admin instructions</emphasis></title>
+			<title>
+				<emphasis>fedora-admin instructions</emphasis>
+			</title>
 			<blockquote>
 				<para>Pull down on <emphasis>Tools</emphasis> on the <emphasis>fedora-admin</emphasis> menu bar, and select item <emphasis>Build Batch</emphasis>.</para>
 				<para>This will open a <emphasis>Batch Build</emphasis> window.  You may need to adjust this window’s size to see its controls.  Use the <emphasis>browse</emphasis> buttons to enter the four required settings.  Clicking on a <emphasis>browse</emphasis> button opens a standard directory/file selection dialog.</para>
@@ -137,7 +143,8 @@
 				</mediaobject>
 				<para>There is then no need to separately ingest the created batch.</para>
 				<para>No subdirectories or files are deleted by <emphasis>fedora-admin</emphasis>.  Setup and cleanup is by using standard operating systems facilities.</para>
-				<para><emphasis>fedora-admin</emphasis> does not itself validate on <emphasis>Batch Build</emphasis>, but batch ingest into Fedora does.  The batch fails on the first individual object ingest failure.</para>
+				<para>
+					<emphasis>fedora-admin</emphasis> does not itself validate on <emphasis>Batch Build</emphasis>, but batch ingest into Fedora does.  The batch fails on the first individual object ingest failure.</para>
 				<para>Fedora will not ingest a METS file whose <emphasis role="bold">METS:xmldata</emphasis> elements are empty or contain non-tagged character data.</para>
 			</blockquote>
 		</sect2>
@@ -156,9 +163,9 @@
 	</sect1>
 	<sect1>
 		<title>Object Processing Map</title>
-		<para>The <emphasis>object-processing-map</emphasis> file has one of the following formats, depending on the value of configurable property <emphasis>pids-format</emphasis>.  (This property defaults to <emphasis role="bold">xml</emphasis>)  <emphasis>Batch Build</emphasis> processing results in an <emphasis>object processing map</emphasis> whose individual maps have only <emphasis role="bold">path2spec</emphasis> and <emphasis role="bold">path2object</emphasis> attributes or fields.  Batch ingest processing results in an object processing map whose individual maps have only <emphasis role="bold">path2object</emphasis> and <emphasis role="bold">pid</emphasis> attributes or fields.  <emphasis>Batch build and Ingest</emphasis> processing results in an <emphasis>object processing map</emphasis> whose individual maps have all three <emphasis role="bold">path2spec</emphasis>, <emphasis role="bold">path2object</emphasis> and <emphasis role="bold">pid</emphasis> attributes or fields.</para>
+		<para>The <emphasis>object-processing-map</emphasis> file has one of the following formats, depending on the choice of <emphasis>xml</emphasis> or <emphasis role="bold">text</emphasis> in <emphasis>fedora-admin</emphasis>. <emphasis>Batch Build</emphasis> processing results in an <emphasis>object processing map</emphasis> whose individual maps have only <emphasis role="bold">path2spec</emphasis> and <emphasis role="bold">path2object</emphasis> attributes or fields.  Batch ingest processing results in an object processing map whose individual maps have only <emphasis role="bold">path2object</emphasis> and <emphasis role="bold">pid</emphasis> attributes or fields.  <emphasis>Batch build and Ingest</emphasis> processing results in an <emphasis>object processing map</emphasis> whose individual maps have all three <emphasis role="bold">path2spec</emphasis>, <emphasis role="bold">path2object</emphasis> and <emphasis role="bold">pid</emphasis> attributes or fields.</para>
 		<sect2>
-			<title>pids-format=xml</title>
+			<title>xml format</title>
 			<programlisting>
 &lt;object-processing-map&gt;
 	&lt;map
@@ -174,7 +181,7 @@
 			</programlisting>
 		</sect2>
 		<sect2>
-			<title>pids-format=text</title>
+			<title>text format</title>
 			<para>(field separator is tab; relative paths used for practical illustration)</para>
 			<programlisting>
 object-specifics/americanacademy.xml	objects/americanacademy.xml	demo:3010
@@ -185,15 +192,17 @@ object-specifics/vaticanlibrary.xml	objects/vaticanlibrary.xml	demo:3019
 	</sect1>
 	<sect1>
 		<title>object-specifics</title>
-		<para><emphasis>Object-specifics</emphasis> are coded in XML files.  These data include:  object ID, label, and comment; datastream and object metadata and accompanying label; datastream URLs, titles, and labels; disseminator-specific datastream labels.  Where possible, attribute names are the same as in the Fedora METS schema, and so correspond to like-named attributes in the Fedora METS template.  How these map is described below and by running the demo and viewing the results for one of the objects.</para>
+		<para>
+			<emphasis>Object-specifics</emphasis> are coded in XML files.  These data include:  object ID, label, and comment; datastream and object metadata and accompanying label; datastream URLs, titles, and labels; disseminator-specific datastream labels.  Where possible, attribute names are the same as in the Fedora METS schema, and so correspond to like-named attributes in the Fedora METS template.  How these map is described below and by running the demo and viewing the results for one of the objects.</para>
 		<para>Any individual substitution is optional.  When absent as a substitution, the value in the template will be used for the resulting Fedora METS object.  (Demo template and <emphasis>object-specific</emphasis> contents are chosen instructively to highlight substitutions made.)  Datastream URLs will generally be specific to an object; practice will show which other substitutions are generally made.</para>
 		<para>All non-METS namespaces used in your own metadata must be declared, as in <emphasis role="bold">xmlns:uvalibadmin</emphasis> in the demo.    </para>
-		<para>Metadata IDs here map to those found in the Fedora <emphasis role="bold">METS:amdSec</emphasis> and Fedora METS:dmdSecFedora element.  The associated metadata is substituted as the content of <emphasis role="bold">METS:xmlData</emphasis> element, which is nested within that Fedora <emphasis role="bold">METS:amdSec</emphasis> or Fedora <emphasis role="bold">METS:dmdSecFedora element</emphasis>.</para>
+		<para>Metadata IDs here map to those found in the Fedora <emphasis role="bold">METS:amdSec</emphasis> and Fedora <emphasis role="bold">METS:dmdSecFedora</emphasis> element.  The associated metadata is substituted as the content of <emphasis role="bold">METS:xmlData</emphasis> element, which is nested within that Fedora <emphasis role="bold">METS:amdSec</emphasis> or Fedora <emphasis role="bold">METS:dmdSecFedora element</emphasis>.</para>
 		<para>Datastream IDs here map to those found in the Fedora <emphasis role="bold">METS:fileGrp</emphasis> element (the nested, not the nesting, one).  The associated <emphasis role="bold">xlink:href</emphasis> and <emphasis role="bold">xlink:title</emphasis> attributes are substituted into the Fedora <emphasis role="bold">METS:Flocat</emphasis> element, which is nested within that Fedora <emphasis role="bold">METS:fileGrp</emphasis> element.  </para>
 		<para>Datastream labels substitute instead into <emphasis role="bold">METS:structMap</emphasis>  If a datastream label is given specific to a disseminator, it is what’s substituted; otherwise the general datastream label is used.</para>
 		<para>Case matters in attribute and element names.</para>
 		<para>Fedora will retain as PIDs only <emphasis role="bold">OBJIDs</emphasis> prefixed &quot;test:&quot; or &quot;demo:&quot;.  Other <emphasis role="bold">OBJIDs</emphasis> will be replaced by Fedora-generated PIDs.</para>
-		<para><emphasis>object-specs</emphasis> in a given batch should meet the structural requirements of that batch’s template:  same number and tagging of datastreams, same number and tagging of metadata elements.  Since substitutions are optional, individual <emphasis>object-specs</emphasis> cannot have &quot;missing&quot; data:  the resulting object simply retains the template&apos;s value.  Neither can <emphasis>object-specs</emphasis> have &quot;extra&quot; data:  the resulting object simply lacks the <emphasis>object-spec&apos;s</emphasis> data -- because the template isn&apos;t designed to use it.  In either case, the batch goes on.</para>
+		<para>
+			<emphasis>object-specs</emphasis> in a given batch should meet the structural requirements of that batch’s template:  same number and tagging of datastreams, same number and tagging of metadata elements.  Since substitutions are optional, individual <emphasis>object-specs</emphasis> cannot have &quot;missing&quot; data:  the resulting object simply retains the template&apos;s value.  Neither can <emphasis>object-specs</emphasis> have &quot;extra&quot; data:  the resulting object simply lacks the <emphasis>object-spec&apos;s</emphasis> data -- because the template isn&apos;t designed to use it.  In either case, the batch goes on.</para>
 		<para>The following <emphasis>object-spec</emphasis> fragment illustrates some of this.</para>
 		<programlisting>
 &lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
