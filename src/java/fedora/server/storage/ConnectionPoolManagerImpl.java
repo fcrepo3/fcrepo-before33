@@ -113,19 +113,19 @@ public class ConnectionPoolManagerImpl extends Module
     } catch (SQLException sqe)
     {
       throw new ModuleInitializationException(
-          sqe.getMessage(),"fedora.server.storage.ConnectionPoolManagerIml");
+          sqe.getMessage(),"fedora.server.storage.ConnectionPoolManagerImpl");
     } catch (PatternSyntaxException pse)
     {
       throw new ModuleInitializationException(
-          pse.getMessage(),"fedora.server.storage.ConnectionPoolManagerIml");
+          pse.getMessage(),"fedora.server.storage.ConnectionPoolManagerImpl");
     } catch (NullPointerException npe)
     {
       throw new ModuleInitializationException(
-          npe.getMessage(),"fedora.server.storage.ConnectionPoolManagerIml");
+          npe.getMessage(),"fedora.server.storage.ConnectionPoolManagerImpl");
     } catch (Exception e)
     {
       throw new ModuleInitializationException(
-          e.getMessage(),"fedora.server.storage.ConnectionPoolManagerIml");
+          e.getMessage(),"fedora.server.storage.ConnectionPoolManagerImpl");
     }
   }
 
