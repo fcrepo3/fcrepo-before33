@@ -81,7 +81,7 @@
 		<param name="testName" value="testValue"/>
 	</module>
 	<module role="fedora.server.storage.translation.DOTranslator"
-               class="fedora.server.storage.translation.DefaultDOTranslator">
+               class="fedora.server.storage.translation.DOTranslatorModule">
 		<comment>Supports translation from DigitalObject to a stream of 
         some format, and vice-versa.  The parameters below specify 
         serializer/deserializer classes to be used for a given format.
