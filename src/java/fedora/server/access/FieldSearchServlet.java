@@ -26,10 +26,10 @@ import fedora.server.search.FieldSearchResult;
 import fedora.server.search.ObjectFields;
 import fedora.server.utilities.StreamUtility;
 
-public class FieldSearchServlet 
-        extends HttpServlet 
+public class FieldSearchServlet
+        extends HttpServlet
         implements Logging {
-        
+
     /** Instance of the Server */
     private static Server s_server=null;
 
@@ -63,7 +63,7 @@ public class FieldSearchServlet
         if ( (req.getParameter("coverage")!=null) && (req.getParameter("coverage").equalsIgnoreCase("true")) ) l.add("coverage");
         if ( (req.getParameter("rights")!=null) && (req.getParameter("rights").equalsIgnoreCase("true")) ) l.add("rights");
         String[] ret=new String[l.size()];
-        for (int i=0; i<l.size(); i++) 
+        for (int i=0; i<l.size(); i++)
            ret[i]=(String) l.get(i);
         return ret;
     }
@@ -87,7 +87,7 @@ public class FieldSearchServlet
             }
             String terms=request.getParameter("terms");
             String query=request.getParameter("query");
-            
+
             String sessionToken=request.getParameter("sessionToken");
 
             // default to 25 if not specified or specified incorrectly
@@ -98,15 +98,15 @@ public class FieldSearchServlet
                 } catch (NumberFormatException nfe) {
                 }
             }
-            
+
             String xmlOutput=request.getParameter("xml");
             boolean xml=false;
-            if ( (xmlOutput!=null) 
+            if ( (xmlOutput!=null)
                     && (xmlOutput.toLowerCase().startsWith("t")
                     || xmlOutput.toLowerCase().startsWith("y")) ) {
                 xml=true;
             }
-            StringBuffer xmlBuf=new StringBuffer(); 
+            StringBuffer xmlBuf=new StringBuffer();
             StringBuffer html=new StringBuffer();
             if (!xml) {
                 html.append("<form method=\"post\" action=\"/fedora/search\">");
@@ -155,10 +155,10 @@ public class FieldSearchServlet
                     fsr=s_access.resumeFindObjects(context, sessionToken);
                 } else {
                     if ((terms!=null) && (terms.length()!=0)) {
-                        fsr=s_access.findObjects(context, fieldsArray, 
+                        fsr=s_access.findObjects(context, fieldsArray,
                                 maxResults, new FieldSearchQuery(terms));
                     } else {
-                        fsr=s_access.findObjects(context, fieldsArray, 
+                        fsr=s_access.findObjects(context, fieldsArray,
                                 maxResults, new FieldSearchQuery(
                                 Condition.getConditions(query)));
                     }
@@ -195,8 +195,8 @@ public class FieldSearchServlet
                         appendXML("subject", f.subjects(), xmlBuf);
                         appendXML("description", f.descriptions(), xmlBuf);
                         appendXML("publisher", f.publishers(), xmlBuf);
-                        appendXML("contributor", f.contributors(), xmlBuf); 
-                        appendXML("date", f.dates(), xmlBuf); 
+                        appendXML("contributor", f.contributors(), xmlBuf);
+                        appendXML("date", f.dates(), xmlBuf);
                         appendXML("type", f.types(), xmlBuf);
                         appendXML("format", f.formats(), xmlBuf);
                         appendXML("identifier", f.identifiers(), xmlBuf);
@@ -273,7 +273,7 @@ public class FieldSearchServlet
                                 html.append(getList(f.coverages()));
                             } else if (l.equalsIgnoreCase("rights")) {
                                 html.append(getList(f.rights()));
-                            }                        
+                            }
                             html.append("</td>");
                         }
                         html.append("</tr>");
@@ -328,7 +328,7 @@ public class FieldSearchServlet
                 }
             }
             if (!xml) {
-                response.setContentType("text/html");
+                response.setContentType("text/html; charset=UTF-8");
                 PrintWriter out=response.getWriter();
                 out.print("<html><head><title>Search Repository</title></head>");
                 out.print("<body><center>");
@@ -387,18 +387,18 @@ public class FieldSearchServlet
             out.append("      <" + name + ">" + StreamUtility.enc(value) + "</" + name + ">\n");
         }
     }
-    
+
     private void appendXML(String name, List values, StringBuffer out) {
         for (int i=0; i<values.size(); i++) {
 	    appendXML(name, (String) values.get(i), out);
 	}
     }
 
-    private void appendXML(String name, Date dt, SimpleDateFormat formatter, 
+    private void appendXML(String name, Date dt, SimpleDateFormat formatter,
             StringBuffer out) {
         if(dt!=null) appendXML(name, formatter.format(dt), out);
     }
-    
+
     private String getList(List l) {
         StringBuffer ret=new StringBuffer();
         for (int i=0; i<l.size(); i++) {
@@ -426,13 +426,13 @@ public class FieldSearchServlet
                     + ie.getMessage());
         }
     }
-    
+
     private Server getServer() {
         return s_server;
     }
-    
+
     /**
-     * Logs a SEVERE message, indicating that the server is inoperable or 
+     * Logs a SEVERE message, indicating that the server is inoperable or
      * unable to start.
      *
      * @param message The message.
@@ -444,11 +444,11 @@ public class FieldSearchServlet
         m.append(message);
         getServer().logSevere(m.toString());
     }
-    
+
     public final boolean loggingSevere() {
         return getServer().loggingSevere();
     }
-    
+
     /**
      * Logs a WARNING message, indicating that an undesired (but non-fatal)
      * condition occured.
@@ -462,11 +462,11 @@ public class FieldSearchServlet
         m.append(message);
         getServer().logWarning(m.toString());
     }
-    
+
     public final boolean loggingWarning() {
         return getServer().loggingWarning();
     }
-    
+
     /**
      * Logs an INFO message, indicating that something relatively uncommon and
      * interesting happened, like server or module startup or shutdown, or
@@ -481,11 +481,11 @@ public class FieldSearchServlet
         m.append(message);
         getServer().logInfo(m.toString());
     }
-    
+
     public final boolean loggingInfo() {
         return getServer().loggingInfo();
     }
-    
+
     /**
      * Logs a CONFIG message, indicating what occurred during the server's
      * (or a module's) configuration phase.
@@ -499,11 +499,11 @@ public class FieldSearchServlet
         m.append(message);
         getServer().logConfig(m.toString());
     }
-    
+
     public final boolean loggingConfig() {
         return getServer().loggingConfig();
     }
-    
+
     /**
      * Logs a FINE message, indicating basic information about a request to
      * the server (like hostname, operation name, and success or failure).
@@ -517,11 +517,11 @@ public class FieldSearchServlet
         m.append(message);
         getServer().logFine(m.toString());
     }
-    
+
     public final boolean loggingFine() {
         return getServer().loggingFine();
     }
-    
+
     /**
      * Logs a FINER message, indicating detailed information about a request
      * to the server (like the full request, full response, and timing
@@ -536,11 +536,11 @@ public class FieldSearchServlet
         m.append(message);
         getServer().logFiner(m.toString());
     }
-    
+
     public final boolean loggingFiner() {
         return getServer().loggingFiner();
     }
-    
+
     /**
      * Logs a FINEST message, indicating method entry/exit or extremely
      * verbose information intended to aid in debugging.
