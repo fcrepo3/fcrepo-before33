@@ -10,13 +10,13 @@ package fedora.server.storage;
  */
 
 import fedora.server.storage.types.*;
+import fedora.server.errors.GeneralException;
 import java.io.InputStream;
 import java.util.Date;
 
 public interface BDefReader extends DOReader
 {
-  public MethodDef[] GetBehaviorMethods(Date versDateTime);
+  public MethodDef[] GetBehaviorMethods(Date versDateTime) throws GeneralException;
 
-  // Overloaded method: returns InputStream of WSDL as alternative
-  public InputStream GetBehaviorMethodsWSDL(Date versDateTime);
+  public InputStream GetBehaviorMethodsWSDL(Date versDateTime) throws GeneralException;
 }
