@@ -10,7 +10,8 @@ public class ThreadMonitorModule
         extends Module
         implements ThreadMonitor {
         
-    ThreadMonitorImpl m_wrappedMonitor;
+    private ThreadMonitorImpl m_wrappedMonitor;
+    private boolean m_active=false;
     
     public ThreadMonitorModule(Map params, Server server, String role) 
             throws ModuleInitializationException {
@@ -22,6 +23,7 @@ public class ThreadMonitorModule
         String active=getParameter("active");
         String pollInterval=getParameter("pollInterval");
         if (active!=null && (active.toLowerCase().equals("yes") || active.toLowerCase().equals("true"))) {
+            m_active=true;
             if (pollInterval==null) {
                 logConfig("pollInterval unspecified, defaulting to 10,000 milliseconds.");
                 pollInterval="10000";
@@ -39,15 +41,21 @@ public class ThreadMonitorModule
     }
     
     public void shutdownModule() {
-        m_wrappedMonitor.requestStop();
+        if (m_active) {
+            m_wrappedMonitor.requestStop();
+        }
     }
 
     public void run() {
-        m_wrappedMonitor.run();
+        if (m_active) {
+            m_wrappedMonitor.run();
+        }
     }
     
     public void requestStop() {
-        m_wrappedMonitor.requestStop();
+        if (m_active) {
+            m_wrappedMonitor.requestStop();
+        }
     }
     
 }
