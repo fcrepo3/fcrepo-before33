@@ -331,7 +331,7 @@ public class FieldSearchResultSQLImpl
         // for up to maxResults objects, or until the result set is
         // empty, whichever comes first.
         try {
-            while (m_resultSet.next() && resultCount<m_maxResults) {
+            while (resultCount<m_maxResults && m_resultSet.next()) {
                 resultCount++;
                 // add the current object from the resultSet to m_objectFields
                 String pid=m_resultSet.getString("pid");

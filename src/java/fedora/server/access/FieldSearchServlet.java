@@ -349,6 +349,7 @@ public class FieldSearchServlet
                         if (fieldHash.contains("coverage")) html.append("<input type=\"hidden\" name=\"coverage\" value=\"true\">");
                         if (fieldHash.contains("rights")) html.append("<input type=\"hidden\" name=\"rights\" value=\"true\">");
                         html.append("\n<input type=\"hidden\" name=\"sessionToken\" value=\"" + fsr.getToken() + "\">\n");
+                        html.append("\n<input type=\"hidden\" name=\"maxResults\" value=\"" + maxResults + "\">\n");
                         html.append("<input type=\"submit\" value=\"More Results &gt;\"></form>");
                     }
                     html.append("</center>\n");
