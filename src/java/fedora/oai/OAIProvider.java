@@ -163,7 +163,8 @@ public interface OAIProvider {
      * @param identifier The item identifier, or null, meaning "the entire repository"
      */
     public abstract Set getMetadataFormats(String id)
-            throws RepositoryException;
+            throws IDDoesNotExistException, NoMetadataFormatsException, 
+            RepositoryException;
 
     /**
      * Get the maximum number of sets that are returned at a time.
