@@ -8,7 +8,7 @@
 <!-- *********************************************************************************************************-->
 <sch:schema xmlns:sch="http://www.ascc.net/xml/schematron">
 	<!-- FIGURE OUT: how to best deal with validation and namespace prefix declaration-->
-	<sch:ns prefix="foxml" uri="info:fedora/def:foxml/"/>
+	<sch:ns prefix="foxml" uri="info:fedora/fedora-system:def/foxml#"/>
 	<sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
 	<!-- RULES FOR OBJECT INGEST PHASE:  These rules apply to a digital object in its "submission" format for ingest into the repository-->
 	<!-- These rules are to be applied upon initial receipt of the object by the repository, before the repository has done any processing of the input.-->
@@ -30,18 +30,18 @@
 			<sch:assert test="child::*[not(@xsi:schemaLocation)]">Inline XML datastreams (xmlContent) cannot contain schemaLocation attributes.</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that Behavior Mechanism objects have the proper kinds of datastreams (DSINPUTSPEC, METHODMAP, and WSDL).-->
-		<sch:rule context="foxml:property[@NAME='info:fedora/def:dobj:fType' and @VALUE='FedoraBMechObject']">
+		<sch:rule context="foxml:property[@NAME='info:fedora/fedora-system:def/fType' and @VALUE='FedoraBMechObject']">
 			<sch:assert test="../../foxml:datastream[@ID='DSINPUTSPEC']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Input Spec (foxml:datastream with ID="DSINPUTSPEC" must exist).</sch:assert>
 			<sch:assert test="../../foxml:datastream[@ID='METHODMAP']">Behavior Mechanism Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
 			<sch:assert test="../../foxml:datastream[@ID='WSDL']">Behavior Mechanism Objects must have an inline Datastream representing WSDL service bindings (foxml:datastream with ID="WSDL" must exist).</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that Behavior Definition objects have the proper kinds of datastreams (METHODMAP).-->
-		<sch:rule context="foxml:property[@NAME='info:fedora/def:dobj:fType' and @VALUE='FedoraBDefObject']">
+		<sch:rule context="foxml:property[@NAME='info:fedora/fedora-system:def/fType' and @VALUE='FedoraBDefObject']">
 			<sch:assert test="../../foxml:datastream[@ID='METHODMAP']">Behavior Definition Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that the Fedora object type (fType) contains a valid value (FedoraObject, FedoraBDefObject, or FedoraBMechObject).-->
-		<sch:rule context="foxml:property[@NAME='info:fedora/def:dobj:fType']">
-			<sch:assert test="@VALUE = 'FedoraObject' or @VALUE = 'FedoraBDefObject' or @VALUE = 'FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (foxml:property NAME="info:fedora/def:dobj:fType" has an invalid VALUE).</sch:assert>
+		<sch:rule context="foxml:property[@NAME='info:fedora/fedora-system:def/fType']">
+			<sch:assert test="@VALUE = 'FedoraObject' or @VALUE = 'FedoraBDefObject' or @VALUE = 'FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (foxml:property NAME="info:fedora/fedora-system:def/fType" has an invalid VALUE).</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that the Fedora AUDIT datastream is not versioned.-->
 		<sch:rule context="foxml:datastream[@ID='AUDIT']">
@@ -49,12 +49,12 @@
 		</sch:rule>
 		<!-- RULE:  check that non-repeatable object properties do not occur more than once.-->
 		<sch:rule context="foxml:objectProperties">
-			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:fType']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:fType']) = 0">DUPLICATE object property: type (foxml:property NAME='info:fedora/def:dobj:fType')</sch:assert>
-			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:label']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:label']) = 0">DUPLICATE object property: label (foxml:property NAME='info:fedora/def:dobj:label')</sch:assert>
-			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:state']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:state']) = 0">DUPLICATE object property: state (foxml:property NAME='info:fedora/def:dobj:state')</sch:assert>
-			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:cDate']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:cDate']) = 0">DUPLICATE object property: creation date (foxml:property NAME='info:fedora/def:dobj:cDate' )</sch:assert>
-			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:mDate']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:mDate']) = 0">DUPLICATE object property: modification date (foxml:property NAME='info:fedora/def:dobj:mDate' )</sch:assert>
-			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:cModel']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:cModel']) = 0">DUPLICATE object property: content model (foxml:property NAME='info:fedora/def:dobj:cModel')</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/fType']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/fType']) = 0">DUPLICATE object property: type (foxml:property NAME='info:fedora/fedora-system:def/fType')</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/label']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/label']) = 0">DUPLICATE object property: label (foxml:property NAME='info:fedora/fedora-system:def/label')</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/state']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/state']) = 0">DUPLICATE object property: state (foxml:property NAME='info:fedora/fedora-system:def/state')</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/cDate']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/cDate']) = 0">DUPLICATE object property: creation date (foxml:property NAME='info:fedora/fedora-system:def/cDate' )</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/mDate']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/mDate']) = 0">DUPLICATE object property: modification date (foxml:property NAME='info:fedora/fedora-system:def/mDate' )</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/cModel']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/cModel']) = 0">DUPLICATE object property: content model (foxml:property NAME='info:fedora/fedora-system:def/cModel')</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that required attributes are not missing. -->
 		<sch:rule context="foxml:datastream">
@@ -90,8 +90,8 @@
 			<sch:assert test="string-length(@PID) &lt;= 64">Digital Object PID must not exceed length of 64 (foxml:digitalObject PID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="foxml:objectProperties">
-			<sch:assert test="foxml:property[@NAME='info:fedora/def:dobj:cDate']">The system did not assign a creation date to the object! (foxml:property: NAME='info:fedora/def:dobj:cDate' is missing)</sch:assert>
-			<sch:assert test="foxml:property[@NAME='info:fedora/def:dobj:state']">The system did not assign a state to the object!  (foxml:property: NAME='info:fedora/def:dobj:state' is missing)</sch:assert>
+			<sch:assert test="foxml:property[@NAME='info:fedora/fedora-system:def/cDate']">The system did not assign a creation date to the object! (foxml:property: NAME='info:fedora/fedora-system:def/cDate' is missing)</sch:assert>
+			<sch:assert test="foxml:property[@NAME='info:fedora/fedora-system:def/state']">The system did not assign a state to the object!  (foxml:property: NAME='info:fedora/fedora-system:def/state' is missing)</sch:assert>
 		</sch:rule>
 		<sch:rule context="foxml:datastream">
 			<sch:assert test="string(@STATE)">The system did not assign a state to the datastream.  (foxml:datastream: value of STATE is missing)</sch:assert>
