@@ -77,10 +77,16 @@ public class METSInOutTest {
             System.out.println("Done.");
             if (args.length>1) {
                 ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
+                HashMap xmlSchemaMap = new HashMap();
+                // LOOK!  These path values should work if test is run from
+                // the FEDORA HOME directory.  Adjust accordingly for test environment.
+                xmlSchemaMap.put("metslikefedora1", "dist/server/xsd/mets-fedora-ext.xsd");
+				HashMap ruleSchemaMap = new HashMap();
+				ruleSchemaMap.put("metslikefedora1", "dist/server/schematron/metsExtRules1-0.xml");
                 DOValidatorImpl v=new DOValidatorImpl(
-                        null, "dist/server/xsd/mets-fedora-ext.xsd",
+                        null, xmlSchemaMap,
                         "dist/server/schematron/preprocessor.xslt",
-                        "dist/server/schematron/fedoraRulesExt.xml", null, null);
+                        ruleSchemaMap, null, null);
                 if (args[1].equals("1")) {
                     v.validate(newIn, "metslikefedora1", 1, "ingest");
                     System.out.println("Level 1 validation: PASSED!");

@@ -51,7 +51,7 @@ public class METSToFOXMLTest
 	protected DigitalObject obj = null;
 		
 	protected void setUp() {
-		inFile=new File("bmech-image-userinput-mrsid.xml");
+		inFile=new File("TestIngestFiles/demo5withaudits.xml");
 		outFile=new File("OUT-foxml.xml");
 		System.setProperty("fedoraServerHost", "localhost");
 		System.setProperty("fedoraServerPort", "80");

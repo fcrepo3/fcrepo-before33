@@ -2,8 +2,7 @@ package fedora.server.test;
 
 import junit.framework.TestCase;
 
-import fedora.server.validation.DOValidatorSchematron;
-import fedora.server.validation.DOValidatorSchematronResult;
+import fedora.server.validation.DOValidatorXMLSchema;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,7 +10,7 @@ import java.io.IOException;
 
 /**
  *
- * <p><b>Title:</b> ValidateSchematronTest.java</p>
+ * <p><b>Title:</b> ValidateXMLSchemaTest.java</p>
  * <p><b>Description:</b></p>
  *
  * -----------------------------------------------------------------------------
@@ -34,29 +33,27 @@ import java.io.IOException;
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
-public class ValidateSchematronTest
+public class ValidateXMLSchemaTest
 	extends TestCase {
 
 	protected String inFile=null;		
-	protected String inSchematronPPFile=null;
-	protected String inSchematronRulesFile=null;
+	protected String inXMLSchemaFile=null;
 	
 	protected String tempdir=null;
-	protected DOValidatorSchematronResult result = null;
 		
 	protected void setUp() {
 		tempdir="TestValidation";
-		inSchematronPPFile="src/xsl/schematron/preprocessor.xslt";
+		
+		// METS
+		//inFile="TestValidation/bdef-simple-image.xml";
+		//inFile="TestValidation/minMETS.xml";				
+		//inXMLSchemaFile="src/xsd/mets-fedora-ext.xsd";
 		
 		// FOXML
-		//inFile="TestValidation/foxml-reference-example.xml";
-		inFile="TestIngestFiles/foxml-reference-example.xml";
-		//inFile="TestExportFiles/problem.xml";				
-		inSchematronRulesFile="src/xml/schematron/foxmlRules1-0.xml";
-
-		// METS
-		//inFile="TestValidation/bdef-simple-image.xml";			
-		//inSchematronRulesFile="src/xml/schematron/metsExtRules1-0.xml";
+		inFile="TestValidation/foxml-reference-example.xml";
+		//inFile="TestValidation/minFOX4.xml";
+		//inFile="TestValidation/minFOX5.xml";				
+		inXMLSchemaFile="src/xsd/foxml1-0.xsd";
 
 				
 		FileInputStream in=null;
@@ -68,9 +65,9 @@ public class ValidateSchematronTest
 		}
 		
 		try {			
-			DOValidatorSchematron dovs = 
-				new DOValidatorSchematron(inSchematronRulesFile, inSchematronPPFile, "ingest");
-			dovs.validate(in);	
+			DOValidatorXMLSchema dov = 
+				new DOValidatorXMLSchema(inXMLSchemaFile);
+			dov.validate(in);	
 		} catch (Exception e) {
 			System.out.println("Error: (" + e.getClass().getName() + "):" + e.getMessage());
 			e.printStackTrace();

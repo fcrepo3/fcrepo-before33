@@ -51,7 +51,8 @@ public class FOXMLDeserializeTest
 	protected DigitalObject obj = null;
 		
 	protected void setUp() {
-		inFile=new File("foxml-reference-example.xml");
+		inFile=new File("TestIngestFiles/foxml-reference-example.xml");
+		//inFile=new File("TestExportFiles/problem.xml");
 		outFile=new File("OUT-foxml.xml");
 		System.setProperty("fedoraServerHost", "localhost");
 		System.setProperty("fedoraServerPort", "80");
