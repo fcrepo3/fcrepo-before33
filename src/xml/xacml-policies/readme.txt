@@ -35,6 +35,20 @@ it doesn't seem to work under sunxacml.
 
 FEDORA
 
+Whether Fedora uses xacml for authorization decisions is controlled broadly by 
+authorization module parameter "ENFORCE-MODE", coded in the fedora.fcfg file.  Use one
+of three values, with the following meanings: 
+	"enforce-policies" == use xacml to determine whether a request is permitted or denied
+	"permit-all-requests" == don't use xacml; permit every request
+	"deny-all-requests" == don't use xacml; deny every request
+The first of these is the usual setting.  The second can facilitate testing code independent 
+of security.  The third could be used to quickly shut down access to the server, but requires
+a server restart to effect this.
+
+Tomcat container security is, of course, still a first barrier to authentication/authorization;
+i.e., Fedora's web.xml specifies access protection earlier than xacml.  Tomcat container security 
+is in place regardless of the setting for parameter ENFORCE-MODE.
+
 For now, the Fedora-specific identifiers to use in policies can be found 
 in fedora.server.security.Authorization.java 
 or derived from fedora.common.Constants and the classes under fedora.common.rdf
@@ -44,6 +58,7 @@ to-do:  provide this list
 To activate policies, 
 copy them from example-repository-policies into repository-policies
 or from example-object-policies into object-policies, renaming appropriately.
+There are example repository policies to duplicate the protection hardcoded into Fedora 2.0
 
 An object policy named demo-5.xml in that directory will be included in 
 evaluating authz for Fedora object demo:5  Or put the object policy in 
