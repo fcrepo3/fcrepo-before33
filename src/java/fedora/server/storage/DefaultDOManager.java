@@ -486,9 +486,8 @@ public class DefaultDOManager
                   String dsID=(String) dsIDIter.next();
                   Datastream dStream=(Datastream) obj.datastreams(dsID).get(0);
                   String controlGroupType = dStream.DSControlGrp;
-                  if ( controlGroupType.equalsIgnoreCase("M") &&
-                       (dStream.DSLocation.indexOf("//")!=-1) )
-                       // if it's managed, and a url, means we need to grab content
+                  if ( controlGroupType.equalsIgnoreCase("M") )
+                       // if it's managed, we might need to grab content
                   {
                     List allVersions = obj.datastreams(dsID);
                     Iterator dsIter = allVersions.iterator();
@@ -498,57 +497,60 @@ public class DefaultDOManager
                     {
                       Datastream dmc =
                           (Datastream) dsIter.next();
-                      MIMETypedStream mimeTypedStream = m_contentManager.
-                          getExternalContent(dmc.DSLocation.toString());
-                      logInfo("Retrieving ManagedContent datastream from remote "
-                          + "location: " + dmc.DSLocation);
-                      // RLW: change required by conversion fom byte[] to InputStream
-                      //ByteArrayInputStream bais =
-                      //    new ByteArrayInputStream(mimeTypedStream.stream);
-                      // RLW: change required by conversion fom byte[] to InputStream
-                      String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
-                                + dmc.DSVersionID;
-                      // RLW: change required by conversion fom byte[] to InputStream
-                      if (obj.getState().equals("I")) {
-                          getDatastreamStore().add(id, mimeTypedStream.getStream());
-                      } else {
-                          // object already existed...so we may need to call 
-                          // replace if "add" indicates that it was already there
-                          try {
-                              getDatastreamStore().add(id, mimeTypedStream.getStream());
-                          } catch (ObjectAlreadyInLowlevelStorageException oailse) {
-                              getDatastreamStore().replace(id, mimeTypedStream.getStream());
-                          }
+                      if (dmc.DSLocation.indexOf("//")!=-1) {
+                        // if it's a url, we need to grab content for this version
+                        MIMETypedStream mimeTypedStream = m_contentManager.
+                            getExternalContent(dmc.DSLocation.toString());
+                        logInfo("Retrieving ManagedContent datastream from remote "
+                            + "location: " + dmc.DSLocation);
+                        // RLW: change required by conversion fom byte[] to InputStream
+                        //ByteArrayInputStream bais =
+                        //    new ByteArrayInputStream(mimeTypedStream.stream);
+                        // RLW: change required by conversion fom byte[] to InputStream
+                        String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
+                                  + dmc.DSVersionID;
+                        // RLW: change required by conversion fom byte[] to InputStream
+                        if (obj.getState().equals("I")) {
+                            getDatastreamStore().add(id, mimeTypedStream.getStream());
+                        } else {
+                            // object already existed...so we may need to call 
+                            // replace if "add" indicates that it was already there
+                            try {
+                                getDatastreamStore().add(id, mimeTypedStream.getStream());
+                            } catch (ObjectAlreadyInLowlevelStorageException oailse) {
+                                getDatastreamStore().replace(id, mimeTypedStream.getStream());
+                            }
+                        }
+                        //getDatastreamStore().add(id, bais);
+                        // RLW: change required by conversion fom byte[] to InputStream
+  
+                        // Make new audit record.
+  
+                        /*
+                        // SDP: commented out since audit record id is not yet
+                        // auto-incremented and we get XML validation error when
+                        // there are multiple managed content datastreams (we get
+                        // duplicate ID elements in the XML)
+                        a = new AuditRecord();
+                        int numAuditRecs = obj.getAuditRecords().size() + 1;
+                        a.id = "REC-" + numAuditRecs;
+                        a.processType = "API-M";
+                        a.action = "Added a ManagedContent datastream for the first "
+                            + "time. Copied remote content stored at \""
+                            + dmc.DSLocation + "\" and stored it in the Fedora "
+                            + "permanentStore under the id: " + id;
+                        a.responsibility = getUserId(context);
+                        a.date = new Date();
+                        a.justification = logMessage;
+                        obj.getAuditRecords().add(a);
+                        */
+  
+                        // Reset dsLocation in object to new internal location.
+                        dmc.DSLocation = id;
+                        logInfo("Replacing ManagedContent datastream with "
+                            + "internal id: " + id);
+                        //bais = null;
                       }
-                      //getDatastreamStore().add(id, bais);
-                      // RLW: change required by conversion fom byte[] to InputStream
-
-                      // Make new audit record.
-
-                      /*
-                      // SDP: commented out since audit record id is not yet
-                      // auto-incremented and we get XML validation error when
-                      // there are multiple managed content datastreams (we get
-                      // duplicate ID elements in the XML)
-                      a = new AuditRecord();
-                      int numAuditRecs = obj.getAuditRecords().size() + 1;
-                      a.id = "REC-" + numAuditRecs;
-                      a.processType = "API-M";
-                      a.action = "Added a ManagedContent datastream for the first "
-                          + "time. Copied remote content stored at \""
-                          + dmc.DSLocation + "\" and stored it in the Fedora "
-                          + "permanentStore under the id: " + id;
-                      a.responsibility = getUserId(context);
-                      a.date = new Date();
-                      a.justification = logMessage;
-                      obj.getAuditRecords().add(a);
-                      */
-
-                      // Reset dsLocation in object to new internal location.
-                      dmc.DSLocation = id;
-                      logInfo("Replacing ManagedContent datastream with "
-                          + "internal id: " + id);
-                      //bais = null;
                     }
                   }
                 }
