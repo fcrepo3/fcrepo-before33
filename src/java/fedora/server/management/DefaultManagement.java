@@ -195,7 +195,8 @@ public class DefaultManagement
                 }                
                 w.setState(state);
             }
-            if (label!=null && !label.equals(""))
+            //if (label!=null && !label.equals(""))
+			if (label!=null)
                 w.setLabel(label);
             w.commit(logMessage);
             return w.getLastModDate();
@@ -504,140 +505,108 @@ public class DefaultManagement
             m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
+			Date nowUTC; // variable for ds modified date
 
-            // If "force" is false and the mime type changed, validate the
+			// some forbidden scenarios...
+			if (orig.DSControlGrp.equals("X")) {
+				throw new GeneralException("Inline XML datastreams must be modified by value, not by reference.");
+			}
+			if (orig.DSState.equals("D")) {
+				throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
+			}
+			
+            // A NULL INPUT PARM MEANS NO CHANGE TO DS ATTRIBUTE...
+            // if input parms are null, the ds attribute should not be changed,
+            // so set the parm values to the existing values in the datastream.
+			if (dsLabel == null) dsLabel = orig.DSLabel;
+			if (mimeType == null) mimeType = orig.DSMIME;
+			if (formatURI == null) formatURI = orig.DSFormatURI;
+			if (altIDs == null) altIDs = orig.DatastreamAltIDs;
+			
+			// In cases where an empty attribute value is not allowed, then
+			// NULL or EMPTY PARM means no change to ds attribute...
+			if (dsLocation==null || dsLocation.equals("")) {
+				if (orig.DSControlGrp.equals("M")) {
+					// if managed content location is unspecified, 
+					// cause a copy of the prior content to be made at commit-time
+					dsLocation="copy://" + orig.DSLocation;
+				} else {
+					dsLocation=orig.DSLocation;
+				}
+			}
+			if (dsState==null || dsState.equals("")) {
+			  // If state unspecified leave state unchanged
+			  dsState = orig.DSState;
+			}
+			
+			// just as a double check, make sure we have a valid ds state
+			if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
+				throw new InvalidStateException("The datastream state of \"" + dsState
+						+ "\" is invalid. The allowed values for state are: "
+						+ " A (active), D (deleted), and I (inactive).");
+			}
+            
+            // if "force" is false and the mime type changed, validate the
             // original datastream with respect to any disseminators it is
             // involved in, and keep a record of that information for later
             // (so we can determine whether the mime type change would cause
             // data contract invalidation)
             Map oldValidationReports = null;
-            if (mimeType == null) mimeType = orig.DSMIME;
             if ( !mimeType.equals(orig.DSMIME) && !force) {
                 oldValidationReports = getAllBindingMapValidationReports(
                                            context, w, datastreamId);
             }
 
-            if (orig.DSState.equals("D")) {
-                throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
-            }
-            Date nowUTC;  // variable for ds modified date
-            if (orig.DSControlGrp.equals("M")) {
-                    DatastreamManagedContent newds=new DatastreamManagedContent();
-                    // FIXME:  should we consider null input values an
-                    // indication that a ds attribute is NOT changed
-                    // and take previous value?
-                    /*
-					if (altIDs == null) altIDs = orig.DatastreamAltIDs;
-					if (formatURI == null) formatURI = orig.DSFormatURI;
-					*/
-					// update ds attributes that are common to all versions...
-                    newds.DatastreamID=orig.DatastreamID;
-					newds.DSVersionable=versionable;
-					newds.DSControlGrp=orig.DSControlGrp;
-                    newds.DSInfoType=orig.DSInfoType;
-                    if(dsState==null || dsState.equals("")) {
-                      // If reference unspecified leave state unchanged
-                      newds.DSState = orig.DSState;
-                    } else {
-                      // Check that supplied value for state is one of the allowable values
-                      if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
-                          throw new InvalidStateException("The datastream state of \"" + dsState
-                                  + "\" is invalid. The allowed values for state are: "
-                                  + " A (active), D (deleted), and I (inactive).");
-                      }                           
-                      newds.DSState = dsState;
-                    } 
-					// update ds version level attributes, and
-					// make sure ds gets a new version id
-					newds.DSVersionID=w.newDatastreamID(datastreamId);
-					newds.DSLabel=dsLabel;
-					newds.DSMIME = mimeType;
-					newds.DSFormatURI=formatURI;
-					newds.DatastreamAltIDs = altIDs;
-					nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-					newds.DSCreateDT=nowUTC;
-					//newds.DSSize will be computed later                    
-                    if (dsLocation==null || dsLocation.equals("")) {
-                        // if location unspecified, cause a copy of the
-                        // prior content to be made at commit-time
-                        newds.DSLocation="copy://" + orig.DSLocation;
-                    } else {
-                        newds.DSLocation=dsLocation;
-                    }
-                    // just add the datastream
-                    w.addDatastream(newds);
-                    // if state was changed, set new state across all versions
-                    if (!orig.DSState.equals(newds.DSState)) {
-                        w.setDatastreamState(datastreamId, newds.DSState); }
-                    // set new versionable across all versions
-                    w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
-                    // add the audit record
-                    fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-                    audit.id=w.newAuditRecordID();
-                    audit.processType="Fedora API-M";
-                    audit.action="modifyDatastreamByReference";
-                    audit.componentID=newds.DatastreamID;
-                    audit.responsibility=context.get("userId");
-                    audit.date=nowUTC;
-                    audit.justification=logMessage;
-                    w.getAuditRecords().add(audit);
-            } else {
-                // Deal with other kinds, except xml (that must be passed in by value).
-                if (orig.DSControlGrp.equals("X")) {
-                    throw new GeneralException("Inline XML datastreams must be modified by value, not by reference.");
-                }
-                DatastreamReferencedContent newds=new DatastreamReferencedContent();
-				// update ds attributes that are common to all versions...
-                newds.DatastreamID=orig.DatastreamID;
-                newds.DSVersionable=versionable;
-                newds.DSControlGrp=orig.DSControlGrp;
-                newds.DSInfoType=orig.DSInfoType;
-                if(dsState==null || dsState.equals("")) {
-                  // If reference unspecified leave state unchanged
-                  newds.DSState = orig.DSState;
-                } else {
-                  // Check that supplied value for state is one of the allowable values
-                  if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
-                      throw new InvalidStateException("The datastream state of \"" + dsState
-                              + "\" is invalid. The allowed values for state are: "
-                              + " A (active), D (deleted), and I (inactive).");
-                  }                           
-                  newds.DSState = dsState;
-                } 
-				// update ds version level attributes, and
-				// make sure ds gets a new version id
-				newds.DSVersionID=w.newDatastreamID(datastreamId);
-				newds.DSLabel=dsLabel;
-				newds.DatastreamAltIDs=altIDs;
-				newds.DSMIME=mimeType;
-				newds.DSFormatURI=formatURI;
-				nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-				newds.DSCreateDT=nowUTC;               
-                if (dsLocation==null || dsLocation.equals("")) {
-                    // if location unspecified for referenced or external,
-                    // just use the old location
-                    newds.DSLocation=orig.DSLocation;
-                } else {
-                    newds.DSLocation=dsLocation;
-                }
-                // just add the datastream
-                w.addDatastream(newds);
-                // if state was changed, set new state
-                if (!orig.DSState.equals(newds.DSState)) {
-                        w.setDatastreamState(datastreamId, newds.DSState); }
-				// set new versionable across all versions
+			// instantiate the right class of datastream
+			// (inline xml "X" datastreams have already been rejected)
+			Datastream newds;
+			if (orig.DSControlGrp.equals("M")) {
+				newds=new DatastreamManagedContent();
+			} else {
+				newds=new DatastreamReferencedContent();
+			}
+			// update ds attributes that are common to all versions...
+			// first, those that cannot be changed by client...
+			newds.DatastreamID=orig.DatastreamID;
+			newds.DSControlGrp=orig.DSControlGrp;
+			newds.DSInfoType=orig.DSInfoType;
+			// next, those that can be changed by client...
+			newds.DSVersionable=versionable;
+			newds.DSState = dsState;
+                     
+			// update ds version-level attributes, and
+			// make sure ds gets a new version id
+			newds.DSVersionID=w.newDatastreamID(datastreamId);
+			newds.DSLabel=dsLabel;
+			newds.DSMIME = mimeType;
+			newds.DSFormatURI=formatURI;
+			newds.DatastreamAltIDs = altIDs;
+			nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+			newds.DSCreateDT=nowUTC;
+			//newds.DSSize will be computed later
+			newds.DSLocation=dsLocation;
+			
+			// next, add the datastream via the object writer
+			w.addDatastream(newds);
+			// if state was changed, set new state across all versions
+			if (!orig.DSState.equals(newds.DSState)) {
+				w.setDatastreamState(datastreamId, newds.DSState); 
+			}
+			// if versionable was changed, set new versionable across all versions
+			if (orig.DSVersionable != newds.DSVersionable) {
 				w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
-				// add the audit record
-                fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-                audit.id=w.newAuditRecordID();
-                audit.processType="Fedora API-M";
-                audit.action="modifyDatastreamByReference";
-                audit.componentID=newds.DatastreamID;
-                audit.responsibility=context.get("userId");
-                audit.date=nowUTC;
-                audit.justification=logMessage;
-                w.getAuditRecords().add(audit);
-            }
+			}
+			// add the audit record
+			fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+			audit.id=w.newAuditRecordID();
+			audit.processType="Fedora API-M";
+			audit.action="modifyDatastreamByReference";
+			audit.componentID=newds.DatastreamID;
+			audit.responsibility=context.get("userId");
+			audit.date=nowUTC;
+			audit.justification=logMessage;
+			w.getAuditRecords().add(audit);						
+            
             // if all went ok, check if we need to validate, then commit.
             if (oldValidationReports != null) { // mime changed and force=false
                 rejectMimeChangeIfCausedInvalidation(
@@ -669,6 +638,7 @@ public class DefaultManagement
                                         String logMessage,
                                         boolean force)
             throws ServerException {
+            	
 		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
 			throw new GeneralException("Modification of the system-controlled AUDIT"
 				+ " datastream is not permitted.");
@@ -680,38 +650,61 @@ public class DefaultManagement
             m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
+            
+            // some forbidden scenarios...
+			if (orig.DSState.equals("D")) {
+				throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
+			}
+			if (!orig.DSControlGrp.equals("X")) {
+				throw new GeneralException("Only content of inline XML datastreams may"
+					+ " be modified by value.\n"
+					+ "Use modifyDatastreamByReference instead.");
+			}
+			if (orig.DatastreamID.equals("METHODMAP")
+					|| orig.DatastreamID.equals("DSINPUTSPEC")
+					|| orig.DatastreamID.equals("WSDL")) {
+				throw new GeneralException("METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified.");
+			}
 
+			// A NULL INPUT PARM MEANS NO CHANGE TO DS ATTRIBUTE...
+			// if input parms are null, the ds attribute should not be changed,
+			// so set the parm values to the existing values in the datastream.
+			if (dsLabel == null) dsLabel = orig.DSLabel;
+			if (mimeType == null) mimeType = orig.DSMIME;
+			if (formatURI == null) formatURI = orig.DSFormatURI;
+			if (altIDs == null) altIDs = orig.DatastreamAltIDs;
+			
+			// In cases where an empty attribute value is not allowed, then
+			// NULL or EMPTY PARM means no change to ds attribute...
+			if (dsState==null || dsState.equals("")) {
+			  // If state unspecified leave state unchanged
+			  dsState = orig.DSState;
+			}
+			
+			// just as a double check, make sure we have a valid ds state
+			if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
+				throw new InvalidStateException("The datastream state of \"" + dsState
+						+ "\" is invalid. The allowed values for state are: "
+						+ " A (active), D (deleted), and I (inactive).");
+			}
+            
             // If "force" is false and the mime type changed, validate the
             // original datastream with respect to any disseminators it is
             // involved in, and keep a record of that information for later
             // (so we can determine whether the mime type change would cause
             // data contract invalidation)
             Map oldValidationReports = null;
-            if (mimeType == null) mimeType = orig.DSMIME;
             if ( !mimeType.equals(orig.DSMIME) && !force) {
                 oldValidationReports = getAllBindingMapValidationReports(
                                            context, w, datastreamId);
             }
 
-            if (orig.DSState.equals("D")) {
-				throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
-            }
-            if (!orig.DSControlGrp.equals("X")) {
-                throw new GeneralException("Only content of inline XML datastreams may"
-                	+ " be modified by value.\n"
-                	+ "Use modifyDatastreamByReference instead.");
-            }
-            if (orig.DatastreamID.equals("METHODMAP")
-                    || orig.DatastreamID.equals("DSINPUTSPEC")
-                    || orig.DatastreamID.equals("WSDL")) {
-                throw new GeneralException("METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified.");
-            }
             DatastreamXMLMetadata newds=new DatastreamXMLMetadata();
             newds.DSMDClass=((DatastreamXMLMetadata) orig).DSMDClass;
             if (dsContent==null) {
-                // If the passed-in dsContent is null, that means "dont change
-                // the content".  Accordingly, here we just make a copy of
-                // the old content.
+                // If the dsContent input stream parm is null, 
+                // that means "do not change the content".  
+                // Accordingly, here we just make a copy of the old content.
                 newds.xmlContent = ((DatastreamXMLMetadata) orig).xmlContent;
             } else {
                 // If it's not null, use it
@@ -722,24 +715,16 @@ public class DefaultManagement
 						((DatastreamXMLMetadata) newds).xmlContent));
 				}
             }
-			//if (altIDs == null) altIDs = orig.DatastreamAltIDs;
-			//if (formatURI == null) formatURI = orig.DSFormatURI;
+
+			// update ds attributes that are common to all versions...
+			// first, those that cannot be changed by client...
             newds.DatastreamID=orig.DatastreamID;
-			newds.DSVersionable=versionable;
             newds.DSControlGrp=orig.DSControlGrp;
             newds.DSInfoType=orig.DSInfoType;
-            if(dsState==null || dsState.equals("")) {
-              // If reference unspecified leave state unchanged
-              newds.DSState = orig.DSState;
-            } else {
-              // Check that supplied value for state is one of the allowable values
-              if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
-                  throw new InvalidStateException("The datastream state of \"" + dsState
-                          + "\" is invalid. The allowed values for state are: "
-                          + " A (active), D (deleted), and I (inactive).");
-              }                           
-              newds.DSState = dsState;
-            }
+			// next, those that can be changed by client...
+			newds.DSVersionable=versionable;
+			newds.DSState = dsState;
+            
 			// update ds version level attributes, and
 			// make sure ds gets a new version id
 			newds.DSVersionID=w.newDatastreamID(datastreamId);
@@ -749,13 +734,18 @@ public class DefaultManagement
 			newds.DSFormatURI=formatURI;
 			Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
 			newds.DSCreateDT=nowUTC;
-            // just add the datastream
+			
+            // next, add the datastream via the object writer
             w.addDatastream(newds);
             // if state was changed, set new state
             if (!orig.DSState.equals(newds.DSState)) {
-            	w.setDatastreamState(datastreamId, newds.DSState); }
-            // set new versionable across all versions
-            w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
+            	w.setDatastreamState(datastreamId, newds.DSState); 
+            }
+			// if versionable was changed, set new versionable across all versions
+			if (orig.DSVersionable != newds.DSVersionable) {
+				w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
+			}
+			
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -766,6 +756,7 @@ public class DefaultManagement
             audit.date=nowUTC;
             audit.justification=logMessage;
             w.getAuditRecords().add(audit);
+            
             // if all went ok, check if we need to validate, then commit.
             if (oldValidationReports != null) { // mime changed and force=false
                 rejectMimeChangeIfCausedInvalidation(
@@ -803,6 +794,7 @@ public class DefaultManagement
             m_ipRestriction.enforce(context);
             w = m_manager.getWriter(context, pid);
             fedora.server.storage.types.Disseminator orig=w.GetDisseminator(disseminatorId, null);
+            
             String oldValidationReport = null;
             if (!force) {
                 oldValidationReport = getBindingMapValidationReport(context,
@@ -813,11 +805,19 @@ public class DefaultManagement
                                                  // there a reason "w" isn't 
                                                  // used for the call below?
             Date[] d=r.getDisseminatorVersions(disseminatorId);
-            // copy the original disseminator, replacing any modified fiELDS
+
             Disseminator newdiss=new Disseminator();
+            // use original diss values for attributes that can't be changed by client
             newdiss.dissID=orig.dissID;
-            // make sure disseminator has a different id
+			newdiss.bDefID=orig.bDefID;
+			newdiss.parentPID=orig.parentPID;
+			
+            // make sure disseminator has a new version id
             newdiss.dissVersionID=w.newDisseminatorID(disseminatorId);
+			// make sure disseminator has a new version date
+			Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+			newdiss.dissCreateDT=nowUTC;
+           
             // for testing; null indicates a new (uninitialized) instance
             // of dsBindingMap was passed in which is what you get if
             // you pass null in for dsBindingMap using MangementConsole
@@ -829,32 +829,38 @@ public class DefaultManagement
             // make sure dsBindMapID has a different id
             newdiss.dsBindMapID=w.newDatastreamBindingMapID();
             newdiss.dsBindMap.dsBindMapID=w.newDatastreamBindingMapID();
-            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-            newdiss.dissCreateDT=nowUTC;
-            // changing bDefID and ParentPid not permitted; use original values
-            newdiss.bDefID=orig.bDefID;
-            newdiss.parentPID=orig.parentPID;
-            // set any fields that were specified; null/empty indicates
-            // leave original value unchanged
-            if (dissLabel==null || dissLabel.equals("")) {
+
+            
+            // NULL INPUT PARMS MEANS NO CHANGE in these cases:
+            // set any diss attributes whose input parms value
+            // is NULL to the original attribute value on the disseminator
+			if (dissLabel==null) {
+            //if (dissLabel==null || dissLabel.equals("")) {
               newdiss.dissLabel=orig.dissLabel;
             } else {
               newdiss.dissLabel=dissLabel;
             }
-            if (bDefLabel==null || bDefLabel.equals("")) {
+            //if (bDefLabel==null || bDefLabel.equals("")) {
+			if (bDefLabel==null) {
               newdiss.bDefLabel=orig.bDefLabel;
             } else {
               newdiss.bDefLabel=bDefLabel;
             }
+			//if (bMechLabel==null || bMechLabel.equals("")) {
+			if (bMechLabel==null) {
+			  newdiss.bMechLabel=orig.bMechLabel;
+			} else {
+			  newdiss.bMechLabel=bMechLabel;
+			}
+            
+            // NULL OR "" INPUT PARM MEANS NO CHANGE:
+            // for diss attributes whose values MUST NOT be empty,
+            // either NULL or "" on the input parm indicates no change 
+            // (keep original value)
             if (bMechPid==null || bMechPid.equals("")) {
               newdiss.bMechID=orig.bMechID;
             } else {
               newdiss.bMechID=bMechPid;
-            }
-            if (bMechLabel==null || bMechLabel.equals("")) {
-              newdiss.bMechLabel=orig.bMechLabel;
-            } else {
-              newdiss.bMechLabel=bMechLabel;
             }
             if (dissState==null || dissState.equals("")) {
               // If reference unspecified leave state unchanged
@@ -868,6 +874,7 @@ public class DefaultManagement
               }	        	        
               newdiss.dissState=dissState;
             }
+            
             // just add the disseminator
             w.addDisseminator(newdiss);
             if (!orig.dissState.equals(newdiss.dissState)) {
