@@ -15,6 +15,9 @@ public abstract class InputPanelFactory {
         if (cl.getName().equals("java.lang.Boolean")) {
             return new BooleanInputPanel(false);
         }
+        if (cl.getName().equals("java.util.Calendar")) {
+          return new DateTimeInputPanel();
+        }
         if (cl.getName().startsWith("[L")) {
             try {
                 return new ArrayInputPanel(Class.forName(
