@@ -19,8 +19,8 @@ class Configuration {
 	private final String registryClass;
 
 	private final String objectRegistryTableName = "objectpaths";
-	private final String datastreamRegistryTableName = "temppaths";
-	private final String tempRegistryTableName = "datastreampaths";
+	private final String datastreamRegistryTableName = "datastreampaths";
+	private final String tempRegistryTableName = "temppaths";
 	
 	private final String fileSystemClass;
 	
