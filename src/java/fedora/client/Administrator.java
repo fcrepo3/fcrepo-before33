@@ -32,6 +32,8 @@ import edu.cornell.dlrg.swing.jhelp.SimpleContentViewerUI;
 import edu.cornell.dlrg.swing.mdi.MDIDesktopPane;
 import edu.cornell.dlrg.swing.mdi.WindowMenu;
 
+import fedora.client.console.management.ManagementConsole;
+
 public class Administrator extends JFrame {
 
     private MDIDesktopPane m_desktop;
@@ -55,9 +57,9 @@ public class Administrator extends JFrame {
         m_aboutText=new JLabel("<html>Copyright 2002 University of "
                 + "Virginia and Cornell University.<p>This software was "
                 + "made possible by a grant from the<p>Andrew W. Mellon "
-                + "Foundation.<p><p>Version: 0.9a<p>Release Date: "
+                + "Foundation.<p><p>Version: N/A<p>Release Date: "
                 + "Unreleased.<p><p>Note: This is a pre-release version "
-                + "of Fedora.<P>See http://fedora.comm.nsdlib.org/ for "
+                + "of Fedora.<P>See http://www.fedora.info/ for "
                 + "more information.");
         m_aboutText.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JPanel splashPicAndText=new JPanel();
@@ -178,10 +180,21 @@ public class Administrator extends JFrame {
         viewMenu.add(viewTooltips);
         menuBar.add(viewMenu);
         
+        JMenu toolsMenu=new JMenu("Tools");
+        toolsMenu.setMnemonic(KeyEvent.VK_T);
+        JMenuItem toolsManagement=new JMenuItem("Management Console",KeyEvent.VK_M);
+        toolsManagement.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createManagementConsole();
+            }
+        });
+        toolsMenu.add(toolsManagement);
+        menuBar.add(toolsMenu);
+        
+        
         WindowMenu windowMenu=new WindowMenu(m_desktop, "Window");
         windowMenu.setMnemonic(KeyEvent.VK_W);
         menuBar.add(windowMenu);
-        
        
         // [H]elp
         JMenu helpMenu=new JMenu("Help");
@@ -263,6 +276,15 @@ public class Administrator extends JFrame {
 
     protected void createFrame() {
         DigitalObjectEditor frame = new DigitalObjectEditor(new DigitalObject(), m_desktop);
+        frame.setVisible(true);
+        m_desktop.add(frame);
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {}
+    }
+    
+    protected void createManagementConsole() {
+        ManagementConsole frame=new ManagementConsole(this);
         frame.setVisible(true);
         m_desktop.add(frame);
         try {
