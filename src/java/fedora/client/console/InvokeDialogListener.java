@@ -46,7 +46,7 @@ public class InvokeDialogListener
 
     public void actionPerformed(ActionEvent event) {
         m_dialog.hide();
-        if (event.getActionCommand().equals("Ok")) {
+        if (event.getActionCommand().equals("OK")) {
             try {
                 MethodInvokerThread th=new MethodInvokerThread(m_invoker,
                         m_invoker.getClass().getMethod("invoke", new Class[0]),

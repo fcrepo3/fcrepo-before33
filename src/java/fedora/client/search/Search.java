@@ -418,7 +418,7 @@ public class Search
 
                 // SOUTH: southPanel(cancelButton, okButton)
 
-                    JButton okButton=new JButton("Ok");
+                    JButton okButton=new JButton("OK");
                     okButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             updateSelectedFields();
@@ -575,7 +575,7 @@ public class Search
 
                 // SOUTH: southPanel(cancelButton, okButton)
 
-                    JButton okButton=new JButton("Ok");
+                    JButton okButton=new JButton("OK");
                     okButton.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             updateModelAndNotify();

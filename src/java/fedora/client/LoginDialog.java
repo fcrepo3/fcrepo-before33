@@ -123,9 +123,9 @@ public class LoginDialog
             }
         });
         if (Administrator.APIA==null) {
-            cancelButton.setLabel("Exit"); // if haven't logged in yet
+            cancelButton.setText("Exit"); // if haven't logged in yet
         } else {
-            cancelButton.setLabel("Cancel");
+            cancelButton.setText("Cancel");
         }
         JPanel buttonPane=new JPanel();
         buttonPane.add(loginButton);

@@ -65,7 +65,7 @@ public class ConsoleSendButtonListener
         panel.add(invoker, BorderLayout.CENTER);
         JPanel okCancelPanel=new JPanel();
         okCancelPanel.setLayout(new BorderLayout());
-        JButton okButton=new JButton("Ok");
+        JButton okButton=new JButton("OK");
         InvokeDialogListener listener=new InvokeDialogListener(jd, invoker);
         okButton.addActionListener(listener);
         JButton cancelButton=new JButton("Cancel");

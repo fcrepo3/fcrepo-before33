@@ -171,13 +171,13 @@ public class SourceRepoDialog
                 }
             }
         });
-        okButton.setText("Ok");
+        okButton.setText("OK");
         JButton cancelButton=new JButton(new AbstractAction() {
             public void actionPerformed(ActionEvent evt) {
                 dispose();
             }
         });
-        cancelButton.setLabel("Cancel");
+        cancelButton.setText("Cancel");
         JPanel buttonPane=new JPanel();
         buttonPane.add(okButton);
         buttonPane.add(cancelButton);
