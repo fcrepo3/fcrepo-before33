@@ -155,7 +155,21 @@
 			<element name="MIMEType" type="string"/>
 			<element name="createDate" type="dateTime"/>
 			<element name="size" type="long"/>
-			<element name="infoType" type="string"/>
+			<element name="infoType" type="string">
+               <annotation>
+                   <documentation>if inline xml, any mets-defined mdtype or anything else.  else unspecified.</documentation>
+               </annotation>
+           </element>
+			<element name="class" type="string">
+               <annotation>
+                   <documentation>if inline xml, digiprov, rights, technical, source, or descriptive.  else unspecified.</documentation>
+               </annotation>
+           </element>
+			<element name="role" type="string">
+               <annotation>
+                   <documentation>see fedora-development archives, oct 11 2002</documentation>
+               </annotation>
+           </element>
 			<element name="state" type="string"/>
 			<element name="location" type="string"/>
 			<element name="contentStream" type="base64Binary"/>
