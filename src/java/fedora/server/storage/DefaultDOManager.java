@@ -863,11 +863,8 @@ public class DefaultDOManager
                 registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context), obj.getLabel(), obj.getContentModelId(), obj.getCreateDate(), obj.getLastModDate());
                 return w;
             } catch (ServerException se) {
-                // remove from permanent and temp store if anything failed
+                // remove from temp store if anything failed
                 if (permPid!=null) {
-                    if (inPermanentStore) {
-                        getObjectStore().remove(permPid);
-                    }
                     if (inTempStore) {
                         getTempStore().remove(permPid);
                     }
