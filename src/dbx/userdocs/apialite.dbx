@@ -51,6 +51,9 @@
 			<listitem>
 				<para>resumeFindObjects  (search) -  gets the next set of items ("hits") in a search result set.  Used when a prior findObjects request specified that the result set should be returned with a maximum number of hits at a time.</para>
 			</listitem>
+			<listitem>
+				<para>getObjectHistory - gets the change history of the specified object. The change history consists of a list of timestamps that inidcate when components of the object were created or modified. The timestamps can be used to disseminate the object as it appeared at a specific point in time.</para>
+			</listitem>			
 		</itemizedlist>
 		<para>For more information on the method definitions, refer to the API descriptions 
   located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink>
@@ -102,6 +105,7 @@ where HH is 24-hour clock.</para>
 				</listitem>
 			</itemizedlist>
 		</blockquote>
+		<!-- *************************************** -->		
 		<variablelist>
 			<title>getObjectProfile syntax:</title>
 			<varlistentry>
@@ -140,6 +144,7 @@ where HH is 24-hour clock.</para>
 				</listitem>
 			</itemizedlist>
 		</blockquote>
+		<!-- *************************************** -->		
 		<variablelist>
 			<title>describeRepository syntax:</title>
 			<varlistentry>
@@ -348,6 +353,40 @@ where HH is 24-hour clock.</para>
 		</blockquote>
 		<!-- *************************************** -->
 		<variablelist>
+			<title>getObjectHistory syntax:</title>
+			<varlistentry>
+				<term>http://hostname:port/fedora/getObjectHistory/PID<emphasis role="bold">[?xml=BOOLEAN]</emphasis>
+				</term>
+				<listitem>
+					<para>This syntax requests the change history for the specified digital object. The change history provides a list of timestamps that indicate when components (e.g., datastreams, disseminators, etc.) in the digital object were created or modified. These timestamps can be used in a dissemination request to view the object as it existed at a specific point in time. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of &quot;false&quot;, a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object history. If the value specified is &quot;true&quot;, then a MIME-typed stream consisting of XML is returned.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<blockquote>
+			<itemizedlist>
+				<listitem>
+					<para>hostname - required hostname of the Fedora server. </para>
+				</listitem>
+				<listitem>
+					<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+				</listitem>
+				<listitem>
+					<para>fedora - a required parameter specifying the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>getObjectHistory - a required parameter specifying the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>PID - required persistent identifier of the digital object.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;true&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;false&quot; indicates format is to be text/html.</para>
+				</listitem>
+			</itemizedlist>
+		</blockquote>
+		<!-- *************************************** -->		
+		<variablelist>
 			<title>Examples</title>
 			<varlistentry>
 				<term>Get the Dissemination for a data object with a PID of demo:5 and associated behavior definition object with a PID of demo:1 and methodName of getThumbnail</term>
@@ -391,6 +430,18 @@ where HH is 24-hour clock.</para>
 					<para>http://localhost:8080/fedora/search?query=pid%7E*1&amp;maxResults=50&amp;xml=true&amp;pid=true&amp;title=true</para>
 				</listitem>
 			</varlistentry>
+			<varlistentry>
+				<term>Get the object history of demo object demo:5 and display the results as html:  </term>
+				<listitem>
+					<para>http://localhost:8080/fedora/getObjectHistory/demo:5</para>
+				</listitem>
+			</varlistentry>			
+			<varlistentry>
+				<term>Get the object history of demo object demo:5 and display the results as xml:  </term>
+				<listitem>
+					<para>http://localhost:8080/fedora/getObjectHistory/demo:5?xml=true</para>
+				</listitem>
+			</varlistentry>						
 		</variablelist>
 	</sect1>
 </article>

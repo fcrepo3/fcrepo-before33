@@ -66,6 +66,9 @@
 					<para>ResumeFindObjects - gets the next list of results from a truncated
                 findObjects response.</para>
 				</listitem>
+				<listitem>
+					<para>GetObjectHistory - gets the change history of an object consisting of a list of timestamps indicating when object components were created or modified.</para>
+				</listitem>
 			</itemizedlist>
 		</blockquote>
 		<para>For more information on the method definitions, refer to the API descriptions located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink> . </para>
@@ -171,6 +174,15 @@
 							</emphasis>
 						</para>
 					</listitem>
+					<listitem>
+						<para>
+							<emphasis>GetObjectHistory</emphasis> - gets object change history.</para>
+						<itemizedlist>
+							<listitem>
+								<para>requires PID_</para>
+							</listitem>
+						</itemizedlist>
+					</listitem>
 				</itemizedlist>
 			</listitem>
 			<listitem>
@@ -225,45 +237,51 @@
 		<title>Examples</title>
 		<orderedlist>
 			<listitem>
-				<para>Get the BehaviorDefinitions for a data object with a PID of test:3</para>
+				<para>Get the BehaviorDefinitions for a data object with a PID of demo:5</para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&#61;GetBehaviorDefinitions&amp;PID_&#61;test:3</para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetBehaviorDefinitions&amp;PID_&#61;demo:5</para>
 				</blockquote>
 			</listitem>
 			<listitem>
-				<para>Get the BehaviorMethods for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1</para>
+				<para>Get the BehaviorMethods for a data object with a PID of demo:5 and associated behavior definition object with a PID of demo:1</para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&#61;GetBehaviorMethods&amp;PID_&#61;test:3&amp;bDefPID_&#61;test:1</para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetBehaviorMethods&amp;PID_&#61;demo:5&amp;bDefPID_&#61;demo:1</para>
 				</blockquote>
 			</listitem>
 			<listitem>
-				<para>Get the BehaviorMethodsXML for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1</para>
+				<para>Get the BehaviorMethodsXML for a data object with a PID of demo:5 and associated behavior definition object with a PID of demo:1</para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&#61;GetBehaviorMethodsXML&amp;PID_&#61;test:3&amp;bDefPID_&#61;test:1</para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetBehaviorMethodsXML&amp;PID_&#61;demo:5&amp;bDefPID_&#61;demo:1</para>
 				</blockquote>
 			</listitem>
 			<listitem>
-				<para>Get the Dissemination for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1 and methodName of getThumbnail</para>
+				<para>Get the Dissemination for a data object with a PID of demo:5 and associated behavior definition object with a PID of demo:1 and methodName of getThumbnail</para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&#61;GetDissemination&amp;PID_&#61;test:3&amp;bDefPID_&#61;test:1&amp;methodName_&#61;getThumbnail </para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetDissemination&amp;PID_&#61;demo:5&amp;bDefPID_&#61;demo:1&amp;methodName_&#61;getThumbnail </para>
 				</blockquote>
 			</listitem>
 			<listitem>
-				<para>Get the ObjectMethods for a data object with a PID of test:3: </para>
+				<para>Get the ObjectMethods for a data object with a PID of demo:5: </para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&#61;GetObjectMethods&amp;PID_&#61;test:3</para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetObjectMethods&amp;PID_&#61;demo:5</para>
 				</blockquote>
 			</listitem>
 			<listitem>
-				<para>Get the ObjectProfile for a data object with a PID of test:3:</para>
+				<para>Get the ObjectProfile for a data object with a PID of demo:5:</para>
 				<blockquote>
-					<para>http://localhost:8080/soapclient/apia?action_&#61;GetObjectProfile&amp;PID_&#61;test:3</para>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetObjectProfile&amp;PID_&#61;demo:5</para>
 				</blockquote>
 			</listitem>
 			<listitem>
 				<para>Get information about the repository:</para>
 				<blockquote>
 					<para>http://localhost:8080/soapclient/apia?action_&#61;DescribeRepository</para>
+				</blockquote>
+			</listitem>
+			<listitem>
+				<para>Get the ObjectHistory for a data object with a PID of demo:5:</para>
+				<blockquote>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;GetObjectHistory&amp;PID_&#61;demo:5</para>
 				</blockquote>
 			</listitem>
 		</orderedlist>
