@@ -126,7 +126,7 @@
              has been assigned, and the object is written to the definitive
              store, an entry is created here.
             </comment>
-		<column name="doPID" type="varchar(64)" notNull="true" binary="true">
+		<column name="doPID" type="varchar(64)" notNull="true" binary="true" index="doPID">
 			<comment>The PID of the object</comment>
 		</column>
 		<column name="foType" type="varchar(1)" notNull="true" default="O">
