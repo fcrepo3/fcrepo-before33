@@ -215,6 +215,9 @@ public class BatchIngestGUI
 	    properties.setProperty("server-port",port);
 	    properties.setProperty("username",user);
 	    properties.setProperty("password",pass);
+	    
+	    batchOutput.setDirectoryPath(properties.getProperty("ingested-pids")); //2003.12.03 niebel -- duplicate output to file
+	    
 	    try {
 		    mdiDesktopPane.add(batchOutput);
 	    } catch (Exception eee) {  //illegal component position occurs ~ every other time ?!?

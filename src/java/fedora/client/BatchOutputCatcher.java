@@ -34,7 +34,7 @@ public class BatchOutputCatcher extends OutputStream {
 
 	public void write(int b) {
 		byte bv = (new Integer(b)).byteValue();
-	jTextArea.append(new String(new byte[] {bv} ));
+		jTextArea.append(new String(new byte[] {bv} ));
 	}
 
 	public BatchOutputCatcher(JTextArea jTextArea) {

@@ -70,6 +70,7 @@ public class BatchThread extends Thread {
 			originalOut = null;
 			System.setErr(originalErr);
 			originalErr = null;
+			batchOutput.flush2file(); //2003.12.03 niebel -- duplicate output to file
 		}
 	}
 }

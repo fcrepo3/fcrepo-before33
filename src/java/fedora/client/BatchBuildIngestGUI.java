@@ -254,6 +254,8 @@ public class BatchBuildIngestGUI
 	    properties.setProperty("server-port",port);
 	    properties.setProperty("username",user);
 	    properties.setProperty("password",pass);
+	    
+	    batchOutput.setDirectoryPath(properties.getProperty("ingested-pids")); //2003.12.03 niebel -- duplicate output to file
 
 	    try {
 		    mdiDesktopPane.add(batchOutput);
