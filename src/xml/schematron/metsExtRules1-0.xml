@@ -25,9 +25,6 @@
 	<!-- PRELIMINARY INGEST RULES PATTERN: -->
 	<!-- These rules are to be applied to objects no matter what phase of the object lifecycle they are in.-->
 	<sch:pattern name="Preliminary Object Checks" id="preliminary">
-		<sch:rule context="METS:xmlData">
-			<sch:assert test="child::*[not(@xsi:schemaLocation)]">Inline XML datastreams cannot contain schemaLocation attributes.</sch:assert>
-		</sch:rule>
 		<sch:rule context="METS:mets[@TYPE='FedoraBMechObject']">
 			<sch:assert test="child::METS:amdSec[@ID='DSINPUTSPEC']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Input Spec (mets:amdSec with ID="DSINPUTSPEC" must exist when element mets has TYPE="FedoraBMechObject"</sch:assert>
 			<sch:assert test="child::METS:amdSec[@ID='METHODMAP']">Behavior Mechanism Objects must have an inline Datastream representing a Fedora Method Map (mets:amdSec with ID="METHODMAP" must exist when element mets has TYPE="FedoraBMechObject"</sch:assert>
