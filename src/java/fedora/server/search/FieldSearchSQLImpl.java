@@ -53,8 +53,8 @@ public class FieldSearchSQLImpl
             false, false, false, false, false,
             false, false, false, false, false,
             false, false, false, false, false};
-            
-            
+    private HashMap m_resultSets=new HashMap();
+    
     private static ReadOnlyContext s_nonCachedContext;
     static {
         HashMap h=new HashMap();
@@ -234,8 +234,18 @@ public class FieldSearchSQLImpl
             logFinest("Exiting delete(String)");
         }
     }
-   
-    public List search(String[] resultFields, String terms) 
+    
+    public FieldSearchResult listObjectFields(String[] resultFields, 
+            int maxResults, FieldSearchQuery query) {
+        return null;
+    }
+
+    public FieldSearchResult resumeListObjectFields(String sessionToken) {
+        return null;
+    }
+    
+    // FIXME: return a ResultSet
+    private List search(String[] resultFields, String terms) 
             throws StorageDeviceException, QueryParseException, ServerException {
         Connection conn=null;
         try {
@@ -293,7 +303,8 @@ public class FieldSearchSQLImpl
         }
     }
 
-    public List search(String[] resultFields, List conditions) 
+    // FIXME: return a ResultSet
+    private List search(String[] resultFields, List conditions) 
             throws ServerException {
         Connection conn=null;
         try {

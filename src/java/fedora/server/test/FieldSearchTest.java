@@ -14,6 +14,7 @@ import fedora.oai.sample.RandomDCMetadataFactory;
 import fedora.server.StdoutLogging;
 import fedora.server.search.Condition;
 //import fedora.server.search.FieldSearchExistImpl;
+import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchSQLImpl;
 import fedora.server.search.ObjectFields;
 import fedora.server.storage.ConnectionPool;
@@ -101,7 +102,9 @@ public class FieldSearchTest
     public void testSimpleSearch() {
         try {
             List results;
-            results=m_fieldSearch.search(new String[] {"pid", "cDate"}, "*test*");
+            //FIXME: limit # of returned results by...what?
+            results=m_fieldSearch.listObjectFields(new String[] {"pid", "cDate"}, 100,
+                    new FieldSearchQuery("*test*")).objectFieldsList();
             System.out.println("search('pid', 'test') got " + results.size() + " results.");
             for (int i=0; i<results.size(); i++) {
                 ObjectFields f=(ObjectFields) results.get(i);
@@ -210,9 +213,11 @@ public class FieldSearchTest
     public void printSimpleSearch(String[] fields, String terms) {
         try {
             System.out.println("Searching...");
-            printResults(fields, m_fieldSearch.search(fields, terms));
+            printResults(fields, m_fieldSearch.listObjectFields(fields, 50,
+                    new FieldSearchQuery(terms)).objectFieldsList());
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
+            System.out.println("ERROR: " + e.getClass().getName() + ": " 
+            + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -220,7 +225,9 @@ public class FieldSearchTest
     public void printAdvancedSearch(String[] fields, String conditionQuery) {
         try {
             System.out.println("Searching...");
-            printResults(fields, m_fieldSearch.search(fields, Condition.getConditions(conditionQuery)));
+            printResults(fields, m_fieldSearch.listObjectFields(fields, 50,
+                    new FieldSearchQuery(Condition.getConditions(
+                    conditionQuery))).objectFieldsList());
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();

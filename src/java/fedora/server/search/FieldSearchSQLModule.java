@@ -104,14 +104,16 @@ public class FieldSearchSQLModule
         return m_wrappedFieldSearch.delete(pid);
     }
 
-    public List search(String[] resultFields, String terms) 
+    public FieldSearchResult listObjectFields(String[] resultFields, 
+            int maxResults, FieldSearchQuery query) 
             throws ServerException {
-        return m_wrappedFieldSearch.search(resultFields, terms);
+        return m_wrappedFieldSearch.listObjectFields(resultFields,
+                maxResults, query);
     }
-    
-    public List search(String[] resultFields, List conditions) 
+
+    public FieldSearchResult resumeListObjectFields(String sessionToken) 
             throws ServerException {
-        return m_wrappedFieldSearch.search(resultFields, conditions);
+        return m_wrappedFieldSearch.resumeListObjectFields(sessionToken);
     }
-    
+
 }

@@ -41,6 +41,8 @@ import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.management.PIDGenerator;
 import fedora.server.search.FieldSearch;
+import fedora.server.search.FieldSearchResult;
+import fedora.server.search.FieldSearchQuery;
 import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.replication.DOReplicator;
@@ -1348,17 +1350,17 @@ public class DefaultDOManager
             }
         }
     }
-
-    public List search(Context context, String[] resultFields,
-            String terms)
+    
+    public FieldSearchResult listObjectFields(Context context, 
+            String[] resultFields, int maxResults, FieldSearchQuery query) 
             throws ServerException {
-        return m_fieldSearch.search(resultFields, terms);
+        return m_fieldSearch.listObjectFields(resultFields, maxResults, query);
     }
 
-    public List search(Context context, String[] resultFields,
-            List conditions)
+    public FieldSearchResult resumeListObjectFields(Context context,
+            String sessionToken) 
             throws ServerException {
-        return m_fieldSearch.search(resultFields, conditions);
+        return m_fieldSearch.resumeListObjectFields(sessionToken);
     }
 
 }

@@ -18,6 +18,7 @@ import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.search.Condition;
+import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.ObjectFields;
 
 public class FieldSearchServlet 
@@ -101,9 +102,14 @@ public class FieldSearchServlet
             if (fieldsArray!=null && fieldsArray.length>0) {
                 List searchResults;
                 if ((terms!=null) && (terms.length()!=0)) {
-                    searchResults=s_access.search(context, fieldsArray, terms);
+                    // FIXME: use max from..params? instead of hardcoding 100
+                    searchResults=s_access.listObjectFields(context, fieldsArray, 
+                            100, new FieldSearchQuery(terms)).objectFieldsList();
                 } else {
-                    searchResults=s_access.search(context, fieldsArray, Condition.getConditions(query));
+                    // FIXME: use max from..params? instead of hardcoding 100
+                    searchResults=s_access.listObjectFields(context, fieldsArray,
+                            100, new FieldSearchQuery(Condition.getConditions(
+                            query))).objectFieldsList();
                 }
                 if (!xml) {
                     html.append("<center><table width=\"90%\" border=\"0\" cellpadding=\"4\">\n");

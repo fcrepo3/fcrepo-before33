@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.apache.axis.types.NonNegativeInteger;
 
 import fedora.server.Context;
 import fedora.server.Server;
@@ -15,6 +16,8 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.types.gen.Condition;
+import fedora.server.types.gen.FieldSearchQuery;
+import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ObjectFields;
 import fedora.server.utilities.AxisUtility;
 import fedora.server.utilities.TypeUtility;
@@ -86,44 +89,6 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
               HTTPConstants.MC_HTTP_SERVLETREQUEST);
       h.put("host", req.getRemoteAddr());
       return new ReadOnlyContext(h);
-  }
-
-  public ObjectFields[] advancedFieldSearch(
-          String[] resultFields, Condition[] conditions)
-          throws RemoteException {
-      Context context=getContext();
-      assertInitialized();
-      try {
-          List searchConditionList=TypeUtility.
-                  convertGenConditionArrayToSearchConditionList(conditions);
-          List objectFields=s_access.search(context, resultFields, searchConditionList);
-          return TypeUtility.convertSearchObjectFieldsListToGenObjectFieldsArray(
-                  objectFields);
-      } catch (ServerException se) {
-          logStackTrace(se);
-          throw AxisUtility.getFault(se);
-      } catch (Exception e) {
-          logStackTrace(e);
-          throw AxisUtility.getFault(e);
-      }
-  }
-
-  public ObjectFields[] simpleFieldSearch(
-          String[] resultFields, String terms)
-          throws RemoteException {
-      Context context=getContext();
-      assertInitialized();
-      try {
-          List objectFields=s_access.search(context, resultFields, terms);
-          return TypeUtility.convertSearchObjectFieldsListToGenObjectFieldsArray(
-                  objectFields);
-      } catch (ServerException se) {
-          logStackTrace(se);
-          throw AxisUtility.getFault(se);
-      } catch (Exception e) {
-          logStackTrace(e);
-          throw AxisUtility.getFault(e);
-      }
   }
 
   /**
@@ -316,6 +281,59 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           + e.getMessage()));
     }
     return null;
+  }
+  
+  public FieldSearchResult listObjectFields(String[] resultFields, 
+          NonNegativeInteger maxResults, FieldSearchQuery query) 
+          throws RemoteException {
+      Context context=getContext();
+      assertInitialized();
+      try {
+          fedora.server.search.FieldSearchResult result=s_access.
+                  listObjectFields(context, resultFields, maxResults.intValue(), 
+                  TypeUtility.convertGenFieldSearchQueryToFieldSearchQuery(
+                  query));
+          return TypeUtility.convertFieldSearchResultToGenFieldSearchResult(result);
+      } catch (ServerException se) {
+          logStackTrace(se);
+          throw AxisUtility.getFault(se);
+      } catch (Exception e) {
+          logStackTrace(e);
+          throw AxisUtility.getFault(e);
+      }
+  }
+  
+/*
+  public ObjectFields[] advancedFieldSearch(
+          String[] resultFields, Condition[] conditions)
+          List searchConditionList=TypeUtility.
+                  convertGenConditionArrayToSearchConditionList(conditions);
+          List objectFields=s_access.search(context, resultFields, searchConditionList);
+          return TypeUtility.convertSearchObjectFieldsListToGenObjectFieldsArray(
+                  objectFields);
+
+  public ObjectFields[] simpleFieldSearch(
+          String[] resultFields, String terms)
+          List objectFields=s_access.search(context, resultFields, terms);
+          return TypeUtility.convertSearchObjectFieldsListToGenObjectFieldsArray(
+                  objectFields);
+*/
+
+  public FieldSearchResult resumeListObjectFields(String sessionToken) 
+          throws java.rmi.RemoteException {
+      Context context=getContext();
+      assertInitialized();
+      try {
+          fedora.server.search.FieldSearchResult result=s_access.
+                  resumeListObjectFields(context, sessionToken);
+          return TypeUtility.convertFieldSearchResultToGenFieldSearchResult(result);
+      } catch (ServerException se) {
+          logStackTrace(se);
+          throw AxisUtility.getFault(se);
+      } catch (Exception e) {
+          logStackTrace(e);
+          throw AxisUtility.getFault(e);
+      }
   }
 
   /**

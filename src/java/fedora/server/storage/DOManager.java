@@ -4,8 +4,10 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 
-import fedora.server.errors.ServerException;
 import fedora.server.Context;
+import fedora.server.errors.ServerException;
+import fedora.server.search.FieldSearchQuery;
+import fedora.server.search.FieldSearchResult;
 
 /**
  * A RepositoryReader that provides facilities for creating
@@ -87,12 +89,12 @@ public interface DOManager
             Calendar lastModDateMin, Calendar lastModDateMax) 
             throws ServerException;
             
-    public List search(Context context, String[] resultFields, 
-            String terms)
+    public FieldSearchResult listObjectFields(Context context, 
+            String[] resultFields, int maxResults, FieldSearchQuery query) 
             throws ServerException;
 
-    public List search(Context context, String[] resultFields,
-            List conditions)
+    public FieldSearchResult resumeListObjectFields(Context context,
+            String sessionToken) 
             throws ServerException;
-
+            
 }

@@ -19,6 +19,8 @@ import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.ReadOnlyContext;
+import fedora.server.search.FieldSearchQuery;
+import fedora.server.search.FieldSearchResult;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
@@ -285,24 +287,21 @@ public class DynamicAccessModule extends Module implements Access
     return null;
   }
 
-  // FIXIT! What do these serach methods mean in dynamic access context???
-  // Maybe they can be taken out of the Access interface and put in a
-  // Search interface and then only DefaultAccess will implement them!!
-  public List search(Context context, String[] resultFields, String terms)
-          throws ServerException
-  {
-    //m_ipRestriction.enforce(context);
-    return da.search(context, resultFields, terms);
+  // FIXIT: What do these mean in this context...anything?
+  // Maybe these methods' exposure needs to be re-thought?
+  public FieldSearchResult listObjectFields(Context context, 
+          String[] resultFields, int maxResults, FieldSearchQuery query) 
+          throws ServerException {
+      return null;
   }
 
-  public List search(Context context, String[] resultFields,
-          List conditions)
-          throws ServerException
-  {
-    //m_ipRestriction.enforce(context);
-    return da.search(context, resultFields, conditions);
+  // FIXIT: What do these mean in this context...anything?
+  // Maybe these methods' exposure needs to be re-thought?
+  public FieldSearchResult resumeListObjectFields(Context context,
+          String sessionToken) throws ServerException {
+      return null;
   }
-
+  
   /**
    */
   protected boolean isDynamicBehaviorDefinition(Context context, String PID,

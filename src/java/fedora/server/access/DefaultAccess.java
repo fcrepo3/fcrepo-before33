@@ -21,6 +21,8 @@ import fedora.server.errors.InvalidUserParmException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
+import fedora.server.search.FieldSearchQuery;
+import fedora.server.search.FieldSearchResult;
 import fedora.server.security.IPRestriction;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.BMechReader;
@@ -445,19 +447,38 @@ public class DefaultAccess extends Module implements Access
           reader.GetObjectPID(), versDateTime);
       return profile;
   }
-
-  public List search(Context context, String[] resultFields,
-          String terms)
+  
+  /**
+   * <p>Lists the specified fields of each object matching the given
+   * criteria.</p>
+   *
+   * @param context the context of this request
+   * @param resultFields the names of the fields to return
+   * @param maxResults the maximum number of results to return at a time
+   * @param the query
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
+  public FieldSearchResult listObjectFields(Context context, 
+          String[] resultFields, int maxResults, FieldSearchQuery query) 
           throws ServerException {
-    m_ipRestriction.enforce(context);
-    return m_manager.search(context, resultFields, terms);
+      m_ipRestriction.enforce(context);
+      return m_manager.listObjectFields(context, resultFields, maxResults, query);
   }
 
-  public List search(Context context, String[] resultFields,
-          List conditions)
-          throws ServerException {
-    m_ipRestriction.enforce(context);
-    return m_manager.search(context, resultFields, conditions);
+  /**
+   * <p>Resumes an in-progress listing of object fields.</p>
+   *
+   * @param content the context of this request
+   * @param sessionToken the token of the session in which the remaining
+   *        results can be obtained
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
+  public FieldSearchResult resumeListObjectFields(Context context,
+          String sessionToken) throws ServerException {
+      m_ipRestriction.enforce(context);
+      return m_manager.resumeListObjectFields(context, sessionToken);
   }
 
   /**

@@ -43,33 +43,28 @@ public interface FieldSearch {
             throws ServerException;
 
     /**
-     * Search across all fields and return the desired fields.
+     * Search across specific fields and return the desired fields.
      *
      * @param resultFields the desired fields
-     * @param terms a space-delimited list of terms, possibly containing the *
-     *        and ? wildcards
-     * @return List a list of matches; ObjectFields objects with the desired
-     *         fields populated
+     * @param maxResults the maximum number of results the client wants
+     * @param query the query
+     * @return FieldSearchResult the results
      * @throws ServerException if anything went wrong
      */
-    public List search(String[] resultFields, String terms) 
+    public FieldSearchResult listObjectFields(String[] resultFields, 
+            int maxResults, FieldSearchQuery query) 
             throws ServerException;
 
     /**
-     * Search across specific fields and return the desired fields.
+     * Resume an in-progress search across specific fields and return the 
+     * desired fields.
      *
-     * This is the more advanced search option.  It allows the use of operators
-     * '=' (for dates and non-repeating fields), '~' (for all fields, excluding 
-     * cDate mDate dcDate), and '>', '<', '>=', or '<=' (for dates).
-     *
-     * @param resultFields the desired fields
-     * @param conditions a list of Condition objects, representing 
-     *        field-specific conditions that must all be met in order
-     *        for an object to be considered a match.
-     * @return List a list of matches; ObjectFields objects with the desired
-     *         fields populated
+     * @param sessiontoken the token of the session in which the remaining
+     *        results can be found
+     * @return FieldSearchResult the results
      * @throws ServerException if anything went wrong
      */
-    public List search(String[] resultFields, List conditions) 
+    public FieldSearchResult resumeListObjectFields(String sessionToken) 
             throws ServerException;
+            
 }

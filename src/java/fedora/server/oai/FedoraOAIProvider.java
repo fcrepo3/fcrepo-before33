@@ -16,6 +16,7 @@ import fedora.server.search.DCFields;
 import fedora.server.search.ObjectFields;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
+import fedora.server.search.FieldSearchQuery;
 
 public class FedoraOAIProvider
         extends StdoutLogging
@@ -131,8 +132,10 @@ public class FedoraOAIProvider
         String pid=getPID(identifier);
         List l=null;
         try {
-            l=m_fieldSearch.search(s_headerAndDCFields, 
-                    Condition.getConditions("pid='" + pid + "' dcmDate>'2000-01-01'"));
+            //FIXME: use maxResults from... config instead of hardcoding 100?
+            l=m_fieldSearch.listObjectFields(s_headerAndDCFields, 100,
+                    new FieldSearchQuery(Condition.getConditions("pid='" + pid 
+                    + "' dcmDate>'2000-01-01'"))).objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
         }
@@ -142,8 +145,9 @@ public class FedoraOAIProvider
         } else {
             // see if it exists
             try {
-                l=m_fieldSearch.search(new String[] {"pid"}, 
-                        Condition.getConditions("pid='" + pid + "'"));
+                l=m_fieldSearch.listObjectFields(new String[] {"pid"}, 1,
+                        new FieldSearchQuery(Condition.getConditions("pid='" 
+                        + pid + "'"))).objectFieldsList();
             } catch (ServerException se) {
                 throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
             }
@@ -167,9 +171,11 @@ public class FedoraOAIProvider
         
         List l=null;
         try {
-            l=m_fieldSearch.search(s_headerAndDCFields, 
-                    Condition.getConditions("dcmDate>'2000-01-01'" 
-                    + getDatePart(from, until) + getFTypePart(set)));
+            //FIXME: use maxResults from... config instead of hardcoding 100?
+            l=m_fieldSearch.listObjectFields(s_headerAndDCFields, 100,
+                    new FieldSearchQuery(Condition.getConditions(
+                    "dcmDate>'2000-01-01'" + getDatePart(from, until) 
+                    + getFTypePart(set)))).objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
         }
@@ -339,9 +345,11 @@ public class FedoraOAIProvider
         }
         List l=null;
         try {
-            l=m_fieldSearch.search(s_headerFields, 
-                    Condition.getConditions("dcmDate>'2000-01-01'" 
-                    + getDatePart(from, until) + getFTypePart(set)));
+            //FIXME: use maxResults from... config instead of hardcoding 100?
+            l=m_fieldSearch.listObjectFields(s_headerFields, 100,
+                    new FieldSearchQuery(Condition.getConditions(
+                    "dcmDate>'2000-01-01'" + getDatePart(from, until) 
+                    + getFTypePart(set)))).objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
         }
@@ -405,7 +413,9 @@ public class FedoraOAIProvider
         String pid=getPID(id);
         List l=null;
         try {
-            l=m_fieldSearch.search(new String[] {"pid"}, Condition.getConditions("pid='" + pid + "' dcmDate>'2000-01-01'"));
+            l=m_fieldSearch.listObjectFields(new String[] {"pid"}, 1,
+                    new FieldSearchQuery(Condition.getConditions("pid='" 
+                    + pid + "' dcmDate>'2000-01-01'"))).objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
         }
@@ -413,7 +423,9 @@ public class FedoraOAIProvider
             return m_formats;
         }
         try {
-            l=m_fieldSearch.search(new String[] {"pid"}, Condition.getConditions("pid='" + pid + "'"));
+            l=m_fieldSearch.listObjectFields(new String[] {"pid"}, 1,
+                    new FieldSearchQuery(Condition.getConditions("pid='" 
+                    + pid + "'"))).objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
         }

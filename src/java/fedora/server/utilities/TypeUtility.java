@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 /**
  *
@@ -20,6 +22,47 @@ import java.io.IOException;
  */
 public abstract class TypeUtility
 {
+
+    public static fedora.server.types.gen.FieldSearchResult
+            convertFieldSearchResultToGenFieldSearchResult(
+            fedora.server.search.FieldSearchResult result) {
+        fedora.server.types.gen.FieldSearchResult ret=
+                new fedora.server.types.gen.FieldSearchResult();
+        ret.setResultList(convertSearchObjectFieldsListToGenObjectFieldsArray(
+                result.objectFieldsList()));
+        if (result.getToken()!=null) {
+            fedora.server.types.gen.ListSession sess=
+                    new fedora.server.types.gen.ListSession();
+            sess.setToken(result.getToken());
+            if (result.getCursor()>-1) {
+                sess.setCursor(new org.apache.axis.types.NonNegativeInteger("" + result.getCursor()));
+            }
+            if (result.getCompleteListSize()>-1) {
+                sess.setCompleteListSize(new org.apache.axis.types.NonNegativeInteger("" + result.getCompleteListSize()));
+            }
+            if (result.getExpirationDate()!=null) {
+                Calendar cal=Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                cal.setTime(result.getExpirationDate());
+                sess.setExpirationDate(cal);
+            }
+            ret.setListSession(sess);
+        }
+        return ret;
+    }
+
+    public static fedora.server.search.FieldSearchQuery
+            convertGenFieldSearchQueryToFieldSearchQuery(
+            fedora.server.types.gen.FieldSearchQuery gen)
+            throws fedora.server.errors.InvalidOperatorException,
+            fedora.server.errors.QueryParseException {
+        if (gen.getTerms()!=null) {
+            return new fedora.server.search.FieldSearchQuery(gen.getTerms());
+        } else {
+            return new fedora.server.search.FieldSearchQuery(
+                    convertGenConditionArrayToSearchConditionList(
+                    gen.getConditions()));
+        }
+    }
 
     public static java.util.List
             convertGenConditionArrayToSearchConditionList(
