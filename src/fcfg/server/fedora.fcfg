@@ -31,6 +31,8 @@
         for an "application" of "apia" (from the Context).  If neither
         "apim" nor "apia", the getReader/Writer call will fail.</comment>
         <param name="object_state_registry" value="poolOne#State"/>
+        <param name="storage_format" value="mets11fedora1"/>
+        <param name="storage_character_encoding" value="UTF-8"/>
     </module>
     <module role="fedora.server.management.Management" 
             class="fedora.server.management.DefaultManagement">
@@ -39,6 +41,17 @@
         service is exposed, or how bytestreams and java types might be
         marshalled/demarshalled over the wire.</comment>
         <param name="testName" value="testValue"/>
+    </module>
+    <module role="fedora.server.storage.DOTranslator"
+            class="fedora.server.storage.DefaultDOTranslator">
+        <comment>Supports translation from DigitalObject to a stream of 
+        some format, and vice-versa.  The parameters below specify 
+        serializer/deserializer classes to be used for a given format.
+        Those classes must implement the DOSerializer/DODeserializer
+        interfaces, and must have a public constructor that takes no parameters.
+        </comment>
+        <param name="serializer_mets11fedora1" value="fedora.server.storage.METSDOSerializer"/>
+        <param name="deserializer_mets11fedora1" value="fedora.server.storage.METSDODeserializer"/>
     </module>
     <module role="fedora.server.management.PIDGenerator" 
             class="fedora.server.management.BasicPIDGenerator">
