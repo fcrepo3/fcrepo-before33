@@ -14,9 +14,11 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title><trademark class="trade">Fedora</trademark> Installation and Configuration Guide</title>
+		<title>
+			<trademark class="trade">Fedora</trademark> Installation and Configuration Guide</title>
 		<subtitle>Software Release 1.2</subtitle>
-		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -179,6 +181,7 @@
 					</para>
 				</blockquote>
 				<para>...where the first parameter is the username you'd like to use for the database, and the second parameter is the password you'd like to use.  Remember this information, as it will be needed later when configuring Fedora.</para>
+				<para>Username and password values are case sensitive.</para>
 				<para>Note: This command resolves to a batch file (mckoi-init.bat) in Windows, and a shell script (mckoi-init.sh) in Unix.  These reside in the server's bin directory.</para>
 			</section>
 			<section>
@@ -197,22 +200,24 @@
 					<listitem>
 						<para>
 							<emphasis>dbaUser</emphasis> is the name of the MySQL user with dba privileges.  In a default MySQL installation, this will be root.</para>
+						<para>Please note that dbaUser is case sensitive.</para>
 					</listitem>
 					<listitem>
 						<para>
 							<emphasis>dbaPass</emphasis> is the password of the MySQL user with dba privileges.  In a default MySQL installation,  if you're running MySQL on the same machine as Fedora, you can usually pass "" for this argument.</para>
+						<para>Please note that dbaPass is case sensitive.</para>
 					</listitem>
 					<listitem>
 						<para>
-							<emphasis>fedoraDBUser</emphasis> is the username you'd like to use for the Fedora software's database access. (e.g., fedoraAdmin)</para>
+							<emphasis>fedoraDBUser</emphasis> is the username you'd like to use for the Fedora software's database access. (e.g., fedoraAdmin) Please note that this value is case sensitive.</para>
 					</listitem>
 					<listitem>
 						<para>
-							<emphasis>fedoraDBPass</emphasis> is the password you'd like to use for the above user.  (e.g., fedoraAdmin)</para>
+							<emphasis>fedoraDBPass</emphasis> is the password you'd like to use for the above user.  (e.g., fedoraAdmin) Please note that the password is case sensitive.</para>
 					</listitem>
 					<listitem>
 						<para>
-							<emphasis>dbName</emphasis> is the name you'd like to use for the Fedora database.  (e.g., FedoraObjects) </para>
+							<emphasis>dbName</emphasis> is the name you'd like to use for the Fedora database.  (e.g., FedoraObjects) Please note that the user name is case sensitive.</para>
 					</listitem>
 				</itemizedlist>
 				<para>Note: This command resolves to a batch file (mysql-config.bat) in Windows, and a shell script (mysql-config.sh) in Unix.  These reside in the server's bin directory.</para>
@@ -288,7 +293,7 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 					<varlistentry>
 						<term>adminPassword</term>
 						<listitem>
-							<para>This is where you set the value of the administrative user, “fedoraAdmin”’s password.  This is used when authenticating remote requests for performing administrative functions.</para>
+							<para>This is where you set the value of the administrative user, “fedoraAdmin”’s password.  This is used when authenticating remote requests for performing administrative functions. Please note that this password is case sensitive.</para>
 						</listitem>
 					</varlistentry>
 					<varlistentry>
@@ -445,7 +450,7 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 					<varlistentry>
 						<term>datastore/dbPassword</term>
 						<listitem>
-							<para>The password for the database user.</para>
+							<para>The password for the database user. Please note that this value is case sensitive.</para>
 						</listitem>
 					</varlistentry>
 					<varlistentry>
@@ -585,6 +590,7 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 				</listitem>
 				<listitem>
 					<para>When invoking the Fedora admin-client, remember to specify the new host name and/or port number when invoking the client. e.g.,   fedora-admin  hostname port  fedora-username fedora-password</para>
+					<para>Please note that all user names and passwords are case sensitive.</para>
 				</listitem>
 			</itemizedlist>
 		</para>
@@ -611,11 +617,11 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 					<para>Restart the Fedora server.</para>
 				</listitem>
 				<listitem>
-					<para>When invoking the Fedora Admin Client, remember to specify the new host name and/or port number when invoking the client. e.g.,   fedora-admin  hostname port  fedora-username fedora-password. </para>
+					<para>When invoking the Fedora Admin Client, remember to specify the new host name and/or port number when invoking the client. e.g.,   fedora-admin  hostname port  fedora-username fedora-password.  Please note that all user names and passwords are case sensitive.</para>
 				</listitem>
 			</itemizedlist>
 		</para>
-<!--		<para>There are some minor backward compatibility issues related to the host/port changes in Fedora 1.1.1. Please note that if you have an existing Fedora 1.0 server and  want to upgrade to version 1.1.1 of the software, <emphasis role="bold">but</emphasis> leave your existing objects as they were ingested under the Fedora 1.0 server (i.e., choose not to purge and then re-ingest the objects), this is possible with the following caveats. Any demo objects ingested under Fedora 1.0 will have the host and port of localhost and 8080 embedded in the demo objects as well as any user-defined objects created using Fedora 1.0 that reference the default host and port of the Fedora 1.0 server. Provided the host and port do not change for the Fedora server, these objects will continue to function correctly under the Fedora 1.1.1 server. However, if the host and/or port changes in the future, these <emphasis role="bold">pre-existing objects</emphasis> will no longer function correctly. The only way to fix them after a host/port change is to purge and then re-ingest the objects.
+		<!--		<para>There are some minor backward compatibility issues related to the host/port changes in Fedora 1.1.1. Please note that if you have an existing Fedora 1.0 server and  want to upgrade to version 1.1.1 of the software, <emphasis role="bold">but</emphasis> leave your existing objects as they were ingested under the Fedora 1.0 server (i.e., choose not to purge and then re-ingest the objects), this is possible with the following caveats. Any demo objects ingested under Fedora 1.0 will have the host and port of localhost and 8080 embedded in the demo objects as well as any user-defined objects created using Fedora 1.0 that reference the default host and port of the Fedora 1.0 server. Provided the host and port do not change for the Fedora server, these objects will continue to function correctly under the Fedora 1.1.1 server. However, if the host and/or port changes in the future, these <emphasis role="bold">pre-existing objects</emphasis> will no longer function correctly. The only way to fix them after a host/port change is to purge and then re-ingest the objects.
 		</para>  ######## I don't think the above applies anymore ########### -->
 	</section>
 	<section>
