@@ -333,6 +333,16 @@
 			<arg path="src/dbx/userdocs/apimadmingui.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<echo message="Translating builder.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/client/admin-gui/builder/index.html"/>
+			<arg path="src/dbx/userdocs/builder.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
 		<echo message="Translating batchclient.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -921,6 +931,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.133  2003/05/17 02:12:44  payette
+  added builder doc
+
   Revision 1.132  2003/05/17 00:51:35  payette
   added object construction guide to build
 
