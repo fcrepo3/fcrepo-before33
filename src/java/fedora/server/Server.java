@@ -11,6 +11,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ResourceBundle;
@@ -81,7 +82,7 @@ public abstract class Server
     
     /**
      * Reads and schema-validates the configuration items in the given
-     * DOM NamedNodeMap, validates required server params, initializes the 
+     * DOM NodeList, validates required server params, initializes the 
      * server, then initializes each module, validating its
      * required params, then verifies that the server's required module
      * roles have been met.
@@ -115,11 +116,13 @@ public abstract class Server
             factory.setNamespaceAware(true);
             DocumentBuilder builder=factory.newDocumentBuilder();
             configFile=new File(fedoraHomeDir + File.separator
-                    + CONFIG_DIR + File.separator + CONFIG_FILE);
+                    + CONSTANTS.getString("config.dir") + File.separator 
+                    + CONSTANTS.getString("config.file"));
             // suck it in
             Element rootElement=builder.parse(configFile).getDocumentElement();
             // ensure root element name ok
-            if (!rootElement.getLocalName().equals(CONFIG_ROOT_ELEMENT_NAME)) {
+            if (!rootElement.getLocalName().equals(CONSTANTS.getString(
+                    "config.element.root"))) {
                 throw new ServerInitializationException(ERROR_PARSING_FILE
                         + configFile + " - " + BAD_ROOT_ELEMENT);
             }
@@ -149,50 +152,66 @@ public abstract class Server
                         fedoraHomeDir} );
                 return inst;
             } catch (ClassNotFoundException cnfe) {
-                throw new ServerInitializationException(SERVER_CLASS_NOT_FOUND
-                        + "\"" + className + "\"");
+                throw new ServerInitializationException(
+                        MessageFormat.format(CONSTANTS.getString(
+                        "init.server.fatal.classnotfound"), 
+                        new Object[] {className}));
             } catch (IllegalAccessException iae) {
                 // improbable
-                throw new ServerInitializationException(SERVER_ILLEGAL_ACCESS
-                        + "\"" + className + "\"");
+                throw new ServerInitializationException(
+                        MessageFormat.format(CONSTANTS.getString(
+                        "init.server.fatal.illegalaccess"), 
+                        new Object[] {className}));
             } catch (IllegalArgumentException iae) {
                 // improbable
-                throw new ServerInitializationException(SERVER_BAD_ARGS
-                        + "\"" + className + "\"");
+                throw new ServerInitializationException(
+                        MessageFormat.format(CONSTANTS.getString(
+                        "init.server.fatal.badargs"), 
+                        new Object[] {className}));
             } catch (InstantiationException ie) {
-                // was abstract
-                throw new ServerInitializationException(SERVER_ABSTRACT
-                        + "\"" + className + "\"");
+                throw new ServerInitializationException(
+                        MessageFormat.format(CONSTANTS.getString(
+                        "init.server.fatal.missingconstructor"), 
+                        new Object[] {className}));
             } catch (NoSuchMethodException nsme) {
-                // was abstract
-                throw new ServerInitializationException(SERVER_MISSING_CONSTRUCTOR
-                        + "\"" + className + "\"");
+                throw new ServerInitializationException(
+                        MessageFormat.format(CONSTANTS.getString(
+                        "init.server.fatal.isabstract"), 
+                        new Object[] {className}));
             } catch (InvocationTargetException ite) {
                 // throw the constructor's thrown exception, if any
                 try {
-                    throw ite.getCause();
+                    throw ite.getCause();  // as of java 1.4
                 } catch (ServerInitializationException sie) {
                     throw sie;
                 } catch (ModuleInitializationException mie) {
                     throw mie;
                 } catch (Throwable t) {
-                    // impossible.
+                    // impossible 
                     return null;
                 }
             } 
         } catch (ParserConfigurationException pce) {
-            throw new ServerInitializationException(XML_PARSER_UNAVAILABLE);
+            throw new ServerInitializationException(CONSTANTS.getString(
+                    "init.xmlparser.fatal.missing"));
         } catch (FactoryConfigurationError fce) {
-            throw new ServerInitializationException(XML_PARSER_UNAVAILABLE);
+            throw new ServerInitializationException(CONSTANTS.getString(
+                    "init.xmlparser.fatal.missing"));
         } catch (IOException ioe) {
-            throw new ServerInitializationException(ERROR_READING_FILE
-                    + configFile);
+            throw new ServerInitializationException(
+                    MessageFormat.format(CONSTANTS.getString(
+                    "init.config.fatal.unreadable"), 
+                    new Object[] {configFile, ioe.getMessage()}));
         } catch (IllegalArgumentException iae) {
-            throw new ServerInitializationException(ERROR_READING_FILE
-                    + configFile);
+            throw new ServerInitializationException(
+                    MessageFormat.format(CONSTANTS.getString(
+                    "init.config.fatal.unreadable"), 
+                    new Object[] {configFile, iae.getMessage()}));
         } catch (SAXException saxe) {
-            throw new ServerInitializationException(ERROR_PARSING_FILE
-                    + configFile + " - " + saxe.getMessage());
+            throw new ServerInitializationException(
+                    MessageFormat.format(CONSTANTS.getString(
+                    "init.config.fatal.malformedxml"), 
+                    new Object[] {configFile, saxe.getMessage()}));
         }
     }
     
@@ -201,7 +220,8 @@ public abstract class Server
     }
     
     public final static String getVersion() {
-        return MAJOR_VERSION + "." + MINOR_VERSION;
+        return CONSTANTS.getString("version.major") + "." + 
+                CONSTANTS.getString("version.minor");
     }
 
     /**
