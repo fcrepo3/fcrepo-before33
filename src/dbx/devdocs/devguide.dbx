@@ -23,7 +23,7 @@
 			<title>Tools/Programs</title>
 			<section>
 				<title>Java</title>
-				<para>A JDK v1.3+, with any IDE you prefer.  This may change to JDK1.4.  Note: In this guide, no
+				<para>A JDK v1.4+, with any IDE you prefer. Note: In this guide, no
       particular IDE is assumed - instructions will be written assuming none.</para>
 			</section>
 			<section>
@@ -68,7 +68,7 @@
 					<para>
 						<emphasis>REQUIRED:</emphasis> Use ssh to log into comm.nsdlib.org to initialize your user directory.</para>
 					<para>This is necessary in order to use CVS.</para>
-					<para>Windows users: type "plink comm.nsdlib.org" Unix users: type "ssh comm.nsdlib.org"  If it asks if you want to store the server's key in your cache, say yes.  Then enter your username and password when prompted.  When successful, you'll see a command-prompt.  Type "exit" to logout.  Your user directory should now be initialized.</para>
+					<para>Windows users: type <userinput>plink comm.nsdlib.org</userinput> Unix users: type <userinput>ssh comm.nsdlib.org</userinput>  If it asks if you want to store the server's key in your cache, say <userinput>yes</userinput>.  Then enter your username and password when prompted.  When successful, you'll see a command-prompt.  Type "exit" to logout.  Your user directory should now be initialized.</para>
 				</listitem>
 				<listitem>
 					<para>
@@ -77,25 +77,25 @@
 					<para>Windows users: type "puttygen", take the defaults, and click "Generate".  Follow the instructions and then save your private and public keys in a secure place on your system.</para>
 					<para>Unix users: type "ssh-keygen" and you'll be led through the process.  Make sure your public and private keys are saved in a place that ssh(1) will look (usually ~/.ssh, which is the default)</para>
 					<para>Note for both Windows and Unix users: using a passphrase on your private key isn't necessary if you keep your private key file secure (readable only by you).  If you decide to use a key passphrase, make it anything you want, and note that whenever you use your private key, you'll need to manually provide that passphrase.</para>
-					<para>Now upload your public key to <ulink url="http://comm.nsdlib.org/projects/fedora/">the SourceForge site</ulink> by 1) logging in, then 2) selecting "Account Maintenance", then 3) selecting "Edit Keys" from the bottom of that page where it says "CVS/SSH Shared Authorized Keys", then 4) pasting your public key into the box, and finally 5) selecting the "Update" button.</para>
+					<para>Now upload your public key to <ulink url="http://comm.nsdlib.org/projects/fedora/">the SourceForge site</ulink> by 1) logging in, then 2) selecting <userinput>Account Maintenance</userinput>, then 3) selecting <userinput>Edit Keys</userinput> from the bottom of that page where it says "CVS/SSH Shared Authorized Keys", then 4) pasting your public key into the box, and finally 5) selecting the <userinput>Update</userinput> button.</para>
 					<para>Windows users: type "pageant" to bring up the putty agent.  This program keeps your private key in memory during secure network communication so that it can be used by the putty ssh client (plink).  It runs in the background.  Bring the pageant window to the foreground and select "add key", then select your private key file.  Note: this step is not necessary for Unix users because by default, ssh(1) looks in a standard place for your private key whenever it is invoked.</para>
-					<para>Test logging in without typing your password.  Windows users: type "plink username@comm.nsdlib.org" (where <emphasis>username</emphasis> is your login name).  Unix users: type "ssh username@comm.nsdlib.org".  Your ssh client should log you in automatically.  Type "exit" to logout.</para>
+					<para>Test logging in without typing your password.  Windows users: type <userinput>plink username@comm.nsdlib.org</userinput> (where <emphasis>username</emphasis> is your login name).  Unix users: type "ssh username@comm.nsdlib.org".  Your ssh client should log you in automatically.  Type "exit" to logout.</para>
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis>OPTIONAL:</emphasis> Set your CVSROOT environment variable to <emphasis>:ext:username@comm.nsdlib.org:/cvsroot/fedora</emphasis>, where <emphasis>username</emphasis> is your login name on the SourceForge site.</para>
-					<para>If you don't do this, you'll have to provide the -d option along with this information every time you do anything with cvs.</para>
+						<emphasis>OPTIONAL:</emphasis> Set your CVSROOT environment variable to <userinput>:ext:username@comm.nsdlib.org:/cvsroot/fedora</userinput>, where <emphasis>username</emphasis> is your login name on the SourceForge site.</para>
+					<para>If you don't do this, you'll have to provide the <userinput>-d</userinput> option along with this information every time you do anything with cvs.</para>
 				</listitem>
 				<listitem>
 					<para>
-						<emphasis>REQUIRED:</emphasis> Set your CVS_RSH environment variable to "ssh" (for Unix) or "plink" (for Windows)</para>
+						<emphasis>REQUIRED:</emphasis> Set your CVS_RSH environment variable to <userinput>ssh</userinput> (for Unix) or <userinput>plink</userinput> (for Windows)</para>
 					<para>This tells your cvs client that it can run cvs commands over your ssh client.</para>
 				</listitem>
 			</orderedlist>
 		</section>
 		<section>
 			<title>Checking out the Project Files</title>
-			<para>When your system is properly configured as specified above, you can type: "cvs co -P mellon", (the -P ignores deleted directories in the repository)
+			<para>When your system is properly configured as specified above, you can type: <userinput>cvs co -P mellon</userinput>, (the <userinput>-P</userinput> ignores deleted directories in the repository)
             and the project files from the repository will be copied to your system, in a directory named
             "mellon".  This is your working copy.  Note that cvs differs from other revision control systems
             in that checking out a file does not lock it for modification by other people.</para>
@@ -103,8 +103,11 @@
 		<section>
 			<title>Preparing Your Environment to use Ant</title>
 			<para>The ant tool is included in the project files, under res/ant.  You may already have ant
-      installed on your system.  If you don't, you will need to add <emphasis>&lt;work_path&gt;/mellon/res/ant/bin</emphasis> to
-      your PATH environment variable before builds will work (where &lt;work_path&gt; is the full path to the directory in which you executed the "cvs co mellon" command above).</para>
+      installed on your system.  If you don't, you will need to add <userinput>&lt;work_path&gt;/mellon/res/ant/bin</userinput> to
+      your PATH environment variable before builds will work (where &lt;work_path&gt; is the full path to the directory in which you executed the "cvs co mellon" command above).  If
+      you're on a Windows system, use <userinput>\</userinput> (backslash) instead of <userinput>/</userinput> (forward slash) in the PATH.</para>
+	        <note>If you're on a Unix system and plan to use the version of ANT included in the res/ directory, you should run "chmod 755 &lt;work_path&gt;/mellonres/ant/bin/*"
+			to ensure that the shell script that invokes ant is executable.</note>
 		</section>
 		<section>
 			<title>Navigating and Understanding the Directory Structure</title>
@@ -178,6 +181,55 @@
 			<para>If you modify the build.xml file, never introduce absolute paths, and never delete targets unless you're sure nobody is dependent on them.</para>
 		</section>
 	</section>
+	<section><title>A Quick Guide to Using CVS</title>
+	  <para>CVS documentation can be daunting.  Here's a quick guide to the most common tasks you'll use in CVS,
+	  biased to the Fedora development environment.</para>
+	  <section><title>Get a Working Copy (one-time)</title>
+	    <para><userinput>cvs co -P mellon</userinput></para>
+		<para>This example brings a copy of the entire mellon subtree (all project files) on to your system, creating the "mellon" directory (and sub-directories) if needed.  You only need to do this once per working copy.</para>
+	  </section>
+	  <section><title>Get the Latest Copy of a File from the Repository</title>
+	    <para><userinput>cvs update YourFile.java</userinput></para>
+		<para>You can also do this recursively on entire directories by specifying a directory instead of a file.</para>
+	  </section>
+	  <section><title>Checking in (committing) a changed file.</title>
+	    <para><userinput>cvs ci -m "I changed that one part" YourFile.java</userinput></para>
+		<para>This example checks in a changed file, using a log message.  If you want a multi-line log message,
+		you can type this same command, but don't include the <userinput>-m "message"</userinput> part.</para>
+	  </section>
+	  <section><title>Adding a File</title>
+	    <para><userinput>cvs add [-kb] MyFile.java</userinput></para>
+		<para>This example adds the file MyFile.java to the repository.  Before a file is available to others for the
+		first time, it must <emphasis>also</emphasis> be checked in. </para>
+		<note>If a file is binary, <emphasis>you must use <userinput>-kb</userinput></emphasis> or the file will
+		be mangled in the repository.   For normal text files, you should not use <userinput>-kb</userinput>.</note>
+      </section>
+	  <section><title>Removing a File</title>
+	    <para><userinput>cvs rm -f MyFile.java</userinput></para>
+		<para>The <userinput>-f</userinput> option tells CVS that before removing it from the repository, it should
+		remove it from your working directory.  If you don't specify <userinput>-f</userinput>, you must have already
+		deleted the file from your working directory or this command will not run.  Directories are deleted in the
+		same way.  Remove operations must be committed to take effect in the repository.</para>
+		<note>Under normal circumstances, deleted files can be recovered from the repository, so the delete operation
+		will only make the file invisible to those who have the most recent copy of the code.  You may check out an
+		old version of the deleted file at any time.</note>
+      </section>
+	  <section><title>Locking</title>
+	    <para>CVS allows for the concurrent modifications to working copies of files.  This is not always a bad thing, but can create confusion
+	    and re-work headaches without adequate developer communication.</para>
+		<para>To remedy this, some people have written extensions to CVS that allow for strict locking (the default practice in
+		most revision control systems), but these extensions
+		are not available in our environment.</para>
+		<para>The other approach (which our environment supports) is to use a method called <emphasis>weak locking</emphasis>.
+		Weak locking is supported by the cvs commands <emphasis>edit</emphasis>, <emphasis>unedit</emphasis>, <emphasis>watch</emphasis>,
+		and <emphasis>watchers</emphasis>.</para>
+		<para>In weak locking, the repository provides several functions that aid in developer communication
+		so we can see what people are working on.</para>
+		<section><title>edit</title><para><userinput>cvs edit MyFile.java</userinput></para><para>Signals that you intend to edit this file.
+		This creates what is called a "temporary watch" on 
+
+
+	</section>
 	<section>
 		<title>Building and Testing</title>
 		<para>To see the targets, be sure you're in the mellon directory, and type "ant -projecthelp".  To run a target, type "ant &lt;target_name&gt;".  After a main target is built, it should tell you where the result is.</para>
@@ -194,6 +246,12 @@
 	<para>Here is the revision history of this guide:</para>
 	<literallayout>
     $Log$
+    Revision 1.3  2002/05/08 00:44:34  cwilper
+    - changed emphasis tags to userinput tags where appropriate
+    - changed note sections to use the note tag
+    - added chmod note for ant on unix
+    - started section, 'a quick guide to cvs'... still need to add weak locking notes
+
     Revision 1.2  2002/05/03 22:30:58  cwilper
     1) added target detail for the working targets
     2) for the cvs "co" command, specified to use -P option
