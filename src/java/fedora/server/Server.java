@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -269,7 +270,7 @@ public abstract class Server
 
     /** The required module constructor's third parameter's class. */
     public static String MODULE_CONSTRUCTOR_PARAM3_CLASS=
-            s_const.getString("module.constructor.param2.class");
+            s_const.getString("module.constructor.param3.class");
 
     /** The name of the DOManager class (a Fedora server module "role"). */
     public static String DOMANAGER_CLASS=s_const.getString("domanager.class");
@@ -532,6 +533,10 @@ public abstract class Server
             m_startupLogRecords=new ArrayList(); // prepare for startup log queueing
             m_loadedModules=new HashMap();
             m_homeDir=homeDir;
+            File logDir=new File(homeDir, LOG_DIR);
+            if (!logDir.exists()) {
+                logDir.mkdir(); // try to create dir if doesn't exist
+            }
             File configFile=new File(homeDir + File.separator + CONFIG_DIR 
                     + File.separator + CONFIG_FILE);
             logConfig("Loading and validating configuration file \"" 
@@ -586,34 +591,38 @@ public abstract class Server
                     Class param1Class=Class.forName(MODULE_CONSTRUCTOR_PARAM1_CLASS);
                     Class param2Class=Class.forName(MODULE_CONSTRUCTOR_PARAM2_CLASS);
                     Class param3Class=Class.forName(MODULE_CONSTRUCTOR_PARAM3_CLASS);
+                    logFinest("Getting constructor " + className + "(" 
+                            + MODULE_CONSTRUCTOR_PARAM1_CLASS + ","
+                            + MODULE_CONSTRUCTOR_PARAM2_CLASS + ","
+                            + MODULE_CONSTRUCTOR_PARAM3_CLASS + ")");
                     Constructor moduleConstructor=moduleClass.getConstructor(
                             new Class[] {param1Class,param2Class,param3Class});
                     Module inst=(Module) moduleConstructor.newInstance( 
-                            new Object[] {moduleParams, this, role} );
+                            new Object[] {(Map) moduleParams, (Server) this, role} );
                     m_loadedModules.put(role, inst);
                 } catch (ClassNotFoundException cnfe) {
                     throw new ModuleInitializationException(
                             MessageFormat.format(INIT_MODULE_SEVERE_CLASSNOTFOUND, 
-                            new Object[] {className}), null);
+                            new Object[] {className}), role);
                 } catch (IllegalAccessException iae) {
                     // improbable
                     throw new ModuleInitializationException(
                             MessageFormat.format(INIT_MODULE_SEVERE_ILLEGALACCESS,
-                            new Object[] {className}), null);
+                            new Object[] {className}), role);
                 } catch (IllegalArgumentException iae) {
                     // improbable
                     throw new ModuleInitializationException(
                             MessageFormat.format(INIT_MODULE_SEVERE_BADARGS,
-                            new Object[] {className}), null);
+                            new Object[] {className}), role);
                 } catch (InstantiationException ie) {
                     throw new ModuleInitializationException(
                             MessageFormat.format(
                             INIT_MODULE_SEVERE_MISSINGCONSTRUCTOR, 
-                            new Object[] {className}), null);
+                            new Object[] {className}), role);
                 } catch (NoSuchMethodException nsme) {
                     throw new ModuleInitializationException(
                             MessageFormat.format(INIT_MODULE_SEVERE_ISABSTRACT,
-                            new Object[] {className}), null);
+                            new Object[] {className}), role);
                 } catch (InvocationTargetException ite) {
                     // throw the constructor's thrown exception, if any
                     try {
@@ -623,11 +632,13 @@ public abstract class Server
                     } catch (Throwable t) {
                         // a runtime error..shouldn't happen, but if it does...
                         StringBuffer s=new StringBuffer();
+                        s.append(t.getClass().getName());
+                        s.append(": ");
                         for (int i=0; i<t.getStackTrace().length; i++) {
                             s.append(t.getStackTrace()[i] + "\n");
                         }
                         throw new ModuleInitializationException(s.toString(), 
-                                null);
+                                role);
                     }
                 }                 
                 
@@ -648,17 +659,17 @@ public abstract class Server
             } catch (ServerShutdownException sse) {
                 logSevere(sse.getMessage());
             } catch (ModuleShutdownException mse) {
-                logSevere(mse.getModule().getRole() + ": " + mse.getMessage());
+                logSevere(mse.getRole() + ": " + mse.getMessage());
             }
             throw sie;
         } catch (ModuleInitializationException mie) {
-            logSevere(mie.getModule().getRole() + ": " + mie.getMessage());
+            logSevere(mie.getRole() + ": " + mie.getMessage());
             try {
                 shutdown();
             } catch (ServerShutdownException sse) {
                 logSevere(sse.getMessage());
             } catch (ModuleShutdownException mse) {
-                logSevere(mse.getModule().getRole() + ": " + mse.getMessage());
+                logSevere(mse.getRole() + ": " + mse.getMessage());
             }
             throw mie;
         }
@@ -679,13 +690,12 @@ public abstract class Server
      * classnames, and the third will contain the the name-value
      * pair <code>HashMaps</code> of each of the CONFIG_ELEMENT_DATASTORE 
      * elements found (keyed by CONFIG_ATTRIBUTE_ID).
-     * <p></p>
+     * 
      * @param element The element containing the name-value pair defintions.
      * @param dAttribute The name of the attribute of the <code>Element</code> 
-     *                   whose value will distinguish this element from others 
-     *                   that may occur in the <code>Document</code>.  If there
-     *                   is no distinguishing attribute, this should be an
-     *                   empty string.
+     *        whose value will distinguish this element from others that may 
+     *        occur in the <code>Document</code>.  If there is no 
+     *        distinguishing attribute, this should be an empty string.
      */
     private final HashMap loadParameters(Element element, String dAttribute) 
             throws ServerInitializationException {
@@ -836,6 +846,8 @@ public abstract class Server
      * <p></p>
      * This is useful for threaded <code>Modules</code> that need to wait
      * until all initialization has occurred before doing something.
+     *
+     * @return whether initialization has completed.
      */
     public final boolean hasInitialized() {
         return m_initialized;
@@ -970,9 +982,6 @@ public abstract class Server
             // send to disk, then empty queue
             PrintStream p=null;
             File logDir=new File(m_homeDir, LOG_DIR);
-            if (!logDir.exists()) {
-                logDir.mkdir(); // try to create dir if doesn't exist
-            }
             File startupLogFile=new File(logDir, LOG_STARTUP_FILE);
             try {
                 p=new PrintStream(new FileOutputStream(startupLogFile));
@@ -1002,7 +1011,8 @@ public abstract class Server
     
     /**
      * Flushes, then closes any resources tied up by the <code>Handler</code>(s)
-     * associated with the <code>Logger</code>.  If there is no 
+     * associated with the <code>Logger</code> and sets the logger to null.  
+     * If there is no 
      * <code>Logger</code>, the <code>LogRecord</code> queue is flushed to 
      * LOG_DIR/LOG_STARTUP_FILE, and if that can't be written to, flushes
      * it to stderr.
@@ -1116,6 +1126,8 @@ public abstract class Server
                 } catch (Throwable t) {
                     // a runtime error..shouldn't happen, but if it does...
                     StringBuffer s=new StringBuffer();
+                    s.append(t.getClass().getName());
+                    s.append(": ");
                     for (int i=0; i<t.getStackTrace().length; i++) {
                         s.append(t.getStackTrace()[i] + "\n");
                     }
@@ -1252,10 +1264,16 @@ public abstract class Server
     public final void shutdown()
             throws ServerShutdownException, ModuleShutdownException {
         Iterator roleIterator=loadedModuleRoles();
+        logInfo("Server shutdown requested.");
         while (roleIterator.hasNext()) {
             Module m=getModule((String) roleIterator.next());
+            logFinest("Started shutting down module for role \"" + m.getRole() 
+                    + "\"");
             m.shutdownModule();
+            logFinest("Finished shutting down module for role \"" + m.getRole() 
+                    + "\"");
         }
+        logFinest("Shutting down server instance.");
         shutdownServer();
     }
 
@@ -1276,6 +1294,7 @@ public abstract class Server
      */
     protected void shutdownServer()
             throws ServerShutdownException {
+        logInfo("Closing logger.");
         closeLogger();
         if (1==2)
             throw new ServerShutdownException(null);
@@ -1315,10 +1334,8 @@ public abstract class Server
             System.err.println("Error: Server could not initialize: "
                     + sie.getMessage());
         } catch (ModuleInitializationException mie) {
-            Module m=mie.getModule();
-            System.err.println("Error: Module '" + m.getClass().getName() 
-                    + "' (role='" + m.getRole() + "') could not initialize: " 
-                    + mie.getMessage());
+            System.err.println("Error: Module with role '" + mie.getRole()
+                    + "' could not initialize: " + mie.getMessage());
         } finally {
             if (server!=null) {
             try {
@@ -1327,10 +1344,8 @@ public abstract class Server
                 System.err.println("Error: Server had trouble shutting down: "
                         + sse.getMessage());
             } catch (ModuleShutdownException mse) {
-                Module m=mse.getModule();
-                System.err.println("Error: Module '" + m.getClass().getName()
-                        + "' (role='" + m.getRole() + "') had trouble "
-                        + "shutting down: " + mse.getMessage());
+                System.err.println("Error: Module with role '" + mse.getRole()
+                        + "' had trouble shutting down: " + mse.getMessage());
             }
             }
         }
