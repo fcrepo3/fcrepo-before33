@@ -2,7 +2,7 @@
 <server xmlns="http://www.fedora.info/definitions/1/0/config/" 
         xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" 
         class="fedora.server.BasicServer">
-	<param name="shutdownPassword" value="fedoraAdmin"/>
+	<param name="adminPassword" value="fedoraAdmin"/>
 	<param name="log_max_size" value="5242880"/>
 	<param name="log_max_days" value="7"/>
 	<param name="log_dir" value="logs"/>
