@@ -231,7 +231,8 @@ public class BasicDigitalObject
                 } catch (NumberFormatException ignored) { }
             }
         }
-        return start + highest;
+        int newNum=highest+1;
+        return start + newNum;
     }
 
 }
