@@ -104,9 +104,9 @@ public class UploadServlet
             HttpServletResponse response) {
         try {
             if (status==HttpServletResponse.SC_CREATED) {
-                logInfo("Failed upload: " + message);
-            } else {
                 logFine("Successful upload, id=" + message);
+            } else {
+                logInfo("Failed upload: " + message);
             }
             response.setStatus(status);
             response.setContentType(CONTENT_TYPE_TEXT);

@@ -99,7 +99,7 @@ public abstract class StreamUtility {
 
     /**
      * Copies the contents of an InputStream to an OutputStream, then closes
-     * both.
+     * both.  
      *
      * @param in The source stream.
      * @param out The target stram.
@@ -109,13 +109,20 @@ public abstract class StreamUtility {
      */
     public static void pipeStream(InputStream in, OutputStream out, int bufSize)
             throws IOException {
-        byte[] buf = new byte[bufSize];
-        int len;
-        while ( ( len = in.read( buf ) ) != -1 ) {
-            out.write( buf, 0, len );
+        try {
+            byte[] buf = new byte[bufSize];
+            int len;
+            while ( ( len = in.read( buf ) ) != -1 ) {
+                out.write( buf, 0, len );
+            }
+        } finally {
+            try {
+                in.close();
+                out.close();
+            } catch (IOException e) {
+                System.err.println("WARNING: Could not close stream.");
+            }
         }
-        in.close();
-        out.close();
     }
 
     public static byte[] decodeBase64(String data) {

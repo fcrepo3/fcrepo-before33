@@ -645,7 +645,9 @@ public class DefaultManagement
 				    logWarning("Could not remove expired uploaded file '" + id
 				            + "'.  Check existence/permissions in management/upload/ directory.");
 				}
-				m_uploadStartTime.remove(id);
+                synchronized (m_uploadStartTime) {
+    				m_uploadStartTime.remove(id);
+                }
 			}
 		}
         // then generate an id
@@ -659,7 +661,9 @@ public class DefaultManagement
 		// if we got this far w/o an exception, add to hash with current time
 		// and return the identifier-that-looks-like-a-url
 		long now=System.currentTimeMillis();
-		m_uploadStartTime.put("" + id, new Long(now));
+        synchronized (m_uploadStartTime) {
+		    m_uploadStartTime.put("" + id, new Long(now));
+        }
 		return "uploaded://" + id;
 	}
 
@@ -675,7 +679,9 @@ public class DefaultManagement
 		    String internalId=id.substring(11);
 			if (m_uploadStartTime.get(internalId)!=null) {
 			    // found... remove from hash and return inputstream
-			    m_uploadStartTime.remove(internalId);
+			    synchronized (m_uploadStartTime) {
+			        m_uploadStartTime.remove(internalId);
+                }
 				try {
 			        return new FileInputStream(new File(m_tempDir, internalId));
 				} catch (Exception e) {
