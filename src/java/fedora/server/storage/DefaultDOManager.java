@@ -965,7 +965,7 @@ public class DefaultDOManager
                        + "FROM ObjectRegistry";
                //        + " WHERE SystemVersion > 0"; // <- ignore new,uncommitted
             if (foType!=null) {
-                query=query+" AND FO_TYPE = '" + foType + "'";
+                query=query+" WHERE FO_TYPE = '" + foType + "'";
             }
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
