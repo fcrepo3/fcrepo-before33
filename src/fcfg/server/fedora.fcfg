@@ -29,6 +29,10 @@
 		<param name="definitive_registry_class" value="fedora.server.storage.DBRegistry"/>
 		<param name="definitive_registry_dbtable" value="mysql1#test1dreg"/>
 	</module>
+	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
+		<comment>This module facilitates obtaining ConnectionPools</comment>
+		<param name="poolNames" value="poolOne"/>
+	</module>
 	<datastore id="mysql1">
 		<comment>This one's kind of slow, but it's all
       we've got.</comment>
@@ -39,4 +43,24 @@
 		<param name="pool_max" value="100"/>
 		<param name="pool_min" value="20"/>
 	</datastore>
+	<datastore id="poolOne">
+		<comment>Config parameters for ConnectionPool number one</comment>
+		<param name="dbUsername" value="fedoraAdmin"/>
+		<param name="dbPassword" value="fedoraAdmin"/>
+		<param name="jdbcURL" value="jdbc:mysql://icarus.lib.virginia.edu:3306/FedoraObjects"/>
+		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
+		<param name="minPoolSize" value="10"/>
+		<param name="maxPoolSize" value="100"/>
+	</datastore>
+	<!--
+	<datastore id="poolTwo">
+		<comment>Config parameters for ConnectionPool number two</comment>
+		<param name="dbUsername" value="fedoraAdmin"/>
+		<param name="dbPassword" value="fedoraAdmin"/>
+		<param name="jdbcURL" value="jdbc:mysql://169.254.137.133:3306/FedoraObjects"/>
+		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
+		<param name="minPoolSize" value="10"/>
+		<param name="maxPoolSize" value="100"/>
+	</datastore>
+	-->
 </server>
