@@ -1,0 +1,40 @@
+<!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Ronda A. Grizzle (University of Virginia) -->
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+<article>
+	<articleinfo>
+		<graphic fileref="images/newlogo2.jpg"/>
+		<title>
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+		<title>
+			Versioning in <trademark class="trade">Fedora</trademark>
+		</title>
+		<subtitle>Software Release 1.2</subtitle>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<copyright>
+			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
+		</copyright>
+		<publisher>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
+		</publisher>
+		<edition>$$</edition>
+		<date>$$</date>
+		<releaseinfo>
+            $$ 
+        </releaseinfo>
+	</articleinfo>
+	<sect1>
+		<title>Introduction</title>
+		<para>Release 1.2 of Fedora includes content versioning functionality. This document will explain how content versioning works both server side and as a function of search results.</para>
+	</sect1>
+</article>
