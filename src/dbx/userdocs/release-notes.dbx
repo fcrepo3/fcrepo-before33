@@ -1,134 +1,194 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <article>
-    <title>Fedora Release Notes</title>
-    <articleinfo>
-        <author>
-            <othername>Fedora Development Team</othername>
-        </author>
-        <edition>$Revision$</edition>
-        <date>$Date$</date>
-        <releaseinfo>
-            $Id$
+	<title>Fedora Release Notes</title>
+	<articleinfo>
+		<author>
+			<othername>Fedora Development Team</othername>
+		</author>
+		<edition>$Revision$</edition>
+		<date>$Date$</date>
+		<releaseinfo>
+            $Id$ 
         </releaseinfo>
-    </articleinfo>
-    <section>
-        <title>Release 0.9 - March 7, 2003</title>
-        <para>
+	</articleinfo>
+	<section>
+		<title>Release 1.0 - March 7, 2003</title>
+		<para>This release is the first public release of the Fedora repository system. Fedora is licensed under the GNU General Public License. Refer to the README and COPYING files in the distribution for details of the license and restrictions governing copying and redistribution. This release includes some major changes since release 0.9 that include the following additions and enhancements.
+		</para>
+		<section>
+			<title>Behavior Definition and Behavior Mechanism Object Builder </title>
+			<para>A new tool has been added to the Admin client that facilitates the building of behavior definition and behavior mechanism objects. The bdef/bmech builder provides a graphical user interface that greatly simplifies the task of creating behavior definition and behavior mechanism objects from scratch.</para>
+		</section>
+		<section>
+			<title>Additional Component Management Method Implemented</title>
+			<para>Several additional methods in API-M have been implemented. The new methods include</para>
+			<itemizedlist>
+				<listitem>
+					<para>GetDatastream – retrieve the specified datastream</para>
+				</listitem>
+				<listitem>
+					<para>GetDisseminator – retrieve the specified disseminator</para>
+				</listitem>
+				<listitem>
+					<para>ListDatastreamIDs – obtain a list of datastream IDs</para>
+				</listitem>
+				<listitem>
+					<para>ListDisseminatorIDs – obtain a list of disseminator IDs</para>
+				</listitem>
+				<listitem>
+					<para>ModifyDatastreamExternal – change the pointer to a Referenced External Content datastream</para>
+				</listitem>
+				<listitem>
+					<para>ModifyDatastreamManagedContent – change the contents of a Managed Content datastream</para>
+				</listitem>
+				<listitem>
+					<para>ModifyDatastreamXMLMetadata  - change the contents of an Implementor-Defined XML Metadata datastream</para>
+				</listitem>
+				<listitem>
+					<para>modifyDisseminator  - modify the references to the behavior definition or behavior mechanism associated with the specified disseminator</para>
+				</listitem>
+			</itemizedlist>
+		</section>
+		<section>
+			<title>Batch Utility Enhancements</title>
+			<para>Several enhancements to the Batch Utility have been added to make the batch utility less platform specific. Enhancements include [blurb from Bill here.]</para>
+		</section>
+		<section>
+			<title>Documentation</title>
+				<para>The Fedora documentation now includes revised and enhanced Installation Guide, Release Notes, Manual, and Demos Guide. The Fedora manual includes a general introduction to the architecture, Installation Guide, User’s Guide, and Developer’s Guide. Upon successful installation, all documentation is also available through the userdocs webapp and can be access using the syntax:</para>
+			<para>http://hostname:port/userdocs</para>
+			<itemizedlist>
+				<listitem>
+					<para>hostname - required hostname of the Fedora server.</para>
+				</listitem>
+				<listitem>
+					<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+				</listitem>
+				<listitem>
+					<para>userdocs - a required parameter specifying the Fedora servlet path hostname - required hostname of the Fedora server.</para>
+				</listitem>
+			</itemizedlist>
+			<para>In-line documentation in the source code has also been updated.</para>
+		</section>
+	</section>	
+	<section>
+		<title>Release 0.9 - March 7, 2003</title>
+		<para>
         This release includes major changes since the December Beta1 release 
         that include the following additions and enhancements.
         </para>
-        <section>
-            <title>Repository-Managed Content Datastreams</title>
-            <para>
+		<section>
+			<title>Repository-Managed Content Datastreams</title>
+			<para>
             The implementation of Repository-Managed Content datastreams has been added. Repository-Managed Content is used for datastreams that are to be under the complete control of the Fedora repository. Upon ingestion, content that is referenced in the Fedora-METS "file" element is copied to an internal storage location in the Fedora server and the external pointer in the Fedora-METS object is updated to reflect the new internal storage location. Repository-Managed Content should be used in cases where it is desirable for datastream content to be stored and managed locally within the Fedora server. The repository manager must insure that there is sufficient disk space allocated to accommodate the ingestion of objects containing Repository-Managed Content.
             </para>
-        </section>
-        <section>
-            <title>Implementor-Defined XML Metadata Datastreams</title>
-            <para>
+		</section>
+		<section>
+			<title>Implementor-Defined XML Metadata Datastreams</title>
+			<para>
             The implementation of Implementor-Defined XML Metadata datastreams has been added. XMLMetadata datastreams represent user-defined XML-encoded metadata that is included in-line in the "amdSec" and "dmdSec" elements of the Fedora-Mets object. Although these datastreams are included in the metadata section of the Fedora-METS object, they can be disseminated just like the regular datastreams included in the "fileSec" element. Implementor-Defined XML Metadata datastreams should be used in cases where it is desirable to include user-defined metadata in-line in the Fedora-METS object. The Dublin Core metadata datastream is an example of an Implementor-Defined XML Metadata datastream (see Search Interface note).
             </para>
-        </section>
-        <section>
-            <title>API-A-Lite Interface</title>
-            <para>
+		</section>
+		<section>
+			<title>API-A-Lite Interface</title>
+			<para>
             A new Fedora Access interface has been implemented known as API-A-Lite. API-A-Lite provides a streamlined implementation of the Fedora Access API over HTTP. The new interface provides two methods: GetDissemination, and GetObjectProfile. GetDissemination is used to request disseminations using HTTP. GetObjectProfile uses object reflection to provide a description of an object and its components. 
             </para>
-        </section>
-        <section>
-            <title>Search Interface</title>
-            <para>
+		</section>
+		<section>
+			<title>Search Interface</title>
+			<para>
             The implementation of a new search interface has been added. Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using this interface. The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the "Datastream ID" is DC, and the XML conforms to the schema at: http://www.openarchives.org/OAI/2.0/oai_dc.xsd. If such a datastream is not provided, only the System Metadata will be indexed for that object. The search interface provides both simple and advanced searching via a web page included with the repository software. All queries are case insensitive. Simple search enables queries of words and phrases occurring anywhere in an object s indexed metadata fields. 
             Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (= and ~) for string fields, and value comparison operators (=, &gt;, &gt;=, &lt;, &lt;=) for date fields (dc:date fields may be treated as both). The wildcards, * and ? may be used in any string-based query. 
             </para>
-        </section>
-        <section>
-            <title>OAI Provider Interface</title>
-            <para>
+		</section>
+		<section>
+			<title>OAI Provider Interface</title>
+			<para>
 The implementation of an OAI-PMH2.0 Provider interface has been added. OAI-PMH is a standard for sharing metadata across repositories. Currently, only the Dublin Core metadata for each object may be disseminated via this interface. 
             </para>
-        </section>
-        <section>
-            <title>Access Control and Authentication</title>
-            <para>
+		</section>
+		<section>
+			<title>Access Control and Authentication</title>
+			<para>
 Although Access Control is not slated until year two of the project, the implementation of a simple form of access control has been added to provide a minimal level of security. IP range restriction is supported at both the Management API and the Access API exposures. The fedora.fcfg configuration file contains two new optional parameters in the Access and Management Modules named "allowhosts" and "denyhost" that are used to provide a comma delimited set of IP ranges. By default, the Management API is restricted to the IP address of the local host and the Access API is unrestricted. In addition, basic authentication is supported for API-M client-to-server communication. The client scripts and fedora-admin GUI have been modified to take a username and password at startup. Only one user, the super user "fedoraAdmin", is supported at this time. The password for fedoraAdmin is configured in fedora.fcfg.
             </para>
-        </section>
-        <section>
-            <title>Server Port Configuration</title>
-            <para>
+		</section>
+		<section>
+			<title>Server Port Configuration</title>
+			<para>
 Server administrators can now more easily configure the port on which the Fedora server is exposed. The port is set in fedora.fcfg. Its default is 8080.
             </para>
-        </section>
-        <section>
-            <title>METS Extension</title>
-            <para>
+		</section>
+		<section>
+			<title>METS Extension</title>
+			<para>
 To accommodate some of the new functionality in Fedora, it was necessary to extend the METS schema. Fedora-METS objects are now validated against this extended version of METS. The extended schema, mets-fedora-ext.xsd, is available at dist/server/xsd/ and contains inline comments where changes were made. Other constraints for the objects, expressed in schematron, are available in the dist/server/schematron/ directory. The demonstration objects act as useful examples in understanding this schema. 
             </para>
-        </section>
-        <section>
-            <title>Default Disseminator</title>
-            <para>
+		</section>
+		<section>
+			<title>Default Disseminator</title>
+			<para>
 The implementation of a new Default Disseminator has been added. Prior to this release, a data object could not be disseminated without first constructing and ingesting a behavior definition and behavior mechanism object. The Default Disseminator is a built-in internal disseminator on every object that provides an internal behavior mechanism for disseminating the basic contents of an object. The Default Disseminator does not replace Behavior Definition and Behavior Mechanism object. Instead, it provides a simple way for viewing the contents of an object without having to construct a separate Behavior Definition and Behavior Mechanism object. Behavior Definition and Behavior Mechanism objects are still required for creating disseminations that provide more complex sets of behaviors.
             </para>
-        </section>
-        <section>
-            <title>Storage Subsystem Enhancements</title>
-            <para>
+		</section>
+		<section>
+			<title>Storage Subsystem Enhancements</title>
+			<para>
 The code supporting the Java instantiation of Fedora Digital Objects inside the server has been re-worked so that serialization and deserialization are completely de-coupled from the Java interfaces to the objects: the DOReaders and DOWriters. Method names have also been changed to be more meaningful and consistent. The serialization and deserialization code has been modified to support the new version of the Fedora METS extension schema (described above). Overall, the code in this portion of the server is more compact and robust than in the previous version of the software.
             </para>
-        </section>
-        <section>
-            <title>Batch Ingest Tool Enhancements</title>
-            <para>
+		</section>
+		<section>
+			<title>Batch Ingest Tool Enhancements</title>
+			<para>
 The functionality to create and ingest batches of objects has been moved under the fedora-admin client tool. This consolidates administrative functions into a single tool and provides a readily accessible user interface. There are now more attributes which can be substituted, per-object, into the batch template. These include object label; datastream labels, both general and specific to a disseminator; and datastream title. An object comment can also be inserted.
             </para>
-        </section>
-        <section>
-            <title>New Demo Objects</title>
-            <para>
+		</section>
+		<section>
+			<title>New Demo Objects</title>
+			<para>
 This includes new demonstration objects. These objects can be loaded into the repository in one of two ways. The xml source files can be "ingested" into the repository via the Fedora Admin GUI client (from the command prompt, run: fedora-admin). Otherwise, they can be loaded with all other demos by running the demo load script (from the command prompt, run: fedora-demoall [hostname] [port] [username] [password]). The demo object source xml files for the demo objects can be found in the following directory: [FEDORA_HOME]/dist/server/demo
             </para>
-            <para>
+			<para>
 There are two categories of demonstrations:
                 <itemizedlist>
-                    <listitem>
-                    <emphasis>Local Server Demos -</emphasis> These demos can be run under any conditions. They are intended to work when the Fedora repository server is in a stand-alone condition, for example, if the repository is running without a network connection, or if the repository is behind a firewall and not set up to received outside connections.
+					<listitem>
+						<emphasis>Local Server Demos -</emphasis> These demos can be run under any conditions. They are intended to work when the Fedora repository server is in a stand-alone condition, for example, if the repository is running without a network connection, or if the repository is behind a firewall and not set up to received outside connections.
                     </listitem>
-                    <listitem>
-                    <emphasis>Open Server Demos -</emphasis> These demos can only be run if the Fedora repository server is running as a network accessible server, meaning that it can make outgoing connections AND accept incoming connections. If the repository server is running behind a firewall, the firewall must be configured to allow incoming connections on the port that the repository server is running. The Open Server Demos use distributed content and services that are remote to the repository server.
+					<listitem>
+						<emphasis>Open Server Demos -</emphasis> These demos can only be run if the Fedora repository server is running as a network accessible server, meaning that it can make outgoing connections AND accept incoming connections. If the repository server is running behind a firewall, the firewall must be configured to allow incoming connections on the port that the repository server is running. The Open Server Demos use distributed content and services that are remote to the repository server.
                     </listitem>
-                </itemizedlist>
-            </para>
-            <para>
+				</itemizedlist>
+			</para>
+			<para>
             Once demo objects are ingested into the repository, they can be viewed via a web browser using API-A-LITE or API-A. Remember the URL syntax to get the object profile via API-A-LITE is: http://{hostname}:{port}/fedora/get/{objectPID}
             </para>
-            <para>
-<emphasis>Example:</emphasis> http://localhost:8080/fedora/get/demo:5
+			<para>
+				<emphasis>Example:</emphasis> http://localhost:8080/fedora/get/demo:5
             </para>
-            <para>
+			<para>
 For additional information refer to the demos.html file in the userdocs directory.
             </para>
-        </section>
-        <section>
-            <title>Documentation</title>
-            <para>
+		</section>
+		<section>
+			<title>Documentation</title>
+			<para>
             After you have installed the software and started the server, you can access the documentation at http://localhost:8080/userdocs (substitute your own hostname and port number if using something other than the default).
             </para>
-        </section>
-    </section>
-    <section>
-        <title>Beta 1 - Dec 20, 2002</title>
-        <para>
+		</section>
+	</section>
+	<section>
+		<title>Beta 1 - Dec 20, 2002</title>
+		<para>
 		This release adds several important features to the Fedora software,
 		including a batch ingest tool, parameterized disseminations,
         and datastream mediation.  Digital object serialization and
         PID generation are now fully active, and validation has been
 		enhanced.  This is a non-public release.
         </para>
-        <section>
-		<title>Batch Ingest</title>
-		<para>A simple batch tool has been added,
+		<section>
+			<title>Batch Ingest</title>
+			<para>A simple batch tool has been added,
            enabling the creation of a batch of objects conforming to the
            same content model. The tool consists of a 3 phase process. Phase 1
            will take a directory structure consisting of datastreams and metadata
@@ -141,19 +201,19 @@ For additional information refer to the demos.html file in the userdocs director
            Phase 1 will be implemented in the next release and is NOT available
            in the beta1 release.
             </para>
-        </section>
-        <section>
-		<title>PID Generation</title>
-		<para>
-         <emphasis>PID generation has been activated.</emphasis> 
+		</section>
+		<section>
+			<title>PID Generation</title>
+			<para>
+				<emphasis>PID generation has been activated.</emphasis> 
            Upon ingestion, Fedora objects that
            pass validation are automatically assigned a unique persistent 
            identifer or PID. The namespace prefix on the PID is determined
            by the namespace parameter in the fedora.cfg configuration
            file. 
 		</para>
-		<para>
-         <emphasis>Special default PID namespace.</emphasis>
+			<para>
+				<emphasis>Special default PID namespace.</emphasis>
           To simplify initial setup and use 
            of the repository, the default namespace of "test:" enables 
            special handling of Fedora object PIDs. If the PID namespace is
@@ -164,30 +224,30 @@ For additional information refer to the demos.html file in the userdocs director
            allow for easier loadeing of sample objects by novice users of
            the repository software.
             </para>
-        </section>
-        <section>
-		<title>Serialization</title>
-		<para>
+		</section>
+		<section>
+			<title>Serialization</title>
+			<para>
           Objects are completely deserialized and re-serialed upon ingest.
           This has the effect that the stored version of the object (in METS form)
           will not be the same byte-for-byte as the version coming out,
           but the information will be preserved.  It also enables
           more complete validation and PID generation.
             </para>
-        </section>
-        <section>
-		<title>Validation Enhancements</title>
-		<para>
+		</section>
+		<section>
+			<title>Validation Enhancements</title>
+			<para>
          Two-phase validation of objects implemented. Upon ingestion,
            Fedora objects undergo a two phase validation process to
            validate against the Fedora METS schema and to validate
            against a set of rules defined for Fedora objects.
             </para>
-        </section>
-        <section>
-		<title>Parameters</title>
-		<para>
-         <emphasis>Method Parameters enabled</emphasis> Method parameters can now be defined in
+		</section>
+		<section>
+			<title>Parameters</title>
+			<para>
+				<emphasis>Method Parameters enabled</emphasis> Method parameters can now be defined in
            Behavior Mechanism objects using WSDL providing a way to pass
            parameters to methods from the end user. For example, an image
            mechanism might have a method named getImage with parameters X
@@ -195,14 +255,14 @@ For additional information refer to the demos.html file in the userdocs director
            Method parameters may be supplied by the end user on a dissemination
            request to affect the result of the dissemination.
 		</para>
-		 <para>
-         <emphasis>Default Method Parameters enabled</emphasis> Mechanism designers can now
+			<para>
+				<emphasis>Default Method Parameters enabled</emphasis> Mechanism designers can now
            create method parameters that are known only to the mechanism.
            Default method parameters cannot be altered by the end user and
            their values must be specified in the Behavior Mechanism object.
 		 </para>
-		 <para>
-         <emphasis>Enhancements to the example soap client (FedoraAccessSoapServlet)</emphasis>
+			<para>
+				<emphasis>Enhancements to the example soap client (FedoraAccessSoapServlet)</emphasis>
            In the alpha1 release, the soap client enabled one to reflect on
            an object using GetBehaviorDefinitions and GetObjectMethods to
            display a list of all methods for a given object and to disseminate
@@ -210,32 +270,32 @@ For additional information refer to the demos.html file in the userdocs director
            for user input of method parameters for those methods that define
            parameters.
 		 </para>
-		 <para>
-           <emphasis>DB Schema updated</emphasis> A new table named MechDefaultParameter has been
+			<para>
+				<emphasis>DB Schema updated</emphasis> A new table named MechDefaultParameter has been
            added and the datatype and length of some column names have changed.
           </para>
-        </section>
-        <section>
-		<title>Fedora Public Website</title>
-		<para>
+		</section>
+		<section>
+			<title>Fedora Public Website</title>
+			<para>
          Added a <ulink url="http://www.fedora.info/release/">release directory</ulink>
           for downloading both milestone source builds and nightly binary distributions,
          and created a <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/WebHome">wiki
          for user support and FAQs</ulink>.
             </para>
-        </section>
-        <section>
-		<title>Datastream Mediation</title>
-		<para>
+		</section>
+		<section>
+			<title>Datastream Mediation</title>
+			<para>
            To provide better security for
            the physical location of datastreams, a simple proxy has been
            implemented to disguise the location of datastreams to external
            mechanisms.
             </para>
-        </section>
+		</section>
 		<section>
-		  <title>Sample Objects</title>
-		  <para>
+			<title>Sample Objects</title>
+			<para>
            The sample objects in the demo directory
            have been renamed for readability. The content of the objects has
            also been updated to reflect new additions like method parameters
@@ -247,8 +307,8 @@ For additional information refer to the demos.html file in the userdocs director
            </para>
 		</section>
 		<section>
-		  <title>Documentation</title>
-		  <para>
+			<title>Documentation</title>
+			<para>
          Enhanced in-line documentation in code. Ancillary documentation and
            diagrams updated.
          Master Specification Document updated. The Specification documented
@@ -256,72 +316,72 @@ For additional information refer to the demos.html file in the userdocs director
           </para>
 		</section>
 	</section>
-    <section>
-        <title>Alpha 1 - Oct 31, 2002</title>
-        <para>
+	<section>
+		<title>Alpha 1 - Oct 31, 2002</title>
+		<para>
          Provided for the first time at the
          development/deployment team meeting at UVA, this release
          includes a basic server that can ingest
          objects, view objects in the repository, and export objects.
 		 This is a non-public release.
          </para>
-         <section>
-           <title>Management API</title>
-           <para>The management API is exposed via SOAP over HTTP and 
+		<section>
+			<title>Management API</title>
+			<para>The management API is exposed via SOAP over HTTP and 
                  has the following methods implemented:
             <itemizedlist>
-               <listitem>ingestObject</listitem>
-               <listitem>purgeObject</listitem>
-               <listitem>listObjectPIDs</listitem>
-               <listitem>exportObject</listitem>
-             </itemizedlist>
-           </para>
-         </section>
-         <section>
-           <title>Management Client</title>
-           <para>The included GUI, Fedora Administrator, can be used
+					<listitem>ingestObject</listitem>
+					<listitem>purgeObject</listitem>
+					<listitem>listObjectPIDs</listitem>
+					<listitem>exportObject</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section>
+			<title>Management Client</title>
+			<para>The included GUI, Fedora Administrator, can be used
                  to ingest objects, purge objects, view objects, and
                  export objects.  It also includes diagnostic consoles
                  for API-M and API-A.
            </para>
-         </section>
-         <section>
-           <title>Access API</title>
-           <para>The access API is exposed via SOAP over HTTP and
+		</section>
+		<section>
+			<title>Access API</title>
+			<para>The access API is exposed via SOAP over HTTP and
                  has the following methods implemented:
              <itemizedlist>
-               <listitem>getBehaviorDefinitions</listitem>
-               <listitem>getBehaviorMethods</listitem>
-               <listitem>getBehaviorMethodsAsWSDL</listitem>
-               <listitem>getObjectMethods</listitem>
-               <listitem>getDissemination</listitem>
-             </itemizedlist>
-           </para>
-         </section>
-         <section>
-           <title>Access Client</title>
-           <para>
+					<listitem>getBehaviorDefinitions</listitem>
+					<listitem>getBehaviorMethods</listitem>
+					<listitem>getBehaviorMethodsAsWSDL</listitem>
+					<listitem>getObjectMethods</listitem>
+					<listitem>getDissemination</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section>
+			<title>Access Client</title>
+			<para>
              A java servlet is included with the server distribution
              that translates from pure HTTP requests to SOAP requests
              and provides an HTML interface so that object methods
              may be browsed and getDissemination requests can be
              provided without the need to send/recieve SOAP envelopes.
            </para>
-         </section>
-         <section>
-           <title>Object Validation</title>
-           <para>Objects must be validated according to METS schema rules,
+		</section>
+		<section>
+			<title>Object Validation</title>
+			<para>Objects must be validated according to METS schema rules,
                  Fedora-imposed schema rules, and object integrity rules.
                  For this release, the validation module implements the
                  first two, but only METS schema validation has been
                  activated.
            </para>
-         </section>
-         <section>
-           <title>Storage Subsystem</title>
-           <para>This has been implemented on top of a filesystem and a
+		</section>
+		<section>
+			<title>Storage Subsystem</title>
+			<para>This has been implemented on top of a filesystem and a
              partially redundant database.
            </para>
-         </section>
-    </section>
+		</section>
+	</section>
 </article>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <article>
 	<title>Fedora Installation Guide</title>
-	<subtitle>Release 0.9</subtitle>
+	<subtitle>Release 1.0</subtitle>
 	<articleinfo>
 		<author>
 			<othername>Fedora Development Team</othername>
@@ -13,28 +13,23 @@
         </releaseinfo>
 	</articleinfo>
 	<section>
-		<title>Migrating From Beta 1</title>
+		<title>Migrating From Pre-Releases</title>
 		<para>
-      The 0.9 release includes some changes to the relational database DBSchema 
-      and has considerably more functionality than that available in the beta1 release. 
-      Because of these changes, there is no direct migration path from beta1 to release 0.9. 
-      If you have sample data loaded in the beta1 release that you want to migrate, 
-      you will need to delete the objects and re-ingest them in the new ingest schema (see
-      release notes).
-      </para>
+     Release 1.0 includes some final changes to the relational database DBSchema and has additional functionality than available in earlier releases. Because of these changes, there is no direct migration path from earlier pre-releases to release 1.0. If you have sample data loaded in earlier releases, you will need to delete the objects and re-ingest them with release 1.0.
+		</para>
 		<para>
-      You will need to complete the following two tasks prior to installing the 0.9 release:
-        <itemizedlist>
-				<listitem>Remove any existing objects from the Fedora beta1 repository.</listitem>
+     You will need to complete the following two tasks prior to installing the 1.0 release:        
+     			 <itemizedlist>
+				<listitem>Remove any existing objects from the pre-release Fedora repository.</listitem>
 				<listitem>Drop and recreate an empty Fedora relational database. 
           The default name in the fedora.fcfg config file for this database 
-          is FedoraObjects. When you install and start the 0.9 release,
+          is FedoraObjects. When you install and start the 1.0 release,
           it will create the new tables in the empty database.</listitem>
 			</itemizedlist>
 		</para>
 		<para>The recommended manner in which to accomplish these tasks is as follows:
         <itemizedlist>
-				<listitem>Start Fedora beta1 server if not already running; dist\server\bin\fedora-start</listitem>
+				<listitem>Start existing pre-release Fedora server if not already running; dist\server\bin\fedora-start</listitem>
 				<listitem>Start Fedora GUI admin client; dist\server\bin\fedora-admin</listitem>
 				<listitem>Open Management Console and use listObjectPIDs method to obtain a list of all object PIDs</listitem>
 				<listitem>Use purgeObject method to delete all objects</listitem>
@@ -63,8 +58,8 @@ Drop and then recreate the MySQL database being used by Fedora. The default data
 				<listitem>If using McKoi.
 Stop the McKoi database if it is running; dist\server\bin\mckoi-stop username password
 </listitem>
-				<listitem>Delete or remove the beta1 installation directory tree.</listitem>
-				<listitem>You are now ready to install the Fedora 0.9 release.</listitem>
+				<listitem>Delete or remove the pre-release installation directory tree.</listitem>
+				<listitem>You are now ready to install the Fedora 1.0 release.</listitem>
 			</itemizedlist>
 		</para>
 	</section>
@@ -75,12 +70,12 @@ Stop the McKoi database if it is running; dist\server\bin\mckoi-stop username pa
 			<para>Make sure you have a jdk1.4 installed and
         in your PATH before you attempt to compile.
         </para>
-        <para>
+			<para>
   Unjar in C:\mellon (jar -xvf filename.jar)
     If you choose a different directory, be sure to change
     the FEDORA_DEV value in initenv.bat appropriately.
     </para>
-    <para>
+			<para>
   Run C:\mellon\initenv
     This sets your environment up for running/compiling the server.
     If you're using a Unix variant, look at initenv.bat and set your
@@ -92,7 +87,7 @@ Stop the McKoi database if it is running; dist\server\bin\mckoi-stop username pa
 			<para>
 Compiling:
 </para>
-<para>
+			<para>
   Go to C:\mellon and type "ant serverdist"
     This builds everything in C:\mellon\dist\server
     For other targets, see build.xml
@@ -103,22 +98,22 @@ Compiling:
 			<para>
 Initial setup:
 </para>
-<para>
-<literallayout>
+			<para>
+				<literallayout>
   1) Install the database (if using mysql, run the installer at C:\mellon\res\)
   2) Start the database
   3) Run mySQLConfig (with no params to see usage)
   4) Change fedora.fcfg if needed (db host, user, pass)
      See comments therein for more configuration options.
 </literallayout>
-      </para>
+			</para>
 		</section>
 		<section>
 			<title>Start The Server</title>
 			<para>
   Type fedora-start
   </para>
-  <para>
+			<para>
     This starts the server.  It will take a few seconds to initialize.
     If it fails, type "fedora-stop".  Logs are kept at dist/server/logs/
       </para>
@@ -128,14 +123,13 @@ Initial setup:
 			<para>
         Type fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin
         </para>
-        <para>
+			<para>
         ...where localhost and 8080 are your server hostname and port, and fedoraAdmin and fedoraAdmin are the super user name and password.  (The superuser name is always fedoraAdmin; the superuser password is configured in fedora.fcfg, and defaults to the value, "fedoraAdmin")
 </para>
-        <para>
+			<para>
 This installs all the demo objects from the
         demo/ directory.  
         </para>
 		</section>
 	</section>
 </article>
-
