@@ -193,7 +193,7 @@ for (int bb=0; bb<objectsPath.length(); bb++) {
 //System.err.println("files[i].getName() " + files[i].getName());
 		//System.err.println("before calling xform");
 
-						String temp = "file:///" + files[i].getPath(); //(files[i].getPath()).replaceFirst("C:", "file:///C:");
+						String temp = "file://" + files[i].getPath(); //(files[i].getPath()).replaceFirst("C:", "file:///C:");
 				//System.err.println("path is [" + temp); //files[i].getPath());
 						transformer.setParameter("subfilepath",temp); //files[i].getPath());
 
