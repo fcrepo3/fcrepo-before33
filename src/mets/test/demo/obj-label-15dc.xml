@@ -1,15 +1,5 @@
 <?xml version="1.0"?>
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-        xmlns:METS="http://www.loc.gov/METS/" 
-        xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" 
-        xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" 
-        xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" 
-        xmlns:xlink="http://www.w3.org/TR/xlink" 
-        xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" 
-        OBJID="test:435" 
-        LABEL="This is the label"
-        TYPE="FedoraObject" 
-        PROFILE="UVA_STD_IMAGE">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="test:435" LABEL="This is the label" TYPE="FedoraObject" PROFILE="UVA_STD_IMAGE">
 	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-20T06:32:00" RECORDSTATUS="A">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name>Chris Wilper</METS:name>
@@ -28,74 +18,72 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DC" STATUS="A">
-  	  <METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
-		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Dublin Core Metadata">
-			<METS:xmlData>
-                <!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
-                <oai_dc:dc 
-                    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" 
-                    xmlns:dc="http://purl.org/dc/elements/1.1/">
-                  <dc:title>title1</dc:title>
-                  <dc:creator>creator1</dc:creator>
-                  <dc:subject>subject1</dc:subject>
-                  <dc:description>description1</dc:description>
-                  <dc:publisher>publisher1</dc:publisher>
-                  <dc:contributor>contributor1</dc:contributor>
-                  <dc:date>date1</dc:date>
-                  <dc:type>type1</dc:type>
-                  <dc:format>format1</dc:format>
-                  <dc:identifier>identifier1</dc:identifier>
-                  <dc:source>source1</dc:source>
-                  <dc:language>language1</dc:language>
-                  <dc:relation>relation1</dc:relation>
-                  <dc:coverage>coverage1</dc:coverage>
-                  <dc:rights>rights1</dc:rights>
-                </oai_dc:dc>
-            </METS:xmlData>
-        </METS:mdWrap>
-       </METS:descMD>
-    </METS:dmdSecFedora>
-  	<METS:dmdSecFedora ID="DESC1" STATUS="A">
-  	  <METS:descMD ID="DESC1.0" CREATED="2002-05-20T06:32:00">
-		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
-			<METS:xmlData>
-				<uvalibdesc:desc>
-					<uvalibdesc:time>
-						<uvalibdesc:date type="created" certainty="ca." era="bc">13th century</uvalibdesc:date>
-					</uvalibdesc:time>
-					<uvalibdesc:identifier scheme="URN">uva-lib:2</uvalibdesc:identifier>
-					<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
-					<uvalibdesc:subject scheme="other" othertype="keyword">Bronze Age, Mycenean</uvalibdesc:subject>
-					<uvalibdesc:subject scheme="other" othertype="keyword">Greek</uvalibdesc:subject>
-					<uvalibdesc:subject scheme="other" othertype="keyword">Mycenae</uvalibdesc:subject>
-					<uvalibdesc:subject scheme="other" othertype="keyword">Greece, Argolis</uvalibdesc:subject>
-					<uvalibdesc:title type="main">Mycenae</uvalibdesc:title>
-					<uvalibdesc:form>architecture</uvalibdesc:form>
-					<uvalibdesc:mediatype type="image">
-						<uvalibdesc:form>digital</uvalibdesc:form>
-					</uvalibdesc:mediatype>
-					<uvalibdesc:agent role="publisher">Art Images for College Teaching</uvalibdesc:agent>
-					<uvalibdesc:covspace>
-						<uvalibdesc:geometry>
-							<uvalibdesc:point>
-								<uvalibdesc:lat>37.750</uvalibdesc:lat>
-								<uvalibdesc:long>22.733</uvalibdesc:long>
-							</uvalibdesc:point>
-						</uvalibdesc:geometry>
-					</uvalibdesc:covspace>
-					<uvalibdesc:covtime>
-						<uvalibdesc:date era="bc">1350</uvalibdesc:date>
-						<uvalibdesc:date era="bc">1200</uvalibdesc:date>
-					</uvalibdesc:covtime>
-					<uvalibdesc:culture>Greek</uvalibdesc:culture>
-					<uvalibdesc:place type="original">
-						<uvalibdesc:geogname>Greece, Mycenae</uvalibdesc:geogname>
-					</uvalibdesc:place>
-					<uvalibdesc:style>Bronze Age, Mycenean</uvalibdesc:style>
-				</uvalibdesc:desc>
-			</METS:xmlData>
-		</METS:mdWrap>
-     </METS:descMD>
+		<METS:descMD ID="DC1.0" CREATED="2002-05-20T06:32:00">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Dublin Core Metadata">
+				<METS:xmlData>
+					<!-- This schema described at http://www.openarchives.org/OAI/openarchivesprotocol.html#dublincore -->
+					<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+						<dc:title>title1</dc:title>
+						<dc:creator>creator1</dc:creator>
+						<dc:subject>subject1</dc:subject>
+						<dc:description>description1</dc:description>
+						<dc:publisher>publisher1</dc:publisher>
+						<dc:contributor>contributor1</dc:contributor>
+						<dc:date>date1</dc:date>
+						<dc:type>type1</dc:type>
+						<dc:format>format1</dc:format>
+						<dc:identifier>identifier1</dc:identifier>
+						<dc:source>source1</dc:source>
+						<dc:language>language1</dc:language>
+						<dc:relation>relation1</dc:relation>
+						<dc:coverage>coverage1</dc:coverage>
+						<dc:rights>rights1</dc:rights>
+					</oai_dc:dc>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:descMD>
+	</METS:dmdSecFedora>
+	<METS:dmdSecFedora ID="DESC1" STATUS="A">
+		<METS:descMD ID="DESC1.0" CREATED="2002-05-20T06:32:00">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
+				<METS:xmlData>
+					<uvalibdesc:desc>
+						<uvalibdesc:time>
+							<uvalibdesc:date type="created" certainty="ca." era="bc">13th century</uvalibdesc:date>
+						</uvalibdesc:time>
+						<uvalibdesc:identifier scheme="URN">uva-lib:2</uvalibdesc:identifier>
+						<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
+						<uvalibdesc:subject scheme="other" othertype="keyword">Bronze Age, Mycenean</uvalibdesc:subject>
+						<uvalibdesc:subject scheme="other" othertype="keyword">Greek</uvalibdesc:subject>
+						<uvalibdesc:subject scheme="other" othertype="keyword">Mycenae</uvalibdesc:subject>
+						<uvalibdesc:subject scheme="other" othertype="keyword">Greece, Argolis</uvalibdesc:subject>
+						<uvalibdesc:title type="main">Mycenae</uvalibdesc:title>
+						<uvalibdesc:form>architecture</uvalibdesc:form>
+						<uvalibdesc:mediatype type="image">
+							<uvalibdesc:form>digital</uvalibdesc:form>
+						</uvalibdesc:mediatype>
+						<uvalibdesc:agent role="publisher">Art Images for College Teaching</uvalibdesc:agent>
+						<uvalibdesc:covspace>
+							<uvalibdesc:geometry>
+								<uvalibdesc:point>
+									<uvalibdesc:lat>37.750</uvalibdesc:lat>
+									<uvalibdesc:long>22.733</uvalibdesc:long>
+								</uvalibdesc:point>
+							</uvalibdesc:geometry>
+						</uvalibdesc:covspace>
+						<uvalibdesc:covtime>
+							<uvalibdesc:date era="bc">1350</uvalibdesc:date>
+							<uvalibdesc:date era="bc">1200</uvalibdesc:date>
+						</uvalibdesc:covtime>
+						<uvalibdesc:culture>Greek</uvalibdesc:culture>
+						<uvalibdesc:place type="original">
+							<uvalibdesc:geogname>Greece, Mycenae</uvalibdesc:geogname>
+						</uvalibdesc:place>
+						<uvalibdesc:style>Bronze Age, Mycenean</uvalibdesc:style>
+					</uvalibdesc:desc>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:descMD>
 	</METS:dmdSecFedora>
 	<METS:amdSec ID="TECH1">
 		<METS:techMD ID="TECH1.0" CREATED="2002-05-20T06:32:00" STATUS="">
@@ -418,14 +406,14 @@
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-     <METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors">
-		<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
-		<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
-		<!-- the disseminator subscribes -->
-		<METS:interfaceMD LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
-		<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
-		<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
-		<METS:serviceBindingMD LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
-     </METS:serviceBinding>
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors">
+			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
+			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
+			<!-- the disseminator subscribes -->
+			<METS:interfaceMD LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
+			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
+			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+			<METS:serviceBindMD LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
+		</METS:serviceBinding>
 	</METS:behaviorSec>
 </METS:mets>
