@@ -21,7 +21,7 @@ public abstract class TypeUtility
 
     public static java.util.List
             convertGenConditionArrayToSearchConditionList(
-            fedora.server.types.gen.Condition[] genConditions) 
+            fedora.server.types.gen.Condition[] genConditions)
             throws fedora.server.errors.InvalidOperatorException,
             fedora.server.errors.QueryParseException {
         java.util.ArrayList list=new java.util.ArrayList();
@@ -32,7 +32,7 @@ public abstract class TypeUtility
         }
         return list;
     }
-    
+
     public static fedora.server.types.gen.ObjectFields[]
             convertSearchObjectFieldsListToGenObjectFieldsArray(
             java.util.List sfList) {
@@ -46,42 +46,42 @@ public abstract class TypeUtility
                     (fedora.server.search.ObjectFields) sfList.get(i);
             // Repository key fields
             if (sf.getPid()!=null) gf.setPid(sf.getPid());
-            if (sf.getLabel()!=null) gf.setLabel(sf.getLabel()); 
-            if (sf.getFType()!=null) gf.setFType(sf.getFType()); 
-            if (sf.getCModel()!=null) gf.setCModel(sf.getCModel()); 
-            if (sf.getState()!=null) gf.setState(sf.getState()); 
-            if (sf.getLocker()!=null) gf.setLocker(sf.getLocker()); 
+            if (sf.getLabel()!=null) gf.setLabel(sf.getLabel());
+            if (sf.getFType()!=null) gf.setFType(sf.getFType());
+            if (sf.getCModel()!=null) gf.setCModel(sf.getCModel());
+            if (sf.getState()!=null) gf.setState(sf.getState());
+            if (sf.getLocker()!=null) gf.setLocker(sf.getLocker());
             if (sf.getCDate()!=null) {
                 java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
                 cal.setTime(sf.getCDate());
-                gf.setCDate(cal); 
+                gf.setCDate(cal);
             }
             if (sf.getMDate()!=null) {
                 java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
                 cal.setTime(sf.getMDate());
-                gf.setMDate(cal); 
+                gf.setMDate(cal);
             }
             // Dublin core fields
-            if (sf.titles().size()!=0) gf.setTitle(toStringArray(sf.titles())); 
-            if (sf.creators().size()!=0) gf.setCreator(toStringArray(sf.creators())); 
-            if (sf.subjects().size()!=0) gf.setSubject(toStringArray(sf.subjects())); 
-            if (sf.descriptions().size()!=0) gf.setDescription(toStringArray(sf.descriptions())); 
-            if (sf.publishers().size()!=0) gf.setPublisher(toStringArray(sf.publishers())); 
-            if (sf.contributors().size()!=0) gf.setContributor(toStringArray(sf.contributors())); 
-            if (sf.dates().size()!=0) gf.setDate(toStringArray(sf.dates())); 
-            if (sf.types().size()!=0) gf.setType(toStringArray(sf.types())); 
-            if (sf.formats().size()!=0) gf.setFormat(toStringArray(sf.formats())); 
-            if (sf.identifiers().size()!=0) gf.setIdentifier(toStringArray(sf.identifiers())); 
-            if (sf.sources().size()!=0) gf.setSource(toStringArray(sf.sources())); 
-            if (sf.languages().size()!=0) gf.setLanguage(toStringArray(sf.languages())); 
-            if (sf.relations().size()!=0) gf.setRelation(toStringArray(sf.relations())); 
-            if (sf.coverages().size()!=0) gf.setCoverage(toStringArray(sf.coverages())); 
-            if (sf.rights().size()!=0) gf.setRights(toStringArray(sf.rights())); 
+            if (sf.titles().size()!=0) gf.setTitle(toStringArray(sf.titles()));
+            if (sf.creators().size()!=0) gf.setCreator(toStringArray(sf.creators()));
+            if (sf.subjects().size()!=0) gf.setSubject(toStringArray(sf.subjects()));
+            if (sf.descriptions().size()!=0) gf.setDescription(toStringArray(sf.descriptions()));
+            if (sf.publishers().size()!=0) gf.setPublisher(toStringArray(sf.publishers()));
+            if (sf.contributors().size()!=0) gf.setContributor(toStringArray(sf.contributors()));
+            if (sf.dates().size()!=0) gf.setDate(toStringArray(sf.dates()));
+            if (sf.types().size()!=0) gf.setType(toStringArray(sf.types()));
+            if (sf.formats().size()!=0) gf.setFormat(toStringArray(sf.formats()));
+            if (sf.identifiers().size()!=0) gf.setIdentifier(toStringArray(sf.identifiers()));
+            if (sf.sources().size()!=0) gf.setSource(toStringArray(sf.sources()));
+            if (sf.languages().size()!=0) gf.setLanguage(toStringArray(sf.languages()));
+            if (sf.relations().size()!=0) gf.setRelation(toStringArray(sf.relations()));
+            if (sf.coverages().size()!=0) gf.setCoverage(toStringArray(sf.coverages()));
+            if (sf.rights().size()!=0) gf.setRights(toStringArray(sf.rights()));
             genFields[i]=gf;
         }
         return genFields;
     }
-    
+
     public static String[] toStringArray(java.util.List l) {
         String[] ret=new String[l.size()];
         for (int i=0; i<l.size(); i++) {
@@ -113,7 +113,8 @@ public abstract class TypeUtility
         genMethodDef.setMethodName(methodDefs[i].methodName);
         fedora.server.storage.types.MethodParmDef[] methodParmDefs =
             methodDefs[i].methodParms;
-        fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = null;
+        //fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = null;
+        fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = new fedora.server.types.gen.MethodParmDef[0];
         if (methodParmDefs != null && methodParmDefs.length > 0)
         {
           genMethodParmDefs =
@@ -156,7 +157,8 @@ public abstract class TypeUtility
       genMethodDef.setMethodName(methodDef.methodName);
       fedora.server.storage.types.MethodParmDef[] methodParmDefs =
           methodDef.methodParms;
-      fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = null;
+      //fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = null;
+      fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = new fedora.server.types.gen.MethodParmDef[0];
       genMethodParmDefs = convertMethodParmDefArrayToGenMethodParmDefArray(
           methodParmDefs);
       if (methodParmDefs != null && methodParmDefs.length > 0)
@@ -201,7 +203,8 @@ public abstract class TypeUtility
         methodDef.methodName = genMethodDefs[i].getMethodName();
         fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
             genMethodDefs[i].getMethodParms();
-        fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
+        //fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
+        fedora.server.storage.types.MethodParmDef[] methodParmDefs = new fedora.server.storage.types.MethodParmDef[0];
         if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
         {
           methodParmDefs =
@@ -243,7 +246,8 @@ public abstract class TypeUtility
       methodDef.methodName = genMethodDef.getMethodName();
       fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
           genMethodDef.getMethodParms();
-      fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
+      //fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
+      fedora.server.storage.types.MethodParmDef[] methodParmDefs = new fedora.server.storage.types.MethodParmDef[0];
       if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
       {
         methodParmDefs = convertGenMethodParmDefArrayToMethodParmDefArray(
@@ -311,6 +315,7 @@ public abstract class TypeUtility
       genMethodParmDef.setParmDomainValues(methodParmDef.parmDomainValues);
       genMethodParmDef.setParmRequired(methodParmDef.parmRequired);
       genMethodParmDef.setParmType(methodParmDef.parmType);
+      genMethodParmDef.setParmPassBy(methodParmDef.parmPassBy);
       return genMethodParmDef;
 
     } else
@@ -373,6 +378,7 @@ public abstract class TypeUtility
       methodParmDef.parmDomainValues = genMethodParmDef.getParmDomainValues();
       methodParmDef.parmRequired = genMethodParmDef.isParmRequired();
       methodParmDef.parmType = genMethodParmDef.getParmType();
+      methodParmDef.parmPassBy = genMethodParmDef.getParmPassBy();
       return methodParmDef;
 
     } else
@@ -459,7 +465,8 @@ public abstract class TypeUtility
 
         fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
             genObjectMethodDefs[i].getMethodParmDefs();
-        fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
+        //fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
+        fedora.server.storage.types.MethodParmDef[] methodParmDefs = new fedora.server.storage.types.MethodParmDef[0];
         if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
         {
           methodParmDefs =
@@ -505,7 +512,8 @@ public abstract class TypeUtility
       objectMethodDef.methodName = genObjectMethodDef.getMethodName();
       fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
           genObjectMethodDef.getMethodParmDefs();
-      fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
+      //fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
+      fedora.server.storage.types.MethodParmDef[] methodParmDefs = new fedora.server.storage.types.MethodParmDef[0];
       if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
       {
         methodParmDefs = convertGenMethodParmDefArrayToMethodParmDefArray(
@@ -545,7 +553,8 @@ public abstract class TypeUtility
         genObjectMethodDef.setMethodName(objectMethodDefs[i].methodName);
         fedora.server.storage.types.MethodParmDef[] methodParmDefs =
             objectMethodDefs[i].methodParmDefs;
-        fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = null;
+        //fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = null;
+        fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = new fedora.server.types.gen.MethodParmDef[0];
         if (methodParmDefs != null && methodParmDefs.length > 0)
         {
           genMethodParmDefs =
