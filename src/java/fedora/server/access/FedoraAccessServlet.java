@@ -17,6 +17,7 @@ import javax.servlet.ServletOutputStream;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -190,7 +191,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           String message = "ObjectProfile Request Syntax Error: DateTime value "
               + "of \"" + URIArray[6] + "\" is not a valid DateTime format. "
               + " ----- The expected format for DateTime is \""
-              + "YYYY-MM-DD HH:MM:SS\".  "
+              + "YYYY-MM-DDTHH:MM:SS\".  "
               + " ----- The expected syntax for "
               + "ObjectProfile requests is: \""
               + URIArray[0] + "//" + URIArray[2] + "/"
@@ -201,6 +202,9 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
           return;
+        } else {
+            asOfDateTime=new GregorianCalendar();
+            asOfDateTime.setTime(versDateTime);
         }
       }
       logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
@@ -223,7 +227,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           String message = "Dissemination Request Syntax Error: DateTime value "
               + "of \"" + URIArray[8] + "\" is not a valid DateTime format. "
               + " ----- The expected format for DateTime is \""
-              + "YYYY-MM-DD HH:MM:SS\".  "
+              + "YYYY-MM-DDTHH:MM:SS\".  "
               + " ----- The expected syntax for Dissemination requests is: \""
               + URIArray[0] + "//" + URIArray[2] + "/"
               + URIArray[3] + "/" + URIArray[4]
@@ -233,6 +237,9 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
           return;
+        } else {
+            asOfDateTime=new GregorianCalendar();
+            asOfDateTime.setTime(versDateTime);
         }
       }
       if (URIArray.length > 9)
