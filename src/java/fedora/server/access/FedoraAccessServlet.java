@@ -686,8 +686,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     // See if dissemination request is in local cache
     // RLW: change required by conversion fom byte[] to InputStream
     //dissemination Result = disseminationCache.get(requestURI);
-    //disseminationResult = TypeUtility.convertGenMIMETypedStreamToMIMETypedStream(
-    //    (fedora.server.types.gen.MIMETypedStream) disseminationCache.get(requestURI));
+    disseminationResult = TypeUtility.convertGenMIMETypedStreamToMIMETypedStream(
+        (fedora.server.types.gen.MIMETypedStream) disseminationCache.get(requestURI));
     //disseminationResult = (MIMETypedStream) disseminationCache.get(requestURI);
     // RLW: change required by conversion fom byte[] to InputStream
 
@@ -707,7 +707,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       disseminationResult =
           s_access.getDissemination(context, PID, bDefPID, methodName,
               userParms, asOfDateTime);
-/*
+
       if (disseminationResult != null)
       {
         // Dissemination request succeeded, so add to local cache
@@ -715,11 +715,11 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         // to achieve optimum performance as the number of requests gets large.
 
         // RLW: change required by conversion fom byte[] to InputStream
-        //fedora.server.types.gen.MIMETypedStream stream =
-        //    TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(disseminationResult);
+        fedora.server.types.gen.MIMETypedStream stream =
+            TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(disseminationResult);
+        disseminationCache.put(requestURI, stream);
+        //disseminationCache.put(requestURI, disseminationResult);
         // RLW: change required by conversion fom byte[] to InputStream
-        //disseminationCache.put(requestURI, stream);
-        disseminationCache.put(requestURI, disseminationResult);
         logFinest("ADDED to CACHE: "+requestURI);
       }
       stopTime = new Date().getTime();
@@ -729,7 +729,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       logFiner("[FedoraAccessServlet] Roundtrip Adding to Cache: "
         + interval + " milliseconds.");
       logFinest("CACHE SIZE: "+disseminationCache.size());
-      */
+
     }
 
     return disseminationResult;
