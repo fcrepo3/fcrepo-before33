@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<!---************************************************************************-->
+<!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
+<!---************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="test:103" TYPE="FedoraObject" LABEL="Rita Brown Papers Finding Aid" PROFILE="UVA_EAD_FINDING_AID">
+	<!---*******************************************************************************************************************************************-->
+	<!--  FEDORA SYSTEM METADATA: -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-20T06:32:00" RECORDSTATUS="I">
+		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
+			<METS:name> Ross Wayland </METS:name>
+			<METS:note> Digital Object based on EAD-encoded Finding Aid and created as the official Fedora sample object </METS:note>
+		</METS:agent>
+		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
+			<METS:name> University of Virginia Library </METS:name>
+			<METS:note> Object owned by UVA </METS:note>
+		</METS:agent>
+		<METS:agent ID="A3" ROLE="CUSTODIAN" TYPE="OTHER">
+			<METS:name> UVA Fedora Repository System</METS:name>
+			<METS:note> Digital Object is under the custodianship of the Fedora repository system at UVA </METS:note>
+		</METS:agent>
+	</METS:metsHdr>
+	<!---*******************************************************************************************************************************************-->
+	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!---*******************************************************************************************************************************************-->
+	<!--                                                                                                                        -->
+	<!--  This is where metadata extracted from the EAD header would be placed. -->
+	<!--                                                                                                                        -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="">
+				<!--This is the Finding Aid source XML file -->
+				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/xmltext/ead/viu03270" xlink:title="EAD-encoded Finding Aid: Rita Mae Brown Papers"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS2" STATUS="">
+				<!-- This is the title page stylesheet -->
+				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/tp.xsl" xlink:title="EAD TitlePage stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS3">
+				<!--This is the administrative Info stylesheet -->
+				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/admin.xsl" xlink:title="EAD AdminInfo stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS4">
+				<!--This is the summary Info stylesheet -->
+				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/summary.xsl" xlink:title="EAD SummaryInfo stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS5">
+				<!--This is the biographical and historical Info stylesheet -->
+				<METS:file ID="DS5.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/bioghist.xsl" xlink:title="EAD BiogHistInfo stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS6">
+				<!--This is the scope and content Info stylesheet -->
+				<METS:file ID="DS6.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/scopecontent.xsl" xlink:title="EAD ScopeContentInfo stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS7">
+				<!--This is the component Info stylesheet -->
+				<METS:file ID="DS7.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/component.xsl" xlink:title="EAD ComponentInfo stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS8">
+				<!--This is the arrangement Info stylesheet -->
+				<METS:file ID="DS8.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/arrangement.xsl" xlink:title="EAD ArrangeInfo stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS9">
+				<!--This is the organization Info stylesheet -->
+				<METS:file ID="DS9.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/organization.xsl" xlink:title="EAD OrgInfo stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS10">
+				<!--This is the entire document  stylesheet -->
+				<METS:file ID="DS10.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/document.xsl" xlink:title="EAD EntireDoc stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS11">
+				<!--This is the  menu stylesheet -->
+				<METS:file ID="DS11.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/menu.xsl" xlink:title="EAD Menu stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS12">
+				<!--This is the title stylesheet -->
+				<METS:file ID="DS12.0" CREATED="2002-05-20T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/bin/xsl/ead/title.xsl" xlink:title="EAD Title stylesheet"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- FEDORA DATASTREAM BINDING MAPS  -->
+	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
+	<!---*******************************************************************************************************************************************-->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="test:102" LABEL="DS Binding Map for UVA EAD-encoded Finding Aid mechanism">
+			<METS:div TYPE="XML_SOURCE" LABEL="EAD xml source" ORDER="0">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+			<METS:div TYPE="XSL_TITLE_PAGE" LABEL="EAD title page stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS2"/>
+			</METS:div>
+			<METS:div TYPE="XSL_ADMIN_INFO" LABEL="EAD administrative Info stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS3"/>
+			</METS:div>
+			<METS:div TYPE="XSL_SUMMARY_INFO" LABEL="EAD summary Info stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS4"/>
+			</METS:div>
+			<METS:div TYPE="XSL_BIOG_HIST_INFO" LABEL="EAD biographical and historical Info stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS5"/>
+			</METS:div>
+			<METS:div TYPE="XSL_SCOPE_CONTENT_INFO" LABEL="EAD scope and content Info stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS6"/>
+			</METS:div>
+			<METS:div TYPE="XSL_COMPONENT_INFO" LABEL="EAD component Info stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS7"/>
+			</METS:div>
+			<METS:div TYPE="XSL_ARRANGE_INFO" LABEL="EAD arrangement Info stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS8"/>
+			</METS:div>
+			<METS:div TYPE="XSL_ORG_INFO" LABEL="EAD organization Info stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS9"/>
+			</METS:div>
+			<METS:div TYPE="XSL_ENTIRE_DOC" LABEL="EAD entire doc stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS10"/>
+			</METS:div>
+			<METS:div TYPE="XSL_MENU" LABEL="EAD menu stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS11"/>
+			</METS:div>
+			<METS:div TYPE="XSL_TITLE" LABEL="EAD title stylesheet" ORDER="0">
+				<METS:fptr FILEID="DS12"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DISSEMINATORS-->
+	<!-- A disseminator provides a "behavior-centric" view of the object.  It has an attribute STRUCTID -->
+	<!-- which is an IDREF to a mechanism-specific structMap.  The structMap labels datastreams in -->
+	<!-- a manner that is understood by the mechanism defined in the disseminator.  -->
+	<!-- -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="test:101" CREATED="2002-05-20T06:32:00" LABEL="UVA EAD-encoded Finding Aid Behaviors">
+			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
+			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
+			<!-- the disseminator subscribes -->
+			<METS:interfaceMD LABEL="UVA EAD-encoded Finding Aid Behavior Definition" LOCTYPE="URN" xlink:href="test:101"/>
+			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
+			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+			<METS:serviceBindMD LABEL="UVA EAD-encoded Finding Aid Behavior Mechanism" LOCTYPE="URN" xlink:href="test:102"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
+</METS:mets>
