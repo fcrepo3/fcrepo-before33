@@ -4,7 +4,8 @@ goto checkEnv
 
 :envOk
 
-set TC=%FEDORA_HOME%\server\tomcat41
+set TOMCAT_DIR=@tomcat.basename@
+set TC=%FEDORA_HOME%\server\%TOMCAT_DIR%
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 
