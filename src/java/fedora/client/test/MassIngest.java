@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import fedora.client.ingest.AutoIngestor;
+import fedora.oai.sample.RandomDCMetadataFactory;
 
 public class MassIngest {
 
@@ -36,34 +37,11 @@ public class MassIngest {
             }
         }
         in.close();
-        // load the dictionary file
-        in=new BufferedReader(new FileReader(dictFile));
-        nextLine="";
-        m_wordList=new ArrayList();
-        while (nextLine!=null) {
-            nextLine=in.readLine();
-            if (nextLine!=null) {
-                String[] words=nextLine.split(" ");
-                for (int i=0; i<words.length; i++) {
-                    String w=words[i];
-                    if ( allLetters(w) ) {
-                        m_wordList.add(w);
-                    }
-                }
-            }
-        }
-        in.close();
-        String[] dcElements=new String[] {"title", "creator", "subject",
-                "description", "publisher", "contributor", "date", "type", 
-                "format", "identifier", "source", "language", "relation",
-                "coverage", "rights"};
-                
         String start=startBuffer.toString(); 
         String end=endBuffer.toString();
-        
-        
+        RandomDCMetadataFactory dcFactory=new RandomDCMetadataFactory(dictFile);
         for (int i=0; i<numTimes; i++) {
-            String xml=start + getRandomRecords(dcElements) + end;
+            String xml=start + dcFactory.get(2, 13) + end;
             String pid=ingestor.ingestAndCommit(new ByteArrayInputStream(
                 xml.getBytes("UTF-8")), "part of massingest of " + numTimes 
                 + " auto-generated objects.");
@@ -73,49 +51,7 @@ public class MassIngest {
         
     }
     
-    private String getRandomRecords(String[] dcElements) {
-        StringBuffer out=new StringBuffer();
-        for (int x=0; x<dcElements.length; x++) {
-            String dcElement=dcElements[x];
-            int num=1+getRandom(2);
-            for (int i=0; i<num; i++) {
-                out.append("<dc:" + dcElement + ">" + getRandomWords() + "</dc:" + dcElement + ">\n");
-            }
-        }
-        return out.toString();
-    }
 
-    private String getRandomWords() {
-        int count=2 + getRandom(12);
-        StringBuffer out=new StringBuffer();
-        for (int i=0; i<count; i++) {
-            if (i>0) {
-                out.append(" ");
-            }
-            out.append(getRandomWord());
-        }
-        return out.toString();
-    }
-
-    private String getRandomWord() {
-        return (String) m_wordList.get(getRandom(m_wordList.size()));
-    }
-    
-    public static int getRandom(int belowThis) {
-        return (int) (Math.random() * belowThis);
-    }
-    
-    private boolean allLetters(String w) {
-        if (w.length()==0) return false;
-        String l=w.toLowerCase();
-        for (int i=0; i<l.length(); i++) {
-            char c=l.charAt(i);
-            if (c<'a' || c>'z') {
-                return false;
-            }
-        }
-        return true;
-    }
 
     public static void showUsage(String message) {
         System.out.println("ERROR: " + message);
