@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
@@ -29,7 +29,7 @@
         </releaseinfo>
 	</articleinfo>
 	<section>
-		<title>Release 1.0 - March 7, 2003</title>
+		<title>Release 1.0 - May 16, 2003</title>
 		<para>This release is the first public release of the Fedora repository system. Fedora is licensed under the Mozilla License. Refer to the README and COPYING files in the distribution for details of the license and restrictions governing copying and redistribution. This release includes some major changes since release 0.9 that include the following additions and enhancements.
 		</para>
 		<section>
