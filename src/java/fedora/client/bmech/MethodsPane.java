@@ -212,15 +212,28 @@ public class MethodsPane extends JPanel {
         {
           baseURL.setEnabled(false);
           baseURL.setText("");
+          cleanupMethodURLs();
         }
         else if (rb_chosen.equalsIgnoreCase("noBaseURL"))
         {
           baseURL.setEnabled(false);
           baseURL.setText("");
+          cleanupMethodURLs();
         }
       }
     }
 
+	private void cleanupMethodURLs()
+	{	
+		Method[] methods = getMethods();
+		for (int i=0; i<methods.length; i++)
+		{
+			methods[i].methodProperties.methodFullURL = " ";
+			methods[i].methodProperties.methodRelativeURL = " ";
+			methodMap.put(methods[i].methodName, methods[i]);
+		}
+	}
+	
     public boolean hasBaseURL()
     {
       if (rb_chosen.equalsIgnoreCase("baseURL"))
