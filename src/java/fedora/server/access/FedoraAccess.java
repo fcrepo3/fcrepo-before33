@@ -33,8 +33,7 @@ public interface FedoraAccess
    * @param asOfDateTime The versioning datetime stamp.
    * @return An Array containing the list of Behavior Definition object PIDs.
    */
-  public String[] GetBehaviorDefinitions(String PID, Calendar asOfDateTime)
-      throws ServerException;
+  public String[] GetBehaviorDefinitions(String PID, Calendar asOfDateTime);
 
   /**
    * <p>Gets the method definitions associated with the specified Behavior
@@ -46,7 +45,7 @@ public interface FedoraAccess
    * @return An Array containing the list of method definitions.
    */
   public MethodDef[] GetBehaviorMethods(String PID, String bDefPID,
-       Calendar asOfDateTime) throws ServerException;
+       Calendar asOfDateTime);
 
   /**
    * <p>Gets the method definitions associated with the specified Behavior
@@ -60,7 +59,7 @@ public interface FedoraAccess
    * Mechanism object.
    */
   public MIMETypedStream GetBehaviorMethodsAsWSDL(String PID, String bDefPID,
-       Calendar asOfDateTime) throws ServerException;
+       Calendar asOfDateTime);
 
 
   /**
@@ -77,8 +76,7 @@ public interface FedoraAccess
    * @return A MIME-typed stream containing the result of the dissemination.
    */
   public MIMETypedStream GetDissemination (String PID, String bDefPID,
-      String methodName, Property[] userParms, Calendar asOfDateTime)
-      throws ServerException;
+      String methodName, Property[] userParms, Calendar asOfDateTime);
 
   /**
    * <p>Gets a list of all Behavior Definition object PIDs and method names
@@ -90,5 +88,5 @@ public interface FedoraAccess
    * digital object.
    */
   public ObjectMethodsDef[] GetObjectMethods (String PID,
-        Calendar asOfDateTime) throws ServerException;
+        Calendar asOfDateTime);
 }
