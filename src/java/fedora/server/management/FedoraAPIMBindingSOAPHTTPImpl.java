@@ -5,11 +5,17 @@
  * by the Apache Axis Wsdl2java emitter.
  */
 
+
 package fedora.server.management;
+
+
+import org.apache.axis.AxisEngine;
+import org.apache.axis.MessageContext;
 
 public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.FedoraAPIM {
     public java.lang.String createObject() throws java.rmi.RemoteException {
-        return "This would be a PID if this operation implementation wasn't a stub.";
+        return "This would be a PID if this operation implementation wasn't a stub.  BTW, the scope of this service (as defined by the scope property in the wsdd file) is '" 
+                + AxisEngine.getCurrentMessageContext().getStrProp("scope") + "'.";
     }
 
     public java.lang.String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
