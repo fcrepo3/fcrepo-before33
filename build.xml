@@ -11,13 +11,15 @@
 	<property name="javaClassOptimize" value="off"/>
 	<property name="javaSourceDir" value="src/java"/>
 	<property name="docDir" value="apidoc"/>
-	<target name="serverdist" depends="server,client,userdocs" description="builds both client and server in dist\server, in a package suitable for distribution">
-		<mkdir dir="dist/server/doc"/>
-		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
-		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
+        <target name="copyclient" depends="client" description="copies client to server dist area">
 		<copy todir="dist/server">
 			<fileset dir="dist/client"/>
 		</copy>
+        </target>
+	<target name="serverdist" depends="server,client,userdocs,copyclient" description="builds both client and server in dist\server, in a package suitable for distribution">
+		<mkdir dir="dist/server/doc"/>
+		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
+		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
 	</target>
 	<target name="client" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
 		<mkdir dir="dist"/>
@@ -479,6 +481,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.72  2003/02/13 12:54:51  cwilper
+  put client copy stuff in separate target
+
   Revision 1.71  2003/02/10 18:15:47  cwilper
   moved all edu.cornell.dlrg.whatever to fedora.whatever
 
