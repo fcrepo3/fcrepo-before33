@@ -578,42 +578,45 @@ public class DefaultAccess extends Module implements Access
             // Value of user-supplied parameter contains a value.
             // Validate the supplied value against the parmDomainValues list.
             String[] parmDomainValues = methodParm.parmDomainValues;
-            if (!parmDomainValues[0].equalsIgnoreCase("null"))
+            if (parmDomainValues.length > 0)
             {
-              boolean isValidValue = false;
-              String userValue = (String)h_userParms.get(methodParm.parmName);
-              for (int i=0; i<parmDomainValues.length; i++)
+              if (!parmDomainValues[0].equalsIgnoreCase("null"))
               {
-                if (userValue.equalsIgnoreCase(parmDomainValues[i]) ||
-                    parmDomainValues[i].equalsIgnoreCase("null"))
-                {
-                  isValidValue = true;
-                }
-              }
-              if (!isValidValue)
-              {
-                // This is a fatal error. The value supplied for this method
-                // parameter does not match any of the values specified by
-                // this method.
-                StringBuffer values = new StringBuffer();
+                boolean isValidValue = false;
+                String userValue = (String)h_userParms.get(methodParm.parmName);
                 for (int i=0; i<parmDomainValues.length; i++)
                 {
-                  if (i == parmDomainValues.length-1)
+                  if (userValue.equalsIgnoreCase(parmDomainValues[i]) ||
+                      parmDomainValues[i].equalsIgnoreCase("null"))
                   {
-                    sb.append(parmDomainValues[i]);
-                  } else
-                  {
-                    sb.append(parmDomainValues[i]+", ");
+                    isValidValue = true;
                   }
                 }
-                sb.append("The method parameter \""
-                          + methodParm.parmName
-                          + "\" with a value of \""
-                          + (String)h_userParms.get(methodParm.parmName)
-                          + "\" is not allowed for the method \""
-                          + methodName + "\". Allowed values for this "
-                          + "method include \"" + sb.toString() + "\".");
-                isValid = false;
+                if (!isValidValue)
+                {
+                  // This is a fatal error. The value supplied for this method
+                  // parameter does not match any of the values specified by
+                  // this method.
+                  StringBuffer values = new StringBuffer();
+                  for (int i=0; i<parmDomainValues.length; i++)
+                  {
+                    if (i == parmDomainValues.length-1)
+                    {
+                      sb.append(parmDomainValues[i]);
+                    } else
+                    {
+                      sb.append(parmDomainValues[i]+", ");
+                    }
+                  }
+                  sb.append("The method parameter \""
+                            + methodParm.parmName
+                            + "\" with a value of \""
+                            + (String)h_userParms.get(methodParm.parmName)
+                            + "\" is not allowed for the method \""
+                            + methodName + "\". Allowed values for this "
+                            + "method include \"" + sb.toString() + "\".");
+                  isValid = false;
+                }
               }
             }
           }
