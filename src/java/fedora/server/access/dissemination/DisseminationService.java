@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
 import java.net.URLEncoder;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -16,15 +15,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fedora.server.Server;
-import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.DisseminationBindingInfoNotFoundException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
-import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.DisseminationBindingInfo;
@@ -227,17 +223,8 @@ public class DisseminationService
           {
             dissURL = dissBindInfo.AddressLocation+dissBindInfo.OperationLocation;
           }
-
-          //if (dissURL.indexOf("=(") != -1 )
-          //{
-          //  datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
-          //      //+ ":" + fedoraServerPort + "/fedora/getDS%3Fid%3D";
-          //      + ":" + fedoraServerPort + "/fedora/getDS?id=";
-          //} else
-          //{
-            datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
-                + ":" + fedoraServerPort + "/fedora/getDS?id=";
-          //}
+          datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
+            + ":" + fedoraServerPort + "/fedora/getDS?id=";
           protocolType = dissBindInfo.ProtocolType;
         }
         String currentKey = dissBindInfo.DSBindKey;
@@ -357,10 +344,11 @@ public class DisseminationService
       Enumeration e = h_userParms.keys();
       while (e.hasMoreElements())
       {
-        String name = (String)e.nextElement();
+        String name = null;
         String value = null;
         try
         {
+          name = URLEncoder.encode((String)e.nextElement(), "UTF-8");
           value = URLEncoder.encode((String)h_userParms.get(name), "UTF-8");
         } catch (UnsupportedEncodingException uee)
         {
@@ -421,8 +409,6 @@ public class DisseminationService
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - startTime;
-        System.out.println("[DisseminationService] Roundtrip "
-            + "ExternalMechanism: " + interval + " milliseconds.");
 
       } else if (protocolType.equalsIgnoreCase("soap"))
       {

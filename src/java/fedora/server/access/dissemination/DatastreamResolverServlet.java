@@ -5,7 +5,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
@@ -17,17 +16,12 @@ import java.util.Hashtable;
 
 import fedora.server.Logging;
 import fedora.server.Server;
-import fedora.server.access.dissemination.DisseminationService;
 import fedora.server.errors.InitializationException;
-import fedora.server.errors.ServerInitializationException;
-import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
-import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
@@ -45,7 +39,7 @@ import fedora.server.storage.types.DatastreamMediation;
  * <p>The servlet also requires that an external mechanism request a datastream
  * within a finite time interval of the tempID's creation. This is to lessen
  * the risk of unauthorized access. The time interval within which a mechanism
- * must repond is set by the Fedora configuraitno parameter named
+ * must repond is set by the Fedora configuration parameter named
  * datastreamMediationLimit and is specified in milliseconds. If this parameter
  * is not supplied it defaults to 5000 miliseconds.</p>
  *

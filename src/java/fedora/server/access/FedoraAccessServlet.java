@@ -1,11 +1,11 @@
 package fedora.server.access;
 
-import java.io.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PipedReader;
 import java.io.PipedWriter;
 import java.net.URLDecoder;
@@ -55,25 +55,25 @@ import fedora.server.utilities.DateUtility;
  * <ul>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
- * <li>fedora - required name of the Fedora access service.</li>
- * <li>get - required verb of the Fedora service.</li>
+ * <li>fedora - required path name for the Fedora access service.</li>
+ * <li>get - required path name for the Fedora service.</li>
  * <li>PID - required persistent idenitifer of the digital object.</li>
  * <li>bDefPID - required persistent identifier of the behavior definition
  *               object to which the digital object subscribes.</li>
  * <li>methodName - required name of the method to be executed.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a
- *     version of the digital object at the specified point in time. (NOT
- *     implemented in release 1.0.)
- * <li>parmArray - optional array of method parameters consisting of
- *     name/value pairs in the form parm1=value1&parm2=value2...</li>
+ *                version of the digital object at the specified point in time.
+ *                (NOT implemented in release 1.0.)
+ * <li>parmArray - optional array of method parameters consisting of name/value
+ *                 pairs in the form parm1=value1&parm2=value2...</li>
  * </ul>
  * <li>GetObjectProfile URL syntax:
  * http://hostname:port/PID[/dateTime][?xml=BOOLEAN]
  * This syntax requests an object profile for the specified digital object.
  * The xml parameter determines the type of output returned.
- * If the parameter is omitted or has a value of "no", a MIME-typed stream
+ * If the parameter is omitted or has a value of "false", a MIME-typed stream
  * consisting of an html table is returned providing a browser-savvy means
- * of viewing the object profile. If the value specified is "yes", then
+ * of viewing the object profile. If the value specified is "true", then
  * a MIME-typed stream consisting of XML is returned.</li>
  * <ul>
  * <li>hostname - required hostname of the Fedora server.</li>
@@ -109,15 +109,19 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
   /** Instance of the access subsystem. */
   private static Access s_access = null;
 
-  ///** Constant indicating value of the string "yes". */
-  //private static final String YES = "yes";
-
   /** Instance of DOManager. */
   private static DOManager m_manager = null;
 
+  /** userInputParm hashtable */
   private Hashtable h_userParms = new Hashtable();
+
+  /** Initial URL request by client */
   private String requestURL = null;
+
+  /** Portion of initial request URL from protocol up to query string */
   private String requestURI = null;
+
+  /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
 
@@ -195,7 +199,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       // Request appears to be a Dissemination Request.
       PID = decoder.decode(URIArray[5],"UTF-8");
       bDefPID = decoder.decode(URIArray[6],"UTF-8");
-      methodName = URIArray[7];
+      methodName = decoder.decode(URIArray[7], "UTF-8");
       if (URIArray.length > 8)
       {
         versDateTime = DateUtility.convertStringToDate(URIArray[8]);
@@ -236,6 +240,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       isGetDisseminationRequest = true;
     } else
     {
+      // Bad syntax; redirect to syntax documentation page.
       response.sendRedirect("/userdocs/apialite/index.html");
       return;
     }
@@ -244,13 +249,13 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     Hashtable h_userParms = new Hashtable();
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
     {
-      String name = (String)e.nextElement();
+      String name = decoder.decode((String)e.nextElement(), "UTF-8");
       if (isGetObjectProfileRequest && name.equalsIgnoreCase("xml"))
       {
         xml = new Boolean(request.getParameter(name)).booleanValue();
       } else
       {
-        String value = request.getParameter(name);
+        String value = decoder.decode(request.getParameter(name), "UTF-8");
         h_userParms.put(name,value);
       }
     }
@@ -275,19 +280,14 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         getObjectProfile(context, PID, asOfDateTime, xml, request, response);
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
-            + "GetObjectprofile: " + interval + " milliseconds.");
         logFiner("[FedoraAccessServlet] Servlet Roundtrip "
             + "GetObjectProfile: " + interval + " milliseconds.");
       }
       else if (isGetDisseminationRequest)
       {
-        getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime,
-                         response);
+        getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime, response);
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
-                           + "GetDissemination: " + interval + " milliseconds.");
         logFiner("[FedoraAccessServlet] Servlet Roundtrip "
             + "GetDissemination: " + interval + " milliseconds.");
       }
@@ -310,7 +310,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       HttpServletResponse response) throws ServerException
   {
 
-    //ServletOutputStream out = null;
     OutputStreamWriter out = null;
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectProfile objProfile = null;
@@ -331,7 +330,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         {
           // Return results as raw XML
           response.setContentType(CONTENT_TYPE_XML);
-          //out = response.getOutputStream();
 
           // Insures stream read from PipedReader correctly translates utf-8
           // encoded characters to OutputStreamWriter.
@@ -343,17 +341,10 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
               out.write(buf, 0, len);
           }
           out.flush();
-          //int bytestream = 0;
-          //while ( (bytestream = pr.read()) >= 0)
-          //{
-          //  out.write(bytestream);
-          //}
-          //out.flush();
         } else
         {
           // Transform results into an html table
           response.setContentType(CONTENT_TYPE_HTML);
-          //out = response.getOutputStream();
           out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
           File xslFile = new File(s_server.getHomeDir(), "access/viewObjectProfile.xslt");
           TransformerFactory factory = TransformerFactory.newInstance();
@@ -579,8 +570,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         dissemResult = null;
         long stopTime = new Date().getTime();
         long interval = stopTime - startTime;
-        System.out.println("[FedoraAccessServlet] Read InputStream: "
-                           + interval + " milliseconds.");
         logFiner("[FedoraAccessServlet] Read InputStream "
             + interval + " milliseconds.");
       }
