@@ -9,6 +9,7 @@ import java.net.URI;
 import java.util.Properties;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Vector;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -50,6 +51,8 @@ class BatchXforms {
         "http://www.w3.org/2001/XMLSchema";
     private static final String JAXP_SCHEMA_SOURCE =
         "http://java.sun.com/xml/jaxp/properties/schemaSource";
+    
+    private HashMap formatMap = new HashMap();
 
 
       private String additionsPath = null;
@@ -62,18 +65,19 @@ class BatchXforms {
 		//xformPath = System.getProperty("fedora.home") + "/client/lib/merge.xsl";
     // The template format controls which xsl stylesheet is to be applied
     // Valid values are "metslikefedora1" and "foxml1.0"
-    if(optValues.getProperty(BatchTool.TEMPLATEFORMAT).equalsIgnoreCase("foxml1.0")) {
+    if(optValues.getProperty(BatchTool.OBJECTFORMAT).equalsIgnoreCase("foxml1.0")) {
         xformPath = System.getProperty("fedora.home") + "/client/lib/foxml-merge.xsl";
-    } else if (optValues.getProperty(BatchTool.TEMPLATEFORMAT).equalsIgnoreCase("metslikefedora1")) {
+    } else if (optValues.getProperty(BatchTool.OBJECTFORMAT).equalsIgnoreCase("metslikefedora1")) {
         xformPath = System.getProperty("fedora.home") + "/client/lib/mets-merge.xsl";
     } else {
-        System.err.println("Unknown template format: "+optValues.getProperty(BatchTool.TEMPLATEFORMAT));
+        System.err.println("Unknown objectTemplate format: "+optValues.getProperty(BatchTool.OBJECTFORMAT));
   			throw new Exception();
     }
 		additionsPath = optValues.getProperty(BatchTool.ADDITIONSPATH);
 		objectsPath = optValues.getProperty(BatchTool.OBJECTSPATH);
 		modelPath = optValues.getProperty(BatchTool.CMODEL);
-
+formatMap.put("foxml1.0","FOXML");
+formatMap.put("metslikefedora1","METS");
 		if (! BatchTool.argOK(additionsPath)) {
 			System.err.println("additionsPath required");
 			throw new Exception();
@@ -227,15 +231,15 @@ for (int bb=0; bb<objectsPath.length(); bb++) {
 					}
 				}
 			} catch (Exception e) {
-				System.err.println("Fedora METS XML failed for " + file4catch.getName());
+				System.err.println("Fedora "+formatMap.get(BatchTool.OBJECTFORMAT)+" XML failed for " + file4catch.getName());
 				System.err.println("exception: " + e.getMessage() + " , class is " + e.getClass());
 				failedBuildCount++;
 			} finally {
 			}
 			System.err.println("\n" + "Batch Build Summary");
 			System.err.println("\n" + (succeededBuildCount + failedBuildCount + badFileCount) + " files processed in this batch");
-			System.err.println("\t" + succeededBuildCount + " Fedora METS XML documents successfully created");
-			System.err.println("\t" + failedBuildCount + " Fedora METS XML documents failed");
+			System.err.println("\t" + succeededBuildCount + " Fedora "+formatMap.get(BatchTool.OBJECTFORMAT)+" XML documents successfully created");
+			System.err.println("\t" + failedBuildCount + " Fedora "+formatMap.get(BatchTool.OBJECTFORMAT)+" XML documents failed");
 			System.err.println("\t" + badFileCount + " unexpected files in directory");
 			System.err.println("\t" + (files4catch - (succeededBuildCount + failedBuildCount + badFileCount)) + " files ignored after error");
 		}

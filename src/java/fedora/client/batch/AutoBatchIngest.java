@@ -31,14 +31,14 @@ import java.io.File;
 public class AutoBatchIngest {
     private Properties batchProperties = new Properties();
 
-    public AutoBatchIngest(String objectDir, String logFile, String logFormat, String templateFormat,
+    public AutoBatchIngest(String objectDir, String logFile, String logFormat, String objectFormat,
         String host, String port, String username, String password) throws Exception {
 
         this.batchProperties.setProperty("ingest", "yes");
         this.batchProperties.setProperty("objects", objectDir);
         this.batchProperties.setProperty("ingested-pids", logFile);
         this.batchProperties.setProperty("pids-format", logFormat);
-        this.batchProperties.setProperty("template-format", templateFormat);
+        this.batchProperties.setProperty("object-format", objectFormat);
         this.batchProperties.setProperty("server-fqdn", host);
         this.batchProperties.setProperty("server-port", port);
         this.batchProperties.setProperty("username", username);
@@ -62,8 +62,8 @@ public class AutoBatchIngest {
                                    + "\"xml\"  or  \"txt\"");
                 errors = true;
             }
-            if (!args[3].equals("foxml1.0") && !args[2].equals("metslikefedora1")) {
-                System.out.println("Format for template file must must be either: \""
+            if (!args[3].equals("foxml1.0") && !args[3].equals("metslikefedora1")) {
+                System.out.println("Object format must must be either: \""
                                    + "\"foxml1.0\"  or  \"metslikefedora1\"");
                 errors = true;
             }            
@@ -82,7 +82,7 @@ public class AutoBatchIngest {
             System.out.println("(1) - full path to object directory");
             System.out.println("(2) - full path to log file");
             System.out.println("(3) - format of log file (xml or text)");
-            System.out.println("(4) - format of template file (foxml1.0 or metslikefedora1)\n");
+            System.out.println("(4) - object format (foxml1.0 or metslikefedora1)\n");
             System.out.println("(5) - host name and port of Fedora server (host:port)");
             System.out.println("(6) - admin username of Fedora server");
             System.out.println("(7) - password for admin user of Fedora server\n");

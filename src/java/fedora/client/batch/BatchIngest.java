@@ -44,7 +44,7 @@ class BatchIngest {
 	String objectsPath = null;
 	String pidsPath = null;
 	String pidsFormat = null;
-	String templateFormat = null;
+	String objectFormat = null;
 
 	BatchIngest(Properties optValues) throws Exception {
 		objectsPath = optValues.getProperty(BatchTool.OBJECTSPATH);
@@ -54,7 +54,7 @@ class BatchIngest {
 		String serverPortAsString = optValues.getProperty(BatchTool.SERVERPORT);
 		username = optValues.getProperty(BatchTool.USERNAME);
 		password = optValues.getProperty(BatchTool.PASSWORD);
-		templateFormat = optValues.getProperty(BatchTool.TEMPLATEFORMAT);
+		objectFormat = optValues.getProperty(BatchTool.OBJECTFORMAT);
 		if (! BatchTool.argOK(objectsPath)) {
 			System.err.println("objectsPath required");
 			throw new Exception();
@@ -85,7 +85,7 @@ class BatchIngest {
 			System.err.println("password required");
 			throw new Exception();
 		}
-		if (! BatchTool.argOK(templateFormat)) {
+		if (! BatchTool.argOK(objectFormat)) {
 				System.err.println("template format required");
 				throw new Exception();
 		}
@@ -124,8 +124,8 @@ class BatchIngest {
 
 		if (! (pidsFormat.equals("xml") || pidsFormat.equals("text")) ) {
 			System.err.println("bad pidsFormat: "+pidsFormat);
-		} else if ( !templateFormat.equals("foxml1.0") && !templateFormat.endsWith("metslikefedora1")) {
-		  System.err.println("bad templateFormat: "+templateFormat);
+		} else if ( !objectFormat.equals("foxml1.0") && !objectFormat.equals("metslikefedora1")) {
+		  System.err.println("bad objectFormat: "+objectFormat);
 		} else {
 			int badFileCount = 0;
 			int succeededIngestCount = 0;
@@ -138,12 +138,12 @@ class BatchIngest {
 				} else {
 					String pid = null;
 					try {
-						pid = autoIngestor.ingestAndCommit(new FileInputStream(files[i]), templateFormat, logMessage);
+						pid = autoIngestor.ingestAndCommit(new FileInputStream(files[i]), objectFormat, logMessage);
 					} catch (Exception e) {
 						System.err.println("ingest failed for: " + files[i].getName());
 						System.err.println("\t" + e.getClass().getName());
 						System.err.println("\t" + e.getMessage());
-						System.err.println("ingest format specified was: \""+templateFormat+"\"");
+						System.err.println("ingest format specified was: \""+objectFormat+"\"");
 						System.err.println("===BATCH HAS FAILED===");
 						System.err.println("consider manually backing out " +
 						"any objects which were already successfully ingested in this batch");
