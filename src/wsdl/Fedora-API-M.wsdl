@@ -1498,10 +1498,10 @@
   </binding>
   <service name="Fedora-API-M-Service">
     <port name="Fedora-API-M-Port-HTTPGET" binding="fedora-api:Fedora-API-M-Binding-HTTPGET">
-      <http:address location="http://www.hostname.com:8088/fedora/management/"/>
+      <http:address location="http://localhost:8080/fedora/management/http"/>
     </port>
     <port name="Fedora-API-M-Port-SOAPHTTP" binding="fedora-api:Fedora-API-M-Binding-SOAPHTTP">
-      <soap:address location="http://www.hostname.com:8088/fedora/management/"/>
+      <soap:address location="http://localhost:8080/fedora/management/soap"/>
     </port>
   </service>
 </definitions>
