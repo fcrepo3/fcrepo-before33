@@ -12,11 +12,13 @@ import fedora.oai.*; //FIXME:evil
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.UnknownSessionTokenException;
 import fedora.server.search.DCFields;
 import fedora.server.search.ObjectFields;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
 import fedora.server.search.FieldSearchQuery;
+import fedora.server.search.FieldSearchResult;
 
 public class FedoraOAIProvider
         extends StdoutLogging
@@ -167,15 +169,14 @@ public class FedoraOAIProvider
         if (!metadataPrefix.equals("oai_dc")) {
             throw new CannotDisseminateFormatException("Repository does not provide that format in OAI-PMH responses.");
         }
-        
-        
         List l=null;
+        FieldSearchResult fsr;
         try {
-            //FIXME: use maxResults from... config instead of hardcoding 100?
-            l=m_fieldSearch.listObjectFields(s_headerAndDCFields, 100,
+            fsr=m_fieldSearch.listObjectFields(s_headerAndDCFields, (int) getMaxRecords(),
                     new FieldSearchQuery(Condition.getConditions(
                     "dcmDate>'2000-01-01'" + getDatePart(from, until) 
-                    + getFTypePart(set)))).objectFieldsList();
+                    + getFTypePart(set))));
+            l=fsr.objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
         }
@@ -186,6 +187,12 @@ public class FedoraOAIProvider
         for (int i=0; i<l.size(); i++) {
             ObjectFields f=(ObjectFields) l.get(i);
             ret.add(new SimpleRecord(getHeader(f), getDCXML(f), s_emptySet));
+        }
+        if (fsr.getToken()!=null) {
+            // add resumptionToken stuff
+            ret.add(new SimpleResumptionToken(fsr.getToken(), 
+                    fsr.getExpirationDate(), fsr.getCompleteListSize(),
+                    fsr.getCursor()));
         }
         return ret;
     }
@@ -297,7 +304,33 @@ public class FedoraOAIProvider
             throws CannotDisseminateFormatException,
             NoRecordsMatchException, NoSetHierarchyException, 
             BadResumptionTokenException, RepositoryException {
-        throw new BadResumptionTokenException("Not a known resumptionToken.");
+        // this is the exact same as the other getRecords, except for the FieldSearch call,
+        // and the fact that we re-throw UnknownSessionTokenException 
+        // as a BadResumptionTokenException
+        List l=null;
+        FieldSearchResult fsr;
+        try {
+            fsr=m_fieldSearch.resumeListObjectFields(resumptionToken);
+            l=fsr.objectFieldsList();
+        } catch (UnknownSessionTokenException uste) {
+            throw new BadResumptionTokenException("Not a known resumptionToken.");
+        } catch (ServerException se) {
+            throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
+        }
+        if (l.size()==0) {
+            throw new NoRecordsMatchException("No records match the given criteria.");
+        }
+        ArrayList ret=new ArrayList();
+        for (int i=0; i<l.size(); i++) {
+            ObjectFields f=(ObjectFields) l.get(i);
+            ret.add(new SimpleRecord(getHeader(f), getDCXML(f), s_emptySet));
+        }
+        if (fsr.getToken()!=null) {
+            ret.add(new SimpleResumptionToken(fsr.getToken(), 
+                    fsr.getExpirationDate(), fsr.getCompleteListSize(),
+                    fsr.getCursor()));
+        }
+        return ret;
     }
     
     private String getFTypePart(String set) 
@@ -344,12 +377,13 @@ public class FedoraOAIProvider
             throw new CannotDisseminateFormatException("Repository does not provide that format in OAI-PMH responses.");
         }
         List l=null;
+        FieldSearchResult fsr;
         try {
-            //FIXME: use maxResults from... config instead of hardcoding 100?
-            l=m_fieldSearch.listObjectFields(s_headerFields, 100,
+            fsr=m_fieldSearch.listObjectFields(s_headerFields, (int) getMaxHeaders(),
                     new FieldSearchQuery(Condition.getConditions(
                     "dcmDate>'2000-01-01'" + getDatePart(from, until) 
-                    + getFTypePart(set)))).objectFieldsList();
+                    + getFTypePart(set))));
+            l=fsr.objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
         }
@@ -372,14 +406,56 @@ public class FedoraOAIProvider
             }
             ret.add(new SimpleHeader(identifier, datestamp, setSpecs, true));
         }
+        if (fsr.getToken()!=null) {
+            ret.add(new SimpleResumptionToken(fsr.getToken(), 
+                    fsr.getExpirationDate(), fsr.getCompleteListSize(),
+                    fsr.getCursor()));
+        }
         return ret;
     }
-
+    
     public List getHeaders(String resumptionToken)
             throws CannotDisseminateFormatException,
             NoRecordsMatchException, NoSetHierarchyException, 
             BadResumptionTokenException, RepositoryException {
-        throw new BadResumptionTokenException("Not a known resumptionToken.");
+        // this is the exact same as the other getHeaders, except for the FieldSearch call,
+        // and the fact that we re-throw UnknownSessionTokenException 
+        // as a BadResumptionTokenException
+        List l=null;
+        FieldSearchResult fsr;
+        try {
+            fsr=m_fieldSearch.resumeListObjectFields(resumptionToken);
+            l=fsr.objectFieldsList();
+        } catch (UnknownSessionTokenException uste) {
+            throw new BadResumptionTokenException("Not a known resumptionToken.");
+        } catch (ServerException se) {
+            throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
+        }
+        if (l.size()==0) {
+            throw new NoRecordsMatchException("No records match the given criteria.");
+        }
+        ArrayList ret=new ArrayList();
+        for (int i=0; i<l.size(); i++) {
+            ObjectFields f=(ObjectFields) l.get(i);
+            String identifier="oai:fedora.info:" + f.getPid();
+            Date datestamp=f.getDCMDate();
+            HashSet setSpecs=new HashSet();
+            String fType=f.getFType();
+            if (fType.equals("D")) {
+                setSpecs.add("bdefs");
+            } else if (fType.equals("M")) {
+                setSpecs.add("bmechs");
+            } else {
+                setSpecs.add("objects");
+            }
+            ret.add(new SimpleHeader(identifier, datestamp, setSpecs, true));
+        }
+        if (fsr.getToken()!=null) {
+            ret.add(new SimpleResumptionToken(fsr.getToken(), 
+                    fsr.getExpirationDate(), fsr.getCompleteListSize(),
+                    fsr.getCursor()));
+        }
+        return ret;
     }
             
     public List getSets()
@@ -439,20 +515,17 @@ public class FedoraOAIProvider
 
     public long getMaxSets()
             throws RepositoryException {
-        return -1;
-        //return m_maxSets;
+        return m_maxSets;
     }
             
     public long getMaxRecords()
             throws RepositoryException {
-        return -1;
-        //return m_maxRecords;
+        return m_maxRecords;
     }
             
     public long getMaxHeaders()
             throws RepositoryException {
-        return -1;
-        //return m_maxHeaders;
+        return m_maxHeaders;
     }
     
 }

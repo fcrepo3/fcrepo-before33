@@ -178,7 +178,9 @@ public class OAIResponder {
                 }
                 ResumptionToken resumptionToken=null;
                 if (m_provider.getMaxRecords()>0) {
+System.out.println("GetRecords got " + records.size() + " items in the result list.");
                     if (records.size()>m_provider.getMaxRecords()) {
+System.out.println("GetRecords: will use resumptionToken");
                         resumptionToken=(ResumptionToken) 
                                 records.get(records.size()-1);
                         records=records.subList(0, records.size()-1);
