@@ -194,7 +194,53 @@ public class METSDOSerializer
             buf.append("\">\n    <!-- This info can't be set via API-M. If it existed, it was ignored during import -->\n");
             buf.append("  </METS:metsHdr>\n");
             //
-            // Serialize Audit Records
+            // Serialize Datastreams...dmdSecs, amdSecs, then fileSecs
+            //
+            // First, dmdSecs
+            Iterator idIter=obj.datastreamIdIterator();
+            while (idIter.hasNext()) {
+                String id=(String) idIter.next();
+                // from the first one with this id,
+                // first decide if its an inline xml
+                Datastream ds=(Datastream) obj.datastreams(id).get(0);
+                if (ds.DSControlGrp.equalsIgnoreCase("X")) {
+                    DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
+                    if (mds.DSMDClass==DatastreamXMLMetadata.DESCRIPTIVE) {
+                        //
+                        // Descriptive inline XML Metadata
+                        //
+                        // <!-- For each version with this dsId -->
+                        // <dmdSec GROUPID=dsId
+                        //              ID=dsVersionId
+                        //         CREATED=dsCreateDate
+                        //          STATUS=dsState>
+                        //   <mdWrap....>
+                        //     ...
+                        //   </mdWrap>
+                        // </dmdSec>
+                        //
+                        Iterator dmdIter=obj.datastreams(id).iterator();
+                        while (dmdIter.hasNext()) {
+                            mds=(DatastreamXMLMetadata) dmdIter.next();
+                            buf.append("  <METS:dmdSec ID=\"");
+                            buf.append(mds.DSVersionID);
+                            buf.append("\" GROUPID=\"");
+                            buf.append(mds.DatastreamID);
+                            buf.append("\" CREATED=\"");
+                            buf.append(DateUtility.convertDateToString(
+		                    mds.DSCreateDT));
+                            buf.append("\" STATUS=\"");
+                            buf.append(mds.DSState);
+                            buf.append("\">\n");
+                            mdWrap(mds, buf);
+                            buf.append("  </METS:dmdSec>\n");
+                        }
+                    }
+                }
+            }
+            // Second, amdSecs
+            //
+            // (Audit Records, then others)
             //
             if (obj.getAuditRecords().size()>0) {
                 buf.append("  <METS:amdSec ID=\"FEDORA-AUDITTRAIL\">\n");
@@ -260,53 +306,16 @@ public class METSDOSerializer
                 }
                 buf.append("  </METS:amdSec>\n");
             }
-            //
-            // Serialize Datastreams
-            //
-            Iterator idIter=obj.datastreamIdIterator();
+            // regular amdSecs
+            idIter=obj.datastreamIdIterator();
             while (idIter.hasNext()) {
                 String id=(String) idIter.next();
                 // from the first one with this id,
                 // first decide if its an inline xml
                 Datastream ds=(Datastream) obj.datastreams(id).get(0);
-                //if (ds.DSControlGrp==Datastream.XML_METADATA) {
                 if (ds.DSControlGrp.equalsIgnoreCase("X")) {
-                    //
-                    // Serialize inline XML datastream
-                    // - dmdSec || amdSec?
-                    //
                     DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
-                    if (mds.DSMDClass==DatastreamXMLMetadata.DESCRIPTIVE) {
-                        //
-                        // Descriptive inline XML Metadata
-                        //
-                        // <!-- For each version with this dsId -->
-                        // <dmdSec GROUPID=dsId
-                        //              ID=dsVersionId
-                        //         CREATED=dsCreateDate
-                        //          STATUS=dsState>
-                        //   <mdWrap....>
-                        //     ...
-                        //   </mdWrap>
-                        // </dmdSec>
-                        //
-                        Iterator dmdIter=obj.datastreams(id).iterator();
-                        while (dmdIter.hasNext()) {
-                            mds=(DatastreamXMLMetadata) dmdIter.next();
-                            buf.append("  <METS:dmdSec ID=\"");
-                            buf.append(mds.DSVersionID);
-                            buf.append("\" GROUPID=\"");
-                            buf.append(mds.DatastreamID);
-                            buf.append("\" CREATED=\"");
-                            buf.append(DateUtility.convertDateToString(
-		                    mds.DSCreateDT));
-                            buf.append("\" STATUS=\"");
-                            buf.append(mds.DSState);
-                            buf.append("\">\n");
-                            mdWrap(mds, buf);
-                            buf.append("  </METS:dmdsec>\n");
-                        }
-                    } else {
+                    if (mds.DSMDClass!=DatastreamXMLMetadata.DESCRIPTIVE) {
                	        //
                         // Administrative inline XML Metadata
                         //
@@ -364,7 +373,7 @@ public class METSDOSerializer
                     }
                 }
             }
-            // Now iterate through datastreams a second time, doing the fileSec
+            // Now iterate through datastreams a third time, doing the fileSec
             idIter=obj.datastreamIdIterator();
             boolean didFileSec=false;
             while (idIter.hasNext()) {
