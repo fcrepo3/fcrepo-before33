@@ -64,14 +64,22 @@ public class DefaultManagement
 
     public String createObject(Context context) 
             throws ServerException {
+        getServer().logFinest("Entered DefaultManagement.ingestObject");
         DOWriter w=m_manager.newWriter(context);
-        return "hi"; //return w.GetObjectPID();
+        String pid=w.GetObjectPID();
+        m_manager.releaseWriter(w);
+        getServer().logFinest("Exiting DefaultManagement.ingestObject");
+        return pid;
     }
 
     public String ingestObject(Context context, InputStream serialization, String format, String encoding, boolean newPid) 
             throws ServerException {
+        getServer().logFinest("Entered DefaultManagement.ingestObject");
         DOWriter w=m_manager.newWriter(context, serialization, format, encoding, newPid);
-        return w.GetObjectPID();
+        String pid=w.GetObjectPID();
+        m_manager.releaseWriter(w);
+        getServer().logFinest("Exiting DefaultManagement.ingestObject");
+        return pid;
     }
 
     public InputStream getObjectXML(Context context, String pid, String format, String encoding) { return null; }
@@ -86,7 +94,19 @@ public class DefaultManagement
 
     public void obtainLock(Context context, String pid) { }
 
-    public void releaseLock(Context context, String pid, String logMessage, boolean commit) { }
+    public void releaseLock(Context context, String pid, String logMessage, 
+            boolean commit) 
+            throws ServerException { 
+        getServer().logFinest("Entered DefaultManagement.releaseLock");
+        DOWriter w=m_manager.getWriter(context, pid);
+        if (commit) {
+            w.commit(logMessage); // FIXME: make the audit record HERE
+        } else {
+            w.cancel();
+        }
+        m_manager.releaseWriter(w);
+        getServer().logFinest("Exiting DefaultManagement.releaseLock");
+    }
 
     public String getLockingUser(Context context, String pid) { return null; }
 
