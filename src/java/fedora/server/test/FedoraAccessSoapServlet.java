@@ -123,9 +123,15 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private static final String GET_OBJECT_METHODS =
       "GetObjectMethods";
 
-  /** URL for the parameter resolver servlet */
-  private static final String PARAMETER_RESOLVER_URL =
-      "http://localhost:8080/fedora/getParmResolver?";
+  /** Servlet path for the parameter resolver servlet */
+  private static final String PARAMETER_RESOLVER_SERVLET_PATH =
+      "/fedora/getParmResolver?";
+
+  /** Full URL for the parameter resolver servlet. Hostname and port
+   *  are determined dynamically and are assumed to be the same as
+   *  for this servlet.
+   */
+  private static String PARAMETER_RESOLVER_URL = null;
 
   /** User-supplied method parameters from servlet URL. */
   private Hashtable h_userParms = null;
@@ -165,6 +171,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     String PID = null;
     Property[] userParms = null;
     h_userParms = new Hashtable();
+    PARAMETER_RESOLVER_URL = "http://" + request.getServerName()
+        + ":" + request.getServerPort() + PARAMETER_RESOLVER_SERVLET_PATH;
 
     // getRequestURL only available in Servlet API 2.3.
     // Use following for earlier releases servlet API:
@@ -886,7 +894,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @throws ServletException If the servet cannot be initialized.
    */
   public void init() throws ServletException
-  {}
+  {
+  }
 
   /**
    * <p>Cleans up servlet resources.</p>
