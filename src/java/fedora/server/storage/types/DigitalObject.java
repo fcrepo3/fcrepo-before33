@@ -191,8 +191,7 @@ public interface DigitalObject {
     public List getAuditRecords();
 
     /**
-     * Gets an Iterator over the ids for which there exist one or more
-     * datastreams in this object.
+     * Gets an Iterator over the datastream ids in this object.
      * <p></p>
      * The Iterator is not tied to the underlying Collection and cannot
      * be used to remove datastreams.
@@ -203,8 +202,9 @@ public interface DigitalObject {
     public Iterator datastreamIdIterator();
 
     /**
-     * Gets a mutable List of Datastreams in this object whose ids match the
-     * provided id.
+     * Gets a mutable List of that consists of versions of the same 
+     * datastream that is identified by the requested datastream
+     * identifier.  
      *
      * @param id The datastream id.
      * @return The list, possibly of zero size but never null.
@@ -212,8 +212,7 @@ public interface DigitalObject {
     public List datastreams(String id);
 
     /**
-     * Gets an Iterator over the ids for which there exist one or more
-     * disseminators in this object.
+     * Gets an Iterator over the disseminator ids in this object.
      * <p></p>
      * The Iterator is not tied to the underlying Collection and cannot
      * be used to remove datastreams.
@@ -224,10 +223,11 @@ public interface DigitalObject {
     public Iterator disseminatorIdIterator();
 
     /**
-     * Gets a mutable List of Disseminators in this object whose ids match the
-     * provided id.
+     * Gets a mutable List that consists of versions of the same
+     * disseminator which is identified by the requested disseminator
+     * identifier. 
      *
-     * @param id The datastream id.
+     * @param id The disseminator id.
      * @return The list, possibly of zero size but never null.
      */
     public List disseminators(String id);
