@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -137,10 +138,11 @@ public class FedoraAPIABindingSOAPHTTPImpl implements fedora.server.access.Fedor
             // Except for last row, get the value of the next binding key
             // out of the hashtable to compare with the value of the current
             // binding key.
-            key = new Integer(counter+1);
+            hashKey = new Integer(counter+1);
+            if (debug) System.out.println("hashKey: '"+hashKey+"' currentKey: '"+currentKey+"'");
             DissResultSet result2 = (DissResultSet)h.get(hashKey);
             nextKey = result2.dsBindingKey;
-            if (debug) System.out.println("key: '"+key+"' currentKey: '"+currentKey+"' nextKey: '"+nextKey+"'");
+           if (debug) System.out.println("' nextKey: '"+nextKey+"'");
           }
           // In most cases, there is only a single datastream that matches a given
           // DSBindingKey so the substitution process is to just replace the
@@ -222,99 +224,43 @@ public class FedoraAPIABindingSOAPHTTPImpl implements fedora.server.access.Fedor
       }
      return dissemination;
     }
-/*
-      String protocolType = null;
-      Vector dissResult = null;
-      String dissURL = null;
-      fedora.server.types.gen.MIMETypedStream dissemination = null;
-      FastDOReader fastReader = new FastDOReader(PID, bDefPID, methodName,
-                                                 asOfDateTime);
-      dissResult = fastReader.getDissemination(PID, bDefPID, methodName, "");
-      if (dissResult.size() == 0)
+
+    /**
+    * Gets a list of Disseminator IDs, Behavior Definition PIDs, 			BehaviorMechanism
+    * PIDs, and methodNames supported by a digital object. 			This is a
+    * set of methodNames, one for each behavior mechanism type associated
+    * with each of the object's disseminator(s).
+    */
+    public fedora.server.types.gen.Vector viewObject(java.lang.String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException
+    {
+      Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+      FastDOReader fastReader = null;
+      Vector queryResults = null;
+      MIMETypedStream mts = null;
+      ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+      PrintWriter out = new PrintWriter(baos);
+      try
       {
-        // FIXME!! need to implement code for getting dissemination
-        // via XML vs SQL.
-        // If null is returned from FastDOReader, this indicates that
-        // the desired object is not in SQL database. Should then try to
-        // get dissemination from authoratative version of object in
-        // XML store using DefinitiveDOReader.
-        System.out.println("Dissemination Result: NULL");
-
-      } else {
-        String replaceString = null;
-        DissResultSet results = null;
-        int counter = 1;
-        int numElements = dissResult.size();
-        Enumeration e = dissResult.elements();
-        // Get row(s) of WSDL results and perform string substitution
-        // on DSBindingKey and method parameter values in WSDL
-        // Note: In case where more than one datastream matches the
-        // DSBindingKey, multiple rows will be returned; otherwise
-        // a single row is returned.
-        while (e.hasMoreElements())
-        {
-          results = new DissResultSet((String[])e.nextElement());
-          // If AddressLocation is LOCAL, this is a flag to indicate
-          // the associated OperationLocation requires no AddressLocation.
-          // i.e., the OperationLocation contains all information necessary
-          // to perform the dissemination request.
-          if (results.addressLocation.equals(LOCAL_ADDRESS_LOCATION))
-          {
-            results.addressLocation = "";
-          }
-          // Match DSBindingKey pattern in WSDL
-          String bindingKeyPattern = "\\("+results.dsBindingKey+"\\)";
-          if (counter == 1)
-          {
-            dissURL = results.addressLocation+results.operationLocation;
-            protocolType = results.protocolType;
-          }
-          // If more than one datastream returned alter replacement string by
-          // appending +(DSBindingKey) for substitution in next iteration.
-          if (numElements == 1 | counter >= numElements)
-          {
-            replaceString = results.dsLocation;
-          } else {
-            replaceString = results.dsLocation+"+("+results.dsBindingKey+")";
-          }
-          dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
-          counter++;
-          if (debug) System.out.println("replaced dissURL = "+
-                                       dissURL.toString()+
-                                       " counter = "+counter);
-        }
-
-        // FIXME!! need to implement handling of user-supplied method parameters
-        // Would need to validate user-supplied parameters and then substitute
-        // values in operationLocation.
-
-        // FIXME!! need to implement Access Policy control
-
-        // Resolve content referenced by dissemination result
-        if (debug) System.out.println("ProtocolType = "+protocolType);
-        if (protocolType.equalsIgnoreCase("http"))
-        {
-          MIMETypedStream diss = null;
-          LocalService httpService = new LocalService();
-          diss = httpService.getHttpContent(dissURL);
-          dissemination = new fedora.server.types.gen.MIMETypedStream();
-          dissemination.setMIMEType(diss.MIMEType);
-          dissemination.setStream(diss.stream);
-        } else if (protocolType.equalsIgnoreCase("soap"))
-        {
-          // FIXME!! future handling by soap interface
-          System.out.println("Protocol type specified: "+protocolType);
-          dissemination = null;
-        } else
-        {
-          System.out.println("Unknown protocol type: "+protocolType);
-          dissemination = null;
-        }
+        fastReader = new FastDOReader(PID, null, null, versDateTime);
+        queryResults = fastReader.getObject(PID, versDateTime);
+      } catch (ObjectNotFoundException onfe)
+      {
+        System.out.println(onfe.getMessage());
+        //this.getServletContext().log(onfe.getMessage(), onfe.getCause());
       }
-
-    return dissemination;
+      Enumeration e = queryResults.elements();
+      fedora.server.types.gen.Vector results = new fedora.server.types.gen.Vector();
+      Object[] o = new Object[queryResults.size()];
+      int count = 0;
+      while (e.hasMoreElements())
+      {
+        o[count] = e.nextElement();
+        count++;
+      }
+      results.setItem(o);
+      return(results);
     }
-*/
+
     /**
      * Method to perform simple string replacement using regular expressions.
      * All mathcing occurrences of the pattern string will be replaced in the
