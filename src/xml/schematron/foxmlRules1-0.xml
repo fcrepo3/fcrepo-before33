@@ -25,18 +25,18 @@
 	<!-- These rules are to be applied to objects no matter what phase of the object lifecycle they are in.-->
 	<sch:pattern name="Preliminary Object Checks" id="preliminary">
 		<!-- RULE:  check that Behavior Mechanism objects have the proper kinds of datastreams (DSINPUTSPEC, METHODMAP, and WSDL).-->
-		<sch:rule context="foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type' and ( @VALUE='FedoraBMechObject' or @VALUE='BMechObject' or @VALUE='info:fedora/fedora-system:def/model#BMechObject')]">
+		<sch:rule context="foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type' and ( @VALUE='FedoraBMechObject' or @VALUE='info:fedora/fedora-system:def/model#FedoraBMechObject')]">
 			<sch:assert test="../../foxml:datastream[@ID='DSINPUTSPEC']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Input Spec (foxml:datastream with ID="DSINPUTSPEC" must exist).</sch:assert>
 			<sch:assert test="../../foxml:datastream[@ID='METHODMAP']">Behavior Mechanism Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
 			<sch:assert test="../../foxml:datastream[@ID='WSDL']">Behavior Mechanism Objects must have an inline Datastream representing WSDL service bindings (foxml:datastream with ID="WSDL" must exist).</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that Behavior Definition objects have the proper kinds of datastreams (METHODMAP).-->
-		<sch:rule context="foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type' and (@VALUE='FedoraBDefObject' or @VALUE='BDefObject' or @VALUE='info:fedora/fedora-system:def/model#BDefObject')]">
+		<sch:rule context="foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type' and (@VALUE='FedoraBDefObject' or @VALUE='info:fedora/fedora-system:def/model#FedoraBDefObject')]">
 			<sch:assert test="../../foxml:datastream[@ID='METHODMAP']">Behavior Definition Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that the Fedora object type (fType) contains a valid value (FedoraObject, FedoraBDefObject, or FedoraBMechObject).-->
 		<sch:rule context="foxml:property[@NAME='http://www.w3.org/1999/02/22-rdf-syntax-ns#type']">
-			<sch:assert test="@VALUE = 'DataObject' or @VALUE = 'BDefObject' or @VALUE = 'BMechObject' or @VALUE = 'info:fedora/fedora-system:def/model#DataObject' or @VALUE = 'info:fedora/fedora-system:def/model#BDefObject' or @VALUE = 'info:fedora/fedora-system:def/model#BMechObject' or @VALUE = 'FedoraObject' or @VALUE = 'FedoraBDefObject' or @VALUE = 'FedoraBMechObject'">Object must be of type "DataObject|BDefObject|BMechObject" (foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" has an invalid VALUE).</sch:assert>
+			<sch:assert test="@VALUE = 'FedoraObject' or @VALUE = 'FedoraBDefObject' or @VALUE = 'FedoraBMechObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraBDefObject' or @VALUE = 'info:fedora/fedora-system:def/model#FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" has an invalid VALUE).</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that the Fedora AUDIT datastream is not versioned.-->
 		<sch:rule context="foxml:datastream[@ID='AUDIT']">

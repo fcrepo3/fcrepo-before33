@@ -46,9 +46,9 @@ public class FedoraModelNamespace extends RDFNamespace {
         this.INACTIVE             = new RDFName(this, "Inactive");
 
         // Types
-        this.BDEF_OBJECT          = new RDFName(this, "BDefObject");
-        this.BMECH_OBJECT         = new RDFName(this, "BMechObject");
-        this.DATA_OBJECT          = new RDFName(this, "DataObject");
+        this.BDEF_OBJECT          = new RDFName(this, "FedoraBDefObject");
+        this.BMECH_OBJECT         = new RDFName(this, "FedoraBMechObject");
+        this.DATA_OBJECT          = new RDFName(this, "FedoraObject");
     }
 
 }

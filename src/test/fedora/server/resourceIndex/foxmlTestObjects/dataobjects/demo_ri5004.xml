@@ -18,7 +18,7 @@
                          xmlns:nsdl="http://www.nsdl.org/ontologies/relationships#" 
                          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
                     <rdf:Description rdf:about="info:fedora/demo:ri5004">
-                        <rdf:type rdf:resource="info:fedora/fedora-system:def/model#DataObject"/>
+                        <rdf:type rdf:resource="info:fedora/fedora-system:def/model#FedoraObject"/>
                     </rdf:Description>
                 </rdf:RDF>
             </foxml:xmlContent>

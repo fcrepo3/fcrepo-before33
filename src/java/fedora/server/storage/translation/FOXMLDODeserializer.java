@@ -308,9 +308,9 @@ public class FOXMLDODeserializer
 				} else if (m_objPropertyName.equals(RDF.TYPE.uri)) {
 					String oType = grab(a, F, "VALUE");
 					if (oType==null || oType.equals("")) { oType=MODEL.DATA_OBJECT.localName; }
-                    if (MODEL.BDEF_OBJECT.looselyMatches(oType, false) || oType.equalsIgnoreCase("FedoraBDefObject")) {
+                    if (MODEL.BDEF_OBJECT.looselyMatches(oType, false)) {
 						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-					} else if (MODEL.BMECH_OBJECT.looselyMatches(oType, false) || oType.equalsIgnoreCase("FedoraBMechObject")) {
+					} else if (MODEL.BMECH_OBJECT.looselyMatches(oType, false)) {
 						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
 					} else {
 						m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);

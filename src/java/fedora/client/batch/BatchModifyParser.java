@@ -937,7 +937,7 @@ public class BatchModifyParser extends DefaultHandler
 				    				    xml.append(">\n");
 				    				}
 				    				xml.append("  <foxml:objectProperties>\n");
-				    				xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"DataObject\"/>\n");
+				    				xml.append("    <foxml:property NAME=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#type\" VALUE=\"FedoraObject\"/>\n");
 				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#label\" VALUE=\"" + StreamUtility.enc(m_obj.label) + "\"/>\n");
 				    				xml.append("    <foxml:property NAME=\"info:fedora/fedora-system:def/model#contentModel\" VALUE=\"" + StreamUtility.enc(m_obj.cModel) + "\"/>\n");			
 				    				xml.append("  </foxml:objectProperties>\n");
