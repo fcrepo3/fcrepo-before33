@@ -926,6 +926,10 @@ public class METSLikeDODeserializer
 	private void convertAudits(){
 		// Only do this if ADMID values were found in the object.
 		if (m_dsADMIDs.size()>0){
+			// Look at datastreams to see if there are audit records for them.
+			// NOTE:  we do not look at disseminators because in pre-2.0
+			// the disseminators did not point to their audit records as
+			// did the datastreams.
 			Iterator dsIdIter=m_obj.datastreamIdIterator();
 			while (dsIdIter.hasNext()) {
 				List datastreams=m_obj.datastreams((String) dsIdIter.next());
@@ -946,21 +950,25 @@ public class METSLikeDODeserializer
 						   // is not a regular datatream in the object.
 						   List matchedDatastreams=m_obj.datastreams(admId);
 						   if (matchedDatastreams.size()<=0) {                      
-								// Keep track of audit id correlated with the 
+								// Keep track of audit metadata correlated with the 
 								// datastream version it's about (for later use).
 								m_AuditIdToComponentId.put(admId, ds.DSVersionID);
 						   } else {
-								// Put ADMID of regular admin metadata in new list.
+								// Keep track of non-audit metadata in a new list.
 								cleanAdmIdList.add(admId);
 						   }
 						}
 					}
 					if (cleanAdmIdList.size()<=0){
-						// remove the entry from master hashmap if the ds version
-						// has no regular admin metadata references.
+						// we keep track of admin metadata references
+						// for each datastream, but we exclude the audit
+						// records from this list.  If there are no
+						// non-audit metadata references, remove the
+						// datastream entry from the master hashmap.
 						m_dsADMIDs.remove(ds.DSVersionID);
 					} else {
-						// otherwise, update the master hashmap with the clean list 
+						// otherwise, update the master hashmap with the 
+						// clean list of non-audit metadata 
 						m_dsADMIDs.put(ds.DSVersionID, cleanAdmIdList);
 					}
 				}
@@ -978,7 +986,11 @@ public class METSLikeDODeserializer
 					// be derived via the datastream version dates and the audit
 					// record dates.
 					String dsVersId = (String)m_AuditIdToComponentId.get(au.id);
-					au.componentID=dsVersId.substring(0, dsVersId.indexOf("."));
+					if (dsVersId!=null && !dsVersId.equals(""))
+					{
+						au.componentID=dsVersId.substring(0, dsVersId.indexOf("."));
+					}
+
 				}
 			}
 		}
