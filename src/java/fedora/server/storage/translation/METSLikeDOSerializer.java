@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
-import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StreamWriteException;
 import fedora.server.storage.types.AuditRecord;
@@ -56,13 +55,12 @@ import fedora.server.utilities.StreamUtility;
 public class METSLikeDOSerializer
         implements DOSerializer {
 
-    public static final String FEDORA_AUDIT_NS="info:fedora/def:audit";
+    public static final String FEDORA_AUDIT_NS="info:fedora/def:audit/";
     public static final String METS_PREFIX="METS";
     public static final String METS_NS="http://www.loc.gov/METS/";
     public static final String METS_XSD_LOCATION="http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd";
     public static final String METS_XLINK_NS="http://www.w3.org/TR/xlink";
     public static final String REAL_XLINK_NS="http://www.w3.org/TR/xlink";
-    //public static final String REAL_XLINK_NS="http://www.w3.org/1999/xlink";
     public static final String XSI_NS="http://www.w3.org/2001/XMLSchema-instance";
 
     private String m_XLinkPrefix="xlink";
@@ -282,35 +280,57 @@ public class METSLikeDOSerializer
             String innerName, List XMLMetadata, StringBuffer buf, String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
-        DatastreamXMLMetadata first=(DatastreamXMLMetadata) XMLMetadata.get(0);
+        DatastreamXMLMetadata first=
+        	(DatastreamXMLMetadata)setDatastreamDefaults(
+        		(DatastreamXMLMetadata) XMLMetadata.get(0));
+        /*
         if (first.DatastreamID==null) {
             throw new ObjectIntegrityException("Datastream must have an id.");
         }
         if (first.DSState==null) {
             throw new ObjectIntegrityException("Datastream must have a state.");
         }
+        */
         buf.append("  <" + METS_PREFIX + ":" + outerName + " ID=\""
                 + first.DatastreamID + "\" STATUS=\"" + first.DSState 
                 + "\">\n");
         for (int i=0; i<XMLMetadata.size(); i++) {
-            DatastreamXMLMetadata ds=(DatastreamXMLMetadata) XMLMetadata.get(i);
+            //DatastreamXMLMetadata ds=(DatastreamXMLMetadata) XMLMetadata.get(i);
+			DatastreamXMLMetadata ds=
+				(DatastreamXMLMetadata)setDatastreamDefaults(
+					(DatastreamXMLMetadata)XMLMetadata.get(i));
+            /*
             if (ds.DSVersionID==null) {
                 throw new ObjectIntegrityException("Datastream must have a version id.");
             }
             if (ds.DSCreateDT==null) {
                 throw new ObjectIntegrityException("Datastream must have a creation date.");
             }
+            */
+			String dateString="";
+			if (ds.DSCreateDT!=null) {
+				dateString=" CREATED=\"" + m_formatter.format(ds.DSCreateDT) + "\"";
+			}
+			buf.append("    <" + METS_PREFIX + ":" + innerName 
+				+ " ID=\""	+ ds.DSVersionID + "\""
+				+ dateString 
+				+ ">\n");
+			/*
             buf.append("    <" + METS_PREFIX + ":" + innerName + " ID=\""
                     + ds.DSVersionID + "\" CREATED=\"" + m_formatter.format(
                     ds.DSCreateDT) + "\">\n");
+            */
+            // set some default values...
+            /*
             if (ds.DSMIME==null) {
-				//ds.DSMIME="text/html";
-                ds.DSMIME="text/xml";
+				ds.DSMIME="text/html";
+                //ds.DSMIME="text/xml";
             }
             if (ds.DSInfoType==null || ds.DSInfoType.equals("")
                     || ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
                 ds.DSInfoType="UNSPECIFIED";
             }
+            */
             String mdType=ds.DSInfoType;
             String otherString="";
             if ( !mdType.equals("MARC") && !mdType.equals("EAD")
@@ -326,9 +346,11 @@ public class METSLikeDOSerializer
             if ( ds.DSLabel!=null && !ds.DSLabel.equals("") ) {
                 labelString=" LABEL=\"" + StreamUtility.enc(ds.DSLabel) + "\"";
             }
-            buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + ds.DSMIME
-                    + "\" MDTYPE=\"" + mdType + "\"" + otherString
-                    + labelString + ">\n");
+            buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + ds.DSMIME + "\""
+                    + " MDTYPE=\"" + mdType + "\"" 
+                    + otherString
+                    + labelString 
+                    + ">\n");
             buf.append("        <" + METS_PREFIX + ":xmlData>\n");
             
 			// If WSDL or SERVICE-PROFILE datastream (in BMech) 
@@ -380,6 +402,9 @@ public class METSLikeDOSerializer
             buf.append("  <" + METS_PREFIX + ":amdSec ID=\"FEDORA-AUDITTRAIL\">\n");
             for (int i=0; i<obj.getAuditRecords().size(); i++) {
                 AuditRecord audit=(AuditRecord) obj.getAuditRecords().get(i);
+                // The audit record is created by the system, so programmatic
+                // validation here is o.k.  Normally, validation takes place
+                // via XML Schema and Schematron.
                 if (audit.id==null) {
                     throw new ObjectIntegrityException("Audit record must have id.");
                 }
@@ -465,7 +490,6 @@ public class METSLikeDOSerializer
                 	// (object was always encoded as FOXML), then default
                 	// to techMD, since it's the most generic category.
                 	mdClass="techMD";
-                    //throw new ObjectIntegrityException("Object's inline XML datastream must have a class (md.DSMDClass=" + md.DSMDClass + ").");
                 }
                 appendMDSec(obj, "amdSec", mdClass, obj.datastreams(id),
                         buf, encoding);
@@ -478,42 +502,54 @@ public class METSLikeDOSerializer
         Iterator iter=obj.datastreamIdIterator();
         boolean didFileSec=false;
         while (iter.hasNext()) {
-            Datastream ds=(Datastream) obj.datastreams((String) iter.next()).get(0);
+            Datastream ds=
+            	setDatastreamDefaults(
+            		(Datastream)obj.datastreams((String)iter.next()).get(0));
             if (!ds.DSControlGrp.equals("X")) {
                 if (!didFileSec) {
                     didFileSec=true;
                     buf.append("  <" + METS_PREFIX + ":fileSec>\n");
                     buf.append("    <" + METS_PREFIX + ":fileGrp ID=\"DATASTREAMS\">\n");
                 }
+                /*
                 if (ds.DatastreamID==null || ds.DatastreamID.equals("")) {
 					throw new ObjectIntegrityException("Missing datastream ID in object: " + obj.getPid());
                 }
-                if (ds.DSState==null) ds.DSState="";
+                */
+                //if (ds.DSState==null) ds.DSState="";
                 buf.append("      <" + METS_PREFIX + ":fileGrp ID=\""
                         + ds.DatastreamID + "\" STATUS=\"" + ds.DSState 
                         + "\">\n");
                 Iterator contentIter=obj.datastreams(ds.DatastreamID).iterator();
                 while (contentIter.hasNext()) {
-                    Datastream dsc=validateDatastream((Datastream) contentIter.next());
-                    
+                    //Datastream dsc=validateDatastream((Datastream) contentIter.next());
+					Datastream dsc=setDatastreamDefaults((Datastream) contentIter.next());                   
                     String labelString="";
                     if (dsc.DSLabel!=null && !dsc.DSLabel.equals("")) {
                         labelString=" " + m_XLinkPrefix + ":title=\""
                                 + StreamUtility.enc(dsc.DSLabel) + "\"";
                     }
-					if (dsc.DSMIME==null) dsc.DSMIME="";
+					String dateString="";
+					if (dsc.DSCreateDT!=null) {
+						dateString=" CREATED=\"" + m_formatter.format(dsc.DSCreateDT) + "\"";
+					}
+					//if (dsc.DSMIME==null) dsc.DSMIME="";
                     String sizeString=" SIZE=\"" + dsc.DSSize + "\"";
                     String admIDString=getIdString(obj, (DatastreamContent)dsc, true);
                     String dmdIDString=getIdString(obj, (DatastreamContent)dsc, false);
 
-                    buf.append("        <" + METS_PREFIX + ":file ID=\""
-                            + dsc.DSVersionID + "\" CREATED=\"" + m_formatter.format(dsc.DSCreateDT)
-                            + "\" MIMETYPE=\"" + dsc.DSMIME + "\"" + sizeString
-                            + admIDString + dmdIDString + " OWNERID=\"" + dsc.DSControlGrp + "\">\n");
+                    buf.append("        <" + METS_PREFIX + ":file ID=\"" + dsc.DSVersionID + "\"" 
+                    		+ dateString
+                            + " MIMETYPE=\"" + dsc.DSMIME + "\"" 
+                            + sizeString
+                            + admIDString 
+                            + dmdIDString 
+                            + " OWNERID=\"" + dsc.DSControlGrp + "\">\n");
                     buf.append("          <" + METS_PREFIX + ":FLocat" + labelString
-                            + " LOCTYPE=\"URL\" " + m_XLinkPrefix
-					        + ":href=\"" + StreamUtility.enc(normalizeDSLocat(obj.getPid(), dsc)) + "\"/>\n");
-                    //        + ":href=\"" + StreamUtility.enc(dsc.DSLocation) + "\"/>\n");
+                            + " LOCTYPE=\"URL\" " 
+                            + m_XLinkPrefix + ":href=\"" 
+                            + StreamUtility.enc(normalizeDSLocat(obj.getPid(), dsc)) 
+					        + "\"/>\n");
                     buf.append("        </" + METS_PREFIX + ":file>\n");
                 }
                 buf.append("      </" + METS_PREFIX + ":fileGrp>\n");
@@ -531,24 +567,6 @@ public class METSLikeDOSerializer
         ArrayList ret;
         if (adm) {
             ret=new ArrayList(content.auditRecordIdList());
-            // if no audit records are found on the datastream, take a look at
-            // the audit records on the object to see if we can pick up
-            // component ids recorded on the audit record themselves.
-            // (this will be the case in v2.0 with FOXML).  We do this
-            // to be able to preserve the ADMID attribute on METS file
-            // elements, where the datastreams point to their audit records.
-            /*
-            if (ret.size()==0) {
-				Iterator iter=((ArrayList) m_obj.getAuditRecords()).iterator();
-				while (iter.hasNext()) {
-					AuditRecord au=(AuditRecord) iter.next();
-					if (au.componentID.equals(content.DSVersionID))
-					{
-						ret.add(au.id);
-					}
-				}
-            }
-            */
         } else {
             ret=new ArrayList();
         }
@@ -707,9 +725,11 @@ public class METSLikeDOSerializer
         buf.append("</" + METS_PREFIX + ":mets>");
     }
 
-	private Datastream validateDatastream(Datastream ds)
+	//private Datastream validateDatastream(Datastream ds)
+	private Datastream setDatastreamDefaults(Datastream ds)
 		throws ObjectIntegrityException {
 		// check on some essentials
+		/*
 		if (ds.DSVersionID==null || ds.DSVersionID.equals("")) {
 			throw new ObjectIntegrityException("Datastream must have a version id.");
 		}			
@@ -719,6 +739,27 @@ public class METSLikeDOSerializer
 		if (ds.DSLocation==null || ds.DSLocation.equals("")) {
 			throw new ObjectIntegrityException("Object's content datastream must have a location.");
 		}
+		*/
+		if (ds.DSMIME==null && ds.DSControlGrp.equalsIgnoreCase("X")) {
+			ds.DSMIME="text/xml";
+		} else if (ds.DSMIME==null) {
+			ds.DSMIME="";
+		}
+		if (ds.DatastreamID==null) {
+			ds.DatastreamID="";
+		}
+		if (ds.DSState==null) {
+			ds.DSState="";
+		}
+		if (ds.DSInfoType==null || ds.DSInfoType.equals("")
+				|| ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
+			ds.DSInfoType="UNSPECIFIED";
+		}
+		/* 
+		if ((ds.DSMIME==null || ds.DSVersionID.equals("")) && ds.DSControlGrp.equalsIgnoreCase("X")) {
+			ds.DSMIME="text/xml";
+		}
+		*/
 		return ds;
 	}
 	
@@ -736,11 +777,18 @@ public class METSLikeDOSerializer
 				return publicLoc;
 			} else if (ds.DSControlGrp.equals("M")) {
 				// make sure internal ids are converted to public dissemination URLs
+				if (ds.DSCreateDT==null) {
+					publicLoc=s_localServerDissemUrlStart 
+							+ PID 
+							+ "/fedora-system:3/getItem/"
+							+ "?itemID=" + ds.DatastreamID;					
+				} else {
 				publicLoc=s_localServerDissemUrlStart 
 						+ PID 
 						+ "/fedora-system:3/getItem/"
 						+ m_formatter.format(ds.DSCreateDT)
 						+ "?itemID=" + ds.DatastreamID;
+				}
 				return publicLoc;
 			} else {
 				return publicLoc;
