@@ -43,7 +43,7 @@ OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
 export JAVA_HOME
 
-if [ -f "$FEDORA_HOME/server/logs/startup.log" ]; then
+if [ ! -e "$FEDORA_HOME/server/logs/startup.log" ]; then
   mkdir $FEDORA_HOME/server/logs
 fi
 
