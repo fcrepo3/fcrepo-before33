@@ -382,10 +382,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
            // Except for last row, get the value of the next binding key
            // out of the hashtable to compare with the value of the current
            // binding key.
-           key = new Integer(counter+1);
+           hashKey = new Integer(counter+1);
+           if (debug) System.out.println("hashKey: '"+hashKey+"' currentKey: '"+currentKey+"'");
            DissResultSet result2 = (DissResultSet)h.get(hashKey);
            nextKey = result2.dsBindingKey;
-           if (debug) System.out.println("key: '"+key+"' currentKey: '"+currentKey+"' nextKey: '"+nextKey+"'");
+           if (debug) System.out.println("' nextKey: '"+nextKey+"'");
          }
          // In most cases, there is only a single datastream that matches a given
          // DSBindingKey so the substitution process is to just replace the
