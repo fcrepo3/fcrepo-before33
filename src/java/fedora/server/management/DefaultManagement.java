@@ -167,6 +167,18 @@ public class DefaultManagement
             throws ServerException { 
         return m_manager.listObjectPIDs(context, foType);
     }
+    
+    public String[] listObjectPIDs(Context context, String pidPattern, 
+            String foType, String lockedByPattern, String state, 
+            String labelPattern, String contentModelIdPattern, 
+            Calendar createDateMin, Calendar createDateMax, 
+            Calendar lastModDateMin, Calendar lastModDateMax) 
+            throws ServerException {
+        return m_manager.listObjectPIDs(context, pidPattern,
+                foType, lockedByPattern, state, labelPattern,
+                contentModelIdPattern, createDateMin, createDateMax, 
+                lastModDateMin, lastModDateMax);
+    }
 
     public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) { return null; }
 

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import org.apache.axis.AxisEngine;
@@ -260,6 +261,24 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         try {
             return s_management.listObjectPIDs(s_context, foType);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        }
+    }
+    
+    public String[] newListObjectPIDs(String pidPattern, String foType, 
+            String lockedByPattern, String state, String labelPattern, 
+            String contentModelIdPattern, Calendar createDateMin, 
+            Calendar createDateMax, Calendar lastModDateMin, 
+            Calendar lastModDateMax) 
+            throws RemoteException {
+        assertInitialized();
+        try {
+            return s_management.listObjectPIDs(s_context, pidPattern,
+                    foType, lockedByPattern, state, labelPattern,
+                    contentModelIdPattern, createDateMin, createDateMax, 
+                    lastModDateMin, lastModDateMax);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);

@@ -40,6 +40,13 @@ public interface Management {
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) throws ServerException;
 
     public String[] listObjectPIDs(Context context, String foType) throws ServerException;
+    
+    public String[] listObjectPIDs(Context context, String pidPattern, 
+            String foType, String lockedByPattern, String state, 
+            String labelPattern, String contentModelIdPattern, 
+            Calendar createDateMin, Calendar createDateMax, 
+            Calendar lastModDateMin, Calendar lastModDateMax) 
+            throws ServerException;
 
     public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) throws ServerException;
 

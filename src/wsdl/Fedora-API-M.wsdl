@@ -153,6 +153,45 @@
       <documentation>the PIDs of the objects.</documentation>
     </part>
   </message>
+  <message name="newListObjectPIDsRequest">
+    <part name="pidPattern" type="xsd:string">
+      <documentation>the pid of the object, with optional wildcards * and ?</documentation>
+    </part>
+    <part name="foType" type="xsd:string">
+      <documentation>the fedora object type for the object.  This may be D, M,
+      or O</documentation>
+    </part>
+    <part name="lockedByPattern" type="xsd:string">
+      <documentation>the userid of the locking user, with optional wildcards * and ?</documentation>
+    </part>
+    <part name="state" type="xsd:string">
+      <documentation>the state of the object.  This may be A, or any of
+      the other possible states.</documentation>
+    </part>
+    <part name="labelPattern" type="xsd:string">
+      <documentation>the label of the object, with optional wildcards * and ?</documentation>
+    </part>
+    <part name="contentModelIdPattern" type="xsd:string">
+      <documentation>the content model of the object, with optional wildcards * and ?</documentation>
+    </part>
+    <part name="createDateMin" type="xsd:dateTime">
+      <documentation>the minimum create date of the object.</documentation>
+    </part>
+    <part name="createDateMax" type="xsd:dateTime">
+      <documentation>the maximum create date of the object.</documentation>
+    </part>
+    <part name="lastModDateMin" type="xsd:dateTime">
+      <documentation>the minimum modified date of the object.</documentation>
+    </part>
+    <part name="lastModDateMax" type="xsd:dateTime">
+      <documentation>the maximum modified date of the object.</documentation>
+    </part>
+  </message>
+  <message name="newListObjectPIDsResponse">
+    <part name="response" type="fedora-types:ArrayOfString">
+      <documentation>the PIDs of the objects.</documentation>
+    </part>
+  </message>
   <message name="addDatastreamExternalRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -585,6 +624,13 @@
       <input message="fedora-api:listObjectPIDsRequest"/>
       <output message="fedora-api:listObjectPIDsResponse"/>
     </operation>
+    <operation name="newListObjectPIDs">
+      <documentation>Gets a list of the PIDs of the objects in the 
+      repository matching all the criteria given.  This is a simple AND search.
+      A parameter that is given as null is treated as an "any" wildcard.</documentation>
+      <input message="fedora-api:newListObjectPIDsRequest"/>
+      <output message="fedora-api:newListObjectPIDsResponse"/>
+    </operation>
     <operation name="addDatastreamExternal">
       <documentation>Creates a Referenced External Content Datastream in the 
       object.  The MIME type is determined by the repository, which uses the 
@@ -889,6 +935,15 @@
         <mime:mimeXml part="response"/>
       </output>
     </operation>
+    <operation name="newListObjectPIDs">
+      <http:operation location="newListObjectPIDs"/>
+      <input>
+        <http:urlEncoded/>
+      </input>
+      <output>
+        <mime:mimeXml part="response"/>
+      </output>
+    </operation>
     <operation name="modifyDatastreamExternal">
       <http:operation location="modifyDatastreamExternal"/>
       <input>
@@ -1103,6 +1158,20 @@
     <operation name="listObjectPIDs">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#listObjectPIDs"/>
+      <input>
+        <soap:body use="encoded" 
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
+      </input>
+      <output>
+        <soap:body use="encoded" 
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
+      </output>
+    </operation>
+    <operation name="newListObjectPIDs">
+      <soap:operation style="rpc" 
+          soapAction="http://www.fedora.info/definitions/1/0/api/#newListObjectPIDs"/>
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 

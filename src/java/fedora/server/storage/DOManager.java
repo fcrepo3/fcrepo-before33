@@ -1,6 +1,7 @@
 package fedora.server.storage;
 
 import java.io.InputStream;
+import java.util.Calendar;
 
 import fedora.server.errors.ServerException;
 import fedora.server.Context;
@@ -93,13 +94,25 @@ public interface DOManager {
             throws ServerException;
 
     /**
-     * Gets a list of object PIDs in the given state.
-     * If state is given as null, all accessible PIDs for the context
-     * are returned.
+     * Gets a list of object PIDs (accessible in the given context) with the 
+     * given foType.  If foType is given as null, all accessible PIDs for the 
+     * context are returned.
      */
     public abstract String[] listObjectPIDs(Context context, String state)
             throws ServerException;
-            
+
+    /**
+     * Gets a list of object PIDs (accessible in the given context) with the 
+     * given criteria.  Any parameter whose name ends with "Pattern" may
+     * use the * and ? wildcards.  A parameter given as null means "any".
+     */
+    public String[] listObjectPIDs(Context context, String pidPattern, 
+            String foType, String lockedByPattern, String state, 
+            String labelPattern, String contentModelIdPattern, 
+            Calendar createDateMin, Calendar createDateMax, 
+            Calendar lastModDateMin, Calendar lastModDateMax) 
+            throws ServerException;
+
     /**
      * Gets the userId of the user who has a lock on the given object.
      * 

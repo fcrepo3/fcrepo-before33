@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1041,6 +1042,16 @@ public class DefaultDOManager
                 m_connectionPool.free(conn);
             }
         }
+    }
+    
+    public String[] listObjectPIDs(Context context, String pidPattern, 
+            String foType, String lockedByPattern, String state, 
+            String labelPattern, String contentModelIdPattern, 
+            Calendar createDateMin, Calendar createDateMax, 
+            Calendar lastModDateMin, Calendar lastModDateMax) {
+        String[] results=new String[1];
+        results[0]="DefaultDOManager.listObjectPIDs(,,,,,,,,,,) is a stub";
+        return results;
     }
 
 }
