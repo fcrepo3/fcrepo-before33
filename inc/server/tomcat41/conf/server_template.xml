@@ -1,8 +1,8 @@
-<Server port="8005" shutdown="SHUTDOWN" debug="0">
+<Server port="#2" shutdown="SHUTDOWN" debug="0">
   <Service name="Fedora-Server">
     <Connector className="org.apache.catalina.connector.http.HttpConnector"
-               port="#" minProcessors="5" maxProcessors="75"
-               enableLookups="true" redirectPort="8443"
+               port="#1" minProcessors="5" maxProcessors="75"
+               enableLookups="true" redirectPort="#3"
                acceptCount="10" debug="0" connectionTimeout="60000"/>
     <Engine name="Standalone" defaultHost="localhost" debug="0">
       <Logger className="org.apache.catalina.logger.FileLogger"
