@@ -400,6 +400,17 @@
 			<arg value="test"/>
 		</exec>
 	</target>
+	<target name="fieldsearchtest" description="run fedora.server.search.FieldSearchDBImpl.">
+		<exec executable="java">
+			<arg value="-Dfedora.home=dist/server"/>
+			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+			<arg value="-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+			<arg value="-Djavax.xml.transform.TransformerFactory=com.icl.saxon.TransformerFactoryImpl"/>
+			<arg value="-classpath"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/saxon6.5.jar;dist/server/tomcat41/common/lib/mkjdbc.jar;dist/server/tomcat41/common/lib/ojdbc14.jar;dist/server/tomcat41/common/lib/mm.mysql-2.0.14-bin.jar"/>
+			<arg value="fedora.server.search.FieldSearchDBImpl"/>
+		</exec>
+        </target>
 	<target name="metstest" description="run fedora.server.test.METSInOutTest on src/mets/test/demo/std-img-bdef.xml... print re-serialized version, then do level 1 and level 2 validation.">
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
@@ -450,6 +461,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.59  2003/01/14 14:58:29  cwilper
+  added tester for fieldsearch
+
   Revision 1.58  2003/01/07 21:02:32  cwilper
   client uses jtable classes
 
