@@ -414,7 +414,7 @@
 					<para>	Disseminators</para>
 					<itemizedlist>
 						<listitem>
-							<para>a.  Behavior Definition Objects use what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  It’s purpose is to allow the contents of Behavior Definition Objects to be disseminated via the Fedora Access API.  In Fedora 1.1.1, the Bootstrap Disseminator functionality is not turned on.  However, it must still be encoded in the METS submission package.:</para>
+							<para>a.  Behavior Definition Objects use what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  Its purpose is to allow the contents of Behavior Definition Objects to be disseminated via the Fedora Access API.  In Fedora 1.1.1, the Bootstrap Disseminator functionality is not turned on.  However, it must still be encoded in the METS submission package.:</para>
 						</listitem>
 						<listitem>
 							<para>b.  In terms of encoding the bootstrap disseminator, follow the examples in the demo objects.  The METS:behaviorSec and the METS:structMap are static, meaning that they will be the same in every Behavior Definition Object.  It is recommended that these sections just be copied into new objects from a demo object.</para>
@@ -476,7 +476,7 @@
 							<para>c.  Web Services Description Language (WSDL): this is used to encode the service binding metadata for the methods expressed in the Fedora Method Map. </para>
 						</listitem>
 						<listitem>
-							<para>d.  Fedora Datastream Input Spec: this is used to encode the fulfillment of the “data contract” specifying the kinds of datastreams that must be available in a Data Object that uses this Behavior Mechanism Object.  These datastreams will ultimately act as input parameters the methods described in the Method Map and the WSDL.</para>
+							<para>d.  Fedora Datastream Input Spec: this is used to encode the fulfillment of the “data contract” specifying the kinds of datastreams that must be available in a Data Object that uses this Behavior Mechanism Object.  These datastreams will ultimately act as input parameters to the methods described in the Method Map and the WSDL.</para>
 						</listitem>
 					</itemizedlist>
 				</listitem>
