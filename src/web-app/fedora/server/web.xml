@@ -79,6 +79,13 @@
 		</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>GetObjectHistoryServlet</servlet-name>
+		<display-name>Fedora Object History Provider</display-name>
+		<servlet-class>
+			fedora.server.access.GetObjectHistoryServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>GetNextPIDServlet</servlet-name>
 		<display-name>Fedora Next PID Provider</display-name>
 		<servlet-class>
@@ -118,6 +125,10 @@
 	<servlet-mapping>
 		<servlet-name>FedoraOAIProviderServlet</servlet-name>
 		<url-pattern>/oai</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetObjectHistoryServlet</servlet-name>
+		<url-pattern>/getObjectHistory/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>FedoraAccessServlet</servlet-name>
