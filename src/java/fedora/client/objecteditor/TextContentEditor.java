@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -15,6 +16,13 @@ import javax.swing.JTextArea;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
 
 /**
  * A general-purpose text editor/viewer with XML pretty-printing.
@@ -64,17 +72,36 @@ public class TextContentEditor
     public void setContent(InputStream data) 
             throws IOException {
         // get a string from the inputstream, assume it's UTF-8
+        boolean formattedXML=true;
         if (m_xml) {
-            System.out.println("FIXME: Because this is XML, it should be pretty-printed into the JTextArea");
+            try {
+                // use xerces to pretty print the xml to the editor
+                OutputFormat fmt=new OutputFormat("XML", "UTF-8", true);
+                fmt.setOmitXMLDeclaration(true);
+                fmt.setIndent(2);
+                fmt.setLineWidth(120);
+                fmt.setPreserveSpace(false);
+                ByteArrayOutputStream buf=new ByteArrayOutputStream();
+                XMLSerializer ser=new XMLSerializer(buf, fmt);
+                DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+                factory.setNamespaceAware(true);
+                DocumentBuilder builder=factory.newDocumentBuilder();
+                Document doc=builder.parse(data);
+                ser.serialize(doc);
+                m_origContent=new String(buf.toByteArray(), "UTF-8");
+            } catch (Exception e) {
+                System.out.println("ERROR: " + e.getClass().getName() + " : " + e.getMessage());
+            }
+        } else {
+            StringBuffer out=new StringBuffer();
+            BufferedReader in=new BufferedReader(new InputStreamReader(data));
+            String thisLine;
+            while ((thisLine=in.readLine())!=null) {
+                out.append(thisLine + "\n");
+            }
+            in.close();
+            m_origContent=out.toString();
         }
-        StringBuffer out=new StringBuffer();
-        BufferedReader in=new BufferedReader(new InputStreamReader(data));
-        String thisLine;
-        while ((thisLine=in.readLine())!=null) {
-            out.append(thisLine + "\n");
-        }
-        in.close();
-        m_origContent=out.toString();
         m_editor.setText(m_origContent);
         m_editor.setCaretPosition(0);
     }

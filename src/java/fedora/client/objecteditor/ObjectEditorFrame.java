@@ -1,6 +1,7 @@
 package fedora.client.objecteditor;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.util.Calendar;
 import javax.swing.BorderFactory;
@@ -109,6 +110,15 @@ public class ObjectEditorFrame
         getContentPane().add(outerPane, BorderLayout.CENTER);
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Open16.gif")));
         pack();
+        Dimension size=getSize();
+        Dimension aSize=Administrator.INSTANCE.getSize();
+        if (size.width>aSize.width-20) {
+            size.width=aSize.width-20;
+        }
+        if (size.height>aSize.height-20) {
+            size.height=aSize.height-20;
+        }
+        setSize(size);
         show();
     }
 
