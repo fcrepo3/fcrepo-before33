@@ -88,6 +88,10 @@ class WSDLParser extends DefaultHandler
   private Vector tmp_bindOperations;
   private Vector tmp_MIMEContent;
 
+  protected Service getService()
+  {
+    return wsdlService;
+  }
 
   public void startDocument() throws SAXException
   {
