@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- **********************************************************************************************************-->
-<!-- SCHEMATRON  SCHEMA FOR FEDORA DIGITAL OBJECTS-->
-<!-- TITLE:  metsExtRules.xml -->
+<!-- TITLE: SCHEMATRON  SCHEMA FOR FEDORA DIGITAL OBJECTS-->
+<!-- SOURCE:  metsExtRules1-0.xml -->
 <!-- DESCRIPTION:  This schema expresses validation rules for Fedora digital objects that -->
 <!-- are NOT ALREADY EXPRESSED in the XML Schema for the Fedora extension of METS.-->
 <!-- AUTHOR:  Sandy Payette,  payette@cs.cornell.edu -->
@@ -11,20 +11,18 @@
 	<sch:ns prefix="METS" uri="http://www.loc.gov/METS/"/>
 	<sch:ns prefix="xlink" uri="http://www.w3.org/TR/xlink"/>
 	<sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
-	<!-- RULES FOR OBJECT INGEST PHASE:  These rules apply to a digital object in its "submission" format for ingest into the repository-->
+	<!-- VALIDATION FOR OBJECT INGEST PHASE:  These rules apply to a digital object in its "submission" format for ingest into the repository-->
 	<!-- These rules are to be applied upon initial receipt of the object by the repository, before the repository has done any processing of the input.-->
 	<sch:phase id="ingest">
 		<sch:active pattern="preliminary"/>
 	</sch:phase>
-	<!-- RULES FOR OBJECT STORAGE PHASE: Rules to ensure that digital object is FULLY valid before being accepted for final storage in the repository-->
+	<!-- VALIDATION FOR OBJECT STORAGE PHASE: Rules to ensure that digital object is FULLY valid before being accepted for final storage in the repository-->
 	<!-- These rules are to be applied after all processing has been done by the repository, and before it is submitted to low level storage.-->
 	<sch:phase id="store">
 		<sch:active pattern="preliminary"/>
-		<!-- TEMPORARY COMMENT OUT OF THE COMPLETED PHASE UNTIL INGEST PROCESS -->
-		<!-- IMPLEMENTS THE ASSIGNMENT OF DATES AND STATUS CODES TO THE OBJECT -->
-		<!-- <sch:active pattern="completed"/> -->
+		<sch:active pattern="completed"/>
 	</sch:phase>
-	<!-- PRELIMINARY PATTERN: -->
+	<!-- PRELIMINARY INGEST RULES PATTERN: -->
 	<!-- These rules are to be applied to objects no matter what phase of the object lifecycle they are in.-->
 	<sch:pattern name="Preliminary Object Checks" id="preliminary">
 		<sch:rule context="METS:xmlData">
@@ -39,37 +37,37 @@
 			<sch:assert test="child::METS:amdSec[@ID='METHODMAP']">Behavior Definition Objects must have an inline Datastream representing a Fedora Method Map of abstract method defs (mets:amdSec with ID="METHODMAP" must exist when element mets has TYPE="FedoraBDefObject"</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:mets">
-			<sch:assert test="string-length(@OBJID) &lt;= 32">Object PID must not exceed length of 32 (mets:mets OBJID)</sch:assert>
+			<sch:assert test="string-length(@OBJID) &lt;= 64">Object PID must not exceed length of 64 (mets:mets OBJID)</sch:assert>
 			<sch:assert test="@TYPE = 'FedoraObject' or @TYPE = 'FedoraBDefObject' or @TYPE = 'FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (mets:mets: TYPE)</sch:assert>
-			<sch:report test="METS:dmdSec">The METS:dmdSec element is not supported by Fedora 1.0.   Use the METS:dmdSecFedora element instead (see the Fedora extension of the METS 1.0 schema)</sch:report>
+			<sch:report test="METS:dmdSec">The METS:dmdSec element is not supported by Fedora.   Use the METS:dmdSecFedora element instead (see the Fedora extension of the METS 1.0 schema)</sch:report>
 		</sch:rule>
 		<sch:rule context="METS:dmdSecFedora">
 			<sch:assert test="@ID">Every Datastream must have a DatastreamID (mets:dmdSecFedora: ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Datastream ID must not exceed length of 32 (mets:dmdSecFedora ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream ID must not exceed length of 64 (mets:dmdSecFedora ID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:amdSec">
 			<sch:assert test="@ID">Every Datastream must have a DatastreamID (mets:amdSec: ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Datastream ID must not exceed length of 32 (mets:amdSecID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream ID must not exceed length of 64 (mets:amdSecID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:descMD">
 			<sch:assert test="@ID">Every Datastream must have a Datastream Version ID (mets:descMD: ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Datastream Version ID must not exceed length of 32 (mets:descMD ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream Version ID must not exceed length of 64 (mets:descMD ID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:techMD">
 			<sch:assert test="@ID">Every Datastream must have a Datastream Version ID (mets:techMD: ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Datastream Version ID must not exceed length of 32 (mets:techMD ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream Version ID must not exceed length of 64 (mets:techMD ID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:rightsMD">
 			<sch:assert test="@ID">Every Datastream must have a Datastream Version ID (mets:rightsMD: ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Datastream Version ID must not exceed length of 32 (mets:rightsMD ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream Version ID must not exceed length of 64 (mets:rightsMD ID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:sourceMD">
 			<sch:assert test="@ID">Every Datastream must have a Datastream Version ID (mets:sourceMD: ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Datastream Version ID must not exceed length of 32 (mets:sourceMD ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream Version ID must not exceed length of 64 (mets:sourceMD ID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:digiprovMD">
 			<sch:assert test="@ID">Every Datastream must have a Datastream Version ID (mets:digiprovMD: ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Datastream Version ID must not exceed length of 32 (mets:digiprovMD ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream Version ID must not exceed length of 64 (mets:digiprovMD ID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:fileSec">
 			<sch:assert test="METS:fileGrp[@ID]">All Datastreams must have a DatastreamID (mets:fileGrp: ID is missing or empty)</sch:assert>
@@ -78,32 +76,32 @@
 		</sch:rule>
 		<sch:rule context="METS:fileGrp">
 			<sch:assert test="@ID">Every Datastream must have a DatastreamID (mets:fileGrp: ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Datastream ID must not exceed length of 32 (mets:fileGrp ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream ID must not exceed length of 64 (mets:fileGrp ID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:file">
 			<sch:assert test="@ID">Every Datastream must have a Datastream Version ID (mets:file: ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Datastream Version ID must not exceed length of 32 (mets:file ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream Version ID must not exceed length of 64 (mets:file ID)</sch:assert>
 			<sch:assert test="string(@OWNERID)">Datastream control group must be recorded (mets:file: OWNERID missing or empty)</sch:assert>
 			<sch:assert test="@OWNERID='R' or @OWNERID = 'E' or @OWNERID = 'M' or @OWNERID = 'X'">Datastream control group must be "E" for External-Ref, "M" for Managed-Content, "R" for Redirect, or "X" for Inline-XML-Metadata.  (mets:file: OWNERID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:structMap">
 			<sch:assert test="string(@ID)">Datastream Binding Map ID is missing (mets:structMap: ID is missing or empty)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Datastream Binding Map ID must not exceed length of 32 (mets:structMap ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream Binding Map ID must not exceed length of 64 (mets:structMap ID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:div">
 			<sch:assert test="string(@TYPE)">Datastream binding key is missing (mets:div: TYPE is missing or empty)</sch:assert>
-			<sch:assert test="string-length(@TYPE) &lt;= 32">Datastream binding key must not exceed length of 32 (mets:div TYPE)</sch:assert>
+			<sch:assert test="string-length(@TYPE) &lt;= 64">Datastream binding key must not exceed length of 64 (mets:div TYPE)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:behaviorSec">
 			<sch:assert test="string(@ID)">Every Disseminator must have a DisseminatorID (mets:behaviorSec: ID is missing or empty)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 32">Disseminator ID must not exceed length of 32 (mets:behaviorSec ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Disseminator ID must not exceed length of 64 (mets:behaviorSec ID)</sch:assert>
 			<sch:assert test="METS:serviceBinding[@ID]">Disseminator must have a Version ID (mets:serviceBinding: ID is missing or empty)</sch:assert>
-			<sch:assert test="METS:serviceBinding[string-length(@ID) &lt;= 32]">Disseminator Version ID must not exceed length of 32 (mets:serviceBinding: ID)</sch:assert>
+			<sch:assert test="METS:serviceBinding[string-length(@ID) &lt;= 64]">Disseminator Version ID must not exceed length of 64 (mets:serviceBinding: ID)</sch:assert>
 			<sch:assert test="METS:serviceBinding/METS:interfaceMD[string(@xlink:href)]">Disseminator must point to a Behavior Definition Object (mets:interfaceMD: xlink:href is missing or empty)</sch:assert>
 			<sch:assert test="METS:serviceBinding/METS:serviceBindMD[string(@xlink:href)]">Disseminator must point to a Behavior Mechanism Object (mets:serviceBindMD: xlink:href is missing or empty)</sch:assert>
 		</sch:rule>
 	</sch:pattern>
-	<!-- COMPLETED PATTERN: -->
+	<!-- COMPLETED RULES PATTERN: -->
 	<!-- These rules are to be applied to objects when they are considered completed and ready to be stored persistently in the repository.-->
 	<sch:pattern name="Completed Object Checks" id="completed">
 		<sch:rule context="METS:metsHdr">
