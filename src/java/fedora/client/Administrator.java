@@ -243,7 +243,10 @@ public class Administrator extends JFrame {
         JMenuBar menuBar = new JMenuBar();
 
         // [F]ile
-        //   [N]ew Object
+        //   [N]ew
+        //     [O]bject
+        //     Behavior [M]echanism
+        //     Behavior [D]efinition
         //   [O]pen Object...
         //   -----------
         //   [I]ngest
@@ -268,6 +271,12 @@ public class Administrator extends JFrame {
         //   -----------
         //   [L]ogin
         //   E[x]it
+        // [S]earch
+        //   [L]ist all
+        //     [O]bjects
+        //     Behavior [M]echanisms
+        //     Behavior [D]efinitions
+        //   [C]ustom...
         JMenu fileMenu=new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
