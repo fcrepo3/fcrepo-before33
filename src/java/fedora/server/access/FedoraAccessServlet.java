@@ -10,43 +10,40 @@ import java.net.URLDecoder;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.servlet.ServletException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Properties;
 
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.util.Properties;
 
 import com.icl.saxon.expr.StringValue;
 
-import fedora.server.access.dissemination.DisseminationService;
-import fedora.server.errors.InitializationException;
-import fedora.server.errors.ServerException;
 import fedora.server.Context;
+import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
+import fedora.server.errors.InitializationException;
+import fedora.server.errors.ServerException;
 import fedora.server.storage.DOManager;
-import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
 import fedora.server.storage.types.MethodParmDef;
-import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.utilities.DateUtility;
 
 /**
  * <p>Title: FedoraAccessServlet.java</p>
- * <p>Description: Implements Fedora Access LITE (API-A-LITE) interface via a
- * java Servlet front end. The syntax defined by API-A-LITE has two bindings:
+ * <p>Description: Implements Fedora Access LITE (API-A-LITE) interface using a
+ * java servlet front end. The syntax defined by API-A-LITE has two bindings:
  * <ol>
  * <li>http://hostname:port/PID/bDefPID/methodName[/dateTime][?parmArray] - this
  *     syntax requests a dissemination of the specified object using the
@@ -56,35 +53,37 @@ import fedora.server.utilities.DateUtility;
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>PID - required persistent idenitifer of the digital object.</li>
- * <li>bDefPID - required persistent identifier of the digital object's associated
- *     behavior definition object.</li>
- * <li>methodName - required name of the method to be executed</li>
+ * <li>bDefPID - required persistent identifier of the behavior definition
+ *               object to which the digital object subscribes.</li>
+ * <li>methodName - required name of the method to be executed.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a
  *     version of the digital object at the specified point in time. (NOT
- *     implemented in current version.)
+ *     implemented in release 1.0.)
  * <li>parmArray - optional array of method parameters consisting of
  *     name/value pairs in the form parm1=value1&parm2=value2...</li>
- * <li>clearCache_ - optional parameter that signals whether the dissemination
- *     cache is to be cleared; value of "yes" clears cache; value of "no" or
- *     omission does not clear cache.</li>
+ * <li>clearCache_ - optional servlet parameter that signals whether the
+ *                   dissemination cache is to be cleared; value of "yes"
+ *                   clears cache; value of "no" or omission continues to
+ *                   use cache.</li>
  * </ul>
- * <li>http://hostname:port/PID[/dateTime][?xmlEncode_=BOOLEAN] - this syntax
+ * <li>http://hostname:port/PID[/dateTime][?xmlEncode=BOOLEAN] - this syntax
  *     requests a list all methods associated with the specified digital
  *     object. The xmlEncode parameter determines the type of output returned.
- *     If the parameter is onitted or has a value of "no", a MIME-typed stream
- *     consisting of html is returned providing a browser-savvy means of
- *     browsing the object's methods. If the value specified is "yes", then
+ *     If the parameter is omitted or has a value of "no", a MIME-typed stream
+ *     consisting of an html table is returned providing a browser-savvy means
+ *     of browsing the object's methods. If the value specified is "yes", then
  *     a MIME-typed stream consisting of XML is returned.</li>
  * <ul>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>PID - required persistent identifier of the digital object.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a
- *     version of the digital object at the specified point in time. (NOT
- *     implemented in current version.)
- * <li>xmlEncode_ - an optional parameter indicating the requested output format.
- *     Value of "yes" indicates raw xml; the absence of the xmlEncode parameter
- *     or a value of "no" indicates format is to be html.</li>
+ *                version of the digital object at the specified point in time.
+ *                (NOT implemented in release 1.0.)
+ * <li>xmlEncode - an optional parameter indicating the requested output format.
+ *                 A value of "yes" indicates a return type of text/xml; the
+ *                 absence of the xmlEncode parameter or a value of "no"
+ *                 indicates format is to be text/html.</li>
  * </ul>
  * <i><b>Note that the clearCache_ parameter name ends with the underscore
  * character ("_"). This is done to avoid possible name clashes with
@@ -105,7 +104,7 @@ import fedora.server.utilities.DateUtility;
  * @author Ross Wayland
  * @version 1.0
  */
-public class FedoraAccessServlet extends HttpServlet
+public class FedoraAccessServlet extends HttpServlet implements Logging
 {
   /** Content type for html. */
   private static final String CONTENT_TYPE_HTML = "text/html";
@@ -116,16 +115,16 @@ public class FedoraAccessServlet extends HttpServlet
   /** Debug toggle for testing */
   private static boolean debug = false;
 
-  /** Dissemination cache size. */
+  /** Dissemination cache size; this value used if not provided in config file.*/
   private static int DISS_CACHE_SIZE = 100;
 
   /** Dissemination cache. */
   private Hashtable disseminationCache = new Hashtable();
 
-  /** The Fedora Server instance */
+  /** Instance of the Fedora server. */
   private static Server s_server = null;
 
-  /** Instance of the access subsystem */
+  /** Instance of the access subsystem. */
   private static Access s_access = null;
 
   /** Constant indicating value of the string "yes". */
@@ -134,48 +133,11 @@ public class FedoraAccessServlet extends HttpServlet
   /** Instance of DOManager. */
   private static DOManager m_manager = null;
 
-  /** Full URL for the parameter resolver servlet. Hostname and port
-   *  are determined dynamically and are assumed to be the same as
-   *  for this servlet.
-   */
-  private static String PARAMETER_RESOLVER_URL = null;
-
-  /** Servlet path for the parameter resolver servlet */
-  private static final String PARAMETER_RESOLVER_SERVLET_PATH =
-      "/fedora/getAccessParmResolver?";
-
-  private HttpSession session = null;
   private Hashtable h_userParms = new Hashtable();
   private String requestURL = null;
   private String requestURI = null;
   private URLDecoder decoder = new URLDecoder();
 
-  /** Make sure we have a server instance. */
-  static
-  {
-    try
-    {
-      //FIXME!! - need to think about most appropriate place for dissemination
-      // cache size parameter in config file; for now, put at top level.
-      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
-      Integer I1 = new Integer(s_server.getParameter("disseminationCacheSize"));
-      DISS_CACHE_SIZE = I1.intValue();
-      s_server.logInfo("Dissemination cache size: " + DISS_CACHE_SIZE);
-      Boolean B1 = new Boolean(s_server.getParameter("debug"));
-      debug = B1.booleanValue();
-      m_manager=(DOManager) s_server.getModule(
-              "fedora.server.storage.DOManager");
-      s_access =
-              (Access) s_server.getModule("fedora.server.access.Access");
-    } catch (InitializationException ie)
-    {
-      System.err.println(ie.getMessage());
-    } catch (NumberFormatException nfe)
-    {
-      System.err.println("disseminationCacheSize parameter not found. Cache" +
-                         "size set to 100." + nfe.getMessage());
-    }
-  }
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -193,7 +155,7 @@ public class FedoraAccessServlet extends HttpServlet
     String PID = null;
     String bDefPID = null;
     String methodName = null;
-    Calendar asOfDate = null;
+    Calendar asOfDateTime = null;
     Date versDateTime = null;
     String action = null;
     String clearCache = null;
@@ -201,8 +163,6 @@ public class FedoraAccessServlet extends HttpServlet
     long servletStartTime = new Date().getTime();
     boolean isGetObjectMethodsRequest = false;
     boolean isGetDisseminationRequest = false;
-    PARAMETER_RESOLVER_URL = "http://" + request.getServerName()
-        + ":" + request.getServerPort() + PARAMETER_RESOLVER_SERVLET_PATH;
 
     HashMap h=new HashMap();
     h.put("application", "apia");
@@ -211,12 +171,11 @@ public class FedoraAccessServlet extends HttpServlet
     h.put("host", request.getRemoteAddr());
     ReadOnlyContext context = new ReadOnlyContext(h);
 
-    requestURL = request.getRequestURL().toString()+"?";
-    requestURI = requestURL+request.getQueryString();
+    requestURI = request.getRequestURL().toString() + "?"
+        + request.getQueryString();
 
     // Parse servlet URL.
-    StringBuffer servletURL = request.getRequestURL();
-    String[] URIArray = servletURL.toString().split("/");
+    String[] URIArray = request.getRequestURL().toString().split("/");
     if (URIArray.length == 6 || URIArray.length == 7)
     {
       PID = decoder.decode(URIArray[5], "UTF-8");
@@ -224,10 +183,10 @@ public class FedoraAccessServlet extends HttpServlet
       {
         versDateTime = DateUtility.convertStringToDate(URIArray[6]);
       }
-      s_server.logFinest("[FedoraAccessServlet] GetObjectMethods Syntax "
+      logFinest("[FedoraAccessServlet] GetObjectMethods Syntax "
           + "Encountered: "+ requestURI);
-      s_server.logFinest("PID: " + PID + "\nbDefPID: "
-          + "\nasOfDate: " + versDateTime);
+      logFinest("PID: " + PID + " bDefPID: "
+          + " asOfDate: " + versDateTime);
       isGetObjectMethodsRequest = true;
 
     } else if (URIArray.length > 7)
@@ -239,21 +198,23 @@ public class FedoraAccessServlet extends HttpServlet
       {
         versDateTime = DateUtility.convertStringToDate(URIArray[8]);
       }
-      s_server.logFinest("[FedoraAccessServlet] Dissemination Syntax "
+      logFinest("[FedoraAccessServlet] Dissemination Syntax "
           + "Ecountered");
-      s_server.logFinest("PID: " + PID + "\nbDefPID: " + bDefPID
-          + "\nmethodName: " + methodName + "\nasOfDate: " + versDateTime);
+      logFinest("PID: " + PID + " bDefPID: " + bDefPID
+          + " methodName: " + methodName + " asOfDate: " + versDateTime);
       isGetDisseminationRequest = true;
 
     } else
     {
-      PrintWriter out = response.getWriter();
-      out.println("<br>Dissemination Request Syntax Error: Required fields "
+      String message = "Dissemination Request Syntax Error: Required fields "
           + "are missing in the Dissemination Request. The expected syntax "
-          + "is:<br>"+URIArray[0]+"//"+URIArray[2]+URIArray[3]+URIArray[4]
-          + "/PID/bDefPID/methodName[/dateTime][?ParmArray]<br>"
-          + "Submitted request was: " + requestURI);
-      return;
+          + "is: "+URIArray[0]+"//"+URIArray[2]+URIArray[3]+URIArray[4]
+          + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+          + "Submitted request was: \"" + requestURI + "\"  .  ";
+      logWarning(message);
+      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+
     }
 
     // Separate out servlet parameters from method parameters
@@ -288,24 +249,41 @@ public class FedoraAccessServlet extends HttpServlet
       userParmCounter++;
     }
 
-    if (isGetObjectMethodsRequest)
+    try
     {
-      getObjectMethods(context, PID, asOfDate, xmlEncode, request,
-              response);
-      long stopTime = new Date().getTime();
-      long interval = stopTime - servletStartTime;
-      System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
-          + "GetObjectMethods: " + interval + " milliseconds.");
-    } else if (isGetDisseminationRequest)
-    {
-      getDissemination(context, PID, bDefPID, methodName, userParms, asOfDate,
-                       clearCache, response);
-      long stopTime = new Date().getTime();
-      long interval = stopTime - servletStartTime;
-      System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
-          + "GetDissemination: " + interval + " milliseconds.");
+      if (isGetObjectMethodsRequest)
+      {
+        getObjectMethods(context, PID, asOfDateTime, xmlEncode, request, response);
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
+            + "GetObjectMethods: " + interval + " milliseconds.");
+        logFiner("[FedoraAccessServlet] Servlet Roundtrip "
+            + "GetObjectMethods: " + interval + " milliseconds.");
+      } else if (isGetDisseminationRequest)
+      {
+        getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime,
+                         clearCache, response);
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
+                           + "GetDissemination: " + interval + " milliseconds.");
+        logFiner("[FedoraAccessServlet] Servlet Roundtrip "
+            + "GetDissemination: " + interval + " milliseconds.");
+      }
+      } catch (ServerException se)
+      {
+        String message = "[FedoraAccessServlet] An error has occured in "
+            + "accessing the Fedora Access Subsystem. The error was \" "
+            + se.getClass().getName()
+            + " \". Reason: "  + se.getMessage();
+        showURLParms(PID, bDefPID, methodName, asOfDateTime,
+                     userParms, clearCache, response, message);
+        //response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        //response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+        logWarning(message);
+        se.printStackTrace();
     }
-
   }
 
   /**
@@ -325,16 +303,18 @@ public class FedoraAccessServlet extends HttpServlet
    * @param request The servlet request.
    * @param response The servlet response.
    * @throws IOException If an error occurrs with an input or output operation.
+   * @throws ServerException If an error occurs in the Access Subsystem.
    */
   public void getObjectMethods(Context context, String PID, Calendar asOfDateTime,
       String xmlEncode, HttpServletRequest request,
-      HttpServletResponse response) throws IOException
+      HttpServletResponse response) throws IOException, ServerException
   {
 
     PrintWriter out = response.getWriter();
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectMethodsDef[] objMethDefArray = null;
-    String serverURI = request.getRequestURL().toString()+"?";
+    PipedWriter pw = new PipedWriter();
+    PipedReader pr = new PipedReader(pw);
 
     try
     {
@@ -343,8 +323,6 @@ public class FedoraAccessServlet extends HttpServlet
       {
         // Object Methods found.
         // Deserialize ObjectmethodsDef datastructure into XML
-        PipedWriter pw = new PipedWriter();
-        PipedReader pr = new PipedReader(pw);
         pw.write("<?xml version=\"1.0\"?>");
         if (versDateTime == null || DateUtility.
             convertDateToString(versDateTime).equalsIgnoreCase(""))
@@ -425,8 +403,6 @@ public class FedoraAccessServlet extends HttpServlet
           Templates template = factory.newTemplates(new StreamSource(xslFile));
           Transformer transformer = template.newTransformer();
           Properties details = template.getOutputProperties();
-          transformer.setParameter("serverURI", new StringValue(serverURI));
-          transformer.setParameter("dummy", new StringValue("dummy"));
           transformer.transform(new StreamSource(pr), new StreamResult(out));
           pr.close();
         }
@@ -435,36 +411,30 @@ public class FedoraAccessServlet extends HttpServlet
       {
         // Object Methods Definition request returned nothing.
         String message = "[FedoraAccessServlet] No Object Method Definitions "
-           + "returned.";
-        s_server.logFinest(message);
-        System.err.println(message);
-        showURLParms(PID, "", "", asOfDateTime,
-                     new Property[0], "", response, message);
+            + "returned.";
+        logInfo(message);
+        showURLParms(PID, "", "", asOfDateTime, new Property[0], "", response, message);
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        response.sendError(response.SC_NO_CONTENT, message);
       }
-    } catch (TransformerException e)
+    } catch (TransformerException te)
     {
-      // FIXME!! Needs more refined Exception handling
       String message = "[FedoraAccessServlet] An error has occured in "
                      + "transforming the deserialized XML from getObjectMethods"
                      + " into html. The "
-                     + "error was \" "
-                     + e.getClass().getName()
-                     + " \". Reason: "  + e.getMessage();
-      s_server.logWarning(message);
-      e.printStackTrace();
-      showURLParms(PID, "", "", asOfDateTime,
-                   new Property[0], "", response, message);
-    } catch (ServerException se)
+                     + "error was a \" "
+                     + te.getClass().getName()
+                     + " \". Reason: "  + te.getMessage();
+      logWarning(message);
+      te.printStackTrace();
+      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+    } finally
     {
-      String message = "[FedoraAccessServlet] An error has occured in accessing"
-                     + " the Fedora Access Subsystem. The error was \" "
-                     + se.getClass().getName()
-                     + " \". Reason: "  + se.getMessage();
-      s_server.logWarning(message);
-      se.printStackTrace();
-      showURLParms(PID, "", "", asOfDateTime,
-                   new Property[0], "", response, message);
+      if (pw != null) pw.close();
+      if (pr != null) pr.close();
     }
+    out.close();
   }
 
   /**
@@ -480,30 +450,30 @@ public class FedoraAccessServlet extends HttpServlet
    * @param clearCache The dissemination cache flag.
    * @param response The servlet response.
    * @throws IOException If an error occurrs with an input or output operation.
+   * @throws ServerException If an error occurs in the Access Subsystem.
    */
   public void getDissemination(Context context, String PID, String bDefPID, String methodName,
       Property[] userParms, Calendar asOfDateTime, String clearCache,
-      HttpServletResponse response) throws IOException
+      HttpServletResponse response) throws IOException, ServerException
   {
     PrintWriter out = response.getWriter();
-    try
+    // See if dissemination request is in local cache
+    MIMETypedStream dissemination = null;
+    dissemination = getDisseminationFromCache(context, PID, bDefPID,
+        methodName, userParms, asOfDateTime, clearCache, response);
+    if (dissemination != null)
     {
-      // See if dissemination request is in local cache
-      MIMETypedStream dissemination = null;
-      dissemination = getDisseminationFromCache(context, PID, bDefPID,
-          methodName, userParms, asOfDateTime, clearCache, response);
-      if (dissemination != null)
+      // Dissemination was successful;
+      // Return MIMETypedStream back to browser client
+      response.setContentType(dissemination.MIMEType);
+      int byteStream = 0;
+      ByteArrayInputStream dissemResult =
+          new ByteArrayInputStream(dissemination.stream);
+      while ((byteStream = dissemResult.read()) >= 0)
       {
-        // Dissemination was successful;
-        // Return MIMETypedStream back to browser client
-        response.setContentType(dissemination.MIMEType);
-        int byteStream = 0;
-        ByteArrayInputStream dissemResult =
-            new ByteArrayInputStream(dissemination.stream);
-        while ((byteStream = dissemResult.read()) >= 0)
-        {
-          out.write(byteStream);
-        }
+        out.write(byteStream);
+      }
+      dissemResult = null;
     } else
     {
       // Dissemination request failed; echo back request parameter.
@@ -511,21 +481,11 @@ public class FedoraAccessServlet extends HttpServlet
           + " was returned.";
       showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms,
                   clearCache, response, message);
-      System.out.println(message);
-      s_server.logWarning(message);
+      logInfo(message);
+      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+      response.sendError(response.SC_NO_CONTENT, message);
     }
-    // FIXME!! Decide on exception handling
-    } catch (Exception e)
-    {
-      String message = "[FedoraAccessServlet] An error has occured in "
-                     + "getting a dissemination from cache. The error was \" "
-                     + e.getClass().getName()
-                     + " \". Reason: "  + e.getMessage();
-      s_server.logWarning(message);
-      e.printStackTrace();
-      showURLParms(PID, bDefPID, methodName, asOfDateTime,
-                   userParms, clearCache, response, message);
-    }
+    out.close();
   }
 
   /**
@@ -548,7 +508,26 @@ public class FedoraAccessServlet extends HttpServlet
    * @throws ServletException If the servet cannot be initialized.
    */
   public void init() throws ServletException
-  {}
+  {
+    try
+    {
+      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      DISS_CACHE_SIZE = new Integer(s_server.getParameter("disseminationCacheSize")).intValue();
+      debug = new Boolean(s_server.getParameter("debug")).booleanValue();
+      m_manager=(DOManager) s_server.getModule("fedora.server.storage.DOManager");
+      s_access = (Access) s_server.getModule("fedora.server.access.Access");
+    } catch (InitializationException ie)
+    {
+      throw new ServletException("Unable to get Fedora Server instance."
+          + ie.getMessage());
+    } catch (NumberFormatException nfe)
+    {
+      logInfo("[FedoraAccessServlet] Unable to convert disseminationCacheSize "
+          + "parameter into an integer. Value read from config file was: \""
+          + s_server.getParameter("disseminationCacheSize") + "\". Cache size "
+          + "has been set to default value of 100");
+    }
+  }
 
   /**
    * <p>Cleans up servlet resources.</p>
@@ -584,11 +563,12 @@ public class FedoraAccessServlet extends HttpServlet
    * @param response The servlet response.
    * @return The MIME-typed stream containing dissemination result.
    * @throws IOException If an error occurrs with an input or output operation.
+   * @throws ServerException If an error occurs in Access Subsystem.
    */
   private synchronized MIMETypedStream getDisseminationFromCache(
       Context context, String PID, String bDefPID, String methodName,
       Property[] userParms, Calendar asOfDateTime, String clearCache,
-      HttpServletResponse response) throws IOException
+      HttpServletResponse response) throws IOException, ServerException
   {
     // Clear cache if size gets larger than DISS_CACHE_SIZE
     if ( (disseminationCache.size() > DISS_CACHE_SIZE) ||
@@ -603,34 +583,18 @@ public class FedoraAccessServlet extends HttpServlet
     {
       // Dissemination request NOT in local cache.
       // Try reading from relational database
-      try
-      {
-        disseminationResult =
-            s_access.getDissemination(context, PID, bDefPID, methodName,
-                                      userParms, asOfDateTime);
-      } catch (ServerException se)
-      {
-
-        response.setStatus(404);
-        String message = "[FedoraAccessServlet] An error has occured in "
-            + "accessing the Fedora Access Subsystem. The error was \" "
-            + se.getClass().getName()
-            + " \". Reason: "  + se.getMessage();
-        response.sendError(404, message);
-        s_server.logWarning(message);
-        se.printStackTrace();
-        showURLParms(PID, bDefPID, methodName, asOfDateTime,
-                   userParms, clearCache, response, message);
-      }
+      disseminationResult =
+          s_access.getDissemination(context, PID, bDefPID, methodName,
+              userParms, asOfDateTime);
       if (disseminationResult != null)
       {
         // Dissemination request succeeded, so add to local cache
         // FIXME!! This is a crude cache. More robust caching will be needed
         // to achieve optimum performance as the number of requests gets large.
         disseminationCache.put(requestURI, disseminationResult);
-        if (debug) s_server.logFinest("ADDED to CACHE: "+requestURI);
+        logFinest("ADDED to CACHE: "+requestURI);
       }
-      if (debug) s_server.logFinest("CACHE SIZE: "+disseminationCache.size());
+      logFinest("CACHE SIZE: "+disseminationCache.size());
     }
     return disseminationResult;
   }
@@ -662,81 +626,215 @@ public class FedoraAccessServlet extends HttpServlet
   {
 
     String versDate = DateUtility.convertCalendarToString(asOfDateTime);
-    if (debug) System.err.println("versdate: "+versDate);
     PrintWriter out = response.getWriter();
     response.setContentType(CONTENT_TYPE_HTML);
 
     // Display servlet input parameters
-    out.println("<html>");
-    out.println("<head>");
-    out.println("<title>FedoraServlet</title>");
-    out.println("</head>");
-    out.println("<body>");
-    out.println("<br></br><font size='+2'>" + message + "</font>");
-    out.println("<br></br><font color='red'>Request Parameters</font>");
-    out.println("<br></br>");
-    out.println("<table cellpadding='5'>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>PID_</td>");
-    out.println("<td> = <td>" + PID + "</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>bDefPID_</td>");
-    out.println("<td> = </td>");
-    out.println("<td>" + bDefPID + "</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>methodName_</td>");
-    out.println("<td> = </td>");
-    out.println("<td>" + methodName + "</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>asOfDateTime_</td>");
-    out.println("<td> = </td>");
-    out.println("<td>" + versDate + "</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>clearCache_</td>");
-    out.println("<td> = </td>");
-    out.println("<td>" + clearCache + "</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td colspan='5'><font size='+1' color='blue'>"+
+    StringBuffer html = new StringBuffer();
+    html.append("<html>");
+    html.append("<head>");
+    html.append("<title>FedoraServlet</title>");
+    html.append("</head>");
+    html.append("<body>");
+    html.append("<br></br><font size='+2'>" + message + "</font>");
+    html.append("<br></br><font color='red'>Request Parameters</font>");
+    html.append("<br></br>");
+    html.append("<table cellpadding='5'>");
+    html.append("<tr>");
+    html.append("<td><font color='red'>PID</td>");
+    html.append("<td> = <td>" + PID + "</td>");
+    html.append("</tr>");
+    html.append("<tr>");
+    html.append("<td><font color='red'>bDefPID</td>");
+    html.append("<td> = </td>");
+    html.append("<td>" + bDefPID + "</td>");
+    html.append("</tr>");
+    html.append("<tr>");
+    html.append("<td><font color='red'>methodName</td>");
+    html.append("<td> = </td>");
+    html.append("<td>" + methodName + "</td>");
+    html.append("</tr>");
+    html.append("<tr>");
+    html.append("<td><font color='red'>asOfDateTime</td>");
+    html.append("<td> = </td>");
+    html.append("<td>" + versDate + "</td>");
+    html.append("</tr>");
+    html.append("<tr>");
+    html.append("<td><font color='red'>clearCache_</td>");
+    html.append("<td> = </td>");
+    html.append("<td>" + clearCache + "</td>");
+    html.append("</tr>");
+    html.append("<tr>");
+    html.append("</tr>");
+    html.append("<tr>");
+    html.append("<td colspan='5'><font size='+1' color='blue'>"+
                 "Other Parameters Found:</font></td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("</tr>");
+    html.append("</tr>");
+    html.append("<tr>");
+    html.append("</tr>");
 
     // List user-supplied parameters if any
     if (userParms != null)
     {
     for (int i=0; i<userParms.length; i++)
     {
-      out.println("<tr>");
-      out.println("<td><font color='red'>" + userParms[i].name
+      html.append("<tr>");
+      html.append("<td><font color='red'>" + userParms[i].name
                   + "</font></td>");
-      out.println("<td> = </td>");
-      out.println("<td>" + userParms[i].value + "</td>");
-        out.println("</tr>");
+      html.append("<td> = </td>");
+      html.append("<td>" + userParms[i].value + "</td>");
+        html.append("</tr>");
     }
     }
-    out.println("</table></center></font>");
-    out.println("</body></html>");
+    html.append("</table></center></font>");
+    html.append("</body></html>");
+    out.println(html.toString());
 
-    if (debug)
+    logFinest("PID: " + PID + " bDefPID: " + bDefPID
+              + " methodName: " + methodName);
+    if (userParms != null)
     {
-      System.err.println("PID: " + PID + "\nbDefPID: " + bDefPID
-                         + "\nmethodName: " + methodName);
-      if (userParms != null)
+      for (int i=0; i<userParms.length; i++)
       {
-        for (int i=0; i<userParms.length; i++)
-        {
-          s_server.logFinest("userParm: " + userParms[i].name
-              + "\nuserValue: "+userParms[i].value);
-        }
+        logFinest("userParm: " + userParms[i].name
+        + " userValue: "+userParms[i].value);
       }
     }
+
+    out.close();
+    html = null;
   }
+
+  private Server getServer() {
+      return s_server;
+  }
+
+  /**
+   * Logs a SEVERE message, indicating that the server is inoperable or
+   * unable to start.
+   *
+   * @param message The message.
+   */
+  public final void logSevere(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logSevere(m.toString());
+  }
+
+  public final boolean loggingSevere() {
+      return getServer().loggingSevere();
+  }
+
+  /**
+   * Logs a WARNING message, indicating that an undesired (but non-fatal)
+   * condition occured.
+   *
+   * @param message The message.
+   */
+  public final void logWarning(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logWarning(m.toString());
+  }
+
+  public final boolean loggingWarning() {
+      return getServer().loggingWarning();
+  }
+
+  /**
+   * Logs an INFO message, indicating that something relatively uncommon and
+   * interesting happened, like server or module startup or shutdown, or
+   * a periodic job.
+   *
+   * @param message The message.
+   */
+  public final void logInfo(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logInfo(m.toString());
+  }
+
+  public final boolean loggingInfo() {
+      return getServer().loggingInfo();
+  }
+
+  /**
+   * Logs a CONFIG message, indicating what occurred during the server's
+   * (or a module's) configuration phase.
+   *
+   * @param message The message.
+   */
+  public final void logConfig(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logConfig(m.toString());
+  }
+
+  public final boolean loggingConfig() {
+      return getServer().loggingConfig();
+  }
+
+  /**
+   * Logs a FINE message, indicating basic information about a request to
+   * the server (like hostname, operation name, and success or failure).
+   *
+   * @param message The message.
+   */
+  public final void logFine(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logFine(m.toString());
+  }
+
+  public final boolean loggingFine() {
+      return getServer().loggingFine();
+  }
+
+  /**
+   * Logs a FINER message, indicating detailed information about a request
+   * to the server (like the full request, full response, and timing
+   * information).
+   *
+   * @param message The message.
+   */
+  public final void logFiner(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logFiner(m.toString());
+  }
+
+  public final boolean loggingFiner() {
+      return getServer().loggingFiner();
+  }
+
+  /**
+   * Logs a FINEST message, indicating method entry/exit or extremely
+   * verbose information intended to aid in debugging.
+   *
+   * @param message The message.
+   */
+  public final void logFinest(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logFinest(m.toString());
+  }
+
+  public final boolean loggingFinest() {
+      return getServer().loggingFinest();
+  }
+
 }

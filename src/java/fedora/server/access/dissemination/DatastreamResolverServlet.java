@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 
+import fedora.server.Logging;
 import fedora.server.Server;
 import fedora.server.access.dissemination.DisseminationService;
 import fedora.server.errors.InitializationException;
@@ -35,17 +36,25 @@ import fedora.server.storage.types.DatastreamMediation;
  * <p>Title: DatastreamResolverServlet.java</p>
  * <p>Description: This servlet acts as a proxy to resolve the physical location
  * of datastreams. It requires a single parameter named <code>id</code> that
- * denotes the temporary id of the requested datastresm. The servlet will
- * perform a database lookup on the Fedora server using the temporary id to
- * obtain the actual * physical location of the datastream and then return the
- * contents of the datastream as a MIME-typed stream.
+ * denotes the temporary id of the requested datastresm. This id is in the form
+ * of a DateTime stamp. The servlet will perform an in-memory hashtable lookup
+ * using the temporary id to obtain the actual physical location of the
+ * datastream and then return the contents of the datastream as a MIME-typed
+ * stream. This servlet is invoked primarily by external mechanisms needing
+ * to retrieve the contents of a datastream.</p>
+ * <p>The servlet also requires that an external mechanism request a datastream
+ * within a finite time interval of the tempID's creation. This is to lessen
+ * the risk of unauthorized access. The time interval within which a mechanism
+ * must repond is set by the Fedora configuraitno parameter named
+ * datastreamMediationLimit and is specified in milliseconds. If this parameter
+ * is not supplied it defaults to 5000 miliseconds.</p>
  *
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
  * @author Ross Wayland
  * @version 1.0
  */
-public class DatastreamResolverServlet extends HttpServlet
+public class DatastreamResolverServlet extends HttpServlet implements Logging
 {
 
   private static Server s_server;
@@ -54,25 +63,6 @@ public class DatastreamResolverServlet extends HttpServlet
   private static Hashtable dsRegistry;
   private static int datastreamMediationLimit;
   private static final String HTML_CONTENT_TYPE = "text/html";
-
-  static
-  {
-    try
-    {
-      String fedoraHome = System.getProperty("fedora.home");
-      if (fedoraHome == null) {
-          throw new ServerInitializationException(
-              "Server failed to initialize: The 'fedora.home' "
-              + "system property was not set.");
-      } else {
-          s_server = Server.getInstance(new File(fedoraHome));
-          m_manager = (DOManager) s_server.getModule(
-              "fedora.server.storage.DOManager");
-      }
-    } catch (InitializationException ie) {
-        System.err.println(ie.getMessage());
-    }
-  }
 
   /**
    * <p>Initialize servlet.</p>
@@ -83,28 +73,31 @@ public class DatastreamResolverServlet extends HttpServlet
   {
     try
     {
-      String expireLimit = s_server.getParameter("datastreamMediationLimit");
+      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      m_manager = (DOManager) getServer().getModule("fedora.server.storage.DOManager");
+      String expireLimit = getServer().getParameter("datastreamMediationLimit");
       if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
       {
-        s_server.logWarning("DatastreamResolverServlet was unable to "
+        logWarning("DatastreamResolverServlet was unable to "
             + "resolve the datastream expiration limit from the configuration "
-            + "file. The expiration limit has been set to 5000 milliseconds.");
+            + "file.  The expiration limit has been set to 5000 milliseconds.  ");
         datastreamMediationLimit = 5000;
       } else
       {
-        Integer I1 =
-            new Integer(expireLimit);
-        datastreamMediationLimit = I1.intValue();
-        s_server.logFinest("datastreamMediationLimit: "
+        datastreamMediationLimit = new Integer(expireLimit).intValue();
+        logFinest("datastreamMediationLimit: "
             + datastreamMediationLimit);
       }
+    } catch (InitializationException ie) {
+      throw new ServletException("Unable to get an instance of Fedora server "
+          + "-- " + ie.getMessage());
     } catch (Throwable th)
     {
-      String message = "Unable to init DatastreamResolverServlet. The "
+      String message = "Unable to init DatastreamResolverServlet.  The "
           + "underlying error was a " + th.getClass().getName()
-          + "The message " + "was \"" + th.getMessage() + "\"";
+          + "  The message " + "was \"" + th.getMessage() + "\"  ";
       th.printStackTrace();
-      s_server.logWarning(message);
+      logWarning(message);
     }
   }
 
@@ -131,6 +124,7 @@ public class DatastreamResolverServlet extends HttpServlet
     PrintWriter out = null;
     ServletOutputStream outStream = null;
 
+    // Initialize context.
     HashMap h = new HashMap();
     h.put("application", "apia");
     h.put("useCachedObject", "false");
@@ -138,18 +132,19 @@ public class DatastreamResolverServlet extends HttpServlet
     m_context = new ReadOnlyContext(h);
 
     id = request.getParameter("id").replaceAll("T"," ");
-    s_server.logFinest("[DatastreamResolverServlet] datastream tempID: " + id);
+    logFinest("[DatastreamResolverServlet] datastream tempID: " + id);
 
     try
     {
       // Check for required id parameter.
       if (id == null || id.equalsIgnoreCase(""))
       {
-        out = response.getWriter();
-        response.setContentType(HTML_CONTENT_TYPE);
-        out.println("<br>[DatastreamResolverServlet] No datastream ID specified"
-            + " in servlet request: " + request.getRequestURI() + "</br>");
-        out.close();
+        String message = "[DatastreamResolverServlet] No datastream ID "
+            + "specified in servlet request:  " + request.getRequestURI()
+            + "  .  ";
+        logWarning(message);
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
         return;
       }
 
@@ -161,15 +156,15 @@ public class DatastreamResolverServlet extends HttpServlet
       dsControlGroupType = dm.dsControlGroupType;
       keyTimestamp = keyTimestamp.valueOf(ds.extractTimestamp(id));
       currentTimestamp = new Timestamp(new Date().getTime());
-      s_server.logFinest("[DatastreamResolverServlet] dsPhysicalLocation: "
+      logFinest("[DatastreamResolverServlet] dsPhysicalLocation: "
           + dsPhysicalLocation);
-      s_server.logFinest("[DatastreamResolverServlet] dsControlGroupType: "
+      logFinest("[DatastreamResolverServlet] dsControlGroupType: "
           + dsControlGroupType);
 
       // Deny mechanism requests that fall outside the specified time interval.
       // The expiration limit can be adjusted using the Fedora config parameter
       // named "datastreamMediationLimit" which is in milliseconds.
-      s_server.logFinest("[DatastreamResolverServlet] TimeStamp differential "
+      logFiner("[DatastreamResolverServlet] TimeStamp differential "
           + "for Mechanism's response: " + ((long)currentTimestamp.getTime() -
           (long)keyTimestamp.getTime()) + " milliseconds");
       System.out.println("[DatastreamResolverServlet] TimeStamp differential "
@@ -185,11 +180,11 @@ public class DatastreamResolverServlet extends HttpServlet
             + "to the DatastreamResolverServlet within the specified "
             + "time limit of \"" + datastreamMediationLimit + "\""
             + "seconds. Datastream access denied.");
-        s_server.logWarning("[DatastreamResolverServlet] Error: "
+        logWarning("[DatastreamResolverServlet] Error: "
             + "Mechanism has failed to respond "
             + "to the DatastreamResolverServlet within the specified "
-            + "time limit of \"" + datastreamMediationLimit + "\""
-            + "seconds. Datastream access denied.");
+            + "time limit of  \"" + datastreamMediationLimit + "\""
+            + "  seconds. Datastream access denied.");
         out.close();
         return;
       }
@@ -198,7 +193,7 @@ public class DatastreamResolverServlet extends HttpServlet
       {
         // Datastream is ReferencedExternalContent so dsLocation is a URL string
         ExternalContentManager externalContentManager =
-            (ExternalContentManager)s_server.getModule(
+            (ExternalContentManager)getServer().getModule(
             "fedora.server.storage.ExternalContentManager");
         mimeTypedStream =
             externalContentManager.getExternalContent(dsPhysicalLocation);
@@ -218,24 +213,23 @@ public class DatastreamResolverServlet extends HttpServlet
         if (s.length != 3)
         {
           String message = "[DatastreamResolverServlet]  The "
-              + "internal Fedora datastream id: \"" + dsPhysicalLocation
-              + "\" is invalid.";
-          s_server.logWarning(message);
+              + "internal Fedora datastream id:  \"" + dsPhysicalLocation
+              + "\"  is invalid.";
+          logWarning(message);
           throw new ServletException(message);
         }
         PID = s[0];
         dsID = s[1];
         dsVersionID = s[2];
-        s_server.logFinest("[DatastreamResolverServlet] PID: " + PID
-            + "\n dsID: " + dsID + "\n dsVersionID: " + dsVersionID);
+        logFinest("[DatastreamResolverServlet] PID: " + PID
+            + " -- dsID: " + dsID + " -- dsVersionID: " + dsVersionID);
         DOReader doReader =  m_manager.getReader(m_context, PID);
         // FIXME!! Need to deal with datastream versioning; ignored for now.
         Datastream d =
             (Datastream) doReader.GetDatastream(dsID, null);
-        s_server.logInfo("[DatastreamResolverServlet] Got datastream: "
+        logFinest("[DatastreamResolverServlet] Got datastream: "
             + d.DatastreamID);
-        InputStream is =
-            d.getContentStream();
+        InputStream is = d.getContentStream();
         int bytestream = 0;
         response.setContentType(d.DSMIME);
         outStream = response.getOutputStream();
@@ -250,26 +244,158 @@ public class DatastreamResolverServlet extends HttpServlet
         response.setContentType(HTML_CONTENT_TYPE);
         out.println("<br>[DatastreamResolverServlet] Unknown "
             + "dsControlGroupType: " + dsControlGroupType + "</br>");
-        s_server.logWarning("[DatastreamResolverServlet] Unknown "
+        logWarning("[DatastreamResolverServlet] Unknown "
             + "dsControlGroupType: " + dsControlGroupType);
       }
     } catch (Throwable th)
     {
       String message = "[DatastreamResolverServlet] returned an error. The "
-          + "underlying error was a " + th.getClass().getName()
-          + "The message " + "was \"" + th.getMessage() + "\"";
+          + "underlying error was a  \"" + th.getClass().getName()
+          + "  The message was  \"" + th.getMessage() + "\".  ";
       th.printStackTrace();
-      s_server.logWarning(message);
+      logWarning(message);
       throw new ServletException(message);
     } finally
     {
       if (out != null) out.close();
       if (outStream != null) outStream.close();
     }
-
   }
 
   //Clean up resources
   public void destroy()
   {}
+
+  private Server getServer() {
+      return s_server;
+  }
+
+  /**
+   * Logs a SEVERE message, indicating that the server is inoperable or
+   * unable to start.
+   *
+   * @param message The message.
+   */
+  public final void logSevere(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logSevere(m.toString());
+  }
+
+  public final boolean loggingSevere() {
+      return getServer().loggingSevere();
+  }
+
+  /**
+   * Logs a WARNING message, indicating that an undesired (but non-fatal)
+   * condition occured.
+   *
+   * @param message The message.
+   */
+  public final void logWarning(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logWarning(m.toString());
+  }
+
+  public final boolean loggingWarning() {
+      return getServer().loggingWarning();
+  }
+
+  /**
+   * Logs an INFO message, indicating that something relatively uncommon and
+   * interesting happened, like server or module startup or shutdown, or
+   * a periodic job.
+   *
+   * @param message The message.
+   */
+  public final void logInfo(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logInfo(m.toString());
+  }
+
+  public final boolean loggingInfo() {
+      return getServer().loggingInfo();
+  }
+
+  /**
+   * Logs a CONFIG message, indicating what occurred during the server's
+   * (or a module's) configuration phase.
+   *
+   * @param message The message.
+   */
+  public final void logConfig(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logConfig(m.toString());
+  }
+
+  public final boolean loggingConfig() {
+      return getServer().loggingConfig();
+  }
+
+  /**
+   * Logs a FINE message, indicating basic information about a request to
+   * the server (like hostname, operation name, and success or failure).
+   *
+   * @param message The message.
+   */
+  public final void logFine(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logFine(m.toString());
+  }
+
+  public final boolean loggingFine() {
+      return getServer().loggingFine();
+  }
+
+  /**
+   * Logs a FINER message, indicating detailed information about a request
+   * to the server (like the full request, full response, and timing
+   * information).
+   *
+   * @param message The message.
+   */
+  public final void logFiner(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logFiner(m.toString());
+  }
+
+  public final boolean loggingFiner() {
+      return getServer().loggingFiner();
+  }
+
+  /**
+   * Logs a FINEST message, indicating method entry/exit or extremely
+   * verbose information intended to aid in debugging.
+   *
+   * @param message The message.
+   */
+  public final void logFinest(String message) {
+      StringBuffer m=new StringBuffer();
+      m.append(getClass().getName());
+      m.append(": ");
+      m.append(message);
+      getServer().logFinest(m.toString());
+  }
+
+  public final boolean loggingFinest() {
+      return getServer().loggingFinest();
+  }
+
 }
