@@ -6,18 +6,20 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.storage.DOManager;
 
+import edu.cornell.dlrg.logging.DatingFileHandler;
+import edu.cornell.dlrg.logging.SimpleXMLFormatter;
 import java.io.IOException;
 import java.io.File;
-import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.XMLFormatter;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class BasicServer 
         extends Server {
+        
+    private File logDir;
         
     public BasicServer(Element rootElement, File fedoraHomeDir) 
             throws ServerInitializationException,
@@ -30,20 +32,27 @@ public class BasicServer
         Logger logger=Logger.getAnonymousLogger();
         logger.setUseParentHandlers(false);
         logger.setLevel(Level.FINEST);
-        File logDir=new File(getHomeDir(), Server.LOG_DIR);
-        String logPattern=logDir.getAbsolutePath() + "/server-log-%g.jxl";
+        logDir=new File(getHomeDir(), Server.LOG_DIR);
         int maxSize=1024*1024;
         int maxFiles=5;
-        FileHandler fh=null;
+        int maxDays=1;
+        String ext=".log";
+        DatingFileHandler fh=null;
         try {
-            fh=new FileHandler(logPattern, maxSize, maxFiles, false);
+            fh=new DatingFileHandler(logDir, maxSize, maxDays, maxFiles, ext, 
+                    new SimpleXMLFormatter(true, "UTF-8"));
+            fh.setLevel(Level.FINEST);
         } catch (IOException ioe) {
             throw new ServerInitializationException("IO Problem initializing loghandler: " + ioe.getMessage());
         }
-        fh.setFormatter(new XMLFormatter());
         logger.addHandler(fh);
         setLogger(logger);
         logInfo("Here's my first log message");
+    }
+    
+    public void shutdownServer() 
+            throws ServerShutdownException {
+        closeLogger();
     }
 
     /**
