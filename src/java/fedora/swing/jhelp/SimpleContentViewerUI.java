@@ -27,6 +27,8 @@ import java.io.*;
 import javax.help.Map.ID;
 
 /**
+ * <p><b>Title:</b> SimpleContentViewerUI.java</p>
+ * <p><b>Description:</b> 
  * Based on SimpleContentViewerUI in javax.help.plaf.basic,
  * which comes with JavaHelp, which comes with Java1.4,
  * and is written by Sun Microsystems.
@@ -42,6 +44,25 @@ import javax.help.Map.ID;
  * (actually, they mysteriously disappear) when the scrollbar
  * is first used.
  * <p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of 
+ * Virginia and Cornell University. All rights reserved.  
+ * Portions created by Sun Microsystems are Copyright &copy; 
+ * Sun Microsystems, originally made available at java.sun.com</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
  * @author Chris Wilper
  */
 

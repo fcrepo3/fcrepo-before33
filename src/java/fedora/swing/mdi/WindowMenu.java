@@ -6,8 +6,30 @@ import java.awt.event.*;
 import java.beans.*;
 
 /**
+ * <p><b>Title:</b> SortHeaderRenderer.java</p>
+ * <p><b>Description:</b> 
  * Menu component that handles the functionality expected of a standard
  * "Windows" menu for MDI applications.
+ * <p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of 
+ * Virginia and Cornell University. All rights reserved.  
+ * Portions created by Gerald Nunn are Copyright &copy; 
+ * Gerald Nunn, originally made available at 
+ * http://www.javaworld.com/javaworld/jw-05-2001/jw-0525-mdi.html</p>
+ *
+ * -----------------------------------------------------------------------------
  */
 public class WindowMenu extends JMenu {
     private MDIDesktopPane desktop;
