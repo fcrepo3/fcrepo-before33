@@ -18,6 +18,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import java.util.Properties;
 import java.awt.Dimension;
+import java.awt.FileDialog;
 import java.awt.Graphics;
 import java.awt.FontMetrics;
 import javax.swing.Box;
@@ -270,16 +271,25 @@ public class BatchIngestGUI
 			   m_objectsField.setText("");
 	}
     }
-
+    
     protected void pidsAction () {
-	try {
-		   File temp = selectFile(Administrator.batchtoolLastDir,false);
-		   if (temp != null) {
-			   m_pidsField.setText(temp.getPath());
-		   }
-	} catch (Exception e) {
-			   m_pidsField.setText("");
-	}
-    }
+      	try {
+      		   FileDialog dlg=new FileDialog(Administrator.INSTANCE,
+      		                                 "PIDs Output File",
+      										 FileDialog.SAVE);
+      		   if (Administrator.batchtoolLastDir!=null) {
+                     dlg.setDirectory(Administrator.batchtoolLastDir.getPath());
+      		   }
+      		   dlg.setVisible(true);
+      		   String temp=dlg.getFile();
+      		   if (temp != null) {
+      			   File dir=new File(dlg.getDirectory());
+      			   m_pidsField.setText(new File(dir, temp).getPath());
+      			   Administrator.batchtoolLastDir=dir;
+      		   }
+      	} catch (Exception e) {
+      			   m_pidsField.setText("");
+      	}
+          }    
 
 }
