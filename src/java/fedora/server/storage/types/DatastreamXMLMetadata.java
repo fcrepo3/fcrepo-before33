@@ -11,6 +11,7 @@ package fedora.server.storage.types;
 
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 public class DatastreamXMLMetadata extends Datastream
@@ -55,13 +56,35 @@ public class DatastreamXMLMetadata extends Datastream
    * requiring that the XML datastream is re-parsed to find these names.
    */
   public String[] namespacePrefixes;
+  
+  private String m_encoding;
 
   public DatastreamXMLMetadata()
   {
+      m_encoding="UTF-8";
+  }
+  
+  public DatastreamXMLMetadata(String encoding)
+  {
+      m_encoding=encoding;
   }
   
   public InputStream getContentStream()
   {
     return(new ByteArrayInputStream(xmlContent));
+  }
+  
+  public InputStream getContentStreamAsDocument() throws UnsupportedEncodingException {
+      // *with* the <?xml version="1.0" encoding="m_encoding" ?> line
+      String firstLine="<?xml version=\"1.0\" encoding=\"" + m_encoding + "\" ?>\n";
+      byte[] firstLineBytes=firstLine.getBytes(m_encoding);
+      byte[] out=new byte[xmlContent.length+firstLineBytes.length];
+      for (int i=0; i<firstLineBytes.length; i++) {
+          out[i]=firstLineBytes[i];
+      }
+      for (int i=firstLineBytes.length; i<firstLineBytes.length+xmlContent.length; i++) {
+          out[i]=xmlContent[i-firstLineBytes.length];
+      }
+      return new ByteArrayInputStream(out);
   }
 }
