@@ -43,8 +43,8 @@ public class Rebuild {
             System.out.println();
             System.out.println(rebuilder.getAction());
             System.out.println();
-            ManagedContentFinder finder = getManagedContentFinder(serverConfig);
-            Map options = getOptions(rebuilder.init(serverDir, serverConfig, finder));
+//            ManagedContentFinder finder = getManagedContentFinder(serverConfig);
+            Map options = getOptions(rebuilder.init(serverDir, serverConfig));
             if (options != null) {
                 System.out.println();
                 System.out.println("Rebuilding...");
@@ -60,17 +60,6 @@ public class Rebuild {
                 System.out.println();
             }
         }
-    }
-
-    private ManagedContentFinder getManagedContentFinder(ServerConfiguration serverConfig) throws Exception {
-        // Determine the datastream path, then pass it to the FileA
-
-
-
-return null;
-
-
-
     }
 
     private void addAllObjects(Rebuilder rebuilder,

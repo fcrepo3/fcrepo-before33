@@ -31,8 +31,7 @@ public class NoOpRebuilder implements Rebuilder {
      * @returns a map of option names to plaintext descriptions.
      */
     public Map init(File serverDir,
-                    ServerConfiguration serverConfig,
-                    ManagedContentFinder finder) {
+                    ServerConfiguration serverConfig) throws Exception {
         m_serverDir = serverDir;
         m_serverConfig = serverConfig;
         Map m = new HashMap();

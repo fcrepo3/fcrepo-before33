@@ -1,6 +1,6 @@
 package fedora.server.utilities.rebuild;
 
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * Finds managed content in lowlevel storage.
@@ -17,11 +17,10 @@ import java.io.InputStream;
  */
 public class FilesystemManagedContentFinder implements ManagedContentFinder {
 
-    /**
-     * Prepare for use.
-     * Index things, set up needed connections, etc.
-     */
-    public void init() { 
+    private File m_baseDir;
+
+    public FilesystemManagedContentFinder(File baseDir) {
+        m_baseDir = baseDir;
     }
 
     /**

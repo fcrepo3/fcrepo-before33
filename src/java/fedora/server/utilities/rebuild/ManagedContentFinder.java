@@ -5,12 +5,6 @@ import java.io.InputStream;
 public interface ManagedContentFinder {
 
     /**
-     * Prepare for use.
-     * Index things, set up needed connections, etc.
-     */
-    public void init() throws Exception;
-
-    /**
      * Find the indicated managed datastream.
      *
      * @returns an InputStream or null if not found.

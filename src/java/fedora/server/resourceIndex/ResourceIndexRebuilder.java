@@ -30,8 +30,7 @@ public class ResourceIndexRebuilder implements Rebuilder {
      * @returns a map of option names to plaintext descriptions.
      */
     public Map init(File serverDir,
-                    ServerConfiguration serverConfig,
-                    ManagedContentFinder mcFinder) {
+                    ServerConfiguration serverConfig) {
         m_serverDir = serverDir;
         m_serverConfig = serverConfig;
         Map m = new HashMap();
