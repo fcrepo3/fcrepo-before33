@@ -123,12 +123,22 @@ public class Administrator extends JFrame {
         cl=this.getClass().getClassLoader();
 
         m_aboutPic=new JLabel(new ImageIcon(cl.getResource("images/fedora/aboutadmin.gif")));
-        m_aboutText=new JLabel("<html>Copyright 2003, The Rector and Visitors of the<p>"
+        m_aboutText=new JLabel("<html>Copyright 2002, 2003, The Rector and Visitors of the<p>"
                 + "University of Virginia and Cornell University<p><p>"
+                + "This program is subject to the Mozilla Public License, Version 1.1<p>"
+                + "(the \"License\"); you may not use this program except in compliance<p>"
+                + "with the License. You may obtain a copy of the License at<p>"
+                + "http://www.mozilla.org/MPL<p><p>"
+                + "Software distributed under the License is distributed on an \"AS IS\"<p>"
+                + "basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.<p>"
+                + "See the License for the specific language governing rights and<p>"
+                + "limitations under the License.<p>"
+                + "<p>"
                 + "Version: 1.0<p>Release Date: "
                 + "May 16, 2003<p>"
                 + "See http://www.fedora.info/ for "
                 + "more information.");
+                
         m_aboutText.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JPanel splashPicAndText=new JPanel();
         splashPicAndText.setLayout(new BorderLayout());
@@ -152,14 +162,6 @@ public class Administrator extends JFrame {
         s_desktop=new MDIDesktopPane();
         s_desktop.setVisible(true);
         mainPanel.add(new JScrollPane(s_desktop), BorderLayout.CENTER);
-//        JToolBar toolBar=new JToolBar("Toolbar");
-//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/New24.gif"))));
-//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/Open24.gif"))));
-//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/Save24.gif"))));
-//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/SaveAs24.gif"))));
-//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/SaveAll24.gif"))));
-//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/Help24.gif"))));
-//        mainPanel.add(toolBar, BorderLayout.NORTH);
 
         getContentPane().add(mainPanel);
         setJMenuBar(createMenuBar());
@@ -190,25 +192,9 @@ public class Administrator extends JFrame {
     protected JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
 
-        // [F]ile
-        //   [N]ew...
-        //   [O]pen...
-        //   [C]lose
-        //   [S]ave
-        //   Save [T]o...
-        //   Save A[l]l
         JMenu fileMenu=new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
         fileMenu.setToolTipText("Contains commands for creating, opening, closing, and saving Digital Objects");
-        JMenuItem fileNew=new JMenuItem("New...",KeyEvent.VK_N);
-        fileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-                ActionEvent.CTRL_MASK));
-        fileNew.setToolTipText("Creates a new, empty Digital Object and opens it for editing");
-        fileNew.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fileNewAction();
-            }
-        });
         JMenuItem fileIngest=new JMenuItem("Ingest...",KeyEvent.VK_I);
         fileIngest.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
                 ActionEvent.CTRL_MASK));
@@ -219,16 +205,6 @@ public class Administrator extends JFrame {
             }
         });
 
-/*
-
-Google example:
-
-http://images.google.com/images?q=mycenae
-fake user-agent with servlet:
-try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&oe=UTF8");URLConnection con = urlObject.openConnection();con.setRequestProperty( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0; H010818)" );System.out.println( "length: "+con.getContentLength() );System.out.println( "content: "+con.getContent() );System.out.println( "type"+con.getContentType() );InputStream st = con.getInputStream();int c;while( (c=st.read()) != -1 ) {    System.out.print( (char)c );}//System.out.println("urlObject.getContent :"+urlObject.getContent());//System.out.println("urlObject.getFile :"+urlObject.getFile());}catch (java.net.MalformedURLException exception){exception.printStackTrace();}catch (java.io.IOException exception){exception.printStackTrace();}
-
-
-*/
         JMenuItem fileViewDatastreams=new JMenuItem(new ViewDatastreams());
         fileViewDatastreams.setMnemonic(KeyEvent.VK_D);
         fileViewDatastreams.setToolTipText("Launches a viewer/editor for the datastreams of an object.");
@@ -241,12 +217,6 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         fileView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,
                 ActionEvent.CTRL_MASK));
 
-//        JMenuItem fileClose=new JMenuItem("Close",KeyEvent.VK_C);
-//        fileClose.setToolTipText("Closes the current Digital Object");
-//        fileClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
-//                ActionEvent.CTRL_MASK));
-
-//        ImageIcon BLANK_16x16_ICON=new ImageIcon("blank16x16.gif");
         JMenuItem fileExport=new JMenuItem(new ExportObject());
         fileExport.setMnemonic(KeyEvent.VK_E);
         fileExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
@@ -276,37 +246,15 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             }
         });
 
-//        fileMenu.add(fileNew);
         fileMenu.add(fileIngest);
         fileMenu.add(fileView);
         fileMenu.add(fileViewDatastreams);
-//        fileMenu.add(fileClose);
-//        fileMenu.addSeparator();
         fileMenu.add(fileExport);
         fileMenu.add(filePurge);
-//        fileMenu.add(fileSave);
-//        fileMenu.add(fileSaveTo);
-//        fileMenu.add(fileSaveAll);
         fileMenu.addSeparator();
-//        fileMenu.add(filePreferences);
-//        fileMenu.addSeparator();
         fileMenu.add(fileExit);
 
         menuBar.add(fileMenu);
-
-//        JMenu editMenu=new JMenu("Edit");
-//        editMenu.setMnemonic(KeyEvent.VK_E);
-//        JMenuItem editDelete=new JMenuItem("Delete",KeyEvent.VK_D);
-//        editMenu.add(editDelete);
-//        menuBar.add(editMenu);
-
-//        JMenu viewMenu=new JMenu("View");
-//        viewMenu.setMnemonic(KeyEvent.VK_V);
-//        JMenuItem viewToolbar=new JMenuItem("Toolbar",KeyEvent.VK_T);
-//        viewMenu.add(viewToolbar);
-//        JMenuItem viewTooltips=new JMenuItem("Tooltips",KeyEvent.VK_I);
-//        viewMenu.add(viewTooltips);
-//        menuBar.add(viewMenu);
 
         JMenu toolsMenu=new JMenu("Tools");
         toolsMenu.setMnemonic(KeyEvent.VK_T);
@@ -419,7 +367,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
           }
         });
 
-/**
+/**                        helpset disabled...currently pointing to doc. url.
    HelpSet hs;
    try {
       URL hsu = cl.getResource("help/jhelpset.hs");
@@ -490,18 +438,6 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         menuBar.add(helpMenu);
 
         return menuBar;
-    }
-
-    protected void fileNewAction() {
-        // The below code opens a not-even-close-to-implemented GUI window for editing an object
-        /*
-        DigitalObjectEditor frame = new DigitalObjectEditor(new DigitalObject(), s_desktop);
-        frame.setVisible(true);
-        s_desktop.add(frame);
-        try {
-            frame.setSelected(true);
-        } catch (java.beans.PropertyVetoException e) {}
-        */
     }
 
     public static File getLastDir() {
