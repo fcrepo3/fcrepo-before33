@@ -273,6 +273,9 @@
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-batch-buildingest.sh fedora-batch-buildingest"/>
 		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-modify.sh fedora-modify"/>
+		</exec>		
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="ugo+x" includes="**/*"/>
 	</target>
