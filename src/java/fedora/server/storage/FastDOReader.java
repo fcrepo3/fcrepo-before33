@@ -393,6 +393,11 @@ public class FastDOReader implements DOReader
           methodParm.parmName = results[0];
           methodParm.parmDefaultValue = results[1];
           methodParm.parmDomainValues = results[2].split(",");
+          if (methodParm.parmDomainValues.length == 1 &&
+              methodParm.parmDomainValues[0].equalsIgnoreCase("null"))
+          {
+            methodParm.parmDomainValues = new String[0];
+          }
           Boolean B = new Boolean(results[3]);
           methodParm.parmRequired = B.booleanValue();
           methodParm.parmLabel = results[4];
