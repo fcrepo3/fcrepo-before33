@@ -377,6 +377,11 @@
 		<param name="active" value="false"/>
 		<param name="pollInterval" value="5000"/>
 	</module>
+    <module role="fedora.server.format.FormatRegistry" class="fedora.server.format.FormatRegistryModule">
+        <comment>Provides information about file formats to various parts of the system.
+            This module uses the fmtreg.xml file as its source data.
+        </comment>
+    </module>
 	<datastore id="localMySQLPool">
 		<comment>MySQL database on localhost with db name of fedora12</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>

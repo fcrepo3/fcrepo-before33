@@ -830,6 +830,7 @@
 			<fileset dir="src/dbspec/server"/>
 		</copy>
 		<copy file="src/fcfg/server/fedora.fcfg" todir="dist/server/config"/>
+		<copy file="src/xml/format-registry/fmtreg.xml" todir="dist/server/config"/>
 		<mkdir dir="dist/server/bin"/>
 		<copy todir="dist/server/bin">
 			<fileset dir="src/bat/server"/>
