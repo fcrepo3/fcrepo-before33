@@ -38,10 +38,10 @@ start /m %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %TC%\bin\bootstrap.jar -Djavax
 set C=%TC%\common\lib
 set CP=%C%\xerces2-2.0.2.jar;%C%\saaj.jar;%C%\commons-discovery.jar;%C%\axis.jar;%C%\commons-logging.jar;%C%\jaxrpc.jar;%C%\wsdl4j.jar;%C%\tt-bytecode.jar
 echo Deploying API-M and API-A...
-%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deployAPI-A.wsdd 15
+%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deployAPI-A.wsdd 15
 if errorlevel 1 goto deployError
 
-%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deploy.wsdd 15
+%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deploy.wsdd 15
 if errorlevel 1 goto deployError
 
 echo Finished.  To stop the server, use fedora-stop.
