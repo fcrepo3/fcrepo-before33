@@ -1,5 +1,7 @@
 package fedora.server.errors;
 
+import fedora.server.Module;
+
 /**
  * Signifies that an error occurred during a module's shutdown.
  *
