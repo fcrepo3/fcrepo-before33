@@ -35,7 +35,7 @@ public class RowInsertion {
         */
 	public void insertBehaviorDefinitionRow(Connection connection, String bdef_pid, String bdef_label) throws SQLException {
 
-		String insertionStatement = "INSERT INTO BehaviorDefinition (BDEF_DBID, BDEF_PID, BDEF_Label) VALUES ('', '" + bdef_pid + "', '" + bdef_label + "');";
+		String insertionStatement = "INSERT INTO BehaviorDefinition (BDEF_PID, BDEF_Label) VALUES ('" + bdef_pid + "', '" + bdef_label + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -53,7 +53,7 @@ public class RowInsertion {
         */
 	public void insertBehaviorMechanismRow(Connection connection, String bdef_dbid, String bmech_pid, String bmech_label) throws SQLException {
 
-		String insertionStatement = "INSERT INTO BehaviorMechanism (BMECH_DBID, BDEF_DBID, BMECH_PID, BMECH_Label) VALUES ('', '" + bdef_dbid + "', '" + bmech_pid + "', '" + bmech_label + "');"; 
+		String insertionStatement = "INSERT INTO BehaviorMechanism (BDEF_DBID, BMECH_PID, BMECH_Label) VALUES ('" + bdef_dbid + "', '" + bmech_pid + "', '" + bmech_label + "');"; 
 
 		insertGen(connection, insertionStatement);
 	}
@@ -95,7 +95,7 @@ public class RowInsertion {
         */
 	public void insertDataStreamBindingMapRow(Connection connection, String bmech_dbid, String dsbindingmap_id, String dsbindingmap_label) throws SQLException {
 
-		String insertionStatement = "INSERT INTO DataStreamBindingMap (BindingMap_DBID, BMECH_DBID, DSBindingMap_ID, DSBindingMap_Label) VALUES ('', '" + bmech_dbid + "', '" + dsbindingmap_id + "', '" + dsbindingmap_label + "');"; 
+		String insertionStatement = "INSERT INTO DataStreamBindingMap (BMECH_DBID, DSBindingMap_ID, DSBindingMap_Label) VALUES ('" + bmech_dbid + "', '" + dsbindingmap_id + "', '" + dsbindingmap_label + "');"; 
 		insertGen(connection, insertionStatement);
 	}
 
@@ -114,7 +114,7 @@ public class RowInsertion {
         */
 	public void insertDataStreamBindingSpecRow(Connection connection, String bmech_dbid, String dsbindingspec_name, String dsbindingspec_ordinality_flag, String dsbindingspec_cardinality, String dsbindingspec_label) throws SQLException {
 
-		String insertionStatement = "INSERT INTO DataStreamBindingSpec (DSBindingKey_DBID, BMECH_DBID, DSBindingSpec_Name, DSBindingSpec_Ordinality_Flag, DSBindingSpec_Cardinality, DSBindingSpec_Label) VALUES ('', '" + bmech_dbid + "', '" + dsbindingspec_name + "', '" + dsbindingspec_ordinality_flag + "', '" + dsbindingspec_cardinality + "', '" + dsbindingspec_label + "');"; 
+		String insertionStatement = "INSERT INTO DataStreamBindingSpec (BMECH_DBID, DSBindingSpec_Name, DSBindingSpec_Ordinality_Flag, DSBindingSpec_Cardinality, DSBindingSpec_Label) VALUES ('" + bmech_dbid + "', '" + dsbindingspec_name + "', '" + dsbindingspec_ordinality_flag + "', '" + dsbindingspec_cardinality + "', '" + dsbindingspec_label + "');"; 
 
 		insertGen(connection, insertionStatement);
 	}
@@ -148,7 +148,7 @@ public class RowInsertion {
         */
 	public void insertDigitalObjectRow(Connection connection, String do_pid, String do_label) throws SQLException {
 
-		String insertionStatement = "INSERT INTO DigitalObject (DO_DBID, DO_PID, DO_Label) VALUES ('', '" + do_pid + "', '" +  do_label + "');";
+		String insertionStatement = "INSERT INTO DigitalObject (DO_PID, DO_Label) VALUES ('" + do_pid + "', '" +  do_label + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -184,7 +184,7 @@ public class RowInsertion {
         */
 	public void insertDisseminatorRow(Connection connection, String bdef_dbid, String bmech_dbid, String diss_id, String diss_label) throws SQLException { 
 
-		String insertionStatement = "INSERT INTO Disseminator (DISS_DBID, BDEF_DBID, BMECH_DBID, DISS_ID, DISS_Label) VALUES ('', '" + bdef_dbid + "', '" + bmech_dbid + "', '" + diss_id + "', '" + diss_label + "');"; 
+		String insertionStatement = "INSERT INTO Disseminator (BDEF_DBID, BMECH_DBID, DISS_ID, DISS_Label) VALUES ('" + bdef_dbid + "', '" + bmech_dbid + "', '" + diss_id + "', '" + diss_label + "');"; 
 		insertGen(connection, insertionStatement);
 	}
 
@@ -225,7 +225,7 @@ public class RowInsertion {
         */
 	public void insertMethodRow(Connection connection, String bdef_dbid, String meth_name, String meth_label) throws SQLException {
 
-		String insertionStatement = "INSERT INTO Method (METH_DBID, BDEF_DBID, METH_Name, METH_Label) VALUES ('', '" + bdef_dbid + "', '" + meth_name + "', '" + meth_label + "');"; 
+		String insertionStatement = "INSERT INTO Method (BDEF_DBID, METH_Name, METH_Label) VALUES ('" + bdef_dbid + "', '" + meth_name + "', '" + meth_label + "');"; 
 
 		insertGen(connection, insertionStatement);
 	}
