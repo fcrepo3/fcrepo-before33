@@ -394,7 +394,7 @@ public class FedoraAccessServlet extends HttpServlet
         {
           // Transform results into an html table
           response.setContentType(CONTENT_TYPE_HTML);
-          File xslFile = new File("dist/server/access/objectmethods.xslt");
+          File xslFile = new File(s_server.getHomeDir(), "access/objectmethods.xslt");
           TransformerFactory factory = TransformerFactory.newInstance();
           Templates template = factory.newTemplates(new StreamSource(xslFile));
           Transformer transformer = template.newTransformer();
