@@ -39,18 +39,6 @@ import java.util.regex.*;
 
 public class DefinitiveDOReader implements DOReader
 {
-  private static ObjectIntegrityException ERROR_GETTING_COMPONENT =
-    new ObjectIntegrityException("Fedora error getting the requested object component. ");
-
-  private static ObjectIntegrityException ERROR_DESERIALIZING_OBJECT =
-    new ObjectIntegrityException("Fedora error deserializing the requested object component. ");
-
-  private static StreamIOException ERROR_LLSTORE_RETRIEVE =
-    new StreamIOException("Fedora error retrieving object from low-level storage. ");
-
-  private static GeneralException ERROR_MISC =
-    new GeneralException("some error that you don't get any more info about. ");
-
   // TEMPORARY: static variables to suppor testing via main()
   protected static boolean debug = true;
   private static Hashtable fakeDORegistry;
@@ -133,6 +121,7 @@ public class DefinitiveDOReader implements DOReader
 
     // FOR TESTING ONLY:
     // Read the digital object xml from test storage using fake registry
+    /*
     try
     {
       File doFile = locateObject(objectPID);
@@ -143,8 +132,8 @@ public class DefinitiveDOReader implements DOReader
     {
       System.out.println("ERROR in Constructor: " + e);
     }
+    */
 
-    /*
     try
     {
       // LLSTORE: call to low level storage layer to retrieve object
@@ -152,13 +141,13 @@ public class DefinitiveDOReader implements DOReader
     }
     catch(LowlevelStorageException e)
     {
-      throw ERROR_LLSTORE_RETRIEVE;
+      throw new StreamIOException("ERROR_LLSTORE_RETRIEVE: " + e.getMessage());
     }
     catch (Exception e)
     {
-      throw ERROR_MISC;
+      throw new GeneralException("ERROR_MISC: " + e.getMessage());
     }
-    */
+
     try
     {
       doErrorHandler = new DOReaderSAXErrorHandler();
@@ -177,12 +166,12 @@ public class DefinitiveDOReader implements DOReader
     }
     catch (SAXException e)
     {
-      System.out.println("ERROR in Constructor: " + e);
-      //throw ERROR_DESERIALIZING_OBJECT;
+      System.out.println("ERROR in SAX parsing: " + e.getMessage());
+      throw new ObjectIntegrityException("ERROR_DESERIALIZING_OBJECT: " + e.getMessage());
     }
     catch (Exception e)
     {
-      throw ERROR_MISC;
+      throw new GeneralException("ERROR_MISC: " + e.getMessage());
     }
   }
 
@@ -207,11 +196,11 @@ public class DefinitiveDOReader implements DOReader
       }
       catch(LowlevelStorageException e)
       {
-        throw ERROR_LLSTORE_RETRIEVE;
+        throw new StreamIOException("ERROR_LLSTORE_RETRIEVE: " + e.getMessage());
       }
       catch (Exception e)
       {
-        throw ERROR_MISC;
+        throw new GeneralException("ERROR_MISC: " + e.getMessage());
       }
       return(doIn);
     }
@@ -903,10 +892,10 @@ public class DefinitiveDOReader implements DOReader
             h_datastream.DSVersionID = attrs.getValue("ID");
             h_datastream.DSCreateDT = convertDate(attrs.getValue("CREATED"));
             try {
-            if (attrs.getValue("SIZE") != null)
-            {
-              h_datastream.DSSize = Long.parseLong(attrs.getValue("SIZE"));
-            }
+              if (attrs.getValue("SIZE") != null)
+              {
+                h_datastream.DSSize = Long.parseLong(attrs.getValue("SIZE"));
+              }
             } catch (NumberFormatException nfe) {
                 throw new SAXException("If specified, a datastream's SIZE "
                         + "attribute must be an xsd:long value.");
