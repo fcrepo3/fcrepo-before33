@@ -128,9 +128,33 @@ public class FedoraOAIProvider
         if (!metadataPrefix.equals("oai_dc")) {
             throw new CannotDisseminateFormatException("Repository does not provide that format in OAI-PMH responses.");
         }
-        throw new RepositoryException("getRecord not impld");
+        String pid=getPID(identifier);
+        List l=null;
+        try {
+            l=m_fieldSearch.search(s_headerAndDCFields, 
+                    Condition.getConditions("pid='" + pid + "' dcmDate~'*T*'"));
+        } catch (ServerException se) {
+            throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
+        }
+        if (l.size()>0) {
+            ObjectFields f=(ObjectFields) l.get(0);
+            return new SimpleRecord(getHeader(f), getDCXML(f), s_emptySet);
+        } else {
+            // see if it exists
+            try {
+                l=m_fieldSearch.search(new String[] {"pid"}, 
+                        Condition.getConditions("pid='" + pid + "'"));
+            } catch (ServerException se) {
+                throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
+            }
+            if (l.size()==0) {
+                throw new IDDoesNotExistException("The provided id does not match any item in the repository.");
+            } else {
+                throw new CannotDisseminateFormatException("The item doesn't even have dc_oai metadata.");
+            }
+        }
     }
-
+    
     public List getRecords(Date from, Date until, String metadataPrefix,
             String set)
             throws CannotDisseminateFormatException,
@@ -155,20 +179,24 @@ public class FedoraOAIProvider
         ArrayList ret=new ArrayList();
         for (int i=0; i<l.size(); i++) {
             ObjectFields f=(ObjectFields) l.get(i);
-            String identifier="oai:fedora.info:" + f.getPid();
-            Date datestamp=f.getDCMDate();
-            HashSet setSpecs=new HashSet();
-            String fType=f.getFType();
-            if (fType.equals("D")) {
-                setSpecs.add("bdefs");
-            } else if (fType.equals("M")) {
-                setSpecs.add("bmechs");
-            } else {
-                setSpecs.add("objects");
-            }
-            ret.add(new SimpleRecord(new SimpleHeader(identifier, datestamp, setSpecs, true), getDCXML(f), s_emptySet));
+            ret.add(new SimpleRecord(getHeader(f), getDCXML(f), s_emptySet));
         }
         return ret;
+    }
+    
+    private Header getHeader(ObjectFields f) {
+        String identifier="oai:fedora.info:" + f.getPid();
+        Date datestamp=f.getDCMDate();
+        HashSet setSpecs=new HashSet();
+        String fType=f.getFType();
+        if (fType.equals("D")) {
+            setSpecs.add("bdefs");
+        } else if (fType.equals("M")) {
+            setSpecs.add("bmechs");
+        } else {
+            setSpecs.add("objects");
+        }
+        return new SimpleHeader(identifier, datestamp, setSpecs, true);
     }
     
     private String getDCXML(DCFields dc) {
@@ -356,6 +384,17 @@ public class FedoraOAIProvider
             NoSetHierarchyException, RepositoryException {
         throw new BadResumptionTokenException("Not a known resumptionToken.");
     }
+    
+    private String getPID(String id) 
+            throws IDDoesNotExistException {
+        if (!id.startsWith("oai:fedora.info:")) {
+            throw new IDDoesNotExistException("For this repository, all identifiers in OAI requests should begin with oai:fedora.info:");
+        }
+        if (id.indexOf("'")!=-1) {
+            throw new IDDoesNotExistException("For this repository, no identifiers contain the apostrophe character.");
+        }
+        return id.substring(16);
+    }
 
     public Set getMetadataFormats(String id)
             throws NoMetadataFormatsException, IDDoesNotExistException, 
@@ -363,16 +402,10 @@ public class FedoraOAIProvider
         if (id==null) {
             return m_formats;
         }
-        if (!id.startsWith("oai:fedora.info:")) {
-            throw new IDDoesNotExistException("For this repository, all identifiers in OAI requests should begin with oai:fedora.info:");
-        }
-        if (id.indexOf("'")!=-1) {
-            throw new IDDoesNotExistException("For this repository, no identifiers contain the apostrophe character.");
-        }
-        String pid=id.substring(16);
+        String pid=getPID(id);
         List l=null;
         try {
-            l=m_fieldSearch.search(new String[] {"pid"}, Condition.getConditions("pid='" + pid + "' dcmDate>'1970-01-01'"));
+            l=m_fieldSearch.search(new String[] {"pid"}, Condition.getConditions("pid='" + pid + "' dcmDate~'*T*'"));
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
         }
