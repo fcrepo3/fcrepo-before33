@@ -44,6 +44,7 @@ package fedora.server.storage;
  */
 
 // java imports
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -59,6 +60,8 @@ import java.util.Properties;
 import java.util.Vector;
 
 // Fedora imports
+import fedora.server.Server;
+import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.storage.types.Datastream;
@@ -205,8 +208,8 @@ private static final String dbPropsFile = "db.properties";
       try
       {
         // FIXME - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the sample
-        // objects in DefinitiveBMechReader
+        // will throw a FileNotFound exception unless the object is one of the
+        // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         behaviorDefs = doReader.GetBehaviorDefs(versDateTime);
         // FIXME - need to catch appropriate Exception thrown by
@@ -215,7 +218,8 @@ private static final String dbPropsFile = "db.properties";
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetBehaviorDefs: OBJECT NOT FOUND --\n PID: "+PID+"\n asOfDate: "+
+        String message = "GetBehaviorDefs: OBJECT NOT FOUND --\n PID: "+
+                         PID+"\n asOfDate: "+
                          DateUtility.convertDateToString(versDateTime)+"\n";
         //throw new ObjectNotFoundException(message);
       }
@@ -232,8 +236,8 @@ private static final String dbPropsFile = "db.properties";
    * @return MethodParmDef[] array of method parameter definitions
    * @throws MethodNotFoundException
    */
-  public MethodParmDef[] GetBMechMethodParm(String bDefPID, String methodName, Date versDateTime)
-      throws MethodNotFoundException
+  public MethodParmDef[] GetBMechMethodParm(String bDefPID, String methodName,
+      Date versDateTime) throws MethodNotFoundException
   {
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
@@ -328,8 +332,8 @@ private static final String dbPropsFile = "db.properties";
       try
       {
         // FIXME - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the sample
-        // objects in DefinitiveBMechReader
+        // will throw a FileNotFound exception unless the object is one of the
+        // sample objects in DefinitiveBMechReader
         DefinitiveBMechReader bMechReader = new DefinitiveBMechReader(bDefPID);
         // FIXME - code to get method parameters directly from the
         // XML objects NOT implemented yet.
@@ -459,8 +463,8 @@ private static final String dbPropsFile = "db.properties";
       try
       {
         // FIXME - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the sample
-        // objects in DefinitiveBMechReader
+        // will throw a FileNotFound exception unless the object is one of the
+        // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         methodDefs = doReader.GetBMechMethods(bDefPID, versDateTime);
         // FIXME - need to catch appropriate Exception thrown by
@@ -469,7 +473,8 @@ private static final String dbPropsFile = "db.properties";
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetBehaviormethods: OBJECT NOT FOUND --\n PID: "+PID+"\n asOfDate: "+
+        String message = "GetBehaviormethods: OBJECT NOT FOUND --\n PID: "+
+                         PID+"\n asOfDate: "+
                          DateUtility.convertDateToString(versDateTime)+"\n";
         //throw new ObjectNotFoundException(message);
       }
@@ -573,8 +578,8 @@ private static final String dbPropsFile = "db.properties";
       try
       {
         // FIXME - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the sample
-        // objects in DefinitiveBMechReader
+        // will throw a FileNotFound exception unless the object is one of the
+        // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         datastream = doReader.GetDatastream(datastreamID, versDateTime);
         // FIXME - need to catch appropriate Exception thrown by
@@ -583,7 +588,8 @@ private static final String dbPropsFile = "db.properties";
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDatastream: OBJECT NOT FOUND --\n PID: "+PID+"\n asOfDate: "+
+        String message = "GetDatastream: OBJECT NOT FOUND --\n PID: "+
+                         PID+"\n asOfDate: "+
                          DateUtility.convertDateToString(versDateTime)+"\n";
         //throw new ObjectNotFoundException(message);
       }
@@ -668,8 +674,8 @@ private static final String dbPropsFile = "db.properties";
       try
       {
         // FIXME - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the sample
-        // objects in DefinitiveBMechReader
+        // will throw a FileNotFound exception unless the object is one of the
+        // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         datastreams = doReader.GetDatastreams(versDateTime);
         // FIXME - need to catch appropriate Exception thrown by
@@ -678,7 +684,8 @@ private static final String dbPropsFile = "db.properties";
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDatastreams: OBJECT NOT FOUND --\n PID: "+PID+"\n asOfDate: "+
+        String message = "GetDatastreams: OBJECT NOT FOUND --\n PID: "+
+                         PID+"\n asOfDate: "+
                          DateUtility.convertDateToString(versDateTime)+"\n";
         //throw new ObjectNotFoundException(message);
       }
@@ -788,7 +795,8 @@ private static final String dbPropsFile = "db.properties";
         int rowCount = 0;
         for (Enumeration e = queryResults.elements(); e.hasMoreElements();)
         {
-          dissBindInfoArray[rowCount] = (DisseminationBindingInfo)e.nextElement();
+          dissBindInfoArray[rowCount] = (DisseminationBindingInfo)
+                             e.nextElement();
           rowCount++;
         }
         connectionPool.free(connection);
@@ -906,8 +914,8 @@ private static final String dbPropsFile = "db.properties";
       try
       {
         // FIXME - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the sample
-        // objects in DefinitiveBMechReader
+        // will throw a FileNotFound exception unless the object is one of the
+        // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         disseminator = doReader.GetDisseminator(disseminatorID, versDateTime);
         // FIXME - need to catch appropriate Exception thrown by
@@ -916,7 +924,8 @@ private static final String dbPropsFile = "db.properties";
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = ":GetDisseminator: OBJECT NOT FOUND --\n PID: "+PID+"\n asOfDate: "+
+        String message = ":GetDisseminator: OBJECT NOT FOUND --\n PID: "+PID+
+                         "\n asOfDate: "+
                          DateUtility.convertDateToString(versDateTime)+"\n";
         //throw new ObjectNotFoundException(message);
       }
@@ -1011,8 +1020,8 @@ private static final String dbPropsFile = "db.properties";
       try
       {
         // FIXME - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the sample
-        // objects in DefinitiveBMechReader
+        // will throw a FileNotFound exception unless the object is one of the
+        // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         disseminators = doReader.GetDisseminators(versDateTime);
         // FIXME - need to catch appropriate Exception thrown by
@@ -1021,7 +1030,8 @@ private static final String dbPropsFile = "db.properties";
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDisseminators: OBJECT NOT FOUND --\n PID: "+PID+"\n asOfDate: "+
+        String message = "GetDisseminators: OBJECT NOT FOUND --\n PID: "+PID+
+                         "\n asOfDate: "+
                          DateUtility.convertDateToString(versDateTime)+"\n";
         //throw new ObjectNotFoundException(message);
       }
@@ -1182,7 +1192,8 @@ private static final String dbPropsFile = "db.properties";
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetObjectMethods: OBJECT NOT FOUND --\n PID: "+PID+"\n asOfDate: "+
+        String message = "GetObjectMethods: OBJECT NOT FOUND --\n PID: "+PID+
+                         "\n asOfDate: "+
                          DateUtility.convertDateToString(versDateTime)+"\n";
         throw new ObjectNotFoundException(message);
         }
@@ -1235,6 +1246,7 @@ private static final String dbPropsFile = "db.properties";
     try
     {
       // read database properties file and init connection pool
+/*
       FileInputStream fis = new FileInputStream(dbPropsFile);
       Properties dbProps = new Properties();
       dbProps.load(fis);
@@ -1246,20 +1258,41 @@ private static final String dbPropsFile = "db.properties";
       int initConnections = i1.intValue();
       Integer i2 = new Integer(dbProps.getProperty("maxConnections"));
       int maxConnections = i2.intValue();
+*/
       // FIXME!! above section of code to be replaced with the following
       // section when Server.java is functional
-      /*
-      Server serverInstance =
-      Server.getInstance(System.getProperty(Server.HOME_PROPERTY));
-      String driver = serverInstance.getDatastoreConfig("drivers");
-      String username = serverInstance.getDatastoreConfig("username");
-      String password = serverInstance.getDatastoreConfig("password");
-      String url = serverInstance.getDatastoreConfig("url");
-      Integer i1 = new Integer(serverInstance.getDatastoreConfig("minConnections"););
+
+
+      //String id = s_server.getModule("fedora.server.storage.DOManager").
+      //            getParameter("fast_db");
+      //FIXME!! - temporary fix until problem with above line is resolved
+      String id = "mysql1";
+      System.out.println("id: "+id);
+      System.out.flush();
+      String driv = s_server.getDatastoreConfig("mysql1").
+                    getParameter("jdbc_driver_class");
+      System.out.println("driver: "+driv);
+      String label = s_server.getParameter("label");
+      System.out.println("label: "+label);
+      System.out.flush();
+      String driver = s_server.getDatastoreConfig(id).
+                      getParameter("jdbc_driver_class");
+      String username = s_server.getDatastoreConfig(id).
+                        getParameter("dbuser");
+      String password = s_server.getDatastoreConfig(id).
+                        getParameter("dbpass");
+      String url = s_server.getDatastoreConfig(id).
+                   getParameter("connect_string");
+      Integer i1 = new Integer(s_server.getDatastoreConfig(id).
+                               getParameter("pool_min"));
       int initConnections = i1.intValue();
-      Integer i2 = new Integer(serverInstance.getDatastoreConfig("maxConnections"););
+      Integer i2 = new Integer(s_server.getDatastoreConfig(id).
+                               getParameter("pool_max"));
       int maxConnections = i2.intValue();
-      */
+      System.out.println("id: "+id+"\ndriver: "+driver+"\nuser"+username+
+                         "\npass: "+password+"\nurl: "+url+"\nmin: "+
+                         initConnections+"\nmax: "+maxConnections);
+      System.out.flush();
       if(debug) System.out.println("\nurl = "+url);
 
       // initialize connection pool
@@ -1275,20 +1308,21 @@ private static final String dbPropsFile = "db.properties";
       Exception e = new Exception("");
       e.initCause(sqle);
       throw e;
-    } catch (FileNotFoundException fnfe)
-    {
-      System.out.println("Unable to read the properties file: " +
-          dbPropsFile);
-      Exception e = new Exception("");
-      e.initCause(fnfe);
-      throw e;
-    } catch (IOException ioe)
-    {
-      System.out.println(ioe);
-      Exception e = new Exception("");
-      e.initCause(ioe);
-      throw e;
     }
+    //} catch (FileNotFoundException fnfe)
+    //{
+    //  System.out.println("Unable to read the properties file: " +
+    //      dbPropsFile);
+    //  Exception e = new Exception("");
+    //  e.initCause(fnfe);
+    //  throw e;
+    //} catch (IOException ioe)
+    //{
+    //  System.out.println(ioe);
+    //  Exception e = new Exception("");
+    //  e.initCause(ioe);
+    //  throw e;
+    //}
   }
 
   /**
@@ -1368,8 +1402,8 @@ private static final String dbPropsFile = "db.properties";
       try
       {
         // FIXME - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the sample
-        // objects in DefinitiveBMechReader
+        // will throw a FileNotFound exception unless the object is one of the
+        // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         datastreamIDs = doReader.ListDatastreamIDs("");
         // FIXME - need to catch appropriate Exception thrown by
@@ -1378,7 +1412,8 @@ private static final String dbPropsFile = "db.properties";
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDatastreamIDs: OBJECT NOT FOUND --\n PID: "+PID+"\n";
+        String message = "GetDatastreamIDs: OBJECT NOT FOUND --\n PID: "+
+                         PID+"\n";
         //throw new ObjectNotFoundException(message);
       }
     }
@@ -1464,8 +1499,8 @@ private static final String dbPropsFile = "db.properties";
       try
       {
         // FIXME - until xml storage code is implemented, the call below
-        // will throw a FileNotFound exception unless the object is one of the sample
-        // objects in DefinitiveBMechReader
+        // will throw a FileNotFound exception unless the object is one of the
+        // sample objects in DefinitiveBMechReader
         if (doReader == null) doReader = new DefinitiveDOReader(PID);
         disseminatorIDs = doReader.ListDisseminatorIDs("A");
         // FIXME - need to catch appropriate Exception thrown by
@@ -1474,7 +1509,8 @@ private static final String dbPropsFile = "db.properties";
       } catch (Exception e)
       {
         // FIXME!! - Decide on Exception handling
-        String message = "GetDisseminatorIDs: OBJECT NOT FOUND --\n PID: "+PID+"\n";
+        String message = "GetDisseminatorIDs: OBJECT NOT FOUND --\n PID: "+
+                         PID+"\n";
         //throw new ObjectNotFoundException(message);
       }
     }
@@ -1826,4 +1862,20 @@ private static final String dbPropsFile = "db.properties";
       System.out.println("MethodNotFound"+mnfe.getMessage());
     }
   }
+
+
+  private static Server s_server;
+
+  static
+  {
+    try
+    {
+      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+    } catch (InitializationException ie)
+    {
+      System.err.println(ie.getMessage());
+      System.err.flush();
+    }
+  }
+
 }
