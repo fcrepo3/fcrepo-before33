@@ -8,7 +8,7 @@ import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 
 import fedora.client.Administrator;
-import fedora.client.purge.AutoPurger;
+import fedora.client.utility.AutoPurger;
 import fedora.client.objecteditor.ObjectEditorFrame;
 
 import fedora.server.utilities.StringUtility;
