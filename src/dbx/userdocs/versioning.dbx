@@ -45,7 +45,7 @@
 		<title>How It Works</title>
 		<para>In the Fedora versioning system, any modifications made to a Datastream or Disseminator through the Fedora management interface (API-M) will automatically result in a new version of that Datastream or Disseminator being created by Fedora.  Fedora will not create a new version of the whole digital object, instead it will version these specific components <emphasis>within</emphasis> the digital object container.  This has the benefit of the digital object PID remaining constant, and not having to keep track of multiple distinct versions of a digital object. </para>
 		<para>The Fedora repository maintains all versions of all Datastreams and Disseminators, thereby creating a history of how objects change over time.  Additionally, Fedora maintains an audit trail record of the nature of the object change events (e.g., who, what, when, why). </para>
-		<para>While a the components of data objects are versioned in Fedora v1.2, versioning of behavior objects (Behavior Definitions and Behavior Mechanisms) is in scope for future releases of the software.</para>
+		<para>While the components of data objects are versioned in Fedora v1.2, versioning of behavior objects (Behavior Definitions and Behavior Mechanisms) is in scope for future releases of the software.</para>
 	</sect1>
 	<sect1>
 		<title>Fedora Administrator</title>
