@@ -1,54 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://www.fedora.info/definitions/1/0/auditing/" 
-    xmlns:fedora-auditing="http://www.fedora.info/definitions/1/0/auditing/" 
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="http://www.fedora.info/definitions/1/0/auditing/" 
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:fedora-auditing="http://www.fedora.info/definitions/1/0/auditing/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+    
+  <import namespace="http://schemas.xmlsoap.org/wsdl/" 
+      schemaLocation="wsdl.xsd"/>
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/" 
+      schemaLocation="soapenc.xsd"/>
 
+  <complexType name="ArrayOfAuditRecord">
+    <annotation>
+      <documentation>an ordered list of AuditRecord-typed elements
+      </documentation>
+    </annotation>
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType"
+            wsdl:arrayType="fedora-auditing:AuditRecord[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
 
-
-
-<xsd:complexType name="ArrayOfAuditRecord"> <xsd:sequence> <xsd:element name="part1" type="xsd:string"/> <xsd:element name="part2" type="xsd:string"/> </xsd:sequence> </xsd:complexType>
-
-<!-- Here's some old stuff:
-
-  <xsd:element name="dsBindingSpec" type="fedora:dsBindingSpecType" abstract="true"/>
-  <xsd:element name="dsBinding" type="fedora:dsBindBaseType" abstract="true"/>
-
-The complex types will NOT define attributes because this is not allowed with SOAP
-
-<xsd:complexType name="dsBindingSpecType"/>
-  <xsd:complexType name="dsBindBaseType">
-    <xsd:choice>
-      <xsd:sequence>
-        <xsd:element name="keyName" type="xsd:string"/>
-        <xsd:element name="bindingInstructions" type="xsd:string"/>
-        <xsd:element name="seqNo" type="xsd:string" minOccurs="0"/>
-				<xsd:element name="MIME" type="xsd:string" minOccurs="0"/>
-				<xsd:element name="techMetadata" minOccurs="0">
-					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:any namespace="##any" minOccurs="0"/>
-						</xsd:sequence>
-					</xsd:complexType>
-				</xsd:element>
-				<xsd:choice>
-					<xsd:element name="fileLocation" type="xsd:string"/>
-					<xsd:element name="URL" type="xsd:string"/>
-					<xsd:element name="content" type="xsd:base64Binary"/>
-				</xsd:choice>
-
-				The techMetadata element is a work in progress.
-				The concept is to allow some specification of other attributes that may be important for binding, such as DPI for images
-				The next choice type are used only in the context of transmitting datastreams, not for the binding specification
-
-			</xsd:sequence>
-			<xsd:element ref="fedora:dsBinding" minOccurs="0" maxOccurs="unbounded"/>
-
-			Allow the option for nested bindings
-
-		</xsd:choice>
-	</xsd:complexType>
-
-
--->
-
-</xsd:schema>
+  <simpleType name="AuditRecord">
+    <annotation>
+      <documentation>Placeholder for the actual AuditRecord schema.</documentation>
+    </annotation>
+    <restriction base="string"/>
+  </simpleType>
+</schema>
