@@ -5,7 +5,6 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.StreamIOException;
-import fedora.server.errors.StreamReadException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
@@ -477,8 +476,13 @@ public class METSLikeDODeserializer
                 if (localName.equals("descMD")) {
                     m_dsMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
                 }
-                m_dsCreateDate=DateUtility.convertStringToDate(
-                        grab(a, M, "CREATED"));
+                String dateString=grab(a, M, "CREATED");
+                if (dateString!=null && !dateString.equals("")){
+					m_dsCreateDate=
+						DateUtility.convertStringToDate(dateString);
+                }
+                //m_dsCreateDate=DateUtility.convertStringToDate(
+                //        grab(a, M, "CREATED"));
             } else if (localName.equals("mdWrap")) {
                 m_dsInfoType=grab(a, M, "MDTYPE");
                 m_dsLabel=grab(a, M, "LABEL");
@@ -509,8 +513,13 @@ public class METSLikeDODeserializer
                 // STATUS=""
                 // SIZE="bytes"
                 m_dsVersId=grab(a, M, "ID");
-                m_dsCreateDate=DateUtility.convertStringToDate(
-                        grab(a,M,"CREATED"));
+				String dateString=grab(a, M, "CREATED");
+				if (dateString!=null && !dateString.equals("")){
+					m_dsCreateDate=
+						DateUtility.convertStringToDate(dateString);
+				}
+                //m_dsCreateDate=DateUtility.convertStringToDate(
+                //        grab(a,M,"CREATED"));
                 m_dsMimeType=grab(a,M,"MIMETYPE");
                 m_dsControlGrp=grab(a,M,"OWNERID");
                 String ADMID=grab(a,M,"ADMID");
