@@ -394,12 +394,16 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-/*
-    public String addDisseminator(String PID, String bMechPID, String dissLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-*/
+	public String addDisseminator(String PID, String bDefPID, String bMechPID, String dissLabel, String bDefLabel, String bMechLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
+		assertInitialized();
+		try {
+			return s_management.addDisseminator(getContext(), PID, bDefPID, bMechPID, dissLabel, bDefLabel, bMechLabel,
+					TypeUtility.convertGenDatastreamBindingMapToDSBindingMap(bindingMap));
+		} catch (ServerException se) {
+			logStackTrace(se);
+			throw AxisUtility.getFault(se);
+	}
+}
 
     public java.util.Calendar[] purgeDisseminator(String PID, 
             String disseminatorID, java.util.Calendar endDT) 

@@ -79,7 +79,7 @@ public interface Management {
 
     public Datastream[] getDatastreamHistory(Context context, String pid, String datastreamID) throws ServerException;
 
-//    public String addDisseminator(Context context, String pid, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) throws ServerException;
+	public String addDisseminator(Context context, String pid, String bDefPID, String bMechPid, String dissLabel, String bDefLabel, String bMechLabel, DSBindingMap bindingMap) throws ServerException;
 
     public void modifyDisseminator(Context context, String pid, String disseminatorID, String bMechPid, String dissLabel, String bDefLabel, String bMechLabel, DSBindingMap bindingMap, String logMessage, String dissState) throws ServerException;
 
