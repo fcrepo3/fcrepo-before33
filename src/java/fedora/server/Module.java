@@ -82,6 +82,20 @@ public abstract class Module
     }
 
     /**
+     * Second stage of Module initialization.
+     *
+     * This is guaranteed to run after all Module's initModule() methods
+     * have run.
+     *
+     * @throws ModuleInitializationException If initialization values are
+     *         invalid or initialization fails for some other reason.
+     */
+    public void postInitModule()
+            throws ModuleInitializationException {
+        if (1==2) throw new ModuleInitializationException(null, null);
+    }
+
+    /**
      * Frees system resources allocated by this Module.
      *
      * @throws ModuleShutdownException If there is a problem freeing

@@ -28,7 +28,14 @@ public class DefaultDOManager
     
     public void initModule()
             throws ModuleInitializationException {
-        
+    }
+
+    public void postInitModule()
+            throws ModuleInitializationException {
+    }
+    
+    public String[] getRequiredModuleRoles() {
+        return new String[] {"fedora.server.storage.ConnectionPoolManager"};
     }
 
     /** pid will always be non-null, context will always be non-null */

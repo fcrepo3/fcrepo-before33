@@ -410,6 +410,9 @@ public abstract class Server
     public static String INIT_SERVER_SEVERE_UNFULFILLEDROLE=
             s_const.getString("init.server.severe.unfulfilledrole");
 
+    public static String INIT_MODULE_SEVERE_UNFULFILLEDROLE=
+            s_const.getString("init.module.severe.unfulfilledrole");
+
     /**
      * Indicates that the server class was abstract, but shouldn't be. 0=server 
      * class specified in config root element
@@ -505,8 +508,6 @@ public abstract class Server
     /**
      * Initializes the Server based on configuration.
      * <p></p>
-     *
-     * FIXME: Update this description.
      *
      * Reads and schema-validates the configuration items in the given
      * DOM <code>NodeList</code>, validates required server params, 
@@ -641,6 +642,34 @@ public abstract class Server
                 
                 logConfig("finished initting module...");
             }
+
+            // Do postInitModule for all Modules, verifying beforehand that
+            // the required module roles (dependencies) have been fulfilled
+            // for that module.
+            mRoles=moduleParams.keySet().iterator();
+            while (mRoles.hasNext()) {
+                String r=(String) mRoles.next();
+                Module m=getModule(r);
+                reqRoles=m.getRequiredModuleRoles();
+                logConfig("verifying dependencies have been loaded...");
+                for (int i=0; i<reqRoles.length; i++) {
+                    if (getModule(reqRoles[i])==null) {
+                        throw new ModuleInitializationException(
+                                MessageFormat.format(
+                                INIT_MODULE_SEVERE_UNFULFILLEDROLE, new Object[]
+                                {reqRoles[i]}), r);
+                    }
+                }
+                logConfig(reqRoles.length + " dependencies, all loaded, ok.");
+                logConfig("started post-initting module with role=" + r);
+                m.postInitModule();
+                logConfig("finished post-initting module with role=" + r);
+            }
+            
+            // Do postInitServer for the Server instance
+            logConfig("started post-initting server...");
+            postInitServer();
+            logConfig("finished post-initting server...");
             
             // flag that we're done initting
             logConfig("finished initializing server and modules...");
@@ -1197,12 +1226,30 @@ public abstract class Server
     /**
      * Performs any server start-up tasks particular to this type of Server.
      * <p></p>
+     * This is guaranteed to be run before any modules are loaded.
      * The default implementation does nothing.
      * 
      * @throws ServerInitializationException If a severe server startup-related 
      *         error occurred.
      */
     protected void initServer()
+            throws ServerInitializationException {
+        if (1==2)
+            throw new ServerInitializationException(null);
+    }
+    
+    /**
+     * Second stage of Server initialization.
+     * <p></p>
+     * This is guaranteed to be run after all Modules have been loaded
+     * and all module initialization (initModule() and postInitModule()) 
+     * has taken place.
+     * The default implementation does nothing.
+     * 
+     * @throws ServerInitializationException If a severe server startup-related 
+     *         error occurred.
+     */
+    protected void postInitServer()
             throws ServerInitializationException {
         if (1==2)
             throw new ServerInitializationException(null);
@@ -1342,6 +1389,10 @@ public abstract class Server
             out.append("\nLoaded Module : " + role + "\n");
             Module module=getModule(role);
             out.append("Class         : " + module.getClass().getName() + "\n");
+            out.append("Dependencies  : " + module.getRequiredModuleRoles().length + "\n");
+            for (i=0; i<module.getRequiredModuleRoles().length; i++) {
+                out.append("Dependency    : " + module.getRequiredModuleRoles()[i] + "\n");
+            }
             out.append("Parameters    : ");
             padding="                ";
             i=0;
