@@ -635,6 +635,13 @@ System.err.println("XXXXXXXXXX adding role:" + principal.getName());
     
     private HttpServletRequest httpServletRequest = null;
     
+    /* these methods are called in the given order in tomcat 5.0:
+     * 1. findSecurityConstraints
+     * 2. hasUserDataPermission
+     * 3. authenticate
+     * 4. hasResourcePermission
+     */
+    
     public SecurityConstraint[] findSecurityConstraints(HttpRequest request, Context context) {
     	System.err.println("in findSecurityConstraints");
     	ServletRequest servletRequest = request.getRequest();
@@ -645,6 +652,9 @@ System.err.println("XXXXXXXXXX adding role:" + principal.getName());
     		if ((fromHeader != null) && ! "".equals(fromHeader)) {
     			represented = fromHeader;
             	System.err.println("got from=" + represented);    			
+    		}
+    		if (httpServletRequest != null) {
+    			System.err.println(httpServletRequest.getMethod() + httpServletRequest.getRequestURI());
     		}
     	}
 
