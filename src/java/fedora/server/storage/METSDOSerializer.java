@@ -85,6 +85,14 @@ public class METSDOSerializer
     // http://www.fedora.info/definitions/1/0/auditing/
     private final static String FEDORA_AUDIT_NAMESPACE_URI=
             "http://fedora.comm.nsdlib.org/audit";
+            
+    /** The namespace for XLINK */
+    private final static String METS_XLINK_NAMESPACE="http://www.w3.org/TR/xlink";
+    // Mets says the above, but the spec at http://www.w3.org/TR/xlink/ 
+    // says it's http://www.w3.org/1999/xlink
+    private final static String REAL_XLINK_NAMESPACE="http://www.w3.org/1999/xlink";
+    
+    private String m_xlinkPrefix;
     
     private String m_characterEncoding;
 
@@ -121,6 +129,7 @@ public class METSDOSerializer
             StreamWriteException {
         try {
             StringBuffer buf=new StringBuffer();
+            m_xlinkPrefix="xlink"; // default if can't figger it
             //
             // Serialize root element and header
             //
@@ -130,14 +139,23 @@ public class METSDOSerializer
             buf.append("\" ?>\n");
             buf.append("<mets xmlns=\"http://www.loc.gov/METS/\"\n");
             Iterator nsIter=obj.getNamespaceMapping().keySet().iterator();
+            boolean didXlink=false;
             while (nsIter.hasNext()) {
                 String uri=(String) nsIter.next();
                 String prefix=(String) obj.getNamespaceMapping().get(uri);
+                if ( (uri.equals(METS_XLINK_NAMESPACE)) 
+                        || (uri.equals(REAL_XLINK_NAMESPACE)) ) {
+                    m_xlinkPrefix=prefix;
+                    didXlink=true;
+                }
                 buf.append("    xmlns:");
                 buf.append(prefix);
                 buf.append("=\"");
                 buf.append(uri);
                 buf.append("\"\n");
+            }
+            if (!didXlink) {
+                buf.append("    xmlns:xlink=\"" + REAL_XLINK_NAMESPACE + "\"\n");
             }
             buf.append("    OBJID=\"");
             buf.append(obj.getPid());
@@ -342,8 +360,8 @@ public class METSDOSerializer
                         buf.append("\" STATUS=\"");
                         buf.append(dsc.DSState);
                         buf.append("\" SIZE=\"" + dsc.DSSize);
-                        buf.append("\" ADMIDS=\"");
-                        Iterator admIdIter=getAdmIds(obj, dsc).iterator();
+                        buf.append("\" ADMID=\"");
+                        Iterator admIdIter=getIds(obj, dsc, true).iterator();
                         int admNum=0;
                         while (admIdIter.hasNext()) {
                             String admId=(String) admIdIter.next();
@@ -353,12 +371,38 @@ public class METSDOSerializer
                             buf.append(admId);
                             admNum++;
                         }
+                        buf.append("\" DMDID=\"");
+                        Iterator dmdIdIter=getIds(obj, dsc, false).iterator();
+                        int dmdNum=0;
+                        while (dmdIdIter.hasNext()) {
+                            String dmdId=(String) dmdIdIter.next();
+                            if (dmdNum>0) {
+                                buf.append(' ');
+                            }
+                            buf.append(dmdId);
+                            dmdNum++;
+                        }
                         //
                         // other attrs
                         //
                         buf.append("\">\n");
                         if (dsc.DSControlGrp==Datastream.EXTERNAL_REF) {
+                            DatastreamReferencedContent dsec=(DatastreamReferencedContent) dsc;
+                            // xlink:title, xlink:href
+                            buf.append("      <FLocat ");
+                            buf.append(m_xlinkPrefix);
+                            buf.append(":title=\"");
+                            buf.append(dsec.DSLabel);
+                            buf.append("\" ");
+                            buf.append(m_xlinkPrefix);
+                            buf.append(":href=\"");
+                            if (dsec.DSLocation==null) {
+                                throw new ObjectIntegrityException("Externally referenced content (ID=" + dsc.DSVersionID + ") must have a URL defined.");
+                            }
+                            buf.append(dsec.DSLocation.toString());
+                            buf.append("\">\n");
                         } else {
+                            // FContent=base64 encoded
                         }
                         buf.append("    </file>\n");
                     } 
@@ -387,9 +431,17 @@ public class METSDOSerializer
         }
         if (1==2) throw new ObjectIntegrityException("bad object");
     }
-    
-    private List getAdmIds(DigitalObject obj, DatastreamContent content) {
-        ArrayList ret=new ArrayList(content.auditRecordIdList());
+
+    /**
+     * Gets administrative or descriptive metadata ids for a datastream.
+     */
+    private List getIds(DigitalObject obj, DatastreamContent content, boolean adm) {
+        ArrayList ret;
+        if (adm) {
+            ret=new ArrayList(content.auditRecordIdList());
+        } else {
+            ret=new ArrayList();
+        }
         Iterator mdIdIter=content.metadataIdList().iterator();
         while (mdIdIter.hasNext()) {
             String mdId=(String) mdIdIter.next();
@@ -399,8 +451,15 @@ public class METSDOSerializer
                 if (ds!=null) {
                     if (ds.DSControlGrp==Datastream.XML_METADATA) {
                         DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
-                        if (mds.DSMDClass != DatastreamXMLMetadata.DESCRIPTIVE) {
-                            ret.add(mdId);
+                        if (mds.DSMDClass == DatastreamXMLMetadata.DESCRIPTIVE) {
+                            if (!adm) {
+                                ret.add(mdId);
+                            }
+                        }
+                        else {
+                            if (adm) {
+                                ret.add(mdId);
+                            }
                         }
                     }
                 }

@@ -6,6 +6,7 @@ import fedora.server.errors.StreamReadException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.utilities.DateUtility;
@@ -19,6 +20,8 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -72,8 +75,12 @@ public class METSDODeserializer
     private long m_dsSize;
     private URL m_dsLocation;
     private String m_dsMimeType;
-    private String[] m_dsAdmIds;
-    private String[] m_dsDmdIds;
+    
+    // key=dsId, value=List of datastream ids (strings)
+    private HashMap m_dsAdmIds; // these are saved till end of parse
+    private String[] m_dsDmdIds; // these are only saved while parsing cur ds
+    
+    
     private StringBuffer m_dsXMLBuffer;
     
     // are we reading binary in an FContent element? (base64-encoded) 
@@ -156,9 +163,6 @@ public class METSDODeserializer
         SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setValidating(validate);
         spf.setNamespaceAware(true);
-        // allows us to see xmlns:id so we can build a table...
-        // hmmm.. maybe this is doable with startNamespacePrefixMapping
-        // spf.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
         m_parser=spf.newSAXParser();
     }
     
@@ -174,6 +178,8 @@ public class METSDODeserializer
         m_dsLabel=null;
         m_dsXMLBuffer=null;
         m_prefixes=new HashMap();
+        m_dsAdmIds=new HashMap();
+        m_dsDmdIds=null;
         try {
             m_parser.parse(in, this);
         } catch (IOException ioe) {
@@ -186,6 +192,40 @@ public class METSDODeserializer
             throw new ObjectIntegrityException("METS root element not found -- must have 'mets' element in namespace " + M + " as root element.");
         }
         obj.setNamespaceMapping(m_prefixes);
+        // foreach datastream: ArrayList ids=(ArrayList) m_dsAdmIds.get(m_dsVersId);
+        // put the admids in the correct place (metadata or auditrecs) for each datastream
+        Iterator dsIdIter=obj.datastreamIdIterator();
+        while (dsIdIter.hasNext()) {
+            List datastreams=obj.datastreams((String) dsIdIter.next());
+            for (int i=0; i<datastreams.size(); i++) {
+                Datastream ds=(Datastream) datastreams.get(i);
+                List admIdList=(List) m_dsAdmIds.get(ds.DSVersionID);
+                if (admIdList!=null) {
+                    // it's got admids..cool.  decide where to put em based
+                    // on the types of their targets.
+                    Iterator admIdIter=admIdList.iterator();
+                    while (admIdIter.hasNext()) {
+                       String admId=(String) admIdIter.next();
+                       List targetDatastreamSequence=obj.datastreams(admId);
+                       if (targetDatastreamSequence.size()>0) {
+                           // it's definitely a datastream.. assume it's admin
+                           try {
+                               DatastreamContent dsc=(DatastreamContent) ds;
+                               dsc.metadataIdList().add(admId);
+                           } catch (ClassCastException cce) {
+                               throw new ObjectIntegrityException(
+                                       "Metadata datastream can't use ADMID to"
+                                       + " point to non-AuditRecord "
+                                       + "datastream(s).");
+                           }
+                       } else {
+                           // it's not a datastram..assume it's an audit record
+                           ds.auditRecordIdList().add(admId);
+                       }
+                    }
+                }
+            }
+        }
     }
     
     public void startPrefixMapping(String prefix, String uri) {
@@ -250,7 +290,6 @@ public class METSDODeserializer
                 m_dsVersId=null;
                 m_dsCreateDate=null;
                 m_dsMimeType=null;
-                m_dsAdmIds=null;
                 m_dsDmdIds=null;
                 m_dsState=null;
                 m_dsSize=-1;
@@ -268,14 +307,28 @@ public class METSDODeserializer
                 m_dsMimeType=grab(a,M,"MIMETYPE");
                 String ADMID=grab(a,M,"ADMID");
                 if ((ADMID!=null) && (!"".equals(ADMID))) {
+                    // remember admids for when we're finished...
+                    // we can't reliably determine yet whether they are 
+                    // metadata refs or audit record refs, since we can't
+                    // rely on having gone through all audit records yet.
+                    ArrayList al=new ArrayList();
                     if (ADMID.indexOf(" ")!=-1) {
-                        m_dsAdmIds=ADMID.split(" ");
+                        String[] admIds=ADMID.split(" ");
+                        for (int idi=0; idi<admIds.length; idi++) {
+                            al.add(admIds[idi]);
+                        }
+                    } else {
+                        al.add(ADMID);
                     }
+                    m_dsAdmIds.put(m_dsVersId, al);
                 }
                 String DMDID=grab(a,M,"DMDID");
                 if ((DMDID!=null) && (!"".equals(DMDID))) {
+                    // saved till we're makin' the datastream object
                     if (DMDID.indexOf(" ")!=-1) {
                         m_dsDmdIds=DMDID.split(" ");
+                    } else {
+                        m_dsDmdIds=new String[] {DMDID};
                     }
                 }
                 m_dsState=grab(a,M,"STATUS");
@@ -308,6 +361,7 @@ public class METSDODeserializer
                 d.DSVersionID=m_dsVersId;
                 d.DSLabel=m_dsLabel;
                 d.DSCreateDT=m_dsCreateDate;
+                d.DSMIME=m_dsMimeType;
                 d.DSControlGrp=Datastream.EXTERNAL_REF;
                 d.DSInfoType="DATA";
                 d.DSState=m_dsState;
@@ -322,6 +376,12 @@ public class METSDODeserializer
                         }
                     }
                 }
+                if (m_dsDmdIds!=null) {
+                    for (int idi=0; idi<m_dsDmdIds.length; idi++) {
+                        d.metadataIdList().add(m_dsDmdIds[idi]);
+                    }
+                }
+                m_obj.datastreams(m_dsId).add(d);
             } else if (localName.equals("FContent")) {
                 // signal that we want to suck it in
                 m_readingContent=true;
