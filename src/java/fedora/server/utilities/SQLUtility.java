@@ -21,12 +21,12 @@ public abstract class SQLUtility {
     public static void replaceInto(Connection conn, String tableName, 
             String[] columns, String[] values, String uniqueColumn) 
             throws SQLException {
-        replaceInto(conn, tableName, columns, values, uniqueColumn, null);
+        replaceInto(conn, tableName, columns, values, uniqueColumn, null, null);
     }
     
     public static void replaceInto(Connection conn, String tableName, 
             String[] columns, String[] values, String uniqueColumn,
-            Logging log) 
+            boolean[] isNumeric, Logging log) 
             throws SQLException {
         // figure out if we need to escape an apostrophe
         for (int i=0; i<values.length; i++) {
@@ -63,9 +63,13 @@ public abstract class SQLUtility {
             if (values[i]==null) {
                 s.append("NULL");
             } else {
-                s.append("'");
+                if (isNumeric==null || !isNumeric[i]) {
+                    s.append("'");
+                }
                 s.append(values[i]);
-                s.append("'");
+                if (isNumeric==null || !isNumeric[i]) {
+                    s.append("'");
+                }
             }
         }
         StringBuffer w=new StringBuffer(); // where clause
@@ -107,9 +111,13 @@ public abstract class SQLUtility {
                     if (values[x]==null) {
                         i.append("NULL");
                     } else {
-                        i.append("'");
+                        if (isNumeric==null || !isNumeric[x]) {
+                            i.append("'");
+                        }
                         i.append(values[x]);
-                        i.append("'");
+                        if (isNumeric==null || !isNumeric[x]) {
+                            i.append("'");
+                        }
                     }
                 }
                 i.append(")");
