@@ -18,6 +18,46 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
-			<para>The Fedora software includes an OAI-PMH2.0 Provider Interface.  OAI-PMH is a standard for sharing metadata across repositories.  Currently, only the Dublin Core metatdata for each object may be disseminated via this interface.</para>
+		<para>The <ulink url="http://www.openarchives.org">OAI Protocol for Metadata Harvesting (OAI-PMH)</ulink> is a standard for sharing metadata across repositories. Every Fedora digital object has a primary Dublin Core record that conforms to the schema at: <ulink url="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</ulink>. This metadata is accessible using Fedora's OAI-PMH2.0 Provider Interface.  Currently, only the Dublin Core metatdata for each object may be disseminated via this interface.</para>
+		<para>The Fedora OAI Provider Interface uses the standard OAI PMH syntax which can be found on the OAI web site (<ulink url="http://www.openarchives.org">http://www.openarchives.org</ulink>). Fedora will accept any valid OAI-PMH2.0 request.</para>
+	</sect1>
+	<sect1>
+		<title>Interface Syntax</title>
+		<para>The Fedora OAI-PMH Provider Interface is implemented as a java servlet and can be accessed using the following syntax:</para>
+		<blockquote>
+				<para>
+					<emphasis role="bold">http://hostname:port/fedora/oai?verb=oai-pmh2.0-verb</emphasis>					</para>
+		</blockquote>
+		<blockquote>
+			<itemizedlist>
+				<listitem>
+					<para>hostname - required hostname of the Fedora server. </para>
+				</listitem>
+				<listitem>
+					<para>port - required port number on which the Fedora server is running.</para>
+				</listitem>
+				<listitem>
+					<para>fedora - a required part of the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>oai - a required part of the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>verb - required keyword of the OAI-PMH2.0 syntax.</para>
+				</listitem>
+				<listitem>
+					<para>oai-pmh2.0-verb - required valid OAI-PMH2.0 verb.</para>
+				</listitem>
+			</itemizedlist>
+		</blockquote>
+		<para>For example, to request an OAI <emphasis role="italics">Identify</emphasis> verb request, use a URL similar to the following:    
+		<blockquote>
+			<simplelist>
+				<member>
+					<emphasis role="bold">http://localhost:8080/fedora/oai?verb=Identify</emphasis>
+				</member>
+			</simplelist>
+		</blockquote>
+		and the Fedora repository will respond with an XML-encoded mime-typed stream providing identification information about the Fedora OAI provider.</para>
 	</sect1>
 </article>

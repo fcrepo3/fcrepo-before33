@@ -33,12 +33,12 @@
 	<sect1>
 		<title>Component Documentation</title>
 		<simplelist type="vert">
-			<member><ulink url="/userdocs/apialite/apialite.html">API-A-Lite HTTP Client</ulink></member>
-			<member><ulink url="/userdocs/apim/apimadmingui.html">API-M Admin GUI Client</ulink></member>
-			<member><ulink url="/userdocs/search/search.html">Search Interface</ulink></member>
-			<member><ulink url="/userdocs/batch/batchclient.html">Admin Client Batch Utility</ulink></member>
-			<member><ulink url="/userdocs/oai/oaiprovider.html">OAI Provider Interface</ulink></member>
-			<member><ulink url="/userdocs/server/server.html">Fedora Server</ulink></member>
+			<member><ulink url="/userdocs/apialite/">API-A-Lite HTTP Client</ulink></member>
+			<member><ulink url="/userdocs/apim/">API-M Admin GUI Client</ulink></member>
+			<member><ulink url="/userdocs/search/">Search Interface</ulink></member>
+			<member><ulink url="/userdocs/batch/">Admin Client Batch Utility</ulink></member>
+			<member><ulink url="/userdocs/oai/">OAI Provider Interface</ulink></member>
+			<member><ulink url="/userdocs/server/">Fedora Server</ulink></member>
 		</simplelist>
 	</sect1>
 	<sect1>

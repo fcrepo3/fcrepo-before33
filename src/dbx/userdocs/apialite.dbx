@@ -28,16 +28,14 @@
 			</listitem>
 		</itemizedlist>
 		<para>For more information on the method definitions, refer to the API descriptions 
-  located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink>
-		</para>
+  located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink></para>
 	</sect1>
 	<sect1>
 		<title>Client Syntax</title>
 		<variablelist>
 			<title>getDissemination syntax:</title>
 			<varlistentry>
-				<term>http://hostname:port/fedora/get/PID/bDefPID/methodName<emphasis role="bold">[/dateTime][?parmArray]</emphasis>
-				</term>
+				<term>http://hostname:port/fedora/get/PID/bDefPID/methodName<emphasis role="bold">[/dateTime][?parmArray]</emphasis></term>
 				<listitem>
 					<para>This syntax requests a dissemination of the specified object using the specified method of the associated behavior definition object. The result is returned as a MIME-typed stream. </para>
 				</listitem>
@@ -67,22 +65,19 @@
 					<para>methodName - required name of the method to be executed. dateTime - optional.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
+					<para><emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis role="bold">parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1&equals;value1&amp;parm2&equals;value2...</para>
+					<para><emphasis role="bold">parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1&equals;value1&amp;parm2&equals;value2...</para>
 				</listitem>
 			</itemizedlist>
 		</blockquote>
 		<variablelist>
 			<title>GetObjectProfile syntax:</title>
 			<varlistentry>
-				<term>http://hostname:port/fedora/get/PID<emphasis role="bold">[/dateTime][?xml=BOOLEAN]</emphasis>
-				</term>
+				<term>http://hostname:port/fedora/get/PID<emphasis role="bold">[/dateTime][?xml=BOOLEAN]</emphasis></term>
 				<listitem>
-					<para>This syntax requests an object profile for the specified digital object. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of &quot;no&quot;, a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is &quot;yes&quot;, then a MIME-typed stream consisting of XML is returned.</para>
+					<para>This syntax requests an object profile for the specified digital object. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of &quot;false&quot;, a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is &quot;true&quot;, then a MIME-typed stream consisting of XML is returned.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
@@ -104,12 +99,10 @@
 					<para>PID - required persistent identifier of the digital object.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
+					<para><emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis role="bold">xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;yes&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;no&quot; indicates format is to be text/html.</para>
+					<para><emphasis role="bold">xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;yes&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;no&quot; indicates format is to be text/html.</para>
 				</listitem>
 			</itemizedlist>
 		</blockquote>
