@@ -3,9 +3,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.io.File;
 import fedora.server.errors.LowlevelStorageException;
-class TimestampPathAlgorithm extends PathAlgorithm {
+class TimestampPathAlgorithmToMinutes extends PathAlgorithm {
 	
-	public TimestampPathAlgorithm (String storeBase) {
+	public TimestampPathAlgorithmToMinutes (String storeBase) {
 		super(storeBase);
 	}
 
@@ -19,7 +19,7 @@ class TimestampPathAlgorithm extends PathAlgorithm {
 		String second = leftPadded(calendar.get(Calendar.SECOND),2);
 		//String sep = configuration.getSeparator();
 		return getStoreBase() + sep + year + sep + month + dayOfMonth + sep + hourOfDay + 
-			sep + minute + sep + second + sep + pid;
+			sep + minute /*+ sep + second*/ + sep + pid;
 	}
 	private static final String[] padding = {"", "0", "00", "000"};
 	private final String leftPadded (int i, int n) throws LowlevelStorageException {
