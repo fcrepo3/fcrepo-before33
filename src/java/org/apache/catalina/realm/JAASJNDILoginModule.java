@@ -23,6 +23,7 @@
  */
 
 package org.apache.catalina.realm;
+import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import javax.security.auth.callback.Callback;
@@ -30,6 +31,8 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
+
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -37,6 +40,15 @@ import java.util.Map;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.spi.LoginModule;
+
+import org.apache.catalina.Container;
+
+import fedora.common.Constants;
+import fedora.server.Context;
+import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.NotAuthorizedException;
+import fedora.server.security.PolicyEnforcementPoint;
+import fedora.server.security.ReducedPolicyEnforcementPoint;
 
 public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule {
 	
@@ -68,6 +80,8 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 	protected static final int IN_SUBJ = 4;
 	
 	protected int state = UNREADY;
+	
+
 
 
 	// --------------------------------------------------------- Public Methods
@@ -88,6 +102,7 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
 		log("in ldap init() ");
 		log("ldap initialize()");
+		setContainer(JAASJNDILoginModule.staticContainer); //fixup		
 		principal = null;
 		this.state = UNREADY;		
 		if ((subject != null) && (callbackHandler != null)) {
@@ -310,6 +325,12 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 			log(message);
 			exception.printStackTrace(System.out);
 		}
+	}
+	
+	//fixup
+	private static Container staticContainer = null;
+	public static void setStaticContainer(Container container) {
+		staticContainer = container;
 	}
 
 }
