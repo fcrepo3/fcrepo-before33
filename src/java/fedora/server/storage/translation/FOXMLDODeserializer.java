@@ -1,5 +1,6 @@
 package fedora.server.storage.translation;
 
+import fedora.common.Constants;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
@@ -69,7 +70,8 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class FOXMLDODeserializer
         extends DefaultHandler
-        implements DODeserializer {
+        implements DODeserializer,
+                   Constants {
 
     /** The namespace for FOXML */
     private final static String F="info:fedora/fedora-system:def/foxml#";
@@ -81,7 +83,6 @@ public class FOXMLDODeserializer
     
 	/** The object to deserialize to. */
 	private DigitalObject m_obj;
-	private String m_objType;
     
 	/** SAX parser */
     private SAXParser m_parser;
@@ -285,22 +286,31 @@ public class FOXMLDODeserializer
 			//=====================
             } else if (localName.equals("property") || localName.equals("extproperty")) {
 				m_objPropertyName = grab(a, F, "NAME");
-				if (m_objPropertyName.equals("info:fedora/fedora-system:def/state")){
-					m_obj.setState(grab(a, F, "VALUE"));
-				} else if (m_objPropertyName.equals("info:fedora/fedora-system:def/cModel")){
+				if (m_objPropertyName.equals(MODEL.STATE.uri)){
+                    String stateString = grab(a, F, "VALUE");
+                    String stateCode = null;
+                    if (MODEL.DELETED.looselyMatches(stateString, true)) {
+                        stateCode = "D";
+                    } else if (MODEL.INACTIVE.looselyMatches(stateString, true)) {
+                        stateCode = "I";
+                    } else if (MODEL.ACTIVE.looselyMatches(stateString, true)) {
+                        stateCode = "A";
+                    }
+                    m_obj.setState(stateCode);
+				} else if (m_objPropertyName.equals(MODEL.CONTENT_MODEL.uri)){
 					m_obj.setContentModelId(grab(a, F, "VALUE"));
-				} else if (m_objPropertyName.equals("info:fedora/fedora-system:def/label")){
+				} else if (m_objPropertyName.equals(MODEL.LABEL.uri)){
 					m_obj.setLabel(grab(a, F, "VALUE"));
-				} else if (m_objPropertyName.equals("info:fedora/fedora-system:def/cDate")){
+				} else if (m_objPropertyName.equals(MODEL.CREATED_DATE.uri)){
 					m_obj.setCreateDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
-				} else if (m_objPropertyName.equals("info:fedora/fedora-system:def/mDate")){
+				} else if (m_objPropertyName.equals(VIEW.LAST_MODIFIED_DATE.uri)){
 					m_obj.setLastModDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
-				} else if (m_objPropertyName.equals("info:fedora/fedora-system:def/fType")){
-					m_objType = grab(a, F, "VALUE");
-					if (m_objType==null || m_objType.equals("")) { m_objType="FedoraObject"; }
-					if (m_objType.equalsIgnoreCase("FedoraBDefObject")) {
+				} else if (m_objPropertyName.equals(RDF.TYPE.uri)) {
+					String oType = grab(a, F, "VALUE");
+					if (oType==null || oType.equals("")) { oType=MODEL.DATA_OBJECT.localName; }
+                    if (MODEL.BDEF_OBJECT.looselyMatches(oType, false) || oType.equalsIgnoreCase("FedoraBDefObject")) {
 						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-					} else if (m_objType.equalsIgnoreCase("FedoraBMechObject")) {
+					} else if (MODEL.BMECH_OBJECT.looselyMatches(oType, false) || oType.equalsIgnoreCase("FedoraBMechObject")) {
 						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
 					} else {
 						m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
