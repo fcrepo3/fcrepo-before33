@@ -27,14 +27,14 @@ public class RowInsertion {
         * Inserts a Behavior Definition row.
         *
         * @param connection JDBC DBMS connection
-        * @param bdef_pid Behavior definition PID
-        * @param bdef_label Behavior definition label
+        * @param bDefPID Behavior definition PID
+        * @param bDefLabel Behavior definition label
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertBehaviorDefinitionRow(Connection connection, String bdef_pid, String bdef_label) throws SQLException {
+	public void insertBehaviorDefinitionRow(Connection connection, String bDefPID, String bDefLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO BehaviorDefinition (BDEF_PID, BDEF_Label) VALUES ('" + bdef_pid + "', '" + bdef_label + "');";
+		String insertionStatement = "INSERT INTO bDef (bDefPID, bDefLabel) VALUES ('" + bDefPID + "', '" + bDefLabel + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -44,15 +44,15 @@ public class RowInsertion {
         * Inserts a Behavior Mechanism row.
         *
         * @param connection JDBC DBMS connection
-        * @param bdef_dbid Behavior definition DBID
-        * @param bmech_dbid Behavior mechanism DBID
-        * @param bmech_label Behavior mechanism label
+        * @param bDefDbID Behavior definition DBID
+        * @param bMechDbID Behavior mechanism DBID
+        * @param bMechLabel Behavior mechanism label
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertBehaviorMechanismRow(Connection connection, String bdef_dbid, String bmech_pid, String bmech_label) throws SQLException {
+	public void insertBehaviorMechanismRow(Connection connection, String bDefDbID, String bMechPID, String bMechLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO BehaviorMechanism (BDEF_DBID, BMECH_PID, BMECH_Label) VALUES ('" + bdef_dbid + "', '" + bmech_pid + "', '" + bmech_label + "');";
+		String insertionStatement = "INSERT INTO bMech (bDefDbID, bMechPID, bMechLabel) VALUES ('" + bDefDbID + "', '" + bMechPID + "', '" + bMechLabel + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -62,109 +62,109 @@ public class RowInsertion {
         * Inserts a DataStreamBindingRow row.
         *
         * @param connection JDBC DBMS connection
-        * @param do_pid Digital object PID
-        * @param dsbindingkey_dbid Datastream binding key DBID
-        * @param bindingmap_dbid Binding map DBID
-        * @param dsbinding_ds_bindingkey_seq Datastream binding key sequence number
-        * @param dsbinding_ds_id Datastream ID
-        * @param dsbinding_ds_label Datastream label
-        * @param dsbinding_ds_mime Datastream mime type
-        * @param dsbinding_ds_location Datastream location
-        * @param policy_dbid Policy DBID
+        * @param doPID Digital object PID
+        * @param dsBindKeyDbID Datastream binding key DBID
+        * @param dsBindMapDbID Binding map DBID
+        * @param dsBindKeySeq Datastream binding key sequence number
+        * @param dsID Datastream ID
+        * @param dsLabel Datastream label
+        * @param dsMIME Datastream mime type
+        * @param dsLocation Datastream location
+        * @param policyDbID Policy DBID
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertDataStreamBindingRow(Connection connection, String do_dbid, String dsbindingkey_dbid, String bindingmap_dbid, String dsbinding_ds_bindingkey_seq, String dsbinding_ds_id, String dsbinding_ds_label, String dsbinding_ds_mime, String dsbinding_ds_location, String dsbinding_ds_control_group_type, String dsbinding_ds_current_version_id, String policy_dbid) throws SQLException {
+	public void insertDataStreamBindingRow(Connection connection, String doDbID, String dsBindKeyDbID, String dsBindMapDbID, String dsBindKeySeq, String dsID, String dsLabel, String dsMIME, String dsLocation, String dsControlGroupType, String dsCurrentVersionID, String policyDbID) throws SQLException {
 
-		String insertionStatement = "INSERT INTO DataStreamBinding (DO_DBID, DSBindingKey_DBID, BindingMap_DBID, DSBinding_DS_BindingKey_Seq, DSBinding_DS_ID, DSBinding_DS_Label, DSBinding_DS_MIME, DSBinding_DS_Location, DSBINDING_DS_Control_Group_Type, DSBINDING_DS_Current_Version_ID, POLICY_DBID) VALUES ('" + do_dbid + "', '" + dsbindingkey_dbid + "', '" + bindingmap_dbid + "', '" + dsbinding_ds_bindingkey_seq + "', '" + dsbinding_ds_id + "', '" + dsbinding_ds_label + "', '" + dsbinding_ds_mime + "', '" + dsbinding_ds_location + "', '" + dsbinding_ds_control_group_type + "', '" + dsbinding_ds_current_version_id + "', '" + policy_dbid + "');";
+		String insertionStatement = "INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID) VALUES ('" + doDbID + "', '" + dsBindKeyDbID + "', '" + dsBindMapDbID + "', '" + dsBindKeySeq + "', '" + dsID + "', '" + dsLabel + "', '" + dsMIME + "', '" + dsLocation + "', '" + dsControlGroupType + "', '" + dsCurrentVersionID + "', '" + policyDbID + "');";
 
 		insertGen(connection, insertionStatement);
 	}
 
         /**
         *
-        * Inserts a DataStreamBindingMap row.
+        * Inserts a dsBindMap row.
         *
         * @param connection JDBC DBMS connection
-        * @param bmech_dbid Behavior mechanism DBID
-        * @param dsbindingmap_id Datastream binding map ID
-        * @param dsbindingmap_label Datastream binding map label
+        * @param bMechDbID Behavior mechanism DBID
+        * @param dsBindMapID Datastream binding map ID
+        * @param dsBindMapLabel Datastream binding map label
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertDataStreamBindingMapRow(Connection connection, String bmech_dbid, String dsbindingmap_id, String dsbindingmap_label) throws SQLException {
+	public void insertDataStreamBindingMapRow(Connection connection, String bMechDbID, String dsBindMapID, String dsBindMapLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO DataStreamBindingMap (BMECH_DBID, DSBindingMap_ID, DSBindingMap_Label) VALUES ('" + bmech_dbid + "', '" + dsbindingmap_id + "', '" + dsbindingmap_label + "');";
+		String insertionStatement = "INSERT INTO dsBindMap (bMechDbID, dsBindMapID, dsBindMapLabel) VALUES ('" + bMechDbID + "', '" + dsBindMapID + "', '" + dsBindMapLabel + "');";
 		insertGen(connection, insertionStatement);
 	}
 
         /**
         *
-        * Inserts a DataStreamBindingSpec row.
+        * Inserts a dsBindSpec row.
         *
         * @param connection JDBC DBMS connection
-        * @param bmech_dbid Behavior mechanism DBID
-        * @param dsbindingspec_name Datastream binding spec name
-        * @param dsbindingspec_ordinality_flag Datastream binding spec ordinality flag
-        * @param dsbindingspec_cardinality Datastream binding cardinality
-        * @param dsbindingspec_label Datastream binding spec lable
+        * @param bMechDbID Behavior mechanism DBID
+        * @param dsBindSpecName Datastream binding spec name
+        * @param dsBindSpecOrdinality Datastream binding spec ordinality flag
+        * @param dsBindSpecCardinality Datastream binding cardinality
+        * @param dsBindSpecLabel Datastream binding spec lable
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertDataStreamBindingSpecRow(Connection connection, String bmech_dbid, String dsbindingspec_name, String dsbindingspec_ordinality_flag, String dsbindingspec_cardinality, String dsbindingspec_label) throws SQLException {
+	public void insertDataStreamBindingSpecRow(Connection connection, String bMechDbID, String dsBindSpecName, String dsBindSpecOrdinality, String dsBindSpecCardinality, String dsBindSpecLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO DataStreamBindingSpec (BMECH_DBID, DSBindingSpec_Name, DSBindingSpec_Ordinality_Flag, DSBindingSpec_Cardinality, DSBindingSpec_Label) VALUES ('" + bmech_dbid + "', '" + dsbindingspec_name + "', '" + dsbindingspec_ordinality_flag + "', '" + dsbindingspec_cardinality + "', '" + dsbindingspec_label + "');";
-
-		insertGen(connection, insertionStatement);
-	}
-
-        /**
-        *
-        * Inserts a DataStreamMIME row.
-        *
-        * @param connection JDBC DBMS connection
-        * @param dsbindingkey_dbid Datastream binding key DBID
-        * @param dsmime_name Datastream MIME type name
-        *
-        * @exception SQLException JDBC, SQL error
-        */
-	public void insertDataStreamMIMERow(Connection connection, String dsbindingkey_dbid, String dsmime_name) throws SQLException {
-
-		String insertionStatement = "INSERT INTO DataStreamMIME (DSBindingKey_DBID, DSMIME_Name) VALUES ('" + dsbindingkey_dbid + "', '" + dsmime_name + "');";
+		String insertionStatement = "INSERT INTO dsBindSpec (bMechDbID, dsBindSpecName, dsBindSpecOrdinality, dsBindSpecCardinality, dsBindSpecLabel) VALUES ('" + bMechDbID + "', '" + dsBindSpecName + "', '" + dsBindSpecOrdinality + "', '" + dsBindSpecCardinality + "', '" + dsBindSpecLabel + "');";
 
 		insertGen(connection, insertionStatement);
 	}
 
         /**
         *
-        * Inserts a DigitalObject row.
+        * Inserts a dsMIME row.
         *
         * @param connection JDBC DBMS connection
-        * @param do_pid DigitalObject PID
-        * @param do_label DigitalObject label
+        * @param dsBindKeyDbID Datastream binding key DBID
+        * @param dsMIMEName Datastream MIME type name
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertDigitalObjectRow(Connection connection, String do_pid, String do_label) throws SQLException {
+	public void insertDataStreamMIMERow(Connection connection, String dsBindKeyDbID, String dsMIMEName) throws SQLException {
 
-		String insertionStatement = "INSERT INTO DigitalObject (DO_PID, DO_Label) VALUES ('" + do_pid + "', '" +  do_label + "');";
+		String insertionStatement = "INSERT INTO dsMIME (dsBindKeyDbID, dsMIMEName) VALUES ('" + dsBindKeyDbID + "', '" + dsMIMEName + "');";
 
 		insertGen(connection, insertionStatement);
 	}
 
         /**
         *
-        * Inserts a DigitalObjectDissAssoc row.
+        * Inserts a do row.
         *
         * @param connection JDBC DBMS connection
-        * @param do_dbid DigitalObject DBID
-        * @param diss_dbid Disseminator DBID
+        * @param doPID DigitalObject PID
+        * @param doLabel DigitalObject label
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertDigitalObjectDissAssocRow(Connection connection, String do_dbid, String diss_dbid) throws SQLException {
+	public void insertDigitalObjectRow(Connection connection, String doPID, String doLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO DigitalObjectDissAssoc (DO_DBID, DISS_DBID) VALUES ('" + do_dbid + "', '" + diss_dbid + "');";
+		String insertionStatement = "INSERT INTO do (doPID, doLabel) VALUES ('" + doPID + "', '" +  doLabel + "');";
+
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a doDissAssoc row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param doDbID DigitalObject DBID
+        * @param dissDbID Disseminator DBID
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertDigitalObjectDissAssocRow(Connection connection, String doDbID, String dissDbID) throws SQLException {
+
+		String insertionStatement = "INSERT INTO doDissAssoc (doDbID, dissDbID) VALUES ('" + doDbID + "', '" + dissDbID + "');";
 		insertGen(connection, insertionStatement);
 	}
 
@@ -173,57 +173,57 @@ public class RowInsertion {
         * Inserts a Disseminator row.
         *
         * @param connection JDBC DBMS connection
-        * @param bdef_dbid Behavior definition DBID
-        * @param bmech_dbid Behavior mechanism DBID
-        * @param diss_id Disseminator ID
-        * @param diss_label Disseminator label
+        * @param bDefDbID Behavior definition DBID
+        * @param bMechDbID Behavior mechanism DBID
+        * @param dissID Disseminator ID
+        * @param dissLabel Disseminator label
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertDisseminatorRow(Connection connection, String bdef_dbid, String bmech_dbid, String diss_id, String diss_label) throws SQLException {
+	public void insertDisseminatorRow(Connection connection, String bDefDbID, String bMechDbID, String dissID, String dissLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO Disseminator (BDEF_DBID, BMECH_DBID, DISS_ID, DISS_Label) VALUES ('" + bdef_dbid + "', '" + bmech_dbid + "', '" + diss_id + "', '" + diss_label + "');";
+		String insertionStatement = "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel) VALUES ('" + bDefDbID + "', '" + bMechDbID + "', '" + dissID + "', '" + dissLabel + "');";
 		insertGen(connection, insertionStatement);
 	}
 
         /**
         *
-        * Inserts a MechanismImpl row.
+        * Inserts a mechImpl row.
         *
         * @param connection JDBC DBMS connection
-        * @param bmech_dbid Behavior mechanism DBID
-        * @param bdef_dbid Behavior definition DBID
-        * @param meth_dbid Method DBID
-        * @param dsbindingkey_dbid Datastream binding key DBID
-        * @param mechimpl_protocol_type Mechanism implementation protocol type
-        * @param mechimpl_return_type Mechanism implementation return type
-        * @param mechimpl_address_location Mechanism implementation address location
-        * @param mechimpl_operation_location Mechanism implementation operation location
-        * @param policy_dbid Policy DBID
+        * @param bMechDbID Behavior mechanism DBID
+        * @param bDefDbID Behavior definition DBID
+        * @param methodDbID Method DBID
+        * @param dsBindKeyDbID Datastream binding key DBID
+        * @param protocolType Mechanism implementation protocol type
+        * @param returnType Mechanism implementation return type
+        * @param addressLocation Mechanism implementation address location
+        * @param operationLocation Mechanism implementation operation location
+        * @param policyDbID Policy DBID
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertMechanismImplRow(Connection connection, String bmech_dbid, String bdef_dbid, String meth_dbid, String dsbindingkey_dbid, String mechimpl_protocol_type, String mechimpl_return_type, String mechimpl_address_location, String mechimpl_operation_location, String policy_dbid) throws SQLException {
+	public void insertMechanismImplRow(Connection connection, String bMechDbID, String bDefDbID, String methodDbID, String dsBindKeyDbID, String protocolType, String returnType, String addressLocation, String operationLocation, String policyDbID) throws SQLException {
 
-		String insertionStatement = "INSERT INTO MechanismImpl (BMECH_DBID, BDEF_DBID, METH_DBID, DSBindingKey_DBID, MECHImpl_Protocol_Type, MECHImpl_Return_Type, MECHImpl_Address_Location, MECHImpl_Operation_Location, POLICY_DBID) VALUES ('" + bmech_dbid + "', '" + bdef_dbid + "', '" + meth_dbid + "', '" + dsbindingkey_dbid + "', '" + mechimpl_protocol_type + "', '" + mechimpl_return_type + "', '" + mechimpl_address_location + "', '" + mechimpl_operation_location + "', '" + policy_dbid + "');";
+		String insertionStatement = "INSERT INTO mechImpl (bMechDbID, bDefDbID, methodDbID, dsBindKeyDbID, protocolType, returnType, addressLocation, operationLocation, policyDbID) VALUES ('" + bMechDbID + "', '" + bDefDbID + "', '" + methodDbID + "', '" + dsBindKeyDbID + "', '" + protocolType + "', '" + returnType + "', '" + addressLocation + "', '" + operationLocation + "', '" + policyDbID + "');";
 
 		insertGen(connection, insertionStatement);
 	}
 
         /**
         *
-        * Inserts a Method row.
+        * Inserts a method row.
         *
         * @param connection JDBC DBMS connection
-        * @param bdef_dbid Behavior definition DBID
-        * @param meth_name Behavior definition label
-        * @param meth_label Behavior definition label
+        * @param bDefDbID Behavior definition DBID
+        * @param methodName Behavior definition label
+        * @param methodLabel Behavior definition label
         *
         * @exception SQLException JDBC, SQL error
         */
-	public void insertMethodRow(Connection connection, String bdef_dbid, String meth_name, String meth_label) throws SQLException {
+	public void insertMethodRow(Connection connection, String bDefDbID, String methodName, String methodLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO Method (BDEF_DBID, METH_Name, METH_Label) VALUES ('" + bdef_dbid + "', '" + meth_name + "', '" + meth_label + "');";
+		String insertionStatement = "INSERT INTO method (bDefDbID, methodName, methodLabel) VALUES ('" + bDefDbID + "', '" + methodName + "', '" + methodLabel + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -246,10 +246,10 @@ public class RowInsertion {
             String parmDomainValues, String parmRequiredFlag,
             String parmLabel, String parmType)
             throws SQLException {
-                String insertionStatement = "INSERT INTO Parameter "
-                + "(METH_DBID, BDEF_DBID, PARM_Name, PARM_Default_Value, "
-                + "PARM_Domain_Values, PARM_Required_Flag, PARM_Label, "
-                + "PARM_Type) VALUES ('"
+                String insertionStatement = "INSERT INTO parm "
+                + "(methodDbID, bDefDbID, parmName, parmDefaultValue, "
+                + "parmDomainValues, parmRequiredFlag, parmLabel, "
+                + "parmType) VALUES ('"
                 + methDBID + "', '" + bdefDBID + "', '"
                 + parmName + "', '" + parmDefaultValue + "', '"
                 + parmDomainValues + "', '"
@@ -276,10 +276,10 @@ public class RowInsertion {
              String parmDomainValues, String parmRequiredFlag,
              String parmLabel, String parmType)
              throws SQLException {
-                 String insertionStatement = "INSERT INTO MechDefaultParameter "
-                 + "(METH_DBID, BMECH_DBID, DEFPARM_Name, DEFPARM_Default_Value, "
-                 + "DEFPARM_Domain_Values, DEFPARM_Required_Flag, DEFPARM_Label, "
-                 + "DEFPARM_Type) VALUES ('"
+                 String insertionStatement = "INSERT INTO mechDefParm "
+                 + "(methodDbID, bMechDbID, defParmName, defParmDefaultValue, "
+                 + "defParmDomainValues, defParmRequiredFlag, defParmLabel, "
+                 + "defParmType) VALUES ('"
                  + methDBID + "', '" + bmechDBID + "', '"
                  + parmName + "', '" + parmDefaultValue + "', '"
                  + parmDomainValues + "', '"

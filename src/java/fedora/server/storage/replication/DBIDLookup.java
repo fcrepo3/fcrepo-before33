@@ -35,7 +35,7 @@ public class DBIDLookup {
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupBehaviorDefinitionDBID(Connection connection, String bDefPID) throws SQLException {
-		return lookupDBID1(connection, "BDEF_DBID", "BehaviorDefinition", "BDEF_PID", bDefPID);
+		return lookupDBID1(connection, "bDefDbID", "bDef", "bDefPID", bDefPID);
 	}
 
         /**
@@ -50,44 +50,44 @@ public class DBIDLookup {
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupBehaviorMechanismDBID(Connection connection, String bMechPID) throws SQLException {
-		return lookupDBID1(connection, "BMECH_DBID", "BehaviorMechanism", "BMECH_PID", bMechPID);
+		return lookupDBID1(connection, "bMechDbID", "bMech", "bMechPID", bMechPID);
 	}
 
         /**
         *
-        * Looks up a DataStreamBindingMap DBID.
+        * Looks up a dsBindMap DBID.
         *
         * @param connection JDBC DBMS connection
         * @param bMechDBID Behavior mechanism DBID
         * @param dsBindingMapID Data stream binding map ID
         *
-        * @return The DBID of the specified DataStreamBindingMap row.
+        * @return The DBID of the specified dsBindMap row.
         *
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupDataStreamBindingMapDBID(Connection connection, String bMechDBID, String dsBindingMapID) throws SQLException {
-		return lookupDBID2FirstNum(connection, "BindingMap_DBID", "DataStreamBindingMap", "BMECH_DBID", bMechDBID, "DSBindingMap_ID", dsBindingMapID);
+		return lookupDBID2FirstNum(connection, "dsBindMapDbID", "dsBindMap", "bMechDbID", bMechDBID, "dsBindMapID", dsBindingMapID);
 	}
 
         /**
         *
-        * Looks up a DataStreamBindingSpec DBID.
+        * Looks up a dsBindSpec DBID.
         *
         * @param connection JDBC DBMS connection
         * @param bMechDBID Behavior mechanism DBID
         * @param dsBindingSpecName Data stream binding spec name
         *
-        * @return The DBID of the specified DataStreamBindingSpec row.
+        * @return The DBID of the specified dsBindSpec row.
         *
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupDataStreamBindingSpecDBID(Connection connection, String bMechDBID, String dsBindingSpecName) throws SQLException {
-		return lookupDBID2FirstNum(connection, "DSBindingKey_DBID", "DataStreamBindingSpec", "BMECH_DBID", bMechDBID, "DSBindingSpec_Name", dsBindingSpecName);
+		return lookupDBID2FirstNum(connection, "dsBindKeyDbID", "dsBindSpec", "bMechDbID", bMechDBID, "dsBindSpecName", dsBindingSpecName);
 	}
 
         /**
         *
-        * Looks up a DigitalObject DBID.
+        * Looks up a do DBID.
         *
         * @param connection JDBC DBMS connection
         * @param doPID Data object PID
@@ -97,7 +97,7 @@ public class DBIDLookup {
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupDigitalObjectDBID(Connection connection, String doPID) throws SQLException {
-		return lookupDBID1(connection, "DO_DBID", "DigitalObject", "DO_PID", doPID);
+		return lookupDBID1(connection, "doDbID", "do", "doPID", doPID);
 	}
 
         /**
@@ -119,10 +119,10 @@ public class DBIDLookup {
 		Statement statement;
 		ResultSet rs;
 
-		query = "SELECT DISS_DBID FROM Disseminator WHERE ";
-		query += "BDEF_DBID = " + bDefDBID + " AND ";
-		query += "BMECH_DBID = " + bMechDBID + " AND ";
-		query += "DISS_ID = '" + dissID + "';";
+		query = "SELECT dissDbID FROM diss WHERE ";
+		query += "bDefDbID = " + bDefDBID + " AND ";
+		query += "bMechDbID = " + bMechDBID + " AND ";
+		query += "dissID = '" + dissID + "';";
 
 		// Debug statement
 		// System.out.println("lookupDisseminator, query = " + query);
@@ -141,18 +141,18 @@ public class DBIDLookup {
 
         /**
         *
-        * Looks up a Method DBID.
+        * Looks up a method DBID.
         *
         * @param connection JDBC DBMS connection
         * @param bDefDBID Behavior definition DBID
         * @param methName Method name
         *
-        * @return The DBID of the specified Method row.
+        * @return The DBID of the specified method row.
         *
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupMethodDBID(Connection connection, String bDefDBID, String methName) throws SQLException {
-		return lookupDBID2FirstNum(connection, "METH_DBID", "Method", "BDEF_DBID", bDefDBID, "METH_Name", methName);
+		return lookupDBID2FirstNum(connection, "methodDbID", "method", "bDefDbID", bDefDBID, "methodName", methName);
 	}
 
         /**

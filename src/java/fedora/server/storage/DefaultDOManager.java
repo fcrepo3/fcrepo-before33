@@ -196,7 +196,7 @@ public class DefaultDOManager
             SQLUtility.createNonExistingTables(m_connectionPool, specIn, this);
         } catch (Exception e) {
             throw new ModuleInitializationException("Error while attempting to "
-                    + "check for and create non-existing table(s): " 
+                    + "check for and create non-existing table(s): "
                     + e.getClass().getName() + ": " + e.getMessage(), getRole());
         }
 /*
@@ -461,21 +461,21 @@ public class DefaultDOManager
             Connection conn=null;
             try {
                 conn=m_connectionPool.getConnection();
-                String query="SELECT SystemVersion "
-                           + "FROM ObjectRegistry "
-                           + "WHERE DO_PID='" + obj.getPid() + "'";
+                String query="SELECT systemVersion "
+                           + "FROM doRegistry "
+                           + "WHERE doPID='" + obj.getPid() + "'";
                 Statement s=conn.createStatement();
                 ResultSet results=s.executeQuery(query);
                 if (!results.next()) {
                     throw new ObjectNotFoundException("Error creating replication job: The requested object doesn't exist in the registry.");
                 }
-                int systemVersion=results.getInt("SystemVersion");
+                int systemVersion=results.getInt("systemVersion");
                 systemVersion++;
                 Date now=new Date();
                 String formattedLastModDate=m_formatter.format(now);
-                s.executeUpdate("UPDATE ObjectRegistry SET SystemVersion="
-                        + systemVersion + ", LockingUser=NULL, CreateDate=CreateDate, LastModifiedDate='" + formattedLastModDate + "' "
-                        + "WHERE DO_PID='" + obj.getPid() + "'");
+                s.executeUpdate("UPDATE doRegistry SET systemVersion="
+                        + systemVersion + ", lockingUser=NULL, createDate=createDate, lastModifiedDate='" + formattedLastModDate + "' "
+                        + "WHERE doPID='" + obj.getPid() + "'");
             } catch (SQLException sqle) {
                 throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
             } finally {
@@ -525,7 +525,7 @@ public class DefaultDOManager
     private void addReplicationJob(String pid, boolean deleted)
             throws StorageDeviceException {
         Connection conn=null;
-        String[] columns=new String[] {"DO_PID", "Action"};
+        String[] columns=new String[] {"doPID", "action"};
         String action="M";
         if (deleted) {
             action="D";
@@ -533,8 +533,8 @@ public class DefaultDOManager
         String[] values=new String[] {pid, action};
         try {
             conn=m_connectionPool.getConnection();
-            SQLUtility.replaceInto(conn, "ObjectReplicationJob", columns,
-                    values, "DO_PID");
+            SQLUtility.replaceInto(conn, "doRepJob", columns,
+                    values, "doPID");
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
         } finally {
@@ -550,8 +550,8 @@ public class DefaultDOManager
         try {
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
-            s.executeUpdate("DELETE FROM ObjectReplicationJob "
-                    + "WHERE DO_PID = '" + pid + "'");
+            s.executeUpdate("DELETE FROM doRepJob "
+                    + "WHERE doPID = '" + pid + "'");
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error removing entry from replication jobs table: " + sqle.getMessage());
         } finally {
@@ -576,20 +576,20 @@ public class DefaultDOManager
             StorageDeviceException, InvalidContextException {
         Connection conn=null;
         try {
-            String query="SELECT LockingUser "
-                       + "FROM ObjectRegistry "
-                       + "WHERE DO_PID='" + pid + "'";
+            String query="SELECT lockingUser "
+                       + "FROM doRegistry "
+                       + "WHERE doPID='" + pid + "'";
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
             ResultSet results=s.executeQuery(query);
             if (!results.next()) {
                 throw new ObjectNotFoundException("The requested object doesn't exist.");
             }
-            String lockingUser=results.getString("LockingUser");
+            String lockingUser=results.getString("lockingUser");
             if (lockingUser==null) {
                 // get the lock
-                s.executeUpdate("UPDATE ObjectRegistry SET LockingUser='"
-                    + getUserId(context) + "', CreateDate=CreateDate, LastModifiedDate=LastModifiedDate WHERE DO_PID='" + pid + "'");
+                s.executeUpdate("UPDATE doRegistry SET lockingUser='"
+                    + getUserId(context) + "', createDate=createDate, lastModifiedDate=lastModifiedDate WHERE doPID='" + pid + "'");
             }
             if (!lockingUser.equals(getUserId(context))) {
                 throw new ObjectLockedException("The object is locked by " + lockingUser);
@@ -697,14 +697,14 @@ public class DefaultDOManager
                     throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
                 }
 
-                // FIXME: I don't think sending to perm store is needed in the normal 
+                // FIXME: I don't think sending to perm store is needed in the normal
                 // case (i.e. where the serializer is used throughout), but it doesn't
                 // hurt here for now... if it's decided that this isn't necessary,
                 // and this is removed, be sure to change the .replace(...) call
                 // to .add(...) in doCommit()
                 InputStream in3=getTempStore().retrieve("temp-ingest");
                 getPermanentStore().add(obj.getPid(), in3);
-                
+
                 permPid=obj.getPid();
                 inPermanentStore=true; // signifies successful perm store addition
                 InputStream in4=getTempStore().retrieve("temp-ingest");
@@ -715,8 +715,8 @@ public class DefaultDOManager
 
                 // then get the writer
                 DOWriter w=new DefinitiveDOWriter(context, this, obj);
-                // ...set the create and last modified dates 
-                Date now=new Date(); 
+                // ...set the create and last modified dates
+                Date now=new Date();
                 obj.setCreateDate(now);
                 obj.setLastModDate(now);
 
@@ -914,9 +914,9 @@ public class DefaultDOManager
             throws StorageDeviceException {
         Connection conn=null;
         try {
-            String query="SELECT DO_PID "
-                       + "FROM ObjectRegistry "
-                       + "WHERE DO_PID='" + pid + "'";
+            String query="SELECT doPID "
+                       + "FROM doRegistry "
+                       + "WHERE doPID='" + pid + "'";
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
             ResultSet results=s.executeQuery(query);
@@ -929,14 +929,14 @@ public class DefaultDOManager
             }
         }
     }
-    
+
     public String getLockingUser(String pid)
             throws StorageDeviceException, ObjectNotFoundException {
         Connection conn=null;
         try {
-            String query="SELECT LockingUser "
-                       + "FROM ObjectRegistry "
-                       + "WHERE DO_PID='" + pid + "'";
+            String query="SELECT lockingUser "
+                       + "FROM doRegistry "
+                       + "WHERE doPID='" + pid + "'";
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
             ResultSet results=s.executeQuery(query);
@@ -981,13 +981,13 @@ public class DefaultDOManager
         try {
             String formattedCreateDate=m_formatter.format(createDate);
             String formattedLastModDate=m_formatter.format(lastModDate);
-            String query="INSERT INTO ObjectRegistry (DO_PID, FO_TYPE, "
-                                                   + "LockingUser, Label, "
-                                                   + "ContentModelId, CreateDate, "
-                                                   + "LastModifiedDate) "
+            String query="INSERT INTO doRegistry (doPID, foType, "
+                                                   + "lockingUser, label, "
+                                                   + "contentModelID, createDate, "
+                                                   + "lastModifiedDate) "
                        + "VALUES ('" + pid + "', '" + foType +"', '"
-                                     + userId +"', '" + theLabel + "', '" 
-                                     + theContentModelId + "', '" 
+                                     + userId +"', '" + theLabel + "', '"
+                                     + theContentModelId + "', '"
                                      + formattedCreateDate + "', '"
                                      + formattedLastModDate + "')";
             conn=m_connectionPool.getConnection();
@@ -1017,7 +1017,7 @@ public class DefaultDOManager
         try {
             conn=m_connectionPool.getConnection();
             st=conn.createStatement();
-            st.executeUpdate("DELETE FROM ObjectRegistry WHERE DO_PID='" + pid + "'");
+            st.executeUpdate("DELETE FROM doRegistry WHERE doPID='" + pid + "'");
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Unexpected error from SQL database while unregistering object: " + sqle.getMessage());
         } finally {
@@ -1031,23 +1031,23 @@ public class DefaultDOManager
             }
         }
     }
-    
-    public String[] listObjectPIDs(Context context) 
+
+    public String[] listObjectPIDs(Context context)
             throws StorageDeviceException {
-        return getPIDs("WHERE SystemVersion > 0");
+        return getPIDs("WHERE systemVersion > 0");
     }
 
-    public String[] listObjectPIDs(Context context, String pidPattern, 
-            String foType, String lockedByPattern, String state, 
-            String labelPattern, String contentModelIdPattern, 
-            Calendar createDateMin, Calendar createDateMax, 
-            Calendar lastModDateMin, Calendar lastModDateMax) 
+    public String[] listObjectPIDs(Context context, String pidPattern,
+            String foType, String lockedByPattern, String state,
+            String labelPattern, String contentModelIdPattern,
+            Calendar createDateMin, Calendar createDateMax,
+            Calendar lastModDateMin, Calendar lastModDateMax)
             throws StorageDeviceException {
         StringBuffer whereClause=new StringBuffer();
         boolean needEscape=false;
-        whereClause.append("WHERE SystemVersion > 0");
+        whereClause.append("WHERE systemVersion > 0");
         if (pidPattern!=null) {
-            String part=toSql("DO_PID", pidPattern);
+            String part=toSql("doPID", pidPattern);
             if (part.charAt(0)==' ') {
                 needEscape=true;
             } else {
@@ -1057,7 +1057,7 @@ public class DefaultDOManager
             whereClause.append(part);
         }
         if (foType!=null) {
-            String part=toSql("FO_Type", foType);
+            String part=toSql("foType", foType);
             if (part.charAt(0)==' ') {
                 needEscape=true;
             } else {
@@ -1067,7 +1067,7 @@ public class DefaultDOManager
             whereClause.append(part);
         }
         if (lockedByPattern!=null) {
-            String part=toSql("LockingUser", lockedByPattern);
+            String part=toSql("lockingUser", lockedByPattern);
             if (part.charAt(0)==' ') {
                 needEscape=true;
             } else {
@@ -1077,7 +1077,7 @@ public class DefaultDOManager
             whereClause.append(part);
         }
         if (state!=null) {
-            String part=toSql("ObjectState", state);
+            String part=toSql("objectState", state);
             if (part.charAt(0)==' ') {
                 needEscape=true;
             } else {
@@ -1087,7 +1087,7 @@ public class DefaultDOManager
             whereClause.append(part);
         }
         if (labelPattern!=null) {
-            String part=toSql("Label", labelPattern);
+            String part=toSql("label", labelPattern);
             if (part.charAt(0)==' ') {
                 needEscape=true;
             } else {
@@ -1097,7 +1097,7 @@ public class DefaultDOManager
             whereClause.append(part);
         }
         if (contentModelIdPattern!=null) {
-            String part=toSql("ContentModelId", contentModelIdPattern);
+            String part=toSql("contentModelID", contentModelIdPattern);
             if (part.charAt(0)==' ') {
                 needEscape=true;
             } else {
@@ -1107,22 +1107,22 @@ public class DefaultDOManager
             whereClause.append(part);
         }
         if (createDateMin!=null) {
-            whereClause.append(" AND CreateDate >= '");
+            whereClause.append(" AND createDate >= '");
             whereClause.append(m_formatter.format(createDateMin));
             whereClause.append('\'');
         }
         if (createDateMax!=null) {
-            whereClause.append(" AND CreateDate <= '");
+            whereClause.append(" AND createDate <= '");
             whereClause.append(m_formatter.format(createDateMax));
             whereClause.append('\'');
         }
         if (lastModDateMin!=null) {
-            whereClause.append(" AND LastModifiedDate >= '");
+            whereClause.append(" AND lastModifiedDate >= '");
             whereClause.append(m_formatter.format(lastModDateMin));
             whereClause.append('\'');
         }
         if (lastModDateMax!=null) {
-            whereClause.append(" AND LastModifiedDate <= '");
+            whereClause.append(" AND lastModifiedDate <= '");
             whereClause.append(m_formatter.format(lastModDateMax));
             whereClause.append('\'');
         }
@@ -1240,20 +1240,20 @@ public class DefaultDOManager
     }
 
     /** whereClause is a WHERE clause, starting with "where" */
-    private String[] getPIDs(String whereClause) 
+    private String[] getPIDs(String whereClause)
             throws StorageDeviceException {
         ArrayList pidList=new ArrayList();
         Connection conn=null;
         try {
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
-            StringBuffer query=new StringBuffer(); 
-            query.append("SELECT DO_PID FROM ObjectRegistry ");
+            StringBuffer query=new StringBuffer();
+            query.append("SELECT doPID FROM doRegistry ");
             query.append(whereClause);
             logFinest("Executing db query: " + query.toString());
             ResultSet results=s.executeQuery(query.toString());
             while (results.next()) {
-                pidList.add(results.getString("DO_PID"));
+                pidList.add(results.getString("doPID"));
             }
             String[] ret=new String[pidList.size()];
             Iterator pidIter=pidList.iterator();
@@ -1264,7 +1264,7 @@ public class DefaultDOManager
             return ret;
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
-            
+
         } finally {
             if (conn!=null) {
                 m_connectionPool.free(conn);

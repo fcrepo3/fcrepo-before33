@@ -123,11 +123,11 @@ import fedora.server.errors.InitializationException;
         }
         String  query =
             "SELECT "
-            + "BehaviorDefinition.BDEF_DBID "
+            + "bDef.bDefDbID "
             + "FROM "
-            + "BehaviorDefinition "
+            + "bDef "
             + "WHERE "
-            + "BehaviorDefinition.BDEF_PID=\'" + BDefPID + "\';";
+            + "bDef.bDefPID=\'" + BDefPID + "\';";
 
         Statement statement = connection.createStatement();
         queryResult = statement.executeQuery(query);
@@ -180,11 +180,11 @@ import fedora.server.errors.InitializationException;
         }
         String  query =
             "SELECT "
-            + "BehaviorMechanism.BMECH_DBID "
+            + "bMech.bMechDbID "
             + "FROM "
-            + "BehaviorMechanism "
+            + "bMech "
             + "WHERE "
-            + "BehaviorMechanism.BMECH_PID=\'" + BMechPID + "\';";
+            + "bMech.bMechPID=\'" + BMechPID + "\';";
 
         Statement statement = connection.createStatement();
         queryResult = statement.executeQuery(query);

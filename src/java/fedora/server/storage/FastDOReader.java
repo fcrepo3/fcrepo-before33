@@ -254,17 +254,17 @@ public class FastDOReader implements DOReader
       // query relational database
       String  query =
           "SELECT DISTINCT "
-          + "BehaviorDefinition.BDEF_PID "
+          + "bDef.bDefPID "
           + "FROM "
-          + "BehaviorDefinition,"
-          + "Disseminator,"
-          + "DigitalObject,"
-          + "DigitalObjectDissAssoc "
+          + "bDef,"
+          + "diss,"
+          + "do,"
+          + "doDissAssoc "
           + "WHERE "
-          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
-          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
-          + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\';";
+          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "doDissAssoc.dissDbID = diss.dissDbID AND "
+          + "bDef.bDefDbID = diss.bDefDbID AND "
+          + "do.doPID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetBehaviorDefsQuery: " + query);
       String results = null;
@@ -362,29 +362,29 @@ public class FastDOReader implements DOReader
       // query relational database
       String query =
           "SELECT DISTINCT "
-          + "PARM_Name,"
-          + "PARM_Default_Value,"
-          + "PARM_Domain_Values,"
-          + "PARM_Required_Flag,"
-          + "PARM_Label,"
-          + "PARM_Type "
+          + "parmName,"
+          + "parmDefaultValue,"
+          + "parmDomainValues,"
+          + "parmRequiredFlag,"
+          + "parmLabel,"
+          + "parmType "
           + " FROM "
-          + "DigitalObject,"
-          + "BehaviorDefinition,"
-          + "BehaviorMechanism,"
-          + "MechanismImpl,"
-          + "Method,"
-          + "Parameter "
+          + "do,"
+          + "bDef,"
+          + "bMech,"
+          + "mechImpl,"
+          + "method,"
+          + "parm "
           + " WHERE "
-          + "BehaviorMechanism.BDEF_DBID=Parameter.BDEF_DBID AND "
-          + "Method.BDEF_DBID=Parameter.BDEF_DBID AND "
-          + "Method.METH_DBID=Parameter.METH_DBID AND "
-          + "BehaviorMechanism.BDEF_DBID=Method.BDEF_DBID AND "
-          + "MechanismImpl.METH_DBID=Method.METH_DBID AND "
-          + "BehaviorMechanism.BDEF_DBID=BehaviorDefinition.BDEF_DBID AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\' AND "
-          + "BehaviorDefinition.BDEF_PID='" + bDefPID + "' AND "
-          + "Method.METH_Name='"  + methodName + "' ";
+          + "bMech.bDefDbID=parm.bDefDbID AND "
+          + "method.bDefDbID=parm.bDefDbID AND "
+          + "method.methodDbID=parm.methodDbID AND "
+          + "bMech.bDefDbID=method.bDefDbID AND "
+          + "mechImpl.methodDbID=method.methodDbID AND "
+          + "bMech.bDefDbID=bDef.bDefDbID AND "
+          + "do.doPID=\'" + PID + "\' AND "
+          + "bDef.bDefPID='" + bDefPID + "' AND "
+          + "method.methodName='"  + methodName + "' ";
 
       if(debug) s_server.logFinest("GetBMechMethodParmQuery=" + query);
       try
@@ -505,29 +505,29 @@ public class FastDOReader implements DOReader
       // query relational database
       String query =
           "SELECT DISTINCT "
-          + "DEFPARM_Name,"
-          + "DEFPARM_Default_Value,"
-          + "DEFPARM_Domain_Values,"
-          + "DEFPARM_Required_Flag,"
-          + "DEFPARM_Label,"
-          + "DEFPARM_Type "
+          + "defParmName,"
+          + "defParmDefaultValue,"
+          + "defParmDomainValues,"
+          + "defParmRequiredFlag,"
+          + "defParmLabel,"
+          + "defParmType "
           + " FROM "
-          + "DigitalObject,"
-          + "BehaviorDefinition,"
-          + "BehaviorMechanism,"
-          + "MechanismImpl,"
-          + "Method,"
-          + "MechDefaultParameter "
+          + "do,"
+          + "bDef,"
+          + "bMech,"
+          + "mechImpl,"
+          + "method,"
+          + "mechDefParm "
           + " WHERE "
-          + "BehaviorMechanism.BMECH_DBID=MechDefaultParameter.BMECH_DBID AND "
-          //+ "Method.BDEF_DBID=MechDefaultParameter.BDEF_DBID AND "
-          + "Method.METH_DBID=MechDefaultParameter.METH_DBID AND "
-          + "BehaviorMechanism.BDEF_DBID=Method.BDEF_DBID AND "
-          + "MechanismImpl.METH_DBID=Method.METH_DBID AND "
-          + "BehaviorMechanism.BDEF_DBID=BehaviorDefinition.BDEF_DBID AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\' AND "
-          + "BehaviorDefinition.BDEF_PID='" + bDefPID + "' AND "
-          + "Method.METH_Name='"  + methodName + "' ";
+          + "bMech.bMechDbID=mechDefParm.bMechDbID AND "
+          //+ "method.bDefDbID=mechDefParm.bDefDbID AND "
+          + "method.methodDbID=mechDefParm.methodDbID AND "
+          + "bMech.bDefDbID=method.bDefDbID AND "
+          + "mechImpl.methodDbID=method.methodDbID AND "
+          + "bMech.bDefDbID=bDef.bDefDbID AND "
+          + "do.doPID=\'" + PID + "\' AND "
+          + "bDef.bDefPID='" + bDefPID + "' AND "
+          + "method.methodName='"  + methodName + "' ";
 
       if(debug) s_server.logFinest("GetBMechDefaultMethodParmQuery=" + query);
       try
@@ -656,29 +656,29 @@ public class FastDOReader implements DOReader
       // query relational database
       String  query =
           "SELECT DISTINCT "
-          + "Method.METH_Name,"
-          + "Method.METH_Label,"
-          + "MechanismImpl.MECHImpl_Address_Location,"
-          + "MechanismImpl.MECHImpl_Operation_Location "
+          + "method.methodName,"
+          + "method.methodLabel,"
+          + "mechImpl.addressLocation,"
+          + "mechImpl.operationLocation "
           + "FROM "
-          + "BehaviorDefinition,"
-          + "Disseminator,"
-          + "Method,"
-          + "DigitalObject,"
-          + "DigitalObjectDissAssoc,"
-          + "BehaviorMechanism,"
-          + "MechanismImpl "
+          + "bDef,"
+          + "diss,"
+          + "method,"
+          + "do,"
+          + "doDissAssoc,"
+          + "bMech,"
+          + "mechImpl "
           + "WHERE "
-          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
-          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
-          + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
-          + "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "
-          + "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND "
-          + "BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND "
-          + "Method.METH_DBID = MechanismImpl.METH_DBID AND "
-          + "Method.BDEF_DBID = BehaviorDefinition.BDEF_DBID AND "
-          + "BehaviorDefinition.BDEF_PID = \'" + bDefPID + "\' AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\';";
+          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "doDissAssoc.dissDbID = diss.dissDbID AND "
+          + "bDef.bDefDbID = diss.bDefDbID AND "
+          + "bMech.bMechDbID = diss.bMechDbID AND "
+          + "bMech.bMechDbID = mechImpl.bMechDbID AND "
+          + "bDef.bDefDbID = mechImpl.bDefDbID AND "
+          + "method.methodDbID = mechImpl.methodDbID AND "
+          + "method.bDefDbID = bDef.bDefDbID AND "
+          + "bDef.bDefPID = \'" + bDefPID + "\' AND "
+          + "do.doPID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetBMechMethodsQuery: " + query);
       String[] results = null;
@@ -829,16 +829,16 @@ public class FastDOReader implements DOReader
       // query relational database
       String  query =
           "SELECT DISTINCT "
-          + "DataStreamBinding.DSBinding_DS_Label,"
-          + "DataStreamBinding.DSBinding_DS_MIME,"
-          + "DataStreamBinding.DSBinding_DS_Location "
+          + "dsBind.dsLabel,"
+          + "dsBind.dsMIME,"
+          + "dsBind.dsLocation "
           + "FROM "
-          + "DigitalObject,"
-          + "DataStreamBinding "
+          + "do,"
+          + "dsBind "
           + "WHERE "
-          + "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "
-          + "DataStreamBinding.DSBinding_DS_ID=\'" + datastreamID +"\' AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\';";
+          + "do.doDbID = dsBind.doDbID AND "
+          + "dsBind.dsID=\'" + datastreamID +"\' AND "
+          + "do.doPID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetDatastreamQuery: " + query);
       String[] results = null;
@@ -938,15 +938,15 @@ public class FastDOReader implements DOReader
       // query relational database
       String  query =
           "SELECT DISTINCT "
-          + "DataStreamBinding.DSBinding_DS_Label,"
-          + "DataStreamBinding.DSBinding_DS_MIME,"
-          + "DataStreamBinding.DSBinding_DS_Location "
+          + "dsBind.dsLabel,"
+          + "dsBind.dsMIME,"
+          + "dsBind.dsLocation "
           + "FROM "
-          + "DigitalObject,"
-          + "DataStreamBinding "
+          + "do,"
+          + "dsBind "
           + "WHERE "
-          + "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\';";
+          + "do.doDbID = dsBind.doDbID AND "
+          + "do.doPID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetDatastreamsQuery: " + query);
       String[] results = null;
@@ -1041,43 +1041,43 @@ public class FastDOReader implements DOReader
       // query relational database
       String query =
           "SELECT DISTINCT "
-          + "DigitalObject.DO_PID,"
-          + "BehaviorDefinition.BDEF_PID,"
-          + "Method.METH_Name,"
-          + "MechanismImpl.MECHImpl_Address_Location,"
-          + "MechanismImpl.MECHImpl_Operation_Location,"
-          + "MechanismImpl.MECHImpl_Protocol_Type,"
-          + "DataStreamBinding.DSBinding_DS_Location, "
-          + "DataStreamBinding.DSBinding_DS_Control_Group_Type, "
-          + "DataStreamBinding.DSBinding_DS_ID, "
-          + "DataStreamBinding.DSBinding_DS_Current_Version_ID, "
-          + "DataStreamBindingSpec.DSBindingSpec_Name "
+          + "do.doPID,"
+          + "bDef.bDefPID,"
+          + "method.methodName,"
+          + "mechImpl.addressLocation,"
+          + "mechImpl.operationLocation,"
+          + "mechImpl.protocolType,"
+          + "dsBind.dsLocation, "
+          + "dsBind.dsControlGroupType, "
+          + "dsBind.dsID, "
+          + "dsBind.dsCurrentVersionID, "
+          + "dsBindSpec.dsBindSpecName "
           + " FROM "
-          + "DigitalObject,"
-          + "BehaviorDefinition,"
-          + "BehaviorMechanism,"
-          + "DataStreamBinding,"
-          + "Disseminator,"
-          + "DigitalObjectDissAssoc,"
-          + "MechanismImpl,"
-          + "Method,"
-          + "DataStreamBindingSpec "
+          + "do,"
+          + "bDef,"
+          + "bMech,"
+          + "dsBind,"
+          + "diss,"
+          + "doDissAssoc,"
+          + "mechImpl,"
+          + "method,"
+          + "dsBindSpec "
           + " WHERE "
-          + "DigitalObject.DO_DBID=DigitalObjectDissAssoc.DO_DBID AND "
-          + "DigitalObjectDissAssoc.DISS_DBID=Disseminator.DISS_DBID AND "
-          + "Disseminator.BDEF_DBID = BehaviorDefinition.BDEF_DBID AND "
-          + "Disseminator.BMECH_DBID = BehaviorMechanism.BMECH_DBID AND "
-          + "DataStreamBinding.DO_DBID = DigitalObject.DO_DBID AND "
-          + "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND "
-          + "MechanismImpl.DSBindingKey_DBID = "
-          + "DataStreamBinding.DSBindingKey_DBID AND "
-          + "DataStreamBindingSpec.DSBindingKey_DBID = "
-          + "MechanismImpl.DSBindingKey_DBID AND "
-          + "MechanismImpl.METH_DBID = Method.METH_DBID AND "
-          + "DigitalObject.DO_PID='" + GetObjectPID() + "' AND "
-          + " BehaviorDefinition.BDEF_PID=\'" + bDefPID + "\' AND "
-          + " Method.METH_Name=\'"  + methodName + "\' "
-          + " ORDER BY DataStreamBindingSpec.DSBindingSpec_Name";
+          + "do.doDbID=doDissAssoc.doDbID AND "
+          + "doDissAssoc.dissDbID=diss.dissDbID AND "
+          + "diss.bDefDbID = bDef.bDefDbID AND "
+          + "diss.bMechDbID = bMech.bMechDbID AND "
+          + "dsBind.doDbID = do.doDbID AND "
+          + "bMech.bMechDbID = mechImpl.bMechDbID AND "
+          + "mechImpl.dsBindKeyDbID = "
+          + "dsBind.dsBindKeyDbID AND "
+          + "dsBindSpec.dsBindKeyDbID = "
+          + "mechImpl.dsBindKeyDbID AND "
+          + "mechImpl.methodDbID = method.methodDbID AND "
+          + "do.doPID='" + GetObjectPID() + "' AND "
+          + " bDef.bDefPID=\'" + bDefPID + "\' AND "
+          + " method.methodName=\'"  + methodName + "\' "
+          + " ORDER BY dsBindSpec.dsBindSpecName";
 
       if(debug) s_server.logFinest("GetDisseminationQuery=" + query);
 
@@ -1199,25 +1199,25 @@ public class FastDOReader implements DOReader
       // query relational database
       String  query =
           "SELECT DISTINCT "
-          + "Disseminator.DISS_ID,"
-          + "BehaviorDefinition.BDEF_PID,"
-          + "BehaviorMechanism.BMECH_PID,"
-          + "DataStreamBindingMap.DSBindingMap_ID "
+          + "diss.dissID,"
+          + "bDef.bDefPID,"
+          + "bMech.bMechPID,"
+          + "dsBindMap.dsBindMapID "
           + "FROM "
-          + "BehaviorDefinition,"
-          + "Disseminator,"
-          + "DataStreamBindingMap,"
-          + "DigitalObject,"
-          + "DigitalObjectDissAssoc,"
-          + "BehaviorMechanism "
+          + "bDef,"
+          + "diss,"
+          + "dsBindMap,"
+          + "do,"
+          + "doDissAssoc,"
+          + "bMech "
           + "WHERE "
-          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
-          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
-          + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
-          + "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "
-          + "DataStreamBindingMap.BMECH_DBID=BehaviorMechanism.BMECH_DBID AND "
-          + "Disseminator.DISS_ID=\'" + disseminatorID + "\' AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\';";
+          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "doDissAssoc.dissDbID = diss.dissDbID AND "
+          + "bDef.bDefDbID = diss.bDefDbID AND "
+          + "bMech.bMechDbID = diss.bMechDbID AND "
+          + "dsBindMap.bMechDbID=bMech.bMechDbID AND "
+          + "diss.dissID=\'" + disseminatorID + "\' AND "
+          + "do.doPID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetDisseminatorQuery: " + query);
       String[] results = null;
@@ -1309,24 +1309,24 @@ public class FastDOReader implements DOReader
       // query relational database
       String  query =
           "SELECT DISTINCT "
-          + "Disseminator.DISS_ID,"
-          + "BehaviorDefinition.BDEF_PID,"
-          + "BehaviorMechanism.BMECH_PID,"
-          + "DataStreamBindingMap.DSBindingMap_ID "
+          + "diss.dissID,"
+          + "bDef.bDefPID,"
+          + "bMech.bMechPID,"
+          + "dsBindMap.dsBindMapID "
           + "FROM "
-          + "BehaviorDefinition,"
-          + "Disseminator,"
-          + "DataStreamBindingMap,"
-          + "DigitalObject,"
-          + "DigitalObjectDissAssoc,"
-          + "BehaviorMechanism "
+          + "bDef,"
+          + "diss,"
+          + "dsBindMap,"
+          + "do,"
+          + "doDissAssoc,"
+          + "bMech "
           + "WHERE "
-          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
-          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
-          + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
-          + "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "
-          + "DataStreamBindingMap.BMECH_DBID=BehaviorMechanism.BMECH_DBID AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\';";
+          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "doDissAssoc.dissDbID = diss.dissDbID AND "
+          + "bDef.bDefDbID = diss.bDefDbID AND "
+          + "bMech.bMechDbID = diss.bMechDbID AND "
+          + "dsBindMap.bMechDbID=bMech.bMechDbID AND "
+          + "do.doPID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetDisseminatorsQuery: " + query);
       String[] results = null;
@@ -1472,27 +1472,27 @@ public class FastDOReader implements DOReader
       // query relational database
       String  query =
           "SELECT DISTINCT "
-          + "DigitalObject.DO_PID,"
-          + "BehaviorDefinition.BDEF_PID,"
-          + "Method.METH_Name "
+          + "do.doPID,"
+          + "bDef.bDefPID,"
+          + "method.methodName "
           + "FROM "
-          + "BehaviorDefinition,"
-          + "Disseminator,"
-          + "Method,"
-          + "DigitalObject,"
-          + "DigitalObjectDissAssoc,"
-          + "BehaviorMechanism,"
-          + "MechanismImpl "
+          + "bDef,"
+          + "diss,"
+          + "method,"
+          + "do,"
+          + "doDissAssoc,"
+          + "bMech,"
+          + "mechImpl "
           + "WHERE "
-          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
-          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
-          + "BehaviorDefinition.BDEF_DBID = Disseminator.BDEF_DBID AND "
-          + "BehaviorMechanism.BMECH_DBID = Disseminator.BMECH_DBID AND "
-          + "BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND "
-          + "BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND "
-          + "Method.METH_DBID = MechanismImpl.METH_DBID AND "
-          + "DigitalObject.DO_PID=\'" + GetObjectPID() + "\' "
-          + "ORDER BY BehaviorDefinition.BDEF_PID, Method.METH_Name;";
+          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "doDissAssoc.dissDbID = diss.dissDbID AND "
+          + "bDef.bDefDbID = diss.bDefDbID AND "
+          + "bMech.bMechDbID = diss.bMechDbID AND "
+          + "bMech.bMechDbID = mechImpl.bMechDbID AND "
+          + "bDef.bDefDbID = mechImpl.bDefDbID AND "
+          + "method.methodDbID = mechImpl.methodDbID AND "
+          + "do.doPID=\'" + GetObjectPID() + "\' "
+          + "ORDER BY bDef.bDefPID, method.methodName;";
 
       if (debug) s_server.logFinest("getObjectMethodsQuery: " + query);
       String[] results = null;
@@ -1715,13 +1715,13 @@ public class FastDOReader implements DOReader
       // query relational database.
       String  query =
           "SELECT DISTINCT "
-          + "DataStreamBinding.DSBinding_DS_ID "
+          + "dsBind.dsID "
           + "FROM "
-          + "DigitalObject,"
-          + "DataStreamBinding "
+          + "do,"
+          + "dsBind "
           + "WHERE "
-          + "DigitalObject.DO_DBID = DataStreamBinding.DO_DBID AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\';";
+          + "do.doDbID = dsBind.doDbID AND "
+          + "do.doPID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("ListDatastreamIDsQuery: " + query);
       String[] results = null;
@@ -1821,15 +1821,15 @@ public class FastDOReader implements DOReader
       // query relational database
       String  query =
           "SELECT DISTINCT "
-          + "Disseminator.DISS_ID "
+          + "diss.dissID "
           + "FROM "
-          + "Disseminator,"
-          + "DigitalObject,"
-          + "DigitalObjectDissAssoc "
+          + "diss,"
+          + "do,"
+          + "doDissAssoc "
           + "WHERE "
-          + "DigitalObject.DO_DBID = DigitalObjectDissAssoc.DO_DBID AND "
-          + "DigitalObjectDissAssoc.DISS_DBID = Disseminator.DISS_DBID AND "
-          + "DigitalObject.DO_PID=\'" + PID + "\';";
+          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "doDissAssoc.dissDbID = diss.dissDbID AND "
+          + "do.doPID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("ListDisseminatorIDsQuery: " + query);
       String[] results = null;
@@ -1926,11 +1926,11 @@ public class FastDOReader implements DOReader
     ResultSet rs = null;
     String  query =
         "SELECT "
-        + "DigitalObject.DO_Label "
+        + "do.doLabel "
         + "FROM "
-        + "DigitalObject "
+        + "do "
         + "WHERE "
-        + "DigitalObject.DO_PID=\'" + PID + "\';";
+        + "do.doPID=\'" + PID + "\';";
     if (debug) s_server.logFinest("LocatPIDQuery: " + query);
 
     try
