@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectExistsException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ObjectNotFoundException;
@@ -25,6 +26,7 @@ import fedora.server.errors.StreamReadException;
 import fedora.server.errors.StreamWriteException;
 import fedora.server.errors.ValidationException;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
+import fedora.server.storage.replication.DOReplicator;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
@@ -298,10 +300,12 @@ public class DefinitiveDOWriter
      * @param logMessage An explanation of the change(s).
      */
     public void commit(String logMessage)
-            throws StorageException {
+            throws ServerException {
         assertNotRemoved();
         assertNotInvalidated();
+/*
         if (save()) {
+*/
             AuditRecord a=new AuditRecord();
             a.id="REC1024";
             a.processType="API-M"; 
@@ -312,10 +316,37 @@ public class DefinitiveDOWriter
             m_obj.getAuditRecords().add(a);
             
             // replicate
+
+            try {
+                if (m_obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
+                    m_mgr.getServer().logInfo("Attempting replication as bdef object: " + m_obj.getPid());
+                    DefinitiveBDefReader reader=new DefinitiveBDefReader(m_obj.getPid());
+                    m_mgr.getServer().logInfo("Got a definitiveBDefReader...");
+                    new DOReplicator().replicateBehaviorDefinitionObject(reader); 
+                    m_mgr.getServer().logInfo("Finished replication as bdef object: " + m_obj.getPid());
+                } else if (m_obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
+                    m_mgr.getServer().logInfo("Attempting replication as bmech object: " + m_obj.getPid());
+                    DefinitiveBMechReader reader=new DefinitiveBMechReader(m_obj.getPid());
+                    m_mgr.getServer().logInfo("Got a definitiveBMechReader...");
+                    new DOReplicator().replicateBehaviorMechanismObject(reader); 
+                    m_mgr.getServer().logInfo("Finished replication as bmech object: " + m_obj.getPid());
+                } else {
+                    m_mgr.getServer().logInfo("Attempting replication as normal object: " + m_obj.getPid());
+                    DefinitiveDOReader reader=new DefinitiveDOReader(m_obj.getPid());
+                    m_mgr.getServer().logInfo("Got a definitiveDOReader...");
+                    new DOReplicator().replicateDO(reader); 
+                    m_mgr.getServer().logInfo("Finished replication as normal object: " + m_obj.getPid());
+                }
+            } catch (ServerException se) {
+                throw se;
+            } catch (Throwable th) {
+                throw new GeneralException("Replicator returned error: (" + th.getClass().getName() + ") - " + th.getMessage());
+            }
+            
             
             // reflect changes from temp copy to perm copy
-            m_pendingCommit=false;
-        }
+//            m_pendingCommit=false;
+//        }
     }
 
     /**

@@ -434,9 +434,14 @@ public class DefaultDOManager
         if (cachedObjectRequired(context)) {
             throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
         } else {
+            // write it to temp, as "temp-ingest": FIXME: temp-ingest stuff is temporary, and not threadsafe
+            getTempStore().add("temp-ingest", in);
+            InputStream in2=getTempStore().retrieve("temp-ingest");
+            
             // deserialize it first
             BasicDigitalObject obj=new BasicDigitalObject();
-            m_translator.deserialize(in, obj, format, encoding);
+            m_translator.deserialize(in2, obj, format, encoding);
+            InputStream in3=getTempStore().retrieve("temp-ingest");
             // do we need to generate a pid?
             if (newPid) {
                getServer().logFinest("Ingesting client wants a new PID.");
@@ -469,7 +474,11 @@ public class DefaultDOManager
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
             ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
-            getPermanentStore().add(obj.getPid(), newIn); 
+            // getPermanentStore().add(obj.getPid(), newIn); 
+            getPermanentStore().add(obj.getPid(), in3); 
+            InputStream in4=getTempStore().retrieve("temp-ingest");
+            getTempStore().add(obj.getPid(), in4);
+            getTempStore().remove("temp-ingest");
             
              
             // then get the writer

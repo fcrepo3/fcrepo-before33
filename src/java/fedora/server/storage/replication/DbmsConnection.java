@@ -14,6 +14,7 @@ import java.sql.*;
 import java.io.*;
 import fedora.server.storage.*;
 import fedora.server.Server;
+import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.InitializationException;
 
 
@@ -34,7 +35,7 @@ public class DbmsConnection {
 	public DbmsConnection() throws Exception {
 		initDB();
 		// Debug statement
-		System.out.println("connectionPool: " + connectionPool);
+		System.out.println("DbmsConnection constructor: using connectionPool: " + connectionPool);
 	}
 
 	public Connection getConnection() throws Exception {
@@ -78,6 +79,9 @@ public class DbmsConnection {
             //String id = s_server.getModule("fedora.server.storage.DOManager").
             //            getParameter("fast_db");
             //FIXME!! - temporary fix until problem with above line is resolved
+            
+/*            
+            
             String id = "mysql1";
             System.out.println("id: "+id);
             System.out.flush();
@@ -110,6 +114,24 @@ public class DbmsConnection {
             // initialize connection pool
             connectionPool = new ConnectionPool(driver, url, username, password,
                 initConnections, maxConnections, true);
+*/
+
+        ConnectionPoolManager cpmgr=(ConnectionPoolManager) s_server.getModule(
+                "fedora.server.storage.ConnectionPoolManager");
+        if (cpmgr==null) {
+            throw new SQLException( "Server module not loaded: " 
+                    + "fedora.server.storage.ConnectionPoolManager");
+        } else {
+            try {
+                connectionPool=cpmgr.getPool();         
+            } catch (ConnectionPoolNotFoundException cpnfe) { 
+                throw new SQLException("Can't get default pool from cpmgr.");
+            }
+        }  
+
+
+
+
           } catch (SQLException sqle)
           {
             // Problem with connection pool and/or database
@@ -117,7 +139,7 @@ public class DbmsConnection {
             ConnectionPool connectionPool = null;
             connectionPool = null;
             // FIXME!! - Decide on Exception handling
-            Exception e = new Exception("");
+            Exception e = new Exception("SQLException in DbmsConnection: " + sqle.getMessage());
             e.initCause(sqle);
             throw e;
           }

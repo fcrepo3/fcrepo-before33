@@ -54,7 +54,7 @@ public abstract class Module
      *
      * @returns The <code>Server</code> instance.
      */
-    protected Server getServer() {
+    public Server getServer() {
         return m_server;
     }
 

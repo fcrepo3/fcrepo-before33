@@ -64,11 +64,11 @@ public class DefaultManagement
 
     public String createObject(Context context) 
             throws ServerException {
-        getServer().logFinest("Entered DefaultManagement.ingestObject");
+        getServer().logFinest("Entered DefaultManagement.createObject");
         DOWriter w=m_manager.newWriter(context);
         String pid=w.GetObjectPID();
         m_manager.releaseWriter(w);
-        getServer().logFinest("Exiting DefaultManagement.ingestObject");
+        getServer().logFinest("Exiting DefaultManagement.createObject");
         return pid;
     }
 
@@ -77,6 +77,7 @@ public class DefaultManagement
         getServer().logFinest("Entered DefaultManagement.ingestObject");
         DOWriter w=m_manager.newWriter(context, serialization, format, encoding, newPid);
         String pid=w.GetObjectPID();
+        w.commit("Ingested via ingestObject, committed immediately for level0 test.");
         m_manager.releaseWriter(w);
         getServer().logFinest("Exiting DefaultManagement.ingestObject");
         return pid;

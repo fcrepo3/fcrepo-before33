@@ -247,6 +247,15 @@ public class METSDODeserializer
                 m_obj.setPid(grab(a, M, "OBJID"));
                 m_obj.setLabel(grab(a, M, "LABEL"));
                 m_obj.setContentModelId(grab(a, M, "PROFILE"));
+                String objType=grab(a, M, "TYPE");
+                if (objType==null) { objType="FedoraObject"; }
+                if (objType.equalsIgnoreCase("FedoraBDefObject")) {
+                    m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
+                } else if (objType.equalsIgnoreCase("FedoraBMechObject")) {
+                    m_obj.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
+                } else {
+                    m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
+                }
             } else if (localName.equals("metsHdr")) {
                 m_obj.setCreateDate(DateUtility.convertStringToDate(
                         grab(a, M, "CREATEDATE")));

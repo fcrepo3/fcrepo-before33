@@ -23,6 +23,14 @@ import java.util.Map;
  */
 public interface DigitalObject {
 
+    public static int FEDORA_OBJECT=0;
+    public static int FEDORA_BDEF_OBJECT=1;    
+    public static int FEDORA_BMECH_OBJECT=2;
+
+    public int getFedoraObjectType();
+
+    public void setFedoraObjectType(int t);
+
     /**
      * Gets the pid.
      *

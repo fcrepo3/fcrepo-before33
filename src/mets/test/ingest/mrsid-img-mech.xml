@@ -189,7 +189,7 @@
 						<wsdl:service name="MrSID">
 							<!-- THIS IS THE HTTP PORT -->
 							<wsdl:port name="MrSID-impl" binding="HTTP-MrSID">
-								<http:address location="http://dl.lib.virginia.edu/mrsid/bin/"/>
+								<http:address location="http://iris.lib.virginia.edu/mrsid/bin/"/>
 							</wsdl:port>
 						</wsdl:service>
 						<!-- ******************************************************************************************************************** -->

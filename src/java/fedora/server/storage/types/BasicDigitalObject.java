@@ -17,6 +17,7 @@ import java.util.Set;
 public class BasicDigitalObject
         implements DigitalObject {
 
+    private int m_fedoraObjectType;
     private String m_pid;
     private String m_state;
     private String m_label;
@@ -32,6 +33,14 @@ public class BasicDigitalObject
         m_auditRecords=new ArrayList();
         m_datastreams=new HashMap();
         m_disseminators=new HashMap();
+    }
+
+    public int getFedoraObjectType() {
+        return m_fedoraObjectType;
+    }
+
+    public void setFedoraObjectType(int t) {
+        m_fedoraObjectType=t;
     }
 
     public String getPid() {
