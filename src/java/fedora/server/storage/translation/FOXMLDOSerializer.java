@@ -119,9 +119,12 @@ public class FOXMLDOSerializer
         if (obj.getPid()==null || obj.getPid().equals("")) {
             throw new ObjectIntegrityException("Object must have a pid.");
         }
-		String uri = "info:fedora/" + obj.getPid();
-		buf.append(indent + "PID=\"" + obj.getPid() 
-				+ "\" FEDORA_URI=\"" + uri + "\"");
+		String objectURIAttr="";
+		if (m_transContext==DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC){
+			objectURIAttr=" FEDORA_URI=\"" + "info:fedora/" 
+			+ obj.getPid() + "\"";
+		}
+		buf.append(indent + "PID=\"" + obj.getPid() + "\"" + objectURIAttr);
         buf.append(">\n");
     }
 
@@ -217,9 +220,14 @@ public class FOXMLDOSerializer
 					if (vds.DSFormatURI!=null && !vds.DSFormatURI.equals("")) {
 						formatURIAttr=" FORMAT_URI=\"" + vds.DSFormatURI + "\"";
 					}
+					String dsURIAttr="";
+					if (m_transContext==DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC){
+						dsURIAttr=" FEDORA_URI=\"" + "info:fedora/" 
+						+ obj.getPid() + "/" + vds.DatastreamID + "\"";
+					}
 					buf.append("    <" + FOXML_PREFIX 
 						+ ":datastream ID=\"" + vds.DatastreamID + "\""
-						+ " FEDORA_URI=\"" + "info:fedora/" + obj.getPid() + "/" + vds.DatastreamID + "\"" 
+						+ dsURIAttr 
 						+ altIdsAttr
 						+ " STATE=\"" + vds.DSState + "\""
 						+ " MIMETYPE=\"" + vds.DSMIME + "\""
@@ -283,12 +291,18 @@ public class FOXMLDOSerializer
 
 	private void appendAudit(DigitalObject obj, StringBuffer buf, String encoding) 
 			throws ObjectIntegrityException {
+
 		if (obj.getAuditRecords().size()>0) {
 			// Audit trail datastream re-created from audit records.
 			// There is only ONE version of the audit trail datastream!
+			String dsURIAttr="";
+			if (m_transContext==DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC){
+				dsURIAttr=" FEDORA_URI=\"" + "info:fedora/" 
+				+ obj.getPid() + "/AUDIT" + "\"";
+			}
 			buf.append("    <" + FOXML_PREFIX 
 				+ ":datastream ID=\"" + "AUDIT" + "\"" 
-				+ " FEDORA_URI=\"" + "info:fedora/" + obj.getPid() + "/AUDIT" + "\""
+				+ dsURIAttr
 				+ " STATE=\"" + "A" + "\""
 				+ " MIMETYPE=\"" + "text/xml" + "\""
 				+ " FORMAT_URI=\"" + "info:fedora/fedora-system:format/xml.fedora.audit" + "\""
