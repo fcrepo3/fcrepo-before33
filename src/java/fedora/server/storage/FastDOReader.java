@@ -28,7 +28,8 @@ import java.util.Properties;
 import java.util.Vector;
 
 // fedora imports
-import fedora.server.access.MIMETypedStream;
+//import fedora.server.access.MIMETypedStream;
+import fedora.server.storage.types.MIMETypedStream;
 
 
 public class FastDOReader extends DefinitiveDOReader implements DisseminatingDOReader
@@ -53,12 +54,11 @@ private static final String dbPropsFile = "db.properties";
     Vector queryResults = new Vector();
     String query = "SELECT DISTINCT "+
         "DigitalObject.DO_PID,"+
-        "Disseminator.DISS_Label,"+
+        "Disseminator.DISS_ID,"+
         "Method.METH_Name,"+
         "MechanismImpl.MECHImpl_Address_Location,"+
         "MechanismImpl.MECHImpl_Operation_Location,"+
         "MechanismImpl.MECHImpl_Protocol_Type,"+
-        "MechanismImpl.MECHImpl_Return_Type,"+
         "DigitalObjectBindingMap.DOBINDINGMap_DS_Location, "+
         "DatastreamBindingKey.DSBindingKey_Name "+
         " FROM "+
