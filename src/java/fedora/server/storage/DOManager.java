@@ -91,26 +91,6 @@ public interface DOManager
     public abstract DOWriter getIngestWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException;
 
-    /**
-     * Gets a list of object PIDs (accessible in the given context) with the
-     * given criteria.  Any parameter whose name ends with "Pattern" may
-     * use the * and ? wildcards.  A parameter given as null means "any".
-     *
-     * @param context The context of this request.
-     * @param pidPattern The pid pattern.
-     * @param foType The Fedora object type.
-     * @param ownerIdPattern The ownerId pattern.
-     * @param state The object state.
-     * @param labelPattern The label pattern.
-     * @param contentModelIdPattern The content model pattern.
-     * @param createDateMin The object creation date beginning range.
-     * @param createDateMax The object creation date ending range.
-     * @param lastModDateMin The object modification date beginning range.
-     * @param lastModDateMax The object modification date ending range.
-     * @return a list of object PIDs.
-     * @throws ServerException if an error occurs in getting the list of PIDs.
-     */
-
     public FieldSearchResult findObjects(Context context,
             String[] resultFields, int maxResults, FieldSearchQuery query)
             throws ServerException;
