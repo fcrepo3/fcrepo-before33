@@ -386,17 +386,20 @@ public class DatastreamsPane
             addRows(left, right, grid, commonPane);
 
             // XPANE: need metadata class and mdType
-            left=new JComponent[] { new JLabel("Classification"),
-                                    new JLabel("Metadata Type") };
-            m_mdClassComboBox=new JComboBox(new String[] { "descriptive",
+            left=new JComponent[] { new JLabel("METS Classification (optional)"),
+                                    new JLabel("METS Metadata Type (optional)") };
+            m_mdClassComboBox=new JComboBox(new String[] { "UNSPECIFIED",
+														   "technical",
                                                            "digital provenance",
                                                            "source", "rights",
-                                                           "technical" });
+                                                           "descriptive" });
+			m_mdClassComboBox.setSelectedIndex(0);
             Administrator.constrainHeight(m_mdClassComboBox);
-            m_mdTypeComboBox=new JComboBox(new String[] { "DC", "DDI", "EAD",
+            m_mdTypeComboBox=new JComboBox(new String[] { "UNSPECIFIED", "DC", "DDI", "EAD",
                                                           "FGDC", "LC_AV", "MARC",
                                                           "NISOIMG", "TEIHDR",
                                                           "VRA" });
+            m_mdTypeComboBox.setSelectedIndex(0);
             Administrator.constrainHeight(m_mdTypeComboBox);
             m_mdTypeComboBox.setEditable(true);
             m_lastSelectedMimeType=(String) m_mimeComboBox.getSelectedItem();
@@ -627,6 +630,9 @@ public class DatastreamsPane
                     if (m_controlGroup.equals("X")) {
                         // m_mdClassComboBox
                         mdClass=(String) m_mdClassComboBox.getSelectedItem();
+                        // if mdClass is not specified, default it to technical for
+                        // METS legacy purposes.
+                        if (mdClass.equals("UNSPECIFIED")) {mdClass="technical";}
                         // m_mdTypeComboBox
                         mdType=(String) m_mdTypeComboBox.getSelectedItem();
                         // m_xEditor
