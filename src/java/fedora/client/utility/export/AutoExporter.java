@@ -158,6 +158,7 @@ public class AutoExporter {
 
 	public static void validateFormat(String format)
 		throws IOException {
+	    if (format==null) return;
 			if (!format.equals("foxml1.0") && 
 				!format.equals("metslikefedora1") && 
 				!format.equals("default")) {
