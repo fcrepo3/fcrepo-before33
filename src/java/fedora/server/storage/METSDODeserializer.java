@@ -127,8 +127,10 @@ public class METSDODeserializer
     
     private int m_queryBehavior;
     
-    public METSDODeserializer() {
-    System.out.println("Mets do deserializer constructed.");
+    public METSDODeserializer() 
+            throws FactoryConfigurationError, ParserConfigurationException,
+            SAXException, UnsupportedEncodingException {
+        this("UTF-8", false, QUERY_NEVER);
     }
     
     /**
@@ -171,7 +173,7 @@ public class METSDODeserializer
     }
     
     public void deserialize(InputStream in, DigitalObject obj, String encoding) 
-            throws ObjectIntegrityException, StreamIOException {
+            throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
         m_obj=obj;
         m_rootElementFound=false;
         m_dsId=null;
@@ -497,7 +499,7 @@ public class METSDODeserializer
                         ds.xmlContent=m_dsXMLBuffer.toString().getBytes(
                                 m_characterEncoding);
                     } catch (UnsupportedEncodingException uee) {
-                      // won't happen -- this was checked in the constructor
+                      System.out.println("oops..encoding not supported, this could have been caught earlier.");
                     }
                     // set the attrs common to all datastreams
                     ds.DatastreamID=m_dsId;

@@ -129,7 +129,12 @@ public class METSDOSerializer
      * Serializes the given Fedora object to an OutputStream.
      */
     public void serialize(DigitalObject obj, OutputStream out, String encoding) 
-            throws ObjectIntegrityException, StreamIOException {
+            throws ObjectIntegrityException, StreamIOException,
+            UnsupportedEncodingException {
+        m_characterEncoding=encoding;
+        StringBuffer buf1=new StringBuffer();
+        buf1.append("test");
+        byte[] temp=buf1.toString().getBytes(m_characterEncoding);
         try {
             StringBuffer buf=new StringBuffer();
             m_xlinkPrefix="xlink"; // default if can't figger it
@@ -418,9 +423,9 @@ public class METSDOSerializer
             buf.append("</mets>");
             out.write(buf.toString().getBytes(m_characterEncoding));
             out.flush();
+        } catch (UnsupportedEncodingException uee) {
+            throw uee;
         } catch (IOException ioe) {
-            // this could be an unsupportedencodingexception, but it won't be 
-            // because we already checked for that in the constructor
             throw new StreamWriteException("Problem writing to outputstream "
                 + "while serializing to mets: " + ioe.getMessage());
         } finally {

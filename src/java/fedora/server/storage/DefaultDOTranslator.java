@@ -2,6 +2,7 @@ package fedora.server.storage;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,6 +20,8 @@ public class DefaultDOTranslator
         
     private HashMap m_serializerClassNameMap;
     private HashMap m_deserializerClassNameMap;
+    
+    /** FIXME: not thread safe, but little impact. */
     private Exception m_instex;
         
     public DefaultDOTranslator(Map moduleParameters, Server server, String role)
@@ -37,13 +40,17 @@ public class DefaultDOTranslator
             String paramName=(String) nameIter.next();
             if (paramName.startsWith("serializer_")) {
                 if (newSerializerInstance(getParameter(paramName))==null) {
-                    throw new ModuleInitializationException("Can't instantiate class for format=" + paramName + " : " + m_instex.getMessage(), getRole());
+                    throw new ModuleInitializationException(
+                            "Can't instantiate class for format=" + paramName 
+                            + " : " + m_instex.getMessage(), getRole());
                 }
                 m_serializerClassNameMap.put(paramName.substring(
                         paramName.indexOf("_")+1), getParameter(paramName));
             } else if (paramName.startsWith("deserializer")) {
                 if (newDeserializerInstance(getParameter(paramName))==null) {
-                    throw new ModuleInitializationException("Can't instantiate class for format=" + paramName + " : " + m_instex.getMessage(), getRole());
+                    throw new ModuleInitializationException(
+                            "Can't instantiate class for format=" + paramName 
+                            + " : " + m_instex.getMessage(), getRole());
                 }
                 m_deserializerClassNameMap.put(paramName.substring(
                         paramName.indexOf("_")+1), getParameter(paramName));
@@ -83,16 +90,50 @@ public class DefaultDOTranslator
 
     public void deserialize(InputStream in, DigitalObject out, 
             String format, String encoding)
-//            throws ObjectIntegrityException, StreamIOException, 
-//           UnsupportedTranslationException 
-            {
+            throws ObjectIntegrityException, StreamIOException, 
+            UnsupportedTranslationException {
+        String className=(String) m_deserializerClassNameMap.get(format);
+        if (className==null) {
+            throw new UnsupportedTranslationException("No deserializer "
+                    + "registered for format " + format);
+        }
+        DODeserializer d=newDeserializerInstance(className);
+        if (d==null) {
+            throw new UnsupportedTranslationException("Problem getting "
+                    + "deserializer for format " + format + " (" + className 
+                    + ") : " + m_instex.getClass().getName() + " : "
+                    + m_instex.getMessage());
+        }
+        try {
+            d.deserialize(in, out, encoding);
+        } catch (UnsupportedEncodingException uee) {
+            throw new UnsupportedTranslationException("Encoding, "
+                    + encoding + " is not understood/supported by the JVM.");
+        }
     }
     
     public void serialize(DigitalObject in, OutputStream out, 
             String format, String encoding)
-//            throws ObjectIntegrityException, StreamIOException, 
-//            UnsupportedTranslationException 
-            {
+            throws ObjectIntegrityException, StreamIOException, 
+            UnsupportedTranslationException {
+        String className=(String) m_serializerClassNameMap.get(format);
+        if (className==null) {
+            throw new UnsupportedTranslationException("No serializer "
+                    + "registered for format " + format);
+        }
+        DOSerializer s=newSerializerInstance(className);
+        if (s==null) {
+            throw new UnsupportedTranslationException("Problem getting "
+                    + "serializer for format " + format + " (" + className 
+                    + ") : " + m_instex.getClass().getName() + " : "
+                    + m_instex.getMessage());
+        }
+        try {
+            s.serialize(in, out, encoding);
+        } catch (UnsupportedEncodingException uee) {
+            throw new UnsupportedTranslationException("Encoding, "
+                    + encoding + " is not understood/supported by the JVM.");
+        }
     }
 
 }
