@@ -87,11 +87,19 @@ public class DefaultManagement
 
     public InputStream exportObject(Context context, String pid, String format, String encoding) { return null; }
 
-    public void withdrawObject(Context context, String pid) { }
+    public void withdrawObject(Context context, String pid, String logMessage) { }
 
-    public void deleteObject(Context context, String pid) { }
+    public void deleteObject(Context context, String pid, String logMessage) { }
 
-    public void purgeObject(Context context, String pid) { }
+    public void purgeObject(Context context, String pid, String logMessage) 
+            throws ServerException { 
+        logFinest("Entered DefaultManagement.purgeObject");
+        // FIXME: This should get a writer and call remove, then commit instead...but this works for now
+        fedora.server.storage.types.BasicDigitalObject obj=new fedora.server.storage.types.BasicDigitalObject();
+        obj.setPid(pid);
+        ((fedora.server.storage.DefaultDOManager) m_manager).doCommit(context, obj, logMessage, true);
+        logFinest("Exiting DefaultManagement.purgeObject");
+    }
 
     public void obtainLock(Context context, String pid) { }
 

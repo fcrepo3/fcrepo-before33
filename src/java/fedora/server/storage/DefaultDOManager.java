@@ -414,6 +414,8 @@ public class DefaultDOManager
                 // deal with this better, but for now this works
             }
             getPermanentStore().remove(obj.getPid());
+            // Remove it from the registry
+            unregisterObject(obj.getPid());
             // Set entry for this object to "D" in the replication jobs table
             addReplicationJob(obj.getPid(), true);
             // tell replicator to do deletion
@@ -896,6 +898,7 @@ public class DefaultDOManager
     private void registerObject(String pid, int fedoraObjectType, String userId)
             throws StorageDeviceException {
         Connection conn=null;
+        Statement st=null;
         String foType="O";
         if (fedoraObjectType==DigitalObject.FEDORA_BDEF_OBJECT) {
             foType="D";
@@ -907,12 +910,42 @@ public class DefaultDOManager
             String query="INSERT INTO ObjectRegistry (DO_PID, FO_TYPE, LockingUser) "
                        + "VALUES ('" + pid + "', '" + foType +"', '"+ userId +"')";
             conn=m_connectionPool.getConnection();
-            Statement s=conn.createStatement();
-            s.executeUpdate(query);
+            st=conn.createStatement();
+            st.executeUpdate(query);
         } catch (SQLException sqle) {
-            throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+            throw new StorageDeviceException("Unexpected error from SQL database while registering object: " + sqle.getMessage());
         } finally {
             if (conn!=null) {
+                if (st!=null) {
+                    try {
+                        st.close();
+                    } catch (Exception e) { }
+                }
+                m_connectionPool.free(conn);
+            }
+        }
+    }
+
+    /**
+     * Removes an object from the object registry.
+     */
+    private void unregisterObject(String pid)
+            throws StorageDeviceException {
+        Connection conn=null;
+        Statement st=null;
+        try {
+            conn=m_connectionPool.getConnection();
+            st=conn.createStatement();
+            st.executeUpdate("DELETE FROM ObjectRegistry WHERE DO_PID='" + pid + "'");
+        } catch (SQLException sqle) {
+            throw new StorageDeviceException("Unexpected error from SQL database while unregistering object: " + sqle.getMessage());
+        } finally {
+            if (conn!=null) {
+                if (st!=null) {
+                    try {
+                        st.close();
+                    } catch (Exception e) { }
+                }
                 m_connectionPool.free(conn);
             }
         }
@@ -924,8 +957,8 @@ public class DefaultDOManager
         Connection conn=null;
         try {
             String query="SELECT DO_PID "
-                       + "FROM ObjectRegistry "
-                       + "WHERE SystemVersion > 0"; // <- ignore new,uncommitted
+                       + "FROM ObjectRegistry";
+               //        + " WHERE SystemVersion > 0"; // <- ignore new,uncommitted
             if (foType!=null) {
                 query=query+" AND FO_TYPE = '" + foType + "'";
             }

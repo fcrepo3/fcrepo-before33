@@ -24,11 +24,11 @@ public interface Management {
 
     public InputStream exportObject(Context context, String pid, String format, String encoding) throws ServerException;
 
-    public void withdrawObject(Context context, String pid) throws ServerException;
+    public void withdrawObject(Context context, String pid, String logMessage) throws ServerException;
 
-    public void deleteObject(Context context, String pid) throws ServerException;
+    public void deleteObject(Context context, String pid, String logMessage) throws ServerException;
 
-    public void purgeObject(Context context, String pid) throws ServerException;
+    public void purgeObject(Context context, String pid, String logMessage) throws ServerException;
 
     public void obtainLock(Context context, String pid) throws ServerException;
 

@@ -201,6 +201,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public void purgeObject(String PID, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
+        try {
+            s_management.purgeObject(s_context, PID, logMessage);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            AxisUtility.throwFault(se);
+        }
     }
 
     public void obtainLock(String PID) throws java.rmi.RemoteException {

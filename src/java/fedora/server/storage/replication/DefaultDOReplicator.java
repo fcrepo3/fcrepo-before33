@@ -53,7 +53,8 @@ public class DefaultDOReplicator
             m_pool=mgr.getPool();
         } catch (ServerException se) {
             throw new ModuleInitializationException(
-                    "Error getting default pool: " + se.getMessage(), getRole());
+                    "Error getting default pool: " + se.getMessage(), 
+                    getRole());
         }
     }
     
@@ -81,17 +82,22 @@ public class DefaultDOReplicator
             // Insert Method rows
             bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection, bDefPID);
             if (bDefDBID == null) {
-                throw new ReplicationException("BehaviorDefinition row doesn't exist for PID: " + bDefPID);
+                throw new ReplicationException(
+                    "BehaviorDefinition row doesn't exist for PID: " 
+                    + bDefPID);
             }
             behaviorDefs = bDefReader.GetBehaviorMethods(null);
             for (int i=0; i<behaviorDefs.length; ++i) {
-                m_ri.insertMethodRow(connection, bDefDBID, behaviorDefs[i].methodName, behaviorDefs[i].methodLabel);
+                m_ri.insertMethodRow(connection, bDefDBID, 
+                        behaviorDefs[i].methodName, 
+                        behaviorDefs[i].methodLabel);
             }
             connection.commit();
         } catch (ReplicationException re) {
             throw re;
         } catch (ServerException se) {
-            throw new ReplicationException("Replication exception caused by ServerException - " + se.getMessage());
+            throw new ReplicationException("Replication exception caused by "
+                    + "ServerException - " + se.getMessage());
         } finally {
             if (connection!=null) {
                 connection.rollback();
@@ -156,7 +162,8 @@ public class DefaultDOReplicator
                 ordinality_flag = 
                         dsBindSpec.dsBindRules[i].ordinality ? "true" : "false";
                 // Convert from type int to type String
-                cardinality = Integer.toString(dsBindSpec.dsBindRules[i].maxNumBindings);
+                cardinality = Integer.toString(
+                        dsBindSpec.dsBindRules[i].maxNumBindings);
     
                 m_ri.insertDataStreamBindingSpecRow(connection, 
                         bMechDBID, dsBindSpec.dsBindRules[i].bindingKeyName, 
@@ -165,16 +172,18 @@ public class DefaultDOReplicator
 
                 // Insert DataStreamMIME rows
                 dsBindingKeyDBID = 
-                        m_dl.lookupDataStreamBindingSpecDBID(connection, bMechDBID, 
-                        dsBindSpec.dsBindRules[i].bindingKeyName);
+                        m_dl.lookupDataStreamBindingSpecDBID(connection, 
+                        bMechDBID, dsBindSpec.dsBindRules[i].bindingKeyName);
                 if (dsBindingKeyDBID == null) {
                         throw new ReplicationException(
-                            "DataStreamBindingSpec row doesn't exist for bMechDBID: "
-                            + bMechDBID + ", binding key name: " + 
-                            dsBindSpec.dsBindRules[i].bindingKeyName);
+                            "DataStreamBindingSpec row doesn't exist for "
+                            + "bMechDBID: " + bMechDBID 
+                            + ", binding key name: " 
+                            + dsBindSpec.dsBindRules[i].bindingKeyName);
                 }
 
-                for (int j=0; j<dsBindSpec.dsBindRules[i].bindingMIMETypes.length; 
+                for (int j=0; 
+                        j<dsBindSpec.dsBindRules[i].bindingMIMETypes.length; 
                         ++j) {
                     m_ri.insertDataStreamMIMERow(connection, 
                     dsBindingKeyDBID,
@@ -187,10 +196,9 @@ public class DefaultDOReplicator
 
             // Insert MechanismImpl rows
             for (int i=0; i<behaviorBindings.length; ++i) {
-                behaviorBindingsEntry = (MethodDefOperationBind)behaviorBindings[i];
+                behaviorBindingsEntry = 
+                        (MethodDefOperationBind)behaviorBindings[i];
                 if (!behaviorBindingsEntry.protocolType.equals("HTTP")) {
-                    // Debug statement
-                    // System.out.println("Ignoring non HTTP protocol: " + behaviorBindingsEntry.protocolType + "i=" + i);
                     // For the time being, ignore bindings other than HTTP.
                     continue;
                 }
@@ -198,16 +206,19 @@ public class DefaultDOReplicator
                 methodDBID = m_dl.lookupMethodDBID(connection, bDefDBID, 
                         behaviorBindingsEntry.methodName);
                 if (methodDBID == null) {
-                    throw new ReplicationException("Method row doesn't exist for "
-                           + "method name: " + behaviorBindingsEntry.methodName);
+                    throw new ReplicationException("Method row doesn't "
+                           + "exist for method name: " 
+                           + behaviorBindingsEntry.methodName);
                 }
             
                 for (int j=0; j<dsBindSpec.dsBindRules.length; ++j) {
                     dsBindingKeyDBID =
-                            m_dl.lookupDataStreamBindingSpecDBID(connection, bMechDBID, 
+                            m_dl.lookupDataStreamBindingSpecDBID(connection, 
+                            bMechDBID, 
                             dsBindSpec.dsBindRules[j].bindingKeyName);
                     if (dsBindingKeyDBID == null) {
-                            throw new ReplicationException("DataStreamBindingSpec "
+                            throw new ReplicationException(
+                                    "DataStreamBindingSpec "
                                     + "row doesn't exist for bMechDBID: "
                                     + bMechDBID + ", binding key name: " 
                                     + dsBindSpec.dsBindRules[j].bindingKeyName);
@@ -222,7 +233,9 @@ public class DefaultDOReplicator
         } catch (ReplicationException re) {
             throw re;
         } catch (ServerException se) {
-            throw new ReplicationException("Replication exception caused by ServerException - " + se.getMessage());
+            throw new ReplicationException(
+                    "Replication exception caused by ServerException - " 
+                    + se.getMessage());
         } finally {
             if (connection!=null) {
                 connection.rollback();
@@ -233,14 +246,14 @@ public class DefaultDOReplicator
     }
 
     /**
-    * 
-    * Replicates a Fedora data object.
-    *
-    * @param doReader data object reader
-    * @exception ReplicationException replication processing error
-    * @exception SQLException JDBC, SQL error
-    */
-    public void replicate(DOReader doReader) throws ReplicationException, SQLException {
+     * Replicates a Fedora data object.
+     *
+     * @param doReader data object reader
+     * @exception ReplicationException replication processing error
+     * @exception SQLException JDBC, SQL error
+     */
+    public void replicate(DOReader doReader) 
+            throws ReplicationException, SQLException {
         Connection connection=null;
         try {
             DSBindingMapAugmented[] allBindingMaps;
@@ -268,70 +281,102 @@ public class DefaultDOReplicator
     
             doDBID = m_dl.lookupDigitalObjectDBID(connection, doPID);
             if (doDBID == null) {
-                throw new ReplicationException("DigitalObject row doesn't exist for PID: " + doPID);
+                throw new ReplicationException("DigitalObject row doesn't "
+                        + "exist for PID: " + doPID);
             }
 
             disseminators = doReader.GetDisseminators(null);
             for (int i=0; i<disseminators.length; ++i) {
-                bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection, disseminators[i].bDefID);
+                bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection, 
+                        disseminators[i].bDefID);
                 if (bDefDBID == null) {
-                    throw new ReplicationException("BehaviorDefinition row doesn't exist for PID: " + disseminators[i].bDefID);
+                    throw new ReplicationException("BehaviorDefinition row "
+                            + "doesn't exist for PID: " 
+                            + disseminators[i].bDefID);
                 }
-                bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection,  disseminators[i].bMechID);
+                bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection, 
+                        disseminators[i].bMechID);
                 if (bMechDBID == null) {
-                    throw new ReplicationException("BehaviorMechanism row doesn't exist for PID: " + disseminators[i].bMechID);
+                    throw new ReplicationException("BehaviorMechanism row "
+                            + "doesn't exist for PID: " 
+                            + disseminators[i].bMechID);
                 }
 
                 // Insert Disseminator row if it doesn't exist.
-                dissDBID = m_dl.lookupDisseminatorDBID(connection, bDefDBID, bMechDBID, disseminators[i].dissID);
+                dissDBID = m_dl.lookupDisseminatorDBID(connection, bDefDBID, 
+                        bMechDBID, disseminators[i].dissID);
                 if (dissDBID == null) {
                     // Disseminator row doesn't exist, add it.
                     m_ri.insertDisseminatorRow(connection, bDefDBID, bMechDBID, 
                     disseminators[i].dissID, disseminators[i].dissLabel);
-                    dissDBID = m_dl.lookupDisseminatorDBID(connection, bDefDBID, bMechDBID, disseminators[i].dissID);
+                    dissDBID = m_dl.lookupDisseminatorDBID(connection, bDefDBID, 
+                            bMechDBID, disseminators[i].dissID);
                     if (dissDBID == null) {
-                        throw new ReplicationException("Disseminator row doesn't exist for PID: " + disseminators[i].dissID);
+                        throw new ReplicationException("Disseminator row "
+                                + "doesn't exist for PID: " 
+                                + disseminators[i].dissID);
                     }
                 }
 
                 // Insert DigitalObjectDissAssoc row
-                m_ri.insertDigitalObjectDissAssocRow(connection, doDBID, dissDBID);
+                m_ri.insertDigitalObjectDissAssocRow(connection, doDBID, 
+                        dissDBID);
             }
 
             allBindingMaps = doReader.GetDSBindingMaps(null);
             for (int i=0; i<allBindingMaps.length; ++i) {
-                bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection,  allBindingMaps[i].dsBindMechanismPID);
+                bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection, 
+                        allBindingMaps[i].dsBindMechanismPID);
                 if (bMechDBID == null) {
-                    throw new ReplicationException("BehaviorMechanism row doesn't exist for PID: " + allBindingMaps[i].dsBindMechanismPID);
+                    throw new ReplicationException("BehaviorMechanism row "
+                            + "doesn't exist for PID: " 
+                            + allBindingMaps[i].dsBindMechanismPID);
                 }
      
                 // Insert DataStreamBindingMap row if it doesn't exist.
-                bindingMapDBID = m_dl.lookupDataStreamBindingMapDBID(connection, bMechDBID, 
-                        allBindingMaps[i].dsBindMapID);
+                bindingMapDBID = m_dl.lookupDataStreamBindingMapDBID(connection, 
+                        bMechDBID, allBindingMaps[i].dsBindMapID);
                 if (bindingMapDBID == null) {
                     // DataStreamBinding row doesn't exist, add it.
                     m_ri.insertDataStreamBindingMapRow(connection, bMechDBID, 
                     allBindingMaps[i].dsBindMapID, 
                     allBindingMaps[i].dsBindMapLabel);
-                    bindingMapDBID = m_dl.lookupDataStreamBindingMapDBID(connection, bMechDBID, allBindingMaps[i].dsBindMapID);
+                    bindingMapDBID = m_dl.lookupDataStreamBindingMapDBID(
+                            connection,bMechDBID,allBindingMaps[i].dsBindMapID);
                     if (bindingMapDBID == null) {
-                        throw new ReplicationException("lookupDataStreamBindingMapDBID row doesn't exist for bMechDBID: " + bMechDBID + ", dsBindingMapID: " + allBindingMaps[i].dsBindMapID);
+                        throw new ReplicationException(
+                                "lookupDataStreamBindingMapDBID row "
+                                + "doesn't exist for bMechDBID: " + bMechDBID 
+                                + ", dsBindingMapID: " 
+                                + allBindingMaps[i].dsBindMapID);
                     }
                 }
  
-                for (int j=0; j<allBindingMaps[i].dsBindingsAugmented.length; ++j) {
-                    dsBindingKeyDBID = m_dl.lookupDataStreamBindingSpecDBID(connection, bMechDBID, allBindingMaps[i].dsBindingsAugmented[j].bindKeyName);
+                for (int j=0; j<allBindingMaps[i].dsBindingsAugmented.length; 
+                        ++j) {
+                    dsBindingKeyDBID = m_dl.lookupDataStreamBindingSpecDBID(
+                            connection, bMechDBID, 
+                            allBindingMaps[i].dsBindingsAugmented[j].
+                            bindKeyName);
                     if (dsBindingKeyDBID == null) {
-                        throw new ReplicationException("lookupDataStreamBindingDBID row doesn't exist for bMechDBID: " + bMechDBID + ", bindKeyName: " + allBindingMaps[i].dsBindingsAugmented[j].bindKeyName + "i=" + i + " j=" + j);
+                        throw new ReplicationException(
+                                "lookupDataStreamBindingDBID row doesn't "
+                                + "exist for bMechDBID: " + bMechDBID 
+                                + ", bindKeyName: " + allBindingMaps[i].
+                                dsBindingsAugmented[j].bindKeyName + "i=" + i 
+                                + " j=" + j);
                     }
                     // Insert DataStreamBinding row
-                    m_ri.insertDataStreamBindingRow(connection, doDBID, dsBindingKeyDBID, 
+                    m_ri.insertDataStreamBindingRow(connection, doDBID, 
+                            dsBindingKeyDBID, 
                             bindingMapDBID, 
                             allBindingMaps[i].dsBindingsAugmented[j].seqNo, 
-                            allBindingMaps[i].dsBindingsAugmented[j].datastreamID,
+                            allBindingMaps[i].dsBindingsAugmented[j].
+                            datastreamID,
                             allBindingMaps[i].dsBindingsAugmented[j].bindLabel,
                             allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
-                            allBindingMaps[i].dsBindingsAugmented[j].DSLocation, "1");
+                            allBindingMaps[i].dsBindingsAugmented[j].DSLocation, 
+                            "1");
  
                 }
             }
@@ -339,13 +384,312 @@ public class DefaultDOReplicator
         } catch (ReplicationException re) {
             throw re;
         } catch (ServerException se) {
-            throw new ReplicationException("Replication exception caused by ServerException - " + se.getMessage());
+            throw new ReplicationException("Replication exception caused by "
+                    + "ServerException - " + se.getMessage());
         } finally {
             if (connection!=null) {
                 connection.rollback();
                 connection.setAutoCommit(true);
                 m_pool.free(connection);
             }
+        }
+    }
+    
+    private ResultSet logAndExecuteQuery(Statement statement, String sql)
+            throws SQLException {
+        logFinest("Executing query: " + sql);
+        return statement.executeQuery(sql);
+    }
+
+    private int logAndExecuteUpdate(Statement statement, String sql)
+            throws SQLException {
+        logFinest("Executing update: " + sql);
+        return statement.executeUpdate(sql);
+    }
+
+    /**
+     * Gets a string suitable for a SQL WHERE clause, of the form 
+     * <b>x=y1 or x=y2 or x=y3</b>...etc, where x is the value from the
+     * column, and y1 is composed of the integer values from the given set.
+     * <p></p>
+     * If the set doesn't contain any items, returns a condition that
+     * always evaluates to false, <b>1=2</b>.
+     */
+    private String inIntegerSetWhereConditionString(String column, 
+            Set integers) {
+        StringBuffer out=new StringBuffer();
+        Iterator iter=integers.iterator();
+        int n=0;
+        while (iter.hasNext()) {
+            if (n>0) {
+                out.append(" OR ");
+            }
+            out.append(column);
+            out.append('=');
+            int i=((Integer) iter.next()).intValue();
+            out.append(i);
+            n++;
+        }
+        if (n>0) {
+            return out.toString();
+        } else {
+            return "1=2";
+        }
+    }
+
+    /**
+     * Deletes all rows pertinent to the given behavior definition object,
+     * if they exist.
+     * <p></p>
+     * Pseudocode:
+     * <ul><pre>
+     * $BDEF_DBID=SELECT BDEF_DBID FROM BehaviorDefinition WHERE BDEF_PID=$PID
+     * DELETE FROM BehaviorDefinition,Method,Parameter 
+     * WHERE BDEF_DBID=$BDEF_DBID
+     * </pre></ul>
+     * 
+     * @throws SQLException If something totally unexpected happened.
+     */
+    private void deleteBehaviorDefinition(Connection connection, String pid) 
+            throws SQLException {
+        logFinest("Entered DefaultDOReplicator.deleteBehaviorDefinition");
+        Statement st=null;
+        try {
+		     st=connection.createStatement();
+            ResultSet results;
+            //
+            // READ
+            //
+            logFinest("Checking BehaviorDefinition table for " + pid + "...");
+            results=logAndExecuteQuery(st, "SELECT BDEF_DBID FROM "
+                    + "BehaviorDefinition WHERE BDEF_PID='" + pid + "'");
+            if (!results.next()) {
+                 // must not be a bdef...exit early
+                 logFinest(pid + " wasn't found in BehaviorDefinition table..."
+                         + "skipping deletion as such.");
+                 return;
+            }
+            int dbid=results.getInt("BDEF_DBID");
+            logFinest(pid + " was found in BehaviorDefinition table (DBID=" 
+                    + dbid + ")");
+            //
+            // WRITE
+            //
+            int rowCount;
+            logFinest("Attempting row deletion from BehaviorDefinition "
+                    + "table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM BehaviorDefinition "
+                    + "WHERE BDEF_DBID=" + dbid);         
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from Method table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM Method WHERE "
+                    + "BDEF_DBID=" + dbid);         
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from Parameter table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM Parameter WHERE "
+                    + "BDEF_DBID=" + dbid);         
+            logFinest("Deleted " + rowCount + " row(s).");
+        } finally {
+            if (st!=null) {
+                try {
+                    st.close();
+                } catch (SQLException sqle) {}
+            }
+            logFinest("Exiting DefaultDOReplicator.deleteBehaviorDefinition");
+        }
+    }
+
+    /**
+     * Deletes all rows pertinent to the given behavior mechanism object,
+     * if they exist.
+     * <p></p>
+     * Pseudocode:
+     * <ul><pre>
+     * $BMECH_DBID, $SMTYPE_DBID=SELECT BMECH_DBID, SMType_DBID 
+     * FROM BehaviorMechanism WHERE BMECH_PID=$PID
+     * BehaviorMechanism
+     * @BKEYIDS=SELECT DSBindingKey_DBID 
+     * FROM DataStreamBindingSpec 
+     * WHERE BMECH_DBID=$BMECH_DBID
+     * DataStreamMIME WHERE DSBindingKey_DBID in @BKEYIDS
+     * StructMapType where SMType_DBID=$SMTYPE_DBID
+     * MechanismImpl 
+     * </pre></ul>
+     *
+     * @throws SQLException If something totally unexpected happened.
+     */
+    private void deleteBehaviorMechanism(Connection connection, String pid) 
+            throws SQLException {
+        logFinest("Entered DefaultDOReplicator.deleteBehaviorMechanism");
+        Statement st=null;
+        try {
+		     st=connection.createStatement();
+            ResultSet results;
+            //
+            // READ
+            //
+            logFinest("Checking BehaviorMechanism table for " + pid + "...");
+            results=logAndExecuteQuery(st, "SELECT BMECH_DBID, SMType_DBID "
+                    + "FROM BehaviorMechanism WHERE BMECH_PID='" + pid + "'");
+            if (!results.next()) {
+                 // must not be a bmech...exit early
+                 logFinest(pid + " wasn't found in BehaviorMechanism table..."
+                         + "skipping deletion as such.");
+                 return;
+            }
+            int dbid=results.getInt("BMECH_DBID");
+            int smtype_dbid=results.getInt("BMECH_DBID");
+            results.close();
+            logFinest(pid + " was found in BehaviorMechanism table (DBID=" 
+                    + dbid + ", SMTYPE_DBID=" + smtype_dbid + ")");
+            logFinest("Getting DSBindingKey_DBID(s) from DataStreamBindingSpec "
+                    + "table...");
+            HashSet dsBindingKeyIds=new HashSet();
+            results=logAndExecuteQuery(st, "SELECT DSBindingKey_DBID from "
+                    + "DataStreamBindingSpec WHERE BMECH_DBID=" + dbid);
+            while (results.next()) {
+                dsBindingKeyIds.add(new Integer(
+                        results.getInt("DSBindingKey_DBID")));
+            }
+            results.close();
+            logFinest("Found " + dsBindingKeyIds.size() 
+                    + " DSBindingKey_DBID(s).");
+            //
+            // WRITE
+            //
+            int rowCount;
+            logFinest("Attempting row deletion from BehaviorMechanism table..");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM BehaviorMechanism "
+                    + "WHERE BMECH_DBID=" + dbid);         
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from DataStreamBindingSpec "
+                    + "table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM "
+                    + "DataStreamBindingSpec WHERE BMECH_DBID=" + dbid);         
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from DataStreamMIME table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM DataStreamMIME WHERE " 
+                    + inIntegerSetWhereConditionString("DSBindingKey_DBID", 
+                    dsBindingKeyIds));         
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from StructMapType table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM StructMapType WHERE "
+                    + "SMType_DBID=" + smtype_dbid);         
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from MechanismImpl table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM MechanismImpl WHERE "
+                    + "BMECH_DBID=" + dbid);         
+            logFinest("Deleted " + rowCount + " row(s).");
+            
+        } finally {
+            if (st!=null) {
+                try {
+                    st.close();
+                } catch (SQLException sqle) {}
+            }
+            logFinest("Exiting DefaultDOReplicator.deleteBehaviorMechanism");
+        }
+    }
+
+    /**
+     * Deletes all rows pertinent to the given digital object (treated as a 
+     * regular data object) if they exist.
+     * <p></p>
+     * Pseudocode:
+     * <ul><pre>
+     * $DO_DBID=SELECT DO_DBID FROM DigitalObject where DO_PID=$PID
+     * @DISSIDS=SELECT DISS_DBID 
+     * FROM DigitalObjectDissAssoc WHERE DO_DBID=$DO_DBID
+     * @BMAPIDS=SELECT BindingMap_DBID 
+     * FROM DataStreamBinding WHERE DO_DBID=$DO_DBID
+     * DigitalObject
+     * DigitalObjectDissAssoc where $DO_DBID=DO_DBID
+     * DataStreamBinding WHERE $DO_DBID=DO_DBID 
+     * Disseminator WHERE DISS_DBID in @DISSIDS
+     * DataStreamBindingMap WHERE BindingMap_DBID in @BMAPIDS
+     * </pre></ul>
+     *
+     * @throws SQLException If something totally unexpected happened.
+     */
+    private void deleteDigitalObject(Connection connection, String pid) 
+            throws SQLException {
+        logFinest("Entered DefaultDOReplicator.deleteDigitalObject");
+        Statement st=null;
+        try {
+		     st=connection.createStatement();
+            ResultSet results;
+            //
+            // READ
+            //
+            logFinest("Checking DigitalObject table for " + pid + "...");
+            results=logAndExecuteQuery(st, "SELECT BDEF_DBID FROM "
+                    + "BehaviorDefinition WHERE BDEF_PID='" + pid + "'");
+            if (!results.next()) {
+                 // must not be a digitalobject...exit early
+                 logFinest(pid + " wasn't found in DigitalObject table..."
+                         + "skipping deletion as such.");
+                 return;
+            }
+            int dbid=results.getInt("DO_DBID");
+            results.close();
+            logFinest(pid + " was found in DigitalObject table (DBID=" 
+                    + dbid + ")");
+            
+            logFinest("Getting DISS_DBID(s) from DigitalObjectDissAssoc "
+                    + "table...");
+            HashSet dissIds=new HashSet();
+            results=logAndExecuteQuery(st, "SELECT DISS_DBID from "
+                    + "DigitalObjectDissAssoc WHERE DO_DBID=" + dbid);
+            while (results.next()) {
+                dissIds.add(new Integer(results.getInt("DISS_DBID")));
+            }
+            results.close();
+            logFinest("Found " + dissIds.size() + " DISS_DBID(s).");
+            
+            logFinest("Getting BindingMap_DBID(s) from DataStreamBinding "
+                    + "table...");
+            HashSet bmapIds=new HashSet();
+            results=logAndExecuteQuery(st, "SELECT BindingMap_BID FROM "
+                    + "DataStreamBinding WHERE DO_DBID=" + dbid);
+            while (results.next()) {
+                bmapIds.add(new Integer(results.getInt("BindingMap_DBID")));
+            }
+            results.close();
+            logFinest("Found " + bmapIds.size() + " BindingMap_DBID(s).");
+            //
+            // WRITE
+            //
+            int rowCount;
+            logFinest("Attempting row deletion from DigitalObject table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM DigitalObject "
+                    + "WHERE DO_DBID=" + dbid);         
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from DigitalObjectDissAssoc "
+                    + "table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM "
+                    + "DigitalObjectDissAssoc WHERE DO_DBID=" + dbid);         
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from DataStreamBinding table..");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM DataStreamBinding "
+                    + "WHERE DO_DBID=" + dbid);         
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from Disseminator table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM Disseminator WHERE " 
+                    + inIntegerSetWhereConditionString("DISS_DBID", dissIds));         
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from DataStreamBindingMap "
+                    + "table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM DataStreamBindingMap "
+                    + "WHERE " + inIntegerSetWhereConditionString(
+                    "BindingMap_DBID", bmapIds));         
+            logFinest("Deleted " + rowCount + " row(s).");
+        } finally {
+            if (st!=null) {
+                try {
+                    st.close();
+                } catch (SQLException sqle) {}
+            }
+            logFinest("Exiting DefaultDOReplicator.deleteDigitalObject");
         }
     }
 
@@ -356,41 +700,45 @@ public class DefaultDOReplicator
      * as such, and then an attempt is made to delete it as a regular
      * digital object as well.
      * <p></p>
-     * Note that this does not do cascading deletes or check dependencies at
+     * Note that this does not do cascading check object dependencies at
      * all.  It is expected at this point that when this is called, any
-     * referencial integrity issues have been ironed out or checked at
+     * referencial integrity issues have been ironed out or checked as
      * appropriate.
      * <p></p>
      * All deletions happen in a transaction.  If any database errors occur,
      * the change is rolled back.
      *
      * @param pid The pid of the object to delete.
-     * @throws ReplicationException If any really bad things happened.
+     * @throws ReplicationException If the request couldn't be fulfilled for 
+     *         any reason.
      */
-    public void delete(String pid) {
-        // do bdef stuff
+    public void delete(String pid) 
+            throws ReplicationException {
+        logFinest("Entered DefaultDOReplicator.delete");
+        Connection connection=null;
+        try {
+            connection = m_pool.getConnection();
+            connection.setAutoCommit(false);
+            deleteBehaviorDefinition(connection, pid);
+            deleteBehaviorMechanism(connection, pid);
+            deleteDigitalObject(connection, pid);
+            connection.commit();
+        } catch (SQLException sqle) {
+            throw new ReplicationException("Error while replicator was trying "
+                    + "to delete " + pid + ". " + sqle.getMessage());
+        } finally {
+            if (connection!=null) {
+                try {
+                    connection.rollback();
+                    connection.setAutoCommit(true);
+                    m_pool.free(connection);
+                } catch (SQLException sqle) {}
+            }
+            logFinest("Exiting DefaultDOReplicator.delete");
+        }
+    }
+    
 /*
-# behavior definition
-$BDEF_DBID=SELECT BDEF_DBID FROM BehaviorDefinition WHERE BDEF_PID=$PID
-BehaviorDefinition
-Parameter*
-Method
-
-# behavior mechanism
-$BMECH_DBID=SELECT BMECH_DBID FROM BehaviorMechanism WHERE BMECH_PID=$PID
-BehaviorMechanism
-DataStreamBindingSpec
-MechanismImpl 
-  (select DSBindingKey_DBID and remove from DataStreamMIME first)
-
-# regular object
-$DO_DBID=SELECT DO_DBID FROM DigitalObject where DO_PID=$PID
-DigitalObject
-Disseminator WHERE DISS_DBID in (Select DISS_DBID from DigitalObjectDissAssoc where DO_DBID=$DO_DBID)
-DigitalObjectDissAssoc where $DO_DBID=DO_DBID
-DataStreamBinding WHERE $DO_DBID=DO_DBID (also remove from DataStreamBindingMap where BindingMap_DBID in (select BdinginMap_DBID from DatastreamBinding where DO_DBID=$DO_DBID)
-
-
   <table name="BehaviorDefinition" primaryKey="BDEF_DBID">
     <column name="BDEF_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
     <column name="BDEF_PID" type="varchar(32)" notNull="true" default="" unique="true"/>
@@ -550,6 +898,5 @@ DataStreamBinding WHERE $DO_DBID=DO_DBID (also remove from DataStreamBindingMap 
     <column name="SMType_Label" type="varchar(255)" notNull="true" default="" index="SMType_Label"/>
   </table>*/
         
-    }
 
 }
