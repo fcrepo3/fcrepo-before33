@@ -22,7 +22,8 @@ public abstract class TypeUtility
     public static java.util.List
             convertGenConditionArrayToSearchConditionList(
             fedora.server.types.gen.Condition[] genConditions) 
-            throws fedora.server.errors.InvalidOperatorException {
+            throws fedora.server.errors.InvalidOperatorException,
+            fedora.server.errors.QueryParseException {
         java.util.ArrayList list=new java.util.ArrayList();
         for (int i=0; i<genConditions.length; i++) {
             fedora.server.types.gen.Condition c=genConditions[i];

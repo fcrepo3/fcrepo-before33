@@ -12,14 +12,18 @@ public class Condition {
     private Operator m_operator;
     private String m_value;
     
-    public Condition(String property, Operator operator, String value) {
+    public Condition(String property, Operator operator, String value) 
+            throws QueryParseException {
         m_property=property;
         m_operator=operator;
+        if (value.indexOf("'")!=-1) {
+            throw new QueryParseException("Query cannot contain the ' character.");
+        }
         m_value=value;
     }
     
     public Condition(String property, String operator, String value) 
-            throws InvalidOperatorException {
+            throws InvalidOperatorException, QueryParseException {
         m_property=property;
         if (operator.equals("eq")) {
             m_operator=new Operator("=", "eq");
@@ -36,6 +40,9 @@ public class Condition {
         } else {
             throw new InvalidOperatorException("Operator, '" + operator + "' does "
                     + "not match one of eq, has, gt, ge, lt, or le.");
+        }
+        if (value.indexOf("'")!=-1) {
+            throw new QueryParseException("Query cannot contain the ' character.");
         }
         m_value=value;
     }

@@ -133,9 +133,9 @@ public class FieldSearchTest
                 } else if (l.equalsIgnoreCase("locker")) {
                     System.out.print("locker='" + f.getLocker() + "' ");
                 } else if (l.equalsIgnoreCase("cDate")) {
-                    System.out.print("cDate='" + m_formatter.format(f.getLocker()) + "' ");
+                    System.out.print("cDate='" + m_formatter.format(f.getCDate()) + "' ");
                 } else if (l.equalsIgnoreCase("mDate")) {
-                    System.out.print("mDate='" + m_formatter.format(f.getLocker()) + "' ");
+                    System.out.print("mDate='" + m_formatter.format(f.getMDate()) + "' ");
                 } else if (l.equalsIgnoreCase("title")) {
                     System.out.print("title=" + printList(f.titles()) + " ");
                 } else if (l.equalsIgnoreCase("creator")) {

@@ -144,22 +144,76 @@ public class FieldSearchExistImpl
                 out.append((String) dc.subjects().get(i));
                 out.append("</subject>\n");
             }
+            for (int i=0; i<dc.descriptions().size(); i++) {
+                out.append("<description>");
+                out.append((String) dc.descriptions().get(i));
+                out.append("</description>\n");
+            }
+            for (int i=0; i<dc.publishers().size(); i++) {
+                out.append("<publisher>");
+                out.append((String) dc.publishers().get(i));
+                out.append("</publisher>\n");
+            }
+            for (int i=0; i<dc.contributors().size(); i++) {
+                out.append("<contributor>");
+                out.append((String) dc.contributors().get(i));
+                out.append("</contributor>\n");
+            }
+            for (int i=0; i<dc.dates().size(); i++) {
+                String dateString=(String) dc.dates().get(i);
+                out.append("<date>");
+                out.append(dateString);
+                out.append("</date>\n");
+                long dateNum=parseDateAsNum(dateString);
+                if (dateNum!=-1) {
+                    out.append("<dateAsNum>");
+                    out.append(dateNum);
+                    out.append("</dateAsNum>");
+                }
+            }
+            for (int i=0; i<dc.types().size(); i++) {
+                out.append("<type>");
+                out.append((String) dc.types().get(i));
+                out.append("</type>\n");
+            }
+            for (int i=0; i<dc.formats().size(); i++) {
+                out.append("<format>");
+                out.append((String) dc.formats().get(i));
+                out.append("</format>\n");
+            }
+            for (int i=0; i<dc.identifiers().size(); i++) {
+                out.append("<identifier>");
+                out.append((String) dc.identifiers().get(i));
+                out.append("</identifier>\n");
+            }
+            for (int i=0; i<dc.sources().size(); i++) {
+                out.append("<source>");
+                out.append((String) dc.sources().get(i));
+                out.append("</source>\n");
+            }
+            for (int i=0; i<dc.languages().size(); i++) {
+                out.append("<language>");
+                out.append((String) dc.languages().get(i));
+                out.append("</language>\n");
+            }
+            for (int i=0; i<dc.relations().size(); i++) {
+                out.append("<relation>");
+                out.append((String) dc.relations().get(i));
+                out.append("</relation>\n");
+            }
+            for (int i=0; i<dc.coverages().size(); i++) {
+                out.append("<coverage>");
+                out.append((String) dc.coverages().get(i));
+                out.append("</coverage>\n");
+            }
+            for (int i=0; i<dc.rights().size(); i++) {
+                out.append("<rights>");
+                out.append((String) dc.rights().get(i));
+                out.append("</rights>\n");
+            }
         }
-/*    
-    <description></description>
-    <publisher></publisher>
-    <contributor></contributor>
-    <date></date>
-    <type></type>
-    <format></format>
-    <identifier></identifier>
-    <source></source>
-    <language></language>
-    <relation></relation>
-    <coverage></coverage>
-    <rights></rights>
-*/
         out.append("</fields>");
+        logFinest("Writing to XML DB: " + out.toString());
         return out.toString();
     }
     
@@ -185,9 +239,12 @@ public class FieldSearchExistImpl
     }
 
     public List search(String[] resultFields, String terms) 
-            throws StorageDeviceException, ServerException {
+            throws StorageDeviceException, QueryParseException, ServerException {
         try {
             logFinest("Entering search(String, String)");
+            if (terms.indexOf("'")!=-1) {
+                throw new QueryParseException("Query cannot contain the ' character.");
+            }
             logFinest("Doing search using queryPart: . &= '" + terms + "'");
             ResourceSet res=m_queryService.query("document(*)/fields[. &= '" + terms + "']");
             if (res==null) {
@@ -203,7 +260,8 @@ public class FieldSearchExistImpl
                     + xmldbe.getMessage());
         }
     }
-    
+
+    // returns -1 if can't parse as date
     private long parseDateAsNum(String str) {
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         try {
@@ -259,8 +317,10 @@ public class FieldSearchExistImpl
                         }
                         queryPart.append(cond.getProperty());
                         queryPart.append(' ');
-                        queryPart.append(cond.getOperator().getSymbol());
-                        queryPart.append(" '");
+                        if (cond.getOperator().getSymbol().equals("~")) {
+                            queryPart.append("&");
+                        }
+                        queryPart.append("= '");
                         queryPart.append(cond.getValue());
                         queryPart.append("'");
                         if (n!=-1) {

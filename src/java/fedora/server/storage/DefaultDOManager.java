@@ -431,6 +431,8 @@ public class DefaultDOManager
             // tell replicator to do deletion
             m_replicator.delete(obj.getPid());
             removeReplicationJob(obj.getPid());
+            logInfo("Deleting from FieldSearch indexes...");
+            m_fieldSearch.delete(obj.getPid());
         } else {
             // save to definitive store, validating beforehand
             // update the system version (add one) and reflect that the object is no longer locked
@@ -490,19 +492,22 @@ public class DefaultDOManager
                     DefinitiveBDefReader reader=new DefinitiveBDefReader(this, obj.getPid());
                     logInfo("Got a definitiveBDefReader...");
                     m_replicator.replicate(reader);
-                    logInfo("Finished replication as bdef object: " + obj.getPid());
+                    logInfo("Updating FieldSearch indexes...");
+                    m_fieldSearch.update(reader);
                 } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
                     logInfo("Attempting replication as bmech object: " + obj.getPid());
                     DefinitiveBMechReader reader=new DefinitiveBMechReader(this, obj.getPid());
                     logInfo("Got a definitiveBMechReader...");
                     m_replicator.replicate(reader);
-                    logInfo("Finished replication as bmech object: " + obj.getPid());
+                    logInfo("Updating FieldSearch indexes...");
+                    m_fieldSearch.update(reader);
                 } else {
                     logInfo("Attempting replication as normal object: " + obj.getPid());
                     DefinitiveDOReader reader=new DefinitiveDOReader(this, obj.getPid());
                     logInfo("Got a definitiveDOReader...");
                     m_replicator.replicate(reader);
-                    logInfo("Finished replication as normal object: " + obj.getPid());
+                    logInfo("Updating FieldSearch indexes...");
+                    m_fieldSearch.update(reader);
                 }
                 // FIXME: also remove from temp storage if this is successful
                 removeReplicationJob(obj.getPid());
