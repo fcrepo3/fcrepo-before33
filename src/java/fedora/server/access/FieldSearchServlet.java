@@ -146,9 +146,9 @@ public class FieldSearchServlet
                 html.append("<input type=\"checkbox\" name=\"cModel\" value=\"true\"" + (fieldHash.contains("cModel") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Content Model\\n\\nIdentifies the template upon\\nwhich the object is based')\">cModel</a><br>");
                 html.append("<input type=\"checkbox\" name=\"state\" value=\"true\"" + (fieldHash.contains("state") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('State\\n\\nThe state of the object.\\nThis will be:\\n  A - Active')\">state</a><br>");
                 html.append("<input type=\"checkbox\" name=\"ownerId\" value=\"true\"" + (fieldHash.contains("ownerId") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Owner Id\\n\\nThe userId of the user who owns the object.')\">ownerId</a><br>");
-                html.append("<input type=\"checkbox\" name=\"cDate\" value=\"true\"" + (fieldHash.contains("cDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Creation Date\\n\\nThe UTC date the object was created,\\nin YYYY-MM-DDTHH:MM:SSZ format')\">cDate</a><br>");
-                html.append("<input type=\"checkbox\" name=\"mDate\" value=\"true\"" + (fieldHash.contains("mDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Modified Date\\n\\nThe UTC date the object was last modified,\\nin YYYY-MM-DDTHH:MM:SSZ format')\">mDate</a><br>");
-                html.append("<input type=\"checkbox\" name=\"dcmDate\" value=\"true\"" + (fieldHash.contains("dcmDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Dublin Core Modified Date\\n\\nThe UTC date the DC datastream was last modified,\\nin YYYY-MM-DDTHH:MM:SSZ format')\">dcmDate</a><br>");
+                html.append("<input type=\"checkbox\" name=\"cDate\" value=\"true\"" + (fieldHash.contains("cDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Creation Date\\n\\nThe UTC date the object was created,\\nin YYYY-MM-DDTHH:MM:SS.SSSZ format')\">cDate</a><br>");
+                html.append("<input type=\"checkbox\" name=\"mDate\" value=\"true\"" + (fieldHash.contains("mDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Modified Date\\n\\nThe UTC date the object was last modified,\\nin YYYY-MM-DDTHH:MM:SS.SSSZ format')\">mDate</a><br>");
+                html.append("<input type=\"checkbox\" name=\"dcmDate\" value=\"true\"" + (fieldHash.contains("dcmDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Dublin Core Modified Date\\n\\nThe UTC date the DC datastream was last modified,\\nin YYYY-MM-DDTHH:MM:SS.SSSZ format')\">dcmDate</a><br>");
                 html.append("</font></td><td valign=top><font size=-1>");
                 html.append("<input type=\"checkbox\" name=\"bDef\" value=\"true\"" + (fieldHash.contains("bDef") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Behavior Definition Pid\\n\\nThe pid of the behavior definition\\nobject(s) to which this object subscribes.\\nThis is a repeating field.')\">bDef</a><br>");
                 html.append("<input type=\"checkbox\" name=\"bMech\" value=\"true\"" + (fieldHash.contains("bMech") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Behavior Mechanism Pid\\n\\nThe pid of the behavior mechanism\\nobject(s) this object uses.\\nThis is a repeating field.\\nThe order will coincide with that of the bDef field values.')\">bMech</a><br>");
@@ -201,7 +201,7 @@ public class FieldSearchServlet
                     }
                     html.append("</tr>");
                 }
-                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 for (int i=0; i<searchResults.size(); i++) {
                     ObjectFields f=(ObjectFields) searchResults.get(i);
                     if (xml) {
@@ -386,7 +386,7 @@ public class FieldSearchServlet
                         out.println("    <completeListSize>" + fsr.getCompleteListSize() + "</completeListSize>");
                     }
                     if (fsr.getExpirationDate()!=null) {
-                        out.println("    <expirationDate>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(fsr.getExpirationDate()) + "</expirationDate>");
+                        out.println("    <expirationDate>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(fsr.getExpirationDate()) + "</expirationDate>");
                     }
                     out.println("  </listSession>");
                 }

@@ -382,6 +382,13 @@ public class FedoraOAIProvider
             return "";
         }
         StringBuffer out=new StringBuffer();
+        // Note OAI only support ISO8601 dates to the seconds
+        // and Fedora stores dates down to the millisecond level.
+        // This should not matter since OAI requests specify
+        // date ranges (from-until), and as long as the requests
+        // are always in the same units, subsequent requests can pick 
+        // up at the last end-point in time (in seconds) without
+        // concern for millisecond granularity.
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         if (from!=null) {
             out.append(" dcmDate>='");

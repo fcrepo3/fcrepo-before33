@@ -68,7 +68,7 @@ public class Report
     private static Access s_access=null;
     
 	private static final String getFieldValue (ObjectFields f, String name) {
-		SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");		
+		SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");		
 		String value = null;
 		if ("pid".equalsIgnoreCase(name)) {
 			value = f.getPid();
@@ -422,7 +422,7 @@ public class Report
 				}
 		
 				long compTime = (new Date()).getTime() - (days * MILLISECS_IN_DAY);
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 				String compString = df.format(new Date(compTime));	
 				if (dateRange != null && ! "".equals(dateRange)) {
 					query += " " + field + op + compString; 
@@ -614,7 +614,7 @@ public class Report
 					outBuf.append("\t\t<completeListSize>" + fsr.objectFieldsList().size() + "</completeListSize>\n");
 				}
 				if (fsr.getExpirationDate()!=null) {
-					outBuf.append("\t\t<expirationDate>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(fsr.getExpirationDate()) + "</expirationDate>\n");
+					outBuf.append("\t\t<expirationDate>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(fsr.getExpirationDate()) + "</expirationDate>\n");
 				}
 				outBuf.append("\t</listSession>\n");
 

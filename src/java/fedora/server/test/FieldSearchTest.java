@@ -60,7 +60,7 @@ public class FieldSearchTest
     //private FieldSearchExistImpl m_fieldSearch;
     private FieldSearchSQLImpl m_fieldSearch;
     private SimpleDateFormat m_formatter=
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private ConnectionPool m_cPool;
 
     public FieldSearchTest(String fedoraHome, String label) {

@@ -186,7 +186,7 @@ public class ObjectInfoAsXML
                                  Date versDateTime)
             throws ServerException {
         StringBuffer out=new StringBuffer();
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         if (versDateTime == null || DateUtility.
@@ -344,7 +344,7 @@ public class ObjectInfoAsXML
     public String getSearchFields(DOReader reader)
             throws ServerException {
         StringBuffer out=new StringBuffer();
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         out.append("<fields>\n");
         out.append("<pid>" + StreamUtility.enc(reader.GetObjectPID()) + "</pid>\n");
         String label=reader.GetObjectLabel();
@@ -535,7 +535,7 @@ public class ObjectInfoAsXML
 
     // returns -1 if can't parse as date
     private long parseDateAsNum(String str) {
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         try {
             Date d=formatter.parse(str);
             return d.getTime();

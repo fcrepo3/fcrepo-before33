@@ -943,7 +943,7 @@ public class DefaultManagement
                 // this datastream.
                 // to do this, we must look through all versions of every
                 // disseminator, regardless of state
-                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 ArrayList usedList=new ArrayList();
                 if (datastreamID.equals("DC")) {
                     usedList.add("The default disseminator");
@@ -1019,7 +1019,7 @@ public class DefaultManagement
                                       Date start,
                                       Date end, 
                                       Date[] deletedDates) {
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         StringBuffer buf=new StringBuffer();
         buf.append("Purged ");
         buf.append(kindaThing);

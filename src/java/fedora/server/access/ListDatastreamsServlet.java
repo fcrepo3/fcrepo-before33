@@ -218,7 +218,7 @@ public class ListDatastreamsServlet extends HttpServlet
                   String message = "ListDatastreams Request Syntax Error: DateTime value "
                       + "of \"" + URIArray[6] + "\" is not a valid DateTime format. "
                       + " ----- The expected format for DateTime is \""
-                      + "YYYY-MM-DDTHH:MM:SSZ\".  "
+                      + "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
                       + " ----- The expected syntax for "
                       + "ListDatastreams requests is: \""
                       + URIArray[0] + "//" + URIArray[2] + "/"

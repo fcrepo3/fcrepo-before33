@@ -37,7 +37,7 @@ public abstract class DateUtility
 
   /**
    * <p>Converts a datetime string into and instance of java.util.Date using
-   * the date format: yyyy-MM-ddTHH:mm:ssZ.</p>
+   * the date format: yyyy-MM-ddTHH:mm:ss.SSSZ.</p>
    *
    * <p>Follows Postel's Law (lenient about what it accepts, as long as
    * it's sensible)</p>
@@ -52,7 +52,7 @@ public abstract class DateUtility
 
   /**
    * <p>Converts an instance of java.util.Date into a String using
-   * the date format: yyyy-MM-ddTHH:mm:ssZ.</p>
+   * the date format: yyyy-MM-ddTHH:mm:ss.SSSZ.</p>
    *
    * @param date Instance of java.util.Date.
    * @return Corresponding datetime string (returns null if Date argument
@@ -62,7 +62,7 @@ public abstract class DateUtility
   {
     String dateTime = null;
     SimpleDateFormat formatter =
-      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     if (!(date == null))
     {
       dateTime = formatter.format(date);
@@ -89,7 +89,7 @@ public abstract class DateUtility
   }
 
     /**
-     * Attempt to parse the given string of form: yyyy-MM-dd[THH:mm:ss[Z]]
+     * Attempt to parse the given string of form: yyyy-MM-dd[THH:mm:ss[.SSS][Z]]
      * as a Date.  If the string is not of that form, return null.
      *
      * @param str the date string to parse
@@ -99,13 +99,21 @@ public abstract class DateUtility
         if (str==null || str.length()==0) return null;
         if (str.indexOf("T")!=-1) {
             try {
-                return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(str);
+                return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(str);
             } catch (ParseException pe) {
-                try {
-                    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(str);
-                } catch (ParseException pe2) {
-                    return null;
-                }
+				try {
+					return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse(str);
+				} catch (ParseException pe1) {
+	                try {
+	                    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").parse(str);
+	                } catch (ParseException pe2) {
+	                	try {
+							return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(str);
+	                	} catch (ParseException pe3) {
+							return null;
+	                	}
+	                }
+				}
             }
         } else {
             try {

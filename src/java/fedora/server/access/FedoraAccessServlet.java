@@ -289,7 +289,7 @@ public class FedoraAccessServlet extends HttpServlet
                     String message = "ObjectProfile Request Syntax Error: DateTime value "
                       + "of \"" + URIArray[6] + "\" is not a valid DateTime format. "
                       + " ----- The expected format for DateTime is \""
-                      + "YYYY-MM-DDTHH:MM:SSZ\".  "
+                      + "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
                       + " ----- The expected syntax for "
                       + "ObjectProfile requests is: \""
                       + URIArray[0] + "//" + URIArray[2] + "/"
@@ -321,7 +321,7 @@ public class FedoraAccessServlet extends HttpServlet
                 String message = "GetDatastreamDissemination Request Syntax Error: DateTime value "
                     + "of \"" + URIArray[7] + "\" is not a valid DateTime format. "
                     + " ----- The expected format for DateTime is \""
-                    + "YYYY-MM-DDTHH:MM:SSZ\".  "
+                    + "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
                     + " ----- The expected syntax for GetDatastreamDissemination requests is: \""
                     + URIArray[0] + "//" + URIArray[2] + "/"
                     + URIArray[3] + "/" + URIArray[4]
@@ -343,7 +343,7 @@ public class FedoraAccessServlet extends HttpServlet
               String message = "Dissemination Request Syntax Error: DateTime value "
                   + "of \"" + URIArray[8] + "\" is not a valid DateTime format. "
                   + " ----- The expected format for DateTime is \""
-                  + "YYYY-MM-DDTHH:MM:SS\".  "
+                  + "YYYY-MM-DDTHH:MM:SS.SSS\".  "
                   + " ----- The expected syntax for Dissemination requests is: \""
                   + URIArray[0] + "//" + URIArray[2] + "/"
                   + URIArray[3] + "/" + URIArray[4]

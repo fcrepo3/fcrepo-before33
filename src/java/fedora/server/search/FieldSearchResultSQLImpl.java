@@ -253,7 +253,7 @@ public class FieldSearchResultSQLImpl
                             throw new QueryParseException("When using "
                                     + "equality or inequality operators "
                                     + "with a date-based value, the date "
-                                    + "must be in yyyy-MM-DD[THH:mm:ss[Z]] "
+                                    + "must be in yyyy-MM-DD[THH:mm:ss[.SSS][Z]] "
                                     + "form.");
                         }
                         if (prop.equals("date")) {

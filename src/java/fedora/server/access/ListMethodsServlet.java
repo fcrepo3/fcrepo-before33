@@ -219,7 +219,7 @@ public class ListMethodsServlet extends HttpServlet
                   String message = "ListMethods Request Syntax Error: DateTime value "
                       + "of \"" + URIArray[6] + "\" is not a valid DateTime format. "
                       + " ----- The expected format for DateTime is \""
-                      + "YYYY-MM-DDTHH:MM:SSZ\".  "
+                      + "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
                       + " ----- The expected syntax for "
                       + "ListMethods requests is: \""
                       + URIArray[0] + "//" + URIArray[2] + "/"
