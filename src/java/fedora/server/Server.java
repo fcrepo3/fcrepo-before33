@@ -233,6 +233,12 @@ public abstract class Server
     public static String CONFIG_ATTRIBUTE_CLASS=
             s_const.getString("config.attribute.class");
 
+    /** 
+     * The configuration file's role-specifying attribute for module elements.
+     */
+    public static String CONFIG_ATTRIBUTE_ROLE=
+            s_const.getString("config.attribute.role");
+
     /** The configuration file param element's name attribute. */
     public static String CONFIG_ATTRIBUTE_NAME=
             s_const.getString("config.attribute.name");
@@ -252,6 +258,18 @@ public abstract class Server
     /** The required server constructor's second parameter's class. */
     public static String SERVER_CONSTRUCTOR_PARAM2_CLASS=
             s_const.getString("server.constructor.param2.class");
+            
+    /** The required module constructor's first parameter's class. */
+    public static String MODULE_CONSTRUCTOR_PARAM1_CLASS=
+            s_const.getString("module.constructor.param1.class");
+
+    /** The required module constructor's second parameter's class. */
+    public static String MODULE_CONSTRUCTOR_PARAM2_CLASS=
+            s_const.getString("module.constructor.param2.class");
+
+    /** The required module constructor's third parameter's class. */
+    public static String MODULE_CONSTRUCTOR_PARAM3_CLASS=
+            s_const.getString("module.constructor.param2.class");
 
     /** The name of the DOManager class (a Fedora server module "role"). */
     public static String DOMANAGER_CLASS=s_const.getString("domanager.class");
@@ -286,6 +304,22 @@ public abstract class Server
             s_const.getString("init.config.severe.badrootelement");
 
     /**
+     * Indicates that an invalid element was found in the configuration xml.
+     * 1=the invalid element's name
+     */
+    public static String INIT_CONFIG_SEVERE_BADELEMENT=
+            s_const.getString("init.config.severe.badelement");
+
+    /**
+     * Indicates that a CONFIG_ELEMENT_DATASTORE didn't specify the required
+     * CONFIG_ATTRIBUTE_ID. 0={config.element.datastore}, 
+     * 1={config.attribute.id}
+     */
+    public static String INIT_CONFIG_SEVERE_NOIDGIVEN=MessageFormat.format(
+            s_const.getString("init.config.severe.noidgiven"), new Object[]
+            {CONFIG_ELEMENT_DATASTORE, CONFIG_ATTRIBUTE_ID});
+
+    /**
      * Indicates that the config file's element's namespace does not match
      * {config.namespace}. 0=config file full path, 1={config.namespace}
      */
@@ -293,14 +327,58 @@ public abstract class Server
             s_const.getString("init.config.severe.badnamespace");
 
     /**
-     * Indicates that a parameter element in the config file is missing
-     * a required element. 0=config file full path, 1={config.element.param},
-     * 2={config.attribute.name}, 3={config.attribute.value}
+     * Indicates that a module element in the server configuration did
+     * not specify a role, but should. 0={config.element.module}, 
+     * 1={config.attribute.role}
      */
-    public static String INIT_CONFIG_SEVERE_INCOMPLETEPARAM=MessageFormat.format(
-            s_const.getString("init.config.severe.incompleteparam"),
-            new Object[] {"{0}",CONFIG_ELEMENT_PARAM,CONFIG_ATTRIBUTE_NAME,
+    public static String INIT_CONFIG_SEVERE_NOROLEGIVEN=MessageFormat.format(
+            s_const.getString("init.config.severe.norolegiven"), new Object[]
+            {CONFIG_ELEMENT_MODULE, CONFIG_ATTRIBUTE_ROLE});
+
+    /**
+     * Indicates that a module element in the server configuration did
+     * not specify an implementing class, but should. 0={config.element.module}, 
+     * 1={config.attribute.class}
+     */
+    public static String INIT_CONFIG_SEVERE_NOCLASSGIVEN=MessageFormat.format(
+            s_const.getString("init.config.severe.noclassgiven"), new Object[]
+            {CONFIG_ELEMENT_MODULE, CONFIG_ATTRIBUTE_CLASS});
+
+    /**
+     * Indicates that an attribute of an element was assigned the same value as 
+     * a previously specified element's attribute, and that this constitutes
+     * a disallowed reassignment.  0=the common element, 1=the common 
+     * attribute's name, 2=the common attribute's value.
+     */
+    public static String INIT_CONFIG_SEVERE_REASSIGNMENT=
+            s_const.getString("init.config.severe.reassignment");
+
+    /**
+     * Indicates that a parameter element in the config file is missing
+     * a required element. 0={config.element.param}, 1={config.attribute.name}, 
+     * 2={config.attribute.value}
+     */
+    public static String INIT_CONFIG_SEVERE_INCOMPLETEPARAM=
+            MessageFormat.format(s_const.getString(
+            "init.config.severe.incompleteparam"), new Object[]
+            {CONFIG_ELEMENT_PARAM, CONFIG_ATTRIBUTE_NAME, 
             CONFIG_ATTRIBUTE_VALUE});
+
+    /**
+     * Tells which config element is being looked at in order to load its
+     * parameters into memory. 0=name of element being examined,
+     * 1=distinguishing attribute (name=&quot;value&quot;), or empty string
+     * if no distinguishing attribute.
+     */
+    public static String INIT_CONFIG_CONFIG_EXAMININGELEMENT=
+            s_const.getString("init.config.config.examiningelement");
+
+    /**
+     * Tells the name and value of a parameter loaded from the config file.
+     * 0=param name, 1=param value
+     */
+    public static String INIT_CONFIG_CONFIG_PARAMETERIS=
+            s_const.getString("init.config.config.parameteris");
 
     /**
      * Indicates that the server class could not be found. 0=server class 
@@ -330,6 +408,14 @@ public abstract class Server
      */
     public static String INIT_SERVER_SEVERE_MISSINGCONSTRUCTOR=
             s_const.getString("init.server.severe.missingconstructor");
+            
+    /**
+     * Indicates that a module role required to be fulfilled by this server
+     * was not fulfilled because the configuration did not specify a module
+     * with that role. 0=the role
+     */
+    public static String INIT_SERVER_SEVERE_UNFULFILLEDROLE=
+            s_const.getString("init.server.severe.unfulfilledrole");
 
     /**
      * Indicates that the server class was abstract, but shouldn't be. 0=server 
@@ -337,6 +423,42 @@ public abstract class Server
      */
     public static String INIT_SERVER_SEVERE_ISABSTRACT=
             s_const.getString("init.server.severe.isabstract");
+
+    /**
+     * Indicates that the module class could not be found. 0=module class 
+     * specified in config
+     */
+    public static String INIT_MODULE_SEVERE_CLASSNOTFOUND=
+            s_const.getString("init.module.severe.classnotfound");
+
+    /**
+     * Indicates that the module class couldn't be accessed due to security
+     * misconfiguration. 0=module class specified in config
+     */
+    public static String INIT_MODULE_SEVERE_ILLEGALACCESS=
+            s_const.getString("init.module.severe.illegalaccess");
+
+    /**
+     * Indicates that the module class constructor was invoked improperly
+     * due to programmer error. 0=module class specified in config
+     */
+    public static String INIT_MODULE_SEVERE_BADARGS=
+            s_const.getString("init.module.severe.badargs");
+
+    /**
+     * Indicates that the module class doesn't have a constructor
+     * matching Module(Map, Server, String), but needs one. 0=module class 
+     * specified in config
+     */
+    public static String INIT_MODULE_SEVERE_MISSINGCONSTRUCTOR=
+            s_const.getString("init.module.severe.missingconstructor");
+            
+    /**
+     * Indicates that the module class was abstract, but shouldn't be. 0=module
+     * class specified in config
+     */
+    public static String INIT_MODULE_SEVERE_ISABSTRACT=
+            s_const.getString("init.module.severe.isabstract");
 
     /**
      * Indicates that the startup log could not be written to its usual
@@ -358,6 +480,11 @@ public abstract class Server
     private File m_homeDir;
     
     /**
+     * Datastore configurations initialized from the server config file.
+     */
+    private HashMap m_datastoreConfigs;
+    
+    /**
      * Modules that have been loaded.
      */
     private HashMap m_loadedModules;
@@ -371,40 +498,212 @@ public abstract class Server
      * The <code>Logger</code> where messages go.
      */
     private Logger m_logger;
+   
+    /**
+     * Is the server running?
+     */
+    private boolean m_initialized;
 
     /**
      * Initializes the Server based on configuration.
      * <p></p>
+     *
+     * FIXME: Update this description.
+     *
      * Reads and schema-validates the configuration items in the given
      * DOM <code>NodeList</code>, validates required server params, 
      * initializes the <code>Server</code>, then initializes each module, 
      * validating its required params, then verifies that the server's 
      * required module roles have been met.
      *
-     * @param configNode The children elements of the root element of the
-     *                   config file.
+     * @param rootConfigElement The root <code>Element</code> of configuration.
      * @param homeDir The home directory of the server, used to interpret 
-     *                relative paths used in configuration.
+     *        relative paths used in configuration.
      * @throws ServerInitializationException If there was an error starting
      *         the server.
      * @throws ModuleInitializationException If there was an error starting
      *         a module.
      */
-    protected Server(NodeList configNodes, File homeDir) 
+    protected Server(Element rootConfigElement, File homeDir) 
             throws ServerInitializationException,
                    ModuleInitializationException {
-        m_startupLogRecords=new ArrayList(); // prepare for startup log queueing
-        m_loadedModules=new HashMap();
-        m_homeDir=homeDir;
-        File configFile=new File(homeDir + File.separator + CONFIG_DIR 
-                + File.separator + CONFIG_FILE);
-        HashMap serverParams=new HashMap();
-        for (int rootChildIndex=0; rootChildIndex<configNodes.getLength(); 
-                rootChildIndex++) {
-            Node n=configNodes.item(rootChildIndex);
+        try {
+            m_initialized=false;
+            m_startupLogRecords=new ArrayList(); // prepare for startup log queueing
+            m_loadedModules=new HashMap();
+            m_homeDir=homeDir;
+            File configFile=new File(homeDir + File.separator + CONFIG_DIR 
+                    + File.separator + CONFIG_FILE);
+            logConfig("Loading and validating configuration file \"" 
+                    + configFile + "\"");
+
+            // do the parsing and validation of configuration
+            HashMap serverParams=loadParameters(rootConfigElement, "");
+            
+            // get the module and datastore info, remove the holding element,
+            // and set the server params so they can be seen via getParameter()
+            ArrayList mdInfo=(ArrayList) serverParams.get(null);
+            HashMap moduleParams=(HashMap) mdInfo.get(0);
+            HashMap moduleClassNames=(HashMap) mdInfo.get(1);
+            HashMap datastoreParams=(HashMap) mdInfo.get(2);
+            serverParams.remove(null);
+            setParameters(serverParams);
+            
+            // ensure server's module roles are met
+            String[] reqRoles=getRequiredModuleRoles();
+            for (int i=0; i<reqRoles.length; i++) {
+                if (moduleParams.get(reqRoles[i])==null) {
+                    throw new ServerInitializationException(
+                            MessageFormat.format(
+                            INIT_SERVER_SEVERE_UNFULFILLEDROLE, new Object[]
+                            {reqRoles[i]}));
+                }
+            }
+            
+            // initialize the server
+            logConfig("started initting server...");
+            initServer();
+            logConfig("finished initting server...");
+            
+            // create the datastore configs and set the instance variable
+            // so they can be seen with getDatastoreConfig(...)
+            Iterator dspi=datastoreParams.keySet().iterator();
+            m_datastoreConfigs=new HashMap();
+            while (dspi.hasNext()) {
+                String id=(String) dspi.next();
+                m_datastoreConfigs.put(id, new DatastoreConfig(
+                        (HashMap) datastoreParams.get(id)));
+            }
+            
+            // initialize each module
+            Iterator mRoles=moduleParams.keySet().iterator();
+            while (mRoles.hasNext()) {
+                String role=(String) mRoles.next();
+                String className=(String) moduleClassNames.get(role);
+                logConfig("started initting module...");
+                try {
+                    Class moduleClass=Class.forName(className);
+                    Class param1Class=Class.forName(MODULE_CONSTRUCTOR_PARAM1_CLASS);
+                    Class param2Class=Class.forName(MODULE_CONSTRUCTOR_PARAM2_CLASS);
+                    Class param3Class=Class.forName(MODULE_CONSTRUCTOR_PARAM3_CLASS);
+                    Constructor moduleConstructor=moduleClass.getConstructor(
+                            new Class[] {param1Class,param2Class,param3Class});
+                    Module inst=(Module) moduleConstructor.newInstance( 
+                            new Object[] {moduleParams, this, role} );
+                    m_loadedModules.put(role, inst);
+                } catch (ClassNotFoundException cnfe) {
+                    throw new ModuleInitializationException(
+                            MessageFormat.format(INIT_MODULE_SEVERE_CLASSNOTFOUND, 
+                            new Object[] {className}), null);
+                } catch (IllegalAccessException iae) {
+                    // improbable
+                    throw new ModuleInitializationException(
+                            MessageFormat.format(INIT_MODULE_SEVERE_ILLEGALACCESS,
+                            new Object[] {className}), null);
+                } catch (IllegalArgumentException iae) {
+                    // improbable
+                    throw new ModuleInitializationException(
+                            MessageFormat.format(INIT_MODULE_SEVERE_BADARGS,
+                            new Object[] {className}), null);
+                } catch (InstantiationException ie) {
+                    throw new ModuleInitializationException(
+                            MessageFormat.format(
+                            INIT_MODULE_SEVERE_MISSINGCONSTRUCTOR, 
+                            new Object[] {className}), null);
+                } catch (NoSuchMethodException nsme) {
+                    throw new ModuleInitializationException(
+                            MessageFormat.format(INIT_MODULE_SEVERE_ISABSTRACT,
+                            new Object[] {className}), null);
+                } catch (InvocationTargetException ite) {
+                    // throw the constructor's thrown exception, if any
+                    try {
+                        throw ite.getCause();  // as of java 1.4
+                    } catch (ModuleInitializationException mie) {
+                        throw mie;
+                    } catch (Throwable t) {
+                        // a runtime error..shouldn't happen, but if it does...
+                        StringBuffer s=new StringBuffer();
+                        for (int i=0; i<t.getStackTrace().length; i++) {
+                            s.append(t.getStackTrace()[i] + "\n");
+                        }
+                        throw new ModuleInitializationException(s.toString(), 
+                                null);
+                    }
+                }                 
+                
+                logConfig("finished initting module...");
+            }
+            
+            // flag that we're done initting
+            logConfig("finished initializing server and modules...");
+            m_initialized=true;
+        } catch (ServerInitializationException sie) {
+            // these are caught and rethrown for two reasons:
+            // 1) so they can be logged in the startup log, and 
+            // 2) so an attempt can be made to free resources tied up thus far
+            //    via shutdown()
+            logSevere(sie.getMessage());
+            try {
+                shutdown();
+            } catch (ServerShutdownException sse) {
+                logSevere(sse.getMessage());
+            } catch (ModuleShutdownException mse) {
+                logSevere(mse.getModule().getRole() + ": " + mse.getMessage());
+            }
+            throw sie;
+        } catch (ModuleInitializationException mie) {
+            logSevere(mie.getModule().getRole() + ": " + mie.getMessage());
+            try {
+                shutdown();
+            } catch (ServerShutdownException sse) {
+                logSevere(sse.getMessage());
+            } catch (ModuleShutdownException mse) {
+                logSevere(mse.getModule().getRole() + ": " + mse.getMessage());
+            }
+            throw mie;
+        }
+    }
+
+    /**
+     * Builds and returns a <code>Map</code> of parameter name-value pairs 
+     * defined as children of the given <code>Element</code>, according to the 
+     * server configuration schema.
+     * <p></p>
+     * If the given element is a CONFIG_ELEMENT_ROOT, this method will
+     * return (along with the server's parameter name-value pairs) a 
+     * <code>null</code>-keyed value, which is an <code>ArrayList</code> of 
+     * three <code>HashMap</code> objects. The first will contain the name-value
+     * pair HashMaps of each of the CONFIG_ELEMENT_MODULE elements found (in a
+     * <code>HashMap</code> keyed by <i>role</i>), the second will contain a 
+     * <code>HashMap</code> mapping module <i>role</i>s to implementation 
+     * classnames, and the third will contain the the name-value
+     * pair <code>HashMaps</code> of each of the CONFIG_ELEMENT_DATASTORE 
+     * elements found (keyed by CONFIG_ATTRIBUTE_ID).
+     * <p></p>
+     * @param element The element containing the name-value pair defintions.
+     * @param dAttribute The name of the attribute of the <code>Element</code> 
+     *                   whose value will distinguish this element from others 
+     *                   that may occur in the <code>Document</code>.  If there
+     *                   is no distinguishing attribute, this should be an
+     *                   empty string.
+     */
+    private final HashMap loadParameters(Element element, String dAttribute) 
+            throws ServerInitializationException {
+        HashMap params=new HashMap();
+        if (element.getLocalName().equals(CONFIG_ELEMENT_ROOT)) {
+            ArrayList moduleAndDatastreamInfo=new ArrayList(3);
+            moduleAndDatastreamInfo.add(new HashMap());
+            moduleAndDatastreamInfo.add(new HashMap());
+            moduleAndDatastreamInfo.add(new HashMap());
+            params.put(null, moduleAndDatastreamInfo);
+        }
+        logConfig(MessageFormat.format(INIT_CONFIG_CONFIG_EXAMININGELEMENT,
+                new Object[] {element.getLocalName(), dAttribute}));
+        for (int i=0; i<element.getChildNodes().getLength(); i++) {
+            Node n=element.getChildNodes().item(i);
             if (n.getNodeType()==Node.ELEMENT_NODE) {
                 if (n.getLocalName().equals(CONFIG_ELEMENT_PARAM)) {
-                    // if name-value pair, save in the server's config HashMap
+                    // if name-value pair, save in the HashMap
                     NamedNodeMap attrs=n.getAttributes();
                     Node nameNode=attrs.getNamedItemNS(CONFIG_NAMESPACE,
                             CONFIG_ATTRIBUTE_NAME);
@@ -418,84 +717,211 @@ public abstract class Server
                     }
                     if (nameNode==null || valueNode==null) {
                         throw new ServerInitializationException(
+                                INIT_CONFIG_SEVERE_INCOMPLETEPARAM);
+                    }
+                    if (nameNode.getNodeValue().equals("") ||
+                            valueNode.getNodeValue().equals("")) {
+                        throw new ServerInitializationException(
                                 MessageFormat.format(
                                 INIT_CONFIG_SEVERE_INCOMPLETEPARAM, new Object[]
-                                {configFile}));
+                                {CONFIG_ELEMENT_PARAM, CONFIG_ATTRIBUTE_NAME, 
+                                CONFIG_ATTRIBUTE_VALUE}));
                     }
-                    serverParams.put(nameNode.getNodeValue(), 
+                    if (params.get(nameNode.getNodeValue())!=null) {
+                        throw new ServerInitializationException(
+                                MessageFormat.format(
+                                INIT_CONFIG_SEVERE_REASSIGNMENT, new Object[]
+                                {CONFIG_ELEMENT_PARAM, CONFIG_ATTRIBUTE_NAME,
+                                nameNode.getNodeValue()}));
+                    }
+                    params.put(nameNode.getNodeValue(), 
                             valueNode.getNodeValue());
-                } else if (n.getLocalName().equals(CONFIG_ELEMENT_DATASTORE)) {
-                    // if datastore element, verify it has a unique id, load
-                    // its params into a HashMap, instantiate a DatastoreConfig,
-                    // and add it to m_datastoreConfigs (key=id)
-                    NamedNodeMap attrs=n.getAttributes();
-                    Node idNode=attrs.getNamedItemNS(CONFIG_NAMESPACE, 
-                        CONFIG_ATTRIBUTE_ID);
-                    if (idNode==null) {
-                        idNode=attrs.getNamedItem(CONFIG_ATTRIBUTE_ID);
-                    }
-                    if (idNode==null) {
-                        throw new ServerInitializationException("todo");
-                    }
-                    // read the params and instantiate the datasource
-                } else if (n.getLocalName().equals(CONFIG_ELEMENT_MODULE)) {
-                    // read the params and instantiate the class
+                    logConfig(MessageFormat.format(
+                            INIT_CONFIG_CONFIG_PARAMETERIS, new Object[] {
+                            nameNode.getNodeValue(),valueNode.getNodeValue()}));
                 } else if (!n.getLocalName().equals(CONFIG_ELEMENT_COMMENT)) {
-                    // warning, unrec element, ignored
+                    if (element.getLocalName().equals(CONFIG_ELEMENT_ROOT)) {
+                        if (n.getLocalName().equals(CONFIG_ELEMENT_MODULE)) {
+                            NamedNodeMap attrs=n.getAttributes();
+                            Node roleNode=attrs.getNamedItemNS(CONFIG_NAMESPACE,
+                                    CONFIG_ATTRIBUTE_ROLE);
+                            if (roleNode==null) {
+                                roleNode=attrs.getNamedItem(
+                                        CONFIG_ATTRIBUTE_ROLE);
+                                if (roleNode==null) {
+                                    throw new ServerInitializationException(
+                                            INIT_CONFIG_SEVERE_NOROLEGIVEN);
+                                }
+                            }
+                            String moduleRole=roleNode.getNodeValue();
+                            if (moduleRole.equals("")) {
+                                throw new ServerInitializationException(
+                                        INIT_CONFIG_SEVERE_NOROLEGIVEN);
+                            }
+                            HashMap moduleImplHash=(HashMap) ((ArrayList) 
+                                    params.get(null)).get(1);
+                            if (moduleImplHash.get(moduleRole)!=null) {
+                                throw new ServerInitializationException(
+                                        MessageFormat.format(
+                                        INIT_CONFIG_SEVERE_REASSIGNMENT,
+                                        new Object[] {CONFIG_ELEMENT_MODULE,
+                                        CONFIG_ATTRIBUTE_ROLE, moduleRole}));
+                            }
+                            Node classNode=attrs.getNamedItemNS(
+                                    CONFIG_NAMESPACE, CONFIG_ATTRIBUTE_CLASS);
+                            if (classNode==null) {
+                                classNode=attrs.getNamedItem(
+                                        CONFIG_ATTRIBUTE_CLASS);
+                                if (classNode==null) {
+                                    throw new ServerInitializationException(
+                                            INIT_CONFIG_SEVERE_NOCLASSGIVEN);
+                                }
+                            }
+                            String moduleClass=classNode.getNodeValue();
+                            if (moduleClass.equals("")) {
+                                throw new ServerInitializationException(
+                                        INIT_CONFIG_SEVERE_NOCLASSGIVEN);
+                            }
+                            moduleImplHash.put(moduleRole, moduleClass);
+                            ((HashMap) ((ArrayList) 
+                                    params.get(null)).get(0)).put(moduleRole,
+                                    loadParameters((Element) n, 
+                                    CONFIG_ATTRIBUTE_ROLE + "=\"" + moduleRole
+                                    + "\""));
+                        } else if (n.getLocalName().equals(
+                                CONFIG_ELEMENT_DATASTORE)) {
+                            NamedNodeMap attrs=n.getAttributes();
+                            Node idNode=attrs.getNamedItemNS(CONFIG_NAMESPACE,
+                                    CONFIG_ATTRIBUTE_ID);
+                            if (idNode==null) {
+                                idNode=attrs.getNamedItem(CONFIG_ATTRIBUTE_ID);
+                                if (idNode==null) {
+                                    throw new ServerInitializationException(
+                                            INIT_CONFIG_SEVERE_NOIDGIVEN);
+                                }
+                            }
+                            String dConfigId=idNode.getNodeValue();
+                            if (dConfigId.equals("")) {
+                                throw new ServerInitializationException(
+                                        INIT_CONFIG_SEVERE_NOIDGIVEN);
+                            }
+                            HashMap dParamHash=(HashMap) ((ArrayList) 
+                                    params.get(null)).get(2);
+                            if (dParamHash.get(dConfigId)!=null) {
+                                throw new ServerInitializationException(
+                                    MessageFormat.format(
+                                    INIT_CONFIG_SEVERE_REASSIGNMENT, 
+                                    new Object[] {CONFIG_ELEMENT_DATASTORE,
+                                    CONFIG_ATTRIBUTE_ID, dConfigId}));
+                            }
+                            dParamHash.put(dConfigId,loadParameters((Element) n,
+                                    CONFIG_ATTRIBUTE_ID + "=\"" + dConfigId
+                                    + "\""));
+                        } else {
+                            throw new ServerInitializationException(
+                                MessageFormat.format(
+                                INIT_CONFIG_SEVERE_BADELEMENT, new Object[]
+                                {n.getLocalName()}));
+                        } 
+                    }
                 }
-                logFinest("found element: " + n.getLocalName());
-            } else {
-                // warning, unrec non-element, ignored
-            }
+                
+            } // else { // ignore non-Element nodes }
         }
-        setParameters(serverParams);
-        
-        
-        // print em..to test
-        Iterator i=parameterNames();
-        while (i.hasNext()) {
-            String n=(String) i.next();
-            logFinest("name=\"" + n + "\", value=\"" + getParameter(n) + "\"");
-        }
-        
-        
-        initServer();
-        // foreach module, load an instance with the given
-        // params
-        
+        return params;
     }
 
-    public void logSevere(String message) {
+    /**
+     * Tells whether the server (and loaded modules) have initialized.
+     * <p></p>
+     * This is useful for threaded <code>Modules</code> that need to wait
+     * until all initialization has occurred before doing something.
+     */
+    public final boolean hasInitialized() {
+        return m_initialized;
+    }
+    
+    /**
+     * Logs a SEVERE message, indicating that the server is inoperable or 
+     * unable to start.
+     *
+     * @param message The message.
+     */
+    public final void logSevere(String message) {
         log(new LogRecord(Level.SEVERE, message));
     }
     
-    public void logWarning(String message) {
+    /**
+     * Logs a WARNING message, indicating that an undesired (but non-fatal)
+     * condition occured.
+     *
+     * @param message The message.
+     */
+    public final void logWarning(String message) {
         log(new LogRecord(Level.WARNING, message));
     }
     
-    public void logInfo(String message) {
+    /**
+     * Logs an INFO message, indicating that something relatively uncommon and
+     * interesting happened, like server or module startup or shutdown, or
+     * a periodic job.
+     *
+     * @param message The message.
+     */
+    public final void logInfo(String message) {
         log(new LogRecord(Level.INFO, message));
     }
     
-    public void logConfig(String message) {
+    /**
+     * Logs a CONFIG message, indicating what occurred during the server's
+     * (or a module's) configuration phase.
+     *
+     * @param message The message.
+     */
+    public final void logConfig(String message) {
         log(new LogRecord(Level.CONFIG, message));
     }
     
-    public void logFine(String message) {
+    /**
+     * Logs a FINE message, indicating basic information about a request to
+     * the server (like hostname, operation name, and success or failure).
+     *
+     * @param message The message.
+     */
+    public final void logFine(String message) {
         log(new LogRecord(Level.FINE, message));
     }
     
-    public void logFiner(String message) {
+    /**
+     * Logs a FINER message, indicating detailed information about a request
+     * to the server (like the full request, full response, and timing
+     * information).
+     *
+     * @param message The message.
+     */
+    public final void logFiner(String message) {
         log(new LogRecord(Level.FINER, message));
     }
     
-    public void logFinest(String message) {
+    /**
+     * Logs a FINEST message, indicating method entry/exit or extremely
+     * verbose information intended to aid in debugging.
+     *
+     * @param message The message.
+     */
+    public final void logFinest(String message) {
         log(new LogRecord(Level.FINEST, message));
     }
     
-      // if m_logger!=null, send to m_logger
-      // otherwise, queue it in memory
-    private void log(LogRecord record) {
+    /**
+     * Sends a <code>LogRecord</code> to the appropriate place.
+     * <p></p>
+     * If we have a <code>Logger</code> defined, send it to that.  Otherwise,
+     * save it in the in-memory queue for later flushing.
+     *
+     * @param record The message.
+     */
+    private final void log(LogRecord record) {
         record.setLoggerName("");
         if (m_logger==null) {
             m_startupLogRecords.add(record);
@@ -515,8 +941,10 @@ public abstract class Server
      * <p></p>
      * This method is intended for use by subclasses of <code>Server</code>,
      * during initialization.
+     *
+     * @param newLogger The <code>Logger</code> to use for messages.
      */
-    protected void setLogger(Logger newLogger) {
+    protected final void setLogger(Logger newLogger) {
         if (m_logger==null) {
             Iterator recs=m_startupLogRecords.iterator();
             while (recs.hasNext()) {
@@ -651,8 +1079,7 @@ public abstract class Server
                 Constructor serverConstructor=serverClass.getConstructor(
                         new Class[] {param1Class, param2Class});
                 Server inst=(Server) serverConstructor.newInstance( 
-                        new Object[] {rootElement.getChildNodes(), 
-                        homeDir} );
+                        new Object[] {rootElement, homeDir} );
                 s_instances.put(homeDir, inst);
                 return inst;
             } catch (ClassNotFoundException cnfe) {
@@ -687,8 +1114,12 @@ public abstract class Server
                 } catch (ModuleInitializationException mie) {
                     throw mie;
                 } catch (Throwable t) {
-                    // impossible 
-                    return null;
+                    // a runtime error..shouldn't happen, but if it does...
+                    StringBuffer s=new StringBuffer();
+                    for (int i=0; i<t.getStackTrace().length; i++) {
+                        s.append(t.getStackTrace()[i] + "\n");
+                    }
+                    throw new ServerInitializationException(s.toString());
                 }
             } 
         } catch (ParserConfigurationException pce) {
@@ -738,6 +1169,16 @@ public abstract class Server
      */
     public final Module getModule(String role) {
         return (Module) m_loadedModules.get(role);
+    }
+    
+    /**
+     * Gets a <code>DatastoreConfig</code>.
+     *
+     * @param id The id as given in the server configuration.
+     * @return The <code>DatastoreConfig</code>, <code>null</code> if not found.
+     */
+    public final DatastoreConfig getDatastoreConfig(String id) {
+        return (DatastoreConfig) m_datastoreConfigs.get(id);
     }
     
     /**
@@ -867,8 +1308,19 @@ public abstract class Server
                     + " not set, using \".\"");
             serverHome=".";
         }
+        Server server=null;
         try {
-            Server server=Server.getInstance(new File(serverHome));
+            server=Server.getInstance(new File(serverHome));
+        } catch (ServerInitializationException sie) {
+            System.err.println("Error: Server could not initialize: "
+                    + sie.getMessage());
+        } catch (ModuleInitializationException mie) {
+            Module m=mie.getModule();
+            System.err.println("Error: Module '" + m.getClass().getName() 
+                    + "' (role='" + m.getRole() + "') could not initialize: " 
+                    + mie.getMessage());
+        } finally {
+            if (server!=null) {
             try {
                 server.shutdown();
             } catch (ServerShutdownException sse) {
@@ -880,14 +1332,7 @@ public abstract class Server
                         + "' (role='" + m.getRole() + "') had trouble "
                         + "shutting down: " + mse.getMessage());
             }
-        } catch (ServerInitializationException sie) {
-            System.err.println("Error: Server could not initialize: "
-                    + sie.getMessage());
-        } catch (ModuleInitializationException mie) {
-            Module m=mie.getModule();
-            System.err.println("Error: Module '" + m.getClass().getName() 
-                    + "' (role='" + m.getRole() + "') could not initialize: " 
-                    + mie.getMessage());
+            }
         }
     }
 
