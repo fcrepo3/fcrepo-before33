@@ -124,8 +124,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         s_server.logFiner("Error carried up to API-M level: " + e.getClass().getName() + "\n" + lines.toString());
     }
 
-	// This remains in Fedora 2.0 for backward compatibility.  It assumes METS-Fedora 
-	// as the ingest format.  It will be deprecated in a future version.
+	// DEPRECATED. This remains in Fedora 2.0 for backward compatibility.  
+	// It assumes METS-Fedora as the ingest format.  It will be remove in a future version.
     public String ingestObject(byte[] METSXML, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
 		return ingest(METSXML, "metslikefedora1", logMessage);
@@ -178,6 +178,23 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
+	public fedora.server.types.gen.Property[] getObjectProperties(String PID)
+			throws RemoteException {
+		assertInitialized();
+		try {
+			fedora.server.storage.types.Property[] properties=
+					s_management.getObjectProperties(
+							getContext(), PID);
+			return TypeUtility.convertPropertyArrayToGenPropertyArray(properties);
+		} catch (ServerException se) {
+			logStackTrace(se);
+			throw AxisUtility.getFault(se);
+		} catch (Exception e) {
+			throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+		}				
+				
+	}
+
     public fedora.server.types.gen.UserInfo describeUser(String id)
             throws RemoteException {
         if (id==null || !id.equals("fedoraAdmin")) {
@@ -209,7 +226,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throws RemoteException {
         assertInitialized();
         try {
-			InputStream in=s_management.exportObject(getContext(), PID, null, "UTF-8");
+			InputStream in=s_management.exportObject(getContext(), PID, null, null, "UTF-8");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
@@ -220,11 +237,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
     
-	public byte[] export(String PID, String format)
+	public byte[] export(String PID, String format, String exportContext)
 			throws RemoteException {
 		assertInitialized();
 		try {
-			InputStream in=s_management.exportObject(getContext(), PID, format, "UTF-8");
+			InputStream in=s_management.exportObject(getContext(), PID, format, exportContext, "UTF-8");
 			ByteArrayOutputStream out=new ByteArrayOutputStream();
 			pipeStream(in, out);
 			return out.toByteArray();
