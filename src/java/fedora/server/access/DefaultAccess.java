@@ -17,7 +17,7 @@ import fedora.server.errors.InvalidUserParmException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
-import fedora.server.storage.DisseminatingDOReader;
+import fedora.server.storage.DOReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.MethodDef;
@@ -95,8 +95,8 @@ public class DefaultAccess extends Module implements Access
   {
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     String[] behaviorDefs = null;
-    DisseminatingDOReader reader =
-        m_manager.getDisseminatingReader(context, PID);
+    DOReader reader =
+        m_manager.getReader(context, PID);
     behaviorDefs = reader.GetBehaviorDefs(versDateTime);
     return behaviorDefs;
   }
@@ -118,8 +118,8 @@ public class DefaultAccess extends Module implements Access
       String bDefPID, Calendar asOfDateTime) throws ServerException
   {
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
-    DisseminatingDOReader reader =
-        m_manager.getDisseminatingReader(context, PID);
+    DOReader reader =
+        m_manager.getReader(context, PID);
     MethodDef[] methodResults =
         reader.GetBMechMethods(bDefPID, versDateTime);
     return methodResults;
@@ -148,8 +148,8 @@ public class DefaultAccess extends Module implements Access
       ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
       Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
       InputStream methodResults = null;
-      DisseminatingDOReader reader =
-          m_manager.getDisseminatingReader(context, PID);
+      DOReader reader =
+          m_manager.getReader(context, PID);
       methodResults = reader.GetBMechMethodsWSDL(bDefPID, versDateTime);
       int byteStream = 0;
       while ((byteStream = methodResults.read()) >= 0)
@@ -198,8 +198,8 @@ public class DefaultAccess extends Module implements Access
     Hashtable h_userParms = new Hashtable();
     MIMETypedStream dissemination = null;
     MethodParmDef[] defaultMethodParms = null;
-    DisseminatingDOReader reader =
-        m_manager.getDisseminatingReader(context, PID);
+    DOReader reader =
+        m_manager.getReader(context, PID);
 
     // Put any user-supplied method parameters into hash table
     if (userParms != null)
@@ -227,7 +227,7 @@ public class DefaultAccess extends Module implements Access
 
     // Get dissemination binding info.
     DisseminationBindingInfo[] dissBindInfo =
-        reader.getDissemination(bDefPID, methodName, versDateTime);
+        reader.getDisseminationBindingInfo(bDefPID, methodName, versDateTime);
 
     // Assemble and execute the dissemination request from the binding info.
     DisseminationService dissService = new DisseminationService();
@@ -252,10 +252,10 @@ public class DefaultAccess extends Module implements Access
       Calendar asOfDateTime) throws ServerException
   {
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
-    DisseminatingDOReader reader =
-        m_manager.getDisseminatingReader(context, PID);
+    DOReader reader =
+        m_manager.getReader(context, PID);
     ObjectMethodsDef[] methodDefs =
-        reader.getObjectMethods(versDateTime);
+        reader.getObjectMethodsDef(versDateTime);
     return methodDefs;
   }
 
@@ -286,15 +286,15 @@ public class DefaultAccess extends Module implements Access
       String methodName, Hashtable h_userParms, Date versDateTime)
       throws ServerException
   {
-    DisseminatingDOReader fdor = null;
+    DOReader fdor = null;
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
     StringBuffer sb = new StringBuffer();
     Hashtable h_validParms = new Hashtable();
     boolean isValid = true;
 
-    DisseminatingDOReader reader =
-      m_manager.getDisseminatingReader(context, PID);
+    DOReader reader =
+      m_manager.getReader(context, PID);
     methodParms = reader.GetBMechMethodParms(bDefPID,
         methodName, versDateTime);
 

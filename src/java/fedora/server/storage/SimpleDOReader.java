@@ -10,6 +10,7 @@ import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.DOTranslator;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.DSBindingAugmented;
@@ -17,6 +18,7 @@ import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.DSBindingMapAugmented;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
+import fedora.server.storage.types.ObjectMethodsDef;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -442,6 +444,15 @@ public class SimpleDOReader
             augMaps[i]=augMap;
         }
         return augMaps;
+    }
+    
+    public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
+          String methodName, Date versDateTime) {
+        return null;
+    }
+
+    public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime) {
+        return null;
     }
     
 }

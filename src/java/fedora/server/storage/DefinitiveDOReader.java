@@ -746,6 +746,15 @@ public class DefinitiveDOReader implements DOReader
       return allBindingMaps;
     }
 
+    public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
+              String methodName, Date versDateTime) {
+        return null;
+    }
+
+    public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime) {
+        return null;
+    }
+
     // private methods
 
     private File locateObject(String PID) {

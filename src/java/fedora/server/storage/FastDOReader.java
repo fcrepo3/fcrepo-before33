@@ -77,7 +77,7 @@ import fedora.server.storage.types.MethodParmDef;
  * @author Ross Wayland
  * @version 1.0
  */
-public class FastDOReader implements DisseminatingDOReader
+public class FastDOReader implements DOReader
 {
   /** Debug toggle for testing */
   private static boolean debug;
@@ -1023,21 +1023,12 @@ public class FastDOReader implements DisseminatingDOReader
   }
 
   /**
-   * <p>Gets a dissemination result.</p>
-   *
-   * @param bDefPID The persistent identifier for the Behavior Definition
-   *        object.
-   * @param methodName The name of the method to be executed.
-   * @param versDateTime The versioning datetime stamp.
-   * @return A MIME-typed stream containing the dissemination result.
-   * @throws ObjectNotFoundException If object cannot be found.
-   * @throws GeneralException If there was any misc exception that we want to
-   *         catch and re-throw as a Fedora exception. Extends ServerException.
+   * Gets the dissemination binding info necessary to perform a particular
+   * dissemination.
    */
-  public DisseminationBindingInfo[] getDissemination(String bDefPID, 
-          String methodName, Date versDateTime)
-          throws GeneralException
-  {
+  public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
+          String methodName, Date versDateTime) 
+          throws GeneralException {
     DisseminationBindingInfo dissBindInfo = null;
     DisseminationBindingInfo[] dissBindInfoArray = null;
     Vector queryResults = new Vector();
@@ -1465,7 +1456,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public ObjectMethodsDef[] getObjectMethods(Date versDateTime)
+  public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime)
       throws GeneralException
   {
     ObjectMethodsDef[] objectMethodsDefArray = null;

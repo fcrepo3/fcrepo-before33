@@ -253,5 +253,11 @@ public interface DOReader
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
           throws ServerException;
+          
+    public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
+          String methodName, Date versDateTime) throws ServerException;
+
+    public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime)
+          throws ServerException;
 
 }

@@ -364,15 +364,6 @@ public class DefaultDOManager
         }
     }
 
-    public DisseminatingDOReader getDisseminatingReader(Context context, String pid)
-            throws ServerException {
-        if (cachedObjectRequired(context)) {
-            return new FastDOReader(context, pid);
-        } else {
-            throw new InvalidContextException("A DisseminatingDOReader is unavailable in a non-cached context.");
-        }
-    }
-
     public BMechReader getBMechReader(Context context, String pid)
             throws ServerException {
         if (cachedObjectRequired(context)) {

@@ -23,10 +23,6 @@ public interface RepositoryReader {
     public abstract DOReader getReader(Context context, String pid)
             throws ServerException;
             
-    public abstract DisseminatingDOReader getDisseminatingReader(
-            Context context, String pid) 
-            throws ServerException;
-
     public abstract BMechReader getBMechReader(Context context, String pid)
             throws ServerException;
 

@@ -640,6 +640,15 @@ public class DefinitiveDOWriter
         return false;
         */
     }
+    
+    public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
+            String methodName, Date versDateTime) {
+        return null;
+    }
+
+    public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime) {
+        return null;
+    }
 
     public void invalidate() {
         m_invalidated=true;
