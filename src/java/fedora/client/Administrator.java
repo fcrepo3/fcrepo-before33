@@ -1,41 +1,12 @@
 package fedora.client;
 
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.net.*;
 import javax.help.*;
 import javax.help.Map.ID;
-import javax.swing.Box;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDesktopPane;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JFileChooser;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.text.JTextComponent;
-import javax.swing.JToolBar;
-import javax.swing.JWindow;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import java.awt.event.*;
-import java.awt.*;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
+import javax.swing.*;
 
 import fedora.swing.jhelp.SimpleHelpBroker;
 import fedora.swing.jhelp.SimpleContentViewerUI;
@@ -125,6 +96,7 @@ public class Administrator extends JFrame {
         WATCH_AREA=new JTextArea();
         WATCH_AREA.setFont(new Font("monospaced", Font.PLAIN, 12));
         WATCH_AREA.setCaretPosition(0);
+
 
 
         if (host!=null) {
@@ -381,11 +353,14 @@ public class Administrator extends JFrame {
         JMenuItem toolsWatch=new JMenuItem("STDOUT/STDERR");
         toolsWatch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JInternalFrame viewFrame=new JInternalFrame("WATCH_AREA");
+                JInternalFrame viewFrame=new JInternalFrame("STDOUT/STDERR", true, true, true, true);
                 viewFrame.getContentPane().add(new JScrollPane(WATCH_AREA));
-                viewFrame.setSize(720,520);
+                viewFrame.setSize(720,300);
                 viewFrame.setVisible(true);
                 Administrator.getDesktop().add(viewFrame);
+                try {
+                    viewFrame.setSelected(true);
+                } catch (java.beans.PropertyVetoException pve) {}    
             }
         });
 
@@ -701,6 +676,9 @@ public class Administrator extends JFrame {
 
 
 
+        WatchPrintStream watchOut=new WatchPrintStream(new ByteArrayOutputStream());
+        PrintStream sysOut=System.out;
+        PrintStream sysErr=System.err;
         try {
         String host=null;
         int port=0;
@@ -711,26 +689,23 @@ public class Administrator extends JFrame {
             port=Integer.parseInt(args[1]);
             user=args[2];
             pass=args[3];
-            System.out.print("Logging in...");
+            System.out.println("Logging in first...");
+            System.setOut(watchOut);
+            System.setErr(watchOut);
             LoginDialog.tryLogin(host, port, user, pass);
-            System.out.println("ok...");
+        } else {
+            System.setOut(watchOut);
+            System.setErr(watchOut);
         }
-        System.out.print("Initializing UI...");
         Administrator administrator=new Administrator(host, port, user, pass);
         System.out.println("Started Fedora Administrator.");
-        } catch (NumberFormatException e) {
-            System.out.println("Error: port must be a number.  fedora-admin host port user pass");
         } catch (Exception e) {
+            System.setOut(sysOut);
+            System.setOut(sysErr);
             System.out.println("FAILED!" + "\n" + e.getMessage());
         }
     }
 
-    // a wrapper around PrintWriter that sends all its content to WATCH_AREA
-    // via WATCH_AREA.append(String)
-    private class WatchPrintStream
-   { //        extends PrintStream {
-
-    }
 
 }
 
