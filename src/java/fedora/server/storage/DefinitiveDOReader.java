@@ -103,7 +103,7 @@ public class DefinitiveDOReader implements DOReader
         //doReader.GetDatastream(dsArray[0].DatastreamID, null);
         //doReader.GetDisseminators(null);
         String[] bdefArray = doReader.GetBehaviorDefs(null);
-        doReader.GetBMechMethods(bdefArray[0], null);
+        doReader.getObjectMethods(bdefArray[0], null);
         doReader.GetDSBindingMaps(null);
       }
       catch (ServerException e)
@@ -526,7 +526,7 @@ public class DefinitiveDOReader implements DOReader
      * @throws GeneralException If there was any misc exception that we want to
      *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
+    public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime)
       throws GeneralException, ServerException
     {
       // TODO! dateTime filter not implemented in this release!!
@@ -537,13 +537,13 @@ public class DefinitiveDOReader implements DOReader
       // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
       if (bDefPID.equalsIgnoreCase("fedora-system:1"))
       {
-        System.out.println("GetBMechMethods: Suppressing report of methods for bootstrap mechanism!");
+        System.out.println("getObjectMethods: Suppressing report of methods for bootstrap mechanism!");
         return null;
       }
 
       if (debug)
       {
-        System.out.println("GetBMechMethods for BDEF: " + bDefPID);
+        System.out.println("getObjectMethods for BDEF: " + bDefPID);
       }
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
       MethodDef[] methods = mechRead.getServiceMethods(null);
@@ -552,7 +552,7 @@ public class DefinitiveDOReader implements DOReader
 
     /**
      * Gets list of method definitions that are available on a particular
-     * Disseminator. Works like method GetBMechMethods, except the method
+     * Disseminator. Works like method getObjectMethods, except the method
      * definitions are returned as XML in accordance with the Fedora
      * Method Map schema.
      *
@@ -561,12 +561,12 @@ public class DefinitiveDOReader implements DOReader
      * @throws GeneralException If there was any misc exception that we want to
      *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime)
+    public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime)
       throws GeneralException, ServerException
     {
       if (bDefPID.equalsIgnoreCase("fedora-system:1"))
       {
-        System.out.println("GetBMechMethodsXML: Suppressing report of methods for bootstrap mechanism!");
+        System.out.println("getObjectMethodsXML: Suppressing report of methods for bootstrap mechanism!");
         return null;
       }
       // TODO! dateTime filter not implemented in this release!!
@@ -589,7 +589,7 @@ public class DefinitiveDOReader implements DOReader
      * @throws GeneralException If there was any misc exception that we want to
      *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public MethodParmDef[] GetBMechMethodParms(String bDefPID,
+    public MethodParmDef[] getObjectMethodParms(String bDefPID,
         String methodName, Date versDateTime)
         throws GeneralException, ServerException
     {
@@ -601,13 +601,13 @@ public class DefinitiveDOReader implements DOReader
       // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
       if (bDefPID.equalsIgnoreCase("fedora-system:1"))
       {
-        System.out.println("GetBMechMethodParms: Suppressing report of methods for bootstrap mechanism!");
+        System.out.println("getObjectMethodParms: Suppressing report of methods for bootstrap mechanism!");
         return null;
       }
 
       if (debug)
       {
-        System.out.println("GetBMechMethodParms for BDEF: " + bDefPID);
+        System.out.println("getObjectMethodParms for BDEF: " + bDefPID);
       }
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
       MethodDef[] methods = mechRead.getServiceMethods(null);
@@ -636,6 +636,7 @@ public class DefinitiveDOReader implements DOReader
      * @throws GeneralException If there was any misc exception that we want to
      *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
+/*
     public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID,
         String methodName, Date versDateTime)
         throws GeneralException, ServerException
@@ -648,13 +649,13 @@ public class DefinitiveDOReader implements DOReader
       // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
       if (bDefPID.equalsIgnoreCase("fedora-system:1"))
       {
-        System.out.println("GetBMechMethodParms: Suppressing report of methods for bootstrap mechanism!");
+        System.out.println("getObjectMethodParms: Suppressing report of methods for bootstrap mechanism!");
         return null;
       }
 
       if (debug)
       {
-        System.out.println("GetBMechMethodParms for BDEF: " + bDefPID);
+        System.out.println("getObjectMethodParms for BDEF: " + bDefPID);
       }
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
       MethodDef[] methods = mechRead.getServiceMethods(null);
@@ -668,6 +669,7 @@ public class DefinitiveDOReader implements DOReader
       }
       return(methodParms);
     }
+*/
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
           throws GeneralException
@@ -739,7 +741,7 @@ public class DefinitiveDOReader implements DOReader
         return null;
     }
 
-    public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime) {
+    public ObjectMethodsDef[] getObjectMethods(Date versDateTime) {
         return null;
     }
 
