@@ -69,7 +69,7 @@ public class ObjectFormatDialog
 		foxmlButton = new JRadioButton("FOXML (Fedora Object XML)", true);
 		foxmlButton.setActionCommand("foxml1.0");
 		foxmlButton.addActionListener(this);
-		metsfButton = new JRadioButton("METS-F (METS Fedora)", false);
+		metsfButton = new JRadioButton("METS (Fedora METS Extension)", false);
 		metsfButton.setActionCommand("metslikefedora1");
 		metsfButton.addActionListener(this);
 		fmt_buttonGroup.add(foxmlButton);
