@@ -383,7 +383,7 @@
 		<param name="pollInterval" value="5000"/>
 	</module>
 	<datastore id="localMySQLPool">
-		<comment>MySQL database on localhost with db name of fedora12</comment>
+		<comment>MySQL database on localhost with db name of fedora20</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora20?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
@@ -403,7 +403,7 @@
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
 	<datastore id="localOracle9iPool">
-		<comment>Oracle9i database on localhost with SID=fedora12</comment>
+		<comment>Oracle9i database on localhost with SID=fedora20</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora20"/>
