@@ -32,7 +32,7 @@ public class METSInOutTest {
                 System.exit(0);
         }
         try {
-            METSDODeserializer deser=new METSDODeserializer("UTF-8", false);
+            METSDODeserializer deser=new METSDODeserializer("UTF-8", false, METSDODeserializer.QUERY_NEVER);
             DigitalObject obj=new BasicDigitalObject();
             System.out.println("Deserializing...");
             deser.deserialize(in, obj);

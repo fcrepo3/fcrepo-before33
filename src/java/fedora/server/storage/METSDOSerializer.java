@@ -6,6 +6,7 @@ import fedora.server.errors.StreamWriteException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
@@ -226,11 +227,12 @@ public class METSDOSerializer
             while (idIter.hasNext()) {
                 String id=(String) idIter.next();
                 // from the first one with this id, 
-                // first decide if it needs an amdSec or dmdSec
+                // first decide if its an inline xml 
                 Datastream ds=(Datastream) obj.datastreams(id).get(0);
                 if (ds.DSControlGrp==Datastream.XML_METADATA) {
                     //
                     // Serialize inline XML datastream
+                    // - dmdSec || amdSec?
                     //
                     DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
                     if (mds.DSMDClass==DatastreamXMLMetadata.DESCRIPTIVE) {
@@ -319,6 +321,36 @@ public class METSDOSerializer
                         }
                         buf.append("  </amdsec>\n");
                     }
+                } else {
+                    //
+                    // Externally-referenced or managed datastreams
+                    //
+                    buf.append("  <fileGrp ID=\"");
+                    buf.append(ds.DatastreamID);
+                    buf.append(">\n");
+                    Iterator extIter=obj.datastreams(id).iterator();
+                    while (extIter.hasNext()) {
+                        DatastreamReferencedContent eds=
+                                (DatastreamReferencedContent) extIter.next();
+                        buf.append("    <file ID=\"");
+                        buf.append(ds.DSVersionID);
+                        buf.append("\" CREATED=\"");
+                        buf.append(DateUtility.convertDateToString(ds.DSCreateDT));
+                        buf.append("\" MIMETYPE=\"");
+                        buf.append(ds.DSMIME);
+                        buf.append("\" STATUS=\"");
+                        buf.append(ds.DSState);
+                        buf.append("\" SIZE=\"" + ds.DSSize);
+                        buf.append("\" ADMIDS=\"");
+                        //
+                        // other attrs
+                        //
+                        buf.append("\">\n");
+                        if (ds.DSControlGrp==Datastream.EXTERNAL_REF) {
+                        }
+                        buf.append("    </file>\n");
+                    } 
+                    buf.append("  </fileGrp>\n");
                 }
             }
             //

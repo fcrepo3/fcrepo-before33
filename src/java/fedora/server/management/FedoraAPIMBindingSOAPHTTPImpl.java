@@ -73,7 +73,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             String pid="1234";
             TestFileStreamStorage st=new TestFileStreamStorage(new File(s_server.getHomeDir(), "data"), 4096);
             METSDOSerializer ser=new METSDOSerializer("UTF-8");
-            METSDODeserializer deser=new METSDODeserializer("UTF-8", false); // don't check if it's well-formed xml
+            METSDODeserializer deser=new METSDODeserializer("UTF-8", false, METSDODeserializer.QUERY_NEVER); // don't check if it's well-formed xml
             w=new DefinitiveDOWriter(pid, st, st, null, 
                     deser, ser, deser, ser, new ByteArrayInputStream(METSXML),
                     true);

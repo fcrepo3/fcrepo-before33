@@ -99,14 +99,35 @@ public class METSDODeserializer
     private String m_auditResponsibility;
     private String m_auditDate;
     private String m_auditJustification;
+
+    /** 
+     * Never query the server and take it's values for Content-length and 
+     * Content-type
+     */
+    public static int QUERY_NEVER=0;
+    
+    /** 
+     * Query the server and take it's values for Content-length and 
+     * Content-type if either are undefined.
+     */
+    public static int QUERY_IF_UNDEFINED=1;
+    
+    /** 
+     * Always query the server and take it's values for Content-length and 
+     * Content-type.
+     */
+    public static int QUERY_ALWAYS=2;
+    
+    private int m_queryBehavior;
     
     /**
-     * Initializes by setting up a parser that doesn't validate.
+     * Initializes by setting up a parser that doesn't validate and never
+     * queries the server for values of DSSize and DSMIME.
      */
     public METSDODeserializer(String characterEncoding) 
             throws FactoryConfigurationError, ParserConfigurationException, 
             SAXException, UnsupportedEncodingException {
-        this(characterEncoding, false);
+        this(characterEncoding, false, QUERY_NEVER);
     }
 
     /**
@@ -120,9 +141,11 @@ public class METSDODeserializer
      * of the byte[] encoding if it plans on doing any translation of
      * that to characters (such as in xml serialization)
      */
-    public METSDODeserializer(String characterEncoding, boolean validate)
+    public METSDODeserializer(String characterEncoding, boolean validate,
+            int queryBehavior)
             throws FactoryConfigurationError, ParserConfigurationException, 
             SAXException, UnsupportedEncodingException {
+        m_queryBehavior=queryBehavior;
         // ensure the desired encoding is supported before starting
         // unsuppenc will be thrown if not
         m_characterEncoding=characterEncoding;
@@ -223,6 +246,14 @@ public class METSDODeserializer
                 m_inXMLMetadata=true;
             } else if (localName.equals("fileGrp")) {
                 m_dsId=grab(a, M, "ID");
+                // reset the values for the next file
+                m_dsVersId=null;
+                m_dsCreateDate=null;
+                m_dsMimeType=null;
+                m_dsAdmIds=null;
+                m_dsDmdIds=null;
+                m_dsState=null;
+                m_dsSize=-1;
             } else if (localName.equals("file")) {
                 // ID="DS3.0" 
                 // CREATED="2002-05-20T06:32:00" 
@@ -272,13 +303,25 @@ public class METSDODeserializer
                 } catch (MalformedURLException murle) {
                     throw new SAXException("xlink:href specifies malformed url: " + dsLocation);
                 }
-
                 DatastreamReferencedContent d=new DatastreamReferencedContent();
                 d.DatastreamID=m_dsId;
                 d.DSVersionID=m_dsVersId;
                 d.DSLabel=m_dsLabel;
+                d.DSCreateDT=m_dsCreateDate;
+                d.DSControlGrp=Datastream.EXTERNAL_REF;
+                d.DSInfoType="DATA";
+                d.DSState=m_dsState;
                 d.DSLocation=m_dsLocation;
-                
+                if (m_queryBehavior!=QUERY_NEVER) {
+                    if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null) 
+                            || (m_dsSize==-1)) {
+                        try {
+                            InputStream in=d.getContentStream();
+                        } catch (StreamIOException sioe) {
+                            throw new SAXException(sioe.getMessage());
+                        }
+                    }
+                }
             } else if (localName.equals("FContent")) {
                 // signal that we want to suck it in
                 m_readingContent=true;
