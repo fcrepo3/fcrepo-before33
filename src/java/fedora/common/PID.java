@@ -188,14 +188,14 @@ public class PID {
      * This is just the PID, prepended with "info:fedora/".
      */
     public String toURI() {
-        return "info:fedora/" + m_normalized;
+        return Constants.FEDORA.uri + m_normalized;
     }
 
     /**
      * Return the URI form of some PID string, assuming it is well-formed.
      */
     public static String toURI(String pidString) {
-        return "info:fedora/" + pidString;
+        return Constants.FEDORA.uri + pidString;
     }
 
     /**
