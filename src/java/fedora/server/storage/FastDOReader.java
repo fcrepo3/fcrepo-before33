@@ -59,28 +59,28 @@ private static final String dbPropsFile = "db.properties";
         "MechanismImpl.MECHImpl_Address_Location,"+
         "MechanismImpl.MECHImpl_Operation_Location,"+
         "MechanismImpl.MECHImpl_Protocol_Type,"+
-        "DigitalObjectBindingMap.DOBINDINGMap_DS_Location, "+
-        "DatastreamBindingKey.DSBindingKey_Name "+
+        "DataStreamBinding.DSBinding_DS_Location, "+
+        "DataStreamBindingSpec.DSBindingSpec_Name "+
         " FROM "+
         "DigitalObject,"+
         "BehaviorDefinition,"+
         "BehaviorMechanism,"+
-        "DigitalObjectBindingMap,"+
+        "DataStreamBinding,"+
         "Disseminator,"+
         "DigitalObjectDissAssoc,"+
         "MechanismImpl,"+
         "Method,"+
-        "DatastreamBindingKey "+
+        "DataStreamBindingSpec "+
  	" WHERE "+
         "DigitalObject.DO_DBID=DigitalObjectDissAssoc.DO_DBID AND "+
 	"DigitalObjectDissAssoc.DISS_DBID=Disseminator.DISS_DBID AND " +
 	"Disseminator.BDEF_DBID = BehaviorDefinition.BDEF_DBID AND " +
 	"Disseminator.BMECH_DBID = BehaviorMechanism.BMECH_DBID AND " +
-	"DigitalObjectBindingMap.DO_DBID = DigitalObject.DO_DBID AND " +
+	"DataStreamBinding.DO_DBID = DigitalObject.DO_DBID AND " +
 	"BehaviorMechanism.BMECH_DBID = MechanismImpl.BMECH_DBID AND " +
 	"BehaviorDefinition.BDEF_DBID = MechanismImpl.BDEF_DBID AND " +
-	"MechanismImpl.DSBindingKey_DBID = DigitalObjectBindingMap.DSBindingKey_DBID AND " +
-        "DatastreamBindingKey.DSBindingKey_DBID = MechanismImpl.DSBindingKey_DBID AND "+
+	"MechanismImpl.DSBindingKey_DBID = DataStreamBinding.DSBindingKey_DBID AND " +
+        "DataStreamBindingSpec.DSBindingKey_DBID = MechanismImpl.DSBindingKey_DBID AND "+
 	"MechanismImpl.METH_DBID = Method.METH_DBID AND " +
 	"DigitalObject.DO_PID='" + PID + "' AND " +
 	" BehaviorDefinition.BDEF_PID='" + bDefPID + "' AND " +
@@ -111,6 +111,7 @@ private static final String dbPropsFile = "db.properties";
       statement.close();
     } catch (SQLException sqle)
     {
+      System.out.println("\nSQLERROR:");
       System.out.println(sqle);
     }
     return queryResults;
@@ -125,10 +126,14 @@ private static final String dbPropsFile = "db.properties";
         "PARM_Required_Flag,"+
         "PARM_Label "+
         " FROM "+
+        "BehaviorDefinition,"+
         "Method,"+
         "Parameter "+
         " WHERE "+
+        "BehaviorDefinition.BDEF_DBID=Parameter.BDEF_DBID AND "+
+        "Method.BDEF_DBID=Parameter.BDEF_DBID AND "+
         "Parameter.METH_DBID=Method.METH_DBID AND "+
+        "BehaviorDefinition.BDEF_PID='" + bDefPID + "' AND "+
         "Method.METH_Name='"  + method + "' ";
     if(debug) System.out.println("query="+query+"\n");
     try
@@ -139,10 +144,10 @@ private static final String dbPropsFile = "db.properties";
       ResultSet rs = statement.executeQuery(query);
       ResultSetMetaData rsMeta = rs.getMetaData();
       int cols = rsMeta.getColumnCount();
-      String[] results = new String[cols];
       // Note: a row is returned for each method parameter
       while (rs.next())
       {
+        String[] results = new String[cols];
         for (int i=1; i<=cols; i++)
         {
           results[i-1] = rs.getString(i);
@@ -230,6 +235,7 @@ private static final String dbPropsFile = "db.properties";
     Vector results = null;
     results = fdor.getDissemination("1007.lib.dl.test/text_ead/viu00003","web_ead","get_web_default");
     Enumeration e = results.elements();
+    System.out.println("\nBEGIN -- TEST RESULTS FOR DISSEMINATION:");
     while(e.hasMoreElements())
     {
       String[] list = (String[])e.nextElement();
@@ -238,22 +244,25 @@ private static final String dbPropsFile = "db.properties";
         System.out.println("dissemResults["+i+"] = "+list[i]+"\n");
       }
     }
+    System.out.println("END -- TEST RESULTS FOR DISSEMINATION\n");
 
     // Test reading method paramters from SQL database
     Vector methodParms = null;
     methodParms = fdor.getMethodParms("web_ead","get_web_default");
     Enumeration e2 = methodParms.elements();
-    String[] methodParm  = null;
+    System.out.println("\nBEGIN -- TEST RESULTS FOR READING METHOD PARMS:");
     while(e2.hasMoreElements())
     {
-      methodParm = (String[])e2.nextElement();
+      String[] methodParm = (String[])e2.nextElement();
       for(int i=0; i<methodParm.length; i++)
       {
         System.out.println("methodParm["+i+"] = "+methodParm[i]+"\n");
       }
     }
+    System.out.println("END -- TEST RESULTS FOR READING METHOD PARAMETERS\n");
 
     // Test reading Http content from the internet
+    System.out.println("\nBEGIN -- TEST RESULTS FOR READING HTTP CONTENT:");
     MIMETypedStream ms = fdor.getHttpContent("http://icarus.lib.virginia.edu/~rlw/test.html");
     try
     {
@@ -262,6 +271,7 @@ private static final String dbPropsFile = "db.properties";
     {
       System.out.println(ioe);
     }
+    System.out.println("END -- TEST RESULTS FOR READING HTTP CONTENT\n");
 
   }
 }
