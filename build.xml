@@ -341,9 +341,11 @@
 			<fileset dir="src/demo-soapclient"/>
 		</copy>
 		<!-- Prepare batch demo-->
-		<copy file="src/xsl/batchtool/merge.xsl" todir="dist/client/lib"/>
+		<copy file="src/xsl/batchtool/mets-merge.xsl" todir="dist/client/lib"/>
+		<copy file="src/xsl/batchtool/foxml-merge.xsl" todir="dist/client/lib"/>
 		<mkdir dir="dist/client/demo/batch-demo"/>
 		<copy file="src/demo-objects/mets/batch-demo/mets-template.xml" todir="dist/client/demo/batch-demo"/>
+		<copy file="src/demo-objects/mets/batch-demo/foxml-template.xml" todir="dist/client/demo/batch-demo"/>
 		<copy file="src/demo-objects/mets/batch-demo/modify-batch-directives.xml" todir="dist/client/demo/batch-demo"/>
 		<copy todir="dist/client/demo/batch-demo/object-specifics">
 			<fileset dir="src/xml/batch-demo/object-specifics"/>
