@@ -1,6 +1,8 @@
 package fedora.server.storage.types;
 
 import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -30,6 +32,8 @@ import java.util.Date;
 public class Disseminator
 {
 
+  private ArrayList m_auditRecordIdList;
+
   public String parentPID;
 
   public boolean isNew=false;
@@ -56,8 +60,13 @@ public class Disseminator
 
   public String dissState;
 
-
   public Disseminator()
   {
+    m_auditRecordIdList=new ArrayList();
+  }
+
+  public List auditRecordIdList()
+  {
+    return m_auditRecordIdList;
   }
 }
