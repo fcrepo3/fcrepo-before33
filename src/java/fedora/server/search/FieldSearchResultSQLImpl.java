@@ -182,7 +182,7 @@ public class FieldSearchResultSQLImpl
                 }
             }
             if (needsEscape) {
-                whereClause.append(" {escape '/'}");
+            //    whereClause.append(" {escape '/'}");
             }
         }
         return whereClause.toString();
@@ -295,7 +295,7 @@ public class FieldSearchResultSQLImpl
                 }
             }
             if (needsEscape) {
-                whereClause.append(" {escape '/'}");
+            //    whereClause.append(" {escape '/'}");
             }
         }
         return whereClause.toString();

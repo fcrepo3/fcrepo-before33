@@ -802,7 +802,7 @@ public class DefaultDOManager
         // temporary, unique handle for file storage of inputstream
         String tempHandle="temp-ingest-" + in.hashCode();
         getServer().logFinest("Using temporary handle: " + tempHandle);
-        
+
         String permPid=null;
         boolean wroteTempIngest=false;
         boolean inPermanentStore=false;
@@ -1388,7 +1388,7 @@ public class DefaultDOManager
         }
 */
         if (needEscape) {
-            whereClause.append(" {escape '/'}");
+        //   whereClause.append(" {escape '/'}");
         }
         return getPIDs(whereClause.toString());
     }
