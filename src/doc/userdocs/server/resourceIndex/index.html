@@ -35,10 +35,6 @@
             font-style: normal;
             font-weight: normal;
         }
-        
-        .reference {
-            text-decoration: none;
-        }
     </style>
 </head>
 <body>
@@ -58,7 +54,7 @@
             <li><a href="#intro">Introduction</a></li>
             <li><a href="#impl">Implementation</a>
                 <ol>
-                    <li>System Relationships</li>
+                    <li><a href="#impl.system">System Relationships &amp; Properties</a></li>
                     <li>User-defined Relationships</li>
                     <li>Services</li>
                 </ol>
@@ -69,15 +65,15 @@
                     <li><a href="#config.datastore">Datastore Configuration</a></li>
                 </ol>
             </li>
-            <li><a href="#demo">Demo</a></li>
-            <li>Search Interface</li>
-            <li>References</li>
+            <li><a href="#search">Search Interface</a></li>
+            <li><a href="#demo">Resource Index Demo</a></li>
+            <li><a href="#references">References</a></li>
         </ol>
     </div>
 </div>
 
 <div id="introduction">
-<h2><a name="intro" />1. Introduction</h2>
+<h2><a name="intro">1. Introduction</a></h2>
 <p>The latest release of Fedora includes the Resource Index, a service which 
 provides the infrastructure for expressing relationships among objects and their 
 components. Examples of relationships between digital objects include well-known 
@@ -86,18 +82,19 @@ chapters and a book, and semantic relationships useful in digital library
 organization such as those expressed within the Functional Requirements for 
 Bibliographic Records (FRBR).</p>
 
-<p>Fedora expresses relationships by defining a base relationship ontology using 
-RDFS and provides a slot in the digital object abstraction for RDF expression of 
-relationships based on this ontology. Assertions from other ontologies may also 
-be included along with the base Fedora relationships. All relationships are 
-represented as a graph that can be queried using an RDF query language. The 
-query interface to the Resource Index is exposed as a web service, providing a 
-rich information foundation for external services 
-[<a href="#ref.1" class="reference">1</a>].</p>
+<p>Fedora expresses relationships by defining a base relationship ontology 
+[<a href="#ref.rels-ext">RELS-EXT</a>] using RDFS and provides a slot in the 
+digital object abstraction for RDF expression of relationships based on this 
+ontology. Assertions from other ontologies may also be included along with the 
+base Fedora relationships. All relationships are represented as a graph that can 
+be queried using an RDF query language. The query interface to the Resource 
+Index is exposed as a web service [<a href="#ref.risearch">risearch</a>], 
+providing a rich information foundation for external services 
+[<a href="#ref.rels" class="reference">Fedora Relationships</a>].</p>
 </div>
 
 <div class="sect">
-<h2><a name="impl" />2. Implementation</h2>
+<h2><a name="impl">2. Implementation</a></h2>
 <p>The Fedora object model can be abstractly viewed as a directed 
 graph, consisting of <em>internal</em> arcs that relate digital object nodes to 
 their dissemination nodes and <em>external</em> arcs between digital objects. 
@@ -105,25 +102,28 @@ The Resource Index is a Fedora service that allows storage and query of this
 graph.</p>
 
 <p>The Resource Index builds on the RDF primitives build within the semantic 
-web community. Fedora supplies a base relationship ontology (defining a core set 
-of internal and external relationships) that can co-exist with domain-specific 
-relationship ontologies from other namespaces. Each digital object's external 
-relationships to other digital objects are expressing in RDF/XML within a 
-reserved datastream in the respective object. A relationship graph over the 
-digital objects in the repository can then be derived by merging the internal 
-relationships implied by the Fedora object model with the external 
-relationships explicitly stated in their relationship datastreams.</p>
+web community. Fedora supplies a base relationship ontology 
+[<a href="#ref.rels-ext">RELS-EXT</a>](defining a core set of internal and 
+external relationships) that can co-exist with domain-specific relationship 
+ontologies from other namespaces. Each digital object's external relationships 
+to other digital objects are expressing in RDF/XML within a reserved datastream 
+in the respective object. A relationship graph over the digital objects in the 
+repository can then be derived by merging the internal relationships implied by 
+the Fedora object model with the external relationships explicitly stated in 
+their relationship datastreams.</p>
 
 <div class="subsect">
-<h3><a name="impl.system">A. System Relationships</a></h3>
-<p>The Fedora base ontology describes such relations and properties as the behavior 
-definition implemented, behavior mechanism used, creation date, state, and 
-mime-type.</p>
+<h3><a name="impl.system">A. System Relationships &amp; Properties</a></h3>
+<p>The Fedora base ontology describes such relations and properties as the 
+behavior definition implemented, behavior mechanism used, creation date, state, 
+and mime-type.</p>
 
-<p>The most rudimentary of digital objects as represented in the Resource Index is
-shown below:</p>
-<img src="images/system-basic.png" height="158" width="604" alt="" />
+<img src="images/system-basic.png" height="300" width="460" alt="" />
 
+<p>Dublic Core statement, as shown in the figure below, are automatically 
+extracted from an object's DC datastream and inserted into the Resource Index.
+datastream, as shown in the figure below: </p>
+<img src="images/system-dc.png" height="183" width="600" alt="" />
 
 </div>
 
@@ -145,7 +145,7 @@ DC
 </div>
 
 <div class="sect">
-<h2><a name="config" />3. Configuration</h2>
+<h2><a name="config">3. Configuration</a></h2>
 <p>Please note that many configuration changes require a full dump-and-load of 
 the Fedora repository to ensure consistency. 
 For example, turning the Resource Index Module off and on again will result in 
@@ -163,7 +163,7 @@ and-load of the repository is planned for the next release of Fedora.</p>
 datastore.</p>
 
 <div class="subsect">
-<h3><a name="config.module" />A. Module Configuration</h3>
+<h3><a name="config.module">A. Module Configuration</a></h3>
     
 <p>An example of the module configuration within fedora.fcfg: </p>
 
@@ -221,7 +221,7 @@ datastore.</p>
 </div>
 
 <div class="subsect">
-<h3><a name="config.datastore" />B. Datastore Configuration</h3>
+<h3><a name="config.datastore">B. Datastore Configuration</a></h3>
 <p>The example datastore configuration below (with the path parameter modified 
 for the installation environment) would provide a local Kowari triplestore that 
 buffers up to 20,000 triples in memory at a time or waits for 5 seconds of 
@@ -504,12 +504,30 @@ repository.</p>
 </div>
 </div>
 
-<div id="references">
-    <h2>References</h2>
+<div class="sect">
+<h2><a name="#search">4. Search Interface</a></h2>
+<p>Please see the <a href="../webservices/risearch/index.html">Resource Index Search documentation</a>.</p>
+</div>
+
+<div class="sect">
+<h2><a name="demo">5. Resource Index Demo</a></h2>
+<p>Please see the <a href="../../distribution/demos.html#imageCollection">Demo documentation</a>.</p>
+</div>
+
+<div id="references" class="sect">
+    <h2><a name="#references">6. References</a></h2>
     <dl>
-        <dt><a href="http://www.arxiv.org/pdf/cs.DL/0501012">Fedora: An 
-        Architecture for Complex Objects and their Relationships</a></dt>
-        <dd>Carl Lagoze, Sandy Payette, Edwin Shin, and Chris Wilper, 2004.</dd>
+        <dt><a name="ref.rels">[Fedora Relationships]</a></dt>
+        <dd><a href="http://www.arxiv.org/pdf/cs.DL/0501012">Fedora: An 
+            Architecture for Complex Objects and their Relationships</a>, Carl 
+            Lagoze, Sandy Payette, Edwin Shin, and Chris Wilper, 2004.</dd>
+        
+        <dt><a name="ref.rels-ext">[RELS-EXT]</a></dt>
+        <dd><a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora Relationship Ontology</a></dd>
+        
+        <dt><a name="ref.risearch">[risearch]</a></dt>
+        <dd><a href="../webservices/risearch/index.html">Fedora Resource Index 
+            Search Service</a></dd>
     </dl>
 </div>
 
