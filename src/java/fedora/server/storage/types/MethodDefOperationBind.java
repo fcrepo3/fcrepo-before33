@@ -12,6 +12,9 @@ package fedora.server.storage.types;
 public class MethodDefOperationBind extends MethodDef
 {
 
+    public static final String HTTP_MESSAGE_PROTOCOL = "HTTP";
+    public static final String SOAP_MESSAGE_PROTOCOL = "SOAP";
+
     public String protocolType = null;
     public String serviceBindingAddress = null;
     public String operationLocation = null;

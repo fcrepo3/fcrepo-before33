@@ -12,12 +12,19 @@ package fedora.server.storage.types;
 public class MethodParmDef
 {
 
+    public static final String PASS_BY_REF = "URL_REF";
+    public static final String PASS_BY_VALUE = "VALUE";
+
     public String parmName = null;
     public String parmType = null;
     public String parmDefaultValue = null;
     public String[] parmDomainValues = new String[0];
     public boolean parmRequired = true;
     public String parmLabel = null;
+    public String parmPassBy = null;
+
+    // For linkage to WSDL
+    public String wsdlMessagePartName = null;
 
     public MethodParmDef()
     {
