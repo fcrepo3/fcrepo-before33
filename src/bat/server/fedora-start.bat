@@ -44,6 +44,9 @@ if errorlevel 1 goto deployError
 %JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deploy.wsdd 15
 if errorlevel 1 goto deployError
 
+echo Initializing Fedora Server instance...
+%JAVA_HOME%\bin\java -cp %TC%\webapps\fedora\WEB-INF\classes;%TC%\common\lib\servlet.jar -Dfedora.home=%FEDORA_HOME% fedora.server.ServerController startup
+
 echo Finished.  To stop the server, use fedora-stop.
 goto finish
 
@@ -66,7 +69,6 @@ if not exist %THIS_JAVA_HOME%\bin\orbd.exe goto badJavaVersion
 goto envOk
 
 :tryJavaHome
-echo Warning: FEDORA_JAVA_HOME not set, falling back to JAVA_HOME
 if "%JAVA_HOME%" == "" goto noJavaHome
 set THIS_JAVA_HOME=%JAVA_HOME%
 goto checkJava

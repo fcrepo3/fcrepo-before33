@@ -4,10 +4,6 @@ goto checkEnv
 
 :envOk
 
-if "%1" == "" goto noShutdownPass
-
-echo Stopping Fedora server...
-
 set TC=%FEDORA_HOME%\tomcat41
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
@@ -16,6 +12,9 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 
 set C=%TC%\common\lib
 set CP=%C%\saaj.jar;%C%\commons-discovery.jar;%C%\axis.jar;%C%\commons-logging.jar;%C%\jaxrpc.jar;%C%\wsdl4j.jar;%C%\tt-bytecode.jar
+
+echo Shutting down Fedora Servers and associated Modules...
+%JAVA_HOME%\bin\java -cp %TC%\webapps\fedora\WEB-INF\classes;%TC%\common\lib\servlet.jar -Dfedora.home=%FEDORA_HOME% fedora.server.ServerController shutdown
 
 echo Shutting down Fedora-Server service...
 %JAVA_HOME%\bin\java -cp %TC%\bin\bootstrap.jar -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\bin -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp org.apache.catalina.startup.Bootstrap stop
@@ -34,7 +33,6 @@ if not exist %THIS_JAVA_HOME%\bin\orbd.exe goto badJavaVersion
 goto envOk
 
 :tryJavaHome
-echo Warning: FEDORA_JAVA_HOME not set, falling back to JAVA_HOME
 if "%JAVA_HOME%" == "" goto noJavaHome
 set THIS_JAVA_HOME=%JAVA_HOME%
 goto checkJava
@@ -60,10 +58,6 @@ goto end
 :badJavaVersion
 echo ERROR: java was found in %THIS_JAVA_HOME%, but it was not version 1.4
 echo Make sure FEDORA_JAVA_HOME or JAVA_HOME points to a 1.4JRE/JDK base.
-goto end
-
-:noShutdownPass
-echo ERROR: You must provide the shutdown password as a parameter.
 goto end
 
 :end
