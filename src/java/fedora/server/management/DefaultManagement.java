@@ -10,6 +10,9 @@ import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
+import fedora.server.storage.DOReader;
+import fedora.server.storage.DOManager;
+import fedora.server.storage.DOWriter;
 import fedora.server.types.gen.AuditRecord;
 import fedora.server.types.gen.ComponentInfo;
 import fedora.server.types.gen.Datastream;
@@ -24,6 +27,8 @@ import fedora.server.types.gen.Disseminator;
  */
 public class DefaultManagement 
         extends Module implements Management {
+        
+    private DOManager m_manager;
 
     /**
      * Creates and initializes the Management Module.
@@ -42,33 +47,22 @@ public class DefaultManagement
             throws ModuleInitializationException {
         super(moduleParameters, server, role);
     }
-
-    /**
-     * Initializes the Module based on configuration parameters.
-     *
-     * @throws ModuleInitializationException If initialization values are
-     *         invalid or initialization fails for some other reason.
-     */
+    
     public void initModule()
             throws ModuleInitializationException {
-        if (1==2) throw new ModuleInitializationException(null, null);
+        m_manager=(DOManager) getServer().getModule(
+                "fedora.server.storage.DOManager");
+        if (m_manager==null) {
+            throw new ModuleInitializationException("Can't get a DOManager "
+                    + "from Server.getModule", getRole());
+        }
     }
 
-    /**
-     * Frees system resources allocated by this Module.
-     *
-     * @throws ModuleShutdownException If there is a problem freeing
-     *         system resources.  Note that if there is a problem, it won't end 
-     *         up aborting the shutdown process.  Therefore, this method should 
-     *         do everything possible to recover from exceptional situations
-     *         before throwing an exception.
-     */
-    public void shutdownModule() 
-            throws ModuleShutdownException {
-        if (1==2) throw new ModuleShutdownException(null, null);
+    public String createObject(Context context) 
+            throws ServerException {
+        DOWriter w=m_manager.getWriter(context);
+        return w.GetObjectPID();
     }
-    
-    public String createObject(Context context) { return null; }
 
     public String ingestObject(Context context, InputStream xml) { return null; }
 

@@ -25,6 +25,11 @@ public class DefaultDOManager
             throws ModuleInitializationException {
         super(moduleParameters, server, role);
     }
+    
+    public void initModule()
+            throws ModuleInitializationException {
+        
+    }
 
     /** pid will always be non-null, context will always be non-null */
     protected DOReader getReaderForContext(String pid, ReadOnlyContext context) {
@@ -33,6 +38,9 @@ public class DefaultDOManager
 
     /** pid may be null, context will always be non-null */
     protected DOWriter getWriterForContext(String pid, ReadOnlyContext context) {
+        if (pid==null) {
+            
+        }
         return null;
     }
     
