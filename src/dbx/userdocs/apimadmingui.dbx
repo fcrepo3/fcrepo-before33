@@ -29,6 +29,16 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
-		<para>This page provides information about the Fedora API-M admin GUI client.</para>
+		<para><emphasis>Fedora Administrator</emphasis> comes
+       with the client distribution.  You can used it to connect to a local or remote
+       Fedora repository and :</para>
+       <simplelist type="vert"> 
+           <member> ingest objects (in batches or one at a time)</member>
+           <member> create Behavior Definition and Behavior Mechanism objects</member>
+           <member> search the repository</member>
+           <member> view and modify the datastreams of objects</member>
+           <member> view and export the METS (XML) of objects</member>
+           <member> purge objects</member>
+       </simplelist>
 	</sect1>
 </article>
