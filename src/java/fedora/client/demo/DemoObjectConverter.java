@@ -143,49 +143,35 @@ public class DemoObjectConverter
     {
       BufferedReader in=new BufferedReader(new FileReader(demoObject));
       String tempFile = demoObject.toString()+"-temp";
-      //FileWriter out=new FileWriter(new File(tempFile));
       OutputStream os = new FileOutputStream(new File(tempFile));
       OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
       String nextLine="";
+      String newUrlStart;
+      if ((toPortNum.equals("")) || (toPortNum.equals("80")))
+      {
+        newUrlStart="http://" + toHostName + "/";
+      } else
+      {
+        newUrlStart="http://" + toHostName + ":" + toPortNum + "/";
+      }
+      String a="http://" + fromHostName;
+      String urlStartNoPort=a + "/";
+      String urlStartPort80=a + ":80" + "/";
+      String urlStartWithPort=a + ":" + fromPortNum + "/";
       while (nextLine!=null)
       {
         nextLine=in.readLine();
         if (nextLine!=null)
         {
-           if (nextLine.indexOf(fromHostName) != -1)
-           {
-             // Line has host name in it.
-             if (nextLine.indexOf(fromHostName+":") != -1)
-             {
-               // Host name specifies a port number.
-               if (toPortNum.equalsIgnoreCase("80") ||
-                   toPortNum.equalsIgnoreCase(""))
-               {
-                 // If requested port to change to is 80 or the empty string,
-                 // omit port number in substitution.
-                 nextLine = nextLine.replaceAll(fromName, toHostName);
-               } else
-               {
-                 // Otherwise, just replace the port number.
-                 nextLine = nextLine.replaceAll(fromName, toName);
-               }
-             } else
-             {
-               // Host name does not specify a port number.
-               if (toPortNum.equalsIgnoreCase("80") ||
-                   toPortNum.equalsIgnoreCase(""))
-               {
-                 // If requested port to change to is 80 or the empty string,
-                 // omit port number in substitution.
-                 nextLine = nextLine.replaceAll(fromHostName, toHostName);
-               } else
-               {
-                 // Otherwise, add colon and port number.
-                 nextLine = nextLine.replaceAll(fromHostName, toName);
-               }
-             }
-           }
-           out.write(nextLine+"\n");
+          if ((fromPortNum.equals("")) || (fromPortNum.equals("80")) )
+          {
+            nextLine = nextLine.replaceAll(urlStartNoPort, newUrlStart);
+            nextLine = nextLine.replaceAll(urlStartPort80, newUrlStart);
+          } else
+          {
+            nextLine = nextLine.replaceAll(urlStartWithPort, newUrlStart);
+          }
+          out.write(nextLine+"\n");
         }
       }
       in.close();
