@@ -151,6 +151,7 @@
 		<copy file="lib/client/gnu-getopt-1.0.9.jar" todir="dist/client/lib"/>
 		<copy file="lib/common/saxon6.5.jar" todir="dist/client/lib"/>
 		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/client/lib"/>
+		<copy file="lib/common/commons-httpclient.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/lib"/>
@@ -216,7 +217,7 @@
 	<target name="clientclasses" depends="clientprep,wsdl2java,stubwrappers" description="Compile client java code into temp/client">
 		<javac srcdir="${javaSourceDir}:temp/server/java:temp/clientgen" 
 		       destdir="temp/client" 
-		       classpath="lib/common/xerces2-2.0.2.jar;lib/client/jhbasic.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" 
+		       classpath="lib/common/xerces2-2.0.2.jar;lib/client/jhbasic.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar;lib/common/commons-httpclient.jar" 
 		       includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java" 
 		       optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
@@ -878,7 +879,7 @@
 		<copy file="src/web-app/fedora/localservices/imagemanip/web.xml" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF"/>
 		<copy file="src/web-app/fedora/localservices/imagemanip/index.html" todir="dist/server/tomcat41/webapps/imagemanip"/>
 		<copy file="lib/server/ij.jar" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF/lib"/>
-		<copy file="lib/server/commons-httpclient.jar" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF/lib"/>
+		<copy file="lib/common/commons-httpclient.jar" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF/lib"/>
 		<!-- the next two need to go in common cuz sealed -->
 		<copy file="lib/server/jai_core.jar" todir="dist/server/tomcat41/common/lib"/>
 		<copy file="lib/server/jai_codec.jar" todir="dist/server/tomcat41/common/lib"/>
@@ -949,7 +950,7 @@
 		<mkdir dir="temp/localservices/classes"/>
 		<mkdir dir="temp/soapclient/classes"/>
 		<mkdir dir="temp/soapclient/lib"/>
-		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar;lib/server/avalon-framework.jar;lib/server/batik.jar;lib/server/fop.jar;lib/server/ij.jar;lib/server/commons-httpclient.jar;lib/server/jai_core.jar;lib/server/jai_codec.jar" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar;lib/server/avalon-framework.jar;lib/server/batik.jar;lib/server/fop.jar;lib/server/ij.jar;lib/common/commons-httpclient.jar;lib/server/jai_core.jar;lib/server/jai_codec.jar" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 		<exec executable="jar">
 			<arg value="-cf"/>
 			<arg path="temp/soapclient/lib/fedorautilities.jar"/>
