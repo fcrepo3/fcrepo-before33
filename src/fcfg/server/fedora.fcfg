@@ -86,6 +86,16 @@
 	<comment>Defines the redirect port of the Fedora sever; default is 8443.</comment>
 	<param name="fedoraServerHost" value="localhost"/>
 	<comment>Defines the host name for the Fedora server, as seen from the outside world.</comment>
+	
+	<!-- module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
+		<comment>Builds and manages Fedora's authorization structure.
+        </comment>
+        <param name="REPOSITORY-POLICIES-DIRECTORY" value="/fedora-repository-policies"/>
+        <param name="OBJECT-POLICIES-DIRECTORY" value="/fedora-object-policies"/>
+        <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
+        <param name="ENFORCE-MODE" value="permit-all-requests"/>      
+	</module -->
+	
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
 		<comment>
         Description:
