@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="bdef">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="method" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="pid" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="parmDomainValues">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="value"  minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="method">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="parm"  minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="object">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="bdef" minOccurs="1" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attribute name="pid" type="xs:string" use="required"/>
+			<xs:attribute name="dateTime" type="xs:dateTime"  use="optional"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="parm">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="parmDomainValues" minOccurs="0" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute name="parmName"  type="xs:string" use="required"/>
+			<xs:attribute name="parmDefaultValue" type="xs:string" use="required"/>
+			<xs:attribute name="parmRequired" type="xs:boolean" use="required"/>
+			<xs:attribute name="parmType" type="xs:string" use="required"/>
+			<xs:attribute name="parmLabel" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="value">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+</xs:schema>
