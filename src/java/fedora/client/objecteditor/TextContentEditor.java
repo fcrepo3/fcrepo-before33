@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.StringReader;
 
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -23,6 +24,8 @@ import org.w3c.dom.Document;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+
+import org.xml.sax.InputSource;
 
 /**
  * A general-purpose text editor/viewer with XML pretty-printing.
@@ -130,10 +133,20 @@ public class TextContentEditor
         m_editor.getDocument().addDocumentListener(this);
     }
 
-    public InputStream getContent() {
+    public InputStream getContent() 
+            throws IOException {
         try {
+            if (m_xml) {
+                // if it's xml, throw an exception if it's not well-formed
+                DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+                DocumentBuilder builder=factory.newDocumentBuilder();
+                Document doc=builder.parse(new InputSource(new StringReader(
+                        m_editor.getText())));
+            }
             return new ByteArrayInputStream(m_editor.getText().getBytes("UTF-8"));
-        } catch (Exception e) { return null; } // never happens
+        } catch (Exception e) {
+            throw new IOException(e.getMessage());
+        }
     }
 
     // Forward DocumentListener's events to the passed-in ActionListener

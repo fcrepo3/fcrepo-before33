@@ -47,6 +47,6 @@ public abstract class ContentEditor
     /**
      * Gets the content in its edited state.
      */
-    public abstract InputStream getContent();
+    public abstract InputStream getContent() throws IOException;
 
 }

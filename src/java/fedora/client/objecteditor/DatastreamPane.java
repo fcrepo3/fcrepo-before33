@@ -355,11 +355,20 @@ private ContentEditor ed;
     public class PriorVersionPane
             extends JPanel {
 
+        private ContentViewer v;
         private Datastream m_ds;
 
         public PriorVersionPane(Datastream ds) {
             m_ds=ds;
-            add(new JButton(ds.getVersionID()));
+            setLayout(new BorderLayout());
+            if (ds.getControlGroup().toString().equals("X")) {
+                try {
+                v=ContentHandlerFactory.getViewer("text/xml", new ByteArrayInputStream(ds.getContentStream()));
+                add(v.getComponent(), BorderLayout.CENTER);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
         }
 
         public Datastream getDatastream() {
