@@ -13,6 +13,7 @@ package fedora.server.storage;
  */
 
 import fedora.server.storage.types.*;
+import fedora.server.storage.lowlevel.*;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -105,14 +106,19 @@ public class DefinitiveDOReader implements DOReader
   }
   public DefinitiveDOReader(String objectPID)
   {
-    // Read the digital object xml from persistent storage
-
-    File doFile = locateObject(objectPID);
-    if (debug) System.out.println("object filepath = " + doFile.getPath());
+    // FOR TESTING:
+    // Read the digital object xml from test storage
+    //File doFile = locateObject(objectPID);
+    //if (debug) System.out.println("object filepath = " + doFile.getPath());
 
     try
     {
-      InputSource doXML = new InputSource(new FileInputStream(doFile));
+      //FOR TESTING:
+      //InputSource doXML = new InputSource(new FileInputStream(doFile));
+
+      // LLSTORE: call to low level storage layer to retrieve object
+      InputSource doXML = new InputSource(FileSystemLowlevelStorage.getInstance().retrieve(objectPID));
+
       doErrorHandler = new DOReaderSAXErrorHandler();
       SAXParserFactory saxfactory = SAXParserFactory.newInstance();
       saxfactory.setValidating(false);
@@ -135,12 +141,25 @@ public class DefinitiveDOReader implements DOReader
     }
   }
 
-    public String GetObjectXML()
+    public InputStream GetObjectXML()
     {
-      return(null);
+      //return(null);
+
+      // LLSTORE: call to low level storage layer to retrieve object
+      InputStream doIn;
+      try
+      {
+        doIn = FileSystemLowlevelStorage.getInstance().retrieve(PID);
+      }
+      catch (Exception e)
+      {
+        System.err.println("Error: " + e.toString());
+        System.exit(1);
+      }
+      return(doIn);
     }
 
-    public String ExportObject()
+    public InputStream ExportObject()
     {
       return(null);
     }
