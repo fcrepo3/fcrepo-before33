@@ -606,7 +606,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
                   }
                 }
               }
-              out.println("<tr>");
+              out.println("<form name=\"parmResolverForm\" "
+                  + "method=\"post\" action=\""
+                  + PARAMETER_RESOLVER_URL + "\"><tr>");
               if (i == 0)
               {
                 out.println("<td><font color=\"blue\"> "
@@ -626,6 +628,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                     objMethDefArray[i].getMethodName(),
                     objMethDefArray[i].getMethodParmDefs(), serverURI);
                 out.println(sb.toString());
+                out.println("</form>");
               } else if (i == 1)
               {
                 out.println("<td colspan='2' rowspan='" + rows + "'></td>");
@@ -641,6 +644,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                     objMethDefArray[i].getMethodName(),
                     objMethDefArray[i].getMethodParmDefs(), serverURI);
                 out.println(sb.toString());
+                out.println("</form>");
               } else
               {
                 out.println("<td><font color=\"green\"> "
@@ -655,8 +659,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
                     objMethDefArray[i].getMethodName(),
                     objMethDefArray[i].getMethodParmDefs(), serverURI);
                 out.println(sb.toString());
+                out.println("</form>");
               }
-              out.println("</tr>");
+              //out.println("</tr>");
             }
             out.println("</table>");
             out.println("</center>");
@@ -1398,8 +1403,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
       String methodName, MethodParmDef[] methodParms, String requestURI)
   {
     StringBuffer sb = new StringBuffer();
-    sb.append("<form name=\"parmResolverForm\" method=\"post\" action=\""
-              + PARAMETER_RESOLVER_URL + "\">");
+    //sb.append("<td><form name=\"parmResolverForm\" method=\"post\" action=\""
+    //          + PARAMETER_RESOLVER_URL + "\">");
     if (methodParms == null || methodParms.length == 0)
     {
       // The method has no parameters.
@@ -1412,9 +1417,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
           + "<input type=\"hidden\" name=\"serverURI\" value=\""
           + requestURI + "\">"
           + "<input type=\"submit\" name=\"Submit\" "
-          + "value=\"RunDissemination\">"
-          + "<td colspan=\"100%\"><font color=\"purple\">No Parameters Defined</font></td>"
-          + "</form></tr>");
+          + "value=\"RunDissemination\"></td>"
+          + "<td colspan=\"100%\"><font color=\"purple\">"
+          + "No Parameters Defined</font></td>");
       return sb;
     }
 
@@ -1426,9 +1431,17 @@ public class FedoraAccessSoapServlet extends HttpServlet
       String[] parmValues = methodParms[i].getParmDomainValues();
       if (i == 0)
       {
-        sb.append("<td>"
-            + "<input type=\"submit\" name=\"Submit\" "
+        sb.append(
+            "<td><input type=\"submit\" name=\"Submit\" "
             + "value=\"RunDissemination\">"
+            + "<input type=\"hidden\" name=\"PID\" value=\""
+            + PID + "\">"
+            + "<input type=\"hidden\" name=\"bDefPID\" value=\""
+            + bDefPID + "\">"
+            + "<input type=\"hidden\" name=\"methodName\" value=\""
+            + methodName + "\">"
+            + "<input type=\"hidden\" name=\"serverURI\" value=\""
+            + requestURI + "\">"
             + "<td><b><font color=\"purple\">"
             + parmName + "</font></b></td>");
         if(parmValues != null)
@@ -1439,7 +1452,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               sb.append("<td>"
                   + "<input type=\"text\"  size=\"10\" maxlength=\"32\" "
-                  + "name=\"" + parmName + "\" value=\"\" </td>");
+                  + "name=\"" + parmName + "\" value=\"\"></td>");
             } else
             {
               sb.append("<td>" + parmValues[j] + "</td>"
@@ -1448,7 +1461,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                   + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
             }
           }
-          sb.append("<td>"
+          /*sb.append("<td>"
               + "<input type=\"hidden\" name=\"PID\" value=\""
               + PID + "\">"
               + "<input type=\"hidden\" name=\"bDefPID\" value=\""
@@ -1457,6 +1470,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               + methodName + "\">"
               + "<input type=\"hidden\" name=\"serverURI\" value=\""
               + requestURI + "\">");
+          */
         }
       } else if (i == 1)
       {
@@ -1470,7 +1484,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               sb.append("<td>"
                   + "<input type=\"text\"  size=\"10\" maxlength=\"32\" "
-                  + "name=\"" + parmName + "\" value=\"\" </td>");
+                  + "name=\"" + parmName + "\" value=\"\"></td>");
             } else
             {
               sb.append("<td>" + parmValues[j] + "</td>"
@@ -1492,7 +1506,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               sb.append("<td>"
                   + "<input type=\"text\"  size=\"10\" maxlength=\"32\" "
-                  + "name=\"" + parmName + "\" value=\"\" </td>");
+                  + "name=\"" + parmName + "\" value=\"\"></td>");
             } else
             {
               sb.append("<td>" + parmValues[j] + "</td>"
@@ -1504,7 +1518,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         }
       }
     }
-    sb.append("</form></td></tr>");
+    //sb.append("</form></td></tr>");
+    //sb.append("</td></tr>");
     return sb;
   }
 }

@@ -30,7 +30,7 @@ public class MethodParameterResolverServlet extends HttpServlet
   public void init() throws ServletException
   {}
 
-  //Process the HTTP Post request
+  //Process the HTTP Post request.
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
@@ -38,12 +38,12 @@ public class MethodParameterResolverServlet extends HttpServlet
     String bDefPID = null;
     String methodName = null;
     String serverURI = null;
+    StringBuffer methodParms = new StringBuffer();
     response.setContentType(CONTENT_TYPE);
     PrintWriter out = response.getWriter();
 
+    // Get servlet parameters.
     Enumeration parms = request.getParameterNames();
-    StringBuffer sb = new StringBuffer();
-
     while (parms.hasMoreElements())
     {
       String name = new String((String)parms.nextElement());
@@ -65,17 +65,15 @@ public class MethodParameterResolverServlet extends HttpServlet
         serverURI = (String)request.getParameter(name);
         System.out.println("serverURI: "+serverURI);
       } else if (name.equals("Submit")) {
-        // Submit parameter is ignored
+        // Submit parameter is ignored.
       } else
       {
         // Any remaining parameters are method parameters.
-        sb.append(name+"="+(String)request.getParameter(name)+"&");
+        methodParms.append(name+"="+(String)request.getParameter(name)+"&");
       }
     }
-    if (sb.length() > 0)
-      sb.replace(sb.lastIndexOf("&"),sb.lastIndexOf("&")+1,"");
 
-    // Check for any missing parameters in form
+    // Check for any missing required parameters.
     if ((PID == null || PID.equalsIgnoreCase("")) ||
         (bDefPID == null || bDefPID.equalsIgnoreCase("")) ||
         (methodName == null || methodName.equalsIgnoreCase("")) ||
@@ -89,18 +87,19 @@ public class MethodParameterResolverServlet extends HttpServlet
                   + serverURI + "</td></tr></table><br>");
     } else
     {
-      response.sendRedirect("http://localhost:8080/fedora/access/soapservlet?"
+      // Translate parameters into dissemination request.
+      StringBuffer url = new StringBuffer();
+      url.append("http://localhost:8080/fedora/access/soapservlet?"
           + "action_=GetDissemination&"
           + "PID_=" + PID + "&"
           + "bDefPID_=" + bDefPID + "&"
           + "methodName_=" + methodName + "&"
-          +sb.toString());
+          +methodParms.toString());
 
-      System.out.println("WebFormURL: \n"
-          +serverURI + "action_=GetDissemination&PID_=" + PID
-          + "&bDefPID_=" + bDefPID
-          + "&methodName_=" + methodName + "&"
-          + sb.toString());
+      // remove any dangling ampersands and redirect request.
+      url.replace(url.lastIndexOf("&"),url.lastIndexOf("&")+1,"");
+      response.sendRedirect(url.toString());
+      System.out.println("WebFormTranslatedURL: \n" + url.toString());
     }
   }
 
