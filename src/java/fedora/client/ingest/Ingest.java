@@ -42,7 +42,7 @@ import fedora.server.types.gen.ObjectFields;
  * All rights reserved.</p>
  *
  * -----------------------------------------------------------------------------
- */ 
+ */
 public class Ingest {
 
     public static int ONE_FROM_FILE=0;
@@ -51,7 +51,7 @@ public class Ingest {
     public static int MULTI_FROM_REPOS=3;
 
     public static String LAST_PATH;
-    
+
     private static String s_rootName;
     public static String s_logPath;
     private static PrintStream s_log;
@@ -90,7 +90,7 @@ public class Ingest {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
                             pids.length + " objects successfully ingested.\n"
                             + s_failedCount + " objects failed.\n"
-                            + "Time elapsed: " + getDuration(et-st));  
+                            + "Time elapsed: " + getDuration(et-st));
                          //   Details are in File->Advanced->STDOUT/STDERR window.");
                     }
                 }
@@ -101,8 +101,8 @@ public class Ingest {
                     if (pid!=null && !pid.equals("")) {
                        pid=oneFromRepository(sdlg.getHost(),
                                              sdlg.getPort(),
-                                             sdlg.getAPIM(), 
-                                             pid, 
+                                             sdlg.getAPIM(),
+                                             pid,
                                              Administrator.APIM,
                                              null);
                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
@@ -129,7 +129,7 @@ public class Ingest {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
                             pids.length + " objects successfully ingested.\n"
                             + s_failedCount + " objects failed.\n"
-                            + "Time elapsed: " + getDuration(et-st));  
+                            + "Time elapsed: " + getDuration(et-st));
                     }
                 }
             }
@@ -143,7 +143,7 @@ public class Ingest {
                     "Ingest Failure",
                     JOptionPane.ERROR_MESSAGE);
         } finally {
-            try { 
+            try {
                 if (s_log!=null && wasMultiple) {
                     closeLog();
                     int n = JOptionPane.showConfirmDialog(Administrator.getDesktop(),
@@ -170,7 +170,7 @@ public class Ingest {
 
                     }
                 }
-            } catch (Exception ex) { 
+            } catch (Exception ex) {
                 JOptionPane.showMessageDialog(Administrator.getDesktop(),
                     ex.getMessage(),
                     "Error",
@@ -178,8 +178,8 @@ public class Ingest {
             }
         }
     }
-    
-    private static String fileAsString(String path) 
+
+    private static String fileAsString(String path)
             throws Exception {
         StringBuffer buffer = new StringBuffer();
         InputStream fis=new FileInputStream(path);
@@ -192,7 +192,7 @@ public class Ingest {
         in.close();
         return buffer.toString();
     }
-    
+
     private static String getDuration(long millis) {
         long tsec=millis/1000;
         long h=tsec/60/60;
@@ -227,9 +227,9 @@ public class Ingest {
                                             getMessage(logMessage, file));
         return pid;
     }
-    
+
     // if logMessage is null, will use original path in logMessage
-    public static String[] multiFromDirectory(File dir, String fTypes, 
+    public static String[] multiFromDirectory(File dir, String fTypes,
                                               FedoraAPIM targetRepository,
                                               String logMessage)
             throws Exception {
@@ -239,31 +239,31 @@ public class Ingest {
         if (tps.indexOf("D")!=-1) {
             toIngest=getFiles(dir, "FedoraBDefObject");
             System.out.println("Found " + toIngest.size() + " behavior definitions.");
-            pidSet.addAll(ingestAll("D", toIngest, targetRepository, logMessage)); 
+            pidSet.addAll(ingestAll("D", toIngest, targetRepository, logMessage));
         }
         if (tps.indexOf("M")!=-1) {
             toIngest=getFiles(dir, "FedoraBMechObject");
             System.out.println("Found " + toIngest.size() + " behavior mechanisms.");
-            pidSet.addAll(ingestAll("M", toIngest, targetRepository, logMessage)); 
+            pidSet.addAll(ingestAll("M", toIngest, targetRepository, logMessage));
         }
         if (tps.indexOf("O")!=-1) {
             toIngest=getFiles(dir, "FedoraObject");
             System.out.println("Found " + toIngest.size() + " data objects.");
-            pidSet.addAll(ingestAll("O", toIngest, targetRepository, logMessage)); 
+            pidSet.addAll(ingestAll("O", toIngest, targetRepository, logMessage));
         }
         Iterator iter=pidSet.iterator();
         String[] pids=new String[pidSet.size()];
         int i=0;
         while (iter.hasNext()) {
-            pids[i++]=(String) iter.next(); 
+            pids[i++]=(String) iter.next();
         }
         return pids;
     }
-    
+
     private static Set ingestAll(String fType,
-                                 Set fileSet, 
-                                 FedoraAPIM targetRepository, 
-                                 String logMessage) 
+                                 Set fileSet,
+                                 FedoraAPIM targetRepository,
+                                 String logMessage)
             throws Exception {
         HashSet set=new HashSet();
         Iterator iter=fileSet.iterator();
@@ -273,7 +273,7 @@ public class Ingest {
                 String pid=oneFromFile(f, targetRepository, logMessage);
                 // success...log it
                 logFromFile(f, fType, pid);
-                set.add(pid); 
+                set.add(pid);
             } catch (Exception e) {
                 // failed... just log it and continue
                 s_failedCount++;
@@ -282,10 +282,10 @@ public class Ingest {
         }
         return set;
     }
-    
+
     private static void openLog(String rootName) throws Exception {
         s_rootName=rootName;
-        String fileName=s_rootName + "-" + System.currentTimeMillis() + ".xml"; 
+        String fileName=s_rootName + "-" + System.currentTimeMillis() + ".xml";
         File outFile;
         String fedoraHome=System.getProperty("fedora.home");
         if (fedoraHome=="") {
@@ -298,18 +298,18 @@ public class Ingest {
                 logDir.mkdir();
             }
             outFile=new File(logDir, fileName);
-            
+
         }
         s_logPath=outFile.getPath();
         s_log=new PrintStream(new FileOutputStream(outFile), true, "UTF-8");
         s_log.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         s_log.println("<" + s_rootName + ">");
     }
-    
+
     private static void logFromFile(File f, String fType, String pid) throws Exception {
         s_log.println("  <ingested file=\"" + f.getPath() + "\" fType=\"" + fType + "\" targetPID=\"" + pid + "\" />");
     }
-    
+
     private static void logFailedFromFile(File f, String fType, Exception e) throws Exception {
         String message=e.getMessage();
         if (message==null) message=e.getClass().getName();
@@ -317,13 +317,15 @@ public class Ingest {
         s_log.println("    " + StreamUtility.enc(message));
         s_log.println("  </failed>");
     }
-    
+
     private static void closeLog() throws Exception {
         s_log.println("</" + s_rootName + ">");
         s_log.close();
+        // force garbage collection and ensure s_log is null immediately following close
+        s_log=null;
     }
-    
-    private static Set getFiles(File dir, String fTypeString) 
+
+    private static Set getFiles(File dir, String fTypeString)
             throws Exception {
         if (!dir.isDirectory()) {
             throw new IOException("Not a directory: " + dir.getPath());
@@ -338,7 +340,7 @@ public class Ingest {
                 BufferedReader in=new BufferedReader(new FileReader(files[i]));
                 boolean isCandidate=false;
                 String line;
-                while ( (line=in.readLine()) != null ) {  
+                while ( (line=in.readLine()) != null ) {
                     if (line.indexOf(fTypeString)!=-1) {
                         isCandidate=true;
                     }
@@ -350,30 +352,30 @@ public class Ingest {
         }
         return set;
     }
-    
+
     // if logMessage is null, will make informative one up
     public static String oneFromRepository(String sourceHost,
                                            int sourcePort,
-                                           FedoraAPIM sourceRepository, 
+                                           FedoraAPIM sourceRepository,
                                            String pid,
                                            FedoraAPIM targetRepository,
                                            String logMessage)
             throws Exception {
         System.out.println("Ingesting " + pid + " from source repository.");
-        
+
         // export it first
         ByteArrayOutputStream out=new ByteArrayOutputStream();
-        AutoExporter.export(sourceRepository, 
-                            pid, 
-                            out, 
+        AutoExporter.export(sourceRepository,
+                            pid,
+                            out,
                             false);
-                            
+
         // fix the host-specific references before ingesting (except "M" datastreams)
         StringBuffer fixed=new StringBuffer();
         BufferedReader in=new BufferedReader(new InputStreamReader(new ByteArrayInputStream(out.toByteArray())));
         String line;
-        while ( (line=in.readLine()) != null ) {  
-            if (line.indexOf("fedora-system:3")==-1) { 
+        while ( (line=in.readLine()) != null ) {
+            if (line.indexOf("fedora-system:3")==-1) {
                 // if the line doesn't have a managed datastream reference,
                 // replace all occurances of sourceHost:sourcePort with
                 // local.fedora.server
@@ -396,7 +398,7 @@ public class Ingest {
                                              fixed.toString().getBytes("UTF-8")),
                                             realLogMessage);
     }
-    
+
     // if logMessage is null, will make informative one up
     public static String[] multiFromRepository(String sourceHost,
                                                int sourcePort,
@@ -412,7 +414,7 @@ public class Ingest {
                                                         sourcePass);
         return multiFromRepository(sourceHost, sourcePort, sourceRepos, fTypes, targetRepos, logMessage);
    }
-   
+
    public static String[] multiFromRepository(String sourceHost,
                                               int sourcePort,
                                               FedoraAPIM sourceRepos,
@@ -450,7 +452,7 @@ public class Ingest {
         String[] pids=new String[pidSet.size()];
         int i=0;
         while (iter.hasNext()) {
-            pids[i++]=(String) iter.next(); 
+            pids[i++]=(String) iter.next();
         }
         return pids;
     }
@@ -460,13 +462,13 @@ public class Ingest {
                                  FedoraAPIM sourceRepos,
                                  String fType,
                                  FedoraAPIM targetRepos,
-                                 String logMessage) 
+                                 String logMessage)
             throws Exception {
         // get pids with fType='$fType', adding all to set at once,
         // then singleFromRepository(sourceRepos, pid, targetRepos, logMessage)
         // for each, then return the set
         HashSet set=new HashSet();
-        String[] res=AutoFinder.getPIDs(sourceHost, sourcePort, "fType=" + fType); 
+        String[] res=AutoFinder.getPIDs(sourceHost, sourcePort, "fType=" + fType);
         for (int i=0; i<res.length; i++) set.add(res[i]);
         String friendlyName="data objects";
         if (fType.equals("D"))
@@ -494,11 +496,11 @@ public class Ingest {
         }
         return successSet;
     }
-    
+
     private static void logFromRepos(String sourcePID, String fType, String targetPID) throws Exception {
         s_log.println("  <ingested sourcePID=\"" + sourcePID + "\" fType=\"" + fType + "\" targetPID=\"" + targetPID + "\" />");
     }
-    
+
     private static void logFailedFromRepos(String sourcePID, String fType, Exception e) throws Exception {
         String message=e.getMessage();
         if (message==null) message=e.getClass().getName();
@@ -506,7 +508,7 @@ public class Ingest {
         s_log.println("    " + StreamUtility.enc(message));
         s_log.println("  </failed>");
     }
-    
+
     private static String getMessage(String logMessage, File file) {
         if (logMessage!=null) return logMessage;
         return "Ingested from local file " + file.getPath();
@@ -545,7 +547,7 @@ public class Ingest {
         System.err.println("fedora-ingest file obj1.xml example.com:80 fedoraAdmin fedoraAdmin");
         System.err.println();
         System.err.println("  Ingests obj1.xml from the current directory into the repository at ");
-        System.err.println("  example.com:80 as fedoraAdmin, using 'fedoraAdmin' as the password,"); 
+        System.err.println("  example.com:80 as fedoraAdmin, using 'fedoraAdmin' as the password,");
         System.err.println("  The logmessage will be system-generated, indicating the source path+filename.");
         System.err.println();
         System.err.println("fedora-ingest dir c:\\archive M example.com:80 fedoraAdmin fedoraAdmin \"\"");
@@ -584,7 +586,7 @@ public class Ingest {
                                                 Integer.parseInt(hp[1]),
                                                 args[3],
                                                 args[4]);
-                System.out.println("Ingested PID: " 
+                System.out.println("Ingested PID: "
                         + Ingest.oneFromFile(f, targetRepos, logMessage));
             } else if (kind=='d') {
                 if (args.length<6 || args.length>7) {
@@ -602,8 +604,8 @@ public class Ingest {
                                                 args[4],
                                                 args[5]);
                 Ingest.openLog("ingest-from-dir");
-                String[] pids=Ingest.multiFromDirectory(d, 
-                                                        args[2], 
+                String[] pids=Ingest.multiFromDirectory(d,
+                                                        args[2],
                                                         targetRepos,
                                                         logMessage);
                 System.out.println("Ingested PID(s):");
