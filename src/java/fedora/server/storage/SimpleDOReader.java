@@ -161,48 +161,52 @@ public class SimpleDOReader
     }
 
 	/**
-	 * Return the object as an XML input stream in the "move/migrate"
-	 * export format in which all relative repository URLs are converted
-	 * to the Fedora local URL syntax ("http://local.fedora.server/...")
-	 * and all internal identifiers are converted to public callback URLs.
-	 *
-	 * For External (E) and Redirected (R) datastreams, the datastream
-	 * location will be evaluated, and if it represents a relative
-	 * repository URL, it will be returned with the Fedora local URL syntax.
-	 * For Managed Content (M) Datastreams, the datastream location will
-	 * be converted from an internal identifier to a public dissemination
-	 * URL that can be used to callback to the repository to obtain the
-	 * datastream content bytestream.
-	 *
-	 * For certain inline XML datastreams (WSDL and SERVICE_PROFILE in
-	 * BMech objects), any instances of URLs relative to the local
-	 * repository will be converted to use the Fedora local URL syntax.
-	 *
-	 * These conversions are intended to preserve the "relative" nature
-	 * of these URLs when objects are moved or migrated to other repositories.
-	 * The Fedora local URL syntax will be recognized by repositories upon
-	 * ingest, and the new repository will consider these URLs to be local
-	 * to itself.
+	 * Return the object as an XML input stream in the specified XML
+	 * format and in the specified export context.
+	 * 
+	 * See DOTranslationUtility.class for description of export contexts
+	 * (translation contexts).
      *
      * @param format The format to export the object in.  If null or "default",
      *               will use the repository's configured default export format.
+     * @param exportContext  The use case for export (public, migrate, archive)
+     *               which results in different ways of representing datastream 
+     *               URLs or datastream content in the output.
 	 */
-    public InputStream ExportObject(String format)
+    public InputStream ExportObject(String format, String exportContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+		int transContext;        
+		// first, set the translation context...
+		if (fedora.server.Debug.DEBUG) 
+			System.out.println("SimpleDOReader.ExportObject export context: " + exportContext);
+
+		if (exportContext==null || exportContext.equals("") || 
+		    exportContext.equalsIgnoreCase("default")) {
+			// null and default is set to PUBLIC translation
+			transContext=DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC; 
+		} else if (exportContext.equalsIgnoreCase("public")){
+			transContext=DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC;
+        } else if (exportContext.equalsIgnoreCase("migrate")){
+			transContext=DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE;
+		} else if (exportContext.equalsIgnoreCase("archive")){
+			throw new UnsupportedTranslationException("Export context of 'archive' " +
+				"is not supported in Fedora 2.0. Will be available in future.");
+        } else {
+			throw new UnsupportedTranslationException("Export context " +
+				exportContext + " is not valid.");       	
+        }
+        // now serialize for export in the proper XML format...			        
 		if (format==null || format.equals("") || format.equalsIgnoreCase("default")) {
-			if (fedora.server.Debug.DEBUG) System.out.println("SimpleDOReader.ExportObject using default format: " + m_exportFormat);
-			if (fedora.server.Debug.DEBUG) System.out.println("SimpleDOReader.ExportObject transContext: ");
-			m_translator.serialize(m_obj, bytes, m_exportFormat,
-				"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE);
-				//"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE);
+			if (fedora.server.Debug.DEBUG) 
+				System.out.println("SimpleDOReader.ExportObject in default format: " + m_exportFormat);
+			m_translator.serialize(m_obj, bytes, m_exportFormat, "UTF-8", transContext);
 		}
 		else {
-			if (fedora.server.Debug.DEBUG) System.out.println("SimpleDOReader.ExportObject with format arg of " + format);
-			m_translator.serialize(m_obj, bytes, format,
-				"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE);
-				//"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE);
+			if (fedora.server.Debug.DEBUG) 
+				System.out.println("SimpleDOReader.ExportObject in format: " + format);
+			m_translator.serialize(m_obj, bytes, format, "UTF-8", transContext);
 		}
 
         return new ByteArrayInputStream(bytes.toByteArray());

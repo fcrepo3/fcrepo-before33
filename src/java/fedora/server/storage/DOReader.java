@@ -116,7 +116,7 @@ public interface DOReader
      * @throws ServerException If there object could not be found or there was
      *         was a failure in accessing the object for any reason.
      */
-    public InputStream ExportObject(String format) throws ServerException;
+    public InputStream ExportObject(String format, String exportContext) throws ServerException;
 
     /**
      * Gets the PID of the digital object.
