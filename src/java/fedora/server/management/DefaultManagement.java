@@ -269,7 +269,12 @@ public class DefaultManagement
                     newds.DSControlGrp="M";
                     newds.DSInfoType=orig.DSInfoType;
                     newds.DSState=orig.DSState;
-                    newds.DSLocation=dsLocation;
+                    if (dsLocation==null || dsLocation.equals("")) {
+                        // if location unspecified, use the old internal location
+                        newds.DSLocation=orig.DSLocation;
+                    } else {
+                        newds.DSLocation=dsLocation;
+                    }
                     newds.auditRecordIdList().addAll(orig.auditRecordIdList());
                     // remove, then add the datastream
                     w.removeDatastream(datastreamId, null, null);

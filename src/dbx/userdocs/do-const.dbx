@@ -10,7 +10,7 @@
 			</inlinemediaobject>
 		</title>
 		<title>Digital Object Construction Guide</title>
-		<subtitle>Software Release 1.1</subtitle>
+		<subtitle>Software Release 1.1.1</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -118,7 +118,7 @@
 		</sect2>
 		<sect2>
 			<title>
-				<emphasis> Interactive Building  (not available in Release 1.1 of Fedora)</emphasis>
+				<emphasis> Interactive Building  (not available in Release 1.1.1 of Fedora)</emphasis>
 			</title>
 			<itemizedlist>
 				<listitem>
@@ -276,7 +276,7 @@
 							<para>b.   Datastreams that are encoded in the METS:fileSec must follow the following pattern to establish proper version groups and datastream IDs.  Each datastream has its own 	METS:fileGrp whose ID attribute is the official datastream ID.  The recommended convention is ID=”DSn” where n is a number (for example ID=”DS1” or ID=”DS2).” </para>
 						</listitem>
 						<listitem>
-							<para>c.  Within a METS:fileGrp, there can be one or more METS:file elements to represent different versions of a datastream.  In Fedora 1.1, only one version will be supported.  The METS:file element for the datastream must have and ID attribute that represent the version number relative to the datastream ID set in the METS:fileGrp.  The recommended convention is ID=”DSn.v”  where n is the 	number of the datastream and v is the version number (for example ID=DS1.0 or ID=DS1.1). </para>
+							<para>c.  Within a METS:fileGrp, there can be one or more METS:file elements to represent different versions of a datastream.  In Fedora 1.1.1, only one version will be supported.  The METS:file element for the datastream must have and ID attribute that represent the version number relative to the datastream ID set in the METS:fileGrp.  The recommended convention is ID=”DSn.v”  where n is the 	number of the datastream and v is the version number (for example ID=DS1.0 or ID=DS1.1). </para>
 						</listitem>
 						<listitem>
 							<para>d. The METS:file element for a datastream must have a CREATED attribute whose value is populated with a date in the following format:        “YYYY-MM-DDThh:mm:ss”.  </para>
@@ -332,10 +332,10 @@
 					<para>Disseminators</para>
 					<itemizedlist>
 						<listitem>
-							<para>a.  Each Disseminator is encoded in its own METS:behaviorSec element.  The METS:behaviorSec element acts as a version container for different versions of the Disseminator.  In Fedora 1.1, only one version is supported.  Each Disseminator must have a disseminator ID which is encode in the ID attribute of the METS:behaviorSec.  The recommended convention is ID=”DISSn” where n is a 	number (for example ID=”DISS1” or ID=”DISS2).”  </para>
+							<para>a.  Each Disseminator is encoded in its own METS:behaviorSec element.  The METS:behaviorSec element acts as a version container for different versions of the Disseminator.  In Fedora 1.1.1, only one version is supported.  Each Disseminator must have a disseminator ID which is encode in the ID attribute of the METS:behaviorSec.  The recommended convention is ID=”DISSn” where n is a 	number (for example ID=”DISS1” or ID=”DISS2).”  </para>
 						</listitem>
 						<listitem>
-							<para>b.  The METS:serviceBinding element represents a particular version of the disseminator.  Again, in Fedora 1.1 only one version is supported.  The element must have and ID attribute that represent the version number relative to the Disseminator ID that is set in the METS:behaviorSec.  The recommended convention is ID=”DISSn.v”  where n is the number of the Disseminator and v is the version number (for example ID=DISS1.0 or ID=DISS1.1). </para>
+							<para>b.  The METS:serviceBinding element represents a particular version of the disseminator.  Again, in Fedora 1.1.1 only one version is supported.  The element must have and ID attribute that represent the version number relative to the Disseminator ID that is set in the METS:behaviorSec.  The recommended convention is ID=”DISSn.v”  where n is the number of the Disseminator and v is the version number (for example ID=DISS1.0 or ID=DISS1.1). </para>
 						</listitem>
 						<listitem>
 							<para>c.  The METS:serviceBinding element must have a CREATED attribute whose value is populated with a date in the following format: “YYYY-MM-DDThh:mm:ss”. </para>
@@ -412,7 +412,7 @@
 					<para>	Disseminators</para>
 					<itemizedlist>
 						<listitem>
-							<para>a.  Behavior Definition Objects use what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  It’s purpose is to allow the contents of Behavior Definition Objects to be disseminated via the Fedora Access API.  In Fedora 1.1, the Bootstrap Disseminator functionality is not turned on.  However, it must still be encoded in the METS submission package.:</para>
+							<para>a.  Behavior Definition Objects use what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  It’s purpose is to allow the contents of Behavior Definition Objects to be disseminated via the Fedora Access API.  In Fedora 1.1.1, the Bootstrap Disseminator functionality is not turned on.  However, it must still be encoded in the METS submission package.:</para>
 						</listitem>
 						<listitem>
 							<para>b.  In terms of encoding the bootstrap disseminator, follow the examples in the demo objects.  The METS:behaviorSec and the METS:structMap are static, meaning that they will be the same in every Behavior Definition Object.  It is recommended that these sections just be copied into new objects from a demo object.</para>
@@ -482,7 +482,7 @@
 					<para>Disseminators</para>
 					<itemizedlist>
 						<listitem>
-							<para>a.  Behavior Mechanism Objects uses what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  It’s purpose is to allow the contents of Behavior Mechanism Objects to be disseminated via the Fedora Access API.  In Fedora 1.1, the Bootstrap Disseminator functionality it not turned on.  However, it must still be encoded in the METS submission package.</para>
+							<para>a.  Behavior Mechanism Objects uses what is known as the “Bootstrap Disseminator.”  The implementation Bootstrap Disseminator is built into the Fedora system.  It’s purpose is to allow the contents of Behavior Mechanism Objects to be disseminated via the Fedora Access API.  In Fedora 1.1.1, the Bootstrap Disseminator functionality it not turned on.  However, it must still be encoded in the METS submission package.</para>
 						</listitem>
 						<listitem>
 							<para>b.  In terms of encoding the bootstrap disseminator, follow the examples in the demo objects.  The METS:behaviorSec and the METS:structMap are static, meaning that they will be the same in every Behavior Mechanism object.  It is recommended that these sections just be copied into new objects from a demo object.</para>
