@@ -61,7 +61,18 @@ public class FieldSearchSQLImpl
         h.put("useCachedObject", "false");
         s_nonCachedContext=new ReadOnlyContext(h);
     }
-        
+
+    /**
+     * Construct a FieldSearchSQLImpl.
+     *
+     * @param cPool the ConnectionPool with connections to the db containing
+     *        the fields
+     * @param repoReader the RepositoryReader to use when getting the original
+     *        values of the fields
+     * @param maxResults the maximum number of results to return at a time,
+     *        regardless of what the user might request
+     * @param logTarget where to send log messages
+     */
     public FieldSearchSQLImpl(ConnectionPool cPool, RepositoryReader repoReader, 
             int maxResults, Logging logTarget) {
         super(logTarget);
@@ -71,7 +82,14 @@ public class FieldSearchSQLImpl
         m_maxResults=maxResults;
         logFinest("Exiting constructor");
     }
-    
+
+    /**
+     * Tell whether a field name, as given in the search request, is a
+     * dublin core field.
+     *
+     * @param the field
+     * @return whether it's a dublin core field
+     */
     private boolean isDCProp(String in) {
         for (int i=0; i<s_dbColumnNames.length; i++) {
             String n=s_dbColumnNames[i];
@@ -82,7 +100,7 @@ public class FieldSearchSQLImpl
         }
         return false;
     }
-    
+
     public void update(DOReader reader) 
             throws ServerException {
         logFinest("Entering update(DOReader)");
@@ -189,7 +207,6 @@ public class FieldSearchSQLImpl
         }
     }
     
-    // delete from doFields where pid=pid, dcDates where pid=pid
     public boolean delete(String pid) 
             throws ServerException {
         logFinest("Entering delete(String)");
@@ -276,14 +293,6 @@ public class FieldSearchSQLImpl
         }
     }
 
-/**
- * = for dates and non-repeating fields
-
-~ for all fields, excluding cDate mDate dcDate
-
->, <, >=, <= for dates
-
-*/
     public List search(String[] resultFields, List conditions) 
             throws ServerException {
         Connection conn=null;
@@ -418,6 +427,9 @@ public class FieldSearchSQLImpl
      * Get the string that should be inserted for a dublin core column,
      * given a list of values.  Turn each value to lowercase and separate them 
      * all by space characters.  If the list is empty, return null.
+     *
+     * @param dcItem a list of dublin core values
+     * @return String the string to insert
      */
     private static String getDbValue(List dcItem) {
         if (dcItem.size()==0) {
@@ -438,6 +450,20 @@ public class FieldSearchSQLImpl
      * and return the result as a List of ObjectFields objects
      * with resultFields populated.  The list will have a maximum size
      * of m_maxResults.
+     *
+     * @param conn the connection on which to query
+     * @param query the full query string.  This should at least select
+     *        a string field, pid
+     * @param resultFields the field names, as given in the search request,
+     *        to be returned
+     * @return List a list of ObjectFields objects, populated with the
+     *         values for the desired fields
+     * @throws SQLException if any kind of error happened while querying the db
+     * @throws UnrecognizedFieldException if a resultFields value isn't valid
+     * @throws ObjectIntegrityException if the underlying digital object can't
+     *         be parsed
+     * @throws ServerException if any other kind of error occurs while reading
+     *         the underlying object
      */
     private List getObjectFields(Connection conn, String query,
             String[] resultFields) 
@@ -471,6 +497,20 @@ public class FieldSearchSQLImpl
     /**
      * For the given pid, get a reader on the object from the repository
      * and return an ObjectFields object with resultFields fields populated.
+     *
+     * @param pid the unique identifier of the object for which the information
+     *        is requested.
+     * @param resultFields the fields to return
+     * @return ObjectFields populated with the requested fields
+     * @throws UnrecognizedFieldException if a resultFields value isn't valid
+     * @throws ObjectIntegrityException if the underlying digital object can't
+     *         be parsed
+     * @throws RepositoryConfigurationException if the sax parser can't
+     *         be constructed
+     * @throws StreamIOException if an error occurs while reading the serialized
+     *         digital object stream
+     * @throws ServerException if any other kind of error occurs while reading
+     *         the underlying object
      */
     private ObjectFields getObjectFields(String pid, String[] resultFields) 
             throws UnrecognizedFieldException, ObjectIntegrityException,
@@ -532,6 +572,9 @@ public class FieldSearchSQLImpl
     /**
      * Attempt to parse the given string of form: yyyy-MM-dd[Thh:mm:ss[Z]] 
      * as a Date.  If the string is not of that form, return null.
+     *
+     * @param str the date string to parse
+     * @return Date the date, if parse was successful; null otherwise
      */
     private static Date parseDate(String str) {
         if (str.indexOf("T")!=-1) {
@@ -556,12 +599,19 @@ public class FieldSearchSQLImpl
     
     /**
      * Return a condition suitable for a SQL WHERE clause, given a column
-     * name and a string with a possible pattern (using * and ? wildcards).
+     * name and a string with a possible pattern (using * and questionmark 
+     * wildcards).
+     * <p></p>
      * If the string has any characters that need to be escaped, it will
      * begin with a space, indicating to the caller that the entire WHERE
      * clause should end with " {escape '/'}".
+     *
+     * @param name the name of the field in the database
+     * @param in the query string, where * and ? are treated as wildcards
+     * @return String a suitable string for use in a SQL WHERE clause,
+     *         as described above
      */
-    public static String toSql(String name, String in) {
+    private static String toSql(String name, String in) {
         in=in.toLowerCase();
         if (name.startsWith("dc") || (name.startsWith("doFields.dc"))) {
             StringBuffer newIn=new StringBuffer();
