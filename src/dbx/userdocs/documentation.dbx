@@ -70,6 +70,12 @@
 		<title>Server Documentation</title>
 		<simplelist type="vert">
 			<member>
+				<ulink url="server/versioning.html">Content Versioning</ulink> NEW!!
+			</member>
+			<member>
+				<ulink url="server/localservices/index.html">Fedora Local Services</ulink>
+			</member>
+			<member>
 				<para>Fedora Web Services Exposure (HTTP/REST-oriented)</para>
 				<itemizedlist>
 					<listitem>Repository Access Interface (API-A-Lite):  [<ulink url="http://www.fedora.info/definitions/1/0/api/#apialite">WSDL</ulink>]  [<ulink url="server/webexp.html">User Guide</ulink>]  [<ulink url="client/browser/apialite/index.html">URL Syntax</ulink>]</listitem>
@@ -92,12 +98,6 @@
 				<itemizedlist>
 					<listitem>Repository Management Interface (API-M):   [<ulink url="http://www.fedora.info/definitions/1/0/api/#apim">WSDL</ulink>]</listitem>
 				</itemizedlist>
-			</member>
-			<member>
-				<ulink url="server/versioning.html">Content Versioning</ulink>
-			</member>
-			<member>
-				<ulink url="server/localservices/index.html">Fedora Local Services</ulink>
 			</member>
 		</simplelist>
 	</sect1>
