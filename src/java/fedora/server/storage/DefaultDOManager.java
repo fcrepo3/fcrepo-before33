@@ -527,7 +527,7 @@ public class DefaultDOManager
                         if (obj.isNew()) {
                             getDatastreamStore().add(id, mimeTypedStream.getStream());
                         } else {
-                            // object already existed...so we may need to call 
+                            // object already existed...so we may need to call
                             // replace if "add" indicates that it was already there
                             try {
                                 getDatastreamStore().add(id, mimeTypedStream.getStream());
@@ -537,9 +537,9 @@ public class DefaultDOManager
                         }
                         //getDatastreamStore().add(id, bais);
                         // RLW: change required by conversion fom byte[] to InputStream
-  
+
                         // Make new audit record.
-  
+
                         /*
                         // SDP: commented out since audit record id is not yet
                         // auto-incremented and we get XML validation error when
@@ -558,7 +558,7 @@ public class DefaultDOManager
                         a.justification = logMessage;
                         obj.getAuditRecords().add(a);
                         */
-  
+
                         // Reset dsLocation in object to new internal location.
                         dmc.DSLocation = id;
                         logInfo("Replacing ManagedContent datastream with "
@@ -789,9 +789,9 @@ public class DefaultDOManager
 				// FIXME: just setting ownerId manually for now...
 				obj.setOwnerId("fedoraAdmin");
                 m_translator.deserialize(in2, obj, format, encoding);
-                // then, before doing anything, set object and component states 
+                // then, before doing anything, set object and component states
                 // to "A" if they're unspecified
-				if (obj.getState()==null) {
+				if (obj.getState()==null || obj.getState().equals("")) {
                     obj.setState("A");
 				}
                 // datastreams,
@@ -800,7 +800,7 @@ public class DefaultDOManager
                     List dsList=(List) obj.datastreams((String) dsIter.next());
                     for (int i=0; i<dsList.size(); i++) {
                         Datastream ds=(Datastream) dsList.get(i);
-						if (ds.DSState==null) {
+						if (ds.DSState==null || ds.DSState.equals("")) {
                             ds.DSState="A";
 						}
                     }
@@ -811,7 +811,7 @@ public class DefaultDOManager
                     List dissList=(List) obj.disseminators((String) dissIter.next());
                     for (int i=0; i<dissList.size(); i++) {
                         Disseminator diss=(Disseminator) dissList.get(i);
-						if (diss.dissState==null) {
+						if (diss.dissState==null || diss.dissState.equals("")) {
                             diss.dissState="A";
 						}
                     }
