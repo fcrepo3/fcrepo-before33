@@ -33,12 +33,12 @@ public class ResourceIndexModule extends Module
         } else {
         	try {
                 level = Integer.parseInt(getParameter("level"));
-                if (level < 1 || level > 3) {
+                if (level < 0 || level > 3) {
                 	throw new NumberFormatException();
                 }
     		} catch (NumberFormatException nfe) {
     			throw new ModuleInitializationException(
-                        "level parameter must have value 1, 2, or 3.", getRole());
+                        "level parameter must have value 0, 1, 2, or 3.", getRole());
     		}
         }
         
