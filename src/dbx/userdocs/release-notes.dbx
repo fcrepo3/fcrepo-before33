@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article>
+    <title>Release Notes</title>
+    <subtitle>Fedora</subtitle>
+    <articleinfo>
+        <author>
+            <othername>Fedora Development Team</othername>
+        </author>
+        <edition>$Revision$</edition>
+        <date>$Date$</date>
+        <releaseinfo>
+            $Id$
+        </releaseinfo>
+    </articleinfo>
+    <section>
+        <title>Beta 1 (Changes since Alpha 1)</title>
+        <para>
+This release adds x, y, and z, and fixes a.
+It was released Dec 20, 2002.
+        </para>
+        <section>
+		<title>Batch Ingest</title>
+		<para>
+Ingesting groups of objects... two stages.
+Talk about sample objects.  Point to user doc..?
+            </para>
+        </section>
+        <section>
+		<title>PID Generation</title>
+		<para>
+Upon ingest, objects are assigned a PID, determined by a configuration value (except those starting with test: inline)
+            </para>
+        </section>
+        <section>
+		<title>Serialization</title>
+		<para>
+Objects are completely deserialized, then re-serialed upon ingest.
+This has the effect that the stored version of the object (in mets form)
+will not be the same byte-for-byte as the version coming out,
+but the information will be preserved.
+            </para>
+        </section>
+        <section>
+		<title>Validation Enhancements</title>
+		<para>
+The validation process also does object relationship integrity checking.
+When a bmech object is ingested, its bdef must be in the repostitory.
+This was true before, but the condition is now sensed explicitly
+and in a more up-front place than before.
+            </para>
+        </section>
+        <section>
+		<title>Dissemination Parameters</title>
+		<para>
+Behavior mechanisms can take user-supplied parameters
+at dissemination time.
+            </para>
+        </section>
+        <section>
+		<title>Schema Changes</title>
+		<para>
+The mets-fedora schema has changed.
+The differences are...(Sandy?)
+            </para>
+        </section>
+        <section>
+		<title>Datastream Mediation</title>
+		<para>
+When datastreams act as input to bmech implementations,
+the href is to the fedora server.  There are a couple kinds.
+(More re: Ross' change)
+            </para>
+        </section>
+	</section>
+	<appendix>
+	  <title>Revision History</title>
+	  <para>The history of this document follows.</para>
+	  <literallayout>
+	  $Log$
+	  Revision 1.1  2002/12/19 21:25:39  cwilper
+	  initial creation
+
+	  </literallayout>
+    </appendix>
+</article>
