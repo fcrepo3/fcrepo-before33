@@ -220,9 +220,9 @@ public class SimpleDOWriter
                 }
             }
             if (doRemove) {
-                // remove associated audit records...
-                removeObjectAuditRecords(ds.auditRecordIdList());
-                // ...then add this datastream to the datastream to-be-removed list.
+                // Note: We don't remove old audit records by design.
+
+                // add this datastream to the datastream to-be-removed list.
                 removeList.add(ds);
             }
         }
@@ -278,17 +278,9 @@ public class SimpleDOWriter
                 }
             }
             if (doRemove) {
-                // remove associated audit records...
-                //
-                // FIXME: Currently, disseminators have no audit records,
-                // so this step is skipped.  Versioning code is not yet
-                // implemented for disseminators anyway, but when it is,
-                // we need to add an auditRecordIdList to the disseminator
-                // class.  (ADMID is supported for interfaceDefs in METS1.3)
-                //
-                // removeObjectAuditRecords(diss.auditRecordIdList());
-                //
-                // ...then add this disseminator to the disseminator to-be-removed list.
+                // Note: We don't remove old audit records by design.
+
+                // add this disseminator to the disseminator to-be-removed list.
                 removeList.add(diss);
             }
         }
