@@ -3,16 +3,22 @@
 <project name="Fedora" default="serverdist" basedir=".">
 	<description>The Fedora Project </description>
 	<!-- set global properties for this build -->
-	<property name="build.debug" value="on"/>
-	<property name="build.optimize" value="off"/>
-	<property name="src.dir" location="src"/>
-	<property name="src.java.dir" location="${src.dir}/java"/>
-	<property name="build.dir" location="build"/>
-	<property name="dist.dir" location="dist"/>
-	<property name="lib.dir" location="lib"/>
-	<property name="release.dir" location="${dist.dir}/release"/>
-	<property name="server.dist.dir" location="${dist.dir}/server"/>
-	<property name="properties.dir" location="${src.dir}/properties"/>
+    <property name="build.debug"        value="on"/>
+    <property name="build.optimize"     value="off"/>
+    <property name="src.dir"            location="src"/>
+    <property name="java.src.dir"       location="${src.dir}/java"/>
+    <property name="test.src.dir"       location="${src.dir}/test"/>
+    <property name="junit.src.dir"      location="${test.src.dir}/junit"/>
+    <property name="build.dir"          location="build"/>
+    <property name="test.build.dir"     location="${build.dir}"/>
+    <property name="junit.build.dir"    location="${test.build.dir}/junit"/>
+    <property name="dist.dir"           location="dist"/>
+    <property name="server.dist.dir"    location="${dist.dir}/server"/>
+    <property name="lib.dir"            location="lib"/>
+    
+    <property name="release.dir"        location="${dist.dir}/release"/>
+    
+    <property name="properties.dir"     location="${src.dir}/properties"/>
 	<!-- load external properties files -->
 	<loadproperties srcFile="${properties.dir}/lib.properties"/>
 	<loadproperties srcFile="${properties.dir}/mckoi.properties"/>
@@ -320,7 +326,7 @@
 	</target>
 	<target name="utilclasses" depends="prep">
 		<mkdir dir="temp/util"/>
-		<javac srcdir="${src.java.dir}" destdir="temp/util" classpath="${lib.md5}" includes="fedora/utilities/**" optimize="${build.optimize}" debug="${build.debug}"/>
+		<javac srcdir="${java.src.dir}" destdir="temp/util" classpath="${lib.md5}" includes="fedora/utilities/**" optimize="${build.optimize}" debug="${build.debug}"/>
 		<jar jarfile="temp/fedora-utilities.jar" basedir="temp/util"/>
 	</target>
 	<target name="makepatch" depends="utilclasses">
@@ -351,7 +357,7 @@
 		<mkdir dir="temp/client"/>
 	</target>
 	<target name="clientclasses" depends="clientprep,wsdl2java,stubwrappers" description="Compile client java code into temp/client">
-		<javac srcdir="${src.java.dir}:temp/server/java:temp/clientgen" destdir="temp/client" classpath="${lib.xerces};${lib.jhbasic};${lib.getopt};${lib.saxon};${lib.axis};${lib.wsdl4j};${lib.jaxrpc};${lib.commons-discovery};${lib.commons-logging};${lib.saaj};${lib.commons-httpclient};${lib.jai_core};${lib.jai_codec};${lib.batik};${lib.jrdf}" includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java,fedora/common/**" optimize="${build.optimize}" debug="${build.debug}"/>
+		<javac srcdir="${java.src.dir}:temp/server/java:temp/clientgen" destdir="temp/client" classpath="${lib.xerces};${lib.jhbasic};${lib.getopt};${lib.saxon};${lib.axis};${lib.wsdl4j};${lib.jaxrpc};${lib.commons-discovery};${lib.commons-logging};${lib.saaj};${lib.commons-httpclient};${lib.jai_core};${lib.jai_codec};${lib.batik};${lib.jrdf}" includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java,fedora/common/**" optimize="${build.optimize}" debug="${build.debug}"/>
 	</target>
 	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
 		<mkdir dir="temp/client/help"/>
@@ -392,7 +398,7 @@
           description="Build the javadocs">
     <mkdir dir="apidoc"/>
     <javadoc packagenames="fedora.swing.mdi.*,fedora.swing.jhelp.*,fedora.client.*,fedora.common.*"
-             sourcepath="${src.java.dir}"
+             sourcepath="${java.src.dir}"
              destdir="apidoc"
              author="true"
              version="true"
@@ -407,7 +413,7 @@
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/userdocs/server/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common,fedora.common.rdf,fedora.server.config" sourcepath="${src.java.dir};temp/server/java;src/html/server/javadoc" classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5};${lib.jena};${lib.trippi};${lib.jrdf}" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common,fedora.common.rdf,fedora.server.config" sourcepath="${java.src.dir};temp/server/java;src/html/server/javadoc" classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5};${lib.jena};${lib.trippi};${lib.jrdf}" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
 		<copy todir="${tomcat.deploy.dir}/userdocs/server/serverdocs">
 			<fileset dir="dist/userdocs/server/serverdocs"/>
 		</copy>
@@ -1094,7 +1100,7 @@
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMServiceLocator.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<mkdir dir="temp/server/classes"/>
-		<javac srcdir="${src.java.dir}:temp/server/java" destdir="temp/server/classes" classpathref="serverclasses-lib.path" includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**" optimize="${build.optimize}" debug="${build.debug}"/>
+		<javac srcdir="${java.src.dir}:temp/server/java" destdir="temp/server/classes" classpathref="serverclasses-lib.path" includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**" optimize="${build.optimize}" debug="${build.debug}"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
@@ -1148,6 +1154,7 @@
 			<fileset dir="src/properties/server"/>
 		</copy>
 	</target>
+
 	<target name="clean" description="Clean up all targets and temp files">
 		<delete dir="temp"/>
 		<delete dir="${dist.dir}"/>
