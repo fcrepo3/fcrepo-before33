@@ -18,10 +18,10 @@ import java.net.URI;
 
 /**
  *
- * <p><b>Title:</b> METSInOutTest.java</p>
- * <p><b>Description:</b> Tests the METS deserializer and serializer by opening
- * a METS file (supplied at command-line), deserializing it, re-serializing it,
- * and sending it to STDOUT.</p>
+ * <p><b>Title:</b> METSToFOXMLTest.java</p>
+ * <p><b>Description:</b> Tests the METS deserializer and FOXML serializer 
+ * by opening a METS file (supplied at command-line), deserializing it, 
+ * re-serializing it as FOXML, and sending it to STDOUT.</p>
  *
  * -----------------------------------------------------------------------------
  *
@@ -40,7 +40,7 @@ import java.net.URI;
  *
  * -----------------------------------------------------------------------------
  *
- * @author cwilper@cs.cornell.edu
+ * @author payette@cs.cornell.edu
  * @version $Id$
  */
 public class METSToFOXMLTest
