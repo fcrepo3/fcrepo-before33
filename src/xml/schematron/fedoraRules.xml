@@ -45,8 +45,8 @@
 	<sch:pattern name="Completed Object Checks" id="completed">
 		<sch:rule context="METS:metsHdr">
 			<sch:assert test="@CREATEDATE">Object must have a date of creation (element header: CREATEDATE missing)</sch:assert>
-			<sch:assert test="string(@RECORDSTATUS)">Object state must be recorded (element header: RECORDSTATUS missing or empty)</sch:assert>
-			<sch:assert test="@RECORDSTATUS ='A' or @RECORDSTATUS ='W' or @RECORDSTATUS ='C' or @RECORDSTATUS ='D'">Object state value is invalid  (element header: RECORDSTATUS must be "A|W|C|D")</sch:assert>
+<!--			<sch:assert test="string(@RECORDSTATUS)">Object state must be recorded (element header: RECORDSTATUS missing or empty)</sch:assert>
+			<sch:assert test="@RECORDSTATUS ='A' or @RECORDSTATUS ='W' or @RECORDSTATUS ='C' or @RECORDSTATUS ='D'">Object state value is invalid  (element header: RECORDSTATUS must be "A|W|C|D")</sch:assert> -->
 		</sch:rule>
 	</sch:pattern>
 </sch:schema>
