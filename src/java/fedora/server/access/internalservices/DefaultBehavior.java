@@ -42,14 +42,28 @@ public interface DefaultBehavior
    * The item list information is returned as XML encoded to
    * the bbb.xsd schema.</p>
    */
-  public MIMETypedStream getItemList() throws ServerException;
+  public MIMETypedStream getMethodIndex() throws ServerException;
 
   /**
    * <p>Returns the list of items (datastreams) in the object.
    * The item list information is returned as HTML in
    * a presentation-oriented format.</p>
    */
-  public MIMETypedStream viewItemList() throws ServerException;
+  public MIMETypedStream viewMethodIndex() throws ServerException;
+
+  /**
+   * <p>Returns the list of items (datastreams) in the object.
+   * The item list information is returned as XML encoded to
+   * the bbb.xsd schema.</p>
+   */
+  public MIMETypedStream getItemIndex() throws ServerException;
+
+  /**
+   * <p>Returns the list of items (datastreams) in the object.
+   * The item list information is returned as HTML in
+   * a presentation-oriented format.</p>
+   */
+  public MIMETypedStream viewItemIndex() throws ServerException;
 
   /**
    * <p>Returns an particular item (datastream) in the object.
@@ -58,7 +72,7 @@ public interface DefaultBehavior
    * @param  itemID  : the unique identifier for the item in
    * the object in the form of DatastreamID+VersionID.  The
    * item identifer can be discovered via the results of the
-   * getItemList or viewItemList methods.
+   * getItemIndex or viewItemIndex methods.
    */
   public MIMETypedStream getItem(String itemID) throws ServerException;
 
