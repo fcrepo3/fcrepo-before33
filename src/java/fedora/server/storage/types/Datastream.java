@@ -40,6 +40,11 @@ public class Datastream
   /** Datastream Control Group:
    *  This indicates the nature of the repository's control over the
    *  datastream content.  Values are:
+   *  <p>
+   *  FIXME: I don't think type "P" is a type anymore...Protected or not
+   *  is controlled at the repository level, and both use "E".  Also,
+   *  "R" is a type... it means redirect (for streams)...right? - Chris
+   *  </p>
    *  P = Protected-ExternalRef.  The datastream content is external to
    *      to the repository and referenced by a URL.  The content is not
    *      under the direct custodianship of the repository.  However,

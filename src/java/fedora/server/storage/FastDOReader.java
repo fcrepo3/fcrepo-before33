@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import fedora.server.Context;
@@ -1405,7 +1406,15 @@ public class FastDOReader implements DOReader
       }
       return doReader.getLockingUser();
   }
-
+  
+  public List getAuditRecords()
+          throws ServerException, StorageDeviceException, ObjectNotFoundException {
+      if (doReader==null) {
+          doReader=m_manager.getReader(m_context, PID);
+      }
+      return doReader.getAuditRecords();
+  }
+  
   /**
    * <p>Gets the XML representation of the object. Since the XML representation
    * of an object is not stored in the Fast storage area, this method always

@@ -116,6 +116,10 @@ public class SimpleDOReader
     public String getLockingUser() {
         return m_obj.getLockingUser();
     }
+    
+    public List getAuditRecords() {
+        return m_obj.getAuditRecords();
+    }
 
     public InputStream GetObjectXML()
             throws ObjectIntegrityException, StreamIOException,

@@ -38,9 +38,7 @@ public class DatastreamXMLMetadata extends Datastream
   /** Digital provenance XML metadata */
   public final static int DESCRIPTIVE=4;
   
-  // FIXME:not sure if this is used publicly, but getContentStream
-  // should preclude its public use.  Also not sure how this affects
-  // character encoding/decoding and what the dependencies are.
+  // FIXME:xml datastream contents are held in memory...this could be expensive.
   public byte[] xmlContent;
 
   /**

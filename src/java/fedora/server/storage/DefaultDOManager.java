@@ -326,22 +326,13 @@ public class DefaultDOManager
         }
     }
 
-    public void doUnlock(String pid, boolean commit) {
-    }
-
-    /**
-     * Warning: Don't use this method unless from a DOWriter
-     *
-     * This should be called from DOWriter.save()...bleh
-     */
-    public void doDefinitiveSave(DigitalObject obj) {
-        // save to definitive store...
-    }
-
     /**
      * This could be in response to update *or* delete
      * makes a new audit record in the object,
      * saves object to definitive store, and replicates.
+     *
+     * In the case where it is not a deletion, the lock is released, too.
+     * This happens as the result of a writer.commit() call.
      */
     public void doCommit(Context context, DigitalObject obj, String logMessage, boolean remove)
             throws ServerException {
@@ -732,7 +723,9 @@ public class DefaultDOManager
             BasicDigitalObject obj=new BasicDigitalObject();
             m_translator.deserialize(getObjectStore().retrieve(pid), obj,
                     m_storageFormat, m_storageCharacterEncoding);
-            DOWriter w=new DefinitiveDOWriter(context, this, obj);
+            DOWriter w=new SimpleDOWriter(context, this, m_translator,  
+                    m_storageFormat, m_storageFormat, 
+                    m_storageCharacterEncoding, obj, this);
             // add to internal list...somehow..think...
             System.gc();
             return w;
@@ -844,7 +837,9 @@ public class DefaultDOManager
                 inTempStore=true; // signifies successful perm store addition
 
                 // then get the writer
-                DOWriter w=new DefinitiveDOWriter(context, this, obj);
+                DOWriter w=new SimpleDOWriter(context, this, m_translator,  
+                        m_storageFormat, m_storageFormat, 
+                        m_storageCharacterEncoding, obj, this);
 
                 // ...set the create and last modified dates as the current
                 // server date/time... in UTC (considering the local timezone

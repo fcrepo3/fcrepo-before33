@@ -22,38 +22,15 @@ import fedora.server.storage.types.Disseminator;
  * and is obtained via a <code>getWriter(String)</code> call on a 
  * <code>DOManager</code>.
  * <p></p>
- * This interface supports transaction behavior with the commit(String) and
- * rollBack() methods.  When a DOWriter is instantiated, there is an implicit
- * transaction.  Write methods may be called, but they won't affect the
- * the underlying data store until commit(String) is invoked.  This also has
- * the effect of creating another implicit transaction.  If temporary
- * changes are no longer wanted, rollBack() may be called to return the object 
- * to it's original form.  rollBack() is only valid for the current transaction.
+ * Call save() to save changes while working with a DOWriter, where the
+ * DOWriter handle may be lost but the changes need to be remembered.
  * <p></p>
- * The read methods of DOWriter reflect on the composition of the object in
- * the context of the current transaction.
+ * Work with a DOWriter ends with either commit() or cancel().
  *
  * @author cwilper@cs.cornell.edu
  */
 public interface DOWriter 
         extends DOReader {
-
-    /**
-     * Sets the content of the entire digital object.
-     *
-     * @param content A stream of encoded content of the digital object.
-     * @param validationType The type of validation that must occur as
-     *        a precondition to setting the content.
-     * @throws ValidationException If the stream couldn't be validated.
-     * @throws ObjectExistsException If shouldExist was false but the object
-     *         was found in storage.
-     * @throws ObjectNotFoundException If shouldExist was true but the object
-     *         wasn't found in storage.
-     * @throws StorageDeviceException If an underlying storage device
-     *         failed for any reason.
-     */
-    public void set(InputStream content)
-            throws ObjectIntegrityException, StreamIOException, StreamReadException;
 
     /**
      * Sets the state of the entire digital object.
@@ -62,8 +39,7 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public void setState(String state) 
-            throws ServerException;
+    public void setState(String state) throws ServerException;
 
     /**
      * Sets the label of the digital object.
@@ -72,8 +48,7 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public void setLabel(String label) 
-            throws ServerException;
+    public void setLabel(String label) throws ServerException;
 
     /**
      * Removes the entire digital object.
@@ -81,8 +56,7 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */    
-    public void remove() 
-            throws ServerException;
+    public void remove() throws ServerException;
 
     /**
      * Adds a datastream to the object.
@@ -92,8 +66,7 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public String addDatastream(Datastream datastream) 
-            throws ServerException;
+    public String addDatastream(Datastream datastream) throws ServerException;
 
     /**
      * Adds a disseminator to the object.
@@ -145,31 +118,11 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public void commit(String logMessage) 
-            throws ServerException;
+    public void commit(String logMessage) throws ServerException;
 
-    /**
-     * Clears the temporary storage area of changes to this object.
-     * <p></p>
-     * Subsequent calls will behave as if the changes made thus far never 
-     * happened.
-     *
-     * @throws ServerException If any type of error occurred fulfilling the 
-     *         request.
-     */
-    public void rollBack() 
-            throws ServerException;
-
-    /** This should probably go in the DOReader interface... it's intended
-        to be used to verify that the object is valid in some way. */
-    public void validate(String validationType)
-            throws ServerException;
+    public void save() throws ServerException;
             
-    public boolean save()
-            throws ServerException;
-            
-    public void cancel()
-            throws ServerException;
+    public void cancel() throws ServerException;
 
     /**
      * Marks this DOWriter handle invalid (unusable).

@@ -13,6 +13,7 @@ package fedora.server.storage;
 import fedora.server.storage.types.*;
 import fedora.server.errors.ServerException;
 import java.util.Date;
+import java.util.List;
 import java.io.InputStream;
 
 public interface DOReader
@@ -43,6 +44,13 @@ public interface DOReader
      * Gets the userid of the user with a write lock on this object.
      */
     public String getLockingUser() throws ServerException;
+    
+    /**
+     * Gets the entire list of audit records for the object.
+     *
+     * Changes to the list affect the underlying object if this is DOWriter.
+     */
+    public List getAuditRecords() throws ServerException;
 
     /**
      * Gets the content of the entire digital object as XML.  The object will
