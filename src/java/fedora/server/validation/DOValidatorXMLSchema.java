@@ -16,7 +16,6 @@ import java.net.URI;
 
 import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.GeneralException;
-import fedora.server.errors.ServerException;
 
 /**
  *
@@ -54,7 +53,6 @@ public class DOValidatorXMLSchema
         "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
     private URI schemaURI = null;
-    private DOIntegrityHandler iHandler = null; // new
 
     public DOValidatorXMLSchema(String schemaPath) throws GeneralException
     {
@@ -114,9 +112,7 @@ public class DOValidatorXMLSchema
         "http://java.sun.com/xml/jaxp/properties/schemaSource",
         schemaURI.toString());
 
-      iHandler = new DOIntegrityHandler(); // new
       XMLReader xmlreader = sp.getXMLReader();
-      xmlreader.setContentHandler(iHandler); // new
       xmlreader.setErrorHandler(new DOValidatorXMLErrorHandler());
       xmlreader.parse(doXML);
       }
@@ -177,9 +173,4 @@ public class DOValidatorXMLSchema
 		}
 	}
 	*/
-
-    public DOIntegrityVariables getDOIntegrityVariables()
-    {
-      return iHandler.iVars;
-    }
 }
