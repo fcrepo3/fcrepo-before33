@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 
 if [ "$FEDORA_HOME" = "" ]; then
   echo "ERROR: Environment variable, FEDORA_HOME must be set."
@@ -49,8 +49,10 @@ if [ -f "$FEDORA_HOME/logs/startup.log" ]; then
   mkdir $FEDORA_HOME/logs
 fi
 
-if [ "$OS" = "" ]; then
+if [ "$1" = "" ]; then
   (exec  nohup $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $TC/bin/bootstrap.jar -Dfedora.home=$FEDORA_HOME -Dclasspath=$TC/bin/bootstrap.jar -Djava.endorsed.dirs=$TC/bin -Djava.security.manager -Djava.security.policy=$TC/conf/catalina.policy -Dcatalina.base=$TC -Dcatalina.home=$TC -Djava.io.tmpdir=$TC/temp org.apache.catalina.startup.Bootstrap start &)
+else
+  (exec  nohup $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $TC/bin/bootstrap.jar -Dfedora.home=$FEDORA_HOME -Dfedora.serverProfile=$1 -Dclasspath=$TC/bin/bootstrap.jar -Djava.endorsed.dirs=$TC/bin -Djava.security.manager -Djava.security.policy=$TC/conf/catalina.policy -Dcatalina.base=$TC -Dcatalina.home=$TC -Djava.io.tmpdir=$TC/temp org.apache.catalina.startup.Bootstrap start &)
 fi
 
 C=$TC/common/lib

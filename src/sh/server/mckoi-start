@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 
 if [ "$FEDORA_HOME" = "" ]; then
   echo "ERROR: Environment variable, FEDORA_HOME must be set."
