@@ -158,7 +158,7 @@
 		<copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/lib"/>
 
 		<!-- all batch tool build is here, except for demo-content (under target "servermostly") -->
-		<copy file="src/xsl/batch/merge.xsl" todir="dist/client/lib"/>
+		<copy file="src/xsl/batchtool/merge.xsl" todir="dist/client/lib"/>
 		<mkdir dir="dist/client/demo/batch-demo"/>
 		<copy file="src/mets/demo/batch-demo/mets-template.xml" todir="dist/client/demo/batch-demo"/>
 		<copy todir="dist/client/demo/batch-demo/object-specifics">
@@ -839,6 +839,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.116  2003/05/11 16:23:34  wdn5e
+  change merge.xslt placement in dist...
+
   Revision 1.115  2003/05/11 05:27:08  cwilper
   fedora-list => fedora-find
 
