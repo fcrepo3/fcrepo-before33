@@ -510,7 +510,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
     
     // wdn >
     protected void createBatchBuildConsole() {
-        BatchBuildGUI frame=new BatchBuildGUI(this);
+        BatchBuildGUI frame=new BatchBuildGUI(this, s_desktop);
         frame.setVisible(true);
         s_desktop.add(frame);
         try {
@@ -518,7 +518,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         } catch (java.beans.PropertyVetoException e) {}
     }    
     protected void createBatchIngestConsole() {
-        BatchIngestGUI frame=new BatchIngestGUI(this);
+        BatchIngestGUI frame=new BatchIngestGUI(this, s_desktop);
         frame.setVisible(true);
         s_desktop.add(frame);
         try {
