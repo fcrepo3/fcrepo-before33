@@ -235,51 +235,87 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 
     // Parse servlet URL.
     String[] URIArray = request.getRequestURL().toString().split("/");
-    if (URIArray.length == 6 || URIArray.length == 7)
-    {
-      // Request appears to be an ObjectProfile request
-      PID = decoder.decode(URIArray[5], "UTF-8");
-      if (URIArray.length == 7)
-      {
-        versDateTime = DateUtility.convertStringToDate(URIArray[6]);
-        if (versDateTime == null)
-        {
-          String message = "ObjectProfile Request Syntax Error: DateTime value "
-              + "of \"" + URIArray[6] + "\" is not a valid DateTime format. "
-              + " ----- The expected format for DateTime is \""
-              + "YYYY-MM-DDTHH:MM:SS\".  "
-              + " ----- The expected syntax for "
-              + "ObjectProfile requests is: \""
-              + URIArray[0] + "//" + URIArray[2] + "/"
-              + URIArray[3] + "/" + URIArray[4]
-              + "/PID[/dateTime] \"  ."
-              + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
-          logWarning(message);
-          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-          return;
-        } else {
-            asOfDateTime=new GregorianCalendar();
-            asOfDateTime.setTime(versDateTime);
+    if (URIArray.length == 6 || URIArray.length == 7) {
+        // Request is either an ObjectProfile request or a datastream request
+        PID = decoder.decode(URIArray[5], "UTF-8");
+        if (URIArray.length == 7) {
+            // They either specified a date/time or a datastream id.
+            if (URIArray[6].indexOf(":")==-1) {
+                // If it doesn't contain a colon, they were after a datastream,
+                // so use the default disseminator.
+                bDefPID = "fedora-system:3";
+                methodName = "getItem";
+                Property itemID = new Property();
+                itemID.name = "itemID";
+                itemID.value = URIArray[6];
+                userParms=new Property[] { itemID };
+                asOfDateTime=null;
+                try {
+                    getDissemination(context, 
+                                     PID, 
+                                     bDefPID, 
+                                     methodName, 
+                                     userParms,
+                                     asOfDateTime, 
+                                     response);
+                    long stopTime = new Date().getTime();
+                    long interval = stopTime - servletStartTime;
+                    logFiner("[FedoraAccessServlet] Servlet Roundtrip "
+                        + "GetDatastream: " + interval + " milliseconds.");
+                } catch (Throwable th) {
+                    String message = "[FedoraAccessServlet] An error has occured in "
+                            + "accessing the Fedora Access Subsystem. The error was \" "
+                            + th.getClass().getName()
+                            + " \". Reason: "  + th.getMessage()
+                            + "  Input Request was: \"" + request.getRequestURL().toString();
+                    showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms, response, message);
+                    logWarning(message);
+                    th.printStackTrace();
+                }
+                return;
+            } else {
+                // If it DOES contain a colon, they were after a date/time-stamped object profile
+                versDateTime = DateUtility.convertStringToDate(URIArray[6]);
+                if (versDateTime == null) {
+                    String message = "ObjectProfile Request Syntax Error: DateTime value "
+                      + "of \"" + URIArray[6] + "\" is not a valid DateTime format. "
+                      + " ----- The expected format for DateTime is \""
+                      + "YYYY-MM-DDTHH:MM:SS\".  "
+                      + " ----- The expected syntax for "
+                      + "ObjectProfile requests is: \""
+                      + URIArray[0] + "//" + URIArray[2] + "/"
+                      + URIArray[3] + "/" + URIArray[4]
+                      + "/PID[/dateTime] \"  ."
+                      + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+                    logWarning(message);
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+                    return;
+                } else {
+                    asOfDateTime=new GregorianCalendar();
+                    asOfDateTime.setTime(versDateTime);
+                }
+                logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
+                    + "Encountered: "+ requestURI);
+                logFinest("PID: " + PID + " bDefPID: "
+                    + " asOfDate: " + versDateTime);
+                isGetObjectProfileRequest = true;
+            }
+        } else { // URIArray.length==6
+            logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
+                + "Encountered: "+ requestURI);
+            logFinest("PID: " + PID + " bDefPID: "
+                + " asOfDate: " + versDateTime);
+            isGetObjectProfileRequest = true;
         }
-      }
-      logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
-          + "Encountered: "+ requestURI);
-      logFinest("PID: " + PID + " bDefPID: "
-          + " asOfDate: " + versDateTime);
-      isGetObjectProfileRequest = true;
-
-    } else if (URIArray.length > 7)
-    {
+    } else if (URIArray.length > 7) {
       // Request appears to be a Dissemination Request.
       PID = decoder.decode(URIArray[5],"UTF-8");
       bDefPID = decoder.decode(URIArray[6],"UTF-8");
       methodName = decoder.decode(URIArray[7], "UTF-8");
-      if (URIArray.length > 8)
-      {
+      if (URIArray.length > 8) {
         versDateTime = DateUtility.convertStringToDate(URIArray[8]);
-        if (versDateTime == null)
-        {
+        if (versDateTime == null) {
           String message = "Dissemination Request Syntax Error: DateTime value "
               + "of \"" + URIArray[8] + "\" is not a valid DateTime format. "
               + " ----- The expected format for DateTime is \""
@@ -294,12 +330,11 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
           return;
         } else {
-            asOfDateTime=new GregorianCalendar();
-            asOfDateTime.setTime(versDateTime);
+          asOfDateTime=new GregorianCalendar();
+          asOfDateTime.setTime(versDateTime);
         }
       }
-      if (URIArray.length > 9)
-      {
+      if (URIArray.length > 9) {
         String message = "Dissemination Request Syntax Error: The expected "
             + "syntax for Dissemination requests is: \""
             + URIArray[0] + "//" + URIArray[2] + "/"
