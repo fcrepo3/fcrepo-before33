@@ -16,27 +16,31 @@ package fedora.server.management;
 public interface FedoraManagement
 {
   /**
-   * API-M Access Methods
+   * API-M Object Management Methods
    */
-    public byte[] GetObject(String pid);
-
-    public String[] ListObjectPIDs(String namespace);
-
-    public Datastream[] GetDatastreams(String pid);
-
-    public Disseminator[] GetDisseminators(String pid);
-
-    /**
-     * API-M Creation Methods
-     */
 
     public String IngestObject(byte[] mets, Agent[] agents);
 
-    public String CreateObject(String pid, String label, String contentModelID, Agent[] agents);
+    public byte[] GetObject(String pid);
+
+    public boolean DeleteObject(String pid);
+
+    public String[] ListObjectPIDs(String namespace);
 
     public void ObtainObjectLock(String pid, String userID, String reason);
 
     public void ReleaseObjectLock(String pid);
+
+
+    /**
+     * API-M Component Management Methods
+     */
+
+    public String CreateObject(String pid, String label, String contentModelID, Agent[] agents);
+
+    public Datastream[] GetDatastreams(String pid);
+
+    public Disseminator[] GetDisseminators(String pid);
 
     /** External Datastream:  Referenced Content */
     public String AddDatastreamERC(String pid, String url);
@@ -55,8 +59,6 @@ public interface FedoraManagement
 
     public String AddDisseminator(String pid, String bDefID, String bMechID, String dissLabel, DSBindingMap dsBindMap);
 
-    // API-M Modify Methods
-
     public boolean ModifyDatastreamERC(String pid, String datastreamID, String dsLabel, String url);
 
     public boolean ModifyDatastreamFC(String pid, String datastreamID, String dsLabel, byte[] content);
@@ -69,19 +71,11 @@ public interface FedoraManagement
 
     public boolean ModifyDisseminator(String pid, String dissID, String bDefID, String bMechID, String dissLabel, DSBindingMap dsBindMap);
 
-
-  /**
-   * API-M Deletion Methods
-   */
-
-    public boolean DeleteObject(String pid);
-
     public boolean DeleteDatastream(String pid, String datastreamID);
 
     public boolean DeleteDisseminator(String pid, String dissID);
 
 }
-
 
 
 
