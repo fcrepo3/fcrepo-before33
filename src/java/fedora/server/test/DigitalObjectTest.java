@@ -18,23 +18,14 @@ import fedora.server.storage.types.Datastream;
 public class DigitalObjectTest 
         extends TestCase {
         
-    private DigitalObject m_obj;
-    private DigitalObject m_bdef;
-    private DigitalObject m_bmech;
+    private DigitalObject m_obj, m_bdef, m_bmech;
     private Date m_startTime;
     private String m_namespacePrefix;
     private String m_namespaceURI;
-    private Datastream m_ds1_0;
-    private Datastream m_ds1_1;
-    private Datastream m_ds2_0;
-    private Disseminator m_diss1_0;
-    private Disseminator m_diss1_1;
-    private Disseminator m_diss2_0;
-    private AuditRecord m_audit1;
-    private AuditRecord m_audit2;
-    private AuditRecord m_audit3;
-    private AuditRecord m_audit4;
-    private AuditRecord m_audit5;
+    private Datastream m_ds1_0, m_ds1_1, m_ds2_0;
+    private Disseminator m_diss1_0, m_diss1_1, m_diss2_0;
+    private AuditRecord m_audit1, m_audit2, m_audit3, m_audit4, 
+            m_audit5, m_audit6, m_audit7;
 
     public DigitalObjectTest(String label) {
         super(label);
@@ -70,14 +61,36 @@ public class DigitalObjectTest
         m_ds2_0.DSVersionID="DS2";
         // ... and some disseminators
         m_diss1_0=new Disseminator();
+        m_diss1_0.dissID="DISS1.0";
+        m_diss1_0.dissVersionID="DISS1";
         m_diss1_1=new Disseminator();
+        m_diss1_1.dissID="DISS1.1";
+        m_diss1_1.dissVersionID="DISS1";
         m_diss2_0=new Disseminator();
+        m_diss2_0.dissID="DISS2.0";
+        m_diss2_0.dissVersionID="DISS2";
         // ... and some audit records
         m_audit1=new AuditRecord();
+        m_audit1.id="AUDIT1";
+        m_audit1.action="Object Created";
         m_audit2=new AuditRecord();
+        m_audit2.id="AUDIT2";
+        m_audit2.action="Datastream 1 Added";
         m_audit3=new AuditRecord();
+        m_audit3.id="AUDIT3";
+        m_audit3.action="Datastream 1 Versioned";
         m_audit4=new AuditRecord();
+        m_audit4.id="AUDIT4";
+        m_audit4.action="Datastream 2 Added";
         m_audit5=new AuditRecord();
+        m_audit5.id="AUDIT5";
+        m_audit5.action="Disseminator 1 Added";
+        m_audit6=new AuditRecord();
+        m_audit6.id="AUDIT6";
+        m_audit6.action="Disseminator 1 Versioned";
+        m_audit7=new AuditRecord();
+        m_audit7.id="AUDIT7";
+        m_audit7.action="Disseminator 2 Added";
         // init bdef
         m_bdef=new BasicDigitalObject();
         m_bdef.setContentModelId("cModel2");
@@ -132,16 +145,25 @@ public class DigitalObjectTest
         assertEquals(m_bmech.getState(), "D");
     }
     
+    public void testAuditRecordComposition() {
+        m_obj.getAuditRecords().add(m_audit1);
+    }
+    
     public void testDatastreamComposition() {
+        m_obj.getAuditRecords().add(m_audit2);
+        m_ds1_0.auditRecordIdList().add(m_audit2.id);
         m_obj.datastreams("DS1").add(m_ds1_0);
+        
+        m_obj.getAuditRecords().add(m_audit3);
+        m_ds1_1.auditRecordIdList().add(m_audit3.id);
         m_obj.datastreams("DS1").add(m_ds1_1);
+        
+        m_obj.getAuditRecords().add(m_audit4);
+        m_ds2_0.auditRecordIdList().add(m_audit4.id);
         m_obj.datastreams("DS2").add(m_ds2_0);
     }
 
     public void testDisseminatorComposition() {
-    }
-
-    public void testAuditRecordComposition() {
     }
 
 }
