@@ -29,7 +29,7 @@ public class FieldSearchTest
     private DirectoryBasedRepositoryReader m_repoReader;
     private FieldSearchExistImpl m_fieldSearch;
     private SimpleDateFormat m_formatter=
-            new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         
     public FieldSearchTest(String fedoraHome, String label) {
         super(label);

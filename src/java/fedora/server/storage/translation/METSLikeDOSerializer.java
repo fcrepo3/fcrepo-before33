@@ -2,6 +2,9 @@ package fedora.server.storage.translation;
 
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.Map;
 
 import fedora.server.errors.ObjectIntegrityException;
@@ -22,6 +25,8 @@ public class METSLikeDOSerializer
     private String m_encoding;
     private String m_XLinkPrefix="xlink";
     private String m_fedoraAuditPrefix="fedora-auditing";
+    private SimpleDateFormat m_formatter=
+            new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
 
     public METSLikeDOSerializer() {
     }
@@ -30,9 +35,6 @@ public class METSLikeDOSerializer
         return new METSLikeDOSerializer();
     }
 
-    public void serialize(DigitalObject obj, OutputStream out, String encoding) {
-    }
-/*
     public void serialize(DigitalObject obj, OutputStream out, String encoding)
             throws ObjectIntegrityException, StreamIOException, 
             UnsupportedEncodingException {
@@ -40,23 +42,35 @@ public class METSLikeDOSerializer
         m_encoding=encoding;
         StringBuffer buf=new StringBuffer();
         buf.append("<?xml version=\"1.0\" encoding=\"" + encoding + "\" ?>\n");
+        // begin mets element
         buf.append("<" + METS_PREFIX + ":mets xmlns:" + METS_PREFIX + "=\"" 
                 + METS_NS + "\"\n");
         appendNamespaceDeclarations("           ",obj.getNamespaceMapping(),buf);
         String PID=obj.getPid();
         if (PID==null) {
-            throw new ObjectIntegrityException("Object PID cannot be null.");
+            throw new ObjectIntegrityException("Object must have a pid.");
         }
         buf.append("           OBJID=\"" + PID + "\" TYPE=\"" 
-                + getTypeAttribute(obj) + "\"\n");
-         
+                + getTypeAttribute(obj) + "\"");
+        String label=obj.getLabel();
+        if (label!=null) {
+            buf.append("\n           LABEL=\"" + label + "\"");
+        }
+        String profile=obj.getContentModelId();
+        if (profile!=null) {
+            buf.append("\n           PROFILE=\"" + profile + "\"");
+        }
+        buf.append("/>\n");
+        appendHdr(obj, buf);
+        // end mets element
         buf.append("</" + METS_PREFIX + ":mets>");
     }
     
     private void appendNamespaceDeclarations(String prepend, Map URIToPrefix, 
-            StringBuffer out) {
-        for (int i=0; i<URIToPrefix.keySet().size(); i++) {
-            String URI=(String) URIToPrefix.keySet().get(i);
+            StringBuffer buf) {
+        Iterator iter=URIToPrefix.keySet().iterator();
+        while (iter.hasNext()) {
+            String URI=(String) iter.next();
             String prefix=(String) URIToPrefix.get(URI);
             if ( (URI.equals(METS_XLINK_NS)) || (URI.equals(REAL_XLINK_NS)) ) {
                 m_XLinkPrefix=prefix;
@@ -72,12 +86,33 @@ public class METSLikeDOSerializer
                 + FEDORA_AUDIT_NS + "\"\n");
     }
     
+    private void appendHdr(DigitalObject obj, StringBuffer buf) 
+            throws ObjectIntegrityException {
+        Date cDate=obj.getCreateDate();
+        if (cDate==null) {
+            throw new ObjectIntegrityException("Object must have a create date.");
+        }
+        buf.append(METS_PREFIX + ":metsHdr CREATEDATE=\"" 
+                + m_formatter.format(cDate) + "\" LASTMODDATE=\"");
+        Date mDate=obj.getLastModDate();
+        if (mDate==null) {
+            throw new ObjectIntegrityException("Object must have a last modified date.");
+        }
+        buf.append(m_formatter.format(mDate) + "\" RECORDSTATUS=\"");
+    }
+    
     private String getTypeAttribute(DigitalObject obj) 
             throws ObjectIntegrityException {
-        if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
+        int t=obj.getFedoraObjectType();
+        if (t==DigitalObject.FEDORA_BDEF_OBJECT) {
+            return "FedoraBDefObject";
+        } else if (t==DigitalObject.FEDORA_BMECH_OBJECT) {
+            return "FedoraBMechObject";
+        } else if (t==DigitalObject.FEDORA_OBJECT) {
+            return "FedoraObject";
+        } else {
+            throw new ObjectIntegrityException("Object must have a FedoraObjectType.");
         }
     }
     
-*/
-
 }

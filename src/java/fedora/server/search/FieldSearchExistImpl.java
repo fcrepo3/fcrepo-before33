@@ -101,7 +101,7 @@ public class FieldSearchExistImpl
     private String getXMLString(DOReader reader) 
             throws ServerException {
         StringBuffer out=new StringBuffer();
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         out.append("<fields>\n");
         out.append("<pid>" + reader.GetObjectPID() + "</pid>\n");
         String label=reader.GetObjectLabel();
@@ -263,7 +263,7 @@ public class FieldSearchExistImpl
 
     // returns -1 if can't parse as date
     private long parseDateAsNum(String str) {
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         try {
             Date d=formatter.parse(str);
             return d.getTime();

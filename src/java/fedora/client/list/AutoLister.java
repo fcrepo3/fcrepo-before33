@@ -79,7 +79,7 @@ public class AutoLister {
                     } else {
                         System.out.println("  locked by=" + inf.getLockedBy());
                     }
-                    SimpleDateFormat df=new SimpleDateFormat();
+                    SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
                     System.out.println("  created=" + df.format(inf.getCreateDate().getTime()));
                     System.out.println("  last modified=" + df.format(inf.getLastModDate().getTime()));
                 }

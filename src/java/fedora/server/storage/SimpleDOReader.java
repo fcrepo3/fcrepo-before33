@@ -50,7 +50,7 @@ public class SimpleDOReader
     private String m_encoding;
 
     private SimpleDateFormat m_formatter=
-            new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
     
     public SimpleDOReader(Context context, RepositoryReader repoReader, 
             DOTranslator translator, String shortExportFormat, 

@@ -86,7 +86,7 @@ public class RepositoryBrowser
         Object[][] data=new Object[m.size()][8];
         Iterator pidIter=m.keySet().iterator();   
         int i=0;
-        SimpleDateFormat df=new SimpleDateFormat();
+        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         while (pidIter.hasNext()) {
             String pid=(String) pidIter.next();
             ObjectInfo inf=(ObjectInfo) m.get(pid);

@@ -83,8 +83,8 @@ public class FieldSearchServlet
             html.append(" An advanced query is a space-delimited set of conditions.  A condition is of the form <i>propertyOPERATORvalue</i>.");
             html.append("Valid operators are =, ~ (meaning 'contains' -- this can take wildcards), <, <=, >, or >=.  Conditions may not contain spaces, ");
             html.append("unless the value is enclosed in single quotes.  For date-based fields, you may use any operator, but if you use the ");
-            html.append("<, <=, >, or >= operators, you must format your date like: <i>yyyy-DD-MM HH:MM:SS</i>.  Note that since the ");
-            html.append("value contains a space, it must be enclosed in single quotes in the condition.</font>");
+            html.append("<, <=, >, or >= operators, you must format your date like: <i>yyyy-DD-MMTHH:MM:SS</i>.  Note that the ");
+            html.append("letter T acts as a delimiter between the date and time parts of the string.</font>");
             html.append("</td></tr></table></center>");
             html.append("</form>");
             html.append("<hr size=\"1\">");
@@ -103,7 +103,7 @@ public class FieldSearchServlet
                     html.append("</b></font></td>");
                 }
                 html.append("</tr>");
-                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
                 for (int i=0; i<searchResults.size(); i++) {
                     ObjectFields f=(ObjectFields) searchResults.get(i);
                     html.append("<tr>");

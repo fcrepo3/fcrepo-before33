@@ -71,7 +71,7 @@ public class DefaultDOManager
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
-    private SimpleDateFormat m_formatter=new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+    private SimpleDateFormat m_formatter=new SimpleDateFormat ("yyyy-MM-dd'T'hh:mm:ss");
 
     public static String DEFAULT_STATE="L";
 
