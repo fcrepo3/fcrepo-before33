@@ -41,15 +41,16 @@
 							<fsvp:serviceMessagingtProtocol>HTTP GET</fsvp:serviceMessagingtProtocol>
 							<fsvp:serviceInputFormats>
 								<fsvp:MIMEType>image/gif</fsvp:MIMEType>
-								<fsvp:MIMEType>image/jpg</fsvp:MIMEType>
 								<fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
-								<fsvp:MIMEType>image/tif</fsvp:MIMEType>
 								<fsvp:MIMEType>image/tiff</fsvp:MIMEType>
-							</fsvp:serviceInputFormats>
+								<fsvp:MIMEType>image/png</fsvp:MIMEType>
+								<fsvp:MIMEType>image/bmp</fsvp:MIMEType>							</fsvp:serviceInputFormats>
 							<fsvp:serviceOutputFormats>
 								<fsvp:MIMEType>image/gif</fsvp:MIMEType>
-								<fsvp:MIMEType>image/jpg</fsvp:MIMEType>
 								<fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
+								<fsvp:MIMEType>image/tiff</fsvp:MIMEType>
+								<fsvp:MIMEType>image/png</fsvp:MIMEType>
+								<fsvp:MIMEType>image/bmp</fsvp:MIMEType>
 							</fsvp:serviceOutputFormats>
 							<fsvp:serviceImplDependencies>
 								<fsvp:tool name="Java" version="1.4.1" type="programming language"/>
@@ -80,10 +81,10 @@
 						<fbs:DSInput wsdlMsgPartName="url" DSMin="1" DSMax="1" DSOrdinality="false">
 							<fbs:DSInputLabel>Image URL</fbs:DSInputLabel>
 							<fbs:DSMIME>image/gif</fbs:DSMIME>
-							<fbs:DSMIME>image/jpg</fbs:DSMIME>
 							<fbs:DSMIME>image/jpeg</fbs:DSMIME>
-							<fbs:DSMIME>image/tif</fbs:DSMIME>
 							<fbs:DSMIME>image/tiff</fbs:DSMIME>
+							<fbs:DSMIME>image/png</fbs:DSMIME>
+							<fbs:DSMIME>image/bmp</fbs:DSMIME>
 							<fbs:DSInputInstruction>URL pointing to an image of type GIF, JPG, or TIF</fbs:DSInputInstruction>
 						</fbs:DSInput>
 					</fbs:DSInputSpec>
@@ -138,10 +139,13 @@
 							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
 						</fmm:Method>
 						<fmm:Method operationName="convertImage"  wsdlMsgName="convertImageRequest" wsdlMsgOutput="image_response">
-							<fmm:UserInputParm parmName="convert" required="true" defaultValue="gif" passBy="VALUE">
+							<fmm:UserInputParm parmName="convertTo" required="true" defaultValue="gif" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="gif"/>
 									<fmm:ValidParm value="jpg"/>
+									<fmm:ValidParm value="tiff"/>
+									<fmm:ValidParm value="png"/>
+									<fmm:ValidParm value="bmp"/>                                                        
 								</fmm:ValidParmValues>
 							</fmm:UserInputParm>
 							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
@@ -198,6 +202,9 @@
 									<xsd:restriction base="xsd:string">
 										<xsd:enumeration value="gif"/>
 										<xsd:enumeration value="jpg"/>
+										<xsd:enumeration value="tiff"/>
+										<xsd:enumeration value="png"/>
+										<xsd:enumeration value="bmp"/>
 									</xsd:restriction>
 								</xsd:simpleType>
 							</xsd:schema>
@@ -296,8 +303,10 @@
 								</wsdl:input>
 								<wsdl:output>
 									<mime:content type="image/gif"/>
-									<mime:content type="image/jpg"/>
 									<mime:content type="image/jpeg"/>
+									<mime:content type="image/tiff"/>
+									<mime:content type="image/png"/>
+									<mime:content type="image/bmp"/>
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="zoomImage">
@@ -307,8 +316,10 @@
 								</wsdl:input>
 								<wsdl:output>
 									<mime:content type="image/gif"/>
-									<mime:content type="image/jpg"/>
 									<mime:content type="image/jpeg"/>
+									<mime:content type="image/tiff"/>
+									<mime:content type="image/png"/>
+									<mime:content type="image/bmp"/>
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="brightImage">
@@ -318,8 +329,10 @@
 								</wsdl:input>
 								<wsdl:output>
 									<mime:content type="image/gif"/>
-									<mime:content type="image/jpg"/>
 									<mime:content type="image/jpeg"/>
+									<mime:content type="image/tiff"/>
+									<mime:content type="image/png"/>
+									<mime:content type="image/bmp"/>
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="watermarkImage">
@@ -329,8 +342,10 @@
 								</wsdl:input>
 								<wsdl:output>
 									<mime:content type="image/gif"/>
-									<mime:content type="image/jpg"/>
 									<mime:content type="image/jpeg"/>
+									<mime:content type="image/tiff"/>
+									<mime:content type="image/png"/>
+									<mime:content type="image/bmp"/>
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="grayscaleImage">
@@ -340,8 +355,10 @@
 								</wsdl:input>
 								<wsdl:output>
 									<mime:content type="image/gif"/>
-									<mime:content type="image/jpg"/>
 									<mime:content type="image/jpeg"/>
+									<mime:content type="image/tiff"/>
+									<mime:content type="image/png"/>
+									<mime:content type="image/bmp"/>
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="cropImage">
@@ -351,19 +368,23 @@
 								</wsdl:input>
 								<wsdl:output>
 									<mime:content type="image/gif"/>
-									<mime:content type="image/jpg"/>
 									<mime:content type="image/jpeg"/>
+									<mime:content type="image/tiff"/>
+									<mime:content type="image/png"/>
+									<mime:content type="image/bmp"/>
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="convertImage">
-								<http:operation location="ImageManipulation?url=(url)&amp;op=convert&amp;convertTo=(convert)"/>
+								<http:operation location="ImageManipulation?url=(url)&amp;op=convert&amp;convertTo=(convertTo)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
 								<wsdl:output>
 									<mime:content type="image/gif"/>
-									<mime:content type="image/jpg"/>
 									<mime:content type="image/jpeg"/>
+									<mime:content type="image/tiff"/>
+									<mime:content type="image/png"/>
+									<mime:content type="image/bmp"/>
 								</wsdl:output>
 							</wsdl:operation>
 						</wsdl:binding>
