@@ -72,7 +72,7 @@ public class BatchModifyValidate
         BatchModifyParser bmp = null;
         BatchModifyValidator bmv = null;
         File file = null;
-        long st=0;
+        long st=System.currentTimeMillis();
         long et=0;
 
         try {
@@ -89,7 +89,6 @@ public class BatchModifyValidate
                     Administrator.setLastDir(file);
                     openLog("validate-modify-directives");
                     in = new FileInputStream(file);
-                    st=System.currentTimeMillis();
                     bmv = new BatchModifyValidator(in, s_log);
                 }
             }
@@ -97,7 +96,7 @@ public class BatchModifyValidate
             JOptionPane.showMessageDialog(Administrator.getDesktop(),
                 e.getClass().getName()
                 + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()),
-                "Error in Parsing Directives File.",
+                "Error Parsing Directives File.",
                 JOptionPane.ERROR_MESSAGE);
         } finally {
             try {
@@ -107,8 +106,8 @@ public class BatchModifyValidate
                     et=System.currentTimeMillis();
                     if (bmv.isValid()) {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            "Modify Directives File in \n"+file.getAbsoluteFile()
-                            + "\n is Valid !"
+                            "Modify Directives file: \n"+file.getAbsoluteFile()
+                            + "\nis Valid !"
                             + "\nTime elapsed: " + getDuration(et-st),
                             "Directives File Valid",
                             JOptionPane.INFORMATION_MESSAGE);
@@ -116,12 +115,12 @@ public class BatchModifyValidate
                         return;
                     } else {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            +bmv.getErrorCount()+" XML validation Errors found in Modify Directives file.\n"
+                            +bmv.getErrorCount()+" XML validation errors found in Modify Directives file.\n"
                             + "See log file for details.\n"
                             + "Time elapsed: " + getDuration(et-st));
                         s_log.println("  <summary>");
                         s_log.println("    "+StreamUtility.enc(bmv.getErrorCount()
-                            + " XML validation Errors found in Modify Directives file.\n"
+                            + " XML validation errors found in Modify Directives file.\n"
                             + "    See log file for details.\n"
                             + "    Time elapsed: " + getDuration(et-st)));
                         s_log.println("  </summary>");
@@ -131,7 +130,7 @@ public class BatchModifyValidate
                         "A detailed log file was created at\n"
                         + s_logPath + "\n\n"
                         + "View it now?",
-                        "View Modify Batch Log?",
+                        "View Validation Log?",
                         JOptionPane.YES_NO_OPTION);
                     if (n==JOptionPane.YES_OPTION) {
                         JTextComponent textEditor=new JTextArea();

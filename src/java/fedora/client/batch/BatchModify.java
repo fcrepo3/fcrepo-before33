@@ -71,7 +71,7 @@ public class BatchModify
         BatchModifyParser bmp = null;
         BatchModifyValidator bmv = null;
         File file = null;
-        long st=0;
+        long st=System.currentTimeMillis();
         long et=0;
 
         try {
@@ -88,7 +88,6 @@ public class BatchModify
                     Administrator.setLastDir(file);
                     openLog("modify-batch");
                     in = new FileInputStream(file);
-                    st=System.currentTimeMillis();
                     bmp = new BatchModifyParser(Administrator.UPLOADER,
                         Administrator.APIM, Administrator.APIA, in, s_log);
                 }

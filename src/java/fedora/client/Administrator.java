@@ -485,7 +485,7 @@ public class Administrator extends JFrame {
         //JMenuItem toolsBatchModify=new JMenuItem("Modify Batch", KeyEvent.VK_M);
         JMenu toolsBatchModify=new JMenu("Modify Batch");
         toolsBatchModify.setMnemonic(KeyEvent.VK_M);
-        JMenuItem executeBatchModify=new JMenuItem("Execute", KeyEvent.VK_E);
+        JMenuItem executeBatchModify=new JMenuItem("Process Directives", KeyEvent.VK_P);
         toolsBatchModify.setToolTipText("Modifies a batch of objects based on "
             + "modify directives specified in a file on disk.");
         executeBatchModify.setToolTipText("Run the Batch Modify Utility.");
