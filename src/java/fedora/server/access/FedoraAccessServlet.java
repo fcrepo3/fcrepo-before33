@@ -23,6 +23,7 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Dissemination;
 import fedora.server.storage.types.Property;
 import fedora.server.storage.types.MethodParmDef;
+import fedora.server.storage.types.MethodDef;
 import fedora.server.utilities.DateUtility;
 
 // Java imports
@@ -222,14 +223,15 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       {
         try
         {
-          MIMETypedStream bDefMethods = GetBehaviorMethods(PID, bDefPID, asOfDate);
+          //MIMETypedStream bDefMethods = GetBehaviorMethods(PID, bDefPID, asOfDate);
+          MethodDef[] bDefMethods = GetBehaviorMethods(PID, bDefPID, asOfDate);
           if (bDefMethods == null)
           {
             emptyResult(action, PID, bDefPID, methodName, asOfDate, userParms,
                         clearCache, response);
           } else
           {
-
+/*
             ByteArrayInputStream methodResults =
                 new ByteArrayInputStream(bDefMethods.stream);
             response.setContentType(bDefMethods.MIMEType);
@@ -254,6 +256,57 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         {
           System.out.println(ioe);
           this.getServletContext().log(ioe.getMessage(), ioe.getCause());
+        }
+            */
+            out.println("<table border='1' cellpadding='2' cellspacing='5'>");
+            out.println("<tr>");
+            out.println("<th><font color=\"blue\"> Object PID " + " </font></th>"+
+                        "<th><font color=\"green\"> BDEF PID" + " </font></th>"+
+                        "<th><font color=\"red\"> Method Name" + " </font></th>");
+            out.println("</tr>");
+
+            out.println("</tr>");
+
+            int rows = bDefMethods.length - 1;
+            for (int i=0; i<bDefMethods.length; i++)
+            {
+              MethodDef results = bDefMethods[i];
+              out.println("<tr>");
+              if (i == 0)
+              {
+              out.println(//"<td><font color=\"blue\"> " + PID + " </font></td>"+
+                          "<tr><td><font color=\"blue\"> " + "<a href=\""+
+                          requestURL + "action_=ViewObject&PID_=" +
+                          PID + "\"> " + PID + " </a></font></td>"+
+                          "<td><font color=\"green\"> " + bDefPID + " </font></td>"+
+                          "<td><font color=\"red\"> " + "<a href=\""+
+                          requestURL + "action_=GetDissemination&PID_=" +
+                          PID + "&bDefPID_=" + bDefPID + "&methodName_=" +
+                          results.methodName + "\"> " + results.methodName +
+                          " </a> </td></tr>");
+              out.flush();
+              } else if (i == 1)
+              {
+                out.println("<tr><td colspan='2' rowspan='"+rows+"'></td>"+
+                            "<td><font color=\"red\"> " + "<a href=\""+
+                          requestURL + "action_=GetDissemination&PID_=" +
+                          PID + "&bDefPID_=" + bDefPID + "&methodName_=" +
+                          results.methodName + "\"> " + results.methodName +
+                          " </a> </td></tr>");
+              } else
+              {
+                out.println("<td><font color=\"red\"> " + "<a href=\""+
+                          requestURL + "action_=GetDissemination&PID_=" +
+                          PID + "&bDefPID_=" + bDefPID + "&methodName_=" +
+                          results.methodName + "\"> " + results.methodName +
+                          " </a> </td>");
+              }
+            }
+            out.println("</table>");
+          }
+        } catch (Exception e)
+        {
+          System.out.println("Exception: "+e.getMessage());
         }
       } else if (action.equals(VIEW_OBJECT))
       {
@@ -298,37 +351,41 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * @param asOfDate - version datetime stamp of the digital object
    * @return - MIMETypedStream containing WSDL definitions for methods
    */
-  public MIMETypedStream GetBehaviorMethods(String PID, String bDefPID,
+  public MethodDef[] GetBehaviorMethods(String PID, String bDefPID,
       Calendar asOfDate)
   {
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
     ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
     MIMETypedStream bDefMethods = null;
+    MethodDef[] methodDefs = null;
     try
     {
       FastDOReader fastReader = new FastDOReader(PID);
-      InputStream methodResults = fastReader.GetBMechMethodsWSDL(bDefPID,
-          versDateTime);
+      //InputStream methodResults = fastReader.GetBMechMethodsWSDL(bDefPID,
+      //    versDateTime);
       // FIXME!! Need to implement something similar to what's done in
       // GetBehaviorDefinitions to handle presentation of methods in
       // an HTML table format.....
-      int byteStream = 0;
-      while ((byteStream = methodResults.read()) >= 0)
-      {
-        baos.write(byteStream);
-      }
-    } catch (IOException ioe)
-    {
-      System.out.println(ioe);
-      this.getServletContext().log(ioe.getMessage(), ioe.getCause());
+      //int byteStream = 0;
+      //while ((byteStream = methodResults.read()) >= 0)
+      //{
+      //  baos.write(byteStream);
+      //}
+      methodDefs = fastReader.GetBMechMethods(bDefPID, versDateTime);
+
+    //} catch (IOException ioe)
+    //{
+    //  System.out.println(ioe);
+    //  this.getServletContext().log(ioe.getMessage(), ioe.getCause());
     } catch (ObjectNotFoundException onfe)
     {
       // FIXME!! - need to decide on exception handling
       return null;
     }
-    bDefMethods = new MIMETypedStream(CONTENT_TYPE_XML,baos.toByteArray());
+    //bDefMethods = new MIMETypedStream(CONTENT_TYPE_XML,baos.toByteArray());
 
-    return(bDefMethods);
+    //return(bDefMethods);
+    return(methodDefs);
 
   }
 
@@ -362,31 +419,13 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
            versDateTime);
        String replaceString = null;
        DissResultSet results = new DissResultSet();
-       // Build a hashtable of the dissemination result sets to be used
-       // as a way of indexing the different result sets.
-       //Enumeration e = dissResult.elements();
-       Hashtable h = new Hashtable();
-       int index = 1;
-       Integer key = new Integer(index);
-       //while (e.hasMoreElements())
-       for (int i=0; i<dissResults.length; i++)
-       {
-         dissResult = dissResults[i];
-         if (debug) System.out.println("KEY: "+key+" VALUE: "+dissResult.DSBindKey);
-         h.put(key,dissResult);
-         index++;
-         key = new Integer(index);
-       }
-       int counter = 1;
        int numElements = dissResults.length;
-       //e = dissResult.elements();
        // Get row(s) of WSDL results and perform string substitution
        // on DSBindingKey and method parameter values in WSDL
        // Note: In case where more than one datastream matches the
        // DSBindingKey or there are multiple DSBindingKeys for the
        // method, multiple rows will be returned; otherwise
        // a single row is returned.
-       //while (e.hasMoreElements())
        for (int i=0; i<dissResults.length; i++)
        {
          dissResult = dissResults[i];
@@ -406,18 +445,14 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
            dissURL = dissResult.AddressLocation+dissResult.OperationLocation;
            protocolType = dissResult.ProtocolType;
          }
-         if (debug) System.out.println("counter: "+counter+" numelem: "+numElements);
+         if (debug) System.out.println("counter: "+i+" numelem: "+numElements);
          String currentKey = dissResult.DSBindKey;
-         Integer hashKey = null;
          String nextKey = "";
          if (i != numElements-1)
          {
            // Except for last row, get the value of the next binding key
-           // out of the hashtable to compare with the value of the current
-           // binding key.
-           hashKey = new Integer(counter+1);
-           if (debug) System.out.println("hashKey: '"+hashKey+"' currentKey: '"+currentKey+"'");
-           //DissResultSet result2 = (DissResultSet)h.get(hashKey);
+           // to compare with the value of the current binding key.
+           if (debug) System.out.println("currentKey: '"+currentKey+"'");
            nextKey = dissResults[i+1].DSBindKey;
            if (debug) System.out.println("' nextKey: '"+nextKey+"'");
          }
@@ -457,7 +492,6 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
          }
          if (debug) System.out.println("replaceString: "+replaceString);
          dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
-         //counter++;
          if (debug) System.out.println("replaced dissURL = "+
                                       dissURL.toString()+
                                       " counter = "+i);
@@ -648,10 +682,13 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     }
     // Put valid method parameters and their attributes into hashtable
     Hashtable v_validParms = new Hashtable();
-    for (int i=0; i<methodParms.length; i++)
+    if (methodParms != null)
     {
-      methodParm = methodParms[i];
-      v_validParms.put(methodParm.parmName,methodParm);
+      for (int i=0; i<methodParms.length; i++)
+      {
+        methodParm = methodParms[i];
+        v_validParms.put(methodParm.parmName,methodParm);
+      }
     }
     // check if no user supplied parameters
     if (!h_userParms.isEmpty())
@@ -708,15 +745,18 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     {
       // There were no user supplied parameters.
       // Check if this method has any required parameters.
-      for (int i=0; i<methodParms.length; i++)
+      if (methodParms != null)
       {
-        methodParm = methodParms[i];
-        if (methodParm.parmRequired)
+        for (int i=0; i<methodParms.length; i++)
         {
-          if (debug) System.out.println("emptyREQUIRED PARAM NAME NOT FOUND: "+methodParm.parmName);
-        } else
-        {
-          if (debug) System.out.println("emptyNON-REQUIRED PARAM FOUND: "+methodParm.parmName);
+          methodParm = methodParms[i];
+          if (methodParm.parmRequired)
+          {
+            if (debug) System.out.println("emptyREQUIRED PARAM NAME NOT FOUND: "+methodParm.parmName);
+          } else
+          {
+            if (debug) System.out.println("emptyNON-REQUIRED PARAM FOUND: "+methodParm.parmName);
+          }
         }
       }
     }
