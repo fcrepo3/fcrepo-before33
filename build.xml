@@ -113,7 +113,7 @@
 			<arg line="-s fedora-export.sh fedora-export"/>
 		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
-			<arg line="-s fedora-list.sh fedora-list"/>
+			<arg line="-s fedora-find.sh fedora-find"/>
 		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-purge.sh fedora-purge"/>
@@ -839,6 +839,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.115  2003/05/11 05:27:08  cwilper
+  fedora-list => fedora-find
+
   Revision 1.114  2003/05/11 04:31:33  wdn5e
   batchtool build changed
 
