@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <input OBJID="test:3010" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
+	<comment>***testing:  comment for american academy***</comment>
 	<metadata>
-		<metadata ID="DESC1">
+		<metadata ID="DESC1" LABEL="***testing:  substituted label for DESC1***">
 				<uvalibdesc:desc>
 					<uvalibdesc:time>
 						<uvalibdesc:date type="created" certainty="ca." era="bc">13th century</uvalibdesc:date>
@@ -47,7 +48,7 @@
 </uvalibadmin:adminrights>
 </uvalibadmin:admin>
 		</metadata>
-		<metadata ID="TECH2">
+		<metadata ID="TECH2"  LABEL="***testing:  substituted label for TECH2***">
 <uvalibadmin:admin>
 <uvalibadmin:technical>
    <uvalibadmin:images>
@@ -183,9 +184,11 @@
 		</metadata>
 	</metadata>
 	<datastreams>
-		<datastream ID="DS1" xlink:href="http://localhost:8080/beta1-demo/thumb/americanacademy.jpg"/>
-		<datastream ID="DS2" xlink:href="http://localhost:8080/beta1-demo/medium/americanacademy.jpg"/>
-		<datastream ID="DS3" xlink:href="http://localhost:8080/beta1-demo/high/americanacademy.jpg"/>
+		<datastream ID="DS1" xlink:href="http://localhost:8080/beta1-demo/thumb/americanacademy.jpg"  LABEL="***testing:  substituted general label for DS1***"/>
+		<datastream ID="DS2" xlink:href="http://localhost:8080/beta1-demo/medium/americanacademy.jpg"  xlink:title="***testing:  substituted title for DS2***"/>
+		<datastream ID="DS3" xlink:href="http://localhost:8080/beta1-demo/high/americanacademy.jpg">
+			<disseminator ID="S1" LABEL="*** testing:  substituted specific label for DS3 in S1 ***"/>
+		</datastream>
 		<datastream ID="DS4" xlink:href="http://localhost:8080/beta1-demo/very-high/americanacademy.jpg"/>
 	</datastreams>
 </input>
