@@ -6,6 +6,31 @@ import fedora.server.Context;
 import fedora.server.errors.DisallowedHostException;
 import fedora.server.errors.InvalidIPSpecException;
 
+/**
+ *
+ * <p><b>Title:</b> IPRestriction.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class IPRestriction {
 
     private ArrayList m_allowRanges=new ArrayList();
@@ -19,20 +44,20 @@ public class IPRestriction {
      * <p></p>
      * <b>allowHosts</b>
      * <dir>
-     * A comma-separated list of IP ranges that the client's address 
-     * is compared to. If this is specified, the remote address 
-     * must match.  If this is not specified, all requests will 
+     * A comma-separated list of IP ranges that the client's address
+     * is compared to. If this is specified, the remote address
+     * must match.  If this is not specified, all requests will
      * be accepted unless the remote address matches a deny pattern.
      * </dir>
      * <b>denyHosts</b>
      * <dir>
-     * A comma-separated list of IP ranges that the client's address 
-     * is compared to. If this is specified, the remote address 
-     * must not match.  If this is not specified, request 
+     * A comma-separated list of IP ranges that the client's address
+     * is compared to. If this is specified, the remote address
+     * must not match.  If this is not specified, request
      * acceptance is governed solely by the allowHosts value.
      * </dir>
      */
-    public IPRestriction(String allowHosts, String denyHosts) 
+    public IPRestriction(String allowHosts, String denyHosts)
             throws InvalidIPSpecException {
         if ( (allowHosts!=null) && (!allowHosts.equals("")) ) {
             m_allowSpecified=true;
@@ -50,20 +75,20 @@ public class IPRestriction {
         }
     }
 
-    public boolean allows(String address) 
+    public boolean allows(String address)
             throws InvalidIPSpecException {
         long a=parseAddress(address);
         return allowed(a) && !denied(a);
     }
-    
-    public void enforce(Context context) 
+
+    public void enforce(Context context)
             throws DisallowedHostException, InvalidIPSpecException {
         if (context.get("host")!=null && !allows(context.get("host"))) {
-            throw new DisallowedHostException("Host " + context.get("host") 
+            throw new DisallowedHostException("Host " + context.get("host")
                     + " is not allowed due to ip restriction.");
         }
     }
-    
+
     private boolean allowed(long address) {
         if (m_allowSpecified) {
             for (int i=0; i<m_allowRanges.size(); i++) {
@@ -76,7 +101,7 @@ public class IPRestriction {
             return true;
         }
     }
-    
+
     private boolean denied(long address) {
         if (m_denySpecified) {
             for (int i=0; i<m_denyRanges.size(); i++) {
@@ -89,8 +114,8 @@ public class IPRestriction {
             return false;
         }
     }
-    
-    private IPRange parseRange(String range) 
+
+    private IPRange parseRange(String range)
             throws InvalidIPSpecException {
         long beginning;
         long ending;
@@ -107,8 +132,8 @@ public class IPRestriction {
         }
         return new IPRange(beginning, ending);
     }
-    
-    private long parseAddress(String address) 
+
+    private long parseAddress(String address)
             throws InvalidIPSpecException {
         String[] parts=address.split("\\.");
         if (parts.length!=4) {

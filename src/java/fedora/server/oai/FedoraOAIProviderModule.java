@@ -17,20 +17,43 @@ import fedora.server.errors.ServerException;
 import fedora.server.search.FieldSearch;
 
 /**
- * An OAIProvider that acts as a server module and wraps FedoraOAIProvider.
+ *
+ * <p><b>Title:</b> FedoraOAIProviderModule.java</p>
+ * <p><b>Description:</b> An OAIProvider that acts as a server module and wraps
+ * FedoraOAIProvider.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
 public class FedoraOAIProviderModule
         extends Module
         implements OAIProvider {
-        
+
     private FedoraOAIProvider m_wrappedOAIProvider;
 
-    public FedoraOAIProviderModule(Map params, Server server, String role) 
+    public FedoraOAIProviderModule(Map params, Server server, String role)
             throws ModuleInitializationException {
         super(params, server, role);
     }
-    
-    public void postInitModule() 
+
+    public void postInitModule()
             throws ModuleInitializationException {
         String repositoryName=getParameter("repositoryName");
         if (repositoryName==null) {
@@ -82,7 +105,7 @@ public class FedoraOAIProviderModule
             throw new ModuleInitializationException("FieldSearch module was not loaded, but is required.", getRole());
         }
         Module fsModule=(Module) getServer().getModule("fedora.server.search.FieldSearch");
-        
+
         if (fsModule.getParameter("maxResults")==null) {
             throw new ModuleInitializationException(
                 "maxResults parameter must be specified in FieldSearch module's configuration.", getRole());
@@ -97,7 +120,7 @@ public class FedoraOAIProviderModule
             throw new ModuleInitializationException(
                 "maxResults specified in FieldSearch module's configuration must be a positive integer.", getRole());
         }
-        
+
         long maxSets=100; // unused for now, but passed in the constructor anyway
         long maxRecords=maxResults;
         long maxHeaders=maxResults;
@@ -135,20 +158,20 @@ public class FedoraOAIProviderModule
                 throw new ModuleInitializationException("maxHeaders value is invalid.", getRole());
             }
         }
-        m_wrappedOAIProvider=new FedoraOAIProvider(repositoryName, 
-                "http://" + host + ":" + port + "/fedora/oai", adminEmails, 
-                friends, pidNamespace, maxSets, maxRecords, maxHeaders, 
+        m_wrappedOAIProvider=new FedoraOAIProvider(repositoryName,
+                "http://" + host + ":" + port + "/fedora/oai", adminEmails,
+                friends, pidNamespace, maxSets, maxRecords, maxHeaders,
                 fieldSearch, this);
     }
-    
+
     public String getRepositoryName() {
         return m_wrappedOAIProvider.getRepositoryName();
     }
-    
+
     public String getBaseURL() {
         return m_wrappedOAIProvider.getBaseURL();
     }
-    
+
     public String getProtocolVersion() {
         return m_wrappedOAIProvider.getProtocolVersion();
     }
@@ -156,29 +179,29 @@ public class FedoraOAIProviderModule
     public Date getEarliestDatestamp() {
         return m_wrappedOAIProvider.getEarliestDatestamp();
     }
-    
+
     public DeletedRecordSupport getDeletedRecordSupport() {
         return m_wrappedOAIProvider.getDeletedRecordSupport();
     }
-    
+
     public DateGranularitySupport getDateGranularitySupport() {
         return m_wrappedOAIProvider.getDateGranularitySupport();
     }
-    
+
     public Set getAdminEmails() {
         return m_wrappedOAIProvider.getAdminEmails();
     }
-    
+
     public Set getSupportedCompressionEncodings() {
         return m_wrappedOAIProvider.getSupportedCompressionEncodings();
     }
-    
+
     public Set getDescriptions() {
         return m_wrappedOAIProvider.getDescriptions();
     }
 
     public Record getRecord(String identifier, String metadataPrefix)
-            throws CannotDisseminateFormatException, IDDoesNotExistException, 
+            throws CannotDisseminateFormatException, IDDoesNotExistException,
             RepositoryException {
         return m_wrappedOAIProvider.getRecord(identifier, metadataPrefix);
     }
@@ -193,25 +216,25 @@ public class FedoraOAIProviderModule
 
     public List getRecords(String resumptionToken)
             throws CannotDisseminateFormatException,
-            NoRecordsMatchException, NoSetHierarchyException, 
+            NoRecordsMatchException, NoSetHierarchyException,
             BadResumptionTokenException, RepositoryException {
         return m_wrappedOAIProvider.getRecords(resumptionToken);
     }
 
     public List getHeaders(Date from, Date until, String metadataPrefix,
             String set)
-            throws CannotDisseminateFormatException, NoRecordsMatchException, 
+            throws CannotDisseminateFormatException, NoRecordsMatchException,
             NoSetHierarchyException, RepositoryException {
         return m_wrappedOAIProvider.getHeaders(from, until, metadataPrefix, set);
     }
 
     public List getHeaders(String resumptionToken)
             throws CannotDisseminateFormatException,
-            NoRecordsMatchException, NoSetHierarchyException, 
+            NoRecordsMatchException, NoSetHierarchyException,
             BadResumptionTokenException, RepositoryException {
         return m_wrappedOAIProvider.getHeaders(resumptionToken);
     }
-            
+
     public List getSets()
             throws NoSetHierarchyException, RepositoryException {
         return m_wrappedOAIProvider.getSets();
@@ -224,7 +247,7 @@ public class FedoraOAIProviderModule
     }
 
     public Set getMetadataFormats(String id)
-            throws NoMetadataFormatsException, IDDoesNotExistException, 
+            throws NoMetadataFormatsException, IDDoesNotExistException,
             RepositoryException {
         return m_wrappedOAIProvider.getMetadataFormats(id);
     }
@@ -233,15 +256,15 @@ public class FedoraOAIProviderModule
             throws RepositoryException {
         return m_wrappedOAIProvider.getMaxSets();
     }
-            
+
     public long getMaxRecords()
             throws RepositoryException {
         return m_wrappedOAIProvider.getMaxRecords();
     }
-            
+
     public long getMaxHeaders()
             throws RepositoryException {
         return m_wrappedOAIProvider.getMaxHeaders();
     }
-    
+
 }

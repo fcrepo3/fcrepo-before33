@@ -35,11 +35,31 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
 
 /**
- * A FieldSearch implementation that uses a relational database
- * as a backend.
+ *
+ * <p><b>Title:</b> FieldSearchSQLImpl.java</p>
+ * <p><b>Description:</b> A FieldSearch implementation that uses a relational
+ * database as a backend.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- */ 
+ * @version 1.0
+ */
 public class FieldSearchSQLImpl
         extends StdoutLogging
         implements FieldSearch {
@@ -48,20 +68,20 @@ public class FieldSearchSQLImpl
     private RepositoryReader m_repoReader;
     private int m_maxResults;
     private int m_maxSecondsPerSession;
-    public static String[] DB_COLUMN_NAMES=new String[] {"pid", "label", 
-            "fType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate", 
-            "bDef", "bMech", "dcTitle", "dcCreator", "dcSubject", "dcDescription", 
-            "dcPublisher", "dcContributor", "dcDate", "dcType", "dcFormat", 
+    public static String[] DB_COLUMN_NAMES=new String[] {"pid", "label",
+            "fType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate",
+            "bDef", "bMech", "dcTitle", "dcCreator", "dcSubject", "dcDescription",
+            "dcPublisher", "dcContributor", "dcDate", "dcType", "dcFormat",
             "dcIdentifier", "dcSource", "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
     private static boolean[] s_dbColumnNumeric=new boolean[] {false, false,
             false, false, false, false, true, true, true, false, false,
             false, false, false, false, false,
             false, false, false, false, false,
             false, false, false, false, false};
-            
+
     // a hash of token-keyed FieldSearchResultSQLImpls
     private HashMap m_currentResults=new HashMap();
-    
+
     private static ReadOnlyContext s_nonCachedContext;
     static {
         HashMap h=new HashMap();
@@ -80,7 +100,7 @@ public class FieldSearchSQLImpl
      *        regardless of what the user might request
      * @param logTarget where to send log messages
      */
-    public FieldSearchSQLImpl(ConnectionPool cPool, RepositoryReader repoReader, 
+    public FieldSearchSQLImpl(ConnectionPool cPool, RepositoryReader repoReader,
             int maxResults, int maxSecondsPerSession, Logging logTarget) {
         super(logTarget);
         logFinest("Entering constructor");
@@ -91,7 +111,7 @@ public class FieldSearchSQLImpl
         logFinest("Exiting constructor");
     }
 
-    public void update(DOReader reader) 
+    public void update(DOReader reader)
             throws ServerException {
         logFinest("Entering update(DOReader)");
         String pid=reader.GetObjectPID();
@@ -127,7 +147,7 @@ public class FieldSearchSQLImpl
             try {
                 dcmd=(DatastreamXMLMetadata) reader.GetDatastream("DC", null);
             } catch (ClassCastException cce) {
-                throw new ObjectIntegrityException("Object " + reader.GetObjectPID() 
+                throw new ObjectIntegrityException("Object " + reader.GetObjectPID()
                         + " has a DC datastream, but it's not inline XML.");
             }
             // add bdef and bmech ids for each active disseminator
@@ -148,13 +168,13 @@ public class FieldSearchSQLImpl
                 InputStream in=dcmd.getContentStream();
                 DCFields dc=new DCFields(in);
                 dbRowValues[8]="" + dcmd.DSCreateDT.getTime();
-                dbRowValues[11]=getDbValue(dc.titles()); 
-                dbRowValues[12]=getDbValue(dc.creators()); 
-                dbRowValues[13]=getDbValue(dc.subjects()); 
-                dbRowValues[14]=getDbValue(dc.descriptions()); 
-                dbRowValues[15]=getDbValue(dc.publishers()); 
-                dbRowValues[16]=getDbValue(dc.contributors()); 
-                dbRowValues[17]=getDbValue(dc.dates()); 
+                dbRowValues[11]=getDbValue(dc.titles());
+                dbRowValues[12]=getDbValue(dc.creators());
+                dbRowValues[13]=getDbValue(dc.subjects());
+                dbRowValues[14]=getDbValue(dc.descriptions());
+                dbRowValues[15]=getDbValue(dc.publishers());
+                dbRowValues[16]=getDbValue(dc.contributors());
+                dbRowValues[17]=getDbValue(dc.dates());
                 // get any dc.dates strings that are formed such that they
                 // can be treated as a timestamp
                 List wellFormedDates=null;
@@ -171,29 +191,29 @@ public class FieldSearchSQLImpl
                     // found at least one... so delete the existing dates
                     // in that table for this pid, then add these.
                     st=conn.createStatement();
-                    st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid 
+                    st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid
                             + "'");
                     for (int i=0; i<wellFormedDates.size(); i++) {
                         Date dt=(Date) wellFormedDates.get(i);
                         st.executeUpdate("INSERT INTO dcDates (pid, dcDate) "
-                                + "values ('" + pid + "', " 
+                                + "values ('" + pid + "', "
                                 + dt.getTime() + ")");
                     }
                 }
-                dbRowValues[18]=getDbValue(dc.types()); 
-                dbRowValues[19]=getDbValue(dc.formats()); 
-                dbRowValues[20]=getDbValue(dc.identifiers()); 
-                dbRowValues[21]=getDbValue(dc.sources()); 
-                dbRowValues[22]=getDbValue(dc.languages()); 
-                dbRowValues[23]=getDbValue(dc.relations()); 
-                dbRowValues[24]=getDbValue(dc.coverages()); 
-                dbRowValues[25]=getDbValue(dc.rights()); 
+                dbRowValues[18]=getDbValue(dc.types());
+                dbRowValues[19]=getDbValue(dc.formats());
+                dbRowValues[20]=getDbValue(dc.identifiers());
+                dbRowValues[21]=getDbValue(dc.sources());
+                dbRowValues[22]=getDbValue(dc.languages());
+                dbRowValues[23]=getDbValue(dc.relations());
+                dbRowValues[24]=getDbValue(dc.coverages());
+                dbRowValues[25]=getDbValue(dc.rights());
             }
             logFine("Formulating SQL and inserting/updating...");
             SQLUtility.replaceInto(conn, "doFields", DB_COLUMN_NAMES,
                     dbRowValues, "pid", s_dbColumnNumeric, this);
         } catch (SQLException sqle) {
-            throw new StorageDeviceException("Error attempting update of " 
+            throw new StorageDeviceException("Error attempting update of "
                     + "object with pid '" + pid + ": " + sqle.getMessage());
         } finally {
             if (conn!=null) {
@@ -207,8 +227,8 @@ public class FieldSearchSQLImpl
             logFinest("Exiting update(DOReader)");
         }
     }
-    
-    public boolean delete(String pid) 
+
+    public boolean delete(String pid)
             throws ServerException {
         logFinest("Entering delete(String)");
         Connection conn=null;
@@ -220,8 +240,8 @@ public class FieldSearchSQLImpl
             st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid + "'");
             return true;
         } catch (SQLException sqle) {
-            throw new StorageDeviceException("Error attempting delete of " 
-                    + "object with pid '" + pid + "': " 
+            throw new StorageDeviceException("Error attempting delete of "
+                    + "object with pid '" + pid + "': "
                     + sqle.getMessage());
         } finally {
             if (conn!=null) {
@@ -235,11 +255,11 @@ public class FieldSearchSQLImpl
             logFinest("Exiting delete(String)");
         }
     }
-    
-    public FieldSearchResult findObjects(String[] resultFields, 
+
+    public FieldSearchResult findObjects(String[] resultFields,
             int maxResults, FieldSearchQuery query)
             throws UnrecognizedFieldException, ObjectIntegrityException,
-            RepositoryConfigurationException, StreamIOException, 
+            RepositoryConfigurationException, StreamIOException,
             ServerException, StorageDeviceException {
         closeAndForgetOldResults();
         int actualMax=maxResults;
@@ -248,7 +268,7 @@ public class FieldSearchSQLImpl
         }
         try {
             return stepAndRemember(new FieldSearchResultSQLImpl(
-                    m_cPool, m_repoReader, resultFields, actualMax, 
+                    m_cPool, m_repoReader, resultFields, actualMax,
                     m_maxSecondsPerSession, query, this));
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error querying sql db: "
@@ -256,9 +276,9 @@ public class FieldSearchSQLImpl
         }
     }
 
-    public FieldSearchResult resumeFindObjects(String sessionToken) 
+    public FieldSearchResult resumeFindObjects(String sessionToken)
             throws UnrecognizedFieldException, ObjectIntegrityException,
-            RepositoryConfigurationException, StreamIOException, 
+            RepositoryConfigurationException, StreamIOException,
             ServerException, UnknownSessionTokenException {
         closeAndForgetOldResults();
         FieldSearchResultSQLImpl result=(FieldSearchResultSQLImpl)
@@ -269,10 +289,10 @@ public class FieldSearchSQLImpl
         }
         return stepAndRemember(result);
     }
-    
-    private FieldSearchResult stepAndRemember(FieldSearchResultSQLImpl result) 
+
+    private FieldSearchResult stepAndRemember(FieldSearchResultSQLImpl result)
             throws UnrecognizedFieldException, ObjectIntegrityException,
-            RepositoryConfigurationException, StreamIOException, 
+            RepositoryConfigurationException, StreamIOException,
             ServerException, UnrecognizedFieldException {
         result.step();
         if (result.getToken()!=null) {
@@ -292,10 +312,10 @@ public class FieldSearchSQLImpl
             }
         }
     }
-    
+
     /**
      * Get the string that should be inserted for a repeating-value column,
-     * given a list of values.  Turn each value to lowercase and separate them 
+     * given a list of values.  Turn each value to lowercase and separate them
      * all by space characters.  If the list is empty, return null.
      *
      * @param dcItem a list of dublin core values

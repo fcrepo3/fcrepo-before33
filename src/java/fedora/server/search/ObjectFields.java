@@ -18,7 +18,32 @@ import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnrecognizedFieldException;
 
-public class ObjectFields 
+/**
+ *
+ * <p><b>Title:</b> ObjectFields.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
+public class ObjectFields
         extends DCFields {
 
     private String m_pid;
@@ -37,7 +62,7 @@ public class ObjectFields
     private boolean[] m_want=new boolean[26];
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-    
+
     public final static int PID=0;
     public final static int LABEL=1;
     public final static int FTYPE=2;
@@ -67,8 +92,8 @@ public class ObjectFields
 
     public ObjectFields() {
     }
-    
-    public ObjectFields(String[] fieldNames) 
+
+    public ObjectFields(String[] fieldNames)
             throws UnrecognizedFieldException {
         for (int i=0; i<fieldNames.length; i++) {
             String s=fieldNames[i];
@@ -129,9 +154,9 @@ public class ObjectFields
             }
         }
     }
-    
-    public ObjectFields(String[] fieldNames, InputStream in) 
-            throws UnrecognizedFieldException, RepositoryConfigurationException, 
+
+    public ObjectFields(String[] fieldNames, InputStream in)
+            throws UnrecognizedFieldException, RepositoryConfigurationException,
             ObjectIntegrityException, StreamIOException {
         this(fieldNames);
         SAXParser parser=null;
@@ -141,7 +166,7 @@ public class ObjectFields
             parser=spf.newSAXParser();
         } catch (Exception e) {
             throw new RepositoryConfigurationException("Error getting SAX "
-                    + "parser for DC metadata: " + e.getClass().getName() 
+                    + "parser for DC metadata: " + e.getClass().getName()
                     + ": " + e.getMessage());
         }
         try {
@@ -150,20 +175,20 @@ public class ObjectFields
             throw new ObjectIntegrityException(
                     "Parse error parsing ObjectFields: " + saxe.getMessage());
         } catch (IOException ioe) {
-            throw new StreamIOException("Stream error parsing ObjectFields: " 
+            throw new StreamIOException("Stream error parsing ObjectFields: "
                     + ioe.getMessage());
         }
     }
-    
-    public void startElement(String uri, String localName, String qName, 
+
+    public void startElement(String uri, String localName, String qName,
             Attributes attrs) {
         m_currentContent=new StringBuffer();
     }
-    
+
     public void characters(char[] ch, int start, int length) {
         m_currentContent.append(ch, start, length);
     }
-    
+
     public void endElement(String uri, String localName, String qName) {
         if ( (m_want[PID]) && (localName.equals("pid")) ) {
             setPid(m_currentContent.toString());
@@ -225,7 +250,7 @@ public class ObjectFields
             bMechs().add(m_currentContent.toString());
         }
     }
-    
+
     public void setPid(String pid) {
         m_pid=pid;
     }
@@ -306,4 +331,4 @@ public class ObjectFields
         return m_bMechs;
     }
 
-}    
+}

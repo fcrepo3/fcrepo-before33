@@ -20,9 +20,34 @@ import fedora.server.search.FieldSearch;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 
+/**
+ *
+ * <p><b>Title:</b> FedoraOAIProvider.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class FedoraOAIProvider
         extends StdoutLogging
-        implements OAIProvider { 
+        implements OAIProvider {
 
     private String m_repositoryName;
     private String m_baseURL;
@@ -35,16 +60,16 @@ public class FedoraOAIProvider
     private FieldSearch m_fieldSearch;
     private Set m_formats;
     private static Set s_emptySet=new HashSet();
-    private static String[] s_headerFields=new String[] {"pid", "dcmDate", 
+    private static String[] s_headerFields=new String[] {"pid", "dcmDate",
             "fType"};
-    private static String[] s_headerAndDCFields=new String[] {"pid", "dcmDate", 
+    private static String[] s_headerAndDCFields=new String[] {"pid", "dcmDate",
             "fType", "title", "creator", "subject", "description", "publisher",
             "contributor", "date", "type", "format", "identifier", "source",
             "language", "relation", "coverage", "rights"};
 
-    public FedoraOAIProvider(String repositoryName, String baseURL, 
-            Set adminEmails, Set friendBaseURLs, String namespaceID, 
-            long maxSets, long maxRecords, long maxHeaders, 
+    public FedoraOAIProvider(String repositoryName, String baseURL,
+            Set adminEmails, Set friendBaseURLs, String namespaceID,
+            long maxSets, long maxRecords, long maxHeaders,
             FieldSearch fieldSearch, Logging logTarget) {
         super(logTarget);
         m_repositoryName=repositoryName;
@@ -67,7 +92,7 @@ public class FedoraOAIProvider
         buf.append("      </oai-identifier>");
         m_descriptions.add(buf.toString());
         if (friendBaseURLs!=null && friendBaseURLs.size()>0) {
-            buf=new StringBuffer(); 
+            buf=new StringBuffer();
             buf.append("      <friends xmlns=\"http://www.openarchives.org/OAI/2.0/friends/\"\n");
             buf.append("          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
             buf.append("          xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/friends/\n");
@@ -80,8 +105,8 @@ public class FedoraOAIProvider
             m_descriptions.add(buf.toString());
         }
         m_formats=new HashSet();
-        m_formats.add(new SimpleMetadataFormat("oai_dc", 
-                "http://www.openarchives.org/OAI/2.0/oai_dc.xsd", 
+        m_formats.add(new SimpleMetadataFormat("oai_dc",
+                "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
                 "http://www.openarchives.org/OAI/2.0/oai_dc/"));
         m_setInfos=new ArrayList();
         m_setInfos.add(new SimpleSetInfo("Regular Digital Objects", "objects", s_emptySet));
@@ -92,11 +117,11 @@ public class FedoraOAIProvider
     public String getRepositoryName() {
         return m_repositoryName;
     }
-    
+
     public String getBaseURL() {
         return m_baseURL;
     }
-    
+
     public String getProtocolVersion() {
         return "2.0";
     }
@@ -104,29 +129,29 @@ public class FedoraOAIProvider
     public Date getEarliestDatestamp() {
         return new Date();
     }
-    
+
     public DeletedRecordSupport getDeletedRecordSupport() {
         return DeletedRecordSupport.NO;
     }
-    
+
     public DateGranularitySupport getDateGranularitySupport() {
         return DateGranularitySupport.SECONDS;
     }
-    
+
     public Set getAdminEmails() {
         return m_adminEmails;
     }
-    
+
     public Set getSupportedCompressionEncodings() {
         return s_emptySet;
     }
-    
+
     public Set getDescriptions() {
         return m_descriptions;
     }
 
     public Record getRecord(String identifier, String metadataPrefix)
-            throws CannotDisseminateFormatException, IDDoesNotExistException, 
+            throws CannotDisseminateFormatException, IDDoesNotExistException,
             RepositoryException {
         if (!metadataPrefix.equals("oai_dc")) {
             throw new CannotDisseminateFormatException("Repository does not provide that format in OAI-PMH responses.");
@@ -136,7 +161,7 @@ public class FedoraOAIProvider
         try {
             //FIXME: use maxResults from... config instead of hardcoding 100?
             l=m_fieldSearch.findObjects(s_headerAndDCFields, 100,
-                    new FieldSearchQuery(Condition.getConditions("pid='" + pid 
+                    new FieldSearchQuery(Condition.getConditions("pid='" + pid
                     + "' dcmDate>'2000-01-01'"))).objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
@@ -148,7 +173,7 @@ public class FedoraOAIProvider
             // see if it exists
             try {
                 l=m_fieldSearch.findObjects(new String[] {"pid"}, 1,
-                        new FieldSearchQuery(Condition.getConditions("pid='" 
+                        new FieldSearchQuery(Condition.getConditions("pid='"
                         + pid + "'"))).objectFieldsList();
             } catch (ServerException se) {
                 throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
@@ -160,7 +185,7 @@ public class FedoraOAIProvider
             }
         }
     }
-    
+
     public List getRecords(Date from, Date until, String metadataPrefix,
             String set)
             throws CannotDisseminateFormatException,
@@ -174,7 +199,7 @@ public class FedoraOAIProvider
         try {
             fsr=m_fieldSearch.findObjects(s_headerAndDCFields, (int) getMaxRecords(),
                     new FieldSearchQuery(Condition.getConditions(
-                    "dcmDate>'2000-01-01'" + getDatePart(from, until) 
+                    "dcmDate>'2000-01-01'" + getDatePart(from, until)
                     + getFTypePart(set))));
             l=fsr.objectFieldsList();
         } catch (ServerException se) {
@@ -190,13 +215,13 @@ public class FedoraOAIProvider
         }
         if (fsr.getToken()!=null) {
             // add resumptionToken stuff
-            ret.add(new SimpleResumptionToken(fsr.getToken(), 
+            ret.add(new SimpleResumptionToken(fsr.getToken(),
                     fsr.getExpirationDate(), fsr.getCompleteListSize(),
                     fsr.getCursor()));
         }
         return ret;
     }
-    
+
     private Header getHeader(ObjectFields f) {
         String identifier="oai:fedora.info:" + f.getPid();
         Date datestamp=f.getDCMDate();
@@ -211,13 +236,13 @@ public class FedoraOAIProvider
         }
         return new SimpleHeader(identifier, datestamp, setSpecs, true);
     }
-    
+
     private String getDCXML(DCFields dc) {
         StringBuffer out=new StringBuffer();
         out.append("        <oai_dc:dc\n");
         out.append("            xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\"\n");
-        out.append("            xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n"); 
-        out.append("            xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"); 
+        out.append("            xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n");
+        out.append("            xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
         out.append("            xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/\n");
         out.append("            http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">\n");
         for (int i=0; i<dc.titles().size(); i++) {
@@ -302,10 +327,10 @@ public class FedoraOAIProvider
 
     public List getRecords(String resumptionToken)
             throws CannotDisseminateFormatException,
-            NoRecordsMatchException, NoSetHierarchyException, 
+            NoRecordsMatchException, NoSetHierarchyException,
             BadResumptionTokenException, RepositoryException {
         // this is the exact same as the other getRecords, except for the FieldSearch call,
-        // and the fact that we re-throw UnknownSessionTokenException 
+        // and the fact that we re-throw UnknownSessionTokenException
         // as a BadResumptionTokenException
         List l=null;
         FieldSearchResult fsr;
@@ -326,14 +351,14 @@ public class FedoraOAIProvider
             ret.add(new SimpleRecord(getHeader(f), getDCXML(f), s_emptySet));
         }
         if (fsr.getToken()!=null) {
-            ret.add(new SimpleResumptionToken(fsr.getToken(), 
+            ret.add(new SimpleResumptionToken(fsr.getToken(),
                     fsr.getExpirationDate(), fsr.getCompleteListSize(),
                     fsr.getCursor()));
         }
         return ret;
     }
-    
-    private String getFTypePart(String set) 
+
+    private String getFTypePart(String set)
             throws NoRecordsMatchException {
         if (set==null) {
             return "";
@@ -348,7 +373,7 @@ public class FedoraOAIProvider
             throw new NoRecordsMatchException("No such set: " + set);
         }
     }
-    
+
     private String getDatePart(Date from, Date until) {
         if (from==null && until==null) {
             return "";
@@ -367,11 +392,11 @@ public class FedoraOAIProvider
         }
         return out.toString();
     }
-    
+
 
     public List getHeaders(Date from, Date until, String metadataPrefix,
             String set)
-            throws CannotDisseminateFormatException, NoRecordsMatchException, 
+            throws CannotDisseminateFormatException, NoRecordsMatchException,
             NoSetHierarchyException, RepositoryException {
         if (!metadataPrefix.equals("oai_dc")) {
             throw new CannotDisseminateFormatException("Repository does not provide that format in OAI-PMH responses.");
@@ -381,7 +406,7 @@ public class FedoraOAIProvider
         try {
             fsr=m_fieldSearch.findObjects(s_headerFields, (int) getMaxHeaders(),
                     new FieldSearchQuery(Condition.getConditions(
-                    "dcmDate>'2000-01-01'" + getDatePart(from, until) 
+                    "dcmDate>'2000-01-01'" + getDatePart(from, until)
                     + getFTypePart(set))));
             l=fsr.objectFieldsList();
         } catch (ServerException se) {
@@ -407,19 +432,19 @@ public class FedoraOAIProvider
             ret.add(new SimpleHeader(identifier, datestamp, setSpecs, true));
         }
         if (fsr.getToken()!=null) {
-            ret.add(new SimpleResumptionToken(fsr.getToken(), 
+            ret.add(new SimpleResumptionToken(fsr.getToken(),
                     fsr.getExpirationDate(), fsr.getCompleteListSize(),
                     fsr.getCursor()));
         }
         return ret;
     }
-    
+
     public List getHeaders(String resumptionToken)
             throws CannotDisseminateFormatException,
-            NoRecordsMatchException, NoSetHierarchyException, 
+            NoRecordsMatchException, NoSetHierarchyException,
             BadResumptionTokenException, RepositoryException {
         // this is the exact same as the other getHeaders, except for the FieldSearch call,
-        // and the fact that we re-throw UnknownSessionTokenException 
+        // and the fact that we re-throw UnknownSessionTokenException
         // as a BadResumptionTokenException
         List l=null;
         FieldSearchResult fsr;
@@ -451,13 +476,13 @@ public class FedoraOAIProvider
             ret.add(new SimpleHeader(identifier, datestamp, setSpecs, true));
         }
         if (fsr.getToken()!=null) {
-            ret.add(new SimpleResumptionToken(fsr.getToken(), 
+            ret.add(new SimpleResumptionToken(fsr.getToken(),
                     fsr.getExpirationDate(), fsr.getCompleteListSize(),
                     fsr.getCursor()));
         }
         return ret;
     }
-            
+
     public List getSets()
             throws NoSetHierarchyException, RepositoryException {
         return m_setInfos;
@@ -469,8 +494,8 @@ public class FedoraOAIProvider
         // no resumptionTokens are currently used on getSets since it's always so small
         throw new BadResumptionTokenException("Not a known resumptionToken.");
     }
-    
-    private String getPID(String id) 
+
+    private String getPID(String id)
             throws IDDoesNotExistException {
         if (!id.startsWith("oai:fedora.info:")) {
             throw new IDDoesNotExistException("For this repository, all identifiers in OAI requests should begin with oai:fedora.info:");
@@ -482,7 +507,7 @@ public class FedoraOAIProvider
     }
 
     public Set getMetadataFormats(String id)
-            throws NoMetadataFormatsException, IDDoesNotExistException, 
+            throws NoMetadataFormatsException, IDDoesNotExistException,
             RepositoryException {
         if (id==null) {
             return m_formats;
@@ -491,7 +516,7 @@ public class FedoraOAIProvider
         List l=null;
         try {
             l=m_fieldSearch.findObjects(new String[] {"pid"}, 1,
-                    new FieldSearchQuery(Condition.getConditions("pid='" 
+                    new FieldSearchQuery(Condition.getConditions("pid='"
                     + pid + "' dcmDate>'2000-01-01'"))).objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
@@ -501,7 +526,7 @@ public class FedoraOAIProvider
         }
         try {
             l=m_fieldSearch.findObjects(new String[] {"pid"}, 1,
-                    new FieldSearchQuery(Condition.getConditions("pid='" 
+                    new FieldSearchQuery(Condition.getConditions("pid='"
                     + pid + "'"))).objectFieldsList();
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
@@ -517,15 +542,15 @@ public class FedoraOAIProvider
             throws RepositoryException {
         return m_maxSets;
     }
-            
+
     public long getMaxRecords()
             throws RepositoryException {
         return m_maxRecords;
     }
-            
+
     public long getMaxHeaders()
             throws RepositoryException {
         return m_maxHeaders;
     }
-    
+
 }

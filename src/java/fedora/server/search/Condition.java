@@ -6,13 +6,38 @@ import java.util.List;
 import fedora.server.errors.InvalidOperatorException;
 import fedora.server.errors.QueryParseException;
 
+/**
+ *
+ * <p><b>Title:</b> Condition.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class Condition {
-        
+
     private String m_property;
     private Operator m_operator;
     private String m_value;
-    
-    public Condition(String property, Operator operator, String value) 
+
+    public Condition(String property, Operator operator, String value)
             throws QueryParseException {
         m_property=property;
         m_operator=operator;
@@ -21,8 +46,8 @@ public class Condition {
         }
         m_value=value;
     }
-    
-    public Condition(String property, String operator, String value) 
+
+    public Condition(String property, String operator, String value)
             throws InvalidOperatorException, QueryParseException {
         m_property=property;
         if (operator.equals("eq")) {
@@ -53,7 +78,7 @@ public class Condition {
      * @param query The query string.
      * @return The Conditions.
      */
-    public static List getConditions(String query) 
+    public static List getConditions(String query)
             throws QueryParseException {
         Operator EQUALS=new Operator("=", "eq");
         Operator CONTAINS=new Operator("~", "has");
@@ -73,7 +98,7 @@ public class Condition {
             char c=query.charAt(i);
             if (inProp) {
                 if (c==' ') {
-                    throw new QueryParseException("Found <space> at character " + i 
+                    throw new QueryParseException("Found <space> at character " + i
                             + " but expected <operator> or <alphanum>");
                 } else if (c=='=') {
                     oper=EQUALS;
@@ -188,16 +213,16 @@ public class Condition {
                         inProp=true;
                     }
                 } else if (c=='=') {
-                    throw new QueryParseException("Found <operator> at position " 
+                    throw new QueryParseException("Found <operator> at position "
                             + i + ", but expected <value>");
                 } else if (c=='~') {
-                    throw new QueryParseException("Found <operator> at position " 
+                    throw new QueryParseException("Found <operator> at position "
                             + i + ", but expected <value>");
                 } else if (c=='>') {
-                    throw new QueryParseException("Found <operator> at position " 
+                    throw new QueryParseException("Found <operator> at position "
                             + i + ", but expected <value>");
                 } else if (c=='<') {
-                    throw new QueryParseException("Found <operator> at position " 
+                    throw new QueryParseException("Found <operator> at position "
                             + i + ", but expected <value>");
                 } else {
                     val.append(c);
@@ -219,30 +244,30 @@ public class Condition {
         }
         return ret;
     }
-    
+
     public String getProperty() {
         return m_property;
     }
-    
+
     public Operator getOperator() {
         return m_operator;
     }
-    
+
     public String getValue() {
         return m_value;
     }
-    
+
     public static void main(String[] args) {
         try {
             List l=Condition.getConditions(args[0]);
             for (int i=0; i<l.size(); i++) {
                 Condition c=(Condition) l.get(i);
-                System.out.println("<" + c.getOperator().getAbbreviation() 
+                System.out.println("<" + c.getOperator().getAbbreviation()
                         + " prop=\"" + c.getProperty() + "\" val=\"" + c.getValue() + "\" />");
             }
         } catch (QueryParseException qpe) {
             System.out.println("PARSE ERROR: " + qpe);
         }
     }
-    
+
 }
