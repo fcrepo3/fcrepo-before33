@@ -1,5 +1,13 @@
 package fedora.server.access;
 
+import java.util.Calendar;
+import java.util.Vector;
+
+import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.server.storage.types.Property;
+
 /**
  * <p>Title: FedoraAccess.java</p>
  * <p>Description: Fedora Access Interface. Defines the interface for the
@@ -13,18 +21,6 @@ package fedora.server.access;
  * @author Ross Wayland
  * @version 1.0
  */
-
-// java imports
-import java.util.Calendar;
-import java.util.Vector;
-
-// Fedora imports
-import fedora.server.storage.types.MethodDef;
-import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.storage.types.ObjectMethodsDef;
-import fedora.server.storage.types.Property;
-
-
 public interface FedoraAccess
 {
 
