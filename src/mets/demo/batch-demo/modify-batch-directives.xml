@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ************************************************************************************************************ -->
+<!-- This is a sample modify directives file that performs a variety of modfications on the                    -->
+<!-- datastreams of demo object demo:5.  In general, one should always validate a modify                -->
+<!-- directives file against the modifyBatch schema prior to running to catch syntax errors.  Parsing  -->
+<!-- will halt if the file is not valid. Refer to the modifyBatch.xsd schema file for details on the syntax   -->
+<!-- for this file.                                                                                                                                                 -->
+<!-- ************************************************************************************************************ -->
+<fbm:batchModify xmlns:fbm="http://www.fedora.info/definitions/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchModify.xsd">
+	<!-- ************************************************************************************************************ -->
+	<!-- Add a new datastream to demo:5 object. It will be assigned datastreamID of DS6.                      -->
+	<!-- The new datastream will be an XMLMetadata datastream containing descriptive metadata.       -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:addDatastream pid="demo:5" dsLabel="New datastream label1" dsMIME="text/xml" formatURI="http://www.fedora.info/" dsControlGroupType="X" dsMdClass="descriptive" dsState="A" harvestable="false">
+		<fbm:xmlData>
+			<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:my="http//foo.bar.none">
+				<dc:title>Coliseum in Rome</dc:title>
+				<dc:creator>Thornton Staples</dc:creator>
+				<dc:subject>Architecture, Roman</dc:subject>
+				<dc:description>Image of Coliseum in Rome</dc:description>
+				<dc:publisher>University of Virginia Library</dc:publisher>
+				<dc:format>image/jpeg</dc:format>
+				<dc:identifier>demo:5</dc:identifier>
+				<my:this>some text</my:this>
+				<my:that>some more text</my:that>
+				<my:other>even more text</my:other>
+			</oai_dc:dc>
+		</fbm:xmlData>
+	</fbm:addDatastream>
+	<!-- ************************************************************************************************************ -->
+	<!-- Add a new datastream to demo:5 object. It will be assigned datastreamID of DS7.                      -->
+	<!-- The new datastream will be a Managed Content datastream containing a thumbnail image.       -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:addDatastream pid="demo:5" dsLabel="New datastream  label2" dsMIME="image/jpeg" formatURI="http://www.fedora.info" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="M" dsState="A" harvestable="false"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Add a new datastream to demo:5 object. It will be assigned datastreamID of DS8.                      -->
+	<!-- The new datastream will be a Redirected Referenced Content datastream containing                 -->
+	<!-- a thumbnail image.                                                                                                                                  -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:addDatastream pid="demo:5" dsLabel="New datastream label3" dsMIME="image/jpeg" formatURI="http://www.fedora.info" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="R" dsState="A" harvestable="false"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Add a new datastream to demo:5 object. It will be assigned datastreamID of DS7.                       -->
+	<!-- The new datastream will be a Referenced Content datastream containing a thumbnail image.    -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:addDatastream pid="demo:5" dsLabel="New datastream label4" dsMIME="image/jpeg" formatURI="http://www.fedora.info" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="E" dsState="A" harvestable="false"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Modify datastream DS1 of demo:5 object by changing its label. and  its format URI.                     -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:modifyDatastream pid="demo:5" dsID="DS1" dsControlGroupType="M" dsLabel="New label for datastream DS1"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Modify datastream DS6 of demo:5 object by changing its label and datastream location so        -->
+	<!-- that it points to the same content as that of datastream DS3 which is a high-res image.               -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:modifyDatastream pid="demo:5" dsID="DS6" dsControlGroupType="M" dsLabel="Changed label for datastream DS6" dsLocation="http://localhost:8080/fedora/get/demo:5/fedora-system:3/getItem?itemID=DS3"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Modify datastream DS7 of demo:5 object by changing its label and datastream location so        -->
+	<!-- that it points to the same content as that of datastream DS4 which is a veryhigh-res image.        -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:modifyDatastream pid="demo:5" dsID="DS7" dsControlGroupType="R" dsLabel="New label for datastream DS7" dsState="A" dsLocation="http://localhost:8080/fedora/get/demo:5/fedora-system:3/getItem?itemID=DS4"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Modify datastream DC of demo:5 object by changing its label and its xml content so that.           -->
+	<!-- its content is replaced byt he block of xml below.                                                                                -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:modifyDatastream pid="demo:5" dsID="DC" dsControlGroupType="X" dsLabel="New label for DC datastream">
+		<fbm:xmlData>
+			<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:my="http//foo.bar.none">
+				<dc:title>Coliseum in Rome</dc:title>
+				<dc:creator>Thornton Staples</dc:creator>
+				<dc:subject>Architecture, Roman</dc:subject>
+				<dc:description>Image of Coliseum in Rome</dc:description>
+				<dc:publisher>University of Virginia Library</dc:publisher>
+				<dc:format>image/jpeg</dc:format>
+				<dc:identifier>demo:5</dc:identifier>
+				<my:this>some text</my:this>
+				<my:that>some more text</my:that>
+				<my:other>even more text</my:other>
+			</oai_dc:dc>
+		</fbm:xmlData>
+	</fbm:modifyDatastream>
+	<!-- ************************************************************************************************************ -->
+	<!-- Purge datastream DS8 from object demo:5                                                                                        -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:purgeDatastream pid="demo:5" dsID="DS8"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Purge all versions of datastream DS1 prior to 2002-06-28T00:00:00 from object demo:5           -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:purgeDatastream pid="demo:5" dsID="DS1" asOfDate="2002-06-28T00:00:00"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Change the state of datastream DS1 to deleted                                                                                 -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:setDatastreamState pid="demo:5" dsID="DS1" dsState="D"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Change the state of datastream DS7 to inactive                                                                                 -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:setDatastreamState pid="demo:5" dsID="DS7" dsState="I"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Make the contents of the DC datastream of object demo:5 unharvestable                                      -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:setDatastreamHarvestable pid="demo:5" dsID="DC" harvestable="false"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Make the contents of the DS1 datastream of object demo:5 harvestable                                        -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:setDatastreamHarvestable pid="demo:5" dsID="DS5" harvestable="true"/>
+	<!-- ************************************************************************************************************ -->
+	<!-- Generate an error by attempting to set the harvestable attribute to true for datastream DS2        -->
+	<!-- This is an error since only one datastream of a given formatURI may be harvestable and            -->
+	<!-- datastream DS2 has no specified formatURI.                                                                                     -->
+	<!-- ************************************************************************************************************ -->
+	<fbm:setDatastreamHarvestable pid="demo:5" dsID="DS2" harvestable="true"/>
+</fbm:batchModify>
