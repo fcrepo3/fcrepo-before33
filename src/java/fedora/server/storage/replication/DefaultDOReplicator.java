@@ -2,13 +2,10 @@ package fedora.server.storage.replication;
 
 import java.util.*;
 import java.sql.*;
-import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fedora.server.errors.*;
 import fedora.server.errors.*;
 import fedora.server.storage.*;
 import fedora.server.storage.types.*;
@@ -159,7 +156,8 @@ public class DefaultDOReplicator
             }
             int doDbID=results.getInt("doDbID");
             results.close();
-
+            
+			
             // check if any mods to datastreams for this digital object
             results=logAndExecuteQuery(st, "SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID, dsState "
                     + "FROM dsBind WHERE doDbID=" + doDbID);
@@ -209,9 +207,10 @@ public class DefaultDOReplicator
             while (results.next()) {
               dissDbIDs.add(new Integer(results.getInt("dissDbID")));
             }
+            
             if (dissDbIDs.size()==0) {
-                logFinest("DefaultDOReplication.updateComponents: Object is "
-                        + "new (has no disseminators); components dont need updating.");
+                logFinest("DefaultDOReplication.updateComponents: Object "
+                        + "has no disseminators; component's dont need updating.");
                 return false;
             }
             results.close();
@@ -349,7 +348,7 @@ public class DefaultDOReplicator
                           "1",
                           "A");
 
-                    }
+                    }                     
                   }
                 }
               }
@@ -390,7 +389,86 @@ public class DefaultDOReplicator
         }
         return true;
     }
+    
+	private boolean addNewComponents(DOReader reader)
+			throws ReplicationException {
+					
+		Connection connection=null;
+		Statement st=null;
+		ResultSet results=null;
+		boolean failed=false;
+		try {
+			
+			String doPID = reader.GetObjectPID();
+			connection=m_pool.getConnection();
+			connection.setAutoCommit(false);
+			st=connection.createStatement();
 
+			// get db ID for the digital object
+			results=logAndExecuteQuery(st, "SELECT doDbID FROM do WHERE "
+					+ "doPID='" + doPID + "'");
+			if (!results.next()) {
+				logFinest("DefaultDOReplication.addNewComponents: Object is "
+						+ "new; components will be added as part of new object replication.");
+				return false;
+			}
+			int doDbID=results.getInt("doDbID");
+			results.close();
+			
+			Disseminator[] dissArray = reader.GetDisseminators(null, null);
+			HashSet newDisseminators = new HashSet();
+			for (int j=0; j< dissArray.length; j++)
+			{
+				// Find disseminators that are NEW within an existing object 
+				// (disseminator does not already exist in the database)
+				results=logAndExecuteQuery(st, "SELECT diss.dissDbID"
+					+ " FROM dodissassoc, diss"
+					+ " WHERE dodissassoc.doDbID=" + doDbID + " AND diss.dissID='" + dissArray[j].dissID + "'" 
+					+ " AND dodissassoc.dissDbID=diss.dissDbID");
+				while (!results.next()) {
+					// the disseminator does NOT exist in the database; it is NEW.
+					newDisseminators.add(dissArray[j]);						
+				}
+			}
+			addDisseminators(doPID, (Disseminator[])newDisseminators.toArray(new Disseminator[0]), reader, connection);
+			connection.commit();
+		} catch (SQLException sqle) {
+			failed=true;
+			throw new ReplicationException("An error has occurred during "
+				+ "Replication. The error was \" " + sqle.getClass().getName()
+				+ " \". The cause was \" " + sqle.getMessage());
+		} catch (ServerException se) {
+			failed=true;
+			throw new ReplicationException("An error has occurred during "
+				+ "Replication. The error was \" " + se.getClass().getName()
+				+ " \". The cause was \" " + se.getMessage());
+		} catch (Exception e) {
+		  e.printStackTrace();
+		} finally {
+			// TODO: make sure this makes sense here
+			if (connection!=null) {
+				try {
+					if (failed) connection.rollback();
+				} catch (Throwable th) {
+					logWarning("While rolling back: " +  th.getClass().getName()
+							+ ": " + th.getMessage());
+				} finally {
+					try {
+						if (results != null) results.close();
+						if (st!=null) st.close();
+						connection.setAutoCommit(true);
+					} catch (SQLException sqle) {
+						logWarning("While cleaning up: " +  sqle.getClass().getName()
+							+ ": " + sqle.getMessage());
+					} finally {
+						m_pool.free(connection);
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
     /**
      * If the object has already been replicated, update the components
      * and return true.  Otherwise, return false.
@@ -829,9 +907,10 @@ public class DefaultDOReplicator
      */
     public void replicate(DOReader doReader)
             throws ReplicationException, SQLException {
-        if (!updateComponents(doReader)) {
+        if (!updateComponents(doReader) && !addNewComponents(doReader)) {
             Connection connection=null;
-            try {
+            try 
+            {
                 DSBindingMapAugmented[] allBindingMaps;
                 Disseminator disseminators[];
                 String bDefDBID;
@@ -859,121 +938,21 @@ public class DefaultDOReplicator
                     throw new ReplicationException("do row doesn't "
                             + "exist for PID: " + doPID);
                 }
-
+				// add disseminator components (which include associated datastream components)
                 disseminators = doReader.GetDisseminators(null, null);
-                for (int i=0; i<disseminators.length; ++i) {
-                    bDefDBID = lookupBehaviorDefinitionDBID(connection,
-                            disseminators[i].bDefID);
-                    if (bDefDBID == null) {
-                        throw new ReplicationException("BehaviorDefinition row "
-                                + "doesn't exist for PID: "
-                                + disseminators[i].bDefID);
-                    }
-                    bMechDBID = lookupBehaviorMechanismDBID(connection,
-                            disseminators[i].bMechID);
-                    if (bMechDBID == null) {
-                        throw new ReplicationException("BehaviorMechanism row "
-                                + "doesn't exist for PID: "
-                                + disseminators[i].bMechID);
-                    }
-                    // Insert Disseminator row if it doesn't exist.
-                    dissDBID = lookupDisseminatorDBID(connection, bDefDBID,
-                            bMechDBID, disseminators[i].dissID);
-                    if (dissDBID == null) {
-                        // Disseminator row doesn't exist, add it.
-                        insertDisseminatorRow(connection, bDefDBID, bMechDBID,
-                        disseminators[i].dissID, disseminators[i].dissLabel, disseminators[i].dissState);
-                        dissDBID = lookupDisseminatorDBID(connection, bDefDBID,
-                                bMechDBID, disseminators[i].dissID);
-                        if (dissDBID == null) {
-                            throw new ReplicationException("diss row "
-                                    + "doesn't exist for PID: "
-                                    + disseminators[i].dissID);
-                        }
-                    }
-                    // Insert doDissAssoc row
-                    insertDigitalObjectDissAssocRow(connection, doDBID,
-                            dissDBID);
-                }
-//                try{
-                    allBindingMaps = doReader.GetDSBindingMaps(null);
-                    for (int i=0; i<allBindingMaps.length; ++i) {
-                        bMechDBID = lookupBehaviorMechanismDBID(connection,
-                                allBindingMaps[i].dsBindMechanismPID);
-                        if (bMechDBID == null) {
-                            throw new ReplicationException("BehaviorMechanism row "
-                                    + "doesn't exist for PID: "
-                                    + allBindingMaps[i].dsBindMechanismPID);
-                        }
-
-                        // Insert dsBindMap row if it doesn't exist.
-                        bindingMapDBID = lookupDataStreamBindingMapDBID(connection,
-                                bMechDBID, allBindingMaps[i].dsBindMapID);
-                        if (bindingMapDBID == null) {
-                            // DataStreamBinding row doesn't exist, add it.
-                            insertDataStreamBindingMapRow(connection, bMechDBID,
-                            allBindingMaps[i].dsBindMapID,
-                            allBindingMaps[i].dsBindMapLabel);
-                            bindingMapDBID = lookupDataStreamBindingMapDBID(
-                                    connection,bMechDBID,allBindingMaps[i].dsBindMapID);
-                            if (bindingMapDBID == null) {
-                                throw new ReplicationException(
-                                        "lookupdsBindMapDBID row "
-                                        + "doesn't exist for bMechDBID: " + bMechDBID
-                                        + ", dsBindingMapID: "
-                                        + allBindingMaps[i].dsBindMapID);
-                            }
-                        }
-
-                        for (int j=0; j<allBindingMaps[i].dsBindingsAugmented.length;
-                                ++j) {
-                            dsBindingKeyDBID = lookupDataStreamBindingSpecDBID(
-                                    connection, bMechDBID,
-                                    allBindingMaps[i].dsBindingsAugmented[j].
-                                    bindKeyName);
-                            if (dsBindingKeyDBID == null) {
-                                throw new ReplicationException(
-                                        "lookupDataStreamBindingDBID row doesn't "
-                                        + "exist for bMechDBID: " + bMechDBID
-                                        + ", bindKeyName: " + allBindingMaps[i].
-                                        dsBindingsAugmented[j].bindKeyName + "i=" + i
-                                        + " j=" + j);
-                            }
-
-                            // Insert DataStreamBinding row
-                            insertDataStreamBindingRow(connection, doDBID,
-                                    dsBindingKeyDBID,
-                                    bindingMapDBID,
-                                    allBindingMaps[i].dsBindingsAugmented[j].seqNo,
-                                    allBindingMaps[i].dsBindingsAugmented[j].
-                                    datastreamID,
-                                    allBindingMaps[i].dsBindingsAugmented[j].DSLabel,
-                                    allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
-                                    // sdp - local.fedora.server conversion
-                                    encodeLocalURL(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
-                                    allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
-                                    allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
-                                    "1",
-                                    "A");
-
-                        }
-                    }
-//                    } catch(Exception e)
-//                    {
-//                      e.printStackTrace();
-//                    }
-                    connection.commit();
-                } catch (ReplicationException re) {
+                addDisseminators(doPID, disseminators, doReader, connection);
+               	connection.commit();
+            } catch (ReplicationException re) {
                     re.printStackTrace();
                     throw new ReplicationException("An error has occurred during "
                         + "Replication. The error was \" " + re.getClass().getName()
                         + " \". The cause was \" " + re.getMessage() + " \"");
-                } catch (ServerException se) {
+            } catch (ServerException se) {
                     se.printStackTrace();
                     throw new ReplicationException("An error has occurred during "
                         + "Replication. The error was \" " + se.getClass().getName()
                         + " \". The cause was \" " + se.getMessage());
-                } finally {
+            } finally {
                     if (connection!=null) {
                         try {
                             connection.rollback();
@@ -2036,4 +2015,117 @@ public class DefaultDOReplicator
               fedoraServerHost+":"+fedoraServerPort);
           }
         }
+        		
+		private void addDisseminators(String doPID, Disseminator[] disseminators, DOReader doReader, Connection connection)
+			throws ReplicationException, SQLException, ServerException
+		{
+			DSBindingMapAugmented[] allBindingMaps;
+			String bDefDBID;
+			String bindingMapDBID;
+			String bMechDBID;
+			String dissDBID;
+			String doDBID;
+			String doLabel;
+			String dsBindingKeyDBID;
+			int rc;
+			
+			doDBID = lookupDigitalObjectDBID(connection, doPID);
+			for (int i=0; i<disseminators.length; ++i) {
+				bDefDBID = lookupBehaviorDefinitionDBID(connection,
+						disseminators[i].bDefID);
+				if (bDefDBID == null) {
+					throw new ReplicationException("BehaviorDefinition row "
+							+ "doesn't exist for PID: "
+							+ disseminators[i].bDefID);
+				}
+				bMechDBID = lookupBehaviorMechanismDBID(connection,
+						disseminators[i].bMechID);
+				if (bMechDBID == null) {
+					throw new ReplicationException("BehaviorMechanism row "
+							+ "doesn't exist for PID: "
+							+ disseminators[i].bMechID);
+				}
+				// Insert Disseminator row if it doesn't exist.
+				dissDBID = lookupDisseminatorDBID(connection, bDefDBID,
+						bMechDBID, disseminators[i].dissID);
+				if (dissDBID == null) {
+					// Disseminator row doesn't exist, add it.
+					insertDisseminatorRow(connection, bDefDBID, bMechDBID,
+					disseminators[i].dissID, disseminators[i].dissLabel, disseminators[i].dissState);
+					dissDBID = lookupDisseminatorDBID(connection, bDefDBID,
+							bMechDBID, disseminators[i].dissID);
+					if (dissDBID == null) {
+						throw new ReplicationException("diss row "
+								+ "doesn't exist for PID: "
+								+ disseminators[i].dissID);
+					}
+				}
+				// Insert doDissAssoc row
+				insertDigitalObjectDissAssocRow(connection, doDBID,
+						dissDBID);
+			}
+			allBindingMaps = doReader.GetDSBindingMaps(null);
+			for (int i=0; i<allBindingMaps.length; ++i) {
+				bMechDBID = lookupBehaviorMechanismDBID(connection,
+						allBindingMaps[i].dsBindMechanismPID);
+				if (bMechDBID == null) {
+					throw new ReplicationException("BehaviorMechanism row "
+							+ "doesn't exist for PID: "
+							+ allBindingMaps[i].dsBindMechanismPID);
+				}
+
+				// Insert dsBindMap row if it doesn't exist.
+				bindingMapDBID = lookupDataStreamBindingMapDBID(connection,
+						bMechDBID, allBindingMaps[i].dsBindMapID);
+				if (bindingMapDBID == null) {
+					// DataStreamBinding row doesn't exist, add it.
+					insertDataStreamBindingMapRow(connection, bMechDBID,
+					allBindingMaps[i].dsBindMapID,
+					allBindingMaps[i].dsBindMapLabel);
+					bindingMapDBID = lookupDataStreamBindingMapDBID(
+							connection,bMechDBID,allBindingMaps[i].dsBindMapID);
+					if (bindingMapDBID == null) {
+						throw new ReplicationException(
+								"lookupdsBindMapDBID row "
+								+ "doesn't exist for bMechDBID: " + bMechDBID
+								+ ", dsBindingMapID: "
+								+ allBindingMaps[i].dsBindMapID);
+					}
+				}
+
+				for (int j=0; j<allBindingMaps[i].dsBindingsAugmented.length;
+						++j) {
+					dsBindingKeyDBID = lookupDataStreamBindingSpecDBID(
+							connection, bMechDBID,
+							allBindingMaps[i].dsBindingsAugmented[j].
+							bindKeyName);
+					if (dsBindingKeyDBID == null) {
+						throw new ReplicationException(
+								"lookupDataStreamBindingDBID row doesn't "
+								+ "exist for bMechDBID: " + bMechDBID
+								+ ", bindKeyName: " + allBindingMaps[i].
+								dsBindingsAugmented[j].bindKeyName + "i=" + i
+								+ " j=" + j);
+					}
+
+					// Insert DataStreamBinding row
+					insertDataStreamBindingRow(connection, doDBID,
+							dsBindingKeyDBID,
+							bindingMapDBID,
+							allBindingMaps[i].dsBindingsAugmented[j].seqNo,
+							allBindingMaps[i].dsBindingsAugmented[j].
+							datastreamID,
+							allBindingMaps[i].dsBindingsAugmented[j].DSLabel,
+							allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
+							// sdp - local.fedora.server conversion
+							encodeLocalURL(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
+							allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
+							allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
+							"1",
+							"A");
+
+				}
+			}
+			return;
+		}
 }
