@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- **********************************************************************************************************-->
+<!-- SCHEMATRON  SCHEMA FOR FEDORA DIGITAL OBJECTS-->
+<!-- TITLE:  fedoraRulesFOXML.xml -->
+<!-- DESCRIPTION:  This schema expresses validation rules for Fedora digital objects that -->
+<!-- are NOT ALREADY EXPRESSED in the FOXML XML Schema.-->
+<!-- AUTHOR:  Sandy Payette,  payette@cs.cornell.edu -->
+<!-- *********************************************************************************************************-->
+<sch:schema xmlns:sch="http://www.ascc.net/xml/schematron">
+	<!-- FIGURE OUT: how to best deal with validation and namespace prefix declaration-->
+	<sch:ns prefix="foxml" uri="info:fedora/def:foxml1.0"/>
+	<sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+	<!-- RULES FOR OBJECT INGEST PHASE:  These rules apply to a digital object in its "submission" format for ingest into the repository-->
+	<!-- These rules are to be applied upon initial receipt of the object by the repository, before the repository has done any processing of the input.-->
+	<sch:phase id="ingest">
+		<sch:active pattern="preliminary"/>
+	</sch:phase>
+	<!-- RULES FOR OBJECT STORAGE PHASE: Rules to ensure that digital object is FULLY valid before being accepted for final storage in the repository-->
+	<!-- These rules are to be applied after all processing has been done by the repository, and before it is submitted to low level storage.-->
+	<sch:phase id="store">
+		<sch:active pattern="preliminary"/>
+		<!-- COMMENTED OUT:  the "completed" rules are implemented programmatically by the Fedora server. -->
+		<!-- This can be re-instated if we want absolute assurance that the server did it's job properly, but we are trusting the server. -->
+		<!-- <sch:active pattern="completed"/> -->
+	</sch:phase>
+	<!-- PRELIMINARY PATTERN: -->
+	<!-- These rules are to be applied to objects no matter what phase of the object lifecycle they are in.-->
+	<sch:pattern name="Preliminary Object Checks" id="preliminary">
+		<!-- RULE:  check that inline XML does not declare a schemaLocation.-->
+		<sch:rule context="foxml:xmlContent">
+			<sch:assert test="child::*[not(@xsi:schemaLocation)]">Inline XML datastreams (xmlContent) cannot contain schemaLocation attributes.</sch:assert>
+		</sch:rule>
+		<!-- RULE:  check that Behavior Mechanism objects have the proper kinds of datastreams (DSINPUTSPEC, METHODMAP, and WSDL).-->
+		<sch:rule context="foxml:property[@NAME='info:fedora/def:dobj:fType' and @VALUE='FedoraBMechObject']">
+			<sch:assert test="../foxml:datastream[@ID='DSINPUTSPEC']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Input Spec (foxml:datastream with ID="DSINPUTSPEC" must exist).</sch:assert>
+			<sch:assert test="../foxml:datastream[@ID='METHODMAP']">Behavior Mechanism Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
+			<sch:assert test="../foxml:datastream[@ID='WSDL']">Behavior Mechanism Objects must have an inline Datastream representing WSDL service bindings (foxml:datastream with ID="WSDL" must exist).</sch:assert>
+		</sch:rule>
+		<!-- RULE:  check that Behavior Definition objects have the proper kinds of datastreams (METHODMAP).-->
+		<sch:rule context="foxml:property[@NAME='info:fedora/def:dobj:fType' and @VALUE='FedoraBDefObject']">
+			<sch:assert test="../foxml:datastream[@ID='METHODMAP']">Behavior Definition Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
+		</sch:rule>
+		<!-- RULE:  check that the Fedora object type (fType) contains a valid value (FedoraObject, FedoraBDefObject, or FedoraBMechObject).-->
+		<sch:rule context="foxml:property[@NAME='info:fedora/def:dobj:fType']">
+			<sch:assert test="@VALUE = 'FedoraObject' or @VALUE = 'FedoraBDefObject' or @VALUE = 'FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (foxml:property NAME="info:fedora/def:dobj:fType" has an invalid VALUE).</sch:assert>
+		</sch:rule>
+		<!-- RULE:  check that the Fedora AUDIT datastream is not versioned.-->
+		<sch:rule context="foxml:datastream[@ID='AUDIT']">
+			<sch:assert test="count(foxml:datastreamVersion) = 1">The AUDIT Datastream can only have ONE version since it is a non-versionable datastream. (foxml: datastreamVersion)</sch:assert>
+		</sch:rule>
+		<!-- RULE:  check that non-repeatable object properties do not occur more than once.-->
+		<sch:rule context="foxml:objectProperties">
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:fType']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:fType']) = 0">DUPLICATE object property: type (foxml:property NAME='info:fedora/def:dobj:fType')</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:label']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:label']) = 0">DUPLICATE object property: label (foxml:property NAME='info:fedora/def:dobj:label')</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:state']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:state']) = 0">DUPLICATE object property: state (foxml:property NAME='info:fedora/def:dobj:state')</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:cDate']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:cDate']) = 0">DUPLICATE object property: creation date (foxml:property NAME='info:fedora/def:dobj:cDate' )</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:mDate']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:mDate']) = 0">DUPLICATE object property: modification date (foxml:property NAME='info:fedora/def:dobj:mDate' )</sch:assert>
+			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:cModel']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:cModel']) = 0">DUPLICATE object property: content model (foxml:property NAME='info:fedora/def:dobj:cModel')</sch:assert>
+		</sch:rule>
+	</sch:pattern>
+	<!-- COMPLETED PATTERN: -->
+	<!-- These rules are to be applied to objects when they are considered completed and ready to be stored persistently in the repository.-->
+	<!-- These are attributes that are optional in the FOXML XML Schema (i.e., to support ingest files), but that ultimately must be assigned by the system. -->
+	<!-- This validation may be unnecessary if we accept that the Fedora server will ensure this programmatically. -->
+	<sch:pattern name="Completed Object Checks" id="completed">
+		<sch:rule context="foxml:objectProperties">
+			<sch:assert test="foxml:property[@NAME='info:fedora/def:dobj:cDate']">The system did not assign a creation date to the object! (foxml:property: NAME='info:fedora/def:dobj:cDate' is missing)</sch:assert>
+			<sch:assert test="foxml:property[@NAME='info:fedora/def:dobj:state']">The system did not assign a state to the object!  (foxml:property: NAME='info:fedora/def:dobj:state' is missing)</sch:assert>
+		</sch:rule>
+		<sch:rule context="foxml:datastream">
+			<sch:assert test="string(@STATE)">The system did not assign a state to the datastream.  (foxml:datastream: STATE is missing)</sch:assert>
+		</sch:rule>
+		<sch:rule context="foxml:datastreamVersion">
+			<sch:assert test="string(@CREATED)">The system did not assign a creation date to the datastream version.  (foxml:datastreamVersion: CREATED is missing)</sch:assert>
+		</sch:rule>
+		<sch:rule context="foxml:disseminator">
+			<sch:assert test="string(@STATE)">The system did not assign a state to the disseminator.  (foxml:disseminator: STATE is missing)</sch:assert>
+		</sch:rule>
+		<sch:rule context="foxml:disseminatorVersion">
+			<sch:assert test="string(@CREATED)">The system did not assign a creation date to the disseminator version.  (foxml:disseminatorVersion: CREATED is missing)</sch:assert>
+		</sch:rule>
+	</sch:pattern>
+</sch:schema>
