@@ -114,6 +114,11 @@
     <column name="DO_PID" type="varchar(32)" notNull="true">
       <comment>The PID of the object</comment>
     </column>
+    <column name="FO_TYPE" type="char(1)" notNull="true" default="O">
+      <comment>The Fedora Object Type of the object.  This indicates
+               whether it's a regular object (O), behavior definition object 
+               (D), or behavior mechanism object (M).</comment>
+    </column>
     <column name="SystemVersion" type="smallint(6)" notNull="true" default="0">
       <comment>The system version of the object.  This starts at zero on
                initial creation or import, and is subsequently incremented by

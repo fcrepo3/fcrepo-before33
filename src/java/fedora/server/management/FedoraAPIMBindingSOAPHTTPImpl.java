@@ -269,10 +269,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return null;
     }
 
-    public String[] listObjectPIDs(String state) throws java.rmi.RemoteException {
+    public String[] listObjectPIDs(String foType) throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            return s_management.listObjectPIDs(s_context, state);
+            return s_management.listObjectPIDs(s_context, foType);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);

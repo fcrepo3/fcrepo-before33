@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -30,12 +31,15 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ObjectExistsException;
 import fedora.server.errors.ObjectLockedException;
 import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.management.PIDGenerator;
 import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
+import fedora.server.storage.replication.DOReplicator;
+import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.SQLUtility;
@@ -59,6 +63,7 @@ public class DefaultDOManager
     private DOTranslator m_translator;
     private ILowlevelStorage m_permanentStore;
     private ILowlevelStorage m_tempStore;
+    private DOReplicator m_replicator;
     private DOValidator m_validator;
 
     private ConnectionPool m_connectionPool;
@@ -149,6 +154,9 @@ public class DefaultDOManager
         if (m_storageFormat==null) {
             m_storageFormat=m_translator.getDefaultFormat();
         }
+        // get ref to replicator
+        m_replicator=(DOReplicator) getServer().
+                getModule("fedora.server.storage.replication.DOReplicator");
         // get ref to digital object validator
         m_validator=(DOValidator) getServer().
                 getModule("fedora.server.validation.DOValidator");
@@ -295,11 +303,16 @@ public class DefaultDOManager
         return m_validator;
     }
 
+    public DOReplicator getReplicator() {
+        return m_replicator;
+    }
+
     public String[] getRequiredModuleRoles() {
         return new String[] {
                 "fedora.server.management.PIDGenerator",
                 "fedora.server.storage.ConnectionPoolManager",
                 "fedora.server.storage.DOTranslator",
+                "fedora.server.storage.replication.DOReplicator",
                 "fedora.server.validation.DOValidator" };
     }
 
@@ -371,9 +384,142 @@ public class DefaultDOManager
      *
      * This should be called from DOWriter.save()...bleh
      */
-    public void doDefinitiveSave(DigitalObject obj, Context context) {
-        
-    } 
+    public void doDefinitiveSave(DigitalObject obj) {
+        // save to definitive store... 
+    }
+
+    /**
+     * This could be in response to update *or* delete
+     * makes a new audit record in the object, 
+     * saves object to definitive store, and replicates.
+     */
+    public void doCommit(Context context, DigitalObject obj, String logMessage, boolean remove)
+            throws ServerException {
+        // make audit record
+        AuditRecord a=new AuditRecord();
+        a.id="REC1024";  // FIXME: id should be auto-gen'd somehow
+        a.processType="API-M"; 
+        a.action="Don't know"; 
+        a.responsibility=getUserId(context); 
+        a.date=new Date();
+        a.justification=logMessage; 
+        obj.getAuditRecords().add(a);
+        if (remove) {
+            // remove from temp *and* definitive store
+            try {
+                getTempStore().remove(obj.getPid());
+            } catch (ObjectNotInLowlevelStorageException onilse) {
+                // ignore... it might not be in temp storage so this is ok.
+                // FIXME: could check modification state with reg table to 
+                // deal with this better, but for now this works
+            }
+            getPermanentStore().remove(obj.getPid());
+            // Set entry for this object to "D" in the replication jobs table
+            addReplicationJob(obj.getPid(), true);
+            // tell replicator to do deletion
+            m_replicator.delete(obj.getPid());
+            removeReplicationJob(obj.getPid());
+        } else {
+            // save to definitive store, validating beforehand
+            // FIXME: insert validator call here
+            // FIXME: definitive save skipped for testing..
+            // update the system version (add one) and reflect that the object is no longer locked
+            Connection conn=null;
+            try {
+                conn=m_connectionPool.getConnection();
+                String query="SELECT SystemVersion "
+                           + "FROM ObjectRegistry "
+                           + "WHERE DO_PID='" + obj.getPid() + "'";
+                Statement s=conn.createStatement();
+                ResultSet results=s.executeQuery(query);
+                if (!results.next()) {
+                    throw new ObjectNotFoundException("Error creating replication job: The requested object doesn't exist in the registry.");
+                }
+                int systemVersion=results.getInt("SystemVersion");
+                systemVersion++;
+                s.executeUpdate("UPDATE ObjectRegistry SET SystemVersion=" 
+                        + systemVersion + ", LockingUser=NULL "
+                        + "WHERE DO_PID='" + obj.getPid() + "'");
+            } catch (SQLException sqle) {
+                throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
+            } finally {
+                if (conn!=null) {
+                    m_connectionPool.free(conn);
+                }
+            }
+            // add to replication jobs table
+            addReplicationJob(obj.getPid(), false);
+            // replicate
+            try {
+                if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
+                    logInfo("Attempting replication as bdef object: " + obj.getPid());
+                    DefinitiveBDefReader reader=new DefinitiveBDefReader(obj.getPid());
+                    logInfo("Got a definitiveBDefReader...");
+                    m_replicator.replicate(reader); 
+                    logInfo("Finished replication as bdef object: " + obj.getPid());
+                } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
+                    logInfo("Attempting replication as bmech object: " + obj.getPid());
+                    DefinitiveBMechReader reader=new DefinitiveBMechReader(obj.getPid());
+                    logInfo("Got a definitiveBMechReader...");
+                    m_replicator.replicate(reader); 
+                    logInfo("Finished replication as bmech object: " + obj.getPid());
+                } else {
+                    logInfo("Attempting replication as normal object: " + obj.getPid());
+                    DefinitiveDOReader reader=new DefinitiveDOReader(obj.getPid());
+                    logInfo("Got a definitiveDOReader...");
+                    m_replicator.replicate(reader); 
+                    logInfo("Finished replication as normal object: " + obj.getPid());
+                }
+                removeReplicationJob(obj.getPid());
+            } catch (ServerException se) {
+                throw se;
+            } catch (Throwable th) {
+                throw new GeneralException("Replicator returned error: (" + th.getClass().getName() + ") - " + th.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Add an entry to the replication jobs table.
+     */
+    private void addReplicationJob(String pid, boolean deleted) 
+            throws StorageDeviceException {
+        Connection conn=null;
+        String[] columns=new String[] {"DO_PID", "Action"};
+        String action="M";
+        if (deleted) {
+            action="D";
+        }
+        String[] values=new String[] {pid, action};
+        try {
+            conn=m_connectionPool.getConnection();
+            SQLUtility.replaceInto(conn, "ObjectReplicationJob", columns,
+                    values, "DO_PID");
+        } catch (SQLException sqle) {
+            throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
+        } finally {
+            if (conn!=null) {
+                m_connectionPool.free(conn);
+            }
+        }
+    }
+    
+    private void removeReplicationJob(String pid) 
+            throws StorageDeviceException {
+        Connection conn=null;
+        try {
+            conn=m_connectionPool.getConnection();
+            Statement s=conn.createStatement();
+            s.executeUpdate("DELETE FROM ObjectReplicationJob "
+                    + "WHERE DO_PID = '" + pid + "'");
+        } catch (SQLException sqle) {
+            throw new StorageDeviceException("Error removing entry from replication jobs table: " + sqle.getMessage());
+        } finally {
+            if (conn!=null) {
+                m_connectionPool.free(conn);
+            }
+        }
+    }
 
     /**
      * Requests a lock on the object.
@@ -439,7 +585,7 @@ public class DefaultDOManager
             BasicDigitalObject obj=new BasicDigitalObject();
             m_translator.deserialize(getPermanentStore().retrieve(pid), obj,
                     m_storageFormat, m_storageCharacterEncoding);
-            DOWriter w=new DefinitiveDOWriter(this, obj);
+            DOWriter w=new DefinitiveDOWriter(context, this, obj);
             // add to internal list...somehow..think...
             return w;
         }
@@ -491,7 +637,7 @@ public class DefaultDOManager
                 throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
             }
             // make a record of it in the registry
-            registerObject(obj.getPid(), getUserId(context));
+            registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
 
             // serialize to disk, then validate.. if that's ok, go on.. else unregister it!
             ByteArrayOutputStream out=new ByteArrayOutputStream();
@@ -505,7 +651,7 @@ public class DefaultDOManager
 
 
             // then get the writer
-            DOWriter w=new DefinitiveDOWriter(this, obj);
+            DOWriter w=new DefinitiveDOWriter(context, this, obj);
             // add to internal list...somehow..think...
             return w;
         }
@@ -537,7 +683,7 @@ public class DefaultDOManager
                 throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
             }
             // make a record of it in the registry
-            registerObject(obj.getPid(), getUserId(context));
+            registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
 
             // serialize to disk, then validate.. if that's ok, go on.. else unregister it!
         }
@@ -695,12 +841,19 @@ public class DefaultDOManager
     /**
      * Adds a new, locked object.
      */
-    private void registerObject(String pid, String userId)
+    private void registerObject(String pid, int fedoraObjectType, String userId)
             throws StorageDeviceException {
         Connection conn=null;
+        String foType="O";
+        if (fedoraObjectType==DigitalObject.FEDORA_BDEF_OBJECT) {
+            foType="D";
+        }
+        if (fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT) {
+            foType="M";
+        }
         try {
-            String query="INSERT INTO ObjectRegistry (DO_PID, LockingUser) "
-                       + "VALUES ('" + pid + "', '"+ userId +"')";
+            String query="INSERT INTO ObjectRegistry (DO_PID, FO_TYPE, LockingUser) "
+                       + "VALUES ('" + pid + "', '" + foType +"', '"+ userId +"')";
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
             s.executeUpdate(query);
@@ -713,7 +866,7 @@ public class DefaultDOManager
         }
     }
 
-    public String[] listObjectPIDs(Context context, String state)
+    public String[] listObjectPIDs(Context context, String foType)
             throws StorageDeviceException {
         ArrayList pidList=new ArrayList();
         Connection conn=null;
@@ -721,6 +874,9 @@ public class DefaultDOManager
             String query="SELECT DO_PID "
                        + "FROM ObjectRegistry "
                        + "WHERE SystemVersion > 0"; // <- ignore new,uncommitted
+            if (foType!=null) {
+                query=query+" AND FO_TYPE = '" + foType + "'";
+            }
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
             ResultSet results=s.executeQuery(query);

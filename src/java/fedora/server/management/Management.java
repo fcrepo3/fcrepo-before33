@@ -44,7 +44,7 @@ public interface Management {
 
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) throws ServerException;
 
-    public String[] listObjectPIDs(Context context, String state) throws ServerException;
+    public String[] listObjectPIDs(Context context, String foType) throws ServerException;
 
     public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) throws ServerException;
 

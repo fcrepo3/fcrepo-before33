@@ -10,11 +10,13 @@ import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -25,6 +27,8 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import java.awt.event.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.net.URL;
 
 import edu.cornell.dlrg.swing.jhelp.SimpleHelpBroker;
@@ -34,6 +38,7 @@ import edu.cornell.dlrg.swing.mdi.WindowMenu;
 
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
+import fedora.client.ingest.AutoIngestor;
 
 public class Administrator extends JFrame {
 
@@ -43,14 +48,20 @@ public class Administrator extends JFrame {
     
     private ID m_homeID;
     private SimpleHelpBroker m_helpBroker;
+    
+    private File s_lastDir;
    
     ClassLoader cl;
     
     private JLabel m_aboutPic;
     private JLabel m_aboutText;
+    private String m_host;
+    private int m_port;
 
-    public Administrator() {
-        super("Fedora Administrator");
+    public Administrator(String host, int port) {
+        super("Fedora Administrator - Server at " + host + ":" + port);
+        m_host=host;
+        m_port=port;
         
         cl=this.getClass().getClassLoader();
 
@@ -130,7 +141,16 @@ public class Administrator extends JFrame {
         fileNew.setToolTipText("Creates a new, empty Digital Object and opens it for editing");
         fileNew.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                createFrame();
+                fileNewAction();
+            }
+        });
+        JMenuItem fileIngest=new JMenuItem("Ingest...",KeyEvent.VK_I);
+        fileIngest.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
+                ActionEvent.CTRL_MASK));
+        fileIngest.setToolTipText("Ingests a serialized Digitial Object.");
+        fileIngest.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fileIngestAction();
             }
         });
         JMenuItem fileOpen=new JMenuItem("Open...",KeyEvent.VK_O);
@@ -161,6 +181,7 @@ public class Administrator extends JFrame {
         });
         
         fileMenu.add(fileNew); 
+        fileMenu.add(fileIngest); 
         fileMenu.add(fileOpen); 
         fileMenu.add(fileClose); 
         fileMenu.addSeparator();
@@ -292,13 +313,48 @@ public class Administrator extends JFrame {
         return menuBar;
     }
 
-    protected void createFrame() {
+    protected void fileNewAction() {
+        // The below code opens a not-even-close-to-implemented GUI window for editing an object
+        /*
         DigitalObjectEditor frame = new DigitalObjectEditor(new DigitalObject(), m_desktop);
         frame.setVisible(true);
         m_desktop.add(frame);
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
+        */
+    }
+    
+    protected void fileIngestAction() {
+        try {
+            JFileChooser browse;
+            if (s_lastDir==null) {
+                browse=new JFileChooser();
+            } else {
+                browse=new JFileChooser(s_lastDir);
+            }
+            int returnVal = browse.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = browse.getSelectedFile();
+                s_lastDir=file.getParentFile(); // remember the dir for next time
+                FileInputStream in=new FileInputStream(file.getAbsolutePath());
+                String host;
+                int port;
+                String logMessage;
+                host=m_host;
+                port=m_port;
+                logMessage="First import.";
+                AutoIngestor ingestor=new AutoIngestor(host, port);
+                String pid=ingestor.ingestAndCommit(in, logMessage);
+                JOptionPane.showMessageDialog(this,
+                        "Ingest succeeded.  PID='" + pid + "'.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    e.getClass().getName() + ": " + e.getMessage(),
+                    "Ingest Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
     
     protected void createManagementConsole() {
@@ -352,7 +408,20 @@ public class Administrator extends JFrame {
         
         // turn off obnoxious Axis stdout/err messages
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
-        Administrator administrator=new Administrator();
+        String host="localhost";
+        int port=8080;
+        if (args.length>0) {
+            host=args[0];
+            if (args.length>1) {
+                try {
+                    port=Integer.parseInt(args[1]);
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Warning: " + args[1] + " is not a valid port number.  Using default.");
+                }
+            }
+        }
+        System.out.println("Using Fedora server at " + host + ":" + port);
+        Administrator administrator=new Administrator(host, port);
 
         int xSize=710;
         int ySize=580;

@@ -160,9 +160,10 @@
     </part>
   </message>
   <message name="ListObjectPIDsRequest">
-    <part name="state" type="xsd:string">
-      <documentation>the state of the objects to list.  If null, objects in any 
-      state will be listed.</documentation>
+    <part name="foType" type="xsd:string">
+      <documentation>the Fedora Object Type of the objects to list.  This may be
+      O (regular object), D (Behavior Definition), M (Behavior Mechanism), or
+      null (all objects).</documentation>
     </part>
   </message>
   <message name="ListObjectPIDsResponse">

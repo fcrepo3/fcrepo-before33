@@ -1,15 +1,12 @@
 package fedora.server.errors;
 
 /**
- * <p>Title: ReplicationException.java</p>
- * <p>Description: Exception class for replication errors.</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
+ * Signals a problem during replication.
+ *
  * @author Paul Charlton
  * @version 1.0
  */
-
-public class ReplicationException extends Exception
+public class ReplicationException extends ServerException
 {
 
   /**
@@ -19,6 +16,6 @@ public class ReplicationException extends Exception
    *
    */
   public ReplicationException(String msg) {
-         super(msg);
+         super(null, msg, null, null, null);
   }
 }

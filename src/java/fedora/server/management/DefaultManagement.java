@@ -77,7 +77,7 @@ public class DefaultManagement
         getServer().logFinest("Entered DefaultManagement.ingestObject");
         DOWriter w=m_manager.newWriter(context, serialization, format, encoding, newPid);
         String pid=w.GetObjectPID();
-        w.commit("Ingested via ingestObject, committed immediately for level0 test.");
+        w.commit("First import.");
         m_manager.releaseWriter(w);
         getServer().logFinest("Exiting DefaultManagement.ingestObject");
         return pid;
@@ -119,9 +119,9 @@ public class DefaultManagement
 
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
 
-    public String[] listObjectPIDs(Context context, String state) 
+    public String[] listObjectPIDs(Context context, String foType) 
             throws ServerException { 
-        return m_manager.listObjectPIDs(context, state);
+        return m_manager.listObjectPIDs(context, foType);
     }
 
     public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) { return null; }
