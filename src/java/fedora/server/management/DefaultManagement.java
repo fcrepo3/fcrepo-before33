@@ -382,6 +382,9 @@ public class DefaultManagement
                 if (dsID.indexOf(" ")!=-1) {
                     throw new GeneralException("Datastream ids cannot contain spaces.");
                 }
+                if (dsID.indexOf("+")!=-1) {
+                    throw new GeneralException("Datastream ids cannot contain plusses.");
+                }
                 if (dsID.indexOf(":")!=-1) {
                     throw new GeneralException("Datastream ids cannot contain colons.");
                 }
