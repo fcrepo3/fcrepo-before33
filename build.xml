@@ -276,6 +276,7 @@
     <copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
       <fileset dir="temp/server/classes"/>
     </copy>
+    <copy file="src/fcfg/server/fedora.fcfg" todir="dist/server/config"/> 
     <echo message="Finished building server distribution in dist/server"/>
   </target>
 
@@ -308,6 +309,9 @@
 
 <!--
   $Log$
+  Revision 1.17  2002/08/05 10:56:41  cwilper
+  added copy of src/fcfg/server/fedora.fcfg to dist/server/config
+
   Revision 1.16  2002/07/30 22:17:48  cwilper
   Modified to sneakily insert the scope=application property that axis
   understands into the auto-generated .wsdd file during server distribution.
