@@ -17,17 +17,30 @@ import java.util.Properties;
  * <p>Description: Transforms a supplied input document using a supplied
  * stylesheet.</p>
  *
- * <p>Copyright: Adapted from the SaxonServlet.java file contained in the
+ * <p>Adapted from the SaxonServlet.java example file contained in the
  * source distribution of "The SAXON XSLT Processor from Michael Kay". </p>
- * <p>This code is part of the Saxon distribution and is subject to the
- * Mozilla Public License Version 1.0; you may not use this
- * file except in compliance with the License. You may obtain a copy of the
- * License at <a href="http://www.mozilla.org/MPL/">
- * http://www.mozilla.org/MPL/</a>. The current project homepage for Saxon
- * may be found at: <a HREF="http://saxon.sourceforge.net/">
- * http://saxon.sourceforge.net/</a>.</p>
  *
- * <p>Company: </p>
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL/">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The original code is Copyright &copy; 2001 by Michael Kay. All rights
+ * reserved. The current project homepage for Saxon may be found at:
+ * <a href="http://saxon.sourceforge.net/">http://saxon.sourceforge.net/</a>.</p>
+ *
+ * <p>Portions created for the Fedora Repository System are Copyright &copy; 2002, 2003
+ * by The Rector and Visitors of the University of Virginia and Cornell
+ * University. All rights reserved."</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
  * @author Michael Kay
  * @version 6.5.2
  */
