@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
 <xsl:output method="html" indent="yes"/> 
+<xsl:param name="title_" >Fedora Digital Object</xsl:param>
+<xsl:param name="subtitle_">Dissemination Index View</xsl:param>
+<xsl:param name="soapClientServletPath_">/soapclient/apia</xsl:param>
+<xsl:param name="soapMethodParmResolverServletPath_">/soapclient/getAccessParmResolver</xsl:param>
 <xsl:template match="/">
 	<html>
 		<head>
-			<title>Object Methods HTML Table View</title>
+			<title><xsl:value-of select="$title_"/>&#160;-&#160;<xsl:value-of select="$subtitle_"/></title>
 		</head>
 		<body>
 			<center>
@@ -15,8 +19,8 @@
 					</td>
 					<td width="643" valign="top">
 						<center>
-							<h2>Fedora Digital Object</h2>
-							<h3>Dissemination Index View</h3>
+							<xsl:element name="h2"><xsl:value-of select="$title_" /></xsl:element>
+							<xsl:element name="h3"><xsl:value-of select="$subtitle_" /></xsl:element>
 						</center>
 					</td>
 				</tr>
@@ -43,7 +47,7 @@
 		</xsl:otherwise>
 	</xsl:choose>
 	<hr/>
-	<table border="1" cellpadding="5" bgcolor="silver">
+	<table border="1" cellpadding="5" bgcolor="#F7DBB3">
 	<tr>
 		<td><b><font size='+2'>BDEF</font></b></td>
 		<td><b><font size='+2'>Method Name</font></b></td>
@@ -60,7 +64,11 @@
 </xsl:template>
 
 <xsl:template match="method">
-	<form name="parmResolverForm" method="post" action="/fedora/getAccessParmResolver?">
+	<!--<form name="parmResolverForm" method="post" action="/getAccessParmResolver?">-->
+	<xsl:element name="form">
+	<xsl:attribute name="name">parmResolverForm</xsl:attribute>
+	<xsl:attribute name="method">post</xsl:attribute>
+	<xsl:attribute name="action"><xsl:value-of select="$soapMethodParmResolverServletPath_"/>?</xsl:attribute>
 	<tr>
 		<td><font color="blue"><xsl:value-of select="../@pid"/></font></td>
 		<td><font size="+1"><xsl:value-of select="@name"/></font></td>
@@ -93,7 +101,7 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</tr>
-	</form>
+	</xsl:element>
 <xsl:apply-templates/>
 </xsl:template>
 
