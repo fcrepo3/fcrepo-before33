@@ -341,7 +341,7 @@ public class FieldSearchSQLImpl
             out.append(" ");
             out.append(val.toLowerCase());
         }
-        out.append(" ");
+        out.append(" .");
         return out.toString();
     }
 
