@@ -393,6 +393,16 @@
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
+	<datastore id="localMcKoiPool">
+		<comment>McKoi database on localhost running on port 9157</comment>
+		<param name="dbUsername" value="fedoraAdmin"/>
+		<param name="dbPassword" value="fedoraAdmin"/>
+		<param name="jdbcURL" value="jdbc:mckoi://localhost:9157/"/>
+		<param name="jdbcDriverClass" value="com.mckoi.JDBCDriver"/>
+		<param name="ddlConverter" value="fedora.server.utilities.McKoiDDLConverter"/>
+		<param name="minPoolSize" value="10"/>
+		<param name="maxPoolSize" value="100"/>
+	</datastore>
     <datastore id="localKowariTriplestore">
         <comment>local Kowari Triplestore used by the Resource Index</comment>
         <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
