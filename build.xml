@@ -485,6 +485,16 @@
 			<arg path="src/dbx/userdocs/features.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<echo message="Translating do-const.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/server/do-const.html"/>
+			<arg path="src/dbx/userdocs/do-const.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
 		<echo message="Translating webexp.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -911,6 +921,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.132  2003/05/17 00:51:35  payette
+  added object construction guide to build
+
   Revision 1.131  2003/05/16 20:51:32  cwilper
   added unix version of fedora-dsinfo...forgot it before
 
