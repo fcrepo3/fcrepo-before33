@@ -71,6 +71,7 @@ import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.TableCreatingConnection;
 import fedora.server.utilities.TableSpec;
 import fedora.server.validation.DOValidator;
+import fedora.server.validation.RelsExtValidator;
 
 /**
  *
@@ -964,7 +965,8 @@ public class DefaultDOManager
                 obj.setLastModDate(nowUTC);
 
                 logFinest("Adding/Checking initial DC record...");
-                // if there's no DC record, add one using PID for identifier.
+                // DC System Reserved Datastream...
+                // if there's no DC datastream, add one using PID for identifier.
                 // and Label for dc:title
                 //
                 // if there IS a DC record, make sure one of the dc:identifiers
@@ -1007,6 +1009,15 @@ public class DefaultDOManager
                 } catch (UnsupportedEncodingException uee) {
                     // safely ignore... we know UTF-8 works
                 }
+                
+                // RELS-EXT System Reserved Datastream... validation
+				RelsExtValidator deser=new RelsExtValidator("UTF-8", false);
+				DatastreamXMLMetadata relsext=(DatastreamXMLMetadata) w.GetDatastream("RELS-EXT", null);
+				InputStream in2 = new ByteArrayInputStream(relsext.xmlContent);
+				logFinest("Validating RELS-EXT datastream...");
+				deser.deserialize(in2, "info:fedora/" + obj.getPid());
+				if (fedora.server.Debug.DEBUG) System.out.println("Done validating RELS-EXT.");
+				logFinest("RELS-EXT datastream passed validation.");
 
                 // at this point all is good...
                 // so make a record of it in the registry
