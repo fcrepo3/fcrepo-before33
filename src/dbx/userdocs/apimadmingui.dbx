@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Ronda A. Grizzle (University of Virginia) -->
- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
@@ -163,17 +163,22 @@
 						<listitem>
 							<para>Click on the <emphasis>Disseminators</emphasis> tab</para>
 							<para>For each Binding required by the Behavior Definition/Behavior Mechanism Contract, the user must select a datastream.</para>
+						</listitem>
+						<listitem>
+							<para>Click on the Binding tab to be defined. Click the <emphasis>Add</emphasis> button.</para>
+							<mediaobject>
+								<imageobject>
+									<imagedata fileref="images/newaddbind.jpg"/>
+								</imageobject>
+							</mediaobject>
+						</listitem>
+						<listitem>
+							<para>From the New Binding dialog, select the datastream from the drop down menu which matches the Binding to be completed. Click <emphasis>OK</emphasis>.</para>
 							<mediaobject>
 								<imageobject>
 									<imagedata fileref="images/newmapds.jpg"/>
 								</imageobject>
 							</mediaobject>
-						</listitem>
-						<listitem>
-							<para>Click on the Binding tab to be defined. Click the <emphasis>Add</emphasis> button.</para>
-						</listitem>
-						<listitem>
-							<para>From the New Binding Dialog, select the datastream from the drop down menu which matches the Binding to be completed. Click <emphasis>OK</emphasis>.</para>
 							<para>Repeat for each binding/datastream pair. When all Bindings are complete, the <emphasis>Save Disseminator</emphasis> button will be active. Click to save the Disseminator. Your new object is now complete.</para>
 						</listitem>
 					</itemizedlist>
@@ -268,10 +273,10 @@
 				</mediaobject>
 				<para>Choosing Ingest One Object from Repository causes the Source Repository dialog box to appear. The user must fill in the hostname: port of the source repository, and enter a username and password. Clicking <emphasis>OK</emphasis> initiates the Input dialog, where the user is prompted for a PID value. Clicking <emphasis>OK</emphasis> on the Input dialog completes the object ingestion.</para>
 				<mediaobject>
-				<imageobject>
-					<imagedata fileref="images/input.jpg"/>
-				</imageobject>
-			</mediaobject>
+					<imageobject>
+						<imagedata fileref="images/input.jpg"/>
+					</imageobject>
+				</mediaobject>
 			</sect3>
 			<sect3>
 				<title>Objects by Type</title>
