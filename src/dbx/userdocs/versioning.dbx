@@ -27,10 +27,10 @@
 		<publisher>
 			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
 		</publisher>
-		<edition>$$</edition>
-		<date>$$</date>
+		<edition>$Revision$</edition>
+		<date>$Date$</date>
 		<releaseinfo>
-            $$ 
+            $Id$ 
         </releaseinfo>
 	</articleinfo>
 	<sect1>
