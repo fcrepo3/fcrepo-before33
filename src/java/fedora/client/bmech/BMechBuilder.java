@@ -110,6 +110,7 @@ public class BMechBuilder extends JInternalFrame
             GeneralPane gp = (GeneralPane)tabs[i];
             newBMech.setbDefPID(gp.getBDefPID());
             newBMech.setbMechLabel(gp.getBMechLabel());
+            newBMech.setbMechName(gp.getBMechName());
             newBMech.setDCRecord(gp.getDCElements());
           }
           else
@@ -136,6 +137,8 @@ public class BMechBuilder extends JInternalFrame
       printBMech();
       MethodMapGenerator mmg = new MethodMapGenerator(newBMech);
       mmg.printMethodMap();
+      WSDLGenerator wsdlg = new WSDLGenerator(newBMech);
+      wsdlg.printWSDL();
       return;
     }
 
@@ -235,14 +238,19 @@ public class BMechBuilder extends JInternalFrame
 
     private boolean validGeneralTab(GeneralPane gp)
     {
-      if (gp.getBDefPID() == null || gp.getBDefPID().equalsIgnoreCase(""))
+      if (gp.getBDefPID() == null || gp.getBDefPID().trim().equals(""))
       {
         assertTabPaneMsg("BDefPID is missing on General Tab.", gp.getName());
         return false;
       }
-      else if (gp.getBMechLabel() == null || gp.getBMechLabel().equalsIgnoreCase(""))
+      else if (gp.getBMechLabel() == null || gp.getBMechLabel().trim().equals(""))
       {
         assertTabPaneMsg("Behavior Mechanism Label is missing on General Tab.", gp.getName());
+        return false;
+      }
+      else if (gp.getBMechName() == null || gp.getBMechName().trim().equals(""))
+      {
+        assertTabPaneMsg("Behavior Mechanism Nickname is missing on General Tab.", gp.getName());
         return false;
       }
       else if (gp.getDCElements().length <= 0)
@@ -255,7 +263,7 @@ public class BMechBuilder extends JInternalFrame
 
     private boolean validMethodsTab(MethodsPane mp)
     {
-      if (mp.hasBaseURL() && (mp.getBaseURL() == null || mp.getBaseURL().equals("")))
+      if (mp.hasBaseURL() && (mp.getBaseURL() == null || mp.getBaseURL().trim().equals("")))
       {
         assertTabPaneMsg("The Base URL is missing on Service Methods Tab.", mp.getName());
         return false;
