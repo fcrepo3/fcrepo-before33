@@ -249,7 +249,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     {
       InputStream in = getMethodIndex().getStream();
       ByteArrayOutputStream out = new ByteArrayOutputStream();
-      File xslFile = new File(reposHomeDir, "access/objectmethods.xslt");
+      File xslFile = new File(reposHomeDir, "access/objectMethods.xslt");
       TransformerFactory factory = TransformerFactory.newInstance();
       Templates template = factory.newTemplates(new StreamSource(xslFile));
       Transformer transformer = template.newTransformer();

@@ -32,6 +32,8 @@ import javax.xml.transform.TransformerFactory;
 
 import com.icl.saxon.expr.StringValue;
 
+import fedora.server.types.gen.FieldSearchQuery;
+import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.MethodDef;
 import fedora.server.types.gen.MethodParmDef;
 import fedora.server.types.gen.MIMETypedStream;
@@ -391,7 +393,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               response.setContentType(CONTENT_TYPE_HTML);
               out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
               TransformerFactory factory = TransformerFactory.newInstance();
-              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/objectmethods.xslt")));
+              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/objectMethods.xslt")));
               Transformer transformer = template.newTransformer();
               Properties details = template.getOutputProperties();
               transformer.setParameter("title_", new StringValue("Fedora Digital Object"));
@@ -644,7 +646,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               response.setContentType(CONTENT_TYPE_HTML);
               out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
               TransformerFactory factory = TransformerFactory.newInstance();
-              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/objectmethods.xslt")));
+              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/objectMethods.xslt")));
               Transformer transformer = template.newTransformer();
               Properties details = template.getOutputProperties();
               transformer.setParameter("title_", new StringValue("Fedora Digital Object"));
@@ -1193,7 +1195,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
      * <p> Constructor for SerializeThread.</p>
      *
      * @param PID The persistent identifier of the specified digital object.
-     * @param objMethDefArray An array of object mtehod definitions.
+     * @param bDefPID The persistent identifier of the behavior definition object.
+     * @param methodDefArray An array of object mtehod definitions.
      * @param versDateTime The version datetime stamp of the request.
      * @param pw A PipedWriter to which the serialization info is written.
      */
@@ -1307,7 +1310,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
      * <p> Constructor for SerializeThread.</p>
      *
      * @param PID The persistent identifier of the specified digital object.
-     * @param objMethDefArray An array of object mtehod definitions.
+     * @param behaviorDefArray An array of behavior method definitions.
      * @param versDateTime The version datetime stamp of the request.
      * @param pw A PipedWriter to which the serialization info is written.
      */
@@ -1628,6 +1631,74 @@ public class FedoraAccessSoapServlet extends HttpServlet
     repositoryInfo =
         (RepositoryInfo) call.invoke( new Object[] {} );
     return repositoryInfo;
+  }
+
+   /**
+    * <p>Lists the specified fields of each object matching the given
+    * criteria.</p>
+    *
+    * @param resultFields the names of the fields to return
+    * @param maxResults the maximum number of results to return at a time
+    * @param query the query
+    * @return the specified fields of each object matching the given
+    *         criteria.
+    * @throws Exception If an error occurs in communicating with the Fedora
+    *         Access SOAP service.
+    */
+    public FieldSearchResult findObjects(String[] resultFields, int maxResults,
+        FieldSearchQuery query) throws Exception
+    {
+      FieldSearchResult fieldSearchResult = null;
+      Service service = new Service();
+      Call call = (Call) service.createCall();
+      call.setOperationName(new QName(FEDORA_API_URI, DESCRIBE_REPOSITORY) );
+      QName qn = new QName(FEDORA_TYPE_URI, "FieldSearchResult");
+      QName qn2 = new QName(FEDORA_TYPE_URI, "FieldSearchQuery");
+      call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
+
+      // Any Fedora-defined types required by the SOAP service must be registered
+      // prior to invocation so the SOAP service knows the appropriate
+      // serializer/deserializer to use for these types.
+      call.registerTypeMapping(FieldSearchResult.class, qn,
+          new BeanSerializerFactory(FieldSearchResult.class, qn),
+          new BeanDeserializerFactory(FieldSearchResult.class, qn));
+      call.registerTypeMapping(FieldSearchQuery.class, qn2,
+        new BeanSerializerFactory(FieldSearchQuery.class, qn2),
+        new BeanDeserializerFactory(FieldSearchQuery.class, qn2));
+      fieldSearchResult =
+          (FieldSearchResult) call.invoke( new Object[] {resultFields, new Integer(maxResults), query} );
+      return fieldSearchResult;
+  }
+
+
+  /**
+   * <p>Resumes an in-progress listing of object fields.</p>
+   *
+   * @param sessionToken the token of the session in which the remaining
+   *        results can be obtained
+   * @return the remaining specified fields of each object matching the given
+   *         criteria.
+   * @throws Exception If an error occurs in communicating with the Fedora
+   *         Access SOAP service.
+   */
+   public FieldSearchResult resumeFindObjects(String sessionToken) throws Exception
+   {
+     FieldSearchResult fieldSearchResult = null;
+     Service service = new Service();
+     Call call = (Call) service.createCall();
+     call.setOperationName(new QName(FEDORA_API_URI, DESCRIBE_REPOSITORY) );
+     QName qn = new QName(FEDORA_TYPE_URI, "FieldSearchResult");
+     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
+
+     // Any Fedora-defined types required by the SOAP service must be registered
+     // prior to invocation so the SOAP service knows the appropriate
+     // serializer/deserializer to use for these types.
+     call.registerTypeMapping(FieldSearchResult.class, qn,
+         new BeanSerializerFactory(FieldSearchResult.class, qn),
+         new BeanDeserializerFactory(FieldSearchResult.class, qn));
+     fieldSearchResult =
+         (FieldSearchResult) call.invoke( new Object[] {sessionToken} );
+     return fieldSearchResult;
   }
 
   /**
