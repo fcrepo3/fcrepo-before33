@@ -187,7 +187,7 @@
 		<column name="DS_Version_ID" type="varchar(32)" notNull="true" default="" index="DS_Version_ID">
 			<comment>The datastream version ID</comment>
 		</column>
-		<column name="DS_Date_Time" type="datetime" notNull="false" default="NULL" index="DS_DATE_Time">
+		<column name="DS_Date_Time" type="timestamp" notNull="false" default="" index="DS_DATE_Time">
 			<comment>A timestamp indicating the age of the table entry</comment>
 		</column>
 	</table>
