@@ -426,7 +426,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
 						- PID : a required parameter. Client must provide the persistent identifier of the object.
 					 	- DATETIME : an optional parameter.  Client can specifiy a dateTime value 
 					 	  indicating that the client wants the object profile to reflect how the object looked 
-					 	  as of a particular date and time.   (NOT implemented in release 1.0.)
+					 	  as of a particular date and time.
 					 	- ENCODE_XML : an optional parameter.  Client can specify that the output of 
 					 	  the operation be HTML or XML.   A value of "true" indicates a return type of 
 					 	  text/xml; the absence of the ENCODE_XML parameter or a value of "false" indicates 
@@ -469,7 +469,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
 						  method to be executed.  A behavior method is also known as a dissemination method.
 						- DATETIME : an optional parameter.  Client can specifiy a dateTime value 
 					 	  indicating that the client wants the object profile to reflect how the object looked 
-					 	  as of a particular date and time.   (NOT implemented in release 1.0.)
+					 	  as of a particular date and time.
 						- PARMS - an optional array of parameters to the behavior method.  The parameter array
 						  must begin with a question mark to delimit it from the rest of the URL.  Then, the
 						  parameters follow as a set of name/value pairs separated by ampersands. 

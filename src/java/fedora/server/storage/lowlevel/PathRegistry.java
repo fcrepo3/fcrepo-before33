@@ -1,6 +1,5 @@
 package fedora.server.storage.lowlevel;
 import java.io.File;
-import java.util.GregorianCalendar;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.io.File;

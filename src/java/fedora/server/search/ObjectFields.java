@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
@@ -17,6 +15,7 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnrecognizedFieldException;
+import fedora.server.utilities.DateUtility;
 
 /**
  *
@@ -60,8 +59,6 @@ public class ObjectFields
 
     private StringBuffer m_currentContent;
     private boolean[] m_want=new boolean[26];
-    private SimpleDateFormat m_formatter=
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public final static int PID=0;
     public final static int LABEL=1;
@@ -203,17 +200,11 @@ public class ObjectFields
         } else if ( (m_want[OWNERID]) && (localName.equals("ownerId")) ) {
             setOwnerId(m_currentContent.toString());
         } else if ( (m_want[CDATE]) && (localName.equals("cDate")) ) {
-            try {
-                setCDate(m_formatter.parse(m_currentContent.toString()));
-            } catch (ParseException e) { }
+            setCDate(DateUtility.convertStringToDate(m_currentContent.toString()));
         } else if ( (m_want[MDATE]) && (localName.equals("mDate")) ) {
-            try {
-                setMDate(m_formatter.parse(m_currentContent.toString()));
-            } catch (ParseException e) { }
+            setMDate(DateUtility.convertStringToDate(m_currentContent.toString()));
         } else if ( (m_want[DCMDATE]) && (localName.equals("dcmDate")) ) {
-            try {
-                setDCMDate(m_formatter.parse(m_currentContent.toString()));
-            } catch (ParseException e) { }
+            setDCMDate(DateUtility.convertStringToDate(m_currentContent.toString()));
         } else if ( (m_want[TITLE]) && (localName.equals("title")) ) {
             titles().add(m_currentContent.toString());
         } else if ( (m_want[CREATOR]) && (localName.equals("creator")) ) {

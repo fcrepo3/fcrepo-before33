@@ -9,15 +9,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import java.util.Vector;
-import java.util.Calendar;
 import java.util.Date;
 import java.io.PrintWriter;
 import java.io.File;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.BMechBuilderException;
+import fedora.server.utilities.DateUtility;
 
 /**
  *
@@ -79,7 +78,8 @@ public abstract class BObjMETSSerializer
     throws BMechBuilderException
   {
     this.bObjData = bObjData;
-    this.now = convertDateToString(getCurrentDate());
+    this.now = DateUtility.convertDateToString(
+            DateUtility.convertLocalDateToUTCDate(new Date()));
   }
 
   // The BDefMETSSerializer and BMechMETSSerializer will implement this to
@@ -312,23 +312,6 @@ public abstract class BObjMETSSerializer
     return dcNode;
   }
 
-  public Date getCurrentDate()
-  {
-    //Calendar cal = Calendar.getInstance(TimeZone.getDefault());
-    Calendar cal = Calendar.getInstance();
-    return cal.getTime();
-  }
-
-  public String convertDateToString(Date date)
-  {
-    String dateTime = null;
-    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    if (!(date == null))
-    {
-      dateTime = formatter.format(date);
-    }
-    return(dateTime);
-  }
 
   public void printMETS()
   {

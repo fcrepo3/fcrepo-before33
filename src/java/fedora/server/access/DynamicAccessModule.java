@@ -1,12 +1,12 @@
 package fedora.server.access;
 
-import java.util.Calendar;
-import java.util.List;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.io.File;
 
 // Fedora imports
 import fedora.server.errors.ServerException;
@@ -192,7 +192,7 @@ public class DynamicAccessModule extends Module implements Access
    * @throws ServerException
    */
   public String[] getBehaviorDefinitions(Context context, String PID,
-      Calendar asOfDateTime) throws ServerException
+      Date asOfDateTime) throws ServerException
   {
     //m_ipRestriction.enforce(context);
     return da.getBehaviorDefinitions(context, PID, asOfDateTime);
@@ -210,7 +210,7 @@ public class DynamicAccessModule extends Module implements Access
    * @throws ServerException
    */
   public MethodDef[] getBehaviorMethods(Context context, String PID,
-      String bDefPID, Calendar asOfDateTime) throws ServerException
+      String bDefPID, Date asOfDateTime) throws ServerException
   {
     //m_ipRestriction.enforce(context);
     return da.getBehaviorMethods(context, PID, bDefPID, asOfDateTime);
@@ -228,7 +228,7 @@ public class DynamicAccessModule extends Module implements Access
    * @throws ServerException
    */
   public MIMETypedStream getBehaviorMethodsXML(Context context, String PID,
-      String bDefPID, Calendar asOfDateTime) throws ServerException
+      String bDefPID, Date asOfDateTime) throws ServerException
   {
     //m_ipRestriction.enforce(context);
     return da.getBehaviorMethodsXML(context, PID, bDefPID, asOfDateTime);
@@ -251,7 +251,7 @@ public class DynamicAccessModule extends Module implements Access
    */
   public MIMETypedStream getDissemination(Context context, String PID,
       String bDefPID, String methodName, Property[] userParms,
-      Calendar asOfDateTime) throws ServerException
+      Date asOfDateTime) throws ServerException
   {
     //m_ipRestriction.enforce(context);
 
@@ -283,7 +283,7 @@ public class DynamicAccessModule extends Module implements Access
    * @throws ServerException
    */
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
-      Calendar asOfDateTime) throws ServerException
+      Date asOfDateTime) throws ServerException
   {
     //m_ipRestriction.enforce(context);
     return da.getObjectMethods(context, PID, asOfDateTime);
@@ -300,7 +300,7 @@ public class DynamicAccessModule extends Module implements Access
    * @throws ServerException
    */
   public ObjectProfile getObjectProfile(Context context, String PID,
-    Calendar asOfDateTime) throws ServerException
+    Date asOfDateTime) throws ServerException
   {
     return null;
   }

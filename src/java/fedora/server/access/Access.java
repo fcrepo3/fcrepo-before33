@@ -1,6 +1,6 @@
 package fedora.server.access;
 
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import fedora.server.Context;
@@ -51,7 +51,7 @@ public interface Access
    *         request.
    */
   public String[] getBehaviorDefinitions(Context context, String PID,
-      Calendar asOfDateTime) throws ServerException;
+      Date asOfDateTime) throws ServerException;
 
   /**
    * <p>Gets the method definitions of the Behavior Mechanism object
@@ -67,7 +67,7 @@ public interface Access
    *         request.
    */
   public MethodDef[] getBehaviorMethods(Context context, String PID,
-      String bDefPID, Calendar asOfDateTime) throws ServerException;
+      String bDefPID, Date asOfDateTime) throws ServerException;
 
   /**
    * <p>Gets the method definitions associated with the specified Behavior
@@ -84,7 +84,7 @@ public interface Access
    *         request.
    */
   public MIMETypedStream getBehaviorMethodsXML(Context context, String PID,
-      String bDefPID, Calendar asOfDateTime) throws ServerException;
+      String bDefPID, Date asOfDateTime) throws ServerException;
 
   /**
    * <p>Disseminates the content produced by executing the specified method
@@ -104,7 +104,7 @@ public interface Access
    */
   public MIMETypedStream getDissemination(Context context, String PID,
       String bDefPID, String methodName, Property[] userParms,
-      Calendar asOfDateTime) throws ServerException;
+      Date asOfDateTime) throws ServerException;
 
   /**
    * <p>Gets a list of all Behavior Definition object PIDs and method names
@@ -119,7 +119,7 @@ public interface Access
    *         request.
    */
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
-      Calendar asOfDateTime) throws ServerException;
+      Date asOfDateTime) throws ServerException;
 
   /**
    * <p>Gets object profile</p>
@@ -133,7 +133,7 @@ public interface Access
    *         request.
    */
   public ObjectProfile getObjectProfile(Context context, String PID,
-      Calendar asOfDateTime) throws ServerException;
+      Date asOfDateTime) throws ServerException;
 
   /**
    * <p>Lists the specified fields of each object matching the given

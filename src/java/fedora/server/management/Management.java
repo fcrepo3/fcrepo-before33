@@ -1,7 +1,7 @@
 package fedora.server.management;
 
 import java.io.InputStream;
-import java.util.Calendar;
+import java.util.Date;
 
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
@@ -36,21 +36,31 @@ import fedora.server.storage.types.DSBindingMap;
  */
 public interface Management {
 
-//    public String createObject(Context context) throws ServerException;
+    public String ingestObject(Context context, 
+                               InputStream serialization, 
+                               String logMessage, 
+                               String format, 
+                               String encoding, 
+                               boolean newPid) throws ServerException;
 
-    public String ingestObject(Context context, InputStream serialization, String logMessage, String format, String encoding, boolean newPid) throws ServerException;
+    public void modifyObject(Context context, 
+                             String pid, 
+                             String state,
+                             String label, 
+                             String logMessage) throws ServerException;
 
-    public void modifyObject(Context context, String pid, String state,
-            String label, String logMessage)
-            throws ServerException;
+    public InputStream getObjectXML(Context context, 
+                                    String pid, 
+                                    String encoding) throws ServerException;
 
-    public InputStream getObjectXML(Context context, String pid, String encoding) throws ServerException;
+    public InputStream exportObject(Context context, 
+                                    String pid, 
+                                    String format, 
+                                    String encoding) throws ServerException;
 
-    public InputStream exportObject(Context context, String pid, String format, String encoding) throws ServerException;
-
-    public void purgeObject(Context context, String pid, String logMessage) throws ServerException;
-
-//    public AuditRecord[] getObjectAuditTrail(Context context, String pid) throws ServerException;
+    public void purgeObject(Context context, 
+                            String pid, 
+                            String logMessage) throws ServerException;
 
     public String addDatastream(Context context,
                                 String pid,
@@ -73,17 +83,40 @@ public interface Management {
                                    String controlGroup,
                                    String dsState) throws ServerException;
 
-    public void modifyDatastreamByReference(Context context, String pid, String datastreamID, String dsLabel, String logMessage, String dsLocation, String dsState) throws ServerException;
+    public void modifyDatastreamByReference(Context context, 
+                                            String pid, 
+                                            String datastreamID, 
+                                            String dsLabel, 
+                                            String logMessage, 
+                                            String dsLocation, 
+                                            String dsState) throws ServerException;
 
-    public void modifyDatastreamByValue(Context context, String pid, String datastreamID, String dsLabel, String logMessage, InputStream dsContent, String dsState) throws ServerException;
+    public void modifyDatastreamByValue(Context context, 
+                                        String pid, 
+                                        String datastreamID, 
+                                        String dsLabel, 
+                                        String logMessage, 
+                                        InputStream dsContent, 
+                                        String dsState) throws ServerException;
 
-    public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar endDT) throws ServerException;
+    public Date[] purgeDatastream(Context context, 
+                                  String pid, 
+                                  String datastreamID, 
+                                  Date endDT) throws ServerException;
 
-    public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime) throws ServerException;
+    public Datastream getDatastream(Context context, 
+                                    String pid, 
+                                    String datastreamID, 
+                                    Date asOfDateTime) throws ServerException;
 
-    public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime, String dsState) throws ServerException;
+    public Datastream[] getDatastreams(Context context, 
+                                       String pid, 
+                                       Date asOfDateTime, 
+                                       String dsState) throws ServerException;
 
-    public Datastream[] getDatastreamHistory(Context context, String pid, String datastreamID) throws ServerException;
+    public Datastream[] getDatastreamHistory(Context context, 
+                                             String pid, 
+                                             String datastreamID) throws ServerException;
 
 	public String addDisseminator(Context context,
 								  String pid,
@@ -95,26 +128,54 @@ public interface Management {
 								  DSBindingMap bindingMap,
 								  String dissState) throws ServerException;
 
-    public void modifyDisseminator(Context context, String pid, String disseminatorID, String bMechPid, String dissLabel, String bDefLabel, String bMechLabel, DSBindingMap bindingMap, String logMessage, String dissState) throws ServerException;
+    public void modifyDisseminator(Context context, 
+                                   String pid, 
+                                   String disseminatorID, 
+                                   String bMechPid, 
+                                   String dissLabel, 
+                                   String bDefLabel, 
+                                   String bMechLabel, 
+                                   DSBindingMap bindingMap, 
+                                   String logMessage, 
+                                   String dissState) throws ServerException;
 
-//    public void deleteDisseminator(Context context, String pid, String disseminatorID) throws ServerException;
+    public Date[] purgeDisseminator(Context context, 
+                                    String pid, 
+                                    String disseminatorID, 
+                                    Date endDT) throws ServerException;
 
-    public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorID, Calendar endDT) throws ServerException;
+    public Disseminator getDisseminator(Context context, 
+                                        String pid, 
+                                        String disseminatorID, 
+                                        Date asOfDateTime) throws ServerException;
 
-    public Disseminator getDisseminator(Context context, String pid, String disseminatorID, Calendar asOfDateTime) throws ServerException;
+    public Disseminator[] getDisseminators(Context context, 
+                                           String pid, 
+                                           Date asOfDateTime, 
+                                           String dissState) throws ServerException;
 
-    public Disseminator[] getDisseminators(Context context, String pid, Calendar asOfDateTime, String dissState) throws ServerException;
-
-    public Disseminator[] getDisseminatorHistory(Context context, String pid, String disseminatorID) throws ServerException;
+    public Disseminator[] getDisseminatorHistory(Context context, 
+                                                 String pid, 
+                                                 String disseminatorID) throws ServerException;
 
     public String putTempStream(InputStream in) throws ServerException;
 
     public InputStream getTempStream(String id) throws ServerException;
 
-    public void setDatastreamState(Context context, String pid, String dsID, String dsState, String logMessage) throws ServerException;
+    public void setDatastreamState(Context context, 
+                                   String pid, 
+                                   String dsID, 
+                                   String dsState, 
+                                   String logMessage) throws ServerException;
 
-    public void setDisseminatorState(Context context, String pid, String dsID, String dsState, String logMessage) throws ServerException;
+    public void setDisseminatorState(Context context, 
+                                     String pid, 
+                                     String dsID, 
+                                     String dsState, 
+                                     String logMessage) throws ServerException;
 
-    public String[] getNextPID(Context context, int numPIDs, String namespace) throws ServerException;
+    public String[] getNextPID(Context context, 
+                               int numPIDs, 
+                               String namespace) throws ServerException;
 
 }

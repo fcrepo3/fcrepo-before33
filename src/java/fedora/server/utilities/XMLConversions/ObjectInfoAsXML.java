@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -144,7 +143,7 @@ public class ObjectInfoAsXML
                                  Date versDateTime)
             throws ServerException {
         StringBuffer out=new StringBuffer();
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         if (versDateTime == null || DateUtility.
@@ -302,7 +301,7 @@ public class ObjectInfoAsXML
     public String getSearchFields(DOReader reader)
             throws ServerException {
         StringBuffer out=new StringBuffer();
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         out.append("<fields>\n");
         out.append("<pid>" + reader.GetObjectPID() + "</pid>\n");
         String label=reader.GetObjectLabel();
@@ -470,7 +469,7 @@ public class ObjectInfoAsXML
     }
     // returns -1 if can't parse as date
     private long parseDateAsNum(String str) {
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         try {
             Date d=formatter.parse(str);
             return d.getTime();

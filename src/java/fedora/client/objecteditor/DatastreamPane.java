@@ -3,7 +3,6 @@ package fedora.client.objecteditor;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -41,9 +40,6 @@ import fedora.server.utilities.StreamUtility;
 public class DatastreamPane
         extends EditingPane 
         implements ChangeListener {
-
-    private static SimpleDateFormat s_formatter=
-            new SimpleDateFormat("yyyy-MM-dd' at 'HH:mm:ss");
 
     private String m_pid;
     private Datastream m_mostRecent;
@@ -193,7 +189,7 @@ public class DatastreamPane
                 createdLabel.setPreferredSize(m_labelDims);
                 m_dateLabelAndValue.add(createdLabel);
                 m_dateLabelAndValue.add(Box.createHorizontalStrut(0));
-                m_dtLabel=new JTextArea(s_formatter.format(versions[0].getCreateDate().getTime()) + " ");
+                m_dtLabel=new JTextArea(versions[0].getCreateDate() + " ");
                 m_dtLabel.setBackground(Administrator.BACKGROUND_COLOR);
                 m_dtLabel.setEditable(false);
                 m_dateLabelAndValue.add(m_dtLabel);
@@ -215,7 +211,7 @@ public class DatastreamPane
        JSlider source=(JSlider)e.getSource();
        if (!source.getValueIsAdjusting()) {
            m_versionCardLayout.show(m_valuePane, "" + source.getValue());
-           m_dtLabel.setText(s_formatter.format(m_versions[source.getValue()].getCreateDate().getTime()));
+           m_dtLabel.setText(m_versions[source.getValue()].getCreateDate());
        }
     }
 
@@ -303,8 +299,7 @@ public class DatastreamPane
         if (withDate) {
             buf.append("fedora-system:3/getItem");
             buf.append('/');
-            SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-            buf.append(formatter.format(ds.getCreateDate().getTime()));
+            buf.append(ds.getCreateDate());
             buf.append("?itemID=");
             buf.append(ds.getID());
         } else {
@@ -424,8 +419,7 @@ public class DatastreamPane
                                              m_locationTextField, 
                                              urlTextField};
                 } else {
-                    JTextArea cDateTextArea=new JTextArea(
-                            s_formatter.format(m_ds.getCreateDate().getTime()));
+                    JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
                     cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
                     cDateTextArea.setEditable(false);
                     values=new JComponent[] {cDateTextArea,
@@ -438,8 +432,7 @@ public class DatastreamPane
                     values=new JComponent[] {m_labelTextField, 
                                              urlTextField};
                 } else {
-                    JTextArea cDateTextArea=new JTextArea(
-                            s_formatter.format(m_ds.getCreateDate().getTime()));
+                    JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
                     cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
                     cDateTextArea.setEditable(false);
                     values=new JComponent[] {cDateTextArea,
@@ -589,7 +582,7 @@ public class DatastreamPane
             JButton purgeButton=new JButton("Purge...");
             Administrator.constrainHeight(purgeButton);
             purgeButton.addActionListener(m_purgeButtonListener);
-            purgeButton.setActionCommand(s_formatter.format(m_ds.getCreateDate().getTime()));
+            purgeButton.setActionCommand(m_ds.getCreateDate());
             actionPane.add(purgeButton);
             add(actionPane, BorderLayout.SOUTH);
         }
@@ -607,7 +600,7 @@ public class DatastreamPane
                                     m_ds.getMIMEType(), 
                                     Administrator.DOWNLOADER.getDatastreamContent(
                                             m_pid, m_ds.getID(), 
-                                            m_ds.getCreateDate().getTime()));
+                                            m_ds.getCreateDate()));
                             m_editor.setContentChangeListener(dataChangeListener);
                             add(m_editor.getComponent(), BorderLayout.CENTER);
                             m_editButton.setEnabled(false);
@@ -619,7 +612,7 @@ public class DatastreamPane
                                     m_ds.getMIMEType(), 
                                     Administrator.DOWNLOADER.getDatastreamContent(
                                             m_pid, m_ds.getID(), 
-                                            m_ds.getCreateDate().getTime()));
+                                            m_ds.getCreateDate()));
                             add(m_viewer.getComponent(), BorderLayout.CENTER);
                             m_viewButton.setEnabled(false);
                             validate();
@@ -633,7 +626,7 @@ public class DatastreamPane
             } else {
                 // the server will provide the content
                 contentStream=Administrator.DOWNLOADER.getDatastreamContent(
-                        m_pid, m_ds.getID(), m_ds.getCreateDate().getTime());
+                        m_pid, m_ds.getID(), m_ds.getCreateDate());
             }
             ContentViewer separateViewer=ContentHandlerFactory.getViewer(
                     m_ds.getMIMEType(), contentStream);
@@ -806,7 +799,7 @@ public class DatastreamPane
                                     m_ds.getMIMEType(), 
                                     Administrator.DOWNLOADER.getDatastreamContent(
                                             m_pid, m_ds.getID(), 
-                                            m_ds.getCreateDate().getTime()
+                                            m_ds.getCreateDate()
                                     ) );
                             add(v.getComponent(), BorderLayout.CENTER);
                             btn.setEnabled(false);
@@ -827,7 +820,7 @@ public class DatastreamPane
             JButton purgeButton=new JButton("Purge...");
             Administrator.constrainHeight(purgeButton);
             purgeButton.addActionListener(m_purgeButtonListener);
-            purgeButton.setActionCommand(s_formatter.format(m_ds.getCreateDate().getTime()));
+            purgeButton.setActionCommand(m_ds.getCreateDate());
             buttonPanel.add(purgeButton);
             add(buttonPanel, BorderLayout.SOUTH);
 
@@ -851,9 +844,8 @@ public class DatastreamPane
             m_dateStrings=new Object[versions.length];
             m_dsIndex=new HashMap();
             for (int i=0; i<versions.length; i++) {
-                String dateAsString=s_formatter.format(versions[i].getCreateDate().getTime());
-                m_dateStrings[i]=dateAsString;
-                m_dsIndex.put(dateAsString, new Integer(i));
+                m_dateStrings[i]=versions[i].getCreateDate();
+                m_dsIndex.put(versions[i].getCreateDate(), new Integer(i));
             }
         }
 
@@ -942,7 +934,7 @@ public class DatastreamPane
                     System.out.println("Exporting to " + file.getPath());
                     Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
                     Administrator.DOWNLOADER.getDatastreamContent(m_pid, 
-                            m_ds.getID(), m_ds.getCreateDate().getTime(),
+                            m_ds.getID(), m_ds.getCreateDate(),
                             new FileOutputStream(file));
                 }
             } catch (Exception e) {

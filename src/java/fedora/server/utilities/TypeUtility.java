@@ -4,8 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 /**
  *
@@ -49,9 +47,7 @@ public abstract class TypeUtility
 		    // only given location if it's a redirect or external datastream
             out.setLocation(in.DSLocation);
 		}
-        java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
-        cal.setTime(in.DSCreateDT);
-        out.setCreateDate(cal);
+        out.setCreateDate(DateUtility.convertDateToString(in.DSCreateDT));
         out.setID(in.DatastreamID);
         out.setInfoType(in.DSInfoType);
         out.setLabel(in.DSLabel);
@@ -80,9 +76,7 @@ public abstract class TypeUtility
                 sess.setCompleteListSize(new org.apache.axis.types.NonNegativeInteger("" + result.getCompleteListSize()));
             }
             if (result.getExpirationDate()!=null) {
-                Calendar cal=Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                cal.setTime(result.getExpirationDate());
-                sess.setExpirationDate(cal);
+                sess.setExpirationDate(DateUtility.convertDateToString(result.getExpirationDate()));
             }
             ret.setListSession(sess);
         }
@@ -136,19 +130,13 @@ public abstract class TypeUtility
             if (sf.getState()!=null) gf.setState(sf.getState());
             if (sf.getOwnerId()!=null) gf.setOwnerId(sf.getOwnerId());
             if (sf.getCDate()!=null) {
-                java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
-                cal.setTime(sf.getCDate());
-                gf.setCDate(cal);
+                gf.setCDate(DateUtility.convertDateToString(sf.getCDate()));
             }
             if (sf.getMDate()!=null) {
-                java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
-                cal.setTime(sf.getMDate());
-                gf.setMDate(cal);
+                gf.setMDate(DateUtility.convertDateToString(sf.getMDate()));
             }
             if (sf.getDCMDate()!=null) {
-                java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
-                cal.setTime(sf.getMDate());
-                gf.setDcmDate(cal);
+                gf.setDcmDate(DateUtility.convertDateToString(sf.getDCMDate()));
             }
             if (sf.bDefs().size()!=0) gf.setBDef(toStringArray(sf.bDefs()));
             if (sf.bMechs().size()!=0) gf.setBMech(toStringArray(sf.bMechs()));
@@ -722,9 +710,9 @@ public abstract class TypeUtility
       objectProfile.objectContentModel = genObjectProfile.getObjContentModel();
       objectProfile.objectType = genObjectProfile.getObjType();
       objectProfile.objectCreateDate =
-          DateUtility.convertCalendarToDate(genObjectProfile.getObjCreateDate());
+          DateUtility.convertStringToDate(genObjectProfile.getObjCreateDate());
       objectProfile.objectLastModDate =
-          DateUtility.convertCalendarToDate(genObjectProfile.getObjLastModDate());
+          DateUtility.convertStringToDate(genObjectProfile.getObjLastModDate());
       objectProfile.dissIndexViewURL = genObjectProfile.getObjDissIndexViewURL();
       objectProfile.itemIndexViewURL = genObjectProfile.getObjItemIndexViewURL();
       return objectProfile;
@@ -747,9 +735,9 @@ public abstract class TypeUtility
       genObjectProfile.setObjContentModel(objectProfile.objectContentModel);
       genObjectProfile.setObjType(objectProfile.objectType);
       genObjectProfile.setObjCreateDate(
-          DateUtility.convertDateToCalendar(objectProfile.objectCreateDate));
+          DateUtility.convertDateToString(objectProfile.objectCreateDate));
       genObjectProfile.setObjLastModDate(
-          DateUtility.convertDateToCalendar(objectProfile.objectLastModDate));
+          DateUtility.convertDateToString(objectProfile.objectLastModDate));
       genObjectProfile.setObjDissIndexViewURL(objectProfile.dissIndexViewURL);
       genObjectProfile.setObjItemIndexViewURL(objectProfile.itemIndexViewURL);
       return genObjectProfile;
@@ -897,13 +885,11 @@ public abstract class TypeUtility
   {
       fedora.server.types.gen.Disseminator out=
               new fedora.server.types.gen.Disseminator();
-      java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
-      cal.setTime(in.dissCreateDT);
+      out.setCreateDate(DateUtility.convertDateToString(in.dissCreateDT));
       out.setBDefLabel(in.bDefLabel);
       out.setBDefPID(in.bDefID);
       out.setBMechLabel(in.bMechLabel);
       out.setBMechPID(in.bMechID);
-      out.setCreateDate(cal);
       out.setID(in.dissID);
       out.setLabel(in.dissLabel);
       out.setState(in.dissState);
@@ -925,7 +911,7 @@ public abstract class TypeUtility
         diss.bDefID = genDisseminator.getBDefPID();
         diss.bMechLabel = genDisseminator.getBMechLabel();
         diss.bMechID = genDisseminator.getBMechPID();
-        diss.dissCreateDT = genDisseminator.getCreateDate().getTime();
+        diss.dissCreateDT = DateUtility.convertStringToDate(genDisseminator.getCreateDate());
         diss.dissID = genDisseminator.getID();
         diss.dissLabel = genDisseminator.getLabel();
         diss.dissState = genDisseminator.getState();
@@ -941,7 +927,6 @@ public abstract class TypeUtility
     {
         fedora.server.types.gen.DatastreamBindingMap out=
                 new fedora.server.types.gen.DatastreamBindingMap();
-        java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
         fedora.server.types.gen.DatastreamBinding datastreamBinding =
             new fedora.server.types.gen.DatastreamBinding();
         out.setDsBindings(convertDSBindingArrayToGenDatastreamBindingArray(in.dsBindings));
@@ -976,7 +961,6 @@ public abstract class TypeUtility
     {
         fedora.server.types.gen.DatastreamBinding out=
                 new fedora.server.types.gen.DatastreamBinding();
-        java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
         out.setBindKeyName(in.bindKeyName);
         out.setBindLabel(in.bindLabel);
         out.setDatastreamID(in.datastreamID);

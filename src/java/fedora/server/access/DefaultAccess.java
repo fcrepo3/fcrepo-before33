@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -170,12 +169,12 @@ public class DefaultAccess extends Module implements Access
    *         request.
    */
   public String[] getBehaviorDefinitions(Context context, String PID,
-      Calendar asOfDateTime) throws ServerException
+      Date asOfDateTime) throws ServerException
   {
     long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
     // Grab the behavior definitions that are bound to the object
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    Date versDateTime = asOfDateTime;
     String[] behaviorDefs = null;
     DOReader reader =
         m_manager.getReader(context, PID);
@@ -215,7 +214,7 @@ public class DefaultAccess extends Module implements Access
    *         request.
    */
   public MethodDef[] getBehaviorMethods(Context context, String PID,
-      String bDefPID, Calendar asOfDateTime) throws ServerException
+      String bDefPID, Date asOfDateTime) throws ServerException
   {
     long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
@@ -228,7 +227,7 @@ public class DefaultAccess extends Module implements Access
         m_dynamicAccess.getBehaviorMethods(context, PID, bDefPID, asOfDateTime);
     }
 
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    Date versDateTime = asOfDateTime;
     DOReader reader =
         m_manager.getReader(context, PID);
 
@@ -260,13 +259,13 @@ public class DefaultAccess extends Module implements Access
    *         request.
    */
   public MIMETypedStream getBehaviorMethodsXML(Context context,
-      String PID, String bDefPID, Calendar asOfDateTime) throws ServerException
+      String PID, String bDefPID, Date asOfDateTime) throws ServerException
   {
     long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
     try
     {
-      Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+      Date versDateTime = asOfDateTime;
       InputStream methodResults = null;
       DOReader reader =
           m_manager.getReader(context, PID);
@@ -342,7 +341,7 @@ public class DefaultAccess extends Module implements Access
    */
   public MIMETypedStream getDissemination(Context context, String PID,
       String bDefPID, String methodName, Property[] userParms,
-      Calendar asOfDateTime) throws ServerException
+      Date asOfDateTime) throws ServerException
   {
     m_ipRestriction.enforce(context);
     long initStartTime = new Date().getTime();
@@ -372,7 +371,7 @@ public class DefaultAccess extends Module implements Access
 
     // SDP: get a bmech reader to get information that is specific to
     // a mechanism.
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    Date versDateTime = asOfDateTime;
     BMechReader bmechreader = null;
     Disseminator[] dissSet = reader.GetDisseminators(versDateTime, null);
     startTime = new Date().getTime();
@@ -480,11 +479,11 @@ public class DefaultAccess extends Module implements Access
    *         request.
    */
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
-      Calendar asOfDateTime) throws ServerException
+      Date asOfDateTime) throws ServerException
   {
     long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    Date versDateTime = asOfDateTime;
     DOReader reader =
         m_manager.getReader(context, PID);
 
@@ -515,14 +514,14 @@ public class DefaultAccess extends Module implements Access
   }
 
   public ObjectProfile getObjectProfile(Context context, String PID,
-    Calendar asOfDateTime) throws ServerException
+    Date asOfDateTime) throws ServerException
   {
     DOReader reader = m_manager.getReader(context, PID);
 
     // Check data object state
     checkState(context, "Data", reader.GetObjectState(), PID);
 
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    Date versDateTime = asOfDateTime;
     ObjectProfile profile = new ObjectProfile();
     profile.PID = reader.GetObjectPID();
     profile.objectLabel = reader.GetObjectLabel();

@@ -9,7 +9,6 @@ import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import fedora.swing.jtable.DefaultSortTableModel;
@@ -59,7 +58,6 @@ public class ResultFrame
     private JSortTable m_table;
     private String[] m_rowPids;
     private JButton m_moreButton;
-    public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     private AutoFinder m_finder=null;
 
@@ -165,9 +163,9 @@ public class ResultFrame
         if (name.equals("cModel")) return o.getCModel();
         if (name.equals("state")) return o.getState();
         if (name.equals("ownerId")) return o.getOwnerId();
-        if (name.equals("cDate")) return FORMATTER.format(o.getCDate().getTime());
-        if (name.equals("mDate")) return FORMATTER.format(o.getMDate().getTime());
-        if (name.equals("dcmDate")) return FORMATTER.format(o.getDcmDate());
+        if (name.equals("cDate")) return o.getCDate();
+        if (name.equals("mDate")) return o.getMDate();
+        if (name.equals("dcmDate")) return o.getDcmDate();
         if (name.equals("bDef")) return getList(o.getBDef());
         if (name.equals("bMech")) return getList(o.getBMech());
         if (name.equals("title")) return getList(o.getTitle());

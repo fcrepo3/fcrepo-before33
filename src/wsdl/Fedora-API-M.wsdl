@@ -5,10 +5,9 @@
 	<types>
 		<documentation>
 			<wsdldoc:type name="xsd:string" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
-			<wsdldoc:type name="xsd:dateTime" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#dateTime"/>
 			<wsdldoc:type name="xsd:base64Binary" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#base64Binary"/>
 			<wsdldoc:type name="fedora-types:ArrayOfString" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfString"/>
-			<wsdldoc:type name="fedora-types:ArrayOfDateTime" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDateTime"/>
+			<wsdldoc:type name="fedora-types:ArrayOfDateTimeString" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDateTimeString"/>
 			<wsdldoc:type name="fedora-types:Datastream" url="http://www.fedora.info/definitions/1/0/types/#Datastream"/>
 			<wsdldoc:type name="fedora-types:ArrayOfDatastream" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDatastream"/>
 			<wsdldoc:type name="fedora-types:DatastreamBindingMap" url="http://www.fedora.info/definitions/1/0/types/#DatastreamBindingMap"/>
@@ -316,7 +315,7 @@
 		<part name="datastreamID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
+		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
       object.  If null, the current view of the object (the most recent time) 
       is assumed.</documentation>
@@ -331,7 +330,7 @@
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
+		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
       object.  If null, the current view of the object (the most recent time) 
       is assumed.</documentation>
@@ -365,7 +364,7 @@
 		<part name="disseminatorID" type="xsd:string">
 			<documentation>the ID of the disseminator.</documentation>
 		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
+		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
 			      object.  If null, the current view of the object (the most recent time) 
 			      is assumed.</documentation>
@@ -378,7 +377,7 @@
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
+		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
 				      object.  If null, the current view of the object (the most recent time) 
 			     	 is assumed.</documentation>
@@ -412,14 +411,14 @@
 		<part name="datastreamID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
-		<part name="endDT" type="xsd:dateTime">
+		<part name="endDT" type="xsd:string">
 			<documentation>the (inclusive) ending date-time stamp of the range. If 
           null, this is taken to be the greatest possible value, and thus,
           the entire version history of the datastream will be purged.</documentation>
 		</part>
 	</message>
 	<message name="purgeDatastreamResponse">
-		<part name="response" type="fedora-types:ArrayOfDateTime">
+		<part name="response" type="fedora-types:ArrayOfDateTimeString">
 			<documentation>the creation date/time of each deleted datastream.
         </documentation>
 		</part>
@@ -431,13 +430,13 @@
 		<part name="disseminatorID" type="xsd:string">
 			<documentation>the ID of the disseminator.</documentation>
 		</part>
-		<part name="endDT" type="xsd:dateTime">
+		<part name="endDT" type="xsd:string">
 			<documentation>the (inclusive) ending date-time stamp of the range. If 
       null, this is taken to be the greatest possible value.</documentation>
 		</part>
 	</message>
 	<message name="purgeDisseminatorResponse">
-		<part name="response" type="fedora-types:ArrayOfDateTime">
+		<part name="response" type="fedora-types:ArrayOfDateTimeString">
 			<documentation>the creation date/time of each deleted disseminator, 
       earliest first.</documentation>
 		</part>

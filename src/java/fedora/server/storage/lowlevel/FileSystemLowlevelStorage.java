@@ -2,7 +2,6 @@ package fedora.server.storage.lowlevel;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.GregorianCalendar;
 import fedora.server.Server;
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.ObjectAlreadyInLowlevelStorageException;

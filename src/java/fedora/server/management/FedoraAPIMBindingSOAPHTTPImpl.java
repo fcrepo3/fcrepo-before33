@@ -14,6 +14,7 @@ import fedora.server.storage.TestFileStreamStorage;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 import fedora.server.utilities.AxisUtility;
+import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.TypeUtility;
 
 import java.io.File;
@@ -23,7 +24,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
@@ -366,10 +367,18 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public java.util.Calendar[] purgeDatastream(String PID, String datastreamID, java.util.Calendar endDT) throws java.rmi.RemoteException {
+    public String[] purgeDatastream(String PID, 
+                                    String datastreamID, 
+                                    String endDT) 
+            throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            return s_management.purgeDatastream(getContext(), PID, datastreamID, endDT);
+            return toStringArray(
+                    s_management.purgeDatastream(
+                            getContext(), 
+                            PID, 
+                            datastreamID,
+                            DateUtility.convertStringToDate(endDT)));
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -378,10 +387,26 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public fedora.server.types.gen.Datastream getDatastream(String PID, String datastreamID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    private String[] toStringArray(Date[] dates) throws Exception {
+        String[] out = new String[dates.length];
+        for (int i = 0; i < dates.length; i++) {
+            out[i] = DateUtility.convertDateToString(dates[i]);
+        }
+        return out;
+    }
+
+    public fedora.server.types.gen.Datastream getDatastream(String PID, 
+                                                            String datastreamID, 
+                                                            String asOfDateTime) 
+            throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            fedora.server.storage.types.Datastream ds=s_management.getDatastream(getContext(), PID, datastreamID, asOfDateTime);
+            fedora.server.storage.types.Datastream ds=
+                    s_management.getDatastream(
+                            getContext(), 
+                            PID, 
+                            datastreamID, 
+                            DateUtility.convertStringToDate(asOfDateTime));
             return TypeUtility.convertDatastreamToGenDatastream(ds);
         } catch (ServerException se) {
             logStackTrace(se);
@@ -391,10 +416,18 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public fedora.server.types.gen.Datastream[] getDatastreams(String PID, java.util.Calendar asOfDateTime, String state) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Datastream[] getDatastreams(String PID, 
+                                                               String asOfDateTime, 
+                                                               String state) 
+            throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            fedora.server.storage.types.Datastream[] intDatastreams=s_management.getDatastreams(getContext(), PID, asOfDateTime, state);
+            fedora.server.storage.types.Datastream[] intDatastreams=
+                    s_management.getDatastreams(
+                            getContext(), 
+                            PID, 
+                            DateUtility.convertStringToDate(asOfDateTime),
+                            state);
             return getGenDatastreams(intDatastreams);
         } catch (ServerException se) {
             logStackTrace(se);
@@ -455,12 +488,18 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 	}
 }
 
-    public java.util.Calendar[] purgeDisseminator(String PID,
-            String disseminatorID, java.util.Calendar endDT)
+    public String[] purgeDisseminator(String PID,
+                                      String disseminatorID, 
+                                      String endDT)
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            return s_management.purgeDisseminator(getContext(), PID, disseminatorID, endDT);
+            return toStringArray(
+                    s_management.purgeDisseminator(
+                            getContext(), 
+                            PID, 
+                            disseminatorID, 
+                            DateUtility.convertStringToDate(endDT)));
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -469,7 +508,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public fedora.server.types.gen.Disseminator[] getDisseminatorHistory(String PID, String disseminatorID) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Disseminator[] getDisseminatorHistory(String PID, 
+                                                                         String disseminatorID) 
+              throws java.rmi.RemoteException {
       assertInitialized();
       try {
           fedora.server.storage.types.Disseminator[] intDisseminators=
@@ -486,29 +527,45 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public fedora.server.types.gen.Disseminator getDisseminator(String PID, String disseminatorID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
-      assertInitialized();
-      try {
-          fedora.server.storage.types.Disseminator diss=s_management.getDisseminator(getContext(), PID, disseminatorID, asOfDateTime);
-          return TypeUtility.convertDisseminatorToGenDisseminator(diss);
-      } catch (ServerException se) {
-          logStackTrace(se);
-          throw AxisUtility.getFault(se);
-      } catch (Exception e) {
-          throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+    public fedora.server.types.gen.Disseminator getDisseminator(String PID, 
+                                                                String disseminatorID, 
+                                                                String asOfDateTime) 
+            throws java.rmi.RemoteException {
+        assertInitialized();
+        try {
+            fedora.server.storage.types.Disseminator diss=
+                    s_management.getDisseminator(
+                            getContext(), 
+                            PID, 
+                            disseminatorID, 
+                            DateUtility.convertStringToDate(asOfDateTime));
+            return TypeUtility.convertDisseminatorToGenDisseminator(diss);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
     }
 
-    public fedora.server.types.gen.Disseminator[] getDisseminators(String PID, java.util.Calendar asOfDateTime, String dissState) throws java.rmi.RemoteException {
-      assertInitialized();
-          try {
-              fedora.server.storage.types.Disseminator[] intDisseminators=s_management.getDisseminators(getContext(), PID, asOfDateTime, dissState);
-              return getGenDisseminators(intDisseminators);
-          } catch (ServerException se) {
-              logStackTrace(se);
-              throw AxisUtility.getFault(se);
-          } catch (Exception e) {
-              throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+    public fedora.server.types.gen.Disseminator[] getDisseminators(String PID, 
+                                                                   String asOfDateTime, 
+                                                                   String dissState) 
+              throws java.rmi.RemoteException {
+        assertInitialized();
+        try {
+            fedora.server.storage.types.Disseminator[] intDisseminators=
+                    s_management.getDisseminators(
+                            getContext(), 
+                            PID, 
+                            DateUtility.convertStringToDate(asOfDateTime),
+                            dissState);
+            return getGenDisseminators(intDisseminators);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
     }
 

@@ -9,9 +9,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -68,7 +65,7 @@ public class Downloader {
         m_creds=new UsernamePasswordCredentials(user, pass);
     }
 
-    public void getDatastreamContent(String pid, String dsID, Date asOfDateTime,
+    public void getDatastreamContent(String pid, String dsID, String asOfDateTime,
             OutputStream out)
             throws IOException {
         InputStream in=getDatastreamContent(pid, dsID, asOfDateTime);
@@ -76,7 +73,7 @@ public class Downloader {
     }
 
     public InputStream getDatastreamContent(String pid, String dsID,
-            Date asOfDateTime)
+            String asOfDateTime)
             throws IOException {
         HashMap parms=new HashMap();
         parms.put("itemID", dsID);
@@ -85,14 +82,14 @@ public class Downloader {
     }
 
     public void getDissemination(String pid, String bDef, String method, 
-            Map parms, Date asOfDateTime, OutputStream out) 
+            Map parms, String asOfDateTime, OutputStream out) 
             throws IOException {
         InputStream in=getDissemination(pid, bDef, method, parms, asOfDateTime);
         StreamUtility.pipeStream(in, out, 4096);
     }
 
     public InputStream getDissemination(String pid, String bDef, String method, 
-            Map parms, Date asOfDateTime) 
+            Map parms, String asOfDateTime) 
             throws IOException {
         StringBuffer buf=new StringBuffer();
         buf.append(m_fedoraUrlStart);
@@ -102,9 +99,8 @@ public class Downloader {
         buf.append('/');
         buf.append(method);
         if (asOfDateTime!=null) {
-            SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             buf.append('/');
-            buf.append(formatter.format(asOfDateTime));
+            buf.append(asOfDateTime);
         }
         if (parms!=null) {
             Iterator iter=parms.keySet().iterator();
@@ -241,10 +237,9 @@ public class Downloader {
     public static void main(String[] args) {
         try {
             if (args.length==7 || args.length==8) {
-                Date asOfDateTime=null;
+                String asOfDateTime=null;
                 if (args.length==8) {
-                    SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                    asOfDateTime=format.parse(args[7], new ParsePosition(0));
+                    asOfDateTime=args[7];
                 }
                 FileOutputStream out=new FileOutputStream(new File(args[6]));
                 Downloader downloader=new Downloader(args[0], 

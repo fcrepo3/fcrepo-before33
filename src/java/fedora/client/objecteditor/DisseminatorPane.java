@@ -3,7 +3,6 @@ package fedora.client.objecteditor;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -42,9 +41,6 @@ import fedora.client.objecteditor.types.ParameterDefinition;
 public class DisseminatorPane
         extends EditingPane
         implements ChangeListener {
-
-    private static SimpleDateFormat s_formatter=
-            new SimpleDateFormat("yyyy-MM-dd' at 'HH:mm:ss");
 
     private String m_pid;
     private Disseminator[] m_versions;
@@ -200,7 +196,7 @@ public class DisseminatorPane
             createdLabel.setPreferredSize(m_labelDims);
             m_dateLabelAndValue.add(createdLabel);
             m_dateLabelAndValue.add(Box.createHorizontalStrut(0));
-            m_dtLabel=new JTextArea(s_formatter.format(versions[0].getCreateDate().getTime()) + " ");
+            m_dtLabel=new JTextArea(versions[0].getCreateDate() + " ");
             m_dtLabel.setBackground(Administrator.BACKGROUND_COLOR);
             m_dtLabel.setEditable(false);
             m_dateLabelAndValue.add(m_dtLabel);
@@ -223,7 +219,7 @@ public class DisseminatorPane
        JSlider source=(JSlider)e.getSource();
        if (!source.getValueIsAdjusting()) {
            // make sure the selected version's date is shown...
-           m_dtLabel.setText(s_formatter.format(m_versions[source.getValue()].getCreateDate().getTime()) + " ");
+           m_dtLabel.setText(m_versions[source.getValue()].getCreateDate() + " ");
            // and that the selected version is shown
            m_versionCardLayout.show(m_valuePane, "" + source.getValue());
            // set the new text of m_bDefLabelTextField
@@ -397,8 +393,7 @@ public class DisseminatorPane
             if (m_didSlider) {
                 right=new JComponent[] {m_labelTextField, bMechInfo};
             } else {
-                JTextArea cDateArea=new JTextArea(
-                        s_formatter.format(m_diss.getCreateDate().getTime()));
+                JTextArea cDateArea=new JTextArea(m_diss.getCreateDate());
                 cDateArea.setBackground(Administrator.BACKGROUND_COLOR);
                 cDateArea.setEditable(false);
                 right=new JComponent[] {cDateArea,
@@ -452,7 +447,7 @@ public class DisseminatorPane
             JPanel bottomPanel=new JPanel(new FlowLayout());
             JButton purgeButton=new JButton("Purge...");
             Administrator.constrainHeight(purgeButton);
-            purgeButton.setActionCommand(s_formatter.format(m_diss.getCreateDate().getTime()));
+            purgeButton.setActionCommand(m_diss.getCreateDate());
             purgeButton.addActionListener(m_purgeButtonListener);
             bottomPanel.add(purgeButton);
 
@@ -615,7 +610,7 @@ public class DisseminatorPane
             JPanel bottomPanel=new JPanel(new FlowLayout());
             JButton purgeButton=new JButton("Purge...");
             Administrator.constrainHeight(purgeButton);
-            purgeButton.setActionCommand(s_formatter.format(m_diss.getCreateDate().getTime()));
+            purgeButton.setActionCommand(m_diss.getCreateDate());
             purgeButton.addActionListener(m_purgeButtonListener);
             bottomPanel.add(purgeButton);
 
@@ -639,7 +634,7 @@ public class DisseminatorPane
             m_dateStrings=new Object[versions.length];
             m_dissIndex=new HashMap();
             for (int i=0; i<versions.length; i++) {
-                String dateAsString=s_formatter.format(versions[i].getCreateDate().getTime());
+                String dateAsString=versions[i].getCreateDate();
                 m_dateStrings[i]=dateAsString;
                 m_dissIndex.put(dateAsString, new Integer(i));
             }

@@ -1,6 +1,5 @@
 package fedora.server.access.internalservices;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.File;
@@ -83,13 +82,13 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
 {
   private Context context;
   private String PID;
-  private Calendar asOfDateTime;
+  private Date asOfDateTime;
   private DOReader reader;
   private String reposBaseURL;
   private File reposHomeDir;
   private Access m_access;
 
-  public DefaultBehaviorImpl(Context context, Calendar asOfDateTime,
+  public DefaultBehaviorImpl(Context context, Date asOfDateTime,
     DOReader reader, Access access, String reposBaseURL, File reposHomeDir)
     throws ServerException
   {
@@ -113,11 +112,10 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   {
     ObjectProfile profile = m_access.getObjectProfile(context, reader.GetObjectPID(), asOfDateTime);
     InputStream in = null;
-    Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
     try
     {
       in = new ByteArrayInputStream(
-      (new ObjectInfoAsXML().getObjectProfile(reposBaseURL, profile, versDate).getBytes("UTF-8")));
+      (new ObjectInfoAsXML().getObjectProfile(reposBaseURL, profile, asOfDateTime).getBytes("UTF-8")));
     } catch (UnsupportedEncodingException uee)
     {
       throw new GeneralException("[DefaultBehaviorImpl] An error has occurred. "
@@ -177,7 +175,6 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       return noMethodIndexMsg();
     }
 
-    Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectMethodsDef[] methods =
       m_access.getObjectMethods(context, reader.GetObjectPID(), asOfDateTime);
     InputStream in = null;
@@ -185,7 +182,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     {
       in = new ByteArrayInputStream(
       (new ObjectInfoAsXML().getMethodIndex(
-        reposBaseURL, reader.GetObjectPID(), methods, versDate).getBytes("UTF-8")));
+        reposBaseURL, reader.GetObjectPID(), methods, asOfDateTime).getBytes("UTF-8")));
     } catch (UnsupportedEncodingException uee)
     {
       throw new GeneralException("[DefaultBehaviorImpl] An error has occurred. "
@@ -278,12 +275,11 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    */
   public MIMETypedStream getItemIndex() throws ServerException
   {
-    Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
     InputStream is = null;
     try{
     is = new ByteArrayInputStream(
       new DatastreamsAsXML().getItemIndex(
-      reposBaseURL, reader, versDate).getBytes("UTF-8"));
+      reposBaseURL, reader, asOfDateTime).getBytes("UTF-8"));
     } catch (Exception e) {}
     return new MIMETypedStream("text/xml", is);
   }
@@ -333,8 +329,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    */
   public MIMETypedStream getItem(String itemID) throws ServerException
   {
-    Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
-    Datastream ds = reader.GetDatastream(itemID, versDate);
+    Datastream ds = reader.GetDatastream(itemID, asOfDateTime);
     InputStream in = null;
     if (ds.DSControlGrp.equalsIgnoreCase("R"))
     {
@@ -495,12 +490,11 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    */
   public MIMETypedStream getDublinCore() throws ServerException
   {
-    Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
     DatastreamXMLMetadata dcmd = null;
     InputStream is = null;
     try
     {
-        dcmd = (DatastreamXMLMetadata) reader.GetDatastream("DC", versDate);
+        dcmd = (DatastreamXMLMetadata) reader.GetDatastream("DC", asOfDateTime);
         is = new ByteArrayInputStream(
              new ObjectInfoAsXML().getOAIDublinCore(dcmd).getBytes("UTF-8"));
     } catch (ClassCastException cce)

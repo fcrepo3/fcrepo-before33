@@ -1,6 +1,5 @@
 package fedora.server.access;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
@@ -100,7 +99,7 @@ public class DynamicAccessImpl
    * @throws ServerException
    */
   public String[] getBehaviorDefinitions(Context context, String PID,
-      Calendar asOfDateTime) throws ServerException
+      Date asOfDateTime) throws ServerException
   {
     // FIXIT! In FUTURE this method might consult some source that tells
     // what behavior definitions are appropriate to dynamically associate
@@ -133,7 +132,7 @@ public class DynamicAccessImpl
    * @throws ServerException
    */
   public MethodDef[] getBehaviorMethods(Context context, String PID,
-      String bDefPID, Calendar asOfDateTime) throws ServerException
+      String bDefPID, Date asOfDateTime) throws ServerException
   {
     Class mechClass = (Class) dynamicBDefToMech.get(bDefPID);
     if (mechClass != null)
@@ -168,7 +167,7 @@ public class DynamicAccessImpl
    * @throws ServerException
    */
   public MIMETypedStream getBehaviorMethodsXML(Context context, String PID,
-      String bDefPID, Calendar asOfDateTime) throws ServerException
+      String bDefPID, Date asOfDateTime) throws ServerException
   {
     return null;
   }
@@ -190,7 +189,7 @@ public class DynamicAccessImpl
    */
   public MIMETypedStream getDissemination(Context context, String PID,
       String bDefPID, String methodName, Property[] userParms,
-      Calendar asOfDateTime, DOReader reader) throws ServerException
+      Date asOfDateTime, DOReader reader) throws ServerException
   {
     if (bDefPID.equalsIgnoreCase("fedora-system:3"))
     {
@@ -236,10 +235,10 @@ public class DynamicAccessImpl
    * @throws ServerException
    */
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
-      Calendar asOfDateTime) throws ServerException
+      Date asOfDateTime) throws ServerException
   {
     String[] bDefPIDs = getBehaviorDefinitions(context, PID, asOfDateTime);
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    Date versDateTime = asOfDateTime;
     ArrayList objectMethods = new ArrayList();
     for (int i=0; i<bDefPIDs.length; i++)
     {
@@ -270,7 +269,7 @@ public class DynamicAccessImpl
    * @throws ServerException
    */
   public ObjectProfile getObjectProfile(Context context, String PID,
-    Calendar asOfDateTime) throws ServerException
+    Date asOfDateTime) throws ServerException
   {
     // FIXIT! Return something here.
     return null;

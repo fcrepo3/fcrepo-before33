@@ -1,6 +1,6 @@
 package fedora.server.test;
 
-import java.util.Calendar;
+import java.util.Date;
 import java.io.ByteArrayInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -51,7 +51,7 @@ public class TestClientAPIA
     String PID = "uva-lib:1225";
     String qName1 = "http://www.fedora.info/definitions/1/0/api/";
     String endpoint = "http://localhost:8080/fedora/access/soap";
-    Calendar asOfDate = null;
+    Date asOfDate = null;
 
     try
     {

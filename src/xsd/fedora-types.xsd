@@ -53,13 +53,13 @@
 			</xsd:restriction>
 		</xsd:complexContent>
 	</xsd:complexType>
-	<xsd:complexType name="ArrayOfDateTime">
+	<xsd:complexType name="ArrayOfDateTimeString">
 		<xsd:annotation>
-			<xsd:documentation>an ordered list of dateTimes</xsd:documentation>
+			<xsd:documentation>an ordered list of strings representing dates in ISO8601 form.</xsd:documentation>
 		</xsd:annotation>
 		<xsd:complexContent>
 			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="dateTime[]"/>
+				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="string[]"/>
 			</xsd:restriction>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -142,7 +142,7 @@
 			<xsd:element name="processType" type="string"/>
 			<xsd:element name="action" type="string"/>
 			<xsd:element name="responsibility" type="string"/>
-			<xsd:element name="date" type="dateTime"/>
+			<xsd:element name="date" type="string"/>
 			<xsd:element name="justification" type="string"/>
 		</xsd:sequence>
 	</xsd:complexType>
@@ -179,7 +179,7 @@
 			<xsd:element name="versionID" type="string"/>
 			<xsd:element name="label" type="string"/>
 			<xsd:element name="MIMEType" type="string"/>
-			<xsd:element name="createDate" type="dateTime"/>
+			<xsd:element name="createDate" type="string"/>
 			<xsd:element name="size" type="long"/>
 			<xsd:element name="infoType" type="string">
 				<xsd:annotation>
@@ -293,7 +293,7 @@
 		<xsd:sequence>
 			<xsd:element name="bDefPID" type="string"/>
 			<xsd:element name="bMechPID" type="string"/>
-			<xsd:element name="createDate" type="dateTime"/>
+			<xsd:element name="createDate" type="string"/>
 			<xsd:element name="ID" type="string"/>
 			<xsd:element name="label" type="string"/>
 			<xsd:element name="versionID" type="string"/>
@@ -405,9 +405,9 @@
 			<xsd:element name="cModel" type="string" minOccurs="0"/>
 			<xsd:element name="state" type="string" minOccurs="0"/>
 			<xsd:element name="ownerId" type="string" minOccurs="0"/>
-			<xsd:element name="cDate" type="dateTime" minOccurs="0"/>
-			<xsd:element name="mDate" type="dateTime" minOccurs="0"/>
-			<xsd:element name="dcmDate" type="dateTime" minOccurs="0"/>
+			<xsd:element name="cDate" type="string" minOccurs="0"/>
+			<xsd:element name="mDate" type="string" minOccurs="0"/>
+			<xsd:element name="dcmDate" type="string" minOccurs="0"/>
 			<xsd:element name="bDef" type="string" minOccurs="0" maxOccurs="unbounded"/>
 			<xsd:element name="bMech" type="string" minOccurs="0" maxOccurs="unbounded"/>
 			<xsd:element name="title" type="string" minOccurs="0" maxOccurs="unbounded"/>
@@ -436,7 +436,7 @@
 			<xsd:element name="bDefPID" type="string"/>
 			<xsd:element name="methodName" type="string"/>
 			<xsd:element name="methodParmDefs" type="fedora-types:ArrayOfMethodParmDef"/>
-			<xsd:element name="asOfDate" type="dateTime"/>
+			<xsd:element name="asOfDate" type="string"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="ObjectProfile">
@@ -449,8 +449,8 @@
 			<xsd:element name="objLabel" type="string"/>
 			<xsd:element name="objContentModel" type="string"/>
 			<xsd:element name="objType" type="string"/>
-			<xsd:element name="objCreateDate" type="dateTime"/>
-			<xsd:element name="objLastModDate" type="dateTime"/>
+			<xsd:element name="objCreateDate" type="string"/>
+			<xsd:element name="objLastModDate" type="string"/>
 			<xsd:element name="objDissIndexViewURL" type="string"/>
 			<xsd:element name="objItemIndexViewURL" type="string"/>
 		</xsd:sequence>
@@ -505,7 +505,7 @@
 			<xsd:element name="token" type="string"/>
 			<xsd:element name="cursor" type="nonNegativeInteger" minOccurs="0"/>
 			<xsd:element name="completeListSize" type="nonNegativeInteger" minOccurs="0"/>
-			<xsd:element name="expirationDate" type="dateTime" minOccurs="0"/>
+			<xsd:element name="expirationDate" type="string" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 </xsd:schema>

@@ -77,8 +77,8 @@ public class ObjectEditorFrame
         String state=o.getState();
         String label=o.getLabel();
         String cModel=o.getCModel();
-        Calendar cDate=o.getCDate();
-        Calendar mDate=o.getMDate();
+        String cDate=o.getCDate();
+        String mDate=o.getMDate();
         String ownerId=o.getOwnerId();
         String fType=o.getFType();
         m_fType=fType;

@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.xml.rpc.ServiceException;
 
@@ -45,9 +44,6 @@ import fedora.server.types.gen.ObjectFields;
 public class AutoFinder {
 
     private FedoraAPIA m_apia;
-
-    public static SimpleDateFormat DATE_FORMATTER=
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public AutoFinder(String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
@@ -128,12 +124,6 @@ public class AutoFinder {
             for (int i=0; i<value.length; i++) {
                 AutoFinder.printValue(name, value[i]);
             }
-        }
-    }
-
-    public static void printValue(String name, Calendar value) {
-        if (value!=null) {
-            AutoFinder.printValue(name, AutoFinder.DATE_FORMATTER.format(value.getTime()));
         }
     }
 

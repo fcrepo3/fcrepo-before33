@@ -81,7 +81,7 @@ public class DateTimeInputPanel
         if (m_nullRadioButton.isSelected()) {
             return null;
         } else {
-            return DateUtility.convertStringToCalendar(m_textField.getText());
+            return DateUtility.convertStringToDate(m_textField.getText());
         }
     }
 

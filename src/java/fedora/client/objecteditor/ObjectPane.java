@@ -2,7 +2,6 @@ package fedora.client.objecteditor;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.text.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -39,9 +38,6 @@ import fedora.client.actions.ViewObjectXML;
 public class ObjectPane
         extends EditingPane {
 
-    private static SimpleDateFormat s_formatter=
-            new SimpleDateFormat("yyyy-MM-dd' at 'HH:mm:ss");
-
     private String m_pid;
     private String m_state;
     private String m_label;
@@ -53,7 +49,7 @@ public class ObjectPane
      * Build the pane.
      */
     public ObjectPane(ObjectEditorFrame owner, String pid, String state, String label, String cModel,
-            Calendar cDate, Calendar mDate, String ownerId)
+            String cDate, String mDate, String ownerId)
             throws Exception {
         super(owner, null, null);
         m_pid=pid;
@@ -116,12 +112,10 @@ public class ObjectPane
                     JTextArea cModelValueLabel=new JTextArea(cModel);
                     cModelValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     cModelValueLabel.setEditable(false);
-                    JTextArea cDateValueLabel=new JTextArea(
-                            s_formatter.format(cDate.getTime()));
+                    JTextArea cDateValueLabel=new JTextArea(cDate);
                     cDateValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     cDateValueLabel.setEditable(false);
-                    JTextArea mDateValueLabel=new JTextArea(
-                            s_formatter.format(mDate.getTime()));
+                    JTextArea mDateValueLabel=new JTextArea(mDate);
                     mDateValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     mDateValueLabel.setEditable(false);
                     JTextArea ownerIdValueLabel=new JTextArea(ownerId);

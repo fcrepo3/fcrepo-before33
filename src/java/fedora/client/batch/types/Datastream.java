@@ -1,9 +1,5 @@
 package fedora.client.batch.types;
 
-import fedora.server.errors.StreamIOException;
-
-import java.util.Calendar;
-
 /**
  *
  * <p><b>Title:</b> Datastream.java</p>
@@ -40,7 +36,7 @@ public class Datastream
 
   public String DSMIME;
 
-  public Calendar asOfDate;
+  public String asOfDate;
 
   public String DSControlGrp;
 

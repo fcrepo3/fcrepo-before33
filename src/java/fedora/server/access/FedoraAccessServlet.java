@@ -14,10 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -198,7 +196,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     String PID = null;
     String bDefPID = null;
     String methodName = null;
-    Calendar asOfDateTime = null;
+    Date asOfDateTime = null;
     Date versDateTime = null;
     String action = null;
     Property[] userParms = null;
@@ -280,7 +278,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                     String message = "ObjectProfile Request Syntax Error: DateTime value "
                       + "of \"" + URIArray[6] + "\" is not a valid DateTime format. "
                       + " ----- The expected format for DateTime is \""
-                      + "YYYY-MM-DDTHH:MM:SS\".  "
+                      + "YYYY-MM-DDTHH:MM:SSZ\".  "
                       + " ----- The expected syntax for "
                       + "ObjectProfile requests is: \""
                       + URIArray[0] + "//" + URIArray[2] + "/"
@@ -292,8 +290,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
                     return;
                 } else {
-                    asOfDateTime=new GregorianCalendar();
-                    asOfDateTime.setTime(versDateTime);
+                    asOfDateTime=versDateTime;
                 }
                 logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
                     + "Encountered: "+ requestURI);
@@ -319,7 +316,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           String message = "Dissemination Request Syntax Error: DateTime value "
               + "of \"" + URIArray[8] + "\" is not a valid DateTime format. "
               + " ----- The expected format for DateTime is \""
-              + "YYYY-MM-DDTHH:MM:SS\".  "
+              + "YYYY-MM-DDTHH:MM:SSZ\".  "
               + " ----- The expected syntax for Dissemination requests is: \""
               + URIArray[0] + "//" + URIArray[2] + "/"
               + URIArray[3] + "/" + URIArray[4]
@@ -330,8 +327,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
           return;
         } else {
-          asOfDateTime=new GregorianCalendar();
-          asOfDateTime.setTime(versDateTime);
+          asOfDateTime=versDateTime;
         }
       }
       if (URIArray.length > 9) {
@@ -419,13 +415,13 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     }
   }
 
-  public void getObjectProfile(Context context, String PID, Calendar asOfDateTime,
+  public void getObjectProfile(Context context, String PID, Date asOfDateTime,
       boolean xml, HttpServletRequest request,
       HttpServletResponse response) throws ServerException
   {
 
     OutputStreamWriter out = null;
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    Date versDateTime = asOfDateTime;
     ObjectProfile objProfile = null;
     PipedWriter pw = null;
     PipedReader pr = null;
@@ -517,7 +513,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
    * @throws ServerException If an error occurs in the Access Subsystem.
    */
   public void getDissemination(Context context, String PID, String bDefPID, String methodName,
-      Property[] userParms, Calendar asOfDateTime, HttpServletResponse response)
+      Property[] userParms, Date asOfDateTime, HttpServletResponse response)
       throws IOException, ServerException
   {
     ServletOutputStream out = null;
@@ -743,13 +739,13 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
    * @throws IOException If an error occurrs with an input or output operation.
    */
   private void showURLParms(String PID, String bDefPID,
-                           String methodName, Calendar asOfDateTime,
+                           String methodName, Date asOfDateTime,
                            Property[] userParms,
                            HttpServletResponse response,
                            String message)
       throws IOException
   {
-    String versDate = DateUtility.convertCalendarToString(asOfDateTime);
+    String versDate = DateUtility.convertDateToString(asOfDateTime);
     response.setContentType(CONTENT_TYPE_HTML);
     ServletOutputStream out = response.getOutputStream();
 

@@ -9,10 +9,8 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -109,12 +107,14 @@ public class DefaultManagement
      * @throws ModuleInitializationException If initilization values are
      *         invalid or initialization fails for some other reason.
      */
-    public DefaultManagement(Map moduleParameters, Server server, String role)
-            throws ModuleInitializationException {
+    public DefaultManagement(Map moduleParameters, 
+                             Server server, 
+                             String role) 
+                throws ModuleInitializationException {
         super(moduleParameters, server, role);
     }
 
-    public void initModule()
+    public void initModule() 
             throws ModuleInitializationException {
         String allowHosts=getParameter("allowHosts");
         String denyHosts=getParameter("denyHosts");
@@ -186,7 +186,12 @@ public class DefaultManagement
         m_fedoraServerPort=getServer().getParameter("fedoraServerPort");
     }
 
-    public String ingestObject(Context context, InputStream serialization, String logMessage, String format, String encoding, boolean newPid)
+    public String ingestObject(Context context, 
+                               InputStream serialization, 
+                               String logMessage, 
+                               String format, 
+                               String encoding, 
+                               boolean newPid)
             throws ServerException {
         getServer().logFinest("Entered DefaultManagement.ingestObject");
         m_ipRestriction.enforce(context);
@@ -203,8 +208,11 @@ public class DefaultManagement
         }
     }
 
-    public void modifyObject(Context context, String pid, String state,
-            String label, String logMessage)
+    public void modifyObject(Context context, 
+                             String pid, 
+                             String state,
+                             String label, 
+                             String logMessage)
             throws ServerException {
         logFinest("Entered DefaultManagement.modifyObject");
         m_ipRestriction.enforce(context);
@@ -223,7 +231,9 @@ public class DefaultManagement
         }
     }
 
-    public InputStream getObjectXML(Context context, String pid, String encoding) 
+    public InputStream getObjectXML(Context context, 
+                                    String pid, 
+                                    String encoding) 
     		throws ServerException {
         logFinest("Entered DefaultManagement.getObjectXML");
         m_ipRestriction.enforce(context);
@@ -233,7 +243,10 @@ public class DefaultManagement
         return instream;
     }
 
-    public InputStream exportObject(Context context, String pid, String format, String encoding) 
+    public InputStream exportObject(Context context, 
+                                    String pid, 
+                                    String format, 
+                                    String encoding) 
     		throws ServerException {
         logFinest("Entered DefaultManagement.exportObject");
         m_ipRestriction.enforce(context);
@@ -243,7 +256,9 @@ public class DefaultManagement
         return instream;
     }
 
-    public void purgeObject(Context context, String pid, String logMessage)
+    public void purgeObject(Context context, 
+                            String pid, 
+                            String logMessage)
             throws ServerException {
         logFinest("Entered DefaultManagement.purgeObject");
         m_ipRestriction.enforce(context);
@@ -253,11 +268,6 @@ public class DefaultManagement
         m_manager.releaseWriter(w);
         logFinest("Exiting DefaultManagement.purgeObject");
     }
-
-/*
-    public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
-
-*/
 
     public String createDatastream(Context context,
                                    String pid,
@@ -528,9 +538,13 @@ public class DefaultManagement
 			}
 		}
 
-    public void modifyDatastreamByReference(Context context, String pid,
-            String datastreamId, String dsLabel, String logMessage,
-            String dsLocation, String dsState)
+    public void modifyDatastreamByReference(Context context, 
+                                            String pid,
+                                            String datastreamId, 
+                                            String dsLabel, 
+                                            String logMessage,
+                                            String dsLocation, 
+                                            String dsState)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
@@ -635,9 +649,14 @@ public class DefaultManagement
         }
     }
 
-    public void modifyDatastreamByValue(Context context, String pid,
-            String datastreamId, String dsLabel, String logMessage,
-            InputStream dsContent, String dsState) throws ServerException {
+    public void modifyDatastreamByValue(Context context, 
+                                        String pid,
+                                        String datastreamId, 
+                                        String dsLabel, 
+                                        String logMessage,
+                                        InputStream dsContent, 
+                                        String dsState) 
+            throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
@@ -707,10 +726,16 @@ public class DefaultManagement
     }
 
 
-    public void modifyDisseminator(Context context, String pid,
-            String disseminatorId, String bMechPid, String dissLabel,
-            String bDefLabel, String bMechLabel, DSBindingMap dsBindingMap,
-            String logMessage, String dissState)
+    public void modifyDisseminator(Context context, 
+                                   String pid,
+                                   String disseminatorId, 
+                                   String bMechPid, 
+                                   String dissLabel,
+                                   String bDefLabel, 
+                                   String bMechLabel, 
+                                   DSBindingMap dsBindingMap,
+                                   String logMessage, 
+                                   String dissState)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
@@ -792,19 +817,17 @@ public class DefaultManagement
     }
 
 
-    public Calendar[] purgeDatastream(Context context, String pid,
-            String datastreamID, Calendar endDT)
+    public Date[] purgeDatastream(Context context, 
+                                  String pid,
+                                  String datastreamID, 
+                                  Date endDT)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
             w=m_manager.getWriter(context, pid);
             Date start=null;
-            Date end=null;
-            if (endDT!=null) {
-                end=endDT.getTime();
-            }
-            Date[] deletedDates=w.removeDatastream(datastreamID, start, end);
+            Date[] deletedDates=w.removeDatastream(datastreamID, start, endDT);
             // check if there's at least one version with this id...
             if (w.GetDatastream(datastreamID, null)==null) {
                 // if deleting would result in no versions remaining,
@@ -812,7 +835,7 @@ public class DefaultManagement
                 // this datastream.
                 // to do this, we must look through all versions of every
                 // disseminator, regardless of state
-                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
                 ArrayList usedList=new ArrayList();
                 if (datastreamID.equals("DC")) {
                     usedList.add("The default disseminator");
@@ -848,7 +871,7 @@ public class DefaultManagement
             }
             // make a log messsage explaining what happened
             String logMessage=getPurgeLogMessage("datastream", datastreamID,
-                    start, end, deletedDates);
+                    start, endDT, deletedDates);
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -866,7 +889,7 @@ public class DefaultManagement
             // It looks like all went ok, so commit
             w.commit(logMessage);
             // ... then give the response
-            return dateArrayToCalendarArray(deletedDates);
+            return deletedDates;
         } finally {
             if (w!=null) {
                 m_manager.releaseWriter(w);
@@ -874,18 +897,12 @@ public class DefaultManagement
         }
     }
 
-    private Calendar[] dateArrayToCalendarArray(Date[] dates) {
-        Calendar response[]=new Calendar[dates.length];
-        for (int i=0; i<dates.length; i++) {
-            response[i]=new GregorianCalendar();
-            response[i].setTime(dates[i]);
-        }
-        return response;
-    }
-
-    private String getPurgeLogMessage(String kindaThing, String id, Date start,
-            Date end, Date[] deletedDates) {
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private String getPurgeLogMessage(String kindaThing, 
+                                      String id, 
+                                      Date start,
+                                      Date end, 
+                                      Date[] deletedDates) {
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         StringBuffer buf=new StringBuffer();
         buf.append("Purged ");
         buf.append(kindaThing);
@@ -917,30 +934,29 @@ public class DefaultManagement
         return buf.toString();
     }
 
-    public Datastream getDatastream(Context context, String pid,
-            String datastreamID, Calendar asOfDateTime)
+    public Datastream getDatastream(Context context, 
+                                    String pid,
+                                    String datastreamID, 
+                                    Date asOfDateTime)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOReader r=m_manager.getReader(context, pid);
-        Date d=null;
-        if (asOfDateTime!=null) {
-            d=asOfDateTime.getTime();
-        }
-		return r.GetDatastream(datastreamID, d);
+		return r.GetDatastream(datastreamID, asOfDateTime);
     }
 
-    public Datastream[] getDatastreams(Context context, String pid,
-            Calendar asOfDateTime, String state)
+    public Datastream[] getDatastreams(Context context, 
+                                       String pid,
+                                       Date asOfDateTime, 
+                                       String state)
             throws ServerException {
+        m_ipRestriction.enforce(context);
         DOReader r=m_manager.getReader(context, pid);
-        Date d=null;
-        if (asOfDateTime!=null) {
-            d=asOfDateTime.getTime();
-        }
-		return r.GetDatastreams(d, state);
+		return r.GetDatastreams(asOfDateTime, state);
     }
 
-    public Datastream[] getDatastreamHistory(Context context, String pid, String datastreamID)
+    public Datastream[] getDatastreamHistory(Context context, 
+                                             String pid, 
+                                             String datastreamID)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOReader r=m_manager.getReader(context, pid);
@@ -971,22 +987,20 @@ public class DefaultManagement
         }
     }
 
-    public Calendar[] purgeDisseminator(Context context, String pid,
-            String disseminatorID, Calendar endDT)
+    public Date[] purgeDisseminator(Context context, 
+                                    String pid,
+                                    String disseminatorID, 
+                                    Date endDT)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
             w=m_manager.getWriter(context, pid);
             Date start=null;
-            Date end=null;
-            if (endDT!=null) {
-                end=endDT.getTime();
-            }
-            Date[] deletedDates=w.removeDisseminator(disseminatorID, start, end);
+            Date[] deletedDates=w.removeDisseminator(disseminatorID, start, endDT);
             // make a log messsage explaining what happened
             String logMessage=getPurgeLogMessage("disseminator", disseminatorID,
-                    start, end, deletedDates);
+                    start, endDT, deletedDates);
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -1004,7 +1018,7 @@ public class DefaultManagement
             // It looks like all went ok, so commit
             // ... then give the response
             w.commit(logMessage);
-            return dateArrayToCalendarArray(deletedDates);
+            return deletedDates;
         } finally {
             if (w!=null) {
                 m_manager.releaseWriter(w);
@@ -1012,30 +1026,28 @@ public class DefaultManagement
         }
     }
 
-    public Disseminator getDisseminator(Context context, String pid,
-            String disseminatorId, Calendar asOfDateTime)
+    public Disseminator getDisseminator(Context context, 
+                                        String pid,
+                                        String disseminatorId, 
+                                        Date asOfDateTime)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOReader r=m_manager.getReader(context, pid);
-        Date d=null;
-        if (asOfDateTime!=null) {
-            d=asOfDateTime.getTime();
-        }
-        return r.GetDisseminator(disseminatorId, d);
+        return r.GetDisseminator(disseminatorId, asOfDateTime);
     }
 
-    public Disseminator[] getDisseminators(Context context, String pid,
-        Calendar asOfDateTime, String dissState)
+    public Disseminator[] getDisseminators(Context context, 
+                                           String pid,
+                                           Date asOfDateTime, 
+                                           String dissState)
             throws ServerException {
         DOReader r=m_manager.getReader(context, pid);
-        Date d=null;
-        if (asOfDateTime!=null) {
-            d=asOfDateTime.getTime();
-        }
-        return r.GetDisseminators(d, dissState);
+        return r.GetDisseminators(asOfDateTime, dissState);
     }
 
-    public Disseminator[] getDisseminatorHistory(Context context, String pid, String disseminatorID)
+    public Disseminator[] getDisseminatorHistory(Context context, 
+                                                 String pid, 
+                                                 String disseminatorID)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOReader r=m_manager.getReader(context, pid);
@@ -1054,8 +1066,9 @@ public class DefaultManagement
         return out;
     }
 
-    public String[] getNextPID(Context context, int numPIDs,
-            String namespace)
+    public String[] getNextPID(Context context, 
+                               int numPIDs,
+                               String namespace)
             throws ServerException {
         m_ipRestriction.enforce(context);
         return m_manager.getNextPID(numPIDs, namespace);
@@ -1140,7 +1153,11 @@ public class DefaultManagement
 		}
 	}
 
-    public void setDatastreamState(Context context, String pid, String datastreamID, String dsState, String logMessage)
+    public void setDatastreamState(Context context, 
+                                   String pid, 
+                                   String datastreamID, 
+                                   String dsState, 
+                                   String logMessage)
             throws ServerException {
       m_ipRestriction.enforce(context);
       DOWriter w=null;
@@ -1171,7 +1188,11 @@ public class DefaultManagement
         }
     }
 
-    public void setDisseminatorState(Context context, String pid, String disseminatorID, String dissState, String logMessage)
+    public void setDisseminatorState(Context context, 
+                                     String pid, 
+                                     String disseminatorID, 
+                                     String dissState, 
+                                     String logMessage)
             throws ServerException {
       m_ipRestriction.enforce(context);
       DOWriter w=null;

@@ -8,7 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,7 +19,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 
 import fedora.server.Context;
 import fedora.server.Module;
@@ -114,7 +112,6 @@ public class DefaultDOManager
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
-    private SimpleDateFormat m_formatter=new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
 
     public static String DEFAULT_STATE="L";
 
@@ -657,7 +654,6 @@ public class DefaultDOManager
                     int systemVersion=results.getInt("systemVersion");
                     systemVersion++;
                     Date now=new Date();
-//                    String formattedLastModDate=m_formatter.format(now);
                     s.executeUpdate("UPDATE doRegistry SET systemVersion="
                             + systemVersion + " "
                             + "WHERE doPID='" + obj.getPid() + "'");
@@ -1295,8 +1291,6 @@ public class DefaultDOManager
             foType="M";
         }
         try {
-          //  String formattedCreateDate=m_formatter.format(createDate);
-          //  String formattedLastModDate=m_formatter.format(lastModDate);
             String query="INSERT INTO doRegistry (doPID, foType, "
                                                    + "ownerId, label, "
                                                    + "contentModelID) "

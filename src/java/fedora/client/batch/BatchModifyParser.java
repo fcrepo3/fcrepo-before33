@@ -14,7 +14,6 @@ import fedora.client.ingest.AutoIngestor;
 import fedora.server.types.gen.DatastreamBinding;
 import fedora.server.types.gen.DatastreamBindingMap;
 import fedora.server.utilities.StreamUtility;
-import fedora.server.utilities.DateUtility;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -26,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
@@ -399,7 +397,7 @@ public class BatchModifyParser extends DefaultHandler
                 // or empty its value is null and indicates that all versions
                 // of the datastream are to be purged.
                 if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equalsIgnoreCase(""))
-                    m_ds.asOfDate = fedora.server.utilities.DateUtility.convertStringToCalendar(attrs.getValue("asOfDate"));
+                    m_ds.asOfDate = attrs.getValue("asOfDate");
 
                 purgeDatastream = true;
 
@@ -741,7 +739,7 @@ public class BatchModifyParser extends DefaultHandler
                 // or empty its value will be null indicates that all versions
                 // of the disseminator are to be removed.
                 if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equalsIgnoreCase(""))
-                    m_diss.asOfDate = fedora.server.utilities.DateUtility.convertStringToCalendar(attrs.getValue("asOfDate"));
+                    m_diss.asOfDate = attrs.getValue("asOfDate");
 
                 purgeDisseminator = true;
 
@@ -982,7 +980,7 @@ public class BatchModifyParser extends DefaultHandler
 
                 // Process purgeDatastream only if no previous errors encountered
                 if (purgeDatastream) {
-                    Calendar[] versionsPurged = null;
+                    String[] versionsPurged = null;
                     versionsPurged = APIM.purgeDatastream(m_ds.objectPID,
                         m_ds.DatastreamID, m_ds.asOfDate);
                     if (versionsPurged.length > 0) {
@@ -992,7 +990,7 @@ public class BatchModifyParser extends DefaultHandler
                                 localName,
                                 "datastreamID: " + m_ds.DatastreamID
                                     + "\n    Purged all versions prior to: "
-                                    + DateUtility.convertCalendarToString(m_ds.asOfDate)
+                                    + m_ds.asOfDate
                                     + "\n    Versions purged: "+versionsPurged.length);
                         } else {
                             logSucceededDirective(m_ds.objectPID,
@@ -1159,7 +1157,7 @@ public class BatchModifyParser extends DefaultHandler
 
                 // Process purgeDisseminator only if no previous errors encountered
                 if (purgeDisseminator) {
-                    Calendar[] versionsPurged = null;
+                    String[] versionsPurged = null;
                     versionsPurged = APIM.purgeDisseminator(m_diss.parentPID,
                         m_diss.dissID, m_diss.asOfDate);
                     if (versionsPurged.length > 0) {
@@ -1168,7 +1166,7 @@ public class BatchModifyParser extends DefaultHandler
                             logSucceededDirective(m_diss.parentPID, localName,
                                 "disseminatorID: " + m_diss.dissID
                                     + "\n    Purged all versions prior to: "
-                                    + DateUtility.convertCalendarToString(m_diss.asOfDate)
+                                    + m_diss.asOfDate
                                     +"\n    Versions purged: " + versionsPurged.length);
                         } else {
                             logSucceededDirective(m_diss.parentPID, localName,

@@ -7,8 +7,6 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import javax.xml.rpc.ServiceException;
 
 import fedora.client.APIMStubFactory;
@@ -44,7 +42,6 @@ import fedora.server.types.gen.Datastream;
 public class DatastreamConduit {
 
     private FedoraAPIM m_apim;
-    public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public DatastreamConduit(String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
@@ -52,24 +49,24 @@ public class DatastreamConduit {
     }
 
     public static Datastream getDatastream(FedoraAPIM skeleton, String pid,
-            String dsId, Calendar asOfDateTime)
+            String dsId, String asOfDateTime)
             throws RemoteException {
         return skeleton.getDatastream(pid, dsId, asOfDateTime);
     }
 
     public Datastream getDatastream(String pid, String dsId,
-            Calendar asOfDateTime)
+            String asOfDateTime)
             throws RemoteException {
         return getDatastream(m_apim, pid, dsId, asOfDateTime);
     }
 
     public static Datastream[] getDatastreams(FedoraAPIM skeleton, String pid,
-            Calendar asOfDateTime, String state)
+            String asOfDateTime, String state)
             throws RemoteException {
         return skeleton.getDatastreams(pid, asOfDateTime, state);
     }
 
-    public Datastream[] getDatastreams(String pid, Calendar asOfDateTime, 
+    public Datastream[] getDatastreams(String pid, String asOfDateTime, 
             String state)
             throws RemoteException {
         return getDatastreams(m_apim, pid, asOfDateTime, state);
@@ -105,13 +102,13 @@ public class DatastreamConduit {
                 content, state);
     }
 
-    public static Calendar[] purgeDatastream(FedoraAPIM skeleton,
-            String pid, String dsId, Calendar endDT)
+    public static String[] purgeDatastream(FedoraAPIM skeleton,
+            String pid, String dsId, String endDT)
             throws RemoteException {
         return skeleton.purgeDatastream(pid, dsId, endDT);
     }
 
-    public Calendar[] purgeDatastream(String pid, String dsId, Calendar endDT)
+    public String[] purgeDatastream(String pid, String dsId, String endDT)
             throws RemoteException {
         return purgeDatastream(m_apim, pid, dsId, endDT);
     }
@@ -157,7 +154,7 @@ public class DatastreamConduit {
                     for (int j=0; j<versions.length; j++) {
                         Datastream ver=versions[j];
                         System.out.println("      Version : " + ver.getVersionID());
-                        System.out.println("        Created : " + FORMATTER.format(ver.getCreateDate().getTime()));
+                        System.out.println("        Created : " + ver.getCreateDate());
                         System.out.println("          Label : " + ver.getLabel());
                         System.out.println("       Location : " + ver.getLocation());
                     }

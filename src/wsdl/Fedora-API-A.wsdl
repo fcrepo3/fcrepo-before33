@@ -4,7 +4,6 @@
 	<types>
 		<documentation>
 			<wsdldoc:type name="xsd:string" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
-			<wsdldoc:type name="xsd:dateTime" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#dateTime"/>
 			<wsdldoc:type name="xsd:nonNegativeInteger" url="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger
 "/>
 			<wsdldoc:type name="wsdl:tDefinitions" url="http://www.w3.org/TR/2001/NOTE-wsdl-20010315#_document-s"/>
@@ -35,7 +34,7 @@
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
+		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
 				object.  If null, the current view of the object (the most recent time) 
 				is assumed.
@@ -54,7 +53,7 @@
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
+		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
 			      object.  If null, the current view of the object (the most recent time) 
 			      is assumed.
@@ -81,7 +80,7 @@
 		<part name="parameters" type="fedora-types:ArrayOfProperty">
 			<documentation>a set of name-value pairs that act as parameters to the method.</documentation>
 		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
+		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
 				object.  If null, the current view of the object (the most recent time) 
 				is assumed.
@@ -97,7 +96,7 @@
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
+		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
 				object.  If null, the current view of the object (the most recent time)
 				is assumed.
@@ -116,7 +115,7 @@
 		<part name="bDefPID" type="xsd:string">
 			<documentation>the PID of the behavior definition.</documentation>
 		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
+		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
 			object.  If null, the current view of the object (the most recent time) 
 			is assumed.
@@ -138,7 +137,7 @@
 		<part name="bDefPID" type="xsd:string">
 			<documentation>the PID of the behavior definition.</documentation>
 		</part>
-		<part name="asOfDateTime" type="xsd:dateTime">
+		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
 			object.  If null, the current view of the object (the most recent time) 
 			is assumed.

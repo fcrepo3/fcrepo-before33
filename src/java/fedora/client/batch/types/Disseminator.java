@@ -3,7 +3,6 @@ package fedora.client.batch.types;
 import fedora.server.storage.types.DSBindingMap;
 import java.util.Date;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -62,7 +61,7 @@ public class Disseminator
 
   public String dissState;
 
-  public Calendar asOfDate;
+  public String asOfDate;
 
   public Disseminator()
   {

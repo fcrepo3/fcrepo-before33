@@ -40,7 +40,7 @@ public abstract class InputPanelFactory {
         if (cl.getName().equals("java.lang.Boolean")) {
             return new BooleanInputPanel(false);
         }
-        if (cl.getName().equals("java.util.Calendar")) {
+        if (cl.getName().equals("java.util.Date")) {
           return new DateTimeInputPanel();
         }
         if (cl.getName().equals("org.apache.axis.types.NonNegativeInteger")) {
