@@ -3,22 +3,20 @@
 <project name="Fedora" default="serverdist" basedir=".">
 	<description>The Fedora Project </description>
 	<!-- set global properties for this build -->
-    <property name="build.debug"        value="on"/>
-    <property name="build.optimize"     value="off"/>
-    <property name="src.dir"            location="src"/>
-    <property name="java.src.dir"       location="${src.dir}/java"/>
-    <property name="test.src.dir"       location="${src.dir}/test"/>
-    <property name="junit.src.dir"      location="${test.src.dir}/junit"/>
-    <property name="build.dir"          location="build"/>
-    <property name="test.build.dir"     location="${build.dir}"/>
-    <property name="junit.build.dir"    location="${test.build.dir}/junit"/>
-    <property name="dist.dir"           location="dist"/>
-    <property name="server.dist.dir"    location="${dist.dir}/server"/>
-    <property name="lib.dir"            location="lib"/>
-    
-    <property name="release.dir"        location="${dist.dir}/release"/>
-    
-    <property name="properties.dir"     location="${src.dir}/properties"/>
+	<property name="build.debug" value="on"/>
+	<property name="build.optimize" value="off"/>
+	<property name="src.dir" location="src"/>
+	<property name="java.src.dir" location="${src.dir}/java"/>
+	<property name="test.src.dir" location="${src.dir}/test"/>
+	<property name="junit.src.dir" location="${test.src.dir}/junit"/>
+	<property name="build.dir" location="build"/>
+	<property name="test.build.dir" location="${build.dir}"/>
+	<property name="junit.build.dir" location="${test.build.dir}/junit"/>
+	<property name="dist.dir" location="dist"/>
+	<property name="server.dist.dir" location="${dist.dir}/server"/>
+	<property name="lib.dir" location="lib"/>
+	<property name="release.dir" location="${dist.dir}/release"/>
+	<property name="properties.dir" location="${src.dir}/properties"/>
 	<!-- load external properties files -->
 	<loadproperties srcFile="${properties.dir}/lib.properties"/>
 	<loadproperties srcFile="${properties.dir}/mckoi.properties"/>
@@ -275,7 +273,7 @@
 		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-modify.sh fedora-modify"/>
-		</exec>		
+		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="ugo+x" includes="**/*"/>
 	</target>
@@ -303,6 +301,11 @@
 		</copy>
 		<copy todir="dist/client/demo/mets">
 			<fileset dir="src/demo-objects/mets"/>
+		</copy>
+		<!-- Prepare SOAP demo client (simple java reference client) -->
+		<mkdir dir="dist/client/demo/soapclient"/>
+		<copy todir="dist/client/demo/soapclient">
+			<fileset dir="src/demo-soapclient"/>
 		</copy>
 		<!-- Prepare batch demo-->
 		<copy file="src/xsl/batchtool/merge.xsl" todir="dist/client/lib"/>
@@ -1163,10 +1166,9 @@
 			<fileset dir="src/properties/server"/>
 		</copy>
 	</target>
-
 	<target name="clean" description="Clean up all targets and temp files">
 		<delete dir="temp"/>
 		<delete dir="${dist.dir}"/>
-        <delete dir="${build.dir}"/>   
+		<delete dir="${build.dir}"/>
 	</target>
 </project>
