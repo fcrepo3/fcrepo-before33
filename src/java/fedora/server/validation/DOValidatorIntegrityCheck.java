@@ -1,24 +1,5 @@
 package fedora.server.validation;
 
-/**
- * <p>Title: DOValidatorIntegrityCheck.java</p>
- * <p>Description: This class will perform various kinds of integrity
- * checking that is beyond what XML schema or Schematron rules can do.
- * Referential integrity checks include:
- *    a. Determine if the behavior definition objects referenced by the
- *    data object exist in the local repository.
- *    b. Determine if the behavior mechanism objects referenced by the
- *    data object exist in the local repository.
- *    c. (Future) - some degree of link checking for datastreams.  This
- *    needs to be thought through more.
- *    d. (Future) Other TBD, as needed.</p>
- * <p></p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Sandy Payette, payette@cs.cornell.edu
- * @version 1.0
- */
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -33,6 +14,40 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.InitializationException;
 
+/**
+ *
+ * <p><b>Title:</b> DOValidatorIntegrityCheck.java</p>
+ * <p><b>Description:</b> This class will perform various kinds of integrity
+ * checking that is beyond what XML schema or Schematron rules can do.
+ * Referential integrity checks include:<ol>
+ *    <li>Determine if the behavior definition objects referenced by the
+ *    data object exist in the local repository.</li>
+ *    <li>Determine if the behavior mechanism objects referenced by the
+ *    data object exist in the local repository.</li>
+ *    <li>(Future) - some degree of link checking for datastreams.  This
+ *    needs to be thought through more.</li>
+ *    <li>(Future) Other TBD, as needed.</ol></p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author payette@cs.cornell.edu
+ * @version 1.0
+ */
  public class DOValidatorIntegrityCheck
 {
   /** Class variable: Debug toggle for testing */

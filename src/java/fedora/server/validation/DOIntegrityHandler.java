@@ -1,16 +1,5 @@
 package fedora.server.validation;
 
-/**
- * <p>Title: DOIntegrityHandler.java</p>
- * <p>Description: Parses digital object to pick up data elements and
- * attributes that are necessary to perform Level 3 validation
- * (Integrity checks).</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Sandy Payette  payette@cs.cornell.edu
- * @version 1.0
- */
-
 import fedora.server.errors.*;
 import java.net.URL;
 import java.util.HashMap;
@@ -20,7 +9,33 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
-
+/**
+ *
+ * <p><b>Title:</b> DOIntegrityHandler.java</p>
+ * <p><b>Description:</b> Description: Parses digital object to pick up data
+ * elements and attributes that are necessary to perform Level 3 validation
+ * (Integrity checks).</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author payette@cs.cornell.edu
+ * @version 1.0
+ */
 class DOIntegrityHandler extends DefaultHandler
 {
   /** The namespace for METS */
