@@ -73,10 +73,12 @@ public class DefinitiveDOWriter
     
     
     private DefaultDOManager m_mgr;
+    private ConnectionPool m_pool;
     
     public DefinitiveDOWriter(DefaultDOManager mgr, DigitalObject obj) {
         m_obj=obj;
         m_mgr=mgr;
+        m_pool=mgr.getConnectionPool();
     }
 
     /**
@@ -322,19 +324,19 @@ public class DefinitiveDOWriter
                     m_mgr.getServer().logInfo("Attempting replication as bdef object: " + m_obj.getPid());
                     DefinitiveBDefReader reader=new DefinitiveBDefReader(m_obj.getPid());
                     m_mgr.getServer().logInfo("Got a definitiveBDefReader...");
-                    new DOReplicator().replicateBehaviorDefinitionObject(reader); 
+                    new DOReplicator(m_pool).replicateBehaviorDefinitionObject(reader); 
                     m_mgr.getServer().logInfo("Finished replication as bdef object: " + m_obj.getPid());
                 } else if (m_obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
                     m_mgr.getServer().logInfo("Attempting replication as bmech object: " + m_obj.getPid());
                     DefinitiveBMechReader reader=new DefinitiveBMechReader(m_obj.getPid());
                     m_mgr.getServer().logInfo("Got a definitiveBMechReader...");
-                    new DOReplicator().replicateBehaviorMechanismObject(reader); 
+                    new DOReplicator(m_pool).replicateBehaviorMechanismObject(reader); 
                     m_mgr.getServer().logInfo("Finished replication as bmech object: " + m_obj.getPid());
                 } else {
                     m_mgr.getServer().logInfo("Attempting replication as normal object: " + m_obj.getPid());
                     DefinitiveDOReader reader=new DefinitiveDOReader(m_obj.getPid());
                     m_mgr.getServer().logInfo("Got a definitiveDOReader...");
-                    new DOReplicator().replicateDO(reader); 
+                    new DOReplicator(m_pool).replicateDO(reader); 
                     m_mgr.getServer().logInfo("Finished replication as normal object: " + m_obj.getPid());
                 }
             } catch (ServerException se) {
