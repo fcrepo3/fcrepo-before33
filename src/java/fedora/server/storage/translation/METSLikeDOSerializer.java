@@ -61,7 +61,7 @@ import fedora.server.utilities.StreamUtility;
 public class METSLikeDOSerializer
         implements DOSerializer {
 
-    public static final String FEDORA_AUDIT_NS="info:fedora/def:audit/";
+    public static final String FEDORA_AUDIT_NS="info:fedora/fedora-system:def/audit#";
     public static final String METS_PREFIX="METS";
     public static final String METS_NS="http://www.loc.gov/METS/";
     public static final String METS_XSD_LOCATION="http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd";
@@ -84,7 +84,7 @@ public class METSLikeDOSerializer
     public void serialize(DigitalObject obj, OutputStream out, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
-		System.out.println("Serializing using METSLike...");
+		System.out.println("Serializing METS (Fedora extension)...");
 		m_transContext=transContext;
         StringBuffer buf=new StringBuffer();
         appendXMLDeclaration(obj, encoding, buf);
