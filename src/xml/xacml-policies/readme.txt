@@ -168,3 +168,22 @@ Otherwise, the request fails authz.
 to do:  we need to discuss valueless attributes as roles, e.g., administrator
 
 to do:  we need to discuss attribute finder always returning a value 
+
+sunxacml returns a single result from its evaluation of the created PolicySet,
+at least with the currently configured combining algorithm, but does so by returning a -set- 
+of results.  The only evidence observed is that only one result is ever returned, and 
+it is always one of the following:  Permit, Deny, NotApplicable, or Indeterminate.
+
+Indeterminate is returned if an attribute value needed to evaluate a rule can't be found,
+or another error prevented processing.
+
+NotApplicable is returned if no rule applied and so couldn't return its effect.
+
+Permit or Deny is returned if a rule did apply and thus returned its effect.
+
+Or the combining algorithm of an individual policy or of the PolicySet might have converted, 
+e.g., an Indeterminate into a Deny.
+
+To protect against a bug in sunxacml code, Fedora's policy evaluation point (PEP) 
+software additionally enforces the 5 items above.  If all are satisfied, operation proceeds
+normally; if any are not, an Authorization fault is thrown.
