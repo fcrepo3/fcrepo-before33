@@ -72,7 +72,8 @@ public class MethodParameterResolverServlet extends HttpServlet
         sb.append(name+"="+(String)request.getParameter(name)+"&");
       }
     }
-    sb.replace(sb.lastIndexOf("&"),sb.lastIndexOf("&")+1,"");
+    if (sb.length() > 0)
+      sb.replace(sb.lastIndexOf("&"),sb.lastIndexOf("&")+1,"");
 
     // Check for any missing parameters in form
     if ((PID == null || PID.equalsIgnoreCase("")) ||
