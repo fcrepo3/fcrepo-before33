@@ -31,6 +31,8 @@ import fedora.server.storage.types.Property;
 import fedora.server.storage.ExternalContentManager;
 import fedora.server.utilities.DateUtility;
 import fedora.server.Server;
+import fedora.server.utilities.XMLConversions.ObjectInfoAsXML;
+import fedora.server.utilities.XMLConversions.DatastreamsAsXML;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
@@ -39,11 +41,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import com.icl.saxon.expr.StringValue;
-
-// FIXIT!  This is duplicate code from the search module.  Can we consolidate
-// and have all parts of system use one version
-import fedora.server.utilities.XMLConversions.ObjectInfoAsXML;
-import fedora.server.utilities.XMLConversions.DatastreamsAsXML;
 
 /**
  * <p>Title: DefaultBehaviorImpl.java</p>
@@ -88,36 +85,35 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
 
   }
 
-  /**
-   * <p>Returns the key metadata from the object.  The data
-   * is returned as XML encoded to the aaaa.xsd schema.</p>
-   *
-   */
+ /**
+  * <p>Returns the object profile which contains key metadata from the object,
+  * plus URLs for the object's Dissemination Index and Item Index.  The data
+  * is returned as XML encoded to the objectprofile.xsd schema.</p>
+  * @return
+  * @throws ServerException
+  */
   public MIMETypedStream getObjectProfile() throws ServerException
   {
     ObjectProfile profile = m_access.getObjectProfile(context, reader.GetObjectPID(), asOfDateTime);
-    //return new MIMETypedStream("text/xml",
-    //  new ObjectInfoAsXML().getObjectProfile(reposBaseURL, profile).getBytes());
-    // RLW: change required by conversion fom byte[] to InputStream
     InputStream in = new ByteArrayInputStream(
       (new ObjectInfoAsXML().getObjectProfile(reposBaseURL, profile).getBytes()));
     return new MIMETypedStream("text/xml", in);
   }
 
   /**
-   * <p>Returns the key metadata from the object.  the data
-   * is returned as HTML in a presentation-oriented format.</p>
-   *
+   * <p>Returns an HTML rendering of the object profile which contains
+   * key metadata from the object, plus URLs for the object's Dissemination
+   * Index and Item Index.  The data is returned as HTML in a
+   * presentation-oriented format.  This is accomplished by doing an XSLT
+   * transform on the object profile XML that is obtained from getObjectProfile.</p>
+   * @return
+   * @throws ServerException
    */
   public MIMETypedStream viewObjectProfile() throws ServerException
   {
-    // DO XSLT transform on object info;
     try
     {
-      // RLW: change required by conversion fom byte[] to InputStream
-      //ByteArrayInputStream in = new ByteArrayInputStream(getObjectProfile().stream);
       InputStream in = getObjectProfile().getStream();
-      // RLW: change required by conversion fom byte[] to InputStream
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       File xslFile = new File(reposHomeDir, "access/viewObjectProfile.xslt");
       TransformerFactory factory = TransformerFactory.newInstance();
@@ -125,11 +121,8 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       Transformer transformer = template.newTransformer();
       Properties details = template.getOutputProperties();
       transformer.transform(new StreamSource(in), new StreamResult(out));
-      // RLW: change required by conversion fom byte[] to InputStream
       in = new ByteArrayInputStream(out.toByteArray());
       return new MIMETypedStream("text/html", in);
-      //return new MIMETypedStream("text/html", out.toByteArray());
-      // RLW: change required by conversion fom byte[] to InputStream
     } catch (TransformerException e)
     {
       throw new DisseminationException("[DefaultBehaviorImpl] had an error "
@@ -139,35 +132,38 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     }
   }
 
-    /**
-   * <p>Returns the list of items (datastreams) in the object.
-   * The item list information is returned as XML encoded to
-   * the bbb.xsd schema.</p>
+  /**
+   * <p>Returns the Dissemination Index for the object.  The Dissemination
+   * Index is a list of method definitions that represent all disseminations
+   * possible on the object.  The Dissemination Index is returned as XML
+   * encoded to the objectmethods.xsd schema.</p>
+   * @return
+   * @throws ServerException
    */
   public MIMETypedStream getMethodIndex() throws ServerException
   {
     ObjectMethodsDef[] methods =
       m_access.getObjectMethods(context, reader.GetObjectPID(), asOfDateTime);
-    // RLW: change required by conversion fom byte[] to InputStream
     InputStream in = new ByteArrayInputStream(
       (new ObjectInfoAsXML().getMethodIndex(
         reposBaseURL, reader.GetObjectPID(), methods).getBytes()));
     return new MIMETypedStream("text/xml", in);
-    //return new MIMETypedStream("text/xml",
-    //  new ObjectInfoAsXML().getMethodIndex(reposBaseURL, reader.GetObjectPID(), methods).getBytes());
   }
 
   /**
-   * <p>Returns the list of items (datastreams) in the object.
-   * The item list information is returned as HTML in
-   * a presentation-oriented format.</p>
+   * <p>Returns an HTML rendering of the Dissemination Index for the object.
+   * The Dissemination Index is a list of method definitions that represent
+   * all disseminations possible on the object.  The Dissemination Index
+   * is returned as HTML in a presentation-oriented format.  This is
+   * accomplished by doing an XSLT transform on the XML that is
+   * obtained from getMethodIndex.</p>
+   * @return
+   * @throws ServerException
    */
   public MIMETypedStream viewMethodIndex() throws ServerException
   {
     try
     {
-      //ByteArrayInputStream in = new ByteArrayInputStream(getMethodIndex().stream);
-      // RLW: change required by conversion fom byte[] to InputStream
       InputStream in = getMethodIndex().getStream();
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       File xslFile = new File(reposHomeDir, "access/objectmethods.xslt");
@@ -176,11 +172,8 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       Transformer transformer = template.newTransformer();
       Properties details = template.getOutputProperties();
       transformer.transform(new StreamSource(in), new StreamResult(out));
-      // RLW: change required by conversion fom byte[] to InputStream
       in = new ByteArrayInputStream(out.toByteArray());
       return new MIMETypedStream("text/html", in);
-      //return new MIMETypedStream("text/html", out.toByteArray());
-      // RLW: change required by conversion fom byte[] to InputStream
     } catch (TransformerException e)
     {
       throw new DisseminationException("[DefaultBehaviorImpl] had an error "
@@ -191,46 +184,36 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   }
 
   /**
-   * <p>Returns the list of items (datastreams) in the object.
-   * The item list information is returned as XML encoded to
-   * the bbb.xsd schema.</p>
+   * <p>Returns the Item Index for the object.  The Item
+   * Index is a list of all datastreams in the object.  The datastream items
+   * can be data or metadata.  The Item Index is returned as XML
+   * encoded to the objectitems.xsd schema.</p>
+   * @return
+   * @throws ServerException
    */
   public MIMETypedStream getItemIndex() throws ServerException
   {
-    // FIXIT!! By using this default utility, we get exactly the information
-    // that is in the digital object.  The DefaultBehaviorImpl will need to
-    // transform this so that the dsLocation has a "public" URL that will
-    // go at the datastream mediation servlet.  Also, may want to consider
-    // whether we want to filter out inline XML metadata datastreams in this
-    // behavior method.
-    //return new MIMETypedStream("text/xml",
-    //  new DatastreamsAsXML().getDatastreamList(reader, null).getBytes());
-
-    // RLW: change required by conversion fom byte[] to InputStream
-    InputStream is = new ByteArrayInputStream(new DatastreamsAsXML().getItemIndex(reposBaseURL, reader, null).getBytes());
+    Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
+    InputStream is = new ByteArrayInputStream(
+      new DatastreamsAsXML().getItemIndex(
+      reposBaseURL, reader, versDate).getBytes());
     return new MIMETypedStream("text/xml", is);
-    //return new MIMETypedStream("text/xml",
-    //  new DatastreamsAsXML().getItemList(reposBaseURL, reader, null).getBytes());
-    // RLW: change required by conversion fom byte[] to InputStream
   }
 
   /**
-   * <p>Returns the list of items (datastreams) in the object.
-   * The item list information is returned as HTML in
-   * a presentation-oriented format.</p>
+   * <p>Returns an HTML rendering of the Item Index for the object.  The Item
+   * Index is a list of all datastreams in the object.  The datastream items
+   * can be data or metadata.  The Item Index is returned as HTML in a
+   * presentation-oriented format.  This is accomplished by doing an XSLT
+   * transform on the XML that is obtained from getItemIndex.</p>
+   * @return
+   * @throws ServerException
    */
   public MIMETypedStream viewItemIndex() throws ServerException
   {
-    //String temp = new String("<html><head><title>FedoraServlet</title></head>" +
-    //  " <body><br></br>DefaultBehaviorImpl: HTML Presentation COMING SOON!</body></html>");
-    //return new MIMETypedStream("text/html", temp.getBytes());
-    /// Transform results into an html table
     try
     {
-      // RLW: change required by conversion fom byte[] to InputStream
-      //ByteArrayInputStream in = new ByteArrayInputStream(getItemList().stream);
       InputStream in = getItemIndex().getStream();
-      // RLW: change required by conversion fom byte[] to InputStream
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       File xslFile = new File(reposHomeDir, "access/viewItemIndex.xslt");
       TransformerFactory factory = TransformerFactory.newInstance();
@@ -238,11 +221,8 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       Transformer transformer = template.newTransformer();
       Properties details = template.getOutputProperties();
       transformer.transform(new StreamSource(in), new StreamResult(out));
-      // RLW: change required by conversion fom byte[] to InputStream
       in = new ByteArrayInputStream(out.toByteArray());
       return new MIMETypedStream("text/html", in);
-      //return new MIMETypedStream("text/html", out.toByteArray());
-      // RLW: change required by conversion fom byte[] to InputStream
     } catch (TransformerException e)
     {
       throw new DisseminationException("[DefaultBehaviorImpl] had an error "
@@ -256,26 +236,22 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    * <p>Returns an particular item (datastream) in the object.
    * The item will by a mime-typed stream of bytes.</p>
    *
-   * @param  itemID  : the unique identifier for the item in
-   * the object in the form of DatastreamID+VersionID.  The
+   * @param  itemID  the unique identifier for the item in
+   * the object in the form of a DatastreamID.  The
    * item identifer can be discovered via the results of the
    * getItemIndex or viewItemIndex methods.
+   * @return
+   * @throws ServerException
    */
   public MIMETypedStream getItem(String itemID) throws ServerException
   {
-  /*
-    Datastream ds = reader.GetDatastream(itemID, null);
-    ExternalContentManager externalContentManager = (ExternalContentManager)
-    s_server.getModule("fedora.server.storage.ExternalContentManager");
+    // FIXIT!! We need to look for the case when dsControlGrp indicates
+    // that there is an externally referenced datastream that we want
+    // to redirect the client to, as opposed to obtaining the bytes here
+    // and sending them back as an inputstream. See DisseminationService.
 
-    // FIXIT!! Deal with different kinds of datasteams
-    MIMETypedStream dissemination =
-      externalContentManager.getExternalContent(ds.DSLocation);
-  */
-
-    // FIXIT!! This is temporary.  Will look for redirect in
-    // dsControlGrp similar to what's in DisseminationService.
-    Datastream ds = reader.GetDatastream(itemID, null);
+    Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
+    Datastream ds = reader.GetDatastream(itemID, versDate);
     ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
     InputStream in = ds.getContentStream();
     int byteStream = 0;
@@ -295,52 +271,44 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
           + "Underlying exception was: "
           + ioe.getMessage());
     }
-    // RLW: change required by conversion fom byte[] to InputStream
     InputStream is = new ByteArrayInputStream(out.toByteArray());
     return new MIMETypedStream(ds.DSMIME, is);
-    //return new MIMETypedStream(ds.DSMIME, out.toByteArray());
-    // RLW: change required by conversion fom byte[] to InputStream
   }
 
   /**
    * <p>Returns the Dublin Core record for the object, if one exists.
    * The record is returned as XML encoded to the oaidc.xsd schema.</p>
-   *
+   * @return
+   * @throws ServerException
    */
   public MIMETypedStream getDublinCore() throws ServerException
   {
-    Date versionDate = DateUtility.convertCalendarToDate(asOfDateTime);
+    Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
     DatastreamXMLMetadata dcmd = null;
     try
     {
-        dcmd = (DatastreamXMLMetadata) reader.GetDatastream("DC", versionDate);
+        dcmd = (DatastreamXMLMetadata) reader.GetDatastream("DC", versDate);
     }
     catch (ClassCastException cce) {
         throw new ObjectIntegrityException("Object " + reader.GetObjectPID()
                 + " has a DC datastream, but it's not inline XML.");
     }
-
-    // RLW: change required by conversion fom byte[] to InputStream
     InputStream is = new ByteArrayInputStream(
       new ObjectInfoAsXML().getOAIDublinCore(dcmd).getBytes());
     return new MIMETypedStream("text/xml", is);
-    //return new MIMETypedStream("text/xml",
-    //  new ObjectInfoAsXML().getOAIDublinCore(reader).getBytes());
-    // RLW: change required by conversion fom byte[] to InputStream
   }
 
   /**
    * <p>Returns the Dublin Core record for the object, if one exists.
    * The record is returned as HTML in a presentation-oriented format.</p>
-   *
+   * @return
+   * @throws ServerException
    */
   public MIMETypedStream viewDublinCore() throws ServerException
   {
     try
     {
-      //ByteArrayInputStream in = new ByteArrayInputStream(getDublinCore().stream);
       InputStream in = getDublinCore().getStream();
-      // RLW: change required by conversion fom byte[] to InputStream
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       File xslFile = new File(reposHomeDir, "access/viewDublinCore.xslt");
       TransformerFactory factory = TransformerFactory.newInstance();
@@ -348,11 +316,8 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       Transformer transformer = template.newTransformer();
       Properties details = template.getOutputProperties();
       transformer.transform(new StreamSource(in), new StreamResult(out));
-      // RLW: change required by conversion fom byte[] to InputStream
       in = new ByteArrayInputStream(out.toByteArray());
       return new MIMETypedStream("text/html", in);
-      //return new MIMETypedStream("text/html", out.toByteArray());
-      // RLW: change required by conversion fom byte[] to InputStream
     } catch (TransformerException e)
     {
       throw new DisseminationException("[DefaultBehaviorImpl] had an error "
@@ -362,22 +327,26 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     }
   }
 
+  /**
+   * Method implementation of reflectMethods from the InternalService interface.
+   * This will return an array of method definitions that constitute the
+   * official default behaviors a Fedora object.  These will be the methods
+   * promulgated by the DefaultBehavior interface, which is the behavior
+   * definition contract for the DefaultBehavior internal service.
+   * Like any other behavior mechanism, an internal service mechanism must
+   * publish the service methods it implements.
+   * @return
+   */
   public static MethodDef[] reflectMethods()
   {
+    // FIXIT!! For now, I am just HACKING in the method defs for some
+    // quick testing. To properly get the default behavior defintion,
+    // we can either do java reflection on the interface DefaultBehavior
+    // (see technique in original Fedora class cornell.SigGen.Lecture.java)
+    // or else we can configure a Method Map XML file with the DynamicAccess
+    // module.  The later solution is better since java reflection can't
+    // provide all information we want about parameters (e.g., parm names).
     ArrayList methodList = new ArrayList();
-    // Read in method definitions for Default Disseminator from
-    // a source file configurable with the repository.
-
-    // FIXIT!! For now, I am just HACKING in a few method defs for some
-    // quick testing.
-    //
-    // To properly get the default behavior defintion, we can either do java
-    // reflection on the interface DefaultBehavior (see technique in original
-    // Fedora class cornell.SigGen.Lecture.java) or else we can configure a
-    // Method Map xml file with the DynamicAccess module.  The later solution
-    // is better since java reflection can't provide all information we want
-    // about parameters.
-
     MethodDef method = null;
 
     method = new MethodDef();
