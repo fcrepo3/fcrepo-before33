@@ -919,7 +919,8 @@
 				<exclude name="**/APIMStubWrapper.java"/>
 				<exclude name="**/FedoraAPIABindingSOAPHTTPImpl.java"/>
 				<exclude name="**/FedoraAPIMBindingSOAPHTTPImpl.java"/>
-				<exclude name="**/FedoraAPIMServiceLocator.java"/>
+				<exclude name="**/FedoraAPIAServiceLocator.java"/>
+                <exclude name="**/FedoraAPIMServiceLocator.java"/>         
 			</fileset>
 			<fileset dir="src/properties/server"/>
 		</copy>
