@@ -100,6 +100,8 @@ public class Administrator extends JFrame {
 
     ClassLoader cl;
 
+    public static JTextArea WATCH_AREA;
+
     private static Administrator s_instance;
     private JLabel m_aboutPic;
     private JLabel m_aboutText;
@@ -120,6 +122,11 @@ public class Administrator extends JFrame {
     public Administrator(String host, int port, String user, String pass) {
         super("Fedora Administrator");
         INSTANCE=this;
+        WATCH_AREA=new JTextArea();
+        WATCH_AREA.setFont(new Font("monospaced", Font.PLAIN, 12));
+        WATCH_AREA.setCaretPosition(0);
+
+
         if (host!=null) {
             // already must have passed through non-interactive login
             try {
@@ -370,7 +377,20 @@ public class Administrator extends JFrame {
                 createAccessConsole();
             }
         });
+
+        JMenuItem toolsWatch=new JMenuItem("STDOUT/STDERR");
+        toolsWatch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JInternalFrame viewFrame=new JInternalFrame("WATCH_AREA");
+                viewFrame.getContentPane().add(new JScrollPane(WATCH_AREA));
+                viewFrame.setSize(720,520);
+                viewFrame.setVisible(true);
+                Administrator.getDesktop().add(viewFrame);
+            }
+        });
+
         toolsAdvanced.add(toolsAccess);
+        toolsAdvanced.add(toolsWatch);
         toolsMenu.add(toolsAdvanced);
 
         menuBar.add(toolsMenu);
@@ -678,23 +698,7 @@ public class Administrator extends JFrame {
     }
 
     public static void main(String[] args) {
-    /*
-        try {
-            UIManager.put("AuditoryCues.playList",
-                    UIManager.get("AuditoryCues.allAuditoryCues"));
-		    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-		} catch (UnsupportedLookAndFeelException exc) {
-		} catch (IllegalAccessException exc) {
-		    System.out.println("IllegalAccessException Error:" + exc);
-		} catch (ClassNotFoundException exc) {
-		    System.out.println("ClassNotFoundException Error:" + exc);
-		} catch (InstantiationException exc) {
-		    System.out.println("InstantiateException Error:" + exc);
-		}
-        */
 
-        // turn off obnoxious Axis stdout/err messages
-        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
 
 
         try {
@@ -713,12 +717,20 @@ public class Administrator extends JFrame {
         }
         System.out.print("Initializing UI...");
         Administrator administrator=new Administrator(host, port, user, pass);
-        System.out.println("ok.");
+        System.out.println("Started Fedora Administrator.");
         } catch (NumberFormatException e) {
             System.out.println("Error: port must be a number.  fedora-admin host port user pass");
         } catch (Exception e) {
             System.out.println("FAILED!" + "\n" + e.getMessage());
         }
     }
+
+    // a wrapper around PrintWriter that sends all its content to WATCH_AREA
+    // via WATCH_AREA.append(String)
+    private class WatchPrintStream
+   { //        extends PrintStream {
+
+    }
+
 }
 
