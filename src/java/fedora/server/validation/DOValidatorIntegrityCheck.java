@@ -88,14 +88,13 @@ import fedora.server.errors.InitializationException;
    * integrity checks. </p>
    *
    * @param objectAsFile the digital object xml to be validated.
-   * @param xmlSchemaURL the URL of the xml schema to be used by
+   * @param xmlSchemaPath the local path of the xml schema to be used by
    *        the parser if the digital object has not already been
    *        parsed by Level 1 Validation.
    * @param c  - a database connection for lookups to support integrity checks
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
-  //public DOValidatorIntegrityCheck(File objectAsFile, String xmlSchemaURL, Connection c)
   public DOValidatorIntegrityCheck(File objectAsFile, String xmlSchemaPath, Connection c)
       throws ObjectValidityException, GeneralException
   {
