@@ -227,6 +227,7 @@ public class MethodPropertiesDialog extends JDialog
         rb_httpRelative = new JRadioButton(rLabel, false);
         rb_httpRelative.setActionCommand("httprel");
         URL_textRelative = new JTextField(30);
+        URL_textRelative.setMinimumSize(new Dimension(200, (int) URL_textRelative.getMinimumSize().height));
         URL_textRelative.setToolTipText("Enter relative URL for the service method"
           + "  See Help button for more details on syntax.");
 
