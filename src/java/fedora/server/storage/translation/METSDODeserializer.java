@@ -67,6 +67,7 @@ public class METSDODeserializer
      * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
      */
     private HashMap m_prefixes;
+    private HashMap m_prefixUris;
 
     private boolean m_rootElementFound;
     private String m_dsId;
@@ -87,10 +88,13 @@ public class METSDODeserializer
 
 
     private StringBuffer m_dsXMLBuffer;
+    private StringBuffer m_dsFirstElementBuffer;
 
     // are we reading binary in an FContent element? (base64-encoded)
     private boolean m_readingContent;
 
+    private boolean m_firstInlineXMLElement;
+    
     /** Namespace prefixes used in the currently scanned datastream */
     private ArrayList m_dsPrefixes;
 
@@ -217,6 +221,7 @@ public class METSDODeserializer
         m_dsLabel=null;
         m_dsXMLBuffer=null;
         m_prefixes=new HashMap();
+        m_prefixUris=new HashMap();
         m_dsAdmIds=new HashMap();
         m_dsDmdIds=null;
         m_dissems=new HashMap();
@@ -276,6 +281,7 @@ public class METSDODeserializer
 
     public void startPrefixMapping(String prefix, String uri) {
         m_prefixes.put(uri, prefix);
+        m_prefixUris.put(prefix, uri);
     }
 
     public void startElement(String uri, String localName, String qName,
@@ -336,9 +342,11 @@ public class METSDODeserializer
                 m_dsLabel=grab(a, M, "LABEL");
             } else if (localName.equals("xmlData")) {
                 m_dsXMLBuffer=new StringBuffer();
+                m_dsFirstElementBuffer=new StringBuffer();
                 m_dsPrefixes=new ArrayList();
                 m_xmlDataLevel=0;
                 m_inXMLMetadata=true;
+                m_firstInlineXMLElement=true;
             } else if (localName.equals("fileGrp")) {
                 m_dsId=grab(a, M, "ID");
                 // reset the values for the next file
@@ -539,18 +547,33 @@ public class METSDODeserializer
             if (m_inXMLMetadata) {
                 // must be in xmlData... just output it, remembering the number
                 // of METS:xmlData elements we see
-                m_dsXMLBuffer.append('<');
                 String prefix=(String) m_prefixes.get(uri);
-                if (prefix!=null) {
-                    if (!m_dsPrefixes.contains(prefix)) {
-                        if (!"".equals(prefix)) {
-                            m_dsPrefixes.add(prefix);
+                if (m_firstInlineXMLElement) {
+                    m_firstInlineXMLElement=false;
+                    m_dsFirstElementBuffer.append('<');
+                    if (prefix!=null) {
+                        if (!m_dsPrefixes.contains(prefix)) {
+                            if (!"".equals(prefix)) {
+                                m_dsPrefixes.add(prefix);
+                            }
                         }
+                        m_dsFirstElementBuffer.append(prefix);
+                        m_dsFirstElementBuffer.append(':');
                     }
-                    m_dsXMLBuffer.append(prefix);
-                    m_dsXMLBuffer.append(':');
+                    m_dsFirstElementBuffer.append(localName);
+                } else {
+                    m_dsXMLBuffer.append('<');
+                    if (prefix!=null) {
+                        if (!m_dsPrefixes.contains(prefix)) {
+                            if (!"".equals(prefix)) {
+                                m_dsPrefixes.add(prefix);
+                            }
+                        }
+                        m_dsXMLBuffer.append(prefix);
+                        m_dsXMLBuffer.append(':');
+                    }
+                    m_dsXMLBuffer.append(localName);
                 }
-                m_dsXMLBuffer.append(localName);
                 for (int i=0; i<a.getLength(); i++) {
                     m_dsXMLBuffer.append(' ');
                     String aPrefix=(String) m_prefixes.get(a.getURI(i));
@@ -634,13 +657,23 @@ public class METSDODeserializer
                     // create the right kind of datastream and add it to m_obj
                     String[] prefixes=new String[m_dsPrefixes.size()];
                     for (int i=0; i<m_dsPrefixes.size(); i++) {
-                        prefixes[i]=(String) m_dsPrefixes.get(i);
+                        String pfx=(String) m_dsPrefixes.get(i);
+                        prefixes[i]=pfx;
+                        // now finish writing to m_dsFirstElementBuffer, a series of strings like
+                        // ' xmlns:PREFIX="URI"'
+                        String pfxUri=(String) m_prefixUris.get(pfx);
+                        m_dsFirstElementBuffer.append(" xmlns:");
+                        m_dsFirstElementBuffer.append(pfx);
+                        m_dsFirstElementBuffer.append("=\"");
+                        m_dsFirstElementBuffer.append(pfxUri);
+                        m_dsFirstElementBuffer.append("\"");
                     }
                     DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
                     // set the attrs specific to XML_METADATA datastreams
                     ds.namespacePrefixes=prefixes;
                     try {
-                        ds.xmlContent=m_dsXMLBuffer.toString().getBytes(
+                        String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
+                        ds.xmlContent=combined.getBytes(
                                 m_characterEncoding);
                     } catch (UnsupportedEncodingException uee) {
                       System.out.println("oops..encoding not supported, this could have been caught earlier.");
@@ -658,7 +691,7 @@ public class METSDODeserializer
                     ds.DSInfoType=m_dsInfoType;
                     ds.DSMDClass=m_dsMDClass;
                     ds.DSState=m_dsState;
-                    ds.DSLocation=null;  // N/A
+                    ds.DSLocation=m_obj.getPid() + "+" m_dsId;
                     // add it to the digitalObject
                     m_obj.datastreams(m_dsId).add(ds);
                 }
