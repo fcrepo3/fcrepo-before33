@@ -10,11 +10,13 @@ import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fedora.server.Context;
+import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.DisseminationBindingInfoNotFoundException;
@@ -22,10 +24,14 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.storage.DOManager;
+import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
+import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.utilities.DateUtility;
 
 /**
  * <p><b>Title: </b>DisseminationService.java</p>
@@ -57,6 +63,12 @@ public class DisseminationService
 
   /** The Fedora Server instance */
   private static Server s_server;
+
+  /** An instance of DO manager */
+  private static DOManager m_manager;
+
+  /** The current context */
+  private static Context m_context;
 
   /** Signifies the special type of address location known as LOCAL.
    *  An address location of LOCAL implies that no remote host name is
@@ -106,6 +118,7 @@ public class DisseminationService
       } else
       {
         s_server = Server.getInstance(new File(fedoraHome));
+        m_manager = (DOManager) s_server.getModule("fedora.server.storage.DOManager");
         hostIP = null;
         fedoraServerPort = s_server.getParameter("fedoraServerPort");
         s_server.logFinest("fedoraServerPort: " + fedoraServerPort);
@@ -184,7 +197,14 @@ public class DisseminationService
       throw new DisseminationException("[DisseminationService] was unable to "
           + "resolve the IP address of the Fedora Server: "
           + datastreamResolverServletURL + " .");
-      }
+    }
+
+    // Initialize context.
+     HashMap h = new HashMap();
+     h.put("application", "apia");
+     h.put("useCachedObject", "false");
+     h.put("userId", "fedoraAdmin");
+     m_context = new ReadOnlyContext(h);
   }
 
   public void checkState(Context context, String state, String dsID, String PID)
@@ -369,12 +389,10 @@ public class DisseminationService
         {
           // Case where binding keys are equal which means that multiple
           // datastreams matched the same binding key.
-          if ((doDatastreamMediation ||
-              dissBindInfo.dsControlGroupType.equalsIgnoreCase("M") ||
-              dissBindInfo.dsControlGroupType.equalsIgnoreCase("X")) &&
+          if (doDatastreamMediation  &&
               !dissBindInfo.dsControlGroupType.equalsIgnoreCase("R"))
           {
-            // Use Datastream Mediation.
+            // Use Datastream Mediation (except for redirected datastreams).
             replaceString = datastreamResolverServletURL
                 + registerDatastreamLocation(dissBindInfo.dsLocation,
                                            dissBindInfo.dsControlGroupType)
@@ -382,28 +400,46 @@ public class DisseminationService
           } else
           {
             // Bypass Datastream Mediation.
-            replaceString = dissBindInfo.dsLocation
-                + "+(" + dissBindInfo.DSBindKey + ")";
+            if ( dissBindInfo.dsControlGroupType.equalsIgnoreCase("M") ||
+                 dissBindInfo.dsControlGroupType.equalsIgnoreCase("X"))
+            {
+                // Use the Default Disseminator syntax to resolve the internal
+                // datastream location for Managed and XML datastreams.
+                replaceString =
+                    resolveInternalDSLocation(dissBindInfo.dsLocation, PID)
+                        + "+(" + dissBindInfo.DSBindKey + ")";;
+            } else {
+                replaceString =
+                        dissBindInfo.dsLocation + "+(" + dissBindInfo.DSBindKey + ")";
+            }
             if (dissBindInfo.dsControlGroupType.equalsIgnoreCase("R") &&
                 dissBindInfo.AddressLocation.equals(LOCAL_ADDRESS_LOCATION))
-                    isRedirect = true;
+                isRedirect = true;
           }
         } else
         {
           // Case where there are one or more binding keys.
-          if ((doDatastreamMediation ||
-              dissBindInfo.dsControlGroupType.equalsIgnoreCase("M") ||
-              dissBindInfo.dsControlGroupType.equalsIgnoreCase("X")) &&
+          if (doDatastreamMediation &&
               !dissBindInfo.dsControlGroupType.equalsIgnoreCase("R"))
           {
-            // Use Datastream Mediation.
+            // Use Datastream Mediation (except for Redirected datastreams)
             replaceString = datastreamResolverServletURL
                 + registerDatastreamLocation(dissBindInfo.dsLocation,
-                                             dissBindInfo.dsControlGroupType);
+                      dissBindInfo.dsControlGroupType);
           } else
           {
             // Bypass Datastream Mediation.
-            replaceString = dissBindInfo.dsLocation;
+            if ( dissBindInfo.dsControlGroupType.equalsIgnoreCase("M") ||
+                 dissBindInfo.dsControlGroupType.equalsIgnoreCase("X"))
+            {
+                // Use the Default Disseminator syntax to resolve the internal
+                // datastream location for Managed and XML datastreams.
+                replaceString =
+                    resolveInternalDSLocation(dissBindInfo.dsLocation, PID);
+            } else
+            {
+                replaceString = dissBindInfo.dsLocation;
+            }
             if (dissBindInfo.dsControlGroupType.equalsIgnoreCase("R") &&
                 dissBindInfo.AddressLocation.equals(LOCAL_ADDRESS_LOCATION))
                     isRedirect = true;
@@ -703,5 +739,42 @@ public class DisseminationService
     if ( index != -1 && index+1 == sb.length())
       sb.replace(index,sb.length(),"");
     return requestURI+sb.toString();
+  }
+
+  /**
+   * <p>Converts the internal dsLocation used by managed and XML type datastreams
+   * to the corresponding Default Dissemination request that will return the
+   * datastream contents.</p>
+   *
+   * @param internalDSLocation - dsLocation of the Managed or XML type datastream.
+   * @param PID - the persistent identifier of the digital object.
+   * @return - A URL corresponding to the Default Dissemination request for the
+   *           specified datastream.
+   * @throws ServerException - If anything goes wrong during the conversion attempt.
+   */
+  private String resolveInternalDSLocation(String internalDSLocation,
+      String PID) throws ServerException
+  {
+      String[] s = internalDSLocation.split("\\+");
+      String dsLocation = null;
+
+      if (s.length == 3)
+      {
+          DOReader doReader =  m_manager.getReader(m_context, PID);
+          Datastream d = (Datastream) doReader.getDatastream(s[1], s[2]);
+          System.out.println("DSDate: "+DateUtility.convertDateToString(d.DSCreateDT));
+          dsLocation = "http://"+fedoraServerHost+":"+fedoraServerPort
+              +"/fedora/get/"+s[0]+"/fedora-system:3/getItem/"
+              +DateUtility.convertDateToString(d.DSCreateDT)+"?itemID="+s[1];
+      } else
+      {
+        String message = "[DisseminationService] An error has occurred. "
+            + "The internal dsLocation: \"" + internalDSLocation + "\" is "
+            + "not in the required format of: "
+            + "\"doPID+DSID+DSVERSIONID\" .";
+        s_server.logFinest(message);
+            throw new GeneralException(message);
+      }
+      return dsLocation;
   }
 }
