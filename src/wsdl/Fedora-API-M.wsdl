@@ -127,7 +127,7 @@
     <part name="response" type="fedora-types:ObjectInfo">
       <documentation>Key information about the object, including
       an element for each of the following:
-      label, foType, profile, state and lockedBy (all xsd:strings),
+      label, foType, contentModelId, state and lockedBy (all xsd:strings),
       and createDate and lastModDate (both xsd:dateTimes)</documentation>
     </part>
   </message>
