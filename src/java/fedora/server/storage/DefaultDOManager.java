@@ -437,6 +437,11 @@ public class DefaultDOManager
                   // RLW: change required by conversion fom byte[] to InputStream
 
                   // Make new audit record.
+                  /*
+                  // SDP: commented out since audit record id is not yet
+                  // auto-incremented and we get XML validation error when
+                  // there are multiple managed content datastreams (we get
+                  // duplicate ID elements in the XML)
                   a = new AuditRecord();
                   a.id = "REC1025";  // FIXME: id should be auto-gen'd somehow
                   a.processType = "API-M";
@@ -448,6 +453,7 @@ public class DefaultDOManager
                   a.date = new Date();
                   a.justification = logMessage;
                   obj.getAuditRecords().add(a);
+                  */
 
                   // Reset dsLocation in object to new internal location.
                   dmc.DSLocation = id;
@@ -747,7 +753,7 @@ public class DefaultDOManager
                     }
                 }
                 // do we need to generate a pid?
-                if (obj.getPid()!=null && obj.getPid().startsWith("test:")) {
+                if (obj.getPid()!=null && (obj.getPid().startsWith("test:") || obj.getPid().startsWith("demo:"))) {
                     getServer().logFinest("Stream contained PID with 'test' namespace-id... will use PID from stream.");
                 } else {
                     if (newPid) {
