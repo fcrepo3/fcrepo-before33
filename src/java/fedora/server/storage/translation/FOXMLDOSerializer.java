@@ -58,8 +58,8 @@ import fedora.server.utilities.StreamUtility;
 public class FOXMLDOSerializer
         implements DOSerializer {
 
-	public static final String FOXML_NS="info:fedora/def:foxml/";
-    public static final String FEDORA_AUDIT_NS="info:fedora/def:audit/";
+	public static final String FOXML_NS="info:fedora/fedora-system:def/foxml#";
+    public static final String FEDORA_AUDIT_NS="info:fedora/fedora-system:def/audit#";
     public static final String FOXML_PREFIX="foxml";
 
     public static final String FOXML_XSD_LOCATION="http://www.fedora.info/definitions/1/0/foxml1-0.xsd";
@@ -79,7 +79,7 @@ public class FOXMLDOSerializer
 	public void serialize(DigitalObject obj, OutputStream out, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
-		System.out.println("Serializing using FOXMLDOSerializer for transContext: " + transContext);
+		System.out.println("Serializing FOXML for transContext: " + transContext);
 		m_transContext=transContext;
         StringBuffer buf=new StringBuffer();
         appendXMLDeclaration(obj, encoding, buf);
@@ -155,27 +155,27 @@ public class FOXMLDOSerializer
 		buf.append("    <" + FOXML_PREFIX + ":objectProperties>\n");
 			
 		if (ftype!=null && !ftype.equals("")) {
-			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:fType" + "\"" 
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/fedora-system:def/fType" + "\"" 
 			+ " VALUE=\"" + ftype + "\"/>\n");
 		}
 		if (state!=null && !state.equals("")) {
-			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:state" + "\"" 
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/fedora-system:def/state" + "\"" 
 			+ " VALUE=\"" + state + "\"/>\n");
 		}
 		if (label!=null && !label.equals("")) {
-			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:label" + "\""
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/fedora-system:def/label" + "\""
 			+ " VALUE=\"" + StreamUtility.enc(label) + "\"/>\n"); 
 		}
 		if (cdate!=null) {
-			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cDate" + "\""
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/fedora-system:def/cDate" + "\""
 			+ " VALUE=\"" + DateUtility.convertDateToString(cdate) + "\"/>\n"); 
 		}
 		if (mdate!=null) {
-			buf.append("        <" + FOXML_PREFIX  + ":property NAME=\"" + "info:fedora/def:dobj:mDate" + "\""
+			buf.append("        <" + FOXML_PREFIX  + ":property NAME=\"" + "info:fedora/fedora-system:def/mDate" + "\""
 			+ " VALUE=\"" + DateUtility.convertDateToString(mdate) + "\"/>\n"); 
 		}
 		if (cmodel!=null && !cmodel.equals("")) {
-			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:cModel" + "\"" 
+			buf.append("        <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/fedora-system:def/cModel" + "\"" 
 			+ " VALUE=\"" + StreamUtility.enc(cmodel) + "\"/>\n");	
 		}
 		Iterator iter = obj.getExtProperties().keySet().iterator();
@@ -274,7 +274,7 @@ public class FOXMLDOSerializer
 				+ " URI=\"" + "info:fedora/" + obj.getPid() + "/AUDIT" + "\""
 				+ " STATE=\"" + "A" + "\""
 				+ " MIMETYPE=\"" + "text/xml" + "\""
-				+ " FORMAT_URI=\"" + "info:fedora/format:xml:audit" + "\""
+				+ " FORMAT_URI=\"" + "info:fedora/fedora-system:format/xml.fedora.audit" + "\""
 				+ " CONTROL_GROUP=\"" + "X" + "\""
 				+ " VERSIONABLE=\"" + "NO" + "\">\n");
 			// insert the ds version-level elements
