@@ -235,7 +235,6 @@ public class DatastreamViewer
                             fieldGrid.add(locationValueField);
                         }
 
-
                     JPanel multiLineValuePanel=new JPanel();
                     multiLineValuePanel.setLayout(new BorderLayout());
                     multiLineValuePanel.add(fieldGrid, BorderLayout.NORTH);
@@ -273,10 +272,24 @@ public class DatastreamViewer
                     // NORTH: saveButton
                     JButton saveButton=new JButton("Save");
                     if (xml) {
-                        saveButton.addActionListener(
-                                new SaveDatastreamByValueListener(pid,
-                                ds.getID(), labelValueField,
-                                modifiedValueLabel, xmlEditor));
+                        if (ds.getID().equals("METHODMAP")
+                                || ds.getID().equals("DSINPUTSPEC")
+                                || ds.getID().equals("WSDL") ) {
+                           saveButton.setText("Note");
+                           saveButton.addActionListener(new ActionListener() {
+                               public void actionPerformed(ActionEvent ae) {
+                                   JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                                       "METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified at this time.",
+                                       "Note: Unmodifiable Datastream",
+                                       JOptionPane.ERROR_MESSAGE);
+                               }
+                           });
+                        } else {
+                           saveButton.addActionListener(
+                                   new SaveDatastreamByValueListener(pid,
+                                   ds.getID(), labelValueField,
+                                   modifiedValueLabel, xmlEditor));
+                        }
                     } else {
                         saveButton.addActionListener(
                                 new SaveDatastreamByReferenceListener(pid,
