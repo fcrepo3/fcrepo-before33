@@ -35,6 +35,7 @@ public class AuditRecord {
     public String id;
     public String processType;
     public String action;
+    public String componentID;
     public String responsibility;
     public Date date;
     public String justification;
