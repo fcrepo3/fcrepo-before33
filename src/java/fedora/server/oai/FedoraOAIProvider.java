@@ -132,7 +132,7 @@ public class FedoraOAIProvider
         List l=null;
         try {
             l=m_fieldSearch.search(s_headerAndDCFields, 
-                    Condition.getConditions("pid='" + pid + "' dcmDate~'*T*'"));
+                    Condition.getConditions("pid='" + pid + "' dcmDate>'2000-01-01'"));
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
         }
@@ -168,7 +168,7 @@ public class FedoraOAIProvider
         List l=null;
         try {
             l=m_fieldSearch.search(s_headerAndDCFields, 
-                    Condition.getConditions("dcmDate~'*T*'" 
+                    Condition.getConditions("dcmDate>'2000-01-01'" 
                     + getDatePart(from, until) + getFTypePart(set)));
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
@@ -340,7 +340,7 @@ public class FedoraOAIProvider
         List l=null;
         try {
             l=m_fieldSearch.search(s_headerFields, 
-                    Condition.getConditions("dcmDate~'*T*'" 
+                    Condition.getConditions("dcmDate>'2000-01-01'" 
                     + getDatePart(from, until) + getFTypePart(set)));
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
@@ -405,7 +405,7 @@ public class FedoraOAIProvider
         String pid=getPID(id);
         List l=null;
         try {
-            l=m_fieldSearch.search(new String[] {"pid"}, Condition.getConditions("pid='" + pid + "' dcmDate~'*T*'"));
+            l=m_fieldSearch.search(new String[] {"pid"}, Condition.getConditions("pid='" + pid + "' dcmDate>'2000-01-01'"));
         } catch (ServerException se) {
             throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
         }
