@@ -263,6 +263,14 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         JMenu toolsMenu=new JMenu("Tools");
         toolsMenu.setMnemonic(KeyEvent.VK_T);
         
+        JMenuItem toolsBrowser=new JMenuItem("Repository Browser",KeyEvent.VK_B);
+        toolsBrowser.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createRepositoryBrowser();
+            }
+        });
+        toolsMenu.add(toolsBrowser);
+        
         JMenuItem toolsManagement=new JMenuItem("Management Console",KeyEvent.VK_M);
         toolsManagement.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -491,6 +499,15 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         }
     }
     
+    protected void createRepositoryBrowser() {
+        RepositoryBrowser frame=new RepositoryBrowser(this);
+        frame.setVisible(true);
+        m_desktop.add(frame);
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {}
+    }
+    
     protected void createManagementConsole() {
         ManagementConsole frame=new ManagementConsole(this);
         frame.setVisible(true);
@@ -522,6 +539,14 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         if (prefYPos<0) prefYPos=0;
         if (prefYPos>maxYPos) prefYPos=maxYPos;
         return new Point(prefXPos, prefYPos);
+    }
+    
+    public String getHost() {
+        return m_host;
+    }
+
+    public int getPort() {
+        return m_port;
     }
 
     public static void main(String[] args) {
