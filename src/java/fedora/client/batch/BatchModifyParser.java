@@ -164,13 +164,13 @@ public class BatchModifyParser extends DefaultHandler
         try
         {
             SAXParserFactory saxfactory=SAXParserFactory.newInstance();
-            //saxfactory.setValidating(true);
+            saxfactory.setValidating(true);
             SAXParser parser=saxfactory.newSAXParser();
             xmlReader=parser.getXMLReader();
             xmlReader.setContentHandler(this);
             xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
             xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
-            //xmlReader.setFeature("http://apache.org/xml/features/validation/schema", true);
+            xmlReader.setFeature("http://apache.org/xml/features/validation/schema", true);
             xmlReader.setErrorHandler(new BatchModifyXMLErrorHandler());
         }
         catch (Exception e)
