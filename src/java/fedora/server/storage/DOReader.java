@@ -18,6 +18,17 @@ import java.io.InputStream;
 public interface DOReader
 {
 
+    public static int FEDORA_OBJECT=0;
+    public static int FEDORA_BDEF_OBJECT=1;    
+    public static int FEDORA_BMECH_OBJECT=2;
+
+    /**
+     * Gets the type of fedora object (FEDORA_OBJECT, FEDORA_BDEF_OBJECT,
+     * FEDORA_BMECH_OBJECT) this is a handle on.
+     */
+//    public int getFedoraObjectType();
+// uncomment when impl'd across all readers
+
     /**
      * Gets the content of the entire digital object as XML.  The object will
      * be returned exactly as it is stored in the repository.
@@ -25,7 +36,6 @@ public interface DOReader
      * @throws ServerException If there object could not be found or there was
      *        was a failure in accessing the object for any reason.
      */
-
     public InputStream GetObjectXML() throws ServerException;
 
     /**
