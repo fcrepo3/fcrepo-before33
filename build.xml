@@ -63,6 +63,7 @@
 		<copy file="src/mets/batch/beta1-demo1/beta1-demo1.xml" todir="dist/batch/beta1-demo1"/>
 		<mkdir dir="dist/batch/beta1-demo2"/>
 		<copy file="src/mets/batch/beta1-demo2/beta1-demo2.xml" todir="dist/batch/beta1-demo2"/>
+		<copy file="src/mets/batch/beta1-demo2/beta1-demo2-extended.xml" todir="dist/batch/beta1-demo2"/>		
 		<copy todir="dist/batch/beta1-demo1">
 			<fileset dir="src/properties/batch/beta1-demo1"/>
 		</copy>
@@ -552,6 +553,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.85  2003/03/05 02:30:08  wdn5e
+  add copy of demo2 extended template to dist
+
   Revision 1.84  2003/03/05 02:05:48  rlw
   changes due to repackaging of FedoraAccessSOAPServlet.
   soap client will now reside in it's own webapp and be totally outside the fedora.server package
