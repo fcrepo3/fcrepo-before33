@@ -38,7 +38,9 @@ public interface DODeserializer {
 
     public DODeserializer getInstance() throws ServerException;
 
-    public void deserialize(InputStream in, DigitalObject obj, String encoding)
+    //public void deserialize(InputStream in, DigitalObject obj, String encoding)
+	public void deserialize(InputStream in, DigitalObject obj, 
+			String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException;
 
