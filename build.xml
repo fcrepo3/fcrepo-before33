@@ -412,7 +412,13 @@
 		</copy>
 		<copy todir="dist/userdocs/client/admin-gui/images">
 			<fileset dir="src/jpg/client/tools"/>
-		</copy>			
+		</copy>
+		<copy todir="dist/userdocs/client/admin-gui/images">
+			<fileset dir="src/jpg/client/help"/>
+		</copy>
+		<copy todir="dist/userdocs/client/admin-gui/images">
+			<fileset dir="src/jpg/client/window"/>
+		</copy>				
 		<!--
 		<copy file="src/jpg/client/tools/build.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
 		<copy file="src/jpg/client/tools/build-ingest.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
