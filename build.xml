@@ -76,16 +76,16 @@
 		</copy>
 	</target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
-       <copy todir="dist/server" file="LICENSE.TXT"/>
-       <copy todir="dist/server" file="COPYRIGHT.TXT"/>
-       <copy todir="dist/server" file="license.html"/>
-       <copy todir="dist/server" file="copyright.html"/>
-       <copy todir="dist/server/tomcat41/webapps/userdocs/distribution" file="license.html"/>
-       <copy todir="dist/server/tomcat41/webapps/userdocs/distribution" file="copyright.html"/>
-       <copy todir="dist/client" file="LICENSE.TXT"/>
-       <copy todir="dist/client" file="COPYRIGHT.TXT"/>
-       <copy todir="dist/client" file="license.html"/>
-       <copy todir="dist/client" file="copyright.html"/>
+		<copy todir="dist/server" file="LICENSE.TXT"/>
+		<copy todir="dist/server" file="COPYRIGHT.TXT"/>
+		<copy todir="dist/server" file="license.html"/>
+		<copy todir="dist/server" file="copyright.html"/>
+		<copy todir="dist/server/tomcat41/webapps/userdocs/distribution" file="license.html"/>
+		<copy todir="dist/server/tomcat41/webapps/userdocs/distribution" file="copyright.html"/>
+		<copy todir="dist/client" file="LICENSE.TXT"/>
+		<copy todir="dist/client" file="COPYRIGHT.TXT"/>
+		<copy todir="dist/client" file="license.html"/>
+		<copy todir="dist/client" file="copyright.html"/>
 	</target>
 	<target name="clientunixstuff" depends="clientmostly" if="buildingOnUnix">
 		<!-- add symlinks for shell scripts in unix -->
@@ -303,7 +303,7 @@
 			<arg path="src/dbx/userdocs/installation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-		<echo message="Translating known-issues.dbx to html"/>
+		<!--<echo message="Translating known-issues.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
@@ -312,7 +312,7 @@
 			<arg path="dist/userdocs/distribution/known-issues.html"/>
 			<arg path="src/dbx/userdocs/known-issues.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
+		</exec>-->
 		<echo message="Translating apialite.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -366,7 +366,7 @@
 			<arg path="src/dbx/userdocs/documentation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-       <!-- commented out for now... this is currently sourced in html
+		<!-- commented out for now... this is currently sourced in html
 		<echo message="Translating license.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -505,6 +505,16 @@
 			<arg path="src/dbx/userdocs/do-const.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<echo message="Translating builder.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/client/admin-gui/builder/builder.html"/>
+			<arg path="src/dbx/userdocs/builder.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>		
 		<echo message="Translating webexp.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -932,6 +942,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.135  2003/05/17 02:49:05  rlw
+  adds transform for builder.dbx
+  removes transform for known-issues.dbx
+
   Revision 1.134  2003/05/17 02:28:50  cwilper
   added image copy of builder/ docs dir so the jpg shows up
 
