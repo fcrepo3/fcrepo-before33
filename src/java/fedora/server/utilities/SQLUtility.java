@@ -57,7 +57,7 @@ public abstract class SQLUtility {
         Statement st=null;
         try {
             st=conn.createStatement();
-System.out.println("SQLUtility.executeUpdate, trying: " + u.toString());
+//System.out.println("SQLUtility.executeUpdate, trying: " + u.toString());
             if (st.executeUpdate(u.toString())==0) {
                 StringBuffer i=new StringBuffer(); // insert statement
                 i.append("INSERT INTO ");
@@ -80,7 +80,7 @@ System.out.println("SQLUtility.executeUpdate, trying: " + u.toString());
                     i.append("'");
                 }
                 i.append(")");
-System.out.println("SQLUtility.executeUpdate, now trying: " + i.toString());
+//System.out.println("SQLUtility.executeUpdate, now trying: " + i.toString());
                 st.executeUpdate(i.toString());
             }
         } catch (SQLException sqle) {
@@ -88,9 +88,11 @@ System.out.println("SQLUtility.executeUpdate, now trying: " + i.toString());
         } finally {
             if (st!=null) {
                 try {
+//System.out.println("SQLUtility.executeUpdate, closing statement!");
                     st.close();
                 } catch (SQLException sqle) { }
             }
+//System.out.println("SQLUtility.executeUpdate, exiting!");
         }
     }
     
