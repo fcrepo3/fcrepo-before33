@@ -32,7 +32,7 @@ Applying the patch
   2) Shut down your Fedora server (using fedora-stop)
 
   3) Make a backup of the following file:
-     %FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\replication\METSLikeExportDOSerializer.class
+     %FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation\METSLikeExportDOSerializer.class
 
   4) Copy the METSLikeExportDOSerializer.class from this patch into the
      above directory, OVER THE EXISTING FILE.
