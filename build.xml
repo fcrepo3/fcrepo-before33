@@ -722,15 +722,29 @@
 		<!-- xacml:  set up policy directories -->
 		<mkdir dir="dist/server/config/xacml-policies"/>
 		<copy file="src/xml/xacml-policies/readme.txt" todir="dist/server/config/xacml-policies"/>
-		<mkdir dir="dist/server/config/xacml-policies/repository-policies"/>
-		<mkdir dir="dist/server/config/xacml-policies/object-policies"/>
-		<copy todir="dist/server/config/xacml-policies/example-repository-policies">
-			<fileset dir="src/xml/xacml-policies/example-repository-policies"/>
+		<copy file="src/xml/xacml-policies/readme-design-choices.txt" todir="dist/server/config/xacml-policies"/>
+		<mkdir dir="dist/server/config/xacml-policies/active"/>		
+		<mkdir dir="dist/server/config/xacml-policies/active/surrogate-policies"/>		
+		<mkdir dir="dist/server/config/xacml-policies/active/repository-policies"/>
+		<mkdir dir="dist/server/config/xacml-policies/active/object-policies"/>
+		<mkdir dir="dist/server/config/xacml-policies/examples"/>
+		<copy todir="dist/server/config/xacml-policies/examples/surrogate-policies">
+			<fileset dir="src/xml/xacml-policies/example-surrogate-policies"/>
+		</copy>		
+		<copy todir="dist/server/config/xacml-policies/examples/repository-policies-approximating-2.0">
+			<fileset dir="src/xml/xacml-policies/example-repository-policies-approximating-2.0"/>
 		</copy>
-		<copy todir="dist/server/config/xacml-policies/example-object-policies">
+		<copy todir="dist/server/config/xacml-policies/examples/other-repository-policies">
+			<fileset dir="src/xml/xacml-policies/other-example-repository-policies"/>
+		</copy>		
+		<copy todir="dist/server/config/xacml-policies/examples/object-policies">
 			<fileset dir="src/xml/xacml-policies/example-object-policies"/>
 		</copy>
 		<copy file="src/web-app/fedora/server/web.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
+		<copy file="src/web-app/fedora/server/readme.txt" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
+		<copy todir="${tomcat.deploy.dir}/fedora">
+			<fileset dir="src/jsp"/>
+		</copy>
 		<java classpath="${lib.md5}" jar="lib/saxon.jar" fork="true">
 			<arg line="-o ${tomcat.deploy.dir}/fedora/WEB-INF/unrestricted-web.xml ${tomcat.deploy.dir}/fedora/WEB-INF/web.xml src/xsl/security/remove-web-xml-security.xsl"/>
 		</java>
@@ -875,6 +889,7 @@
 		<copy file="${lib.avalon-framework}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
 		<copy file="${lib.batik}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
 		<copy file="${lib.commons-httpclient}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.commons-logging}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>		
 		<copy file="${lib.cos}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>		
 		<copy file="${lib.fop}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
 		<copy file="${lib.ij}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
