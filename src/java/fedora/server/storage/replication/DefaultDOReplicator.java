@@ -457,9 +457,9 @@ public class DefaultDOReplicator
 				// Find disseminators that are NEW within an existing object
 				// (disseminator does not already exist in the database)
 				results=logAndExecuteQuery(st, "SELECT diss.dissDbID"
-					+ " FROM dodissassoc, diss"
-					+ " WHERE dodissassoc.doDbID=" + doDbID + " AND diss.dissID='" + dissArray[j].dissID + "'"
-					+ " AND dodissassoc.dissDbID=diss.dissDbID");
+					+ " FROM doDissAssoc, diss"
+					+ " WHERE doDissAssoc.doDbID=" + doDbID + " AND diss.dissID='" + dissArray[j].dissID + "'"
+					+ " AND doDissAssoc.dissDbID=diss.dissDbID");
 				if (!results.next()) {
 					// the disseminator does NOT exist in the database; it is NEW.
 					newDisseminators.add(dissArray[j]);
@@ -572,9 +572,9 @@ public class DefaultDOReplicator
                                 // Find disseminators that have been removed within an existing object
                                 // (disseminator(s) still exist in the database)
                                 results=logAndExecuteQuery(st, "SELECT diss.dissDbID"
-                                    + " FROM dodissassoc, diss"
-                                    + " WHERE dodissassoc.doDbID=" + doDbID + " AND diss.dissID='" + dissArray[j].dissID + "'"
-                                        + " AND dodissassoc.dissDbID=diss.dissDbID");
+                                    + " FROM doDissAssoc, diss"
+                                    + " WHERE doDissAssoc.doDbID=" + doDbID + " AND diss.dissID='" + dissArray[j].dissID + "'"
+                                        + " AND doDissAssoc.dissDbID=diss.dissDbID");
 
                                 if (!results.next()) {
                                   // No disseminator was found in db so it must be new one
