@@ -279,21 +279,23 @@
 		<param name="maxSecondsPerSession" value="100"/>
 		<param name="connectionPool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
 	</module>
-<!--
 	<module role="fedora.server.resourceIndex.ResourceIndex" class="fedora.server.resourceIndex.ResourceIndexModule">
 		<comment>
         Description:
           Supports the ResourceIndex.
         Parameters:
           - level
-            Index level
-         Warning:
-            Changing the index level requires a full re-index
+            Index level. Currently, only 0 and 1 are supported levels.
+            0 = off (i.e., do not use the ResourceIndex)
+            1 = on
+          - datastoreId (required)
+            Name of the triplestore to use.
+            Warning: changing the triplestore requires a full dump-and-load
+            of the repository.
         </comment>
-		<param name="level" value="3"/>
+		<param name="level" value="1"/>
 		<param name="datastoreId" value="localKowariTriplestore"/>
 	</module>
--->
 	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
 		<comment>
         Description:
@@ -423,10 +425,11 @@
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
     <datastore id="localKowariTriplestore">
+        <comment>local Kowari Triplestore used by the Resource Index</comment>
         <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
         <param name="modelName" value="resourceIndex"/>
         <param name="poolMaxGrowth" value="-1"/>
-        <param name="path" value="C:\ristore"/>
+        <param name="path" value="C:\fedora2_0_resourceIndex"/>
         <param name="bufferFlushBatchSize" value="20000"/>
         <param name="autoCreate" value="true"/>
         <param name="bufferSafeCapacity" value="40000"/>
