@@ -180,6 +180,13 @@ public class PID {
     }
 
     /**
+     * Return the URI form of some PID string, assuming it is well-formed.
+     */
+    public static String toURI(String pidString) {
+        return "info:fedora/" + pidString;
+    }
+
+    /**
      * Return a string representing this PID that can be safely used
      * as a filename on any OS.
      *
