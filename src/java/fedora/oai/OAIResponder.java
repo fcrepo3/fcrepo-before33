@@ -16,7 +16,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import com.sun.corba.se.internal.core.Constant;
+
 import fedora.server.Context;
+import fedora.common.Constants;
 import fedora.server.Server;
 import fedora.server.errors.AuthzOperationalException;
 import fedora.server.errors.ModuleInitializationException;
@@ -80,6 +83,11 @@ public class OAIResponder {
             // not going to happen... all java impls support UTF-8
         }
         String verb=(String) args.get("verb");
+        
+        String baseURL = m_provider.getBaseURL(
+        		context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
+						? "https" : "http",
+        		context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri));
         try {
             if (verb==null) {
                 throw new BadVerbException("Request did not specify a verb.");
@@ -97,13 +105,12 @@ public class OAIResponder {
                     throw new BadArgumentException("GetRecord request specified illegal argument(s).");
                 }
                 Record record=m_provider.getRecord(identifier, metadataPrefix);
-                respondToGetRecord(args, m_provider.getBaseURL(), record, out);
+                respondToGetRecord(args, baseURL, record, out);
             } else if (verb.equals("Identify")) {
                 if (args.size()>1) {
                     throw new BadArgumentException("Identify request specified illegal argument(s).");
                 }
                 String repositoryName=m_provider.getRepositoryName();
-                String baseURL=m_provider.getBaseURL();
                 String protocolVersion=m_provider.getProtocolVersion();
                 Date earliestDatestamp=m_provider.getEarliestDatestamp();
                 DeletedRecordSupport deletedRecord=m_provider.getDeletedRecordSupport();
@@ -164,7 +171,7 @@ public class OAIResponder {
                         headers=headers.subList(0, headers.size()-1);
                     }
                 }
-                respondToListIdentifiers(args, m_provider.getBaseURL(),
+                respondToListIdentifiers(args, baseURL,
                         headers, resumptionToken, out);
             } else if (verb.equals("ListMetadataFormats")) {
                 String identifier=(String) args.get("identifier");
@@ -177,7 +184,7 @@ public class OAIResponder {
                         throw new BadArgumentException("ListMetadataFormats request specified illegal argument(s).");
                     }
                 }
-                respondToListMetadataFormats(args, m_provider.getBaseURL(),
+                respondToListMetadataFormats(args, baseURL,
                         m_provider.getMetadataFormats(identifier), out);
             } else if (verb.equals("ListRecords")) {
                 String rToken=(String) args.get("resumptionToken");
@@ -230,7 +237,7 @@ public class OAIResponder {
                         records=records.subList(0, records.size()-1);
                     }
                 }
-                respondToListRecords(args, m_provider.getBaseURL(),
+                respondToListRecords(args, baseURL,
                         records, resumptionToken, out);
             } else if (verb.equals("ListSets")) {
                 String rToken=(String) args.get("resumptionToken");
@@ -254,12 +261,12 @@ public class OAIResponder {
                         sets=sets.subList(0, sets.size()-1);
                     }
                 }
-                respondToListSets(args, m_provider.getBaseURL(), sets, resumptionToken, out);
+                respondToListSets(args, baseURL, sets, resumptionToken, out);
             } else {
                 throw new BadVerbException("Unrecognized verb, '" + verb + "'.");
             }
         } catch (OAIException oaie) {
-            respondWithError(oaie, verb, m_provider.getBaseURL(), out);
+            respondWithError(oaie, verb, baseURL, out);
         } finally {
             out.flush();
         }

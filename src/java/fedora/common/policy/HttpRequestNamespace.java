@@ -24,6 +24,10 @@ public class HttpRequestNamespace extends XacmlNamespace {
 	public final XacmlName SOAP;
 	public final XacmlName REST;
 	
+	// Values of SECURITY	 
+	public final XacmlName SECURE;
+	public final XacmlName INSECURE;
+	
     private HttpRequestNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
 
@@ -48,6 +52,10 @@ public class HttpRequestNamespace extends XacmlNamespace {
     	// Values of MESSAGE_PROTOCOL	 
     	SOAP               = addName(new XacmlName(this, "soap"));
     	REST               = addName(new XacmlName(this, "rest"));    	
+    	
+    	// Values of SECURITY	 
+    	SECURE               = addName(new XacmlName(this, "secure"));
+    	INSECURE               = addName(new XacmlName(this, "insecure"));     	
     }
 
 	public static HttpRequestNamespace onlyInstance = new HttpRequestNamespace(EnvironmentNamespace.getInstance(), "http-request");

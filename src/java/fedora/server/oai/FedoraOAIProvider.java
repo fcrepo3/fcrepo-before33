@@ -52,7 +52,8 @@ public class FedoraOAIProvider
 
     private String m_repositoryName;
     private String m_repositoryDomainName;
-    private String m_baseURL;
+    private String m_localname;
+    private String m_relpath;
     private Set m_adminEmails;
     private Set m_descriptions;
     private List m_setInfos;
@@ -70,13 +71,14 @@ public class FedoraOAIProvider
             "language", "relation", "coverage", "rights"};
 
     public FedoraOAIProvider(String repositoryName, String repositoryDomainName,
-            String baseURL, Set adminEmails, Set friendBaseURLs, 
+            String localname, String relpath, Set adminEmails, Set friendBaseURLs, 
             String namespaceID, long maxSets, long maxRecords, long maxHeaders,
             FieldSearch fieldSearch, Logging logTarget) {
         super(logTarget);
         m_repositoryName=repositoryName;
         m_repositoryDomainName=repositoryDomainName;
-        m_baseURL=baseURL;
+        m_localname=localname;
+        m_relpath=relpath;        
         m_adminEmails=adminEmails;
         m_maxSets=maxSets;
         m_maxRecords=maxRecords;
@@ -121,8 +123,8 @@ public class FedoraOAIProvider
         return m_repositoryName;
     }
 
-    public String getBaseURL() {
-        return m_baseURL;
+    public String getBaseURL(String protocol, String port) {
+        return protocol + "://" + m_localname + ":" + port + m_relpath;
     }
 
     public String getProtocolVersion() {

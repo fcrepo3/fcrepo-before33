@@ -46,7 +46,7 @@ public interface OAIProvider {
      * @return the base URL.
      * @throws RepositoryException if an error has occurred.
      */
-    public abstract String getBaseURL()
+    public abstract String getBaseURL(String protocol, String port)
             throws RepositoryException;
 
     /**

@@ -101,8 +101,8 @@ public class SampleOAIProvider
         return "My Repository";
     }
 
-    public String getBaseURL() {
-        return "http://localhost:8080/path/to/servlet";
+    public String getBaseURL(String protocol, String port) {
+        return protocol + "://localhost:" + port + "/path/to/servlet";
     }
 
     public String getProtocolVersion() {

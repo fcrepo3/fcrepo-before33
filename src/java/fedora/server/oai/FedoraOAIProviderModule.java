@@ -160,8 +160,8 @@ public class FedoraOAIProviderModule
             }
         }
         m_wrappedOAIProvider=new FedoraOAIProvider(repositoryName, 
-                repositoryDomainName, "http://" + host + ":" + port 
-                + "/fedora/oai", adminEmails, friends, pidNamespace, maxSets, 
+                repositoryDomainName, host, "/fedora/oai", 
+		   		adminEmails, friends, pidNamespace, maxSets, 
                 maxRecords, maxHeaders, fieldSearch, this);
     }
 
@@ -169,8 +169,8 @@ public class FedoraOAIProviderModule
         return m_wrappedOAIProvider.getRepositoryName();
     }
 
-    public String getBaseURL() {
-        return m_wrappedOAIProvider.getBaseURL();
+    public String getBaseURL(String protocol, String port) {
+        return m_wrappedOAIProvider.getBaseURL(protocol, port);
     }
 
     public String getProtocolVersion() {

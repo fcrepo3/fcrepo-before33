@@ -270,7 +270,8 @@ if (request != null) {
   	try {
   		environmentMap.set(Constants.HTTP_REQUEST.PROTOCOL.uri, request.getProtocol());
   		environmentMap.set(Constants.HTTP_REQUEST.SCHEME.uri, request.getScheme());
-  		environmentMap.set(Constants.HTTP_REQUEST.SECURITY.uri, (request.isSecure()) ? "secure" : "insecure");
+  		environmentMap.set(Constants.HTTP_REQUEST.SECURITY.uri, 
+  				(request.isSecure()) ? Constants.HTTP_REQUEST.SECURE.uri : Constants.HTTP_REQUEST.INSECURE.uri);
   	
   	    if (request.getAuthType() != null) {
   	    	environmentMap.set(Constants.HTTP_REQUEST.AUTHTYPE.uri, request.getAuthType());  
