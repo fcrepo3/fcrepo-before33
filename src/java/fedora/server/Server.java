@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
@@ -119,21 +120,23 @@ import org.w3c.dom.NodeList;
  * shutdown.server      Shutting down the server
  * shutdown.module      Shutting down a module
  * </pre>
- * There are five possible message types, described below.
+ * There are several possible message types, described below.  These coincide
+ * with jdk1.4's new 
+ * <a href="http://java.sun.com/j2se/1.4/docs/api/java/util/logging/package-summary.html">java.util.logging</a>
+ * package's log levels.
  * <pre>
  * MessageType          Description
  * -----------          -----------
- * fatal                Severe errors that cause the server to terminate 
- *                      prematurely.
- * error                Runtime errors or unexpected conditions that cannot
- *                      be recovered from on a per-incident basis, but don't
- *                      cause server shutdown.
- * warn                 Use of deprecated APIs or runtime conditions that are
- *                      undesirable but not by themselves unrecoverable.
- * info                 Interesting runtime events such as server or module 
- *                      startup, shutdown, and periodic server status messages.
- * debug                detailed information on flow through the system. 
- * trace                more detailed information.
+ * severe               Errors that render the server inoperable or prevent
+ *                      it from starting up in the first place.
+ * warning              Errors that signal an undesired condition, but may be
+ *                      recovered from.
+ * info                 Interesting events that don't occur often, such as
+ *                      Server and Module startup and shutdown.
+ * config               Significant Server or Module configuration steps.
+ * fine                 Request hosts and operations, success or fail.
+ * finer                Full request, response, and timing information.
+ * finest               Method entry and exit, and extremely verbose messages.
  * </pre>
  *
  * @author cwilper@cs.cornell.edu
@@ -237,44 +240,44 @@ public abstract class Server
             s_const.getString("default.server.class");
 
     /** Indicates that an XML parser could not be found. */
-    public static String INIT_XMLPARSER_FATAL_MISSING=
-            s_const.getString("init.xmlparser.fatal.missing");
+    public static String INIT_XMLPARSER_SEVERE_MISSING=
+            s_const.getString("init.xmlparser.severe.missing");
 
     /** 
      * Indicates that the config file could not be read. 0=config file full 
      * path, 1=additional info from underlying exception
      */
-    public static String INIT_CONFIG_FATAL_UNREADABLE=
-            s_const.getString("init.config.fatal.unreadable");
+    public static String INIT_CONFIG_SEVERE_UNREADABLE=
+            s_const.getString("init.config.severe.unreadable");
 
     /**
      * Indicates that the config file has malformed XML. 0=config file full 
      * path, 1=additional info from underlying exception
      */
-    public static String INIT_CONFIG_FATAL_MALFORMEDXML=
-            s_const.getString("init.config.fatal.malformedxml");
+    public static String INIT_CONFIG_SEVERE_MALFORMEDXML=
+            s_const.getString("init.config.severe.malformedxml");
 
     /**
      * Indicates that the config file has a mis-named root element. 0=config 
      * file full path, 1={config.element.root}, 2=actual root element name
      */
-    public static String INIT_CONFIG_FATAL_BADROOTELEMENT=
-            s_const.getString("init.config.fatal.badrootelement");
+    public static String INIT_CONFIG_SEVERE_BADROOTELEMENT=
+            s_const.getString("init.config.severe.badrootelement");
 
     /**
      * Indicates that the config file's element's namespace does not match
      * {config.namespace}. 0=config file full path, 1={config.namespace}
      */
-    public static String INIT_CONFIG_FATAL_BADNAMESPACE=
-            s_const.getString("init.config.fatal.badnamespace");
+    public static String INIT_CONFIG_SEVERE_BADNAMESPACE=
+            s_const.getString("init.config.severe.badnamespace");
 
     /**
      * Indicates that a parameter element in the config file is missing
      * a required element. 0=config file full path, 1={config.element.param},
      * 2={config.attribute.name}, 3={config.attribute.value}
      */
-    public static String INIT_CONFIG_FATAL_INCOMPLETEPARAM=MessageFormat.format(
-            s_const.getString("init.config.fatal.incompleteparam"),
+    public static String INIT_CONFIG_SEVERE_INCOMPLETEPARAM=MessageFormat.format(
+            s_const.getString("init.config.severe.incompleteparam"),
             new Object[] {"{0}",CONFIG_ELEMENT_PARAM,CONFIG_ATTRIBUTE_NAME,
             CONFIG_ATTRIBUTE_VALUE});
 
@@ -282,37 +285,37 @@ public abstract class Server
      * Indicates that the server class could not be found. 0=server class 
      * specified in config root element
      */
-    public static String INIT_SERVER_FATAL_CLASSNOTFOUND=
-            s_const.getString("init.server.fatal.classnotfound");
+    public static String INIT_SERVER_SEVERE_CLASSNOTFOUND=
+            s_const.getString("init.server.severe.classnotfound");
 
     /**
      * Indicates that the server class couldn't be accessed due to security
      * misconfiguration. 0=server class specified in config root element
      */
-    public static String INIT_SERVER_FATAL_ILLEGALACCESS=
-            s_const.getString("init.server.fatal.illegalaccess");
+    public static String INIT_SERVER_SEVERE_ILLEGALACCESS=
+            s_const.getString("init.server.severe.illegalaccess");
 
     /**
      * Indicates that the server class constructor was invoked improperly
      * due to programmer error. 0=server class specified in config root element
      */
-    public static String INIT_SERVER_FATAL_BADARGS=
-            s_const.getString("init.server.fatal.badargs");
+    public static String INIT_SERVER_SEVERE_BADARGS=
+            s_const.getString("init.server.severe.badargs");
 
     /**
      * Indicates that the server class doesn't have a constructor
      * matching Server(NodeList, File), but needs one. 0=server class specified 
      * in config root element.
      */
-    public static String INIT_SERVER_FATAL_MISSINGCONSTRUCTOR=
-            s_const.getString("init.server.fatal.missingconstructor");
+    public static String INIT_SERVER_SEVERE_MISSINGCONSTRUCTOR=
+            s_const.getString("init.server.severe.missingconstructor");
 
     /**
      * Indicates that the server class was abstract, but shouldn't be. 0=server 
      * class specified in config root element
      */
-    public static String INIT_SERVER_FATAL_ISABSTRACT=
-            s_const.getString("init.server.fatal.isabstract");
+    public static String INIT_SERVER_SEVERE_ISABSTRACT=
+            s_const.getString("init.server.severe.isabstract");
 
     /**
      * Holds an instance of a <code>Server</code> for each distinct 
@@ -375,14 +378,18 @@ public abstract class Server
                     if (nameNode==null || valueNode==null) {
                         throw new ServerInitializationException(
                                 MessageFormat.format(
-                                INIT_CONFIG_FATAL_INCOMPLETEPARAM, new Object[]
+                                INIT_CONFIG_SEVERE_INCOMPLETEPARAM, new Object[]
                                 {configFile}));
                     }
                     serverParams.put(nameNode.getNodeValue(), 
                             valueNode.getNodeValue());
                 } else if (n.getLocalName().equals(CONFIG_ELEMENT_DATASTORE)) {
+                    // if datastore element, verify it has a unique id, load
+                    // its params into a HashMap, instantiate a DatastoreConfig,
+                    // and add it to m_datastoreConfigs (key=id)
                     NamedNodeMap attrs=n.getAttributes();
-                    Node idNode=attrs.getNamedItemNS(CONFIG_NAMESPACE, CONFIG_ATTRIBUTE_ID);
+                    Node idNode=attrs.getNamedItemNS(CONFIG_NAMESPACE, 
+                        CONFIG_ATTRIBUTE_ID);
                     if (idNode==null) {
                         idNode=attrs.getNamedItem(CONFIG_ATTRIBUTE_ID);
                     }
@@ -415,6 +422,10 @@ public abstract class Server
         // foreach module, load an instance with the given
         // params
         
+    }
+
+    public Logger getLogger() {
+        return null;
     }
     
     /**
@@ -451,14 +462,14 @@ public abstract class Server
             // ensure root element name ok
             if (!rootElement.getLocalName().equals(CONFIG_ELEMENT_ROOT)) {
                 throw new ServerInitializationException(
-                        MessageFormat.format(INIT_CONFIG_FATAL_BADROOTELEMENT,
+                        MessageFormat.format(INIT_CONFIG_SEVERE_BADROOTELEMENT,
                         new Object[] {configFile, CONFIG_ELEMENT_ROOT,
                         rootElement.getLocalName()}));
             }
             // ensure namespace specified properly
             if (!rootElement.getNamespaceURI().equals(CONFIG_NAMESPACE)) {
                 throw new ServerInitializationException(MessageFormat.format(
-                        INIT_CONFIG_FATAL_BADNAMESPACE, new Object[] {
+                        INIT_CONFIG_SEVERE_BADNAMESPACE, new Object[] {
                         configFile, CONFIG_NAMESPACE}));
             }
             // select <server class="THIS_PART"> .. </server>
@@ -479,29 +490,30 @@ public abstract class Server
                 Server inst=(Server) serverConstructor.newInstance( 
                         new Object[] {rootElement.getChildNodes(), 
                         homeDir} );
+                s_instances.put(homeDir, inst);
                 return inst;
             } catch (ClassNotFoundException cnfe) {
                 throw new ServerInitializationException(
-                        MessageFormat.format(INIT_SERVER_FATAL_CLASSNOTFOUND, 
+                        MessageFormat.format(INIT_SERVER_SEVERE_CLASSNOTFOUND, 
                         new Object[] {className}));
             } catch (IllegalAccessException iae) {
                 // improbable
                 throw new ServerInitializationException(
-                        MessageFormat.format(INIT_SERVER_FATAL_ILLEGALACCESS,
+                        MessageFormat.format(INIT_SERVER_SEVERE_ILLEGALACCESS,
                         new Object[] {className}));
             } catch (IllegalArgumentException iae) {
                 // improbable
                 throw new ServerInitializationException(
-                        MessageFormat.format(INIT_SERVER_FATAL_BADARGS,
+                        MessageFormat.format(INIT_SERVER_SEVERE_BADARGS,
                         new Object[] {className}));
             } catch (InstantiationException ie) {
                 throw new ServerInitializationException(
                         MessageFormat.format(
-                        INIT_SERVER_FATAL_MISSINGCONSTRUCTOR, 
+                        INIT_SERVER_SEVERE_MISSINGCONSTRUCTOR, 
                         new Object[] {className}));
             } catch (NoSuchMethodException nsme) {
                 throw new ServerInitializationException(
-                        MessageFormat.format(INIT_SERVER_FATAL_ISABSTRACT,
+                        MessageFormat.format(INIT_SERVER_SEVERE_ISABSTRACT,
                         new Object[] {className}));
             } catch (InvocationTargetException ite) {
                 // throw the constructor's thrown exception, if any
@@ -518,21 +530,21 @@ public abstract class Server
             } 
         } catch (ParserConfigurationException pce) {
             throw new ServerInitializationException(
-                    INIT_XMLPARSER_FATAL_MISSING);
+                    INIT_XMLPARSER_SEVERE_MISSING);
         } catch (FactoryConfigurationError fce) {
             throw new ServerInitializationException(
-                    INIT_XMLPARSER_FATAL_MISSING);
+                    INIT_XMLPARSER_SEVERE_MISSING);
         } catch (IOException ioe) {
             throw new ServerInitializationException(
-                    MessageFormat.format(INIT_CONFIG_FATAL_UNREADABLE,
+                    MessageFormat.format(INIT_CONFIG_SEVERE_UNREADABLE,
                     new Object[] {configFile, ioe.getMessage()}));
         } catch (IllegalArgumentException iae) {
             throw new ServerInitializationException(
-                    MessageFormat.format(INIT_CONFIG_FATAL_UNREADABLE,
+                    MessageFormat.format(INIT_CONFIG_SEVERE_UNREADABLE,
                     new Object[] {configFile, iae.getMessage()}));
         } catch (SAXException saxe) {
             throw new ServerInitializationException(
-                    MessageFormat.format(INIT_CONFIG_FATAL_MALFORMEDXML,
+                    MessageFormat.format(INIT_CONFIG_SEVERE_MALFORMEDXML,
                     new Object[] {configFile, saxe.getMessage()}));
         }
     }
@@ -579,7 +591,7 @@ public abstract class Server
      * <p></p>
      * The default implementation does nothing.
      * 
-     * @throws ServerInitializationException If a fatal server startup-related 
+     * @throws ServerInitializationException If a severe server startup-related 
      *         error occurred.
      */
     protected void initServer()
@@ -628,9 +640,9 @@ public abstract class Server
      * to the object in the VM, finalization will be called (but you will
      * be unable to catch <code>ShutdownException</code> variants, if thrown).
      *
-     * @throws ServerShutdownException If a fatal server shutdown-related error
+     * @throws ServerShutdownException If a severe server shutdown-related error
      *         occurred.
-     * @throws ModuleShutdownException If a fatal module shutdown-related error
+     * @throws ModuleShutdownException If a severe module shutdown-related error
      *         occurred.
      */
     public final void shutdown()
@@ -654,7 +666,7 @@ public abstract class Server
      * it should be thrown as a <code>ServerShutdownException</code> after 
      * attempts to free every resource have been made.
      *
-     * @throws ServerShutdownException If a fatal server shutdown-related error
+     * @throws ServerShutdownException If a severe server shutdown-related error
      *         occurred.
      */
     protected void shutdownServer()
@@ -666,9 +678,9 @@ public abstract class Server
     /**
      * Calls <code>shutdown()</code> when finalization occurs.
      *
-     * @throws ServerShutdownException If a fatal server shutdown-related error
+     * @throws ServerShutdownException If a severe server shutdown-related error
      *         occurred.
-     * @throws ModuleShutdownException If a fatal module shutdown-related error
+     * @throws ModuleShutdownException If a severe module shutdown-related error
      *         occurred.
      */
     public final void finalize() 
