@@ -97,7 +97,7 @@ public class DefaultDOManager
 
     private String m_pidNamespace;
     private String m_storagePool;
-    private String m_storageFormat;
+    private String m_defaultStorageFormat;
     private String m_defaultExportFormat;
     private String m_storageCharacterEncoding;
     private PIDGenerator m_pidGenerator;
@@ -168,9 +168,9 @@ public class DefaultDOManager
                 + "not given, will defer to ConnectionPoolManager's "
                 + "default pool.");
         }
-        // storageFormat (required)
-        m_storageFormat=getParameter("storageFormat");
-        if (m_storageFormat==null) {
+        // default storageFormat (required)
+        m_defaultStorageFormat=getParameter("storageFormat");
+        if (m_defaultStorageFormat==null) {
             throw new ModuleInitializationException("Parameter storageFormat "
                 + "not given, but it's required.", getRole());
         }
@@ -326,7 +326,7 @@ public class DefaultDOManager
     }
 
     public String getStorageFormat() {
-        return m_storageFormat;
+        return m_defaultStorageFormat;
     }
 
     public String getDefaultExportFormat() {
@@ -359,7 +359,7 @@ public class DefaultDOManager
             return new FastDOReader(context, pid);
         } else {
             return new SimpleDOReader(context, this, m_translator,
-                    m_defaultExportFormat, m_storageFormat,
+                    m_defaultExportFormat, m_defaultStorageFormat,
                     m_storageCharacterEncoding,
                     getObjectStore().retrieve(pid), this);
         }
@@ -372,7 +372,7 @@ public class DefaultDOManager
             //throw new InvalidContextException("A BMechReader is unavailable in a cached context.");
         } else {
             return new SimpleBMechReader(context, this, m_translator,
-                    m_defaultExportFormat, m_storageFormat,
+                    m_defaultExportFormat, m_defaultStorageFormat,
                     m_storageCharacterEncoding,
                     getObjectStore().retrieve(pid), this);
         }
@@ -385,7 +385,7 @@ public class DefaultDOManager
             //throw new InvalidContextException("A BDefReader is unavailable in a cached context.");
         } else {
             return new SimpleBDefReader(context, this, m_translator,
-                    m_defaultExportFormat, m_storageFormat,
+                    m_defaultExportFormat, m_defaultStorageFormat,
                     m_storageCharacterEncoding,
                     getObjectStore().retrieve(pid), this);
         }
@@ -609,9 +609,9 @@ public class DefaultDOManager
                 // set last mod date, in UTC
                 obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
+                    m_translator.serialize(obj, out, m_defaultStorageFormat, m_storageCharacterEncoding);
                     ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
-                    m_validator.validate(inV, m_storageFormat, 0, "store");
+                    m_validator.validate(inV, m_defaultStorageFormat, 0, "store");
                     // TODO: DELTA-MODULE:
                     // After validating for storage, but before saving to definitive store, 
                     // tell the Delta Module about new or modified objects
@@ -786,9 +786,9 @@ public class DefaultDOManager
 
             BasicDigitalObject obj=new BasicDigitalObject();
             m_translator.deserialize(getObjectStore().retrieve(pid), obj,
-                    m_storageFormat, m_storageCharacterEncoding);
+                    m_defaultStorageFormat, m_storageCharacterEncoding);
             DOWriter w=new SimpleDOWriter(context, this, m_translator,
-                    m_storageFormat,
+                    m_defaultStorageFormat,
                     m_storageCharacterEncoding, obj, this);
             // add to internal list...somehow..think...
             System.gc();
@@ -950,7 +950,8 @@ public class DefaultDOManager
                 DCFields dcf;
                 if (dc==null) {
                     dc=new DatastreamXMLMetadata("UTF-8");
-                    dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
+                    dc.DSMDClass=0;
+					//dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
                     dc.DatastreamID="DC";
                     dc.DSVersionID="DC1.0";
                     dc.DSControlGrp="X";
