@@ -324,19 +324,19 @@ public class DefinitiveDOWriter
                     m_mgr.getServer().logInfo("Attempting replication as bdef object: " + m_obj.getPid());
                     DefinitiveBDefReader reader=new DefinitiveBDefReader(m_obj.getPid());
                     m_mgr.getServer().logInfo("Got a definitiveBDefReader...");
-                    new DOReplicator(m_pool).replicateBehaviorDefinitionObject(reader); 
+                    new DOReplicator(m_pool).replicate(reader); 
                     m_mgr.getServer().logInfo("Finished replication as bdef object: " + m_obj.getPid());
                 } else if (m_obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
                     m_mgr.getServer().logInfo("Attempting replication as bmech object: " + m_obj.getPid());
                     DefinitiveBMechReader reader=new DefinitiveBMechReader(m_obj.getPid());
                     m_mgr.getServer().logInfo("Got a definitiveBMechReader...");
-                    new DOReplicator(m_pool).replicateBehaviorMechanismObject(reader); 
+                    new DOReplicator(m_pool).replicate(reader); 
                     m_mgr.getServer().logInfo("Finished replication as bmech object: " + m_obj.getPid());
                 } else {
                     m_mgr.getServer().logInfo("Attempting replication as normal object: " + m_obj.getPid());
                     DefinitiveDOReader reader=new DefinitiveDOReader(m_obj.getPid());
                     m_mgr.getServer().logInfo("Got a definitiveDOReader...");
-                    new DOReplicator(m_pool).replicateDO(reader); 
+                    new DOReplicator(m_pool).replicate(reader); 
                     m_mgr.getServer().logInfo("Finished replication as normal object: " + m_obj.getPid());
                 }
             } catch (ServerException se) {
