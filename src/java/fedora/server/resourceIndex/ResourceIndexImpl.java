@@ -873,8 +873,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
         
         String bDefPid = digitalObject.getPid();
-        String delete = "DELETE riMethod.*, riMethodPermutation.* " +
-                        "FROM riMethod, riMethodPermutation " +
+        String delete = "DELETE FROM riMethod, riMethodPermutation " +
                         "WHERE (riMethod.methodId = riMethodPermutation.methodId) " +
                         "AND riMethod.bDefPid = '" + bDefPid + "'";
         Statement stmt = null;
@@ -928,8 +927,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
         
         String bMechPid = digitalObject.getPid();
-        String delete = "DELETE riMethodImpl.*, riMethodMimeType.* " +
-                        "FROM riMethodImpl, riMethodMimeType " +
+        String delete = "DELETE FROM riMethodImpl, riMethodMimeType " +
                         "WHERE (riMethodImpl.methodImplId = riMethodMimeType.methodImplId) " +
                         "AND riMethodImpl.bMechPid = '" + bMechPid + "'";
         Statement stmt = null;
