@@ -7,6 +7,9 @@
 		<auth-method>BASIC</auth-method>
 		<realm-name>Fedora Management Interface</realm-name>
 	</login-config>
+	<security-role>
+		<role-name>administrator</role-name>
+	</security-role>
 	
 	<!-- changes made for 2.1
 		1. rearranged to bring together sections related to same Fedora function
@@ -80,8 +83,8 @@
           <param-value>true</param-value>
         </init-param>
         <load-on-startup>100</load-on-startup>
-	</servlet>	
-
+	</servlet>
+	
 	<servlet>
 		<servlet-name>AxisServlet</servlet-name>
 		<display-name>Apache-Axis Servlet</display-name>
@@ -89,22 +92,14 @@
 	        org.apache.axis.transport.http.AxisServlet
 	    </servlet-class>
 	</servlet>
-	<servlet-mapping><!-- testing -->
+	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/*</url-pattern>
-	</servlet-mapping>	
-	<!--servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/management/soap</url-pattern>
+		<url-pattern>/services/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/access/soap</url-pattern>
-	</servlet-mapping>	
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>/AdminService</url-pattern>
-	</servlet-mapping-->	
+	</servlet-mapping>	
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>*.jws</url-pattern>						
@@ -112,7 +107,7 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
-			<url-pattern>/management/soap</url-pattern>
+			<url-pattern>/services/management</url-pattern>
 			<http-method>GET</http-method>			
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>
@@ -124,7 +119,7 @@
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
-			<url-pattern>/access/soap</url-pattern>
+			<url-pattern>/services/access</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>

@@ -898,7 +898,7 @@
 	</binding>
 	<service name="Fedora-API-M-Service">
 		<port name="Fedora-API-M-Port-SOAPHTTP" binding="fedora-api:Fedora-API-M-Binding-SOAPHTTP">
-			<soap:address location="http://localhost:8080/fedora/management/soap"/>
+			<soap:address location="http://localhost:8080/fedora/services/management"/>
 		</port>
 	</service>
 </definitions>

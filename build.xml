@@ -715,12 +715,12 @@
 		<copy file="temp/server/java/fedora/server/access/deploy.wsdd" tofile="dist/server/config/deployAPI-A.wsdd"/>
 		<copy file="temp/server/java/fedora/server/management/undeploy.wsdd" todir="dist/server/config"/>
 		<copy file="temp/server/java/fedora/server/access/undeploy.wsdd" tofile="dist/server/config/undeployAPI-A.wsdd"/>
-		<replace file="dist/server/config/deploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management/soap"/>
-		<replace file="dist/server/config/deployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access/soap"/>
+		<replace file="dist/server/config/deploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
+		<replace file="dist/server/config/deployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
 		<replace file="dist/server/config/deploy.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
 		<replace file="dist/server/config/deployAPI-A.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
-		<replace file="dist/server/config/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management/soap"/>
-		<replace file="dist/server/config/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access/soap"/>
+		<replace file="dist/server/config/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
+		<replace file="dist/server/config/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
 		<!-- xacml:  set up policy directories -->
 		<mkdir dir="dist/server/config/xacml-policies"/>
 		<copy file="src/xml/xacml-policies/readme.txt" todir="dist/server/config/xacml-policies"/>

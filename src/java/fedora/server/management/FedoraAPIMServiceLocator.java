@@ -29,7 +29,7 @@ package fedora.server.management;
 public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service implements fedora.server.management.FedoraAPIMService {
 
     // Use to get a proxy class for FedoraAPIMPortSOAPHTTP
-    private final java.lang.String FedoraAPIMPortSOAPHTTP_address = "http://localhost:8080/fedora/management/soap";
+    private final java.lang.String FedoraAPIMPortSOAPHTTP_address = "http://localhost:8080/fedora/services/management";
 
     private String username=null;
     private String password=null;

@@ -37,7 +37,7 @@ public class TestClient {
         String qName = "http://www.fedora.info/definitions/1/0/api/";
 
         try {
-            String managementEndpoint = "http://localhost:8080/fedora/management/soap";
+            String managementEndpoint = "http://localhost:8080/fedora/services/management";
             Service service = new Service();
             Call call = (Call) service.createCall();
             call.setTargetEndpointAddress( new java.net.URL(managementEndpoint) );

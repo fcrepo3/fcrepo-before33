@@ -50,7 +50,7 @@ public class TestClientAPIA
   {
     String PID = "uva-lib:1225";
     String qName1 = "http://www.fedora.info/definitions/1/0/api/";
-    String endpoint = "http://localhost:8080/fedora/access/soap";
+    String endpoint = "http://localhost:8080/fedora/services/access";
     Date asOfDate = null;
 
     try
