@@ -139,7 +139,7 @@ public class Administrator extends JFrame {
                 + "limitations under the License.<p>"
                 + "<p>"
                 + "Version: 1.2<p>Release Date: "
-                + "December 10, 2003<p>"
+                + "December 22, 2003<p>"
                 + "See http://www.fedora.info/ for "
                 + "more information.");
 
@@ -287,14 +287,14 @@ public class Administrator extends JFrame {
                 createBMechBuilder();
             }
         });
-        
+
         JMenuItem fileNewBDef=new JMenuItem("Behavior Definition", KeyEvent.VK_D);
         fileNewBDef.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 createBDefBuilder();
             }
         });
-        
+
         fileNew.add(fileNewObject);
         fileNew.add(fileNewBMech);
         fileNew.add(fileNewBDef);
@@ -341,7 +341,7 @@ public class Administrator extends JFrame {
                 new Ingest(Ingest.MULTI_FROM_REPOS);
             }
         });
-        
+
         fileIngestMultiple.add(fileIngestMultipleFromFile);
         fileIngestMultiple.add(fileIngestMultipleFromRepository);
         fileIngest.add(fileIngestOne);
@@ -350,7 +350,7 @@ public class Administrator extends JFrame {
         //   [E]xport
         JMenu fileExport=new JMenu("Export");
         fileExport.setMnemonic(KeyEvent.VK_E);
-        
+
         JMenuItem fileExportObject=new JMenuItem("One Object...");
         fileExportObject.setMnemonic(KeyEvent.VK_O);
         fileExportObject.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
@@ -361,7 +361,7 @@ public class Administrator extends JFrame {
                 new Export(Export.ONE);
             }
         });
-        
+
         JMenuItem fileExportMultiple=new JMenuItem("Objects By Type...");
         fileExportMultiple.setMnemonic(KeyEvent.VK_M);
         fileExportMultiple.setToolTipText("Exports multiple serialized Digitial Objects to disk.");
@@ -494,10 +494,10 @@ public class Administrator extends JFrame {
                 Administrator.getDesktop().add(viewFrame);
                 try {
                     viewFrame.setSelected(true);
-                } catch (java.beans.PropertyVetoException pve) {}    
+                } catch (java.beans.PropertyVetoException pve) {}
             }
         });
-        
+
         JMenu toolsConsole=new JMenu("Console");
         toolsConsole.setMnemonic(KeyEvent.VK_C);
         toolsConsole.add(toolsAccess);
