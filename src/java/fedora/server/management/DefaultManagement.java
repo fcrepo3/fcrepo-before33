@@ -363,6 +363,7 @@ public class DefaultManagement
             audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
             audit.action="addDatastream";
+            audit.componentID=ds.DatastreamID;
             audit.responsibility=context.get("userId");
             audit.date=nowUTC;
             audit.justification="Added a new datastream";
@@ -414,6 +415,7 @@ public class DefaultManagement
 				audit.id=w.newAuditRecordID();
 				audit.processType="Fedora API-M";
 				audit.action="addDisseminator";
+				audit.componentID=diss.dissID;
 				audit.responsibility=context.get("userId");
 				audit.date=nowUTC;
 				audit.justification="Added a new disseminator";
@@ -478,6 +480,7 @@ public class DefaultManagement
                     audit.id=w.newAuditRecordID();
                     audit.processType="Fedora API-M";
                     audit.action="modifyDatastreamByReference";
+                    audit.componentID=newds.DatastreamID;
                     audit.responsibility=context.get("userId");
                     audit.date=nowUTC;
                     audit.justification=logMessage;
@@ -519,6 +522,7 @@ public class DefaultManagement
                 audit.id=w.newAuditRecordID();
                 audit.processType="Fedora API-M";
                 audit.action="modifyDatastreamByReference";
+                audit.componentID=newds.DatastreamID;
                 audit.responsibility=context.get("userId");
                 audit.date=nowUTC;
                 audit.justification=logMessage;
@@ -590,6 +594,7 @@ public class DefaultManagement
             audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
             audit.action="modifyDatastreamByValue";
+            audit.componentID=newds.DatastreamID;
             audit.responsibility=context.get("userId");
             audit.date=nowUTC;
             audit.justification=logMessage;
@@ -674,6 +679,7 @@ public class DefaultManagement
                     audit.id=w.newAuditRecordID();
                     audit.processType="Fedora API-M";
                     audit.action="modifyDisseminator";
+                    audit.componentID=newdiss.dissID;
                     audit.responsibility=context.get("userId");
                     audit.date=nowUTC;
                     audit.justification=logMessage;
@@ -751,6 +757,7 @@ public class DefaultManagement
             audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
             audit.action="purgeDatastream";
+            audit.componentID=datastreamID;
             audit.responsibility=context.get("userId");
             audit.date=nowUTC;
             audit.justification=logMessage;
@@ -888,6 +895,7 @@ public class DefaultManagement
             audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
             audit.action="purgeDisseminator";
+            audit.componentID=disseminatorID;
             audit.responsibility=context.get("userId");
             audit.date=nowUTC;
             audit.justification=logMessage;
@@ -1049,6 +1057,7 @@ public class DefaultManagement
           audit.id=w.newAuditRecordID();
           audit.processType="Fedora API-M";
           audit.action="setDatastreamState";
+          audit.componentID=datastreamID;
           audit.responsibility=context.get("userId");
           Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
           audit.date=nowUTC;
@@ -1079,6 +1088,7 @@ public class DefaultManagement
           audit.id=w.newAuditRecordID();
           audit.processType="Fedora API-M";
           audit.action="setDisseminatorState";
+          audit.componentID=disseminatorID;
           audit.responsibility=context.get("userId");
           Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
           audit.date=nowUTC;
