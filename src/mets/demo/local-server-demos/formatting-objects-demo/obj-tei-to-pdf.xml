@@ -83,12 +83,12 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="FOPDISSEM" STATUS="">
 				<METS:file ID="FOPRENDITION" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/xml" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://local.fedora.server/fedora/get/demo:26/demo:22/getFO" xlink:title="FOP Dissemination as Datastream"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/fedora/get/demo:26/demo:22/getFO" xlink:title="FOP Dissemination as Datastream"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>
 	</METS:fileSec>
-<!--http://local.fedora.server/saxon/SaxonServlet?source=http%3a//localhost%3a8080/fedora/get/demo%3a22/fedora-system%3a3/getItem%3fitemID=DOCBOOKSOURCE&style=http%3a//www.altova.com/stylesheets/docbook/fo/docbook.xsl -->
+<!--http://localhost:8080/saxon/SaxonServlet?source=http%3a//localhost%3a8080/fedora/get/demo%3a22/fedora-system%3a3/getItem%3fitemID=DOCBOOKSOURCE&style=http%3a//www.altova.com/stylesheets/docbook/fo/docbook.xsl -->
 	<!---*******************************************************************************************************************************************-->
 	<!--- FEDORA DATASTREAM BINDING MAPS  -->
 	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->

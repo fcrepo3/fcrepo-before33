@@ -50,7 +50,7 @@
 			<METS:fileGrp ID="DS1">
 				<!--This is the high resolution image -->
 				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" OWNERID="M" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://local.fedora.server/demo/simple-image-demo/coliseum-high.jpg" xlink:title="Thorny's Coliseum high jpg image"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" xlink:title="Thorny's Coliseum high jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>

@@ -589,7 +589,7 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="A">
 				<METS:file ID="DS1.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/html" OWNERID="E" STATUS="A">
-					<METS:FLocat LOCTYPE="URL" xlink:href=" http://local.fedora.server/saxon/" xlink:title="Programmer documentation"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href=" http://localhost:8080/saxon/" xlink:title="Programmer documentation"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>

@@ -286,7 +286,7 @@
 						<wsdl:service name="ImageManipulation">
 							<!-- THIS IS THE HTTP PORT -->
 							<wsdl:port name="ImageManipulation_port" binding="this:ImageManipulation_http">
-								<http:address location="http://local.fedora.server/imagemanip/"/>
+								<http:address location="http://localhost:8080/imagemanip/"/>
 							</wsdl:port>
 						</wsdl:service>
 						<!-- ******************************************************************************************************************** -->

@@ -418,65 +418,65 @@ This font contains no embedding license restrictions
       </fo:table-header>
       <fo:table-body>
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">ã�†ã‚“</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">うん</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>"yeah" or "uh huh"</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block></fo:block></fo:table-cell>
         </fo:table-row>
 
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">ã‚¢ã‚¦ã‚¿ãƒ¼ã‚¹ãƒšãƒ¼ã‚¹</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">アウタースペース</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>outer space</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block></fo:block></fo:table-cell>
         </fo:table-row>
 
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">ã‚¹ãƒšãƒ¼ã‚¹ã‚¯ãƒ©ãƒ•ãƒˆ</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">スペースクラフト</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>spacecraft</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block></fo:block></fo:table-cell>
         </fo:table-row>
 
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">ã‚¹ãƒšãƒ¼ã‚¹ã‚·ãƒ£ãƒˆãƒ«</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">スペースシャトル</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>space shuttle</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block></fo:block></fo:table-cell>
         </fo:table-row>
 
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">è‘—ã‚�ã�™</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">著わす</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>"to write", "to publish"</fo:block></fo:table-cell>
-          <fo:table-cell ><fo:block>verÃ¶ffentlichen</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block>veröffentlichen</fo:block></fo:table-cell>
         </fo:table-row>
 
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">é›»å­�å‡ºç‰ˆ</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">電子出版</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>electronic publishing</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block></fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">äº”è¼ª</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">五輪</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>the Olympics</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>Olympische Spiele</fo:block></fo:table-cell>
         </fo:table-row>
 
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">ç©ºæ¸¯</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">空港</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>airport</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>Flughafen</fo:block></fo:table-cell>
         </fo:table-row>
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">ãƒ�ãƒ¥ãƒ¼ãƒªãƒƒãƒ’</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">チューリッヒ</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>Zurich</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>Z&#252;rich</fo:block></fo:table-cell>
         </fo:table-row>
 
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">ã‚³ãƒ­ãƒ©ãƒ‰</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">コロラド</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>Colorado</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block></fo:block></fo:table-cell>
         </fo:table-row>
 
         <fo:table-row>
-          <fo:table-cell ><fo:block font-family="MSGothic">ã‚³ãƒ­ãƒ©ãƒ‰ã‚¹ãƒ—ãƒªãƒ³ã‚°ã‚¹</fo:block></fo:table-cell>
+          <fo:table-cell ><fo:block font-family="MSGothic">コロラドスプリングス</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block>Colorado Springs</fo:block></fo:table-cell>
           <fo:table-cell ><fo:block></fo:block></fo:table-cell>
         </fo:table-row>
