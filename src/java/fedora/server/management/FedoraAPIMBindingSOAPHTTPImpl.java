@@ -290,6 +290,13 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public void modifyDatastreamByValue(String PID, String datastreamID, String dsLabel, String logMessage, byte[] dsContent) throws java.rmi.RemoteException {
         assertInitialized();
+        try {
+            s_management.modifyDatastreamByValue(getContext(), PID,
+                    datastreamID, dsLabel, logMessage, new ByteArrayInputStream(dsContent));
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        }
     }
 /*
     public void withdrawDatastream(String PID, String datastreamID) throws java.rmi.RemoteException {

@@ -247,7 +247,7 @@ public class DatastreamViewer
                         try {
                             // use xerces to pretty print the xml to the editor
                             OutputFormat fmt=new OutputFormat("XML", "UTF-8", true);
-                            //fmt.setIndent(2);
+                            fmt.setOmitXMLDeclaration(true);
                             ByteArrayOutputStream buf=new ByteArrayOutputStream();
                             XMLSerializer ser=new XMLSerializer(buf, fmt);
                             DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();

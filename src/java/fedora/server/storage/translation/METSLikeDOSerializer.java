@@ -320,16 +320,16 @@ public class METSLikeDOSerializer
                         + StreamUtility.enc(audit.processType) + "\"/>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":action>"
                         + StreamUtility.enc(audit.action)
-                        + "             </" + m_fedoraAuditPrefix + ":action>\n");
+                        + "</" + m_fedoraAuditPrefix + ":action>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":responsibility>"
                         + StreamUtility.enc(audit.responsibility)
-                        + "             </" + m_fedoraAuditPrefix + ":responsibility>\n");
+                        + "</" + m_fedoraAuditPrefix + ":responsibility>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":date>"
                         + m_formatter.format(audit.date)
-                        + "             </" + m_fedoraAuditPrefix + ":date>\n");
+                        + "</" + m_fedoraAuditPrefix + ":date>\n");
                 buf.append("            <" + m_fedoraAuditPrefix + ":justification>"
                         + StreamUtility.enc(audit.justification)
-                        + "             </" + m_fedoraAuditPrefix + ":justification>\n");
+                        + "</" + m_fedoraAuditPrefix + ":justification>\n");
                 buf.append("          </" + m_fedoraAuditPrefix + ":record>\n");
                 buf.append("        </" + METS_PREFIX + ":xmlData>\n");
                 buf.append("      </" + METS_PREFIX + ":mdWrap>\n");

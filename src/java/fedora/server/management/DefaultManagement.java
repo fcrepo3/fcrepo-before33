@@ -1,5 +1,6 @@
 package fedora.server.management;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.Map;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
@@ -16,10 +18,14 @@ import fedora.server.security.IPRestriction;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOWriter;
+import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamManagedContent;
+import fedora.server.storage.types.DatastreamReferencedContent;
+import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Datastream;
 import fedora.server.types.gen.ObjectInfo;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.StreamUtility;
 
 /**
  *
@@ -244,6 +250,7 @@ public class DefaultManagement
                     // the new location, triggering to doCommit that it needs to
                     // be loaded from a new remote location
                     DatastreamManagedContent newds=new DatastreamManagedContent();
+                    newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
                     newds.DatastreamID=orig.DatastreamID;
                     newds.DSVersionID=orig.DSVersionID;
                     newds.DSLabel=dsLabel;
@@ -270,9 +277,38 @@ public class DefaultManagement
                     w.getAuditRecords().add(audit);
                     newds.auditRecordIdList().add(audit.id);
             } else {
-                // TODO: other control groups for current datastream
+                // Deal with other kinds, except xml (that must be passed in by value).
+                if (orig.DSControlGrp.equals("X")) {
+                    throw new GeneralException("Inline XML datastreams must be replaced by value, not by reference.");
+                }
+                DatastreamReferencedContent newds=new DatastreamReferencedContent();
+                newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
+                newds.DatastreamID=orig.DatastreamID;
+                newds.DSVersionID=orig.DSVersionID;
+                newds.DSLabel=dsLabel;
+                newds.DSMIME=orig.DSMIME;
+                Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+                newds.DSCreateDT=nowUTC;
+                newds.DSControlGrp=orig.DSControlGrp;
+                newds.DSInfoType=orig.DSInfoType;
+                newds.DSState=orig.DSState;
+                newds.DSLocation=dsLocation;
+                newds.auditRecordIdList().addAll(orig.auditRecordIdList());
+                // remove, then add the datastream
+                w.removeDatastream(datastreamId, null, null);
+                w.addDatastream(newds);
+                // add the audit record
+                fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+                audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+                audit.processType="Fedora API-M";
+                audit.action="modifyDatastreamByReference";
+                audit.responsibility=context.get("userId");
+                audit.date=nowUTC;
+                audit.justification=logMessage;
+                w.getAuditRecords().add(audit);
+                newds.auditRecordIdList().add(audit.id);            
             }
-            // now commit it... note: committing here is probably temporary.
+            // if all went ok, commit
             w.commit(logMessage);
         } finally {
             if (w!=null) {
@@ -285,42 +321,53 @@ public class DefaultManagement
             String datastreamId, String dsLabel, String logMessage,
             InputStream dsContent) throws ServerException {
         m_ipRestriction.enforce(context);
-        DOWriter w=m_manager.getWriter(context, pid);
-        // Replace the datastream.
-        // - First, get a handle on it
-        // - Then remove it
-        // - Then re-add it, then commit.
-        fedora.server.storage.types.Datastream origDatastream=w.GetDatastream(datastreamId, null);
-        if (origDatastream.DSControlGrp.equals("M")) {
+        DOWriter w=null;
+        try {
+            w=m_manager.getWriter(context, pid);
+            fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
+            if (!orig.DSControlGrp.equals("X")) {
+                throw new GeneralException("Only inline XML datastreams may be replaced by value.");
+            }
+            DatastreamXMLMetadata newds=new DatastreamXMLMetadata();
+            newds.DSMDClass=((DatastreamXMLMetadata) orig).DSMDClass;
+            ByteArrayOutputStream bytes=new ByteArrayOutputStream();
+            try {
+                StreamUtility.pipeStream(dsContent, bytes, 1024);
+            } catch (Exception ex) {
+            }
+            newds.xmlContent=bytes.toByteArray();
+            newds.DatastreamID=orig.DatastreamID;
+            newds.DSVersionID=orig.DSVersionID;
+            newds.DSLabel=dsLabel;
+            newds.DSMIME=orig.DSMIME;
+            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+            newds.DSCreateDT=nowUTC;
+            newds.DSControlGrp=orig.DSControlGrp;
+            newds.DSInfoType=orig.DSInfoType;
+            newds.DSState=orig.DSState;
+            newds.auditRecordIdList().addAll(orig.auditRecordIdList());
+            // remove, then add the datastream
+            w.removeDatastream(datastreamId, null, null);
+            w.addDatastream(newds);
+            // add the audit record
+            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+            audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+            audit.processType="Fedora API-M";
+            audit.action="modifyDatastreamByReference";
+            audit.responsibility=context.get("userId");
+            audit.date=nowUTC;
+            audit.justification=logMessage;
+            w.getAuditRecords().add(audit);
+            newds.auditRecordIdList().add(audit.id);                
+            // if all went ok, commit
+            w.commit(logMessage);
+        } finally {
+            if (w!=null) {
+                m_manager.releaseWriter(w);
+            }
         }
-        w.removeDatastream(datastreamId, null, null);
-        /*
-        modifyByRef
-   X  // must be xml!
-
-   E or R
-      // just change location
-   M
-      was already in lowlevel store...
-      somehow trigger, using defaultdomanager's doCommit stuff,
-      looking at the dslocation syntax?
-
-
-modifyByValue
-   X  // must be xml!
-      newds.xmlContent=byte array
-   E or R
-      changes it to external datastream
-   M
-      // maybe don't enable this yet...throw exception?
-      it was already in lowlevel store...
-      just needs its content replaced.
-      should be able to trigger thi
-
-      */
-
-
     }
+    
 /*
     public void withdrawDatastream(Context context, String pid,
             String datastreamId) throws ServerException {
