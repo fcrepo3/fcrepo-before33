@@ -9,8 +9,7 @@ package fedora.server.errors;
  * @author Ross Wayland
  * @version 1.0
  */
-
-public class HttpServiceNotFoundException extends AccessException
+public class HttpServiceNotFoundException extends StorageException
 {
 
   /**
