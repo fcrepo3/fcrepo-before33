@@ -113,6 +113,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            logStackTrace(e);
+            throw AxisUtility.getFault(e);
         }
 /*        try {
             String pid="1234";
