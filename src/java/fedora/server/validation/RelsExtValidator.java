@@ -3,6 +3,7 @@ package fedora.server.validation;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
+import fedora.common.Constants;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -57,7 +58,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *       relationships.  In other words, NO SELF-REFERENTIAL relationships.
  * 
  *   7.  There must NOT be any assertion of properties from the DC namespace or
- *       from the FedoraOntology namespace (e.g., object properties).  This is
+ *       from the Fedora object properties namespaces (model and view).  This is
  *       because these assertions exist elsewhere in a Fedora digital object and
  *       we do not want duplication.  The RELS-EXT datasream is reserved for
  *       relationship metadata.</b> </p>
@@ -87,9 +88,11 @@ public class RelsExtValidator
 
 	// Namespace URIs
     private final static String F="info:fedora/fedora-system:def/foxml#";
-	private final static String RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	private final static String OAIDC="http://www.openarchives.org/OAI/2.0/oai_dc/";
-	private final static String DC="http://purl.org/dc/elements/1.1/";
+	private final static String FMODEL=fedora.common.Constants.MODEL.uri;
+	private final static String FVIEW=fedora.common.Constants.VIEW.uri;
+	private final static String RDF=fedora.common.Constants.RDF.uri;
+	private final static String DC=fedora.common.Constants.DC.uri;
 
 	// state variables
 	private String m_characterEncoding;
@@ -166,17 +169,10 @@ public class RelsExtValidator
 						+ " in the RELS-EXT datastream.");
         		}
         	} else if (m_descriptionFound) {
-				//if (nsURI.equals(DC) || nsURI.equals(OAIDC)) {
-				//	throw new SAXException("RelsExtValidator:"
-				//		+ " No Dublin Core assertions allowed"
-				//		+ " in the RELS-EXT datastream.");
-				//} else {
 					m_depth++;
 					checkDepth(m_depth, qName);
 					checkBadAssertion(nsURI, localName, qName);
-					checkResourceURI(grab(a, RDF, "resource"), qName);
-				//}
-        		
+					checkResourceURI(grab(a, RDF, "resource"), qName);       		
         	} else {
 				throw new SAXException("RelsExtValidator:"
 					+ " Invalid element " + localName 
@@ -239,15 +235,15 @@ public class RelsExtValidator
 	
 	/**
 	 * checkBadAssertion: checks that there are NOT be any assertions of 
-	 * properties from the DC or FedoraOntology namespaces.  This is because 
-	 * these assertions exist elsewhere in a Fedora digital object and we do 
-	 * not want duplication.
+	 * properties from the DC or Fedora properties namespaces.  This is 
+	 * because these assertions exist elsewhere in a Fedora digital object 
+	 * and we do not want duplication.
 	 * @param nsURI - the namespace URI of the property being evaluated
 	 * @param localName - the local name of the property being evaluated
 	 * @param qName - the qualified name of the property being evaluated
 	 * @throws SAXException
 	 */
-	private void checkBadAssertion(String nsURI, String locaName, String qName) 
+	private void checkBadAssertion(String nsURI, String localName, String qName) 
 		throws SAXException {
 
 		if (nsURI.equals(DC) || nsURI.equals(OAIDC)) {
@@ -256,8 +252,13 @@ public class RelsExtValidator
 				+ " relationship assertion: " + qName + ".\n"
 				+ " No Dublin Core assertions allowed"
 				+ " in Fedora relationship metadata.");
-		} else {
-			// insert Fedora Ontology restriction...
+		} else if (nsURI.equals(FMODEL) || nsURI.equals(FVIEW)) {
+			throw new SAXException("RelsExtValidator:"
+				+ " The RELS-EXT datastream has improper"
+				+ " relationship assertion: " + qName + ".\n"
+				+ " Relationship metadata cannot contain"
+				+ " assertions from the Fedora object properties" 
+				+ " namespaces.");
 		}
 	}
 
