@@ -418,12 +418,13 @@ private static final String dbPropsFile = "db.properties";
           }
           methodDef.methodName = results[0];
           methodDef.methodLabel = results[1];
-          methodDef.httpBindingURL = null;
-          methodDef.httpBindingAddress = results[2];
-          methodDef.httpBindingOperationLocation = results[3];
+          //methodDef.httpBindingURL = null;
+          //methodDef.httpBindingAddress = results[2];
+          //methodDef.httpBindingOperationLocation = results[3];
           try
           {
-            methodDef.methodParms = this.GetBMechMethodParm(bDefPID, methodDef.methodName, versDateTime);
+            methodDef.methodParms = this.GetBMechMethodParm(bDefPID,
+                methodDef.methodName, versDateTime);
           } catch (MethodNotFoundException mpnfe)
           {
             // FIXME!! - Decide on Exception handling
@@ -489,15 +490,8 @@ private static final String dbPropsFile = "db.properties";
    */
   public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
   {
-    InputStream is = null;
-    System.out.println("GetWSDL PID: "+PID);
-    System.out.flush();
     if (doReader == null) doReader = new DefinitiveDOReader(PID);
-    is = doReader.GetBMechMethodsWSDL(bDefPID, versDateTime);
-    System.out.println("FastDO instream: "+is);
-    System.out.flush();
-    //return doReader.GetBMechMethodsWSDL(bDefPID, versDateTime);
-    return is;
+    return doReader.GetBMechMethodsWSDL(bDefPID, versDateTime);
   }
 
   /**
@@ -1207,6 +1201,17 @@ private static final String dbPropsFile = "db.properties";
   }
 
   /**
+   * <p>Gets the state on a digital object</p>
+   *
+   * @return String state of the object
+   */
+  public String GetObjectState()
+  {
+    if (doReader == null) doReader = new DefinitiveDOReader(PID);
+    return doReader.GetObjectState();
+    }
+
+  /**
    * <p>Gets the XML representation of the object. Since the XML representation
    * of an object is not stored in the Fast storage area, this method always
    * queries the Definitive storage area using <code>DefinitveDOReader</code>.
@@ -1647,11 +1652,11 @@ private static final String dbPropsFile = "db.properties";
       for (int i=0; i<methodDefs.length; i++)
       {
         System.out.println("methodDefName: "+i+" \n"+methodDefs[i].methodName+
-        "\n   methodDefLabel["+i+"] = "+methodDefs[i].methodLabel+
-        "\n   methodDefBindingURL["+i+"] = "+methodDefs[i].httpBindingURL+
-        "\n   methodDefAddress["+i+"] = "+methodDefs[i].httpBindingAddress+
-        "\n   methodDefOperation["+i+"] = "+
-        methodDefs[i].httpBindingOperationLocation+"\n");
+        "\n   methodDefLabel["+i+"] = "+methodDefs[i].methodLabel);
+        //"\n   methodDefBindingURL["+i+"] = "+methodDefs[i].httpBindingURL+
+        //"\n   methodDefAddress["+i+"] = "+methodDefs[i].httpBindingAddress+
+        //"\n   methodDefOperation["+i+"] = "+
+        //methodDefs[i].httpBindingOperationLocation+"\n");
         methodParms = methodDefs[i].methodParms;
         if (methodParms != null)
         {
@@ -1810,8 +1815,6 @@ private static final String dbPropsFile = "db.properties";
                          "Definitive Store");
       PID = "uva-lib:1220";
       fdor = new FastDOReader(PID);
-      System.out.println("PID="+PID+fdor.isFoundInDefinitiveStore+fdor.isFoundInFastStore);
-      System.out.flush();
       System.out.println("ObjectLabel: "+fdor.GetObjectPID());
       System.out.println("END ----- TEST GET OBJECT PID");
 
