@@ -348,8 +348,206 @@ public class DefaultDOReplicator
             }
         }
     }
-    
+
+    /**
+     * Removes a digital object from the dissemination database.
+     *
+     * If the object is a behavior definition or mechanism, it's deleted
+     * as such, and then an attempt is made to delete it as a regular
+     * digital object as well.
+     *
+     * Note that this does not do cascading deletes or check dependencies at
+     * all.  It is expected at this point that when this is called, any
+     * referencial integrity issues have been ironed out or checked at
+     * appropriate.
+     *
+     * All deletions happen in a transaction.  If any database errors occur,
+     * the change is rolled back.
+     *
+     * @param pid The pid of the object to delete.
+     * @throws ReplicationException If any really bad things happened.
+     */
     public void delete(String pid) {
+/*
+# behavior definition
+$BDEF_DBID=SELECT BDEF_DBID FROM BehaviorDefinition WHERE BDEF_PID=$PID
+BehaviorDefinition
+Parameter*
+Method
+
+# behavior mechanism
+$BMECH_DBID=SELECT BMECH_DBID FROM BehaviorMechanism WHERE BMECH_PID=$PID
+BehaviorMechanism
+DataStreamBindingSpec
+MechanismImpl 
+  (select DSBindingKey_DBID and remove from DataStreamMIME first)
+
+# regular object
+$DO_DBID=SELECT DO_DBID FROM DigitalObject where DO_PID=$PID
+DigitalObject
+Disseminator WHERE DISS_DBID in (Select DISS_DBID from DigitalObjectDissAssoc where DO_DBID=$DO_DBID)
+DigitalObjectDissAssoc where $DO_DBID=DO_DBID
+DataStreamBinding WHERE $DO_DBID=DO_DBID (also remove from DataStreamBindingMap where BindingMap_DBID in (select BdinginMap_DBID from DatastreamBinding where DO_DBID=$DO_DBID)
+
+
+  <table name="BehaviorDefinition" primaryKey="BDEF_DBID">
+    <column name="BDEF_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="BDEF_PID" type="varchar(32)" notNull="true" default="" unique="true"/>
+    <column name="BDEF_Label" type="varchar(255)" notNull="true" default="" index="BDEF_Label"/>
+  </table>
+  <table name="BehaviorMechanism" primaryKey="BMECH_DBID">
+    <column name="BMECH_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="BDEF_DBID" type="int(11)" notNull="true" default="0" index="BDEF_ID"/>
+    <column name="SMType_DBID" type="int(11)" notNull="true" default="0" index="SMType_ID"/>
+    <column name="BMECH_PID" type="varchar(32)" notNull="true" default="" unique="true"/>
+    <column name="BMECH_Label" type="varchar(255)" notNull="true" default="" index="BMECH_Label"/>
+  </table>
+  <table name="DataStreamBinding">
+    <column name="DO_DBID" type="int(11)" notNull="true" default="0" index="DO_DBID"/>
+    <column name="DSBindingKey_DBID" type="int(11)" notNull="true" default="0" index="DSBindingKey_DBID"/>
+    <column name="BindingMap_DBID" type="int(11)" notNull="true" default="0"/>
+    <column name="DSBinding_DS_BindingKey_Seq" type="int(11)" notNull="true" default="0" index="DOBindingMap_DSBindingKey_Seq"/>
+    <column name="DSBinding_DS_ID" type="varchar(32)" notNull="true" default="" index="DOBindingMap_DS_ID"/>
+    <column name="DSBinding_DS_Label" type="varchar(255)" notNull="true" default="" index="DOBindingMap_DS_Label"/>
+    <column name="DSBinding_DS_MIME" type="varchar(32)" notNull="true" default="" index="DOBindingMap_DS_MIME"/>
+    <column name="DSBinding_DS_Location" type="varchar(255)" notNull="true" default="" index="DOBindingMap_DS_URL"/>
+    <column name="POLICY_DBID" type="int(11)" notNull="true" default="0" index="POLICY_ID"/>
+  </table>
+  <table name="DataStreamBindingMap">
+    <column name="BindingMap_DBID" type="int(11)" notNull="true" autoIncrement="true" unique="true"/>
+    <column name="BMECH_DBID" type="int(11)" notNull="true" default="0"/>
+    <column name="DSBindingMap_ID" type="varchar(32)" notNull="true" default=""/>
+    <column name="DSBindingMap_Label" type="varchar(255)" notNull="true" default=""/>
+  </table>
+  <table name="DataStreamBindingSpec" primaryKey="DSBindingKey_DBID">
+    <column name="DSBindingKey_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="BMECH_DBID" type="int(11)" notNull="true" default="0" index="BMECH_DBID"/>
+    <column name="DSBindingSpec_Name" type="varchar(32)" notNull="true" default="" index="DSBindingSpec_Name"/>
+    <column name="DSBindingSpec_Ordinality_Flag" type="char(1)" notNull="true" default="N" index="DSBindingSpec_Ordinality_Flag"/>
+    <column name="DSBindingSpec_Cardinality" type="smallint(6)" notNull="true" default="1" index="DSBindingSpec_Cardinality"/>
+    <column name="DSBindingSpec_Label" type="varchar(255)" notNull="true" default="" index="DSBindingSpec_Label"/>
+  </table>
+  <table name="DataStreamMIME">
+    <column name="DSBindingKey_DBID" type="int(11)" notNull="true" default="0" index="DSBindingKey_DBID"/>
+    <column name="DSMIME_Name" type="varchar(32)" notNull="true" default="" index="DSBindingKeyMIME_Name"/>
+  </table>
+  <table name="DigitalObject" primaryKey="DO_DBID">
+    <column name="DO_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="DO_PID" type="varchar(32)" notNull="true" default="" unique="true"/>
+    <column name="DO_Label" type="varchar(255)" notNull="true" default="" index="DO_Label"/>
+  </table>
+  <table name="DigitalObjectDissAssoc" primaryKey="DO_DBID,DISS_DBID">
+    <column name="DO_DBID" type="int(11)" notNull="true" default="0"/>
+    <column name="DISS_DBID" type="int(11)" notNull="true" default="0"/>
+  </table>
+  <table name="Disseminator" primaryKey="DISS_DBID">
+    <column name="DISS_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="BDEF_DBID" type="int(11)" notNull="true" default="0" index="BDEF_ID"/>
+    <column name="BMECH_DBID" type="int(11)" notNull="true" default="0" index="BMECH_ID"/>
+    <column name="DISS_ID" type="varchar(32)" notNull="true" default="" index="DISS_Name"/>
+    <column name="DISS_Label" type="varchar(255)" notNull="true" default="" index="DISS_Label"/>
+  </table>
+  <table name="MechanismImpl" primaryKey="BMECH_DBID,BDEF_DBID,METH_DBID,DSBindingKey_DBID">
+    <column name="BMECH_DBID" type="int(11)" notNull="true" default="0"/>
+    <column name="BDEF_DBID" type="int(11)" notNull="true" default="0"/>
+    <column name="METH_DBID" type="int(11)" notNull="true" default="0"/>
+    <column name="DSBindingKey_DBID" type="int(11)" notNull="true" default="0"/>
+    <column name="MECHImpl_Protocol_Type" type="varchar(32)" notNull="true" default="" index="MI_Protocol_Type"/>
+    <column name="MECHImpl_Return_Type" type="varchar(32)" notNull="true" default="" index="MI_Return_Type"/>
+    <column name="MECHImpl_Address_Location" type="varchar(255)" notNull="true" default="" index="MI_Address_Location"/>
+    <column name="MECHImpl_Operation_Location" type="varchar(255)" notNull="true" default="" index="MI_Operation_Location"/>
+    <column name="POLICY_DBID" type="int(11)" notNull="true" default="0" index="POLICY_ID"/>
+  </table>
+  <table name="Method" primaryKey="METH_DBID,BDEF_DBID">
+    <column name="METH_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="BDEF_DBID" type="int(11)" notNull="true" default="0"/>
+    <column name="METH_Name" type="varchar(32)" notNull="true" default="" index="METH_Name"/>
+    <column name="METH_Label" type="varchar(255)" notNull="true" default="" index="METH_Label"/>
+  </table>
+  <table name="PIDRegistry" primaryKey="PID_DBID">
+    <column name="PID_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="PID" type="varchar(32)" notNull="true" default="" unique="true"/>
+    <column name="Location" type="varchar(255)" notNull="true" default=""/>
+  </table>
+  <table name="TempRegistry" primaryKey="PID_DBID">
+    <column name="PID_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="PID" type="varchar(32)" notNull="true" default="" unique="true"/>
+    <column name="Location" type="varchar(255)" notNull="true" default=""/>
+  </table>
+  <table name="Parameter">
+    <column name="METH_DBID" type="int(11)" notNull="true" default="0" index="METH_DBID"/>
+    <column name="BDEF_DBID" type="int(11)" notNull="true" default="0" index="BDEF_DBID"/>
+    <column name="PARM_Name" type="varchar(32)" notNull="true" default="" index="PARM_Name"/>
+    <column name="PARM_Default_Value" type="varchar(32)" index="PARM_Default_Value"/>
+    <column name="PARM_Required_Flag" type="varchar(5)" notNull="true" default="false" index="PARM_Required_Flag"/>
+    <column name="PARM_Label" type="varchar(255)" notNull="true" default="" index="PARM_Label"/>
+  </table>
+  <table name="Policy" primaryKey="POLICY_ID">
+    <column name="POLICY_ID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="POLICY_Name" type="varchar(32)" notNull="true" default="" index="POLICY_Name"/>
+    <column name="POLICY_Rule" type="varchar(255)" notNull="true" default="" index="POLICY_Rule"/>
+    <column name="POLICY_Label" type="varchar(255)" notNull="true" default="0"/>
+  </table>
+  <table name="ObjectRegistry">
+    <comment>This is used internally to keep track of objects in the definitive
+             store.  When an object is ingested or newly created, a PID
+             has been assigned, and the object is written to the definitive
+             store, an entry is created here.
+             The entry will be: pid, 0, (userid from context), N
+             A write lock is indicated by a non-null LockingUser value.
+             As you can see above, when an object is created in the
+             repository, it is automatically locked.
+             Objects are only deleted from this table in the following two
+             cases:  1) When ModifiedFlag is 'D' and DOWriter.commit() is
+             called.  2) When DOWriter.cancel() is called and SystemVersion
+             is '0' (zero).
+    </comment>
+    <column name="DO_PID" type="varchar(32)" notNull="true">
+      <comment>The PID of the object</comment>
+    </column>
+    <column name="FO_TYPE" type="char(1)" notNull="true" default="O">
+      <comment>The Fedora Object Type of the object.  This indicates
+               whether it's a regular object (O), behavior definition object 
+               (D), or behavior mechanism object (M).</comment>
+    </column>
+    <column name="SystemVersion" type="smallint(6)" notNull="true" default="0">
+      <comment>The system version of the object.  This starts at zero on
+               initial creation or import, and is subsequently incremented by
+               one each time a change is committed to the definitive store.
+      </comment>
+    </column>
+    <column name="LockingUser" type="varchar(32)" notNull="false">
+      <comment>The userId of the user owning the write lock on the object.
+               If the object is not locked, this is NULL.
+      </comment>
+    </column>
+    <column name="ModifiedFlag" type="char(1)" notNull="true" default="N">
+      <comment>Indicates the kind of pending modification to permanent storage.
+               Changes that have been save()d but not commit()ed reside
+               in a temporary storage area.  They can either reflect a
+               modification or a deletion of the original object.
+               This is signified by "M" or "D", respectively. When
+               no change is pending, the value is "N".
+      </comment>
+    </column>
+    <column name="ObjectState" type="char(1)" notNull="true" default="A">
+      <comment>The state of the object (currently unused)</comment>
+    </column>
+  </table>
+  <table name="ObjectReplicationJob">
+    <comment>Used as a queue for replication jobs.</comment>
+    <column name="DO_PID" type="varchar(32)" notNull="true">
+      <comment>The object pid</comment>
+    </column>
+    <column name="Action" type="char(1)" notNull="true">
+      <comment>M or D, meaning "modified" or "deleted"</comment>
+    </column>
+  </table>
+  <table name="StructureMapType" primaryKey="SMType_DBID">
+    <column name="SMType_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="SMType_Name" type="varchar(32)" notNull="true" default="" index="SMType_Name"/>
+    <column name="SMType_Label" type="varchar(255)" notNull="true" default="" index="SMType_Label"/>
+  </table>*/
         
     }
 
