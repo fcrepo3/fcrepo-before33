@@ -140,11 +140,11 @@
 						<wsdl:service name="Watermarker">
 							<!-- THIS IS THE HTTP PORT -->
 							<wsdl:port name="watermarker-impl" binding="HTTP-watermarker">
-								<http:address location="http://uva.lib.edu/mech/watermarker/svp1/"/>
+								<http:address location="http://icarus.lib.virginia.edu/"/>
 							</wsdl:port>
 							<!-- THIS IS THE SOAP PORT -->
 							<wsdl:port name="watermarker-impl-soap" binding="SOAP-watermarker">
-								<soap:address location="http://uva.lib.edu/mech/watermarker/"/>
+								<soap:address location="http://icarus.lib.virginia.edu/"/>
 							</wsdl:port>
 						</wsdl:service>
 						<!-- ******************************************************************************************************************** -->
@@ -153,7 +153,7 @@
 						<wsdl:binding name="HTTP-watermarker" type="Watermarker">
 							<http:binding verb="GET"/>
 							<wsdl:operation name="getImage">
-								<http:operation location="bin/doWatermark.pl?image=(PHOTO)&amp;watermark=(WATERMARK)&amp;dpi=300"/>
+								<http:operation location="cgi-bin/doWatermark.pl?image=(PHOTO)&amp;watermark=(WATERMARK)&amp;dpi=300"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
