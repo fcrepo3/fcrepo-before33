@@ -34,10 +34,12 @@ public interface DOWriter
      * Sets the content of the entire digital object.
      *
      * @param content A stream of encoded content of the digital object.
+     * @param newState The state to attempt to transition to, if null, 
+     *        no state transition is performed upon success.
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public void set(InputStream content) 
+    public void set(InputStream content, String newState) 
             throws ServerException;
 
     /**
@@ -117,10 +119,12 @@ public interface DOWriter
      * Saves the changes thus far to the permanent copy of the digital object.
      *
      * @param logMessage An explanation of the change(s).
+     * @param newState The state to attempt to transition to, if null, 
+     *        no state transition is performed upon success.
      * @throws ServerException If any type of error occurred fulfilling the 
      *         request.
      */
-    public void commit(String logMessage) 
+    public void commit(String logMessage, String newState) 
             throws ServerException;
 
     /**
