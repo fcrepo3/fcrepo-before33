@@ -67,7 +67,7 @@ public abstract class BObjMETSSerializer
   protected PrintWriter out;
   protected Document document;
   protected Element root;
-  protected Element header;
+  //protected Element header;
   protected Element bObjFileSec;
   protected Vector docDSIDs = new Vector();
   protected Element bObjStructMap;
@@ -121,7 +121,7 @@ public abstract class BObjMETSSerializer
         " Parser configuration exception initializing document builder.");
     }
     root = (Element)document.createElementNS(METS, "METS:mets");
-    header = (Element)document.createElementNS(METS, "METS:metsHdr");
+    //header = (Element)document.createElementNS(METS, "METS:metsHdr");
     bObjFileSec = (Element)document.createElementNS(METS, "METS:fileSec");
     bObjStructMap = (Element)document.createElementNS(METS, "METS:structMap");
     bObjStructMap.setAttribute("ID", "S1");
@@ -135,7 +135,7 @@ public abstract class BObjMETSSerializer
   {
     // put the tree together
     document.appendChild(root);
-    root.appendChild(header);
+    //root.appendChild(header);
     Element[] mdSecs = getInlineMD();
     for (int i=0; i<mdSecs.length; i++)
     {
@@ -151,7 +151,7 @@ public abstract class BObjMETSSerializer
   {
     // METS root element
     setMETSRoot(bObjData);
-    setMETSHeader();
+    //setMETSHeader();
     setBObjFileSec(bObjData);
     setBObjStructMap(bObjData);
     setBObjBehaviorSec(bObjData);
@@ -176,7 +176,7 @@ public abstract class BObjMETSSerializer
       root.setAttributeNodeNS(attrSet[i]);
     }
   }
-
+/*
   protected void setMETSHeader()
   {
     // METS header element
@@ -195,7 +195,7 @@ public abstract class BObjMETSSerializer
     agent.appendChild(agentNote);
     header.appendChild(agent);
   }
-
+*/
   protected void setBObjFileSec(BObjTemplate bObjData)
   {
     // METS fileSec element for the behavior object
