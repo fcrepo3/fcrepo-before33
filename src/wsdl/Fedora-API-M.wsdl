@@ -30,8 +30,9 @@
 		</part>
 	</message>
 	<message name="ingestObjectRequest">
+		<documentation> DEPRECATED IN FEDORA 2.0.  USE ingestRequest.</documentation>
 		<part name="METSXML" type="xsd:base64Binary">
-			<documentation>the digital object in an XML submission format.</documentation>
+			<documentation>the digital object in the METS (Fedora Extension) XML submission format.</documentation>
 		</part>
 		<part name="logMessage" type="xsd:string">
 			<documentation>a log message.</documentation>
@@ -79,10 +80,24 @@
 	</message>
 	<message name="exportRequest">
 		<part name="pid" type="xsd:string"/>
-		<part name="format" type="xsd:string"/>
-		<part name="context" type="xsd:string"/>
+		<part name="format" type="xsd:string">
+			<documentation>the desired XML format of the export file, either
+			"foxml1.0" for Fedora Object XML (FOXML) or "metslikefedora1"
+			for METS (Fedora extension of METS).</documentation>
+		</part>
+		<part name="context" type="xsd:string">
+			<documentation>the export context, which indicates the intended
+			use of the export file.  Valid options are (1) "public" which produces an
+			export file that is appropriate for use outside of the repository (all datastream
+			content can be obtained via public callback URLs), (2) "migrate" which produces
+			an export file that is appropriate for migrating an object from one Fedora repository
+			to another, or (3)"archive" which produces an export file that is a standalone entity, 
+			where all datastream content is inlines (XML inline and binary base64-encoded inline).
+			Note that the "archive" option is not available in Fedora 2.0.</documentation>
+		</part>
 	</message>
 	<message name="exportObjectRequest">
+		<documentation> DEPRECATED IN FEDORA 2.0.  USE exportRequest.</documentation>
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
 		</part>
@@ -522,17 +537,17 @@
 			<output message="fedora-api:ingestObjectResponse"/>
 		</operation>
 		<operation name="ingestObject">
-			<documentation>TO BE DEPRECATED IN FEDORA 2.0. Creates a new 
-	digital object in the repository, given the data in the provided XML document, 
-	and a format indentifier for the METS document format.   The object's initial 
-      state will be A (active).   If the XML document does not specify a pid in the 
-      OBJID attribute of the  root element, the repository will generate and return a new pid 
-      for the object resulting from this request.  That pid will have the namespace of 
-      the repository.  If the XML document specifies a pid, it will be assigned 
-      to the digital object provided that 1) it conforms to the Fedora pid 
-      Syntax, 2) it does not specify the namespace of the repository, and 3) 
-      it does not collide with an existing pid of an object in the repository.
-      </documentation>
+			<documentation>DEPRECATED IN FEDORA 2.0. USE ingest.  
+			Creates a new digital object in the repository, given the data in the provided
+			XML document, 	and a format indentifier for the METS document format.   
+			The object's initial  state will be A (active).   If the XML document does not 
+			specify a pid in the OBJID attribute of the  root element, the repository will 
+			generate and return a new pid for the object resulting from this request.  
+			That pid will have the namespace of the repository.  If the XML document 
+			specifies a pid, it will be assigned to the digital object provided that 
+			1) it conforms to the Fedora pid Syntax, 2) it does not specify the namespace 
+			of the repository, and 3) it does not collide with an existing pid of an object in 
+			the repository. </documentation>
 			<input message="fedora-api:ingestObjectRequest"/>
 			<output message="fedora-api:ingestObjectResponse"/>
 		</operation>
@@ -556,20 +571,14 @@
 			<output message="fedora-api:getObjectXMLResponse"/>
 		</operation>
 		<operation name="export">
-			<documentation>Gets the entire XML-encoded digital object for 
-      external use (viewing, editing, moving to another repository).  XML 
-      metadata datastreams will be included inline, content datastreams will 
-      be included inline (base64-encoded), and external datastreams will be 
-      referenced by url.</documentation>
+			<documentation>Exports the entire digital object in the specified XML
+			format ("foxml1.0" or "metslikefedora1"), and encoded appropriately 
+			for the specified export context ("public", "migrate", or "archive").</documentation>
 			<input message="fedora-api:exportRequest"/>
 			<output message="fedora-api:exportObjectResponse"/>
 		</operation>
 		<operation name="exportObject">
-			<documentation>Gets the entire METS-encoded digital object for 
-      external use (viewing, editing, moving to another repository).  XML 
-      metadata datastreams will be included inline, content datastreams will 
-      be included inline (base64-encoded), and external datastreams will be 
-      referenced by url.</documentation>
+			<documentation>DEPRECATED IN FEDORA 2.0. USE export.</documentation>
 			<input message="fedora-api:exportObjectRequest"/>
 			<output message="fedora-api:exportObjectResponse"/>
 		</operation>
@@ -587,7 +596,7 @@
     </operation>
 -->
 		<operation name="addDatastream">
-			<documentation>THIS METHOD HAS BEEN DEPRECATED - USE CREATEDATASTREAM INSTEAD.  
+			<documentation>DEPRECATED IN FEDORA 2.0. USE createDatastream.  
 			Creates a new datastream in the object.</documentation>
 			<input message="fedora-api:addDatastreamRequest"/>
 			<output message="fedora-api:addDatastreamResponse"/>
