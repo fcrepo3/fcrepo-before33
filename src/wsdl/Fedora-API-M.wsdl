@@ -142,18 +142,6 @@
     </part>
   </message>
   <message name="listObjectPIDsRequest">
-    <part name="foType" type="xsd:string">
-      <documentation>the Fedora Object Type of the objects to list.  This may be
-      O (regular object), D (Behavior Definition), M (Behavior Mechanism), or
-      null (all objects).</documentation>
-    </part>
-  </message>
-  <message name="listObjectPIDsResponse">
-    <part name="response" type="fedora-types:ArrayOfString">
-      <documentation>the PIDs of the objects.</documentation>
-    </part>
-  </message>
-  <message name="newListObjectPIDsRequest">
     <part name="pidPattern" type="xsd:string">
       <documentation>the pid of the object, with optional wildcards * and ?</documentation>
     </part>
@@ -187,7 +175,7 @@
       <documentation>the maximum modified date of the object.</documentation>
     </part>
   </message>
-  <message name="newListObjectPIDsResponse">
+  <message name="listObjectPIDsResponse">
     <part name="response" type="fedora-types:ArrayOfString">
       <documentation>the PIDs of the objects.</documentation>
     </part>
@@ -620,16 +608,11 @@
     </operation>
     <operation name="listObjectPIDs">
       <documentation>Gets a list of the PIDs of the objects in the 
-      repository.</documentation>
+      repository matching all the criteria given.  This is a simple AND search.
+      Strings can contain the simple * (0 or more characters) or ? (1 character) wildcards.
+      A parameter that is given as null is treated as an "any" wildcard.</documentation>
       <input message="fedora-api:listObjectPIDsRequest"/>
       <output message="fedora-api:listObjectPIDsResponse"/>
-    </operation>
-    <operation name="newListObjectPIDs">
-      <documentation>Gets a list of the PIDs of the objects in the 
-      repository matching all the criteria given.  This is a simple AND search.
-      A parameter that is given as null is treated as an "any" wildcard.</documentation>
-      <input message="fedora-api:newListObjectPIDsRequest"/>
-      <output message="fedora-api:newListObjectPIDsResponse"/>
     </operation>
     <operation name="addDatastreamExternal">
       <documentation>Creates a Referenced External Content Datastream in the 
@@ -935,15 +918,6 @@
         <mime:mimeXml part="response"/>
       </output>
     </operation>
-    <operation name="newListObjectPIDs">
-      <http:operation location="newListObjectPIDs"/>
-      <input>
-        <http:urlEncoded/>
-      </input>
-      <output>
-        <mime:mimeXml part="response"/>
-      </output>
-    </operation>
     <operation name="modifyDatastreamExternal">
       <http:operation location="modifyDatastreamExternal"/>
       <input>
@@ -1158,20 +1132,6 @@
     <operation name="listObjectPIDs">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#listObjectPIDs"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-    <operation name="newListObjectPIDs">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#newListObjectPIDs"/>
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 

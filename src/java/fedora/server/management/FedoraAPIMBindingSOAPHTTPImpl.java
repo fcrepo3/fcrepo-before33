@@ -257,17 +257,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return null;
     }
 
-    public String[] listObjectPIDs(String foType) throws java.rmi.RemoteException {
-        assertInitialized();
-        try {
-            return s_management.listObjectPIDs(s_context, foType);
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-        }
-    }
-    
-    public String[] newListObjectPIDs(String pidPattern, String foType, 
+    public String[] listObjectPIDs(String pidPattern, String foType, 
             String lockedByPattern, String state, String labelPattern, 
             String contentModelIdPattern, Calendar createDateMin, 
             Calendar createDateMax, Calendar lastModDateMin, 

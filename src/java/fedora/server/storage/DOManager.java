@@ -95,14 +95,6 @@ public interface DOManager {
 
     /**
      * Gets a list of object PIDs (accessible in the given context) with the 
-     * given foType.  If foType is given as null, all accessible PIDs for the 
-     * context are returned.
-     */
-    public abstract String[] listObjectPIDs(Context context, String state)
-            throws ServerException;
-
-    /**
-     * Gets a list of object PIDs (accessible in the given context) with the 
      * given criteria.  Any parameter whose name ends with "Pattern" may
      * use the * and ? wildcards.  A parameter given as null means "any".
      */

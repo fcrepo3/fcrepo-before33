@@ -27,7 +27,15 @@ public class AutoLister {
 
     public static Map list(FedoraAPIM skeleton, String fedoraObjectType) 
             throws RemoteException {
-        String[] pids=skeleton.listObjectPIDs(fedoraObjectType); 
+        String[] pids=skeleton.listObjectPIDs(null, fedoraObjectType,
+                null, null, null, null, null, null, null, null);
+/*
+            String pidPattern, 
+            String foType, String lockedByPattern, String state, 
+            String labelPattern, String contentModelIdPattern, 
+            Calendar createDateMin, Calendar createDateMax, 
+            Calendar lastModDateMin, Calendar lastModDateMax        
+*/
         HashMap oi=new HashMap();
         for (int i=0; i<pids.length; i++) {
             oi.put(pids[i], skeleton.getObjectInfo(pids[i]));

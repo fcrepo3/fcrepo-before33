@@ -1011,16 +1011,6 @@ public class DefaultDOManager
         }
     }
 
-    public String[] listObjectPIDs(Context context, String foType)
-            throws StorageDeviceException {
-        StringBuffer whereClause=new StringBuffer();
-        whereClause.append("WHERE SystemVersion > 0");
-        if (foType!=null) {
-            return getPIDs(" AND FO_TYPE = '" + foType + "'");
-        }
-        return getPIDs(whereClause.toString());
-    }
-    
     public String[] listObjectPIDs(Context context, String pidPattern, 
             String foType, String lockedByPattern, String state, 
             String labelPattern, String contentModelIdPattern, 

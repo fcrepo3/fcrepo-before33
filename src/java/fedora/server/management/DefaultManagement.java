@@ -163,11 +163,6 @@ public class DefaultManagement
 
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
 
-    public String[] listObjectPIDs(Context context, String foType) 
-            throws ServerException { 
-        return m_manager.listObjectPIDs(context, foType);
-    }
-    
     public String[] listObjectPIDs(Context context, String pidPattern, 
             String foType, String lockedByPattern, String state, 
             String labelPattern, String contentModelIdPattern, 
