@@ -721,8 +721,41 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
             parameter that indicates whether Fedora should make
             changes in-place or retain prior versions on datastream
             modification. This information is currently maintained,
-            but not acted upon.<br />
-            <br /></li>
+            but not acted upon.</li>
+            
+            <li>New ingest method added. With the introduction of 
+            FOXML and support for multiple ingest formats, an 
+            additional parameter was required on ingest to specify 
+            the format of the file to be ingested. Valid values 
+            for format are "foxml1.0", "metslikefedora1", or "default". 
+            The format of "foxml1.0" specifies ingest files is
+            encoded using FOXMLv1.0. The format of "metslikefedora1"
+            specifies the encoding is Fedora's extension of METS. The
+            format of "default" indicates to use the current repository
+            default format. Refer to the API-M WSDL for additional 
+            information about the change. The former ingestObject 
+            method is now deprecated.</li>
+            
+            <li>New export method added. With the introduction of 
+            FOXML and support for multiple export formats, an 
+            additional parameter was required on export to specify 
+            the format of the file to be exported and to specify
+            the context of the export. Valid values for format 
+            are "foxml1.0", "metslikefedora1", or "default". 
+            Valid values for format are described above. Valid values
+            for context are "public", "migrate", and "archive". 
+            A value of "public" produces an export file 
+            that is appropriate for use outside of the repository 
+            (all datastream	content can be obtained via public 
+            callback URLs). A value of "migrate" produces
+			an export file that is appropriate for migrating an 
+			object from one Fedora repository to another. A value
+			of "archive" produces an export file that is a standalone 
+			entity, where all datastream content is inlines 
+			(XML inline and binary base64-encoded inline).
+			Note that the "archive" option is not implemented in Fedora 2.0. 
+			Refer to the API-M WSDL for additional information about the change. 
+			The former exportObject method is now deprecated.</li>
 
             <li>modifyDatastream now supports changing the mimeType
             and formatURI, and altID.</li>
@@ -770,7 +803,7 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
 
             <li>describeUser: [no change]</li>
 
-            <li>export: [no change]</li>
+            <li>export: added parameters format, context</li>
 
             <li>exportObject: [no change]</li>
 
@@ -790,7 +823,7 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
 
             <li>getObjectXML: [no change]</li>
 
-            <li>ingest: [no change]</li>
+            <li>ingest: added parameter format</li>
 
             <li>ingestObject: [no change]</li>
 
