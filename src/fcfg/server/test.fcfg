@@ -393,7 +393,7 @@
     <datastore id="localKowariTriplestore">
         <comment>local Kowari Triplestore used by the Resource Index</comment>
         <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
-        <param name="modelName" value="resourceIndex"/>
+        <param name="modelName" value="ri"/>
         <param name="poolMaxGrowth" value="-1"/>
         <param name="path" value="/opt/fedora/testStore/resourceIndex"/>
         <param name="bufferFlushBatchSize" value="20000"/>
