@@ -43,7 +43,7 @@
         - storageCharacterEncoding [default=UTF-8]
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
-		<param name="pidNamespace" value="changeme"/>
+		<param name="pidNamespace" value="test"/>
 		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
 		<param name="storageFormat" value="mets11fedora1"/>
 		<param name="storageCharacterEncoding" value="UTF-8"/>

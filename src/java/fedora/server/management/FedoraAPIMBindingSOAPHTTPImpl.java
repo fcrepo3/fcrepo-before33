@@ -107,7 +107,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         try {
             return s_management.ingestObject(s_context, 
-                    new ByteArrayInputStream(METSXML), "mets11fedora1", "UTF-8", false); // <-- only for lv0 test, normally true
+                    new ByteArrayInputStream(METSXML), "mets11fedora1", "UTF-8", true);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
