@@ -807,7 +807,7 @@ public class DefaultDOManager
      * the PID in the stream has a namespace-id part of "test"... in which
      * cast the PID from the stream will be used
      */
-    public DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
+    public synchronized DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException {
         getServer().logFinest("Entered DefaultDOManager.newWriter(Context, InputStream, String, String, boolean)");
         // temporary, unique handle for file storage of inputstream
@@ -1004,7 +1004,7 @@ public class DefaultDOManager
     /**
      * Gets a writer on a new, empty object.
      */
-    public DOWriter newWriter(Context context)
+    public syncronized DOWriter newWriter(Context context)
             throws ServerException {
         getServer().logFinest("Entered DefaultDOManager.newWriter(Context)");
         if (cachedObjectRequired(context)) {
