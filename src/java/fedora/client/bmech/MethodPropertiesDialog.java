@@ -41,9 +41,12 @@ public class MethodPropertiesDialog extends JDialog
 {
     private MethodsPane parent;
     private String methodName;
+    private String baseURL;
     private JTable parmTable;
     private JRadioButton rb_http;
     private JTextField rb_http_URL;
+    private JRadioButton rb_httpRelative;
+    private JTextField rb_httpRelative_URL;
     private JRadioButton rb_soap;
     private JTextField returnMIMES;
     private MethodProperties mp;
@@ -101,23 +104,43 @@ public class MethodPropertiesDialog extends JDialog
         loadParmReqToDisplayTbl();
         this.parent = parent;
         this.methodName = methodName;
+        this.baseURL = parent.getBaseURL();
+        if (parent.hasBaseURL())
+        {
+          this.baseURL = (parent.getBaseURL().endsWith("/"))
+            ? parent.getBaseURL() : (parent.getBaseURL() + "/");
+        }
         setTitle("Method Properties for: " + methodName);
         setSize(800, 400);
         setModal(true);
         getContentPane().setLayout(new BorderLayout());
 
         // Method Binding Panel
-        rb_http = new JRadioButton("HTTP Binding URL: ", true);
+        // http full URL
+        rb_http = new JRadioButton("HTTP URL: ", false);
         rb_http.setActionCommand("http");
-        // http url entry box
         rb_http_URL = new JTextField(30);
         rb_http_URL.setToolTipText("Enter the full URL for the service method." +
           "The URL should use the replacement syntax described in Help.");
+        // http relative URL
+        String rLabel = "HTTP URL (relative):     " + baseURL;
+        rb_httpRelative = new JRadioButton(rLabel, false);
+        rb_httpRelative.setActionCommand("httprel");
         // soap checkbox
         rb_soap = new JRadioButton("SOAP Binding (auto-generated)", false);
         rb_soap.setActionCommand("soap");
+        rb_soap.setEnabled(false);
         ButtonGroup rb_buttonGroup = new ButtonGroup();
-        rb_buttonGroup.add(rb_http);
+        if (parent.hasBaseURL())
+        {
+          rb_httpRelative.setSelected(true);
+          rb_buttonGroup.add(rb_httpRelative);
+        }
+        else
+        {
+          rb_http.setSelected(true);
+          rb_buttonGroup.add(rb_http);
+        }
         rb_buttonGroup.add(rb_soap);
         JPanel bindingPanel = new JPanel();
         bindingPanel.setBorder(new TitledBorder("Method Binding:"));
@@ -127,7 +150,14 @@ public class MethodPropertiesDialog extends JDialog
         gbc.insets = new Insets(15,2,2,2);
         gbc.gridy = 0;
         gbc.gridx = 0;
-        bindingPanel.add(rb_http, gbc);
+        if (parent.hasBaseURL())
+        {
+          bindingPanel.add(rb_httpRelative, gbc);
+        }
+        else
+        {
+          bindingPanel.add(rb_http, gbc);
+        }
         gbc.gridx = 1;
         bindingPanel.add(rb_http_URL, gbc);
         gbc.insets = new Insets(2,2,15,2);
@@ -250,12 +280,8 @@ public class MethodPropertiesDialog extends JDialog
         lowerPanel.add(mainButtonPanel, BorderLayout.SOUTH);
 
         getContentPane().add(bindingPanel, BorderLayout.NORTH);
-        //getContentPane().add(topPanel, BorderLayout.NORTH);
         getContentPane().add(parmsPanel, BorderLayout.CENTER);
-        //getContentPane().add(scrollpane, BorderLayout.CENTER);
-        //getContentPane().add(t_buttonPanel, BorderLayout.EAST);
         getContentPane().add(lowerPanel, BorderLayout.SOUTH);
-        //getContentPane().add(mainButtonPanel, BorderLayout.SOUTH);
         renderCurrentProperties(methodProperties);
         setVisible(true);
     }
@@ -350,6 +376,11 @@ public class MethodPropertiesDialog extends JDialog
           assertMethodPropertiesMsg("You must enter an HTTP binding URL for method!");
           return false;
         }
+        else if (mp.methodRelativeURL.startsWith("http://"))
+        {
+          assertMethodPropertiesMsg("A relative URL cannot begin with http://");
+          return false;
+        }
         else if (!(parmsInURL(mp.methodFullURL, mp.methodParms)))
         {
           assertMethodPropertiesMsg("A parm from the parm table is not "
@@ -424,7 +455,19 @@ public class MethodPropertiesDialog extends JDialog
       if (rb_http.isSelected())
       {
         mp.methodFullURL = rb_http_URL.getText();
-        mp.methodRelativeURL = null;
+        mp.methodRelativeURL = mp.methodFullURL;
+        mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
+      }
+      else if (rb_httpRelative.isSelected())
+      {
+        mp.methodRelativeURL = rb_http_URL.getText();
+        // Get rid of forward slash if exists since the baseURL is
+        // forced to end in a forward slash.
+        if (mp.methodRelativeURL.startsWith("/"))
+        {
+          mp.methodRelativeURL = mp.methodRelativeURL.substring(1);
+        }
+        mp.methodFullURL = baseURL + mp.methodRelativeURL;
         mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
       }
       else
