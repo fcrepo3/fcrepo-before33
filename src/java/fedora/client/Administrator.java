@@ -13,7 +13,6 @@ import fedora.swing.jhelp.SimpleContentViewerUI;
 import fedora.swing.mdi.MDIDesktopPane;
 import fedora.swing.mdi.WindowMenu;
 
-import fedora.client.actions.ExportObject;
 import fedora.client.actions.Login;
 import fedora.client.actions.PurgeObject;
 import fedora.client.actions.ViewObjectXML;
@@ -22,12 +21,9 @@ import fedora.client.bmech.BDefBuilder;
 import fedora.client.bmech.BMechBuilder;
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
-import fedora.client.export.AutoExporter;
-import fedora.client.export.Export;
-import fedora.client.ingest.Ingest;
-import fedora.client.objecteditor.ObjectEditorFrame;
-import fedora.client.purge.AutoPurger;
-import fedora.client.search.ResultFrame;
+import fedora.client.export.ExportDialog;
+import fedora.client.utility.export.Export;
+import fedora.client.ingest.IngestDialog;
 import fedora.client.search.Search;
 import fedora.client.batch.BatchModify;
 import fedora.client.batch.BatchModifyValidate;
@@ -314,7 +310,7 @@ public class Administrator extends JFrame {
         JMenuItem fileIngestOneFromFile=new JMenuItem("From File...", KeyEvent.VK_F);
         fileIngestOneFromFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new Ingest(Ingest.ONE_FROM_FILE);
+                new IngestDialog(IngestDialog.ONE_FROM_FILE);
             }
         });
         JMenuItem fileIngestOneFromRepository=new JMenuItem("From Repository...", KeyEvent.VK_R);
@@ -322,7 +318,7 @@ public class Administrator extends JFrame {
                 ActionEvent.CTRL_MASK));
         fileIngestOneFromRepository.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new Ingest(Ingest.ONE_FROM_REPOS);
+                new IngestDialog(IngestDialog.ONE_FROM_REPOS);
             }
         });
         fileIngestOne.add(fileIngestOneFromFile);
@@ -332,13 +328,13 @@ public class Administrator extends JFrame {
         JMenuItem fileIngestMultipleFromFile=new JMenuItem("From Directory...", KeyEvent.VK_D);
         fileIngestMultipleFromFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new Ingest(Ingest.MULTI_FROM_DIR);
+                new IngestDialog(IngestDialog.MULTI_FROM_DIR);
             }
         });
         JMenuItem fileIngestMultipleFromRepository=new JMenuItem("From Repository...", KeyEvent.VK_R);
         fileIngestMultipleFromRepository.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new Ingest(Ingest.MULTI_FROM_REPOS);
+                new IngestDialog(IngestDialog.MULTI_FROM_REPOS);
             }
         });
 
@@ -358,7 +354,7 @@ public class Administrator extends JFrame {
         fileExportObject.setToolTipText("Exports a serialized Digitial Object to disk.");
         fileExportObject.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new Export(Export.ONE);
+                new ExportDialog(ExportDialog.ONE);
             }
         });
 
@@ -367,7 +363,7 @@ public class Administrator extends JFrame {
         fileExportMultiple.setToolTipText("Exports multiple serialized Digitial Objects to disk.");
         fileExportMultiple.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new Export(Export.MULTI);
+                new ExportDialog(ExportDialog.MULTI);
             }
         });
         fileExport.add(fileExportObject);
