@@ -43,7 +43,7 @@ body {
 
 #toc {
     width: 50%;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 #tocbox {
@@ -60,11 +60,7 @@ body {
     list-style: upper-alpha outside none;
 }
 
-#introduction {
-    margin-bottom: 4px;
-}
-
-.sect {
+#introduction, #references, .sect {
     margin-bottom: 5px;
 }
 
