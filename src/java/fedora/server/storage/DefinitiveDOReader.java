@@ -504,7 +504,7 @@ public class DefinitiveDOReader implements DOReader
      *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
     public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
-      throws GeneralException
+      throws GeneralException, ServerException
     {
       // TODO! dateTime filter not implemented in this release!!
 
@@ -538,7 +538,7 @@ public class DefinitiveDOReader implements DOReader
      *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
     public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
-      throws GeneralException
+      throws GeneralException, ServerException
     {
       if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
       {
