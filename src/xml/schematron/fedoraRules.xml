@@ -1,37 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- SCHEMATRON  SCHEMA FOR FEDORA DIGITAL OBJECTS-->
+<!-- This schema expresses validation rules for Fedora digital objects that are NOT ALREADY EXPRESSED in the METS XML Schema.-->
 <sch:schema xmlns:sch="http://www.ascc.net/xml/schematron">
+	<!-- FIGURE OUT: how to best deal with validation and namespace prefix declaration-->
 	<sch:ns prefix="METS" uri="http://www.loc.gov/METS/"/>
+	<!-- RULES FOR OBJECT INGEST PHASE:  These rules apply to a digital object in its "submission" format for ingest into the repository-->
+	<!-- These rules are to be applied upon initial receipt of the object by the repository, before the repository has done any processing of the input.-->
 	<sch:phase id="ingest">
-            <sch:active pattern="submission"/>
-      </sch:phase>
-      	<sch:phase id="store">
-            <sch:active pattern="created"/>
-      </sch:phase>
-      	<sch:pattern name="Ingest Package Checks" id="submission">
-      		<!-- FIGURE OUT: how to validate the namespace prefix declaration-->
+		<sch:active pattern="preliminary"/>
+	</sch:phase>
+	<!-- RULES FOR OBJECT STORAGE PHASE: Rules to ensure that digital object is FULLY valid before being accepted for final storage in the repository-->
+	<!-- These rules are to be applied after all processing has been done by the repository, and before it is submitted to low level storage.-->
+	<sch:phase id="store">
+		<sch:active pattern="preliminary"/>
+		<sch:active pattern="completed"/>
+	</sch:phase>
+	<!-- PRELIMINARY PATTERN: -->
+	<!-- These rules are to be applied to objects no matter what phase of the object lifecycle they are in.-->
+	<sch:pattern name="Preliminary Object Checks" id="preliminary">
+		<sch:rule context="METS:mets[@TYPE='FedoraBMechObject']">
+			<sch:assert test="child::METS:amdSec[@ID='DSBIND']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Binding Spec (element amdSec with ID="DSBIND" must exist when element mets has TYPE="FedoraBMechObject"</sch:assert>
+			<sch:assert test="child::METS:amdSec[@ID='WSDL']">Behavior Mechanism Objects must have an inline Datastream representing WSDL service bindings (element amdSec with ID="WSDL" must exist when element mets has TYPE="FedoraBMechObject"</sch:assert>
+		</sch:rule>
+		<sch:rule context="METS:mets[@TYPE='FedoraBDefObject']">
+			<sch:assert test="child::METS:amdSec[@ID='WSDL']">Behavior Definition Objects must have an inline Datastream representing WSDL abstract method defs (element amdSec with ID="WSDL" must exist when element mets has TYPE="FedoraBDefObject"</sch:assert>
+		</sch:rule>
 		<sch:rule context="METS:mets">
-			<sch:assert test="@TYPE = 'FedoraObject' or @TYPE = 'FedoraBDefObject' or @TYPE = 'FedoraBMechObject'">Ingest Phase: Object must be of type "FedoraObject," "FedoraBDefObject," or "FedoraBMechObject" (element mets: TYPE)</sch:assert>
+			<sch:assert test="@TYPE = 'FedoraObject' or @TYPE = 'FedoraBDefObject' or @TYPE = 'FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (element mets: TYPE)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:fileSec">
-			<sch:assert test="count(METS:fileGrp) = 1">Ingest Phase: Object fileSec must not have greater than one file group</sch:assert>
-			<sch:assert test="METS:fileGrp[@ID='DATASTREAMS']">Ingest Phase: Object must have one fileGrp whose ID is "DATASTREAMS"</sch:assert>
+			<sch:assert test="METS:fileGrp[@ID]">All Datastreams must have a DatastreamID (element fileGrp: ID is missing or empty)</sch:assert>
+			<sch:assert test="METS:fileGrp[@ID='DATASTREAMS']">Datastreams section encoding error (element fileSec: must have child fileGrp whose ID is "DATASTREAMS"</sch:assert>
+			<sch:assert test="count(METS:fileGrp) = 1">Datastreams section encoding error (element fileSec: can only have one fileGrp as direct decendant)</sch:assert>
+		</sch:rule>
+		<sch:rule context="METS:fileGrp">
+			<sch:assert test="@ID">Every Datastream must have a DatastreamID (element fileGrp: ID is missing)</sch:assert>
+		</sch:rule>
+		<sch:rule context="METS:behaviorSec">
+			<sch:assert test="string(@GROUPID)">Every Disseminator must have a DisseminatorID (element behaviorSec: GROUPID is missing or empty)</sch:assert>
 		</sch:rule>
 	</sch:pattern>
-	<sch:pattern name="Completed Object Checks" id="created">
-		<!-- FIGURE OUT: how to validate the namespace prefix declaration-->
+	<!-- COMPLETED PATTERN: -->
+	<!-- These rules are to be applied to objects when they are considered completed and ready to be stored persistently in the repository.-->
+	<sch:pattern name="Completed Object Checks" id="completed">
 		<sch:rule context="METS:mets">
-			<sch:assert test="string(@OBJID)">Created Phase: Object must have a PID (element mets: OBJID is missing or empty)</sch:assert>
-			<sch:assert test="@TYPE = 'FedoraObject' or @TYPE = 'FedoraBDefObject' or @TYPE = 'FedoraBMechObject'">Created Phase: Object must be of type "FedoraObject," "FedoraBDefObject," or "FedoraBMechObject" (element mets: TYPE)</sch:assert>
-			<sch:assert test="METS:amdSec[@ID='FEDORA-AUDITTRAIL']">Created Phase: Object must have an audit trail (element amdSec: ID="FEDORA-AUDITTRAIL)</sch:assert>
+			<sch:assert test="string(@OBJID)">Object must have a PID (element mets: OBJID is missing or empty)</sch:assert>
+			<sch:assert test="METS:amdSec[@ID='FEDORA-AUDITTRAIL']">Object must have an audit trail (element amdSec: ID="FEDORA-AUDITTRAIL)</sch:assert>
 		</sch:rule>
-		<sch:rule context="METS:fileSec">
-			<sch:assert test="count(METS:fileGrp) = 1">Created Phase: Object file section (element fileSec) must not have greater than one file group (element fileGrp)</sch:assert>
-			<sch:assert test="METS:fileGrp[@ID='DATASTREAMS']">Created Phase: Object must have one file group reserved for Datastreams (element fileGrp:  ID="DATASTREAMS")</sch:assert>
+		<sch:rule context="METS:file">
+			<sch:assert test="@ADMID">Every Datastream must have an audit trail record associated with it (element file: ADMID is missing)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:metsHdr">
-			<sch:assert test="@CREATEDATE">Created Phase: Object must have a date of creation (element header: CREATEDATE missing)</sch:assert>
-			<sch:assert test="@RECORDSTATUS">Created Phase: Object state must be recorded (element header: RECORDSTATUS missing)</sch:assert>
-			<sch:assert test="@RECORDSTATUS ='A'">Created Phase: Object state must be set to active  (element header: RECORDSTATUS="A")</sch:assert>
+			<sch:assert test="@CREATEDATE">Object must have a date of creation (element header: CREATEDATE missing)</sch:assert>
+			<sch:assert test="string(@RECORDSTATUS)">Object state must be recorded (element header: RECORDSTATUS missing or empty)</sch:assert>
+			<sch:assert test="@RECORDSTATUS ='A' or @RECORDSTATUS ='W' or @RECORDSTATUS ='C' or @RECORDSTATUS ='D'">Object state value is invalid  (element header: RECORDSTATUS must be "A|W|C|D")</sch:assert>
 		</sch:rule>
 	</sch:pattern>
 </sch:schema>
