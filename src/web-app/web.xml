@@ -38,7 +38,7 @@
 
   <servlet-mapping>
     <servlet-name>FedoraAccessServlet</servlet-name>
-    <url-pattern>/access/*</url-pattern>
+    <url-pattern>/access/http</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
