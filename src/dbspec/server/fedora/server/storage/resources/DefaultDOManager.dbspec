@@ -302,14 +302,14 @@
 	<table name="riMethodPermutation">
 		<comment>
 		</comment>
-		<column name="permutationId" type="int(11)" notNull="true" default="0" index="permutationId" autoIncrement="true"/>
+		<column name="permutationId" type="int(11)" notNull="true" index="permutationId" autoIncrement="true"/>
 		<column name="methodId" type="varchar(255)" notNull="true" default="" index="methodID"/>
 		<column name="permutation" type="text" notNull="true" default=""/>
 	</table>
 	<table name="riMethodMimeType">
 		<comment>
 		</comment>
-		<column name="mimeTypeId" type="int(11)" notNull="true" default="0" index="mimeTypeId" autoIncrement="true"/>
+		<column name="mimeTypeId" type="int(11)" notNull="true" index="mimeTypeId" autoIncrement="true"/>
 		<column name="methodImplId" type="varchar(255)" notNull="true" default="0" index="methodImplId"/>
 		<column name="mimeType" type="varchar(255)" notNull="true" default="" index="mimeType"/>
 	</table>
