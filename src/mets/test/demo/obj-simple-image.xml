@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by Ross Wayland (University of Virginia) -->
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
 <!---************************************************************************-->
@@ -24,46 +25,46 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DESC1" STATUS="A">
-     <METS:descMD ID="DESC1.0" CREATED="2002-05-20T06:32:00">
-		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
-			<METS:xmlData>
-				<uvalibdesc:desc>
-					<uvalibdesc:time>
-						<uvalibdesc:date type="created" certainty="ca." era="bc">13th century</uvalibdesc:date>
-					</uvalibdesc:time>
-					<uvalibdesc:identifier scheme="URN">uva-lib:2</uvalibdesc:identifier>
-					<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
-					<uvalibdesc:subject scheme="other" othertype="keyword">Bronze Age, Mycenean</uvalibdesc:subject>
-					<uvalibdesc:subject scheme="other" othertype="keyword">Greek</uvalibdesc:subject>
-					<uvalibdesc:subject scheme="other" othertype="keyword">Mycenae</uvalibdesc:subject>
-					<uvalibdesc:subject scheme="other" othertype="keyword">Greece, Argolis</uvalibdesc:subject>
-					<uvalibdesc:title type="main">Mycenae</uvalibdesc:title>
-					<uvalibdesc:form>architecture</uvalibdesc:form>
-					<uvalibdesc:mediatype type="image">
-						<uvalibdesc:form>digital</uvalibdesc:form>
-					</uvalibdesc:mediatype>
-					<uvalibdesc:agent role="publisher">Art Images for College Teaching</uvalibdesc:agent>
-					<uvalibdesc:covspace>
-						<uvalibdesc:geometry>
-							<uvalibdesc:point>
-								<uvalibdesc:lat>37.750</uvalibdesc:lat>
-								<uvalibdesc:long>22.733</uvalibdesc:long>
-							</uvalibdesc:point>
-						</uvalibdesc:geometry>
-					</uvalibdesc:covspace>
-					<uvalibdesc:covtime>
-						<uvalibdesc:date era="bc">1350</uvalibdesc:date>
-						<uvalibdesc:date era="bc">1200</uvalibdesc:date>
-					</uvalibdesc:covtime>
-					<uvalibdesc:culture>Greek</uvalibdesc:culture>
-					<uvalibdesc:place type="original">
-						<uvalibdesc:geogname>Greece, Mycenae</uvalibdesc:geogname>
-					</uvalibdesc:place>
-					<uvalibdesc:style>Bronze Age, Mycenean</uvalibdesc:style>
-				</uvalibdesc:desc>
-			</METS:xmlData>
-		</METS:mdWrap>
-	  </METS:descMD>
+		<METS:descMD ID="DESC1.0" CREATED="2002-05-20T06:32:00">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
+				<METS:xmlData>
+					<uvalibdesc:desc>
+						<uvalibdesc:time>
+							<uvalibdesc:date type="created" certainty="ca." era="bc">13th century</uvalibdesc:date>
+						</uvalibdesc:time>
+						<uvalibdesc:identifier scheme="URN">uva-lib:2</uvalibdesc:identifier>
+						<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
+						<uvalibdesc:subject scheme="other" othertype="keyword">Bronze Age, Mycenean</uvalibdesc:subject>
+						<uvalibdesc:subject scheme="other" othertype="keyword">Greek</uvalibdesc:subject>
+						<uvalibdesc:subject scheme="other" othertype="keyword">Mycenae</uvalibdesc:subject>
+						<uvalibdesc:subject scheme="other" othertype="keyword">Greece, Argolis</uvalibdesc:subject>
+						<uvalibdesc:title type="main">Mycenae</uvalibdesc:title>
+						<uvalibdesc:form>architecture</uvalibdesc:form>
+						<uvalibdesc:mediatype type="image">
+							<uvalibdesc:form>digital</uvalibdesc:form>
+						</uvalibdesc:mediatype>
+						<uvalibdesc:agent role="publisher">Art Images for College Teaching</uvalibdesc:agent>
+						<uvalibdesc:covspace>
+							<uvalibdesc:geometry>
+								<uvalibdesc:point>
+									<uvalibdesc:lat>37.750</uvalibdesc:lat>
+									<uvalibdesc:long>22.733</uvalibdesc:long>
+								</uvalibdesc:point>
+							</uvalibdesc:geometry>
+						</uvalibdesc:covspace>
+						<uvalibdesc:covtime>
+							<uvalibdesc:date era="bc">1350</uvalibdesc:date>
+							<uvalibdesc:date era="bc">1200</uvalibdesc:date>
+						</uvalibdesc:covtime>
+						<uvalibdesc:culture>Greek</uvalibdesc:culture>
+						<uvalibdesc:place type="original">
+							<uvalibdesc:geogname>Greece, Mycenae</uvalibdesc:geogname>
+						</uvalibdesc:place>
+						<uvalibdesc:style>Bronze Age, Mycenean</uvalibdesc:style>
+					</uvalibdesc:desc>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:descMD>
 	</METS:dmdSecFedora>
 	<METS:amdSec ID="TECH1">
 		<METS:techMD ID="TECH1.0" CREATED="2002-05-20T06:32:00" STATUS="">
@@ -386,14 +387,14 @@
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
-     <METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors">
-		<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
-		<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
-		<!-- the disseminator subscribes -->
-		<METS:interfaceMD LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
-		<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
-		<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
-		<METS:serviceBindMD LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
-      <METS:serviceBinding>
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors">
+			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
+			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
+			<!-- the disseminator subscribes -->
+			<METS:interfaceMD LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
+			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
+			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+			<METS:serviceBindMD LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
+		</METS:serviceBinding>
 	</METS:behaviorSec>
 </METS:mets>
