@@ -1,0 +1,325 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Developer's Guide</title><meta name="generator" content="DocBook XSL Stylesheets V1.50.0"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article"><div class="titlepage"><div><h2 class="title"><a name="d0e1"></a>Developer's Guide</h2></div><div><h3 class="subtitle"><i>Fedora-Mellon Project</i></h3></div><div><div class="author"><h3 class="author">Fedora-Mellon Development Team</h3></div></div><div><p class="releaseinfo">
+            $Id$
+        </p></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#d0e21">Prerequisites</a></dt><dt><a href="#d0e90">Working with the Sources</a></dt><dt><a href="#d0e345">Building and Testing</a></dt><dt>A. <a href="#d0e374">A Quick Guide to Using CVS</a></dt><dt>B. <a href="#d0e502">Revision History</a></dt></dl></div><div class="section"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e21"></a>Prerequisites</h2></div></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e24"></a>OS</h3></div></div><p>Fedora development can occur on any OS/Hardware combination
+                  that supports the required development tools. At the very
+                  least, this includes:
+                  </p><div class="itemizedlist"><p class="title"><b></b></p><ul type="disc"><li><p>Recent Windows releases (NT4/2k, 95/98/Me,
+                          XP)</p></li><li><p>Modern Unix flavors (Linux, Solaris,
+                          etc.)</p></li></ul></div><p>
+            </p></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e38"></a>Tools/Programs</h3></div></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e41"></a>Java</h4></div></div><p>A JDK v1.4+, with any IDE you prefer. Note: In this guide,
+                      no particular IDE is assumed - instructions will be
+                      written assuming none.</p></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e46"></a>CVS Client</h4></div></div><p>CVS is used for revision control.  It comes with most
+                      modern unix installations by default.  For windows users,
+                      and those new to CVS, you can download and read about
+                      it at
+                      <a href="http://www.cvshome.org/" target="_top">cvshome.org</a>.
+                      From this point forward, this guide assumes your have
+                      the 'cvs' executable in your PATH, although your
+                      partciular IDE may already integrate CVS support. You
+                      may wish to consult
+                      <a href="http://cvsbook.red-bean.com/cvsbook.html" target="_top">the
+                      online cvs book</a> as a reference.</p></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e57"></a>SSH(1) Client</h4></div></div><p>SSH is used in conjunction with CVS to enable secure
+                      communication with the source code repository.  Modern
+                      unix installations usually come with ssh(1) and
+                      ssh-keygen installed.  Windows users can download an SSH
+                      client called Putty from
+                      <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html" target="_top">this
+                      site</a>.  If you're a Windows user and you don't
+                      already have an SSH client and RSA key generator, go
+                      ahead and download (at least) putty, plink, pageant,
+                      and puttygen from that site.  The remainder of this guide
+                      assumes that:
+                      </p><div class="itemizedlist"><p class="title"><b></b></p><ul type="disc"><li><p>If you're a Unix user, you have ssh(1) and
+                                    ssh-keygen installed and in your PATH.
+                              </p></li><li><p>If you're a Windows user, you have putty,
+                                    plink, pageant, and puttygen installed and
+                                    in your PATH.</p></li></ul></div><p>
+                </p></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e74"></a>Other Tools</h4></div></div><p>Other tools necessary for building and unit testing of
+                      the project are included as part of the project within
+                      CVS <a href="#dir_res" title="res/">in the res/ directory</a>.
+                      They will be downloaded when you first perform a
+                      "checkout" operation from CVS.  &lt;&lt;TODO: When
+                      source code is finally made public, some of these tools
+                      may need to be removed from CVS in order to comply with
+                      their licenses for redistribution.  When that time comes,
+                      instructions will be included in this gude on what the
+                      tools are, how to get them, and where to put them so
+                      that the project builds and runs without problems.
+                      &gt;&gt;</p></div></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e82"></a>SourceForge account</h3></div></div><p>To log into the project site at
+                  <a href="http://comm.nsdlib.org/projects/fedora/" target="_top">comm.nsdlib.org/projects/fedora</a>,
+                  and to work with the CVS repository, you should have a
+                  SourceForge account.</p></div></div><div class="section"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e90"></a>Working with the Sources</h2></div></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e93"></a>Getting Started</h3></div></div><div class="orderedlist"><p class="title"><b>Steps</b></p><ol type="1"><li><p>
+                        <span class="emphasis"><em>OPTIONAL:</em></span> Log into
+                        <a href="http://comm.nsdlib.org/projects/fedora/" target="_top">the
+                        project site</a>  (see the link in the upper-left
+                        on that page) using an SSL-capable browser to ensure
+                        that your account has been set up.</p></li><li><p>
+                        <span class="emphasis"><em>REQUIRED:</em></span> Use ssh to log into
+                        comm.nsdlib.org to initialize your user directory.
+                    </p><p>This is necessary in order to use CVS.</p><p>Windows users: type <b><tt>plink
+                          comm.nsdlib.org</tt></b> Unix users: type
+                          <b><tt>ssh comm.nsdlib.org</tt></b>  If it
+                          asks if you want to store the server's key in your
+                          cache, say <b><tt>yes</tt></b>.  Then enter
+                          your username and password when prompted.  When
+                          successful, you'll see a command-prompt.  Type "exit"
+                          to logout.  Your user directory should now be
+                          initialized.</p></li><li><p><span class="emphasis"><em>SUGGESTED:</em></span> Create a private/public
+                          RSA key pair if you don't already have one, and upload
+                          your public key to SourceForge.</p><p>This allows you to run CVS actions over the network
+                          without providing your password every time.</p><p>Windows users: type "puttygen", take the defaults,
+                          and click "Generate".  Follow the instructions and
+                          then save your private and public keys in a secure
+                          place on your system.</p><p>Unix users: type "ssh-keygen" and you'll be led
+                          through the process.  Make sure your public and
+                          private keys are saved in a place that ssh(1) will
+                          look (usually ~/.ssh, which is the default)</p><p>Note for both Windows and Unix users: using a
+                          passphrase on your private key isn't necessary if
+                          you keep your private key file secure (readable
+                          only by you).  If you decide to use a key passphrase,
+                          make it anything you want, and note that whenever
+                          you use your private key, you'll need to manually
+                          provide that passphrase.</p><p>Now upload your public key to
+                          <a href="http://comm.nsdlib.org/projects/fedora/" target="_top">
+                          the SourceForge site</a> by 1) logging in, then
+                          2) selecting <b><tt>Account Maintenance
+                          </tt></b>, then 3) selecting <b><tt>
+                          Edit Keys</tt></b> from the bottom of that page
+                          where it says "CVS/SSH Shared Authorized Keys",
+                          then 4) pasting your public key into the box, and
+                          finally 5) selecting the <b><tt>Update</tt></b>
+                          button.</p><p>Windows users: type "pageant" to bring up the putty
+                          agent.  This program keeps your private key in memory
+                          during secure network communication so that it can
+                          be used by the putty ssh client (plink).  It runs in
+                          the background.  Bring the pageant window to the
+                          foreground and select "add key", then select your
+                          private key file.  <span class="emphasis"><em>You must do this each time you
+                          start pageant unless you automatically invoke
+                          pageant with the first parameter being the location
+                          of your private key.</em></span>
+                          Note: this step is not necessary
+                          for Unix users because by default, ssh(1) looks in a
+                          standard place for your private key whenever it is
+                          invoked.</p><p>Test logging in without typing your password.
+                          Windows users: type <b><tt>
+                          plink username@comm.nsdlib.org</tt></b> (where
+                          <span class="emphasis"><em>username</em></span> is your login name).
+                          Unix users: type <b><tt>
+                          ssh username@comm.nsdlib.org</tt></b>.  Your ssh
+                          client should log you in automatically.  Type
+                          <b><tt>exit</tt></b> to logout.</p></li><li><p>
+                        <span class="emphasis"><em>OPTIONAL:</em></span> Set your CVSROOT
+                        environment variable to
+                        <b><tt>:ext:username@comm.nsdlib.org:/cvsroot/fedora</tt></b>,
+                        where <span class="emphasis"><em>username</em></span> is your login name
+                        on the SourceForge site.</p><p>If you don't do this, you'll have to provide the
+                        <b><tt>-d</tt></b> option along with this
+                        information every time you do anything with cvs.</p></li><li><p><span class="emphasis"><em>REQUIRED:</em></span> Set your CVS_RSH
+                          environment variable to <b><tt>ssh</tt></b> (for
+                          Unix) or <b><tt>plink</tt></b> (for Windows)</p><p>This tells your cvs client that it can run cvs
+                          commands over your ssh client.</p></li></ol></div></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e203"></a>Staying Informed about Code Changes</h3></div></div><p>If you
+         <a href="https://comm.nsdlib.org/mailman/listinfo/fedora-codewatch" target="_top">subscribe
+         to the fedora-codewatch mailing list</a>, you will get email notification
+         of changes to the source of the project as they are checked into CVS.
+         You may prefer not to recieve too many email messages, but still have
+         an interest in code changes.  In that case, don't subscribe
+         (if you're already subscribed, unsubscribe) and periodically have a
+         look at the
+         <a href="https://comm.nsdlib.org/mailman/archives/fedora-codewatch/" target="_top">mailing
+         list archives</a>.
+         </p></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e214"></a>Checking out the Project Files</h3></div></div><p>When your system is properly configured as specified above,
+                  you can type: <b><tt>cvs co -P mellon</tt></b>, (the
+                  <b><tt>-P</tt></b> ignores deleted directories in the
+                  repository) and the project files from the repository will be
+                  copied to your system, in a directory named "mellon".  This
+                  is your working copy.  Note that cvs differs from other
+                  revision control systems in that checking out a file does
+                  not lock it for modification by other people.</p></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e225"></a>Preparing Your Environment to use Ant</h3></div></div><p>The ant tool is included in the project files, under res/ant.
+                  You may already have ant installed on your system.  If you
+                  don't, you will need to add
+                  <b><tt>&lt;work_path&gt;/mellon/res/ant/bin</tt></b>
+                  to your PATH environment variable before builds will work
+                  (where &lt;work_path&gt; is the full path to the directory
+                  in which you executed the "cvs co mellon" command above).  If
+                  you're on a Windows system, use <b><tt>\</tt></b>
+                  (backslash) instead of <b><tt>/</tt></b> (forward
+                  slash) in the PATH.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>If you're on a Unix system
+                  and plan to use the version of ANT included in the res/
+                  directory, you should run <b><tt>chmod 755
+                  &lt;work_path&gt;/mellonres/ant/bin/*</tt></b> to ensure
+                  that the shell script that invokes ant is executable.</div></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e244"></a>Navigating and Understanding the Directory Structure</h3></div></div><p>The CVS repository's copy of the project files is navigable
+                  from <a href="https://comm.nsdlib.org/horde/chora/cvs.php/fedora/mellon" target="_top">this
+                  page on the SourceForge site</a>.  When you commit
+                  changes to the CVS repository from your working copy, they
+                  will be reflected on the site.</p><p>A description of the cvs mellon/ directory structure
+                  follows.</p><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e254"></a>build.xml</h4></div></div><p>The makefile for the entire project, in ant (v1.4) format.
+                      (Ant is a cross-platform build tool similar to make...
+                      <a href="http://jakarta.apache.org/ant" target="_top">Read more
+                      about it here, if you're interested</a>.). This
+                      contains the dependencies and calls to external programs
+                      that help to produce the final form(s) of the project.
+                </p></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e262"></a>lib/</h4></div></div><p>Components that 1) help in compiling the project to its
+                      final form(s), and 2) are necessary for the final
+                      form(s), but are not part of the intellectual basis of
+                      the project.</p><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e267"></a>lib/client/</h5></div></div><p>For client builds/dists only.</p></div></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="dir_res"></a>res/</h4></div></div><p>Components that help in compiling the project to its
+                      final form(s), but are neither 1) part of the
+                      intellectual basis of the project, nor 2) necessary
+                      for the final form(s) of the project.</p><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e277"></a>res/ant</h5></div></div><p>The ant tool, v1.4.  This is necessary for builds.</p></div><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e282"></a>res/docbook-xsl</h5></div></div><p>Stylesheets for converting docbook XML (.dbx) files
+                          to various formats.</p></div><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e287"></a>res/xalan</h5></div></div><p>An xslt engine used for xml translation during
+                          builds.</p></div></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e292"></a>inc/</h4></div></div><p>Files and directories that are included with the final
+                      form(s) of the project, but are not 1) part of the
+                      intellectual basis of the project, nor 2) used during
+                      compilation of the project.</p><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e297"></a>inc/client/jar</h5></div></div><p>To be included in client distributions, inside the
+                          jar</p></div></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e302"></a>src/</h4></div></div><p>The intellectual basis of the project, organized into
+                      directories named by file type.  There are many
+                      possible logical groupings of files within a project.
+                      The 'file type' grouping used at this directory level
+                      is the only one dictated outside the build.xml (ant) file.
+                      Groupings inside these directories are not necessary,
+                      but may be useful during compilation (for example, the
+                      java directory is organized by package because the java
+                      compiler expects it to be that way)  Note that file
+                      type should usually be based on mime type distinctions,
+                      and if there is a standard file extension for the
+                      particular type, that should be used.  For xml files
+                      that don't have a well-established extension, rather
+                      than putting them all in xml, put them in a directory
+                      using some obvious identifier for their schema namespace
+                      (but non-version specific, to be consistent with file
+                      extension conventions).</p><p>&lt;&lt;TODO: At the end of this list, insert other
+                      types, with brief descriptions and directory structure
+                      explanations, if applicable.&gt;&gt;</p><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e309"></a>src/java</h5></div></div><p>Java source code.  See the javadocs for a description
+                          of the packaging scheme used (which also matches the
+                          directory scheme beneath src/java).</p></div><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e314"></a>src/dbx</h5></div></div><p>DocBook XML files</p><div class="section"><div class="titlepage"><div><h6 class="title"><a name="d0e319"></a>src/dbx/devdocs</h6></div></div><p>Used for the 'devdocs' target</p></div></div><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e324"></a>src/mfs</h5></div></div><p>Manifest files (used for jar packaging)</p></div></div></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e329"></a>Coding and Revision Control Guidelines</h3></div></div><p>Be nice and document your code and make it readable by others.
+                  (Use consistent indenting, javadoc, etc.)  Sun's
+                  <a href="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html" target="_top">Code
+                  conventions for Java</a> provide a nice basis, but I
+                  don't think we have to be too anal about enforcing coding
+                  style -- shoot for consistency and clarity.</p><p>When committing changes, write a note (however short)
+                  indicating what you did.</p><p>Once a module checked into cvs is compiling, don't check in
+                  changes that cause builds to fail.</p><p>If you add a tool or library dependency to the project,
+                  1) make sure it doesn't break supported platforms for
+                  development and deployment, and 2) check the tool into
+                  cvs in the appropriate place</p><p>If you modify the build.xml file, never introduce absolute
+                  paths, and never delete targets unless you're sure nobody
+                  is dependent on them.</p></div></div><div class="section"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e345"></a>Building and Testing</h2></div></div><p>To see the targets, be sure you're in the mellon directory,
+              and type <b><tt>ant -projecthelp</tt></b>.  To run a
+              target, type <b><tt>ant &lt;target_name&gt;</tt></b>.
+              After a main target is built, it should tell you where the
+              result is.</p><p>&lt;&lt;TODO: As new targets come about (like the server target,
+              and optimized variations of client and server), talk about them
+              briefly here.&gt;&gt;</p><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e358"></a>The "client" target</h3></div></div><p>The client target (generated by typing "ant client") creates
+                a client distribution in dist/client/.  To run it after
+                building it, cd to that directory and type <b><tt>java
+                -jar client.jar</tt></b>.</p></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e366"></a>The "devdocs" target</h3></div></div><p>The devdocs target (generated by typing <b><tt>ant
+          devdocs</tt></b>) creates a development documentation distribution
+          (system specs, api docs, this guide) in dist/devdocs/.  After
+          generating it, see the readme.txt file in that directory for a
+          description of the files.</p></div></div><div class="appendix"><h2 class="title" style="clear: both"><a name="d0e374"></a>A. A Quick Guide to Using CVS</h2><p>CVS documentation can be daunting.  Here's a quick guide to the
+            most common tasks you'll use in CVS, biased to the Fedora
+            development environment.</p><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e379"></a>Get a Working Copy (one-time)</h3></div></div><p><b><tt>cvs co -P mellon</tt></b></p><p>This example brings a copy of the entire mellon subtree (all
+              project files) on to your system, creating the "mellon" directory
+              (and sub-directories) if needed.  You only need to do this once
+              per working copy.</p></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e387"></a>Getting the Latest Copy of a File from the Repository</h3></div></div><p><b><tt>cvs update -d YourFile.java</tt></b></p><p>You can also do this recursively on entire directories by
+              specifying a directory instead of a file. The -d tells it to
+              get newly created directories, which is usually what you want.</p></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e395"></a>Checking in (committing) a changed file.</h3></div></div><p><b><tt>cvs ci -m "I changed that one part"
+              YourFile.java</tt></b></p><p>This example checks in a changed file, using a log message.  If
+              you want a multi-line log message, you can type this same
+              command, but don't include the <b><tt>-m "message"</tt></b>
+              part.</p></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e406"></a>Adding a File</h3></div></div><p><b><tt>cvs add [-kb] MyFile.java</tt></b></p><p>This example adds the file MyFile.java to the repository.  Before
+              a file is available to others for the first time, it must
+              <span class="emphasis"><em>also</em></span> be checked in. </p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>If a file
+              is binary, <span class="emphasis"><em>you must use <b><tt>-kb</tt></b>
+              </em></span> or the file will be mangled in the repository.
+              For normal text files, you should not use
+              <b><tt>-kb</tt></b>.</div></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e428"></a>Removing a File</h3></div></div><p><b><tt>cvs rm -f MyFile.java</tt></b></p><p>The <b><tt>-f</tt></b> option tells CVS that before
+              removing it from the repository, it should remove it from your
+              working directory.  If you don't specify
+              <b><tt>-f</tt></b>, you must have already deleted the file
+              from your working directory or this command will not run.
+              Directories are deleted in the same way.  Remove operations must
+              be committed to take effect in the repository.</p><div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><h3 class="title">Note</h3>Under normal circumstances, deleted files can be recovered from
+              the repository, so the delete operation will only make the file
+              invisible to those who have the most recent copy of the code.
+              You may check out an old version of the deleted file at
+              any time.</div></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e444"></a>Locking</h3></div></div><p>CVS allows for the concurrent modifications to working copies
+              of files.  This is not always a bad thing, but can create
+              confusion and re-work headaches without adequate developer
+              communication.</p><p>To remedy this, some people have written extensions to CVS
+              that allow for strict locking (the default practice in most
+              revision control systems), but these extensions are not available
+              in our environment.</p><p>The other approach (which our environment supports) is to use a
+              method called <span class="emphasis"><em>weak locking</em></span>.  Weak locking
+              is supported by the cvs commands <span class="emphasis"><em>edit</em></span>,
+              <span class="emphasis"><em>unedit</em></span>, <span class="emphasis"><em>watch</em></span>,
+              and <span class="emphasis"><em>watchers</em></span>.</p><p>In weak locking, the repository provides several functions that
+              aid in developer communication so we can see what people are
+              working on.</p><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e470"></a>edit</h4></div></div><p><b><tt>cvs edit
+                  MyFile.java</tt></b></p><p>Signals that you intend to edit this file.  This creates
+                  what is called a "temporary watch" on the file, which
+                  signifies to other developers that you are working
+                  on the file.  It also has the effect of "watch" until you
+                  "unedit" the file.</p></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e478"></a>unedit</h4></div></div><p><b><tt>cvs unedit MyFile.java</tt></b></p><p>Cancels the effect of a cvs "edit".  This doesn't
+                  revert your changes -- it just signals to the repository
+                  that you are not an editor of this file.  This is typically
+                  done after you have made changes and committed a file
+                  and are moving on to something else, or you've decided that
+                  you're no longer interested in changing the file.</p></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e486"></a>watch</h4></div></div><p><b><tt>cvs watch [add|remove]</tt></b></p><p>Adds you to (or removes you from) the list of "watchers" for
+                  all actions on this file.  If the repository is configured to
+                  do email notification (currently not the case), you will get
+                  an email any time someone does something with the file in
+                  the repository.</p></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e494"></a>watchers</h4></div></div><p><b><tt>cvs watchers MyFile.java</tt></b></p><p>Lists the people who are watching the file.
+                  This will include anyone who has a temporary watch, too
+                  (someone who is editing the file).  It is a good idea to do
+                  this before editing a file to make sure nobody else is working
+                  on it at the same time. (Unless you've co-ordinated with someone
+                  to do concurrent mods on separate sections of the file, in which
+                  case CVS will do the merging for you at commit-time)</p></div></div></div><div class="appendix"><h2 class="title" style="clear: both"><a name="d0e502"></a>B. Revision History</h2><p>Here is the revision history of this guide:</p><div class="literallayout"><p><br>
+&nbsp;&nbsp;&nbsp;&nbsp;$Log$
+&nbsp;&nbsp;&nbsp;&nbsp;Revision 1.1  2005/01/27 05:12:36  eddie
+&nbsp;&nbsp;&nbsp;&nbsp;moved all devdoc-related files to src/doc/devdocs,
+&nbsp;&nbsp;&nbsp;&nbsp;edited buildfile accordingly
+&nbsp;&nbsp;&nbsp;&nbsp;translated docbook to html and deleted the dbx files
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.10&nbsp;&nbsp;2002/09/11&nbsp;11:44:58&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;updated&nbsp;as&nbsp;per&nbsp;bill's&nbsp;suggestion&nbsp;--&nbsp;suggested&nbsp;key&nbsp;pair,&nbsp;and&nbsp;added<br>
+&nbsp;&nbsp;&nbsp;&nbsp;note&nbsp;on&nbsp;adding&nbsp;key&nbsp;pair&nbsp;to&nbsp;pageant.<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.9&nbsp;&nbsp;2002/05/17&nbsp;20:02:00&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Added&nbsp;section&nbsp;on&nbsp;the&nbsp;fedora-codewatch&nbsp;mailing&nbsp;list&nbsp;(automatic&nbsp;updates&nbsp;for&nbsp;project&nbsp;code-related&nbsp;events)<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.8&nbsp;&nbsp;2002/05/13&nbsp;18:39:29&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Added&nbsp;a&nbsp;comment&nbsp;on&nbsp;the&nbsp;-d&nbsp;option&nbsp;with&nbsp;"cvs&nbsp;update"<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.7&nbsp;&nbsp;2002/05/09&nbsp;21:24:44&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Finished&nbsp;locking&nbsp;section<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.6&nbsp;&nbsp;2002/05/09&nbsp;16:09:03&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Re-formatted&nbsp;xml&nbsp;and&nbsp;added&nbsp;userinput&nbsp;elements&nbsp;in&nbsp;a&nbsp;couple&nbsp;needed&nbsp;places<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.5&nbsp;&nbsp;2002/05/08&nbsp;00:50:36&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fixed&nbsp;another&nbsp;missing&nbsp;section&nbsp;closing&nbsp;tag&nbsp;prob<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.4&nbsp;&nbsp;2002/05/08&nbsp;00:47:09&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fixed&nbsp;minor&nbsp;prob&nbsp;(unclosed&nbsp;tag)&nbsp;at&nbsp;end&nbsp;of&nbsp;in-progress&nbsp;locking&nbsp;section&nbsp;under&nbsp;cvs&nbsp;section<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.3&nbsp;&nbsp;2002/05/08&nbsp;00:44:34&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;changed&nbsp;emphasis&nbsp;tags&nbsp;to&nbsp;userinput&nbsp;tags&nbsp;where&nbsp;appropriate<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;changed&nbsp;note&nbsp;sections&nbsp;to&nbsp;use&nbsp;the&nbsp;note&nbsp;tag<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;added&nbsp;chmod&nbsp;note&nbsp;for&nbsp;ant&nbsp;on&nbsp;unix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;started&nbsp;section,&nbsp;'a&nbsp;quick&nbsp;guide&nbsp;to&nbsp;cvs'...&nbsp;still&nbsp;need&nbsp;to&nbsp;add&nbsp;weak&nbsp;locking&nbsp;notes<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.2&nbsp;&nbsp;2002/05/03&nbsp;22:30:58&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1)&nbsp;added&nbsp;target&nbsp;detail&nbsp;for&nbsp;the&nbsp;working&nbsp;targets<br>
+&nbsp;&nbsp;&nbsp;&nbsp;2)&nbsp;for&nbsp;the&nbsp;cvs&nbsp;"co"&nbsp;command,&nbsp;specified&nbsp;to&nbsp;use&nbsp;-P&nbsp;option<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;so&nbsp;it&nbsp;doesn't&nbsp;pick&nbsp;up&nbsp;deleted&nbsp;directories<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.1&nbsp;&nbsp;2002/05/03&nbsp;18:50:29&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;moved&nbsp;to&nbsp;devdocs&nbsp;subdir&nbsp;and&nbsp;removed&nbsp;system-specific&nbsp;headers<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Revision&nbsp;1.2&nbsp;&nbsp;2002/05/02&nbsp;20:06:56&nbsp;&nbsp;cwilper<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Fixed&nbsp;a&nbsp;couple&nbsp;misspellings&nbsp;and&nbsp;added&nbsp;CVS&nbsp;tags&nbsp;inline.<br>
+</p></div></div></div></body></html>

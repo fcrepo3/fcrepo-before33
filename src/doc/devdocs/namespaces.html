@@ -1,0 +1,95 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Namespace Specification &amp; Design Rationale</title><meta name="generator" content="DocBook XSL Stylesheets V1.50.0"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="article"><div class="titlepage"><div><h2 class="title"><a name="d0e1"></a>Namespace Specification &amp; Design Rationale</h2></div><div><h3 class="subtitle"><i>Fedora-Mellon Project</i></h3></div><div><div class="author"><h3 class="author">Fedora-Mellon Development Team</h3></div></div><div><p class="releaseinfo">
+            $Id$
+        </p></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#d0e21">URL, Hostname</a></dt><dt><a href="#d0e35">Common Identifier Path</a></dt><dt><a href="#d0e49">Version Path</a></dt><dt><a href="#d0e54">Grouping Of Namespaces</a></dt><dt>A. <a href="#d0e79">Implicit Namespaces and Versioning</a></dt><dt>B. <a href="#d0e149">References</a></dt><dt>C. <a href="#d0e172">Revision History</a></dt></dl></div><div class="section"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e21"></a>URL, Hostname</h2></div></div><p>The first part of the identifier for Fedora namespaces is the 
+        publication url, http://www.fedora.info/   The URL identifies 
+        the project, and the project team has indefinite control over the 
+        hostname, so this works to
+        </p><div class="itemizedlist"><p class="title"><b></b></p><ul type="disc"><li><p>uniquely identify the software, and</p></li><li><p>ensure the URL won't change</p></li></ul></div><p>
+		</p></div><div class="section"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e35"></a>Common Identifier Path</h2></div></div><p>Further, the namespace identifiers have their own common path 
+		in the URL that is separate from the website so that
+        </p><div class="itemizedlist"><p class="title"><b></b></p><ul type="disc"><li><p>we logically separate Fedora namespace URIs from
+		      Fedora website URLs, and</p></li><li><p>this leaves open the option to use something like 
+		      RDDL to describe (in human and machine-readable form) the XML 
+		      resources related to the Fedora application without colliding 
+		      with the Fedora site's web pages.
+		  </p></li></ul></div><p>
+		The path is definitions/.  So now we have
+		http://www.fedora.info/definitions/</p></div><div class="section"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e49"></a>Version Path</h2></div></div><p>Next, we recognize that Fedora will be versioned, and with this 
+		will likely come new/different items and meanings.  To keep things 
+		simple and intuitive, we will version the namespaces (and identifiers) 
+		along with releases of the Fedora software.  We use the major and minor 
+		version identifiers in the next part of the namespaces' URIs.  In a 
+		namespace URI, we use the "/" character to separate the major 
+		and minor parts of the version identifier.  Thus, the remaining portion 
+		of a URI becomes M/m, where M is "major version number" and 
+		m is "minor version number".  Following this specification, 
+		the beginning of the namespace identifiers for the first major release 
+		of Fedora is http://www.fedora.info/defintions/1/0/</p></div><div class="section"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e54"></a>Grouping Of Namespaces</h2></div></div><p>To avoid name collision, and to expose only those names necessary 
+		to converse and/or develop around a particular logical part of Fedora, 
+		we have grouped the names into the following namespaces:</p><p><span class="emphasis"><em>api/</em></span> - WSDL definitions and SOAPAction 
+        header names for API-A or API-M operations.</p><p><span class="emphasis"><em>auditing/</em></span> - The types/elements defined in 
+        the XML Schema for audit records.  This is based on the UVA digiprov 
+        schema.</p><p><span class="emphasis"><em>binding/</em></span> - The types/elements defined in 
+        the XML Schema for binding specifications.</p><p><span class="emphasis"><em>javadoc/</em></span> - The java source code documentation;
+        one namespace per class (see below).</p><p><span class="emphasis"><em>types/</em></span> - The types defined in the XML Schema 
+        used for specifying API-A and API-M requests and/or responses.</p></div><div class="appendix"><h2 class="title" style="clear: both"><a name="d0e79"></a>A. Implicit Namespaces and Versioning</h2><p>In accord with the specifications above, we explicitly define the 
+	  following namespaces for the first release of Fedora:</p><p><span class="emphasis"><em>http://www.fedora.info/definitions/1/0/api/</em></span> 
+      - The web service API (WSDL-based) for version 1.0 of Fedora.  There
+      is a name entry in this namespace for each of the SOAPAction header names 
+      defined by version 1.0 of Fedora.</p><p><span class="emphasis"><em>http://www.fedora.info/definitions/1/0/auditing/</em></span>
+      - The audit trail XML Schema types/elements as defined by version 1.0 
+      of Fedora.</p><p><span class="emphasis"><em>http://www.fedora.info/definitions/1/0/binding/</em></span>
+      - The binding specification XML Schema types/elements as defined by 
+      version 1.0 of Fedora.</p><p><span class="emphasis"><em>http://www.fedora.info/definitions/1/0/javadoc/</em></span>
+      - The api documentation for the source code of version 1.0 of Fedora (one 
+      namespace per class). Java has
+      it's own namespace identifiers built-in (based on package.package.package.class).
+      The Fedora javadocs namespaces follow that convention, except they
+      start at http://www.fedora.info/definitions/majorVersion/minorVersion/javadoc
+      ... and the individual namespace for the javadoc of each package is 
+      package/package/ClassName.html.  Names in each class' namespace 
+      (methods and fields) are designated by packageNamespace#name(param1Type,
+      param2Type)
+      For instance, the namespace for the documentation of the Server class 
+      for release 1.0 is
+      http://www.fedora.info/definitions/1/0/javadoc/fedora/server/Server.html,
+      and the getHomeDir() method is fully qualified as:
+      <a href="http://www.fedora.info/definitions/1/0/javadoc/fedora/server/Server.html#getHomeDir()" target="_top">http://www.fedora.info/definitions/1/0/javadoc/fedora/server/Server.html#getHomeDir()</a>.
+      </p><p><span class="emphasis"><em>http://www.fedora.info/definitions/1/0/types/</em></span>
+      - The other XML Schema types/elements necessary to support API requests 
+      and responses as defined by version 1.0 of Fedora.</p><p>For convenience, we say that the following namespaces are implied by 
+      the above:
+	  </p><div class="itemizedlist"><p class="title"><b></b></p><ul type="disc"><li><p>http://www.fedora.info/definitions/1/api/</p></li><li><p>http://www.fedora.info/definitions/1/auditing/</p></li><li><p>http://www.fedora.info/definitions/1/binding/</p></li><li><p>http://www.fedora.info/definitions/1/javadoc/[...]</p></li><li><p>http://www.fedora.info/definitions/1/types/</p></li></ul></div><p>
+      These identify the namespaces for "the latest minor version of the 
+      version 1 release of Fedora".</p><p>
+	  </p><div class="itemizedlist"><p class="title"><b></b></p><ul type="disc"><li><p>http://www.fedora.info/definitions/api/</p></li><li><p>http://www.fedora.info/definitions/auditing/</p></li><li><p>http://www.fedora.info/definitions/binding/</p></li><li><p>http://www.fedora.info/definitions/javadoc/[...]</p></li><li><p>http://www.fedora.info/definitions/types/</p></li></ul></div><p>
+      These identify the namespaces for "the latest major and minor version 
+      of Fedora".</p><p>Implicit namespace identifiers are useful in specification documents 
+      and discussion, but we always use explicitly versioned identifiers in
+      code and recommend that developers/integrators using Fedora use 
+      explicitly versioned namespace identifiers.</p></div><div class="appendix"><h2 class="title" style="clear: both"><a name="d0e149"></a>B. References</h2><p><a href="http://www.w3.org/TR/REC-xml-names/" target="_top">http://www.w3.org/TR/REC-xml-names</a>
+      - W3C Recommendation on XML Names</p><p><a href="http://www.xml.com/pub/a/2001/02/28/rddl.html" target="_top">http://www.xml.com/pub/a/2001/02/28/rddl.html</a>
+      - Answering the Namespace Riddle - An Introduction to the Resource 
+      Directory Description Language</p><p><a href="http://www.rddl.org/" target="_top">http://www.rddl.org/</a>
+      - XML Resource Directory Description Language - Formal Description</p><p><a href="http://lists.xml.org/archives/xml-dev/200103/msg00995.html" target="_top">http://lists.xml.org/archives/xml-dev/200103/msg00995.html</a>
+      - Eric van der Vlist's description of Examplotron's scheme for implicit 
+      namespace identifiers.</p><p><a href="http://lists.xml.org/archives/xml-dev/200105/msg00068.html" target="_top">http://lists.xml.org/archives/xml-dev/200105/msg00068.html</a>
+      - Tony Coates' point: Why applications should not embed general version ids.</p></div><div class="appendix"><h2 class="title" style="clear: both"><a name="d0e172"></a>C. Revision History</h2><p>The history of this document follows.</p><div class="literallayout"><p><br>
+	&nbsp;&nbsp;$Log$
+	&nbsp;&nbsp;Revision 1.1  2005/01/27 05:12:36  eddie
+	&nbsp;&nbsp;moved all devdoc-related files to src/doc/devdocs,
+	&nbsp;&nbsp;edited buildfile accordingly
+	&nbsp;&nbsp;translated docbook to html and deleted the dbx files
+	&nbsp;&nbsp;<br>
+	&nbsp;&nbsp;Revision&nbsp;1.3&nbsp;&nbsp;2002/09/11&nbsp;11:17:20&nbsp;&nbsp;cwilper<br>
+	&nbsp;&nbsp;Added&nbsp;..javadoc/...&nbsp;namespaces&nbsp;description<br>
+	<br>
+	&nbsp;&nbsp;Revision&nbsp;1.2&nbsp;&nbsp;2002/07/18&nbsp;20:07:00&nbsp;&nbsp;cwilper<br>
+	&nbsp;&nbsp;changed&nbsp;'actions'&nbsp;namespace&nbsp;to&nbsp;'api'&nbsp;because&nbsp;it's&nbsp;more&nbsp;sensible<br>
+	<br>
+	&nbsp;&nbsp;Revision&nbsp;1.1&nbsp;&nbsp;2002/07/16&nbsp;16:26:14&nbsp;&nbsp;cwilper<br>
+	&nbsp;&nbsp;First&nbsp;import&nbsp;of&nbsp;namespaces&nbsp;spec/design&nbsp;doc,&nbsp;converted&nbsp;to&nbsp;docbook&nbsp;from&nbsp;txt<br>
+	<br>
+	&nbsp;&nbsp;</p></div></div></div></body></html>
