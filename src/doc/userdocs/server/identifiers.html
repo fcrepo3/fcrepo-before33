@@ -6,19 +6,33 @@
   <title>Fedora Identifiers</title>
   <meta name="robots" content="all"/>
   <link href="../docstyle.css" rel="stylesheet" type="text/css"/>
+  <script language="Javascript">
+    
+  </script>
 </head>
 
 <body>
   <div class="title">
     <h1>Fedora Identifiers</h1>
-    <p>$Id$</p>
-    <p>Copyright &#xa9;2005 The Rector and Visitors of The University of Virginia and Cornell University</p>
   </div>
+    <p align="right">
+      <em>
+        Last Modified
+        <script>
+          var cvsDate = "$Date$";
+          var parts = cvsDate.split(" ");
+          var modifiedDate = parts[1];
+          document.write(modifiedDate);
+        </script>
+      </em>
+    </p>
 
   <div class="abstract">
     <h2>Abstract</h2>
     <p>
-      This document blah, etc, blah, blah.
+      This document describes the purpose, syntax, and normalization rules for the 
+      major identifiers used in Fedora.  These include PIDs for identifying objects 
+      and URIs for identifying objects and disseminations.
     </p>
   </div>
 
@@ -39,6 +53,11 @@
           <li> <a href="#URIsForObjects.Normalization">Normalization</a></li>
         </ol>
         <li> <a href="#URIsForDisseminations">URIs for Disseminations</a></li>
+        <ol type="A">
+          <li> <a href="#URIsForDisseminations.Syntax">Syntax</a></li>
+          <li> <a href="#URIsForDisseminations.Examples">Examples</a></li>
+          <li> <a href="#URIsForDisseminations.Normalization">Normalization</a></li>
+        </ol>
       </ol>
     </div>
   </div>
@@ -60,10 +79,9 @@
       </p>
       <div class="code">
 object-pid    = namespace-id ":" object-id
-namespace-id  = ( [A-Z] / [a-z] / [0-9] / "-" / "." ) 1+
-object-id     = ( [A-Z] / [a-z] / [0-9] / "-" / "." / "~" / "_" / escaped-octet ) 1+
-escaped-octet = "%" hex-digit hex-digit
-hex-digit     = [0-9] / [A-F]
+namespace-id  = 1*( ALPHA / DIGIT / "-" / "." )
+object-id     = 1*( ALPHA / DIGIT / "-" / "." / "~" / "_" / escaped-octet )
+escaped-octet = "%" HEXDIG HEXDIG
       </div>
       <p>
         <strong>The maximum length of a PID is 64 characters</strong>
@@ -87,7 +105,7 @@ hex-digit     = [0-9] / [A-F]
     <div class="sec2">
       <h3><a name="PIDs.Normalization">C. Normalization</a></h3>
       <p>
-        Hex-digits may occur in lowercase, but should be capitalized for 
+        HEXDIG characters may occur in lowercase, but should be capitalized for 
         normalization purposes. The separator character may occur as "%3A" 
         or "%3a", but should be changed to a colon ":" for normalization purposes. 
       </p>
@@ -113,7 +131,7 @@ hex-digit     = [0-9] / [A-F]
     <div class="sec2">
       <h3><a name="URIsForObjects.Syntax">A. Syntax</a></h3>
       <p>
-        The URI for a Fedora object is obtained simply by appending the
+        The URI for a Fedora object is constructed simply by appending the
         PID to the string <code>"info:fedora/"</code>.
       </p>
     </div>
@@ -127,13 +145,58 @@ hex-digit     = [0-9] / [A-F]
     </div>
     <div class="sec2">
       <h3><a name="URIsForObjects.Normalization">C. Normalization</a></h3>
-      <p>To normalize a Fedora URI, normalize the PID part as described above.</p>
+      <p>To normalize an object URI, normalize the PID part as described above.</p>
     </div>
   </div>
   <div class="sec1">
     <h2><a name="URIsForDisseminations">3. URIs for Disseminations</a></h2>
     <p>
+      Every dissemination of an object also has an implicit URI associated
+      with it.  This is useful when describing or referring to the the
+      representations provided by a digital object.
     </p>
+    <div class="sec2">
+      <h3><a name="URIsForDisseminations.Syntax">A. Syntax</a></h3>
+      <p>
+        Dissemination URIs take one of two forms.  In the case of a method call
+        the URI indicates the behavior definition and the method (along
+        with any parameters).  In the case of a datastream dissemination,
+        the URI indicates the datastream id.
+      </p>
+      <div class="code">
+dissemination-uri = "info:fedora/" pid "/" ( method-call / datastream-id )
+method-call       = bDef-pid "/" method-name [ "?" param *( "&" param ) ]
+param             = paramName "=" paramValue
+      </div>
+      <p>
+        Note that datastream-ids and method-names may consist of XML NCName
+        characters.  NCName characters that are not URI-safe must be escaped
+        using one to four escaped UTF-8 octets per character, each of the
+        form "%" HEXDIG HEXDIG.
+      </p>
+    </div>
+    <div class="sec2">
+      <h3><a name="URIsForDisseminations.Examples">B. Examples</a></h3>
+      <ul>
+        <li> <code>info:fedora/demo:1/demo:MyBDef/method</code></li>
+        <li> <code>info:fedora/demo:1/demo:MyBDef/method?param1=value1</code></li>
+        <li> <code>info:fedora/demo:1/title.jpg</code></li>
+        <li> <code>info:fedora/demo:1/DC</code></li>
+      </ul>
+    </div>
+    <div class="sec2">
+      <h3><a name="URIsForDisseminations.Normalization">C. Normalization</a></h3>
+      <p>
+        To normalize a dissemination URI:
+        <ol>
+          <li> Normalize the PID portion(s) of the URI.</li>
+          <li> Un-escape any URI-escaped characters that do not need escaping 
+               according to the definition of the "info" scheme.</li>
+          <li> Make all remaining escaped octets use UPPSERCASE (%ff becomes %FF).</li>
+          <li> Parameters should be alphabetized in order by name, then by value.
+               The order should be according to occurence in UTF-8.</li>
+      </p>
+    </div>
   </div>
 </body>
 </html>
