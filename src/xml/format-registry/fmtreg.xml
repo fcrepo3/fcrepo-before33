@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<formats xmlns="http://www.fedora.info/definitions/format-registry/">
+  <format label="Unqualified Dublin Core 1.1 suitable for OAI-PMH">
+    <identifier>http://www.openarchives.org/OAI/2.0/oai_dc/</identifier>
+    <xml-schema-location>http://www.openarchives.org/OAI/2.0/oai_dc.xsd</xml-schema-location>
+    <xml-namespace>http://www.openarchives.org/OAI/2.0/oai_dc/</xml-namespace>
+	<oai-prefix>oai_dc</oai-prefix>
+  </format>
+</formats>
