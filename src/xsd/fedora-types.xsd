@@ -430,20 +430,6 @@
 			<xsd:element name="rights" type="string" minOccurs="0" maxOccurs="unbounded"/>
 		</xsd:sequence>
 	</xsd:complexType>
-	<xsd:complexType name="ObjectInfo">
-		<xsd:annotation>
-			<xsd:documentation>a Fedora data structure containing key information about a digital object</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="label" type="string"/>
-			<xsd:element name="foType" type="string"/>
-			<xsd:element name="contentModelId" type="string"/>
-			<xsd:element name="state" type="string"/>
-			<xsd:element name="lockedBy" type="string"/>
-			<xsd:element name="createDate" type="dateTime"/>
-			<xsd:element name="lastModDate" type="dateTime"/>
-		</xsd:sequence>
-	</xsd:complexType>
 	<xsd:complexType name="ObjectMethodsDef">
 		<xsd:annotation>
 			<xsd:documentation>a Fedora data structure containing all method definitions for a digital object</xsd:documentation>

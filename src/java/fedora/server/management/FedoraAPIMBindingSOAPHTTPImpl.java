@@ -12,7 +12,6 @@ import fedora.server.management.Management;
 import fedora.server.storage.TestFileStreamStorage;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
-import fedora.server.types.gen.ObjectInfo;
 import fedora.server.utilities.AxisUtility;
 import fedora.server.utilities.TypeUtility;
 
@@ -239,42 +238,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public void releaseLock(String PID, String logMessage, boolean commit) throws java.rmi.RemoteException {
         assertInitialized();
     }
-*/
-    public ObjectInfo getObjectInfo(String pid)
-            throws RemoteException {
-        assertInitialized();
-        try {
-            return s_management.getObjectInfo(getContext(), pid);
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-        }
-    }
-/*
+
     public fedora.server.types.gen.AuditRecord[] getObjectAuditTrail(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
-*/
 
-    public String[] listObjectPIDs(String pidPattern, String foType,
-            String lockedByPattern, String state, String labelPattern,
-            String contentModelIdPattern, Calendar createDateMin,
-            Calendar createDateMax, Calendar lastModDateMin,
-            Calendar lastModDateMax)
-            throws RemoteException {
-        assertInitialized();
-        try {
-            return s_management.listObjectPIDs(getContext(), pidPattern,
-                    foType, lockedByPattern, state, labelPattern,
-                    contentModelIdPattern, createDateMin, createDateMax,
-                    lastModDateMin, lastModDateMax);
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-        }
-    }
-/*
     public String addDatastreamExternal(String PID, String dsLabel, String dsLocation) throws java.rmi.RemoteException {
         assertInitialized();
         return null;

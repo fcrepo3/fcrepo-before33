@@ -24,7 +24,6 @@ import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Datastream;
-import fedora.server.types.gen.ObjectInfo;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
@@ -199,50 +198,9 @@ public class DefaultManagement
         m_manager.releaseWriter(w);
         getServer().logFinest("Exiting DefaultManagement.releaseLock");
     }
-*/
-    // fixme: i don't think this is needed...maybe it is though
-    public ObjectInfo getObjectInfo(Context context, String pid)
-            throws ServerException {
-        getServer().logFinest("Entered DefaultManagement.getObjectInfo");
-        m_ipRestriction.enforce(context);
-        ObjectInfo inf=new ObjectInfo();
-        DOReader r=m_manager.getReader(context, pid);
-        inf.setLabel(r.GetObjectLabel());
-        inf.setFoType(r.getFedoraObjectType());
-        inf.setContentModelId(r.getContentModelId());
-        inf.setState(r.GetObjectState());
-        String lockedBy=r.getLockingUser();
-        if (lockedBy==null) {
-            inf.setLockedBy("");
-        } else {
-            inf.setLockedBy(lockedBy);
-        }
-        GregorianCalendar createDate=new GregorianCalendar();
-        createDate.setTime(r.getCreateDate());
-        inf.setCreateDate(createDate);
-        GregorianCalendar lastModDate=new GregorianCalendar();
-        lastModDate.setTime(r.getLastModDate());
-        inf.setLastModDate(lastModDate);
-        getServer().logFinest("Exiting DefaultManagement.getObjectInfo");
-        return inf;
-    }
-/*
-    public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
-*/
-    public String[] listObjectPIDs(Context context, String pidPattern,
-            String foType, String lockedByPattern, String state,
-            String labelPattern, String contentModelIdPattern,
-            Calendar createDateMin, Calendar createDateMax,
-            Calendar lastModDateMin, Calendar lastModDateMax)
-            throws ServerException {
-        m_ipRestriction.enforce(context);
-        return m_manager.listObjectPIDs(context, pidPattern,
-                foType, lockedByPattern, state, labelPattern,
-                contentModelIdPattern, createDateMin, createDateMax,
-                lastModDateMin, lastModDateMax);
-    }
 
-/*
+    public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
+
     public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) { return null; }
 
     public String addDatastreamManagedContent(Context context, String pid, String dsLabel, String MimeType, InputStream dsContent) { return null; }

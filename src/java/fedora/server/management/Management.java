@@ -5,7 +5,6 @@ import java.util.Calendar;
 
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
-import fedora.server.types.gen.ObjectInfo;
 import fedora.server.storage.types.Datastream;
 
 /**
@@ -53,16 +52,7 @@ public interface Management {
 
 //    public void releaseLock(Context context, String pid, String logMessage, boolean commit) throws ServerException;
 
-    public ObjectInfo getObjectInfo(Context context, String pid) throws ServerException;
-
 //    public AuditRecord[] getObjectAuditTrail(Context context, String pid) throws ServerException;
-
-    public String[] listObjectPIDs(Context context, String pidPattern,
-            String foType, String lockedByPattern, String state,
-            String labelPattern, String contentModelIdPattern,
-            Calendar createDateMin, Calendar createDateMax,
-            Calendar lastModDateMin, Calendar lastModDateMax)
-            throws ServerException;
 
 //    public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) throws ServerException;
 

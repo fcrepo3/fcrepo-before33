@@ -101,21 +101,6 @@
       <documentation>whether the change(s) should be committed.</documentation>
     </part>
   </message>
--->
-	<message name="getObjectInfoRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
-		</part>
-	</message>
-	<message name="getObjectInfoResponse">
-		<part name="response" type="fedora-types:ObjectInfo">
-			<documentation>Key information about the object, including
-      an element for each of the following:
-      label, foType, contentModelId, state and lockedBy (all xsd:strings),
-      and createDate and lastModDate (both xsd:dateTimes)</documentation>
-		</part>
-	</message>
-	<!--
   <message name="getObjectAuditTrailRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -126,47 +111,6 @@
       <documentation>the ordered audit records for the object.</documentation>
     </part>
   </message>
--->
-	<message name="listObjectPIDsRequest">
-		<part name="pidPattern" type="xsd:string">
-			<documentation>the pid of the object, with optional wildcards * and ?</documentation>
-		</part>
-		<part name="foType" type="xsd:string">
-			<documentation>the fedora object type for the object.  This may be D, M,
-      or O</documentation>
-		</part>
-		<part name="lockedByPattern" type="xsd:string">
-			<documentation>the userid of the locking user, with optional wildcards * and ?</documentation>
-		</part>
-		<part name="state" type="xsd:string">
-			<documentation>the state of the object.  This may be A, or any of
-      the other possible states.</documentation>
-		</part>
-		<part name="labelPattern" type="xsd:string">
-			<documentation>the label of the object, with optional wildcards * and ?</documentation>
-		</part>
-		<part name="contentModelIdPattern" type="xsd:string">
-			<documentation>the content model of the object, with optional wildcards * and ?</documentation>
-		</part>
-		<part name="createDateMin" type="xsd:dateTime">
-			<documentation>the minimum create date of the object.</documentation>
-		</part>
-		<part name="createDateMax" type="xsd:dateTime">
-			<documentation>the maximum create date of the object.</documentation>
-		</part>
-		<part name="lastModDateMin" type="xsd:dateTime">
-			<documentation>the minimum modified date of the object.</documentation>
-		</part>
-		<part name="lastModDateMax" type="xsd:dateTime">
-			<documentation>the maximum modified date of the object.</documentation>
-		</part>
-	</message>
-	<message name="listObjectPIDsResponse">
-		<part name="response" type="fedora-types:ArrayOfString">
-			<documentation>the PIDs of the objects.</documentation>
-		</part>
-	</message>
-	<!--
   <message name="addDatastreamExternalRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -582,28 +526,11 @@
       <documentation>Unlocks an object for writing.</documentation>
       <input message="fedora-api:releaseLockRequest"/>
     </operation>
--->
-		<operation name="getObjectInfo">
-			<documentation>Gets key information about the object.</documentation>
-			<input message="fedora-api:getObjectInfoRequest"/>
-			<output message="fedora-api:getObjectInfoResponse"/>
-		</operation>
-		<!--
     <operation name="getObjectAuditTrail">
       <documentation>Gets all audit trail records for the object.</documentation>
       <input message="fedora-api:getObjectAuditTrailRequest"/>
       <output message="fedora-api:getObjectAuditTrailResponse"/>
     </operation>
--->
-		<operation name="listObjectPIDs">
-			<documentation>Gets a list of the PIDs of the objects in the 
-      repository matching all the criteria given.  This is a simple AND search.
-      Strings can contain the simple * (0 or more characters) or ? (1 character) wildcards.
-      A parameter that is given as null is treated as an "any" wildcard.</documentation>
-			<input message="fedora-api:listObjectPIDsRequest"/>
-			<output message="fedora-api:listObjectPIDsResponse"/>
-		</operation>
-		<!--
     <operation name="addDatastreamExternal">
       <documentation>Creates a Referenced External Content Datastream in the 
       object.  The MIME type is determined by the repository, which uses the 
@@ -815,14 +742,6 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
--->
-		<operation name="getObjectInfo">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectInfo"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-		</operation>
-		<!--
     <operation name="getObjectAuditTrail">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectAuditTrail"/>
@@ -837,17 +756,6 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
--->
-		<operation name="listObjectPIDs">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listObjectPIDs"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<!--
     <operation name="addDatastreamExternal">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastreamExternal"/>
