@@ -1163,6 +1163,22 @@ public abstract class Server
         return (s_instances.get(homeDir)!=null);
     }
 
+    public final static Server getInstance(File homeDir, boolean okToStart)
+            throws ServerInitializationException,
+                   ModuleInitializationException {
+        if (okToStart) {
+            return getInstance(homeDir);
+        } else {
+            Server instance = (Server) s_instances.get(homeDir);
+            if (instance == null) {
+                throw new ServerInitializationException("The Fedora server is not yet running.");
+            } else {
+                return instance;
+            }
+        }
+
+    }
+
     /**
      * Provides an instance of the server specified in the configuration
      * file at homeDir/CONFIG_DIR/CONFIG_FILE, or DEFAULT_SERVER_CLASS
