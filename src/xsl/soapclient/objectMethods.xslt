@@ -25,38 +25,34 @@
 					</td>
 				</tr>
 			</table>			
-			<xsl:apply-templates/>
+			<hr/>
+			<font size="+1" color="blue">Object Identifier (PID):   </font>
+			<font size="+1"><xsl:value-of select="@pid"/></font>
+			<p/>
+			<xsl:choose>
+				<xsl:when test="@dateTime">
+					<font size="+1" color="blue">Version Date:   </font>
+					<font size="+1"><xsl:value-of select="@dateTime"/></font>
+				</xsl:when>
+				<xsl:otherwise>
+					<font size="+1" color="blue">Version Date:   </font>
+					<font size="+1">current</font>	
+				</xsl:otherwise>
+			</xsl:choose>
+			<hr/>
+			<table border="1" cellpadding="5" bgcolor="#F7DBB3">
+				<tr>
+					<td><b><font size='+2'>BDEF</font></b></td>
+					<td><b><font size='+2'>Method Name</font></b></td>
+					<td>&#x00A0;</td>
+					<td><b><font size='+2'>Parm Name</font></b></td>
+					<td colspan="100%"><b><font size='+1'>Parm Values<br>(Enter A value for each parm)</br>						</font></b></td>
+				</tr>
+				<xsl:apply-templates/>
+			</table>	
 			</center>
 		</body>
 	</html>
-</xsl:template>
-
-<xsl:template match="object">
-	<hr/>
-	<font size="+1" color="blue">Object Identifier (PID):   </font>
-	<font size="+1"><xsl:value-of select="@pid"/></font>
-	<p/>
-	<xsl:choose>
-		<xsl:when test="@dateTime">
-			<font size="+1" color="blue">Version Date:   </font>
-			<font size="+1"><xsl:value-of select="@dateTime"/></font>
-		</xsl:when>
-		<xsl:otherwise>
-			<font size="+1" color="blue">Version Date:   </font>
-			<font size="+1">current</font>	
-		</xsl:otherwise>
-	</xsl:choose>
-	<hr/>
-	<table border="1" cellpadding="5" bgcolor="#F7DBB3">
-	<tr>
-		<td><b><font size='+2'>BDEF</font></b></td>
-		<td><b><font size='+2'>Method Name</font></b></td>
-		<td>&#x00A0;</td>
-		<td><b><font size='+2'>Parm Name</font></b></td>
-		<td colspan="100%"><b><font size='+1'>Parm Values<br>(Enter A value for each parm)</br></font></b></td>
-	</tr>
-	<xsl:apply-templates/>
-	</table>
 </xsl:template>
 
 <xsl:template match="bdef">
