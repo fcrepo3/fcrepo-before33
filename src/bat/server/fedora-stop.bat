@@ -4,11 +4,25 @@ goto checkEnv
 
 :envOk
 
+if "%1" == "" goto noShutdownPass
+
 echo Stopping Fedora server...
 
 set TC=%FEDORA_HOME%\tomcat41
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
+
+:undeploy
+
+set C=%TC%\common\lib
+set CP=%C%\saaj.jar;%C%\commons-discovery.jar;%C%\axis.jar;%C%\commons-logging.jar;%C%\jaxrpc.jar;%C%\wsdl4j.jar;%C%\tt-bytecode.jar
+
+echo Un-Deploying API-M and API-A and sending shutdown request...
+%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\undeployAPI-A.wsdd "http://localhost:8080/fedora/AdminService" 15 "http://localhost:8080/fedora/management/shutdown?password=%1"
+
+%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\undeploy.wsdd "http://localhost:8080/fedora/AdminService" 15 
+
+echo Shutting down Tomcat...
 %JAVA_HOME%\bin\java -cp %TC%\bin\bootstrap.jar -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\bin -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp org.apache.catalina.startup.Bootstrap stop
 set JAVA_HOME=%OLD_JAVA_HOME%
 
@@ -51,6 +65,10 @@ goto end
 :badJavaVersion
 echo ERROR: java was found in %THIS_JAVA_HOME%, but it was not version 1.4
 echo Make sure FEDORA_JAVA_HOME or JAVA_HOME points to a 1.4JRE/JDK base.
+goto end
+
+:noShutdownPass
+echo ERROR: You must provide the shutdown password as a parameter.
 goto end
 
 :end
