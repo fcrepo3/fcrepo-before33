@@ -34,7 +34,7 @@ public class Ingest {
     public static String LAST_PATH;
     
     private static String s_rootName;
-    private static String s_logPath;
+    public static String s_logPath;
     private static PrintStream s_log;
     private static int s_failedCount;
 
@@ -581,6 +581,7 @@ public class Ingest {
                                                 Integer.parseInt(hp[1]),
                                                 args[4],
                                                 args[5]);
+                Ingest.openLog("ingest-from-dir");
                 String[] pids=Ingest.multiFromDirectory(d, 
                                                         args[2], 
                                                         targetRepos,
@@ -594,6 +595,7 @@ public class Ingest {
                     System.out.print(" None.");
                 }
                 System.out.println();
+                System.out.println("A detailed report is at " + Ingest.s_logPath);
             } else if (kind=='r') {
                 if (args.length<8 || args.length>9) {
                     Ingest.badArgs("Wrong number of arguments for repository ingest.");
@@ -624,6 +626,7 @@ public class Ingest {
                 } else {
                     // multi-object
                     hp=args[1].split(":");
+                    Ingest.openLog("ingest-from-dir");
                     String[] pids=Ingest.multiFromRepository(hp[0],
                                                              Integer.parseInt(hp[1]),
                                                              args[2],
@@ -640,6 +643,7 @@ public class Ingest {
                         System.out.print(" None.");
                     }
                     System.out.println();
+                    System.out.println("A detailed report is at " + Ingest.s_logPath);
                 }
             } else {
                 Ingest.badArgs("First argument must start with f, d, or r.");
