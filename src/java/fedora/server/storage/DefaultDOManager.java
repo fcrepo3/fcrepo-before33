@@ -857,9 +857,12 @@ public class DefaultDOManager
                 	
                 // set state...
                 // set object and component states to "A" (Active) unspecified
-                logFinest("Setting object/component states to A if unset...");
+                logFinest("Setting object/component states and create dates if unset...");
 				if (obj.getState()==null || obj.getState().equals("")) {
                     obj.setState("A");
+				}
+				if (obj.getCreateDate()==null || obj.getCreateDate().equals("")) {
+					obj.setCreateDate(nowUTC);
 				}
                 // datastreams...
                 Iterator dsIter=obj.datastreamIdIterator();
@@ -882,6 +885,9 @@ public class DefaultDOManager
                     List dissList=(List) obj.disseminators((String) dissIter.next());
                     for (int i=0; i<dissList.size(); i++) {
                         Disseminator diss=(Disseminator) dissList.get(i);
+						if (diss.dissCreateDT==null || diss.dissCreateDT.equals("")) {
+							diss.dissCreateDT=nowUTC;
+						}
 						if (diss.dissState==null || diss.dissState.equals("")) {
                             diss.dissState="A";
 						}
