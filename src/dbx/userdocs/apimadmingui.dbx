@@ -35,7 +35,7 @@
 	<sect1>
 		<title>Introduction</title>
 		<para>
-			<emphasis>Fedora Administrator</emphasis> is the direct link to API-M functionality for repository administrators. Using this tool it is possible to ingest, search for and retrieve, modify and purge data objects and build, search for and retrieve, modify, and purge behavioral objects.</para>
+			Fedora Administrator is the direct link to API-M functionality for repository administrators. Using this tool it is possible to ingest, search for and retrieve, modify and purge data objects and build, search for and retrieve, modify, and purge behavioral objects.</para>
 	</sect1>
 	<sect1>
 		<title>Using Fedora Administrator</title>
@@ -46,6 +46,11 @@
             the GUI for a server running on the local machine, port 8080,
             where fedoraAdmin's password is simply, "fedoraAdmin".
         </para>
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="images/login.jpg"/>
+			</imageobject>
+		</mediaobject>
 		<para>New to the 1.2 release of Fedora is the authentication dialog. When you start Fedora Administrator, you will be asked to choose the server to which you wish to connect, your username and password. The server and username fields are pre-populated and the password is validated using values from fedora.fcfg</para>
 	</sect1>
 	<sect1>
@@ -70,59 +75,175 @@
 		</itemizedlist>
 		<sect2>
 			<title>File Menu</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="images/filemenu.jpg"/>
+				</imageobject>
+			</mediaobject>
 			<para>Commands on the file menu allow a repository administrator to perform operations on objects in the repository or to log in to a different repository.</para>
 			<sect3>
 				<title>New</title>
-				<para>This menu option allows users to build a new data object from component parts.</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/filenew.jpg"/>
+					</imageobject>
+				</mediaobject>
+				<para>The New menu option allows users to build new Fedora objects from component parts. When the New...Data Object option is selected a skeletal Fedora Object is ingested into the repository and the repository administrator/object owner then completes the object by defining a Behavior Definition and Behavior Mechanism for the object, adding datastreams, and finally binding disseminators and datastreams together.</para>
+				<para>Users may also create Behavior Definition and Behavior Mechanism Objects by selecting these menu options. The complex task of building WSDL objects dictated the necessity of onscreen context sensitive help screens for these builders. Clicking the Help button on any pane in the Behavior Definition Builder or Behavior Mechanism Builder will open a popup help screen defining each field in view.</para>
+				<sect4>
+					<title>Creating a New Data Object</title>
+					<para>This section will provide instructions for building a new data object using Fedora Administrator.</para>
+					<blockquote>
+						<para>On the File Menu, select New.</para>
+						<para>From the New submenu, select Data Object.</para>
+						<para>The New Object Dialog appears.</para>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/newobj_dialog.jpg"/>
+							</imageobject>
+						</mediaobject>
+						<para>Fill in the label data for the object and the content model to which the data object subscribes. If a custom PID is desired, click the check box and fill in the PID value.</para>
+						<para>Clicking Create causes a Fedora Data Object to be created and ingested into the repository. The new object is displayed in a tabbed pane showing the following tabs: <emphasis>Properties, Datastreams, and Disseminators</emphasis>.</para>
+						<para>Click the Disseminator Tab to bring that pane to the front. On this tab, the user must</para>
+						<itemizedlist>
+							<listitem>
+								<para>Fill in the Disseminator Label</para>
+							</listitem>
+							<listitem>
+								<para>Select a Behavior Definition from the drop down menu</para>
+								<mediaobject>
+									<imageobject>
+										<imagedata fileref="images/newbdefdrop.jpg"/>
+									</imageobject>
+								</mediaobject>
+								<para>Once the Behavior Definition has been selected, the pane will display a list of methods available for and parameters required by the Behavior Definition, and the Behavior Mechanism drop down menu will appear.</para>
+							</listitem>
+							<listitem>
+								<para>Select a Behavior Mechanism from the drop down menu</para>
+								<mediaobject>
+									<imageobject>
+										<imagedata fileref="images/newbmech.jpg"/>
+									</imageobject>
+								</mediaobject>
+								<para>The values in the menu are pre-populated based on the Behavior Definition chosen in the previous step. Once the Behavior Mechanism is selected, the Bindings tabs are shown for each method required by that Behavior Definition/Behavior Mechanism pairing.</para>
+								<mediaobject>
+									<imageobject>
+										<imagedata fileref="images/newbmech2.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</listitem>
+							<listitem>
+								<para>Click on the Datastreams tab</para>
+								<para>The display will show a side tabbed pane displaying all datastreams currently in the object. All Fedora Data Objects contain a Dublin Core metadata datastream. The user will wish to edit this metadata, adding fields as appropriate for the data object in question.</para>
+								<mediaobject>
+									<imageobject>
+										<imagedata fileref="images/newdcmeta.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</listitem>
+							<listitem>
+								<para>Click on the New side tab</para>
+								<para>Fill in the label for the datastream, select the MIME type</para>
+								<mediaobject>
+									<imageobject>
+										<imagedata fileref="images/newmimedialog.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</listitem>
+							<listitem>
+								<para>Select the Control Group. Clicking through the control group options will show text defining each control group option.</para>
+								<para>If the datastream is Internal XML Metadata, select the classification from the drop down menu (descriptive, digital provenance, source, rights, or technical). The user may enter text directly into the editing window or data may imported from a file by clicking Import. Click Save to save the datastream to the object.</para>
+								<para>If the datastream is Managed Content, click Import. Once import is complete, click Save to save the datastream to the object.</para>
+								<para>If the datastream is External Referenced Content, fill in the Location URL and click Save to save the datastream to the object.</para>
+								<para>If the datastream is Redirect, specify the redirect URL in the Location text box and click Save to save the datastream to the object.</para>
+								<para>Once all datastreams required have been created and saved, you must bind the disseminators and datastreams together.</para>
+							</listitem>
+							<listitem>
+								<para>Click on the Disseminators tab</para>
+								<para>For each Binding required by the Behavior Definition/Behavior Mechanism Contract, the user must add a datastream.</para>
+								<mediaobject>
+									<imageobject>
+										<imagedata fileref="images/newmapds.jpg"/>
+									</imageobject>
+								</mediaobject>
+							</listitem>
+							<listitem>
+								<para>Click on the Binding tab to be defined. Click the Add button.</para>
+							</listitem>
+							<listitem>
+								<para>From the New Binding Dialog, select the datastream from the drop down menu which matches the Binding to be completed. Click OK.</para>
+								<para>Repeat for each binding/datastream pair. When all Bindings are complete, the Save Disseminator button will be active. Click to save the Disseminator. Your new object is now complete.</para>
+							</listitem>
+						</itemizedlist>
+					</blockquote>
+				</sect4>
 			</sect3>
 			<sect3>
 				<title>Open</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/input.jpg"/>
+					</imageobject>
+				</mediaobject>
 				<para>The Open menu requires input of an object PID for retrieval of the object. Upon retrieval, the object is displayed on two tabbed panes.</para>
-				<para><emphasis>Object Properties Pane</emphasis></para>
+				<para>
+					<emphasis>Object Properties Pane</emphasis>
+				</para>
 				<para>The default first pane is the Object Properties pane.  On this pane the state and label of the object may be modified. Creation and modification dates are shown, along with the content model to which the object subscribes and the owner of the object.</para>
 				<blockquote>
 					<itemizedlist>
-					<title>Object States</title>
-					<para>Valid object states appear in the drop down menu and include:</para>
-					<listitem>
-						<para><emphasis>Active</emphasis>: the object is freely available to all users.</para>
-					</listitem>
-					<listitem>
-						<para><emphasis>Inactive</emphasis>: the object is only available to repository administrators.</para>
-					</listitem>
-					<listitem>
-						<para><emphasis>Deleted</emphasis>: the object has been marked for permanent removal from the repository, pending review by repository administrators.</para>
-					</listitem>
-				</itemizedlist>
+						<title>Object States</title>
+						<para>Valid object states appear in the drop down menu and include:</para>
+						<listitem>
+							<para>
+								<emphasis>Active</emphasis>: the object is freely available to all users.</para>
+						</listitem>
+						<listitem>
+							<para>
+								<emphasis>Inactive</emphasis>: the object is only available to repository administrators.</para>
+						</listitem>
+						<listitem>
+							<para>
+								<emphasis>Deleted</emphasis>: the object has been marked for permanent removal from the repository, pending review by repository administrators.</para>
+						</listitem>
+					</itemizedlist>
 				</blockquote>
-				<para>Also available on this pane is the ability to view the object’s xml, export the object to a file, or purge the object from the repository.</para>
+				<para>Also available on this pane is the ability to view the object’s XML, export the object to a file, or purge the object from the repository.</para>
 				<blockquote>
-					<para><emphasis role="bold">Viewing XML</emphasis>: From this window, the XML of the object can be viewed, but cannot be modified.</para>
-					<para><emphasis role="bold">Export Object</emphasis>: If Export is selected, the user will be prompted for a file name and location to which to write the xml file.  The format for exported objects is fedora:mets.</para>
-					<para><emphasis role="bold">Purge Object</emphasis>: Purging an object completely removes it from the repository. Upon selecting the Purge option, the user will be prompted to enter a reason for the object’s removal. Please note that objects with dependencies in the repository cannot be purged. WARNING: There is no “Are you sure?” dialog with this option and the purge cannot be undone.</para>
+					<para>
+						<emphasis role="bold">Viewing XML</emphasis>: From this window, the XML of the object can be viewed, but cannot be modified.</para>
+					<para>
+						<emphasis role="bold">Export Object</emphasis>: If Export is selected, the user will be prompted for a file name and location to which to write the XML file.  The format for exported objects is fedora:mets.</para>
+					<para>
+						<emphasis role="bold">Purge Object</emphasis>: Purging an object completely removes it from the repository. Upon selecting the Purge option, the user will be prompted to enter a reason for the object’s removal. Please note that objects with dependencies in the repository cannot be purged. WARNING: There is no “Are you sure?” dialog with this option and the purge cannot be undone.</para>
 				</blockquote>
-				<para><emphasis>The Datastreams Pane</emphasis></para>
+				<para>
+					<emphasis>The Datastreams Pane</emphasis>
+				</para>
 				<para>On the Datastreams Pane, the state of each datastream in the object can be modified, along with the datastream label and location. The MIME type of the datastream is shown, along with the control group, info type, create date, and the Fedora URL of the object.</para>
 				<blockquote>
 					<itemizedlist>
-					<title>Datastream States</title>
-					<para>Valid datastream states appear in the drop down menu and include:</para>
-					<listitem>
-						<para><emphasis>Active</emphasis>: the datastream is freely available to all users.</para>
-					</listitem>
-					<listitem>
-						<para><emphasis>Inactive</emphasis>: the datastream is only available to repository administrators.</para>
-					</listitem>
-					<listitem>
-						<para><emphasis>Deleted</emphasis>: the datastream has been marked for permanent removal from the repository, pending review by repository administrators.</para>
-					</listitem>
-				</itemizedlist>
+						<title>Datastream States</title>
+						<para>Valid datastream states appear in the drop down menu and include:</para>
+						<listitem>
+							<para>
+								<emphasis>Active</emphasis>: the datastream is freely available to all users.</para>
+						</listitem>
+						<listitem>
+							<para>
+								<emphasis>Inactive</emphasis>: the datastream is only available to repository administrators.</para>
+						</listitem>
+						<listitem>
+							<para>
+								<emphasis>Deleted</emphasis>: the datastream has been marked for permanent removal from the repository, pending review by repository administrators.</para>
+						</listitem>
+					</itemizedlist>
 				</blockquote>
 				<para>From this pane, users may additionally request to view a datastream, add a new datastream to the object, export a datastream’s contents, or purge the datastream from the object.</para>
 				<para>Please note that datastreams which are linked to active disseminators may not be purged.</para>
 				<para>If a datastream has a MIME type of <emphasis>text</emphasis>, it may be edited in place by clicking the Edit button and making the desired changes in the editing window.  A user may also choose to import new data by clicking the Import button or to export the data contained in the datastream by clicking the Export button. If the datastream is not linked to an active disseminator, it may be purged from the object. Note: Purge is not valid for the DC metadata datastream because it is always linked to the default disseminator.</para>
 				<para>If <emphasis>Import</emphasis> is selected, the user is prompted for a file name or url where the the import file is located. </para>
-				<para>If <emphasis>Export</emphasis> is selected, the user is prompted for a file name and location to which to write the xml file of the DC metadata.</para>
+				<para>If <emphasis>Export</emphasis> is selected, the user is prompted for a file name and location to which to write the XML file of the DC metadata.</para>
 				<para>If <emphasis>Purge</emphasis> is selected, the user is warned that the operation is permanent and must click “Yes” to continue. If “Yes” is selected, the datastream is immediately purged from the object.</para>
 				<para>Datatstreams with a MIME type of <emphasis>image</emphasis> may only be viewed, exported, or purged from the object.</para>
 			</sect3>
@@ -132,13 +253,23 @@
 				<para>Objects may currently only be ingested from a file. Future releases of the software will allow ingestion from other repositories.</para>
 				<sect4>
 					<title>One Object</title>
-					<para>Choosing Ingest One Object from File, the user is prompted to select the file name from a dialog box or browse on the local drive(s) for the file to be ingested. Clicking open will cause the file to be ingested. If the repository has been set to retain pids on ingest in the fedora.fcfg file, the pid in the object xml will be maintained. Otherwise, the pid will be overwritten. If the pid of the new object matches the pid of an existing object, the existing object will be overwritten.</para>
+					<para>Choosing Ingest One Object from File, the user is prompted to select the file name from a dialog box or browse on the local drive(s) for the file to be ingested. Clicking open will cause the file to be ingested. If the repository has been set to retain PIDs on ingest in the fedora.fcfg file, the PID in the object XML will be maintained. Otherwise, the PID will be overwritten. If the PID of the new object matches the PID of an existing object, the existing object will be overwritten.</para>
 				</sect4>
 				<sect4>
-					<title>Multiple Objects</title>
-					<para>Users may also ingest all the files in a directory by selecting the Ingest Multiple Objects menu item.</para>
+					<title>Objects by Type</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="images/ingestdirdialog.jpg"/>
+						</imageobject>
+					</mediaobject>
+					<para>Users may also ingest all the files in a directory by selecting the Ingest Objects by Type menu item.</para>
 					<para>Upon selecting this menu option, a dialog box prompts the user to select or browse to the directory containing the objects to be selected. Once the directory has been identified, clicking Open will activate a second dialog box which prompts the user to select the type of object to be ingested—behavior definition, behavior mechanism, and/or data object.</para>
-					<para>Please remember that the behavior objects to which a data object are bound must exist in the repository before the data object can be ingested.  Order of ingestion must be</para>
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="images/selectbytype.jpg"/>
+						</imageobject>
+					</mediaobject>
+					<para>If you choose to separate your objects by type into separate directories for ingestion, please remember that the behavior objects to which a data object are bound must exist in the repository before the data object can be ingested.  Order of ingestion must be</para>
 					<orderedlist>
 						<listitem>
 							<para>Behavior Definition</para>
@@ -150,32 +281,62 @@
 							<para>Data Object</para>
 						</listitem>
 					</orderedlist>
-					<para>Using the multiple object ingest menu allows users to place all objects in a single directory, and the Fedora software will ingest objects in the proper order.</para>
-					<para>If the repository has been set to retain pids on ingest in the fedora.fcfg, the pid in the object xml will be maintained. Otherwise, the pid will be overwritten. If the pid of the new object matches the pid of an existing object, the existing object will be overwritten.</para>
+					<para>Using the Ingest Objects by Type menu allows users to place all objects in a single directory, and the Fedora software will ingest the objects in that directory in the proper order.</para>
+					<para>If the repository has been set to retain PIDs on ingest in the fedora.fcfg, the PID in the object XML will be maintained. Otherwise, the PID will be overwritten. If the PID of the new object matches the PID of an existing object, the existing object will be overwritten.</para>
 				</sect4>
 			</sect3>
 			<sect3>
 				<title>Export</title>
-				<para>Users have the option of exporting a single object or multiple objects.</para>
+				<para>Users have the option of exporting a single object or exporting objects by type.</para>
 				<sect4>
 					<title>One Object</title>
-					<para>When the Export One Object option is selected, the user is prompted to select a directory to which the export file will be written. Clicking Open causes the user to be prompted for an object pid and when OK is clicked, the file is exported to the selected directory. The file is named <emphasis>pid_value.xml</emphasis>.</para>
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="images/exportdirdialog.jpg"/>
+						</imageobject>
+					</mediaobject>
+					<para>When the Export One Object option is selected, the user is prompted to select a directory to which the export file will be written. Clicking Open causes the user to be prompted for an object PID and when OK is clicked, the file is exported to the selected directory. The file is named <emphasis>pidvalue.xml</emphasis>.</para>
 				</sect4>
 				<sect4>
-					<title>Multiple Objects</title>
-					<para>When the Export Multiple Objects option is selected, the user is prompted to select a directory to which the export files will be written. Clicking Open causes the user to be prompted for which type of object is to be exported--behavior definitions, behavior mechanisms, or data objects. The default selection is Data Objects. When the file types are selected and OK is clicked, the system searches for and retrieves <emphasis role="bold">all</emphasis> objects of that type, which are then exported to individual files in the destination directory. The files are named <emphasis>pid_value.xml</emphasis>.</para>
+					<title>Export Object by Type</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="images/exportdirdialog.jpg"/>
+						</imageobject>
+					</mediaobject>
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="images/selectbytype.jpg"/>
+						</imageobject>
+					</mediaobject>
+					<para>When the Export Object by Type option is selected, the user is prompted to select a directory to which the export files will be written. Clicking Open causes the user to be prompted for which type of object is to be exported--behavior definitions, behavior mechanisms, or data objects. The default selection is Data Objects. When the file types are selected and OK is clicked, the system searches for and retrieves <emphasis role="bold">all</emphasis> objects of that type, which are then exported to individual files in the destination directory. The files are named <emphasis>pidvalue.xml</emphasis>.</para>
 				</sect4>
 			</sect3>
 			<sect3>
 				<title>Purge Object</title>
-				<para>Purging an object completely and permanently removes it from the repository. Upon selecting the Purge option, the user will be prompted to enter an object pid and a reason for the object’s removal. Please note that objects with dependencies in the repository cannot be purged. WARNING: There is no “Are you sure?” dialog with this option.</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/input.jpg"/>
+					</imageobject>
+				</mediaobject>
+				<para>Purging an object completely and permanently removes it from the repository. Upon selecting the Purge option, the user will be prompted to enter an object PID and a reason for the object’s removal. Please note that objects with dependencies in the repository cannot be purged. WARNING: There is no “Are you sure?” dialog with this option.</para>
 			</sect3>
 			<sect3>
 				<title>View Object XML</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/input.jpg"/>
+					</imageobject>
+				</mediaobject>
 				<para>This menu option allows a user to view the xml, but not edit. XML may be cut and pasted into another application using standard Windows commands (CTL-C, CTL-V) if desired.</para>
 			</sect3>
 			<sect3>
 				<title>Change Repository</title>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/login.jpg"/>
+					</imageobject>
+				</mediaobject>
 				<para>The Change Repository option allows a user to login to a different Fedora repository.  When selected, this menu option causes the Login dialog to be displayed. The user may then select a different Fedora server with which to connect, entering the appropriate login name and password.</para>
 			</sect3>
 			<sect3>
@@ -185,48 +346,296 @@
 		</sect2>
 		<sect2>
 			<title>Tools Menu</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="images/tools_menu.jpg"/>
+				</imageobject>
+			</mediaobject>
 			<para>Commands on the Tools menu provide the user with the ability to search and retrieve objects from the repository, build and ingest batches of digital objects, and under the console menu, gain access directly to API-M and API-A methods for testing purposes. </para>
 			<sect3>
 				<title>Search/Browse Repository</title>
-				<para>The Search/Browse Repository menu option provides a mechanism for searching and retrieving objects from the Fedora repository.  Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using this menu option.  The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the <emphasis>Datastream ID</emphasis> is DC, and the XML conforms to the schema at <ulink url="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</ulink>.  If a Dublin Core metadata datastream is not provided, Fedora will construct a minimal DC datastream consisting of the elements dc:title and dc:identifier. The value for dc:title will be obtained from the object's label (if present in the object) and the value for dc:identifier will be assigned to the object's persistent identifier or PID.</para>
-		<para>The search interface provides both simple and advanced searching.  All queries are case insensitive.  Simple Search enables queries of words and phrases occurring anywhere in than object's indexed metadata fields.  Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (&#160; &#061; and &#126;&#160;) for string fields, and value comparison operators (&#160; &#061;, &#62;, &#8805;, &#60;, &#8804; &#160;) for date fields (dc:date fields may be treated as both).  The wildcards, &#42; and &#63; may be used in any string-based query.</para>
+				<para>The Search/Browse Repository menu option provides a mechanism for searching and retrieving objects from the Fedora repository.  Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using this menu option.  The DC Metadata section is an optional Implementer-Defined XML Metadata datastream in the object, where the <emphasis>Datastream ID</emphasis> is DC, and the XML conforms to the schema at <ulink url="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</ulink>.  If a Dublin Core metadata datastream is not provided, Fedora will construct a minimal DC datastream consisting of the elements dc:title and dc:identifier. The value for dc:title will be obtained from the object's label (if present in the object) and the value for dc:identifier will be assigned to the object's persistent identifier or PID.</para>
+				<para>The search interface provides both simple and advanced searching.  All queries are case insensitive.  Simple Search enables queries of words and phrases occurring anywhere in than object's indexed metadata fields.  Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (&#160; &#061; and &#126;&#160;) for string fields, and value comparison operators (&#160; &#061;, &#62;, &#8805;, &#60;, &#8804; &#160;) for date fields (dc:date fields may be treated as both).  The wildcards, &#42; and &#63; may be used in any string-based query.</para>
 				<sect4>
-					<title>Search Repository</title>
-					<para>In the Search Repository</para>
-					<sect5>
-						<title>Simple Search Tab</title>
-						<para>The Simple Search query searches both the Dublin Core metadata and the Fedora System Metadata fields. </para>
-					</sect5>
-					<sect5>
-						<title>Advanced Search Tab</title>
-						<para>The Advanced Search query enables searching of specific fields provided in the query. </para>
-
-					</sect5>
+					<title>Simple Search Tab</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="images/simplesearch.jpg"/>
+						</imageobject>
+					</mediaobject>
+					<para>The Simple Search tab is the default selection in the Search Repository window. The Simple Search query searches both the Dublin Core metadata and the Fedora System Metadata fields. </para>
+					<para>At the top of the Search window, the user may select fields to be displayed by clicking the change button and selecting/deselecting field names from the dialog.</para>
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="images/searchfields.jpg"/>
+						</imageobject>
+					</mediaobject>
+					<para>The Simple Search searches all indexed metadata fields for the text entered into the text box. All searches are case insensitive.  The wildcard character &ast; can be substituted for any string of characters. The wildcard character &quest; can be substituted for any single character. Clicking Search will retrieve a list of objects where the entered text string appears in an indexed metadata field.</para>
+				</sect4>
+				<sect4>
+					<title>Advanced Search Tab</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="images/searchadvanced.jpg"/>
+						</imageobject>
+					</mediaobject>
+					<para>The Advanced Search query enables users to refine their repository search by searching specific fields for specific values provided in the query. </para>
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="images/search_adv_cond_dialog.jpg"/>
+						</imageobject>
+					</mediaobject>
+					<para>The search conditions can be modified by clicking the Add button, which opens the Enter Condition dialog.  The user selects the field to be defined from the drop down menu, selects the condition to be matched, and enters the text to be matched, if appropriate. Clicking OK saves the condition. Once all conditions are entered, clicking Search will retrieve a list of objects in which the conditions are met.</para>
+				</sect4>
+				<sect4>
+					<title>Search Results Window</title>
+					<para>The Search Results Window displays the results of a successful search in a table format. Across the top of the table are a row of labels of the fields that have been returned from the objects meeting the search criteria. Double clicking anywhere on a row opens that object. Right clicking anywhere on a row opens a pop-up menu that contains object level tasks from which the user may select. These tasks include <emphasis>Open Object</emphasis>, <emphasis>View Object XML</emphasis>, <emphasis>Export ...</emphasis>, and <emphasis>Purge Object</emphasis>.</para>
 				</sect4>
 			</sect3>
 			<sect3>
 				<title>Batch</title>
-				<para>blah</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/tools_batch.jpg"/>
+					</imageobject>
+				</mediaobject>
+				<para>The Batch menu item includes tools to create and ingest multiple Fedora objects, which are Fedora-specific METS XML documents contained in files outside the repository.</para>
+				<para>It&#39;s simple to ingest objects created by one-up edit or by custom scripting.</para>
+				<para>The Batch menu also supports building objects.  This takes a general template common to all objects in a batch and makes object-specific substitutions into the template.  It also substitutes a common datetime stamp for all date attributes.  The template is a Fedora METS XML document, with data common to the objects of the batch.  Separate XML documents hold the per-object substitution values.</para>
+				<para>The relatedness of objects in a batch is defined by what Fedora Administrator allows to be substituted and by which substitutions you choose to make.  Data from the template are retained, unless replaced per individual object, including XML comments.</para>
+				<para>Fedora Administrator provides for three modes of object batch processing:  <emphasis role="bold">batch build</emphasis>, <emphasis role="bold">batch ingest</emphasis>, and a combined <emphasis role="bold">batch build and ingest</emphasis>. </para>
+				<para>This phased processing is shown in the following diagram.</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/table.jpg"/>
+					</imageobject>
+				</mediaobject>
+				<sect4>
+					<title>Building Fedora objects in batch</title>
+					<para>Build a set of Fedora METS XML files from a common Fedora METS template and simple (non-METS) XML <emphasis>object-specs</emphasis>.  The resulting objects are then ready for ingesting into Fedora.</para>
+				</sect4>
+				<sect4>
+					<title>Instructions for Building a Batch in Fedora Administrator</title>
+					<blockquote>
+						<para>Select <emphasis>Tools</emphasis> on the Fedora Administrator menu bar, select item <emphasis>Batch</emphasis> and then <emphasis>Build Batch.</emphasis>
+						</para>
+						<para>This will open a <emphasis>Batch Build</emphasis> window.  You may need to adjust this window’s size to see its controls.  Use the <emphasis>browse</emphasis> buttons to enter the four required settings.  Clicking on a <emphasis>browse</emphasis> button opens a standard directory/file selection dialog.</para>
+						<para>Then click the <emphasis>Build this batch</emphasis> button to build the batch of Fedora METS XML documents.</para>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/build.jpg"/>
+							</imageobject>
+						</mediaobject>
+						<para>A second (output-only) window will open to show progress.  You can build multiple different batches before closing the <emphasis>Batch Build</emphasis> window.</para>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/build-output.jpg"/>
+							</imageobject>
+						</mediaobject>
+						<para>You can then ingest the created batch as described elsewhere in this document.</para>
+						<para>No subdirectories or files are deleted by Fedora Administrator. Setup and cleanup of the files in the batch must be done by you using standard operating systems facilities.</para>
+					</blockquote>
+				</sect4>
+				<sect4>
+					<title>To Demo</title>
+					<blockquote>
+						<para>You can use files and subdirectories of directory <emphasis role="bold">client/demo/batch-demo</emphasis>, relative to your <emphasis role="bold">FEDORA_HOME</emphasis> environment variable.  (When you create your own batches, the needed directories and files can be anywhere in the file space of the system on which you are running Fedora Administrator or command-line <emphasis>BatchTool</emphasis>.)</para>
+						<para>Use file <emphasis role="bold">mets-template.xml</emphasis> for <emphasis>METS template</emphasis> (<emphasis>input file</emphasis>).</para>
+						<para>Use subdirectory <emphasis role="bold">object-specifics</emphasis> for <emphasis>XML specs</emphasis> (<emphasis>input directory</emphasis>); this is a directory holding (all and only) per-object data.</para>
+						<para>Use subdirectory <emphasis role="bold">objects</emphasis> for METS objects (<emphasis>output directory</emphasis>); this is a directory to hold (all and only) Fedora METS files built by Fedora Administrator.</para>
+						<para>Specify a file path of your choice for <emphasis>object processing map</emphasis> (<emphasis>output file</emphasis>); this is a file which maps <emphasis>object-specs</emphasis> to objects built.  See the section on <emphasis>object processing maps</emphasis>, elsewhere in this documentation.  Note that PIDs cannot be reported in this (<emphasis>Batch Build</emphasis>) mode, as they have not yet been assigned.</para>
+						<para>Optionally select the output format for <emphasis>object processing map</emphasis>, either <emphasis role="bold">xml</emphasis> or <emphasis role="bold">text</emphasis> (<emphasis role="bold">xml</emphasis> is the default format).</para>
+					</blockquote>
+				</sect4>
+				<sect4>
+					<title>Ingesting Fedora Objects in Batch</title>
+					<para>Create a set of Fedora objects in your repository from a corresponding set of Fedora METS XML files.</para>
+				</sect4>
+				<sect4>
+					<title>Fedora Administrator Instructions</title>
+					<blockquote>
+						<para>Select <emphasis>Tools</emphasis> on the Fedora Administrator menu bar, and select item <emphasis>Ingest Batch</emphasis>.</para>
+						<para>This will open a <emphasis>Batch Ingest</emphasis> window.  You may need to adjust this window’s size to see its controls.  Use the <emphasis>browse</emphasis> buttons to enter the two required settings.  Clicking on a <emphasis>browse</emphasis> button opens a standard directory/file selection dialog.  </para>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/ingest.jpg"/>
+							</imageobject>
+						</mediaobject>
+						<para>Then click the <emphasis>Ingest this batch</emphasis> button to ingest the batch into your Fedora repository.</para>
+						<para>A second (output-only) window will open to show progress.  You can ingest multiple different batches before closing the <emphasis>Batch Ingest</emphasis> window.</para>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/ingest-output.jpg"/>
+							</imageobject>
+						</mediaobject>
+						<para>No subdirectories or files are deleted by Fedora Administrator.  Setup and cleanup is by using standard operating systems facilities. Fedora Administrator does not itself validate on <emphasis>Batch Build</emphasis>, but batch ingest into Fedora does.  The batch fails on the first individual object ingest failure.</para>
+						<para>Fedora will not ingest a METS file whose <emphasis role="bold">METS:xmldata</emphasis> elements are empty or contain non-tagged character data.</para>
+					</blockquote>
+				</sect4>
+				<sect4>
+					<title>To Demo</title>
+					<blockquote>
+						<para>You can use files and subdirectories of directory <emphasis role="bold">client/demo/batch-demo</emphasis>, relative to your <emphasis role="bold">FEDORA_HOME</emphasis> environment variable.  (When you create your own batches, the needed directories and files can be anywhere in the file space of the system on which you are running Fedora Administrator or command-line <emphasis>BatchTool</emphasis>.)  </para>
+						<para>You will need to have already done a <emphasis>Build Batch</emphasis> demo, explained elsewhere in this document, to populate the <emphasis role="bold">objects</emphasis> directory needed in this current demo.  If you have ingested these objects before, either in this <emphasis>Ingest Batch</emphasis> mode following a separate <emphasis>Build Batch</emphasis> mode, or in a <emphasis>Build and Ingest Batch</emphasis> mode, you will first need to edit <emphasis role="bold">OBJIDs</emphasis> in the <emphasis>object-spec</emphasis> files, or to remove the corresponding objects from your Fedora repository.</para>
+						<para>Use subdirectory <emphasis role="bold">objects</emphasis> for <emphasis>METS objects</emphasis> (<emphasis>input directory</emphasis>); this is a directory holding (all and only) Fedora METS files to ingest.  </para>
+						<para>Specify a file path of your choice for <emphasis>object processing map</emphasis> (<emphasis>output file</emphasis>); this is a file which maps objects to their assigned PIDs.  See the section on <emphasis>object processing maps</emphasis>, elsewhere in this documentation.  Note that <emphasis>object-specs</emphasis> of objects previously built by Fedora Administrator cannot be reported in this (<emphasis>Batch Ingest</emphasis>) mode, as they (as source documents) are no longer known.</para>
+						<para>Optionally select the output format for object processing map, either <emphasis role="bold">xml</emphasis> or <emphasis role="bold">text</emphasis> (<emphasis role="bold">xml</emphasis> is the default format).</para>
+					</blockquote>
+				</sect4>
+				<sect4>
+					<title>Building and ingesting Fedora objects in batch</title>
+					<para>This process builds a set of Fedora METS XML files from a common Fedora METS template and simple (non-METS) XML <emphasis>object-specs</emphasis>, then ingests the  resulting batch into Fedora.</para>
+				</sect4>
+				<sect4>
+					<title>Fedora Administrator instructions</title>
+					<blockquote>
+						<para>Select <emphasis>Tools</emphasis> on the Fedora Administrator menu bar, and select item <emphasis>Build and Ingest Batch</emphasis>.</para>
+						<para>This will open a <emphasis>Batch Build</emphasis> and Ingest window.  You may need to adjust this window’s size to see its controls.  Use the <emphasis>browse</emphasis> buttons to enter the four required settings.  Clicking on a <emphasis>browse</emphasis> button opens a standard directory/file selection dialog.</para>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/build-ingest.jpg"/>
+							</imageobject>
+						</mediaobject>
+						<para>Then click the <emphasis>Build and Ingest this batch</emphasis> button to build the batch of Fedora METS XML documents and then ingest them into Fedora.</para>
+						<para>A second (<emphasis>output-only</emphasis>) window will open to show progress.  You can build and ingest multiple different batches before closing the <emphasis>Batch Build and Ingest</emphasis> window.</para>
+						<mediaobject>
+							<imageobject>
+								<imagedata fileref="images/build-ingest-output.jpg"/>
+							</imageobject>
+						</mediaobject>
+						<para>There is then no need to separately ingest the created batch.</para>
+						<para>No subdirectories or files are deleted by Fedora Administrator.  Setup and cleanup of the files in the batch must be done by you using standard operating systems facilities.</para>
+						<para>Fedora Administrator does not itself validate on <emphasis>Batch Build</emphasis>, but batch ingest into Fedora does.  The batch fails on the first individual object ingest failure.</para>
+						<para>Fedora will not ingest a METS file whose <emphasis role="bold">METS:xmldata</emphasis> elements are empty or contain non-tagged character data.</para>
+					</blockquote>
+				</sect4>
+				<sect4>
+					<title>To Demo</title>
+					<blockquote>
+						<para>You can use files and subdirectories of directory <emphasis role="bold">client/demo/batch-demo</emphasis>, relative to your <emphasis role="bold">FEDORA_HOME</emphasis> environment variable.  (When you create your own batches, the needed directories and files can be anywhere in the file space of the system on which you are running Fedora Administrator or command-line <emphasis>BatchTool</emphasis>.)</para>
+						<para>If you have ingested these objects before, either in this <emphasis>Build and Ingest Batch</emphasis> mode or in separate sequential <emphasis>Build Batch</emphasis> and <emphasis>Ingest Batch</emphasis> modes, you will first need to edit <emphasis role="bold">OBJIDs</emphasis> in the <emphasis>object-spec</emphasis> files, or to remove the corresponding objects from your Fedora repository.</para>
+						<para>Use file <emphasis role="bold">mets-template.xml</emphasis> for <emphasis>METS template</emphasis> (<emphasis>input file</emphasis>).</para>
+						<para>Use subdirectory <emphasis role="bold">object-specifics</emphasis> for <emphasis>XML specs</emphasis> (<emphasis>input directory</emphasis>); this is a directory holding (all and only) per-object data.</para>
+						<para>Use subdirectory <emphasis role="bold">objects</emphasis> for <emphasis>METS objects</emphasis> (<emphasis>output directory</emphasis>); this is a directory to hold (all and only) Fedora METS files built by Fedora Administrator.  </para>
+						<para>Specify a file path of your choice for <emphasis>object processing map</emphasis> (<emphasis>output file</emphasis>); this is a file which maps <emphasis>object-specs</emphasis> through objects built and on to PIDs assigned.  See the section on <emphasis>object processing maps</emphasis>, elsewhere in this documentation.  Unlike separate <emphasis>Batch Build</emphasis> and <emphasis>Batch Ingest</emphasis> modes, the complete triple is reported in this <emphasis>Batch Build and Ingest</emphasis> mode.</para>
+						<para>Optionally select the output format for <emphasis>object processing map</emphasis>, either <emphasis role="bold">xml</emphasis> or <emphasis role="bold">text</emphasis> (<emphasis role="bold">xml</emphasis> is the default format).</para>
+					</blockquote>
+				</sect4>
+				<sect4>
+					<title>Progress Report File</title>
+					<para>Fedora Administrator already provides a progress report of each use of a batch tool, written to a GUI window, to provide user feedback.  Additionally, this progress report is now written to a text file, to provide a permanent record.</para>
+					<para>[Note that this progress report is not especially suited and is not intended for further processing by another computer program.  Use the "object processing map", a different output file already provided, for such machine processing.]</para>
+					<para>The progress report file is written to the same directory as the object processing map.  The name of any instance of these new files includes the time when it is written, e.g., 20031203-123201-365.txt [The final group of numerals would serve to differentiate report files written, oddly but possibly, at the same second, by 2 instances of the GUI client running on the same machine.]</para>
+					<para>The following description tells what is recorded in this new file and how its directory is chosen in giving the location of the object processing map.</para>
+					<para>The batch tools are available through the Tools menu, under Batch, and serve to provide: Build Batch, Build and Ingest Batch, or Ingest Batch.</para>
+					<para>After selecting one of these tools, a dialog box opens for user input of tool parameters.  This dialog box is titled "Batch Build", "Batch Build and Ingest", or "Batch Ingest", depending on which tool is chosen.  For each tool, one of the required parameters is the path to the "object processing map" (an output file), which records the tool's processing in a form amendable to later input to another program.  This path is specified in a usual file dialog, including its parent directory.</para>
+					<para>This is the parent directory, also, into which the new processing report file is written.</para>
+					<para>The contents of this new file is simply the contents of the respective output window of the GUI client, one of : "Batch Build Output", "Batch Build and Ingest Output", or "Batch Ingest Output".</para>
+				</sect4>
+				<sect4>
+					<title>Object Processing Map</title>
+					<para>The <emphasis>object-processing-map</emphasis> file has one of the following formats, depending on the choice of <emphasis>xml</emphasis> or <emphasis role="bold">text</emphasis> in Fedora Administrator. <emphasis>Batch Build</emphasis> processing results in an <emphasis>object processing map</emphasis> whose individual maps have only <emphasis role="bold">path2spec</emphasis> and <emphasis role="bold">path2object</emphasis> attributes or fields.  Batch ingest processing results in an object processing map whose individual maps have only <emphasis role="bold">path2object</emphasis> and <emphasis role="bold">pid</emphasis> attributes or fields.  <emphasis>Batch build and Ingest</emphasis> processing results in an <emphasis>object processing map</emphasis> whose individual maps have all three <emphasis role="bold">path2spec</emphasis>, <emphasis role="bold">path2object</emphasis> and <emphasis role="bold">pid</emphasis> attributes or fields.</para>
+				</sect4>
+				<sect4>
+					<title>XML Format</title>
+					<programlisting>
+&lt;object-processing-map&gt;
+	&lt;map
+	path2spec="/mellon/dist/client/demo/batch-demo/object-specifics/americanacademy.xml"
+	path2object=" /mellon/dist/client/demo/batch-demo/objects/americanacademy.xml"
+	pid="demo:3010" /&gt;
+	. . .
+	&lt;map
+	path2spec="/mellon/dist/client/demo/batch-demo/object-specifics/vaticanlibrary.xml" 
+	path2object="/mellon/dist/client/demo/batch-demo/objects/vaticanlibrary.xml" 
+	pid="demo:3019" /&gt;
+&lt;/object-processing-map&gt;
+				</programlisting>
+				</sect4>
+				<sect4>
+					<title>Text Format</title>
+					<para>(field separator is tab; relative paths used for practical illustration)</para>
+					<programlisting>
+object-specifics/americanacademy.xml	objects/americanacademy.xml	demo:3010
+. . .
+object-specifics/vaticanlibrary.xml	objects/vaticanlibrary.xml	demo:3019
+				</programlisting>
+				</sect4>
+				<sect4>
+					<title>Object-Specifics</title>
+					<para>
+						<emphasis>Object-specifics</emphasis> are coded in XML files.  These data include:  object ID, label, and comment; datastream and object metadata and accompanying label; datastream URLs, titles, and labels; disseminator-specific datastream labels.  Where possible, attribute names are the same as in the Fedora METS schema, and so correspond to like-named attributes in the Fedora METS template.  How these map is described below and by running the demo and viewing the results for one of the objects.</para>
+					<para>Any individual substitution is optional.  When absent as a substitution, the value in the template will be used for the resulting Fedora METS object.  (Demo template and <emphasis>object-specific</emphasis> contents are chosen instructively to highlight substitutions made.)  Datastream URLs will generally be specific to an object; practice will show which other substitutions are generally made.</para>
+					<para>All non-METS namespaces used in your own metadata must be declared, as in <emphasis role="bold">xmlns:uvalibadmin</emphasis> in the demo.    </para>
+					<para>Metadata IDs here map to those found in the Fedora <emphasis role="bold">METS:amdSec</emphasis> and Fedora <emphasis role="bold">METS:dmdSecFedora</emphasis> element.  The associated metadata is substituted as the content of <emphasis role="bold">METS:xmlData</emphasis> element, which is nested within that Fedora <emphasis role="bold">METS:amdSec</emphasis> or Fedora <emphasis role="bold">METS:dmdSecFedora element</emphasis>.</para>
+					<para>Datastream IDs here map to those found in the Fedora <emphasis role="bold">METS:fileGrp</emphasis> element (the nested, not the nesting, one).  The associated <emphasis role="bold">xlink:href</emphasis> and <emphasis role="bold">xlink:title</emphasis> attributes are substituted into the Fedora <emphasis role="bold">METS:Flocat</emphasis> element, which is nested within that Fedora <emphasis role="bold">METS:fileGrp</emphasis> element.  </para>
+					<para>Datastream labels substitute instead into <emphasis role="bold">METS:structMap</emphasis>  If a datastream label is given specific to a disseminator, it is what’s substituted; otherwise the general datastream label is used.</para>
+					<para>Case matters in attribute and element names.</para>
+					<para>Fedora will retain as PIDs only <emphasis role="bold">OBJIDs</emphasis> prefixed &quot;test:&quot; or &quot;demo:&quot;.  Other <emphasis role="bold">OBJIDs</emphasis> will be replaced by Fedora-generated PIDs.</para>
+					<para>
+						<emphasis>object-specs</emphasis> in a given batch should meet the structural requirements of that batch’s template:  same number and tagging of datastreams, same number and tagging of metadata elements.  Since substitutions are optional, individual <emphasis>object-specs</emphasis> cannot have &quot;missing&quot; data:  the resulting object simply retains the template&apos;s value.  Neither can <emphasis>object-specs</emphasis> have &quot;extra&quot; data:  the resulting object simply lacks the <emphasis>object-spec&apos;s</emphasis> data -- because the template isn&apos;t designed to use it.  In either case, the batch goes on.</para>
+					<para>The following <emphasis>object-spec</emphasis> fragment illustrates some of this.</para>
+					<programlisting>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+&lt;input OBJID="test:2800" LABEL="my object" xmlns:METS="http://www.loc.gov/METS/" 
+xmlns:uvalibadmin="http://www.lib.virginia.edu/uvalibadmin/" &gt;
+    &lt;metadata&gt;
+        &lt;metadata ID="RIGHTS1" LABEL=""&gt;
+            &lt;!-- include comment optionally --&gt;
+            &lt;uvalibadmin:admin&gt;
+                &lt;uvalibadmin:adminrights&gt;
+                    &lt;uvalibadmin:policy&gt;
+                        &lt;uvalibadmin:access&gt;unrestricted&lt;/uvalibadmin:access&gt;
+                        &lt;uvalibadmin:use&gt;educational&lt;/uvalibadmin:use&gt;
+                    &lt;/uvalibadmin:policy&gt;
+                &lt;/uvalibadmin:adminrights&gt;
+            &lt;/uvalibadmin:admin&gt;
+        &lt;/metadata&gt;
+        . . .
+        other metadata
+        . . .
+    &lt;/metadata&gt;
+    &lt;datastreams&gt;
+        &lt;datastream ID="DS1" xlink:href="http://localhost:8080/demo/batch-demo/thumb/4868090.jpg" xlink:title="" LABEL="copied into every disseminator’s label for this datastream"/&gt;
+        &lt;datastream ID="DS2" xlink:href="http://localhost:8080/demo/batch-demo/thumb/4868090.jpg" xlink:title="" LABEL=" copied into a disseminator’s label for this datastream, unless the disseminator has a nested node with a label herein "&gt;
+            &lt;disseminator ID="" LABEL=" copied into only this disseminator’s label for this datastream " /&gt;
+        &lt;/datastream&gt;
+        . . .
+        other datastreams
+        . . .
+    &lt;/datastreams&gt;
+&lt;/input&gt;
+			</programlisting>
+				</sect4>
 			</sect3>
 			<sect3>
 				<title>Console</title>
-				<para>blah</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/tools_console.jpg"/>
+					</imageobject>
+				</mediaobject>
+				<para>The menu options under the Console menu give developers direct access to the methods in the Fedora APIs and to the Stdout/Stderr window.  In this way, development tools calling  API methods can be more efficiently tested.</para>
+				<para>These console windows are not intended for casual users or repository administrators, therefore they contain no guiding text to assist users in their function.  Developers should carefully read the Fedora Technical Specification to understand the parameters required for each method in the Fedora APIs.</para>
 			</sect3>
 		</sect2>
 		<sect2>
 			<title>Builders</title>
-			<para>blah</para>
-			<sect3>
-				<title>Behavior Definition Builder</title>
-				<para>blah</para>
-			</sect3>
-			<sect3>
-				<title>Behavior Mechanism Builder</title>
-				<para>blah</para>
-			</sect3>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="images/builders_menu.jpg"/>
+				</imageobject>
+			</mediaobject>
+			<para>The Builders menu gives users access to the Behavior Definition Builder and the Behavior Definition Builder. These WSDL objects are of such complex structure that it was necessary to create a wizard-like tool to enable users to construct custom Behavior Definitions and Behavior Mechanisms. </para>
+			<para>The complexity of the task requires that extensive help be available within the Fedora Administrator interface, so on every pane of these builders, users will find a Help button. Clicking this button, opens a help screen that guides the user through the data on that pane.</para>
 		</sect2>
 		<sect2>
 			<title>Window Menu</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="images/window_menu.jpg"/>
+				</imageobject>
+			</mediaobject>
 			<para>The Window menu contains standard commands for managing multiple panes open in the Fedora Administrator window. These include:</para>
 			<itemizedlist>
 				<listitem>
@@ -245,6 +654,11 @@
 		</sect2>
 		<sect2>
 			<title>Help Menu</title>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="images/help_menu.jpg"/>
+				</imageobject>
+			</mediaobject>
 			<para>The help menu has two options:</para>
 			<itemizedlist>
 				<listitem>
