@@ -1,7 +1,7 @@
 package fedora.server.storage;
 
 /**
- * <p>Title: </p>
+ * <p>Title: FastDOReader.java</p>
  * <p>Description: Digital Object Reader. Reads objects in SQL database</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
@@ -95,11 +95,11 @@ private static final String dbPropsFile = "db.properties";
       ResultSet rs = statement.executeQuery(query);
       ResultSetMetaData rsMeta = rs.getMetaData();
       int cols = rsMeta.getColumnCount();
-      String[] results = new String[cols];
       // Note: When more than one datastream matches the DSBindingKey
       // in the dissemination query, multiple rows are returned.
       while (rs.next())
       {
+        String[] results = new String[cols];
         for (int i=1; i<=cols; i++)
         {
           results[i-1] = rs.getString(i);
@@ -230,10 +230,9 @@ private static final String dbPropsFile = "db.properties";
     Vector results = null;
     results = fdor.getDissemination("1007.lib.dl.test/text_ead/viu00003","web_ead","get_web_default");
     Enumeration e = results.elements();
-    String[] list  = null;
     while(e.hasMoreElements())
     {
-      list = (String[])e.nextElement();
+      String[] list = (String[])e.nextElement();
       for(int i=0; i<list.length; i++)
       {
         System.out.println("dissemResults["+i+"] = "+list[i]+"\n");
