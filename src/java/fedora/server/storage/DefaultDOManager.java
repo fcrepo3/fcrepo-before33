@@ -1013,18 +1013,229 @@ public class DefaultDOManager
 
     public String[] listObjectPIDs(Context context, String foType)
             throws StorageDeviceException {
+        StringBuffer whereClause=new StringBuffer();
+        whereClause.append("WHERE SystemVersion > 0");
+        if (foType!=null) {
+            return getPIDs(" AND FO_TYPE = '" + foType + "'");
+        }
+        return getPIDs(whereClause.toString());
+    }
+    
+    public String[] listObjectPIDs(Context context, String pidPattern, 
+            String foType, String lockedByPattern, String state, 
+            String labelPattern, String contentModelIdPattern, 
+            Calendar createDateMin, Calendar createDateMax, 
+            Calendar lastModDateMin, Calendar lastModDateMax) 
+            throws StorageDeviceException {
+        StringBuffer whereClause=new StringBuffer();
+        boolean needEscape=false;
+        whereClause.append("WHERE SystemVersion > 0");
+        if (pidPattern!=null) {
+            String part=toSql("DO_PID", pidPattern);
+            if (part.charAt(0)==' ') {
+                needEscape=true;
+            } else {
+                whereClause.append(' ');
+            }
+            whereClause.append("AND ");
+            whereClause.append(part);
+        }
+        if (foType!=null) {
+            String part=toSql("FO_Type", foType);
+            if (part.charAt(0)==' ') {
+                needEscape=true;
+            } else {
+                whereClause.append(' ');
+            }
+            whereClause.append("AND ");
+            whereClause.append(part);
+        }
+        if (lockedByPattern!=null) {
+            String part=toSql("LockingUser", lockedByPattern);
+            if (part.charAt(0)==' ') {
+                needEscape=true;
+            } else {
+                whereClause.append(' ');
+            }
+            whereClause.append("AND ");
+            whereClause.append(part);
+        }
+        if (state!=null) {
+            String part=toSql("ObjectState", state);
+            if (part.charAt(0)==' ') {
+                needEscape=true;
+            } else {
+                whereClause.append(' ');
+            }
+            whereClause.append("AND ");
+            whereClause.append(part);
+        }
+        if (labelPattern!=null) {
+            String part=toSql("Label", labelPattern);
+            if (part.charAt(0)==' ') {
+                needEscape=true;
+            } else {
+                whereClause.append(' ');
+            }
+            whereClause.append("AND ");
+            whereClause.append(part);
+        }
+        if (contentModelIdPattern!=null) {
+            String part=toSql("ContentModelId", contentModelIdPattern);
+            if (part.charAt(0)==' ') {
+                needEscape=true;
+            } else {
+                whereClause.append(' ');
+            }
+            whereClause.append("AND ");
+            whereClause.append(part);
+        }
+        if (createDateMin!=null) {
+            whereClause.append(" AND CreateDate >= '");
+            whereClause.append(m_formatter.format(createDateMin));
+            whereClause.append('\'');
+        }
+        if (createDateMax!=null) {
+            whereClause.append(" AND CreateDate <= '");
+            whereClause.append(m_formatter.format(createDateMax));
+            whereClause.append('\'');
+        }
+        if (lastModDateMin!=null) {
+            whereClause.append(" AND LastModifiedDate >= '");
+            whereClause.append(m_formatter.format(lastModDateMin));
+            whereClause.append('\'');
+        }
+        if (lastModDateMax!=null) {
+            whereClause.append(" AND LastModifiedDate <= '");
+            whereClause.append(m_formatter.format(lastModDateMax));
+            whereClause.append('\'');
+        }
+        if (needEscape) {
+            whereClause.append(" {escape '/'}");
+        }
+        return getPIDs(whereClause.toString());
+    }
+
+    // translates simple wildcard string to sql-appropriate.
+    // the first character is a " " if it needs an escape
+    public static String toSql(String name, String in) {
+        if (in.indexOf("\\")!=-1) {
+            // has one or more escapes, un-escape and translate
+            StringBuffer out=new StringBuffer();
+            out.append("\'");
+            boolean needLike=false;
+            boolean needEscape=false;
+            boolean lastWasEscape=false;
+            for (int i=0; i<in.length(); i++) {
+                char c=in.charAt(i);
+                if ( (!lastWasEscape) && (c=='\\') ) {
+                    lastWasEscape=true;
+                } else {
+                    char nextChar='!';
+                    boolean useNextChar=false;
+                    if (!lastWasEscape) {
+                        if (c=='?') {
+                            out.append('_');
+                            needLike=true;
+                        } else if (c=='*') {
+                            out.append('%');
+                            needLike=true;
+                        } else {
+                            nextChar=c;
+                            useNextChar=true;
+                        }
+                    } else {
+                        nextChar=c;
+                        useNextChar=true;
+                    }
+                    if (useNextChar) {
+                        if (nextChar=='\"') {
+                            out.append("\\\"");
+                            needEscape=true;
+                        } else if (nextChar=='\'') {
+                            out.append("\\\'");
+                            needEscape=true;
+                        } else if (nextChar=='%') {
+                            out.append("\\%");
+                            needEscape=true;
+                        } else if (nextChar=='_') {
+                            out.append("\\_");
+                            needEscape=true;
+                        } else {
+                            out.append(nextChar);
+                        }
+                    }
+                    lastWasEscape=false;
+                }
+            }
+            out.append("\'");
+            if (needLike) {
+                out.insert(0, " LIKE ");
+            } else {
+                out.insert(0, " = ");
+            }
+            out.insert(0, name);
+            if (needEscape) {
+                out.insert(0, ' ');
+            }
+            return out.toString();
+        } else {
+            // no escapes, just translate if needed
+            StringBuffer out=new StringBuffer();
+            out.append("\'");
+            boolean needLike=false;
+            boolean needEscape=false;
+            for (int i=0; i<in.length(); i++) {
+                char c=in.charAt(i);
+                if (c=='?') {
+                    out.append('_');
+                    needLike=true;
+                } else if (c=='*') {
+                    out.append('%');
+                    needLike=true;
+                } else if (c=='\"') {
+                    out.append("\\\"");
+                    needEscape=true;
+                } else if (c=='\'') {
+                    out.append("\\\'");
+                    needEscape=true;
+                } else if (c=='%') {
+                    out.append("\\%");
+                    needEscape=true;
+                } else if (c=='_') {
+                    out.append("\\_");
+                    needEscape=true;
+                } else {
+                    out.append(c);
+                }
+            }
+            out.append("\'");
+            if (needLike) {
+                out.insert(0, " LIKE ");
+            } else {
+                out.insert(0, " = ");
+            }
+            out.insert(0, name);
+            if (needEscape) {
+                out.insert(0, ' ');
+            }
+            return out.toString();
+        }
+    }
+
+    /** whereClause is a WHERE clause, starting with "where" */
+    private String[] getPIDs(String whereClause) 
+            throws StorageDeviceException {
         ArrayList pidList=new ArrayList();
         Connection conn=null;
         try {
-            String query="SELECT DO_PID "
-                       + "FROM ObjectRegistry";
-               //        + " WHERE SystemVersion > 0"; // <- ignore new,uncommitted
-            if (foType!=null) {
-                query=query+" WHERE FO_TYPE = '" + foType + "'";
-            }
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
-            ResultSet results=s.executeQuery(query);
+            StringBuffer query=new StringBuffer(); 
+            query.append("SELECT DO_PID FROM ObjectRegistry ");
+            query.append(whereClause);
+            logFinest("Executing db query: " + query.toString());
+            ResultSet results=s.executeQuery(query.toString());
             while (results.next()) {
                 pidList.add(results.getString("DO_PID"));
             }
@@ -1037,21 +1248,12 @@ public class DefaultDOManager
             return ret;
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+            
         } finally {
             if (conn!=null) {
                 m_connectionPool.free(conn);
             }
         }
-    }
-    
-    public String[] listObjectPIDs(Context context, String pidPattern, 
-            String foType, String lockedByPattern, String state, 
-            String labelPattern, String contentModelIdPattern, 
-            Calendar createDateMin, Calendar createDateMax, 
-            Calendar lastModDateMin, Calendar lastModDateMax) {
-        String[] results=new String[1];
-        results[0]="DefaultDOManager.listObjectPIDs(,,,,,,,,,,) is a stub";
-        return results;
     }
 
 }
