@@ -19,6 +19,76 @@ import java.io.ByteArrayOutputStream;
 public abstract class TypeUtility
 {
 
+    public static java.util.List
+            convertGenConditionArrayToSearchConditionList(
+            fedora.server.types.gen.Condition[] genConditions) 
+            throws fedora.server.errors.InvalidOperatorException {
+        java.util.ArrayList list=new java.util.ArrayList();
+        for (int i=0; i<genConditions.length; i++) {
+            fedora.server.types.gen.Condition c=genConditions[i];
+            list.add(new fedora.server.search.Condition(c.getProperty(),
+                    c.getOperator().toString(), c.getValue()));
+        }
+        return list;
+    }
+    
+    public static fedora.server.types.gen.ObjectFields[]
+            convertSearchObjectFieldsListToGenObjectFieldsArray(
+            java.util.List sfList) {
+        fedora.server.types.gen.ObjectFields[] genFields=
+                new fedora.server.types.gen.ObjectFields[
+                sfList.size()];
+        for (int i=0; i<sfList.size(); i++) {
+            fedora.server.types.gen.ObjectFields gf=
+                    new fedora.server.types.gen.ObjectFields();
+            fedora.server.search.ObjectFields sf=
+                    (fedora.server.search.ObjectFields) sfList.get(i);
+            // Repository key fields
+            if (sf.getPid()!=null) gf.setPid(sf.getPid());
+            if (sf.getLabel()!=null) gf.setLabel(sf.getLabel()); 
+            if (sf.getFType()!=null) gf.setFType(sf.getFType()); 
+            if (sf.getCModel()!=null) gf.setCModel(sf.getCModel()); 
+            if (sf.getState()!=null) gf.setState(sf.getState()); 
+            if (sf.getLocker()!=null) gf.setLocker(sf.getLocker()); 
+            if (sf.getCDate()!=null) {
+                java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
+                cal.setTime(sf.getCDate());
+                gf.setCDate(cal); 
+            }
+            if (sf.getMDate()!=null) {
+                java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
+                cal.setTime(sf.getMDate());
+                gf.setMDate(cal); 
+            }
+            // Dublin core fields
+            if (sf.titles().size()!=0) gf.setTitle(toStringArray(sf.titles())); 
+            if (sf.creators().size()!=0) gf.setCreator(toStringArray(sf.creators())); 
+            if (sf.subjects().size()!=0) gf.setSubject(toStringArray(sf.subjects())); 
+            if (sf.descriptions().size()!=0) gf.setDescription(toStringArray(sf.descriptions())); 
+            if (sf.publishers().size()!=0) gf.setPublisher(toStringArray(sf.publishers())); 
+            if (sf.contributors().size()!=0) gf.setContributor(toStringArray(sf.contributors())); 
+            if (sf.dates().size()!=0) gf.setDate(toStringArray(sf.dates())); 
+            if (sf.types().size()!=0) gf.setType(toStringArray(sf.types())); 
+            if (sf.formats().size()!=0) gf.setFormat(toStringArray(sf.formats())); 
+            if (sf.identifiers().size()!=0) gf.setIdentifier(toStringArray(sf.identifiers())); 
+            if (sf.sources().size()!=0) gf.setSource(toStringArray(sf.sources())); 
+            if (sf.languages().size()!=0) gf.setLanguage(toStringArray(sf.languages())); 
+            if (sf.relations().size()!=0) gf.setRelation(toStringArray(sf.relations())); 
+            if (sf.coverages().size()!=0) gf.setCoverage(toStringArray(sf.coverages())); 
+            if (sf.rights().size()!=0) gf.setRights(toStringArray(sf.rights())); 
+            genFields[i]=gf;
+        }
+        return genFields;
+    }
+    
+    public static String[] toStringArray(java.util.List l) {
+        String[] ret=new String[l.size()];
+        for (int i=0; i<l.size(); i++) {
+            ret[i]=(String) l.get(i);
+        }
+        return ret;
+    }
+
   /**
    * <p>Converts an array of fedora.server.storage.types.MethodDef into an
    * array of fedora.server.types.gen.MethodDef.</p>

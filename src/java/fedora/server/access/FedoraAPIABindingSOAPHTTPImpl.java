@@ -1,8 +1,9 @@
 package fedora.server.access;
 
 import java.io.File;
+import java.rmi.RemoteException;
 import java.util.HashMap;
-
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
@@ -13,6 +14,8 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.types.gen.Condition;
+import fedora.server.types.gen.ObjectFields;
 import fedora.server.utilities.AxisUtility;
 import fedora.server.utilities.TypeUtility;
 
@@ -83,6 +86,44 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
               HTTPConstants.MC_HTTP_SERVLETREQUEST);
       h.put("host", req.getRemoteAddr());
       return new ReadOnlyContext(h);
+  }
+
+  public ObjectFields[] advancedFieldSearch(
+          String[] resultFields, Condition[] conditions) 
+          throws RemoteException {
+      Context context=getContext();
+      assertInitialized();
+      try {
+          List searchConditionList=TypeUtility.
+                  convertGenConditionArrayToSearchConditionList(conditions);
+          List objectFields=s_access.search(context, resultFields, searchConditionList);
+          return TypeUtility.convertSearchObjectFieldsListToGenObjectFieldsArray(
+                  objectFields);
+      } catch (ServerException se) {
+          logStackTrace(se);
+          throw AxisUtility.getFault(se);
+      } catch (Exception e) {
+          logStackTrace(e);
+          throw AxisUtility.getFault(e);
+      }
+  }
+
+  public ObjectFields[] simpleFieldSearch(
+          String[] resultFields, String terms) 
+          throws RemoteException {
+      Context context=getContext();
+      assertInitialized();
+      try {
+          List objectFields=s_access.search(context, resultFields, terms);
+          return TypeUtility.convertSearchObjectFieldsListToGenObjectFieldsArray(
+                  objectFields);
+      } catch (ServerException se) {
+          logStackTrace(se);
+          throw AxisUtility.getFault(se);
+      } catch (Exception e) {
+          logStackTrace(e);
+          throw AxisUtility.getFault(e);
+      }
   }
 
   /**

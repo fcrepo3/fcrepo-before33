@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 import fedora.server.Context;
@@ -275,6 +276,20 @@ public class DefaultAccess extends Module implements Access
     ObjectMethodsDef[] methodDefs =
         reader.getObjectMethodsDef(versDateTime);
     return methodDefs;
+  }
+  
+  public List search(Context context, String[] resultFields, 
+          String terms)
+          throws ServerException {
+    m_ipRestriction.enforce(context);
+    return m_manager.search(context, resultFields, terms);
+  }
+
+  public List search(Context context, String[] resultFields,
+          List conditions)
+          throws ServerException {
+    m_ipRestriction.enforce(context);
+    return m_manager.search(context, resultFields, conditions);
   }
 
   /**

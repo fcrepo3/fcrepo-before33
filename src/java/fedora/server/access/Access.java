@@ -1,6 +1,7 @@
 package fedora.server.access;
 
 import java.util.Calendar;
+import java.util.List;
 
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
@@ -102,4 +103,13 @@ public interface Access
    */
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
       Calendar asOfDateTime) throws ServerException;
+      
+  public List search(Context context, String[] resultFields, 
+          String terms)
+          throws ServerException;
+
+  public List search(Context context, String[] resultFields,
+          List conditions)
+          throws ServerException;
+          
 }
