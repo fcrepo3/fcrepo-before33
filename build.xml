@@ -41,7 +41,6 @@
 		<jar jarfile="dist/client/client/client.jar" basedir="temp/client" manifest="src/mfs/client.mfs"/>
 		<mkdir dir="dist/client/client/lib"/>
 		<copy file="lib/client/jhbasic.jar" todir="dist/client/client/lib"/>
-		<copy file="lib/client/rms.jar" todir="dist/client/client/lib"/>
 		<copy file="lib/client/gnu-getopt-1.0.9.jar" todir="dist/client/client/lib"/>
 		<copy file="lib/common/saxon6.5.jar" todir="dist/client/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/client/lib"/>
@@ -96,7 +95,7 @@
 		<mkdir dir="temp/client"/>
 	</target>
 	<target name="clientclasses" depends="clientprep,wsdl2java" description="Compile client java code into temp/client">
-		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/rms.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
 		<mkdir dir="temp/client/help"/>
@@ -502,6 +501,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.81  2003/02/26 11:42:38  cwilper
+  removed traces of rms.jar
+
   Revision 1.80  2003/02/25 20:49:51  payette
   added copy of new stylesheets to dist area
 
