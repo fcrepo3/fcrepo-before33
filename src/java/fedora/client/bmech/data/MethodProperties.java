@@ -16,6 +16,7 @@ public class MethodProperties
 
   // Data entered via MethodPropertiesDialog
   public MethodParm[] methodParms = new MethodParm[0];
+  public String[] returnMIMETypes = new String[0];
   public String[] dsBindingKeys = new String[0];
   public String protocolType = null;
   public String methodRelativeURL = null;
