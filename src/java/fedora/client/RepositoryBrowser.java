@@ -9,7 +9,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -48,6 +50,8 @@ public class RepositoryBrowser
         
     private Administrator m_mainFrame;
     private static FedoraAPIMServiceLocator m_locator=new FedoraAPIMServiceLocator();
+
+    private JPopupMenu m_singlePopup;
     
     public RepositoryBrowser(Administrator mainFrame) {
         super("Repository Browser",
@@ -56,6 +60,13 @@ public class RepositoryBrowser
               true, //maximizable
               true);//iconifiable
         m_mainFrame=mainFrame;
+        m_singlePopup=new JPopupMenu();
+        JMenuItem i1=new JMenuItem("View XML");
+        JMenuItem i2=new JMenuItem("Export");
+        JMenuItem i3=new JMenuItem("Purge");
+        m_singlePopup.add(i1);
+        m_singlePopup.add(i2);
+        m_singlePopup.add(i3);
        
         String[] columnNames = {"PID", 
                                 "Label",
@@ -113,6 +124,7 @@ public class RepositoryBrowser
                 public void mousePressed(MouseEvent e) {
                     if (SwingUtilities.isRightMouseButton(e) ) {
                         //do your stuff here...    
+                        m_singlePopup.show(e.getComponent(), e.getX(), e.getY());
                         System.out.println("Right click");
                     } else {
                         // not a right click
