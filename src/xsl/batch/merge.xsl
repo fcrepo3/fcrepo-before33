@@ -88,7 +88,7 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 	
 
 	<!-- target substitutions @CREATED in METS:file METS:behaviorSec -->
-	<xsl:template match="METS:file|METS:behaviorSec" xmlns:METS="http://www.loc.gov/METS/">
+	<xsl:template match="METS:file|/METS:mets/METS:behaviorSec/METS:serviceBinding" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
 			<xsl:if test="$date">
@@ -219,16 +219,16 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>	
 
-	<METS:dmdSec ID="DESC1.0" CREATED="2002-05-20T06:32:00" GROUPID="DESC1" STATUS="">
-		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
-			<METS:xmlData />
-		</METS:mdWrap>
-	</METS:dmdSec>		
 	 <!-- target substitution (per-object metadata) -->
-	<xsl:template match="/METS:mets/METS:dmdSec/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
+	 <!-- testing next line, changing for new schema -->
+	<!-- xsl:template match="/METS:mets/METS:dmdSec/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/" -->
+	<xsl:template match="/METS:mets/METS:dmdSecFedora/*/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
-			<xsl:variable name="metadataID" select="../../@ID" /><!-- e.g., DESC1.0, from dmdSec element -->
+			<!-- testing next line, changing for new schema -->
+			<!-- xsl:variable name="metadataID" select="../../@ID" / --><!-- e.g., DESC1.0, from dmdSec element -->
+			<xsl:variable name="metadataID" select="../../../@ID" /><!-- e.g., DESC1, from METS:dmdSecFedora element -->
+			
 			<xsl:if test="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" >
 				<xsl:attribute name="LABEL">
 					<xsl:value-of select="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" />

@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><!---************************************************************************--><!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS --><!---************************************************************************-->
-<METS:mets xmlns:METS="http://www.loc.gov/METS/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="test:3009" TYPE="FedoraObject" LABEL="AICT Image Collection - Mycenae" PROFILE="UVA_STD_IMAGE">
+<?xml version="1.0" encoding="utf-8"?><!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by Ross Wayland (University of Virginia) --><!---************************************************************************--><!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS --><!---************************************************************************-->
+<METS:mets xmlns:METS="http://www.loc.gov/METS/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="test:3009" TYPE="FedoraObject" LABEL="AICT Image Collection - Mycenae" PROFILE="UVA_STD_IMAGE">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
 	
-   <METS:metsHdr ID="H1" CREATEDATE="2002-12-20T11:30:07" LASTMODDATE="2002-12-20T11:30:07" RECORDSTATUS="A">
+   <METS:metsHdr ID="H1" CREATEDATE="2003-02-18T23:38:12" LASTMODDATE="2003-02-18T23:38:12" RECORDSTATUS="I">
 		
       <METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			
@@ -35,87 +35,91 @@
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	
-   <METS:dmdSec ID="DESC1.0" CREATED="2002-12-20T11:30:07" GROUPID="DESC1" STATUS="">
+   <METS:dmdSecFedora ID="DESC1" STATUS="A">
 		
-      <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
+      <METS:descMD ID="DESC1.0" CREATED="2002-05-20T06:32:00">
 			
-         <METS:xmlData>
-            <uvalibdesc:desc>
+         <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
 				
-               <uvalibdesc:time>
+            <METS:xmlData>
+               <uvalibdesc:desc>
+				
+                  <uvalibdesc:time>
 					
-                  <uvalibdesc:date type="created" certainty="ca." era="ce">16th century</uvalibdesc:date>
+                     <uvalibdesc:date type="created" certainty="ca." era="ce">16th century</uvalibdesc:date>
 				
-               </uvalibdesc:time>
+                  </uvalibdesc:time>
 				
-               <uvalibdesc:identifier scheme="URN">uva-lib:2</uvalibdesc:identifier>
+                  <uvalibdesc:identifier scheme="URN">uva-lib:2</uvalibdesc:identifier>
 				
-               <uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
+                  <uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
 				
-               <uvalibdesc:subject scheme="other" othertype="keyword">Renaissance</uvalibdesc:subject>
+                  <uvalibdesc:subject scheme="other" othertype="keyword">Renaissance</uvalibdesc:subject>
 				
-               <uvalibdesc:subject scheme="other" othertype="keyword">Italian</uvalibdesc:subject>
+                  <uvalibdesc:subject scheme="other" othertype="keyword">Italian</uvalibdesc:subject>
 				
-               <uvalibdesc:subject scheme="other" othertype="keyword">Rome</uvalibdesc:subject>
+                  <uvalibdesc:subject scheme="other" othertype="keyword">Rome</uvalibdesc:subject>
 				
-               <uvalibdesc:subject scheme="other" othertype="keyword">Italy, Vatican City</uvalibdesc:subject>
+                  <uvalibdesc:subject scheme="other" othertype="keyword">Italy, Vatican City</uvalibdesc:subject>
 				
-               <uvalibdesc:title type="main">Vatican Apostolic Library</uvalibdesc:title>
+                  <uvalibdesc:title type="main">Vatican Apostolic Library</uvalibdesc:title>
 				
-               <uvalibdesc:form>architecture</uvalibdesc:form>
+                  <uvalibdesc:form>architecture</uvalibdesc:form>
 				
-               <uvalibdesc:mediatype type="image">
+                  <uvalibdesc:mediatype type="image">
 					
-                  <uvalibdesc:form>digital</uvalibdesc:form>
+                     <uvalibdesc:form>digital</uvalibdesc:form>
 				
-               </uvalibdesc:mediatype>
+                  </uvalibdesc:mediatype>
 				
-               <uvalibdesc:agent role="publisher">Alderman Library</uvalibdesc:agent>
+                  <uvalibdesc:agent role="publisher">Alderman Library</uvalibdesc:agent>
 				
-               <uvalibdesc:covspace>
+                  <uvalibdesc:covspace>
 					
-                  <uvalibdesc:geometry>
+                     <uvalibdesc:geometry>
 						
-                     <uvalibdesc:point>
+                        <uvalibdesc:point>
 							
-                        <uvalibdesc:lat>41.54N</uvalibdesc:lat>
+                           <uvalibdesc:lat>41.54N</uvalibdesc:lat>
 							
-                        <uvalibdesc:long>12.27E</uvalibdesc:long>
+                           <uvalibdesc:long>12.27E</uvalibdesc:long>
 						
-                     </uvalibdesc:point>
+                        </uvalibdesc:point>
 					
-                  </uvalibdesc:geometry>
+                     </uvalibdesc:geometry>
 				
-               </uvalibdesc:covspace>
+                  </uvalibdesc:covspace>
 				
-               <uvalibdesc:covtime>
+                  <uvalibdesc:covtime>
 					
-                  <uvalibdesc:date era="ce">1587</uvalibdesc:date>
+                     <uvalibdesc:date era="ce">1587</uvalibdesc:date>
 					
-                  <uvalibdesc:date era="cd">1590</uvalibdesc:date>
+                     <uvalibdesc:date era="cd">1590</uvalibdesc:date>
 				
-               </uvalibdesc:covtime>
+                  </uvalibdesc:covtime>
 				
-               <uvalibdesc:culture>Italian</uvalibdesc:culture>
+                  <uvalibdesc:culture>Italian</uvalibdesc:culture>
 				
-               <uvalibdesc:place type="original">
+                  <uvalibdesc:place type="original">
 					
-                  <uvalibdesc:geogname>Italy, Vatican City</uvalibdesc:geogname>
+                     <uvalibdesc:geogname>Italy, Vatican City</uvalibdesc:geogname>
 				
-               </uvalibdesc:place>
+                  </uvalibdesc:place>
 				
-               <uvalibdesc:style>Renaissance Italian</uvalibdesc:style>
+                  <uvalibdesc:style>Renaissance Italian</uvalibdesc:style>
 			
-            </uvalibdesc:desc>
-         </METS:xmlData>
+               </uvalibdesc:desc>
+            </METS:xmlData>
+			
+         </METS:mdWrap>
 		
-      </METS:mdWrap>
+      </METS:descMD>
 	
-   </METS:dmdSec>
+   </METS:dmdSecFedora>
 	
    <METS:amdSec ID="TECH1">
 		
-      <METS:techMD ID="TECH1.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="TECH1.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for THUMBNAIL image">
 				
@@ -143,7 +147,7 @@
 	
    <METS:amdSec ID="TECH2">
 		
-      <METS:techMD ID="TECH2.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="TECH2.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for MED res image">
 				
@@ -171,7 +175,7 @@
 	
    <METS:amdSec ID="TECH3">
 		
-      <METS:techMD ID="TECH3.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="TECH3.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for HIGH res image">
 				
@@ -199,7 +203,7 @@
 	
    <METS:amdSec ID="TECH4">
 		
-      <METS:techMD ID="TECH4.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="TECH4.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for VERYHIGH res image">
 				
@@ -227,7 +231,7 @@
 	
    <METS:amdSec ID="SOURCE1">
 		
-      <METS:techMD ID="SOURCE1.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="SOURCE1.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for THUMBNAIL res image">
 				
@@ -257,7 +261,7 @@
 	
    <METS:amdSec ID="SOURCE2">
 		
-      <METS:techMD ID="SOURCE2.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="SOURCE2.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for MEDRES res image">
 				
@@ -287,7 +291,7 @@
 	
    <METS:amdSec ID="SOURCE3">
 		
-      <METS:techMD ID="SOURCE3.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="SOURCE3.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for HIGH res image">
 				
@@ -317,7 +321,7 @@
 	
    <METS:amdSec ID="SOURCE4">
 		
-      <METS:techMD ID="SOURCE4.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="SOURCE4.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for VERYHIGH res image">
 				
@@ -347,7 +351,7 @@
 	
    <METS:amdSec ID="DIGIPROV1">
 		
-      <METS:techMD ID="DIGIPROV1.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="DIGIPROV1.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for THUMBNAIL res image">
 				
@@ -375,7 +379,7 @@
 	
    <METS:amdSec ID="DIGIPROV2">
 		
-      <METS:techMD ID="DIGIPROV2.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="DIGIPROV2.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for MEDRES res image">
 				
@@ -403,7 +407,7 @@
 	
    <METS:amdSec ID="DIGIPROV3">
 		
-      <METS:techMD ID="DIGIPROV3.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="DIGIPROV3.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for HIGH res image">
 				
@@ -431,7 +435,7 @@
 	
    <METS:amdSec ID="DIGIPROV4">
 		
-      <METS:techMD ID="DIGIPROV4.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:techMD ID="DIGIPROV4.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for VERYHIGH res image">
 				
@@ -459,7 +463,7 @@
 	
    <METS:amdSec ID="RIGHTS1">
 		
-      <METS:rightsMD ID="RIGHTS1.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:rightsMD ID="RIGHTS1.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for THUMBNAIL res image">
 				
@@ -489,7 +493,7 @@
 	
    <METS:amdSec ID="RIGHTS2">
 		
-      <METS:rightsMD ID="RIGHTS2.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:rightsMD ID="RIGHTS2.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for MEDRES res image">
 				
@@ -519,7 +523,7 @@
 	
    <METS:amdSec ID="RIGHTS3">
 		
-      <METS:rightsMD ID="RIGHTS3.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:rightsMD ID="RIGHTS3.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for HIGHRES res image">
 				
@@ -549,7 +553,7 @@
 	
    <METS:amdSec ID="RIGHTS4">
 		
-      <METS:rightsMD ID="RIGHTS4.0" CREATED="2002-12-20T11:30:07" STATUS="">
+      <METS:rightsMD ID="RIGHTS4.0" CREATED="2003-02-18T23:38:12" STATUS="">
 			
          <METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for VERYHIGH res image">
 				
@@ -587,9 +591,9 @@
          <METS:fileGrp ID="DS1" STATUS="">
 				<!--This is the thumbnail sized image -->
 				
-            <METS:file ID="DS1.0" CREATED="2002-12-20T11:30:07" MIMETYPE="image/jpg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="">
+            <METS:file ID="DS1.0" CREATED="2003-02-18T23:38:12" MIMETYPE="image/jpeg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="M" STATUS="">
 					
-               <METS:FLocat LOCTYPE="URL" xlink:title="AICT thumbnail jpg image" xlink:href="http://localhost:8080/beta1-demo/thumb/vaticanlibrary.jpg"/>
+               <METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/beta1-demo/thumb/vaticanlibrary.jpg" xlink:title="AICT thumbnail jpg image"/>
 				
             </METS:file>
 			
@@ -598,9 +602,9 @@
          <METS:fileGrp ID="DS2" STATUS="">
 				<!-- This is the medium sized image -->
 				
-            <METS:file ID="DS2.0" CREATED="2002-12-20T11:30:07" MIMETYPE="image/jpg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
+            <METS:file ID="DS2.0" CREATED="2003-02-18T23:38:12" MIMETYPE="image/jpeg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
 					
-               <METS:FLocat LOCTYPE="URL" xlink:title="AICT medium jpg image" xlink:href="http://localhost:8080/beta1-demo/medium/vaticanlibrary.jpg"/>
+               <METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/beta1-demo/medium/vaticanlibrary.jpg" xlink:title="AICT medium jpg image"/>
 				
             </METS:file>
 			
@@ -609,9 +613,9 @@
          <METS:fileGrp ID="DS3">
 				<!--This is the high resolution image -->
 				
-            <METS:file ID="DS3.0" CREATED="2002-12-20T11:30:07" MIMETYPE="image/jpg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
+            <METS:file ID="DS3.0" CREATED="2003-02-18T23:38:12" MIMETYPE="image/jpeg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
 					
-               <METS:FLocat LOCTYPE="URL" xlink:title="AICT high jpg image" xlink:href="http://localhost:8080/beta1-demo/high/vaticanlibrary.jpg"/>
+               <METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/beta1-demo/high/vaticanlibrary.jpg" xlink:title="AICT high jpg image"/>
 				
             </METS:file>
 			
@@ -620,9 +624,9 @@
          <METS:fileGrp ID="DS4">
 				<!--This is the very high resolution image -->
 				
-            <METS:file ID="DS4.0" CREATED="2002-12-20T11:30:07" MIMETYPE="image/jpg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
+            <METS:file ID="DS4.0" CREATED="2003-02-18T23:38:12" MIMETYPE="image/jpeg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
 					
-               <METS:FLocat LOCTYPE="URL" xlink:title="AICT veryhigh jpg image" xlink:href="http://localhost:8080/beta1-demo/very-high/vaticanlibrary.jpg"/>
+               <METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/beta1-demo/very-high/vaticanlibrary.jpg" xlink:title="AICT veryhigh jpg image"/>
 				
             </METS:file>
 			
@@ -677,16 +681,20 @@
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
 	
-   <METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-12-20T11:30:07" LABEL="UVA Std Image Behaviors" GROUPID="DISS1" STATUS="">
-		<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
-		<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
-		<!-- the disseminator subscribes -->
+   <METS:behaviorSec ID="DISS1" STATUS="A">
 		
-      <METS:interfaceDef LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
-		<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
-		<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+      <METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2003-02-18T23:38:12" LABEL="UVA Std Image Behaviors">
+			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
+			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
+			<!-- the disseminator subscribes -->
+			
+         <METS:interfaceMD LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
+			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
+			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+			
+         <METS:serviceBindMD LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
 		
-      <METS:mechanism LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
+      </METS:serviceBinding>
 	
    </METS:behaviorSec>
 

@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
+<!-- edited with XML Spy v4.3 U (http://www.xmlspy.com) by Ross Wayland (University of Virginia) -->
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="test:3" TYPE="FedoraObject" LABEL="AICT Image Collection - Mycenae" PROFILE="UVA_STD_IMAGE">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="test:4444" TYPE="FedoraObject" LABEL="AICT Image Collection - Mycenae" PROFILE="UVA_STD_IMAGE">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-20T06:32:00" RECORDSTATUS="A">
+	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-20T06:32:00" RECORDSTATUS="I">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name> Ross Wayland </METS:name>
 			<METS:note> Digital Object based on AICT image and created as the official Fedora sample object </METS:note>
@@ -23,11 +24,13 @@
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
-	<METS:dmdSec ID="DESC1.0" CREATED="2002-05-20T06:32:00" GROUPID="DESC1" STATUS="">
-		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
-			<METS:xmlData />
-		</METS:mdWrap>
-	</METS:dmdSec>
+	<METS:dmdSecFedora ID="DESC1" STATUS="A">
+		<METS:descMD ID="DESC1.0" CREATED="2002-05-20T06:32:00">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
+				<METS:xmlData />
+			</METS:mdWrap>
+		</METS:descMD>
+	</METS:dmdSecFedora>
 	<METS:amdSec ID="TECH1">
 		<METS:techMD ID="TECH1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for THUMBNAIL image">
@@ -147,26 +150,26 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="">
 				<!--This is the thumbnail sized image -->
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:title="AICT thumbnail jpg image"/>
+				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="M" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/thumbs/aict/006-007.jpg" xlink:title="AICT thumbnail jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS2" STATUS="">
 				<!-- This is the medium sized image -->
-				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:title="AICT medium jpg image"/>
+				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="AICT medium jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS3">
 				<!--This is the high resolution image -->
-				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:title="AICT high jpg image"/>
+				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/high/006-007.jpg" xlink:title="AICT high jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS4">
 				<!--This is the very high resolution image -->
-				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:title="AICT veryhigh jpg image"/>
+				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/vhigh/006-007.jpg" xlink:title="AICT veryhigh jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>
@@ -200,13 +203,15 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors" GROUPID="DISS1" STATUS="">
-		<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
-		<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
-		<!-- the disseminator subscribes -->
-		<METS:interfaceDef LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
-		<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
-		<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
-		<METS:mechanism LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors">
+			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
+			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
+			<!-- the disseminator subscribes -->
+			<METS:interfaceMD LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
+			<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
+			<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
+			<METS:serviceBindMD LABEL="UVA Std Image Behavior Mechanism" LOCTYPE="URN" xlink:href="test:2"/>
+		</METS:serviceBinding>
 	</METS:behaviorSec>
 </METS:mets>
