@@ -1192,9 +1192,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 
     private void queueImplements(List queue, String bMechURI, String bDefURI) throws ResourceIndexException {
         try {
-            queue.add(TripleMaker.createPlain(bMechURI, 
-                                              MODEL.IMPLEMENTS_BDEF.uri, 
-                                              bDefURI));
+            queue.add(TripleMaker.create(bMechURI, 
+                                         MODEL.IMPLEMENTS_BDEF.uri, 
+                                         bDefURI));
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
