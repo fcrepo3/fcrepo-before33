@@ -54,8 +54,10 @@ public interface ResourceIndex extends TriplestoreReader {
     public static final String NS_FEDORA_MODEL  = NS_FEDORA + "fedora-system:def/model#";
     public static final String NS_FEDORA_REP    = NS_FEDORA + "fedora-system:def/service#";
     public static final String NS_RDF           = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    public static final String NS_XML_SCHEMA    = "http://www.w3.org/2001/XMLSchema#";
     
 	public static final String RDF_TYPE                = NS_RDF + "type";
+    public static final String XML_DATE                = NS_XML_SCHEMA + "date";
 	
     public static final String MODEL_ALT_ID            = NS_FEDORA_MODEL + "alternateIdentifier";
 	public static final String MODEL_BDEF              = NS_FEDORA_MODEL + "bdef";
@@ -75,14 +77,12 @@ public interface ResourceIndex extends TriplestoreReader {
     public static final String MODEL_ACTIVE            = NS_FEDORA_MODEL + "Active";
     public static final String MODEL_INACTIVE          = NS_FEDORA_MODEL + "Inactive";
     
-    public static final String REP_DATE_MODIFIED       = NS_FEDORA_REP + "dateModified";
+    public static final String REP_DATE_MODIFIED       = NS_FEDORA_REP + "lastModified";
     public static final String REP_DEPENDS             = NS_FEDORA_REP + "dependsOn";
     public static final String REP_DIRECT              = NS_FEDORA_REP + "direct";
     public static final String REP_MEDIATYPE           = NS_FEDORA_REP + "media-type";
     public static final String REP_REPRESENTATION      = NS_FEDORA_REP + "hasRepresentation";
     public static final String REP_VOLATILE            = NS_FEDORA_REP + "volatile";
-    
-    
 	
     /**
      * Returns the index level of the ResourceIndex.

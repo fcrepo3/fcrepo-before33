@@ -98,6 +98,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         namespaces.put("fedora", NS_FEDORA);
         namespaces.put("fedora-ont", NS_FEDORA_MODEL);
         namespaces.put("rdf", NS_RDF);
+        namespaces.put("xml-schema", NS_XML_SCHEMA);
         m_connector = connector;
         m_reader = m_connector.getReader();
         m_writer = m_connector.getWriter();
@@ -141,7 +142,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		// Insert basic system metadata
         queuePlainLiteralTriple(doIdentifier, MODEL_LABEL, digitalObject.getLabel());
         queuePlainLiteralTriple(doIdentifier, MODEL_DATE_CREATED, getDate(digitalObject.getCreateDate()));
-        queueTypedLiteralTriple(doIdentifier, MODEL_DATE_MODIFIED, getDate(digitalObject.getLastModDate()), "http://www.w3.org/2001/XMLSchema#date");
+        queueTypedLiteralTriple(doIdentifier, MODEL_DATE_MODIFIED, getDate(digitalObject.getLastModDate()), XML_DATE);
 		
 		if (digitalObject.getOwnerId() != null) {
 		    queuePlainLiteralTriple(doIdentifier, MODEL_OWNER, digitalObject.getOwnerId());
@@ -210,14 +211,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             queuePlainLiteralTriple(datastreamURI, MODEL_ALT_ID, altIDs[i]);
         }
         
+        // TODO not needed till we do dependency analysis
         // Volatile Datastreams: False for datastreams that are locally managed 
         // (have a control group "M" or "I").
         //String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
-
-        queueTriple(doURI, REP_REPRESENTATION, datastreamURI);
-        queueTypedLiteralTriple(datastreamURI, MODEL_DATE_MODIFIED, getDate(ds.DSCreateDT), "http://www.w3.org/2001/XMLSchema#date");
         //queuePlainLiteralTriple(datastreamURI, REP_DIRECT, "true");
         //queuePlainLiteralTriple(datastreamURI, REP_VOLATILE, isVolatile);
+
+        queueTriple(doURI, REP_REPRESENTATION, datastreamURI);
+        queueTypedLiteralTriple(datastreamURI, MODEL_DATE_MODIFIED, getDate(ds.DSCreateDT), XML_DATE);
         addQueue(false);
         
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
@@ -278,7 +280,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                      queueTypedLiteralTriple(rep, 
                                              MODEL_DATE_MODIFIED, 
                                              dissCreateDT,
-                                             "http://www.w3.org/2001/XMLSchema#date"); 
+                                             XML_DATE); 
                  }
             } catch (SQLException e) {
                 try {
