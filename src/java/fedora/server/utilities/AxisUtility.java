@@ -107,7 +107,7 @@ public abstract class AxisUtility {
 
     public static void showDeployUsage() {
         System.out.println("Usage:");
-        System.out.println("    AxisUtility deploy wsdd_file timeout_seconds [finished_url]");
+        System.out.println("    AxisUtility deploy wsdd_file timeout_seconds [finished_url] [username] [passwd]");
     }
 
     public static boolean serverActive(URL url, int timeoutSeconds) {
@@ -140,7 +140,7 @@ public abstract class AxisUtility {
     public static void main(String args[]) {
         if (args.length>0) {
            if (args[0].equals("deploy")) {
-               if ((args.length!=3) && (args.length!=4)) {
+               if ((args.length < 3) || (args.length == 5)) {
                    showDeployUsage();
                } else {
                    File wsddFile=new File(args[1]);
@@ -173,13 +173,22 @@ public abstract class AxisUtility {
                            StringBuffer url=new StringBuffer("http://localhost:" + port + "/fedora/AdminService");
                            URL adminUrl=new URL(url.toString());
                            URL mainUrl=new URL("http://localhost:" + port + "/");
-                           String[] parms=new String[] {"-l" + adminUrl, wsddFile.toString(), 
-                           		"-ufedoraAdmin", "-wfedoraAdmin"}; //2005-03-30 wdn5e added to un-40x POST/fedora/AdminService 
+                           String[] parms = null;
+                           if (args.length < 5) {
+                           		parms=new String[] {"-l" + adminUrl, wsddFile.toString()};
+                           } else { // != 5 from conditional above
+                           		parms=new String[] {"-l" + adminUrl, wsddFile.toString(), 
+                               		"-u" + args[4], "-w" + args[5]}; 
+                           	
+                           }
                            //http://ws.apache.org/axis/java/install.html#RunTheAdminClient
                            int timeoutSeconds=Integer.parseInt(args[2]);
                            if (serverActive(mainUrl, timeoutSeconds)) {
                                AdminClient.main(parms);
-                               if (args.length==4) {
+                               for (int i=0; i<args.length; i++) {
+                               	System.err.println("audit parms " + args[i]);
+                               }
+                               if ((args.length > 3) && (args[3] != null) && ! "".equals(args[3])) {
                                    try {
                                        serverActive(new URL(args[3]), 2);
                                    } catch (MalformedURLException murle) {
