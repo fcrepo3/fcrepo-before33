@@ -2,6 +2,7 @@ package fedora.client.bmech.data;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Vector;
 
 public class BMechTemplate {
 
@@ -13,7 +14,9 @@ public class BMechTemplate {
     private String serviceBaseURL;
     private Method[] methods;
     private HashMap bMechMethods = new HashMap();
+    private Vector dsBindingKeys = new Vector();
     private DSInputRule[] dsInputSpec;
+    private Datastream[] docDatastreams = new Datastream[0];
 
 
     public BMechTemplate()
@@ -58,6 +61,26 @@ public class BMechTemplate {
     public void setDCRecord(DCElement[] dcRecord)
     {
         this.dcRecord = dcRecord;
+    }
+
+    public Vector getDSBindingKeys()
+    {
+        return dsBindingKeys;
+    }
+
+    public void setDSBindingKeys(Vector dsBindingKesy)
+    {
+        this.dsBindingKeys = dsBindingKeys;
+    }
+
+    public Datastream[] getDocDatastreams()
+    {
+        return docDatastreams;
+    }
+
+    public void setDocDatastreams(Datastream[] docDatastreams)
+    {
+        this.docDatastreams = docDatastreams;
     }
 
     public HashMap getBMechMethodMap()
