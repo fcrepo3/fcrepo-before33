@@ -16,7 +16,7 @@ import java.util.Date;
 
 public interface BDefReader extends DOReader
 {
-  public MethodDef[] GetBehaviorMethods(Date versDateTime) throws ServerException;
+  public MethodDef[] getAbstractMethods(Date versDateTime) throws ServerException;
 
-  public InputStream GetBehaviorMethodsWSDL(Date versDateTime) throws ServerException;
+  public InputStream getAbstractMethodsXML(Date versDateTime) throws ServerException;
 }
