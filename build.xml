@@ -466,6 +466,7 @@
 	</target>
 	<target name="userdocs" depends="prep" description="Assemble user documentation into dist/userdocs">
 		<mkdir dir="${dist.dir}/userdocs"/>
+<!--  Temporarily turned off pending userdoc changes		
 		<echo message="Translating docs..."/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -716,6 +717,7 @@
 		<copy todir="${tomcat.deploy.dir}/userdocs">
 			<fileset dir="dist/userdocs"/>
 		</copy>
+		-->
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, API-M, and API-M-LITE wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
