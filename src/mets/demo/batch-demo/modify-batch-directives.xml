@@ -87,16 +87,28 @@
 	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" formatURI="http://www.fedora.info" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="R" dsState="A" harvestable="false"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Modify datastream DS1 of demo:5 object by changing its label.                                                       -->
+	<!--                                                                                                                                                                   -->
+	<!-- NOTE: Optional attributes that are omitted or set to "" imply that the original values are to           -->
+	<!-- remain unchanged so in this example the datastream location, state, and isHarvestable             -->
+	<!-- attributes are not modified.                                                                                                                    -->	
 	<!-- ************************************************************************************************************ -->
 	<fbm:modifyDatastream pid="demo:32" dsID="DS1" dsControlGroupType="E" dsLabel="New label for datastream DS1"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Modify datastream DS5 of demo:32 object by changing its label and datastream location so     -->
 	<!-- that it points to the same content as that of datastream DS3 which is a high-res image.               -->
+	<!--                                                                                                                                                                   -->
+	<!-- NOTE: Optional attributes that are omitted or set to "" imply that the original values are to           -->
+	<!-- remain unchanged so in this example the datastream state and isHarvestable                              -->
+	<!-- attributes are not modified.                                                                                                                    -->	
 	<!-- ************************************************************************************************************ -->
 	<fbm:modifyDatastream pid="demo:32" dsID="DS5" dsControlGroupType="E" dsLabel="Changed label for datastream DS5" dsLocation="http://localhost:8080/fedora/get/demo:5/fedora-system:3/getItem?itemID=DS4"/>
 	<!-- ************************************************************************************************************ -->
 	<!-- Modify datastream DC of demo:32 object by changing its label and its xml content so that.         -->
 	<!-- its content is replaced byt he block of xml below.                                                                                -->
+	<!--                                                                                                                                                                   -->
+	<!-- NOTE: Optional attributes that are omitted or set to "" imply that the original values are to           -->
+	<!-- remain unchanged so in this example the datastream state, and isHarvestable                             -->
+	<!-- attributes are not modified.                                                                                                                    -->	
 	<!-- ************************************************************************************************************ -->
 	<fbm:modifyDatastream pid="demo:32" dsID="DC" dsControlGroupType="X" dsLabel="New label for DC datastream">
 		<fbm:xmlData>
@@ -140,45 +152,43 @@
 	<!-- mechanism include: THUMBRES_IMAG, MEDRES_IMG, HIGHRES_IMG, and                           -->
 	<!-- VERYHIGHRES_IMG.                                                                                                                           -->
 	<!-- ************************************************************************************************************ -->
-	<!--
 	<fbm:addDisseminator pid="demo:32" bDefPid="demo:1" bMechPid="demo:2" bDefLabel="" bMechLabel="" dissLabel="HTTP Getter Image Disseminator" dissState="A">
 		<fbm:addDatastreamBinding dsBindKeyName="THUMBRES_IMG" dsID="DS1" dsBindLabel=""/>
 		<fbm:addDatastreamBinding dsBindKeyName="MEDRES_IMG" dsID="DS2" dsBindLabel=""/>
 		<fbm:addDatastreamBinding dsBindKeyName="HIGHRES_IMG" dsID="DS3" dsBindLabel=""/>
 		<fbm:addDatastreamBinding dsBindKeyName="VERYHIGHRES_IMG" dsID="DS4" dsBindLabel=""/>
 	</fbm:addDisseminator>
-	-->
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a second disseminator to the object demo:32 using the Image Manipulation Behavior         -->
 	<!-- Definition (demo:27) and the Image Manipulation service (demo:28). The mechanism                -->
 	<!-- specifies a sinlge Binding Key name of url.                                                                                         -->
 	<!-- ************************************************************************************************************ -->
-	<!--
 	<fbm:addDisseminator pid="demo:32" bDefPid="demo:27" bMechPid="demo:28" bDefLabel="" bMechLabel="" dissLabel="Image Manipulation Disseminator" dissState="A">
 		<fbm:addDatastreamBinding dsBindKeyName="url" dsID="DS5" dsBindLabel=""/>
 	</fbm:addDisseminator>
-	-->
 	<!-- ************************************************************************************************************ -->
 	<!-- Modify the first disseminator by changing its label and also the label for its associated behavior -->
 	<!-- definition label.  Also remove the datastream binding for DS3 and replace it with a new binding -->
 	<!-- that maps to DS5 for the high resolution image.                                                                                  -->
+	<!--                                                                                                                                                                    -->
+	<!-- NOTE: Optional attributes that are omitted or set to "" imply that the original values are to            -->
+	<!-- remain unchanged so in this example the disseminator bMech label is not modified.                    -->	
 	<!-- ************************************************************************************************************ -->
-	<!--
 	<fbm:modifyDisseminator pid="demo:32" dissID="DISS1" bMechPid="demo:2" dissLabel="changed DISS label" bDefLabel="new label for dDef" bMechLabel="" dissState="A">
 		<fbm:removeDatastreamBinding dsID="DS3"/>
 		<fbm:addDatastreamBinding dsBindKeyName="HIGHRES_IMG" dsID="DS5" dsBindLabel="Label for New Binding"/>
 	</fbm:modifyDisseminator>
-	-->
 	<!-- ************************************************************************************************************ -->
 	<!-- Modify the second disseminator by changing the label of its associated behavior mechanism.  -->
 	<!-- Also remove the datastream binding for DS5. Note that since no new binding was added to     -->
 	<!-- replace the one deleted, disseminations will now fail for the second disseminator since no        -->
 	<!-- datastreams are bound to the disseminator any longer. This can be remedied by adding back -->
 	<!-- the necessary binding using the batch modify utility or using the admin GUI client.                        -->
+	<!--                                                                                                                                                                  -->
+	<!-- NOTE: Optional attributes that are omitted or set to "" imply that the original values are to          -->
+	<!-- remain unchanged so in this example the disseminator label and bDef label are not modified.  -->                                                                                                                                      
 	<!-- ************************************************************************************************************ -->
-	<!--
-	<fbm:modifyDisseminator pid="demo:32" dissID="DISS2" bMechPid="demo:28" dissLabel="" bDefLabel="" bMechLabel="new label for bmech" dissState="A">
+	<fbm:modifyDisseminator pid="demo:32" dissID="DISS2" bMechPid="demo:28" bMechLabel="new label for bmech" bDefLabel="" dissState="A">
 		<fbm:removeDatastreamBinding dsID="DS5"/>
 	</fbm:modifyDisseminator>
-	-->
 </fbm:batchModify>
