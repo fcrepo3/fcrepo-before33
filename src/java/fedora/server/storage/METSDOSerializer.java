@@ -35,16 +35,17 @@ public class METSDOSerializer
     public void serialize(DigitalObject obj, OutputStream out) 
             throws ObjectIntegrityException, StreamIOException, 
             StreamWriteException {
-        StringBuffer buf=new StringBuffer();
-        buf.append("<?xml version=\"1.0\" ");
-        buf.append("encoding=\"");
-        buf.append(m_characterEncoding);
-        buf.append("\" ?>\n");
-        buf.append("<mets xmlns=\"http://www.loc.gov/METS/\"\n");
-        buf.append("      OBJID=\"" + obj.getPid() + "\"\n");
-        buf.append("      LABEL=\"" + obj.getLabel() + "\">\n");
-        buf.append("</mets>");
         try {
+            StringBuffer buf=new StringBuffer();
+            buf.append("<?xml version=\"1.0\" ");
+            buf.append("encoding=\"");
+            buf.append(m_characterEncoding);
+            buf.append("\" ?>\n");
+            buf.append("<mets xmlns=\"http://www.loc.gov/METS/\"\n");
+            buf.append("      OBJID=\"" + obj.getPid() + "\"\n");
+            buf.append("      LABEL=\"" + obj.getLabel() + "\">\n");
+            buf.append("</mets>");
+
             out.write(buf.toString().getBytes(m_characterEncoding));
             out.flush();
         } catch (IOException ioe) {
