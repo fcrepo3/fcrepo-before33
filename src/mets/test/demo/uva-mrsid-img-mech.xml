@@ -192,7 +192,7 @@
 									<http:urlReplacement/>
 								</wsdl:input>
 								<wsdl:output>
-									<mime:content type="application/java"/>
+									<mime:content type="text/html"/>
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getVeryHigh">
@@ -201,7 +201,7 @@
 									<http:urlReplacement/>
 								</wsdl:input>
 								<wsdl:output>
-									<mime:content type="application/java"/>
+									<mime:content type="text/html"/>
 								</wsdl:output>
 							</wsdl:operation>
 						</wsdl:binding>
