@@ -13,8 +13,25 @@
 			<wsdldoc:type name="wsdl:tDefinitions" url="http://www.w3.org/TR/2001/NOTE-wsdl-20010315#_document-s"/>
 			<wsdldoc:type name="fedora-types:MIMETypedStream" url="http://www.fedora.info/definitions/1/0/types/#MIMETypedStream"/>
 			<wsdldoc:type name="fedora-types:FieldSearchResult" url="http://www.fedora.info/definitions/1/0/types/#FieldSearchResult"/>
+			<wsdldoc:type name="fedora-types:RepositoryInfo" url="http://www.fedora.info/definitions/1/0/types/#RepositoryInfo"/>
 		</documentation>
 	</types>
+	<message name="describeRepositoryRequest">
+		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
+		<part name="ENCODE_XML" type="xsd:string">
+			<documentation>a string value of "yes" or "no" indicating that the repository info should be XML encoded. 
+				Fedora will assume a default of "no" if the ENCODE_XML part is not specified.
+			</documentation>
+		</part>
+	</message>
+	<message name="describeRepositoryResponse">
+		<part name="response" type="fedora-types:MIMETypedStream">
+			<documentation> The repository info response contains key metadata about the Fedora
+				repository server including repository name, version, baseURL, PID namespace, and
+				sample request URLs.  The repository info will be returned as either XML or HTML.
+			</documentation>
+		</part>
+	</message>
 	<message name="getObjectProfileRequest">
 		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
 		<part name="PID" type="xsd:string">
@@ -36,7 +53,7 @@
 		<part name="response" type="fedora-types:MIMETypedStream">
 			<documentation> The object profile response contains key metadata about the object
 				and URLs for the object's Dissemination Index and Item Index.  The object
-				profile will be returns as either XML or HTML.
+				profile will be returned as either XML or HTML.
 			</documentation>
 		</part>
 	</message>
@@ -95,82 +112,82 @@
                 provide at once.  If this is unspecified, the server will default
                 to a small value.</documentation>
 		</part>
-       <part name="xml" type="xsd:string">
-           <documentation>whether to return the result as an xml document.  If this is
+		<part name="xml" type="xsd:string">
+			<documentation>whether to return the result as an xml document.  If this is
            given as true, the result will be in xml.  Otherwise, the result will be
            provided in a simple html document.</documentation>
-       </part>
+		</part>
 		<part name="pid" type="xsd:string">
-            <documentation>if true, the pids of matching objects will be included in the response.</documentation>
+			<documentation>if true, the pids of matching objects will be included in the response.</documentation>
 		</part>
 		<part name="label" type="xsd:string">
-            <documentation>if true, the labels of matching objects will be included in the response.</documentation>
+			<documentation>if true, the labels of matching objects will be included in the response.</documentation>
 		</part>
 		<part name="fType" type="xsd:string">
-            <documentation>if true, the fedora object types of matching objects will be included in the response.</documentation>
+			<documentation>if true, the fedora object types of matching objects will be included in the response.</documentation>
 		</part>
 		<part name="cModel" type="xsd:string">
-            <documentation>if true, the content models of matching objects will be included in the response.</documentation>
+			<documentation>if true, the content models of matching objects will be included in the response.</documentation>
 		</part>
 		<part name="state" type="xsd:string">
-            <documentation>if true, the states of matching objects will be included in the response.</documentation>
+			<documentation>if true, the states of matching objects will be included in the response.</documentation>
 		</part>
 		<part name="locker" type="xsd:string">
-            <documentation>if true, the userids of locking users of objects will be included in the response.</documentation>
+			<documentation>if true, the userids of locking users of objects will be included in the response.</documentation>
 		</part>
 		<part name="cDate" type="xsd:string">
-            <documentation>if true, the create date of objects will be included in the response.</documentation>
+			<documentation>if true, the create date of objects will be included in the response.</documentation>
 		</part>
 		<part name="mDate" type="xsd:string">
-            <documentation>if true, the modified date of objects will be included in the response.</documentation>
+			<documentation>if true, the modified date of objects will be included in the response.</documentation>
 		</part>
 		<part name="dcmDate" type="xsd:string">
-            <documentation>if true, the modified date of the dublin core record for the objects will be included in the response.</documentation>
+			<documentation>if true, the modified date of the dublin core record for the objects will be included in the response.</documentation>
 		</part>
 		<part name="title" type="xsd:string">
-            <documentation>if true, the dc:titles of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:titles of the objects will be included in the response.</documentation>
 		</part>
 		<part name="creator" type="xsd:string">
-            <documentation>if true, the dc:creators of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:creators of the objects will be included in the response.</documentation>
 		</part>
 		<part name="subject" type="xsd:string">
-            <documentation>if true, the dc:subjects of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:subjects of the objects will be included in the response.</documentation>
 		</part>
 		<part name="description" type="xsd:string">
-            <documentation>if true, the dc:descriptions of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:descriptions of the objects will be included in the response.</documentation>
 		</part>
 		<part name="publisher" type="xsd:string">
-            <documentation>if true, the dc:publishers of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:publishers of the objects will be included in the response.</documentation>
 		</part>
 		<part name="contributor" type="xsd:string">
-            <documentation>if true, the dc:contributors of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:contributors of the objects will be included in the response.</documentation>
 		</part>
 		<part name="date" type="xsd:string">
-            <documentation>if true, the dc:dates of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:dates of the objects will be included in the response.</documentation>
 		</part>
 		<part name="type" type="xsd:string">
-            <documentation>if true, the dc:types of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:types of the objects will be included in the response.</documentation>
 		</part>
 		<part name="format" type="xsd:string">
-            <documentation>if true, the dc:formats of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:formats of the objects will be included in the response.</documentation>
 		</part>
 		<part name="identifier" type="xsd:string">
-            <documentation>if true, the dc:identifiers of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:identifiers of the objects will be included in the response.</documentation>
 		</part>
 		<part name="source" type="xsd:string">
-            <documentation>if true, the dc:sources of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:sources of the objects will be included in the response.</documentation>
 		</part>
 		<part name="language" type="xsd:string">
-            <documentation>if true, the dc:languages of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:languages of the objects will be included in the response.</documentation>
 		</part>
 		<part name="relation" type="xsd:string">
-            <documentation>if true, the dc:relations of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:relations of the objects will be included in the response.</documentation>
 		</part>
 		<part name="coverage" type="xsd:string">
-            <documentation>if true, the dc:coverages of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:coverages of the objects will be included in the response.</documentation>
 		</part>
 		<part name="rights" type="xsd:string">
-            <documentation>if true, the dc:rights of the objects will be included in the response.</documentation>
+			<documentation>if true, the dc:rights of the objects will be included in the response.</documentation>
 		</part>
 	</message>
 	<message name="findObjectsResponse">
@@ -184,12 +201,12 @@
 			<documentation>the token of the session in which the next few
                 results can be found.</documentation>
 		</part>
-       <part name="xml" type="xsd:string">
-           <documentation>whether to return the result as an xml document.  If this is
+		<part name="xml" type="xsd:string">
+			<documentation>whether to return the result as an xml document.  If this is
            given as true, the result will be in xml.  Otherwise, the result will be
            provided in a simple html document.</documentation>
-       </part>
-    </message>
+		</part>
+	</message>
 	<portType name="Fedora-API-A-LITE">
 		<documentation>  This is a simple URI-oriented service definition for the Access service 
 			of a Fedora repository.  It is intended to support a REST-like style of access to the 
@@ -202,6 +219,24 @@
 			request is either HTML or XML, whichever the client requested.  The result of the search methods
            is also either HTML or XML.  When URL syntax is shown below, green indicates required parts and red indicates optional parts.
 		</documentation>
+		<operation name="describeRepository">
+			<documentation>
+				<p>Gets key metadata elements about the Fedora repository
+				server including repository name, version, baseURL, PID namespace,
+				and sample request URLs.  The repository info can be returned as XML data 
+				or as an HTML presentation.</p>
+				<p>URL Syntax:</p>
+				<p>
+					<b>http://<font color="#22cc22">host:port</font>/fedora/describe?{<font color="#22cc22">xml=ENCODE_XML</font>}</b>
+				</p>
+				<p> A complete example URL conforming to this syntax is:</p>
+				<p>
+					<i>http://localhost:8080/fedora/describe?xml=yes</i>
+				</p>
+			</documentation>
+			<input message="fedora-api:describeRepositoryRequest"/>
+			<output message="fedora-api:describeRepositoryResponse"/>
+		</operation>
 		<operation name="getObjectProfile">
 			<documentation> Gets a profile of the digital object, which contains
 				key metadata elements about the object, and URLs for the object's
@@ -226,35 +261,41 @@
 		</operation>
 		<operation name="findObjects">
 			<documentation>
-           <p>Gets the requested ObjectFields on all objects in the 
+				<p>Gets the requested ObjectFields on all objects in the 
             repository matching the given criteria.  This is like a SQL query on a table that
             indexes all objects in the repository with key fields, including unqualified dublin core
             metadata.</p>
-           <p>URL Syntax:</p>
-           <p><b>http://<font color="#22cc22">host:port</font>/fedora/search?{<font color="#22cc22">terms=TERMS</font>|<font color="#22cc22">query=QUERY</font>}<font color="#cc2222">&amp;maxResults=MAXRESULTS<br />
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;xml=true&amp;pid=true&amp;label=true&amp;fType=true&amp;cModel=true&amp;state=true&amp;locker=true<br />
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;cDate=true&amp;mDate=true&amp;dcmDate=true&amp;bDef=true&amp;bMech=true&amp;title=true<br />
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;creator=true&amp;subject=true&amp;description=true&amp;publisher=true&amp;contributor=true<br />
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;date=true&amp;type=true&amp;format=true&amp;identifier=true&amp;source=true&amp;language=true<br />
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;relation=true&amp;coverage=true&amp;rights=true</font></b>
-           </p>
-<p> A couple complete example URLs conforming to this syntax, are:</p>
-<p><i>http://localhost:8080/fedora/search?terms=fedora&amp;pid=true</i></p>
-<dir>
+				<p>URL Syntax:</p>
+				<p>
+					<b>http://<font color="#22cc22">host:port</font>/fedora/search?{<font color="#22cc22">terms=TERMS</font>|<font color="#22cc22">query=QUERY</font>}<font color="#cc2222">&amp;maxResults=MAXRESULTS<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;xml=true&amp;pid=true&amp;label=true&amp;fType=true&amp;cModel=true&amp;state=true&amp;locker=true<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;cDate=true&amp;mDate=true&amp;dcmDate=true&amp;bDef=true&amp;bMech=true&amp;title=true<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;creator=true&amp;subject=true&amp;description=true&amp;publisher=true&amp;contributor=true<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;date=true&amp;type=true&amp;format=true&amp;identifier=true&amp;source=true&amp;language=true<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;relation=true&amp;coverage=true&amp;rights=true</font>
+					</b>
+				</p>
+				<p> A couple complete example URLs conforming to this syntax, are:</p>
+				<p>
+					<i>http://localhost:8080/fedora/search?terms=fedora&amp;pid=true</i>
+				</p>
+				<dir>
 This example requests that the server provide the pids of objects where any of the indexed fields contain the word fedora.
 Since maxResults and xml aren't specified, the maxResults the server uses will be a small number, and the result will
 be provided in html.
 </dir>
-<p><i>http://localhost:8080/fedora/search?query=pid~*1&amp;maxResults=50&amp;xml=true&amp;pid=true&amp;creator=true</i></p>
-<dir>
+				<p>
+					<i>http://localhost:8080/fedora/search?query=pid~*1&amp;maxResults=50&amp;xml=true&amp;pid=true&amp;creator=true</i>
+				</p>
+				<dir>
 This example requests that the server provide the pids and dc:creators of objects where the pid ends with the number 1.
 It asks for up to 50 results at a time from the server, and requests that the result is provided in xml.
 </dir>
-	           <p>At least one of the object fields should be specified as true.  Object fields are the optional fields
+				<p>At least one of the object fields should be specified as true.  Object fields are the optional fields
             beginning with <b>pid</b>, above.  The result of the search will be a simple HTML document if
             the xml parameter is not specified.  If it is, the result will look like:
 </p>
-<pre>
+				<pre>
 &lt;result&gt;
   &lt;listSession&gt;
     &lt;token&gt;abcdef123456&lt;/token&gt;
@@ -274,7 +315,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
   &lt;/resultList&gt;
 &lt;/result&gt;
 </pre>
-<p>...where dots indicate possible repeating elements in the xml.  The listSession element is only provided if the result is a partial result. (See resumeFindObjects below)</p>
+				<p>...where dots indicate possible repeating elements in the xml.  The listSession element is only provided if the result is a partial result. (See resumeFindObjects below)</p>
 			</documentation>
 			<input message="fedora-api:findObjectsRequest"/>
 			<output message="fedora-api:findObjectsResponse"/>
@@ -302,6 +343,30 @@ It asks for up to 50 results at a time from the server, and requests that the re
 	</service>
 	<binding name="Fedora-API-A-LITE-Binding" type="fedora-api:Fedora-API-A-LITE">
 		<http:binding verb="GET"/>
+		<operation name="describeRepository">
+			<http:operation location="describe[?xml=(ENCODE_XML)]"/>
+			<input>
+				<urlReplacement/>
+				<documentation>  This URL replacement syntax is used to request a description
+					of the Fedora repository server.  The request will return key metadata elements
+					about the repository server including repository name, version, baseURL,
+					PID namespace, and sample request URLs.  When putting together a proper URL, 
+					the client should replace parenthesized parts of the operation location URL with actual values.  
+					For example, "(ENCODE_XML)" 	should be replaced with a "yes" or "no" to indicate
+					whether the repository information should be returned as XML (alternative is HTML).
+					Parts of the operation location URL that are surrounded by brackets ("[ ]") are optional.  
+					To construct a proper URL the client must replace the following variables with real information:
+					 	- ENCODE_XML : an optional parameter.  Client can specify that the output of 
+					 	  the operation be HTML or XML.   A value of "yes" indicates a return type of 
+					 	  text/xml; the absence of the ENCODE_XML parameter or a value of "no" indicates 
+					 	  format is to be text/html.
+				</documentation>
+			</input>
+			<output>
+				<mime:content type="text/xml"/>
+				<mime:content type="text/html"/>
+			</output>
+		</operation>
 		<operation name="getObjectProfile">
 			<http:operation location="get/(PID)[/(DATETIME)][?xml=(ENCODE_XML)]"/>
 			<input>
@@ -374,18 +439,18 @@ It asks for up to 50 results at a time from the server, and requests that the re
 				<mime:content type="text/html"/>
 			</output>
 		</operation>
-       <operation name="resumeFindObjects">
-           <http:operation location="search?sessionToken=(sessionToken)[&amp;xml=(xml)]"/>
-           <input>
-               <urlReplacement/>
-               <documentation>This operation is used to resume a findObjects operation.  
+		<operation name="resumeFindObjects">
+			<http:operation location="search?sessionToken=(sessionToken)[&amp;xml=(xml)]"/>
+			<input>
+				<urlReplacement/>
+				<documentation>This operation is used to resume a findObjects operation.  
                The sessionToken value comes from the previous response.  The URL replacement 
                uses the same syntax conventions as the findObjects operation.</documentation>
-           </input>
+			</input>
 			<output>
 				<mime:content type="text/xml"/>
 				<mime:content type="text/html"/>
 			</output>
-       </operation>
+		</operation>
 	</binding>
 </definitions>

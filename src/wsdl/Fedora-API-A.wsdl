@@ -13,8 +13,19 @@
 			<wsdldoc:type name="fedora-types:MIMETypedStream" url="http://www.fedora.info/definitions/1/0/types/#MIMETypedStream"/>
 			<wsdldoc:type name="fedora-types:ArrayOfMethodDef" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfMethodDef"/>
 			<wsdldoc:type name="fedora-types:ObjectProfile" url="http://www.fedora.info/definitions/1/0/types/#ObjectProfile"/>
+			<wsdldoc:type name="fedora-types:RepositoryInfo" url="http://www.fedora.info/definitions/1/0/types/#RepositoryInfo"/>
 		</documentation>
 	</types>
+	<message name="describeRepositoryRequest">
+	</message>
+	<message name="describeRepositoryResponse">
+		<part name="response" type="fedora-types:RepositoryInfo">
+			<documentation>A data structure that contains key metadata
+				describing the Fedora repository server including repository name, 
+				version, base URL, PID namespace, and sample request URLs.
+			</documentation>
+		</part>
+	</message>
 	<message name="getObjectProfileRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -164,7 +175,7 @@
 			<documentation>the token of the session in which the next few
                 results can be found.</documentation>
 		</part>
-    </message>
+	</message>
 	<portType name="Fedora-API-A">
 		<documentation>The Fedora Access service defines an open interface for
 		    accessing digital objects.  The access operations include methods to do
@@ -181,6 +192,14 @@
 		    on behalf of the client, simply returning a dissemination result via the
 		    Access service layer.
 		</documentation>
+		<operation name="describeRepository">
+			<documentation>Gets key metadata fields that describe the Fedora 
+				repository server including repository name, version, baseURL,
+				PID namespace, sample request URLs.
+			</documentation>
+			<input message="fedora-api:describeRepositoryRequest"/>
+			<output message="fedora-api:describeRepositoryResponse"/>
+		</operation>
 		<operation name="getObjectProfile">
 			<documentation>Gets a profile of the object which includes key
 				metadata fields and URLs for the object Dissemination 
@@ -250,92 +269,17 @@
 			<output message="fedora-api:findObjectsResponse"/>
 		</operation>
 	</portType>
-	<binding name="Fedora-API-A-Binding-HTTPGET" type="fedora-api:Fedora-API-A">
-		<http:binding verb="GET"/>
-		<operation name="getObjectProfile">
-			<http:operation location="getObjectProfile"/>
-			<input>
-				<http:urlEncoded/>
-			</input>
-			<output>
-				<mime:mimeXml part="response"/>
-			</output>
-		</operation>
-		<operation name="getObjectMethods">
-			<http:operation location="getObjectMethods"/>
-			<input>
-				<http:urlEncoded/>
-			</input>
-			<output>
-				<mime:mimeXml part="response"/>
-			</output>
-		</operation>
-		<operation name="getDissemination">
-			<http:operation location="getDissemination"/>
-			<input>
-				<http:urlEncoded>
-					<documentation>Inside the 'parameters' input message, 
-				          mechanism-specific parameters may be given.  When given as an HTTP 
-				          GET API-A request to Fedora, the mechanism-specific parameters are to 
-				          be further encoded in the HTTP GET request in the value of the 
-				          'parameters' message.  When demarshaling the request, the Fedora 
-				          server will un-URL-encode the the value of 'parameters', and pass the 
-				          provided value(s) to the underlying service.
-					</documentation>
-				</http:urlEncoded>
-			</input>
-			<output>
-				<mime:content type="*/*"/>
-			</output>
-		</operation>
-		<operation name="getBehaviorDefinitions">
-			<http:operation location="getBehaviorDefinitions"/>
-			<input>
-				<http:urlEncoded/>
-			</input>
-			<output>
-				<mime:mimeXml part="response"/>
-			</output>
-		</operation>
-		<operation name="getBehaviorMethods">
-			<http:operation location="getBehaviorMethods"/>
-			<input>
-				<http:urlEncoded/>
-			</input>
-			<output>
-				<mime:mimeXml part="response"/>
-			</output>
-		</operation>
-		<operation name="getBehaviorMethodsXML">
-			<http:operation location="getBehaviorMethodsXML"/>
-			<input>
-				<http:urlEncoded/>
-			</input>
-			<output>
-				<mime:mimeXml part="response"/>
-			</output>
-		</operation>
-		<operation name="findObjects">
-			<http:operation location="findObjects"/>
-			<input>
-				<http:urlEncoded/>
-			</input>
-			<output>
-				<mime:mimeXml part="response"/>
-			</output>
-		</operation>
-		<operation name="resumeFindObjects">
-			<http:operation location="resumeFindObjects"/>
-			<input>
-				<http:urlEncoded/>
-			</input>
-			<output>
-				<mime:mimeXml part="response"/>
-			</output>
-		</operation>
-	</binding>
 	<binding name="Fedora-API-A-Binding-SOAPHTTP" type="fedora-api:Fedora-API-A">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="describeRepository">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#describeRepository"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
 		<operation name="getObjectProfile">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectProfile"/>
 			<input>
@@ -410,9 +354,6 @@
 		</operation>
 	</binding>
 	<service name="Fedora-API-A-Service">
-		<port name="Fedora-API-A-Port-HTTPGET" binding="fedora-api:Fedora-API-A-Binding-HTTPGET">
-			<http:address location="http://localhost:8080/fedora/access/http"/>
-		</port>
 		<port name="Fedora-API-A-Port-SOAPHTTP" binding="fedora-api:Fedora-API-A-Binding-SOAPHTTP">
 			<soap:address location="http://localhost:8080/fedora/access/soap"/>
 		</port>
