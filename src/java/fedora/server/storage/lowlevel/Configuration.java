@@ -10,28 +10,28 @@ class Configuration {
 	private final String objectStoreBase;
 	private final String[] objectStoreBases;
 	private final String datastreamStoreBase;
-	private final String[] datastreamStoreBases;	
+	private final String[] datastreamStoreBases;
 	private final String tempStoreBase;
 	private final String[] tempStoreBases;
 	//private final boolean useSingleRegistry;
 	private final String algorithmClass;
-	
+
 	private final String registryClass;
 
 	private final String objectRegistryTableName = "objectpaths";
 	private final String datastreamRegistryTableName = "datastreampaths";
-	private final String tempRegistryTableName = "temppaths";
-	
+	private final String tempRegistryTableName = "tempPaths";
+
 	private final String fileSystemClass;
-	
-	private static boolean testConfig = false; 
+
+	private static boolean testConfig = false;
 	static {
 		String temp = System.getProperty("store.lowlevel.mode");
 		if ((temp != null) && temp.equals("test")) {
 			testConfig = true;
 		}
 	}
-	
+
 	private static final Server s_server;
 	static {
 		Server temp = null;
@@ -39,7 +39,7 @@ class Configuration {
 			try {
 				temp = Server.getInstance(new File(System.getProperty("fedora.home")));
 			} catch (InitializationException ie) {
-				System.err.println(ie.getMessage());				
+				System.err.println(ie.getMessage());
 			}
 		}
 		s_server = temp;
@@ -56,13 +56,13 @@ class Configuration {
 			singleInstance = temp;
 		}
 	}
-	
+
 	public static final Configuration getInstance() {
 		return singleInstance;
 	}
 
 	private static final String FCFG_BACKSLASH_IS_ESCAPE = "backslash_is_escape";
-	
+
 	private static final String FCFG_FILE_SYSTEM_CLASS = "file_system";
 	private static final String FCFG_PATH_ALGORITHM_CLASS = "path_algorithm";
 	private static final String FCFG_REGISTRY_CLASS = "registry";
@@ -71,7 +71,7 @@ class Configuration {
 	private static final String FCFG_DATASTREAM_STORE_BASE = "datastream_store_base";
 	private static final String FCFG_TEMP_STORE_BASE = "temp_store_base";
 
-	private static final String FCFG_OBJECT_TABLE_NAME = "object_table_name";	
+	private static final String FCFG_OBJECT_TABLE_NAME = "object_table_name";
 	private static final String FCFG_DATASTREAM_TABLE_NAME = "datastream_table_name";
 	private static final String FCFG_TEMP_TABLE_NAME = "temp_table_name";
 
@@ -82,7 +82,7 @@ class Configuration {
 				s_server.getParameter(FCFG_PATH_ALGORITHM_CLASS);
 			if (algorithmClassTemp == null) {
 				throw new LowlevelStorageException(true,"must configure " + FCFG_PATH_ALGORITHM_CLASS);
-			}			
+			}
 			algorithmClass = algorithmClassTemp;
 		}
 
@@ -104,16 +104,16 @@ class Configuration {
 			}
 			objectRegistryTableName = tableName;
 		}
-		
+
 		{
-			String tableName = testConfig ? "temppaths" :
+			String tableName = testConfig ? "tempPaths" :
 				s_server.getParameter(FCFG_TEMP_TABLE_NAME);
 			if ((tableName == null) || tableName.equals("")) {
 				throw new LowlevelStorageException(true,"must configure " + FCFG_TEMP_TABLE_NAME);
 			}
-			tempRegistryTableName = tableName;	
+			tempRegistryTableName = tableName;
 		}
-		
+
 		{
 			String tableName = testConfig ? "datastreampaths" :
 				s_server.getParameter(FCFG_DATASTREAM_TABLE_NAME);
@@ -132,7 +132,7 @@ class Configuration {
 			}
 			fileSystemClass = fileSystemClassTemp;
 		}
-		
+
 		{
 			String backslashIsEscapeString = testConfig ? "yes" :
 				s_server.getParameter(FCFG_BACKSLASH_IS_ESCAPE);
@@ -145,7 +145,7 @@ class Configuration {
 			}
 			backslashIsEscape = backslashIsEscapeString.equals("YES");
 		}
-		
+
 		{
 			String objectStoreBaseTemp = testConfig ? "C:\\fedora_objects" :
 				s_server.getParameter(FCFG_OBJECT_STORE_BASE);
@@ -162,13 +162,13 @@ class Configuration {
 			if (tempStoreBaseTemp == null) {
 				throw new LowlevelStorageException(true,"must configure " + FCFG_TEMP_STORE_BASE);
 			}
-        
+
 // FIXME: thinks c:\temp and c:\temp2 overlap
 			if (objectStoreBaseTemp.startsWith(datastreamStoreBaseTemp)
 			||  objectStoreBaseTemp.startsWith(tempStoreBaseTemp)
 			||  datastreamStoreBaseTemp.startsWith(objectStoreBaseTemp)
 			||  datastreamStoreBaseTemp.startsWith(tempStoreBaseTemp)
-			||  tempStoreBaseTemp.startsWith(objectStoreBaseTemp)			
+			||  tempStoreBaseTemp.startsWith(objectStoreBaseTemp)
 			||  tempStoreBaseTemp.startsWith(datastreamStoreBaseTemp)) {
 				throw new LowlevelStorageException(true, FCFG_OBJECT_STORE_BASE + ", " + FCFG_DATASTREAM_STORE_BASE + ", and " + FCFG_TEMP_STORE_BASE + " cannot overlap");
 			}
@@ -227,24 +227,24 @@ class Configuration {
 	}
 	public final String getRegistryClass() {
 		return registryClass;
-	}	
+	}
 	public final String getObjectRegistryTableName() {
 		return objectRegistryTableName;
 	}
 	public final String getDatastreamRegistryTableName() {
 		return datastreamRegistryTableName;
-	}	
+	}
 	public final String getTempRegistryTableName() {
 		return tempRegistryTableName;
 	}
-	
+
 	public final String getFileSystemClass() {
 		return fileSystemClass;
 	}
 	public final boolean getBackslashIsEscape() {
 		return backslashIsEscape;
 	}
-	
+
 	public static final boolean getTestConfig() {
 		return testConfig;
 	}
