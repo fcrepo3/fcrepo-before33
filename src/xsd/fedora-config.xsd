@@ -15,7 +15,6 @@
       label="Test Fedora Repository"
       port="8080"/>
     <comment>This is just a test server.</comment>
-    <port="8080"/>
     <admin email="root@localhost" public="true">
       <comment>This is Bob Smith.  He's real nice.</comment>
     </admin>
