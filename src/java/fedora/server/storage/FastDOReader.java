@@ -130,7 +130,7 @@ private static final String dbPropsFile = "db.properties";
    *
    * @return String containing the exported object
    */
-  public String ExportObject()
+  public InputStream ExportObject()
   {
     if (doReader == null) doReader = new DefinitiveDOReader(PID);
     return(doReader.ExportObject());
@@ -1230,7 +1230,7 @@ private static final String dbPropsFile = "db.properties";
    *
    * @return String containing the XML representation of the object.
    */
-  public String GetObjectXML()
+  public InputStream GetObjectXML()
   {
     if (doReader == null) doReader = new DefinitiveDOReader(PID);
     return(doReader.GetObjectXML());
