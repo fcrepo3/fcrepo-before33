@@ -349,9 +349,20 @@ public class METSLikeDODeserializer
                 }
             }
         }
-        // 2) In the WSDL (id=SERVICE-PROFILE) of bMech objects
+        // 2) In the SERVICE-PROFILE and WSDL of bMech objects
         if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
             List datastreams=obj.datastreams("SERVICE-PROFILE");
+            for (int i=0; i<datastreams.size(); i++) {
+                DatastreamXMLMetadata ds=(DatastreamXMLMetadata) datastreams.get(i);
+                try {
+                    String xml=new String(ds.xmlContent, "UTF-8");
+                    xml=s_localPattern.matcher(xml).replaceAll(s_hostInfo);
+                    ds.xmlContent=xml.getBytes("UTF-8");
+                } catch (UnsupportedEncodingException uee) {
+                    // wont happen, java always supports UTF-8
+                }
+            }
+            datastreams=obj.datastreams("WSDL");
             for (int i=0; i<datastreams.size(); i++) {
                 DatastreamXMLMetadata ds=(DatastreamXMLMetadata) datastreams.get(i);
                 try {

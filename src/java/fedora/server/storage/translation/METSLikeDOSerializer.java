@@ -72,6 +72,8 @@ public class METSLikeDOSerializer
 
     private static Pattern s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
     private static Pattern s_localServerUrlStartWithoutPort; // "http://actual.hostname/"
+    private static Pattern s_localhostUrlStartWithPort; // "http://localhost:8080/"
+    private static Pattern s_localhostUrlStartWithoutPort; // "http://localhost/"
 
     public METSLikeDOSerializer() {
     }
@@ -110,6 +112,8 @@ public class METSLikeDOSerializer
                     + fedoraServerHost + ":" + fedoraServerPort + "/");
             s_localServerUrlStartWithoutPort=Pattern.compile("http://" 
                     + fedoraServerHost + "/"); 
+            s_localhostUrlStartWithoutPort=Pattern.compile("http://localhost/"); 
+            s_localhostUrlStartWithPort=Pattern.compile("http://localhost:" + fedoraServerPort + "/"); 
         }
         // now do serialization stuff
         StringBuffer buf=new StringBuffer();
@@ -285,8 +289,8 @@ public class METSLikeDOSerializer
                     + labelString + ">\n");
             buf.append("        <" + METS_PREFIX + ":xmlData>\n");
             if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT
-                    && ds.DatastreamID.equals("SERVICE-PROFILE")) {
-                // If it's the WSDL datastream in a bMech and it contains a 
+                    && (ds.DatastreamID.equals("SERVICE-PROFILE")) || (ds.DatastreamID.equals("WSDL")) ) {
+                // If it's the WSDL or SERVICE-PROFILE datastream in a bMech and it contains a 
                 // service URL that's local, replace it with a machine-neutral 
                 // host identifier.
                 try {
@@ -294,6 +298,10 @@ public class METSLikeDOSerializer
                     xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
                             "http://local.fedora.server/");
                     xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
+                            "http://local.fedora.server/");
+                    xml=s_localhostUrlStartWithPort.matcher(xml).replaceAll(
+                            "http://local.fedora.server/");
+                    xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
                             "http://local.fedora.server/");
                     buf.append(xml);
                 } catch (UnsupportedEncodingException uee) {
@@ -394,8 +402,9 @@ public class METSLikeDOSerializer
     }
 
     // append the admin md, while replacing occurances of 
-    // s_localServerUrlStartWithPort and s_localServerUrlStartWithoutPort
-    // with "http://local.fedora.server/" in the SERVICE-PROFILE id'd wsdl of 
+    // s_localServerUrlStartWithPort and s_localServerUrlStartWithoutPort and
+    // s_localhostUrlStartWithPort and s_localhostUrlStartWithoutPort
+    // with "http://local.fedora.server/" in the SERVICE-PROFILE and WSDL id'd admin datastreams
     // bMech objects.
     private void appendOtherAdminMD(DigitalObject obj, StringBuffer buf,
             String encoding)
@@ -471,6 +480,8 @@ public class METSLikeDOSerializer
                     // machine-neutral ones
                     dsc.DSLocation=s_localServerUrlStartWithPort.matcher(dsc.DSLocation).replaceAll("http://local.fedora.server/");
                     dsc.DSLocation=s_localServerUrlStartWithoutPort.matcher(dsc.DSLocation).replaceAll("http://local.fedora.server/");
+                    dsc.DSLocation=s_localhostUrlStartWithPort.matcher(dsc.DSLocation).replaceAll("http://local.fedora.server/");
+                    dsc.DSLocation=s_localhostUrlStartWithoutPort.matcher(dsc.DSLocation).replaceAll("http://local.fedora.server/");
                     String sizeString=" SIZE=\"" + dsc.DSSize + "\"";
                     String admIDString=getIdString(obj, dsc, true);
                     String dmdIDString=getIdString(obj, dsc, false);
