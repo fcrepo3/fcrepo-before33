@@ -2,6 +2,7 @@ package fedora.server.utilities;
 
 import java.text.SimpleDateFormat;
 import java.text.ParsePosition;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -162,6 +163,34 @@ public abstract class DateUtility
     UTCDate.setTime(localDate.getTime() + tzOffset);
     return UTCDate;
   }
+  
+    /**
+     * Attempt to parse the given string of form: yyyy-MM-dd[Thh:mm:ss[Z]] 
+     * as a Date.  If the string is not of that form, return null.
+     *
+     * @param str the date string to parse
+     * @return Date the date, if parse was successful; null otherwise
+     */
+    public static Date parseDate(String str) {
+        if (str.indexOf("T")!=-1) {
+            try {
+                return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").parse(str);
+            } catch (ParseException pe) {
+                try {
+                    return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'").parse(str);
+                } catch (ParseException pe2) {
+                    return null;
+                }
+            }
+        } else {
+            try {
+                return new SimpleDateFormat("yyyy-MM-dd").parse(str);
+            } catch (ParseException pe3) {
+                return null;
+            }
+        }
+        
+    }
 
   public static void main(String[] args)
   {

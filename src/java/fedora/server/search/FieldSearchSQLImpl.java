@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import fedora.server.Logging;
@@ -29,6 +30,7 @@ import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
 
 /**
@@ -45,7 +47,7 @@ public class FieldSearchSQLImpl
     private RepositoryReader m_repoReader;
     private int m_maxResults;
     private int m_maxSecondsPerSession;
-    private static String[] s_dbColumnNames=new String[] {"pid", "label", 
+    public static String[] DB_COLUMN_NAMES=new String[] {"pid", "label", 
             "fType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate",
             "dcTitle", "dcCreator", "dcSubject", "dcDescription", "dcPublisher",
             "dcContributor", "dcDate", "dcType", "dcFormat", "dcIdentifier",
@@ -86,24 +88,6 @@ public class FieldSearchSQLImpl
         m_maxResults=maxResults;
         m_maxSecondsPerSession=maxSecondsPerSession;
         logFinest("Exiting constructor");
-    }
-
-    /**
-     * Tell whether a field name, as given in the search request, is a
-     * dublin core field.
-     *
-     * @param the field
-     * @return whether it's a dublin core field
-     */
-    private boolean isDCProp(String in) {
-        for (int i=0; i<s_dbColumnNames.length; i++) {
-            String n=s_dbColumnNames[i];
-            if ( (n.startsWith("dc"))
-                    && (n.toLowerCase().indexOf(in.toLowerCase())!=-1) ) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void update(DOReader reader) 
@@ -166,7 +150,7 @@ public class FieldSearchSQLImpl
                     if (i==0) {
                         wellFormedDates=new ArrayList();
                     }
-                    Date p=parseDate((String) dc.dates().get(i));
+                    Date p=DateUtility.parseDate((String) dc.dates().get(i));
                     if (p!=null) {
                         wellFormedDates.add(p);
                     }
@@ -194,7 +178,7 @@ public class FieldSearchSQLImpl
                 dbRowValues[23]=getDbValue(dc.rights()); 
             }
             logFine("Formulating SQL and inserting/updating...");
-            SQLUtility.replaceInto(conn, "doFields", s_dbColumnNames,
+            SQLUtility.replaceInto(conn, "doFields", DB_COLUMN_NAMES,
                     dbRowValues, "pid", s_dbColumnNumeric, this);
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting update of " 
@@ -241,225 +225,58 @@ public class FieldSearchSQLImpl
     }
     
     public FieldSearchResult listObjectFields(String[] resultFields, 
-            int maxResults, FieldSearchQuery query) {
+            int maxResults, FieldSearchQuery query)
+            throws UnrecognizedFieldException, ObjectIntegrityException,
+            RepositoryConfigurationException, StreamIOException, 
+            ServerException, StorageDeviceException {
+        closeAndForgetOldResults();
         int actualMax=maxResults;
         if (m_maxResults<maxResults) {
             actualMax=m_maxResults;
         }
-        FieldSearchResultSQLImpl result=new FieldSearchResultSQLImpl(
-                m_cPool, m_repoReader, resultFields, actualMax, 
-                m_maxSecondsPerSession, query, this);
-        return stepAndRemember(result);
+        try {
+            return stepAndRemember(new FieldSearchResultSQLImpl(
+                    m_cPool, m_repoReader, resultFields, actualMax, 
+                    m_maxSecondsPerSession, query, this));
+        } catch (SQLException sqle) {
+            throw new StorageDeviceException("Error querying sql db: "
+                    + sqle.getMessage());
+        }
     }
 
     public FieldSearchResult resumeListObjectFields(String sessionToken) 
-            throws UnknownSessionTokenException {
+            throws UnrecognizedFieldException, ObjectIntegrityException,
+            RepositoryConfigurationException, StreamIOException, 
+            ServerException, UnknownSessionTokenException {
+        closeAndForgetOldResults();
         FieldSearchResultSQLImpl result=(FieldSearchResultSQLImpl)
                 m_currentResults.remove(sessionToken);
         if (result==null) {
-            throw new UnknownSessionTokenException("No record of session "
-                    + "with token " + sessionToken);
+            throw new UnknownSessionTokenException("Session is expired "
+                    + "or never existed.");
         }
         return stepAndRemember(result);
     }
     
-    public FieldSearchResult stepAndRemember(FieldSearchResultSQLImpl result) {
-        // first, call release() then remove any in m_currentResults
-        // where getExpirationDate() has passed (if not null)
+    private FieldSearchResult stepAndRemember(FieldSearchResultSQLImpl result) 
+            throws UnrecognizedFieldException, ObjectIntegrityException,
+            RepositoryConfigurationException, StreamIOException, 
+            ServerException, UnrecognizedFieldException {
         result.step();
         if (result.getToken()!=null) {
             m_currentResults.put(result.getToken(), result);
         }
         return result;
     }
-    
-    // FIXME: return a ResultSet
-    private List search(String[] resultFields, String terms) 
-            throws StorageDeviceException, QueryParseException, ServerException {
-        Connection conn=null;
-        try {
-            logFinest("Entering search(String[], String)");
-            if (terms.indexOf("'")!=-1) {
-                throw new QueryParseException("Query cannot contain the ' character.");
-            }
-            StringBuffer whereClause=new StringBuffer();
-            if (!terms.equals("*") && !terms.equals("")) {
-                whereClause.append(" WHERE");
-                // formulate the where clause if the terms aren't * or ""
-                int usedCount=0;
-                boolean needsEscape=false;
-                for (int i=0; i<s_dbColumnNames.length; i++) {
-                    String column=s_dbColumnNames[i];
-                    // use only stringish columns in query
-                    boolean use=column.indexOf("Date")==-1;
-                    if (!use) {
-                        if (column.equals("dcDate")) {
-                            use=true;
-                        }
-                    }
-                    if (use) {
-                        if (usedCount>0) {
-                            whereClause.append(" OR");
-                        }
-                        String qPart=toSql(column, terms);
-                        if (qPart.charAt(0)==' ') {
-                            needsEscape=true;
-                        } else {
-                            whereClause.append(" ");
-                        }
-                        whereClause.append(qPart);
-                        usedCount++;
-                    }
-                }
-                if (needsEscape) {
-                    whereClause.append(" {escape '/'}");
-                }
-            }
-            logFinest("Doing word search using whereClause: '" 
-                    + whereClause.toString() + "'");
-            conn=m_cPool.getConnection();
-            List ret=getObjectFields(conn, "SELECT pid FROM doFields" 
-                    + whereClause.toString(), resultFields);
-            return ret;
-        } catch (SQLException sqle) {
-            throw new StorageDeviceException("Error attempting word search: \"" 
-                    + terms + "\": " + sqle.getMessage());
-        } finally {
-            if (conn!=null) {
-                m_cPool.free(conn);
-            }
-            logFinest("Exiting search(String[], String)");
-        }
-    }
 
-    // FIXME: return a ResultSet
-    private List search(String[] resultFields, List conditions) 
-            throws ServerException {
-        Connection conn=null;
-        try {
-            logFinest("Entering search(String[], List)");
-            StringBuffer whereClause=new StringBuffer();
-            boolean willJoin=false;
-            if (conditions.size()>0) {
-                boolean needsEscape=false;
-                whereClause.append(" WHERE");
-                for (int i=0; i<conditions.size(); i++) {
-                    Condition cond=(Condition) conditions.get(i);
-                    if (i>0) {
-                        whereClause.append(" AND");
-                    }
-                    String op=cond.getOperator().getSymbol();
-                    String prop=cond.getProperty();
-                    if (prop.toLowerCase().endsWith("date")) {
-                        // deal with dates ... cDate mDate dcmDate date
-                        if (op.equals("~")) {
-                            if (prop.equals("date")) {
-                                // query for dcDate as string
-                                String sqlPart=toSql("doFields.dcDate", cond.getValue());
-                                if (sqlPart.startsWith(" ")) {
-                                    needsEscape=true;
-                                } else {
-                                    whereClause.append(' ');
-                                }
-                                whereClause.append(sqlPart);
-                            } else {
-                                throw new QueryParseException("The ~ operator "
-                                        + "cannot be used with cDate, mDate, "
-                                        + "or dcmDate because they are not "
-                                        + "string-valued fields.");
-                            }
-                        } else { // =, <, <=, >, >=
-                            // property must be parsable as a date... if ok,
-                            // do (cDate, mDate, dcmDate) 
-                            // or (date) <- dcDate from dcDates table
-                            Date dt=parseDate(cond.getValue());
-                            if (dt==null) {
-                                throw new QueryParseException("When using "
-                                        + "equality or inequality operators "
-                                        + "with a date-based value, the date "
-                                        + "must be in yyyy-MM-DD[Thh:mm:ss[Z]] "
-                                        + "form.");
-                            }
-                            if (prop.equals("date")) {
-                                // do a left join on the dcDates table...dcDate
-                                // query will be of form: 
-                                // select pid 
-                                // from doFields 
-                                // left join dcDates on doFields.pid=dcDates.pid 
-                                // where...
-                                if (!willJoin) {
-                                    willJoin=true;
-                                    whereClause.insert(0, " LEFT JOIN dcDates "
-                                            + "ON doFields.pid=dcDates.pid");
-                                }
-                                whereClause.append(" dcDates.dcDate" + op 
-                                        + dt.getTime() );
-                            } else {
-                                whereClause.append(" doFields." + prop + op
-                                        + dt.getTime() );
-                            }
-                        }
-                    } else {
-                        if (op.equals("=")) {
-                            if (isDCProp(prop)) {
-                                throw new QueryParseException("The = operator "
-                                        + "can only be used with dates and "
-                                        + "non-repeating fields.");
-                            } else {
-                                // do a real equals check... do a toSql but
-                                // reject it if it uses "LIKE"
-                                String sqlPart=toSql("doFields." + prop, cond.getValue());
-                                if (sqlPart.indexOf("LIKE ")!=-1) {
-                                    throw new QueryParseException("The = "
-                                        + "operator cannot be used with "
-                                        + "wildcards.");
-                                }
-                                if (sqlPart.startsWith(" ")) {
-                                    needsEscape=true;
-                                } else {
-                                    whereClause.append(' ');
-                                }
-                                whereClause.append(sqlPart);
-                            }
-                        } else if (op.equals("~")) {
-                            if (isDCProp(prop)) {
-                                // prepend dc and caps the first char first...
-                                prop="dc" + prop.substring(0,1).toUpperCase() 
-                                        + prop.substring(1);  
-                            }
-                            // the field name is ok, so toSql it
-                            String sqlPart=toSql("doFields." + prop, 
-                                    cond.getValue());
-                            if (sqlPart.startsWith(" ")) {
-                                needsEscape=true;
-                            } else {
-                                whereClause.append(' ');
-                            }
-                            whereClause.append(sqlPart);
-                        } else {
-                            throw new QueryParseException("Can't use >, >=, <, "
-                                    + "or <= operator on a string-based field.");
-                        }
-                    }
-                }
-                if (needsEscape) {
-                    whereClause.append(" {escape '/'}");
-                }
+    // erase and cleanup expired stuff
+    private void closeAndForgetOldResults() {
+        Iterator iter=m_currentResults.values().iterator();
+        while (iter.hasNext()) {
+            FieldSearchResultSQLImpl r=(FieldSearchResultSQLImpl) iter.next();
+            if (r.isExpired()) {
+                m_currentResults.remove(r.getToken());
             }
-            logFinest("Doing field search using whereClause: '" 
-                    + whereClause.toString() + "'");
-            conn=m_cPool.getConnection();
-            List ret=getObjectFields(conn, "SELECT doFields.pid FROM doFields" 
-                    + whereClause.toString(), resultFields);
-            return ret;
-        } catch (SQLException sqle) {
-            throw new StorageDeviceException("Error from SQL DB while attempting field search: "
-                    + sqle.getMessage());
-        } finally {
-            if (conn!=null) {
-                m_cPool.free(conn);
-            }
-            logFinest("Exiting search(String[], List)");
         }
     }
     
@@ -483,289 +300,6 @@ public class FieldSearchSQLImpl
         }
         out.append(" ");
         return out.toString();
-    }
-
-    /**
-     * Perform the given query for 'pid' using the given connection
-     * and return the result as a List of ObjectFields objects
-     * with resultFields populated.  The list will have a maximum size
-     * of m_maxResults.
-     *
-     * @param conn the connection on which to query
-     * @param query the full query string.  This should at least select
-     *        a string field, pid
-     * @param resultFields the field names, as given in the search request,
-     *        to be returned
-     * @return List a list of ObjectFields objects, populated with the
-     *         values for the desired fields
-     * @throws SQLException if any kind of error happened while querying the db
-     * @throws UnrecognizedFieldException if a resultFields value isn't valid
-     * @throws ObjectIntegrityException if the underlying digital object can't
-     *         be parsed
-     * @throws ServerException if any other kind of error occurs while reading
-     *         the underlying object
-     */
-    private List getObjectFields(Connection conn, String query,
-            String[] resultFields) 
-            throws SQLException, UnrecognizedFieldException, 
-            ObjectIntegrityException, ServerException {
-        Statement st=null;
-        try {
-            ArrayList fields=new ArrayList();
-            st=conn.createStatement();
-            ResultSet results=st.executeQuery(query);
-            boolean tooMany=false;
-            int numResults=0;
-            while (results.next() && !tooMany) {
-                String pid=results.getString("pid");
-                fields.add(getObjectFields(pid, resultFields));
-                numResults++;
-                if (numResults>m_maxResults) {
-                    tooMany=true;
-                }
-            }
-            return fields;
-        } finally {
-            if (st!=null) {
-                try {
-                    st.close();
-                } catch (Exception e) { }
-            }
-        }
-    }
-
-    /**
-     * For the given pid, get a reader on the object from the repository
-     * and return an ObjectFields object with resultFields fields populated.
-     *
-     * @param pid the unique identifier of the object for which the information
-     *        is requested.
-     * @param resultFields the fields to return
-     * @return ObjectFields populated with the requested fields
-     * @throws UnrecognizedFieldException if a resultFields value isn't valid
-     * @throws ObjectIntegrityException if the underlying digital object can't
-     *         be parsed
-     * @throws RepositoryConfigurationException if the sax parser can't
-     *         be constructed
-     * @throws StreamIOException if an error occurs while reading the serialized
-     *         digital object stream
-     * @throws ServerException if any other kind of error occurs while reading
-     *         the underlying object
-     */
-    private ObjectFields getObjectFields(String pid, String[] resultFields) 
-            throws UnrecognizedFieldException, ObjectIntegrityException,
-            RepositoryConfigurationException, StreamIOException, 
-            ServerException {
-        DOReader r=m_repoReader.getReader(s_nonCachedContext, pid);
-        ObjectFields f;
-        // If there's a DC record available, use SAX to parse the most 
-        // recent version of it into f.
-        DatastreamXMLMetadata dcmd=null;
-        try {
-            dcmd=(DatastreamXMLMetadata) r.GetDatastream("DC", null);
-        } catch (ClassCastException cce) {
-            throw new ObjectIntegrityException("Object " + r.GetObjectPID() 
-                    + " has a DC datastream, but it's not inline XML.");
-        }
-        if (dcmd!=null) {
-            f=new ObjectFields(resultFields, dcmd.getContentStream());
-            // add dcmDate if wanted
-            for (int i=0; i<resultFields.length; i++) {
-                if (resultFields[i].equals("dcmDate")) {
-                    f.setDCMDate(dcmd.DSCreateDT);
-                }
-            }
-        } else {
-            f=new ObjectFields();
-        }
-        // add non-dc values from doReader for the others in resultFields[]
-        for (int i=0; i<resultFields.length; i++) {
-            String n=resultFields[i];
-            if (n.equals("pid")) {
-                f.setPid(pid);
-            }
-            if (n.equals("label")) {
-                f.setLabel(r.GetObjectLabel());
-            }
-            if (n.equals("fType")) {
-                f.setFType(r.getFedoraObjectType());
-            }
-            if (n.equals("cModel")) {
-                f.setCModel(r.getContentModelId());
-            }
-            if (n.equals("state")) {
-                f.setState(r.GetObjectState());
-            }
-            if (n.equals("locker")) {
-                f.setLocker(r.getLockingUser());
-            }
-            if (n.equals("cDate")) {
-                f.setCDate(r.getCreateDate());
-            }
-            if (n.equals("mDate")) {
-                f.setMDate(r.getLastModDate());
-            }
-        }
-        return f;
-    }
-    
-    /**
-     * Attempt to parse the given string of form: yyyy-MM-dd[Thh:mm:ss[Z]] 
-     * as a Date.  If the string is not of that form, return null.
-     *
-     * @param str the date string to parse
-     * @return Date the date, if parse was successful; null otherwise
-     */
-    private static Date parseDate(String str) {
-        if (str.indexOf("T")!=-1) {
-            try {
-                return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss").parse(str);
-            } catch (ParseException pe) {
-                try {
-                    return new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'").parse(str);
-                } catch (ParseException pe2) {
-                    return null;
-                }
-            }
-        } else {
-            try {
-                return new SimpleDateFormat("yyyy-MM-dd").parse(str);
-            } catch (ParseException pe3) {
-                return null;
-            }
-        }
-        
-    }
-    
-    /**
-     * Return a condition suitable for a SQL WHERE clause, given a column
-     * name and a string with a possible pattern (using * and questionmark 
-     * wildcards).
-     * <p></p>
-     * If the string has any characters that need to be escaped, it will
-     * begin with a space, indicating to the caller that the entire WHERE
-     * clause should end with " {escape '/'}".
-     *
-     * @param name the name of the field in the database
-     * @param in the query string, where * and ? are treated as wildcards
-     * @return String a suitable string for use in a SQL WHERE clause,
-     *         as described above
-     */
-    private static String toSql(String name, String in) {
-        in=in.toLowerCase();
-        if (name.startsWith("dc") || (name.startsWith("doFields.dc"))) {
-            StringBuffer newIn=new StringBuffer();
-            if (!in.startsWith("*")) {
-                newIn.append("* ");
-            }
-            newIn.append(in);
-            if (!in.endsWith("*")) {
-                newIn.append(" *");
-            }
-            in=newIn.toString();
-        }
-        if (in.indexOf("\\")!=-1) {
-            // has one or more escapes, un-escape and translate
-            StringBuffer out=new StringBuffer();
-            out.append("\'");
-            boolean needLike=false;
-            boolean needEscape=false;
-            boolean lastWasEscape=false;
-            for (int i=0; i<in.length(); i++) {
-                char c=in.charAt(i);
-                if ( (!lastWasEscape) && (c=='\\') ) {
-                    lastWasEscape=true;
-                } else {
-                    char nextChar='!';
-                    boolean useNextChar=false;
-                    if (!lastWasEscape) {
-                        if (c=='?') {
-                            out.append('_');
-                            needLike=true;
-                        } else if (c=='*') {
-                            out.append('%');
-                            needLike=true;
-                        } else {
-                            nextChar=c;
-                            useNextChar=true;
-                        }
-                    } else {
-                        nextChar=c;
-                        useNextChar=true;
-                    }
-                    if (useNextChar) {
-                        if (nextChar=='\"') {
-                            out.append("\\\"");
-                            needEscape=true;
-                        } else if (nextChar=='\'') {
-                            out.append("\\\'");
-                            needEscape=true;
-                        } else if (nextChar=='%') {
-                            out.append("\\%");
-                            needEscape=true;
-                        } else if (nextChar=='_') {
-                            out.append("\\_");
-                            needEscape=true;
-                        } else {
-                            out.append(nextChar);
-                        }
-                    }
-                    lastWasEscape=false;
-                }
-            }
-            out.append("\'");
-            if (needLike) {
-                out.insert(0, " LIKE ");
-            } else {
-                out.insert(0, " = ");
-            }
-            out.insert(0, name);
-            if (needEscape) {
-                out.insert(0, ' ');
-            }
-            return out.toString();
-        } else {
-            // no escapes, just translate if needed
-            StringBuffer out=new StringBuffer();
-            out.append("\'");
-            boolean needLike=false;
-            boolean needEscape=false;
-            for (int i=0; i<in.length(); i++) {
-                char c=in.charAt(i);
-                if (c=='?') {
-                    out.append('_');
-                    needLike=true;
-                } else if (c=='*') {
-                    out.append('%');
-                    needLike=true;
-                } else if (c=='\"') {
-                    out.append("\\\"");
-                    needEscape=true;
-                } else if (c=='\'') {
-                    out.append("\\\'");
-                    needEscape=true;
-                } else if (c=='%') {
-                    out.append("\\%");
-                    needEscape=true;
-                } else if (c=='_') {
-                    out.append("\\_");
-                    needEscape=true;
-                } else {
-                    out.append(c);
-                }
-            }
-            out.append("\'");
-            if (needLike) {
-                out.insert(0, " LIKE ");
-            } else {
-                out.insert(0, " = ");
-            }
-            out.insert(0, name);
-            if (needEscape) {
-                out.insert(0, ' ');
-            }
-            return out.toString();
-        }
     }
 
 }
