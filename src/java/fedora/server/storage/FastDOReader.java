@@ -526,14 +526,15 @@ public class FastDOReader implements DisseminatingDOReader
           methodParm.parmRequired = B.booleanValue();
           methodParm.parmLabel = results[4];
           methodParm.parmType = results[5];
-            System.out.println("FastDOReader:methodParms: " + methodParm.parmName
+            s_server.logFinest("FastDOReader:methodParms: " + methodParm.parmName
                 + "\nlabel: " + methodParm.parmLabel
                 + "\ndefault: " + methodParm.parmDefaultValue
                 + "\nrequired: " + methodParm.parmRequired
                 + "\ntype: " + methodParm.parmType);
             for (int j=0; j<methodParm.parmDomainValues.length; j++)
             {
-              System.out.println("FastDOReader:domainValues: " + methodParm.parmDomainValues[j]);
+              s_server.logFinest("FastDOReader:domainValues: "
+                  + methodParm.parmDomainValues[j]);
             }
           queryResults.addElement(methodParm);
         }
