@@ -6,7 +6,14 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
-		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>		
+		<title>
+			<inlinemediaobject>
+    				<imageobject>
+      				<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+    				</imageobject>
+    			</inlinemediaobject>
+		</title>
 		<title>Fedora OAI Provider Interface User Documentation</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -25,8 +32,7 @@
 		<title>Interface Syntax</title>
 		<para>The Fedora OAI-PMH Provider Interface is implemented as a java servlet and can be accessed using the following syntax:</para>
 		<blockquote>
-				<para>
-					<emphasis role="bold">http://hostname:port/fedora/oai?verb=oai-pmh2.0-verb</emphasis>					</para>
+			<para><emphasis role="bold">http://hostname:port/fedora/oai?verb=oai-pmh2.0-verb</emphasis></para>
 		</blockquote>
 		<blockquote>
 			<itemizedlist>
@@ -52,12 +58,11 @@
 		</blockquote>
 		<para>For example, to request an OAI <emphasis role="italics">Identify</emphasis> verb request, use a URL similar to the following:    
 		<blockquote>
-			<simplelist>
-				<member>
-					<emphasis role="bold">http://localhost:8080/fedora/oai?verb=Identify</emphasis>
-				</member>
-			</simplelist>
-		</blockquote>
-		and the Fedora repository will respond with an XML-encoded mime-typed stream providing identification information about the Fedora OAI provider.</para>
+				<simplelist>
+					<member><emphasis role="bold">http://localhost:8080/fedora/oai?verb=Identify</emphasis></member>
+				</simplelist>
+			</blockquote>
+and the Fedora repository will respond with an XML-encoded mime-typed stream providing identification information about the Fedora OAI provider.
+		</para>
 	</sect1>
 </article>

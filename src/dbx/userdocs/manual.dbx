@@ -6,7 +6,14 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <book>
 	<bookinfo>
-		<graphic fileref="http://www/fedora.info/assets/newlogo2.jpg"/>
+		<graphic fileref="http://www/fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+		<title>
+			<inlinemediaobject>
+    				<imageobject>
+      				<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+    				</imageobject>
+    			</inlinemediaobject>
+		</title>		
 		<title>The Fedora Manual</title>
 		<subtitle>for Software Release 1.0</subtitle>
 		<copyright>

@@ -7,6 +7,13 @@
 <article>
 	<articleinfo>
 		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<title>
+			<inlinemediaobject>
+    				<imageobject>
+      				<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+    				</imageobject>
+    			</inlinemediaobject>
+		</title>		
 		<title>Fedora API-M Admin GUI Client User Documentation</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -18,6 +25,6 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
-			<para>This page provides information about the Fedora API-M admin GUI client.</para>
+		<para>This page provides information about the Fedora API-M admin GUI client.</para>
 	</sect1>
 </article>

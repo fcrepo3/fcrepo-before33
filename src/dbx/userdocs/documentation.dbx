@@ -7,6 +7,13 @@
 <article>
 	<articleinfo>
 		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<title>
+			<inlinemediaobject>
+    				<imageobject>
+      				<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+    				</imageobject>
+    			</inlinemediaobject>
+		</title>		
 		<title>Fedora System Documentation</title>
 		<subtitle>Software Release 1.0</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
