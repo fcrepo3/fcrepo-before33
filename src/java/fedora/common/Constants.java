@@ -14,6 +14,7 @@ public interface Constants {
 
     public static final DublinCoreNamespace  DC    = new DublinCoreNamespace();
     public static final FedoraModelNamespace MODEL = new FedoraModelNamespace();
+    public static final FedoraRelNamespace   REL   = new FedoraRelNamespace();
     public static final RDFSyntaxNamespace   RDF   = new RDFSyntaxNamespace();
     public static final FedoraViewNamespace  VIEW  = new FedoraViewNamespace();
     public static final XSDNamespace         XSD   = new XSDNamespace();
