@@ -33,6 +33,7 @@ import fedora.server.errors.InvalidContextException;
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.ObjectAlreadyInLowlevelStorageException;
 import fedora.server.errors.ObjectDependencyException;
 import fedora.server.errors.ObjectExistsException;
 import fedora.server.errors.ObjectLockedException;
@@ -511,8 +512,13 @@ public class DefaultDOManager
                       if (obj.getState().equals("I")) {
                           getDatastreamStore().add(id, mimeTypedStream.getStream());
                       } else {
-                          // object already existed...so call replace instead
-                          getDatastreamStore().replace(id, mimeTypedStream.getStream());
+                          // object already existed...so we may need to call 
+                          // replace if "add" indicates that it was already there
+                          try {
+                              getDatastreamStore().add(id, mimeTypedStream.getStream());
+                          } catch (ObjectAlreadyInLowlevelStorageException oailse) {
+                              getDatastreamStore().replace(id, mimeTypedStream.getStream());
+                          }
                       }
                       //getDatastreamStore().add(id, bais);
                       // RLW: change required by conversion fom byte[] to InputStream
