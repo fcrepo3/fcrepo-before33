@@ -356,7 +356,8 @@ public class SimpleDOReader
 
     protected String getWhenString(Date versDateTime) {
         if (versDateTime==null) {
-            return m_formatter.format(versDateTime);
+            //return m_formatter.format(versDateTime);
+            return "null";
         } else {
             return "the current time";
         }
