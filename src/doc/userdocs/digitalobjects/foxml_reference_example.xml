@@ -6,23 +6,23 @@
 <!-- The digitalObject root element contains the object PID, which uniquely identifies the Fedora object  -->
 <!--*******************************************************************************************************************************************-->
 <foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="demo:999" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
-	<!---***************************************************************************************************************************************
-	 	FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object
-	 	At ingest, the object MUST have these attributes:
-	 		- type: 				(required) The object is classified as one of three primitive Fedora object types, 
-	 							namely FedoraObject, FedoraBDefObject, or FedoraBMechObject	 							
-	 		- state: 				(required) The object state can be Active (A), Inactive (I), or Deleted (D)
+<!---***************************************************************************************************************************************
+    FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object
+    At ingest, the object MUST have these attributes:
+        - type:(required) The object is classified as one of three primitive Fedora object types, 
+          namely FedoraObject, FedoraBDefObject, or FedoraBMechObject	 							
+        - state:(required) The object state can be Active (A), Inactive (I), or Deleted (D)
 	 		
-	 	And at ingest, it may have these optional attributes:	 		
-	 		- label: 				(optional) The object is given a user-defined descriptive label.  		
-	 		- contentModel: 		(optional) The object is given user-defined content model identifier 
-	 							(to classify the pattern of datastreams and disseminations found in this object).
+    And at ingest, it may have these optional attributes:	 		
+        - label: (optional) The object is given a user-defined descriptive label.  		
+        - contentModel: (optional) The object is given user-defined content model identifier 
+                                 (to classify the pattern of datastreams and disseminations found in this object).
 	 							
-	 	The system will automatically assign these attributes (they should not be put in the ingest files,
-	 	 but they appear in stored files):  							
-	 		- createdDate: 		(system assigned) The object creation date is assigned to the millisecond. 
-	 		- lastModifiedDate:	(system assigned) The object creation date is assigned to the millisecond. 
-	******************************************************************************************************************************************-->
+    The system will automatically assign these attributes (they should not be put in the ingest files,
+    but they appear in stored files):  							
+        - createdDate: (system assigned) The object creation date is assigned to the millisecond. 
+        - lastModifiedDate:(system assigned) The object creation date is assigned to the millisecond. 
+******************************************************************************************************************************************-->
 	<foxml:objectProperties>
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
