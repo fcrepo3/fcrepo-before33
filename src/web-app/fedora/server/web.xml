@@ -26,13 +26,6 @@
     </servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>FedoraAccessSoapServlet</servlet-name>
-		<display-name>Fedora Access Soap Servlet</display-name>
-		<servlet-class>
-			fedora.server.test.FedoraAccessSoapServlet
-		</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>FedoraFieldSearchServlet</servlet-name>
 		<display-name>Fedora FieldSearch Servlet</display-name>
 		<servlet-class>
@@ -64,13 +57,6 @@
 		<servlet-name>MethodParameterResolverServlet</servlet-name>
 		<display-name>Fedora Access Datastream Locator</display-name>
 		<servlet-class>
-			fedora.server.test.MethodParameterResolverServlet
-		</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>MethodParameterResolverServlet2</servlet-name>
-		<display-name>Fedora Access Datastream Locator</display-name>
-		<servlet-class>
 			fedora.server.access.MethodParameterResolverServlet
 		</servlet-class>
 	</servlet>
@@ -82,12 +68,6 @@
 		<servlet-name>ControlServlet</servlet-name>
 		<url-pattern>/management/control</url-pattern>
 	</servlet-mapping>
-	<!-- Testing soap access via a java servlet -->
-	<servlet-mapping>
-		<servlet-name>FedoraAccessSoapServlet</servlet-name>
-		<url-pattern>/access/soapservlet</url-pattern>
-	</servlet-mapping>
-	<!-- end test -->
 	<servlet-mapping>
 		<servlet-name>FedoraFieldSearchServlet</servlet-name>
 		<url-pattern>/search</url-pattern>
@@ -106,10 +86,6 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>MethodParameterResolverServlet</servlet-name>
-		<url-pattern>/getParmResolver</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>MethodParameterResolverServlet2</servlet-name>
 		<url-pattern>/getAccessParmResolver</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
@@ -119,17 +95,17 @@
 	<welcome-file-list id="WelcomeFileList_1">
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
-        <security-constraint>
-            <web-resource-collection>
-                <web-resource-name>Fedora Management Interface</web-resource-name>
-                <url-pattern>/management/s*</url-pattern>
-            </web-resource-collection>
-            <auth-constraint>
-                <role-name>administrator</role-name>
-            </auth-constraint>
-        </security-constraint>
-        <login-config>
-            <auth-method>BASIC</auth-method>
-            <realm-name>Fedora Management Interface</realm-name>
-        </login-config>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Management Interface</web-resource-name>
+			<url-pattern>/management/s*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>administrator</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>Fedora Management Interface</realm-name>
+	</login-config>
 </web-app>
