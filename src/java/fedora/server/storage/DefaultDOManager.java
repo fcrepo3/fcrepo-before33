@@ -686,7 +686,7 @@ public class DefaultDOManager
             getServer().logFinest("Creating object, need a new PID.");
             String p=null;
             try {
-                p="urn:" + m_pidGenerator.generatePID(m_pidNamespace);
+                p=m_pidGenerator.generatePID(m_pidNamespace);
             } catch (Exception e) {
                 throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
                         + e.getClass().getName() + ") - " + e.getMessage());
@@ -720,6 +720,8 @@ public class DefaultDOManager
     }
 
     /**
+     * FIXME: This is no longer valid given the decision not to start pids with "urn:"
+     *
      * Throws an exception if the PID is invalid.
      * <pre>
      * Basically:
