@@ -20,9 +20,8 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
+import fedora.server.Context;
 import fedora.server.Logging;
-import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
@@ -329,7 +328,7 @@ public class Report
 	private static final long MILLISECS_IN_DAY = 1000 * 60 * 60 * 24;
 
 	
-	private Report(String _reportName, String _xslt, String[] _fieldsArray, String _query, String _remoteAddr, 
+	private Report(Context context, String _reportName, String _xslt, String[] _fieldsArray, String _query, String _remoteAddr, 
 			String _maxResults, String _sessionToken, String _newBase,
 			String _prefix, String _dateRange) throws QueryParseException, ServerException {
 		try {
@@ -470,14 +469,6 @@ public class Report
 				} catch (NullPointerException npe) {
 				} catch (NumberFormatException nfe) {
 				}			
-				ReadOnlyContext context = null; {
-					HashMap h=new HashMap();
-					h.put("application", "apia");
-					h.put("useCachedObject", "true");
-					h.put("userId", "fedoraAdmin");
-					h.put("host", _remoteAddr);
-					context = new ReadOnlyContext(h);
-				}		
 				if (sessionToken!=null) {
 					fsr=s_access.resumeFindObjects(context, sessionToken);
 				} else {
@@ -492,10 +483,10 @@ public class Report
 		}
 	}
 
-	protected static final Report getInstance(String remoteAddr, String sessionToken, 
+	protected static final Report getInstance(Context context, String remoteAddr, String sessionToken, 
 			String reportName, String xslt, String maxResults, String newBase,
 			String prefix, String dateRange) throws QueryParseException, ServerException {
-		return getInstance(remoteAddr, sessionToken, reportName, null, null, xslt, maxResults, newBase,
+		return getInstance(context, remoteAddr, sessionToken, reportName, null, null, xslt, maxResults, newBase,
 				prefix, dateRange);
 	}
 
@@ -522,11 +513,11 @@ public class Report
 		return contentType;
 	}
  
- 	protected static final Report getInstance(String _remoteAddr, String _sessionToken, String _reportName, 
+ 	protected static final Report getInstance(Context context, String _remoteAddr, String _sessionToken, String _reportName, 
 			String[] _fieldsArray, String _query, String _xslt, String _maxResults, String newBase,
 			String prefix, String dateRange) 
 			throws QueryParseException, ServerException {
-		Report report = new Report(_reportName, _xslt, _fieldsArray, _query, _remoteAddr, _maxResults, _sessionToken, newBase,
+		Report report = new Report(context, _reportName, _xslt, _fieldsArray, _query, _remoteAddr, _maxResults, _sessionToken, newBase,
 				prefix, dateRange);
 		return report;
 	}

@@ -13,11 +13,14 @@ import javax.servlet.ServletException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import fedora.server.Context;
 import fedora.server.Logging;
+import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.QueryParseException;
 import fedora.server.errors.ServerException;
+import fedora.server.security.Authorization;
 
 
 
@@ -113,7 +116,8 @@ public class ReportServlet
 
 		Report report;
 		try {
-			report = Report.getInstance(remoteAddr, sessionToken, reportName, fieldsArray, query, xslt, maxResults, newBase,
+		    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_REST, request, ReadOnlyContext.USE_CACHED_OBJECT);
+			report = Report.getInstance(context, remoteAddr, sessionToken, reportName, fieldsArray, query, xslt, maxResults, newBase,
 					prefix, dateRange);
 		} catch (QueryParseException e1) {
 			throw new ServletException("bad query parm", e1);
