@@ -64,6 +64,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 s_management=(Management) s_server.getModule("fedora.server.management.Management");
                 HashMap h=new HashMap();
                 h.put("application", "apim");
+                h.put("useCachedObject", "false");
+                h.put("userId", "fedoraAdmin");
                 s_context=new ReadOnlyContext(h);
             }
             s_st=FileSystemLowlevelStorage.getPermanentStore();  // FIXME: Move this
@@ -88,7 +90,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         try {
             return s_management.ingestObject(s_context, 
-                    new ByteArrayInputStream(METSXML), "mets11fedora1", "UTF-8", true); // <-- false for test
+                    new ByteArrayInputStream(METSXML), "mets11fedora1", "UTF-8", false); // <-- only for lv0 test, normally true
         } catch (ServerException se) {
             throw AxisUtility.getFault(se);
         }
