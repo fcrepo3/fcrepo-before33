@@ -240,9 +240,15 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 */
     }
     
-    public ObjectInfo getObjectInfo(String PID) 
+    public ObjectInfo getObjectInfo(String pid) 
             throws RemoteException {
-        return null;
+        assertInitialized();
+        try {
+            return s_management.getObjectInfo(s_context, pid);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        }
     }
 
     public fedora.server.types.gen.AuditRecord[] getObjectAuditTrail(String PID) throws java.rmi.RemoteException {
