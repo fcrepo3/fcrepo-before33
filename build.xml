@@ -152,6 +152,9 @@
 		<copy file="lib/common/saxon6.5.jar" todir="dist/client/lib"/>
 		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/client/lib"/>
 		<copy file="lib/common/commons-httpclient.jar" todir="dist/client/lib"/>
+		<copy file="lib/client/batik-1.5.jar" todir="dist/client/lib"/>
+		<copy file="lib/server/jai_core.jar" todir="dist/client/lib"/>
+		<copy file="lib/server/jai_codec.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/lib"/>
@@ -217,7 +220,7 @@
 	<target name="clientclasses" depends="clientprep,wsdl2java,stubwrappers" description="Compile client java code into temp/client">
 		<javac srcdir="${javaSourceDir}:temp/server/java:temp/clientgen" 
 		       destdir="temp/client" 
-		       classpath="lib/common/xerces2-2.0.2.jar;lib/client/jhbasic.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar;lib/common/commons-httpclient.jar" 
+		       classpath="lib/common/xerces2-2.0.2.jar;lib/client/jhbasic.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar;lib/common/commons-httpclient.jar;lib/server/jai_core.jar;lib/server/jai_codec.jar;lib/client/batik-1.5.jar" 
 		       includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java" 
 		       optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>

@@ -196,6 +196,7 @@ public class ImportDialog
 					if (!f.exists()) {
 					    throw new IOException("File does not exist.");
 					}
+                    file=f;
 				} else {
 				    if (m_urlField.getText().equals("")) {
 					    throw new IOException("No URL entered.");

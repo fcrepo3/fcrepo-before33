@@ -249,6 +249,28 @@ public class LoginDialog
 
     }
 
+        // sets Administrator.APIA/M if success, throws Exception if fails.
+        public static void tryLogin(String host, int port, String user, String pass) 
+                throws Exception {
+            Administrator.APIA=APIAStubFactory.getStub(host, port, user, pass);
+            Administrator.APIM=APIMStubFactory.getStub(host, port, user, pass);
+            RepositoryInfo info=Administrator.APIA.describeRepository();
+            if (!info.getRepositoryVersion().equals("1.1.1")) {
+                throw new IOException("Server is version "
+                        + info.getRepositoryVersion() + ", but this"
+                        + " client only works with version 1.1.1");
+            }
+            // do a bogus API-M call, and if it doesn't come back
+            // unauthorized, assume all is ok.
+            try {
+                Administrator.APIM.getDatastream(null, null, null);
+            } catch (Exception e) {
+                if (e.getMessage().indexOf("Unauthorized")!=-1) {
+                    throw new IOException("Bad username or password.");
+                }
+            }
+        }
+
     public class PasswordChangeListener
             implements DocumentListener {
 
@@ -279,7 +301,9 @@ public class LoginDialog
                 m_loginButton.setEnabled(true);
             }
         }
+
     }
+
 
     public class LoginAction
             extends AbstractAction {
@@ -322,28 +346,13 @@ public class LoginDialog
                     if (username.equals("")) {
                         throw new IOException("No username provided.");
                     }
-                    Administrator.APIA=APIAStubFactory.getStub(host, port, username, m_passwordField.getText());
-                    Administrator.APIM=APIMStubFactory.getStub(host, port, username, m_passwordField.getText());
-                    RepositoryInfo info=Administrator.APIA.describeRepository();
-                    if (!info.getRepositoryVersion().equals("1.1.1")) {
-                        throw new IOException("Server is version "
-                                + info.getRepositoryVersion() + ", but this"
-                                + " client only works with version 1.1.1");
-                    }
-                    // do a bogus API-M call, and if it doesn't come back
-                    // unauthorized, assume all is ok.
-                    try {
-                        Administrator.APIM.getDatastream(null, null, null);
-                    } catch (Exception e) {
-                        if (e.getMessage().indexOf("Unauthorized")!=-1) {
-                            throw new IOException("Bad username or password.");
-                        }
-                    }
+                    String pass=m_passwordField.getText();
+                    tryLogin(host, port, username, pass);
                     // all looks ok...just save stuff and exit now
                     m_lastServer=host + ":" + port;
                     m_lastUsername=username;
                     m_loginDialog.saveProperties();
-                    Administrator.INSTANCE.setLoginInfo(host, port, username, m_passwordField.getText());
+                    Administrator.INSTANCE.setLoginInfo(host, port, username, pass);
                     m_loginDialog.dispose();
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(m_loginDialog,

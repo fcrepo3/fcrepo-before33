@@ -110,7 +110,8 @@ public class ObjectEditorFrame
         getContentPane().add(outerPane, BorderLayout.CENTER);
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Open16.gif")));
         pack();
-        Dimension size=getSize();
+        setSize(new Dimension(740, 545)); 
+/*        Dimension size=getSize();
         Dimension aSize=Administrator.INSTANCE.getSize();
         if (size.width>aSize.width-20) {
             size.width=aSize.width-20;
@@ -119,6 +120,7 @@ public class ObjectEditorFrame
             size.height=aSize.height-20;
         }
         setSize(size);
+*/
         show();
     }
 

@@ -42,6 +42,7 @@ public class DatastreamsPane
 
     private String m_pid;
     private JTabbedPane m_tabbedPane;
+    private DatastreamPane[] m_datastreamPanes;
 
     /**
      * Build the pane.
@@ -50,39 +51,29 @@ public class DatastreamsPane
             throws Exception {
         m_pid=pid;
 
-        // this(newPurgePane, m_tabbedPane)
-
-            // newPurgePane(newButton, purgeButton)
-
-                JButton newButton=new JButton("New Datastream...");
-                newButton.setEnabled(false);
-                JButton purgeButton=new JButton("Purge Datastream...");
-                purgeButton.setEnabled(false);
-
-            JPanel newPurgePane=new JPanel();
-            newPurgePane.setLayout(new FlowLayout());
-            newPurgePane.setBorder(BorderFactory.createEmptyBorder(6,0,0,0));
-            newPurgePane.add(newButton);
-            newPurgePane.add(purgeButton);
+        // this(m_tabbedPane)
 
             // m_tabbedPane(DatastreamPane[])
 
             m_tabbedPane=new JTabbedPane(SwingConstants.LEFT);
             Datastream[] currentVersions=Administrator.APIM.
                     getDatastreams(pid, null, null);
+            m_datastreamPanes=new DatastreamPane[currentVersions.length];
             for (int i=0; i<currentVersions.length; i++) {
-                m_tabbedPane.add(currentVersions[i].getID(), 
-                        new DatastreamPane(pid, currentVersions[i]));
+                m_datastreamPanes[i]=new DatastreamPane(pid, currentVersions[i]);
+                m_tabbedPane.add(currentVersions[i].getID(), m_datastreamPanes[i]);
             }
 
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
+        setBorder(BorderFactory.createEmptyBorder(6,6,0,6));
         add(m_tabbedPane, BorderLayout.CENTER);
-        add(newPurgePane, BorderLayout.SOUTH); 
 
     }
 
     public boolean isDirty() {
+        for (int i=0; i<m_datastreamPanes.length; i++) {
+            if (m_datastreamPanes[i].isDirty()) return true;
+        }
         return false;
     }
 

@@ -19,7 +19,12 @@ public abstract class ContentHandlerFactory {
 
     /**
      * Registers a viewer or editor with the factory.  Before the factory
-     * is used, all needed viewers/editors should be registered.
+     * is used, all needed editors and viewers should be registered (in that
+     * order).  Order is important here because all editors are considered
+     * viewers by default.  If a separate viewer is registered after an
+     * editor that handles the same type, that viewer will be the one provided
+     * via getViewer.  In general, the last viewers/editors passed in will
+     * have the most precendence.
      */
     public static void register(ContentViewer handler) {
         if (handler.isEditor()) {
@@ -40,6 +45,19 @@ public abstract class ContentHandlerFactory {
     public static boolean hasViewer(String type) {
         return s_viewers.containsKey(type) || 
             (type.endsWith("+xml") && s_viewers.containsKey("text/xml"));
+    }
+
+    /**
+     * If a viewer would be provided for the given type, is that viewer
+     * also an editor?
+     */
+    public static boolean viewerIsEditor(String type) {
+        Object viewer=s_viewers.get(type);
+        if (viewer!=null) {
+            return (viewer instanceof ContentEditor);
+        } else {
+            return false;
+        }
     }
 
     /**

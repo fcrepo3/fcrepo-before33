@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -90,6 +91,8 @@ public class DatastreamPane
 		m_pid=pid;
         m_mostRecent=mostRecent;
         new TextContentEditor();  // causes it to be registered if not already
+        new ImageContentViewer();  // causes it to be registered if not already
+        new SVGContentViewer();  // causes it to be registered if not already
 
         // mainPane(commonPane, versionPane)
 
@@ -198,17 +201,14 @@ public class DatastreamPane
 
             JPanel versionPane=new JPanel();
             versionPane.setLayout(new BorderLayout());
-            String versionPaneLabel="1 Version";
+/*            String versionPaneLabel="(1 Version)";
             if (versions.length>1) {
-                versionPaneLabel=versions.length + " Versions";
+                versionPaneLabel="(" + versions.length + " Versions)";
             }
-            versionPane.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createEmptyBorder(6,0,0,0),
-                    BorderFactory.createTitledBorder(
-                            BorderFactory.createEtchedBorder(),
-                            versionPaneLabel
-                            )
-                    ));
+            versionPane.setBorder( BorderFactory.createTitledBorder(
+                            BorderFactory.createEmptyBorder(),
+                            versionPaneLabel ));
+*/
             if (versions.length>1) {
                 versionPane.add(m_versionSlider, BorderLayout.NORTH);
             }
@@ -258,8 +258,6 @@ public class DatastreamPane
 
     public void saveChanges(String logMessage) 
             throws Exception {
-
-// defer this stuff to the below jpanel...todo
         String state=null;
         int i=m_stateComboBox.getSelectedIndex();
         if (i==0)
@@ -323,6 +321,7 @@ public class DatastreamPane
         private JButton m_viewButton;
         private JButton m_importButton;
         private JButton m_exportButton;
+        private JButton m_separateViewButton;
 
         private ContentEditor m_editor;
         private ContentViewer m_viewer;
@@ -373,9 +372,17 @@ public class DatastreamPane
             JLabel[] labels;
             if (R || E) {
                 JLabel locationLabel=new JLabel("Reference");
-                labels=new JLabel[] {labelLabel, locationLabel};
+                if (m_versionSlider!=null) {
+                    labels=new JLabel[] {labelLabel, locationLabel};
+                } else {
+                    labels=new JLabel[] {new JLabel("Created"), labelLabel, locationLabel};
+                }
             } else {
-                labels=new JLabel[] {labelLabel};
+                if (m_versionSlider!=null) {
+                    labels=new JLabel[] {labelLabel};
+                } else {
+                    labels=new JLabel[] {new JLabel("Created"), labelLabel};
+                }
             }
             m_labelTextField=new JTextField(ds.getLabel());
             m_labelTextField.getDocument().addDocumentListener(
@@ -392,9 +399,21 @@ public class DatastreamPane
                 m_locationTextField=new JTextField(m_ds.getLocation());
                 m_locationTextField.getDocument().addDocumentListener(
                     dataChangeListener);
-                values=new JComponent[] {m_labelTextField, m_locationTextField};
+                if (m_versionSlider!=null) {
+                    values=new JComponent[] {m_labelTextField, m_locationTextField};
+                } else {
+                    values=new JComponent[] {new JLabel(
+                        s_formatter.format(m_ds.getCreateDate().getTime())), 
+                        m_labelTextField, m_locationTextField};
+                }
             } else {
-                values=new JComponent[] {m_labelTextField};
+                if (m_versionSlider!=null) {
+                    values=new JComponent[] {m_labelTextField};
+                } else {
+                    values=new JComponent[] {new JLabel(
+                        s_formatter.format(m_ds.getCreateDate().getTime())), 
+                        m_labelTextField};
+                }
             }
 
             JPanel fieldPane=new JPanel();
@@ -405,7 +424,8 @@ public class DatastreamPane
             add(fieldPane, BorderLayout.NORTH);
 
             JPanel actionPane=new JPanel();
-            actionPane.setLayout(new BoxLayout(actionPane, BoxLayout.Y_AXIS));
+            actionPane.setLayout(new FlowLayout());
+           // actionPane.setLayout(new BoxLayout(actionPane, BoxLayout.Y_AXIS));
             if (m_canEdit) {
                 // we know it's editable... add a button
                 m_editButton.addActionListener(new ActionListener() {
@@ -421,6 +441,25 @@ public class DatastreamPane
                     }
                 });
                 actionPane.add(m_editButton);
+                // if a *separate* viewer is also available, add a view button
+                if (!ContentHandlerFactory.viewerIsEditor(ds.getMIMEType())) {
+                    m_separateViewButton=new JButton("View");
+                    m_separateViewButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            // open a separate viewing window, using the content
+                            // from the *server* if the text is "View", and the
+                            // content from the editor if the text is "Preview"
+                            try {
+                                startSeparateViewer();
+                            } catch (Exception e) {
+                                JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                                        e.getMessage(), "Content View Error",
+                                        JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    });
+                    actionPane.add(m_separateViewButton);
+                }
             } else if (m_canView) {
                 // it's not editable, but it's VIEWable... add a button
                 m_viewButton.addActionListener(new ActionListener() {
@@ -540,7 +579,7 @@ public class DatastreamPane
                 }
                 }
             });
-            add(actionPane, BorderLayout.EAST);
+            add(actionPane, BorderLayout.SOUTH);
         }
 
         public Datastream getDatastream() {
@@ -572,6 +611,34 @@ public class DatastreamPane
                             add(m_viewer.getComponent(), BorderLayout.CENTER);
                             m_viewButton.setEnabled(false);
                             validate();
+        }
+
+        public void startSeparateViewer() throws Exception {
+            InputStream contentStream;
+            if (m_separateViewButton.getText().equals("Preview")) {
+                // the editor will provide the content
+                contentStream=m_editor.getContent();
+            } else {
+                // the server will provide the content
+                contentStream=Administrator.DOWNLOADER.getDatastreamContent(
+                        m_pid, m_ds.getID(), m_ds.getCreateDate().getTime());
+            }
+            ContentViewer separateViewer=ContentHandlerFactory.getViewer(
+                    m_ds.getMIMEType(), contentStream);
+            // now open up a new JInternalFrame and put the v.getComponent()
+            // in it.
+            JInternalFrame viewFrame=new JInternalFrame(
+                    m_separateViewButton.getText() + "ing " + m_ds.getID() 
+                    + " datastream from object " + m_pid, true, true, true, true);
+            //viewFrame.setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Edit16.gif")));
+            JPanel myPanel=new JPanel();
+            myPanel.setLayout(new BorderLayout());
+            myPanel.add(separateViewer.getComponent(), BorderLayout.CENTER);
+            viewFrame.getContentPane().add(myPanel);
+            viewFrame.setSize(720,520);
+            Administrator.getDesktop().add(viewFrame);
+            viewFrame.setVisible(true);
+            viewFrame.toFront();
         }
 
 	public void saveChanges(String state, String logMessage)
@@ -606,6 +673,24 @@ public class DatastreamPane
 		}
     }
         public boolean isDirty() {
+            if (m_editor!=null) {
+                if (m_editor.isDirty()) {
+                    // ensure the button label for view is right, if it's there
+                    if (m_separateViewButton!=null) {
+                        if (m_separateViewButton.getText().equals("View")) {
+                            m_separateViewButton.setText("Preview");
+                        }
+                    }
+                    return true;
+                } else {
+                    // ensure the button label for view is right, if it's there
+                    if (m_separateViewButton!=null) {
+                        if (m_separateViewButton.getText().equals("Preview")) {
+                            m_separateViewButton.setText("View");
+                        }
+                    }
+                }
+            }
             if (!m_ds.getLabel().equals(m_labelTextField.getText())) {
                  return true;
             }
@@ -614,7 +699,7 @@ public class DatastreamPane
                  return true;
             }
             if (m_importFile!=null) return true;
-            return (m_editor!=null && m_editor.isDirty());
+            return false;
         }
 
         public void changesSaved() {
@@ -624,8 +709,10 @@ public class DatastreamPane
             if (m_importFile!=null) {
                 // update display, and set to null
                 m_importFile=null;
-                remove(m_importLabel);
-                m_importLabel=null;
+                if (m_importLabel!=null) {
+                    remove(m_importLabel);
+                    m_importLabel=null;
+                }
             }
             // But all this may be a moot point, since it may be best to just
             // re-load the entire datastream history to get a fresh view with
@@ -658,22 +745,114 @@ public class DatastreamPane
     public class PriorVersionPane
             extends JPanel {
 
+        private boolean X;
+        private boolean M;
+        private boolean E;
+        private boolean R;
+
         private ContentViewer v;
         private Datastream m_ds;
 
         public PriorVersionPane(Datastream ds) {
             m_ds=ds;
-            setLayout(new BorderLayout());
-			JLabel label=new JLabel(ds.getLabel()+ "((" + ds.getVersionID() + "))");
-			add(label, BorderLayout.NORTH);
             if (ds.getControlGroup().toString().equals("X")) {
-                try {
-                v=ContentHandlerFactory.getViewer("text/xml", new ByteArrayInputStream(ds.getContentStream()));
-                add(v.getComponent(), BorderLayout.CENTER);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
+                X=true;
+            } else if (ds.getControlGroup().toString().equals("M")) {
+                M=true;
+            } else if (ds.getControlGroup().toString().equals("E")) {
+                E=true;
+            } else if (ds.getControlGroup().toString().equals("R")) {
+                R=true;
             }
+            setLayout(new BorderLayout());
+            // NORTH: fieldPanel
+            // disabled labels and values
+            JLabel labelLabel=new JLabel("Label");
+            JTextField labelValue=new JTextField();
+            labelValue.setText(ds.getLabel());
+            labelValue.setEditable(false);
+            JLabel[] labels;
+            JComponent[] values;
+            if (E || R) {
+                labels=new JLabel[] {labelLabel, new JLabel("Reference")};
+                JTextField refValue=new JTextField();
+                refValue.setText(ds.getLocation());
+                refValue.setEditable(false);
+                values=new JComponent[] {labelValue, refValue};
+            } else {
+                labels=new JLabel[] {labelLabel};
+                values=new JComponent[] {labelValue};
+            }
+
+            JPanel fieldPanel=new JPanel();
+            GridBagLayout fieldGrid=new GridBagLayout();
+            fieldPanel.setLayout(fieldGrid);
+            addLabelValueRows(labels, values, 
+                       fieldGrid, fieldPanel);
+            add(fieldPanel, BorderLayout.NORTH);
+
+            // SOUTH: buttonPanel
+            JPanel buttonPanel=new JPanel();
+            buttonPanel.setLayout(new FlowLayout());
+            if (ContentHandlerFactory.hasViewer(ds.getMIMEType())) {
+                JButton viewButton=new JButton("View");
+                // CENTER: populated on view
+                viewButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent evt) {
+                        JButton btn=(JButton) evt.getSource();
+                        try {
+                            ContentViewer v=ContentHandlerFactory.getViewer(
+                                    m_ds.getMIMEType(), 
+                                    Administrator.DOWNLOADER.getDatastreamContent(
+                                            m_pid, m_ds.getID(), 
+                                            m_ds.getCreateDate().getTime()
+                                    ) );
+                            add(v.getComponent(), BorderLayout.CENTER);
+                            btn.setEnabled(false);
+                            validate();
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                                    e.getMessage(), "Content View Failure",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                });
+                buttonPanel.add(viewButton);
+            }
+            JButton exportButton=new JButton("Export...");
+            exportButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    // FIXME: save behavior as other exporter, consolidate
+                    // popup the file dialog
+                    try {
+                        JFileChooser browse;
+                        if (Administrator.getLastDir()==null) {
+                            browse=new JFileChooser();
+                        } else {
+                            browse=new JFileChooser(Administrator.getLastDir());
+                        }
+                        browse.setApproveButtonText("Export");
+                        browse.setApproveButtonMnemonic('E');
+                        browse.setApproveButtonToolTipText("Exports to the selected file.");
+                        browse.setDialogTitle("Export Datastream Content to...");
+                        int returnVal = browse.showOpenDialog(Administrator.getDesktop());
+                        if (returnVal == JFileChooser.APPROVE_OPTION) {
+                            File file = browse.getSelectedFile();
+                            Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
+                            Administrator.DOWNLOADER.getDatastreamContent(m_pid, 
+                                    m_ds.getID(), m_ds.getCreateDate().getTime(),
+                                    new FileOutputStream(file));
+                        }
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                                e.getMessage(), "Content Export Failure",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+            buttonPanel.add(exportButton);
+            add(buttonPanel, BorderLayout.SOUTH);
+
         }
 
         public Datastream getDatastream() {

@@ -118,9 +118,17 @@ public class Administrator extends JFrame {
     public static File BASE_DIR;
     public static Administrator INSTANCE=null;
 
-    public Administrator() {
+    public Administrator(String host, int port, String user, String pass) {
         super("Fedora Administrator");
         INSTANCE=this;
+        if (host!=null) {
+            // already must have passed through non-interactive login
+            try {
+            APIA=APIAStubFactory.getStub(host, port, user, pass);
+            APIM=APIMStubFactory.getStub(host, port, user, pass);;
+            setLoginInfo(host, port, user, pass);
+            } catch (Exception e) { APIA=null; APIM=null; }
+        }
         if (System.getProperty("fedora.home")!=null) {
             File f=new File(System.getProperty("fedora.home"));
             if (f.exists() && f.isDirectory()) {
@@ -696,8 +704,29 @@ public class Administrator extends JFrame {
         // turn off obnoxious Axis stdout/err messages
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
 
-        Administrator administrator=new Administrator();
 
+        try {
+        String host=null;
+        int port=0;
+        String user=null;
+        String pass=null;
+        if (args.length==4) {
+            host=args[0];
+            port=Integer.parseInt(args[1]);
+            user=args[2];
+            pass=args[3];
+            System.out.print("Logging in...");
+            LoginDialog.tryLogin(host, port, user, pass);
+            System.out.println("ok...");
+        }
+        System.out.print("Initializing UI...");
+        Administrator administrator=new Administrator(host, port, user, pass);
+        System.out.println("ok.");
+        } catch (NumberFormatException e) {
+            System.out.println("Error: port must be a number.  fedora-admin host port user pass");
+        } catch (Exception e) {
+            System.out.println("FAILED!" + "\n" + e.getMessage());
+        }
     }
 }
 
