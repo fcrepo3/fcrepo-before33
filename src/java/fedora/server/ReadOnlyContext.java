@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.catalina.realm.GenericPrincipal;
 
 import fedora.common.Constants;
+import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.NotAuthorizedException;
+import fedora.server.security.Authorization;
 
 /**
  *
@@ -242,12 +245,22 @@ public class ReadOnlyContext
     	}
         return new ReadOnlyContext(parameters);
     }
+
+    
+    public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, boolean useCachedObject) {
+    	return getContext(soapOrRest, request, useCachedObject, null, null, null);
+    }
     
     /*
      * Gets a Context appropriate for the request, and whether it is ok
      * to use the dissemination cache or not.
      */
-    public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, boolean useCachedObject) {
+    public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, boolean useCachedObject,
+    		String subjectId, String password, String[] roles) {
+System.err.println("in context, handling roles parm =" + roles);	
+if (roles != null) {
+	System.err.println("in context, role parm length=" + roles.length);	
+}	
       
   	MultiValueMap environmentMap = new MultiValueMap();
   	//h.put(Authorization.ENVIRONMENT_CURRENT_DATETIME_URI_STRING, "2005-01-26T16:42:00Z");  //does xacml engine provide this?
@@ -288,7 +301,9 @@ public class ReadOnlyContext
   		environmentMap.lock();
   	}
 
-  	String subjectId = request.getRemoteUser();
+  	if (subjectId == null) {
+  		subjectId = request.getRemoteUser();
+  	}
 
   	//roles are available through xacml "attribute finder" callback and so are not stored here 
   	//as subject attrs
@@ -298,16 +313,34 @@ public class ReadOnlyContext
   	if (subjectId == null) {
   		subjectId = "";
   	}
-  	String password = "";
-  	String roles[] = null;
   	if (request.getUserPrincipal() != null) {
   	  	log("request.getUserPrincipal().getName()=" + request.getUserPrincipal().getName());
   	}
+  	
+  	if (request.getUserPrincipal() == null) {
+System.err.println("in context, no principal to grok roles from!!");				
+  	} else {
+			if (request.getUserPrincipal() instanceof GenericPrincipal) {
+				System.err.println("in context, principal is GenericPrincipal, so I can grok roles from it!!");
+			} else {
+				System.err.println("in context, principal is -not- GenericPrincipal, so I'm not groking roles from it!!");
+  	}
+  		
+  	
+  	}
+  	
   	if ((request.getUserPrincipal() != null) && (request.getUserPrincipal() instanceof GenericPrincipal)) {		
   	  	if (((GenericPrincipal) request.getUserPrincipal()).getPassword() != null ) {
-  	  		password = ((GenericPrincipal) request.getUserPrincipal()).getPassword();
+  	  		if (password == null) {
+  	  			password = ((GenericPrincipal) request.getUserPrincipal()).getPassword();
+  	  		}
+  	  		if (password == null) {
+  	  			password = "";
+  	  		}
   	  	}
-  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
+  	  	if (roles == null) {
+  	  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
+  	  	}
   	}
   	try {		
   		subjectMap.set(Constants.SUBJECT.LOGIN_ID.uri, subjectId);
@@ -315,6 +348,7 @@ public class ReadOnlyContext
   			String[] parts = parseRole(roles[i]);
  			if ((parts != null) && parts.length == 2) {
 				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
+System.err.println("in context, adding subject attr " + parts[0] + "=" + parts[1]);				
  			}
   		}
   	} catch (Exception e) {	
@@ -331,6 +365,20 @@ public class ReadOnlyContext
   	commonParams.put("userId", subjectMap.getString(Constants.SUBJECT.LOGIN_ID.uri)); //to do: change referring code to access Authorization.SUBJECT_ID, then delete this line   
   	commonParams.put("host", environmentMap.getString(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri)); //to do:  as above, vis-a-vis Authorization.ENVIRONMENT_CLIENT_IP
       ReadOnlyContext temp = new ReadOnlyContext(commonParams, environmentMap, subjectMap, password);
+
+      /*
+    String fromHeader = request.getHeader("From");
+	if ((fromHeader != null) && ("".equals(fromHeader))) {
+	    if (authorizationModule == null) {
+			throw new NotAuthorizedException("no authorizationModule");	
+	    }
+	    authorizationModule.enforceGetDissemination(temp, PID, bDefPID, methodName, asOfDateTime);
+		subjectId = fromHeader;
+	}	
+			subjectMap.lock();
+
+*/
+
       return temp;
     }
 
