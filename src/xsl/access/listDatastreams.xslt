@@ -25,7 +25,7 @@
 					<hr/>
 					<font size="+1" color="blue">Object Identifier (PID):       </font>
 					<font size="+1">
-						<xsl:value-of select="@PID"/>
+						<xsl:value-of select="@pid"/>
 					</font>
 					<p/>
 					<xsl:choose>
