@@ -105,6 +105,8 @@ public class DefaultManagement
             throw se;
         }
         m_manager.releaseWriter(w);
+        Runtime r=Runtime.getRuntime();
+        getServer().logFinest("Memory: " + r.freeMemory() + " bytes free of " + r.totalMemory() + " available.");
         getServer().logFinest("Exiting DefaultManagement.ingestObject");
         return pid;
     }
