@@ -85,10 +85,10 @@
 				<ulink url="client/browser/search/index.html">Repository Search Interface</ulink>
 			</member>
 			<member>
-				<ulink url="client/admin-gui/apim/index.html">API-M Admin GUI Client</ulink>
+				<ulink url="client/browser/oai/index.html">OAI Provider Interface</ulink>
 			</member>
 			<member>
-				<ulink url="client/browser/oai/index.html">OAI Provider Interface</ulink>
+				<ulink url="client/admin-gui/apim/index.html">Java Application: Admin GUI -- for API-M</ulink>
 			</member>
 <!--			<member>
 				<ulink url="client/admin-gui/apim/do-const.html">Java Application: Admin GUI - Object Creation and Repository Management via API-M</ulink>
