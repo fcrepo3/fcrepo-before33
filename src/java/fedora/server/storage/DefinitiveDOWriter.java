@@ -346,7 +346,7 @@ public class DefinitiveDOWriter
         } catch (UnsupportedEncodingException uee) { }
         return new ByteArrayInputStream(bytes.toByteArray());
     }
-    
+
     public String getContentModelId()
             throws ObjectIntegrityException {
         assertNotRemoved();
@@ -377,12 +377,12 @@ public class DefinitiveDOWriter
         assertNotPendingRemoval();
         return m_obj.getState();
     }
-    
-    public String getLockingUser() 
+
+    public String getLockingUser()
             throws StorageDeviceException, ObjectNotFoundException {
         return m_mgr.getLockingUser(m_obj.getPid());
     }
-    
+
     public Date getCreateDate()
             throws ObjectIntegrityException {
         assertNotRemoved();
@@ -390,7 +390,7 @@ public class DefinitiveDOWriter
         assertNotPendingRemoval();
         return m_obj.getCreateDate();
     }
-    
+
     public Date getLastModDate()
             throws ObjectIntegrityException {
         assertNotRemoved();
@@ -504,7 +504,7 @@ public class DefinitiveDOWriter
     }
 
     // Returns list of methods that Behavior Mechanism implements for a BDef
-    public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
+    public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotInvalidated();
@@ -513,7 +513,7 @@ public class DefinitiveDOWriter
     }
 
     // Overloaded method: returns InputStream as alternative
-    public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime)
+    public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
         assertNotInvalidated();
@@ -523,7 +523,7 @@ public class DefinitiveDOWriter
 
     // Returns list of method parameters that Behavior Mechanism implements
     // for a BDef
-    public MethodParmDef[] GetBMechMethodParms(String bDefPID,
+    public MethodParmDef[] getObjectMethodParms(String bDefPID,
             String methodName, Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
@@ -534,6 +534,7 @@ public class DefinitiveDOWriter
 
     // Returns list of default method parameters that Behavior Mechanism
     // implements for a BDef
+    /*
     public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID,
             String methodName, Date versDateTime)
             throws ObjectIntegrityException {
@@ -542,6 +543,7 @@ public class DefinitiveDOWriter
         assertNotPendingRemoval();
         return new MethodParmDef[0];
     }
+    */
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
             throws ObjectIntegrityException {
@@ -643,13 +645,13 @@ public class DefinitiveDOWriter
         return false;
         */
     }
-    
+
     public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
             String methodName, Date versDateTime) {
         return null;
     }
 
-    public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime) {
+    public ObjectMethodsDef[] getObjectMethods(Date versDateTime) {
         return null;
     }
 
