@@ -6,7 +6,7 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> -->
 <article>
 	<articleinfo>
-		<graphic fileref="images//newlogo2.jpg"/>
+		<graphic fileref="images/newlogo2.jpg"/>
 		<title>
 			<inlinemediaobject>
 				<imageobject>
@@ -672,6 +672,6 @@ xmlns:uvalibadmin="http://www.lib.virginia.edu/uvalibadmin/" &gt;
 	</sect1>
 	<sect1>
 		<title>Appendix A: Digital Object Construction</title>
-		<para>This manual's focus is on practical use of the Fedora Administrator Tool. For further discussion on the theory behind digital object construction, please see the <ulink url="server/do-const.html">Digital Object Construction manual</ulink>.</para>
+		<para>This manual's focus is on practical use of the Fedora Administrator Tool. For further discussion on the theory behind digital object construction, please see the <ulink url="../../server/do-const.html">Digital Object Construction manual</ulink>.</para>
 	</sect1>
 </article>

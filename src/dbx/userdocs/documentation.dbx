@@ -14,9 +14,11 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title><trademark class="trade">Fedora</trademark> System Documentation</title>
+		<title>
+			<trademark class="trade">Fedora</trademark> System Documentation</title>
 		<subtitle>Software Release 1.2</subtitle>
-		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -88,7 +90,7 @@
 				<ulink url="client/browser/oai/index.html">OAI Provider Interface</ulink>
 			</member>
 			<member>
-				<ulink url="client/admin-gui/apim/index.html">Java Application: Admin GUI -- for API-M</ulink>
+				<ulink url="client/admin-gui/index.html">Java Application: Admin GUI -- for API-M</ulink>
 			</member>
 			<!--			<member>
 				<ulink url="client/admin-gui/apim/do-const.html">Java Application: Admin GUI - Object Creation and Repository Management via API-M</ulink>
