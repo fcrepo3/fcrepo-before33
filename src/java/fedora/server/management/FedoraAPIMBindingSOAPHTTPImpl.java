@@ -107,7 +107,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         try {
             return s_management.ingestObject(s_context, 
-                    new ByteArrayInputStream(METSXML), "mets11fedora1", "UTF-8", true);
+                    new ByteArrayInputStream(METSXML), "mets11fedora1", "UTF-8", false); // false=repos won't gen pid, will take as given
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
