@@ -48,10 +48,6 @@ import fedora.client.console.Console;
 import fedora.client.console.ConsoleSendButtonListener;
 import fedora.client.console.ConsoleCommand;
 import fedora.client.console.ServiceConsoleCommandFactory;
-import fedora.client.list.AutoLister;
-import fedora.server.management.FedoraAPIMServiceLocator;
-import fedora.server.management.FedoraAPIM;
-import fedora.server.types.gen.ObjectInfo;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 
@@ -60,32 +56,44 @@ public class ResultFrame
         
     private JSortTable m_table;
     
-    public ResultFrame(String frameTitle, String[] resultFields, int maxResults, FieldSearchQuery query, 
-            // remove below parms
-            String pidPattern, String foType, 
-            String lockedByPattern, String state, String labelPattern, 
-            String contentModelIdPattern, Calendar createDateMin, 
-            Calendar createDateMax, Calendar lastModDateMin, 
-            Calendar lastModDateMax) {
-
-//String[] resultFields, int maxResults, FieldSearchQuery query)
-
-
+    public ResultFrame(String frameTitle, String[] displayFields, String sessionToken) {
+    }
+    
+    public ResultFrame(String frameTitle, String[] displayFields, int maxResults, FieldSearchQuery query) {
         super(frameTitle,
               true, //resizable
               true, //closable
               true, //maximizable
               true);//iconifiable
        
-        String[] columnNames = resultFields;
+        // Make sure resultFields has pid, even though they may not 
+        // want to display it. Also, signal that the pid should or
+        // should not be displayed.
+        boolean displayPid=false;
+        for (int i=0; i<displayFields.length; i++) {
+            if (displayFields[i].equals("pid")) {
+                displayPid=true;
+            }
+        }
+        String[] resultFields;
+        if (displayPid) {
+            resultFields=displayFields;
+        } else {
+            resultFields=new String[displayFields.length+1];
+            resultFields[0]="pid";
+            for (int i=1; i<displayFields.length+1; i++) {
+                resultFields[i]=displayFields[i-1];
+            }
+        }
 
         try {
-//            AutoFinder a=new AutoFinder(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
-            AutoLister a=new AutoLister(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
+            AutoFinder a=new AutoFinder(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
+/*            FieldSearchResult fsr=a.findObjects();
+
             Map m=a.list(pidPattern, foType, lockedByPattern, state,
                     labelPattern, contentModelIdPattern, createDateMin,
                     createDateMax, lastModDateMin, lastModDateMax);
-            Object[][] data=new Object[m.size()][8];
+            Object[][] data=new Object[m.size()][displayFields.size];
             Iterator pidIter=m.keySet().iterator();   
             int i=0;
             SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
@@ -103,7 +111,7 @@ public class ResultFrame
                 i++;
             }
     
-            DefaultSortTableModel model=new DefaultSortTableModel(data, columnNames);
+            DefaultSortTableModel model=new DefaultSortTableModel(data, displayFields);
             m_table=new JSortTable(model);
             m_table.setPreferredScrollableViewportSize(new Dimension(400, 400));
             m_table.setShowVerticalLines(false);
@@ -114,6 +122,7 @@ public class ResultFrame
             JScrollPane browsePanel = new JScrollPane(m_table);
             getContentPane().setLayout(new BorderLayout());
             getContentPane().add(browsePanel, BorderLayout.CENTER);
+*/
     
             setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Zoom16.gif")));
     
