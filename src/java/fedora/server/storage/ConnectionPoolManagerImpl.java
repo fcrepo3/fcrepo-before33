@@ -10,6 +10,7 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.InitializationException;
 import fedora.server.Module;
 import fedora.server.Server;
+import fedora.server.utilities.DDLConverter;
 
 /**
  * <p>Title: ConnectionPoolManagerImpl.java</p>
@@ -71,8 +72,7 @@ public class ConnectionPoolManagerImpl extends Module
       if (defaultPoolName == null || defaultPoolName.equalsIgnoreCase(""))
       {
         throw new ModuleInitializationException("Default Connection Pool " +
-            "Name Not Specified",
-            "fedora.server.storage.ConnectionPoolManagerImpl");
+            "Name Not Specified", getRole());
       }
       System.out.println("DefaultPoolName: "+defaultPoolName);
       String poolList = this.getParameter("poolNames");
@@ -105,12 +105,37 @@ public class ConnectionPoolManagerImpl extends Module
         int maxConnections = i2.intValue();
         System.out.println("max: "+maxConnections);
 
+        // If a ddlConverter has been specified for the pool,
+        // try to instantiate it so the ConnectionPool can use
+        // it when it provides a TableCreatingConnection.
+        // If a ddlConverter has been specified, it is assumed
+        // that a failure to initialize (construct) it should
+        // trigger a ModuleInitializationException (a fatal startup error).
+        DDLConverter ddlConverter=null;
+        String ddlConverterClassName=getServer().
+                  getDatastoreConfig(poolNames[i]).
+                  getParameter("ddlConverter");
+        if (ddlConverterClassName!=null) {
+          try 
+          {
+            ddlConverter=(DDLConverter) 
+                    Class.forName(ddlConverterClassName).newInstance();
+          } catch (Throwable th) {
+            throw new ModuleInitializationException("A DDLConverter was "
+                    + "specified for the pool \"" + poolNames[i]
+                    + "\", but it couldn't be instantiated.  The underlying "
+                    + "error was a " + th.getClass().getName() 
+                    + "The message was \"" + th.getMessage() + "\".", 
+                    getRole());
+          }
+        }
+
         // Create connection pool
         try
         {
           ConnectionPool connectionPool = new ConnectionPool(jdbcDriverClass,
               jdbcURL, dbUsername, dbPassword, minConnections,
-              maxConnections, true);
+              maxConnections, true, ddlConverter);
           System.out.println("Initialized Pool: "+connectionPool);
           h_ConnectionPools.put(poolNames[i],connectionPool);
           System.out.println("putPoolInHash: "+h_ConnectionPools.size());
