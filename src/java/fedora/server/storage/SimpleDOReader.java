@@ -83,7 +83,7 @@ public class SimpleDOReader
         m_translator=translator;
         m_shortExportFormat=shortExportFormat;
         m_longExportFormat=longExportFormat;
-        m_encoding=encoding;        
+        m_encoding=encoding;
         m_obj=obj;
     }
 
@@ -325,7 +325,7 @@ public class SimpleDOReader
         return bDefIds;
     }
 
-    public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
+    public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime)
             throws DisseminatorNotFoundException, ServerException {
         String mechPid=getBMechPid(bDefPID, versDateTime);
         if (mechPid==null) {
@@ -335,7 +335,7 @@ public class SimpleDOReader
                 getServiceMethods(versDateTime);
     }
 
-    public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime)
+    public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime)
             throws DisseminatorNotFoundException, ServerException {
         String mechPid=getBMechPid(bDefPID, versDateTime);
         if (mechPid==null) {
@@ -381,7 +381,7 @@ public class SimpleDOReader
         }
     }
 
-    public MethodParmDef[] GetBMechMethodParms(String bDefPID,
+    public MethodParmDef[] getObjectMethodParms(String bDefPID,
             String methodName, Date versDateTime)
             throws DisseminatorNotFoundException, MethodNotFoundException,
             ServerException {
@@ -398,16 +398,17 @@ public class SimpleDOReader
         return getParms(m_repoReader.getBMechReader(m_context, mechPid).
                 getServiceMethods(versDateTime), methodName);
     }
-
+/*
     public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID,
             String methodName, Date versDateTime)
             throws DisseminatorNotFoundException, MethodNotFoundException,
             ServerException {
         // The *default* parms are expressed in the method bindings
         // of the WSDL datastream in the behavior mechanism object.
-        MethodDef[] methods=GetBMechMethods(bDefPID, versDateTime);
+        MethodDef[] methods=getObjectMethods(bDefPID, versDateTime);
         return getParms(methods, methodName);
     }
+*/
 
     /**
      * Gets the parameter definitions for the method named <i>methodName</i>
@@ -416,7 +417,7 @@ public class SimpleDOReader
      * @return null if methods is given as null
      * @throws MethodNotFoundException if no mush method exist in the array.
      */
-    private MethodParmDef[] getParms(MethodDef[] methods, String methodName)
+    protected MethodParmDef[] getParms(MethodDef[] methods, String methodName)
             throws MethodNotFoundException {
         if (methods==null) {
             return null;
@@ -481,7 +482,7 @@ public class SimpleDOReader
         return null;
     }
 
-    public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime) {
+    public ObjectMethodsDef[] getObjectMethods(Date versDateTime) {
         return null;
     }
 

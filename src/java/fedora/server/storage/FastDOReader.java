@@ -346,7 +346,7 @@ public class FastDOReader implements DOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public MethodParmDef[] GetBMechMethodParms(String bDefPID, String methodName,
+  public MethodParmDef[] getObjectMethodParms(String bDefPID, String methodName,
       Date versDateTime) throws GeneralException
   {
     MethodParmDef[] methodParms = null;
@@ -463,7 +463,7 @@ public class FastDOReader implements DOReader
         {
           doReader = m_manager.getReader(m_context, PID);
         }
-        methodParms = doReader.GetBMechMethodParms(bDefPID, methodName,
+        methodParms = doReader.getObjectMethodParms(bDefPID, methodName,
             versDateTime);
       } catch (Throwable th)
       {
@@ -489,6 +489,7 @@ public class FastDOReader implements DOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
+/*
   public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID,
       String methodName, Date versDateTime) throws GeneralException
   {
@@ -619,7 +620,7 @@ public class FastDOReader implements DOReader
     }
     return methodParms;
   }
-
+*/
   /**
    * <p>Gets all method defintiions associated with the specified Behavior
    * Mechanism. Note the PID of the associated Behavior Mechanism object is
@@ -641,7 +642,7 @@ public class FastDOReader implements DOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
+  public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime)
       throws GeneralException
   {
     MethodDef[] methodDefs = null;
@@ -680,7 +681,7 @@ public class FastDOReader implements DOReader
           + "bDef.bDefPID = \'" + bDefPID + "\' AND "
           + "do.doPID=\'" + PID + "\';";
 
-      if (debug) s_server.logFinest("GetBMechMethodsQuery: " + query);
+      if (debug) s_server.logFinest("getObjectMethodsQuery: " + query);
       String[] results = null;
       try
       {
@@ -701,7 +702,7 @@ public class FastDOReader implements DOReader
           methodDef.methodLabel = results[1];
           try
           {
-            methodDef.methodParms = this.GetBMechMethodParms(bDefPID,
+            methodDef.methodParms = this.getObjectMethodParms(bDefPID,
                 methodDef.methodName, versDateTime);
           } catch (Throwable th)
           {
@@ -754,7 +755,7 @@ public class FastDOReader implements DOReader
         {
           doReader = m_manager.getReader(m_context, PID);
         }
-        methodDefs = doReader.GetBMechMethods(bDefPID, versDateTime);
+        methodDefs = doReader.getObjectMethods(bDefPID, versDateTime);
       } catch (Throwable th)
       {
         throw new GeneralException("Definitive reader returned error. The "
@@ -782,7 +783,7 @@ public class FastDOReader implements DOReader
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
-  public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime)
+  public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime)
       throws GeneralException, ServerException
   {
     try
@@ -791,7 +792,7 @@ public class FastDOReader implements DOReader
       {
         doReader = m_manager.getReader(m_context, PID);
       }
-      return doReader.GetBMechMethodsXML(bDefPID, versDateTime);
+      return doReader.getObjectMethodsXML(bDefPID, versDateTime);
     } catch (ServerException se)
     {
       throw se;
@@ -1113,7 +1114,7 @@ public class FastDOReader implements DOReader
           dissBindInfo.DSBindKey = results[10];
           try
           {
-            dissBindInfo.methodParms = this.GetBMechMethodParms(results[1],
+            dissBindInfo.methodParms = this.getObjectMethodParms(results[1],
                 results[2], versDateTime);
           } catch (GeneralException ge)
           {
@@ -1456,7 +1457,7 @@ public class FastDOReader implements DOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime)
+  public ObjectMethodsDef[] getObjectMethods(Date versDateTime)
       throws GeneralException
   {
     ObjectMethodsDef[] objectMethodsDefArray = null;
@@ -1514,7 +1515,7 @@ public class FastDOReader implements DOReader
           objectMethodsDef.PID = results[0];
           objectMethodsDef.bDefPID = results[1];
           objectMethodsDef.methodName = results[2];
-          MethodParmDef[] methodParms = GetBMechMethodParms(results[1],
+          MethodParmDef[] methodParms = getObjectMethodParms(results[1],
               results[2], versDateTime);
           objectMethodsDef.methodParmDefs = methodParms;
           queryResults.add(objectMethodsDef);
@@ -1563,12 +1564,12 @@ public class FastDOReader implements DOReader
         Vector results = new Vector();
         for (int i=0; i<behaviorDefs.length; i++)
         {
-          MethodDef[] methodDefs = doReader.GetBMechMethods(behaviorDefs[i],
+          MethodDef[] methodDefs = doReader.getObjectMethods(behaviorDefs[i],
                                    versDateTime);
           // FIXME!! Behavior Mechanism and Behavior Definition
           // objects cannot currently be disseminated because the code
           // to implement this in the definitive readers has not been
-          // implemented. GetBMechMethods returns null for Behavior
+          // implemented. Method getObjectMethods returns null for Behavior
           // Mechanism and Behavior Definition objects which gets trapped
           // here.
           if(methodDefs == null)
@@ -1585,7 +1586,7 @@ public class FastDOReader implements DOReader
             objectMethodsDef.methodName = methodDefs[j].methodName;
             System.out.println("methodName: "+methodDefs[j].methodName);
             System.out.println("CALL: bdef: "+behaviorDefs[i]+"methodefs: "+methodDefs[i].methodName);
-            objectMethodsDef.methodParmDefs = doReader.GetBMechMethodParms(behaviorDefs[i], methodDefs[i].methodName, versDateTime);
+            objectMethodsDef.methodParmDefs = doReader.getObjectMethodParms(behaviorDefs[i], methodDefs[i].methodName, versDateTime);
             objectMethodsDef.asOfDate = versDateTime;
             results.addElement(objectMethodsDef);
           }
