@@ -1,7 +1,5 @@
 package fedora.client.bmech.data;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -88,7 +86,7 @@ public class BMechTemplate extends BObjTemplate
         return dsBindingKeys;
     }
 
-    public void setDSBindingKeys(Vector dsBindingKesy)
+    public void setDSBindingKeys(Vector dsBindingKeys)
     {
         this.dsBindingKeys = dsBindingKeys;
     }

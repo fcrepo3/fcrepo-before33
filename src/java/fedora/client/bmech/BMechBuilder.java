@@ -11,16 +11,14 @@ import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
 import javax.swing.JTextArea;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.StringTokenizer;
+import java.util.Vector;
 import java.io.File;
 import java.io.InputStream;
 
@@ -105,14 +103,12 @@ public class BMechBuilder extends JInternalFrame
         tabpane.addTab("Datastream Input", createDSInputPane());
         tabpane.addTab("Documentation", createDocPane());
         tabpane.addTab("Service Profile", createProfilePane());
+/*
         // set up listener for JTabbedPane object
         tabpane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 currentTabIndex = tabpane.getSelectedIndex();
                 currentTabName = tabpane.getTitleAt(currentTabIndex);
-                //System.out.println("index = " + currentTabIndex);
-                //System.out.println("tabname = " + currentTabName);
-
                 if (currentTabIndex == 2)
                 {
                   DatastreamInputPane dsip =
@@ -121,8 +117,7 @@ public class BMechBuilder extends JInternalFrame
                 }
             }
         });
-
-
+*/
         // General Buttons Panel
         JButton save = new JButton("Save");
         save.addActionListener(new ActionListener() {
@@ -157,9 +152,32 @@ public class BMechBuilder extends JInternalFrame
 
         getContentPane().add(tabpane, BorderLayout.CENTER);
         getContentPane().add(gbuttonPanel, BorderLayout.SOUTH);
+        setListeners();
         setVisible(true);
     }
 
+	private void setListeners()
+	{	
+		// set up listener for JTabbedPane object
+		tabpane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				// everytime a tab changes, update the bmech template object in memory
+				updateBMechTemplate();
+				// pre-populate the DatastreamInputPane with valid datastream 
+				// input parms that were defined in the MethodsPane
+				currentTabIndex = tabpane.getSelectedIndex();
+				currentTabName = tabpane.getTitleAt(currentTabIndex);
+				if (currentTabIndex == 2)
+				{
+				  DatastreamInputPane dsip =
+					(DatastreamInputPane)tabpane.getComponentAt(2);
+				  dsip.setDSBindingKeys(newBMech.getDSBindingKeys());
+				}
+			}
+		});
+		
+	}
+	
     public BMechTemplate getBMechTemplate()
     {
       return newBMech;
@@ -265,153 +283,278 @@ public class BMechBuilder extends JInternalFrame
       dispose();
     }
 
+	protected void updateBMechTemplate()
+	{
+		Component[] tabs = tabpane.getComponents();
+		for (int i=0; i < tabs.length; i++)
+		{
+		  if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
+		  {
+			  GeneralPane gp = (GeneralPane)tabs[i];
+			  if (gp.rb_chosen.equalsIgnoreCase("testPID"))
+			  {
+				newBMech.setbObjPID(gp.getBObjectPID());
+			  }
+			  else
+			  {
+				newBMech.setbObjPID(null);
+			  }
+			  newBMech.setbDefContractPID(gp.getBDefContractPID());
+			  newBMech.setbObjLabel(gp.getBObjectLabel());
+			  newBMech.setbObjName(gp.getBObjectName());
+			  newBMech.setDCRecord(gp.getDCElements());
+		  }
+		  else if (tabs[i].getName().equalsIgnoreCase("MethodsTab"))
+		  {
+			  MethodsPane mp = (MethodsPane)tabs[i];
+			  newBMech.setHasBaseURL(mp.hasBaseURL());
+			  if (mp.hasBaseURL())
+			  {
+				String baseURL = mp.getBaseURL();
+				if (baseURL.endsWith("/"))
+				{
+				  newBMech.setServiceBaseURL(baseURL);
+				}
+				else
+				{
+				  newBMech.setServiceBaseURL(baseURL + "/");
+				}
+			  }
+			  else
+			  {
+				newBMech.setServiceBaseURL("LOCAL");
+			  }
+			  newBMech.setMethodsHashMap(mp.getMethodMap());
+			  newBMech.setMethods(mp.getMethods());
+		  }
+		  else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
+		  {
+			  // set the datastream input rules
+			  DatastreamInputPane dsp = (DatastreamInputPane)tabs[i];
+			  newBMech.setDSInputSpec(dsp.getDSInputRules());
+			  
+			  // set the datastream binding keys
+			  Vector dsBindingKeys = new Vector();
+			  DSInputRule[] dsrules = newBMech.getDSInputSpec();
+			  for (int j=0; j<dsrules.length; j++)
+			  {
+				dsBindingKeys.add(dsrules[j].bindingKeyName);
+			  }
+			  newBMech.setDSBindingKeys(dsBindingKeys);
+		  }
+		  else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
+		  {
+			  DocumentsPane docp = (DocumentsPane)tabs[i];
+			  newBMech.setDocDatastreams(docp.getDocDatastreams());
+		  }
+		}
+		return;		
+	}
+	
+	protected boolean validateBMechTemplate()
+	{
+		boolean validBMech = false;
+		Component[] tabs = tabpane.getComponents();
+		for (int i=0; i < tabs.length; i++)
+		{
+			if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
+			{
+				if (!validGeneralTab((GeneralPane)tabs[i]))
+				{
+					return false;
+				}
+			}
+			else if (tabs[i].getName().equalsIgnoreCase("MethodsTab"))
+			{
+				if (!validMethodsTab((MethodsPane)tabs[i]))
+			  	{
+			  		return false;
+			  	}
+			}
+			else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
+			{
+			  	if (!validDSInputTab((DatastreamInputPane)tabs[i]))
+			  	{
+			  		return false;
+			  	}
+			}
+			else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
+			{
+			  	if (!validDocsTab((DocumentsPane)tabs[i]))
+			  	{
+			  		return false;
+			  	}
+			}
+		}
+		return true;
+	}
+/*	
+	protected boolean xvalidateBMechTemplate()
+	{
+		boolean validBMech = false;
+		Component[] tabs = tabpane.getComponents();
+		//System.out.println("tabs count: " + tabs.length);
+		for (int i=0; i < tabs.length; i++)
+		{
+		  //System.out.println("tab name: " + tabs[i].getName());
+		  if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
+		  {
+			if (validGeneralTab((GeneralPane)tabs[i]))
+			{
+			  GeneralPane gp = (GeneralPane)tabs[i];
+			  if (gp.rb_chosen.equalsIgnoreCase("testPID"))
+			  {
+				newBMech.setbObjPID(gp.getBObjectPID());
+			  }
+			  else
+			  {
+				newBMech.setbObjPID(null);
+			  }
+			  newBMech.setbDefContractPID(gp.getBDefContractPID());
+			  newBMech.setbObjLabel(gp.getBObjectLabel());
+			  newBMech.setbObjName(gp.getBObjectName());
+			  newBMech.setDCRecord(gp.getDCElements());
+			}
+			else
+			{
+			  return false;
+			}
+		  }
+		  else if (tabs[i].getName().equalsIgnoreCase("MethodsTab"))
+		  {
+			if (validMethodsTab((MethodsPane)tabs[i]))
+			{
+			  MethodsPane mp = (MethodsPane)tabs[i];
+			  newBMech.setHasBaseURL(mp.hasBaseURL());
+			  if (mp.hasBaseURL())
+			  {
+				String baseURL = mp.getBaseURL();
+				if (baseURL.endsWith("/"))
+				{
+				  newBMech.setServiceBaseURL(baseURL);
+				}
+				else
+				{
+				  newBMech.setServiceBaseURL(baseURL + "/");
+				}
+			  }
+			  else
+			  {
+				newBMech.setServiceBaseURL("LOCAL");
+			  }
+			  newBMech.setMethodsHashMap(mp.getMethodMap());
+			  newBMech.setMethods(mp.getMethods());
+			}
+			else
+			{
+			  return false;
+			}
+		  }
+		  else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
+		  {
+			if (validDSInputTab((DatastreamInputPane)tabs[i]))
+			{
+			  // set the datastream input rules
+			  DatastreamInputPane dsp = (DatastreamInputPane)tabs[i];
+			  newBMech.setDSInputSpec(dsp.getDSInputRules());
+			  
+			  // set the datastream binding keys
+			  Vector dsBindingKeys = new Vector();
+			  DSInputRule[] dsrules = newBMech.getDSInputSpec();
+			  for (int j=0; j<dsrules.length; j++)
+			  {
+				dsBindingKeys.add(dsrules[j].bindingKeyName);
+			  }
+			  newBMech.setDSBindingKeys(dsBindingKeys);
+			}
+			else
+			{
+			  return false;
+			}
+		  }
+		  else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
+		  {
+			if (validDocsTab((DocumentsPane)tabs[i]))
+			{
+			  DocumentsPane docp = (DocumentsPane)tabs[i];
+			  newBMech.setDocDatastreams(docp.getDocDatastreams());
+			}
+			else
+			{
+			  return false;
+			}
+		  }
+		}
+		return true;
+	}
+*/	
     public BMechMETSSerializer savePanelInfo()
     {
-
-      Component[] tabs = tabpane.getComponents();
-      //System.out.println("tabs count: " + tabs.length);
-      for (int i=0; i < tabs.length; i++)
-      {
-        //System.out.println("tab name: " + tabs[i].getName());
-        if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
-        {
-          if (validGeneralTab((GeneralPane)tabs[i]))
-          {
-            GeneralPane gp = (GeneralPane)tabs[i];
-            if (gp.rb_chosen.equalsIgnoreCase("testPID"))
-            {
-              newBMech.setbObjPID(gp.getBObjectPID());
-            }
-            else
-            {
-              newBMech.setbObjPID(null);
-            }
-            newBMech.setbDefContractPID(gp.getBDefContractPID());
-            newBMech.setbObjLabel(gp.getBObjectLabel());
-            newBMech.setbObjName(gp.getBObjectName());
-            newBMech.setDCRecord(gp.getDCElements());
-          }
-          else
-          {
-            return null;
-          }
-        }
-        else if (tabs[i].getName().equalsIgnoreCase("MethodsTab"))
-        {
-          if (validMethodsTab((MethodsPane)tabs[i]))
-          {
-            MethodsPane mp = (MethodsPane)tabs[i];
-            newBMech.setHasBaseURL(mp.hasBaseURL());
-            if (mp.hasBaseURL())
-            {
-              String baseURL = mp.getBaseURL();
-              if (baseURL.endsWith("/"))
-              {
-                newBMech.setServiceBaseURL(baseURL);
-              }
-              else
-              {
-                newBMech.setServiceBaseURL(baseURL + "/");
-              }
-            }
-            else
-            {
-              newBMech.setServiceBaseURL("LOCAL");
-            }
-            newBMech.setMethodsHashMap(mp.getMethodMap());
-            newBMech.setMethods(mp.getMethods());
-          }
-          else
-          {
-            return null;
-          }
-        }
-        else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
-        {
-          if (validDSInputTab((DatastreamInputPane)tabs[i]))
-          {
-            DatastreamInputPane dsp = (DatastreamInputPane)tabs[i];
-            newBMech.setDSInputSpec(dsp.getDSInputRules());
-          }
-          else
-          {
-            return null;
-          }
-        }
-        else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
-        {
-          if (validDocsTab((DocumentsPane)tabs[i]))
-          {
-            DocumentsPane docp = (DocumentsPane)tabs[i];
-            newBMech.setDocDatastreams(docp.getDocDatastreams());
-          }
-          else
-          {
-            return null;
-          }
-        }
-      }
-      //printBMech();
-      DCGenerator dcg = null;
-      DSInputSpecGenerator dsg = null;
-      MethodMapGenerator mmg = null;
-      WSDLGenerator wsdlg = null;
-      try
-      {
-        dcg = new DCGenerator(newBMech);
-        //dcg.printDC();
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-        assertTabPaneMsg("BMechBuilder: error generating dc record", null);
-      }
-      try
-      {
-        dsg = new DSInputSpecGenerator(newBMech);
-        //dsg.printDSInputSpec();
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-        assertTabPaneMsg("BMechBuilder: error generating ds input spec", null);
-      }
-      try
-      {
-        mmg = new MethodMapGenerator(newBMech);
-        //mmg.printMethodMap();
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-        assertTabPaneMsg("BMechBuilder: error generating method map", null);
-      }
-      try
-      {
-        wsdlg = new WSDLGenerator(newBMech);
-        //wsdlg.printWSDL();
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-        assertTabPaneMsg("BMechBuilder: error generating wsdl", null);
-      }
-
-      BMechMETSSerializer mets = null;
-      try
-      {
-        mets = new BMechMETSSerializer(newBMech, dcg.getRootElement(),
-          dsg.getRootElement(), mmg.getRootElement(), wsdlg.getRootElement());
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-        assertTabPaneMsg("BMechBuilder: error in creating METS for bmech.", null);
-      }
-      //mets.printMETS();
-      return mets;
+	  BMechMETSSerializer mets = null;
+	  if (validateBMechTemplate())
+	  {
+	      //printBMech();
+	      DCGenerator dcg = null;
+	      DSInputSpecGenerator dsg = null;
+	      MethodMapGenerator mmg = null;
+	      WSDLGenerator wsdlg = null;
+	      try
+	      {
+	        dcg = new DCGenerator(newBMech);
+	        //dcg.printDC();
+	      }
+	      catch (Exception e)
+	      {
+	        e.printStackTrace();
+	        assertTabPaneMsg("BMechBuilder: error generating dc record", null);
+	      }
+	      try
+	      {
+	        dsg = new DSInputSpecGenerator(newBMech);
+	        //dsg.printDSInputSpec();
+	      }
+	      catch (Exception e)
+	      {
+	        e.printStackTrace();
+	        assertTabPaneMsg("BMechBuilder: error generating ds input spec", null);
+	      }
+	      try
+	      {
+	        mmg = new MethodMapGenerator(newBMech);
+	        //mmg.printMethodMap();
+	      }
+	      catch (Exception e)
+	      {
+	        e.printStackTrace();
+	        assertTabPaneMsg("BMechBuilder: error generating method map", null);
+	      }
+	      try
+	      {
+	        wsdlg = new WSDLGenerator(newBMech);
+	        //wsdlg.printWSDL();
+	      }
+	      catch (Exception e)
+	      {
+	        e.printStackTrace();
+	        assertTabPaneMsg("BMechBuilder: error generating wsdl", null);
+	      }
+	
+	      try
+	      {
+	        mets = new BMechMETSSerializer(newBMech, dcg.getRootElement(),
+	          dsg.getRootElement(), mmg.getRootElement(), wsdlg.getRootElement());
+	      }
+	      catch (Exception e)
+	      {
+	        e.printStackTrace();
+	        assertTabPaneMsg("BMechBuilder: error in creating METS for bmech.", null);
+	      }
+	      //mets.printMETS();
+	      //return mets;
+	  }
+	  return mets;
     }
-
+	
     private JComponent createGeneralPane()
     {
       GeneralPane gpane = new GeneralPane(this);
@@ -517,12 +660,12 @@ public class BMechBuilder extends JInternalFrame
       }
       else if (gp.getBObjectLabel() == null || gp.getBObjectLabel().trim().equals(""))
       {
-        assertTabPaneMsg("Behavior Mechanism Label is missing on General Tab.", gp.getName());
+        assertTabPaneMsg("Behavior Object Description is missing on General Tab.", gp.getName());
         return false;
       }
       else if (gp.getBObjectName() == null || gp.getBObjectName().trim().equals(""))
       {
-        assertTabPaneMsg("Behavior Mechanism Nickname is missing on General Tab.", gp.getName());
+        assertTabPaneMsg("Behavior Object Name (1-word) is missing on General Tab.", gp.getName());
         return false;
       }
       else if (gp.getDCElements().length <= 0)
@@ -542,7 +685,7 @@ public class BMechBuilder extends JInternalFrame
       }
       else if (mp.getMethods().length <=0)
       {
-        assertTabPaneMsg("You must enter at least one method on Service Methods Tab.", mp.getName());
+        assertTabPaneMsg("You must enter at least one method definition on Service Methods Tab.", mp.getName());
         return false;
       }
       else

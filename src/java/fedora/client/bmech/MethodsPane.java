@@ -1,19 +1,14 @@
 package fedora.client.bmech;
 
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JTable;
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JComponent;
 import java.awt.BorderLayout;
-import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,7 +16,6 @@ import javax.swing.BoxLayout;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
@@ -54,7 +48,6 @@ import fedora.client.bmech.data.*;
  */
 public class MethodsPane extends JPanel {
 
-    //private BMechBuilder parent;
     protected JInternalFrame parent;
     private JRadioButton rb_baseURL;
     private JRadioButton rb_noBaseURL;
@@ -69,7 +62,6 @@ public class MethodsPane extends JPanel {
 
     // Method Map: key=methodData.methodName, value=methodData
     private HashMap methodMap = new HashMap();
-    //private Vector dsBindingKeys = new Vector();
 
     public MethodsPane(BDefBuilder parent)
     {
@@ -322,16 +314,14 @@ public class MethodsPane extends JPanel {
       method.methodProperties = mproperties;
       methodMap.put(methodName, method);
 
-      String[] dsParmNames = method.methodProperties.dsBindingKeys;
-      for (int i=0; i<dsParmNames.length; i++)
-      {
-        Vector dsBindingKeys = ((BMechBuilder)parent).getBMechTemplate().getDSBindingKeys();
-        if (!dsBindingKeys.contains(dsParmNames[i]))
-        {
-          dsBindingKeys.add(dsParmNames[i]);
-        }
-        ((BMechBuilder)parent).getBMechTemplate().setDSBindingKeys(dsBindingKeys);
-      }
+	  // we need to update the BMechTemplate object with the latest
+	  // datastream binding keys
+	  Vector dsBindingKeys = new Vector();
+	  for (int i=0; i<mproperties.dsBindingKeys.length; i++)
+	  {
+	  	dsBindingKeys.add(mproperties.dsBindingKeys[i]);
+	  }
+	  ((BMechBuilder)parent).getBMechTemplate().setDSBindingKeys(dsBindingKeys);
     }
 
     private void addMethod()
@@ -373,11 +363,16 @@ public class MethodsPane extends JPanel {
         assertNoMethodMsg("You must select a method row before entering properties");
         return;
       }
+	  else if (rb_baseURL.isSelected() && baseURL.getText().trim().equalsIgnoreCase(""))
+	  {
+		assertNoMethodMsg("You must enter the Base URL for the service before entering method properties");
+		return;
+	  }
       else
       {
         int currentRowIndex = methodTable.getSelectedRow();
         String methodName = (String)methodTable.getValueAt(currentRowIndex,0);
-        if (methodName == null || methodName.trim().equals(""))
+        if (methodName == null || methodName.trim().equalsIgnoreCase(""))
         {
           assertNoMethodMsg("You must enter a method name before entering properties");
           return;

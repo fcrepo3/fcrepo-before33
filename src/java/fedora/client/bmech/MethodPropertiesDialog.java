@@ -1,25 +1,15 @@
 package fedora.client.bmech;
 
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
-import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.ButtonGroup;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.JComponent;
 import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
@@ -32,11 +22,9 @@ import java.awt.event.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.HashMap;
-import java.util.Collection;
 import java.util.Vector;
 import java.util.StringTokenizer;
 import java.util.Iterator;
-import java.util.HashMap;
 
 import fedora.client.bmech.data.*;
 
@@ -152,7 +140,7 @@ public class MethodPropertiesDialog extends JDialog
         JPanel bindingPanel = null;
         if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
         {
-          this.baseURL = parent.getBaseURL();
+          //this.baseURL = parent.getBaseURL();
           if (parent.hasBaseURL())
           {
             this.baseURL = (parent.getBaseURL().endsWith("/"))
@@ -519,8 +507,6 @@ public class MethodPropertiesDialog extends JDialog
           return false;
         }
       }
-      System.out.println("All parms found within the"
-        + " HTTP method bindingURL: " + http_URL);
       return true;
     }
 
@@ -533,14 +519,14 @@ public class MethodPropertiesDialog extends JDialog
       for (int i=0; i<parms.length; i++)
       {
         tableParms.add(parms[i].parmName);
-        System.out.println("Parm name in table: " + parms[i].parmName);
+        //System.out.println("Parm name in table: " + parms[i].parmName);
       }
       // find the encoded parm names in the HTTP binding URL
       StringTokenizer st1 = new StringTokenizer(http_URL, "(");
       while (st1.hasMoreTokens())
       {
         String fpt = st1.nextToken();
-        System.out.println("First pass token " + fpt);
+        //System.out.println("First pass token " + fpt);
         firstPassTokens.add(fpt);
       }
       Iterator it = firstPassTokens.iterator();
@@ -558,7 +544,7 @@ public class MethodPropertiesDialog extends JDialog
           {
               String s = st2.nextToken();
               parmsInURL.add(s);
-              System.out.println("parm parsed out of HTTP method binding URL: " + s);
+              //System.out.println("parm parsed out of HTTP method binding URL: " + s);
               break;
           }
         }
@@ -612,7 +598,7 @@ public class MethodPropertiesDialog extends JDialog
       {
         if (mp.protocolType.equalsIgnoreCase(mp.HTTP_MESSAGE_PROTOCOL))
         {
-          if (mp.methodFullURL == null || mp.methodFullURL.trim().equals(""))
+          if (mp.methodFullURL == null || mp.methodFullURL.trim().equalsIgnoreCase(""))
           {
             assertMethodPropertiesMsg("You must enter an HTTP binding URL for method!");
             return false;
@@ -662,19 +648,19 @@ public class MethodPropertiesDialog extends JDialog
 
     private boolean validMethodParm(MethodParm parm)
     {
-      if (parm.parmType == null || parm.parmType.trim().equals(""))
+      if (parm.parmType == null || parm.parmType.trim().equalsIgnoreCase(""))
       {
         assertMethodPropertiesMsg("A value for 'Parm Type' must be selected for parm "
           + parm.parmName);
         return false;
       }
-      else if (parm.parmRequired == null || parm.parmRequired.trim().equals(""))
+      else if (parm.parmRequired == null || parm.parmRequired.trim().equalsIgnoreCase(""))
       {
         assertMethodPropertiesMsg("A value for 'Required?' must be selected for parm "
           + parm.parmName);
         return false;
       }
-      else if (parm.parmPassBy == null || parm.parmPassBy.trim().equals(""))
+      else if (parm.parmPassBy == null || parm.parmPassBy.trim().equalsIgnoreCase(""))
       {
         assertMethodPropertiesMsg("A value for 'Pass By' must be selected for parm "
           + parm.parmName);

@@ -1,40 +1,17 @@
 package fedora.client.bmech;
 
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JComboBox;
-import javax.swing.JRadioButton;
-import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import javax.swing.ButtonGroup;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.JComponent;
 import javax.swing.border.TitledBorder;
 import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.HashMap;
-import java.util.Collection;
 import java.util.Vector;
-import java.util.StringTokenizer;
 
 import fedora.client.bmech.data.*;
 
