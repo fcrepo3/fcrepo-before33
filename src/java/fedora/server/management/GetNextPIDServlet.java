@@ -123,12 +123,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     int numPIDs = 1;
     String namespace = null;
 
-    HashMap h=new HashMap();
-    h.put("application", "apim");
-    h.put("useCachedObject", "false");
-    h.put("userId", "fedoraAdmin");
-    h.put("host", request.getRemoteAddr());
-    ReadOnlyContext context = new ReadOnlyContext(h);
+    Context context = ReadOnlyContext.getContext(ReadOnlyContext.REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
 
     // Get optional supplied parameters.
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
