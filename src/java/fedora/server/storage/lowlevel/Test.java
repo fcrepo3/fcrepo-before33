@@ -28,7 +28,6 @@ class Test {
 		String line;
 		try {
 			while ( (line = in.readLine()) != null) {
-				//System.err.println(line);
 				String[] parts = line.split("\\s");
 				if (parts.length < 1) {
 					System.err.println("enter action (pid (path)), separated only by whitespace");
@@ -40,11 +39,9 @@ class Test {
 							System.err.println("enter audit");
 						} else {
 							try {
-								if (lowlevelStorage == null) System.out.println("no store");
 								lowlevelStorage.audit();
 							} catch (Exception e) {
 								System.out.println("error1 " + e.getMessage());
-								System.out.println("error1 " + e.getClass());
 							}
 						}
 					} else if (action.equals("rebuild")) {
@@ -112,54 +109,9 @@ class Test {
 					}
 					}
 				}
-				/*
-				for (int i = 0; i < parts.length; i++) {
-					System.err.println(parts[i]);
-				}
-				*/
 			}
 		} catch (IOException e0) {
 			System.err.println("problem reading System.in");
 		}
-		/*	
-		System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!");
-		byte[] bytes = new byte[1];
-		bytes[0] = 32;
-		try {
-			lowlevelStorage.add("abc",new ByteArrayInputStream(bytes));
-		} catch (Exception e) {
-			System.out.println("1 " + e.getMessage());
-		}
-		try {
-			lowlevelStorage.add("xyz",new ByteArrayInputStream(bytes));
-		} catch (Exception e) {
-			System.out.println("2 " + e.getMessage());
-		}
-		try {
-			lowlevelStorage.add("xyz",new ByteArrayInputStream(bytes));
-		} catch (Exception e) {
-			System.out.println("3 " + e.getMessage());
-		}
-		try {
-			lowlevelStorage.replace("xyz",new ByteArrayInputStream(bytes));
-		} catch (Exception e) {
-			System.out.println("4 " + e.getMessage());
-		}				
-		try {
-			InputStream outputStream = lowlevelStorage.retrieve("abc");
-		} catch (Exception e) {
-			System.out.println("5 " + e.getMessage());
-		}
-		try {
-			lowlevelStorage.remove("abc");
-		} catch (Exception e) {
-			System.out.println("6 " + e.getMessage());
-		}
-		try {
-			lowlevelStorage.audit();
-		} catch (Exception e) {
-			System.out.println("7 " + e.getMessage());
-		}
-*/
 	}
 }

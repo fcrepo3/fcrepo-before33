@@ -133,20 +133,20 @@ abstract class PathRegistry implements IPathRegistry {
 	
 	public void auditRegistry () throws LowlevelStorageException {
 		System.err.println("\nbegin audit:  registry-against-files");
-		System.err.println("aR0");
+		//System.err.println("aR0");
 		Enumeration keys = keys();
-		System.err.println("aR1");
+		//System.err.println("aR1");
 		while (keys.hasMoreElements()) {
-		System.err.println("aR2");
+		//System.err.println("aR2");
 			String pid = (String) keys.nextElement();
-		System.err.println("aR3");
+		//System.err.println("aR3");
 			try {
 				String path = get(pid);
-		System.err.println("aR4");
+		//System.err.println("aR4");
 				File file = new File(path);
-		System.err.println("aR5");
+		//System.err.println("aR5");
 				boolean fileExists = file.exists();
-		System.err.println("aR6");
+		//System.err.println("aR6");  
 				System.err.println((fileExists ? "" : "ERROR: ") +
 					"registry has [" + pid + "] => [" + path + "] " +
 					(fileExists ? "and" : "BUT") +
