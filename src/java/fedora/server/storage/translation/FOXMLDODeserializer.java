@@ -108,6 +108,7 @@ public class FOXMLDODeserializer
     private String m_dsVersId;
     private Date m_dsCreateDate;
     private String m_dsState;
+    private String[] m_dsAltIds;
     private String m_dsFormatURI;
     private String m_dsLabel;
     private long m_dsSize;
@@ -317,6 +318,7 @@ public class FOXMLDODeserializer
 				// set datastream URI for integrity purposes
 				m_dsURI = m_obj.getURI() + "/" + m_dsId;
 				m_dsState=grab(a, F, "STATE");
+				m_dsAltIds=(grab(a, F, "ALT_IDS")).split(" ");
 				m_dsFormatURI=grab(a, F, "FORMAT_URI");
 				m_dsMimeType=grab(a, F, "MIMETYPE");
 				m_dsControlGrp=grab(a, F, "CONTROL_GROUP");
@@ -729,6 +731,7 @@ public class FOXMLDODeserializer
 			m_dsURI="";
 			m_dsVersionable="";
 			m_dsState="";
+			m_dsAltIds=new String[0];
 			m_dsFormatURI="";
 			m_dsInfoType="";
 			m_dsOtherInfoType="";
@@ -768,6 +771,7 @@ public class FOXMLDODeserializer
 		// set datastream variables with values grabbed from the SAX parse    	  	
 		ds.DatastreamID=m_dsId;
 		ds.DatastreamURI=m_dsURI;
+		ds.DatastreamAltIDs=m_dsAltIds;
 		ds.DSVersionable=m_dsVersionable;
 		ds.DSFormatURI=m_dsFormatURI;
 		ds.DSVersionID=m_dsVersId;
