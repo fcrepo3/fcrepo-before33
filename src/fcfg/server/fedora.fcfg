@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server xmlns="http://www.fedora.info/definitions/1/0/config/"
+    class="fedora.server.BasicServer">
+  <comment>Your server comment here.</comment>
+  <param name="label" value="Your Server Label Here"/>
+  <param name="port" value="8080"/>
+  <param name="admin_email" value="fedora-server-admin@localhost"/>
+  <param name="admin_email_public" value="true"/>
+  <module role="fedora.server.modules.Logging" 
+          class="fedora.server.modules.Logger">
+    <comment>We're using the basic logging module.</comment>
+    <param name="dbtable" value="mysql1#test1log">
+        <comment>Bob administers this, too.</comment>
+    </param>
+  </module>
+  <module role="fedora.server.storage.DOManager"
+          class="fedora.server.storage.DefaultDOManager">
+    <comment>This one comes with Fedora.  It's best not to change
+        these values unless you know what you're doing.</comment>
+    <param name="reader_fast" value="fedora.server.storage.FastDOReader"/>
+    <param name="writer_fast" value="fedora.server.storage.FastDOWriter"/>
+    <param name="fast_db" value="mysql1#test1fast"/>
+    <param name="fast_fallback_reader" value="definitive"/>
+    <param name="reader_definitive" value="fedora.server.storage.DefinitiveDOReader"/>
+    <param name="writer_definitive" value="fedora.server.storage.DefinitiveDOWriter"/>
+    <param name="definitive_registry_class" value="fedora.server.storage.DBRegistry"/>
+    <param name="definitive_registry_dbtable" value="mysql1#test1dreg"/>
+  </module>
+  <database id="mysql1">
+    <comment>This one's kind of slow, but it's all
+      we've got.</comment>
+    <admin email="mysql@localhost" public="true">
+      <comment>This goes to Elmo's pager.</comment>
+    </admin>
+    <login username="admin" password="admin">
+      <comment>This is locked down to localhost
+        and there are no other users on this box,
+        so default user/pass is ok.</comment>
+    </login>
+    <connection class="com.imaginary.sql.msql.msqlDriver" 
+        url="jdbc:msql://localhost:1114/objreg"
+        initConnections="5"
+        maxConnections="20">
+      <comment>I downloaded this driver from cnet - it got
+          a good review.</comment>
+    </connection>
+  </database>
+</server>
