@@ -39,6 +39,10 @@ public class DefaultSortTableModel
     return true;
   }
   
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return false;
+    }
+  
   public void sortColumn(int col, boolean ascending)
   {
     Collections.sort(getDataVector(),
