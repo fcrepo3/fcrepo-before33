@@ -37,11 +37,13 @@
           and there are no other users on this box,
           so default user/pass is ok.</comment>
       </login>
-      <jdbc class="com.imaginary.sql.msql.msqlDriver" 
-          url="jdbc:msql://localhost:1114/objreg">
-        <comment>I downloaded this from cnet - it got
+      <connection class="com.imaginary.sql.msql.msqlDriver" 
+          url="jdbc:msql://localhost:1114/objreg"
+          initConnections="5"
+          maxConnections="20">
+        <comment>I downloaded this driver from cnet - it got
             a good review.</comment>
-      </jdbc>
+      </connection>
     </database>
   </server>
   
@@ -102,7 +104,7 @@
       <element name="comment" type="xsd:string" minOccurs="0"/>
       <element name="admin" type="fedora-config:Admin"/>
       <element name="login" type="fedora-config:DatabaseLogin"/>
-      <element name="jdbc" type="fedora-config:JDBCConnectionInfo"/>
+      <element name="connection" type="fedora-config:DatabaseConnection"/>
     </sequence>
   </complexType>
   
@@ -114,12 +116,14 @@
     <attribute name="password" type="xsd:string"/>
   </complexType>
   
-  <complexType name="JDBCConnectionInfo">
+  <complexType name="DatabaseConnection">
     <sequence>
       <element name="comment" type="xsd:string" minOccurs="0"/>
     </sequence>
     <attribute name="class" type="xsd:string"/>
     <attribute name="url" type="xsd:string"/>
+    <attribute name="initConnections" type="xsd:positiveInteger"/>
+    <attribute name="maxConnections" type="xsd:positiveInteger"/>
   </complexType>
   
 </schema>
