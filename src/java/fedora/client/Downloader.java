@@ -75,10 +75,16 @@ public class Downloader {
     public InputStream getDatastreamContent(String pid, String dsID,
             String asOfDateTime)
             throws IOException {
-        HashMap parms=new HashMap();
-        parms.put("itemID", dsID);
-        return getDissemination(pid, "fedora-system:3", "getItem", parms, 
-                asOfDateTime);
+        StringBuffer buf = new StringBuffer();
+        buf.append(m_fedoraUrlStart);
+        buf.append(pid);
+        buf.append('/');
+        buf.append(dsID);
+        if (asOfDateTime != null) {
+            buf.append('/');
+            buf.append(asOfDateTime);
+        }
+        return get(buf.toString());
     }
 
     public void getDissemination(String pid, String bDef, String method, 

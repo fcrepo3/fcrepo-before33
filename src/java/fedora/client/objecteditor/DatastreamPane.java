@@ -296,14 +296,10 @@ public class DatastreamPane
         buf.append("/fedora/get/");
         buf.append(m_pid);
         buf.append('/');
+        buf.append(ds.getID());
         if (withDate) {
-            buf.append("fedora-system:3/getItem");
             buf.append('/');
             buf.append(ds.getCreateDate());
-            buf.append("?itemID=");
-            buf.append(ds.getID());
-        } else {
-            buf.append(ds.getID());
         }
         return buf.toString();
     }
