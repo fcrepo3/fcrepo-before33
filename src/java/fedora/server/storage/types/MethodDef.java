@@ -16,14 +16,6 @@ public class MethodDef
     public String methodLabel;
     public MethodParmDef[] methodParms;
 
-/*
-    public String httpBindingURL;
-    public String httpBindingAddress;
-    public String httpBindingOperationLocation;
-
-    // TODO: deal with soap bindings
-    public String soapActionBindingURL;
-*/
     public MethodDef()
     {
     }
