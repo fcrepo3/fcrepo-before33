@@ -41,8 +41,21 @@ JNDIRealm (changed from Tomcat source)
 6. not tested in either authenticating scenario
 
 
-JAASMemoryLoginModule
-	I couldn't make the same-named login module from Tomcat work as delivered.  So I wrote another, 
-subclassing from MemoryRealm.  We should try the Tomcat version again, in case I was wrong or our Tomcat 
-upgrade brought a fix. 
+JAASRealm (changed from Tomcat source)
+1. tomcat source passed along a GenericPrincipal found among subjects returned by login modules,
+effectively ignoring any other principals found and so making login modules returning Generic Principals 
+(those shipped with tomcat) -not- work cooperatively with other login modules.
+2. (the only login module shipping with tomcat 5.0 is the JAASMemoryLoginModule.)
+3. GenericPrincipal is so named because the same principal instance conveys subject data and roles
+4. I changed JAASRealm code so that JAASMemoryLoginModule (or any login module returning
+Generic Principal) plays correctly with other login modules
+5. this change fixed problems which I had mistakenly thought were in JAASMemoryLoginModule, so I deleted 
+that replacement class from Fedora distribution (tomcat version of JAASMemoryLoginModule works with 
+the changed JAASRealm)
+6. I also changed JAASRealm to include password in the single created principal passed along to tomcat.
+The existing code nulled that out, whenever a principal is created from various login modules.  
+(As opposed to when it passed along intact a GenericPrincipal -- this simple short-circuiting now never 
+happens, GenericPrincipal is no longer handled deferentially by JAASRealm.)
+
+
 		
