@@ -41,6 +41,7 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableCreatingConnection;
 import fedora.server.utilities.TableSpec;
+import fedora.server.validation.DOValidator;
 
 /**
  * Provides access to digital object readers and writers.
@@ -58,6 +59,7 @@ public class DefaultDOManager
     private DOTranslator m_translator;
     private ILowlevelStorage m_permanentStore;
     private ILowlevelStorage m_tempStore;
+    private DOValidator m_validator;
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
@@ -146,6 +148,13 @@ public class DefaultDOManager
                 getModule("fedora.server.storage.DOTranslator");
         if (m_storageFormat==null) {
             m_storageFormat=m_translator.getDefaultFormat();
+        }
+        // get ref to digital object validator
+        m_validator=(DOValidator) getServer().
+                getModule("fedora.server.validation.DOValidator");
+        if (m_validator==null) {
+            throw new ModuleInitializationException(
+                    "DOValidator not loaded.", getRole());
         }
         // now get the connectionpool
         ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().
@@ -282,11 +291,16 @@ public class DefaultDOManager
         return m_connectionPool;
     }
 
+    public DOValidator getDOValidator() {
+        return m_validator;
+    }
+
     public String[] getRequiredModuleRoles() {
         return new String[] {
                 "fedora.server.management.PIDGenerator",
                 "fedora.server.storage.ConnectionPoolManager",
-                "fedora.server.storage.DOTranslator" };
+                "fedora.server.storage.DOTranslator",
+                "fedora.server.validation.DOValidator" };
     }
 
     public String getStorageFormat() {
