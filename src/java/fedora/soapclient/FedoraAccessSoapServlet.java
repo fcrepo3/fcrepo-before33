@@ -689,8 +689,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
             System.out.println(message);
             showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
                          response, message);
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-            response.sendError(response.SC_NO_CONTENT, message);
           }
         } catch (Throwable th)
         {
@@ -720,8 +718,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
         System.out.println(message);
         showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
                      response, message);
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        response.sendError(response.SC_NO_CONTENT, message);
       }
     }
   }
@@ -1167,14 +1163,15 @@ public class FedoraAccessSoapServlet extends HttpServlet
   {
     try
     {
-      System.out.println("realpath: "+this.getServletContext().getRealPath(soapClientPropertiesFile));
+      System.out.println("Realpath Properties File: "
+          + getServletContext().getRealPath(soapClientPropertiesFile));
       FileInputStream fis = new FileInputStream(this.getServletContext().getRealPath(soapClientPropertiesFile));
       Properties p = new Properties();
       p.load(fis);
       FEDORA_ACCESS_ENDPOINT = p.getProperty("fedoraEndpoint");
       SERVLET_PATH = p.getProperty("soapClientServletPath");
-      System.out.println("Endpoint: "+this.FEDORA_ACCESS_ENDPOINT);
-      System.out.println("ServletPath: "+this.SERVLET_PATH);
+      System.out.println("FedoraEndpoint: " + FEDORA_ACCESS_ENDPOINT);
+      System.out.println("soapClientServletPath: " + SERVLET_PATH);
 
     } catch (Throwable th)
     {
@@ -1226,7 +1223,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         response.setContentType(CONTENT_TYPE_HTML);
         html.append("<html>");
         html.append("<head>");
-        html.append("<title>FedoraServlet</title>");
+        html.append("<title>FedoraAccessSOAPServlet</title>");
         html.append("</head>");
         html.append("<body>");
         html.append("<p><font size='+1' color='red'>"
@@ -1298,7 +1295,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         response.setContentType(CONTENT_TYPE_HTML);
         html.append("<html>");
         html.append("<head>");
-        html.append("<title>FedoraServlet</title>");
+        html.append("<title>FedoraAccessSOAPServlet</title>");
         html.append("</head>");
         html.append("<body>");
         html.append("<p><font size='+1' color='red'>"
@@ -1357,7 +1354,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         response.setContentType(CONTENT_TYPE_HTML);
         html.append("<html>");
         html.append("<head>");
-        html.append("<title>FedoraServlet</title>");
+        html.append("<title>FedoraAccessSOAPServlet</title>");
         html.append("</head>");
         html.append("<body>");
         html.append("<p><font size='+1' color='red'>"
@@ -1418,7 +1415,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       response.setContentType(CONTENT_TYPE_HTML);
       html.append("<html>");
       html.append("<head>");
-      html.append("<title>FedoraServlet</title>");
+      html.append("<title>FedoraAccessSOAPServlet</title>");
       html.append("</head>");
       html.append("<body>");
       html.append("<p><font size='+1' color='red'>Invalid 'action' "
@@ -1513,7 +1510,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     StringBuffer html = new StringBuffer();
     html.append("<html>");
     html.append("<head>");
-    html.append("<title>FedoraServlet</title>");
+    html.append("<title>FedoraAccessSOAPServlet</title>");
     html.append("</head>");
     html.append("<body>");
     html.append("<br></br><font size='+2'>" + message + "</font>");

@@ -666,7 +666,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     StringBuffer html = new StringBuffer();
     html.append("<html>");
     html.append("<head>");
-    html.append("<title>FedoraServlet</title>");
+    html.append("<title>FedoraAccessServlet</title>");
     html.append("</head>");
     html.append("<body>");
     html.append("<br></br><font size='+2'>" + message + "</font>");
