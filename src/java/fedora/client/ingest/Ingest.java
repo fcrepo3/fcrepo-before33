@@ -15,6 +15,8 @@ public class Ingest {
     public static int MULTI_FROM_DIR=1;
     public static int ONE_FROM_REPOS=2;
     public static int MULTI_FROM_REPOS=3;
+
+    public static String LAST_PATH;
     
     // launch interactively
     public Ingest(int kind) 
@@ -26,6 +28,7 @@ public class Ingest {
                                      String logMessage)
             throws Exception {
         System.out.println("Ingesting from file " + file.getPath());
+        LAST_PATH=file.getPath();
         return AutoIngestor.ingestAndCommit(targetRepository,
                                             new FileInputStream(file),
                                             getMessage(logMessage, file));
@@ -146,13 +149,17 @@ public class Ingest {
      */
     public static void badArgs(String msg) {
         System.err.println("Error  : " + msg);
+        System.err.println();
         System.err.println("Command: fedora-ingest");
+        System.err.println();
         System.err.println("Summary: Ingests one or more objects into a Fedora repository, from either");
         System.err.println("         the local filesystem or another Fedora repository.");
+        System.err.println();
         System.err.println("Syntax:");
         System.err.println("  fedora-ingest f[ile] PATH THST:TPRT TUSR TPSS [LOG]");
         System.err.println("  fedora-ingest d[ir] PATH FTYPS THST:TPRT TUSR TPSS [LOG]");
         System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS [LOG]");
+        System.err.println();
         System.err.println("Where:");
         System.err.println("  PATH       is the local file or directory name.");
         System.err.println("  FTYPS      is any combination of the characters O, D, and M, specifying");
@@ -165,8 +172,8 @@ public class Ingest {
         System.err.println("  SPSS/TPSS  is the password of the source or target repository user.");
         System.err.println("  LOG        is the optional log message.  If unspecified, the log message");
         System.err.println("             will indicate the source filename or repository of the object(s).");
-        System.err.println("Examples:");
         System.err.println();
+        System.err.println("Examples:");
         System.err.println("fedora-ingest file obj1.xml example.com:80 fedoraAdmin fedoraAdmin");
         System.err.println();
         System.err.println("  Ingests obj1.xml from the current directory into the repository at ");
@@ -291,6 +298,9 @@ public class Ingest {
                 e.printStackTrace();
             } else {
                 System.err.print(e.getMessage());
+            }
+            if (Ingest.LAST_PATH!=null) {
+                System.out.println("Last attempted file: " + Ingest.LAST_PATH);
             }
             System.err.println();
         }
