@@ -86,9 +86,9 @@ public class DOValidatorXMLSchema
     {
       try
       {
-        System.out.println("XML Schema Path: " + schemaPath);
+        //System.out.println("XML Schema Path: " + schemaPath);
         schemaURI = (new File(schemaPath)).toURI();
-        System.out.println("XML Schema URI: " + schemaURI);
+        //System.out.println("XML Schema URI: " + schemaURI);
       }
       catch (Exception e)
       {
@@ -110,7 +110,6 @@ public class DOValidatorXMLSchema
         String msg = "DOValidatorXMLSchema returned error. "
                   + "The underlying exception was a " + e.getClass().getName() + ".  "
                   + "The message was "  + "\"" + e.getMessage() + "\"";
-        System.out.println(msg);
         throw new GeneralException(msg);
       }
     }
@@ -150,7 +149,6 @@ public class DOValidatorXMLSchema
         String msg = "DOValidatorXMLSchema returned parser error. "
                   + "The underlying exception was a " + e.getClass().getName() + ".  "
                   + "The message was "  + "\"" + e.getMessage() + "\"";
-        System.out.println(msg);
         throw new GeneralException(msg);
       }
       catch (SAXException e)
@@ -158,7 +156,6 @@ public class DOValidatorXMLSchema
         String msg = "DOValidatorXMLSchema returned validation exception. "
                   + "The underlying exception was a " + e.getClass().getName() + ".  "
                   + "The message was "  + "\"" + e.getMessage() + "\"";
-        System.out.println(msg);
         throw new ObjectValidityException(msg);
       }
       catch (Exception e)
@@ -166,7 +163,6 @@ public class DOValidatorXMLSchema
         String msg = "DOValidatorXMLSchema returned error. "
                   + "The underlying error was a " + e.getClass().getName() + ".  "
                   + "The message was "  + "\"" + e.getMessage() + "\"";
-        System.out.println(msg);
         throw new GeneralException(msg);
       }
     }

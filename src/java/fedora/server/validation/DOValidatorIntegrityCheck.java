@@ -167,10 +167,6 @@ import fedora.server.errors.InitializationException;
       }
       if (!rowFound)
       {
-        System.out.println("Digital Object Disseminator "
-                + "refers to a Behavior Definition Object that does not exist "
-                + "in the local repository: "
-                + BDefPID);
         throw new ObjectValidityException("Digital Object Disseminator "
                 + "refers to a Behavior Definition Object that does not exist "
                 + "in the local repository: "
@@ -235,10 +231,6 @@ import fedora.server.errors.InitializationException;
       }
       if (!rowFound)
       {
-        System.out.println("Digital Object Disseminator "
-                + "refers to a Behavior Mechanism Object that does not exist "
-                + "in the local repository: "
-                + BMechPID);
         throw new ObjectValidityException("Digital Object Disseminator "
                 + "refers to a Behavior Mechanism Object that does not exist "
                 + "in the local repository: "

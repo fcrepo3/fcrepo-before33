@@ -199,11 +199,6 @@ public class DOValidatorSchematron
       DOMResult validationResult = new DOMResult();
       vtransformer.transform(objectSource, validationResult);
       result = new DOValidatorSchematronResult(validationResult);
-
-      // Examine the validation results
-      //String sr2 = result.serializeResult(new FileWriter("c:/mellon/work/schematron.out"));
-      //System.out.println("SCHEMATRON RESULT:");
-      //System.out.println(sr2);
     }
     catch(TransformerException e)
     {
@@ -221,7 +216,6 @@ public class DOValidatorSchematron
       String msg = null;
       try
       {
-        System.out.println("The object is not valid according to the Schematron!");
         msg = result.getXMLResult();
         System.err.println(msg);
       }
@@ -300,7 +294,6 @@ public class DOValidatorSchematron
     {
       // Create a transformer for that uses the Schematron preprocessor stylesheet.
       // Transform the Schematron schema (rules) into a validating stylesheet.
-      System.out.println("CREATING NEW VALIDATING STYLESHEET FOR WORKFLOW PHASE: " + workFlowPhase);
       TransformerFactory tfactory = TransformerFactory.newInstance();
       Transformer ptransformer = tfactory.newTransformer(preprocessorSource);
       ptransformer.setParameter("phase", workFlowPhase);
