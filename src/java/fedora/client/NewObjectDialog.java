@@ -217,6 +217,7 @@ public class NewObjectDialog
 	            ByteArrayInputStream in=new ByteArrayInputStream(
 	                    objXML.getBytes("UTF-8"));
 	            String newPID=AutoIngestor.ingestAndCommit(
+	            		Administrator.APIA,
 	                    Administrator.APIM,
 	                    in,
 	                    "foxml1.0",
