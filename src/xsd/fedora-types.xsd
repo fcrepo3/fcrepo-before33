@@ -293,7 +293,7 @@
 		<xsd:sequence>
 			<xsd:element name="bDefPID" type="string"/>
 			<xsd:element name="bMechPID" type="string"/>
-			<xsd:element name="createDT" type="dateTime"/>
+			<xsd:element name="createDate" type="dateTime"/>
 			<xsd:element name="ID" type="string"/>
 			<xsd:element name="label" type="string"/>
 			<xsd:element name="versionID" type="string"/>
