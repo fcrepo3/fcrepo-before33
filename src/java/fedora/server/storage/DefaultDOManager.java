@@ -432,7 +432,7 @@ public class DefaultDOManager
             // at time of ingest, then again, here, at time of storage.
             // We'll just be conservative for now and call all levels both times.
             // First, serialize the digital object into an Inputstream to be passed to validator.
-            
+
             // FIXME: Uncomment the following to validate on the serialized obj.
             // This is currently bypassed in favor of the exact copy of the ingested object
             // due to METSDOSerializer's malfunctioning
@@ -441,8 +441,8 @@ public class DefaultDOManager
             //ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
             //m_validator.validate(inV, 0, "store");
             m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
-            
-            // validation worked... so write to perm storage, then update the 
+
+            // validation worked... so write to perm storage, then update the
             // lockinguser (set to NULL) and systemVersion (add one)
             // FIXME: write change to perm store here...right before db stuff
             Connection conn=null;
@@ -635,7 +635,7 @@ public class DefaultDOManager
                 getTempStore().add("temp-ingest", in);
                 wroteTempIngest=true;
                 InputStream in2=getTempStore().retrieve("temp-ingest");
-    
+
                 // perform initial validation of the ingest submission format
                 InputStream inV=getTempStore().retrieve("temp-ingest");
                 m_validator.validate(inV, 0, "ingest");
@@ -669,27 +669,28 @@ public class DefaultDOManager
                 if (objectExists(obj.getPid())) {
                     throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
                 }
-    
+
                 // serialize to disk, then validate.. if that's ok, go on.. else unregister it!
                 ByteArrayOutputStream out=new ByteArrayOutputStream();
                 m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
-                ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
-                getPermanentStore().add(obj.getPid(), newIn);
-                // InputStream in3=getTempStore().retrieve("temp-ingest");
-                // getPermanentStore().add(obj.getPid(), in3);
+                //ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
+                //getPermanentStore().add(obj.getPid(), newIn);
+
+                InputStream in3=getTempStore().retrieve("temp-ingest");
+                getPermanentStore().add(obj.getPid(), in3);
                 permPid=obj.getPid();
                 inPermanentStore=true; // signifies successful perm store addition
                 InputStream in4=getTempStore().retrieve("temp-ingest");
-                
+
                 // now add it to the working area with the *known* pid
                 getTempStore().add(obj.getPid(), in4);
                 inTempStore=true; // signifies successful perm store addition
 
                 // then get the writer
                 DOWriter w=new DefinitiveDOWriter(context, this, obj);
-                
+
                 // add to internal list...somehow..think...
-                
+
                 // at this point all is good...
                 // so make a record of it in the registry
                 registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
