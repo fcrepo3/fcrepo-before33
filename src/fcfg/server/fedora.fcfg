@@ -47,7 +47,7 @@
         - storageCharacterEncoding [default=UTF-8]
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
-        <param name="storagePool" value="localMcKoiPool"/>
+        <param name="storagePool" value="localMySQLPool"/>
         <param name="storageFormat" value="mets11fedora1"/>
         <param name="storageCharacterEncoding" value="UTF-8"/>
     </module>
@@ -86,11 +86,11 @@
     </module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
-		<param name="defaultPoolName" value="poolOne"/>
-		<param name="poolNames" value="poolOne,poolTwo,localMcKoiPool"/>
+		<param name="defaultPoolName" value="localMySQLPool"/>
+		<param name="poolNames" value="localMySQLPool,localMcKoiPool,remoteMySQLPool"/>
 	</module>
-	<datastore id="poolOne">
-		<comment>Config parameters for ConnectionPool number one</comment>
+	<datastore id="remoteMySQLPool">
+		<comment>MySQL database on UVA test host (known to work)</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mysql://icarus.lib.virginia.edu:3306/FedoraObjects"/>
@@ -99,18 +99,18 @@
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
-	<datastore id="poolTwo">
-		<comment>Config parameters for ConnectionPool number two</comment>
-		<param name="dbUsername" value="fedoraAdmin"/>
+	<datastore id="localMySQLPool">
+		<comment>MySQL database on localhost</comment>
+       <param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mysql://localhost/FedoraObjects"/>
 		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
-        <param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
+       <param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
 	<datastore id="localMcKoiPool">
-		<comment>Config parameters for ConnectionPool on localhost using mckoi java db</comment>
+		<comment>McKoi database on localhost</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mckoi://localhost/"/>
