@@ -33,6 +33,13 @@
 		</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>FedoraReportServlet</servlet-name>
+		<display-name>Fedora Report Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.ReportServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>FedoraOAIProviderServlet</servlet-name>
 		<display-name>Fedora OAI Provider Servlet</display-name>
 		<servlet-class>
@@ -100,6 +107,10 @@
 		<servlet-name>FedoraFieldSearchServlet</servlet-name>
 		<url-pattern>/search</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FedoraReportServlet</servlet-name>
+		<url-pattern>/report</url-pattern>
+	</servlet-mapping>	
 	<servlet-mapping>
 		<servlet-name>FedoraOAIProviderServlet</servlet-name>
 		<url-pattern>/oai</url-pattern>
