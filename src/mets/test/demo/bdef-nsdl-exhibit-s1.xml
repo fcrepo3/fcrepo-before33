@@ -40,7 +40,7 @@
 						<fmm:Method operationName="getExhibitStyle2">
 						</fmm:Method>
 						<fmm:Method operationName="getExhibitMyStyle">
-							<fmm:UserInputParm parmName="XSL_MYSTYLESHEET_URL" defaultValue="" passBy="VALUE"/>
+							<fmm:UserInputParm parmName="XSL_MYSTYLESHEET_URL" required="true" defaultValue="" passBy="VALUE"/>
 						</fmm:Method>
 					</fmm:MethodMap>
 				</METS:xmlData>

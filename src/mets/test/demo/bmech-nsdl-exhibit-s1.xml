@@ -103,21 +103,21 @@
 					<fmm:MethodMap name="MethodMap - NSDL Exhibit (Style 1) Methods" bDefPID="test:50" bMechPID="test:51" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 						<!-- NOTE: The operationName attribute correlates to WSDL operation in terms of mapping to WSDL definitions -->
 						<fmm:Method operationName="getExhibitStyle1" wsdlMsgName="getExhibitStyle1Request" wsdlMsgOutput="xslt_response">
-							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_STYLESHEET1" passBy="URL_REF"/>
-							<fmm:DefaultInputParm parmName="CLEAR_CACHE" defaultValue="yes" passBy="VALUE"/>
+							<fmm:DatastreamInputParm parmName="XML_SOURCE" required="true" passBy="URL_REF"/>
+							<fmm:DatastreamInputParm parmName="XSL_STYLESHEET1" required="true" passBy="URL_REF"/>
+							<fmm:DefaultInputParm parmName="CLEAR_CACHE" required="true" defaultValue="yes" passBy="VALUE"/>
 							<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
 						</fmm:Method>
 						<fmm:Method operationName="getExhibitStyle2" wsdlMsgName="getExhibitStyle2Request" wsdlMsgOutput="xslt_response">
-							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:DatastreamInputParm parmName="XSL_STYLESHEET2" passBy="URL_REF"/>
-							<fmm:DefaultInputParm parmName="CLEAR_CACHE" defaultValue="yes" passBy="VALUE"/>
+							<fmm:DatastreamInputParm parmName="XML_SOURCE" required="true" passBy="URL_REF"/>
+							<fmm:DatastreamInputParm parmName="XSL_STYLESHEET2" required="true" passBy="URL_REF"/>
+							<fmm:DefaultInputParm parmName="CLEAR_CACHE" required="true" defaultValue="yes" passBy="VALUE"/>
 							<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
 						</fmm:Method>
 						<fmm:Method operationName="getExhibitMyStyle" wsdlMsgName="getExhibitMyStyleRequest" wsdlMsgOutput="xslt_response">
-							<fmm:DatastreamInputParm parmName="XML_SOURCE" passBy="URL_REF"/>
-							<fmm:UserInputParm parmName="XSL_MYSTYLESHEET_URL" defaultValue="" passBy="VALUE"/>
-							<fmm:DefaultInputParm parmName="CLEAR_CACHE" defaultValue="yes" passBy="VALUE"/>
+							<fmm:DatastreamInputParm parmName="XML_SOURCE" required="true" passBy="URL_REF"/>
+							<fmm:UserInputParm parmName="XSL_MYSTYLESHEET_URL" required="true" defaultValue="" passBy="VALUE"/>
+							<fmm:DefaultInputParm parmName="CLEAR_CACHE" required="true" defaultValue="yes" passBy="VALUE"/>
 							<fmm:MethodReturnType wsdlMsgName="xslt_response" wsdlMsgTOMIME="text/html"/>
 						</fmm:Method>
 					</fmm:MethodMap>
