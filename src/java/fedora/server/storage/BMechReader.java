@@ -9,7 +9,7 @@ package fedora.server.storage;
  * @version 1.0
  */
 
-import fedora.server.storage.abstraction.*;
+import fedora.server.storage.types.*;
 import java.io.InputStream;
 import java.util.Date;
 

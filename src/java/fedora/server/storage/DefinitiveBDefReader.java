@@ -9,7 +9,7 @@ package fedora.server.storage;
  * @version 1.0
  */
 
-import fedora.server.storage.abstraction.*;
+import fedora.server.storage.types.*;
 import java.util.Date;
 import java.util.Vector;
 import java.util.StringTokenizer;
@@ -38,15 +38,18 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
     // FOR TESTING...
     DefinitiveBDefReader doReader = new DefinitiveBDefReader(args[1]);
     doReader.GetObjectPID();
+    doReader.GetObjectLabel();
     doReader.ListDatastreamIDs("A");
     doReader.ListDisseminatorIDs("A");
     doReader.GetDatastreams(null);
     doReader.GetDatastream("DS1", null);
     doReader.GetDisseminators(null);
-    doReader.GetDisseminator("DISS1", null);
     doReader.GetBehaviorDefs(null);
     doReader.GetBehaviorMethods(null);
     doReader.GetBehaviorMethodsWSDL(null);
+    Disseminator d = doReader.GetDisseminator("DISS1", null);
+    doReader.GetBMechMethods(d.bDefID, null);
+    doReader.GetDSBindingMaps(null);
   }
 
   public DefinitiveBDefReader(String objectPID)
