@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:8" URI="info:fedora/demo:8" xmlns:METS="http://www.loc.gov/METS/"
+  xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec"
+  xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+  xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd"
+  xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+  <foxml:objectProperties>
+    <foxml:property NAME="info:fedora/fedora-system:def/fType" VALUE="FedoraBDefObject"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/state" VALUE="A"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/label" VALUE="Behavior Definition Object for UserInput Image Contract"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/cDate" VALUE="2004-09-22T19:35:06Z"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/mDate" VALUE="2004-09-22T19:35:07Z"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/cModel" VALUE="fedora:BDEF"/>
+  </foxml:objectProperties>
+  <foxml:datastream CONTROL_GROUP="E" FORMAT_URI="" ID="DS1" MIMETYPE="text/html" STATE="A" URI="info:fedora/demo:8/DS1" VERSIONABLE="YES">
+    <foxml:datastreamVersion CREATED="2000-08-22T06:32:00Z" ID="DS1.0" LABEL="Behavior Def Guide" SIZE="0">
+      <foxml:contentLocation REF=" http://uva.lib.edu/bdef/image/doc/userInputImage.html" TYPE="URL"/>
+      <foxml:contentDigest DIGEST="future: hash of content goes here" TYPE="MD5"/>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" FORMAT_URI="null" ID="DC" MIMETYPE="text/xml" STATE="A"
+    URI="info:fedora/demo:8/DC" VERSIONABLE="YES">
+    <foxml:datastreamVersion CREATED="2004-09-22T19:35:06Z" ID="DC1.0" LABEL="Dublin Core Metadata" SIZE="260">
+      <foxml:xmlContent>
+        <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+          <dc:title>Behavior Definition Object for UserInput Image Contract</dc:title>
+          <dc:identifier>demo:8</dc:identifier>
+        </oai_dc:dc>
+      </foxml:xmlContent>
+      <foxml:contentDigest DIGEST="future: hash of content goes here" TYPE="MD5"/>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" FORMAT_URI="info:fedora/fedora-system:format/xml.mets.techMD.OTHER.UNSPECIFIED"
+    ID="METHODMAP" MIMETYPE="text/xml" STATE="A" URI="info:fedora/demo:8/METHODMAP" VERSIONABLE="YES">
+    <foxml:datastreamVersion CREATED="2002-02-17T06:32:00Z" ID="METHODMAP1.0"
+      LABEL="Method Map of the Fedora Behavior Definition for UserInput Image" SIZE="931">
+      <foxml:xmlContent>
+        <fmm:MethodMap name="Fedora MethodMap for UserInput Image BDef" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+          <fmm:Method operationName="getThumbnail"/>
+          <fmm:Method operationName="getImage">
+            <fmm:UserInputParm defaultValue="yes" parmName="ZOOM" passBy="VALUE" required="true">
+              <fmm:ValidParmValues>
+                <fmm:ValidParm value="yes"/>
+                <fmm:ValidParm value="no"/>
+              </fmm:ValidParmValues>
+            </fmm:UserInputParm>
+            <fmm:UserInputParm defaultValue="medium1" parmName="SIZE" passBy="VALUE" required="true">
+              <fmm:ValidParmValues>
+                <fmm:ValidParm value="small"/>
+                <fmm:ValidParm value="medium1"/>
+                <fmm:ValidParm value="medium2"/>
+              </fmm:ValidParmValues>
+            </fmm:UserInputParm>
+          </fmm:Method>
+        </fmm:MethodMap>
+      </foxml:xmlContent>
+      <foxml:contentDigest DIGEST="future: hash of content goes here" TYPE="MD5"/>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:disseminator BDEF_CONTRACT_PID="fedora-system:1" ID="DISS1" STATE="A" VERSIONABLE="YES">
+    <foxml:disseminatorVersion BMECH_SERVICE_PID="fedora-system:2" CREATED="2000-08-22T06:32:00Z" ID="DISS1.0" LABEL="Bootstrap Behaviors">
+      <foxml:serviceInputMap>
+        <foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="BDEF-METHODMAP" LABEL="Abstract behavior definition in Fedora Method Map format"/>
+        <foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="BDEF-GUIDE" LABEL="The Official Guide to the UserInput Image Behavior Definition"/>
+      </foxml:serviceInputMap>
+    </foxml:disseminatorVersion>
+  </foxml:disseminator>
+</foxml:digitalObject>
