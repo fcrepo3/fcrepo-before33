@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JOptionPane;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
@@ -56,18 +57,6 @@ public class BMechBuilder extends JInternalFrame
         tabpane.addTab("Datastream Input", createDSInputPane());
         tabpane.addTab("Service Profile", createProfilePane());
         tabpane.addTab("Documentation", createDocPane());
-        /*
-        // Register a change listener for the tab pane
-        tabpane.addChangeListener(new ChangeListener() {
-            // This method is called whenever the selected tab changes
-            public void stateChanged(ChangeEvent evt) {
-                JTabbedPane tabpane = (JTabbedPane)evt.getSource();
-                // Get current tab
-                selectedTabPane = tabpane.getSelectedIndex();
-            }
-        });
-        */
-
 
         // General Buttons Panel
         JButton save = new JButton("Save");
@@ -116,18 +105,32 @@ public class BMechBuilder extends JInternalFrame
         System.out.println("tab name: " + tabs[i].getName());
         if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
         {
-          GeneralPane gp = (GeneralPane)tabs[i];
-          newBMech.setbDefPID(gp.getBDefPID());
-          newBMech.setbMechLabel(gp.getBMechLabel());
-          newBMech.setDCRecord(gp.getDCElements());
+          if (validGeneralTab((GeneralPane)tabs[i]))
+          {
+            GeneralPane gp = (GeneralPane)tabs[i];
+            newBMech.setbDefPID(gp.getBDefPID());
+            newBMech.setbMechLabel(gp.getBMechLabel());
+            newBMech.setDCRecord(gp.getDCElements());
+          }
+          else
+          {
+            return;
+          }
         }
         else if (tabs[i].getName().equalsIgnoreCase("MethodsTab"))
         {
-          MethodsPane mp = (MethodsPane)tabs[i];
-          newBMech.setHasBaseURL(mp.hasBaseURL());
-          newBMech.setServiceBaseURL(mp.getBaseURL());
-          newBMech.setBMechMethodMap(mp.getBMechMethodMap());
-          newBMech.setBMechMethods(mp.getBMechMethods());
+          if (validMethodsTab((MethodsPane)tabs[i]))
+          {
+            MethodsPane mp = (MethodsPane)tabs[i];
+            newBMech.setHasBaseURL(mp.hasBaseURL());
+            newBMech.setServiceBaseURL(mp.getBaseURL());
+            newBMech.setBMechMethodMap(mp.getBMechMethodMap());
+            newBMech.setBMechMethods(mp.getBMechMethods());
+          }
+          else
+          {
+            return;
+          }
         }
       }
       printBMech();
@@ -194,13 +197,11 @@ public class BMechBuilder extends JInternalFrame
       System.out.println("bDefPID: " + newBMech.getbDefPID());
       System.out.println("bMechLabel: " + newBMech.getbMechLabel());
       System.out.println("DCRecord: ");
-      HashMap m = newBMech.getDCRecord();
-      Set elements = m.keySet();
-      Iterator it_elements = elements.iterator();
-      while (it_elements.hasNext())
+      DCElement[] dcrecord = newBMech.getDCRecord();
+      for (int i=0; i<dcrecord.length; i++)
       {
-        String element = (String)it_elements.next();
-        System.out.println(">>element: " + element + "=" + m.get(element));
+        System.out.println(">>> " + dcrecord[i].elementName + "="
+          + dcrecord[i].elementValue);
       }
       System.out.println("FROM METHODS TAB===============================");
       System.out.println("hasBaseURL: "  + newBMech.getHasBaseURL());
@@ -230,5 +231,61 @@ public class BMechBuilder extends JInternalFrame
             + ">>>parmDomainValues: " + mp.parmDomainValues + "\n");
         }
       }
+    }
+
+    private boolean validGeneralTab(GeneralPane gp)
+    {
+      if (gp.getBDefPID() == null || gp.getBDefPID().equalsIgnoreCase(""))
+      {
+        assertTabPaneMsg("BDefPID is missing on General Tab.", gp.getName());
+        return false;
+      }
+      else if (gp.getBMechLabel() == null || gp.getBMechLabel().equalsIgnoreCase(""))
+      {
+        assertTabPaneMsg("Behavior Mechanism Label is missing on General Tab.", gp.getName());
+        return false;
+      }
+      else if (gp.getDCElements().length <= 0)
+      {
+        assertTabPaneMsg("You must enter at least one DC element on General Tab.", gp.getName());
+        return false;
+      }
+      return true;
+    }
+
+    private boolean validMethodsTab(MethodsPane mp)
+    {
+      if (mp.hasBaseURL() && (mp.getBaseURL() == null || mp.getBaseURL().equals("")))
+      {
+        assertTabPaneMsg("The Base URL is missing on Service Methods Tab.", mp.getName());
+        return false;
+      }
+      else if (mp.getBMechMethods().length <=0)
+      {
+        assertTabPaneMsg("You must enter at least one method on Service Methods Tab.", mp.getName());
+        return false;
+      }
+      else
+      {
+        Method[] methods = mp.getBMechMethods();
+        for (int i=0; i<methods.length; i++)
+        {
+          if (methods[i].methodProperties == null)
+          {
+            assertTabPaneMsg(new String("You must enter properties for method: "
+              + methods[i].methodName), mp.getName());
+            return false;
+          }
+        }
+        return true;
+      }
+    }
+
+
+    private void assertTabPaneMsg(String msg, String tabpane)
+    {
+      JOptionPane.showMessageDialog(
+        this, new String(msg), new String(tabpane + " Message"),
+        JOptionPane.INFORMATION_MESSAGE);
     }
   }
