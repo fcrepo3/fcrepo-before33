@@ -30,6 +30,12 @@ public class MethodParameterResolverServlet extends HttpServlet
   public void init() throws ServletException
   {}
 
+  public void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException
+  {
+    doPost(request, response);
+  }
+
   //Process the HTTP Post request.
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
@@ -89,7 +95,7 @@ public class MethodParameterResolverServlet extends HttpServlet
     {
       // Translate parameters into dissemination request.
       StringBuffer url = new StringBuffer();
-      url.append("http://localhost:8080/fedora/access/soapservlet?"
+      url.append(serverURI
           + "action_=GetDissemination&"
           + "PID_=" + PID + "&"
           + "bDefPID_=" + bDefPID + "&"
