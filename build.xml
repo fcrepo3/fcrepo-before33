@@ -421,7 +421,7 @@
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/access/objectmethods.xslt" todir="dist/server/access"/>
 		<!-- the next copy is temporary and may change -->
-		<copy file="src/xsl/access/objectmethods2.xslt" todir="dist/server/access"/>
+		<!--<copy file="src/xsl/access/objectmethods2.xslt" todir="dist/server/access"/>-->
 		<!--ObjectProfile xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/access"/>
 		<!--ItemIndex xsl stylesheet used by Default Disseminator (DefaultBehaviorImpl) -->
@@ -437,6 +437,15 @@
 		<copy file="src/web-app/fedora/localservices/saxon/web.xml" todir="dist/server/tomcat41/webapps/saxon/WEB-INF"/>
 		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/saxon/WEB-INF/lib"/>
 		<copy file="src/web-app/fedora/localservices/saxon/index.html" todir="dist/server/tomcat41/webapps/saxon"/>
+		<copy todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/classes">
+			<fileset dir="temp/soapclient/classes"/>
+		</copy>
+		<copy file="src/web-app/fedora/soapclient/web.xml" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
+		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
+		<copy file="temp/soapclient/lib/fedoragentypes.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
+		<copy file="temp/soapclient/lib/fedorautilities.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
+		<copy file="src/xsl/soapclient/objectmethods.xslt" todir="dist/server/tomcat41/webapps/soapclient/xsl"/>
+		<copy file="src/web-app/fedora/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
 		<exec executable="java">
@@ -507,12 +516,33 @@
 	</target>
 	<target name="localservicesclasses" depends="localservicesprep" description="Generate java classes for local services">
 		<mkdir dir="temp/localservices/classes"/>
+		<mkdir dir="temp/soapclient/classes"/>
+		<mkdir dir="temp/soapclient/lib"/>
 		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<exec executable="jar">
+			<arg value="-cf"/>
+			<arg path="temp/soapclient/lib/fedorautilities.jar"/>
+			<arg value="-C"/>
+			<arg value="temp/server/classes"/>
+			<arg value="fedora/server/utilities/"/>
+		</exec>
+		<exec executable="jar">
+			<arg value="-cf"/>
+			<arg path="temp/soapclient/lib/fedoragentypes.jar"/>
+			<arg value="-C"/>
+			<arg value="temp/server/classes"/>
+			<arg value="fedora/server/types/gen/"/>
+		</exec>
+		<javac srcdir="temp/soapclient/java" destdir="temp/soapclient/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar;lib/common/junit.jar;lib/server/md5.jar;temp/soapclient/lib/fedoragentypes.jar;temp/soapclient/lib/fedorautilities.jar" includes="**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="localservicesprep" depends="prep" description="Prepare a temporary build area for localservices-related targets">
 		<mkdir dir="temp/localservices"/>
 		<copy todir="temp/localservices/java/fedora/localservices">
 			<fileset dir="src/java/fedora/localservices"/>
+		</copy>
+		<mkdir dir="temp/soapclient"/>
+		<copy todir="temp/soapclient/java/fedora/soapclient">
+			<fileset dir="src/java/fedora/soapclient"/>
 		</copy>
 	</target>
 	<target name="clean" description="Clean up all targets and temp files">
@@ -522,6 +552,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.84  2003/03/05 02:05:48  rlw
+  changes due to repackaging of FedoraAccessSOAPServlet.
+  soap client will now reside in it's own webapp and be totally outside the fedora.server package
+
   Revision 1.83  2003/03/03 23:00:24  payette
   Added wsdl documentation generation for API-A-LITE
 
