@@ -31,6 +31,7 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.MethodParmDef;
 import fedora.server.utilities.DateUtility;
 
 /**
@@ -249,6 +250,9 @@ public class DisseminationService
       Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray)
       throws ServerException
   {
+    if (1==1) { //fedora.server.Debug.DEBUG) {
+        printBindingInfo(dissBindInfoArray);
+    }
     long initStartTime = new Date().getTime();
     long startTime = new Date().getTime();
     String protocolType = null;
@@ -786,5 +790,53 @@ public class DisseminationService
             throw new GeneralException(message);
       }
       return dsLocation;
+  }
+
+  public static void printBindingInfo(DisseminationBindingInfo[] info) {
+    for (int i = 0; i < info.length; i++) {
+      System.out.println("DisseminationBindingInfo[" + i + "]:");
+      System.out.println("  DSBindKey          : " + info[i].DSBindKey);
+      System.out.println("  dsLocation         : " + info[i].dsLocation);
+      System.out.println("  dsControlGroupType : " + info[i].dsControlGroupType);
+      System.out.println("  dsID               : " + info[i].dsID);
+      System.out.println("  dsVersionID        : " + info[i].dsVersionID);
+      System.out.println("  AddressLocation    : " + info[i].AddressLocation);
+      System.out.println("  OperationLocation  : " + info[i].OperationLocation);
+      System.out.println("  ProtocolType       : " + info[i].ProtocolType);
+      System.out.println("  dsState            : " + info[i].dsState);
+      for (int j = 0; j < info[i].methodParms.length; j++) {
+        MethodParmDef def = info[i].methodParms[j];
+        System.out.println("  MethodParamDef[" + j + "]:");
+        System.out.println("    parmName         : " + def.parmName);
+        System.out.println("    parmDefaultValue : " + def.parmDefaultValue);
+        System.out.println("    parmRequired     : " + def.parmRequired);
+        System.out.println("    parmLabel        : " + def.parmLabel);
+        System.out.println("    parmPassBy       : " + def.parmPassBy);
+        for (int k = 0; k < def.parmDomainValues.length; k++) {
+          System.out.println("    parmDomainValue  : " + def.parmDomainValues[k]);
+        }
+        /*
+            public String parmName = null;
+    public String parmType = null;
+    public String parmDefaultValue = null;
+    public String[] parmDomainValues = new String[0];
+    public boolean parmRequired = true;
+    public String parmLabel = null;
+    public String parmPassBy = null;
+        */
+      }
+    }
+    /*
+  public String DSBindKey = null;
+  public MethodParmDef[] methodParms = null;
+  public String dsLocation = null;
+  public String dsControlGroupType = null;
+  public String dsID = null;
+  public String dsVersionID = null;
+  public String AddressLocation = null;
+  public String OperationLocation = null;
+  public String ProtocolType = null;
+  public String dsState = null;
+    */
   }
 }
