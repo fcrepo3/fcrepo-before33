@@ -119,7 +119,7 @@ public class FOXMLDOSerializer
         }
 		String uri = "info:fedora/" + obj.getPid();
 		buf.append(indent + "PID=\"" + obj.getPid() 
-				+ "\" URI=\"" + uri + "\"");
+				+ "\" FEDORA_URI=\"" + uri + "\"");
         buf.append(">\n");
     }
 
@@ -203,16 +203,25 @@ public class FOXMLDOSerializer
 			// Use the first version to pick up the attributes common to all versions.
 			List dsList = obj.datastreams(dsid);
 			for (int i=0; i<dsList.size(); i++) {
-				//Datastream vds = validateDatastream((Datastream) dsList.get(i));
 				Datastream vds = DOTranslationUtility.setDatastreamDefaults((Datastream) dsList.get(i));
 				// insert the ds elements common to all versions.
 				if (i==0) {
+					String altIdsAttr="";
+					String altIds=oneString(vds.DatastreamAltIDs);
+					if (altIds!=null && !altIds.equals("")) {
+						altIdsAttr=" ALT_IDS=\"" + altIds + "\"";
+					}
+					String formatURIAttr="";
+					if (vds.DSFormatURI!=null && !vds.DSFormatURI.equals("")) {
+						formatURIAttr=" FORMAT_URI=\"" + vds.DSFormatURI + "\"";
+					}
 					buf.append("    <" + FOXML_PREFIX 
 						+ ":datastream ID=\"" + vds.DatastreamID + "\""
-						+ " URI=\"" + "info:fedora/" + obj.getPid() + "/" + vds.DatastreamID + "\"" 
+						+ " FEDORA_URI=\"" + "info:fedora/" + obj.getPid() + "/" + vds.DatastreamID + "\"" 
+						+ altIdsAttr
 						+ " STATE=\"" + vds.DSState + "\""
 						+ " MIMETYPE=\"" + vds.DSMIME + "\""
-						+ " FORMAT_URI=\"" + vds.DSFormatURI + "\""
+						+ formatURIAttr
 						+ " CONTROL_GROUP=\"" + vds.DSControlGrp + "\""
 						+ " VERSIONABLE=\"" + vds.DSVersionable + "\">\n");
 				}
@@ -251,10 +260,16 @@ public class FOXMLDOSerializer
 					appendInlineXML(obj.getFedoraObjectType(), 
 						(DatastreamXMLMetadata)vds, buf, encoding);
 				}					
-				// FUTURE: Add digest of datastream content 
-				//(to be calculated in DefaultManagement).
+				// FIXME: In future release, add digest of datastream content.
+				// First we need to decide how the digest is managed.  Is it
+				// automatically calculated by DefaultManagement during API-M
+				// operations?  What purposes will it serve?  This is part of
+				// Fedora Phase II. 
+				/*
 				buf.append("            <" + FOXML_PREFIX + ":contentDigest TYPE=\"MD5\""
-					+ " DIGEST=\"future: hash of content goes here\"/>\n"); 
+					+ " DIGEST=\"future: hash of content goes here\"/>\n");
+				*/
+					 
 				buf.append("        </" + FOXML_PREFIX + ":datastreamVersion>\n");
 				// if it's the last version, wrap-up with closing datastream element.	
 				if (i==(dsList.size() - 1)) {
@@ -271,7 +286,7 @@ public class FOXMLDOSerializer
 			// There is only ONE version of the audit trail datastream!
 			buf.append("    <" + FOXML_PREFIX 
 				+ ":datastream ID=\"" + "AUDIT" + "\"" 
-				+ " URI=\"" + "info:fedora/" + obj.getPid() + "/AUDIT" + "\""
+				+ " FEDORA_URI=\"" + "info:fedora/" + obj.getPid() + "/AUDIT" + "\""
 				+ " STATE=\"" + "A" + "\""
 				+ " MIMETYPE=\"" + "text/xml" + "\""
 				+ " FORMAT_URI=\"" + "info:fedora/fedora-system:format/xml.fedora.audit" + "\""
@@ -472,6 +487,17 @@ public class FOXMLDOSerializer
 		} else {
 			throw new ObjectIntegrityException("Object must have a FedoraObjectType.");
 		}
+	}
+	
+	private String oneString(String[] idList){
+		StringBuffer out=new StringBuffer();
+		for (int i=0; i<idList.length; i++) {
+			if (i>0) {
+				out.append(' ');
+			}
+			out.append((String) idList[i]);
+		}
+		return out.toString();
 	}
 	
     private void writeToStream(StringBuffer buf, OutputStream out,
