@@ -66,7 +66,7 @@ public interface Access
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
-  public MIMETypedStream getBehaviorMethodsAsWSDL(Context context, String PID,
+  public MIMETypedStream getBehaviorMethodsXML(Context context, String PID,
       String bDefPID, Calendar asOfDateTime) throws ServerException;
 
   /**
@@ -103,13 +103,13 @@ public interface Access
    */
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
       Calendar asOfDateTime) throws ServerException;
-      
-  public List search(Context context, String[] resultFields, 
+
+  public List search(Context context, String[] resultFields,
           String terms)
           throws ServerException;
 
   public List search(Context context, String[] resultFields,
           List conditions)
           throws ServerException;
-          
+
 }

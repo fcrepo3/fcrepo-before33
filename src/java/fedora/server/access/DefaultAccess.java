@@ -156,7 +156,7 @@ public class DefaultAccess extends Module implements Access
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
-  public MIMETypedStream getBehaviorMethodsAsWSDL(Context context,
+  public MIMETypedStream getBehaviorMethodsXML(Context context,
       String PID, String bDefPID, Calendar asOfDateTime) throws ServerException
   {
     m_ipRestriction.enforce(context);
@@ -167,7 +167,7 @@ public class DefaultAccess extends Module implements Access
       InputStream methodResults = null;
       DOReader reader =
           m_manager.getReader(context, PID);
-      methodResults = reader.GetBMechMethodsWSDL(bDefPID, versDateTime);
+      methodResults = reader.GetBMechMethodsXML(bDefPID, versDateTime);
       int byteStream = 0;
       while ((byteStream = methodResults.read()) >= 0)
       {
@@ -277,8 +277,8 @@ public class DefaultAccess extends Module implements Access
         reader.getObjectMethodsDef(versDateTime);
     return methodDefs;
   }
-  
-  public List search(Context context, String[] resultFields, 
+
+  public List search(Context context, String[] resultFields,
           String terms)
           throws ServerException {
     m_ipRestriction.enforce(context);
