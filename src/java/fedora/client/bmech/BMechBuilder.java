@@ -72,7 +72,7 @@ public class BMechBuilder extends JInternalFrame
       });
 
       frame.getContentPane().add(
-        new BMechBuilder("http://localhost", 8080, "test", "test"),
+        new BMechBuilder("localhost", 8080, "test", "test"),
           BorderLayout.CENTER);
       frame.setSize(700, 500);
       frame.setVisible(true);
@@ -80,7 +80,7 @@ public class BMechBuilder extends JInternalFrame
 
     public BMechBuilder(String host, int port, String user, String pass)
     {
-        super("BMechBuilder");
+        super("Behavior Mechanism Builder");
         s_host = host;
         s_port = port;
         s_user = user;
@@ -255,9 +255,17 @@ public class BMechBuilder extends JInternalFrame
           if (validGeneralTab((GeneralPane)tabs[i]))
           {
             GeneralPane gp = (GeneralPane)tabs[i];
-            newBMech.setbDefPID(gp.getBDefPID());
-            newBMech.setbMechLabel(gp.getBMechLabel());
-            newBMech.setbMechName(gp.getBMechName());
+            if (gp.rb_chosen.equalsIgnoreCase("testPID"))
+            {
+              newBMech.setbObjPID(gp.getBObjectPID());
+            }
+            else
+            {
+              newBMech.setbObjPID(null);
+            }
+            newBMech.setbDefContractPID(gp.getBDefContractPID());
+            newBMech.setbObjLabel(gp.getBObjectLabel());
+            newBMech.setbObjName(gp.getBObjectName());
             newBMech.setDCRecord(gp.getDCElements());
           }
           else
@@ -280,8 +288,8 @@ public class BMechBuilder extends JInternalFrame
             {
               newBMech.setServiceBaseURL(baseURL + "/");
             }
-            newBMech.setBMechMethodMap(mp.getBMechMethodMap());
-            newBMech.setBMechMethods(mp.getBMechMethods());
+            newBMech.setMethodsHashMap(mp.getMethodMap());
+            newBMech.setMethods(mp.getMethods());
           }
           else
           {
@@ -337,7 +345,7 @@ public class BMechBuilder extends JInternalFrame
 
     private JComponent createGeneralPane()
     {
-      GeneralPane gpane = new GeneralPane();
+      GeneralPane gpane = new GeneralPane(this);
       gpane.setName("GeneralTab");
       return gpane;
       //return new JLabel("Insert general stuff here.");
@@ -374,8 +382,8 @@ public class BMechBuilder extends JInternalFrame
     private void printBMech()
     {
       System.out.println("FROM GENERAL TAB===============================");
-      System.out.println("bDefPID: " + newBMech.getbDefPID());
-      System.out.println("bMechLabel: " + newBMech.getbMechLabel());
+      System.out.println("bDefPID: " + newBMech.getbDefContractPID());
+      System.out.println("bMechLabel: " + newBMech.getbObjLabel());
       System.out.println("DCRecord: ");
       DCElement[] dcrecord = newBMech.getDCRecord();
       for (int i=0; i<dcrecord.length; i++)
@@ -387,7 +395,7 @@ public class BMechBuilder extends JInternalFrame
       System.out.println("hasBaseURL: "  + newBMech.getHasBaseURL());
       System.out.println("serviceBaseURL: " + newBMech.getServiceBaseURL());
       System.out.println("methods: ");
-      HashMap m2 = newBMech.getBMechMethodMap();
+      HashMap m2 = newBMech.getMethodsHashMap();
       Collection methods = m2.values();
       Iterator it_methods = methods.iterator();
       while (it_methods.hasNext())
@@ -427,17 +435,17 @@ public class BMechBuilder extends JInternalFrame
 
     private boolean validGeneralTab(GeneralPane gp)
     {
-      if (gp.getBDefPID() == null || gp.getBDefPID().trim().equals(""))
+      if (gp.getBDefContractPID() == null || gp.getBDefContractPID().trim().equals(""))
       {
         assertTabPaneMsg("BDefPID is missing on General Tab.", gp.getName());
         return false;
       }
-      else if (gp.getBMechLabel() == null || gp.getBMechLabel().trim().equals(""))
+      else if (gp.getBObjectLabel() == null || gp.getBObjectLabel().trim().equals(""))
       {
         assertTabPaneMsg("Behavior Mechanism Label is missing on General Tab.", gp.getName());
         return false;
       }
-      else if (gp.getBMechName() == null || gp.getBMechName().trim().equals(""))
+      else if (gp.getBObjectName() == null || gp.getBObjectName().trim().equals(""))
       {
         assertTabPaneMsg("Behavior Mechanism Nickname is missing on General Tab.", gp.getName());
         return false;
@@ -457,14 +465,14 @@ public class BMechBuilder extends JInternalFrame
         assertTabPaneMsg("The Base URL is missing on Service Methods Tab.", mp.getName());
         return false;
       }
-      else if (mp.getBMechMethods().length <=0)
+      else if (mp.getMethods().length <=0)
       {
         assertTabPaneMsg("You must enter at least one method on Service Methods Tab.", mp.getName());
         return false;
       }
       else
       {
-        Method[] methods = mp.getBMechMethods();
+        Method[] methods = mp.getMethods();
         for (int i=0; i<methods.length; i++)
         {
           if (methods[i].methodProperties == null)
