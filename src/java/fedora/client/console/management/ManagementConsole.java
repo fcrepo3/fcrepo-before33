@@ -13,13 +13,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.xml.rpc.ServiceException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import fedora.client.Administrator;
+import fedora.client.console.Console;
 import fedora.client.console.ConsoleSendButtonListener;
 import fedora.client.console.ConsoleCommand;
 import fedora.client.console.ServiceConsoleCommandFactory;
@@ -27,10 +32,14 @@ import fedora.server.management.FedoraAPIMServiceLocator;
 import fedora.server.management.FedoraAPIM;
 
 public class ManagementConsole
-        extends JInternalFrame {
+        extends JInternalFrame 
+        implements Console {
         
     private Administrator m_mainFrame;
     private static FedoraAPIMServiceLocator m_locator=new FedoraAPIMServiceLocator();
+    private JTextArea m_outputArea;
+    private JTextField m_hostTextField;
+    private JTextField m_portTextField;
     
     public ManagementConsole(Administrator mainFrame) {
         super("Management Console",
@@ -42,22 +51,15 @@ public class ManagementConsole
         m_mainFrame=mainFrame;
         
         
-       JTextArea outputArea = new JTextArea(
-    "This is an editable JTextArea " +
-    "that has been initialized with the setText method. " +
-    "A text area is a \"plain\" text component, " +
-    "which means that although it can display text " +
-    "in any font, all of the text is in the same font."
-);
-outputArea.setFont(new Font("Serif", Font.PLAIN, 12));
-outputArea.setEditable(false);
+        m_outputArea = new JTextArea();
+        m_outputArea.setFont(new Font("Serif", Font.PLAIN, 16));
+        m_outputArea.setEditable(false);
 
-JScrollPane outputScrollPane = new JScrollPane(outputArea);
-outputScrollPane.setVerticalScrollBarPolicy(
-		JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-outputScrollPane.setPreferredSize(new Dimension(250, 250));
-outputScrollPane.setBorder(BorderFactory.createEmptyBorder(5,5,0,0));
-// outputScrollPane.setBorder(...create border...);
+        JScrollPane outputScrollPane = new JScrollPane(m_outputArea);
+        outputScrollPane.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        outputScrollPane.setPreferredSize(new Dimension(250, 250));
+        outputScrollPane.setBorder(BorderFactory.createEmptyBorder(5,5,0,0));
 
         JPanel controlPanel=new JPanel(); 
         controlPanel.setLayout(new BorderLayout());
@@ -67,12 +69,14 @@ outputScrollPane.setBorder(BorderFactory.createEmptyBorder(5,5,0,0));
         JPanel hostPanel=new JPanel();
         hostPanel.setLayout(new BorderLayout());
         hostPanel.add(new JLabel("Host : "), BorderLayout.WEST);
-        hostPanel.add(new JTextField("localhost", 13), BorderLayout.EAST);
+        m_hostTextField=new JTextField("localhost", 13);
+        hostPanel.add(m_hostTextField, BorderLayout.EAST);
         
         JPanel portPanel=new JPanel();
         portPanel.setLayout(new BorderLayout());
         portPanel.add(new JLabel("  Port : "), BorderLayout.WEST);
-        portPanel.add(new JTextField("8080", 4), BorderLayout.EAST);
+        m_portTextField=new JTextField("8080", 4);
+        portPanel.add(m_portTextField, BorderLayout.EAST);
        
         hostPortPanel.add(hostPanel, BorderLayout.WEST);
         hostPortPanel.add(portPanel, BorderLayout.EAST);
@@ -80,48 +84,6 @@ outputScrollPane.setBorder(BorderFactory.createEmptyBorder(5,5,0,0));
         JPanel commandPanel=new JPanel();
         commandPanel.setLayout(new BorderLayout());
         commandPanel.add(new JLabel("  Command : "), BorderLayout.WEST);
-        
-/**
-        String[] commands=new String[] {
-                "String createObject()",
-                "String ingestObject(byte[] METSXML)",
-                "byte[] getObjectXML(String PID)",
-                "byte[] exportObject(String PID)",
-                "void withdrawObject(String PID)",
-                "void deleteObject(String PID)",
-                "void purgeObject(String PID)",
-                "void obtainLock(String PID)",
-                "void releaseLock(String PID, String logMessage, boolean commit)",
-                "String getLockingUser(String PID)",
-                "String getObjectState(String PID)",
-                "Calendar getObjectCreateDate(String PID)",
-                "Calendar getObjectLastModDate(String PID)",
-                "AuditRecord[] getObjectAuditTrail(String PID)",
-                "String[] listObjectPIDs(String state)",
-                "String addDatastreamExternal(String PID, String dsLabel, String dsLocation)",
-                "String addDatastreamManagedContent(String PID, String dsLabel, String MIMEType, byte[] dsContent)",
-                "String addDatastreamXMLMetadata(String PID, String dsLabel, String MDType, byte[] dsInlineMetadata)",
-                "String addDisseminator(String PID, String bMechPID, String dissLabel, .DatastreamBindingMap bindingMap)",
-                "void modifyDisseminator(String PID, String disseminatorID, String bMechPID, String dissLabel, .DatastreamBindingMap bindingMap)",
-                "void modifyDatastreamExternal(String PID, String datastreamID, String dsLabel, String dsLocation)",
-                "void modifyDatastreamManagedContent(String PID, String datastreamID, String dsLabel, String MIMEType, byte[] dsContent)",
-                "void modifyDatastreamXMLMetadata(String PID, String datastreamID, String dsLabel, String MDType, byte[] dsInlineMetadata)",
-                "void withdrawDatastream(String PID, String datastreamID)",
-                "void deleteDatastream(String PID, String datastreamID)",
-                "Calendar[] purgeDatastream(String PID, String datastreamID, Calendar startDT, java.util.Calendar endDT)",
-                "void withdrawDisseminator(String PID, String disseminatorID)",
-                "void deleteDisseminator(String PID, String disseminatorID)",
-                "Calendar[] purgeDisseminator(String PID, String disseminatorID, Calendar startDT, Calendar endDT)",
-                "Datastream getDatastream(String PID, String datastreamID, Calendar asOfDateTime)",
-                "Datastream[] getDatastreams(String PID, Calendar asOfDateTime)",
-                "String[] listDatastreamIDs(String PID, String state)",
-                "ComponentInfo[] getDatastreamHistory(String PID, String datastreamID)",
-                "Disseminator getDisseminator(String PID, String disseminatorID, Calendar asOfDateTime)",
-                "Disseminator[] getDisseminators(String PID, Calendar asOfDateTime)",
-                "String[] listDisseminatorIDs(String PID, String state)",
-                "ComponentInfo[] getDisseminatorHistory(String PID, String disseminatorID)"
-        };
-*/
         ConsoleCommand[] commands=null;
         try {
             commands=
@@ -137,7 +99,7 @@ outputScrollPane.setBorder(BorderFactory.createEmptyBorder(5,5,0,0));
         commandComboBox.setSelectedIndex(0);
         commandPanel.add(commandComboBox);
         JButton sendButton=new JButton(" Send.. ");
-        sendButton.addActionListener(new ConsoleSendButtonListener(commandComboBox.getModel(), m_mainFrame));
+        sendButton.addActionListener(new ConsoleSendButtonListener(commandComboBox.getModel(), m_mainFrame, this));
 
 
         commandPanel.add(sendButton, BorderLayout.EAST);
@@ -153,6 +115,42 @@ outputScrollPane.setBorder(BorderFactory.createEmptyBorder(5,5,0,0));
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/development/Host16.gif")));
 
         setSize(400,400);
+    }
+    
+    public Object getInvocationTarget(ConsoleCommand cmd)
+            throws InvocationTargetException {
+        String hostString=m_hostTextField.getText();
+        String portString=m_portTextField.getText();
+        try {
+            URL ourl=new URL(m_locator.getFedoraAPIMPortSOAPHTTPAddress());
+            StringBuffer nurl=new StringBuffer();
+            nurl.append("http://");
+            nurl.append(hostString);
+            nurl.append(':');
+            nurl.append(portString);
+            nurl.append(ourl.getPath());
+            if ((ourl.getQuery()!=null) && (!ourl.getQuery().equals("")) ) {
+                nurl.append('?');
+                nurl.append(ourl.getQuery());
+            }
+            if ((ourl.getRef()!=null) && (!ourl.getRef().equals("")) ) {
+                nurl.append('#');
+                nurl.append(ourl.getRef());
+            }
+            return m_locator.getFedoraAPIMPortSOAPHTTP(new URL(nurl.toString()));
+        } catch (MalformedURLException murle) {
+            throw new InvocationTargetException(murle, "Badly formed URL");
+        } catch (ServiceException se) {
+            throw new InvocationTargetException(se);
+        }
+    }
+    
+    public void print(String output) {
+        m_outputArea.append(output);
+    }
+    
+    public void clear() {
+        m_outputArea.setText("");
     }
     
 }
