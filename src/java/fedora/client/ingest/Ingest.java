@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.text.*;
 
 import fedora.client.Administrator;
 import fedora.client.APIAStubFactory;
@@ -14,6 +15,7 @@ import fedora.client.export.AutoExporter;
 import fedora.client.search.AutoFinder;
 
 import fedora.server.management.FedoraAPIM;
+import fedora.server.utilities.StreamUtility;
 
 import fedora.server.types.gen.Condition;
 import fedora.server.types.gen.ComparisonOperator;
@@ -30,9 +32,15 @@ public class Ingest {
     public static int MULTI_FROM_REPOS=3;
 
     public static String LAST_PATH;
+    
+    private static String s_rootName;
+    private static String s_logPath;
+    private static PrintStream s_log;
+    private static int s_failedCount;
 
     // launch interactively
     public Ingest(int kind) {
+        s_failedCount=0;
         try {
             if (kind==ONE_FROM_FILE) {
                 JFileChooser browse=new JFileChooser(Administrator.getLastDir());
@@ -54,11 +62,13 @@ public class Ingest {
                     FTypeDialog dlg=new FTypeDialog();
                     if (dlg.getResult()!=null) {
                         String fTypes=dlg.getResult();
+                        openLog("ingest-from-dir");
                         long st=System.currentTimeMillis();
                         String[] pids=multiFromDirectory(file, fTypes, Administrator.APIM, null);
                         long et=System.currentTimeMillis();
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            "Ingest of " + pids.length + " objects finished.\n"
+                            pids.length + " objects successfully ingested.\n"
+                            + s_failedCount + " objects failed.\n"
                             + "Time elapsed: " + getDuration(et-st));  
                          //   Details are in File->Advanced->STDOUT/STDERR window.");
                     }
@@ -84,6 +94,7 @@ public class Ingest {
                         // looks ok... do the request
                         String fTypes=dlg.getResult();
                         long st=System.currentTimeMillis();
+                        openLog("ingest-from-repos");
                         String[] pids=multiFromRepository(sdlg.getHost(),
                                                           sdlg.getPort(),
                                                           sdlg.getAPIM(),
@@ -92,7 +103,8 @@ public class Ingest {
                                                           null);
                         long et=System.currentTimeMillis();
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            "Ingest of " + pids.length + " objects finished.\n"
+                            pids.length + " objects successfully ingested.\n"
+                            + s_failedCount + " objects failed.\n"
                             + "Time elapsed: " + getDuration(et-st));  
                     }
                 }
@@ -106,7 +118,55 @@ public class Ingest {
                     msg,
                     "Ingest Failure",
                     JOptionPane.ERROR_MESSAGE);
+        } finally {
+            try { 
+                if (s_log!=null) {
+                    closeLog();
+                    int n = JOptionPane.showConfirmDialog(Administrator.getDesktop(),
+                        "A detailed log file was created at\n"
+                        + s_logPath + "\n\n"
+                        + "View it now?",
+                        "View Ingest Log?",
+                        JOptionPane.YES_NO_OPTION);
+                    if (n==JOptionPane.YES_OPTION) {
+                        JTextComponent textEditor=new JTextArea();
+                        textEditor.setFont(new Font("monospaced", Font.PLAIN, 12));
+                        textEditor.setText(fileAsString(s_logPath));
+                        textEditor.setCaretPosition(0);
+                        textEditor.setEditable(false);
+                        JInternalFrame viewFrame=new JInternalFrame("Viewing " + s_logPath, true, true, true, true);
+                        viewFrame.setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Edit16.gif")));
+                        viewFrame.getContentPane().add(new JScrollPane(textEditor));
+                        viewFrame.setSize(720,520);
+                        viewFrame.setVisible(true);
+                        Administrator.getDesktop().add(viewFrame);
+                        try {
+                            viewFrame.setSelected(true);
+                        } catch (java.beans.PropertyVetoException pve) {}
+
+                    }
+                }
+            } catch (Exception ex) { 
+                JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                    ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            }
         }
+    }
+    
+    private static String fileAsString(String path) 
+            throws Exception {
+        StringBuffer buffer = new StringBuffer();
+        FileInputStream fis = new FileInputStream(path);
+        InputStreamReader isr = new InputStreamReader(fis, "UTF-8");
+        Reader in = new BufferedReader(isr);
+        int ch;
+        while ((ch = in.read()) > -1) {
+            buffer.append((char)ch);
+        }
+        in.close();
+        return buffer.toString();
     }
     
     private static String getDuration(long millis) {
@@ -138,9 +198,10 @@ public class Ingest {
             throws Exception {
         System.out.println("Ingesting from file " + file.getPath());
         LAST_PATH=file.getPath();
-        return AutoIngestor.ingestAndCommit(targetRepository,
+        String pid=AutoIngestor.ingestAndCommit(targetRepository,
                                             new FileInputStream(file),
                                             getMessage(logMessage, file));
+        return pid;
     }
     
     // if logMessage is null, will use original path in logMessage
@@ -154,17 +215,17 @@ public class Ingest {
         if (tps.indexOf("D")!=-1) {
             toIngest=getFiles(dir, "FedoraBDefObject");
             System.out.println("Found " + toIngest.size() + " behavior definitions.");
-            pidSet.addAll(ingestAll(toIngest, targetRepository, logMessage)); 
+            pidSet.addAll(ingestAll("D", toIngest, targetRepository, logMessage)); 
         }
         if (tps.indexOf("M")!=-1) {
             toIngest=getFiles(dir, "FedoraBMechObject");
             System.out.println("Found " + toIngest.size() + " behavior mechanisms.");
-            pidSet.addAll(ingestAll(toIngest, targetRepository, logMessage)); 
+            pidSet.addAll(ingestAll("M", toIngest, targetRepository, logMessage)); 
         }
         if (tps.indexOf("O")!=-1) {
             toIngest=getFiles(dir, "FedoraObject");
             System.out.println("Found " + toIngest.size() + " data objects.");
-            pidSet.addAll(ingestAll(toIngest, targetRepository, logMessage)); 
+            pidSet.addAll(ingestAll("O", toIngest, targetRepository, logMessage)); 
         }
         Iterator iter=pidSet.iterator();
         String[] pids=new String[pidSet.size()];
@@ -175,7 +236,8 @@ public class Ingest {
         return pids;
     }
     
-    private static Set ingestAll(Set fileSet, 
+    private static Set ingestAll(String fType,
+                                 Set fileSet, 
                                  FedoraAPIM targetRepository, 
                                  String logMessage) 
             throws Exception {
@@ -183,9 +245,58 @@ public class Ingest {
         Iterator iter=fileSet.iterator();
         while (iter.hasNext()) {
             File f=(File) iter.next();
-            set.add(oneFromFile(f, targetRepository, logMessage)); 
+            try {
+                String pid=oneFromFile(f, targetRepository, logMessage);
+                // success...log it
+                logFromFile(f, fType, pid);
+                set.add(pid); 
+            } catch (Exception e) {
+                // failed... just log it and continue
+                s_failedCount++;
+                logFailedFromFile(f, fType, e);
+            }
         }
         return set;
+    }
+    
+    private static void openLog(String rootName) throws Exception {
+        s_rootName=rootName;
+        String fileName=s_rootName + "-" + System.currentTimeMillis() + ".xml"; 
+        File outFile;
+        String fedoraHome=System.getProperty("fedora.home");
+        if (fedoraHome=="") {
+            // to current dir
+            outFile=new File(fileName);
+        } else {
+            // to client/log
+            File logDir=new File(new File(new File(fedoraHome), "client"), "logs");
+            if (!logDir.exists()) {
+                logDir.mkdir();
+            }
+            outFile=new File(logDir, fileName);
+            
+        }
+        s_logPath=outFile.getPath();
+        s_log=new PrintStream(new FileOutputStream(outFile), true, "UTF-8");
+        s_log.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        s_log.println("<" + s_rootName + ">");
+    }
+    
+    private static void logFromFile(File f, String fType, String pid) throws Exception {
+        s_log.println("  <ingested file=\"" + f.getPath() + "\" fType=\"" + fType + "\" targetPID=\"" + pid + "\" />");
+    }
+    
+    private static void logFailedFromFile(File f, String fType, Exception e) throws Exception {
+        String message=e.getMessage();
+        if (message==null) message=e.getClass().getName();
+        s_log.println("  <failed file=\"" + f.getPath() + "\" fType=\"" + fType + "\">");
+        s_log.println("    " + StreamUtility.enc(message));
+        s_log.println("  </failed>");
+    }
+    
+    private static void closeLog() throws Exception {
+        s_log.println("</" + s_rootName + ">");
+        s_log.close();
     }
     
     private static Set getFiles(File dir, String fTypeString) 
@@ -346,14 +457,34 @@ public class Ingest {
             friendlyName="behavior mechanisms";
         System.out.println("Found " + set.size() + " " + friendlyName + " to ingest.");
         Iterator iter=set.iterator();
+        HashSet successSet=new HashSet();
         while (iter.hasNext()) {
             String pid=(String) iter.next();
-            oneFromRepository(sourceRepos,
-                              pid,
-                              targetRepos,
-                              logMessage);
+            try {
+                String newPID=oneFromRepository(sourceRepos,
+                                  pid,
+                                  targetRepos,
+                                  logMessage);
+                successSet.add(newPID);
+                logFromRepos(pid, fType, newPID);
+            } catch (Exception e) {
+                s_failedCount++;
+                logFailedFromRepos(pid, fType, e);
+            }
         }
-        return set;
+        return successSet;
+    }
+    
+    private static void logFromRepos(String sourcePID, String fType, String targetPID) throws Exception {
+        s_log.println("  <ingested sourcePID=\"" + sourcePID + "\" fType=\"" + fType + "\" targetPID=\"" + targetPID + "\" />");
+    }
+    
+    private static void logFailedFromRepos(String sourcePID, String fType, Exception e) throws Exception {
+        String message=e.getMessage();
+        if (message==null) message=e.getClass().getName();
+        s_log.println("  <failed sourcePID=\"" + sourcePID + "\" fType=\"" + fType + "\">");
+        s_log.println("    " + StreamUtility.enc(message));
+        s_log.println("  </failed>");
     }
     
     private static String getMessage(String logMessage, File file) {
