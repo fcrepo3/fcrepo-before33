@@ -15,7 +15,6 @@ package fedora.server.storage;
  */
 
 // java imports
-import java.io.File;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.regex.PatternSyntaxException;
@@ -31,26 +30,13 @@ public class ConnectionPoolManagerImpl extends Module
     implements ConnectionPoolManager
 {
 
-  private Hashtable h_ConnectionPools = null;
+  private static Hashtable h_ConnectionPools = null;
   private String jdbcDriverClass = null;
   private String dbUsername = null;
   private String dbPassword = null;
   private String jdbcURL = null;
   private int initConnections = 0;
   private int maxConnections = 0;
-  private static Server s_server;
-
-  static
-  {
-    try
-    {
-      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
-    } catch (InitializationException ie)
-    {
-      System.err.println(ie.getMessage());
-      System.err.flush();
-    }
-  }
 
   /**
    * <p>Creates a new ConnectionPoolManager</p>
@@ -68,47 +54,57 @@ public class ConnectionPoolManagerImpl extends Module
   }
 
   /**
-   * Initializes the Module based on configuration parameters.
+   * Initializes the Module based on configuration parameters. The
+   * implementation of this method is dependent on the schema used to define
+   * the parameter names for the role of
+   * <code>fedora.server.storage.ConnectionPoolManager</code>.
    *
    * @throws ModuleInitializationException If initialization values are
    *         invalid or initialization fails for some other reason.
    */
   public void initModule() throws ModuleInitializationException
   {
-
     try
     {
-      // Get list of connection pool names from fedora.fcfg config file.
-      String poolList =
-          s_server.getModule("fedora.server.storage.ConnectionPoolManager").
-          getParameter("poolNames");
+      h_ConnectionPools = new Hashtable();
+      Server s_server = this.getServer();
+      // Get list of pool names from fedora.fcfg config file
+      String poolList = this.getParameter("poolNames");
+      // Names should be comma delimted so parse out names
       String[] poolNames = poolList.split(",");
       // Initialize each pool found
       for (int i=0; i<poolNames.length; i++)
       {
+        System.out.println("poolName["+i+"] = "+poolNames[i]);
         jdbcDriverClass = s_server.getDatastoreConfig(poolNames[i]).
                  getParameter("jdbcDriverClass");
+        System.out.println("driver: "+jdbcDriverClass);
         dbUsername = s_server.getDatastoreConfig(poolNames[i]).
                    getParameter("dbUsername");
+        System.out.println("user: "+dbUsername);
         dbPassword = s_server.getDatastoreConfig(poolNames[i]).
                    getParameter("dbPassword");
+        System.out.println("pass: "+dbPassword);
         jdbcURL = s_server.getDatastoreConfig(poolNames[i]).
                   getParameter("jdbcURL");
+        System.out.println("URL: "+jdbcURL);
         Integer i1 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                                  getParameter("minPoolSize"));
         int initConnections = i1.intValue();
+        System.out.println("min: "+initConnections);
         Integer i2 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                                  getParameter("maxPoolSize"));
         int maxConnections = i2.intValue();
-        System.out.println("class: "+jdbcDriverClass+dbUsername+dbPassword+
-                           jdbcURL+initConnections+maxConnections);
+        System.out.println("max: "+maxConnections);
         System.out.flush();
-        ConnectionPool connectionPool  = null;
         // Create connection pool
-        connectionPool = new ConnectionPool(jdbcDriverClass, jdbcURL,
-            dbUsername, dbPassword, initConnections, maxConnections, true);
+        ConnectionPool connectionPool = new ConnectionPool(jdbcDriverClass,
+            jdbcURL, dbUsername, dbPassword, initConnections, maxConnections,
+            true);
         // Add ConnectionPool to hashtable
+        System.out.println("Initialized Pool: "+connectionPool);
         h_ConnectionPools.put(poolNames[i],connectionPool);
+        System.out.println("putPoolInHash: "+h_ConnectionPools.size());
       }
     } catch (SQLException sqe)
     {
@@ -145,6 +141,7 @@ public class ConnectionPoolManagerImpl extends Module
       {
         // Pool exists
         connectionPool = (ConnectionPool)h_ConnectionPools.get(poolName);
+        System.out.println("PoolFound: "+connectionPool);
       } else
       {
         // Error pool was never initialized or name could not be found
