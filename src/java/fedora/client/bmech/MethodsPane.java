@@ -15,11 +15,18 @@ import javax.swing.JScrollPane;
 import javax.swing.BoxLayout;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.Boolean;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.List;
+import java.io.IOException;
 import fedora.client.bmech.data.*;
+
+import fedora.client.objecteditor.Util;
+import fedora.client.objecteditor.types.MethodDefinition;
+import fedora.client.objecteditor.types.ParameterDefinition;
 
 /**
  *
@@ -87,7 +94,7 @@ public class MethodsPane extends JPanel {
         rb_noBaseURLMS.setActionCommand("noBaseURLMS");
         rb_noBaseURLMS.addActionListener(rb_listen);
 
-        rb_noBaseURL = new JRadioButton("No Base URL (Fedora LOCAL HTTP Resolver)", false);
+        rb_noBaseURL = new JRadioButton("Fedora Built-in Datastream Resolver", false);
         rb_noBaseURL.setActionCommand("noBaseURL");
         rb_noBaseURL.addActionListener(rb_listen);
 
@@ -108,10 +115,10 @@ public class MethodsPane extends JPanel {
         serviceBasePanel.add(baseURL = new JTextField(30), gbc);
         gbc.gridy = 1;
         gbc.gridx = 0;
-        serviceBasePanel.add(rb_noBaseURL, gbc);
+        serviceBasePanel.add(rb_noBaseURLMS, gbc);
         gbc.gridy = 2;
         gbc.gridx = 0;
-        serviceBasePanel.add(rb_noBaseURLMS, gbc);
+        serviceBasePanel.add(rb_noBaseURL, gbc);
 
         JPanel methodsPanel = setMethodsPanel();
         methodsPanel.setBorder(new TitledBorder("Service Method Definitions:"));
@@ -197,7 +204,50 @@ public class MethodsPane extends JPanel {
         methodsPanel.add(t_buttonPanel, BorderLayout.EAST);
         return methodsPanel;
     }
-
+    
+	public JTable renderContractMethods(String bDefPID) 
+	{
+	  List methodDefs = getBDefMethods(bDefPID);
+	  for (int i=0; i<methodDefs.size(); i++)
+	  {
+	  	MethodDefinition def = (MethodDefinition)methodDefs.get(i);
+	  	List parms = def.parameterDefinitions();
+		Method newmethod = new Method();
+		newmethod.methodName = def.getName();
+		newmethod.methodLabel = def.getLabel();
+		newmethod.methodProperties = new MethodProperties();
+		newmethod.methodProperties.dsBindingKeys = new String[0];
+		newmethod.methodProperties.methodFullURL = null;
+		newmethod.methodProperties.methodRelativeURL = null;
+		newmethod.methodProperties.protocolType = Method.HTTP_MESSAGE_PROTOCOL;
+		newmethod.methodProperties.returnMIMETypes = new String[0];
+		newmethod.methodProperties.methodParms = new MethodParm[parms.size()];
+		for (int j=0; j<parms.size(); j++)
+		{
+			ParameterDefinition parm = (ParameterDefinition)parms.get(j);
+			MethodParm p = new MethodParm();
+			p.parmDefaultValue = parm.getDefaultValue();
+			p.parmDomainValues = (String[])parm.validValues().toArray(new String[0]);
+			p.parmLabel = parm.getLabel();
+			p.parmName = parm.getName();
+			p.parmPassBy = MethodParm.PASS_BY_VALUE;
+			p.parmRequired = Boolean.toString(parm.isRequired());
+			p.parmType = MethodParm.USER_INPUT;
+			newmethod.methodProperties.methodParms[j] = p;
+		}
+		try
+		{
+			setBMechMethod(newmethod.methodName, newmethod.methodLabel);
+			setMethodProperties(newmethod.methodName, newmethod.methodProperties);
+		}
+		catch (BMechBuilderException e)
+		{
+			assertMethodLoadErrorMsg("Problem loading bdef contract methods");
+		}   
+	  }
+	  return methodTable;
+	}
+	
     // Action Listener for button group
     class BaseURLActionListener implements ActionListener
     {
@@ -326,16 +376,6 @@ public class MethodsPane extends JPanel {
       Method method = (Method)methodMap.get(methodName);
       method.methodProperties = mproperties;
       methodMap.put(methodName, method);
-/*
-	  // we need to update the BMechTemplate object with the latest
-	  // datastream binding keys
-	  Vector dsBindingKeys = new Vector();
-	  for (int i=0; i<mproperties.dsBindingKeys.length; i++)
-	  {
-	  	dsBindingKeys.add(mproperties.dsBindingKeys[i]);
-	  }
-	  ((BMechBuilder)parent).getBMechTemplate().setDSBindingKeys(dsBindingKeys);
-*/
     }
 
     private void addMethod()
@@ -419,4 +459,25 @@ public class MethodsPane extends JPanel {
         this, new String(msg), "Method Exists Message",
         JOptionPane.INFORMATION_MESSAGE);
     }
+    
+	protected void assertMethodLoadErrorMsg(String msg)
+	{
+	  JOptionPane.showMessageDialog(
+		this, new String(msg), "Method Loading Problem",
+		JOptionPane.INFORMATION_MESSAGE);
+	}
+    
+	private List getBDefMethods(String bDefPID)
+	{	
+		List methodDefs = null;
+		try
+		{
+			methodDefs=Util.getMethodDefinitions(bDefPID);
+		}
+		catch (IOException e)
+		{
+			assertNoMethodMsg("Could not obtain methods from Behavior Definition object.");
+		}
+		return methodDefs;
+	}
 }

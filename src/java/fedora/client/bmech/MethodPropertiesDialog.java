@@ -27,6 +27,7 @@ import java.util.StringTokenizer;
 import java.util.Iterator;
 
 import fedora.client.bmech.data.*;
+import fedora.client.Administrator;
 
 /**
  *
@@ -121,6 +122,7 @@ public class MethodPropertiesDialog extends JDialog
     public MethodPropertiesDialog(MethodsPane parent, String methodName,
       MethodProperties methodProperties)
     {
+		super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Add Method Properties", true);
         loadParmTypeTbl();
         loadParmTypeToDisplayTbl();
         loadPassByTbl();
@@ -419,45 +421,64 @@ public class MethodPropertiesDialog extends JDialog
         helptxt.setLineWrap(true);
         helptxt.setWrapStyleWord(true);
         helptxt.setBounds(0,0,550,20);
-        helptxt.append("The HTTP method binding must represent an appropriate"
-          + " URL syntax necessary to run the method on the target service. "
+        helptxt.append("The Method Binding entry pane must specify an appropriate"
+          + " URL syntax necessary to run a particular service method being defined for this "
+          + " Behavior Mechanism object.\n\n"
           + " Fedora uses the URL replacement syntax defined in the WSDL 1.1"
           + " specification (see http://www.w3.org/TR/wsdl) to encode "
-          + " placeholders in the URL for parameter values.");
-        helptxt.append("  A placeholder is"
-          + " created by putting the Fedora-specific parameter name"
-          + " (defined in table below) inside parentheses, and inserting this"
-          + " within the URL at the spot where a parameter value should be. "
-          + " At runtime, Fedora will insert actual values in the URL where"
-          + " the placeholders exist.  The values will either be obtained from a user"
-          + " or acquired by the system.  In the case of Datastream inputs to"
-          + " a method at runtime, Fedora determined which datastream in an"
-          + " object is tagged with the Fedora-specific parameter name,"
-          + " and will insert a value (i.e., the Fedora callback URL for the"
-          + " datastream) into the parameter value.\n\n"
-          + " There are three different cases that can occur in:\n\n");
-        helptxt.append("CASE 1: Service with a common base URL (typical)\n\n"
-          + " The base URL will have been entered in the Service Methods Tab.\n"
-          + " Use the following syntax to encode your parameters"
-          + " within a relative URL for the method binding:\n\n");
+          + " placeholders in a URL for parameter values.");
+        helptxt.append("  A parameter placeholder is"
+          + " created by putting a Fedora-specific parameter name"
+          + " inside parentheses, and inserting this within the URL"
+          + " at the spot in the URL where the parameter value should be."
+          + " Each parameter value name must then be listed in the Parameter Definition table"
+          + " which further specifies the nature of the parameter value."
+          + " At runtime, Fedora will insert the actual parameter value in the URL exactly where"
+          + " the parameter placeholders exists.  At runtime, the values for parameters"
+          + " will either be obtained from the user or resolved by the Fedora repository"
+          + " system.  In the case of 'DATASTREAM' parameters you are specifying that the"
+          + " method takes input that is the content of a Datastream in the Fedora data object"
+          + " that is being disseminated. In this dialog, you will define a Fedora-specific binding key name"
+          + " to be used as a handle by which the appropriate Datastream(s) can be identified by"
+          + " Fedora at runtime (i.e., when the URL replacement is being resolved).\n\n"
+          + " Here is how Fedora will resolve the placeholders at run time:\n"
+          + " Within the service method URL, Fedora will insert a value for 'DATASTREAM'"
+          + " parameters that consists of the callback URL(s) of the Datastream(s) that must"
+          + " act as input on the service method URL being defined here."
+          + " In the case of 'USER INPUT' parameters, Fedora will acquire user input"
+          + " and put the user-supplied data into the parameter value on the service method URL."
+          + " In the case of 'SYSTEM' parameters, Fedora will use the Default Value"
+          + " defined in the Method Parameter Definition table of this dialog.\n\n"
+          + " Generally, there are three types of service method bindings that can be specified here:\n\n");
+        helptxt.append("CASE 1: A relative URL representing a service method.\n\n"
+          + " The service method's base URL will have been carried over from the Service Methods Tab.\n"
+          + " Use the following syntax to complete the relative URL and encode your method parameters"
+          + " for the method binding:\n\n");
         helptxt.append("/mymethod?myparm1=(parmname1)&myparm2=(parmname2)\n");
         helptxt.append("For example:\n");
         helptxt.append("/resize_image?image=(IMGDATASTREAM)&size=(USERSIZE)\n\n");
-        helptxt.append("CASE 2: Multi-Server Service (fully qualified URL for each method)\n"
+        helptxt.append("CASE 2: A fully qualified URL representing a service method.\n"
+          + " this option is enabled if you entered 'Multi-Server Service' on the"
+          + " 'Service Methods' panel."
           + " Use the following syntax to encode your parameters"
           + " within a fully qualified URL for the method binding:\n\n");
         helptxt.append("http://myserver.com/myservice/mymethod?myparm1=(parmname1)&myparm2=(parmname2)\n");
         helptxt.append("For example:\n");
         helptxt.append("http://localhost:8080/imgsizer/resize_image?image=(IMGDATASTREAM)&size=(USERSIZE)\n\n");
-        helptxt.append("CASE 3: Fedora LOCAL HTTP Resolver\n");
-        helptxt.append("When the option to use Fedora LOCAL HTTP Resolver"
-          + " is selected, you do not need to enter a URL.  This option"
-          + " means that there is no independent service being called to"
-          + " run the method, instead, Fedora will just resolve a URL for"
-          + " a datastream that is bound to the method.  In this case, all"
-          + " that is required is that a parameter representing a datastream"
-          + " be entered in parentheses.  The same parameter should be entered"
-          + " in the method parameters table.\n\n");
+        helptxt.append("CASE 3:  No URL - just a 'DATASTREAM' replacement parameter.  This"
+          + " is enabled if you entered 'Fedora Built-in Datastream Resolver' on the"
+          + " 'Service Methods' panel.\n"
+          + " In this case you do not need a URL to run a service method since"
+          + " there is no independent service being called to run the behavor method."
+          + " Instead, Fedora we want to signal Fedora to just return a particular Datastream "
+          + " that is bound to the behavior method definition.  In this case, all"
+          + " that is required is that you enter a Datastream binding key name in parentheses."
+          + " The same binding key name should be entered in the Method Parameter Definitions table."
+          + " In the table, these types of parameters should be set to a Parm Type value of"
+          + " 'DATASTREAM' and a Pass By value of 'URL REF.'  At runtime, the Fedora repository"
+          + " will look for Datastream(s) n the target data object are tagged with the binding key"
+          + " name specified here.  Fedora will just return the content of the Datastream(s) in"
+          + " in response to running the behavior method defined here.\n\n");
         helptxt.append("Use the following syntax to encode your parameter"
           + " within the method binding URL box:\n\n");
         helptxt.append("(parmname1)\n");
@@ -475,6 +496,7 @@ public class MethodPropertiesDialog extends JDialog
       MethodProperties properties = getMethodProperties();
       if (validMethodProperties(properties))
       {
+		mp.wasValidated = true;
         if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
         {
           mp.dsBindingKeys = filterDSBindingKeys(properties.methodParms);
@@ -592,10 +614,12 @@ public class MethodPropertiesDialog extends JDialog
 
     private boolean validBinding(MethodProperties mp)
     {
+
       if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
       {
-        if (mp.protocolType.equalsIgnoreCase(mp.HTTP_MESSAGE_PROTOCOL))
-        {
+
+        //if (mp.protocolType.equalsIgnoreCase(mp.HTTP_MESSAGE_PROTOCOL))
+        //{
           if (mp.methodFullURL == null || mp.methodFullURL.trim().equalsIgnoreCase(""))
           {
             assertMethodPropertiesMsg("You must enter an HTTP binding URL for method!");
@@ -620,13 +644,15 @@ public class MethodPropertiesDialog extends JDialog
             return false;
           }
 
-        }
+        //}
+/*
         else if (mp.protocolType.equalsIgnoreCase(mp.SOAP_MESSAGE_PROTOCOL))
         {
             assertMethodPropertiesMsg("Sorry, the SOAP bindings are not supported yet."
               + " Please select HTTP binding.");
             return false;
         }
+*/
       }
       return true;
     }
@@ -708,10 +734,10 @@ public class MethodPropertiesDialog extends JDialog
           mp.methodFullURL = baseURL + mp.methodRelativeURL;
           mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
         }
-        else
-        {
-          mp.protocolType = mp.SOAP_MESSAGE_PROTOCOL;
-        }
+        //else
+        //{
+        //  mp.protocolType = mp.SOAP_MESSAGE_PROTOCOL;
+        //}
       }
       mp.returnMIMETypes = unloadReturnTypes();
       mp.methodParms = unloadMethodParms();
@@ -897,14 +923,16 @@ public class MethodPropertiesDialog extends JDialog
 
     private void renderBindingProperties(MethodProperties properties)
     {
-      if (properties.protocolType.equalsIgnoreCase(Method.HTTP_MESSAGE_PROTOCOL))
-      {
+      //if (properties.protocolType.equalsIgnoreCase(Method.HTTP_MESSAGE_PROTOCOL))
+      //{
         //rb_http.setSelected(true);
         if (parent.hasBaseURL())
         {
           rb_httpRelative.setSelected(true);
-          URL_textRelative.setText(properties.methodRelativeURL);
-
+          if (properties.methodRelativeURL != null)
+          {
+			URL_textRelative.setText(properties.methodRelativeURL);
+          }
           rb_httpDS.setSelected(false);
           rb_httpFull.setSelected(false);
 
@@ -914,8 +942,10 @@ public class MethodPropertiesDialog extends JDialog
         else if (parent.isMultiServer())
         {
           rb_httpFull.setSelected(true);
-          URL_textFull.setText(properties.methodFullURL);
-
+		  if (properties.methodFullURL != null)
+		  {
+			URL_textFull.setText(properties.methodFullURL);
+		  }
           rb_httpDS.setSelected(false);
           rb_httpRelative.setSelected(false);
 
@@ -925,8 +955,10 @@ public class MethodPropertiesDialog extends JDialog
         else if (parent.isLocalHTTP())
         {
           rb_httpDS.setSelected(true);
-          URL_textDS.setText(properties.methodFullURL);
-
+		  if (properties.methodFullURL != null)
+          {
+			URL_textDS.setText(properties.methodFullURL);
+          }
           rb_httpFull.setSelected(false);
           rb_httpRelative.setSelected(false);
 
@@ -935,7 +967,8 @@ public class MethodPropertiesDialog extends JDialog
         }
 
         rb_soap.setSelected(false);
-      }
+      //}
+/*
       else if (properties.protocolType.equalsIgnoreCase(Method.SOAP_MESSAGE_PROTOCOL))
       {
         rb_httpDS.setSelected(false);
@@ -951,6 +984,7 @@ public class MethodPropertiesDialog extends JDialog
 
         rb_soap.setSelected(true);
       }
+*/
     }
 
     private void assertMethodPropertiesMsg(String msg)
