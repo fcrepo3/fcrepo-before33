@@ -559,10 +559,16 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         //    new ByteArrayInputStream(dissemination.stream);
         InputStream dissemResult = dissemination.getStream();
         // RLW: change required by conversion fom byte[] to InputStream
-        while ((byteStream = dissemResult.read()) != -1)
+        /*while ((byteStream = dissemResult.read()) != -1)
         {
           out.write(byteStream);
+        }*/
+        byte[] buffer = new byte[256];
+        while ((byteStream = dissemResult.read(buffer)) != -1)
+        {
+          out.write(buffer, 0, byteStream);
         }
+        buffer = null;
         dissemResult.close();
         dissemResult = null;
         long stopTime = new Date().getTime();

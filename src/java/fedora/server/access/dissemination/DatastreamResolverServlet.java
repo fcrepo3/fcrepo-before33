@@ -201,10 +201,12 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
         response.setContentType(mimeTypedStream.MIMEType);
         int byteStream = 0;
         // RLW: chnage required by conversion fom byte[] to InputStream
-        while ( (byteStream = mimeTypedStream.getStream().read()) != -1)
+        byte[] buffer = new byte[256];
+        while ( (byteStream = mimeTypedStream.getStream().read(buffer)) != -1)
         {
-          outStream.write(byteStream);
+          outStream.write(buffer, 0, byteStream);
         }
+        buffer = null;
         //outStream.write(mimeTypedStream.stream);
         // RLW: change required by conversion fom byte[] to InputStream
       } else if (dsControlGroupType.equalsIgnoreCase("M") ||
