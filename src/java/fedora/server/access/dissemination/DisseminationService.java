@@ -197,7 +197,7 @@ public class DisseminationService
       )
     {
       throw new GeneralException("The requested dissemination for data object \""+PID+"\" is no "
-          + "longer available for dissemination. One of its datastreams (dsID=\""+dsID+"\") has been flagged for DELETION "
+          + "longer available. One of its datastreams (dsID=\""+dsID+"\") has been flagged for DELETION "
           + "by the repository administrator. ");
 
     } else if ( state.equalsIgnoreCase("I")  &&
@@ -206,7 +206,7 @@ public class DisseminationService
               )
     {
       throw new GeneralException("The requested dissemination for data object \""+PID+"\" is no "
-          + "longer available for dissemination. One of its datastreams (dsID=\""+dsID+"\") has been flagged as INACTIVE "
+          + "longer available. One of its datastreams (dsID=\""+dsID+"\") has been flagged as INACTIVE "
           + "by the repository administrator. ");
     }
   }
