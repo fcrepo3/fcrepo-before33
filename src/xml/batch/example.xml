@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<input OBJID="test:8675309" LABEL="this label is the for the entire object" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
+	<comment>this is a comment for the object</comment>
+	<metadata>
+		<metadata ID="DESC1" LABEL="this label is for this metadata section">
+				<!-- comments here -->
+				<uvalibdesc:desc>
+				<!-- your metadata here -->				
+				</uvalibdesc:desc>
+				<!-- would be copied into the object -->
+		</metadata>
+	</metadata>
+	<datastreams>
+		<datastream ID="DS1" xlink:href="http://localhost:8080/beta1-demo/thumb/americanacademy.jpg"  
+			xlink:title="label this datastream (I'm not sure that this substitution will be made)"
+			LABEL="this label is for this datastream for -any- disseminator in the structMap">
+			<disseminator ID="S3" LABEL="unless, like here, there's an override for a disseminator"/>
+		</datastream>			
+	</datastreams>
+</input>
