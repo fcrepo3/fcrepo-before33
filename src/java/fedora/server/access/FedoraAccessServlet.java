@@ -255,55 +255,63 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         {
           response.setContentType(CONTENT_TYPE_HTML);
           String[] bDefs = GetBehaviorDefinitions(PID, asOfDate);
-
-          // Return HTML table containing results; include links to digital
-          // object PID to further explore object.
-          out.println("<html>");
-          out.println("<head>");
-          out.println("<title>Behavior Definitions</title>");
-          out.println("</head>");
-          out.println("<br></br>");
-          out.println("<center>");
-          out.println("<table border='1' cellpadding='5'>");
-          out.println("<tr>");
-          out.println("<td><b><font size='+2'><b>PID</font></td></b>");
-          out.println("<td><b><font size='+2'>Version Date</font></b></td>");
-          out.println("<td><b><font size='+2'>Behavior Definitions</font>"+
-                      "</b></td");
-          out.println("</tr>");
-
-          // Format table such that repeating fields display only once
-          int rows = bDefs.length - 1;
-          for (int i=0; i<bDefs.length; i++)
+          if (bDefs != null)
           {
+            // Return HTML table containing results; include links to digital
+            // object PID to further explore object.
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Behavior Definitions</title>");
+            out.println("</head>");
+            out.println("<br></br>");
+            out.println("<center>");
+            out.println("<table border='1' cellpadding='5'>");
             out.println("<tr>");
-            if (i == 0)
-            {
-              out.println("<td><font color='blue'><a href='" + requestURL +
-                          "action_=GetObjectMethods&PID_=" + PID+ "'>" + PID +
-                          "</a></font></td>");
-              out.println("<td><font color='green'>" +
-                          DateUtility.convertDateToString(versDateTime) +
-                          "</font></td>");
-              out.println("<td><font color='red'>" + bDefs[i] +
-                          "</font></td>");
-            } else if (i == 1)
-            {
-              out.println("<td colspan='2' rowspan='" + rows +
-                          "'></td><td><font color='red'>" + bDefs[i] +
-                          "</font></td>");
-            } else
-            {
-              out.println("<td><font color='red'>" + bDefs[i] +
-                          "</font></td>");
-            }
+            out.println("<td><b><font size='+2'><b>PID</font></td></b>");
+            out.println("<td><b><font size='+2'>Version Date</font></b></td>");
+            out.println("<td><b><font size='+2'>Behavior Definitions</font>"+
+                        "</b></td");
             out.println("</tr>");
+
+            // Format table such that repeating fields display only once
+            int rows = bDefs.length - 1;
+            for (int i=0; i<bDefs.length; i++)
+            {
+              out.println("<tr>");
+              if (i == 0)
+              {
+                out.println("<td><font color='blue'><a href='" + requestURL +
+                            "action_=GetObjectMethods&PID_=" + PID+ "'>" + PID +
+                            "</a></font></td>");
+                out.println("<td><font color='green'>" +
+                            DateUtility.convertDateToString(versDateTime) +
+                            "</font></td>");
+                out.println("<td><font color='red'>" + bDefs[i] +
+                            "</font></td>");
+              } else if (i == 1)
+              {
+                out.println("<td colspan='2' rowspan='" + rows +
+                            "'></td><td><font color='red'>" + bDefs[i] +
+                            "</font></td>");
+              } else
+              {
+                out.println("<td><font color='red'>" + bDefs[i] +
+                            "</font></td>");
+              }
+              out.println("</tr>");
+            }
+            out.println("</table>");
+            out.println("</center>");
+            out.println("<br></br>");
+            out.println("</body>");
+            out.println("</html>");
+          } else
+          {
+            // No method BehaviorDefs found; echo back request parameters
+            showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
+                         clearCache, response);
+            System.out.println("GetBehaviorDefinitions: NO Definitions Found");
           }
-          out.println("</table>");
-          out.println("</center>");
-          out.println("<br></br>");
-          out.println("</body>");
-          out.println("</html>");
 
         // FIXME!! Decide on Exception handling
         } catch (Exception e)
@@ -338,12 +346,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         try
         {
           MethodDef[] bDefMethods = GetBehaviorMethods(PID, bDefPID, asOfDate);
-          if (bDefMethods == null)
-          {
-            // No Behavior Definitions were found; echo back request parameters
-            showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                        clearCache, response);
-          } else
+          if (bDefMethods != null)
           {
             // Behavior Definitions found; output HTML table of results
             // with links to each method enabling dissemination of the
@@ -411,6 +414,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
             out.println("</center>");
             out.println("</body>");
             out.println("</html>");
+          } else
+          {
+            // No Behavior Definitions were found; echo back request parameters
+            showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
+                        clearCache, response);
           }
 
         // FIXME!! Need to decide on Exception handling
@@ -425,12 +433,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         try
         {
           objMethDefArray = GetObjectMethods(PID, asOfDate);
-          if (objMethDefArray == null)
-          {
-            // No object methods were found; echo back request parameters
-            showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                        clearCache, response);
-          } else
+          if (objMethDefArray != null)
           {
             // Object methods found; output HTML table containing all object
             // methods with links on each method enabling dissemination of
@@ -505,12 +508,17 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
             out.println("</center>");
             out.println("</body>");
             out.println("</html>");
+          } else
+          {
+            // No object methods were found; echo back request parameters
+            showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
+                        clearCache, response);
           }
         } catch (Exception e)
         {
           // FIXME!! Need to decide on Exception handling
           System.out.println(e.getMessage());
-    }
+        }
       }
     } else
     {
