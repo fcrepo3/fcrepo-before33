@@ -142,6 +142,7 @@ public class DefaultDOReplicator
         ResultSet results=null;
         boolean triedUpdate=false;
         boolean failed=false;
+        logFinest("DefaultDOReplicator.updateComponents: Entering ------");
         try {
             connection=m_pool.getConnection();
             st=connection.createStatement();
@@ -156,8 +157,8 @@ public class DefaultDOReplicator
             }
             int doDbID=results.getInt("doDbID");
             results.close();
-            
-			
+
+
             // check if any mods to datastreams for this digital object
             results=logAndExecuteQuery(st, "SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID, dsState "
                     + "FROM dsBind WHERE doDbID=" + doDbID);
@@ -207,7 +208,7 @@ public class DefaultDOReplicator
             while (results.next()) {
               dissDbIDs.add(new Integer(results.getInt("dissDbID")));
             }
-            
+
             if (dissDbIDs.size()==0) {
                 logFinest("DefaultDOReplication.updateComponents: Object "
                         + "has no disseminators; components dont need updating.");
@@ -244,23 +245,29 @@ public class DefaultDOReplicator
               // compare the latest version of the disseminator with what's in the db...
               // replace what's in db if they are different
               Disseminator diss=reader.GetDisseminator(dissID, null);
+              if (diss == null) {
+                // xml object has no disseminators
+                // so this must be a purgeComponents or a new object
+                logFinest("DefaultDOReplicator.updateComponents: XML object has no disseminators");
+                return false;
+              }
               if (!diss.dissLabel.equals(dissLabel)
                   || !diss.bMechID.equals(bMechPID)
                   || !diss.dissState.equals(dissState)) {
-                if (!diss.dissLabel.equals(dissLabel)) 
+                if (!diss.dissLabel.equals(dissLabel))
                     logFinest("dissLabel changed from '" + dissLabel + "' to '" + diss.dissLabel + "'");
-                if (!diss.dissState.equals(dissState)) 
+                if (!diss.dissState.equals(dissState))
                     logFinest("dissState changed from '" + dissState + "' to '" + diss.dissState + "'");
                 // we might need to set the bMechDbID to the id for the new one,
                 // if the mechanism changed
-                int newBMechDbID; 
+                int newBMechDbID;
                 if (diss.bMechID.equals(bMechPID)) {
-                  newBMechDbID=bMechDbID; 
+                  newBMechDbID=bMechDbID;
                 } else {
                   logFinest("bMechPID changed from '" + bMechPID + "' to '" + diss.bMechID + "'");
                   results=logAndExecuteQuery(st, "SELECT bMechDbID "
                                                + "FROM bMech "
-                                               + "WHERE bMechPID='" 
+                                               + "WHERE bMechPID='"
                                                        + diss.bMechID + "'");
                   if (!results.next()) {
                     // shouldn't have gotten this far, but if so...
@@ -374,7 +381,7 @@ public class DefaultDOReplicator
                           "1",
                           "A");
 
-                    }                     
+                    }
                   }
                 }
               }
@@ -413,18 +420,20 @@ public class DefaultDOReplicator
                 }
             }
         }
+        logFinest("DefaultDOReplicator.updateComponents: Exiting ------");
         return true;
     }
-    
+
 	private boolean addNewComponents(DOReader reader)
 			throws ReplicationException {
-					
+
 		Connection connection=null;
 		Statement st=null;
 		ResultSet results=null;
 		boolean failed=false;
+                logFinest("DefaultDOReplicator.addNewComponents: Entering ------");
 		try {
-			
+
 			String doPID = reader.GetObjectPID();
 			connection=m_pool.getConnection();
 			connection.setAutoCommit(false);
@@ -440,20 +449,20 @@ public class DefaultDOReplicator
 			}
 			int doDbID=results.getInt("doDbID");
 			results.close();
-			
+
 			Disseminator[] dissArray = reader.GetDisseminators(null, null);
 			HashSet newDisseminators = new HashSet();
 			for (int j=0; j< dissArray.length; j++)
 			{
-				// Find disseminators that are NEW within an existing object 
+				// Find disseminators that are NEW within an existing object
 				// (disseminator does not already exist in the database)
 				results=logAndExecuteQuery(st, "SELECT diss.dissDbID"
 					+ " FROM dodissassoc, diss"
-					+ " WHERE dodissassoc.doDbID=" + doDbID + " AND diss.dissID='" + dissArray[j].dissID + "'" 
+					+ " WHERE dodissassoc.doDbID=" + doDbID + " AND diss.dissID='" + dissArray[j].dissID + "'"
 					+ " AND dodissassoc.dissDbID=diss.dissDbID");
 				if (!results.next()) {
 					// the disseminator does NOT exist in the database; it is NEW.
-					newDisseminators.add(dissArray[j]);						
+					newDisseminators.add(dissArray[j]);
 				}
 			}
 			addDisseminators(doPID, (Disseminator[])newDisseminators.toArray(new Disseminator[0]), reader, connection);
@@ -492,9 +501,214 @@ public class DefaultDOReplicator
 				}
 			}
 		}
+                logFinest("DefaultDOReplicator.addNewComponents: Exiting ------");
 		return true;
 	}
-	
+
+        /**
+         * <p> Removes components of a digital object from the database.</p>
+         *
+         * @param reader an instance a DOReader.
+         * @return True if the removal was successfult; false otherwise.
+         * @throws ReplicationException If any type of error occurs during the removal.
+         */
+        private boolean purgeComponents(DOReader reader)
+                        throws ReplicationException {
+
+                Connection connection=null;
+                Statement st=null;
+                ResultSet results=null;
+                boolean failed=false;
+                logFinest("DefaultDOReplication.purgeComponents: Entering -----");
+                try {
+
+                        String doPID = reader.GetObjectPID();
+                        connection=m_pool.getConnection();
+                        connection.setAutoCommit(false);
+                        st=connection.createStatement();
+
+                        // get db ID for the digital object
+                        results=logAndExecuteQuery(st, "SELECT doDbID FROM do WHERE "
+                                        + "doPID='" + doPID + "'");
+                        if (!results.next()) {
+                                logFinest("DefaultDOReplication.purgeComponents: Object is "
+                                                + "new; components will be added as part of new object replication.");
+                                return false;
+                        }
+                        int doDbID=results.getInt("doDbID");
+                        results.close();
+
+                        // Get all disseminators that are in db for this object
+                        HashSet dissDbIds = new HashSet();
+                        results=logAndExecuteQuery(st, "SELECT dissDbID"
+                            + " FROM doDissAssoc"
+                            + " WHERE doDbID=" + doDbID+";");
+                        while (results.next()) {
+                          Integer id = new Integer(results.getInt("dissDbID"));
+                          dissDbIds.add(id);
+                        }
+                        results.close();
+                        logFinest("DefaultDOReplicator.purgeComponents: Found "
+                            + dissDbIds.size() + "dissDbId(s). ");
+
+                        // Get all binding maps that are in db for this object
+                        HashSet dsBindMapIds = new HashSet();
+                        results=logAndExecuteQuery(st, "SELECT DISTINCT dsBindMapDbID "
+                            + " FROM dsbind WHERE doDbID=" + doDbID + ";");
+                        while (results.next()) {
+                          Integer id = new Integer(results.getInt("dsBindMapDbID"));
+                          dsBindMapIds.add(id);
+                        }
+                        results.close();
+                        logFinest("DefaultDOReplicator.purgeComponents: Found "
+                            + dsBindMapIds.size() + "dsBindMapDbId(s). ");
+
+                        // Now get all existing disseminators that are in xml object for this object
+                        Disseminator[] dissArray = reader.GetDisseminators(null, null);
+                        HashSet existingDisseminators = new HashSet();
+                        HashSet purgedDisseminators = new HashSet();
+                        for (int j=0; j< dissArray.length; j++)
+                        {
+                                // Find disseminators that have been removed within an existing object
+                                // (disseminator(s) still exist in the database)
+                                results=logAndExecuteQuery(st, "SELECT diss.dissDbID"
+                                    + " FROM dodissassoc, diss"
+                                    + " WHERE dodissassoc.doDbID=" + doDbID + " AND diss.dissID='" + dissArray[j].dissID + "'"
+                                        + " AND dodissassoc.dissDbID=diss.dissDbID");
+
+                                if (!results.next()) {
+                                  // No disseminator was found in db so it must be new one
+                                  // indicating an instance of AddNewComponents rather than purgeComponents
+                                  logFinest("DefaultDOReplicator.purgeComponents: Disseminator not found in db; Assuming this is case of AddNewComponents");
+                                  return false;
+                                } else {
+                                  Integer id = new Integer(results.getInt("dissDbID"));
+                                  existingDisseminators.add(id);
+                                  logFinest("DefaultDOReplicator.purgeComponents: Adding "
+                                      + " dissDbId: " + id + " to list of Existing dissDbId(s). ");
+                                }
+                                results.close();
+                        }
+                        logFinest("DefaultDOReplicator.purgeComponents: Found "
+                            + existingDisseminators.size() + " existing dissDbId(s). ");
+
+                        // Now get all existing dsbindmapids that are in xml object for this object
+                        HashSet existingDsBindMapIds = new HashSet();
+                        HashSet purgedDsBindMapIds = new HashSet();
+                        for (int j=0; j< dissArray.length; j++)
+                        {
+                                // Find disseminators that have been removed within an existing object
+                                // (disseminator(s) still exist in the database)
+                                results=logAndExecuteQuery(st, "SELECT dsBindMapDbID, dsBindMapID"
+                                    + " FROM dsBindMap,bmech,diss"
+                                    + " WHERE dsBindMap.bmechDbID=bmech.bmechDbID AND bmech.bmechPID='" + dissArray[j].bMechID + "' "
+                                    + " AND diss.dissID='" + dissArray[j].dissID + "' AND dsBindMapID='" + dissArray[j].dsBindMapID + "' ;");
+
+                                if (!results.next()) {
+                                  // No disseminator was found in db so it must be new one
+                                  // indicating an instance of AddNewComponents rather than purgeComponents
+                                  logFinest("DefaultDOReplicator.purgeComponents: Disseminator not found in db; Assuming this is case of AddNewComponents");
+                                  return false;
+                                } else {
+                                  Integer dsBindMapDbId = new Integer(results.getInt("dsBindMapDbID"));
+                                  String dsBindMapID = results.getString("dsBindMapID");
+                                  existingDsBindMapIds.add(dsBindMapDbId);
+                                  logFinest("DefaultDOReplicator.purgeComponents: Adding "
+                                      + " dsBindMapDbId: " + dsBindMapDbId + " to list of Existing dsBindMapDbId(s). ");
+                                }
+                                results.close();
+                        }
+                        logFinest("DefaultDOReplicator.purgeComponents: Found "
+                            + existingDsBindMapIds.size() + " existing dsBindMapDbId(s). ");
+
+                        // Compare what's in db with what's in xml object
+                        Iterator dissDbIdIter = dissDbIds.iterator();
+                        Iterator existingDissIter = existingDisseminators.iterator();
+                        while (dissDbIdIter.hasNext()) {
+                          Integer dissDbId = (Integer) dissDbIdIter.next();
+                          if (existingDisseminators.contains(dissDbId)) {
+                            // database disseminator exists in xml object
+                            // so ignore
+                          } else {
+                            // database disseminator does not exist in xml object
+                            // so remove it from database
+                            purgedDisseminators.add(dissDbId);
+                            logFinest("DefaultDOReplicator.purgeComponents: Adding "
+                                      + " dissDbId: " + dissDbId + " to list of Purged dissDbId(s). ");
+                          }
+                        }
+                        if (purgedDisseminators.isEmpty()) {
+                          // no disseminators were removed so this must be an
+                          // an instance of addComponent or updateComponent
+                          logFinest("DefaultDOReplicator.purgeComponents: "
+                              + "No disseminators have been removed from object;"
+                              + " Assuming this a case of UpdateComponents");
+                          return false;
+                        }
+
+                        // Compare what's in db with what's in xml object
+                        Iterator dsBindMapIdIter = dsBindMapIds.iterator();
+                        Iterator existingDsBindMapIdIter = existingDsBindMapIds.iterator();
+                        while (dsBindMapIdIter.hasNext()) {
+                          Integer dsBindMapDbId = (Integer) dsBindMapIdIter.next();
+                          if (existingDsBindMapIds.contains(dsBindMapDbId)) {
+                            // database disseminator exists in xml object
+                            // so ignore
+                          } else {
+                            // database disseminator does not exist in xml object
+                            // so remove it from database
+                            purgedDsBindMapIds.add(dsBindMapDbId);
+                            logFinest("DefaultDOReplicator.purgeComponents: Adding "
+                                      + " dsBindMapDbId: " + dsBindMapDbId + " to list of Purged dsBindMapDbId(s). ");
+                          }
+                        }
+                        if (purgedDsBindMapIds.isEmpty()) {
+                          // no disseminators were removed so this must be an
+                          // an instance of addComponent or updateComponent
+                          logFinest("DefaultDOReplicator.purgeComponents: "
+                              + "No disseminators have been removed from object;"
+                              + " Assuming this a case of UpdateComponents");
+                          return false;
+                        }
+
+                        purgeDisseminators(doPID, purgedDisseminators, purgedDsBindMapIds, reader, connection);
+                        connection.commit();
+                } catch (SQLException sqle) {
+                        failed=true;
+                        throw new ReplicationException("An error has occurred during "
+                                + "Replication. The error was \" " + sqle.getClass().getName()
+                                + " \". The cause was \" " + sqle.getMessage());
+                } catch (ServerException se) {
+                        failed=true;
+                        throw new ReplicationException("An error has occurred during "
+                                + "Replication. The error was \" " + se.getClass().getName()
+                                + " \". The cause was \" " + se.getMessage());
+                } finally {
+                        // TODO: make sure this makes sense here
+                        if (connection!=null) {
+                                try {
+                                        if (failed) connection.rollback();
+                                } catch (Throwable th) {
+                                        logWarning("While rolling back: " +  th.getClass().getName()
+                                                        + ": " + th.getMessage());
+                                } finally {
+                                        try {
+                                                if (results != null) results.close();
+                                                if (st!=null) st.close();
+                                                connection.setAutoCommit(true);
+                                        } catch (SQLException sqle) {
+                                                logWarning("While cleaning up: " +  sqle.getClass().getName()
+                                                        + ": " + sqle.getMessage());
+                                        } finally {
+                                                m_pool.free(connection);
+                                        }
+                                }
+                        }
+                }
+                logFinest("DefaultDOReplicator.purgeComponents: Exiting ------");
+                return true;
+	}
+
     /**
      * If the object has already been replicated, update the components
      * and return true.  Otherwise, return false.
@@ -934,13 +1148,24 @@ public class DefaultDOReplicator
     public void replicate(DOReader doReader)
             throws ReplicationException, SQLException {
         // do updates if the object already existed
-        boolean componentsUpdated=updateComponents(doReader);
-        // and do adds if the object already existed
-        boolean componentsAdded=addNewComponents(doReader);
-        // ...if neither returned true, assume the object never existed
-        if (!componentsUpdated && !componentsAdded) {
+        boolean componentsUpdated=false;
+        boolean componentsAdded=false;
+        boolean componentsPurged=purgeComponents(doReader);
+        logFinest("DefaultDOReplicator.replicate: componentsPurged: "+componentsPurged);
+
+        // Update operations are mutually exclusive
+        if (!componentsPurged) {
+          componentsUpdated=updateComponents(doReader);
+                  logFinest("DefaultDOReplicator.replicate: componentsUpdated: "+componentsUpdated);
+          if (!componentsUpdated) {
+            // and do adds if the object already existed
+            componentsAdded=addNewComponents(doReader);
+            logFinest("DefaultDOReplicator.replicate: componentsAdded: "+componentsAdded);
+          }
+        }
+        if ( !componentsUpdated && !componentsAdded && !componentsPurged ) {
             Connection connection=null;
-            try 
+            try
             {
                 DSBindingMapAugmented[] allBindingMaps;
                 Disseminator disseminators[];
@@ -1229,9 +1454,10 @@ public class DefaultDOReplicator
      */
     private void deleteDigitalObject(Connection connection, String pid)
             throws SQLException {
-        logFinest("Entered DefaultDOReplicator.deleteDigitalObject");
+        logFinest("DefaultDOReplicator.deleteDigitalObject: Entering -----");
         Statement st=null;
         Statement st2=null;
+        Statement st3=null;
         ResultSet results=null;
         try {
 		     st=connection.createStatement();
@@ -1255,17 +1481,23 @@ public class DefaultDOReplicator
             logFinest("Getting dissDbID(s) from doDissAssoc "
                     + "table...");
             HashSet dissIds=new HashSet();
-            HashSet dissIdsInUse = new HashSet();
+            HashSet dissIdsNotShared = new HashSet();
+
+            // Get all dissIds in db for this object
             results=logAndExecuteQuery(st, "SELECT dissDbID from "
                     + "doDissAssoc WHERE doDbID=" + dbid);
             while (results.next()) {
                 dissIds.add(new Integer(results.getInt("dissDbID")));
             }
             results.close();
-            HashSet bMechIds = new HashSet();
+
+            logFinest("Found " + dissIds.size() + " dissDbID(s).");
             logFinest("Getting dissDbID(s) from doDissAssoc "
                     + "table unique to this object...");
             Iterator iterator = dissIds.iterator();
+
+            // Iterate over dissIds and separate those that are unique
+            // (i.e., not shared by other objects)
             while (iterator.hasNext())
             {
               Integer id = (Integer)iterator.next();
@@ -1276,57 +1508,62 @@ public class DefaultDOReplicator
               while (results.next())
               {
                 Integer i1 = new Integer(results.getInt("COUNT(*)"));
-                if ( i1.intValue() > 1 )
+                if ( i1.intValue() == 1 )
                 {
-                  //dissIds.remove(id);
-                  // A dissDbID that occurs more than once indicates that the
-                  // disseminator is used by other objects. In this case, we
-                  // do not want to remove the disseminator from the diss
-                  // table so keep track of this dissDbID.
-                  dissIdsInUse.add(id);
-                } else
-                {
-                  ResultSet rs = null;
-                  logFinest("Getting associated bMechDbID(s) that are unique "
-                        + "for this object in diss table...");
-                  st2 = connection.createStatement();
-                  rs=logAndExecuteQuery(st2, "SELECT bMechDbID from "
-                    + "diss WHERE dissDbID=" + id);
-                  while (rs.next())
-                  {
-                    bMechIds.add(new Integer(rs.getInt("bMechDbID")));
-                  }
-                  rs.close();
-                  st2.close();
+                  // A dissDbID that occurs only once indicates that the
+                  // disseminator is not used by other objects. In this case, we
+                  // want to keep track of this dissDbID.
+                  dissIdsNotShared.add(id);
+                  logFinest("DefaultDOReplicator.deleteDigitalObject: added "
+                    + "dissDbId that was not shared: " + id);
                 }
               }
               results.close();
 
             }
-            iterator = dissIdsInUse.iterator();
 
-            // Remove disseminator ids of those disseminators that were in
-            // use by one or more other objects to prevent them from being
-            // removed from the disseminator table in following code section.
+            // Get all binding map Ids in db for this object.
+            HashSet bmapIds=new HashSet();
+            results=logAndExecuteQuery(st, "SELECT dsBindMapDbID FROM "
+                    + "dsBind WHERE doDbID=" + dbid);
+            while (results.next()) {
+                bmapIds.add(new Integer(results.getInt("dsBindMapDbID")));
+            }
+            results.close();
+            logFinest("Found " + bmapIds.size() + " dsBindMapDbID(s).");
+
+            // Iterate over bmapIds and separate those that are unique
+            // (i.e., not shared by other objects)
+            iterator = bmapIds.iterator();
+            HashSet bmapIdsNotShared = new HashSet();
             while (iterator.hasNext() )
             {
               Integer id = (Integer)iterator.next();
-              dissIds.remove(id);
+              ResultSet rs = null;
+              logFinest("Getting associated bmapId(s) that are unique "
+                  + "for this object in diss table...");
+              st2 = connection.createStatement();
+              rs=logAndExecuteQuery(st2, "SELECT DISTINCT doDbID FROM "
+                  + "dsBind WHERE dsBindMapDbID=" + id);
+              int rowCount = 0;
+              while (rs.next())
+              {
+                rowCount++;
+              }
+              if ( rowCount == 1 )
+              {
+                // A bmapId that occurs only once indicates that
+                // a bmapId is not used by other objects. In this case, we
+                // want to keep track of this bpamId.
+                bmapIdsNotShared.add(id);
+                logFinest("DefaultDOReplicator.deleteDigitalObject: added "
+                    + "dsBindMapDbId that was not shared: " + id);
+              }
+
+              rs.close();
+              st2.close();
             }
 
-            logFinest("Found " + dissIds.size() + " dissDbID(s).");
-            logFinest("Getting bMechDbIDs matching dsBindMapDbID(s) from dsBind "
-                    + "table...");
-            logFinest("Getting dsBindMapDbID(s) from dsBind "
-                    + "table...");
-            //HashSet bmapIds=new HashSet();
-            //results=logAndExecuteQuery(st, "SELECT dsBindMapDbID FROM "
-            //        + "dsBind WHERE doDbID=" + dbid);
-            //while (results.next()) {
-            //    bmapIds.add(new Integer(results.getInt("dsBindMapDbID")));
-            //}
-            //results.close();
-            //logFinest("Found " + bmapIds.size() + " dsBindMapDbID(s).");
             //
             // WRITE
             //
@@ -1344,22 +1581,27 @@ public class DefaultDOReplicator
             rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBind "
                     + "WHERE doDbID=" + dbid);
             logFinest("Deleted " + rowCount + " row(s).");
+
+            // Since dissIds can be shared by other objects in db, only remove
+            // those Ids that are not shared.
             logFinest("Attempting row deletion from diss table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM diss WHERE "
-                    + inIntegerSetWhereConditionString("dissDbID", dissIds));
+                    + inIntegerSetWhereConditionString("dissDbID", dissIdsNotShared));
             logFinest("Deleted " + rowCount + " row(s).");
             logFinest("Attempting row deletion from dsBindMap "
                     + "table...");
+
+            // Since bmapIds can be shared by other objects in db, only remove
+            // thos Ids that are not shared.
             rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBindMap "
                     + "WHERE " + inIntegerSetWhereConditionString(
-            //        "dsBindMapDbID", bmapIds));
-                      "bMechDbID", bMechIds));
+                    "dsBindMapDbID", bmapIdsNotShared));
             logFinest("Deleted " + rowCount + " row(s).");
         } finally {
             if (results != null) results.close();
             if (st!=null) st.close();
             if (st2!=null) st2.close();
-            logFinest("Exiting DefaultDOReplicator.deleteDigitalObject");
+            logFinest("DefaultDOReplicator.deleteDigitalObject: Exiting -----");
         }
     }
 
@@ -1415,6 +1657,7 @@ public class DefaultDOReplicator
         * @param connection JDBC DBMS connection
         * @param bDefPID Behavior definition PID
         * @param bDefLabel Behavior definition label
+        * @param bDefState State of behavior definition object.
         *
         * @exception SQLException JDBC, SQL error
         */
@@ -1433,6 +1676,7 @@ public class DefaultDOReplicator
         * @param bDefDbID Behavior definition DBID
         * @param bMechPID Behavior mechanism DBID
         * @param bMechLabel Behavior mechanism label
+        * @param bMechState Statye of behavior mechanism object.
         *
         * @throws SQLException JDBC, SQL error
         */
@@ -1459,6 +1703,7 @@ public class DefaultDOReplicator
         * @param dsControlGroupType Datastream type
         * @param dsCurrentVersionID Datastream current version ID
         * @param policyDbID Policy DBID
+        * @param dsState State of datastream.
         *
         * @exception SQLException JDBC, SQL error
         */
@@ -1530,6 +1775,7 @@ public class DefaultDOReplicator
         * @param connection JDBC DBMS connection
         * @param doPID DigitalObject PID
         * @param doLabel DigitalObject label
+        * @param doState State of digital object.
         *
         * @exception SQLException JDBC, SQL error
         */
@@ -1565,12 +1811,13 @@ public class DefaultDOReplicator
         * @param bMechDbID Behavior mechanism DBID
         * @param dissID Disseminator ID
         * @param dissLabel Disseminator label
+        * @param dissState State of disseminator.
         *
         * @exception SQLException JDBC, SQL error
         */
 	public void insertDisseminatorRow(Connection connection, String bDefDbID, String bMechDbID, String dissID, String dissLabel, String dissState) throws SQLException {
 
-		String insertionStatement = "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel, dissState) VALUES ('" + bDefDbID + "', '" + bMechDbID + "', '" + dissID + "', '" + SQLUtility.aposEscape(dissLabel) + "', '" + dissState +"')";
+		String insertionStatement = "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel, dissState) VALUES ('" + bDefDbID + "', '" + bMechDbID + "', '" + dissID + "', '" + SQLUtility.aposEscape(dissLabel) + "', '" + dissState + "')";
 		insertGen(connection, insertionStatement);
 	}
 
@@ -1743,6 +1990,11 @@ public class DefaultDOReplicator
 	public String lookupDataStreamBindingMapDBID(Connection connection, String bMechDBID, String dsBindingMapID) throws StorageDeviceException {
 		return lookupDBID2FirstNum(connection, "dsBindMapDbID", "dsBindMap", "bMechDbID", bMechDBID, "dsBindMapID", dsBindingMapID);
 	}
+
+        public String lookupDsBindingMapDBID(Connection connection, String bMechDBID, String dsBindingMapID) throws StorageDeviceException {
+                return lookupDBID2FirstNum(connection, "dissDbID", "diss", "bMechDbID", bMechDBID, "dsBindMapID", dsBindingMapID);
+        }
+
 
         /**
         *
@@ -2046,7 +2298,7 @@ public class DefaultDOReplicator
               fedoraServerHost+":"+fedoraServerPort);
           }
         }
-        		
+
 		private void addDisseminators(String doPID, Disseminator[] disseminators, DOReader doReader, Connection connection)
 			throws ReplicationException, SQLException, ServerException
 		{
@@ -2059,7 +2311,7 @@ public class DefaultDOReplicator
 			String doLabel;
 			String dsBindingKeyDBID;
 			int rc;
-			
+
 			doDBID = lookupDigitalObjectDBID(connection, doPID);
 			for (int i=0; i<disseminators.length; ++i) {
 				bDefDBID = lookupBehaviorDefinitionDBID(connection,
@@ -2083,6 +2335,9 @@ public class DefaultDOReplicator
 					// Disseminator row doesn't exist, add it.
 					insertDisseminatorRow(connection, bDefDBID, bMechDBID,
 					disseminators[i].dissID, disseminators[i].dissLabel, disseminators[i].dissState);
+
+                                        //insertDisseminatorRow(connection, bDefDBID, bMechDBID,
+					//disseminators[i].dissID, disseminators[i].dissLabel, disseminators[i].dissState, disseminators[i].dsBindMapID);
 					dissDBID = lookupDisseminatorDBID(connection, bDefDBID,
 							bMechDBID, disseminators[i].dissID);
 					if (dissDBID == null) {
@@ -2140,9 +2395,19 @@ public class DefaultDOReplicator
 					}
 
 					// Insert DataStreamBinding row
+                                        //dissDBID = lookupDsBindingMapDBID(connection, bMechDBID, allBindingMaps[i].dsBindMapID);
+                                        //if (dissDBID==null) {
+                                        //  throw new ReplicationException(
+                                        //                  "lookupDsBindingDBID row doesn't "
+                                        //                  + "exist for bMechDBID: " + bMechDBID
+                                        //                  + ", bindMapID: " + allBindingMaps[i].dsBindMapID + "i=" + i
+                                        //                  + " j=" + j);
+                                        //}
+                                        //System.out.println("dissDBID: "+dissDBID+" bmechDBID: "+bMechDBID+" bindmapID: "+allBindingMaps[i].dsBindMapID);
 					insertDataStreamBindingRow(connection, doDBID,
 							dsBindingKeyDBID,
 							bindingMapDBID,
+                                                        //dissDBID,
 							allBindingMaps[i].dsBindingsAugmented[j].seqNo,
 							allBindingMaps[i].dsBindingsAugmented[j].
 							datastreamID,
@@ -2159,4 +2424,162 @@ public class DefaultDOReplicator
 			}
 			return;
 		}
+
+        /**
+         * <p> Permanently removes a disseminator from the database incuding
+         * all associated datastream bindings and datastream binding maps.
+         * Associated entries are removed from the following db tables:</p>
+         * <ul>
+         * <li>doDissAssoc - all entries matching pid of data object.</li>
+         * <li>diss - all entries matching disseminator ID provided that no
+         * other objects depend on this disseminator.</li>
+         * <li>dsBind - all entries matching pid of data object.</li>
+         * <li>dsBindMap - all entries matching associated bMech object pid
+         * provided that no other objects depend on this binding map.</li>
+         * </ul>
+         * @param pid Persistent identifier for the data object.
+         * @param dissIds Set of disseminator IDs to be removed.
+         * @param doReader An instance of DOReader.
+         * @param connection A database connection.
+         * @throws SQLException If something totally unexpected happened.
+         */
+        private void purgeDisseminators(String pid, HashSet dissIds, HashSet bmapIds, DOReader doReader, Connection connection)
+            throws SQLException
+        {
+
+          logFinest("DefaultDOReplicator.purgeDisseminators: Entering ------");
+          Statement st=null;
+          Statement st2=null;
+          ResultSet results=null;
+          try {
+              st=connection.createStatement();
+              //
+              // READ
+              //
+              logFinest("Checking do table for " + pid + "...");
+              results=logAndExecuteQuery(st, "SELECT doDbID FROM "
+                      + "do WHERE doPID='" + pid + "'");
+              if (!results.next()) {
+                   // must not be a digitalobject...exit early
+                   logFinest(pid + " wasn't found in do table..."
+                           + "skipping deletion as such.");
+                   return;
+              }
+              int dbid=results.getInt("doDbID");
+              results.close();
+              logFinest(pid + " was found in do table (DBID="
+                      + dbid + ")");
+
+              logFinest("Getting dissDbID(s) from doDissAssoc "
+                      + "table...");
+
+              HashSet dissIdsNotShared = new HashSet();
+              logFinest("Getting dissDbID(s) from doDissAssoc "
+                      + "table unique to this object...");
+              logFinest("DefaultDOReplicator.purgeDisseminators: Found "
+                  + dissIds.size() + " dissDbId(s). ");
+
+              // Iterate over dissIds and separate those that are unique
+              // (i.e., not shared by other objects)
+              Iterator iterator = dissIds.iterator();
+              while (iterator.hasNext())
+              {
+                Integer id = (Integer)iterator.next();
+                logFinest("Getting occurrences of dissDbID(s) in "
+                      + "doDissAssoc table...");
+                results=logAndExecuteQuery(st, "SELECT COUNT(*) from "
+                      + "doDissAssoc WHERE dissDbID=" + id);
+                while (results.next())
+                {
+                  Integer i1 = new Integer(results.getInt("COUNT(*)"));
+                  if ( i1.intValue() == 1 )
+                  {
+                    // A dissDbID that occurs only once indicates that the
+                    // disseminator is not used by other objects. In this case,
+                    // we want to keep track of this dissDbID.
+                    dissIdsNotShared.add(id);
+                  }
+                }
+                results.close();
+              }
+
+              // Iterate over bmapIds and separate those that are unique
+              // (i.e., not shared by other objects)
+              logFinest("DefaultDOReplicator.purgeDisseminators: Found "
+                  + bmapIds.size() + " dsBindMapDbId(s). ");
+              iterator = bmapIds.iterator();
+              HashSet bmapIdsInUse = new HashSet();
+              HashSet bmapIdsShared = new HashSet();
+              HashSet bmapIdsNotShared = new HashSet();
+              while (iterator.hasNext() )
+              {
+                Integer id = (Integer)iterator.next();
+                ResultSet rs = null;
+                logFinest("Getting associated bmapId(s) that are unique "
+                    + "for this object in diss table...");
+                st2 = connection.createStatement();
+                rs=logAndExecuteQuery(st2, "SELECT DISTINCT doDbID FROM "
+                    + "dsBind WHERE dsBindMapDbID=" + id);
+                int rowCount = 0;
+                while (rs.next())
+                {
+                  rowCount++;
+                }
+                if ( rowCount == 1 )
+                {
+                  // A dsBindMapDbId that occurs only once indicates that
+                  // the dsBindMapId is not used by other objects. In this case,
+                  // we want to keep track of this dsBindMapDbId.
+                  bmapIdsNotShared.add(id);
+                }
+
+                rs.close();
+                st2.close();
+              }
+
+              //
+              // WRITE
+              //
+              int rowCount;
+
+              // In doDissAssoc table, we are removing rows specific to the
+              // doDbId, so remove all dissDbIds (both shared and nonShared).
+              logFinest("Attempting row deletion from doDissAssoc "
+                      + "table...");
+              rowCount=logAndExecuteUpdate(st, "DELETE FROM "
+                      + "doDissAssoc WHERE doDbID=" + dbid
+                      + " AND ( " + inIntegerSetWhereConditionString("dissDbID", dissIds) + " );");
+              logFinest("Deleted " + rowCount + " row(s).");
+
+              // In dsBind table, we are removing rows specific to the doDbID,
+              // so remove all dsBindMapIds (both shared and nonShared).
+              logFinest("Attempting row deletion from dsBind table..");
+              rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBind "
+                      + "WHERE doDbID=" + dbid
+                      + " AND ( " + inIntegerSetWhereConditionString("dsBindMapDbID", bmapIds) + " );");
+
+              // In diss table, dissDbIds can be shared by other objects so only
+              // remove dissDbIds that are not shared.
+              logFinest("Attempting row deletion from diss table...");
+              rowCount=logAndExecuteUpdate(st, "DELETE FROM diss WHERE "
+                      + inIntegerSetWhereConditionString("dissDbID", dissIdsNotShared));
+              logFinest("Deleted " + rowCount + " row(s).");
+
+              // In dsBindMap table, dsBindMapIds can be shared by other objects
+              // so only remove dsBindMapIds that are not shared.
+              logFinest("Attempting row deletion from dsBindMap "
+                      + "table...");
+              rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBindMap "
+                      + "WHERE " + inIntegerSetWhereConditionString(
+                      "dsBindMapDbID", bmapIdsNotShared));
+              logFinest("Deleted " + rowCount + " row(s).");
+
+          } finally {
+              if (results != null) results.close();
+              if (st!=null) st.close();
+              if (st2!=null) st2.close();
+              logFinest("DefaultDOReplicator.purgeDisseminators: Exiting ------");
+        }
+      }
+
 }
