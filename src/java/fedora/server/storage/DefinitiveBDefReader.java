@@ -24,7 +24,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefReader
 {
 
-  private MethodDef[] behaviorDefs;
+  private MethodDef[] methodDefs;
 
   public static void main(String[] args)
   {
@@ -49,15 +49,16 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
       doReader.GetDatastream(dsArray[0].DatastreamID, null);
       doReader.GetDisseminators(null);
       doReader.GetBehaviorDefs(null);
-      doReader.GetBehaviorMethods(null);
-      doReader.GetBehaviorMethodsWSDL(null);
       Disseminator d = doReader.GetDisseminator("DISS1", null);
       doReader.GetBMechMethods(d.bDefID, null);
       doReader.GetDSBindingMaps(null);
+      // Bdef reader methods
+      doReader.GetBehaviorMethods(null);
+      doReader.GetBehaviorMethodsWSDL(null);
     }
     catch (ServerException e)
     {
-      System.err.println("FEDORA EXCEPTION:)" + e.getMessage());
+      System.err.println("FEDORA EXCEPTION: suppressing print of ServerException");
     }
     catch (Exception e)
     {
@@ -70,8 +71,7 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
     super(objectPID);
   }
 
-  //FIXIT!! Not dealing with parms on the method defs now!!
-  public MethodDef[] GetBehaviorMethods(Date versDateTime)
+  public MethodDef[] GetBehaviorMethods(Date versDateTime) throws GeneralException
   {
     try
     {
@@ -79,117 +79,51 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
       InputSource wsdlXML = new InputSource(new ByteArrayInputStream(wsdlDS.xmlContent));
 
       // reset the xmlreader of superclass to the specical WSDLEventHandler
-      xmlreader.setContentHandler(new BDefWSDLEventHandler());
+      WSDLBehaviorDeserializer wsdl = new WSDLBehaviorDeserializer();
+      xmlreader.setContentHandler(wsdl);
       xmlreader.setFeature("http://xml.org/sax/features/namespaces", false);
       xmlreader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
       xmlreader.parse(wsdlXML);
-
-      if (debug)
-      {
-        for (int i = 0; i < behaviorDefs.length; i++)
-        {
-          System.out.println("GetBehaviorMethods: ");
-          System.out.println("  method[" + i + "]=" + behaviorDefs[i].methodName);
-        }
-      }
+      methodDefs = wsdl.methodDefs;
+      if (debug) printBehaviorMethods();
     }
     catch (Exception e)
     {
-      System.err.println("Error: " + e.toString());
+      System.err.println("DefinitiveBDefReader: " + e.toString());
+      throw new GeneralException("DefinitiveBDefReader.GetBehaviorMethods: " + e.getMessage());
     }
-    return(behaviorDefs);
+    return(methodDefs);
   }
 
-  // Overloaded method: returns InputStream of WSDL as alternative
-  public InputStream GetBehaviorMethodsWSDL(Date versDateTime)
+  public InputStream GetBehaviorMethodsWSDL(Date versDateTime) throws GeneralException
   {
     DatastreamXMLMetadata wsdlDS = (DatastreamXMLMetadata)datastreamTbl.get("WSDL");
     InputStream wsdl = new ByteArrayInputStream(wsdlDS.xmlContent);
     return(wsdl);
   }
 
-  class BDefWSDLEventHandler extends DefaultHandler
+  private void printBehaviorMethods()
   {
-
-    private boolean inDefinitions = false;
-    private boolean inPortType = false;
-    private boolean inOperation = false;
-
-    private String h_nameWSDL;
-    private String h_portType;
-    private String h_operation;
-    private Vector h_vOperations;
-    private MethodDef h_methodDef;
-
-    public void startDocument() throws SAXException
+    System.out.println("Printing Behavior Methods...");
+    for (int i = 0; i < methodDefs.length; i++)
     {
-      //initialize the event handler variables
-
-      h_vOperations = new Vector();
-    }
-
-    public void endDocument() throws SAXException
-    {
-        behaviorDefs = (MethodDef[]) h_vOperations.toArray(new MethodDef[0]);
-        h_vOperations = null;
-    }
-
-    public void skippedEntity(String name) throws SAXException
-    {
-      StringBuffer sb = new StringBuffer();
-      sb.append('&');
-      sb.append(name);
-      sb.append(';');
-      char[] text = new char[sb.length()];
-      sb.getChars(0, sb.length(), text, 0);
-      this.characters(text, 0, text.length);
-    }
-
-
-    public void characters(char ch[], int start, int length)  throws SAXException
-    {
-    }
-
-    public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
-      throws SAXException
-    {
-      // FIXIT!! Deal with method parms (input in WSDL)
-      if (qName.equalsIgnoreCase("wsdl:definitions"))
+      System.out.println("METHOD: " + i);
+      System.out.println("  method[" + i + "]=" + methodDefs[i].methodName);
+      for (int j = 0; j < methodDefs[i].methodParms.length; j++)
       {
-        inDefinitions = true;
-        h_nameWSDL = attrs.getValue("name");
-        if (debug) System.out.println("wsdl name= " + h_nameWSDL);
-      }
-      else if (qName.equalsIgnoreCase("wsdl:portType"))
-      {
-        inPortType = true;
-        h_portType = attrs.getValue("name");
-        if (debug) System.out.println("portType name = " + h_portType);
-      }
-      else if (qName.equalsIgnoreCase("wsdl:operation") && inPortType)
-      {
-        inOperation = true;
-        h_methodDef = new MethodDef();
-        h_methodDef.methodName = attrs.getValue("name");
-      }
-    }
+        System.out.println(
+              "  parm[" + j + "]=" +
+              methodDefs[i].methodParms[j].parmName +
+              " parmType=" + methodDefs[i].methodParms[j].parmType +
+              " defaultValue=" + methodDefs[i].methodParms[j].parmDefaultValue +
+              " required=" + methodDefs[i].methodParms[j].parmRequired);
 
-    public void endElement(String namespaceURI, String localName, String qName) throws SAXException
-    {
-
-      if (qName.equalsIgnoreCase("wsdl:definitions") && inDefinitions)
-      {
-        inDefinitions = false;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:portType") && inPortType)
-      {
-        inPortType = false;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:operation") && inOperation && inPortType)
-      {
-        inOperation = false;
-        h_vOperations.addElement(h_methodDef);
-        h_methodDef = null;
+        for (int j2 = 0; j2 < methodDefs[i].methodParms[j].parmDomainValues.length; j2++)
+        {
+          System.out.println(
+              "  parmDomainValue[" + j2 + "]=" +
+              methodDefs[i].methodParms[j].parmDomainValues[j2]);
+        }
       }
     }
   }

@@ -2,10 +2,16 @@ package fedora.server.storage;
 
 /**
  * <p>Title: DefinitiveBMechReader.java</p>
- * <p>Description: </p>
+ * <p>Description: A Reader for Fedora Behavior Mechanism Objects. Since
+ * a Behavior Mechanism Object can be treated like any other Fedora
+ * object, the DefinitiveBMechReader extends the functionality of the
+ * DefinitiveDOReader. The DefinitiveBMechReader can provide a list
+ * of behavior methods for the service that the Behavior Mechanism Object
+ * represents.  The method definitions and bindings are drawn out of the
+ * WSDL datastream in the Behavior Mechanism Object. </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
- * @author Sandy Payette
+ * @author Sandy Payette payette@cs.cornell.edu
  * @version 1.0
  */
 
@@ -25,9 +31,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechReader
 {
-
-  //private MethodDef[] behaviorDefs;
-  private MethodDefOperationBind[] behaviorBindings;
+  private MethodDefOperationBind[] methodDefBind;
   private BMechDSBindSpec dsBindSpec;
 
   public static void main(String[] args)
@@ -54,12 +58,14 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       String[] bdefArray = doReader.GetBehaviorDefs(null);
       doReader.GetBMechMethods(bdefArray[0], null);
       doReader.GetDSBindingMaps(null);
+      // BMech reader methods
       doReader.GetBehaviorMethods(null);
       doReader.GetBehaviorMethodsWSDL(null);
+      doReader.GetDSBindingSpec(null);
     }
     catch (ServerException e)
     {
-      System.err.println("FEDORA EXCEPTION:)" + e.getMessage());
+      System.err.println("FEDORA EXCEPTION: suppressing print of ServerException");
     }
     catch (Exception e)
     {
@@ -72,7 +78,16 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
     super(objectPID);
   }
 
-  public MethodDef[] GetBehaviorMethods(Date versDateTime)
+  /**
+   * Get the set of method definitions that are implemented by the service
+   * that this Behavior Mechanism Object represents.
+   * Specifically, these are the service operations that are defined in the WSDL
+   * datastream of the Behavior Mechanism Object.
+   * @param versDateTime
+   * @return  an array of method definitions
+   * @throws GeneralException
+   */
+  public MethodDef[] GetBehaviorMethods(Date versDateTime) throws GeneralException
   {
     try
     {
@@ -80,45 +95,60 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       InputSource wsdlXML = new InputSource(new ByteArrayInputStream(wsdlDS.xmlContent));
 
       // reset the xmlreader of superclass to the specical WSDLEventHandler
-      xmlreader.setContentHandler(new WSDLEventHandler());
+      WSDLBehaviorDeserializer wsdl = new WSDLBehaviorDeserializer();
+      xmlreader.setContentHandler(wsdl);
       xmlreader.setFeature("http://xml.org/sax/features/namespaces", false);
       xmlreader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
       xmlreader.parse(wsdlXML);
-
-      //if (debug)
-      //{
-        System.out.println("GetBehaviorMethods: ");
-        for (int i = 0; i < behaviorBindings.length; i++)
-        {
-          System.out.println("METHOD: " + i);
-          System.out.println("  method[" + i + "]=" + behaviorBindings[i].methodName);
-          System.out.println("  protocol[" + i + "]=" + behaviorBindings[i].protocolType);
-          System.out.println("  service address[" + i + "]=" + behaviorBindings[i].serviceBindingAddress);
-          System.out.println("  operation loc[" + i + "]=" + behaviorBindings[i].operationLocation);
-          System.out.println("  operation URL[" + i + "]=" + behaviorBindings[i].operationURL);
-          for (int j = 0; j < behaviorBindings[i].dsBindingKeys.length; j++)
-          {
-            System.out.println("  dsBindingKey[" + j + "]=" + behaviorBindings[i].dsBindingKeys[j]);
-          }
-        }
-      //}
+      methodDefBind = wsdl.methodDefBind;
+      if (debug) printBehaviorMethods();
     }
     catch (Exception e)
     {
-      System.err.println("Error: " + e.toString());
+      System.err.println("GetBehaviorMethods: " + e.toString());
+      throw new GeneralException("DefinitiveBMechReader.GetBehaviorMethods: " + e.getMessage());
+
     }
-    return(behaviorBindings);
+    return(methodDefBind);
   }
 
-  // Overloaded method: returns InputStream of WSDL as alternative
-  public InputStream GetBehaviorMethodsWSDL(Date versDateTime)
+  /**
+   * Get the set of method definitions that are implemented by the service
+   * that this Behavior Mechanism Object represents.  In this case, the
+   * method defintions will be returned as a stream of XML that is encoded
+   * in accordance with the WSDL schema.  The WSDL expression of the methods
+   * is stored this way as a datastream in the Behavior Mechanism Object.
+   * @param versDateTime
+   * @return  an input stream that is XML encoded to the WSDL schema
+   * @throws GeneralException
+   */
+  public InputStream GetBehaviorMethodsWSDL(Date versDateTime) throws GeneralException
   {
     DatastreamXMLMetadata wsdlDS = (DatastreamXMLMetadata)datastreamTbl.get("WSDL");
     InputStream wsdl = new ByteArrayInputStream(wsdlDS.xmlContent);
     return(wsdl);
   }
 
-  public BMechDSBindSpec GetDSBindingSpec(Date versDateTime)
+  /**
+   * Get the datastream binding specification that defines the datastream requirements
+   * for Data Objects that will associate with this Behavior Mechanism Object.
+   * It can be seen as a "contract" between the Behavior Mechanism Object and any
+   * Data Objects that use the service that the Behavior Mechanism Object represents.
+   * Specifically, the binding specification defines what kinds of datastreams
+   * should be made available to the service that this Behavior Mechanism Object
+   * represents.  It defines an abstract perspective of the contents of a
+   * Data Object from the perspective of the service that will process the
+   * contents of the Data Object.  The datastream binding specification
+   * will define a formal name for each kind of datastream input (i.e., a binding key),
+   * acceptable MIME types for those datastreams, and the cardinality and ordinality
+   * for those datastreams.  The datastream binding specification can be used
+   * to facilitate the creation of Disseminators on Data Objects, or to validate
+   * the relationships between Data Objects and Behavior Mechanism Objects.
+   * @param versDateTime
+   * @return  the datastream binding specification for the Behavior Mechansim Object
+   * @throws GeneralException
+   */
+  public BMechDSBindSpec GetDSBindingSpec(Date versDateTime) throws GeneralException
   {
     try
     {
@@ -130,283 +160,90 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       xmlreader.setFeature("http://xml.org/sax/features/namespaces", false);
       xmlreader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
       xmlreader.parse(dsBindXML);
+      if (debug) printDSBindingSpec();
     }
     catch (Exception e)
     {
       System.err.println("Error: " + e.toString());
-    }
-    if (debug)
-    {
-      System.out.println("GetDSBindingSpec.bMechID = " + dsBindSpec.bMechPID);
-      System.out.println("GetDSBindingSpec.bDefID = " + dsBindSpec.bDefPID);
-      for (int i = 0; i < dsBindSpec.dsBindRules.length; i++)
-      {
-        System.out.println(">>>>>Binding[" + i + "].bindKey = " + dsBindSpec.dsBindRules[i].bindingKeyName);
-        System.out.println(">>>>>Binding[" + i + "].instruct = " + dsBindSpec.dsBindRules[i].bindingInstruction);
-        System.out.println(">>>>>Binding[" + i + "].label = " + dsBindSpec.dsBindRules[i].bindingLabel);
-        System.out.println(">>>>>Binding[" + i + "].max = " + dsBindSpec.dsBindRules[i].maxNumBindings);
-        System.out.println(">>>>>Binding[" + i + "].min = " + dsBindSpec.dsBindRules[i].minNumBindings);
-        System.out.println(">>>>>Binding[" + i + "].ordin = " + dsBindSpec.dsBindRules[i].ordinality);
-      }
+      throw new GeneralException("DefinitiveBMechReader.GetDSBindingSpec: " + e.getMessage());
     }
     return(dsBindSpec);
   }
 
-  class WSDLEventHandler extends DefaultHandler
+  /**
+   * Print the methods definitions for the service represented by
+   * the Behavior Mechanism Object.
+   */
+  private void printBehaviorMethods()
   {
-
-    private boolean inDefinitions = false;
-    private boolean inMessage = false;
-    private boolean inMessagePart = false;
-    private boolean inAbstractOperation = false;
-    private boolean inAbstractInput = false;
-    private boolean inPortType = false;
-    private boolean inService = false;
-    private boolean inPort = false;
-    private boolean inHTTPAddress = false;
-    private boolean inSOAPAddress = false;
-    private boolean inBinding = false;
-    private boolean isHTTPBinding = false;
-    private boolean isSOAPBinding = false;
-    private boolean doGET = false;
-    private boolean inWSDLOperation = false;
-    private boolean inHTTPOperation = false;
-    private boolean inSOAPOperation = false;
-
-    private String portBindingName = null;
-    private String bindingName = null;
-    private Hashtable portTbl;
-
-    //========================new
-    private Hashtable tmp_messageTbl;
-    private String tmp_messageName;
-    private String tmp_methodName;
-    private Vector tmp_vMessageParts;
-    private Hashtable tmp_methodTbl;
-    //========================end new
-
-    private String h_nameWSDL;
-    private String h_portType;
-    private String h_operation;
-    private MethodDefOperationBind h_methodBind;
-    private Vector h_vMethodBindings;
-    private String h_httpAddress;
-    private String h_soapAddress;
-
-    public void startDocument() throws SAXException
+    System.out.println("Printing Behavior Methods...");
+    for (int i = 0; i < methodDefBind.length; i++)
     {
-      //initialize the event handler variables
+      System.out.println("METHOD: " + i);
+      System.out.println("  method[" + i + "]=" + methodDefBind[i].methodName);
+      System.out.println("  protocol[" + i + "]=" + methodDefBind[i].protocolType);
+      System.out.println("  service address[" + i + "]=" + methodDefBind[i].serviceBindingAddress);
+      System.out.println("  operation loc[" + i + "]=" + methodDefBind[i].operationLocation);
+      System.out.println("  operation URL[" + i + "]=" + methodDefBind[i].operationURL);
+      for (int j = 0; j < methodDefBind[i].methodParms.length; j++)
+      {
+        System.out.println(
+              "  parm[" + j + "]=" +
+              methodDefBind[i].methodParms[j].parmName +
+              " parmType=" + methodDefBind[i].methodParms[j].parmType +
+              " defaultValue=" + methodDefBind[i].methodParms[j].parmDefaultValue +
+              " required=" + methodDefBind[i].methodParms[j].parmRequired);
 
-      h_vMethodBindings = new Vector();
-      portTbl = new Hashtable();
-      tmp_messageTbl = new Hashtable();
-      tmp_methodTbl = new Hashtable();
-    }
-
-    public void endDocument() throws SAXException
-    {
-        int cnt = h_vMethodBindings.size();
-        behaviorBindings = new MethodDefOperationBind[cnt];
-        Iterator it = h_vMethodBindings.iterator();
-        for (int i = 0; i < cnt; i++)
+        for (int j2 = 0; j2 < methodDefBind[i].methodParms[j].parmDomainValues.length; j2++)
         {
-          MethodDefOperationBind mbind = (MethodDefOperationBind) it.next();
-          // Look up the message parts (dsBindingKeys) that go with the method
-          Vector messageParts = (Vector)tmp_messageTbl.get(tmp_methodTbl.get(mbind.methodName));
-          mbind.dsBindingKeys = (String[])messageParts.toArray(new String[0]);
-          behaviorBindings[i] = mbind;
+          System.out.println(
+              "  parmDomainValue[" + j2 + "]=" +
+              methodDefBind[i].methodParms[j].parmDomainValues[j2]);
         }
-        //behaviorBindings = (MethodDefOperationBind[])h_vMethodBindings.toArray(new MethodDefOperationBind[0]);
-        h_vMethodBindings = null;
-        portTbl = null;
-    }
-
-    public void skippedEntity(String name) throws SAXException
-    {
-      StringBuffer sb = new StringBuffer();
-      sb.append('&');
-      sb.append(name);
-      sb.append(';');
-      char[] text = new char[sb.length()];
-      sb.getChars(0, sb.length(), text, 0);
-      this.characters(text, 0, text.length);
-    }
-
-
-    public void characters(char ch[], int start, int length)  throws SAXException
-    {
-    }
-
-    public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
-      throws SAXException
-    {
-      if (qName.equalsIgnoreCase("wsdl:definitions"))
-      {
-        inDefinitions = true;
-        h_nameWSDL = attrs.getValue("name");
-        if (debug) System.out.println("wsdl name= " + h_nameWSDL);
       }
-      // ===============================new
-
-      else if (qName.equalsIgnoreCase("wsdl:message"))
+      for (int k = 0; k < methodDefBind[i].dsBindingKeys.length; k++)
       {
-        inMessage = true;
-        tmp_messageName = attrs.getValue("name");
-        tmp_vMessageParts = new Vector();
-      }
-      else if (qName.equalsIgnoreCase("wsdl:part") && inMessage)
-      {
-        inMessagePart = true;
-        tmp_vMessageParts.add(attrs.getValue("name"));
-      }
-      else if (qName.equalsIgnoreCase("wsdl:portType"))
-      {
-        inPortType = true;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:operation") && inPortType)
-      {
-        inAbstractOperation = true;
-        tmp_methodName = attrs.getValue("name");
-      }
-      else if (qName.equalsIgnoreCase("wsdl:input") && inAbstractOperation)
-      {
-        inAbstractInput = true;
-        tmp_methodTbl.put(tmp_methodName, attrs.getValue("message"));
-      }
-      //===============================end new
-      else if (qName.equalsIgnoreCase("wsdl:service"))
-      {
-        inService = true;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:port"))
-      {
-        inPort = true;
-        portBindingName = attrs.getValue("binding");
-      }
-      else if (qName.equalsIgnoreCase("http:address") && inService && inPort)
-      {
-        inHTTPAddress = true;
-        portTbl.put(portBindingName, attrs.getValue("location"));
-      }
-      else if (qName.equalsIgnoreCase("soap:address") && inService && inPort)
-      {
-        inSOAPAddress = true;
-        portTbl.put(portBindingName, attrs.getValue("location"));
-      }
-      else if (qName.equalsIgnoreCase("wsdl:binding"))
-      {
-        inBinding = true;
-        bindingName = attrs.getValue("name");
-      }
-      else if (qName.equalsIgnoreCase("http:binding"))
-      {
-        isHTTPBinding = true;
-      }
-      else if (qName.equalsIgnoreCase("soap:binding"))
-      {
-        isSOAPBinding = true;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:operation") && inBinding)
-      {
-        inWSDLOperation = true;
-        h_methodBind = new MethodDefOperationBind();
-        h_methodBind.methodName = attrs.getValue("name");
-      }
-      else if (qName.equalsIgnoreCase("http:operation") && inWSDLOperation && isHTTPBinding )
-      {
-        inHTTPOperation = true;
-        h_methodBind.protocolType = "HTTP";
-        h_httpAddress = (String)portTbl.get(bindingName);
-        h_methodBind.serviceBindingAddress = h_httpAddress;
-        h_methodBind.operationLocation = attrs.getValue("location");
-        h_methodBind.operationURL = h_httpAddress.concat(attrs.getValue("location"));
-      }
-      else if (qName.equalsIgnoreCase("soap:operation") && inWSDLOperation && isSOAPBinding )
-      {
-        inSOAPOperation = true;
-        h_methodBind.protocolType = "SOAP";
-        h_soapAddress = (String)portTbl.get(bindingName);
-        h_methodBind.serviceBindingAddress = h_soapAddress;
-        h_methodBind.operationLocation = attrs.getValue("soapAction");
-        h_methodBind.operationURL = attrs.getValue("soapAction");
-      }
-    }
-
-    public void endElement(String namespaceURI, String localName, String qName) throws SAXException
-    {
-      if (qName.equalsIgnoreCase("wsdl:definitions") && inDefinitions)
-      {
-        inDefinitions = false;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:message"))
-      {
-        inMessage = false;
-        tmp_messageTbl.put(tmp_messageName, tmp_vMessageParts);
-        tmp_messageName = null;
-        tmp_vMessageParts = null;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:part") && inMessage)
-      {
-        inMessagePart = false;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:portType"))
-      {
-        inPortType = false;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:operation") && inPortType)
-      {
-        inAbstractOperation = false;
-        tmp_methodName = null;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:input") && inAbstractOperation)
-      {
-        inAbstractInput = false;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:service") && inService)
-      {
-        inService = false;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:port") && inPort)
-      {
-        inPort = false;
-        portBindingName = null;
-      }
-      else if (qName.equalsIgnoreCase("http:address") && inHTTPAddress)
-      {
-        inHTTPAddress = false;
-      }
-      else if (qName.equalsIgnoreCase("soap:address") && inSOAPAddress)
-      {
-        inSOAPAddress = false;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:binding") && inBinding)
-      {
-        inBinding = false;
-        bindingName = null;
-        h_httpAddress = null;
-        h_soapAddress = null;
-        isHTTPBinding = false;
-        isSOAPBinding = false;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:operation") && inWSDLOperation)
-      {
-        inWSDLOperation = false;
-        h_vMethodBindings.addElement(h_methodBind);
-        h_methodBind = null;
-      }
-      else if (qName.equalsIgnoreCase("http:operation") && inHTTPOperation)
-      {
-        inHTTPOperation = false;
-      }
-      else if (qName.equalsIgnoreCase("soap:operation") && inSOAPOperation)
-      {
-        inSOAPOperation = false;
+        System.out.println("  dsBindingKey[" + k + "]=" + methodDefBind[i].dsBindingKeys[k]);
       }
     }
   }
 
+  /**
+   * Print the datastream binding specification for the service
+   * represented by the Behavior Mechanism Object.
+   */
+  private void printDSBindingSpec()
+  {
+    System.out.println("Printing DS Binding Specification...");
+    System.out.println("GetDSBindingSpec.bMechID = " + dsBindSpec.bMechPID);
+    System.out.println("GetDSBindingSpec.bDefID = " + dsBindSpec.bDefPID);
+    for (int i = 0; i < dsBindSpec.dsBindRules.length; i++)
+    {
+      System.out.println(">>>>>Binding[" + i + "].bindKey = " + dsBindSpec.dsBindRules[i].bindingKeyName);
+      System.out.println(">>>>>Binding[" + i + "].instruct = " + dsBindSpec.dsBindRules[i].bindingInstruction);
+      System.out.println(">>>>>Binding[" + i + "].label = " + dsBindSpec.dsBindRules[i].bindingLabel);
+      System.out.println(">>>>>Binding[" + i + "].max = " + dsBindSpec.dsBindRules[i].maxNumBindings);
+      System.out.println(">>>>>Binding[" + i + "].min = " + dsBindSpec.dsBindRules[i].minNumBindings);
+      System.out.println(">>>>>Binding[" + i + "].ordin = " + dsBindSpec.dsBindRules[i].ordinality);
+    }
+  }
+
+  /**
+   *
+   * <p>Title: DSBindEventHandler.java</p>
+   * <p>Description: Inner class to parse a datastream bindings specification.
+   *    A datastream binding specificaiton is a special XML datastream
+   *    found in a Behavior Mechanism Object.</p>
+   * <p>Copyright: Copyright (c) 2002</p>
+   * <p>Company: </p>
+   * @author Sandy Payette   payette@cs.cornell.edu
+   * @version 1.0
+   */
   class DSBindEventHandler extends DefaultHandler
   {
+    // FIXIT! How can we deal with prefix variability?  fbs.DSBinding vs. something.DSBinding?
+    // I need to do something better here to deal with namespaces,
+    // so the event handler is not fragile.
 
     private boolean inDSBindSpec = false;
     private boolean inBMechID = false;
@@ -478,9 +315,6 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       }
     }
 
-    //FIXIT! How can we deal with prefix variability?  fbs.DSBinding vs. something.DSBinding?
-    // Maybe Fedora controls the prefix so we can know what it will be.
-    // But we need to do something better here, so the event handler is not fragile.
     public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
       throws SAXException
     {
