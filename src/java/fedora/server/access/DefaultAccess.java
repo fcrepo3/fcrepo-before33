@@ -283,7 +283,6 @@ public class DefaultAccess extends Module implements Access
     Hashtable h_userParms = new Hashtable();
     MIMETypedStream dissemination = null;
     MethodParmDef[] defaultMethodParms = null;
-    reader = m_manager.getReader(context, PID);
 
     startTime = new Date().getTime();
     // Put any user-supplied method parameters into hash table
