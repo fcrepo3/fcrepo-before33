@@ -11,6 +11,7 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSLikeDODeserializer;
 import fedora.server.storage.translation.METSLikeDOSerializer;
+import fedora.server.storage.translation.DOTranslationUtility;
 
 /**
  *
@@ -57,8 +58,10 @@ public class RepositoryReaderTest
             HashMap desers=new HashMap();
             desers.put(mets, new METSLikeDODeserializer());
             DOTranslatorImpl translator=new DOTranslatorImpl(sers, desers, null);
-            m_repoReader=new DirectoryBasedRepositoryReader(m_repoDir, translator,
-                    mets, mets, "UTF-8", null);
+            m_repoReader=
+            	new DirectoryBasedRepositoryReader(m_repoDir, translator,
+                    mets, mets, 
+					"UTF-8", null);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
         }

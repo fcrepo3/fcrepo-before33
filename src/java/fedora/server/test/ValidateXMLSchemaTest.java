@@ -50,7 +50,8 @@ public class ValidateXMLSchemaTest
 		//inXMLSchemaFile="src/xsd/mets-fedora-ext.xsd";
 		
 		// FOXML
-		inFile="TestValidation/foxml-reference-example.xml";
+		//inFile="TestValidation/foxml-reference-example.xml";
+		inFile="TestValidation/foxml-bdef.xml";
 		//inFile="TestValidation/minFOX4.xml";
 		//inFile="TestValidation/minFOX5.xml";				
 		inXMLSchemaFile="src/xsd/foxml1-0.xsd";

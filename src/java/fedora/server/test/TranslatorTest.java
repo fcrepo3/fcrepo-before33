@@ -57,11 +57,11 @@ public class TranslatorTest {
             }
             DigitalObject obj=new BasicDigitalObject();
             System.out.println("Deserializing...");
-            trans.deserialize(in, obj, args[1], args[2]);
+            trans.deserialize(in, obj, args[1], args[2], DOTranslationUtility.DESERIALIZE_INSTANCE);
             System.out.println("Done.");
             ByteArrayOutputStream outStream=new ByteArrayOutputStream();
             System.out.println("Re-serializing...");
-            trans.serialize(obj, outStream, args[1], args[2], false);
+            trans.serialize(obj, outStream, args[1], args[2], DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
             System.out.println("Done. Here it is:");
             System.out.println(outStream.toString(args[2]));
             server.shutdown();

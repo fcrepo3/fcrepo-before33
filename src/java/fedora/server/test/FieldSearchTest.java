@@ -24,6 +24,7 @@ import fedora.server.storage.SimpleDOReader;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSLikeDODeserializer;
 import fedora.server.storage.translation.METSLikeDOSerializer;
+import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 
@@ -80,8 +81,10 @@ public class FieldSearchTest
             desers.put(mets, new METSLikeDODeserializer());
             DOTranslatorImpl translator=new DOTranslatorImpl(sers, desers, null);
             translator.setLogLevel(0);
-            m_repoReader=new DirectoryBasedRepositoryReader(m_repoDir, translator,
-                    mets, mets, "UTF-8", null);
+            m_repoReader=
+            	new DirectoryBasedRepositoryReader(m_repoDir, translator,
+                    mets, mets, 
+					"UTF-8", null);
             m_repoReader.setLogLevel(0);
             //m_fieldSearch=new FieldSearchExistImpl(m_existDir.toString(), null);
             m_cPool=new ConnectionPool( "com.mckoi.JDBCDriver",

@@ -5,6 +5,7 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.translation.DOTranslatorImpl;
 import fedora.server.storage.translation.METSLikeDODeserializer;
 import fedora.server.storage.translation.METSLikeDOSerializer;
+import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.validation.DOValidatorImpl;
 
 import java.io.ByteArrayInputStream;
@@ -69,11 +70,11 @@ public class METSInOutTest {
             DOTranslatorImpl trans=new DOTranslatorImpl(sers, desers, null);
             DigitalObject obj=new BasicDigitalObject();
             System.out.println("Deserializing...");
-            trans.deserialize(in, obj, "metslikefedora1", "UTF-8");
+            trans.deserialize(in, obj, "metslikefedora1", "UTF-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
             System.out.println("Done.");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
-            System.out.println("Re-serializing...");
-            trans.serialize(obj, out, "metslikefedora1", "UTF-8", false);
+            System.out.println("Re-serializing for STORAGE...");
+            trans.serialize(obj, out, "metslikefedora1", "UTF-8", DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
             System.out.println("Done.");
             if (args.length>1) {
                 ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());

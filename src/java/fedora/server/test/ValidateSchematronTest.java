@@ -50,7 +50,9 @@ public class ValidateSchematronTest
 		
 		// FOXML
 		//inFile="TestValidation/foxml-reference-example.xml";
-		inFile="TestIngestFiles/foxml-reference-example.xml";
+		//inFile="TestIngestFiles/foxml-reference-example.xml";
+		//inFile="TestValidation/foxml-bdef.xml";
+		inFile="TestIngestFiles/foxml-reference-ingest.xml";
 		//inFile="TestExportFiles/problem.xml";				
 		inSchematronRulesFile="src/xml/schematron/foxmlRules1-0.xml";
 

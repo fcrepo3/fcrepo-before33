@@ -51,8 +51,9 @@ public class METSToFOXMLTest
 	protected DigitalObject obj = null;
 		
 	protected void setUp() {
-		inFile=new File("TestIngestFiles/demo5withaudits.xml");
-		outFile=new File("OUT-foxml.xml");
+		//inFile=new File("TestIngestFiles/demo5withaudits.xml");
+		inFile=new File("TestIngestFiles/bmech-simple-image-4res.xml");
+		outFile=new File("TestExportFiles/OUT-foxml.xml");
 		System.setProperty("fedoraServerHost", "localhost");
 		System.setProperty("fedoraServerPort", "80");
 		
@@ -73,7 +74,7 @@ public class METSToFOXMLTest
 			DOTranslatorImpl trans=new DOTranslatorImpl(sermap, desermap, null);
 			obj=new BasicDigitalObject();
 			System.out.println("Deserializing METS input...");
-			trans.deserialize(in, obj, "metslikefedora1", "UTF-8");
+			trans.deserialize(in, obj, "metslikefedora1", "UTF-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
 			System.out.println("Digital Object PID= " + obj.getPid());
 			// serialize
 			sermap.put("foxml1.0", ser);
@@ -81,7 +82,7 @@ public class METSToFOXMLTest
 			System.out.println("Writing file to... " + outFile.getPath());
 			FileOutputStream out = new FileOutputStream(outFile);
 			//ByteArrayOutputStream out=new ByteArrayOutputStream();
-			trans.serialize(obj, out, "foxml1.0", "UTF-8", false);
+			trans.serialize(obj, out, "foxml1.0", "UTF-8", DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
 			System.out.println("Done.");
 			//System.out.println("Here it is:");
 			//System.out.println(out.toString("UTF-8"));
