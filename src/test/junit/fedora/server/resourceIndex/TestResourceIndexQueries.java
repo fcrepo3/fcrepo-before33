@@ -131,7 +131,7 @@ public class TestResourceIndexQueries extends TestResourceIndex {
     
     public void testQueryCollectionMembership() throws Exception {
         String query = "select ?member " +
-                       "where  (?member <nsdl:isMemberOf> <info:fedora/demo:ri1010>)";
+                       "where  (?member <fedora-rels-ext:isMemberOfCollection> <info:fedora/demo:ri1010>)";
         
         TupleIterator it;
         it = m_ri.findTuples("rdql", query, 0, true);

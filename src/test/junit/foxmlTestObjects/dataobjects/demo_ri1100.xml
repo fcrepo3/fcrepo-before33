@@ -13,11 +13,12 @@
         <foxml:datastreamVersion ID="RELS-EXT1.0" MIMETYPE="text/xml" CREATED="2004-12-07T19:32:00Z" LABEL="Relationships">
             <foxml:xmlContent>
                 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+                         xmlns:fedora-rels-ext="info:fedora/fedora-system:def/relations-external#"
                          xmlns:nsdl="http://www.nsdl.org/ontologies/relationships#" 
                          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
                     <rdf:Description rdf:about="info:fedora/demo:ri1100">
                         <nsdl:hasMetadata rdf:resource="info:fedora/demo:ri2100"/>
-                        <nsdl:isMemberOf rdf:resource="info:fedora/demo:ri1010"/>
+                        <fedora-rels-ext:isMemberOfCollection rdf:resource="info:fedora/demo:ri1010"/>
                     </rdf:Description>
                 </rdf:RDF>
             </foxml:xmlContent>
