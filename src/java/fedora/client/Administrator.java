@@ -135,7 +135,7 @@ public class Administrator extends JFrame {
                 + "limitations under the License.<p>"
                 + "<p>"
                 + "Version: 1.1<p>Release Date: "
-                + "August 1, 2003<p>"
+                + "August 5, 2003<p>"
                 + "See http://www.fedora.info/ for "
                 + "more information.");
 
