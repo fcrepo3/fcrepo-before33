@@ -9,7 +9,6 @@ import fedora.server.errors.StorageDeviceException;
 import fedora.server.storage.METSDOSerializer;
 import fedora.server.storage.DefinitiveDOWriter;
 import fedora.server.storage.METSDODeserializer;
-import fedora.server.storage.METSDOSerializer;
 import fedora.server.storage.TestFileStreamStorage;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
