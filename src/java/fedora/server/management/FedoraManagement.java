@@ -9,7 +9,7 @@ package fedora.server.management;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
- * @author Sandy Payette
+ * @author Sandy Payette xxxxx
  * @version 1.0
  */
 
