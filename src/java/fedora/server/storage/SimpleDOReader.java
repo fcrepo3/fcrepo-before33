@@ -656,7 +656,7 @@ public class SimpleDOReader
                         versDateTime);
                 if (methods!=null) {
                     for (int j=0; j<methods.length; j++) {
-                        methodList.add(methods[i]);
+                        methodList.add(methods[j]);
                         bDefIDList.add(diss.bDefID);
                     }
                 }
