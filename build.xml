@@ -407,6 +407,16 @@
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
 		-->
+		<echo message="Translating versioning.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/server/versioning.html"/>
+			<arg path="src/dbx/userdocs/versioning.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>		
 		<copy todir="dist/userdocs/client/admin-gui/images">
 			<fileset dir="src/jpg/client/file"/>
 		</copy>
@@ -418,7 +428,7 @@
 		</copy>
 		<copy todir="dist/userdocs/client/admin-gui/images">
 			<fileset dir="src/jpg/client/window"/>
-		</copy>				
+		</copy>
 		<!--
 		<copy file="src/jpg/client/tools/build.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
 		<copy file="src/jpg/client/tools/build-ingest.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
