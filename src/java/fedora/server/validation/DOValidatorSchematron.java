@@ -14,7 +14,6 @@ import java.net.URL;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.*;
 
 
@@ -22,7 +21,7 @@ import javax.xml.transform.*;
  *
  * <p><b>Title:</b> DOValidatorSchematron.java</p>
  * <p><b>Description:</b> Schematron validation for fedora objects encoded in
- * schematron schema for Fedora.  The schematron schema (fedoraRulesExt.xml)
+ * schematron schema for Fedora.  The schematron schema (metsExtRules1-0.xml)
  * expresses a set of rules using XPATH that enable us to check for things
  * that are either not expressed in the METS XML schema, or that cannot be
  * expressed with XML Schema language.  Generally we will look for things
@@ -64,15 +63,15 @@ public class DOValidatorSchematron
    *
    * @param schemaPath  the URL of the Schematron schema
    * @param preprocessorPath the location of the Schematron preprocessor
-   * @param workFlowPhase the phase in the fedora object lifecycle to which
+   * @param phase the phase in the fedora object lifecycle to which
    *                      validation should pertain.  (Currently options are
    *                      "ingest" and "store"
    * @throws ObjectValidityException
    */
-  public DOValidatorSchematron(String schemaPath, String preprocessorPath, String workFlowPhase)
+  public DOValidatorSchematron(String schemaPath, String preprocessorPath, String phase)
       throws ObjectValidityException
   {
-    validatingStyleSheet = setUp(preprocessorPath, schemaPath, workFlowPhase);
+    validatingStyleSheet = setUp(preprocessorPath, schemaPath, phase);
   }
 
   /**
@@ -151,40 +150,40 @@ public class DOValidatorSchematron
    *
    * @param preprocessorPath the location of the Schematron preprocessor
    * @param fedoraschemaPath the URL of the Schematron schema
-   * @param workFlowPhase the phase in the fedora object lifecycle to which
+   * @param phase the phase in the fedora object lifecycle to which
    *                      validation should pertain.  (Currently options are
    *                      "ingest" and "store"
    * @return StreamSource
    * @throws ObjectValidityException
    */
-  private StreamSource setUp(String preprocessorPath, String fedoraschemaPath, String workFlowPhase)
+  private StreamSource setUp(String preprocessorPath, String fedoraschemaPath, String phase)
     throws ObjectValidityException
   {
     rulesSource = fileToStreamSource(fedoraschemaPath);
     preprocessorSource = fileToStreamSource(preprocessorPath);
-    return(createValidatingStyleSheet(rulesSource, preprocessorSource, workFlowPhase));
+    return(createValidatingStyleSheet(rulesSource, preprocessorSource, phase));
   }
 
   /**
    * Create the validating stylesheet which will be used to perform the actual
    * Schematron validation.  The validating stylesheet is created dynamically
    * using the preprocessor stylesheet and the Schematron schema for Fedora.
-   * The workFlowPhase is key.  The stylesheet is created for the appropriate
-   * phase as specified in the fedoraRulesExt.xml schema.  Valid work flow phases
+   * The phase is key.  The stylesheet is created for the appropriate
+   * phase as specified in the Schematron rules schema.  Valid work flow phases
    * are currently "ingest" and "store."  Different schematron rules apply to
    * different phases of the object lifecycle.  Some rules are applied when
    * an object is first being ingested into the repository.  Other rules apply
    * before the object is put into permanent storage.
    * @param rulesSource the location of the rules
    * @param preprocessorSource the location of the Schematron preprocessor
-   * @param workFlowPhase the phase in the fedora object lifecycle to which
+   * @param phase the phase in the fedora object lifecycle to which
    *                      validation should pertain.  (Currently options are
    *                      "ingest" and "store"
    * @return StreamSource
    * @throws ObjectValidityException
    */
   private StreamSource createValidatingStyleSheet(
-    StreamSource rulesSource, StreamSource preprocessorSource, String workFlowPhase)
+    StreamSource rulesSource, StreamSource preprocessorSource, String phase)
     throws ObjectValidityException
   {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -194,7 +193,7 @@ public class DOValidatorSchematron
       // Transform the Schematron schema (rules) into a validating stylesheet.
       TransformerFactory tfactory = TransformerFactory.newInstance();
       Transformer ptransformer = tfactory.newTransformer(preprocessorSource);
-      ptransformer.setParameter("phase", workFlowPhase);
+      ptransformer.setParameter("phase", phase);
       ptransformer.transform(rulesSource, new StreamResult(out));
     }
     catch(TransformerException e)
@@ -222,7 +221,6 @@ public class DOValidatorSchematron
       path = '/' + path;
     try {
       String url = new URL("file", null, path).toString();
-      //System.out.println("file to URL for StreamSource: " + url);
       return new StreamSource(url);
     }
     catch (java.net.MalformedURLException e) {
