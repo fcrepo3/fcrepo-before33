@@ -10,15 +10,35 @@ import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 
 /**
- * A RepositoryReader that provides facilities for creating
- * and modifying objects within the repository, as well as 
- * a query facility.
+ *
+ * <p><b>Title:</b> DOManager.java</p>
+ * <p><b>Description:</b> A RepositoryReader that provides facilities for creating
+ * and modifying objects within the repository, as well as
+ * a query facility.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
-public interface DOManager 
+public interface DOManager
         extends RepositoryReader {
-        
+
     /**
      * Relinquishes control of a DOWriter back to the DOManager.
      * <p></p>
@@ -32,9 +52,9 @@ public interface DOManager
      * a persistent lock in that it remains even after the system is
      * shutdown or the DOWriter object is garbage collected.
      * <p></p>
-     * The other kind of lock is more temporary.  It's called a session lock.  
-     * This is used to guarantee that the same user can't get more than one 
-     * handle (DOWriter) on the same underlying object.  To release the 
+     * The other kind of lock is more temporary.  It's called a session lock.
+     * This is used to guarantee that the same user can't get more than one
+     * handle (DOWriter) on the same underlying object.  To release the
      * session lock, a DOWriter user calls this method.
      */
     public abstract void releaseWriter(DOWriter writer)
@@ -52,7 +72,7 @@ public interface DOManager
             throws ServerException;
 
     /**
-     * Creates a digital object with a newly-allocated pid, and returns 
+     * Creates a digital object with a newly-allocated pid, and returns
      * a DOWriter on it.  The initial state will be "L" (locked).
      *
      * @param context The context of this request.
@@ -62,7 +82,7 @@ public interface DOManager
      */
     public abstract DOWriter newWriter(Context context)
             throws ServerException;
-    
+
     /**
      * Creates a copy of the digital object given by the InputStream,
      * with either a new PID or the PID indicated by the InputStream.
@@ -76,25 +96,25 @@ public interface DOManager
      */
     public abstract DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException;
-        
+
     /**
-     * Gets a list of object PIDs (accessible in the given context) with the 
+     * Gets a list of object PIDs (accessible in the given context) with the
      * given criteria.  Any parameter whose name ends with "Pattern" may
      * use the * and ? wildcards.  A parameter given as null means "any".
      */
-    public String[] listObjectPIDs(Context context, String pidPattern, 
-            String foType, String lockedByPattern, String state, 
-            String labelPattern, String contentModelIdPattern, 
-            Calendar createDateMin, Calendar createDateMax, 
-            Calendar lastModDateMin, Calendar lastModDateMax) 
+    public String[] listObjectPIDs(Context context, String pidPattern,
+            String foType, String lockedByPattern, String state,
+            String labelPattern, String contentModelIdPattern,
+            Calendar createDateMin, Calendar createDateMax,
+            Calendar lastModDateMin, Calendar lastModDateMax)
             throws ServerException;
-            
-    public FieldSearchResult findObjects(Context context, 
-            String[] resultFields, int maxResults, FieldSearchQuery query) 
+
+    public FieldSearchResult findObjects(Context context,
+            String[] resultFields, int maxResults, FieldSearchQuery query)
             throws ServerException;
 
     public FieldSearchResult resumeFindObjects(Context context,
-            String sessionToken) 
+            String sessionToken)
             throws ServerException;
-            
+
 }

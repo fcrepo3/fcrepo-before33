@@ -19,8 +19,8 @@ import fedora.server.storage.types.MethodDefOperationBind;
 import fedora.server.storage.types.MethodParmDef;
 
 /**
- * <p>Title: FastBmechReader.java</p>
- * <p>Description: BMECH Object Reader that accesses objects located in the
+ * <p><b>Title: </b>FastBmechReader.java</p>
+ * <p><b>Description: </b>BMECH Object Reader that accesses objects located in the
  * "Fast" storage area. It mirros the functionality of SimpleBMechReader for
  * the "Definitive" storage aread. To enhance performance of disseminations,
  * there are two distinct storage areas for digital objects:
@@ -54,14 +54,30 @@ import fedora.server.storage.types.MethodParmDef;
  * When the object exists in both storage areas, preference is given to the
  * Fast storage area since this reader is designed to read primarily from the
  * Fast Storage area. A <code>SimpleBMechReader</code> should always be used to
- * read the authoritative version of a bmech object.</p> <i><b>Note that
- * versioning is not implemented in Phase 1. Methods in
+ * read the authoritative version of a bmech object.</p>
+ * <p><i><b>Note that versioning is not implemented in Phase 1. Methods in
  * <code>FastBmechReader</code> that contain arguments related to versioning
  * date such as <code>versDateTime</code> or <code>asOfDate</code> will be
- * ignored in Phase 1.</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Ross Wayland
+ * ignored in Phase 1.</i></p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author rlw@virginia.edu
  * @version 1.0
  */
 public class FastBmechReader extends FastDOReader implements BMechReader

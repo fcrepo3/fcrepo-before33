@@ -10,15 +10,15 @@ import fedora.server.utilities.TableCreatingConnection;
 
 /**
  * <p>Title: ConnectionPool.java</p>
- * <p>Description: A class for preallocating, recycling, and managing</p>
- * <p>JDBC connections.</p>
+ * <p>Description: A class for preallocating, recycling, and managing
+ * JDBC connections.</p>
+ *
  * <p>Copyright: Taken/adapted from Core Servlets and JavaServer Pages</p>
  * <p>from Prentice Hall and Sun Microsystems Press,</p>
- * <p>http://www.coreservlets.com/</p>
+ * <p><a href="http://www.coreservlets.com/">http://www.coreservlets.com/</a></p>
  * <p>&copy; 2000 Marty Hall; may be freely used or adapted</p>
- * <p>Company: </p>
+ *
  * @author Marty Hall
- * @version 1.0
  */
 public class ConnectionPool implements Runnable
 {

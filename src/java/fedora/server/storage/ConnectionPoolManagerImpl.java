@@ -13,16 +13,32 @@ import fedora.server.Server;
 import fedora.server.utilities.DDLConverter;
 
 /**
- * <p>Title: ConnectionPoolManagerImpl.java</p>
- * <p>Description: Implements ConnectionPoolManager to facilitate obtaining
+ *
+ * <p><b>Title:</b> ConnectionPoolManagerImpl.java</p>
+ * <p><b>Description:</b> Implements ConnectionPoolManager to facilitate obtaining
  * database connection pools. This class initializes the connection pools
  * specified by parameters in the Fedora <code>fedora.fcfg</code> configuration
  * file. The Fedora server must be instantiated in order for this class to
  * function properly.</p>
  *
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Ross Wayland
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author rlw@virginia.edu
  * @version 1.0
  */
 public class ConnectionPoolManagerImpl extends Module

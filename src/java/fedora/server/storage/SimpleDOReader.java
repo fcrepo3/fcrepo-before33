@@ -34,9 +34,29 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 
 /**
- * A DOReader backed by a DigitalObject.
+ *
+ * <p><b>Title:</b> SimpleDOReader.java</p>
+ * <p><b>Description:</b> A DOReader backed by a DigitalObject.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
 public class SimpleDOReader
         extends StdoutLogging
@@ -116,7 +136,7 @@ public class SimpleDOReader
     public String getLockingUser() {
         return m_obj.getLockingUser();
     }
-    
+
     public List getAuditRecords() {
         return m_obj.getAuditRecords();
     }
@@ -521,7 +541,7 @@ public class SimpleDOReader
     }
 
     public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
-          String methodName, Date versDateTime) 
+          String methodName, Date versDateTime)
           throws ServerException {
         // Results will be returned in this array, one item per datastream
         DisseminationBindingInfo[] bindingInfo;
@@ -538,7 +558,7 @@ public class SimpleDOReader
         bindingInfo=new DisseminationBindingInfo[dsCount];
         // The bmech reader provides information about the service and params.
         BMechReader mech=m_repoReader.getBMechReader(m_context, diss.bMechID);
-        MethodParmDef[] methodParms=mech.getServiceMethodParms(methodName, versDateTime); 
+        MethodParmDef[] methodParms=mech.getServiceMethodParms(methodName, versDateTime);
         // Find the operation bindings for the method in question
         MethodDefOperationBind[] opBindings=mech.getServiceMethodBindings(versDateTime);
         String addressLocation=null;
@@ -553,12 +573,12 @@ public class SimpleDOReader
             }
         }
         if (!foundMethod) {
-            throw new MethodNotFoundException("Method " + methodName 
+            throw new MethodNotFoundException("Method " + methodName
                     + " was not found in " + diss.bMechID + "'s operation "
                     + " binding.");
         }
-        // For each datastream referenced by the disseminator's ds bindings, 
-        // add an element to the output array which includes key information 
+        // For each datastream referenced by the disseminator's ds bindings,
+        // add an element to the output array which includes key information
         // on the operation and the datastream.
         for (int i=0; i<dsCount; i++) {
             String dsID=dsBindings[i].datastreamID;
@@ -575,10 +595,10 @@ public class SimpleDOReader
             bindingInfo[i].OperationLocation=operationLocation;
             bindingInfo[i].ProtocolType=protocolType;
         }
-        return bindingInfo;         
+        return bindingInfo;
     }
 
-    public ObjectMethodsDef[] getObjectMethods(Date versDateTime) 
+    public ObjectMethodsDef[] getObjectMethods(Date versDateTime)
             throws ServerException {
         String[] ids=ListDisseminatorIDs("A");
         ArrayList methodList=new ArrayList();
@@ -586,7 +606,7 @@ public class SimpleDOReader
         for (int i=0; i<ids.length; i++) {
             Disseminator diss=GetDisseminator(ids[i], versDateTime);
             if (diss!=null) {
-                MethodDef[] methods=getObjectMethods(diss.bDefID, 
+                MethodDef[] methods=getObjectMethods(diss.bDefID,
                         versDateTime);
                 if (methods!=null) {
                     for (int j=0; j<methods.length; j++) {

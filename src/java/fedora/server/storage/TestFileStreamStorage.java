@@ -13,15 +13,40 @@ import java.io.OutputStream;
 
 import java.io.ByteArrayInputStream;
 
+/**
+ *
+ * <p><b>Title:</b> TestFileStreamStorage.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class TestFileStreamStorage
         implements TestStreamStorage {
 
     private File m_baseDir;
-    
+
     private int m_bufSize;
 
     /** Creates if dir doesn't exist, one level only. */
-    public TestFileStreamStorage(File baseDir, int bufSize) 
+    public TestFileStreamStorage(File baseDir, int bufSize)
             throws StorageDeviceException {
         m_baseDir=baseDir;
         m_bufSize=bufSize;
@@ -33,7 +58,7 @@ public class TestFileStreamStorage
         }
     }
 
-    public void add(String id, InputStream in) 
+    public void add(String id, InputStream in)
             throws ObjectExistsException, StorageDeviceException {
         try {
             pipeStream(in, new FileOutputStream(getNewFile(id)));
@@ -43,7 +68,7 @@ public class TestFileStreamStorage
         }
     }
 
-    public void replace(String id, InputStream in) 
+    public void replace(String id, InputStream in)
             throws ObjectNotFoundException, StorageDeviceException {
         try {
             pipeStream(in, new FileOutputStream(getExistingFile(id)));
@@ -70,7 +95,7 @@ public class TestFileStreamStorage
         }
     }
 
-    private File getExistingFile(String id) 
+    private File getExistingFile(String id)
             throws ObjectNotFoundException {
         File f=new File(m_baseDir, id.replace(':', '_'));
         if (!f.exists()) {
@@ -78,8 +103,8 @@ public class TestFileStreamStorage
         }
         return f;
     }
-    
-    private File getNewFile(String id) 
+
+    private File getNewFile(String id)
             throws ObjectExistsException {
         File f=new File(m_baseDir, id.replace(':', '_'));
         if (f.exists()) {
@@ -88,7 +113,7 @@ public class TestFileStreamStorage
         return f;
     }
 
-    private void pipeStream(InputStream in, OutputStream out) 
+    private void pipeStream(InputStream in, OutputStream out)
             throws StorageDeviceException {
         try {
             byte[] buf = new byte[m_bufSize];
@@ -108,7 +133,7 @@ public class TestFileStreamStorage
             }
         }
     }
-    
+
     public static void main(String[] args) {
         try {
             TestFileStreamStorage storage=new TestFileStreamStorage(new File("."), 4096);
@@ -125,7 +150,7 @@ public class TestFileStreamStorage
             }
             in.close();
             System.out.println("myns:1 contained '" + out.toString() + "'");
-            
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

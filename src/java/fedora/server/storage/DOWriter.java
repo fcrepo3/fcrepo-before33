@@ -16,27 +16,48 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
 
 /**
- * The standard interface for write operations on a digital object.
- * <p></p>
- * A <code>DOWriter</code> instance is a handle on a Fedora digital object,
- * and is obtained via a <code>getWriter(String)</code> call on a 
- * <code>DOManager</code>.
- * <p></p>
- * Call save() to save changes while working with a DOWriter, where the
- * DOWriter handle may be lost but the changes need to be remembered.
- * <p></p>
- * Work with a DOWriter ends with either commit() or cancel().
+ *
+ * <p><b>Title:</b> DOWriter.java</p>
+ * <p><b>Description:</b> The standard interface for write operations on a
+ * digital object.</p>
+ *
+ * <p>A <code>DOWriter</code> instance is a handle on a Fedora digital object,
+ * and is obtained via a <code>getWriter(String)</code> call on a
+ * <code>DOManager</code>.</p>
+ *
+ * <p>Call save() to save changes while working with a DOWriter, where the
+ * DOWriter handle may be lost but the changes need to be remembered.</p>
+ *
+ * <p>Work with a DOWriter ends with either commit() or cancel().</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
-public interface DOWriter 
+public interface DOWriter
         extends DOReader {
 
     /**
      * Sets the state of the entire digital object.
      *
      * @param state The state.
-     * @throws ServerException If any type of error occurred fulfilling the 
+     * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
     public void setState(String state) throws ServerException;
@@ -45,7 +66,7 @@ public interface DOWriter
      * Sets the label of the digital object.
      *
      * @param label The label.
-     * @throws ServerException If any type of error occurred fulfilling the 
+     * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
     public void setLabel(String label) throws ServerException;
@@ -53,16 +74,16 @@ public interface DOWriter
     /**
      * Removes the entire digital object.
      *
-     * @throws ServerException If any type of error occurred fulfilling the 
+     * @throws ServerException If any type of error occurred fulfilling the
      *         request.
-     */    
+     */
     public void remove() throws ServerException;
 
     /**
      * Adds a datastream to the object.
      *
      * @param datastream The datastream.
-     * @throws ServerException If any type of error occurred fulfilling the 
+     * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
     public void addDatastream(Datastream datastream) throws ServerException;
@@ -72,55 +93,55 @@ public interface DOWriter
      *
      * @param disseminator The disseminator.
      * @return An internally-unique disseminator id.
-     * @throws ServerException If any type of error occurred fulfilling the 
+     * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void addDisseminator(Disseminator disseminator) 
+    public void addDisseminator(Disseminator disseminator)
             throws ServerException;
 
     /**
      * Removes a datastream from the object.
      *
      * @param id The id of the datastream.
-     * @param start The start date (inclusive) of versions to remove.  If 
-     *        <code>null</code>, this is taken to be the smallest possible 
+     * @param start The start date (inclusive) of versions to remove.  If
+     *        <code>null</code>, this is taken to be the smallest possible
      *        value.
-     * @param end The end date (inclusive) of versions to remove.  If 
-     *        <code>null</code>, this is taken to be the greatest possible 
+     * @param end The end date (inclusive) of versions to remove.  If
+     *        <code>null</code>, this is taken to be the greatest possible
      *        value.
-     * @throws ServerException If any type of error occurred fulfilling the 
+     * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void removeDatastream(String id, Date start, Date end) 
+    public void removeDatastream(String id, Date start, Date end)
             throws ServerException;
 
     /**
      * Removes a disseminator from the object.
      *
      * @param id The id of the datastream.
-     * @param start The start date (inclusive) of versions to remove.  If 
-     *        <code>null</code>, this is taken to be the smallest possible 
+     * @param start The start date (inclusive) of versions to remove.  If
+     *        <code>null</code>, this is taken to be the smallest possible
      *        value.
-     * @param end The end date (inclusive) of versions to remove.  If 
-     *        <code>null</code>, this is taken to be the greatest possible 
+     * @param end The end date (inclusive) of versions to remove.  If
+     *        <code>null</code>, this is taken to be the greatest possible
      *        value.
-     * @throws ServerException If any type of error occurred fulfilling the 
+     * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void removeDisseminator(String id, Date start, Date end) 
+    public void removeDisseminator(String id, Date start, Date end)
             throws ServerException;
 
     /**
      * Saves the changes thus far to the permanent copy of the digital object.
      *
      * @param logMessage An explanation of the change(s).
-     * @throws ServerException If any type of error occurred fulfilling the 
+     * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
     public void commit(String logMessage) throws ServerException;
 
     public void save() throws ServerException;
-            
+
     public void cancel() throws ServerException;
 
     /**

@@ -32,8 +32,8 @@ import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 
 /**
- * <p>Title: FastDOReader.java</p>
- * <p>Description: Digital Object Reader that accesses objects located in the
+ * <p><b>Title: </b>FastDOReader.java</p>
+ * <p><b>Description: </b>Digital Object Reader that accesses objects located in the
  * "Fast" storage area. To enhance performance of disseminations, there are
  * two distinct storage areas for digital objects:
  * <ol>
@@ -67,14 +67,29 @@ import fedora.server.storage.types.MethodParmDef;
  * Fast storage area since this reader is designed to read primarily from the
  * Fast Storage area. <code>SimpleDODOReader</code>
  * should always be used to read the authoritative version of an object.</p>
- * <i><b>Note that versioning is not implemented in Phase 1. Methods in
+ * <p><i>Note that versioning is not implemented in Phase 1. Methods in
  * <code>FastDOReader</code> that contain arguments related to versioning date
  * such as <code>versDateTime</code> or <code>asOfDate</code> will be ignored
- * in Phase 1.</p>
- * <p></p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Ross Wayland
+ * in Phase 1.</i></p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author rlw@virginia.edu
  * @version 1.0
  */
 public class FastDOReader implements DOReader
@@ -974,7 +989,7 @@ public class FastDOReader implements DOReader
         {
           doReader = m_manager.getReader(m_context, GetObjectPID());
         }
-        dissBindInfoArray=doReader.getDisseminationBindingInfo(bDefPID, 
+        dissBindInfoArray=doReader.getDisseminationBindingInfo(bDefPID,
                 methodName, versDateTime);
       } catch (Throwable th)
       {
@@ -1406,7 +1421,7 @@ public class FastDOReader implements DOReader
       }
       return doReader.getLockingUser();
   }
-  
+
   public List getAuditRecords()
           throws ServerException, StorageDeviceException, ObjectNotFoundException {
       if (doReader==null) {
@@ -1414,7 +1429,7 @@ public class FastDOReader implements DOReader
       }
       return doReader.getAuditRecords();
   }
-  
+
   /**
    * <p>Gets the XML representation of the object. Since the XML representation
    * of an object is not stored in the Fast storage area, this method always

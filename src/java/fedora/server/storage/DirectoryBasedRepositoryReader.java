@@ -20,23 +20,43 @@ import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.translation.DOTranslator;
 
 /**
- * A RepositoryReader that uses a directory of serialized objects
- * as its working repository.
- * <p></p>
- * All files in the directory must be digital object serializations,
- * and none may have the same PID.  This is verified upon construction.
- * <p></p>
- * Note: This implementation does not recognize when files are added
+ *
+ * <p><b>Title:</b> DirectoryBasedRepositoryReader.java</p>
+ * <p><b>Description:</b> A RepositoryReader that uses a directory of serialized
+ * objects as its working repository.</p>
+ *
+ * <p>All files in the directory must be digital object serializations,
+ * and none may have the same PID.  This is verified upon construction.</p>
+ *
+ * <p>Note: This implementation does not recognize when files are added
  * to the directory.  What is in the directory at construction-time
  * is what is assumed to be the extent of the repository for the life
- * of the object.
+ * of the object.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
-public class DirectoryBasedRepositoryReader 
+public class DirectoryBasedRepositoryReader
         extends StdoutLogging
         implements RepositoryReader {
-        
+
     private File m_directory;
     private DOTranslator m_translator;
     private String m_shortExportFormat;
@@ -44,7 +64,7 @@ public class DirectoryBasedRepositoryReader
     private String m_storageFormat;
     private String m_encoding;
     private HashMap m_files=new HashMap();
- 
+
     /**
      * Initializes the RepositoryReader by looking at all files in the
      * provided directory and ensuring that they're all serialized
@@ -59,8 +79,8 @@ public class DirectoryBasedRepositoryReader
      */
     public DirectoryBasedRepositoryReader(File directory, DOTranslator translator,
             String shortExportFormat, String longExportFormat, String storageFormat,
-            String encoding, Logging logTarget) 
-            throws StorageDeviceException, ObjectIntegrityException, 
+            String encoding, Logging logTarget)
+            throws StorageDeviceException, ObjectIntegrityException,
             StreamIOException, UnsupportedTranslationException,
             ServerException {
         super(logTarget);
@@ -96,8 +116,8 @@ public class DirectoryBasedRepositoryReader
             // naw
         }
     }
-    
-    private InputStream getStoredObjectInputStream(String pid) 
+
+    private InputStream getStoredObjectInputStream(String pid)
             throws ObjectNotFoundException {
         try {
             return new FileInputStream((File) m_files.get(pid));
@@ -106,17 +126,17 @@ public class DirectoryBasedRepositoryReader
                     + "not found in the repository.");
         }
     }
-        
-    public DOReader getReader(Context context, String pid) 
-            throws ObjectIntegrityException, ObjectNotFoundException, 
+
+    public DOReader getReader(Context context, String pid)
+            throws ObjectIntegrityException, ObjectNotFoundException,
             StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleDOReader(null, this, m_translator,
                 m_shortExportFormat, m_longExportFormat, m_storageFormat,
                 m_encoding, getStoredObjectInputStream(pid), this);
     }
-            
-    public BMechReader getBMechReader(Context context, String pid) 
-            throws ObjectIntegrityException, ObjectNotFoundException, 
+
+    public BMechReader getBMechReader(Context context, String pid)
+            throws ObjectIntegrityException, ObjectNotFoundException,
             StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleBMechReader(null, this, m_translator,
                 m_shortExportFormat, m_longExportFormat, m_storageFormat,
@@ -124,7 +144,7 @@ public class DirectoryBasedRepositoryReader
     }
 
     public BDefReader getBDefReader(Context context, String pid)
-            throws ObjectIntegrityException, ObjectNotFoundException, 
+            throws ObjectIntegrityException, ObjectNotFoundException,
             StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleBDefReader(null, this, m_translator,
                 m_shortExportFormat, m_longExportFormat, m_storageFormat,
