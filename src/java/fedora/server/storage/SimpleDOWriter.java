@@ -18,6 +18,7 @@ import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.ValidationException;
 import fedora.server.storage.DefaultDOManager;
 import fedora.server.storage.translation.DOTranslator;
+import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
@@ -167,25 +168,32 @@ public class SimpleDOWriter
         ArrayList removeList=new ArrayList();
         for (int i=0; i<versions.size(); i++) {
             Datastream ds=(Datastream) versions.get(i);
+            boolean doRemove=false;
             if (start!=null) {
                 if (end!=null) {
                     if ( (ds.DSCreateDT.compareTo(start)>=0)
                             && (ds.DSCreateDT.compareTo(end)<=0) ) {
-                        removeList.add(ds);
+                        doRemove=true;
                     }
                 } else {
                     if (ds.DSCreateDT.compareTo(start)>=0) {
-                        removeList.add(ds);
+                        doRemove=true;
                     }
                 }
             } else {
                 if (end!=null) {
                     if (ds.DSCreateDT.compareTo(end)<=0) {
-                        removeList.add(ds);
+                        doRemove=true;
                     }
                 } else {
-                    removeList.add(ds);
+                    doRemove=true;
                 }
+            }
+            if (doRemove) {
+                // remove associated audit records...
+                removeObjectAuditRecords(ds.auditRecordIdList());
+                // ...then add this datastream to the datastream to-be-removed list.
+                removeList.add(ds);
             }
         }
         versions.removeAll(removeList);
@@ -212,28 +220,68 @@ public class SimpleDOWriter
         ArrayList removeList=new ArrayList();
         for (int i=0; i<versions.size(); i++) {
             Disseminator diss=(Disseminator) versions.get(i);
+            boolean doRemove=false;
             if (start!=null) {
                 if (end!=null) {
                     if ( (diss.dissCreateDT.compareTo(start)>=0)
                             && (diss.dissCreateDT.compareTo(end)<=0) ) {
-                        removeList.add(diss);
+                        doRemove=true;
                     }
                 } else {
                     if (diss.dissCreateDT.compareTo(start)>=0) {
-                        removeList.add(diss);
+                        doRemove=true;
                     }
                 }
             } else {
                 if (end!=null) {
                     if (diss.dissCreateDT.compareTo(end)<=0) {
-                        removeList.add(diss);
+                        doRemove=true;
                     }
                 } else {
-                    removeList.add(diss);
+                    doRemove=true;
                 }
+            }
+            if (doRemove) {
+                // remove associated audit records...
+                //
+                // FIXME: Currently, disseminators have no audit records,
+                // so this step is skipped.  Versioning code is not yet
+                // implemented for disseminators anyway, but when it is,
+                // we need to add an auditRecordIdList to the disseminator
+                // class.  (ADMID is supported for interfaceDefs in METS1.3)
+                //
+                // removeObjectAuditRecords(diss.auditRecordIdList());
+                //
+                // ...then add this disseminator to the disseminator to-be-removed list.
+                removeList.add(diss);
             }
         }
         versions.removeAll(removeList);
+    }
+
+    /**
+     * Remove the audit records with ids given in the list.
+     *
+     * This is a helper method for removeDatastream and removeDisseminator,
+     * which need to clean up associated audit records.
+     *
+     * @param auditIds a List of audit record ids.
+     */
+    private void removeObjectAuditRecords(List auditIds) {
+        StringBuffer removeAuditIds=new StringBuffer();
+        for (int j=0; j<auditIds.size(); j++) {
+            String auditId=(String) auditIds.get(j);
+            removeAuditIds.append("#" + auditId + "#");
+        }
+        List objectAuditRecords=m_obj.getAuditRecords();
+        ArrayList removeAuditList=new ArrayList();
+        for (int j=0; j<objectAuditRecords.size(); j++) {
+            AuditRecord objectAuditRecord=(AuditRecord) objectAuditRecords.get(j);
+            if (removeAuditIds.indexOf("#" + objectAuditRecord.id + "#")!=-1) {
+                removeAuditList.add(objectAuditRecord);
+            }
+        }
+        objectAuditRecords.removeAll(removeAuditList);
     }
 
     /**

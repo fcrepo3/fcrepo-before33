@@ -100,7 +100,9 @@ public interface DOWriter
             throws ServerException;
 
     /**
-     * Removes a datastream from the object.
+     * Removes a range of datastream versions from an object without leaving
+     * anything behind.  If any integrity checks need to be done, they should
+     * be done outside of this code.
      *
      * @param id The id of the datastream.
      * @param start The start date (inclusive) of versions to remove.  If
@@ -116,7 +118,9 @@ public interface DOWriter
             throws ServerException;
 
     /**
-     * Removes a disseminator from the object.
+     * Removes a range of disseminator versions from an object without leaving
+     * anything behind.  If any integrity checks need to be done, they should
+     * be done outside of this code.
      *
      * @param id The id of the datastream.
      * @param start The start date (inclusive) of versions to remove.  If
