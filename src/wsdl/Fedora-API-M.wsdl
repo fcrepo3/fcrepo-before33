@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions targetNamespace="http://www.fedora.info/definitions/1/0/api/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" xmlns:fedora-auditing="http://www.fedora.info/definitions/1/0/auditing/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" name="Fedora-API-M-WSDL">
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" xmlns:fedora-auditing="http://www.fedora.info/definitions/1/0/auditing/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" targetNamespace="http://www.fedora.info/definitions/1/0/api/" name="Fedora-API-M-WSDL">
 	<import namespace="http://www.fedora.info/definitions/1/0/types/" location="fedora-types.xsd"/>
 	<import namespace="http://www.fedora.info/definitions/1/0/auditing/" location="fedora-auditing.xsd"/>
 	<types>
@@ -14,523 +14,269 @@
 			<wsdldoc:type name="fedora-types:Disseminator" url="http://www.fedora.info/definitions/1/0/types/#Disseminator"/>
 			<wsdldoc:type name="fedora-types:ArrayOfDisseminator" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDisseminator"/>
 			<wsdldoc:type name="fedora-types:UserInfo" url="http://www.fedora.info/definitions/1/0/types/#UserInfo"/>
+			<wsdldoc:type name="fedora-types:ArrayOfProperty" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfProperty"/>
 			<wsdldoc:type name="fedora-auditing:ArrayOfAuditRecord" url="http://www.fedora.info/definitions/1/0/auditing/#ArrayOfAuditRecord"/>
 		</documentation>
 	</types>
 	<message name="ingestRequest">
-		<part name="XML" type="xsd:base64Binary">
-			<documentation>the digital object in an XML submission format.</documentation>
-		</part>
-		<part name="format" type="xsd:string">
-			<documentation>the XML format of the submission</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a log message.</documentation>
-		</part>
+		<part name="XML" type="xsd:base64Binary"/>
+		<part name="format" type="xsd:string"/>
+		<part name="logMessage" type="xsd:string"/>
 	</message>
 	<message name="ingestObjectRequest">
-		<part name="METSXML" type="xsd:base64Binary">
-			<documentation>the digital object in an XML submission format.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a log message.</documentation>
-		</part>
+		<documentation>(DEPRECATED IN FEDORA 2.0. USE INGEST INSTEAD.)</documentation>
+		<part name="METSXML" type="xsd:base64Binary"/>
+		<part name="logMessage" type="xsd:string"/>
 	</message>
 	<message name="ingestObjectResponse">
-		<part name="response" type="xsd:string">
-			<documentation>the pid of the newly created object.</documentation>
-		</part>
+		<part name="response" type="xsd:string"/>
 	</message>
 	<message name="modifyObjectRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="state" type="xsd:string">
-			<documentation>the new state, A, I or D.  Null means leave unchanged.</documentation>
-		</part>
-		<part name="label" type="xsd:string">
-			<documentation>the new label.  Null means leave unchanged.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a log message.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="state" type="xsd:string"/>
+		<part name="label" type="xsd:string"/>
+		<part name="logMessage" type="xsd:string"/>
 	</message>
-    <message name="modifyObjectResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="modifyObjectResponse">
+		<part name="response" type="xsd:string"/>
+	</message>
+	<message name="getObjectPropertiesRequest">
+		<part name="pid" type="xsd:string"/>
+	</message>
+	<message name="getObjectPropertiesResponse">
+		<part name="response" type="fedora-types:ArrayOfProperty"/>
+	</message>
 	<message name="getObjectXMLRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
 	</message>
 	<message name="getObjectXMLResponse">
-		<part name="response" type="xsd:base64Binary">
-			<documentation>the digital object in the Fedora XML internal storage format.</documentation>
-		</part>
+		<part name="response" type="xsd:base64Binary"/>
 	</message>
 	<message name="exportRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="format" type="xsd:string">
-			<documentation>the XML format to export.  Can be "metslikefedora1",
-      "foxml1.0", or null.  If null, will export in the default format
-      configured for the repository.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="format" type="xsd:string"/>
+		<part name="context" type="xsd:string"/>
 	</message>
 	<message name="exportObjectRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
+		<documentation>(DEPRECATED IN FEDORA 2.0. USE EXPORT INSTEAD.) 
+		Object will be exported in the default export format configured for the repository.</documentation>
+		<part name="pid" type="xsd:string"/>
 	</message>
 	<message name="exportObjectResponse">
-		<part name="response" type="xsd:base64Binary">
-			<documentation>the digital object in the requested XML format.</documentation>
-		</part>
+		<part name="response" type="xsd:base64Binary"/>
 	</message>
 	<message name="purgeObjectRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>an explanation of the purge.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="logMessage" type="xsd:string"/>
 	</message>
-    <message name="purgeObjectResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
-	<!--
-  <message name="getObjectAuditTrailRequest">
-    <part name="pid" type="xsd:string">
-      <documentation>the pid of the object.</documentation>
-    </part>
-  </message>
-  <message name="getObjectAuditTrailResponse">
-    <part name="response" type="fedora-auditing:ArrayOfAuditRecord">
-      <documentation>the ordered audit records for the object.</documentation>
-    </part>
-  </message>
-  -->
+	<message name="purgeObjectResponse">
+		<part name="response" type="xsd:string"/>
+	</message>
 	<message name="addDatastreamRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dsLabel" type="xsd:string">
-			<documentation>the label for the datastream.</documentation>
-		</part>
-		<part name="MIMEType" type="xsd:string">
-			<documentation>the mime type.</documentation>
-		</part>
-		<part name="dsLocation" type="xsd:string">
-			<documentation>the location of the datastream.  The content will be retrieved from this location.</documentation>
-		</part>
-		<part name="controlGroup" type="xsd:string">
-			<documentation>the control group.  This must be one of "X", "M", "R", or "E".</documentation>
-		</part>
-		<part name="MDClass" type="xsd:string">
-			<documentation>the metadata class.  This is only required if the controlGroup is "X", and it must be one of "descriptive", "digital provenance", "source", "rights", or "technical".</documentation>
-		</part>
-		<part name="MDType" type="xsd:string">
-			<documentation>the metadata type.  This is only required if the controlGroup is "X", and it should be a well-accepted string that indicates the type of metadata.</documentation>
-		</part>
-		<part name="dsState" type="xsd:string">
-			<documentation>the initial state of the datastream.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dsLabel" type="xsd:string"/>
+		<part name="MIMEType" type="xsd:string"/>
+		<part name="dsLocation" type="xsd:string"/>
+		<part name="controlGroup" type="xsd:string"/>
+		<part name="MDClass" type="xsd:string"/>
+		<part name="MDType" type="xsd:string"/>
+		<part name="dsState" type="xsd:string"/>
 	</message>
 	<message name="addDatastreamResponse">
-		<part name="response" type="xsd:string">
-			<documentation>the datastreamID of the newly added datastream.</documentation>
-		</part>
+		<part name="response" type="xsd:string"/>
 	</message>
 	<message name="createDatastreamRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dsID" type="xsd:string">
-			<documentation>the ID of the datastream (64 characters max).  
-			If given as null, Fedora will generate an id for you.</documentation>
-		</part>
-		<part name="dsLabel" type="xsd:string">
-			<documentation>the label for the datastream.</documentation>
-		</part>
-		<part name="versionable" type="xsd:boolean">
-			<documentation>Whether Fedora should maintain old versions of the datastream when it is modified,
-			or it should just over-write the old content.</documentation>
-		</part>
-		<part name="MIMEType" type="xsd:string">
-			<documentation>the mime type.</documentation>
-		</part>
-		<part name="formatURI" type="xsd:string">
-			<documentation>the format URI (a more granular format identifier than mime type).  Optional.</documentation>
-		</part>
-		<part name="dsLocation" type="xsd:string">
-			<documentation>the location of the datastream.  The content will be retrieved from this location.</documentation>
-		</part>
-		<part name="controlGroup" type="xsd:string">
-			<documentation>the control group.  This must be one of "X", "M", "R", or "E".</documentation>
-		</part>
-		<part name="dsState" type="xsd:string">
-			<documentation>the initial state of the datastream.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dsID" type="xsd:string"/>
+		<part name="dsLabel" type="xsd:string"/>
+		<part name="versionable" type="xsd:boolean"/>
+		<part name="MIMEType" type="xsd:string"/>
+		<part name="formatURI" type="xsd:string"/>
+		<part name="dsLocation" type="xsd:string"/>
+		<part name="controlGroup" type="xsd:string"/>
+		<part name="dsState" type="xsd:string"/>
 	</message>
 	<message name="createDatastreamResponse">
-		<part name="response" type="xsd:string">
-			<documentation>the datastreamID of the newly added datastream.</documentation>
-		</part>
+		<part name="response" type="xsd:string"/>
 	</message>
 	<message name="addDisseminatorRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="bDefPid" type="xsd:string">
-			<documentation>the pid of the behavior definition object.</documentation>
-		</part>
-		<part name="bMechPid" type="xsd:string">
-			<documentation>the pid of the behavior mechanism object.</documentation>
-		</part>
-		<part name="dissLabel" type="xsd:string">
-			<documentation>the label of the disseminator.</documentation>
-		</part>
-		<part name="bDefLabel" type="xsd:string">
-			<documentation>the label assigned to the behavior definition of the disseminator.</documentation>
-		</part>
-		<part name="bMechLabel" type="xsd:string">
-			<documentation>the label assigned to the behavior mechanism of the disseminator.</documentation>
-		</part>
-		<part name="bindingMap" type="fedora-types:DatastreamBindingMap">
-			<documentation>the binding map.</documentation>
-		</part>
-		<part name="dissState" type="xsd:string">
-			<documentation>the initial state of the disseminator.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="bDefPid" type="xsd:string"/>
+		<part name="bMechPid" type="xsd:string"/>
+		<part name="dissLabel" type="xsd:string"/>
+		<part name="bDefLabel" type="xsd:string"/>
+		<part name="bMechLabel" type="xsd:string"/>
+		<part name="bindingMap" type="fedora-types:DatastreamBindingMap"/>
+		<part name="dissState" type="xsd:string"/>
 	</message>
 	<message name="addDisseminatorResponse">
-		<part name="response" type="xsd:string">
-			<documentation>the ID of the newly created disseminator.</documentation>
-		</part>
+		<part name="response" type="xsd:string"/>
 	</message>
 	<message name="describeUserRequest">
-		<part name="id" type="xsd:string">
-			<documentation>the id of the user.</documentation>
-		</part>
+		<part name="id" type="xsd:string"/>
 	</message>
 	<message name="describeUserResponse">
-		<part name="response" type="fedora-types:UserInfo">
-			<documentation>information about the user.</documentation>
-		</part>
+		<part name="response" type="fedora-types:UserInfo"/>
 	</message>
 	<message name="modifyDatastreamByReferenceRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dsID" type="xsd:string">
-			<documentation>the ID of the datastream.</documentation>
-		</part>
-		<part name="dsLabel" type="xsd:string">
-			<documentation>the label for the datastream.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a message about the change.</documentation>
-		</part>
-		<part name="dsLocation" type="xsd:string">
-			<documentation>the url to the datastream.</documentation>
-		</part>
-		<part name="dsState" type="xsd:string">
-			<documentation>the state of the datastream.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dsID" type="xsd:string"/>
+		<part name="dsLabel" type="xsd:string"/>
+		<part name="logMessage" type="xsd:string"/>
+		<part name="dsLocation" type="xsd:string"/>
+		<part name="dsState" type="xsd:string"/>
 	</message>
-    <message name="modifyDatastreamByReferenceResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="modifyDatastreamByReferenceResponse">
+		<part name="response" type="xsd:string"/>
+	</message>
 	<message name="modifyDatastreamByValueRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dsID" type="xsd:string">
-			<documentation>the ID of the datastream.</documentation>
-		</part>
-		<part name="dsLabel" type="xsd:string">
-			<documentation>the label for the datastream.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a message about the change.</documentation>
-		</part>
-		<part name="dsContent" type="xsd:base64Binary">
-			<documentation>the content of the datastream.</documentation>
-		</part>
-		<part name="dsState" type="xsd:string">
-			<documentation>the state of the datastream.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dsID" type="xsd:string"/>
+		<part name="dsLabel" type="xsd:string"/>
+		<part name="logMessage" type="xsd:string"/>
+		<part name="dsContent" type="xsd:base64Binary"/>
+		<part name="dsState" type="xsd:string"/>
 	</message>
-    <message name="modifyDatastreamByValueResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="modifyDatastreamByValueResponse">
+		<part name="response" type="xsd:string"/>
+	</message>
 	<message name="modifyDisseminatorRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dissID" type="xsd:string">
-			<documentation>the ID of the disseminator.</documentation>
-		</part>
-		<part name="bMechPid" type="xsd:string">
-			<documentation>the pid of the behavior mechanism object.</documentation>
-		</part>
-		<part name="dissLabel" type="xsd:string">
-			<documentation>the label of the disseminator.</documentation>
-		</part>
-		<part name="bDefLabel" type="xsd:string">
-			<documentation>the label assigned to the bDef of the disseminator.</documentation>
-		</part>
-		<part name="bMechLabel" type="xsd:string">
-			<documentation>the label assigned to the bMech of the disseminator.</documentation>
-		</part>
-		<part name="bindingMap" type="fedora-types:DatastreamBindingMap">
-			<documentation>the binding map.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a message about the change.</documentation>
-		</part>
-		<part name="dissState" type="xsd:string">
-			<documentation>the state of the disseminator.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dissID" type="xsd:string"/>
+		<part name="bMechPid" type="xsd:string"/>
+		<part name="dissLabel" type="xsd:string"/>
+		<part name="bDefLabel" type="xsd:string"/>
+		<part name="bMechLabel" type="xsd:string"/>
+		<part name="bindingMap" type="fedora-types:DatastreamBindingMap"/>
+		<part name="logMessage" type="xsd:string"/>
+		<part name="dissState" type="xsd:string"/>
 	</message>
-    <message name="modifyDisseminatorResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="modifyDisseminatorResponse">
+		<part name="response" type="xsd:string"/>
+	</message>
 	<message name="setDatastreamStateRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dsID" type="xsd:string">
-			<documentation>the ID of the datastream.</documentation>
-		</part>
-		<part name="dsState" type="xsd:string">
-			<documentation>the state to be set on the datastream.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a message about the change.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dsID" type="xsd:string"/>
+		<part name="dsState" type="xsd:string"/>
+		<part name="logMessage" type="xsd:string"/>
 	</message>
-    <message name="setDatastreamStateResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="setDatastreamStateResponse">
+		<part name="response" type="xsd:string"/>
+	</message>
 	<message name="setDisseminatorStateRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dissID" type="xsd:string">
-			<documentation>the ID of the disseminator.</documentation>
-		</part>
-		<part name="dissState" type="xsd:string">
-			<documentation>the state to be set on the disseminator.</documentation>
-		</part>
-		<part name="logMessage" type="xsd:string">
-			<documentation>a message about the change.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dissID" type="xsd:string"/>
+		<part name="dissState" type="xsd:string"/>
+		<part name="logMessage" type="xsd:string"/>
 	</message>
-    <message name="setDisseminatorStateResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="setDisseminatorStateResponse">
+		<part name="response" type="xsd:string"/>
+	</message>
 	<message name="getDatastreamRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dsID" type="xsd:string">
-			<documentation>the ID of the datastream.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-      object.  If null, the current view of the object (the most recent time) 
-      is assumed.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dsID" type="xsd:string"/>
+		<part name="asOfDateTime" type="xsd:string"/>
 	</message>
 	<message name="getDatastreamResponse">
-		<part name="response" type="fedora-types:Datastream">
-			<documentation>the datastream.</documentation>
-		</part>
+		<part name="response" type="fedora-types:Datastream"/>
 	</message>
 	<message name="getDatastreamsRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-      object.  If null, the current view of the object (the most recent time) 
-      is assumed.</documentation>
-		</part>
-		<part name="dsState" type="xsd:string">
-			<documentation>the state of the datastreams to get, null for all states.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="asOfDateTime" type="xsd:string"/>
+		<part name="dsState" type="xsd:string"/>
 	</message>
 	<message name="getDatastreamsResponse">
-		<part name="response" type="fedora-types:ArrayOfDatastream">
-			<documentation>the datastreams.</documentation>
-		</part>
+		<part name="response" type="fedora-types:ArrayOfDatastream"/>
 	</message>
 	<message name="getDatastreamHistoryRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dsID" type="xsd:string">
-			<documentation>the ID of the datastream.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dsID" type="xsd:string"/>
 	</message>
 	<message name="getDatastreamHistoryResponse">
-		<part name="response" type="fedora-types:ArrayOfDatastream">
-			<documentation>each version of the datastream, sorted from most to least recent.</documentation>
-		</part>
+		<part name="response" type="fedora-types:ArrayOfDatastream"/>
 	</message>
 	<message name="getDisseminatorRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dissID" type="xsd:string">
-			<documentation>the ID of the disseminator.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-			      object.  If null, the current view of the object (the most recent time) 
-			      is assumed.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dissID" type="xsd:string"/>
+		<part name="asOfDateTime" type="xsd:string"/>
 	</message>
 	<message name="getDisseminatorResponse">
 		<part name="response" type="fedora-types:Disseminator"/>
 	</message>
 	<message name="getDisseminatorsRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-				      object.  If null, the current view of the object (the most recent time) 
-			     	 is assumed.</documentation>
-		</part>
-		<part name="dissState" type="xsd:string">
-			<documentation>the state of the disseminatorss to get, null for all states.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="asOfDateTime" type="xsd:string"/>
+		<part name="dissState" type="xsd:string"/>
 	</message>
 	<message name="getDisseminatorsResponse">
-		<part name="response" type="fedora-types:ArrayOfDisseminator">
-			<documentation>the disseminators.</documentation>
-		</part>
+		<part name="response" type="fedora-types:ArrayOfDisseminator"/>
 	</message>
 	<message name="getDisseminatorHistoryRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dissID" type="xsd:string">
-			<documentation>the ID of the disseminator.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dissID" type="xsd:string"/>
 	</message>
 	<message name="getDisseminatorHistoryResponse">
-		<part name="response" type="fedora-types:ArrayOfDisseminator">
-			<documentation>creation dates for each version of the disseminator.</documentation>
-		</part>
+		<part name="response" type="fedora-types:ArrayOfDisseminator"/>
 	</message>
 	<message name="purgeDatastreamRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dsID" type="xsd:string">
-			<documentation>the ID of the datastream.</documentation>
-		</part>
-		<part name="endDT" type="xsd:string">
-			<documentation>the (inclusive) ending date-time stamp of the range. If 
-          null, this is taken to be the greatest possible value, and thus,
-          the entire version history of the datastream will be purged.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dsID" type="xsd:string"/>
+		<part name="endDT" type="xsd:string"/>
 	</message>
 	<message name="purgeDatastreamResponse">
-		<part name="response" type="fedora-types:ArrayOfDateTimeString">
-			<documentation>the creation date/time of each deleted datastream.
-        </documentation>
-		</part>
+		<part name="response" type="fedora-types:ArrayOfDateTimeString"/>
 	</message>
 	<message name="purgeDisseminatorRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="dissID" type="xsd:string">
-			<documentation>the ID of the disseminator.</documentation>
-		</part>
-		<part name="endDT" type="xsd:string">
-			<documentation>the (inclusive) ending date-time stamp of the range. If 
-      null, this is taken to be the greatest possible value.</documentation>
-		</part>
+		<part name="pid" type="xsd:string"/>
+		<part name="dissID" type="xsd:string"/>
+		<part name="endDT" type="xsd:string"/>
 	</message>
 	<message name="purgeDisseminatorResponse">
-		<part name="response" type="fedora-types:ArrayOfDateTimeString">
-			<documentation>the creation date/time of each deleted disseminator, 
-      earliest first.</documentation>
-		</part>
+		<part name="response" type="fedora-types:ArrayOfDateTimeString"/>
 	</message>
 	<message name="getNextPIDRequest">
-		<part name="numPids" type="xsd:nonNegativeInteger">
-			<documentation>the number of pids requested.</documentation>
-		</part>
-		<part name="pidNamespace" type="xsd:string">
-			<documentation>the namespace of the requested pid(s).</documentation>
-		</part>
+		<part name="numPids" type="xsd:nonNegativeInteger"/>
+		<part name="pidNamespace" type="xsd:string"/>
 	</message>
 	<message name="getNextPIDResponse">
-		<part name="response" type="fedora-types:ArrayOfString">
-			<documentation>an array of the requested next available pid(s).</documentation>
-		</part>
+		<part name="response" type="fedora-types:ArrayOfString"/>
 	</message>
 	<portType name="Fedora-API-M">
 		<documentation>The Fedora Management service defines an open interface for
-    administering the repository, including creating, modifying, and deleting
-    digital objects, or components within digital objects.  The Management
-    service interacts with the underlying repository system to read content from
-    and write content to the digital object and datastream storage areas.  The
-    Management service exposes a set of operations that enable a client to view
-    and manipulate digital objects from an abstract perspective, meaning that
-    a client does not need to know anything about underlying storage formats,
-    storage media, or storage management schemes for objects.  Also, the
-    underlying repository system handles the details of storing datastream
-    content within the repository, as well as mediating connectivity for
-    datastreams that reference external content.</documentation>
+		administering the repository, including creating, modifying, and deleting digital objects, 
+		or components within digital objects.  The Management service interacts with the 
+		underlying repository system to read content from and write content to the digital 
+		object and datastream storage areas.  The Management service exposes a set of 
+		operations that enable a client to view and manipulate digital objects from an abstract 
+		perspective, meaning that a client does not need to know anything about underlying 
+		storage formats,  storage media, or storage management schemes for objects.  Also, the
+		 underlying repository system handles the details of storing datastream content within the 
+		 repository, as well as mediating connectivity for datastreams that reference external content.</documentation>
 		<operation name="ingest">
-			<documentation>Creates a new digital object in the repository, given the 
-      data in the provided XML document, and a format indentifier for the XML document format.  
-      The valid formats are currently: "foxml1.0" and "metslikefedora1".  The object's initial 
-      state will be A (active).   If the XML document does not specify a pid in the 
-      OBJID attribute of the  root element, the repository will generate and return a new pid 
-      for the object resulting from this request.  That pid will have the namespace of 
-      the repository.  If the XML document specifies a pid, it will be assigned 
-      to the digital object provided that 1) it conforms to the Fedora pid 
-      Syntax, 2) it does not specify the namespace of the repository, and 3) 
-      it does not collide with an existing pid of an object in the repository.
-      </documentation>
+			<documentation>Creates a new digital object in the repository using
+			the provided XML ingest file.  The ingest file may be in one of several
+			formats that Fedora supports.  As of Fedora 2.0, the valid formats are
+			"foxml1.0" and "metslikefedora1".  After a successful ingest, the object's
+			initial state will be A (active).   If the XML document does not specify a pid, 
+			the repository will generate and return a new pid for the object as a result of
+			this request.  That pid will have the namespace of that is configured as the
+			default for the repository.  If the XML ingest file specifies a pid, it will be assigned
+			to the digital object provided that 1) it conforms to the Fedora pid syntax, 
+			2) it does not specify the namespace of the repository, and 3) it does not collide 
+			with an existing pid of an object in the repository.</documentation>
 			<input message="fedora-api:ingestRequest"/>
 			<output message="fedora-api:ingestObjectResponse"/>
 		</operation>
 		<operation name="ingestObject">
-			<documentation>TO BE DEPRECATED IN FEDORA 2.0. Creates a new 
-	digital object in the repository, given the data in the provided XML document, 
-	and a format indentifier for the METS document format.   The object's initial 
-      state will be A (active).   If the XML document does not specify a pid in the 
-      OBJID attribute of the  root element, the repository will generate and return a new pid 
-      for the object resulting from this request.  That pid will have the namespace of 
-      the repository.  If the XML document specifies a pid, it will be assigned 
-      to the digital object provided that 1) it conforms to the Fedora pid 
-      Syntax, 2) it does not specify the namespace of the repository, and 3) 
-      it does not collide with an existing pid of an object in the repository.
-      </documentation>
+			<documentation>(DEPRECATED IN FEDORA 2.0. USE INGEST INSTEAD.)
+			Creates a new digital object in the repository using the provided XML ingest file
+			which must be in the Fedora METS format ("metslikefedora1").   The object's initial
+			state will be A (active).   If the XML document does not specify a pid, the repository 
+			will generate and return a new pid for the object resulting from this request.  That pid 
+			will have the namespace of the repository.  If the XML document specifies a pid, it will 
+			be assigned to the digital object provided that 1) it conforms to the Fedora pid syntax, 
+			2) it does not specify the namespace of the repository, and 3) it does not collide with an 
+			existing pid of an object in the repository.</documentation>
 			<input message="fedora-api:ingestObjectRequest"/>
 			<output message="fedora-api:ingestObjectResponse"/>
 		</operation>
@@ -544,30 +290,50 @@
 			<input message="fedora-api:modifyObjectRequest"/>
 			<output message="fedora-api:modifyObjectResponse"/>
 		</operation>
+		<operation name="getObjectProperties">
+			<documentation>Get the object's properties as an array of name/value pairs.</documentation>
+			<input message="fedora-api:getObjectPropertiesRequest"/>
+			<output message="fedora-api:getObjectPropertiesResponse"/>
+		</operation>
 		<operation name="getObjectXML">
-			<documentation>Gets the XML portion of the entire METS-encoded 
-      digital object for external use (viewing, editing, moving to another 
-      repository).  XML metadata datastreams will be included inline, content 
-      datastreams will not be included, and external datastreams will be 
-      referenced by url.</documentation>
+			<documentation>Gets the entire XML-encoded  digital object in the 
+			internal storage format configured for the repository. This operation is intended to get
+			a copy of the object as it looks in the repository persistent storage area.</documentation>
 			<input message="fedora-api:getObjectXMLRequest"/>
 			<output message="fedora-api:getObjectXMLResponse"/>
 		</operation>
 		<operation name="export">
-			<documentation>Gets the entire XML-encoded digital object for 
-      external use (viewing, editing, moving to another repository).  XML 
-      metadata datastreams will be included inline, content datastreams will 
-      be included inline (base64-encoded), and external datastreams will be 
-      referenced by url.</documentation>
+			<documentation>Gets the entire XML-encoded digital object in the default 
+			export format configured for the repository ("metslikefedora1" or "foxml1.0").  
+			The request specifies the desired export format.  The request also specifies the 
+			desired export context, which determines how datastream content will appear 
+			in the export output.  Valid export contexts are "public," "migrate" and "archive"   
+			-  The "public" context will provide output where all datastreams have absolute
+			URLs.  URLs that refer to the host:port of the exporting repository are encoded as 
+			absolute callback URLs to the repository.  This is context is appropriate when the 
+			exporting repository will 	continue to exist and will continue to support callback URLs 
+			for datastream content and disseminations.
+			- The "migrate" context will provide output that is appropriate for migrating objects
+			from one Fedora repository to another.  An export with the "migrate" context is necessary
+			to maintain relative repository URLs in a *new* repository.  Specificallly, this will
+			ensure that URLs that were relative to the exporting repository, will become
+			relative to a *new* repository if the export file is subsequently ingested into another
+			Fedora repository.   This context is appropriate when the exporting repository will NOT 
+			be available after objects have been migrated to a new repository.
+			- (FUTURE) The "archive" context will produce output that has all datastream 
+			content (both xml and binary content) inlined.  Binary content is base-64 encoded.  
+			This export output is a self-contained entity that does not require any URLs to be resolved to obtain
+			datastream content. </documentation>
 			<input message="fedora-api:exportRequest"/>
 			<output message="fedora-api:exportObjectResponse"/>
 		</operation>
 		<operation name="exportObject">
-			<documentation>Gets the entire METS-encoded digital object for 
-      external use (viewing, editing, moving to another repository).  XML 
-      metadata datastreams will be included inline, content datastreams will 
-      be included inline (base64-encoded), and external datastreams will be 
-      referenced by url.</documentation>
+			<documentation>(DEPRECATED IN FEDORA 2.0. USE EXPORT INSTEAD.)
+			Gets the entire XML-encoded digital object in the default export format configured
+			for the repository ("metslikefedora1" or "foxml1.0").  The export format is intended
+			for external use (viewing, editing, moving to another repository).	XML metadata 
+			datastreams will be included inline, content datastreams will be included inline 
+			(base64-encoded), and external datastreams will be referenced by url.</documentation>
 			<input message="fedora-api:exportObjectRequest"/>
 			<output message="fedora-api:exportObjectResponse"/>
 		</operation>
@@ -675,7 +441,7 @@
 	<binding name="Fedora-API-M-Binding-SOAPHTTP" type="fedora-api:Fedora-API-M">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
 		<operation name="ingest">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#ingest"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#ingest" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -684,7 +450,7 @@
 			</output>
 		</operation>
 		<operation name="ingestObject">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#ingestObject"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#ingestObject" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -693,7 +459,7 @@
 			</output>
 		</operation>
 		<operation name="describeUser">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#describeUser"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#describeUser" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -702,7 +468,16 @@
 			</output>
 		</operation>
 		<operation name="modifyObject">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyObject"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#modifyObject" style="rpc"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="getObjectProperties">
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectProperties" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -711,7 +486,7 @@
 			</output>
 		</operation>
 		<operation name="getObjectXML">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectXML"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectXML" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -720,7 +495,7 @@
 			</output>
 		</operation>
 		<operation name="export">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#export"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#export" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -729,7 +504,7 @@
 			</output>
 		</operation>
 		<operation name="exportObject">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#exportObject"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#exportObject" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -738,7 +513,7 @@
 			</output>
 		</operation>
 		<operation name="purgeObject">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeObject"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#purgeObject" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -763,7 +538,7 @@
     </operation>
 -->
 		<operation name="addDatastream">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastream"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastream" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -772,7 +547,7 @@
 			</output>
 		</operation>
 		<operation name="createDatastream">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#createDatastream"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#createDatastream" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -781,7 +556,7 @@
 			</output>
 		</operation>
 		<operation name="addDisseminator">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#addDisseminator"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#addDisseminator" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -790,7 +565,7 @@
 			</output>
 		</operation>
 		<operation name="modifyDatastreamByReference">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByReference"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByReference" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -799,7 +574,7 @@
 			</output>
 		</operation>
 		<operation name="modifyDatastreamByValue">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByValue"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByValue" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -808,7 +583,7 @@
 			</output>
 		</operation>
 		<operation name="modifyDisseminator">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDisseminator"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDisseminator" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -817,7 +592,7 @@
 			</output>
 		</operation>
 		<operation name="setDatastreamState">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#setDatastreamState"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#setDatastreamState" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -826,7 +601,7 @@
 			</output>
 		</operation>
 		<operation name="setDisseminatorState">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#setDisseminatorState"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#setDisseminatorState" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -835,7 +610,7 @@
 			</output>
 		</operation>
 		<operation name="getDatastream">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastream"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastream" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -844,7 +619,7 @@
 			</output>
 		</operation>
 		<operation name="getDatastreams">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreams"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreams" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -853,7 +628,7 @@
 			</output>
 		</operation>
 		<operation name="getDatastreamHistory">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamHistory"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamHistory" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -862,7 +637,7 @@
 			</output>
 		</operation>
 		<operation name="getDisseminator">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminator"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminator" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -871,7 +646,7 @@
 			</output>
 		</operation>
 		<operation name="getDisseminators">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminators"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminators" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -880,7 +655,7 @@
 			</output>
 		</operation>
 		<operation name="getDisseminatorHistory">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminatorHistory"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminatorHistory" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -889,7 +664,7 @@
 			</output>
 		</operation>
 		<operation name="purgeDatastream">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDatastream"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDatastream" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -898,7 +673,7 @@
 			</output>
 		</operation>
 		<operation name="purgeDisseminator">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDisseminator"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDisseminator" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -907,7 +682,7 @@
 			</output>
 		</operation>
 		<operation name="getNextPID">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getNextPID"/>
+			<soap:operation soapAction="http://www.fedora.info/definitions/1/0/api/#getNextPID" style="rpc"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -921,4 +696,16 @@
 			<soap:address location="http://localhost:8080/fedora/management/soap"/>
 		</port>
 	</service>
+	<!--
+  <message name="getObjectAuditTrailRequest">
+    <part name="pid" type="xsd:string">
+      <documentation>The pid of the object.</documentation>
+    </part>
+  </message>
+  <message name="getObjectAuditTrailResponse">
+    <part name="response" type="fedora-auditing:ArrayOfAuditRecord">
+      <documentation>The ordered audit records for the object.</documentation>
+    </part>
+  </message>
+  -->
 </definitions>
