@@ -123,6 +123,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private static final String GET_OBJECT_METHODS =
       "GetObjectMethods";
 
+  /** URL for the parameter resolver servlet */
+  private static final String PARAMETER_RESOLVER_URL =
+      "http://localhost:8080/fedora/getParmResolver?";
+
   /** User-supplied method parameters from servlet URL. */
   private Hashtable h_userParms = null;
 
@@ -536,6 +540,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
       } else if (action.equals(GET_OBJECT_METHODS))
       {
         ObjectMethodsDef[] objMethDefArray = null;
+        String serverURI = request.getRequestURL().toString()+"?";
+
         try
         {
           // Call Fedora Access SOAP service to request Object Methods.
@@ -570,12 +576,36 @@ public class FedoraAccessSoapServlet extends HttpServlet
                         + " </font></b></td>");
             out.println("<td><b><font size='+2'> Method Name"
                         + " </font></b></td>");
+            out.println("<td>&nbsp;</td><td><b><font size='+2'> Parm Name"
+                        + " </font></b></td>");
+            out.println("<td colspan=\"100%\"><b><font size='+2'> Allowed Parm Values<br>(Select a value for each Parameter)"
+                        + " </font></b></td>");
             out.println("</tr>");
 
             // Format table such that repeating fields only display once.
             int rows = objMethDefArray.length-1;
             for (int i=0; i<objMethDefArray.length; i++)
             {
+              if (debug)
+              {
+                MethodParmDef[] methodParms = null;
+                methodParms = objMethDefArray[i].getMethodParmDefs();
+                if (methodParms != null)
+                {
+                  for(int j=0; j<methodParms.length; j++)
+                  {
+                    System.out.println("ParmName: "+methodParms[j].getParmName());
+                    String[] values = methodParms[j].getParmDomainValues();
+                    if(values != null)
+                    {
+                      for(int k=0; k<values.length; k++)
+                      {
+                        System.out.println("parmValue: "+values[k]);
+                      }
+                    }
+                  }
+                }
+              }
               out.println("<tr>");
               if (i == 0)
               {
@@ -588,13 +618,14 @@ public class FedoraAccessSoapServlet extends HttpServlet
                             + objMethDefArray[i].getBDefPID()
                             + " </font></td>");
                 out.println("<td><font color=\"red\"> "
-                            + "<a href=\"" + requestURL
-                            + "action_=GetDissemination&PID_="
-                            + objMethDefArray[i].getPID() + "&bDefPID_="
-                            + objMethDefArray[i].getBDefPID() + "&methodName_="
-                            + objMethDefArray[i].getMethodName() + "\"> "
                             + objMethDefArray[i].getMethodName()
-                            + " </a></td>");
+                            + " </font></td>");
+
+                // Setup special formatting if there are any method parameters
+                StringBuffer sb = createParmForm(PID, objMethDefArray[i].getBDefPID(),
+                    objMethDefArray[i].getMethodName(),
+                    objMethDefArray[i].getMethodParmDefs(), serverURI);
+                out.println(sb.toString());
               } else if (i == 1)
               {
                 out.println("<td colspan='2' rowspan='" + rows + "'></td>");
@@ -602,26 +633,28 @@ public class FedoraAccessSoapServlet extends HttpServlet
                             + objMethDefArray[i].getBDefPID()
                             + " </font></td>");
                 out.println("<td><font color=\"red\"> "
-                            + "<a href=\"" + requestURL
-                            + "action_=GetDissemination&PID_="
-                            + objMethDefArray[i].getPID() + "&bDefPID_="
-                            + objMethDefArray[i].getBDefPID() + "&methodName_="
-                            + objMethDefArray[i].getMethodName() + "\"> "
                             + objMethDefArray[i].getMethodName()
-                            + " </a></td>");
+                            + " </font></td>");
+
+                // Setup special formatting if there are any method parameters
+                StringBuffer sb = createParmForm(PID, objMethDefArray[i].getBDefPID(),
+                    objMethDefArray[i].getMethodName(),
+                    objMethDefArray[i].getMethodParmDefs(), serverURI);
+                out.println(sb.toString());
               } else
               {
                 out.println("<td><font color=\"green\"> "
                             + objMethDefArray[i].getBDefPID()
                             + " </font></td>");
                 out.println("<td><font color=\"red\"> "
-                            + "<a href=\"" + requestURL
-                            + "action_=GetDissemination&PID_="
-                            + objMethDefArray[i].getPID() + "&bDefPID_="
-                            + objMethDefArray[i].getBDefPID() + "&methodName_="
-                            + objMethDefArray[i].getMethodName() + "\"> "
                             + objMethDefArray[i].getMethodName()
-                            + " </a></td>");
+                            + " </font></td>");
+
+                // Setup special formatting if there are any method parameters
+                StringBuffer sb = createParmForm(PID, objMethDefArray[i].getBDefPID(),
+                    objMethDefArray[i].getMethodName(),
+                    objMethDefArray[i].getMethodParmDefs(), serverURI);
+                out.println(sb.toString());
               }
               out.println("</tr>");
             }
@@ -646,6 +679,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                          + e.getClass().getName()
                          + " <br> Reason: "  + e.getMessage();
           System.err.println(message);
+          e.printStackTrace();
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, clearCache, response, message);
         }
@@ -824,6 +858,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     Call call = (Call) service.createCall();
     call.setOperationName(new QName(FEDORA_API_URI, GET_OBJECT_METHODS) );
     QName qn = new QName(FEDORA_TYPE_URI, "ObjectMethodsDef");
+    QName qn2 = new QName(FEDORA_TYPE_URI, "MethodParmDef");
     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
 
     // Any Fedora-defined types required by the SOAP service must be registered
@@ -832,6 +867,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
     call.registerTypeMapping(ObjectMethodsDef.class, qn,
         new BeanSerializerFactory(ObjectMethodsDef.class, qn),
         new BeanDeserializerFactory(ObjectMethodsDef.class, qn));
+    call.registerTypeMapping(MethodParmDef.class, qn2,
+        new BeanSerializerFactory(MethodParmDef.class, qn2),
+        new BeanDeserializerFactory(MethodParmDef.class, qn2));
     objMethDefArray =
         (ObjectMethodsDef[]) call.invoke( new Object[] { PID, asOfDateTime} );
     return objMethDefArray;
@@ -1342,5 +1380,106 @@ public class FedoraAccessSoapServlet extends HttpServlet
       }
     }
     System.err.println("REQUEST Returned NO Data");
+  }
+
+  /**
+   * <p>Creates a web form that allows one to select the values of method
+   * parameters to be used for method specified in a dissemination request.
+   * If the method has no parameters, this is noted in the form output.</p>
+   *
+   * @param PID The persistent idenitifer for the digital object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName The name of the method.
+   * @param methodParms An array of method parameter definitions.
+   * @param requestURI The URI of the calling servlet.
+   * @return A string buffer containing the generated html form information.
+   */
+  public StringBuffer createParmForm(String PID, String bDefPID,
+      String methodName, MethodParmDef[] methodParms, String requestURI)
+  {
+    StringBuffer sb = new StringBuffer();
+    sb.append("<form name=\"parmResolverForm\" method=\"post\" action=\""
+              + PARAMETER_RESOLVER_URL + "\">");
+    if (methodParms == null || methodParms.length == 0)
+    {
+      // The method has no parameters.
+      sb.append("<td><input type=\"hidden\" name=\"PID\" value=\""
+          + PID + "\">"
+          + "<input type=\"hidden\" name=\"bDefPID\" value=\""
+          + bDefPID + "\">"
+          + "<input type=\"hidden\" name=\"methodName\" value=\""
+          + methodName + "\">"
+          + "<input type=\"hidden\" name=\"serverURI\" value=\""
+          + requestURI + "\">"
+          + "<input type=\"submit\" name=\"Submit\" "
+          + "value=\"RunDissemination\">"
+          + "</form></tr>");
+      return sb;
+    }
+
+    // Format table such that repeating fields only display once.
+    int rows = methodParms.length-1;
+    for (int i=0; i<methodParms.length; i++)
+    {
+      String parmName = methodParms[i].getParmName();
+      String[] parmValues = methodParms[i].getParmDomainValues();
+      if (i == 0)
+      {
+        sb.append("<td>"
+            + "<input type=\"submit\" name=\"Submit\" "
+            + "value=\"RunDissemination\">"
+            + "<td><b><font color=\"purple\">"
+            + parmName + "</font></b></td>");
+        if(parmValues != null)
+        {
+          for (int j=0; j<parmValues.length; j++)
+          {
+            sb.append("<td>" + parmValues[j] + "</td>"
+            + "<td>"
+            + "<input type=\"radio\" name=\""
+            + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
+          }
+          sb.append("<td>"
+              + "<input type=\"hidden\" name=\"PID\" value=\""
+              + PID + "\">"
+              + "<input type=\"hidden\" name=\"bDefPID\" value=\""
+              + bDefPID + "\">"
+              + "<input type=\"hidden\" name=\"methodName\" value=\""
+              + methodName + "\">"
+              + "<input type=\"hidden\" name=\"serverURI\" value=\""
+              + requestURI + "\">");
+        }
+      } else if (i == 1)
+      {
+        sb.append("</tr><tr><td colspan=\"5\" rowspan=\"" + rows + "\"></td>"
+            + "<td><b><font color=\"purple\">" + parmName + "</font></b></td>");
+        if(parmValues != null)
+        {
+          for (int j=0; j<parmValues.length; j++)
+          {
+            sb.append("<td>" + parmValues[j] + "</td>"
+                + "<td>"
+                + "<input type=\"radio\" name=\""
+                + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
+          }
+        }
+      } else
+      {
+        sb.append("</tr><tr><td><b><font color=\"purple\">"
+            + parmName + "</font></b></td>");
+        if(parmValues != null)
+        {
+          for (int j=0; j<parmValues.length; j++)
+          {
+            sb.append("<td>" + parmValues[j] + "</td>"
+                + "<td>"
+                + "<input type=\"radio\" name=\""
+                + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
+          }
+        }
+      }
+    }
+    sb.append("</form></td></tr>");
+    return sb;
   }
 }
