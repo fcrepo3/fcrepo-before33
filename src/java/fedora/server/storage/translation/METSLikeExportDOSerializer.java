@@ -403,7 +403,11 @@ public class METSLikeExportDOSerializer
                 } else if (md.DSMDClass==DatastreamXMLMetadata.DIGIPROV) {
                     mdClass="digiprovMD";
                 } else {
-                    throw new ObjectIntegrityException("Object's inline XML datastream must have a class.");
+					// if we don't have a METS mdClass (say because the
+					// (object was always encoded as FOXML), then default
+					// to techMD, since it's the most generic category.
+					mdClass="techMD";
+                    //throw new ObjectIntegrityException("Object's inline XML datastream must have a class.");
                 }
                 appendMDSec(obj, "amdSec", mdClass, obj.datastreams(id),
                         buf, encoding);

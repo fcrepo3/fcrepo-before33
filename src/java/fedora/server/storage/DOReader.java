@@ -110,7 +110,7 @@ public interface DOReader
      * The intent of this method is to return the digital object along with
      * valid URI pointers for ALL its datastreams.
      *
-     * @param format The XML format to export (e.g., foxml, metslikefedora1)
+     * @param format The XML format to export (e.g., foxml1.0, metsf1.0)
      * @return the content of the entire digital object as XML, with public
      *         URIs for managed content datastreams.
      * @throws ServerException If there object could not be found or there was

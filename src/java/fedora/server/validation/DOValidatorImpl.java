@@ -201,7 +201,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
     {
     	System.out.println("LOOK VALIDATE: format is " + format);
     	// FIXIT:  temporary bypass of validation for FOXML
-    	if (format.equals("foxml")) {
+    	if (format.equals("foxml1.0")) {
     		return;
     	}
     	
@@ -254,7 +254,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
     {
 		System.out.println("LOOK VALIDATE: format is " + format);
 		// FIXIT:  temporary bypass of validation for FOXML
-		if (format.equals("foxml")) {
+		if (format.equals("foxml1.0")) {
 			return;
 		}
 		

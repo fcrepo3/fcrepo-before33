@@ -82,11 +82,11 @@ public class METSInOutTest {
                         "dist/server/schematron/preprocessor.xslt",
                         "dist/server/schematron/fedoraRulesExt.xml", null, null);
                 if (args[1].equals("1")) {
-                    v.validate(newIn, 1, "ingest");
+                    v.validate(newIn, "metsf1.0", 1, "ingest");
                     System.out.println("Level 1 validation: PASSED!");
                 } else {
                     if (args[1].equals("2")) {
-                        v.validate(newIn, 2, "ingest");
+                        v.validate(newIn, "metsf1.0", 2, "ingest");
                         System.out.println("Level 2 validation: PASSED!");
                     } else {
                         System.out.println("Unrecognized validation level, '" + args[1] + "'");

@@ -196,7 +196,7 @@ public class FastDOReader implements DOReader
    * not stored in the Fast storage area, this method always queries the
    * Definitive storage area using <code>DefinitiveDOReader</code>.</p>
    *
-   * @param format The XML format to export (e.g., foxml, metslikefedora1)
+   * @param format The XML format to export (e.g., foxml1.0, metsf1.0)
    * @return A stream of bytes consisting of the XML-encoded representation
    *         of the digital object.
    * @throws StreamIOException If there is a problem in getting the XML input

@@ -87,6 +87,7 @@ public class METSLikeDOSerializer
     public void serialize(DigitalObject obj, OutputStream out, String encoding)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
+		System.out.println("Serializing using METSLike...");
         // get the host info in a static var so search/replaces are quicker later
         if (s_localServerUrlStartWithPort==null) {
             String fedoraHome=System.getProperty("fedora.home");
@@ -445,7 +446,11 @@ public class METSLikeDOSerializer
                 } else if (md.DSMDClass==DatastreamXMLMetadata.DIGIPROV) {
                     mdClass="digiprovMD";
                 } else {
-                    throw new ObjectIntegrityException("Object's inline XML datastream must have a class (md.DSMDClass=" + md.DSMDClass + ").");
+                	// if we don't have a METS mdClass (say because the
+                	// (object was always encoded as FOXML), then default
+                	// to techMD, since it's the most generic category.
+                	mdClass="techMD";
+                    //throw new ObjectIntegrityException("Object's inline XML datastream must have a class (md.DSMDClass=" + md.DSMDClass + ").");
                 }
                 appendMDSec(obj, "amdSec", mdClass, obj.datastreams(id),
                         buf, encoding);

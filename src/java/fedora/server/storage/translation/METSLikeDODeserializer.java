@@ -237,6 +237,7 @@ public class METSLikeDODeserializer
 
     public void deserialize(InputStream in, DigitalObject obj, String encoding)
             throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
+		System.out.println("Deserializing using METSLike...");
         m_obj=obj;
         m_rootElementFound=false;
         m_dsId=null;
@@ -822,6 +823,8 @@ public class METSLikeDODeserializer
                     a.responsibility=m_auditResponsibility;
                     a.date=DateUtility.convertStringToDate(m_auditDate);
                     a.justification=m_auditJustification;
+                    System.out.println("Adding Audit records to object in METS deserializer...");
+                    System.out.println("Audit id = " + a.id);
                     m_obj.getAuditRecords().add(a);
                 } else {
                     // create the right kind of datastream and add it to m_obj

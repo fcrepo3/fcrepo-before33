@@ -56,13 +56,13 @@ import fedora.server.utilities.StreamUtility;
 public class FOXMLDOSerializer
         implements DOSerializer {
 
-	public static final String FOXML_NS="info:fedora/def:foxml";
+	public static final String FOXML_NS="info:fedora/def:foxml1.0";
     public static final String FEDORA_AUDIT_NS="info:fedora/def:audit";
 	public static final String FEDORA_DC_NS="http://www.openarchives.org/OAI/2.0/oai_dc/";
 	public static final String FEDORA_RELSOUT_NS="info:fedora/def:relation:outer";
     public static final String FOXML_PREFIX="foxml";
 
-    public static final String FOXML_XSD_LOCATION="http://www.fedora.info/definitions/1/0/foxml.xsd";
+    public static final String FOXML_XSD_LOCATION="http://www.fedora.info/definitions/1/0/foxml1.0.xsd";
     public static final String XSI_NS="http://www.w3.org/2001/XMLSchema-instance";
 
     private String m_fedoraAuditPrefix="audit";
@@ -570,6 +570,12 @@ public class FOXMLDOSerializer
 		}
 		if ( ds.DSLabel==null && ds.DSLabel.equals("") ) {
 			ds.DSLabel = "Datastream known as: " + ds.DatastreamURI;
+		}
+		if (ds.DSFormatURI==null) {
+			ds.DSFormatURI="";
+		}
+		if (ds.DSVersionable==null) {
+			ds.DSVersionable="YES";
 		}
 		// For METS backward compatibility:
 		// If we have a METS MDClass value, preserve MDClass and MDType in a format URI
