@@ -1,0 +1,4 @@
+<?xml version='1.0'?>
+<tomcat-users>
+    <user name="fedoraAdmin" password="#" roles="administrator" />
+</tomcat-users>
