@@ -68,6 +68,13 @@
 		</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>GetNextPIDServlet</servlet-name>
+		<display-name>Fedora Next PID Provider</display-name>
+		<servlet-class>
+			fedora.server.management.GetNextPIDServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>LoginServlet</servlet-name>
 		<display-name>Prompts the user for login info</display-name>
 		<servlet-class>
@@ -114,6 +121,10 @@
 		<url-pattern>*.jws</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
+		<servlet-name>GetNextPIDServlet</servlet-name>
+		<url-pattern>/mgmt/getNextPID</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>DescribeRepositoryServlet</servlet-name>
 		<url-pattern>/describe</url-pattern>
 	</servlet-mapping>
@@ -141,6 +152,15 @@
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
 			<url-pattern>/management/upload</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>administrator</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Management Interface</web-resource-name>
+			<url-pattern>/mgmt/getNextPID</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>administrator</role-name>
