@@ -1,23 +1,16 @@
 package fedora.client.bmech;
 
-import javax.swing.JInternalFrame;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.IOException;
 import fedora.client.bmech.data.DCElement;
+import fedora.client.Administrator;
+import fedora.client.objecteditor.Util;
 
 /**
  *
@@ -48,7 +41,9 @@ import fedora.client.bmech.data.DCElement;
 public class GeneralPane extends JPanel
 {
     private JInternalFrame parent;
-    private JTextField bDefPID;
+	private JComboBox bDefPIDComboBox;
+    private String bDefPID;
+    private String bDefLabel;
     protected JTextField bObjectPID;
     private JRadioButton rb_sysPID;
     private JRadioButton rb_retainPID;
@@ -63,6 +58,7 @@ public class GeneralPane extends JPanel
     {
         this.parent = parent;
         setLayout(new BorderLayout());
+        /*
         JPanel contractPanel = new JPanel();
         contractPanel.setLayout(new GridBagLayout());
         contractPanel.setBorder(new TitledBorder("Behavior Definition Contract"));
@@ -79,11 +75,12 @@ public class GeneralPane extends JPanel
         contractPanel.add(new JLabel("                             "), gbc2);
         gbc2.gridx = 3;
         contractPanel.add(new JLabel("                             "), gbc2);
-
+*/
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new GridLayout(2,1));
         topPanel.add(setDescriptionPanel());
-        topPanel.add(contractPanel);
+        //topPanel.add(contractPanel);
+		topPanel.add(setContractPanel());
 
         add(topPanel, BorderLayout.NORTH);
         add(setDCPanel(), BorderLayout.CENTER);
@@ -127,7 +124,8 @@ public class GeneralPane extends JPanel
         gbc.gridx = 3;
         descriptionPanel.add(bObjectPID = new JTextField(10), gbc);
         bObjectPID.setToolTipText("The repository will accept test PIDs"
-          + " with the prefixes 'test:' or 'demo:' (e.g., 'demo:1').");
+          + " with the prefixes 'test:' or 'demo:' or a prefix you configured with your Fedora server."
+          + " Examples PIDs are: 'demo:1', test:50, my-behaviors:75, myprefix:200");
         bObjectPID.setEnabled(false);
         gbc.gridy = 1;
         gbc.gridx = 0;
@@ -149,6 +147,88 @@ public class GeneralPane extends JPanel
         return descriptionPanel;
     }
 
+	private JPanel setContractPanel()
+	{
+		JPanel contractPanel = new JPanel();
+		contractPanel.setLayout(new GridBagLayout());
+		contractPanel.setBorder(new TitledBorder("Behavior Definition Contract"));
+		GridBagConstraints gbc2 = new GridBagConstraints();
+		//gbc2.anchor = GridBagConstraints.WEST;
+		gbc2.gridy = 0;
+		gbc2.gridx = 0;
+		contractPanel.add(
+		  new JLabel("Behavior: "),
+		  gbc2);
+
+		// build dropdown of possible behaviors by getting a full
+		// list of bDefs from the server.
+		Map allBDefLabels = null;
+		try
+		{
+			allBDefLabels=Util.getBDefLabelMap();
+		} 
+		catch (Exception e) 
+		{
+			JOptionPane.showMessageDialog(Administrator.getDesktop(),
+					e.getMessage() + "\nError getting behavior definitions from repository!", 
+					"Contact system administrator.",
+					JOptionPane.ERROR_MESSAGE);
+		}		
+		Map bDefLabels=new HashMap();
+		Iterator iter=allBDefLabels.keySet().iterator();
+		while (iter.hasNext()) {
+			String pid=(String) iter.next();
+				bDefLabels.put(pid, (String) allBDefLabels.get(pid));
+		}
+		// set up the combobox 
+		String[] bDefOptions=new String[bDefLabels.keySet().size() + 1];
+		if (bDefOptions.length==1) {
+			bDefOptions[0]="No behavior definitions in repository!";
+		} else {
+			bDefOptions[0]="[Select a Behavior Definition]";
+		}
+		iter=bDefLabels.keySet().iterator();
+		int i=1;
+		while (iter.hasNext()) {
+			String pid=(String) iter.next();
+			String label=(String) bDefLabels.get(pid);
+			bDefOptions[i++]=pid + " - " + label;
+		}
+		
+		bDefPIDComboBox=new JComboBox(bDefOptions);		
+		bDefPIDComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				try {
+					String[] parts=
+							((String) bDefPIDComboBox.getSelectedItem()).
+									split(" - ");
+					if (parts.length==1) {
+						bDefPID=null;
+						bDefLabel=null;
+						//openBDefButton.setEnabled(false);
+					} else {
+						bDefPID=parts[0];
+						bDefLabel=parts[1];
+						//openBDefButton.setEnabled(true);
+					}
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(
+							Administrator.getDesktop(),
+							e.getMessage(), 
+							"Error getting behavior definition",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});	
+		gbc2.gridx = 1;
+		contractPanel.add(bDefPIDComboBox, gbc2);
+		//gbc2.gridx = 2;
+		//contractPanel.add(new JLabel("                             "), gbc2);
+		//gbc2.gridx = 3;
+		//contractPanel.add(new JLabel("                             "), gbc2);
+		return contractPanel;
+	}
+	
     private JPanel setDCPanel()
     {
         // Table Panel
@@ -219,7 +299,8 @@ public class GeneralPane extends JPanel
       if (parent.getClass().getName().equalsIgnoreCase(
         "fedora.client.bmech.BMechBuilder"))
       {
-        return bDefPID.getText();
+      	return bDefPID;
+        //return bDefPID.getText();
       }
       return null;
     }
