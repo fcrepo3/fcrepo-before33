@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server xmlns="http://www.fedora.info/definitions/1/0/config/"
-    xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/"
-    class="fedora.server.BasicServer">
-  <comment>Your server comment here.</comment>
-  <param name="label" value="Your Server Label Here"/>
-  <param name="port" value="8080"/>
-  <param name="admin_email" value="fedora-server-admin@localhost"/>
-  <param name="admin_email_public" value="true"/>
-  <param name="log_max_size" value="5242880"/>
-  <param name="log_max_days" value="7"/>
-  <param name="log_dir" value="logs"/>
-  <param name="log_level" value="finest"/>
-  <module role="fedora.server.storage.DOManager"
-          class="fedora.server.storage.DefaultDOManager">
-    <comment>This one comes with Fedora.  It's best not to change
+<server xmlns="http://www.fedora.info/definitions/1/0/config/" xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" class="fedora.server.BasicServer">
+	<comment>Your server comment here.</comment>
+	<param name="label" value="Your Server Label Here"/>
+	<param name="port" value="8080"/>
+	<param name="admin_email" value="fedora-server-admin@localhost"/>
+	<param name="admin_email_public" value="true"/>
+	<param name="log_max_size" value="5242880"/>
+	<param name="log_max_days" value="7"/>
+	<param name="log_dir" value="logs"/>
+	<param name="log_level" value="finest"/>
+	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
+		<comment>This one comes with Fedora.  It's best not to change
         these values unless you know what you're doing.</comment>
-    <param name="reader_fast" value="fedora.server.storage.FastDOReader"/>
-    <param name="writer_fast" value="fedora.server.storage.FastDOWriter"/>
-    <param name="fast_db" value="mysql1#test1fast"/>
-    <param name="fast_fallback_reader" value="definitive"/>
-    <param name="reader_definitive" value="fedora.server.storage.DefinitiveDOReader"/>
-    <param name="writer_definitive" value="fedora.server.storage.DefinitiveDOWriter"/>
-    <param name="definitive_registry_class" value="fedora.server.storage.DBRegistry"/>
-    <param name="definitive_registry_dbtable" value="mysql1#test1dreg"/>
-  </module>
-  <datastore id="mysql1">
-    <comment>This one's kind of slow, but it's all
+		<param name="reader_fast" value="fedora.server.storage.FastDOReader"/>
+		<param name="writer_fast" value="fedora.server.storage.FastDOWriter"/>
+		<param name="fast_db" value="mysql1#test1fast"/>
+		<param name="fast_fallback_reader" value="definitive"/>
+		<param name="reader_definitive" value="fedora.server.storage.DefinitiveDOReader"/>
+		<param name="writer_definitive" value="fedora.server.storage.DefinitiveDOWriter"/>
+		<param name="definitive_registry_class" value="fedora.server.storage.DBRegistry"/>
+		<param name="definitive_registry_dbtable" value="mysql1#test1dreg"/>
+	</module>
+	<datastore id="mysql1">
+		<comment>This one's kind of slow, but it's all
       we've got.</comment>
-    <param name="dbuser" value="fred"/>
-    <param name="dbpass" value="fredspass"/>
-    <param name="connect_string" value="jdbc://db.somecollege.edu/here"/>
-    <param name="pool_max" value="100"/>
-    <param name="pool_min" value="20"/>
-  </datastore>
+		<param name="dbuser" value="public"/>
+		<param name="dbpass" value=""/>
+		<param name="connect_string" value="jdbc:mysql://icarus.lib.virginia.edu:3306/FedoraObjects"/>
+		<param name="jdbc_driver_class" value="org.gjt.mm.mysql.Driver"/>
+		<param name="pool_max" value="100"/>
+		<param name="pool_min" value="20"/>
+	</datastore>
 </server>
