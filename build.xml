@@ -54,7 +54,7 @@
     </copy>-->
 		<!-- begin additions -->
 		<mkdir dir="dist/batch"/>
-		<copy file="src/doc/batch/batchtool-beta1.doc" todir="dist/batch"/>
+		<copy file="src/doc/batch/batch.doc" todir="dist/batch"/>
 		<copy file="src/properties/batch/default.properties" todir="dist/batch"/>
 		<copy file="src/xsl/batch/merge.xsl" todir="dist/batch"/>
 		<mkdir dir="dist/batch/bin"/>
@@ -555,6 +555,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.87  2003/03/05 17:18:32  wdn5e
+  changed copy of batch doc
+
   Revision 1.86  2003/03/05 13:55:56  rlw
   moved xsl directory for soapclient webapp down into WEB-INF so it's not visible by casual browsing
 
