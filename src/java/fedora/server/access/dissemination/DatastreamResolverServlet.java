@@ -26,6 +26,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
+import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
@@ -50,9 +51,8 @@ public class DatastreamResolverServlet extends HttpServlet
   private static Server s_server;
   private static DOManager m_manager;
   private static Context m_context;
-  private static ConnectionPool connectionPool;
   private static Hashtable dsRegistry;
-  private static int datastreamExpirationLimit;
+  private static int datastreamMediationLimit;
   private static final String HTML_CONTENT_TYPE = "text/html";
 
   static
@@ -68,11 +68,6 @@ public class DatastreamResolverServlet extends HttpServlet
           s_server = Server.getInstance(new File(fedoraHome));
           m_manager = (DOManager) s_server.getModule(
               "fedora.server.storage.DOManager");
-          HashMap h = new HashMap();
-          h.put("application", "apia");
-          h.put("useCachedObject", "false");
-          h.put("userId", "fedoraAdmin");
-      m_context = new ReadOnlyContext(h);
       }
     } catch (InitializationException ie) {
         System.err.println(ie.getMessage());
@@ -88,30 +83,28 @@ public class DatastreamResolverServlet extends HttpServlet
   {
     try
     {
-      ConnectionPoolManager poolManager = (ConnectionPoolManager)
-          s_server.getModule("fedora.server.storage.ConnectionPoolManager");
-      connectionPool = poolManager.getPool();
-      String expireLimit = s_server.getParameter("datastreamExpirationLimit");
+      String expireLimit = s_server.getParameter("datastreamMediationLimit");
       if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
       {
-        s_server.logWarning("DisseminationService was unable to "
+        s_server.logWarning("DatastreamResolverServlet was unable to "
             + "resolve the datastream expiration limit from the configuration "
-            + "file. The expiration limit has been set to 5 minutes.");
-        datastreamExpirationLimit = 5;
+            + "file. The expiration limit has been set to 5000 milliseconds.");
+        datastreamMediationLimit = 5000;
       } else
       {
         Integer I1 =
             new Integer(expireLimit);
-        datastreamExpirationLimit = I1.intValue();
-        s_server.logFinest("datastreamExpirationLimit: "
-                           + datastreamExpirationLimit);
+        datastreamMediationLimit = I1.intValue();
+        s_server.logFinest("datastreamMediationLimit: "
+            + datastreamMediationLimit);
       }
     } catch (Throwable th)
     {
-      System.err.println("Unable to init DatastreamREsolverServlet. The "
-                                 + "underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+      String message = "Unable to init DatastreamResolverServlet. The "
+          + "underlying error was a " + th.getClass().getName()
+          + "The message " + "was \"" + th.getMessage() + "\"";
+      th.printStackTrace();
+      s_server.logWarning(message);
     }
   }
 
@@ -128,8 +121,7 @@ public class DatastreamResolverServlet extends HttpServlet
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
-    String id = request.getParameter("id").replaceAll("T"," ");
-    System.out.println("[DatastreamResolverServlet] tempID: "+id);
+    String id = null;
     String dsPhysicalLocation = null;
     String dsControlGroupType = null;
     MIMETypedStream mimeTypedStream = null;
@@ -139,6 +131,15 @@ public class DatastreamResolverServlet extends HttpServlet
     PrintWriter out = null;
     ServletOutputStream outStream = null;
 
+    HashMap h = new HashMap();
+    h.put("application", "apia");
+    h.put("useCachedObject", "false");
+    h.put("userId", "fedoraAdmin");
+    m_context = new ReadOnlyContext(h);
+
+    id = request.getParameter("id").replaceAll("T"," ");
+    s_server.logFinest("[DatastreamResolverServlet] datastream tempID: " + id);
+
     try
     {
       // Check for required id parameter.
@@ -146,8 +147,8 @@ public class DatastreamResolverServlet extends HttpServlet
       {
         out = response.getWriter();
         response.setContentType(HTML_CONTENT_TYPE);
-        out.println("<br>DatastreamResolverServlet: No datastream id specified "
-            + "in servlet request: " + request.getRequestURI() + "</br>");
+        out.println("<br>[DatastreamResolverServlet] No datastream ID specified"
+            + " in servlet request: " + request.getRequestURI() + "</br>");
         out.close();
         return;
       }
@@ -160,92 +161,106 @@ public class DatastreamResolverServlet extends HttpServlet
       dsControlGroupType = dm.dsControlGroupType;
       keyTimestamp = keyTimestamp.valueOf(ds.extractTimestamp(id));
       currentTimestamp = new Timestamp(new Date().getTime());
+      s_server.logFinest("[DatastreamResolverServlet] dsPhysicalLocation: "
+          + dsPhysicalLocation);
+      s_server.logFinest("[DatastreamResolverServlet] dsControlGroupType: "
+          + dsControlGroupType);
 
       // Deny mechanism requests that fall outside the specified time interval.
+      // The expiration limit can be adjusted using the Fedora config parameter
+      // named "datastreamMediationLimit" which is in milliseconds.
+      s_server.logFinest("[DatastreamResolverServlet] TimeStamp differential "
+          + "for Mechanism's response: " + ((long)currentTimestamp.getTime() -
+          (long)keyTimestamp.getTime()) + " milliseconds");
+      System.out.println("[DatastreamResolverServlet] TimeStamp differential "
+          + "for Mechanism's response: " + ((long)currentTimestamp.getTime() -
+          (long)keyTimestamp.getTime()) + " milliseconds");
       if (currentTimestamp.getTime() - keyTimestamp.getTime() >
-          datastreamExpirationLimit*1000)
+          (long) datastreamMediationLimit)
       {
         out = response.getWriter();
         response.setContentType(HTML_CONTENT_TYPE);
-        out.println("<br><b>DatastreamResolverServlet Error:</b>"
-                    + "<font color=\"red\"> Mechanism has failed to respond "
-                    + "to the DatastreamResolverServlet within the specified "
-                    + "time limit of \"" + datastreamExpirationLimit + "\""
-                    + "seconds. Datastream access denied.");
+        out.println("<br><b>[DatastreamResolverServlet] Error:</b>"
+            + "<font color=\"red\"> Mechanism has failed to respond "
+            + "to the DatastreamResolverServlet within the specified "
+            + "time limit of \"" + datastreamMediationLimit + "\""
+            + "seconds. Datastream access denied.");
+        s_server.logWarning("[DatastreamResolverServlet] Error: "
+            + "Mechanism has failed to respond "
+            + "to the DatastreamResolverServlet within the specified "
+            + "time limit of \"" + datastreamMediationLimit + "\""
+            + "seconds. Datastream access denied.");
         out.close();
         return;
       }
 
       if (dsControlGroupType.equalsIgnoreCase("E"))
-        {
-          ExternalContentManager externalContentManager =
-              (ExternalContentManager)s_server.getModule(
-              "fedora.server.storage.ExternalContentManager");
-          mimeTypedStream =
-              externalContentManager.getExternalContent(dsPhysicalLocation);
-          outStream = response.getOutputStream();
-          response.setContentType(mimeTypedStream.MIMEType);
-          outStream.write(mimeTypedStream.stream);
-        } else if (dsControlGroupType.equalsIgnoreCase("M"))
-        {
-          // Not yet implemented. Flag as an error.
-          out = response.getWriter();
-          response.setContentType(HTML_CONTENT_TYPE);
-          out.println("<br>DatastreamResolverServlet: "
-                      + "Repository Managed Datastreams not yet "
-                     + "supported</br>");
-          s_server.logWarning("DatastreamResolverServlet: "
-              + "Repository Managed Datastreams not yet "
-                     + "supported");
-      } else if (dsControlGroupType.equalsIgnoreCase("X"))
       {
+        // Datastream is ReferencedExternalContent so dsLocation is a URL string
+        ExternalContentManager externalContentManager =
+            (ExternalContentManager)s_server.getModule(
+            "fedora.server.storage.ExternalContentManager");
+        mimeTypedStream =
+            externalContentManager.getExternalContent(dsPhysicalLocation);
+        outStream = response.getOutputStream();
+        response.setContentType(mimeTypedStream.MIMEType);
+        outStream.write(mimeTypedStream.stream);
+      } else if (dsControlGroupType.equalsIgnoreCase("M") ||
+                 dsControlGroupType.equalsIgnoreCase("X"))
+      {
+        // Datastream is either XMLMetadata or ManagedContent so dsLocation
+        // is in the form of an internal Fedora ID using the syntax:
+        // PID+DSID+DSVersID; parse the ID and get the datastream content.
         String PID = null;
         String dsVersionID = null;
         String dsID = null;
-        System.out.println("dsPhysicalLocation: "+dsPhysicalLocation);
         String[] s = dsPhysicalLocation.split("\\+");
-        System.out.println("size s: "+s.length);
+        if (s.length != 3)
+        {
+          String message = "[DatastreamResolverServlet]  The "
+              + "internal Fedora datastream id: \"" + dsPhysicalLocation
+              + "\" is invalid.";
+          s_server.logWarning(message);
+          throw new ServletException(message);
+        }
         PID = s[0];
         dsID = s[1];
         dsVersionID = s[2];
-        System.out.println("PID: "+PID+" dsID: "+dsID+" dsVersionID: "+dsVersionID);
-        System.out.println("[DSResolverServlet] ControlGroup: "+dsControlGroupType);
-        System.out.println("dsLocation: "+dsPhysicalLocation);
+        s_server.logFinest("[DatastreamResolverServlet] PID: " + PID
+            + "\n dsID: " + dsID + "\n dsVersionID: " + dsVersionID);
         DOReader doReader =  m_manager.getReader(m_context, PID);
+        // FIXME!! Need to deal with datastream versioning; ignored for now.
+        Datastream d =
+            (Datastream) doReader.GetDatastream(dsID, null);
+        s_server.logInfo("[DatastreamResolverServlet] Got datastream: "
+            + d.DatastreamID);
         InputStream is =
-            doReader.GetDatastream(dsID, null).getContentStream();
+            d.getContentStream();
         int bytestream = 0;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+        response.setContentType(d.DSMIME);
         outStream = response.getOutputStream();
-        response.setContentType("text/xml");
         while ((bytestream = is.read()) != -1)
         {
           outStream.write(bytestream);
         }
+        is.close();
       } else
       {
         out = response.getWriter();
         response.setContentType(HTML_CONTENT_TYPE);
-        out.println("<br>DatastreamResolverServlet: Unknown "
-                    + "dsControlGroupType: " + dsControlGroupType + "</br>");
-        s_server.logWarning("DatastreamResolverServlet: Unknown "
-                            + "dsControlGroupType: " + dsControlGroupType);
+        out.println("<br>[DatastreamResolverServlet] Unknown "
+            + "dsControlGroupType: " + dsControlGroupType + "</br>");
+        s_server.logWarning("[DatastreamResolverServlet] Unknown "
+            + "dsControlGroupType: " + dsControlGroupType);
       }
     } catch (Throwable th)
     {
-      System.err.println("DatastreamResolverServlet returned an error. The "
-                                 + "underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+      String message = "[DatastreamResolverServlet] returned an error. The "
+          + "underlying error was a " + th.getClass().getName()
+          + "The message " + "was \"" + th.getMessage() + "\"";
       th.printStackTrace();
-      s_server.logWarning("DatastreamResolverServlet returned an error. The "
-                                 + "underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
-      throw new ServletException("DatastreamResolverServlet returned an error. "
-                                 + "The underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+      s_server.logWarning(message);
+      throw new ServletException(message);
     } finally
     {
       if (out != null) out.close();
