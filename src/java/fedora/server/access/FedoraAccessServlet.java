@@ -127,29 +127,6 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   }
 
   /**
-   * <p>Initialize servlet.</p>
-   *
-   * @throws ServletException If the servet cannot be initialized.
-   */
-  public void init() throws ServletException
-  {}
-
-  /**
-   * <p>For now, treat a HTTP POST request just like a GET request.</p>
-   *
-   * @param request The servet request.
-   * @param response The servlet response.
-   * @throws ServletException If thrown by <code>doGet</code>.
-   * @throws IOException If thrown by <code>doGet</code>.
-   */
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException
-  {
-   // treat Post same as a Get
-   doGet(request, response);
-  }
-
-  /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
    * parameters and then execute the specified request.</p>
    *
@@ -541,6 +518,20 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   }
 
   /**
+   * <p>For now, treat a HTTP POST request just like a GET request.</p>
+   *
+   * @param request The servet request.
+   * @param response The servlet response.
+   * @throws ServletException If thrown by <code>doGet</code>.
+   * @throws IOException If thrown by <code>doGet</code>.
+   */
+  public void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException
+  {
+   doGet(request, response);
+  }
+
+  /**
    * <p>Implements GetBehaviorDefinitions in the FedoraAccess interface. Gets a
    * list of Behavior Definition object PIDs for the specified digital object.
    * </p>
@@ -827,288 +818,83 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   }
 
   /**
-   * <p>Performs simple string replacement using regular expressions.
-   * All matching occurrences of the pattern string will be replaced in the
-   * input string by the replacement string.
+   * <p>Initialize servlet.</p>
    *
-   * @param inputString The source string.
-   * @param patternString The regular expression pattern.
-   * @param replaceString The replacement string.
-   * @return The source string with substitutions.
+   * @throws ServletException If the servet cannot be initialized.
    */
-  private String substituteString(String inputString, String patternString,
-                                 String replaceString)
-  {
-    Pattern pattern = Pattern.compile(patternString);
-    Matcher m = pattern.matcher(inputString);
-    return m.replaceAll(replaceString);
+  public void init() throws ServletException
+  {}
+
+  /**
+   * <p>Cleans up servlet resources.</p>
+   */
+  public void destroy()
+  {}
+
+  /**
+   * <p>Instantiates a new dissemination cache.</p>
+   */
+  private synchronized void clearDisseminationCache() {
+    disseminationCache = new Hashtable();
   }
 
   /**
-   * <p>Validates user-supplied method parameters against values
-   * in the corresponding Behavior Definition object. The method will validate
-   * for:</p>
-   * <ol>
-   * <li> Valid name - each name must match a valid method parameter name</li>
-   * <li> DefaultValue - any specified parameters with valid default values
-   * will have the default value substituted if the user-supplied value is null
-   * </li>
-   * <li> Required name - each required method parameter name must be present
-   * </ol>
+   * <p>Gets dissemination from cache. This method attempts to retrieve
+   * a dissemination from the cache. If found, the dissemination is
+   * returned. If not found, this method calls <code>GetDissemination</code>
+   * to get the dissemination. If the retrieval is successful, the
+   * dissemination is added to the cache. The cache may be cleared by
+   * setting the URL servlet parameter <code>clearCache</code> to a value
+   * of "yes". The cache is also flushed when it reaches the limit
+   * specified by <code>DISS_CACHE_SIZE</code>.</p>
    *
-   * @param PID The persistent identifier of the digital object.
+   * @param dissRequestID The originating URI request used as hash key.
+   * @param PID The persistent identifier of the Digital Object.
    * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param methodName The name of the method.
-   * @param A hashtable of user-supplied method parameter name/value.
-   *                      pairs
-   * @return True if method parameters are valid; false otherwise.
-   *
-   */
-  private boolean isValidUserParms(String PID, String bDefPID,
-                                    String methodName, Hashtable h_userParms,
-                                    Date versDateTime,
-                                    HttpServletResponse response)
-      throws IOException
-  {
-    boolean valid = true;
-    FastDOReader fdor = null;
-    MethodParmDef[] methodParms = null;
-    MethodParmDef methodParm = null;
-
-    try
-    {
-      fdor = new FastDOReader(PID);
-      methodParms = fdor.GetBMechMethodParm(bDefPID, methodName, versDateTime);
-
-      // FIXME!! Decide on Exception handling
-    } catch(MethodNotFoundException mpnfe)
-    {
-      System.out.println(mpnfe.getMessage());
-      this.getServletContext().log(mpnfe.getMessage(), mpnfe.getCause());
-    } catch (ObjectNotFoundException onfe)
-    {
-      System.out.println(onfe.getMessage());
-      this.getServletContext().log(onfe.getMessage(), onfe.getCause());
-    }
-
-    // Put valid method parameters and their attributes into hashtable
-    Hashtable v_validParms = new Hashtable();
-    if (methodParms != null)
-    {
-      for (int i=0; i<methodParms.length; i++)
-      {
-        methodParm = methodParms[i];
-        v_validParms.put(methodParm.parmName,methodParm);
-      }
-    }
-
-    // check if no user supplied parameters
-    if (!h_userParms.isEmpty())
-    {
-      // Iterate over each user supplied parameter name
-      Enumeration parmNames = h_userParms.keys();
-      while (parmNames.hasMoreElements())
-      {
-        String name = (String)parmNames.nextElement();
-        methodParm = (MethodParmDef)v_validParms.get(name);
-        if (methodParm != null && methodParm.parmName != null)
-        {
-          // Method has at least one parameter
-          if (methodParm.parmRequired)
-          {
-            // Method parm is required
-            if (h_userParms.get(methodParm.parmName) == null)
-            {
-              // Error: required method parameter not in user-supplied list
-              System.out.println("REQUIRED PARAMETER:" + methodParm.parmName +
-                                 " NOT FOUND");
-              response.setContentType(CONTENT_TYPE_HTML);
-              PrintWriter out = response.getWriter();
-              out.println("<br></br><b><font size=\"+1\" color=\"green\">"+
-                          "*****REQUIRED PARAMETER NOT FOUND: "+
-                          methodParm.parmName + "</font></b>");
-              valid = false;
-            } else
-            {
-              // Required parameter found
-              if (debug) System.out.println("Required parameter FOUND: " +
-                  methodParm.parmName);
-            }
-          }
-
-          // Method parameter is not required
-          // Check for default value if user-supplied value is null or empty
-          String value = (String)h_userParms.get(methodParm.parmName);
-          if (value == null && value.equalsIgnoreCase(""))
-          {
-            // Value of user-supplied parameter is  null or empty
-            if(methodParm.parmDefaultValue != null)
-            {
-              // Default value is specified for this parameter.
-              // Substitute default value.
-              h_userParms.put(methodParm.parmName, methodParm.parmDefaultValue);
-              if (debug) System.out.println("SET DEFAULT VALUE: "+
-                  methodParm.parmDefaultValue);
-            }
-          } else
-          {
-            // Value of user-supplied parameter is NOT null or empty
-            if (debug) System.out.println("NO DEFAULT VALUE APPLIED");
-          }
-          if (!h_userParms.isEmpty() &&
-              (h_userParms.get(methodParm.parmName) == null) )
-          {
-            // User-supplied parameter name does not match any valid parameter
-            // names for this method.
-            System.out.println("USER SUPPLIED PARAMETER NOT VALID FOR THIS " +
-                              "METHOD: "+methodParm.parmName);
-            response.setContentType(CONTENT_TYPE_HTML);
-            PrintWriter out = response.getWriter();
-            out.println("<br><b><font size=\"+1\" color=\"green\">"+
-                        "*****INVALID METHOD PARAMETER: "+methodParm.parmName+
-                          "</font></b>");
-            valid = false;
-          }
-        } else
-        {
-          if (debug) System.out.println("NAME NOT FOUND: "+name);
-        }
-    }
-    } else
-    {
-      // There were no user supplied parameters.
-      // Check if this method has any required parameters.
-      if (methodParms != null)
-      {
-        for (int i=0; i<methodParms.length; i++)
-        {
-          methodParm = methodParms[i];
-          if (methodParm.parmRequired)
-          {
-            // A required method parameter was not found
-            if (debug) System.out.println("emptyREQUIRED PARAM NAME NOT FOUND: "
-                + methodParm.parmName);
-            response.setContentType(CONTENT_TYPE_HTML);
-            PrintWriter out = response.getWriter();
-            out.println("<br></br><b><font size=\"+1\" color=\"green\">"+
-                        "REQUIRED METHOD PARAMETER NOT FOUND: "+
-                        methodParm.parmName+"</font></b>");
-            valid = false;
-          } else
-          {
-            //if (debug) System.out.println("emptyNON-REQUIRED PARAM FOUND: " +
-            //    methodParm.parmName);
-          }
-        }
-      }
-    }
-    return valid;
-  }
-
-  /**
-   * <p>Displays a list of the servlet input parameters. This method is
-   * generally called when a service request returns no data. Usually
-   * this is a result of an incorrect spelling of either a required
-   * URL parameter or in one of the user-supplied parameters. The output
-   * from this method can be used to help verify the URL parameters
-   * sent to the servlet</p>
-   *
-   * @param action The Fedora service requested.
-   * @param PID The persistent identifier of the digital object.
-   * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param methodName the name of the method.
+   * @param methodName The method name.
+   * @param userParms An array of user-supplied method parameters.
    * @param asOfDate The version datetime stamp of the digital object.
-   * @param userParms An array of user-supplied method parameters and values.
-   * @param clearCache The dissemination cache flag.
-   * @param response The servlet response.
-   * @throws IOException If an error occurrs with an input or output operation.
+   * @return The MIME-typed stream containing dissemination result.
    */
-  private void showURLParms(String action, String PID, String bDefPID,
-                           String methodName, Calendar asOfDate,
-                           Property[] userParms, String clearCache,
-                           HttpServletResponse response)
-      throws IOException
+  private synchronized MIMETypedStream getDisseminationFromCache(String action,
+      String PID, String bDefPID, String methodName,
+      Property[] userParms, Calendar asOfDate, String clearCache,
+      HttpServletResponse response) throws IOException
   {
-
-    String versDate = DateUtility.convertCalendarToString(asOfDate);
-    if (debug) System.out.println("versdate: "+versDate);
-    PrintWriter out = response.getWriter();
-    response.setContentType(CONTENT_TYPE_HTML);
-
-    // Display servlet input parameters
-    out.println("<html>");
-    out.println("<head>");
-    out.println("<title>FedoraServlet</title>");
-    out.println("</head>");
-    out.println("<body>");
-    out.println("<br></br><font size='+3' REQUEST Returned NO Data</font>");
-    out.println("<br></br><font color='red'>Request Parameters</font>");
-    out.println("<br></br>");
-    out.println("<table cellpadding='5'>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>action_</td>");
-    out.println("<td> = </td>");
-    out.println("<td>"+action+"</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>PID_</td>");
-    out.println("<td> = <td>"+PID+"</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>bDefPID_</td>");
-    out.println("<td> = </td>");
-    out.println("<td>"+bDefPID+"</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>methodName_</td>");
-    out.println("<td> = </td>");
-    out.println("<td>"+methodName+"</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>AsOfDate_</td>");
-    out.println("<td> = </td>");
-    out.println("<td>"+versDate+"</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td><font color='red'>clearCache_</td>");
-    out.println("<td> = </td>");
-    out.println("<td>"+clearCache+"</td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("<td colspan='5'><font size='+1' color='blue'>"+
-                "Other Parameters Found:</font></td>");
-    out.println("</tr>");
-    out.println("<tr>");
-    out.println("</tr>");
-
-    // List user-supplied parameters if any
-    for (int i=0; i<userParms.length; i++)
+    // Clear cache if size gets larger than DISS_CACHE_SIZE
+    // FIXME!! This needs to part of the Fedora server config parameters
+    if (disseminationCache.size() > DISS_CACHE_SIZE ||
+        (clearCache != null && clearCache.equalsIgnoreCase(YES)))
     {
-      out.println("<tr>");
-      out.println("<td><font color='red'>"+userParms[i].Name+"</font></td>");
-      out.println("<td> = </td>");
-      out.println("<td>"+userParms[i].Value+"</td>");
-        out.println("</tr>");
+      clearDisseminationCache();
     }
-    out.println("</table></center></font>");
-    out.println("</body></html>");
-
-    if (debug)
+    MIMETypedStream disseminationResult = null;
+    // See if dissemination request is in local cache
+    disseminationResult =
+        (MIMETypedStream)disseminationCache.get(requestURI);
+    if (disseminationResult == null)
     {
-      System.out.println("PID: "+PID+"bDEF: "+bDefPID+"methodName: " +
-                         methodName);
-      if (userParms != null)
+      // Dissemination request NOT in local cache.
+      // Try reading from relational database
+      disseminationResult = GetDissemination(PID, bDefPID, methodName,
+          userParms, asOfDate);
+      if (disseminationResult != null)
       {
-        for (int i=0; i<userParms.length; i++)
-        {
-          System.out.println("<p>userParm: "+userParms[i].Name+
-          " userValue: "+userParms[i].Value);
-        }
-      }
+        // Dissemination request succeeded, so add to local cache
+        disseminationCache.put(requestURI, disseminationResult);
+         if (debug) System.out.println("ADDED to CACHE: "+requestURI);
+      } /* else
+      {
+        // Dissemination request failed
+        // FIXME!! need to decide on exception handling
+        showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
+                    clearCache, response);
+        System.out.println("Dissemination Result: NULL");
+        this.getServletContext().log("Dissemination Result: NULL");
+      } */
+      if (debug) System.out.println("CACHE SIZE: "+disseminationCache.size());
     }
-    System.out.println("REQUEST Returned NO Data");
+    return disseminationResult;
   }
 
   /**
@@ -1457,75 +1243,287 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   }
 
   /**
-   * <p>Gets dissemination from cache. This method attempts to retrieve
-   * a dissemination from the cache. If found, the dissemination is
-   * returned. If not found, this method calls <code>GetDissemination</code>
-   * to get the dissemination. If the retrieval is successful, the
-   * dissemination is added to the cache. The cache may be cleared by
-   * setting the URL servlet parameter <code>clearCache</code> to a value
-   * of "yes". The cache is also flushed when it reaches the limit
-   * specified by <code>DISS_CACHE_SIZE</code>.</p>
+   * <p>Validates user-supplied method parameters against values
+   * in the corresponding Behavior Definition object. The method will validate
+   * for:</p>
+   * <ol>
+   * <li> Valid name - each name must match a valid method parameter name</li>
+   * <li> DefaultValue - any specified parameters with valid default values
+   * will have the default value substituted if the user-supplied value is null
+   * </li>
+   * <li> Required name - each required method parameter name must be present
+   * </ol>
    *
-   * @param dissRequestID The originating URI request used as hash key.
-   * @param PID The persistent identifier of the Digital Object.
+   * @param PID The persistent identifier of the digital object.
    * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param methodName The method name.
-   * @param userParms An array of user-supplied method parameters.
+   * @param methodName The name of the method.
+   * @param A hashtable of user-supplied method parameter name/value.
+   *                      pairs
+   * @return True if method parameters are valid; false otherwise.
+   *
+   */
+  private boolean isValidUserParms(String PID, String bDefPID,
+                                    String methodName, Hashtable h_userParms,
+                                    Date versDateTime,
+                                    HttpServletResponse response)
+      throws IOException
+  {
+    boolean valid = true;
+    FastDOReader fdor = null;
+    MethodParmDef[] methodParms = null;
+    MethodParmDef methodParm = null;
+
+    try
+    {
+      fdor = new FastDOReader(PID);
+      methodParms = fdor.GetBMechMethodParm(bDefPID, methodName, versDateTime);
+
+      // FIXME!! Decide on Exception handling
+    } catch(MethodNotFoundException mpnfe)
+    {
+      System.out.println(mpnfe.getMessage());
+      this.getServletContext().log(mpnfe.getMessage(), mpnfe.getCause());
+    } catch (ObjectNotFoundException onfe)
+    {
+      System.out.println(onfe.getMessage());
+      this.getServletContext().log(onfe.getMessage(), onfe.getCause());
+    }
+
+    // Put valid method parameters and their attributes into hashtable
+    Hashtable v_validParms = new Hashtable();
+    if (methodParms != null)
+    {
+      for (int i=0; i<methodParms.length; i++)
+      {
+        methodParm = methodParms[i];
+        v_validParms.put(methodParm.parmName,methodParm);
+      }
+    }
+
+    // check if no user supplied parameters
+    if (!h_userParms.isEmpty())
+    {
+      // Iterate over each user supplied parameter name
+      Enumeration parmNames = h_userParms.keys();
+      while (parmNames.hasMoreElements())
+      {
+        String name = (String)parmNames.nextElement();
+        methodParm = (MethodParmDef)v_validParms.get(name);
+        if (methodParm != null && methodParm.parmName != null)
+        {
+          // Method has at least one parameter
+          if (methodParm.parmRequired)
+          {
+            // Method parm is required
+            if (h_userParms.get(methodParm.parmName) == null)
+            {
+              // Error: required method parameter not in user-supplied list
+              System.out.println("REQUIRED PARAMETER:" + methodParm.parmName +
+                                 " NOT FOUND");
+              response.setContentType(CONTENT_TYPE_HTML);
+              PrintWriter out = response.getWriter();
+              out.println("<br></br><b><font size=\"+1\" color=\"green\">"+
+                          "*****REQUIRED PARAMETER NOT FOUND: "+
+                          methodParm.parmName + "</font></b>");
+              valid = false;
+            } else
+            {
+              // Required parameter found
+              if (debug) System.out.println("Required parameter FOUND: " +
+                  methodParm.parmName);
+            }
+          }
+
+          // Method parameter is not required
+          // Check for default value if user-supplied value is null or empty
+          String value = (String)h_userParms.get(methodParm.parmName);
+          if (value == null && value.equalsIgnoreCase(""))
+          {
+            // Value of user-supplied parameter is  null or empty
+            if(methodParm.parmDefaultValue != null)
+            {
+              // Default value is specified for this parameter.
+              // Substitute default value.
+              h_userParms.put(methodParm.parmName, methodParm.parmDefaultValue);
+              if (debug) System.out.println("SET DEFAULT VALUE: "+
+                  methodParm.parmDefaultValue);
+            }
+          } else
+          {
+            // Value of user-supplied parameter is NOT null or empty
+            if (debug) System.out.println("NO DEFAULT VALUE APPLIED");
+          }
+          if (!h_userParms.isEmpty() &&
+              (h_userParms.get(methodParm.parmName) == null) )
+          {
+            // User-supplied parameter name does not match any valid parameter
+            // names for this method.
+            System.out.println("USER SUPPLIED PARAMETER NOT VALID FOR THIS " +
+                              "METHOD: "+methodParm.parmName);
+            response.setContentType(CONTENT_TYPE_HTML);
+            PrintWriter out = response.getWriter();
+            out.println("<br><b><font size=\"+1\" color=\"green\">"+
+                        "*****INVALID METHOD PARAMETER: "+methodParm.parmName+
+                          "</font></b>");
+            valid = false;
+          }
+        } else
+        {
+          if (debug) System.out.println("NAME NOT FOUND: "+name);
+        }
+    }
+    } else
+    {
+      // There were no user supplied parameters.
+      // Check if this method has any required parameters.
+      if (methodParms != null)
+      {
+        for (int i=0; i<methodParms.length; i++)
+        {
+          methodParm = methodParms[i];
+          if (methodParm.parmRequired)
+          {
+            // A required method parameter was not found
+            if (debug) System.out.println("emptyREQUIRED PARAM NAME NOT FOUND: "
+                + methodParm.parmName);
+            response.setContentType(CONTENT_TYPE_HTML);
+            PrintWriter out = response.getWriter();
+            out.println("<br></br><b><font size=\"+1\" color=\"green\">"+
+                        "REQUIRED METHOD PARAMETER NOT FOUND: "+
+                        methodParm.parmName+"</font></b>");
+            valid = false;
+          } else
+          {
+            //if (debug) System.out.println("emptyNON-REQUIRED PARAM FOUND: " +
+            //    methodParm.parmName);
+          }
+        }
+      }
+    }
+    return valid;
+  }
+
+  /**
+   * <p>Displays a list of the servlet input parameters. This method is
+   * generally called when a service request returns no data. Usually
+   * this is a result of an incorrect spelling of either a required
+   * URL parameter or in one of the user-supplied parameters. The output
+   * from this method can be used to help verify the URL parameters
+   * sent to the servlet</p>
+   *
+   * @param action The Fedora service requested.
+   * @param PID The persistent identifier of the digital object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName the name of the method.
    * @param asOfDate The version datetime stamp of the digital object.
-   * @return The MIME-typed stream containing dissemination result.
+   * @param userParms An array of user-supplied method parameters and values.
+   * @param clearCache The dissemination cache flag.
+   * @param response The servlet response.
+   * @throws IOException If an error occurrs with an input or output operation.
    */
-  private synchronized MIMETypedStream getDisseminationFromCache(String action,
-      String PID, String bDefPID, String methodName,
-      Property[] userParms, Calendar asOfDate, String clearCache,
-      HttpServletResponse response) throws IOException
+  private void showURLParms(String action, String PID, String bDefPID,
+                           String methodName, Calendar asOfDate,
+                           Property[] userParms, String clearCache,
+                           HttpServletResponse response)
+      throws IOException
   {
-    // Clear cache if size gets larger than DISS_CACHE_SIZE
-    // FIXME!! This needs to part of the Fedora server config parameters
-    if (disseminationCache.size() > DISS_CACHE_SIZE ||
-        (clearCache != null && clearCache.equalsIgnoreCase(YES)))
+
+    String versDate = DateUtility.convertCalendarToString(asOfDate);
+    if (debug) System.out.println("versdate: "+versDate);
+    PrintWriter out = response.getWriter();
+    response.setContentType(CONTENT_TYPE_HTML);
+
+    // Display servlet input parameters
+    out.println("<html>");
+    out.println("<head>");
+    out.println("<title>FedoraServlet</title>");
+    out.println("</head>");
+    out.println("<body>");
+    out.println("<br></br><font size='+3' REQUEST Returned NO Data</font>");
+    out.println("<br></br><font color='red'>Request Parameters</font>");
+    out.println("<br></br>");
+    out.println("<table cellpadding='5'>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>action_</td>");
+    out.println("<td> = </td>");
+    out.println("<td>"+action+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>PID_</td>");
+    out.println("<td> = <td>"+PID+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>bDefPID_</td>");
+    out.println("<td> = </td>");
+    out.println("<td>"+bDefPID+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>methodName_</td>");
+    out.println("<td> = </td>");
+    out.println("<td>"+methodName+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>AsOfDate_</td>");
+    out.println("<td> = </td>");
+    out.println("<td>"+versDate+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>clearCache_</td>");
+    out.println("<td> = </td>");
+    out.println("<td>"+clearCache+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td colspan='5'><font size='+1' color='blue'>"+
+                "Other Parameters Found:</font></td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("</tr>");
+
+    // List user-supplied parameters if any
+    for (int i=0; i<userParms.length; i++)
     {
-      clearDisseminationCache();
+      out.println("<tr>");
+      out.println("<td><font color='red'>"+userParms[i].Name+"</font></td>");
+      out.println("<td> = </td>");
+      out.println("<td>"+userParms[i].Value+"</td>");
+        out.println("</tr>");
     }
-    MIMETypedStream disseminationResult = null;
-    // See if dissemination request is in local cache
-    disseminationResult =
-        (MIMETypedStream)disseminationCache.get(requestURI);
-    if (disseminationResult == null)
+    out.println("</table></center></font>");
+    out.println("</body></html>");
+
+    if (debug)
     {
-      // Dissemination request NOT in local cache.
-      // Try reading from relational database
-      disseminationResult = GetDissemination(PID, bDefPID, methodName,
-          userParms, asOfDate);
-      if (disseminationResult != null)
+      System.out.println("PID: "+PID+"bDEF: "+bDefPID+"methodName: " +
+                         methodName);
+      if (userParms != null)
       {
-        // Dissemination request succeeded, so add to local cache
-        disseminationCache.put(requestURI, disseminationResult);
-         if (debug) System.out.println("ADDED to CACHE: "+requestURI);
-      } /* else
-      {
-        // Dissemination request failed
-        // FIXME!! need to decide on exception handling
-        showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                    clearCache, response);
-        System.out.println("Dissemination Result: NULL");
-        this.getServletContext().log("Dissemination Result: NULL");
-      } */
-      if (debug) System.out.println("CACHE SIZE: "+disseminationCache.size());
+        for (int i=0; i<userParms.length; i++)
+        {
+          System.out.println("<p>userParm: "+userParms[i].Name+
+          " userValue: "+userParms[i].Value);
+        }
+      }
     }
-    return disseminationResult;
+    System.out.println("REQUEST Returned NO Data");
   }
 
   /**
-   * <p>Instantiates a new dissemination cache.</p>
+   * <p>Performs simple string replacement using regular expressions.
+   * All matching occurrences of the pattern string will be replaced in the
+   * input string by the replacement string.
+   *
+   * @param inputString The source string.
+   * @param patternString The regular expression pattern.
+   * @param replaceString The replacement string.
+   * @return The source string with substitutions.
    */
-  private synchronized void clearDisseminationCache() {
-    disseminationCache = new Hashtable();
-  }
-
-  /**
-   * <p>Cleans up servlet resources.</p>
-   */
-  public void destroy()
+  private String substituteString(String inputString, String patternString,
+                                 String replaceString)
   {
+    Pattern pattern = Pattern.compile(patternString);
+    Matcher m = pattern.matcher(inputString);
+    return m.replaceAll(replaceString);
   }
 }
