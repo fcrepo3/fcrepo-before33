@@ -32,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -59,7 +60,11 @@ public class RepositoryBrowser
 
     private JSortTable m_table;
     
-    public RepositoryBrowser() {
+    public RepositoryBrowser(String pidPattern, String foType, 
+            String lockedByPattern, String state, String labelPattern, 
+            String contentModelIdPattern, Calendar createDateMin, 
+            Calendar createDateMax, Calendar lastModDateMin, 
+            Calendar lastModDateMax) {
         super("Repository Browser",
               true, //resizable
               true, //closable
@@ -77,7 +82,9 @@ public class RepositoryBrowser
 
         try {
         AutoLister a=new AutoLister(Administrator.getHost(), Administrator.getPort());
-        Map m=a.list(null);
+        Map m=a.list(pidPattern, foType, lockedByPattern, state,
+                labelPattern, contentModelIdPattern, createDateMin,
+                createDateMax, lastModDateMin, lastModDateMax);
         Object[][] data=new Object[m.size()][8];
         Iterator pidIter=m.keySet().iterator();   
         int i=0;

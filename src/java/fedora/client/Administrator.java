@@ -258,13 +258,13 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         JMenu toolsMenu=new JMenu("Tools");
         toolsMenu.setMnemonic(KeyEvent.VK_T);
         
-        JMenuItem toolsBrowser=new JMenuItem("Repository Browser",KeyEvent.VK_B);
-        toolsBrowser.addActionListener(new ActionListener() {
+        JMenuItem toolsSearch=new JMenuItem("Search/Browse Repository",KeyEvent.VK_B);
+        toolsSearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                createRepositoryBrowser();
+                createSearchRepository();
             }
         });
-        toolsMenu.add(toolsBrowser);
+        toolsMenu.add(toolsSearch);
         
         JMenuItem toolsManagement=new JMenuItem("Management Console",KeyEvent.VK_M);
         toolsManagement.addActionListener(new ActionListener() {
@@ -453,8 +453,8 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         }
     }
     
-    protected void createRepositoryBrowser() {
-        RepositoryBrowser frame=new RepositoryBrowser();
+    protected void createSearchRepository() {
+        Search frame=new Search();
         frame.setVisible(true);
         s_desktop.add(frame);
         try {

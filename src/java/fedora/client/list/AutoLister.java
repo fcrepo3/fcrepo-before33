@@ -3,6 +3,7 @@ package fedora.client.list;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -21,21 +22,25 @@ public class AutoLister {
         m_apim=APIMSkeletonFactory.getSkeleton(host, port);
     }
 
-    public Map list(String fedoraObjectType) throws RemoteException {
-        return list(m_apim, fedoraObjectType);
+    public Map list(String pidPattern, String foType, String lockedByPattern, 
+            String state, String labelPattern, String contentModelIdPattern, 
+            Calendar createDateMin, Calendar createDateMax, 
+            Calendar lastModDateMin, Calendar lastModDateMax)
+            throws RemoteException {
+        return list(m_apim, pidPattern, foType, lockedByPattern, state,
+                labelPattern, contentModelIdPattern, createDateMin,
+                createDateMax, lastModDateMin, lastModDateMax);
     }
 
-    public static Map list(FedoraAPIM skeleton, String fedoraObjectType) 
-            throws RemoteException {
-        String[] pids=skeleton.listObjectPIDs(null, fedoraObjectType,
-                null, null, null, null, null, null, null, null);
-/*
-            String pidPattern, 
-            String foType, String lockedByPattern, String state, 
-            String labelPattern, String contentModelIdPattern, 
+    public static Map list(FedoraAPIM skeleton, String pidPattern, 
+            String foType, String lockedByPattern, 
+            String state, String labelPattern, String contentModelIdPattern, 
             Calendar createDateMin, Calendar createDateMax, 
-            Calendar lastModDateMin, Calendar lastModDateMax        
-*/
+            Calendar lastModDateMin, Calendar lastModDateMax)
+            throws RemoteException {
+        String[] pids=skeleton.listObjectPIDs(pidPattern, foType,
+                lockedByPattern, state, labelPattern, contentModelIdPattern,
+                createDateMin, createDateMax, lastModDateMin, lastModDateMax);
         HashMap oi=new HashMap();
         for (int i=0; i<pids.length; i++) {
             oi.put(pids[i], skeleton.getObjectInfo(pids[i]));
@@ -57,7 +62,8 @@ public class AutoLister {
                 String hostName=args[0];
                 int portNum=Integer.parseInt(args[1]);
                 AutoLister a=new AutoLister(hostName, portNum);
-                Map m=a.list(args[2]);
+                Map m=a.list(null, args[2], null, null, null, null, null, null,
+                        null, null);
                 Iterator pidIter=m.keySet().iterator();
                 while (pidIter.hasNext()) {
                     String pid=(String) pidIter.next();
