@@ -91,6 +91,10 @@ public abstract class Parameterized {
         m_parameters.put(name, value);
     }
 
+    public Map getParameters() {
+        return m_parameters;
+    }
+
     /**
      * Gets an Iterator over the names of parameters for this component.
      *
