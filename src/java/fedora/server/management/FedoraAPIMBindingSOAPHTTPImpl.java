@@ -5,16 +5,49 @@
  * by the Apache Axis WSDL2Java emitter.
  */
 
+
 package fedora.server.management;
 
+import javax.xml.namespace.QName;
 import org.apache.axis.AxisEngine;
+import org.apache.axis.AxisFault;
 import org.apache.axis.MessageContext;
 
 public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.FedoraAPIM{
-    public java.lang.String createObject() throws java.rmi.RemoteException {
-                return "This would be a PID if this operation implementation wasn't a stub.  BTW, the scope of this service (as defined by the scope property in the wsdd file) is '" 
-                + AxisEngine.getCurrentMessageContext().getStrProp("scope") + "'.";
 
+    /**
+     * The (SOAP[version-specific] spec-dictated) namespace for fault codes.
+     * See http://www.w3.org/TR/SOAP/#_Toc478383510 for SOAPv1.1 (what Axis currently
+     * conforms to) and http://www.w3.org/TR/soap12-part1/#faultcodeelement for SOAPv1.2
+     * This should go in some utility class for the APIs to share. SOAP v1.1 here.
+     */
+    public static String SOAP_FAULT_CODE_NAMESPACE="http://schemas.xmlsoap.org/soap/envelope/";
+    
+    /**
+     * Similar to above.  This is "actor" in soap1.1 and "role"  in 1.2.
+     * Soap 1.1 provides (see http://www.w3.org/TR/SOAP/#_Toc478383499) a special
+     * URI for intermediaries, http://schemas.xmlsoap.org/soap/actor/next,
+     * and leaves other URIs up to the application.  Soap 1.2 provides 
+     * (see http://www.w3.org/TR/soap12-part1/#soaproles) three special URIs --
+     * one of which is for ultimate recievers, which is the category Fedora
+     * falls into.  http://www.w3.org/2002/06/soap-envelope/role/ultimateReceiver
+     * is the URI v1.2 provides.  Since we're doing soap1.1 with axis, we
+     * interpolate and use http://schemas.xmlsoap.org/soap/actor/ultimateReceiver.
+     */
+    public static String SOAP_ULTIMATE_RECEIVER="http://schemas.xmlsoap.org/soap/actor/ultimateReceiver";
+    
+    public java.lang.String createObject() throws java.rmi.RemoteException {
+        if (1==1) {
+            AxisFault fault=new AxisFault(new QName(SOAP_FAULT_CODE_NAMESPACE, 
+                    "Server.api.methodNotImplemented"), 
+                    "The createObject() method hasn't been implemented yet.",
+                    SOAP_ULTIMATE_RECEIVER, null);
+            fault.setFaultDetailString("No further information is available.");
+            throw fault;
+        }
+        return "This would be a PID if this operation implementation wasn't a stub.  BTW, the scope of this service (as defined by the scope property in the wsdd file) is '" 
+                + AxisEngine.getCurrentMessageContext().getStrProp("scope") + "'.";
+        //return null;
     }
 
     public java.lang.String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
