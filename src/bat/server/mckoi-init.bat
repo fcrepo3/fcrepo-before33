@@ -2,16 +2,25 @@
 
 if "%FEDORA_HOME%" == "" goto envErr
 
-if not exist %FEDORA_HOME%\server\mckoi094\mckoidb.jar goto mckoiNotFound
+rem McKoi environment variables
+set MCKOI_BASENAME=@mckoi.basename@
+set MCKOI_HOME="%FEDORA_HOME%"/server/"%MCKOI_BASENAME%"
+set MCKOI_CLASSPATH="%MCKOI_HOME%"/gnu-regexp-1.1.4.jar
+set MCKOIDB_JAR="%MCKOI_HOME%"/mckoidb.jar
+set MCKOI_CONF="%MCKOI_HOME%"/db.conf
+set MCKOI_DB="%MCKOI_HOME%"/data/DefaultDatabase_sf.koi
+set MCKOI_PORT=9157
 
-if exist %FEDORA_HOME%\server\mckoi094\data\DefaultDatabase.sf goto mckoiDBInstalled
+if not exist "%MCKOIDB_JAR%" goto mckoiNotFound
+
+if exist "%MCKOI_DB%" goto mckoiDBInstalled
 
 if "%1" == "" goto showUsage
 if "%2" == "" goto showUsage
 
 echo Initializing McKoi DB...
 
-java -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf -create "%1" "%2"
+java -cp "%MCKOI_CLASSPATH%" -jar "%MCKOIDB_JAR%" -conf "%MCKOI_CONF%" -create "%1" "%2"
 
 echo Finished.
 
@@ -22,13 +31,13 @@ echo ERROR: Environment variable, FEDORA_HOME must be set.
 goto end
 
 :mckoiNotFound
-echo ERROR: No mckoidb.jar found in %FEDORA_HOME%\server\mckoi094\  
+echo ERROR: No mckoidb.jar found in %MCKOI_HOME%  
 echo Make sure FEDORA_HOME is set correctly.
 goto end
 
 :mckoiDBInstalled
 echo ERROR: McKoi database already initialized.  
-echo Remove %FEDORA_HOME%\server\mckoi094\data to delete.
+echo Remove %MCKOI_HOME%\data to delete.
 goto end
 
 :showUsage

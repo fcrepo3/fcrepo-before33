@@ -3,8 +3,17 @@
 goto checkEnv
 :envOk
 
-if not exist %FEDORA_HOME%\server\mckoi094\mckoidb.jar goto mckoiNotFound
-if not exist %FEDORA_HOME%\server\mckoi094\data\DefaultDatabase.sf goto mckoiNotInitialized
+rem McKoi environment variables
+set MCKOI_BASENAME=@mckoi.basename@
+set MCKOI_HOME="%FEDORA_HOME%"/server/"%MCKOI_BASENAME%"
+set MCKOI_CLASSPATH="%MCKOI_HOME%"/gnu-regexp-1.1.4.jar
+set MCKOIDB_JAR="%MCKOI_HOME%"/mckoidb.jar
+set MCKOI_CONF="%MCKOI_HOME%"/db.conf
+set MCKOI_DB="%MCKOI_HOME%"/data/DefaultDatabase_sf.koi
+set MCKOI_PORT=9157
+
+if not exist "%MCKOIDB_JAR%" goto mckoiNotFound
+if not exist "%MCKOI_DB%" goto mckoiNotInitialized
 
 echo Starting McKoi DB...
 
@@ -14,11 +23,11 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 if "%OS%" == "" goto runMinimized
 
 :runInBackground
-start "mcKoiBG" /B "%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf
+start "mcKoiBG" /B "%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp "%MCKOI_CLASSPATH%" -jar "%MCKOIDB_JAR%" -conf "%MCKOI_CONF%"
 goto :doneRunning
 
 :runMinimized
-start "mckoiMin" /m "%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf
+start "mckoiMin" /m "%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp "%MCKOI_CLASSPATH%" -jar "%MCKOIDB_JAR%" -conf "%MCKOI_CONF%"
 
 :doneRunning
 set JAVA_HOME=%OLD_JAVA_HOME%
@@ -28,7 +37,7 @@ echo To stop the server, use mckoi-stop.
 goto end
 
 :mckoiNotFound
-echo ERROR: No mckoidb.jar found in %FEDORA_HOME%\server\mckoi094\
+echo ERROR: No mckoidb.jar found in %MCKOI_HOME%
 goto end
 
 :mckoiNotInitialized
