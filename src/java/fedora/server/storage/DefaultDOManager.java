@@ -611,7 +611,7 @@ public class DefaultDOManager
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
                     ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
-                    m_validator.validate(inV, 0, "store");
+                    m_validator.validate(inV, m_storageFormat, 0, "store");
                     // TODO: DELTA-MODULE:
                     // After validating for storage, but before saving to definitive store, 
                     // tell the Delta Module about new or modified objects
@@ -830,13 +830,14 @@ public class DefaultDOManager
                 // perform initial validation of the ingest submission format
                 InputStream inV=getTempStore().retrieve(tempHandle);
                 //m_validator.validate(inV, format, 0, "ingest");
-				m_validator.validate(inV, 0, "ingest");
+				m_validator.validate(inV, format, 0, "ingest");
 
                 // deserialize it first
                 BasicDigitalObject obj=new BasicDigitalObject();
 				// FIXME: just setting ownerId manually for now...
 				obj.setOwnerId("fedoraAdmin");
 				// deserialize the input stream, specifying its client-supplied format
+				System.out.println("LOOK! just about to deserialize format of: " + format);
                 m_translator.deserialize(in2, obj, format, encoding);
                 // then, before doing anything, set object and component states
                 // to "A" if they're unspecified
@@ -927,6 +928,7 @@ public class DefaultDOManager
 
                 // then get a digital object writer configured with
                 // the DEFAULT export format.
+				System.out.println("LOOK! get new writer with default export format: " + m_defaultExportFormat);
                 DOWriter w=new SimpleDOWriter(context, this, m_translator,
                         m_defaultExportFormat,
                         m_storageCharacterEncoding, obj, this);
