@@ -34,9 +34,8 @@
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Method Map for Fedora Behavior Definition for UVA PickSize Image">
 				<METS:xmlData>
 					<fmm:MethodMap name="Fedora MethodMap for PickSize Image BDef" bDefPID="test:13" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
-						<fmm:Method operationName="getThumbnail">
-						</fmm:Method>
-						<fmm:Method operationName="getSize">
+						<fmm:Method operationName="getThumbnail"/>
+						<fmm:Method operationName="getImage">
 							<fmm:UserInputParm parmName="ZOOM" defaultValue="yes" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="yes"/>
