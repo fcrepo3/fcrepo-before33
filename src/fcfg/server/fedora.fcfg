@@ -4,6 +4,8 @@
 	<comment>Defines a human readable name for the Fedora server; default is Fedora Repository.</comment>
 	<param name="adminEmailList" value="bob@somewhere.com sally@somewhere.com"/>
 	<comment>Defines one or more email addresses for server administrators; list is space delimited.</comment>
+	<param name="adminUser" value="fedoraAdmin"/>
+	<comment>Defines the username for the Fedora server; default is fedoraAdmin.</comment>
 	<param name="adminPassword" value="fedoraAdmin"/>
 	<comment>Defines the password for the Fedora server; default is fedoraAdmin.</comment>
 	<param name="log_max_size" value="5242880"/>
@@ -90,8 +92,9 @@
 	<module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
 		<comment>Builds and manages Fedora's authorization structure.
         </comment>
-        <param name="REPOSITORY-POLICIES-DIRECTORY" value="config/xacml-policies/repository-policies"/>
-        <param name="OBJECT-POLICIES-DIRECTORY" value="config/xacml-policies/object-policies"/>
+        <param name="SURROGATE-POLICIES-DIRECTORY" value="config/xacml-policies/active/surrogate-policies"/>
+        <param name="REPOSITORY-POLICIES-DIRECTORY" value="config/xacml-policies/active/repository-policies"/>
+        <param name="OBJECT-POLICIES-DIRECTORY" value="config/xacml-policies/active/object-policies"/>
         <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
         <param name="ENFORCE-MODE" value="enforce-policies"/>
         <!-- param name="ENFORCE-MODE" value="permit-all-requests"/ -->
@@ -152,20 +155,8 @@
               over the wire
             - how the storage subsystem is implemented.
         Parameters:
-            - allowHosts (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string)
-              A comma-separated list of IP ranges that the client's address 
-              is compared to. If this is specified, the remote address 
-              must match for any Management request to be accepted. 
-              If this is not specified, all requests will be accepted unless 
-              the remote address matches a deny pattern.
-            - denyHosts (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string)
-              A comma-separated list of IP ranges that the client's address 
-              is compared to. If this is specified, the remote address 
-              must not match for any Management request to be accepted. 
-              If this is not specified, request acceptance is governed 
-              solely by the allowHosts parameter.
+        	- none (allowHosts and denyHosts now handled through xacml policies)
         </comment>
-		<param name="allowHosts" value="127.0.0.1"/>
 	</module>
 	<module role="fedora.server.access.Access" class="fedora.server.access.DefaultAccess">
 		<comment>
