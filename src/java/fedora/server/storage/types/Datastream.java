@@ -25,18 +25,6 @@ public class Datastream
       m_auditRecordIdList=new ArrayList();
   }
 
-  /** ControlGrp for "Repository Managed Content" datastreams (internal) */
-  //public final static int MANAGED_CONTENT = 1;
-
-  /** ControlGrp for "Implementor-Defined XML Metadata" datastreams (internal/inline) */
-  //public final static int XML_METADATA = 2;
-
-  /** ControlGrp for "External Referenced Content" datastreams (external) */
-  //public final static int EXTERNAL_REF = 3;
-
-  /** Future(?): ControlGrp "External Service Request" datastreams  (external/request) */
-  //public final static int EXTERNAL_REQUEST = 4;
-
   public String DatastreamID;
 
   public String DSVersionID;
@@ -48,9 +36,6 @@ public class Datastream
   public Date DSCreateDT;
 
   public long DSSize;
-
-  /** Control Group: MANAGED_CONTENT/XML_METADATA/EXTERNAL_REF */
-  //public int DSControlGrp;
 
   /** Datastream Control Group:
    *  This indicates the nature of the repository's control over the
@@ -87,12 +72,14 @@ public class Datastream
 
   public String DSLocation;
 
-  public List auditRecordIdList() {
+  public List auditRecordIdList()
+  {
       return m_auditRecordIdList;
   }
 
   public InputStream getContentStream()
-          throws StreamIOException {
+          throws StreamIOException
+  {
       return null;
   }
 
