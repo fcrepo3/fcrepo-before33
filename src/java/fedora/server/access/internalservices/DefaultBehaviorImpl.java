@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.Date;
 
@@ -16,6 +17,7 @@ import fedora.server.access.Access;
 import fedora.server.access.ObjectProfile;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.DisseminationException;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ObjectIntegrityException;
@@ -94,8 +96,17 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   public MIMETypedStream getObjectProfile() throws ServerException
   {
     ObjectProfile profile = m_access.getObjectProfile(context, reader.GetObjectPID(), asOfDateTime);
-    InputStream in = new ByteArrayInputStream(
-      (new ObjectInfoAsXML().getObjectProfile(reposBaseURL, profile).getBytes()));
+    InputStream in = null;
+    try
+    {
+      in = new ByteArrayInputStream(
+      (new ObjectInfoAsXML().getObjectProfile(reposBaseURL, profile).getBytes("UTF-8")));
+    } catch (UnsupportedEncodingException uee)
+    {
+      throw new GeneralException("[DefaultBehaviorImpl] An error has occurred. "
+          + "The error was a \"" + uee.getClass().getName() + "\"  . The "
+          + "Reason was \"" + uee.getMessage() + "\"  .");
+    }
     return new MIMETypedStream("text/xml", in);
   }
 
@@ -143,9 +154,18 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   {
     ObjectMethodsDef[] methods =
       m_access.getObjectMethods(context, reader.GetObjectPID(), asOfDateTime);
-    InputStream in = new ByteArrayInputStream(
+    InputStream in = null;
+    try
+    {
+      in = new ByteArrayInputStream(
       (new ObjectInfoAsXML().getMethodIndex(
-        reposBaseURL, reader.GetObjectPID(), methods).getBytes()));
+        reposBaseURL, reader.GetObjectPID(), methods).getBytes("UTF-8")));
+    } catch (UnsupportedEncodingException uee)
+    {
+      throw new GeneralException("[DefaultBehaviorImpl] An error has occurred. "
+          + "The error was a \"" + uee.getClass().getName() + "\"  . The "
+          + "Reason was \"" + uee.getMessage() + "\"  .");
+    }
     return new MIMETypedStream("text/xml", in);
   }
 
@@ -193,9 +213,12 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   public MIMETypedStream getItemIndex() throws ServerException
   {
     Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
-    InputStream is = new ByteArrayInputStream(
+    InputStream is = null;
+    try{
+    is = new ByteArrayInputStream(
       new DatastreamsAsXML().getItemIndex(
-      reposBaseURL, reader, versDate).getBytes());
+      reposBaseURL, reader, versDate).getBytes("UTF-8"));
+    } catch (Exception e) {}
     return new MIMETypedStream("text/xml", is);
   }
 
@@ -284,16 +307,23 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   {
     Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
     DatastreamXMLMetadata dcmd = null;
+    InputStream is = null;
     try
     {
         dcmd = (DatastreamXMLMetadata) reader.GetDatastream("DC", versDate);
-    }
-    catch (ClassCastException cce) {
+        is = new ByteArrayInputStream(
+             new ObjectInfoAsXML().getOAIDublinCore(dcmd).getBytes("UTF-8"));
+    } catch (ClassCastException cce)
+    {
         throw new ObjectIntegrityException("Object " + reader.GetObjectPID()
-                + " has a DC datastream, but it's not inline XML.");
+            + " has a DC datastream, but it's not inline XML.");
+
+    } catch (UnsupportedEncodingException uee)
+    {
+        throw new GeneralException("[DefaultBehaviorImpl] An error has occurred. "
+            + "The error was a \"" + uee.getClass().getName() + "\"  . The "
+            + "Reason was \"" + uee.getMessage() + "\"  .");
     }
-    InputStream is = new ByteArrayInputStream(
-      new ObjectInfoAsXML().getOAIDublinCore(dcmd).getBytes());
     return new MIMETypedStream("text/xml", is);
   }
 
