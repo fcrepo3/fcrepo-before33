@@ -23,6 +23,7 @@ import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
+import fedora.server.errors.UnknownSessionTokenException;
 import fedora.server.errors.UnrecognizedFieldException;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
@@ -43,6 +44,7 @@ public class FieldSearchSQLImpl
     private ConnectionPool m_cPool;
     private RepositoryReader m_repoReader;
     private int m_maxResults;
+    private int m_maxSecondsPerSession;
     private static String[] s_dbColumnNames=new String[] {"pid", "label", 
             "fType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate",
             "dcTitle", "dcCreator", "dcSubject", "dcDescription", "dcPublisher",
@@ -53,7 +55,9 @@ public class FieldSearchSQLImpl
             false, false, false, false, false,
             false, false, false, false, false,
             false, false, false, false, false};
-    private HashMap m_resultSets=new HashMap();
+            
+    // a hash of token-keyed FieldSearchResultSQLImpls
+    private HashMap m_currentResults=new HashMap();
     
     private static ReadOnlyContext s_nonCachedContext;
     static {
@@ -74,12 +78,13 @@ public class FieldSearchSQLImpl
      * @param logTarget where to send log messages
      */
     public FieldSearchSQLImpl(ConnectionPool cPool, RepositoryReader repoReader, 
-            int maxResults, Logging logTarget) {
+            int maxResults, int maxSecondsPerSession, Logging logTarget) {
         super(logTarget);
         logFinest("Entering constructor");
         m_cPool=cPool;
         m_repoReader=repoReader;
         m_maxResults=maxResults;
+        m_maxSecondsPerSession=maxSecondsPerSession;
         logFinest("Exiting constructor");
     }
 
@@ -237,11 +242,35 @@ public class FieldSearchSQLImpl
     
     public FieldSearchResult listObjectFields(String[] resultFields, 
             int maxResults, FieldSearchQuery query) {
-        return null;
+        int actualMax=maxResults;
+        if (m_maxResults<maxResults) {
+            actualMax=m_maxResults;
+        }
+        FieldSearchResultSQLImpl result=new FieldSearchResultSQLImpl(
+                m_cPool, m_repoReader, resultFields, actualMax, 
+                m_maxSecondsPerSession, query, this);
+        return stepAndRemember(result);
     }
 
-    public FieldSearchResult resumeListObjectFields(String sessionToken) {
-        return null;
+    public FieldSearchResult resumeListObjectFields(String sessionToken) 
+            throws UnknownSessionTokenException {
+        FieldSearchResultSQLImpl result=(FieldSearchResultSQLImpl)
+                m_currentResults.remove(sessionToken);
+        if (result==null) {
+            throw new UnknownSessionTokenException("No record of session "
+                    + "with token " + sessionToken);
+        }
+        return stepAndRemember(result);
+    }
+    
+    public FieldSearchResult stepAndRemember(FieldSearchResultSQLImpl result) {
+        // first, call release() then remove any in m_currentResults
+        // where getExpirationDate() has passed (if not null)
+        result.step();
+        if (result.getToken()!=null) {
+            m_currentResults.put(result.getToken(), result);
+        }
+        return result;
     }
     
     // FIXME: return a ResultSet

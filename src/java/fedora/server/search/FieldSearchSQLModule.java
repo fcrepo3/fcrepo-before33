@@ -48,6 +48,23 @@ public class FieldSearchSQLModule
                 "maxResults must be a positive integer.", getRole());
         }
         //
+        // get and validate maxSecondsPerSession
+        //
+        if (getParameter("maxSecondsPerSession")==null) {
+            throw new ModuleInitializationException(
+                "maxSecondsPerSession parameter must be specified.", getRole());
+        }
+        int maxSecondsPerSession=0;
+        try {
+            maxSecondsPerSession=Integer.parseInt(getParameter("maxSecondsPerSession"));
+            if (maxSecondsPerSession<1) {
+                throw new NumberFormatException("");
+            }
+        } catch (NumberFormatException nfe) {
+            throw new ModuleInitializationException(
+                "maxSecondsPerSession must be a positive integer.", getRole());
+        }
+        //
         // get connectionPool from ConnectionPoolManager
         //
         ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().
@@ -86,7 +103,7 @@ public class FieldSearchSQLModule
         // things look ok...get the wrapped instance
         //
         m_wrappedFieldSearch=new FieldSearchSQLImpl(cPool, doManager, 
-                maxResults, this);
+                maxResults, maxSecondsPerSession, this);
     }
     
     public String[] getRequiredModuleRoles() {
