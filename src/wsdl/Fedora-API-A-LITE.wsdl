@@ -174,7 +174,7 @@
 	</message>
 	<message name="findObjectsResponse">
 		<part name="response" type="fedora-types:FieldSearchResult">
-			<documentation>containing an array of ObjectFields and, possibly,
+			<documentation>An xml chunk containing an array of ObjectFields and, possibly,
             a listSession.</documentation>
 		</part>
 	</message>
@@ -195,10 +195,11 @@
 			Fedora Access web service (in contrast to a traditional SOAP web service definition).  
 			This means that we define a simple URL syntax that can be used to issue service requests.
 			API-A-Lite does not provide service bindings for all of the operations defined in Fedora's full
-			Access service (API-A).  API-A-Lite only provides bindings for getDissemination and getObjectProfile. 
+			Access service (API-A).  API-A-Lite only provides bindings for getDissemination, getObjectProfile,
+           findObjects, and resumeFindObjects. 
 			The result of the getDissemination request is a MIME-typed stream.  The result of the getObjectProfile 
-			request is either HTML or XML, whichever the client requested. This is consistent with the main purpose
-			of defining API-A-Lite which is to provide a simple way to run Fedora disseminations via a URL.
+			request is either HTML or XML, whichever the client requested.  The result of the search methods
+           is also either HTML or XML.  When URL syntax is shown below, green indicates required parts and red indicates optional parts.
 		</documentation>
 		<operation name="getObjectProfile">
 			<documentation> Gets a profile of the digital object, which contains
@@ -223,8 +224,41 @@
 			<output message="fedora-api:getDisseminationResponse"/>
 		</operation>
 		<operation name="findObjects">
-			<documentation>Gets the requested ObjectFields on all objects in the
-                repository matching the given criteria.
+			<documentation>
+           <p>Gets the requested ObjectFields on all objects in the 
+            repository matching the given criteria.</p>
+           <p>URL Syntax:</p>
+           <p><b>http://<font color="#22cc22">host:port</font>/fedora/search?{<font color="#22cc22">terms=TERMS</font>|<font color="#22cc22">query=QUERY</font>}<font color="#cc2222">&amp;maxResults=MAXRESULTS<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;xml=true&amp;pid=true&amp;label=true&amp;fType=true&amp;cModel=true&amp;state=true&amp;locker=true<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;cDate=true&amp;mDate=true&amp;dcmDate=true&amp;bDef=true&amp;bMech=true&amp;title=true<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;creator=true&amp;subject=true&amp;description=true&amp;publisher=true&amp;contributor=true<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;date=true&amp;type=true&amp;format=true&amp;identifier=true&amp;source=true&amp;language=true<br />
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;relation=true&amp;coverage=true&amp;rights=true</font></b>
+           </p>
+           <p>At least one of the object fields should be specified as true.  Object fields are the optional fields
+            beginning with <b>pid</b>, above.  The result of the search will be a simple HTML document if
+            the xml parameter is not specified.  If it is, the result will look like:
+</p>
+<pre>
+&lt;result&gt;
+  &lt;listSession&gt;
+    &lt;token&gt;abcdef123456&lt;/token&gt;
+    &lt;cursor&gt;0&lt;/cursor&gt;
+    &lt;completeListSize&gt;500&lt;/completeListSize&gt;
+    &lt;expirationDate&gt;2003-03-04T12:53:00Z&lt;/expirationDate&gt;
+  &lt;/listSession&gt;
+  &lt;resultList&gt;
+    &lt;objectFields&gt;
+        &lt;pid&gt;demo:5&lt;/pid&gt;
+        &lt;bDef&gt;demo:1&lt;/bDef&gt;
+        &lt;bDef&gt;demo:3&lt;/bDef&gt;
+        &lt;subject&gt;My Subject&lt;/subject&gt;
+        ...
+    &lt;/objectFields&gt;
+    ...
+  &lt;/resultList&gt;
+&lt;/result&gt;
+</pre>
 			</documentation>
 			<input message="fedora-api:findObjectsRequest"/>
 			<output message="fedora-api:findObjectsResponse"/>
