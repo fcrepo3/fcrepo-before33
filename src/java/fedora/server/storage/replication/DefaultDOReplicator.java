@@ -73,6 +73,10 @@ public class DefaultDOReplicator
             String bDefDBID;
             String bDefPID;
             String bDefLabel;
+            String methDBID;
+            String methodName;
+            String parmRequired;
+            String[] parmDomainValues;
             connection = m_pool.getConnection();
             connection.setAutoCommit(false);
             // Insert Behavior Definition row
@@ -80,7 +84,9 @@ public class DefaultDOReplicator
             bDefLabel = bDefReader.GetObjectLabel();
             m_ri.insertBehaviorDefinitionRow(connection, bDefPID, bDefLabel);
             // Insert Method rows
+            System.out.println("ABOUT TO INSERT METHOD ROWS");
             bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection, bDefPID);
+            System.out.println("bDefDBID: "+bDefDBID);
             if (bDefDBID == null) {
                 throw new ReplicationException(
                     "BehaviorDefinition row doesn't exist for PID: "
@@ -88,9 +94,50 @@ public class DefaultDOReplicator
             }
             behaviorDefs = bDefReader.GetBehaviorMethods(null);
             for (int i=0; i<behaviorDefs.length; ++i) {
+              System.out.println("methName: "+behaviorDefs[i].methodName);
                 m_ri.insertMethodRow(connection, bDefDBID,
                         behaviorDefs[i].methodName,
                         behaviorDefs[i].methodLabel);
+                System.out.println("ABOUT TO INSERT METHOD PARAMETER ROWS");
+                // Insert Method Parameter rows
+                methDBID =  m_dl.lookupMethodDBID(connection, bDefDBID,
+                    behaviorDefs[i].methodName);
+                System.out.println("methDBID: "+methDBID);
+                System.out.println("methodParmSize: "+behaviorDefs[i].methodParms.length);
+                for (int j=0; j<behaviorDefs[i].methodParms.length; j++)
+                {
+                  MethodParmDef[] methodParmDefs =
+                      new MethodParmDef[behaviorDefs[i].methodParms.length];
+                  methodParmDefs = behaviorDefs[i].methodParms;
+                  System.out.println("MethodParmDefSize: " + methodParmDefs.length);
+                  for (int k=0; k<methodParmDefs.length; k++)
+                  {
+                    parmRequired =
+                             methodParmDefs[k].parmRequired ? "true" : "false";
+                    parmDomainValues = methodParmDefs[k].parmDomainValues;
+                    StringBuffer sb = new StringBuffer();
+                    for (int m=0; m<parmDomainValues.length; m++)
+                    {
+                      if (m < parmDomainValues.length-1)
+                      {
+                        sb.append(parmDomainValues[m]+",");
+                      } else
+                      {
+                        sb.append(parmDomainValues[m]);
+                      }
+                    }
+                    System.out.println("parmName: "+methodParmDefs[k].parmName);
+                    System.out.println("parmdefault: "+methodParmDefs[k].parmDefaultValue);
+                    System.out.println("parmType: "+methodParmDefs[k].parmType);
+                    m_ri.insertMethodParmRow(connection, methDBID, bDefDBID,
+                            methodParmDefs[k].parmName,
+                            methodParmDefs[k].parmDefaultValue,
+                            sb.toString(),
+                            parmRequired,
+                            methodParmDefs[k].parmLabel,
+                            methodParmDefs[k].parmType);
+                  }
+                }
             }
             connection.commit();
         } catch (ReplicationException re) {
@@ -130,6 +177,8 @@ public class DefaultDOReplicator
             String methodDBID;
             String ordinality_flag;
             String cardinality;
+            String[] parmDomainValues;
+            String parmRequired;
 
             connection = m_pool.getConnection();
             connection.setAutoCommit(false);
@@ -202,7 +251,8 @@ public class DefaultDOReplicator
                     // For the time being, ignore bindings other than HTTP.
                     continue;
                 }
-
+                System.out.println("ABOUT TO INSERT METHOD PARAMETER ROWS");
+                // Insert MechDefaultParameter rows
                 methodDBID = m_dl.lookupMethodDBID(connection, bDefDBID,
                         behaviorBindingsEntry.methodName);
                 if (methodDBID == null) {
@@ -210,7 +260,45 @@ public class DefaultDOReplicator
                            + "exist for method name: "
                            + behaviorBindingsEntry.methodName);
                 }
-
+                System.out.println("methDBID: "+methodDBID);
+                System.out.println("methodParmSize: "+behaviorBindings[i].methodParms.length);
+                for (int j=0; j<behaviorBindings[i].methodParms.length; j++)
+                {
+                  MethodParmDef[] methodParmDefs =
+                      new MethodParmDef[behaviorBindings[i].methodParms.length];
+                  methodParmDefs = behaviorBindings[i].methodParms;
+                  System.out.println("MethodParmDefSize: " + methodParmDefs.length);
+                  for (int k=0; k<methodParmDefs.length; k++)
+                  {
+                    if (methodParmDefs[k].parmType.equalsIgnoreCase("fedora:defaultInputType"))
+                    {
+                    parmRequired =
+                             methodParmDefs[k].parmRequired ? "true" : "false";
+                    parmDomainValues = methodParmDefs[k].parmDomainValues;
+                    StringBuffer sb = new StringBuffer();
+                    for (int m=0; m<parmDomainValues.length; m++)
+                    {
+                      if (m < parmDomainValues.length-1)
+                      {
+                        sb.append(parmDomainValues[m]+",");
+                      } else
+                      {
+                        sb.append(parmDomainValues[m]);
+                      }
+                    }
+                    System.out.println("parmName: "+methodParmDefs[k].parmName);
+                    System.out.println("parmdefault: "+methodParmDefs[k].parmDefaultValue);
+                    System.out.println("parmType: "+methodParmDefs[k].parmType);
+                    m_ri.insertMechDefaultMethodParmRow(connection, methodDBID, bMechDBID,
+                            methodParmDefs[k].parmName,
+                            methodParmDefs[k].parmDefaultValue,
+                            sb.toString(),
+                            parmRequired,
+                            methodParmDefs[k].parmLabel,
+                            methodParmDefs[k].parmType);
+                  }
+                  }
+                }
                 for (int j=0; j<dsBindSpec.dsBindRules.length; ++j) {
                     dsBindingKeyDBID =
                             m_dl.lookupDataStreamBindingSpecDBID(connection,
@@ -231,6 +319,9 @@ public class DefaultDOReplicator
                       // a single method may have multiple binding keys,
                       // multiple rows are added for each different
                       // BindingKeyName for that method.
+                      System.out.println("dsbehaviorBindingKeys["+k+"]: "+behaviorBindingsEntry.dsBindingKeys[k]);
+                      System.out.println("dsBindRulesKey["+j+"]: "+dsBindSpec.dsBindRules[j].bindingKeyName);
+                      System.out.flush();
                       if (behaviorBindingsEntry.dsBindingKeys[k].
                           equalsIgnoreCase(
                           dsBindSpec.dsBindRules[j].bindingKeyName))
@@ -289,6 +380,7 @@ public class DefaultDOReplicator
             connection.setAutoCommit(false);
 
             // Insert Digital Object row
+            System.out.println("ABOUT TO INSERT DO ROW");
             doPID = doReader.GetObjectPID();
             doLabel = doReader.GetObjectLabel();
 
@@ -334,12 +426,15 @@ public class DefaultDOReplicator
                 }
 
                 // Insert DigitalObjectDissAssoc row
+                System.out.println("ABOUT TO INSERT DODISSASSOC ROW");
                 m_ri.insertDigitalObjectDissAssocRow(connection, doDBID,
                         dissDBID);
             }
-
+System.out.println("GETBINDINGMAPS");
             allBindingMaps = doReader.GetDSBindingMaps(null);
+
             for (int i=0; i<allBindingMaps.length; ++i) {
+              System.out.println("DSbIMDmECHid: "+allBindingMaps[i].dsBindMechanismPID);
                 bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection,
                         allBindingMaps[i].dsBindMechanismPID);
                 if (bMechDBID == null) {
@@ -349,6 +444,7 @@ public class DefaultDOReplicator
                 }
 
                 // Insert DataStreamBindingMap row if it doesn't exist.
+                System.out.println("ABOUT TO INSERT DSBINDINGMAP ROW");
                 bindingMapDBID = m_dl.lookupDataStreamBindingMapDBID(connection,
                         bMechDBID, allBindingMaps[i].dsBindMapID);
                 if (bindingMapDBID == null) {
@@ -382,6 +478,9 @@ public class DefaultDOReplicator
                                 + " j=" + j);
                     }
                     // Insert DataStreamBinding row
+                    System.out.println("ABOUT TO INSERT DSBINDING ROW");
+                    System.out.println("DSControlGroup: "+allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp);
+                    System.out.println("DSVersionID: "+allBindingMaps[i].dsBindingsAugmented[j].DSVersionID);
                     m_ri.insertDataStreamBindingRow(connection, doDBID,
                             dsBindingKeyDBID,
                             bindingMapDBID,
@@ -391,6 +490,8 @@ public class DefaultDOReplicator
                             allBindingMaps[i].dsBindingsAugmented[j].bindLabel,
                             allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
                             allBindingMaps[i].dsBindingsAugmented[j].DSLocation,
+                            allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
+                            allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
                             "1");
 
                 }
@@ -599,6 +700,10 @@ public class DefaultDOReplicator
             logFinest("Attempting row deletion from MechanismImpl table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM MechanismImpl WHERE "
                     + "BMECH_DBID=" + dbid);
+            logFinest("Deleted " + rowCount + " row(s).");
+            logFinest("Attempting row deletion from MechDefaultMechanism table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM MechDefaultParameter "
+                + "WHERE BMECH_DBID=" + dbid);
             logFinest("Deleted " + rowCount + " row(s).");
 
         } finally {

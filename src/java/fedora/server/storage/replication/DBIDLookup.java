@@ -4,7 +4,7 @@ package fedora.server.storage.replication;
  * Title: DBIDLookup.java
  * Description: Database DBID lookup code.
  * Copyright: Copyright (c) 2002
- * Company: 
+ * Company:
  * @author Paul Charlton
  * @version 1.0
  */
@@ -13,19 +13,18 @@ import java.util.*;
 import java.sql.*;
 import java.io.*;
 
-
 /**
-* 
+*
 * Description: Looks up and returns the DBID for a row that matches the column
 * values passed in for that particular row.
 *
 * @version 1.0
 *
 */
-public class DBIDLookup {   
+public class DBIDLookup {
 
         /**
-        * 
+        *
         * Looks up a BehaviorDefinition DBID.
         *
         * @param connection JDBC DBMS connection
@@ -40,7 +39,7 @@ public class DBIDLookup {
 	}
 
         /**
-        * 
+        *
         * Looks up a BehaviorMechanism DBID.
         *
         * @param connection JDBC DBMS connection
@@ -55,7 +54,7 @@ public class DBIDLookup {
 	}
 
         /**
-        * 
+        *
         * Looks up a DataStreamBindingMap DBID.
         *
         * @param connection JDBC DBMS connection
@@ -71,7 +70,7 @@ public class DBIDLookup {
 	}
 
         /**
-        * 
+        *
         * Looks up a DataStreamBindingSpec DBID.
         *
         * @param connection JDBC DBMS connection
@@ -87,7 +86,7 @@ public class DBIDLookup {
 	}
 
         /**
-        * 
+        *
         * Looks up a DigitalObject DBID.
         *
         * @param connection JDBC DBMS connection
@@ -102,7 +101,7 @@ public class DBIDLookup {
 	}
 
         /**
-        * 
+        *
         * Looks up a Disseminator DBID.
         *
         * @param connection JDBC DBMS connection
@@ -129,9 +128,9 @@ public class DBIDLookup {
 		// System.out.println("lookupDisseminator, query = " + query);
 
 		statement = connection.createStatement();
-		rs = statement.executeQuery(query); 
+		rs = statement.executeQuery(query);
 
-		while (rs.next()) 
+		while (rs.next())
 			ID = rs.getString(1);
 
 		statement.close();
@@ -141,7 +140,7 @@ public class DBIDLookup {
 	}
 
         /**
-        * 
+        *
         * Looks up a Method DBID.
         *
         * @param connection JDBC DBMS connection
@@ -157,7 +156,7 @@ public class DBIDLookup {
 	}
 
         /**
-        * 
+        *
         * General JDBC lookup method with 1 lookup column value.
         *
         * @param connection JDBC DBMS connection
@@ -181,13 +180,14 @@ public class DBIDLookup {
 
 		// Debug statement
 		// System.out.println("lookupDBID1, query = " + query);
+                System.out.println("DBID1: "+query);
 
 		statement = connection.createStatement();
-		rs = statement.executeQuery(query); 
+		rs = statement.executeQuery(query);
 
-		while (rs.next()) 
+		while (rs.next())
 			ID = rs.getString(1);
-
+                System.out.println("bmechdbID: "+ID);
 		statement.close();
 		rs.close();
 
@@ -195,7 +195,7 @@ public class DBIDLookup {
 	}
 
         /**
-        * 
+        *
         * General JDBC lookup method with 2 lookup column values.
         *
         * @param connection JDBC DBMS connection
@@ -224,9 +224,9 @@ public class DBIDLookup {
 		// System.out.println("lookupDBID2, query = " + query);
 
 		statement = connection.createStatement();
-		rs = statement.executeQuery(query); 
+		rs = statement.executeQuery(query);
 
-		while (rs.next()) 
+		while (rs.next())
 			ID = rs.getString(1);
 
 		statement.close();
@@ -242,18 +242,19 @@ public class DBIDLookup {
 		ResultSet rs;
 
 		query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
-		query += lookupColumnName1 + " = " + lookupColumnValue1 + " AND ";
+		query += lookupColumnName1 + " = '" + lookupColumnValue1 + "' AND ";
 		query += lookupColumnName2 + " = '" + lookupColumnValue2 + "';";
 
 		// Debug statement
 		// System.out.println("lookupDBID2FirstNum, query = " + query);
+                System.out.println("DBID2FirstNumQuery: "+query);
 
 		statement = connection.createStatement();
-		rs = statement.executeQuery(query); 
+		rs = statement.executeQuery(query);
 
-		while (rs.next()) 
+		while (rs.next())
 			ID = rs.getString(1);
-
+                System.out.println("ID: "+ID);
 		statement.close();
 		rs.close();
 
