@@ -49,6 +49,8 @@ public class MethodPropertiesDialog extends JDialog
     private JTextField rb_httpRelative_URL;
     private JRadioButton rb_soap;
     private JTextField returnMIMES;
+
+    // The data structure that is populated by this dialog.
     private MethodProperties mp;
 
     // These are used to load JComboBox table columns
@@ -308,11 +310,13 @@ public class MethodPropertiesDialog extends JDialog
       System.out.println("MethodPropertiesDialog.saveProperties: " +
         "Saving values back in parent");
       setMethodProperties();
-      if (validMethodProperties(getMethodProperties()))
+      MethodProperties properties = getMethodProperties();
+      if (validMethodProperties(properties))
       {
         System.out.println("MethodPropertiesDialog.saveProperties: " +
         "all method properties are valid.");
-        parent.setBMechMethodProperties(methodName, getMethodProperties());
+        mp.dsBindingKeys = setDSBindingKeys(properties.methodParms);
+        parent.setBMechMethodProperties(methodName, mp);
         setVisible(false);
         dispose();
       }
@@ -476,7 +480,7 @@ public class MethodPropertiesDialog extends JDialog
       }
       mp.returnMIMETypes = unloadReturnTypes();
       mp.methodParms = unloadMethodParms();
-      //mp.dsBindingKeys = getDSBindingKeys(mp.methodParms);
+      //mp.dsBindingKeys = setDSBindingKeys(mp.methodParms);
       return;
     }
 
@@ -552,7 +556,15 @@ public class MethodPropertiesDialog extends JDialog
       if (properties.protocolType.equalsIgnoreCase(Method.HTTP_MESSAGE_PROTOCOL))
       {
         rb_http.setSelected(true);
-        rb_http_URL.setText(properties.methodFullURL);
+        if (parent.hasBaseURL())
+        {
+          rb_http_URL.setText(properties.methodRelativeURL);
+        }
+        else
+        {
+          rb_http_URL.setText(properties.methodFullURL);
+        }
+
         rb_soap.setSelected(false);
       }
       else if (properties.protocolType.equalsIgnoreCase(Method.SOAP_MESSAGE_PROTOCOL))

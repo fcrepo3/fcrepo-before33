@@ -29,6 +29,7 @@ import fedora.client.bmech.data.*;
 
 public class MethodsPane extends JPanel {
 
+    private BMechBuilder parent;
     private JRadioButton rb_baseURL;
     private JRadioButton rb_noBaseURL;
     private final ButtonGroup rb_buttonGroup;
@@ -41,11 +42,12 @@ public class MethodsPane extends JPanel {
 
     // Method Map: key=methodData.methodName, value=methodData
     private HashMap methodMap = new HashMap();
-    //private Method methodData;
+    //private Vector dsBindingKeys = new Vector();
 
-    public MethodsPane()
+    public MethodsPane(BMechBuilder parent)
     {
         //setSize(600, 400);
+        this.parent = parent;
         setLayout(new BorderLayout());
 
         // Radio Buttons Panel
@@ -245,6 +247,17 @@ public class MethodsPane extends JPanel {
       Method method = (Method)methodMap.get(methodName);
       method.methodProperties = mproperties;
       methodMap.put(methodName, method);
+
+      String[] dsParmNames = method.methodProperties.dsBindingKeys;
+      for (int i=0; i<dsParmNames.length; i++)
+      {
+        Vector dsBindingKeys = parent.getBMechTemplate().getDSBindingKeys();
+        if (!dsBindingKeys.contains(dsParmNames[i]))
+        {
+          dsBindingKeys.add(dsParmNames[i]);
+        }
+        parent.getBMechTemplate().setDSBindingKeys(dsBindingKeys);
+      }
     }
 
     private void addMethod()
@@ -324,12 +337,4 @@ public class MethodsPane extends JPanel {
         this, new String(msg), "Method Exists Message",
         JOptionPane.INFORMATION_MESSAGE);
     }
-/*
-    protected void assertMethodPropertiesMsg(String msg)
-    {
-      JOptionPane.showMessageDialog(
-        this, new String(msg), "No Method Properties Message",
-        JOptionPane.INFORMATION_MESSAGE);
-    }
-    */
 }
