@@ -458,7 +458,7 @@
 						<wsdl:binding name="FedoraEAD_http" type="this:FedoraEADPortType">
 							<http:binding verb="GET"/>
 							<wsdl:operation name="getTitlePage">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_TITLE_PAGE)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_TITLE_PAGE)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -467,7 +467,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getAdminInfo">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ADMIN_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ADMIN_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -476,7 +476,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getSummaryInfo">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_SUMMARY_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_SUMMARY_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -485,7 +485,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getBiogHistInfo">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_BIOG_HIST_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_BIOG_HIST_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -494,7 +494,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getScopeContentInfo">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_SCOPE_CONTENT_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_SCOPE_CONTENT_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -503,7 +503,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getComponentInfo">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_COMPONENT_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_COMPONENT_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -512,7 +512,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getArrangeInfo">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ARRANGE_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ARRANGE_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -521,7 +521,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getOrgInfo">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ORG_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ORG_INFO)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -530,7 +530,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getEntireDoc">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ENTIRE_DOC)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_ENTIRE_DOC)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -539,7 +539,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getMenu">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_MENU)&amp;clear-stylesheet-cache=(CLEAR_CACHE)&amp;key=(key)&amp;startwith=(startwith)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_MENU)&amp;clear-stylesheet-cache=(CLEAR_CACHE)&amp;key=(key)&amp;startwith=(startwith)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -557,7 +557,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getTitle">
-								<http:operation location="http://icarus.lib.virginia.edu:8080/saxon/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_TITLE)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
+								<http:operation location="http://icarus.lib.virginia.edu/servlet/SaxonServlet?source=(XML_SOURCE)&amp;style=(XSL_TITLE)&amp;clear-stylesheet-cache=(CLEAR_CACHE)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
