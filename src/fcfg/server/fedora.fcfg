@@ -2,25 +2,26 @@
 <server xmlns="http://www.fedora.info/definitions/1/0/config/" 
         xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" 
         class="fedora.server.BasicServer">
-	<comment>Your server comment here.</comment>
-	<param name="label" value="Your Server Label Here"/>
     <param name="shutdownPassword" value="fedoraAdmin"/>
-	<param name="port" value="8080"/>
-	<param name="admin_email" value="fedora-server-admin@localhost"/>
-	<param name="admin_email_public" value="true"/>
+    
 	<param name="log_max_size" value="5242880"/>
 	<param name="log_max_days" value="7"/>
 	<param name="log_dir" value="logs"/>
 	<param name="log_level" value="finest"/>
 	<param name="log_flush_threshold" value="1"/>
-	<param name="store_base" value="C:\temp"/>
-	<param name="pid_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
+
+
+	<param name="path_algorithm" value="fedora.server.storage.lowlevel.TimestampPathAlgorithm"/>
+	<param name="file_system" value="fedora.server.storage.lowlevel.GenericFileSystem"/>
 	<param name="backslash_is_escape" value="yes"/>
-	<param name="dbuser" value="fred"/>
-	<param name="dbpass" value="fredspass"/>
-	<param name="connect_string" value="jdbc://db.somecollege.edu/here"/>
-	<param name="pool_max" value="100"/>
-	<param name="pool_min" value="20"/>
+	<param name="store_base" value="C:\fedora_perm"/>
+	<param name="temp_store_base" value="C:\fedora_temp"/>
+	<param name="pid_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
+	<param name="temp_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
+    
+    
+    
+    
 	<param name="disseminationCacheSize" value="100"/>
 	<param name="debug" value="true"/>	
 	<module role="fedora.server.storage.DOManager" 
@@ -36,6 +37,11 @@
           for an "application" of "apia" (from the Context).  Other
           context-specific logic TBD. 
         Parameters:
+        - pidNamespace (required)
+          This is the namespace id for pids of newly-created objects.
+          This should be unique for a repository.
+          It can be from 1 to 17 characters, and may only contain
+          A-Z, a-z, 0-9, and '-' (dash).
         - storagePool [default=default provided by the ConnectionPoolManager]
           The named connection pool from which read/write
           database connections are to be provided for the storage
@@ -47,7 +53,8 @@
         - storageCharacterEncoding [default=UTF-8]
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
-        <param name="storagePool" value="localMySQLPool"/>
+        <param name="pidNamespace" value="changeme"/>
+        <param name="storagePool" value="localMcKoiPool"/>
         <param name="storageFormat" value="mets11fedora1"/>
         <param name="storageCharacterEncoding" value="UTF-8"/>
     </module>
@@ -82,11 +89,11 @@
     <module role="fedora.server.management.PIDGenerator" 
             class="fedora.server.management.BasicPIDGenerator">
         <comment>The pid generator.</comment>
-        <param name="pidgen_log_dir" value="logs"/>
+        <param name="pidgen_log_dir" value="pidgen"/>
     </module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
-		<param name="defaultPoolName" value="localMySQLPool"/>
+		<param name="defaultPoolName" value="localMcKoiPool"/>
 		<param name="poolNames" value="localMySQLPool,localMcKoiPool,remoteMySQLPool"/>
 	</module>
 	<datastore id="remoteMySQLPool">
