@@ -517,13 +517,14 @@ public class DefaultDOManager
             }
             // update lockinguser (set to NULL) and systemVersion (add one)
             Connection conn=null;
+            ResultSet results=null;
             try {
                 conn=m_connectionPool.getConnection();
                 String query="SELECT systemVersion "
                            + "FROM doRegistry "
                            + "WHERE doPID='" + obj.getPid() + "'";
                 Statement s=conn.createStatement();
-                ResultSet results=s.executeQuery(query);
+                results=s.executeQuery(query);
                 if (!results.next()) {
                     throw new ObjectNotFoundException("Error creating replication job: The requested object doesn't exist in the registry.");
                 }
@@ -538,6 +539,11 @@ public class DefaultDOManager
                 throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
             } finally {
                 if (conn!=null) {
+                    if (results!=null) {
+                        try {
+                            results.close();
+                        } catch (Exception ignoredException) { }
+                    }
                     m_connectionPool.free(conn);
                 }
             }
@@ -637,13 +643,14 @@ public class DefaultDOManager
             throws ObjectLockedException, ObjectNotFoundException,
             StorageDeviceException, InvalidContextException {
         Connection conn=null;
+        ResultSet results=null;
         try {
             String query="SELECT lockingUser "
                        + "FROM doRegistry "
                        + "WHERE doPID='" + pid + "'";
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
-            ResultSet results=s.executeQuery(query);
+            results=s.executeQuery(query);
             if (!results.next()) {
                 throw new ObjectNotFoundException("The requested object doesn't exist.");
             }
@@ -662,6 +669,11 @@ public class DefaultDOManager
             throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
         } finally {
             if (conn!=null) {
+                if (results!=null) {
+                    try {
+                        results.close();
+                    } catch (Exception ignoredException) { }
+                }
                 m_connectionPool.free(conn);
             }
         }
@@ -1003,18 +1015,24 @@ public class DefaultDOManager
     public boolean objectExists(String pid)
             throws StorageDeviceException {
         Connection conn=null;
+        ResultSet results=null;
         try {
             String query="SELECT doPID "
                        + "FROM doRegistry "
                        + "WHERE doPID='" + pid + "'";
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
-            ResultSet results=s.executeQuery(query);
+            results=s.executeQuery(query);
             return results.next(); // 'true' if match found, else 'false'
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
         } finally {
             if (conn!=null) {
+                if (results!=null) {
+                    try {
+                        results.close();
+                    } catch (Exception ignoredException) { }
+                }
                 m_connectionPool.free(conn);
             }
         }
@@ -1023,13 +1041,14 @@ public class DefaultDOManager
     public String getLockingUser(String pid)
             throws StorageDeviceException, ObjectNotFoundException {
         Connection conn=null;
+        ResultSet results=null;
         try {
             String query="SELECT lockingUser "
                        + "FROM doRegistry "
                        + "WHERE doPID='" + pid + "'";
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
-            ResultSet results=s.executeQuery(query);
+            results=s.executeQuery(query);
             if (results.next()) {
                 return results.getString(1);
             } else {
@@ -1039,6 +1058,11 @@ public class DefaultDOManager
             throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
         } finally {
             if (conn!=null) {
+                if (results!=null) {
+                    try {
+                        results.close();
+                    } catch (Exception ignoredException) { }
+                }
                 m_connectionPool.free(conn);
             }
         }
@@ -1334,6 +1358,7 @@ public class DefaultDOManager
             throws StorageDeviceException {
         ArrayList pidList=new ArrayList();
         Connection conn=null;
+        ResultSet results=null;
         try {
             conn=m_connectionPool.getConnection();
             Statement s=conn.createStatement();
@@ -1341,7 +1366,7 @@ public class DefaultDOManager
             query.append("SELECT doPID FROM doRegistry ");
             query.append(whereClause);
             logFinest("Executing db query: " + query.toString());
-            ResultSet results=s.executeQuery(query.toString());
+            results=s.executeQuery(query.toString());
             while (results.next()) {
                 pidList.add(results.getString("doPID"));
             }
@@ -1357,6 +1382,11 @@ public class DefaultDOManager
 
         } finally {
             if (conn!=null) {
+                if (results!=null) {
+                    try {
+                        results.close();
+                    } catch (Exception ignoredException) { }
+                }
                 m_connectionPool.free(conn);
             }
         }
