@@ -27,7 +27,7 @@
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="E" ID="ViewStylesheet.xsl" STATE="A" VERSIONABLE="true">
-    <foxml:datastreamVersion CREATED="2005-01-13T17:17:08.943Z" ID="ViewStylesheet.xsl.0"
+    <foxml:datastreamVersion CREATED="2005-03-16T01:02:03.456Z" ID="ViewStylesheet.xsl.0"
       LABEL="Stylesheet to view list dissemination as html" MIMETYPE="text/xml" SIZE="0">
       <foxml:contentLocation REF="http://local.fedora.server/demo/image-collection-demo/SmileyStuff-ViewStylesheet.xsl" TYPE="URL"/>
     </foxml:datastreamVersion>
@@ -39,7 +39,7 @@
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:disseminator BDEF_CONTRACT_PID="demo:Collection" ID="Collection" STATE="A" VERSIONABLE="true">
-    <foxml:disseminatorVersion BMECH_SERVICE_PID="demo:DualResImageCollection" CREATED="2005-01-13T17:17:08.943Z"
+    <foxml:disseminatorVersion BMECH_SERVICE_PID="demo:DualResImageCollection" CREATED="2004-09-01T23:45:00.001Z"
       ID="DISS1.0" LABEL="Collection disseminator">
       <foxml:serviceInputMap>
         <foxml:datastreamBinding DATASTREAM_ID="ViewStylesheet.xsl" KEY="XSLT"
