@@ -49,6 +49,7 @@ import fedora.client.export.AutoExporter;
 import fedora.client.ingest.AutoIngestor;
 import fedora.client.purge.AutoPurger;
 import fedora.client.search.ResultFrame;
+import fedora.client.search.Search;
 import fedora.server.types.gen.FieldSearchQuery;
 
 // wdn >
@@ -70,6 +71,7 @@ public class Administrator extends JFrame {
    
     ClassLoader cl;
     
+    private static Administrator s_instance;
     private JLabel m_aboutPic;
     private JLabel m_aboutText;
     private static String s_host;
@@ -146,10 +148,15 @@ public class Administrator extends JFrame {
         });
         
         splashScreen.setVisible(false);
+        s_instance=this;
     }
     
     public static JDesktopPane getDesktop() {
         return s_desktop;
+    }
+    
+    public static Administrator getInstance() {
+        return s_instance;
     }
 
     protected JMenuBar createMenuBar() {
@@ -492,8 +499,8 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
     }
     
     protected void createSearchRepository() {
-        //Search frame=new Search();
-        FieldSearchQuery query=new FieldSearchQuery();
+        Search frame=new Search();
+/*        FieldSearchQuery query=new FieldSearchQuery();
         query.setTerms("*");
         String[] fields=new String[4];
         fields[0]="pid";
@@ -501,6 +508,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         fields[2]="bDef";
         fields[3]="title";
         ResultFrame frame=new ResultFrame("Search Results", fields, 10, query);
+        */
         frame.setVisible(true);
         s_desktop.add(frame);
         try {
