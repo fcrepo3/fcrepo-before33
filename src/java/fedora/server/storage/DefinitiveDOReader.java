@@ -562,7 +562,7 @@ public class DefinitiveDOReader implements DOReader
 
     /**
      * Gets list of method definitions that are available on a particular
-     * Disseminator. This is done by reflecting on the Disseminator
+     * method. This is done by reflecting on the Disseminator
      * that subscribes to the Behavior Definition that is specified in the
      * method input parameter.  Then, by reflecting on that Disseminator,
      * the PID of the Behavior Mechanism object can be obtained.
