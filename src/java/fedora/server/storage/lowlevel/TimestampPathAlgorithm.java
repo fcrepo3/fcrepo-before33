@@ -3,9 +3,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.io.File;
 import fedora.server.errors.LowlevelStorageException;
-class TimestampPathAlgorithmToMinutes extends PathAlgorithm {
+class TimestampPathAlgorithm extends PathAlgorithm {
 	
-	public TimestampPathAlgorithmToMinutes (String storeBase) {
+	public TimestampPathAlgorithm (String storeBase) {
 		super(storeBase);
 	}
 
