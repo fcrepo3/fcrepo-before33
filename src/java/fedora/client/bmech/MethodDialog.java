@@ -106,7 +106,6 @@ public class MethodDialog extends JDialog {
 
     private void saveMethodFields()
     {
-      System.out.println("Saving values back in parent");
       if (validMethod())
       {
         try
