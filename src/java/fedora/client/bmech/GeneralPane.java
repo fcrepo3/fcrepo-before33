@@ -70,7 +70,7 @@ public class GeneralPane
         JScrollPane scrollpane = new JScrollPane(dcTable);
 
         // Table Buttons Panel
-        JButton jb1 = new JButton("Add");
+        JButton jb1 = new JButton("New");
         jb1.setMinimumSize(new Dimension(100,30));
         jb1.setMaximumSize(new Dimension(100,30));
         jb1.addActionListener(new ActionListener() {
@@ -126,6 +126,10 @@ public class GeneralPane
 
     public HashMap getDCElements()
     {
+      if (dcTable.isEditing())
+      {
+        dcTable.getCellEditor().stopCellEditing();
+      }
       HashMap elements = new HashMap();
       int rowcount = dcTable.getModel().getRowCount();
       System.out.println("dcTable rowcount=" + rowcount);
