@@ -3,11 +3,25 @@ package fedora.server.resourceIndex;
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ResourceIndexException;
+import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.service.ServiceMapper;
 import fedora.server.storage.types.*;
 import fedora.server.utilities.DCFields;
 
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.mime.MIMEContent;
+import javax.wsdl.factory.*;
+import javax.wsdl.xml.*;
+import javax.wsdl.*;
+import javax.xml.namespace.QName;
+
 import java.io.ByteArrayInputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -16,6 +30,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.xml.sax.InputSource;
@@ -39,6 +55,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	private RIStore m_store;
 	private static final String FEDORA_URI_SCHEME = "info:fedora/";
 	private static final String DC_URI_PREFIX = "http://purl.org/dc/elements/1.1/";
+    
+    // For the database
+    private ConnectionPool m_cPool;
+    private Connection m_conn;
+    private Statement m_statement;
+    private ResultSet m_resultSet;
 	
 	/**
 	 * @param target
@@ -48,6 +70,19 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		m_indexLevel = indexLevel;
 		m_store = store;
 	}
+    
+    public ResourceIndexImpl(int indexLevel, RIStore store, ConnectionPool cPool, Logging target) {
+        super(target);
+        m_indexLevel = indexLevel;
+        m_store = store;
+        m_cPool = cPool;
+        try {
+            m_conn = m_cPool.getConnection();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 	
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#query(fedora.server.resourceIndex.RIQuery)
@@ -118,9 +153,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    } else {
 	        datastreamURI = doURI + "/" + datastreamID;
 	    }
+        
+        // Volatile Datastreams: False for datastreams that are locally managed 
+        // (have a control group "M" or "I").
+        String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
 	    
-	    m_store.insert(doURI, HAS_REPRESENTATION_URI, datastreamURI);
+        m_store.insert(doURI, HAS_REPRESENTATION_URI, datastreamURI);
 	    m_store.insertLiteral(datastreamURI, DATE_LAST_MODIFIED_URI, getDate(ds.DSCreateDT));
+        m_store.insertLiteral(datastreamURI, DISSEMINATION_DIRECT_URI, "true");
+        m_store.insertLiteral(datastreamURI, DISSEMINATION_VOLATILE_URI, isVolatile);
 	    
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
 		if (datastreamID.equalsIgnoreCase("DC")) {
@@ -146,37 +187,89 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	public void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
 	    Disseminator diss = getLatestDisseminator(digitalObject.disseminators(disseminatorID));
 	    String doIdentifier = getDOURI(digitalObject);
-	    m_store.insert(doIdentifier, USES_BMECH_URI, getDOURI(diss.bMechID));
+        String bMechPID = diss.bMechID;
+	    m_store.insert(doIdentifier, USES_BMECH_URI, getDOURI(bMechPID));
 		
 	    DSBindingMap m = diss.dsBindMap; // is this needed???
 	    String bDefPID = diss.bDefID;
 	    
 	    // insert representations
 	    if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_OBJECT) {
-		    List methods = getMethodNames(bDefPID);
-		    Iterator it = methods.iterator();
-		    String rep;
-		    while (it.hasNext()) {
-		    	rep = doIdentifier + "/" + bDefPID + "/" + (String)it.next();
-		    	m_store.insert(doIdentifier, HAS_REPRESENTATION_URI, rep);
-		    }
+//		    List methods = getMethodNames(bDefPID);
+//		    Iterator it = methods.iterator();
+//		    String rep;
+//		    while (it.hasNext()) {
+//		    	rep = doIdentifier + "/" + bDefPID + "/" + (String)it.next();
+//		    	m_store.insert(doIdentifier, HAS_REPRESENTATION_URI, rep);
+//		    }
+            
+            String query = "SELECT riMethodPermutation.permutation, riMethodMimeType.mimeType " +
+                           "FROM riMethodPermutation, riMethodMimeType, riMethodImpl " +
+                           "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
+                           "AND riMethodImpl.methodImplId = riMethodMimeType.methodImplId " +
+                           "AND riMethodImpl.bMechPid = '" + bMechPID + "'";
+            Statement select;
+            
+            try {
+                 select = m_conn.createStatement();
+                 ResultSet rs = select.executeQuery(query);
+                 String permutation, mimeType, rep;
+                 while (rs.next()) {
+                     permutation = rs.getString("permutation");
+                     mimeType = rs.getString("mimeType");
+                     rep = doIdentifier + "/" + bDefPID + "/" + permutation;
+                     m_store.insert(doIdentifier, HAS_REPRESENTATION_URI, rep);
+                     // TODO mimetype as URI...what form???
+                     m_store.insertLiteral(rep, DISSEMINATION_MEDIA_TYPE_URI, mimeType);
+                     
+                 }
+            } catch (SQLException e) {
+                 // TODO Auto-generated catch block
+                 e.printStackTrace();
+            }
+            
 	    }
+        
+        // get reps from db, given bdefPid, bMechPid
+        // SELECT permutation FROM riPermutation 
+        /*
+         * SELECT riMethodPermutation.permutation, riMimeType.mimeType
+         * FROM riMethodPermutation, riMimeType, riMethodImpl
+         * WHERE riMethodPermutation.methodId = riMethodImpl.methodId
+         *       AND riMethodImpl.methodImplId = riMimeType.methodImplId 
+         *       AND riMethodImpl.bMechPid = ''; 
+         * 
+         * SELECT riMethodPermutation.permutation
+         * FROM riMethodPermutation, riMethod
+         * WHERE riMethodPermutation.methodId = riMethod.methodId
+         *       AND riMethod.bDefPid = '';
+         */
+
 	    
 	    // TODO
-		//m_store.insert(disseminatorIdentifier, DISSEMINATION_DIRECT_URI, diss.?); // not going against a service, i.e. datastreams (true/false)
+	    //m_store.insert(disseminatorIdentifier, DISSEMINATION_MEDIA_TYPE_URI, diss.?);
+        //m_store.insertLiteral(disseminatorIdentifier, DISSEMINATION_DIRECT_URI, "false"); // not going against a service, i.e. datastreams (true/false)
+        
+        //?
 		//m_store.insertLiteral(disseminatorIdentifier, DATE_LAST_MODIFIED_URI, getDate(diss.dissCreateDT));
-		//m_store.insert(disseminatorIdentifier, DISSEMINATION_MEDIA_TYPE_URI, diss.?);
+		
+        
 		//m_store.insertLiteral(disseminatorIdentifier, STATE_URI, diss.dissState); // change to uri #active/#inactive
-		//m_store.insert(disseminatorIdentifier, DISSEMINATION_TYPE_URI, diss.?);
-		//m_store.insert(disseminatorIdentifier, DISSEMINATION_VOLATILE_URI, diss.?); // redirect, external, based on diss that depends on red/ext (true/false)
+		
+        //?
+        //m_store.insert(disseminatorIdentifier, DISSEMINATION_TYPE_URI, diss.?);
+		
+        
+        //m_store.insert(disseminatorIdentifier, DISSEMINATION_VOLATILE_URI, diss.?); // redirect, external, based on diss that depends on red/ext (true/false)
 	}
 
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDigitalObject(fedora.server.storage.types.DigitalObject)
 	 */
-	public void modifyDigitalObject(DigitalObject digitalObject) {
-		// TODO Auto-generated method stub
-		
+	public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
+		// FIXME simple, dumb way to modify
+		deleteDigitalObject(digitalObject.getPid());
+        addDigitalObject(digitalObject);        
 	}
 
 	/* (non-Javadoc)
@@ -234,11 +327,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		String doURI = getDOURI(bMech);
 		m_store.insert(doURI, RDF_TYPE_URI, BMECH_RDF_TYPE_URI);
 		
-		Datastream ds;
-		ds = getLatestDatastream(bMech.datastreams("DSINPUTSPEC"));
-		BMechDSBindSpec dsBindSpec = getDSBindSpec(bMech.getPid(), ds);
-		String bDefPID = dsBindSpec.bDefPID;
-		m_store.insert(doURI, IMPLEMENTS_BDEF_URI, getDOURI(bDefPID));
+		String bDefPid = getBDefPid(bMech);
+		m_store.insert(doURI, IMPLEMENTS_BDEF_URI, getDOURI(bDefPid));
 		
 	}
 	
@@ -341,15 +431,33 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // Placeholder
     }
 	
+    /**
+     * MethodMap datastream is only required for identifying the various 
+     * combinations (permutations) of method names, their parameters and values.
+     * However, the MethodMap datastream is only available in the bDef that 
+     * defines the methods or the bMech(s) that implement the bDef, but this 
+     * information is needed at the ingest of the dataobjects.
+     * So, these method permutations are stored in a relational database
+     * for performance reasons.
+     * 
+     * Note that we only track unparameterized disseminations and disseminations
+     * with fixed parameters
+     * 
+     * @param digitalObject
+     * @param ds
+     * @throws ResourceIndexException
+     */
 	private void addMethodMapDatastream(DigitalObject digitalObject, Datastream ds) throws ResourceIndexException {
 	    // only bdefs & bmechs have mmaps, and we only add when we see bdefs.
 	    if (digitalObject.getFedoraObjectType() != DigitalObject.FEDORA_BDEF_OBJECT) {
 	        return;
 	    }
-
+        
+        List permutations = new ArrayList();
+        String bDefPid = digitalObject.getPid();
         String doURI = getDOURI(digitalObject);
 	    DatastreamXMLMetadata mmapDS = (DatastreamXMLMetadata)ds;
-	    ServiceMapper serviceMapper = new ServiceMapper(digitalObject.getPid());
+	    ServiceMapper serviceMapper = new ServiceMapper(bDefPid);
 	    MethodDef[] mdef;
 	    try {
 	        mdef = serviceMapper.getMethodDefs(new InputSource(new ByteArrayInputStream(mmapDS.xmlContent)));
@@ -357,17 +465,25 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	        throw new ResourceIndexException(t.getMessage());
 	    }
 	    
-	    // we only track
-	    // 1. unparameterized disseminations
-	    // 2. disseminations with fixed parameters
 	    String methodName;
 	    boolean noRequiredParms;
         int optionalParms;
+        PreparedStatement insertMethod, insertPermutation;
+
+        try {
+            insertMethod = m_conn.prepareStatement("INSERT INTO riMethod (methodId, bDefPid, methodName) VALUES (?, ?, ?)");
+            insertPermutation = m_conn.prepareStatement("INSERT INTO riMethodPermutation (methodId, permutation) VALUES (?, ?)");
+        } catch (SQLException se) {
+            // TODO Auto-generated catch block
+            se.printStackTrace();
+            throw new ResourceIndexException(se.getMessage());
+        }
+        
 	    for (int i = 0; i < mdef.length; i++) {
 	    	methodName = mdef[i].methodName;
 	    	MethodParmDef[] mparms = mdef[i].methodParms;
 	    	if (mparms.length == 0) { // no method parameters
-	    		m_store.insertLiteral(doURI, DEFINES_METHOD_URI, methodName);
+                permutations.add(methodName);
 	    	} else {
 	    		noRequiredParms = true;
                 optionalParms = 0;
@@ -381,7 +497,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                     }
 	    		}
 	    		if (noRequiredParms) {
-	    			m_store.insertLiteral(doURI, DEFINES_METHOD_URI, methodName);
+                    permutations.add(methodName);
 	    		} else {
 	    		    // add methods with their required, fixed parameters
                     parms.addAll(getMethodParameterCombinations(mparms, true));
@@ -391,13 +507,33 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 }
                 Iterator it = parms.iterator();
                 while (it.hasNext()) {
-                    m_store.insertLiteral(doURI, DEFINES_METHOD_URI, methodName + "?" + it.next());
+                    permutations.add(methodName + "?" + it.next());
                 }
-	    		
 	    	}
+            
+            // build the batch of sql statements to execute
+            String riMethodPK = getRIMethodPrimaryKey(bDefPid, methodName);
+            try {
+                insertMethod.setString(1, riMethodPK);
+                insertMethod.setString(2, bDefPid);
+                insertMethod.setString(3, methodName);
+                insertMethod.addBatch();
 
-	    	// FIXME 
-	    	// do we need passby and type in the graph?
+                Iterator it = permutations.iterator();
+                while (it.hasNext()) {
+                    insertPermutation.setString(1, riMethodPK);
+                    insertPermutation.setString(2, (String)it.next());
+                    insertPermutation.addBatch();
+                }
+                permutations.clear();
+            
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                throw new ResourceIndexException(e.getMessage());
+            }
+
+	    	// FIXME do we need passby and type in the graph?
 //	        for (int j = 0; j < mparms.length; j++) {
 //	            System.out.println(methodName + " *parmName: " + mparms[j].parmName);
 //	            System.out.println(methodName + " *parmPassBy: " + mparms[j].parmPassBy);
@@ -405,11 +541,14 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 //	        }
 	    }
         
-        // Performance hack:
-        // To ensure that bDef methods are available when inserting a data object
-        // (which queries the graph for the methods) we force a commit (flush) now
-        // TODO ensure this is taken care whenever a bdef's mmap is modified/deleted/etc
-        m_store.commit();
+        try {
+            insertMethod.executeBatch();
+            insertPermutation.executeBatch();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            throw new ResourceIndexException(e.getMessage());
+        }
 	}
 	
     private void addRelsDatastream(Datastream ds) {
@@ -422,6 +561,16 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // Placeholder
     }
     
+    /**
+     * The WSDL datastream is only parsed to obtain the mime types of
+     * disseminations. As this is only available in bMech objects,
+     * we cache this information to a relational database table for later
+     * querying when data objects are ingested.
+     * 
+     * @param digitalObject
+     * @param ds
+     * @throws ResourceIndexException
+     */
     private void addWSDLDatastream(DigitalObject digitalObject, Datastream ds) throws ResourceIndexException {
         // for the moment, we're only interested in WSDL Datastreams
         // in BMechs, so that we can extract mimetypes.
@@ -429,17 +578,83 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             return;
         }
         
+
+        // SELECT methodId FROM riMethod WHERE bDefPid = '' AND methodName = '';
+        // INSERT INTO riMethodMimeType (methodId, mimeType) VALUES ()
         String doURI = getDOURI(digitalObject);
+        String bDefPid = getBDefPid(digitalObject);
+        String bMechPid = digitalObject.getPid();
         DatastreamXMLMetadata wsdlDS = (DatastreamXMLMetadata)ds;
-        ServiceMapper serviceMapper = new ServiceMapper(digitalObject.getPid());
+        Map bindings;
+        PreparedStatement insertMethodImpl, insertMethodMimeType;
         
-        MethodDefOperationBind[] mdefbind;
-//        try {
-//            mdefbind = serviceMapper.getMethodDefBindings(new InputSource(new ByteArrayInputStream(wsdlDS.xmlContent)), 
-//                                                          new InputSource(new ByteArrayInputStream(mmapDS.xmlContent)));
-//        } catch (Throwable t) {
-//            throw new ResourceIndexException(t.getMessage());
-//        }
+        try {
+            WSDLFactory wsdlFactory = WSDLFactory.newInstance();
+            WSDLReader wsdlReader = wsdlFactory.newWSDLReader();
+            wsdlReader.setFeature("javax.wsdl.verbose",false);
+            
+            Definition definition = wsdlReader.readWSDL(null, new InputSource(new ByteArrayInputStream(wsdlDS.xmlContent)));
+            bindings = definition.getBindings();
+            
+            Set bindingKeys = bindings.keySet();
+            Iterator it = bindingKeys.iterator();
+            
+            String methodName, mimeType;
+            insertMethodImpl = m_conn.prepareStatement("INSERT INTO riMethodImpl (methodImplId, bMechPid, methodId) VALUES (?, ?, ?)");
+            insertMethodMimeType = m_conn.prepareStatement("INSERT INTO riMethodMimeType (methodImplId, mimeType) VALUES (?, ?)");
+            String riMethodImplPK, riMethodFK;
+            QName mimeContentQName = new QName("http://schemas.xmlsoap.org/wsdl/mime/", "content");
+            while (it.hasNext()) {
+                QName qname = (QName)it.next();
+                Binding binding = (Binding)bindings.get(qname);
+                //System.out.println("*bindingKey: " + qname);
+                
+                List bops = binding.getBindingOperations();
+                Iterator bit = bops.iterator();
+                while (bit.hasNext()) {
+                    BindingOperation bop = (BindingOperation)bit.next();
+                    methodName = bop.getName();
+                    System.out.println("*BindingOperation.getName(): " + methodName);
+                    riMethodFK = getRIMethodPrimaryKey(bDefPid, methodName);
+                    riMethodImplPK = getRIMethodImplPrimaryKey(bMechPid, methodName);
+                    insertMethodImpl.setString(1, riMethodImplPK);
+                    insertMethodImpl.setString(2, bMechPid);
+                    insertMethodImpl.setString(3, riMethodFK);
+                    insertMethodImpl.addBatch();
+                    BindingOutput bout = bop.getBindingOutput();
+                    List extEls = bout.getExtensibilityElements();
+                    Iterator eit = extEls.iterator();
+                    while (eit.hasNext()) {
+                        ExtensibilityElement extEl = (ExtensibilityElement)eit.next();
+                        QName eType = extEl.getElementType();
+                        if (eType.equals(mimeContentQName)) {
+                            MIMEContent mc = (MIMEContent)extEl;
+                            mimeType = mc.getType();
+                            insertMethodMimeType.setString(1, riMethodImplPK);
+                            insertMethodMimeType.setString(2, mimeType);
+                            insertMethodMimeType.addBatch();
+                            System.out.println("*mc.getType(): " + mimeType);
+                        }
+                    }
+                }
+            }
+            
+            try {
+                insertMethodImpl.executeBatch();
+                insertMethodMimeType.executeBatch();
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                throw new ResourceIndexException(e.getMessage());
+            }
+            
+        } catch (WSDLException e) {
+            e.printStackTrace();
+            throw new ResourceIndexException("WSDLException: " + e.getMessage());
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
     
 	private Datastream getLatestDatastream(List datastreams) {
@@ -465,20 +680,21 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    }
 	}
 	
-	private List getMethodNames(String bdefPID) throws ResourceIndexException {
-		RDQLQuery query = new RDQLQuery("SELECT ?o WHERE (<" + getDOURI(bdefPID) + "> <" + DEFINES_METHOD_URI + "> ?o)");
-		query.setRequiresCommitBeforeQuery(false);
-        JenaResultIterator results = (JenaResultIterator)executeQuery(query);
-		
-		Value v;
-		List methods = new ArrayList();
-		while (results.hasNext()) {
-			v = (Value)results.next().get("o");
-			methods.add(v.getString());
-		}
-        logFinest("Finished query to resource index and iteration of results.");
-		return methods;
-	}
+//	private List getMethodNames(String bdefPID) throws ResourceIndexException {
+//		RDQLQuery query = new RDQLQuery("SELECT ?o WHERE (<" + getDOURI(bdefPID) + "> <" + DEFINES_METHOD_URI + "> ?o)");
+//        
+//        logFinest("Started query to resource index (rdql).");
+//        JenaResultIterator results = (JenaResultIterator)executeQuery(query);
+//		
+//		Value v;
+//		List methods = new ArrayList();
+//		while (results.hasNext()) {
+//			v = (Value)results.next().get("o");
+//			methods.add(v.getString());
+//		}
+//        logFinest("Finished query to resource index and iteration of results.");
+//		return methods;
+//	}
 	
 	private BMechDSBindSpec getDSBindSpec(String pid, Datastream ds) throws ResourceIndexException {
 	    DatastreamXMLMetadata dsInSpecDS = (DatastreamXMLMetadata)ds;
@@ -571,6 +787,36 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
         return combinations;
     }
+    
+    /**
+     * If we could rely on support for JDBC 3.0's Statement.getGeneratedKeys(),
+     * we could use an auto-increment field for the primary key.
+     * 
+     * A composite primary key isn't used (at the moment) because
+     * of varying support for composite keys.
+     * A post to the McKoi mailing list suggests that while McKoi
+     * allows composite primary keys, it's not indexing them as a 
+     * composite, and requiring a (full?) table scan.
+     * 
+     * @return bDefPid + "/" + methodName, e.g. demo:8/getImage
+     */
+    private String getRIMethodPrimaryKey(String bDefPid, String methodName) {
+        return (bDefPid + "/" + methodName);
+    }
+    
+    private String getRIMethodImplPrimaryKey(String bMechPid, String methodName) {
+        return (bMechPid + "/" + methodName);
+    }
+    
+    private String getBDefPid(DigitalObject bMech) throws ResourceIndexException {
+        if (bMech.getFedoraObjectType() != DigitalObject.FEDORA_BMECH_OBJECT) {
+            throw new ResourceIndexException("Illegal argument: object is not a bMech");
+        }
+        Datastream ds;
+        ds = getLatestDatastream(bMech.datastreams("DSINPUTSPEC"));
+        BMechDSBindSpec dsBindSpec = getDSBindSpec(bMech.getPid(), ds);
+        return dsBindSpec.bDefPID;
+    }
 
     /* (non-Javadoc)
      * @see fedora.server.resourceIndex.ResourceIndex#getIndexLevel()
@@ -639,4 +885,5 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             crossProduct.add(copy);
         }
     }
+
 }

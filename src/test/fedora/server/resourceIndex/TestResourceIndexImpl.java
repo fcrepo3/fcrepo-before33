@@ -5,8 +5,6 @@ import java.io.FilenameFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URI;
-import java.util.Date;
-import java.util.HashMap;
 
 import org.kowari.server.driver.SessionFactoryFinder;
 import org.kowari.server.local.LocalSessionFactory;
@@ -17,15 +15,10 @@ import org.kowari.store.jena.ModelKowariMaker;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.shared.ReificationStyle;
 
-import fedora.server.storage.translation.DOTranslationUtility;
-import fedora.server.storage.translation.DOTranslatorImpl;
+import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.translation.FOXMLDODeserializer;
-import fedora.server.storage.translation.FOXMLDOSerializer;
-import fedora.server.storage.types.AuditRecord;
-import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.BasicDigitalObject;
-import fedora.server.storage.types.Disseminator;
 import junit.framework.TestCase;
 
 /**
@@ -39,6 +32,15 @@ public class TestResourceIndexImpl extends TestCase {
     private static final String SERVER_NAME = "testFedora";
     private static final String DEMO_OBJECTS_ROOT_DIR = "src/test/fedora/server/resourceIndex/foxmlTestObjects";
     
+    private static final String CP_DRIVER = "com.mysql.jdbc.Driver";
+    private static final String CP_URL = "jdbc:mysql://localhost/fedora20?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true";
+    private static final String CP_USERNAME = "fedoraAdmin";
+    private static final String CP_PASSWORD = "fedoraAdmin";
+    private static final int CP_ICONN = 1;
+    private static final int CP_MAXCONN = 1;
+    private static final boolean CP_WAIT = true;
+    
+    
     private String m_modelURI;
     private LocalSessionFactory m_factory;
     private DatabaseSession m_session;
@@ -46,6 +48,8 @@ public class TestResourceIndexImpl extends TestCase {
     private RIStore m_kowariRIStore;
     private ResourceIndex ri;
     private DigitalObject digitalObject, m_bDef, m_bMech;
+    
+    private ConnectionPool cPool;
     
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestResourceIndexImpl.class);
@@ -64,6 +68,9 @@ public class TestResourceIndexImpl extends TestCase {
 		    m_factory.setDirectory(serverDir);
 		}
 		m_session = (DatabaseSession) m_factory.newSession();
+        
+		// the connection pool
+        cPool = new ConnectionPool(CP_DRIVER, CP_URL, CP_USERNAME, CP_PASSWORD, CP_ICONN, CP_MAXCONN, CP_WAIT);
 
         // create the model
         GraphKowariMaker graphMaker = new GraphKowariMaker(m_session, serverURI,
@@ -71,12 +78,14 @@ public class TestResourceIndexImpl extends TestCase {
         ModelKowariMaker modelMaker = new ModelKowariMaker(graphMaker);
         m_model = modelMaker.createModel(MODEL_NAME);
         m_kowariRIStore = new KowariRIStore(m_session, m_model);
-        ri = new ResourceIndexImpl(3, m_kowariRIStore, null);
+        ri = new ResourceIndexImpl(3, m_kowariRIStore, cPool, null);
         //digitalObject = getDigitalObject();
         
         // needed by the deserializer
         System.setProperty("fedoraServerHost", "localhost");
 		System.setProperty("fedoraServerPort", "8080");
+        
+        
     }
 
     /*
