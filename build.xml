@@ -445,7 +445,9 @@
 		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
 		<copy file="temp/soapclient/lib/fedoragentypes.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
 		<copy file="temp/soapclient/lib/fedorautilities.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
-		<copy file="src/xsl/soapclient/objectmethods.xslt" todir="dist/server/tomcat41/webapps/soapclient/xsl"/>
+		<copy file="src/xsl/soapclient/objectmethods.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
+		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
+		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
 		<copy file="src/web-app/fedora/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
@@ -553,6 +555,13 @@
 </project>
 <!--
   $Log$
+  Revision 1.86  2003/03/05 13:55:56  rlw
+  moved xsl directory for soapclient webapp down into WEB-INF so it's not visible by casual browsing
+
+  added copy of viewObjectProfile.xslt to xsl directory so any stylesheets needed by soapclient are self contained in webapp module
+
+  added copy for soapclient properties file
+
   Revision 1.85  2003/03/05 02:30:08  wdn5e
   add copy of demo2 extended template to dist
 
