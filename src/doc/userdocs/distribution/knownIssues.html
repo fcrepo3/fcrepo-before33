@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+    <title>Fedora Known Issues</title>
+    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
+</head>
+
+<body>
+<div id="header">
+    <a href="../index.html" id="logo"></a>
+    <div id="title">
+        <h1>Fedora Known Issues</h1>
+    </div>
+</div>
+
+<div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="tocbox">
+        <ol>
+            <li><a href="#2.0">Release 2.0</a></li>
+
+        </ol>
+    </div>
+</div>
+
+<div class="sec1">
+<h2><a name="2.0">Release 2.0 - January 31, 2005</a></h2>
+This list covers some of the known problems with Fedora 2.0. Please read this before reporting any new bugs, and watch it regularly (we'll update it as new bugs are found in the release).
+
+<h3>All Platforms</h3>
+<hr />
+<ul>
+    <li>When running listDatastreams via API-A (SOAP), the list is incomplete, 
+        but when running against API-A-LITE (REST), it works fine.  The 
+        incomplete list consists only of datastreams that are used by 
+        disseminators. 
+        (<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=99">
+        http://www.fedora.info/bugzilla/show_bug.cgi?id=99</a>)</li>
+</ul>
+
+<h3>Windows</h3>
+<hr />
+<ul>
+    <li>Fedora wsdl incompatible with wsdl.exe 
+        (<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=95">
+        http://www.fedora.info/bugzilla/show_bug.cgi?id=95</a>)</li>
+    <li>fedora-stop.bat, fedora-ingest-demos.bat may not work if the environment 
+        variables JAVA_HOME or FEDORA_JAVA_HOME contain spaces. 
+        (<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=97">
+        http://www.fedora.info/bugzilla/show_bug.cgi?id=97</a> and 
+        <a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=98">
+        http://www.fedora.info/bugzilla/show_bug.cgi?id=98</a>).</li>
+    <li>fedora-debug.bat contains incorrect path references 
+        (<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=100">
+        http://www.fedora.info/bugzilla/show_bug.cgi?id=100</a>).</li>
+</ul>
+
+<h3>Linux and Unix Systems</h3>
+<hr />
+
+
+<h3>Mac OS X</h3>
+<hr /> 
+</div>
+
+<div id="footer">
+    <div id="copyright">
+        Copyright &copy; 2005 Fedora Project
+    </div>
+
+    <div id="lastModified">
+        Last Modified <script type="text/javascript">
+        //<![CDATA[
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+        //]]>
+        </script>
+    </div>
+</div>
+</body>
+</html>
