@@ -91,6 +91,7 @@ public class DefaultExternalContentManager extends Module
     MIMETypedStream httpContent = null;
     try
     {
+      //URL url = new URL(java.net.URLDecoder.decode(URL, "utf-8"));
       URL url = new URL(URL);
       HttpURLConnection connection = (HttpURLConnection)url.openConnection();
       if (connection.getResponseCode()!=HttpURLConnection.HTTP_OK)
@@ -110,8 +111,12 @@ public class DefaultExternalContentManager extends Module
       //  baos.write(byteStream);
       //}
       // RLW: change required by conversion fom byte[] to InputStream
-      if(contentType == null) contentType =
+      if(contentType == null)
+      {
+        contentType =
           connection.guessContentTypeFromStream(connection.getInputStream());
+        if (contentType == null) contentType = "text/plain";
+      }
       // RLW: change required by conversion fom byte[] to InputStream
       httpContent = new MIMETypedStream(contentType, inStream);
       //httpContent = new MIMETypedStream(contentType, baos.toByteArray());
