@@ -4,37 +4,51 @@ import fedora.common.Constants;
 
 public class FedoraModelNamespace extends RDFNamespace {
 
-    public static final String uri = Constants.FEDORA_SYSTEM_DEF_URI + "/model#";
-
-    //
     // Properties
-    //
+    public final RDFName CONTENT_MODEL;
+    public final RDFName CREATED_DATE;
+    public final RDFName DEFINES_METHOD;
+    public final RDFName IMPLEMENTS_BDEF;
+    public final RDFName LABEL;
+    public final RDFName OWNER;
+    public final RDFName STATE;
+    public final RDFName USES_BMECH;
 
-    public static final RDFQName CONTENT_MODEL   = new RDFQName(uri, "contentModel");
-    public static final RDFQName CREATED_DATE    = new RDFQName(uri, "createdDate");
-    public static final RDFQName DEFINES_METHOD  = new RDFQName(uri, "definesMethod");
-    public static final RDFQName IMPLEMENTS_BDEF = new RDFQName(uri, "implementsBDef");
-    public static final RDFQName LABEL           = new RDFQName(uri, "label");
-    public static final RDFQName OWNER           = new RDFQName(uri, "owner");
-    public static final RDFQName STATE           = new RDFQName(uri, "state");
-    public static final RDFQName USES_BMECH      = new RDFQName(uri, "usesBMech");
-
-
-    //
     // Values
-    //
+    public final RDFName ACTIVE;
+    public final RDFName DELETED;
+    public final RDFName INACTIVE;
 
-    public static final RDFQName ACTIVE          = new RDFQName(uri, "Active");
-    public static final RDFQName DELETED         = new RDFQName(uri, "Deleted");
-    public static final RDFQName INACTIVE        = new RDFQName(uri, "Inactive");
-
-
-    //
     // Types
-    //
+    public final RDFName BDEF_OBJECT;
+    public final RDFName BMECH_OBJECT;
+    public final RDFName DATA_OBJECT;
 
-    public static final RDFQName BDEF            = new RDFQName(uri, "BDefObject");
-    public static final RDFQName BMECH           = new RDFQName(uri, "BMechObject");
-    public static final RDFQName DATAOBJECT      = new RDFQName(uri, "DataObject");
+    protected FedoraModelNamespace() {
+
+        this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/model#";
+
+        // Properties
+//        this.ALTERNATE_IDENTIFIER = new RDFName(this, "alternateIdentifier");
+        this.CONTENT_MODEL        = new RDFName(this, "contentModel");
+        this.CREATED_DATE         = new RDFName(this, "createdDate");
+        this.DEFINES_METHOD       = new RDFName(this, "definesMethod");
+        this.IMPLEMENTS_BDEF      = new RDFName(this, "implementsBDef");
+        this.LABEL                = new RDFName(this, "label");
+        this.LAST_MODIFIED_DATE   = new RDFName(this, "lastModifiedDate");
+        this.OWNER                = new RDFName(this, "owner");
+        this.STATE                = new RDFName(this, "state");
+        this.USES_BMECH           = new RDFName(this, "usesBMech");
+
+        // Values
+        this.ACTIVE               = new RDFName(this, "Active");
+        this.DELETED              = new RDFName(this, "Deleted");
+        this.INACTIVE             = new RDFName(this, "Inactive");
+
+        // Types
+        this.BDEF_OBJECT          = new RDFName(this, "BDefObject");
+        this.BMECH_OBJECT         = new RDFName(this, "BMechObject");
+        this.DATA_OBJECT          = new RDFName(this, "DataObject");
+    }
 
 }
