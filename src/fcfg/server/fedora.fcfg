@@ -280,20 +280,18 @@
 		<param name="connectionPool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
 	</module>
 <!--
-	<module role="fedora.server.resourceIndex.ResourceIndex" class="fedora.server.resourceIndex.KowariRIModule">
+	<module role="fedora.server.resourceIndex.ResourceIndex" class="fedora.server.resourceIndex.ResourceIndexModule">
 		<comment>
         Description:
           Supports the ResourceIndex.
         Parameters:
           - level
             Index level
-          - localServerPath
-            Filesystem path to store the ResourceIndex
          Warning:
             Changing the index level requires a full re-index
         </comment>
 		<param name="level" value="3"/>
-		<param name="localServerPath" value="/opt/fedora/store/resourceIndex"/>
+		<param name="datastoreId" value="localKowariTriplestore"/>
 	</module>
 -->
 	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
