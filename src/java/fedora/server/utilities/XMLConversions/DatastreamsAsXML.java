@@ -14,7 +14,7 @@ import fedora.server.utilities.DateUtility;
  * and encode the in XML.
  *
  * XML Schemas used for output:
- * http://www.fedora.info/definitions/1/0/access/objectItemList.xsd.
+ * http://www.fedora.info/definitions/1/0/access/objectItemIndex.xsd.
  * (To be created at this URL asap!) </p>
  *
  * @author Sandy Payette payette@cs.cornell.edu
@@ -33,7 +33,7 @@ public class DatastreamsAsXML
         StringBuffer out = new StringBuffer();
 
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        out.append("<objectItemList"
+        out.append("<objectItemIndex"
               + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
               + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
@@ -54,7 +54,7 @@ public class DatastreamsAsXML
           out.append("<itemMIMEType>" + datastreams[i].DSMIME + "</itemMIMEType>\n");
           out.append("</item>\n");
         }
-        out.append("</objectItemList>");
+        out.append("</objectItemIndex>");
         return out.toString();
     }
 
