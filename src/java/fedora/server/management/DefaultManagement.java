@@ -330,9 +330,15 @@ public class DefaultManagement
             ds.DSState= dsState;
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             ds.DSCreateDT=nowUTC;
-            if (dsID==null) {
+            if (dsID==null && dsID.length()==0) {
                 ds.DatastreamID=w.newDatastreamID();
             } else {
+                if (dsID.indexOf(" ")!=-1) {
+                    throw new GeneralException("Datastream ids cannot contain spaces.");
+                }
+                if (dsID.indexOf(":")!=-1) {
+                    throw new GeneralException("Datastream ids cannot contain colons.");
+                }
                 if (w.GetDatastream(dsID, null)!=null) {
                     throw new GeneralException("A datastream already exists with ID: " + dsID);
                 } else {
