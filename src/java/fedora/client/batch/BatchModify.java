@@ -17,7 +17,6 @@ import javax.swing.text.JTextComponent;
 import fedora.client.Administrator;
 import fedora.client.batch.BatchModifyParser;
 import fedora.server.utilities.StreamUtility;
-import fedora.server.management.FedoraAPIM;
 import fedora.client.Uploader;
 
 /**
@@ -55,7 +54,6 @@ public class BatchModify
     private static String s_rootName = null;
     private static String s_logPath = null;
     private static PrintStream s_log = null;
-    private static FedoraAPIM APIM = null;
     private static Uploader UPLOADER = null;
     private static Administrator s_admin;
 
@@ -65,8 +63,7 @@ public class BatchModify
      * @param s_admin - An instance of FedoraAPIM.
      */
     public BatchModify(Administrator s_admin) {
-        this.APIM = APIM;
-        this.s_admin = s_admin;
+        BatchModify.s_admin = s_admin;
         InputStream in = null;
         BatchModifyParser bmp = null;
         BatchModifyValidator bmv = null;
