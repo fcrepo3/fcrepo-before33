@@ -12,6 +12,7 @@ import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.ValidationException;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.DigitialObject;
 import fedora.server.storage.types.*;
 
 /**
@@ -26,6 +27,7 @@ import fedora.server.storage.types.*;
 public class DefinitiveDOWriter
         implements DOWriter {
 
+    private DigitalObject m_obj;
 /** remove and replace these with a DigitalObject instance  */
     private String m_pid;
     private String m_label;
@@ -45,6 +47,7 @@ public class DefinitiveDOWriter
     public DefinitiveDOWriter(String pid, StreamValidator validator, 
             TestStreamStorage storage, TestStreamStorage tempStorage) 
             throws StorageDeviceException, ObjectNotFoundException {
+            
         m_pid=pid;
         m_validator=validator;
         m_storage=storage;
