@@ -9,6 +9,8 @@ package fedora.server.storage.types;
  * @version 1.0
  */
 
+import fedora.server.errors.StreamIOException;
+
 import java.util.Date;
 import java.io.InputStream;
 
@@ -49,9 +51,9 @@ public class Datastream
 
   public String DSLocation;
   
-  public InputStream getContentStream()
-  {
-    return null;
+  public InputStream getContentStream() 
+          throws StreamIOException {
+      return null;
   }
 
 }
