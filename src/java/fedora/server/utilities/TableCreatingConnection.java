@@ -6,14 +6,34 @@ import java.sql.Statement;
 import java.util.Iterator;
 
 /**
- * A ConnectionWrapper that creates tables on the target database
- * given a TableSpec.
+ *
+ * <p><b>Title:</b> TableCreatingConnection.java</p>
+ * <p><b>Description:</b> A ConnectionWrapper that creates tables on the
+ * target database given a TableSpec.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
 public class TableCreatingConnection
         extends ConnectionWrapper {
-        
+
     private DDLConverter m_converter;
 
     /**
@@ -30,7 +50,7 @@ public class TableCreatingConnection
 
     /**
      * Get the DDLConverter this TableCreatingConnection works with.
-     * 
+     *
      * @return The converter.
      */
     public DDLConverter getDDLConverter() {
@@ -46,7 +66,7 @@ public class TableCreatingConnection
      *
      * @param spec A description of the table to be created.
      */
-    public void createTable(TableSpec spec) 
+    public void createTable(TableSpec spec)
             throws SQLException {
         Statement s=createStatement();
         Iterator iter=m_converter.getDDL(spec).iterator();

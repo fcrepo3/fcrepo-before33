@@ -6,19 +6,44 @@ import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
 
+/**
+ *
+ * <p><b>Title:</b> ThreadMonitorModule.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class ThreadMonitorModule
         extends Module
         implements ThreadMonitor {
-        
+
     private ThreadMonitorImpl m_wrappedMonitor;
     private boolean m_active=false;
-    
-    public ThreadMonitorModule(Map params, Server server, String role) 
+
+    public ThreadMonitorModule(Map params, Server server, String role)
             throws ModuleInitializationException {
         super(params, server, role);
     }
-    
-    public void initModule() 
+
+    public void initModule()
             throws ModuleInitializationException {
         String active=getParameter("active");
         String pollInterval=getParameter("pollInterval");
@@ -39,7 +64,7 @@ public class ThreadMonitorModule
             }
         }
     }
-    
+
     public void shutdownModule() {
         if (m_active) {
             m_wrappedMonitor.requestStop();
@@ -51,11 +76,11 @@ public class ThreadMonitorModule
             m_wrappedMonitor.run();
         }
     }
-    
+
     public void requestStop() {
         if (m_active) {
             m_wrappedMonitor.requestStop();
         }
     }
-    
+
 }

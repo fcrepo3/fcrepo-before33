@@ -13,26 +13,51 @@ import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;                           
+import org.w3c.dom.Node;
 
 import fedora.server.errors.ServerException;
 
+/**
+ *
+ * <p><b>Title:</b> AxisUtility.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public abstract class AxisUtility {
 
     /**
      * The (SOAP[version-specific] spec-dictated) namespace for fault codes.
-     * See http://www.w3.org/TR/SOAP/#_Toc478383510 for SOAPv1.1 
-     * (what Axis currently conforms to) and 
+     * See http://www.w3.org/TR/SOAP/#_Toc478383510 for SOAPv1.1
+     * (what Axis currently conforms to) and
      * http://www.w3.org/TR/soap12-part1/#faultcodeelement for SOAPv1.2
      * SOAP v1.1 here.
      */
     public static String SOAP_FAULT_CODE_NAMESPACE="http://schemas.xmlsoap.org/soap/envelope/";
-    
+
     /**
      * Similar to above, this is "actor" in soap1_1 and "role"  in 1_2.
      * Soap 1.1 provides (see http://www.w3.org/TR/SOAP/#_Toc478383499) a special
      * URI for intermediaries, http://schemas.xmlsoap.org/soap/actor/next,
-     * and leaves other URIs up to the application.  Soap 1.2 provides 
+     * and leaves other URIs up to the application.  Soap 1.2 provides
      * (see http://www.w3.org/TR/soap12-part1/#soaproles) three special URIs --
      * one of which is for ultimate recievers, which is the category Fedora
      * falls into.  http://www.w3.org/2002/06/soap-envelope/role/ultimateReceiver
@@ -40,7 +65,7 @@ public abstract class AxisUtility {
      * interpolate and use http://schemas.xmlsoap.org/soap/actor/ultimateReceiver.
      */
     public static String SOAP_ULTIMATE_RECEIVER="http://schemas.xmlsoap.org/soap/actor/ultimateReceiver";
-    
+
     public static void throwFault(ServerException se)
             throws AxisFault {
         String[] details=se.getDetails();
@@ -71,20 +96,20 @@ public abstract class AxisUtility {
         fault.setFaultDetailString(buf.toString());
         return fault;
     }
-    
+
     public static AxisFault getFault(Exception e) {
         AxisFault fault=new AxisFault(new QName(SOAP_FAULT_CODE_NAMESPACE,
-                "Uncaught"), 
+                "Uncaught"),
                 e.getClass().getName() + ":" + e.getMessage(), SOAP_ULTIMATE_RECEIVER,
                 null);
         return fault;
     }
-    
+
     public static void showDeployUsage() {
         System.out.println("Usage:");
         System.out.println("    AxisUtility deploy wsdd_file timeout_seconds [finished_url]");
     }
-    
+
     public static boolean serverActive(URL url, int timeoutSeconds) {
         long startms=new Date().getTime();
         long timeoutms=startms+(1000*timeoutSeconds);
@@ -111,7 +136,7 @@ public abstract class AxisUtility {
         long total=endms-startms;
         return false;
     }
-    
+
     public static void main(String args[]) {
         if (args.length>0) {
            if (args[0].equals("deploy")) {
@@ -143,8 +168,8 @@ public abstract class AxisUtility {
                                if (nameNode.getNodeValue().equals("fedoraServerPort")) {
                                    port=valueNode.getNodeValue();
                                }
-                           }                                      
-                           
+                           }
+
                            StringBuffer url=new StringBuffer("http://localhost:" + port + "/fedora/AdminService");
                            URL adminUrl=new URL(url.toString());
                            URL mainUrl=new URL("http://localhost:" + port + "/");

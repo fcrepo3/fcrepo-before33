@@ -8,12 +8,37 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import fedora.server.errors.InconsistentTableSpecException;
 
+/**
+ *
+ * <p><b>Title:</b> TableSpecDeserializer.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class TableSpecDeserializer
         extends DefaultHandler {
-        
+
     private ArrayList m_tableSpecList;
     private InconsistentTableSpecException m_itse;
-    
+
     private ArrayList m_columnSpecList;
     private String m_table_name;
     private String m_table_primaryKey;
@@ -33,20 +58,20 @@ public class TableSpecDeserializer
         m_tableSpecList=new ArrayList();
         m_columnSpecList=new ArrayList();
     }
-    
-    public List getTableSpecs() { 
+
+    public List getTableSpecs() {
         return m_tableSpecList;
     }
-    
-    public void assertTableSpecsConsistent() 
+
+    public void assertTableSpecsConsistent()
             throws InconsistentTableSpecException {
         if (m_itse!=null) {
             throw m_itse;
         }
     }
-    
-    public void startElement(String uri, String localName, String qName, 
-            Attributes a) throws SAXException {    
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes a) throws SAXException {
         if (localName.equals("table")) {
             m_table_name=a.getValue("name");
             if (m_table_name==null) {
@@ -88,7 +113,7 @@ public class TableSpecDeserializer
             }
         }
     }
-    
+
     private boolean getBoolean(Attributes a, String name) {
         String v=a.getValue(name);
         if (v==null) {
@@ -99,11 +124,11 @@ public class TableSpecDeserializer
         }
         return false;
     }
-    
+
     public void endElement(String uri, String localName, String qName) {
         if (localName.equals("table")) {
             try {
-                m_tableSpecList.add(new TableSpec(m_table_name, 
+                m_tableSpecList.add(new TableSpec(m_table_name,
                         m_columnSpecList, m_table_primaryKey, m_table_type));
             } catch (InconsistentTableSpecException itse) {
                 m_itse=itse;
@@ -113,11 +138,11 @@ public class TableSpecDeserializer
             m_table_type=null;
             m_columnSpecList=new ArrayList();
         } else if (localName.equals("column")) {
-            m_columnSpecList.add(new ColumnSpec(m_column_name, m_column_type, 
+            m_columnSpecList.add(new ColumnSpec(m_column_name, m_column_type,
                     m_column_default, m_column_autoIncrement, m_column_index,
-                    m_column_unique, m_column_notNull, 
+                    m_column_unique, m_column_notNull,
                     m_column_foreignKey_foreignTableName,
-                    m_column_foreignKey_columnName, 
+                    m_column_foreignKey_columnName,
                     m_column_foreignKey_onDeleteAction));
             m_column_name=null;
             m_column_type=null;

@@ -8,12 +8,29 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * <p>Title: DateUtility.java</p>
- * <p>Description: A collection of utility methods for performing</p>
+ *
+ * <p><b>Title:</b> DateUtility.java</p>
+ * <p><b>Description:</b> A collection of utility methods for performing</p>
  * <p>frequently require tasks.</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Ross Wayland
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author rlw@virginia.edu
  * @version 1.0
  */
 public abstract class DateUtility
@@ -145,15 +162,15 @@ public abstract class DateUtility
     }
     return(calendar);
   }
-  
-  public static Date convertLocalDateToUTCDate(Date localDate) 
+
+  public static Date convertLocalDateToUTCDate(Date localDate)
   {
     // figure out the time zone offset of this machine (in millisecs)
     Calendar cal=Calendar.getInstance();
     int tzOffset=cal.get(Calendar.ZONE_OFFSET);
     // ...and account for daylight savings time, if applicable
     TimeZone tz = cal.getTimeZone();
-    if (tz.inDaylightTime(localDate)) 
+    if (tz.inDaylightTime(localDate))
     {
       tzOffset+=cal.get(Calendar.DST_OFFSET);
     }
@@ -163,9 +180,9 @@ public abstract class DateUtility
     UTCDate.setTime(localDate.getTime() + tzOffset);
     return UTCDate;
   }
-  
+
     /**
-     * Attempt to parse the given string of form: yyyy-MM-dd[Thh:mm:ss[Z]] 
+     * Attempt to parse the given string of form: yyyy-MM-dd[Thh:mm:ss[Z]]
      * as a Date.  If the string is not of that form, return null.
      *
      * @param str the date string to parse
@@ -189,7 +206,7 @@ public abstract class DateUtility
                 return null;
             }
         }
-        
+
     }
 
   public static void main(String[] args)

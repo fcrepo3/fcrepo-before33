@@ -3,10 +3,35 @@ package fedora.server.utilities;
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
 
-public class ThreadMonitorImpl 
-        extends StdoutLogging 
+/**
+ *
+ * <p><b>Title:</b> ThreadMonitorImpl.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
+public class ThreadMonitorImpl
+        extends StdoutLogging
         implements ThreadMonitor {
-        
+
     private boolean m_stopRequested;
     private int m_pollInterval;
 
@@ -18,7 +43,7 @@ public class ThreadMonitorImpl
             t.start();
         }
     }
-    
+
     public void run() {
         while (!m_stopRequested) {
             try {
@@ -27,7 +52,7 @@ public class ThreadMonitorImpl
             logFiner(getThreadTree());
         }
     }
-    
+
     public void requestStop() {
         m_stopRequested=true;
     }
@@ -43,9 +68,9 @@ public class ThreadMonitorImpl
         }
         StringBuffer out=new StringBuffer();
         appendGroup(root, "", out);
-        return out.toString(); 
+        return out.toString();
     }
-    
+
     private static void appendGroup(ThreadGroup g, String indent, StringBuffer out) {
         if (g!=null) {
             int tc=g.activeCount();
@@ -54,7 +79,7 @@ public class ThreadMonitorImpl
             ThreadGroup[] groups=new ThreadGroup[gc];
             g.enumerate(threads, false);
             g.enumerate(groups, false);
-            out.append(indent + "Group: " + g.getName() + " MaxPriority: " 
+            out.append(indent + "Group: " + g.getName() + " MaxPriority: "
                     + g.getMaxPriority() + (g.isDaemon()?" DAEMON":"") + "\n");
             for (int i=0; i<tc; i++)
                 appendThread(threads[i], indent + "    ", out);
@@ -70,7 +95,7 @@ public class ThreadMonitorImpl
                 (t.isDaemon()?" DAEMON":"") +
                 (t.isAlive()?"":" NOT ALIVE") + "\n");
     }
-    
+
     public static void main(String[] args) {
         ThreadMonitorImpl tm=new ThreadMonitorImpl(2000, null);
         try {
@@ -79,5 +104,5 @@ public class ThreadMonitorImpl
         }
         tm.requestStop();
     }
-    
+
 }
