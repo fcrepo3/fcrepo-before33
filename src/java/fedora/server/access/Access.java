@@ -176,4 +176,18 @@ public interface Access
    */
   public RepositoryInfo describeRepository(Context context) throws ServerException;
 
+  /**
+   * <p>Gets the change history of an object by returning a list of timestamps
+   * that correspond to modification dates of components. This currently includes
+   * changes to datastreams and disseminators.</p>
+   *
+   * @param context The context of this request.
+   * @param PID The persistent identifier of the digitla object.
+   * @return An Array containing the list of timestamps indicating when changes
+   *         were made to the object.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
+  public String[] getObjectHistory(Context context, String PID) throws ServerException;
+
 }

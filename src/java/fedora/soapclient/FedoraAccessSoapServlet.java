@@ -155,6 +155,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
       "GetObjectProfile";
 
   /** GetObjectProfile service name. */
+  private static final String GET_OBJECT_HISTORY =
+      "GetObjectHistory";
+
+  /** GetObjectProfile service name. */
   private static final String DESCRIBE_REPOSITORY =
       "DescribeRepository";
 
@@ -882,8 +886,89 @@ public class FedoraAccessSoapServlet extends HttpServlet
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-      }
-      else
+      } else if (action.equals(GET_OBJECT_HISTORY))
+      {
+        String[] objectHistory = null;
+        PipedWriter pw = new PipedWriter();
+        PipedReader pr = new PipedReader(pw);
+        OutputStreamWriter out = null;
+
+        try
+        {
+          pw = new PipedWriter();
+          pr = new PipedReader(pw);
+          objectHistory = getObjectHistory(PID);
+          if (objectHistory.length > 0)
+          {
+            // Object History found.
+            // Deserialize Object History datastructure into XML
+            new ObjectHistorySerializerThread(PID, objectHistory, pw).start();
+            if (xml)
+            {
+              // Return results as raw XML
+              response.setContentType(CONTENT_TYPE_XML);
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
+              int bufSize = 4096;
+              char[] buf=new char[bufSize];
+              int len=0;
+              while ( (len = pr.read(buf, 0, bufSize)) != -1) {
+                  out.write(buf, 0, len);
+              }
+              out.flush();
+            } else
+            {
+              // Transform results into an html table
+              response.setContentType(CONTENT_TYPE_HTML);
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
+              File xslFile = new File(this.getServletContext().getRealPath("WEB-INF/xsl/viewObjectHistory.xslt"));
+              TransformerFactory factory = TransformerFactory.newInstance();
+              Templates template = factory.newTemplates(new StreamSource(xslFile));
+              Transformer transformer = template.newTransformer();
+              Properties details = template.getOutputProperties();
+              transformer.setParameter("title_", new StringValue("Fedora"));
+              transformer.setParameter("subtitle_", new StringValue("Object History View"));
+              transformer.setParameter("soapClientServletPath", new StringValue(SOAP_CLIENT_SERVLET_PATH));
+              transformer.setParameter("soapClientMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+              transformer.transform(new StreamSource(pr), new StreamResult(out));
+            }
+            out.flush();
+
+          } else
+          {
+            // No Repository Info returned
+            String message = "[FedoraAccessSoapServlet] No Object History returned.";
+            System.out.println(message);
+            showURLParms(action, "", "", "", null, new Property[0],
+                         response, message);
+          }
+        } catch (Throwable th)
+        {
+          String message = "[FedoraAccessSoapServlet] An error has occured. "
+              + " The error was a \" "
+              + th.getClass().getName()
+              + " \". Reason: "  + th.getMessage();
+          System.out.println(message);
+          th.printStackTrace();
+          System.out.println(message);
+          showURLParms(action, PID, "", "", null, new Property[0],
+                         response, message);
+        } finally
+        {
+          try
+          {
+            if (pr != null) pr.close();
+            if (out != null) out.close();
+          } catch (Throwable th)
+          {
+            String message = "[FedoraAccessSoapServlet] An error has occured. "
+                + " The error was a \" " + th.getClass().getName()
+                + " \". Reason: "  + th.getMessage();
+            throw new ServletException(message);
+          }
+        }
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+      } else
       {
         // Action not recognized
         String message = "[FedoraAccessSoapServlet] Requested action not recognized.";
@@ -1413,6 +1498,72 @@ public class FedoraAccessSoapServlet extends HttpServlet
   }
 
   /**
+   * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
+   *
+   */
+  public class ObjectHistorySerializerThread extends Thread
+  {
+    private PipedWriter pw = null;
+    private String PID = null;
+    private String[] objectHistoryArray = new String[0];
+
+    /**
+     * <p> Constructor for SerializeThread.</p>
+     *
+     * @param PID The persistent identifier of the specified digital object.
+     * @param objectHistoryArray An array of behavior method definitions.
+     * @param pw A PipedWriter to which the serialization info is written.
+     */
+    public ObjectHistorySerializerThread(String PID, String[] objectHistoryArray,
+                        PipedWriter pw)
+    {
+      this.pw = pw;
+      this.PID = PID;
+      this.objectHistoryArray = objectHistoryArray;
+    }
+
+    /**
+     * <p> This method executes the thread.</p>
+     */
+    public void run()
+    {
+      if (pw != null)
+      {
+        try
+        {
+          pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+          pw.write("<fedoraObjectHistory "
+              + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+              + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+              + " http://" + fedoraServerHost + ":" + fedoraServerPort
+              + "/fedoraObjectHistory.xsd\" "+"pid=\""+PID+"\" >");
+          String nextBdef = "null";
+          String currentBdef = "";
+          for (int i=0; i<objectHistoryArray.length; i++)
+          {
+              pw.write("<objectChangeDate>" + objectHistoryArray[i] + "</objectChangeDate>");
+          }
+          pw.write("</fedoraObjectHistory>");
+          pw.flush();
+          pw.close();
+        } catch (IOException ioe) {
+          System.err.println("WriteThread IOException: " + ioe.getMessage());
+        } finally
+        {
+          try
+          {
+            if (pw != null) pw.close();
+          } catch (IOException ioe)
+          {
+            System.err.println("WriteThread IOException: " + ioe.getMessage());
+          }
+        }
+      }
+    }
+  }
+
+  /**
    * <p>For now, treat a HTTP POST request just like a GET request.</p>
    *
    * @param request The servet request.
@@ -1449,6 +1600,26 @@ public class FedoraAccessSoapServlet extends HttpServlet
     String[] behaviorDefs = (String[]) call.invoke(new Object[] { PID,
           versDateTime });
     return behaviorDefs;
+  }
+
+  /**
+   * <p>Gets a list of Behavior Definition object PIDs for the specified
+   * digital object by invoking the appropriate Fedora Access SOAP service.</p>
+   *
+   * @param PID The persistent identifier of the digital object.
+   * @return An array of timestamps indicating when an object component changed.
+   * @throws Exception If an error occurs in communicating with the Fedora
+   *         Access SOAP service.
+   */
+  public String[] getObjectHistory(String PID)
+      throws Exception
+  {
+    Service service = new Service();
+    Call call = (Call) service.createCall();
+    call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
+    call.setOperationName(new QName(FEDORA_API_URI, GET_OBJECT_HISTORY) );
+    String[] objectHistory = (String[]) call.invoke(new Object[] { PID });
+    return objectHistory;
   }
 
   /**
@@ -1883,8 +2054,68 @@ public class FedoraAccessSoapServlet extends HttpServlet
         html.append("</head>");
         html.append("<body>");
         html.append("<p><font size='+1' color='red'>"
-                    + "Required parameter missing in Behavior "
-                    + "Definition Request:</font></p>");
+                    + "Required parameter missing in "
+                    + action
+                    + " Request:</font></p>");
+        html.append("<table cellpadding='5'>");
+        html.append("<tr>");
+        html.append("<td><font color='red'>action_</td>");
+        html.append("<td> = </td>");
+        html.append("<td>" + action + "</td>");
+        html.append("<td><font color='blue'>(REQUIRED)</font></td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><font color='red'>PID_</td>");
+        html.append("<td> = </td>");
+        html.append("<td>" + PID + "</td>");
+        html.append("<td><font color='blue'>(REQUIRED)</font></td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td><font color='red'>asOfDateTime_</td>");
+        html.append("<td> = </td>");
+        html.append("<td>" + versDate + "</td>");
+        html.append("<td><font color='green'>(OPTIONAL)</font></td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("<td colspan='5'><font size='+1' color='blue'>"
+                    + "Other Parameters Found:</font></td>");
+        html.append("</tr>");
+        html.append("<tr>");
+        html.append("</tr>");
+        for (Enumeration e = h_userParms.keys() ; e.hasMoreElements(); )
+        {
+          String name = (String)e.nextElement();
+          html.append("<tr>");
+          html.append("<td><font color='red'>"+name+"</font></td>");
+          html.append("<td>= </td>");
+          html.append("<td>"+h_userParms.get(name)+"</td>");
+          html.append("</tr>");
+        }
+        html.append("</table>");
+        html.append("</body>");
+        html.append("</html>");
+        out.println(html.toString());
+        isValid = false;
+      }
+    } else if (action != null && action.equals(GET_OBJECT_HISTORY))
+    {
+        System.out.println("action: "+action+" PID: "+PID+"isValid: "+isValid);
+      if (PID == null)
+      {
+        // GetObjectHistory requires PID;
+        // xml is optional.
+        response.setContentType(CONTENT_TYPE_HTML);
+        html.append("<html>");
+        html.append("<head>");
+        html.append("<title>FedoraAccessSOAPServlet</title>");
+        html.append("</head>");
+        html.append("<body>");
+        html.append("<p><font size='+1' color='red'>"
+                    + "Required parameter missing in "
+                    + action
+                    + " Request:</font></p>");
         html.append("<table cellpadding='5'>");
         html.append("<tr>");
         html.append("<td><font color='red'>action_</td>");
@@ -1942,8 +2173,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
         html.append("</head>");
         html.append("<body>");
         html.append("<p><font size='+1' color='red'>"
-                    + "Required parameter missing in Behavior "
-                    + "Methods Request:</font></p>");
+                    + "Required parameter missing in "
+                    + action
+                    + " Request:</font></p>");
         html.append("<table cellpadding='5'>");
         html.append("<tr>");
         html.append("<td><font color='red'>action_</td>");
@@ -1999,6 +2231,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       isValid = true;
     } else
     {
+    System.out.println("action: "+action+" PID: "+PID+" isValid: "+isValid);
       System.out.println("Unknown API-A request encountered.");
       // Unknown Fedora service has been requested.
       response.setContentType(CONTENT_TYPE_HTML);

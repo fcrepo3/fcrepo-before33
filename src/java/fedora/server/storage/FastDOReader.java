@@ -1547,6 +1547,34 @@ public class FastDOReader implements DOReader
     }
   }
 
+  /**
+   * <p>Gets the change history of an object by returning a list of timestamps
+   * that correspond to modification dates of components. This currently includes
+   * changes to datastreams and disseminators.</p>
+   *
+   * @param PID The persistent identifier of the digitla object.
+   * @return An Array containing the list of timestamps indicating when changes
+   *         were made to the object.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
+  public String[] getObjectHistory(String PID) throws GeneralException
+  {
+    try
+    {
+      if (doReader == null)
+      {
+        doReader =  m_manager.getReader(m_context, PID);
+      }
+      return doReader.getObjectHistory(PID);
+    } catch (Throwable th)
+    {
+      throw new GeneralException("[FastDOReader] Definitive doReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+    }
+  }
+
   public String getOwnerId()
           throws ServerException, StorageDeviceException, ObjectNotFoundException {
       if (doReader==null) {

@@ -23,11 +23,13 @@ import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodDefOperationBind;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.server.utilities.DateUtility;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -96,7 +98,7 @@ public class SimpleDOReader
      */
     public SimpleDOReader(Context context, RepositoryReader repoReader,
             DOTranslator translator,
-            String exportFormat, 
+            String exportFormat,
             String encoding, DigitalObject obj,
             Logging logTarget) {
         super(logTarget);
@@ -154,12 +156,12 @@ public class SimpleDOReader
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
 		if (format==null || format.equals("") || format.equalsIgnoreCase("default")) {
-			System.out.println("SimpleDOReader.ExportObject using default format of " + m_exportFormat); 
-			m_translator.serialize(m_obj, bytes, m_exportFormat, "UTF-8", true);     	
+			System.out.println("SimpleDOReader.ExportObject using default format of " + m_exportFormat);
+			m_translator.serialize(m_obj, bytes, m_exportFormat, "UTF-8", true);
 		}
 		else {
-			System.out.println("SimpleDOReader.ExportObject with format arg of " + format); 
-			m_translator.serialize(m_obj, bytes, format, "UTF-8", true); 
+			System.out.println("SimpleDOReader.ExportObject with format arg of " + format);
+			m_translator.serialize(m_obj, bytes, format, "UTF-8", true);
 		}
 
         return new ByteArrayInputStream(bytes.toByteArray());
@@ -388,6 +390,35 @@ public class SimpleDOReader
         return bDefIds;
     }
 
+    /**
+     * <p>Gets the change history of an object by returning a list of timestamps
+     * that correspond to modification dates of components. This currently includes
+     * changes to datastreams and disseminators.</p>
+     *
+     * @param PID The persistent identifier of the digitla object.
+     * @return An Array containing the list of timestamps indicating when changes
+     *         were made to the object.
+     */
+    public String[] getObjectHistory(String PID) {
+        String[] dsIDs = ListDatastreamIDs("A");
+        String[] dissIDs = ListDisseminatorIDs("A");
+        TreeSet modDates = new TreeSet();
+        for (int i=0; i<dsIDs.length; i++) {
+            Date[] dsDates = getDatastreamVersions(dsIDs[i]);
+            for (int j=0; j<dsDates.length; j++) {
+                modDates.add(DateUtility.convertDateToString(dsDates[j]));
+            }
+        }
+        for (int i=0; i<dissIDs.length; i++) {
+            Date[] dissDates = getDisseminatorVersions(dissIDs[i]);
+            for (int j=0; j<dissDates.length; j++) {
+                modDates.add(DateUtility.convertDateToString(dissDates[j]));
+            }
+        }
+
+        return (String[])modDates.toArray(new String[0]);
+    }
+
     public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime)
             throws MethodNotFoundException, ServerException {
 
@@ -578,7 +609,7 @@ public class SimpleDOReader
         return augMaps;
     }
 
-    private String getDisseminatorID(String bDefPID) 
+    private String getDisseminatorID(String bDefPID)
             throws DisseminatorNotFoundException {
         String[] ids=ListDisseminatorIDs(null);
         ArrayList al=new ArrayList();

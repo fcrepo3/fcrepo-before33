@@ -148,6 +148,38 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     return null;
   }
 
+  public java.lang.String[] getObjectHistory(java.lang.String PID)
+          throws java.rmi.RemoteException
+  {
+    Context context=getContext();
+    assertInitialized();
+    try
+    {
+      String[] bDefs =
+          s_access.getObjectHistory(context, PID);
+      if (bDefs != null && debug)
+      {
+        for (int i=0; i<bDefs.length; i++)
+        {
+          s_server.logFinest("bDef["+i+"] = "+bDefs[i]);
+        }
+      }
+      return bDefs;
+    } catch (ServerException se)
+    {
+      s_server.logFinest("ServerException: " + se.getMessage());
+      logStackTrace(se);
+      AxisUtility.throwFault(se);
+    } catch (Exception e) {
+      s_server.logFinest("Exception: " + e.getMessage());
+      logStackTrace(e);
+      AxisUtility.throwFault(
+          new ServerInitializationException(e.getClass().getName() + ": "
+          + e.getMessage()));
+    }
+    return null;
+  }
+
   /**
    * <p>Gets a list of Behavior Methods associated with the specified
    * Behavior Mechanism object.</p>

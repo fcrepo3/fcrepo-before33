@@ -8,6 +8,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.TreeSet;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -197,6 +199,7 @@ public class DefaultAccess extends Module implements Access
     }
     return (String[])bDefList.toArray(new String[0]);
   }
+
 
   /**
    * <p>Gets the method definitions of the Behavior Mechanism object
@@ -600,6 +603,29 @@ public class DefaultAccess extends Module implements Access
       + "/oai?verb=Identify";
     repositoryInfo.retainPIDs = getRetainPIDs();
     return repositoryInfo;
+  }
+
+  /**
+   * <p>Gets the change history of an object by returning a list of timestamps
+   * that correspond to modification dates of components. This currently includes
+   * changes to datastreams and disseminators.</p>
+   *
+   * @param context The context of this request.
+   * @param PID The persistent identifier of the digitla object.
+   * @return An Array containing the list of timestamps indicating when changes
+   *         were made to the object.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
+  public String[] getObjectHistory(Context context, String PID) throws ServerException
+  {
+    m_ipRestriction.enforce(context);
+    DOReader reader = m_manager.getReader(context, PID);
+
+    // Check data object state
+    checkState(context, "Data", reader.GetObjectState(), PID);
+
+    return reader.getObjectHistory(PID);
   }
 
   private String[] getAdminEmails()

@@ -326,6 +326,14 @@ public class DynamicAccessModule extends Module implements Access
       return null;
   }
 
+  // FIXIT: What do these mean in this context...anything?
+  // Maybe these methods' exposure needs to be re-thought?
+  public String[] getObjectHistory(Context context, String PID) throws ServerException
+  {
+    //m_ipRestriction.enforce(context);
+    return da.getObjectHistory(context, PID);
+  }
+
   /**
    */
   protected boolean isDynamicBehaviorDefinition(Context context, String PID,

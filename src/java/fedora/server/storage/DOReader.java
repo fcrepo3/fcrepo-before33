@@ -105,7 +105,7 @@ public interface DOReader
     /**
      * Gets the content of the entire digital object as XML, with public URIs
      * as references to managed content datastreams under the custodianship
-     * of the repository. 
+     * of the repository.
      * <p></p>
      * The intent of this method is to return the digital object along with
      * valid URI pointers for ALL its datastreams.
@@ -237,6 +237,7 @@ public interface DOReader
      * Same as getDatastreams, but for disseminators.
      *
      * @param versDateTime The date-time stamp to get appropriate Disseminator version
+     * @param state The state of the disseminator.
      * @return all Disseminators as of a certain date.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
@@ -379,5 +380,18 @@ public interface DOReader
      */
     public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
           String methodName, Date versDateTime) throws ServerException;
+
+    /**
+     * <p>Gets the change history of an object by returning a list of timestamps
+     * that correspond to modification dates of components. This currently includes
+     * changes to datastreams and disseminators.</p>
+     *
+     * @param PID The persistent identifier of the digitla object.
+     * @return An Array containing the list of timestamps indicating when changes
+     *         were made to the object.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    public String[] getObjectHistory(String PID) throws ServerException;
 
 }
