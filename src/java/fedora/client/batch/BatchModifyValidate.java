@@ -22,11 +22,12 @@ import fedora.client.Uploader;
 
 /**
  *
- * <p><b>Title:</b> BatchModify.java</p>
- * <p><b>Description:</b> A GUI interface for entering info required to perform
- * a batch modify that consists of a file containing the modify directives to
- * be processed. A log file is generated and saved in the client logs directory
- * detailing the events that occured during processing.
+ * <p><b>Title:</b> BatchModifyValidate.java</p>
+ * <p><b>Description:</b> A GUI interface for entering info required to validate
+ * a file of modify directives against the batchModify.xsd XML Schema. The
+ * batch modify utility has validation turned on so pre-validation is not
+ * necessary. It is provided as a means to pre-validate a modify directives
+ * file prior to running  it through the batch modify utility.
  *
  * -----------------------------------------------------------------------------
  *
@@ -49,7 +50,7 @@ import fedora.client.Uploader;
  * @version $Id $
  */
 
-public class BatchModify
+public class BatchModifyValidate
 {
 
     private static String s_rootName = null;
@@ -64,7 +65,7 @@ public class BatchModify
      *
      * @param s_admin - An instance of FedoraAPIM.
      */
-    public BatchModify(Administrator s_admin) {
+    public BatchModifyValidate(Administrator s_admin) {
         this.APIM = APIM;
         this.s_admin = s_admin;
         InputStream in = null;
@@ -81,16 +82,15 @@ public class BatchModify
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 file = browse.getSelectedFile();
                 int n = JOptionPane.showConfirmDialog(Administrator.getDesktop(),
-                    "Process modify directives in file: \n"+file.getAbsolutePath()+" ?\n",
-                    "Run Batch Modify?",
+                    "Validate the Modify Directives in file: \n" + file.getAbsoluteFile()+" ?\n",
+                    "Validate Modify Directives File",
                     JOptionPane.YES_NO_OPTION);
                 if (n==JOptionPane.YES_OPTION) {
                     Administrator.setLastDir(file);
-                    openLog("modify-batch");
+                    openLog("validate-modify-directives");
                     in = new FileInputStream(file);
                     st=System.currentTimeMillis();
-                    bmp = new BatchModifyParser(Administrator.UPLOADER,
-                        Administrator.APIM, Administrator.APIA, in, s_log);
+                    bmv = new BatchModifyValidator(in, s_log);
                 }
             }
         } catch (Exception e) {
@@ -105,31 +105,24 @@ public class BatchModify
                     in.close();
                 if (s_log!=null) {
                     et=System.currentTimeMillis();
-                    if (bmp.getFailedCount()==-1) {
+                    if (bmv.isValid()) {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            bmp.getSucceededCount() + " Modify Directives successfully processed.\n"
-                            + "Parser Error.\n"
-                            + "An Unknown number of Modify Directives were not processed.\n"
-                            + "See log file for details of how many directives were\n"
-                            + "processed before the fatal error occurred.\n"
-                            + "Time elapsed: " + getDuration(et-st));
-                        s_log.println("  <summary>");
-                        s_log.println("    "+StreamUtility.enc(bmp.getSucceededCount()
-                            + " modify directives successfully processed.\n"
-                            + "    Parser error encountered.\n"
-                            + "    An unknown number of modify directives were not processed.\n"
-                            + "    Time elapsed: " + getDuration(et-st)));
-                        s_log.println("  </summary>");
+                            "Modify Directives File in \n"+file.getAbsoluteFile()
+                            + "\n is Valid !"
+                            + "\nTime elapsed: " + getDuration(et-st),
+                            "Directives File Valid",
+                            JOptionPane.INFORMATION_MESSAGE);
+                        closeLog();
+                        return;
                     } else {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            bmp.getSucceededCount() + " modify directives successfully ingested.\n"
-                            + bmp.getFailedCount() + " modify directives failed.\n"
+                            +bmv.getErrorCount()+" XML validation Errors found in Modify Directives file.\n"
                             + "See log file for details.\n"
                             + "Time elapsed: " + getDuration(et-st));
                         s_log.println("  <summary>");
-                        s_log.println("    "+StreamUtility.enc(bmp.getSucceededCount()
-                            + " modify directives successfully processed.\n    "
-                            + bmp.getFailedCount() + " modify directives failed.\n"
+                        s_log.println("    "+StreamUtility.enc(bmv.getErrorCount()
+                            + " XML validation Errors found in Modify Directives file.\n"
+                            + "    See log file for details.\n"
                             + "    Time elapsed: " + getDuration(et-st)));
                         s_log.println("  </summary>");
                     }

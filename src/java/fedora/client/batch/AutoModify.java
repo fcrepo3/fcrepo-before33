@@ -97,9 +97,9 @@ public class AutoModify
    *                             the modify directives.
    * @param logFilePath - the absolute file path of the log file.
    */
-  public void modify(String directivesFilePath, String logFilePath)
+  public void modify(String directivesFilePath, String logFilePath, boolean validateOnly)
   {
-      modify(s_APIM, s_UPLOADER, directivesFilePath, logFilePath);
+      modify(s_APIM, s_UPLOADER, directivesFilePath, logFilePath, validateOnly);
   }
 
   /**
@@ -112,17 +112,24 @@ public class AutoModify
    * @param logFilePath - the absolute file path of the log file.
    */
     public static void modify(FedoraAPIM APIM, Uploader UPLOADER,
-        String directivesFilePath, String logFilePath)
+        String directivesFilePath, String logFilePath, boolean validateOnly)
     {
 
       InputStream in = null;
       BatchModifyParser bmp = null;
+      BatchModifyValidator bmv = null;
       long st=System.currentTimeMillis();
+      long et=0;
     try
     {
         in = new FileInputStream(directivesFilePath);
-        openLog(logFilePath, "modify-batch");
-        bmp = new BatchModifyParser(s_UPLOADER, s_APIM, s_APIA, in, s_log);
+        if (validateOnly) {
+            openLog(logFilePath, "validate-modify-directives");
+            bmv = new BatchModifyValidator(in, s_log);
+        } else {
+            openLog(logFilePath, "modify-batch");
+            bmp = new BatchModifyParser(s_UPLOADER, s_APIM, s_APIA, in, s_log);
+        }
 
     } catch (Exception e)
     {
@@ -139,7 +146,8 @@ public class AutoModify
         }
         if (s_log!=null)
         {
-          long et=System.currentTimeMillis();
+          et=System.currentTimeMillis();
+          if (bmp!=null) {
           if(bmp.getFailedCount()==-1)
           {
             System.out.println("\n\n"
@@ -168,6 +176,34 @@ public class AutoModify
                 + bmp.getFailedCount() + " modify directives failed.\n"
                 + "    Time elapsed: " + getDuration(et-st)));
             s_log.println("  </summary>");
+          }
+          } else if (bmv!=null) {
+              et=System.currentTimeMillis();
+              if (bmv.isValid()) {
+                  System.out.println("Modify Directives File in \n"
+                      +directivesFilePath
+                      + "\n is Valid !"
+                      + "\nTime elapsed: " + getDuration(et-st));
+                  s_log.println("  <summary>");
+                  s_log.println("    Modify Directives File: \n    "
+                      +directivesFilePath
+                      + "\n    is Valid !"
+                      + "\n    Time elapsed: " + getDuration(et-st));
+                  s_log.println("  </summary>");
+                  closeLog();
+                  return;
+              } else {
+                  System.out.println(bmv.getErrorCount()
+                      +" XML validation Errors found in Modify Directives file.\n"
+                      + "See log file for details.\n"
+                      + "Time elapsed: " + getDuration(et-st));
+                  s_log.println("  <summary>");
+                  s_log.println("    "+StreamUtility.enc(bmv.getErrorCount()
+                      + " XML validation Errors found in Modify Directives file.\n"
+                      + "    See log file for details.\n"
+                      + "    Time elapsed: " + getDuration(et-st)));
+                  s_log.println("  </summary>");
+              }
           }
           closeLog();
           System.out.println(
@@ -254,7 +290,7 @@ public class AutoModify
         System.out.println("Error: " + errMessage);
         System.out.println("");
         System.out.println("Usage: AutoModify host port username password "
-            + "directives-filepath log-filepath ");
+            + "directives-filepath log-filepath validate-only-option");
     }
 
 
@@ -267,12 +303,13 @@ public class AutoModify
       String username = null;
       String password = null;
       int portNum = 8080;
+      boolean validateOnly = true;
 
         try
         {
-            if (args.length!=6)
+            if (args.length!=7)
             {
-                AutoModify.showUsage("You must provide six arguments.");
+                AutoModify.showUsage("You must provide seven arguments.");
             } else
             {
                 hostName = args[0];
@@ -281,12 +318,17 @@ public class AutoModify
                 password = args[3];
                 directivesFilePath = args[4];
                 logFilePath = args[5];
+                validateOnly = new Boolean(args[6]).booleanValue();
                 if (new File(directivesFilePath).exists())
                 {
                   System.out.println("\nCONNECTING to Fedora server....");
                   AutoModify am = new AutoModify(hostName, portNum, username, password);
-                  System.out.println("Processing directives file...\n");
-                  am.modify(directivesFilePath, logFilePath);
+                  if(validateOnly) {
+                      System.out.println("\n----- VALIDATING DIRECTIVES FILE ONLY -----\n");
+                  } else {
+                      System.out.println("\n----- PROCESSING DIRECTIVES FILE -----\n");
+                  }
+                  am.modify(directivesFilePath, logFilePath, validateOnly);
                 } else
                 {
                   AutoModify.showUsage("Directives input file does not exist: "

@@ -31,6 +31,7 @@ import fedora.client.purge.AutoPurger;
 import fedora.client.search.ResultFrame;
 import fedora.client.search.Search;
 import fedora.client.batch.BatchModify;
+import fedora.client.batch.BatchModifyValidate;
 
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
@@ -468,15 +469,42 @@ public class Administrator extends JFrame {
         toolsBatchSubMenu.add(toolsBatchIngest);
 
         // rlw
+
+/*        JMenu fileIngest=new JMenu("Ingest");
+        fileIngest.setMnemonic(KeyEvent.VK_I);
+        JMenu fileIngestOne=new JMenu("One Object");
+        fileIngestOne.setMnemonic(KeyEvent.VK_O);
+        JMenuItem fileIngestOneFromFile=new JMenuItem("From File...", KeyEvent.VK_F);
+        fileIngestOneFromFile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Ingest(Ingest.ONE_FROM_FILE);
+            }
+        });
+  */
         // SubMenuItem for batch modify tool
-        JMenuItem toolsBatchModify=new JMenuItem("Modify Batch", KeyEvent.VK_M);
+        //JMenuItem toolsBatchModify=new JMenuItem("Modify Batch", KeyEvent.VK_M);
+        JMenu toolsBatchModify=new JMenu("Modify Batch");
+        toolsBatchModify.setMnemonic(KeyEvent.VK_M);
+        JMenuItem executeBatchModify=new JMenuItem("Execute", KeyEvent.VK_E);
         toolsBatchModify.setToolTipText("Modifies a batch of objects based on "
             + "modify directives specified in a file on disk.");
-        toolsBatchModify.addActionListener(new ActionListener() {
+        executeBatchModify.setToolTipText("Run the Batch Modify Utility.");
+        executeBatchModify.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new BatchModify(INSTANCE);
             }
         });
+        toolsBatchModify.add(executeBatchModify);
+
+        JMenuItem validateBatchModify=new JMenuItem("Validate Directives File",KeyEvent.VK_V);
+        validateBatchModify.setToolTipText("Validate the modify directives file against the batchModify XML Schema.");
+        validateBatchModify.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new BatchModifyValidate(INSTANCE);
+            }
+        });
+
+        toolsBatchModify.add(validateBatchModify);
         // rlw
 
         toolsBatchSubMenu.add(toolsBatchModify);
