@@ -17,6 +17,7 @@ package fedora.server.storage.service;
  */
 
 import fedora.server.errors.*;
+import java.io.InputStream;
 import java.util.Vector;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -88,13 +89,55 @@ class WSDLParser extends DefaultHandler
   private Vector tmp_bindOperations;
   private Vector tmp_MIMEContent;
 
-  protected Service getService()
+    /**
+   *   Constructor to enable another class to initiate the parsing
+   */
+  public WSDLParser()
+  {
+  }
+
+  /**
+   *   Constructor allows this class to initiate the parsing
+   */
+  public WSDLParser(InputStream in)
+    throws RepositoryConfigurationException, ObjectIntegrityException
+  {
+      XMLReader xmlReader = null;
+      try
+      {
+          SAXParserFactory saxfactory=SAXParserFactory.newInstance();
+          saxfactory.setValidating(false);
+          SAXParser parser=saxfactory.newSAXParser();
+          xmlReader=parser.getXMLReader();
+          xmlReader.setContentHandler(this);
+          xmlReader.setFeature("http://xml.org/sax/features/namespaces", false);
+          xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
+      }
+      catch (Exception e)
+      {
+          throw new RepositoryConfigurationException("Internal SAX error while "
+                  + "preparing for WSDL datastream parsing: "
+                  + e.getMessage());
+      }
+      try
+      {
+          xmlReader.parse(new InputSource(in));
+      }
+      catch (Exception e)
+      {
+          throw new ObjectIntegrityException("Error parsing WSDL datastream" +
+                  e.getClass().getName() + ": " + e.getMessage());
+      }
+  }
+
+  public Service getService()
   {
     return wsdlService;
   }
 
   public void startDocument() throws SAXException
   {
+    System.out.println("WSDLParser: START DOC");
     nsPrefixMap = new HashMap();
     wsdlTypeTbl = new Hashtable();
     wsdlMessageTbl = new Hashtable();
@@ -111,6 +154,7 @@ class WSDLParser extends DefaultHandler
     wsdlPortBindingTbl = null;
     wsdlBindingTbl = null;
     wsdlAbstrOperTbl = null;
+    System.out.println("WSDLParser: END DOC");
   }
 
   public void startPrefixMapping(String prefix, String uri) throws SAXException
@@ -136,6 +180,7 @@ class WSDLParser extends DefaultHandler
   public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
     throws SAXException
   {
+    //System.out.println("WSDLParser: START ELEMENT " + qName);
 
     // Look for things in the WSDL that this parser is not ready to support yet!
     // Exception will be thrown and the parsing will stop if an unsupported
@@ -417,6 +462,8 @@ class WSDLParser extends DefaultHandler
 
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException
   {
+    //System.out.println("WSDLParser: END ELEMENT " + qName);
+
     // Type post-processing
     if (inWSDLTypes)
     {
