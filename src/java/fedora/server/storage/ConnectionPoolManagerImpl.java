@@ -162,7 +162,7 @@ public class ConnectionPoolManagerImpl extends Module
    * @param poolName The name of the connection pool.
    * @return The named connection pool.
    * @throws ConnectionPoolNotFoundException If the specified connection pool
-   * cannot be found.
+   *         cannot be found.
    */
   public ConnectionPool getPool(String poolName)
       throws ConnectionPoolNotFoundException
@@ -196,8 +196,8 @@ public class ConnectionPoolManagerImpl extends Module
    * getPool(String poolName)</code>.</p>
    *
    * @return The default connection pool.
-   * @throws ConnectionPoolNotfoundException If the default connection pool
-   * cannot be found.
+   * @throws ConnectionPoolNotFoundException If the default connection pool
+   *         cannot be found.
    */
   public ConnectionPool getPool()
       throws ConnectionPoolNotFoundException

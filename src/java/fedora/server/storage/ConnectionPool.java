@@ -81,14 +81,14 @@ public class ConnectionPool implements Runnable
    * @param initialConnections The minimum number of connections possible.
    * @param maxConnections The maximum number of connections possible.
    * @param waitIfBusy Boolean flag that determines whether to wait if there
-   * are no more available connections. If set to true, it will wait until a
-   * connection becomes available. If set to false, it will throw
-   * <code>SQLException</code> when a connection is requested and there are no
-   * more available connections.
+   *        are no more available connections. If set to true, it will wait
+   *        until a connection becomes available. If set to false, it will throw
+   *        <code>SQLException</code> when a connection is requested and there
+   *        are no more available connections.
    * @param ddlConverter The DDLConverter that the TableCreatingConnections
    *        should use when createTable(TableSpec) is called.
    * @throws SQLException If the connection pool cannot be established for
-   * any reason.
+   *         any reason.
    */
   public ConnectionPool(String driver, String url,
                         String username, String password,
@@ -112,9 +112,11 @@ public class ConnectionPool implements Runnable
    * @return The next available Connection from the pool, wrapped as
    *         a TableCreatingException, or null if this ConnectionPool
    *         hasn't been configured with a DDLConverter (see constructor).
+   * @throws SQLException If there is any propblem in getting the SQL
+   *         connection.
    */
-  public TableCreatingConnection getTableCreatingConnection() 
-      throws SQLException 
+  public TableCreatingConnection getTableCreatingConnection()
+      throws SQLException
   {
     if (ddlConverter==null)
     {
@@ -123,14 +125,14 @@ public class ConnectionPool implements Runnable
       Connection c=getConnection();
       return new TableCreatingConnection(c, ddlConverter);
     }
-  }  
+  }
 
   /**
    * <p>Gets the next available connection.</p>
    *
    * @return The next available connection.
    * @throws SQLException If the maximum number of connections has been reached
-   * or there is some other problem in obtaining the connection.
+   *         or there is some other problem in obtaining the connection.
    */
   public synchronized Connection getConnection()
       throws SQLException

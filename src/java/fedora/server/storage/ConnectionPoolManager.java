@@ -22,7 +22,7 @@ public interface ConnectionPoolManager
    * @param poolName The name of the specified connection pool.
    * @return The named connection pool.
    * @throws ConnectionPoolNotFoundException If the specified connection pool
-   * cannot be found.
+   *         cannot be found.
    */
   public ConnectionPool getPool(String poolName)
       throws ConnectionPoolNotFoundException;
@@ -34,7 +34,7 @@ public interface ConnectionPoolManager
    *
    * @return The default connection pool.
    * @throws ConnectionPoolNotFoundException If the default connection pool
-   * cannot be found.
+   *         cannot be found.
    */
   public ConnectionPool getPool()
       throws ConnectionPoolNotFoundException;

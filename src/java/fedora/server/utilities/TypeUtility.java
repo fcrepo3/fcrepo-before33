@@ -68,7 +68,7 @@ public abstract class TypeUtility
    * <p>Converts an instance of fedora.server.storage.types.MethodDef into an
    * instance of fedora.server.types.gen.MethodDef.</p>
    *
-   * @param methodDefs An instance of fedora.server.storage.types.MethodDef.
+   * @param methodDef An instance of fedora.server.storage.types.MethodDef.
    * @return An instance of fedora.server.types.gen.MethodDef.
    */
   public static fedora.server.types.gen.MethodDef
@@ -111,7 +111,7 @@ public abstract class TypeUtility
    * <p>Converts an array of fedora.server.types.gen.MethodDef into an
    * array of fedora.server.storage.types.MethodDef.</p>
    *
-   * @param methodDefs An array of fedora.server.types.gen.MethodDef.
+   * @param genMethodDefs An array of fedora.server.types.gen.MethodDef.
    * @return An array of fedora.server.storage.types.MethodDef.
    */
   public static fedora.server.storage.types.MethodDef[]
@@ -157,7 +157,7 @@ public abstract class TypeUtility
    * <p>Converts an instance of fedora.server.types.gen.MethodDef into an
    * instance of fedora.server.storage.types.MethodDef.</p>
    *
-   * @param methodDefs An instance of fedora.server.types.gen.MethodDef.
+   * @param genMethodDef An instance of fedora.server.types.gen.MethodDef.
    * @return An instance of fedora.server.storage.types.MethodDef.
    */
   public static fedora.server.storage.types.MethodDef
@@ -191,7 +191,7 @@ public abstract class TypeUtility
    * <p>Converts an array of fedora.server.storage.types.MethodParmDef into
    * an array of fedora.server.types.gen.MethodParmDef.</p>
    *
-   * @param methodParmDef An array of fedora.server.storage.types.MethodParmDef.
+   * @param methodParmDefs An array of fedora.server.storage.types.MethodParmDef.
    * @return An array of fedora.server.types.gen.MethodParmDef.
    */
   public static fedora.server.types.gen.MethodParmDef[]
@@ -223,7 +223,7 @@ public abstract class TypeUtility
    * an instance of fedora.server.types.gen.MethodParmDef.</p>
    *
    * @param methodParmDef An instance of
-   * fedora.server.storage.types.MethodParmDef.
+   *        fedora.server.storage.types.MethodParmDef.
    * @return An instance of fedora.server.types.gen.MethodParmDef.
    */
   public static fedora.server.types.gen.MethodParmDef
@@ -250,7 +250,7 @@ public abstract class TypeUtility
    * <p>Converts an array of fedora.server.types.gen.MethodParmDef into an
    * array of fedora.server.storage.types.MethodParmDef.</p>
    *
-   * @param methodDefs An array of fedora.server.types.gen.MethodParmDef.
+   * @param genMethodParmDefs An array of fedora.server.types.gen.MethodParmDef.
    * @return An array of fedora.server.storage.types.MethodParmDef.
    */
   public static fedora.server.storage.types.MethodParmDef[]
@@ -282,8 +282,8 @@ public abstract class TypeUtility
    * <p>Converts an instance of fedora.server.storage.types.MethodParmDef into
    * an instance of fedora.server.types.gen.MethodParmDef.</p>
    *
-   * @param methodParmDef An instance of
-   * fedora.server.storage.types.MethodParmDef.
+   * @param genMethodParmDef An instance of
+   *        fedora.server.storage.types.MethodParmDef.
    * @return An instance of fedora.server.types.gen.MethodParmDef.
    */
   public static fedora.server.storage.types.MethodParmDef
@@ -311,7 +311,7 @@ public abstract class TypeUtility
    * an instance of fedora.server.types.gen.MIMETypedStream.</p>
    *
    * @param mimeTypedStream An instance of
-   * fedora.server.storage.types.MIMETypedStream.
+   *        fedora.server.storage.types.MIMETypedStream.
    * @return An instance of fedora.server.types.gen.MIMETypedStream.
    */
   public static fedora.server.types.gen.MIMETypedStream
@@ -336,8 +336,8 @@ public abstract class TypeUtility
    * <p>Converts an instance of fedora.server.types.gen.MIMETypedStream into
    * an instance of fedora.server.storage.types.MIMETypedStream.</p>
    *
-   * @param mimeTypedStream An instance of
-   * fedora.server.types.gen.MIMETypedStream.
+   * @param genMIMETypedStream An instance of
+   *        fedora.server.types.gen.MIMETypedStream.
    * @return an instance of fedora.server.storage.types.MIMETypedStream.
    */
   public static fedora.server.storage.types.MIMETypedStream
@@ -362,7 +362,7 @@ public abstract class TypeUtility
    * array of fedora.server.storage.types.ObjectMethodsDef.</p>
    *
    * @param genObjectMethodDefs An array of
-   * fedora.server.types.gen.ObjectMethodsDef.
+   *        fedora.server.types.gen.ObjectMethodsDef.
    * @return An array of fedora.server.storage.types.ObjectMethodsDef.
    */
   public static fedora.server.storage.types.ObjectMethodsDef[]
@@ -395,8 +395,8 @@ public abstract class TypeUtility
    * <p>Converts an instance of fedora.server.types.gen.ObjectMethodsDef into
    * an instance of fedora.server.storage.types.ObjectMethodsDef.</p>
    *
-   * @param genObjectMethodDefs An instance of
-   * fedora.server.types.gen.ObjectMethodsDef.
+   * @param genObjectMethodDef An instance of
+   *        fedora.server.types.gen.ObjectMethodsDef.
    * @return An instance of fedora.server.storage.types.ObjectMethodsDef.
    */
   public static fedora.server.storage.types.ObjectMethodsDef
@@ -424,8 +424,8 @@ public abstract class TypeUtility
    * <p>Converts an array of fedora.server.storage.types.ObjectMethodsDef into
    * an array of fedora.server.types.gen.ObjectMethodsDef.</p>
    *
-   * @param genObjectMethodDefs An array of
-   * fedora.server.storage.types.ObjectMethodsDef.
+   * @param objectMethodDefs An array of
+   *        fedora.server.storage.types.ObjectMethodsDef.
    * @return An array of fedora.server.types.gen.ObjectMethodsDef.
    */
   public static fedora.server.types.gen.ObjectMethodsDef[]
@@ -457,8 +457,8 @@ public abstract class TypeUtility
    * <p>Converts an instance of fedora.server.storage.types.ObjectMethodsDef
    * into an instance of fedora.server.types.gen.ObjectMethodsDef.</p>
    *
-   * @param genObjectMethodDefs An instance of
-   * fedora.server.storage.types.ObjectMethodsDef.
+   * @param objectMethodDef An instance of
+   *        fedora.server.storage.types.ObjectMethodsDef.
    * @return An instance of fedora.server.types.gen.ObjectMethodsDef.
    */
   public static fedora.server.types.gen.ObjectMethodsDef
@@ -484,7 +484,7 @@ public abstract class TypeUtility
    * <p>Converts an array of fedora.server.types.gen.Property into an
    * array of fedora.server.storage.types.Property.</p>
    *
-   * @param properties An array of fedora.server.types.gen.Property.
+   * @param genProperties An array of fedora.server.types.gen.Property.
    * @return An array of fedora.server.storage.types.Property.
    */
   public static fedora.server.storage.types.Property[]
@@ -515,8 +515,7 @@ public abstract class TypeUtility
    * <p>Converts an instance of fedora.server.types.gen.Property into
    * an instance of fedora.server.storage.types.Property.</p>
    *
-   * @param methodParmDef An instance of
-   * fedora.server.types.gen.Property.
+   * @param genProperty An instance of fedora.server.types.gen.Property.
    * @return An instance of fedora.server.storage.types.Property.
    */
   public static fedora.server.storage.types.Property
@@ -537,7 +536,7 @@ public abstract class TypeUtility
    * <p>Converts an array of fedora.server.storage.types.Property into an
    * array of fedora.server.types.gen.Property.</p>
    *
-   * @param genProperties An array of fedora.server.storage.typesProperty.
+   * @param properties An array of fedora.server.storage.typesProperty.
    * @return An array of fedora.server.types.gen.Property.
    */
   public static fedora.server.types.gen.Property[]
@@ -568,8 +567,7 @@ public abstract class TypeUtility
    * <p>Converts an instance of fedora.server.storage.types.Property into
    * an instance of fedora.server.types.gen.Property.</p>
    *
-   * @param property An instance of
-   * fedora.server.storage.types.Property.
+   * @param property An instance of fedora.server.storage.types.Property.
    * @return An instance of fedora.server.types.gen.Property.
    */
   public static fedora.server.types.gen.Property

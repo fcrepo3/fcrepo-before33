@@ -1,11 +1,8 @@
 package fedora.server.access.localservices;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import fedora.server.storage.types.MIMETypedStream;
@@ -13,9 +10,9 @@ import fedora.server.errors.HttpServiceNotFoundException;
 
 /**
  * <p>Title: HttpService.java</p>
- * <p>Description: Provides a local Http Behavior Mechanism service that</p>
- * <p>handles mechanisms invoking services via Http ( simple HTTP GETs, </p>
- * <p>cgi-scripts, java servlets, JSPs, etc.</p>
+ * <p>Description: Provides a local Http Behavior Mechanism service that
+ * handles mechanisms invoking services via Http ( simple HTTP GETs,
+ * cgi-scripts, java servlets, JSPs, etc.</p>
  *
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
@@ -28,9 +25,10 @@ public class HttpService
    * A method that reads the contents of the specified URL and returns the
    * result as a MIMETypedStream
    *
-   * @param urlString URL of the content
-   * @return MIMETypedStream
-   * @throws HttpServiceNotFoundException
+   * @param urlString The URL of the content.
+   * @return A MIME-typed stream.
+   * @throws HttpServiceNotFoundException If the URL connection could not
+   *         be established.
    */
   public MIMETypedStream getHttpContent(String urlString)
       throws HttpServiceNotFoundException

@@ -22,19 +22,22 @@ import fedora.server.utilities.TypeUtility;
 public class FedoraAPIABindingSOAPHTTPImpl implements
     fedora.server.access.FedoraAPIA
 {
-  /** The Fedora Server instance */
+  /** The Fedora Server instance. */
   private static Server s_server;
 
-  /** Whether the service has initialized... true if initialized */
+  /** Whether the service has initialized... true if initialized. */
   private static boolean s_initialized;
 
   /** The exception indicating that initialization failed. */
   private static InitializationException s_initException;
 
+  /** Instance of the access subsystem */
   private static Access s_access;
 
+  /** Context for cached objects. */
   private static ReadOnlyContext s_context;
 
+  /** Debug toggle for testing. */
   private static boolean debug = false;
 
   /** Before fulfilling any requests, make sure we have a server instance. */
@@ -83,13 +86,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       java.util.Calendar asOfDateTime) throws java.rmi.RemoteException
   {
     assertInitialized();
-    s_server.logFinest("server init'd");
     try
     {
-      s_server.logFinest("about to invoke DefaultAccess");
       String[] bDefs =
           s_access.getBehaviorDefinitions(s_context, PID, asOfDateTime);
-      s_server.logFinest("bDefs: "+bDefs);
       if (bDefs != null && debug)
       {
         for (int i=0; i<bDefs.length; i++)
@@ -103,14 +103,12 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       s_server.logFinest("ServerException: " + se.getMessage());
       logStackTrace(se);
       AxisUtility.throwFault(se);
-      //return null;
     } catch (Exception e) {
       s_server.logFinest("Exception: " + e.getMessage());
       logStackTrace(e);
       AxisUtility.throwFault(
           new ServerInitializationException(e.getClass().getName() + ": "
           + e.getMessage()));
-      //return null;
     }
     return null;
   }
