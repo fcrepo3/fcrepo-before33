@@ -98,6 +98,8 @@
 			<fileset dir="src/txt/devdocs"/>
 			<fileset dir="src/doc/devdocs"/>
 			<fileset dir="src/sdr/devdocs"/>
+			<fileset dir="src/pdf/devdocs"/>
+			<fileset dir="src/gif/devdocs"/>
 		</copy>
 		<!--    <mkdir dir="dist/devdocs/devguide"/> -->
 		<echo message="Translating devguide.dbx to html"/>
@@ -318,6 +320,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.33  2002/09/19 10:23:18  cwilper
+  updated to copy *.pdf and *.gif devdocs files for the devdocs target
+
   Revision 1.32  2002/09/16 02:49:52  cwilper
   wsdldoc target outputs to dist/ instead of temp/
 
