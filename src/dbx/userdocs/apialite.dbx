@@ -53,6 +53,9 @@
 			</listitem>
 			<listitem>
 				<para>getObjectHistory - gets the change history of the specified object. The change history consists of a list of timestamps that inidcate when components of the object were created or modified. The timestamps can be used to disseminate the object as it appeared at a specific point in time.</para>
+			</listitem>
+			<listitem>
+				<para>getDatastream - gets a datastream in the digital object.  This is a shorter, convenience method for getDissemination http://hostname:port/fedora/get/PID/fedora-system:3/getItem?itemID=dsID. Note that if a particular date/timestamped view of a datastream is needed, getDissemination still must be used.  When making direct links to datastreams within web pages or applications, this syntax is recommended.</para>
 			</listitem>			
 		</itemizedlist>
 		<para>For more information on the method definitions, refer to the API descriptions 
@@ -105,7 +108,7 @@ where HH is 24-hour clock.</para>
 				</listitem>
 			</itemizedlist>
 		</blockquote>
-		<!-- *************************************** -->		
+		<!-- *************************************** -->
 		<variablelist>
 			<title>getObjectProfile syntax:</title>
 			<varlistentry>
@@ -144,7 +147,7 @@ where HH is 24-hour clock.</para>
 				</listitem>
 			</itemizedlist>
 		</blockquote>
-		<!-- *************************************** -->		
+		<!-- *************************************** -->
 		<variablelist>
 			<title>describeRepository syntax:</title>
 			<varlistentry>
@@ -385,7 +388,40 @@ where HH is 24-hour clock.</para>
 				</listitem>
 			</itemizedlist>
 		</blockquote>
-		<!-- *************************************** -->		
+		<!-- *************************************** -->
+		<variablelist>
+			<title>getDatastream syntax:</title>
+			<varlistentry>
+				<term>http://hostname:port/fedora/get/PID/dsID
+				</term>
+				<listitem>
+					<para>Returns a datastream in the digital object.  This is a shorter, convenience method for getDissemination http://hostname:port/fedora/get/PID/fedora-system:3/getItem?itemID=dsID. Note that if a particular date/timestamped view of a datastream is needed, getDissemination still must be used.  When making direct links to datastreams within web pages or applications, this syntax is recommended.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<blockquote>
+			<itemizedlist>
+				<listitem>
+					<para>hostname - required hostname of the Fedora server. </para>
+				</listitem>
+				<listitem>
+					<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+				</listitem>
+				<listitem>
+					<para>fedora - a required parameter specifying the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>get - a required parameter specifying the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>PID - required persistent identifier of the digital object.</para>
+				</listitem>
+				<listitem>
+					<para>dsID - required identifier of the datastream.</para>
+				</listitem>
+			</itemizedlist>
+		</blockquote>		
+		<!-- *************************************** -->
 		<variablelist>
 			<title>Examples</title>
 			<varlistentry>
@@ -435,11 +471,23 @@ where HH is 24-hour clock.</para>
 				<listitem>
 					<para>http://localhost:8080/fedora/getObjectHistory/demo:5</para>
 				</listitem>
-			</varlistentry>			
+			</varlistentry>
 			<varlistentry>
 				<term>Get the object history of demo object demo:5 and display the results as xml:  </term>
 				<listitem>
 					<para>http://localhost:8080/fedora/getObjectHistory/demo:5?xml=true</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Get the Dublin Core (DC) datastream of demo object demo:5:  </term>
+				<listitem>
+					<para>http://localhost:8080/fedora/get/demo:5/DC</para>
+				</listitem>
+			</varlistentry>			
+			<varlistentry>
+				<term>Get the thumbnail datastream (DS1) of demo object demo:5:  </term>
+				<listitem>
+					<para>http://localhost:8080/fedora/get/demo:5/DS1</para>
 				</listitem>
 			</varlistentry>						
 		</variablelist>
