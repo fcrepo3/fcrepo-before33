@@ -1,5 +1,6 @@
 package fedora.client.console;
 
+import java.awt.Component;
 import java.lang.reflect.InvocationTargetException;
 
 public interface Console {
@@ -13,5 +14,11 @@ public interface Console {
     
     /** Clears the console. */
     public void clear();
+
+    /** Tells the console whether it should look busy or not. */
+    public void setBusy(boolean busy);
+    
+    /** Checks whether the console is busy. */
+    public boolean isBusy();
 
 }

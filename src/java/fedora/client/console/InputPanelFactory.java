@@ -15,6 +15,14 @@ public abstract class InputPanelFactory {
         if (cl.getName().equals("java.lang.Boolean")) {
             return new BooleanInputPanel(false);
         }
+        if (cl.getName().startsWith("[L")) {
+            try {
+                return new ArrayInputPanel(Class.forName(
+                        cl.getName().substring(2, cl.getName().length()-1)));
+            } catch (ClassNotFoundException cnfe) {
+                // will fall through as unrecognized
+            }
+        }
         System.out.println("Unrecognized type: " + cl.getName());
         return NullInputPanel.getInstance();
     }

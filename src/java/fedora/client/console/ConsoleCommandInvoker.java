@@ -1,6 +1,7 @@
 package fedora.client.console;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import javax.swing.BoxLayout;
@@ -44,13 +45,14 @@ public class ConsoleCommandInvoker
         jeez2.add(returnTypeLabel, BorderLayout.WEST);
         add(jeez2);
     }
-
+    
     /**
      * Invokes the console command with whatever parameters have been
      * set thus far, sending any errors to the console.
      */
     public void invoke() {
         try {
+            m_console.setBusy(true);
             m_console.print("Invoking " + m_command.toString() + "\n");
             Object[] parameters=new Object[m_command.getParameterTypes().length];
             if (m_command.getParameterTypes().length>0) {
@@ -97,6 +99,8 @@ public class ConsoleCommandInvoker
         } catch (Throwable th) {
             m_console.print("ERROR (" + th.getClass().getName() + ") : " 
                     + th.getMessage() + "\n");
+        } finally {
+            m_console.setBusy(false);
         }
     }
     

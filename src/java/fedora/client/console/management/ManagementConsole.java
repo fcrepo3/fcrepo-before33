@@ -15,6 +15,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.xml.rpc.ServiceException;
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -40,6 +42,7 @@ public class ManagementConsole
     private JTextArea m_outputArea;
     private JTextField m_hostTextField;
     private JTextField m_portTextField;
+    private boolean m_isBusy;
     
     public ManagementConsole(Administrator mainFrame) {
         super("Management Console",
@@ -47,7 +50,6 @@ public class ManagementConsole
               true, //closable
               true, //maximizable
               true);//iconifiable
-              
         m_mainFrame=mainFrame;
         
         
@@ -115,6 +117,20 @@ public class ManagementConsole
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/development/Host16.gif")));
 
         setSize(400,400);
+        m_isBusy=false;      
+    }
+    
+    public void setBusy(boolean b) {
+        m_isBusy=b;
+        if (b) {
+            getContentPane().setCursor(new Cursor(Cursor.WAIT_CURSOR));
+        } else {
+            getContentPane().setCursor(null);
+        }
+    }
+    
+    public boolean isBusy() {
+        return m_isBusy;
     }
     
     public Object getInvocationTarget(ConsoleCommand cmd)
