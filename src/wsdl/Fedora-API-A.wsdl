@@ -13,24 +13,24 @@
 			<wsdldoc:type name="fedora-types:MIMETypedStream" url="http://www.fedora.info/definitions/1/0/types/#MIMETypedStream"/>
 		</documentation>
 	</types>
-    <message name="advancedFieldSearchRequest">
-        <part name="resultFields" type="fedora-types:ArrayOfString">
-            <documentation>an array of unique object fields
+	<message name="advancedFieldSearchRequest">
+		<part name="resultFields" type="fedora-types:ArrayOfString">
+			<documentation>an array of unique object fields
             from fedora-types:ObjectFields.  This tells the server which fields
             should be returned from the query.</documentation>
-        </part>
-        <part name="query" type="fedora-types:ArrayOfCondition">
-            <documentation>the conditions (property, operation, value) that
+		</part>
+		<part name="query" type="fedora-types:ArrayOfCondition">
+			<documentation>the conditions (property, operation, value) that
             must all be true (implicit AND) in order for an object to be
             considered a match.</documentation>
-        </part>
-    </message>
-    <message name="advancedFieldSearchResponse">
-        <part name="response" type="fedora-types:ArrayOfObjectFields">
-            <documentation>a set of ObjectFields structures, one for each
+		</part>
+	</message>
+	<message name="advancedFieldSearchResponse">
+		<part name="response" type="fedora-types:ArrayOfObjectFields">
+			<documentation>a set of ObjectFields structures, one for each
             object that matched all conditions of the query.</documentation>
-        </part>
-    </message>
+		</part>
+	</message>
 	<message name="getBehaviorDefinitionsRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -69,7 +69,7 @@
 		</documentation>
 		</part>
 	</message>
-	<message name="getBehaviorMethodsAsWSDLRequest">
+	<message name="getBehaviorMethodsXMLRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
@@ -83,7 +83,7 @@
 		</documentation>
 		</part>
 	</message>
-	<message name="getBehaviorMethodsAsWSDLResponse">
+	<message name="getBehaviorMethodsXMLResponse">
 		<part name="response" type="fedora-types:MIMETypedStream">
 			<documentation>pre-bound WSDL that the client may use to formulate 
 				dissemination requests for the given digital object and behavior 
@@ -136,23 +136,23 @@
 			</documentation>
 		</part>
 	</message>
-    <message name="simpleFieldSearchRequest">
-        <part name="resultFields" type="fedora-types:ArrayOfString">
-            <documentation>an array of unique object fields
+	<message name="simpleFieldSearchRequest">
+		<part name="resultFields" type="fedora-types:ArrayOfString">
+			<documentation>an array of unique object fields
             from fedora-types:ObjectFields.  This tells the server which fields
             should be returned from the query.</documentation>
-        </part>
-        <part name="terms" type="xsd:string">
-            <documentation>a space-delimited list of words that should be in
+		</part>
+		<part name="terms" type="xsd:string">
+			<documentation>a space-delimited list of words that should be in
             any field in order for an object to be considered a match.</documentation>
-        </part>
-    </message>
-    <message name="simpleFieldSearchResponse">
-        <part name="response" type="fedora-types:ArrayOfObjectFields">
-            <documentation>a set of ObjectFields structures, one for each
+		</part>
+	</message>
+	<message name="simpleFieldSearchResponse">
+		<part name="response" type="fedora-types:ArrayOfObjectFields">
+			<documentation>a set of ObjectFields structures, one for each
             object that matched the query.</documentation>
-        </part>
-    </message>
+		</part>
+	</message>
 	<portType name="Fedora-API-A">
 		<documentation>The Fedora Access service defines an open interface for
 		    accessing digital objects.  The access operations include methods to do
@@ -169,13 +169,13 @@
 		    on behalf of the client, simply returning a dissemination result via the
 		    Access service layer.
 		</documentation>
-        <operation name="advancedFieldSearch">
+		<operation name="advancedFieldSearch">
 			<documentation>Gets the requested ObjectFields on all objects in the
                 repository matching a set of conditions.
 			</documentation>
 			<input message="fedora-api:advancedFieldSearchRequest"/>
 			<output message="fedora-api:advancedFieldSearchResponse"/>
-        </operation>
+		</operation>
 		<operation name="getBehaviorDefinitions">
 			<documentation>Gets a list of behavior definitions supported by a
 				digital object.  This is a set of PIDs, one for each behavior
@@ -191,12 +191,12 @@
 			<input message="fedora-api:getBehaviorMethodsRequest"/>
 			<output message="fedora-api:getBehaviorMethodsResponse"/>
 		</operation>
-		<operation name="getBehaviorMethodsAsWSDL">
+		<operation name="getBehaviorMethodsXML">
 			<documentation>Gets a list of the method descriptions for a given
       			behavior definition type associated with the digital object.
       		</documentation>
-			<input message="fedora-api:getBehaviorMethodsAsWSDLRequest"/>
-			<output message="fedora-api:getBehaviorMethodsAsWSDLResponse"/>
+			<input message="fedora-api:getBehaviorMethodsXMLRequest"/>
+			<output message="fedora-api:getBehaviorMethodsXMLResponse"/>
 		</operation>
 		<operation name="getDissemination">
 			<documentation>Gets a MIME-typed view of the digital
@@ -219,18 +219,18 @@
 			<input message="fedora-api:getObjectMethodsRequest"/>
 			<output message="fedora-api:getObjectMethodsResponse"/>
 		</operation>
-        <operation name="simpleFieldSearch">
+		<operation name="simpleFieldSearch">
 			<documentation>Gets the requested ObjectFields on all objects in the
                 repository having all search terms present somewhere in their
                 ObjectFields record.
 			</documentation>
 			<input message="fedora-api:simpleFieldSearchRequest"/>
 			<output message="fedora-api:simpleFieldSearchResponse"/>
-        </operation>
+		</operation>
 	</portType>
 	<binding name="Fedora-API-A-Binding-HTTPGET" type="fedora-api:Fedora-API-A">
 		<http:binding verb="GET"/>
-        <operation name="advancedFieldSearch">
+		<operation name="advancedFieldSearch">
 			<http:operation location="advancedFieldSearch"/>
 			<input>
 				<http:urlEncoded/>
@@ -238,7 +238,7 @@
 			<output>
 				<mime:mimeXml part="response"/>
 			</output>
-        </operation>
+		</operation>
 		<operation name="getBehaviorDefinitions">
 			<http:operation location="getBehaviorDefinitions"/>
 			<input>
@@ -257,8 +257,8 @@
 				<mime:mimeXml part="response"/>
 			</output>
 		</operation>
-		<operation name="getBehaviorMethodsAsWSDL">
-			<http:operation location="getBehaviorMethodsAsWSDL"/>
+		<operation name="getBehaviorMethodsXML">
+			<http:operation location="getBehaviorMethodsXML"/>
 			<input>
 				<http:urlEncoded/>
 			</input>
@@ -293,7 +293,7 @@
 				<mime:mimeXml part="response"/>
 			</output>
 		</operation>
-        <operation name="simpleFieldSearch">
+		<operation name="simpleFieldSearch">
 			<http:operation location="simpleFieldSearch"/>
 			<input>
 				<http:urlEncoded/>
@@ -301,7 +301,7 @@
 			<output>
 				<mime:mimeXml part="response"/>
 			</output>
-        </operation>
+		</operation>
 	</binding>
 	<binding name="Fedora-API-A-Binding-SOAPHTTP" type="fedora-api:Fedora-API-A">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -332,8 +332,8 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
-		<operation name="getBehaviorMethodsAsWSDL">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getBehaviorMethodsAsWSDL"/>
+		<operation name="getBehaviorMethodsXML">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getBehaviorMethodsXML"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
