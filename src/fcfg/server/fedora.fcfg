@@ -20,7 +20,7 @@
 			denotes logging indicating basic information about a request to the server (like hostname, operation name, and success or failure).  
 		- finer
 			denotes logging indicating detailed information about a request to the server (like the full request, full response, and timing information). 
-		- finest (deafult)
+		- finest (default)
 			denotes logging indicating method entry/exit or extremely verbose information intended to aid in debugging. 
 		- info
 			denotes logging indicating that something relatively uncommon and interesting happened, like server or module startup or shutdown, or a periodic job. 
