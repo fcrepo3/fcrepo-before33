@@ -76,12 +76,6 @@ public class FastBmechReader extends FastDOReader implements BMechReader
   /** Label of behavior mechanism object */
   private String bMechLabel = null;
 
-  /** Switch indicating if bmech object is in Fast Store */
-  private static boolean isBmechFoundInFastStore = false;
-
-  /** Switch indicating if bmech object is in Definitive Store */
-  private static boolean isBmechFoundInDefinitiveStore = false;
-
   /**
    * <p>Constructs an instance of FastBMechReader.</p>
    *
@@ -139,7 +133,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
     Statement statement = null;
     ResultSet rs = null;
 
-    if (isBmechFoundInFastStore && versDateTime == null)
+    if (isFoundInFastStore && versDateTime == null)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
@@ -236,7 +230,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
           }
         }
       }
-    } else if (isBmechFoundInDefinitiveStore || versDateTime != null)
+    } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitive storage area.
@@ -355,7 +349,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
           doReader = m_manager.getReader(m_context, bMechPID);
         }
         bMechLabel = doReader.GetObjectLabel();
-        isBmechFoundInDefinitiveStore = true;
+        isFoundInDefinitiveStore = true;
         s_server.logFinest("[FastBMechReader] BMECH OBJECT FOUND IN DEFINITIVE "
             + "STORE: " + bMechPID);
       } catch (ServerException se)
@@ -372,7 +366,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
       }
     } else
     {
-      isBmechFoundInFastStore = true;
+      isFoundInFastStore = true;
       s_server.logFinest("[FastBMechReader] BMECH OBJECT FOUND IN FAST STORE: "
           + bMechPID);
     }
