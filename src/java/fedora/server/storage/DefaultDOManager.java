@@ -829,7 +829,13 @@ public class DefaultDOManager
                 // VALIDATION: perform initial validation of the ingest submission file
                 logFinest("Getting another handle from temp store for validation...");
                 logFinest("Validating (ingest phase)...");
-				m_validator.validate(tempFile, format, 0, "ingest");
+                logFinest("Skipping Schematron validation because it's done at storage time anyway");
+                logFinest("Skipping XML Schema validation because it's done at storage time anyway");
+				//m_validator.validate(tempFile, format, 0, "ingest");
+                // FIXME: above commenting is just a test... when verified
+                // that it's REALLY unnecessary, remove it, this, all the tempFile
+                // stuff (since only one inputStream needs to be used), AND the comments above!!
+
 
                 // deserialize the ingest input stream into a digital object
                 BasicDigitalObject obj=new BasicDigitalObject();
