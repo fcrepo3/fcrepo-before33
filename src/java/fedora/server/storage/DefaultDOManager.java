@@ -591,6 +591,7 @@ public class DefaultDOManager
 					dc.DSMIME="text/xml";
 					dc.DSSize=0;
 					dc.DSState="A";
+					dc.DSVersionable=true;
 					dcf=new DCFields();
 					if (obj.getLabel()!=null && !(obj.getLabel().equals(""))) {
 						dcf.titles().add(obj.getLabel());
