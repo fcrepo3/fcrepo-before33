@@ -9,7 +9,6 @@ import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
 
 import fedora.common.Constants;
-import fedora.common.rdf.RDFName;
 import fedora.server.Context;
 
 /*package*/ class ContextAttributeFinderModule extends AttributeFinderModule {

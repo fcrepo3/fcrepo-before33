@@ -10,8 +10,6 @@ import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.utilities.DDLConverter;
 
-import org.apache.commons.pool.impl.GenericObjectPool;
-
 /**
  *
  * <p><b>Title:</b> ConnectionPoolManagerImpl.java</p>

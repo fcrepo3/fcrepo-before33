@@ -1,7 +1,5 @@
 package fedora.server.security;
 
-import java.util.Date;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.net.URI;
@@ -10,19 +8,11 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.ServletContext;
 import com.sun.xacml.EvaluationCtx;
-import com.sun.xacml.attr.AttributeDesignator;
 import com.sun.xacml.attr.AttributeValue;
 import com.sun.xacml.attr.BagAttribute;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
 import com.sun.xacml.ctx.Status;
-
-import fedora.server.Context;
-import fedora.server.ReadOnlyContext;
-import fedora.server.errors.ServerException;
-import fedora.server.storage.DOManager;
-import fedora.server.storage.DOReader;
-import fedora.server.storage.types.Datastream;
 
 /*package*/ abstract class AttributeFinderModule extends com.sun.xacml.finder.AttributeFinderModule {
 	

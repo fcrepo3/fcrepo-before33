@@ -3,8 +3,6 @@ package fedora.server.security;
 import java.util.Date;
 import fedora.server.Context;
 import fedora.server.errors.NotAuthorizedException;
-import fedora.server.storage.types.Property;
-import fedora.server.utilities.DateUtility;
 
 public interface Authorization {
 	

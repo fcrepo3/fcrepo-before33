@@ -5,8 +5,6 @@ import java.util.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.log4j.*;
-import org.apache.log4j.xml.*;
 import org.xml.sax.SAXException;
 
 import fedora.server.config.*;

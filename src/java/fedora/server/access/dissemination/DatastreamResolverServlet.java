@@ -12,7 +12,6 @@ import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -21,7 +20,6 @@ import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
-import fedora.server.security.Authorization;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
@@ -47,23 +45,6 @@ import fedora.server.utilities.Logger;
  * must repond is set by the Fedora configuration parameter named
  * datastreamMediationLimit and is specified in milliseconds. If this parameter
  * is not supplied it defaults to 5000 miliseconds.</p>
- *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
  * @version $Id$

@@ -9,7 +9,6 @@ import java.sql.Statement;
 import java.util.*;
 
 import fedora.server.Context;
-import fedora.server.Debug;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.config.ServerConfiguration;

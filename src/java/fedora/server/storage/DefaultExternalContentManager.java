@@ -1,32 +1,14 @@
 package fedora.server.storage;
 
-import java.awt.Dimension;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.List;
 
 import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HeaderElement;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
 
-import fedora.client.Administrator;
-import fedora.client.SwingWorker;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
@@ -36,8 +18,6 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.Property;
-import fedora.server.utilities.StreamUtility;
-import fedora.server.security.Authorization;
 import fedora.common.Constants;
 
 /**
