@@ -581,34 +581,7 @@ public class DatastreamPane
             }
             // export is always possible!
             actionPane.add(m_exportButton);
-            m_exportButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                try {
-                    JFileChooser browse;
-                    if (Administrator.getLastDir()==null) {
-                        browse=new JFileChooser();
-                    } else {
-                        browse=new JFileChooser(Administrator.getLastDir());
-                    }
-                    browse.setApproveButtonText("Export");
-                    browse.setApproveButtonMnemonic('E');
-                    browse.setApproveButtonToolTipText("Exports to the selected file.");
-                    browse.setDialogTitle("Export Datastream Content to...");
-                    int returnVal = browse.showOpenDialog(Administrator.getDesktop());
-                    if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        File file = browse.getSelectedFile();
-                        Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
-                        Administrator.DOWNLOADER.getDatastreamContent(m_pid, 
-                                m_ds.getID(), m_ds.getCreateDate().getTime(),
-                                new FileOutputStream(file));
-                    }
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            e.getMessage(), "Content Export Failure",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-                }
-            });
+            m_exportButton.addActionListener(new ExportActionListener(m_ds));
             // and purge is, too
             JButton purgeButton=new JButton("Purge...");
             Administrator.constrainHeight(purgeButton);
@@ -846,36 +819,7 @@ public class DatastreamPane
             }
             JButton exportButton=new JButton("Export...");
             Administrator.constrainHeight(exportButton);
-            exportButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    // FIXME: save behavior as other exporter, consolidate
-                    // popup the file dialog
-                    try {
-                        JFileChooser browse;
-                        if (Administrator.getLastDir()==null) {
-                            browse=new JFileChooser();
-                        } else {
-                            browse=new JFileChooser(Administrator.getLastDir());
-                        }
-                        browse.setApproveButtonText("Export");
-                        browse.setApproveButtonMnemonic('E');
-                        browse.setApproveButtonToolTipText("Exports to the selected file.");
-                        browse.setDialogTitle("Export Datastream Content to...");
-                        int returnVal = browse.showOpenDialog(Administrator.getDesktop());
-                        if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            File file = browse.getSelectedFile();
-                            Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
-                            Administrator.DOWNLOADER.getDatastreamContent(m_pid, 
-                                    m_ds.getID(), m_ds.getCreateDate().getTime(),
-                                    new FileOutputStream(file));
-                        }
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                e.getMessage(), "Content Export Failure",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            });
+            exportButton.addActionListener(new ExportActionListener(m_ds));
             buttonPanel.add(exportButton);
             JButton purgeButton=new JButton("Purge...");
             Administrator.constrainHeight(purgeButton);
@@ -969,6 +913,39 @@ public class DatastreamPane
                                 JOptionPane.ERROR_MESSAGE);
                     }
                 }
+            }
+        }
+    }
+
+    public class ExportActionListener 
+	        implements ActionListener {
+
+		Datastream m_ds;
+
+        public ExportActionListener(Datastream ds) {
+			m_ds=ds;
+		}
+        public void actionPerformed(ActionEvent evt) {
+            try {
+        	    FileDialog dlg=new FileDialog(Administrator.INSTANCE, 
+	                                          "Export Datastream Content to...",
+		                                   	FileDialog.SAVE);
+                if (Administrator.getLastDir()!=null) {
+            		dlg.setDirectory(Administrator.getLastDir().getPath());
+                }
+                dlg.setVisible(true);
+                if (dlg.getFile()!=null) {
+                    File file = new File(new File(dlg.getDirectory()), dlg.getFile());
+                    System.out.println("Exporting to " + file.getPath());
+                    Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
+                    Administrator.DOWNLOADER.getDatastreamContent(m_pid, 
+                            m_ds.getID(), m_ds.getCreateDate().getTime(),
+                            new FileOutputStream(file));
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                        e.getMessage(), "Content Export Failure",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }

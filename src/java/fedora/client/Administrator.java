@@ -314,7 +314,6 @@ public class Administrator extends JFrame {
         fileIngestOneFromFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new Ingest(Ingest.ONE_FROM_FILE);
-                // old way -> fileIngestAction();
             }
         });
         JMenuItem fileIngestOneFromRepository=new JMenuItem("From Repository...", KeyEvent.VK_R);
@@ -611,72 +610,6 @@ public class Administrator extends JFrame {
 
     public static void setLastDir(File f) {
         s_lastDir=f;
-    }
-
-    protected void fileIngestAction() {
-        try {
-            JFileChooser browse;
-            if (s_lastDir==null) {
-                browse=new JFileChooser();
-            } else {
-                browse=new JFileChooser(s_lastDir);
-            }
-            int returnVal = browse.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = browse.getSelectedFile();
-                s_lastDir=file.getParentFile(); // remember the dir for next time
-                FileInputStream in=new FileInputStream(file.getAbsolutePath());
-                String host;
-                int port;
-                String logMessage;
-                host=s_host;
-                port=s_port;
-                logMessage="First import.";
-                AutoIngestor ingestor=new AutoIngestor(host, port, s_user, s_pass);
-                String pid=ingestor.ingestAndCommit(in, logMessage);
-                JOptionPane.showMessageDialog(this,
-                        "Ingest succeeded.  PID='" + pid + "'.");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    e.getClass().getName() + ": " + e.getMessage(),
-                    "Ingest Failure",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    protected void fileExportAction() {
-        try {
-            String pid=JOptionPane.showInputDialog("Enter the PID.");
-            JFileChooser browse;
-            if (s_lastDir==null) {
-                browse=new JFileChooser();
-            } else {
-                browse=new JFileChooser(s_lastDir);
-            }
-            browse.setApproveButtonText("Export");
-            browse.setApproveButtonMnemonic('E');
-            browse.setApproveButtonToolTipText("Exports to the selected file.");
-            browse.setDialogTitle("Export to...");
-            int returnVal = browse.showOpenDialog(this);
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-                File file = browse.getSelectedFile();
-                s_lastDir=file.getParentFile(); // remember the dir for next time
-                String host;
-                int port;
-                host=s_host;
-                port=s_port;
-                AutoExporter exporter=new AutoExporter(host, port, s_user, s_pass);
-                exporter.export(pid, new FileOutputStream(file), false);
-                JOptionPane.showMessageDialog(this,
-                        "Export succeeded.");
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    e.getClass().getName() + ": " + e.getMessage(),
-                    "Export Failure",
-                    JOptionPane.ERROR_MESSAGE);
-        }
     }
 
     protected void createBDefBuilder() {

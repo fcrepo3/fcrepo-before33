@@ -1,6 +1,7 @@
 package fedora.client.actions;
 
 import java.awt.event.ActionEvent;
+import java.awt.FileDialog;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashSet;
@@ -85,18 +86,15 @@ public class ExportObject
                 String pid=(String) pidIter.next();
                 try {
                     JFileChooser browse;
-                    if (Administrator.getLastDir()==null) {
-                        browse=new JFileChooser();
-                    } else {
-                        browse=new JFileChooser(Administrator.getLastDir());
+					FileDialog dlg=new FileDialog(Administrator.INSTANCE,
+					                              "Export object to...",
+												  FileDialog.SAVE);
+                    if (Administrator.getLastDir()!=null) {
+					    dlg.setDirectory(Administrator.getLastDir().getPath());
                     }
-                    browse.setApproveButtonText("Export");
-                    browse.setApproveButtonMnemonic('E');
-                    browse.setApproveButtonToolTipText("Exports to the selected file.");
-                    browse.setDialogTitle("Export to...");
-                    int returnVal = browse.showOpenDialog(Administrator.getDesktop());
-                    if (returnVal == JFileChooser.APPROVE_OPTION) {
-                        File file = browse.getSelectedFile();
+                    dlg.setVisible(true);
+                    if (dlg.getFile()!=null) {
+                        File file = new File(new File(dlg.getDirectory()), dlg.getFile());
                         Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
                         exporter.export(pid, new FileOutputStream(file), false);
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
@@ -137,7 +135,7 @@ public class ExportObject
                                     buf.append(c);
                                 }
                             }
-                            File outFile=new File(browse.getSelectedFile(), buf.toString());
+                            File outFile=new File(browse.getSelectedFile(), buf.toString() + ".xml");
                             exporter.export(pid, new FileOutputStream(outFile),false);
                         }
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),

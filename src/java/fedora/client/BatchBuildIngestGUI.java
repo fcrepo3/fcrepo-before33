@@ -10,6 +10,7 @@ import javax.swing.JTextField;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import java.awt.BorderLayout;
+import java.awt.FileDialog;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -331,14 +332,23 @@ public class BatchBuildIngestGUI
 	}
     }
     protected void pidsAction () {
-	try {
-		   File temp = selectFile(Administrator.batchtoolLastDir,false);
-		   if (temp != null) {
-			   m_pidsField.setText(temp.getPath());
-		   }
-	} catch (Exception e) {
-			   m_pidsField.setText("");
-	}
+    try {
+           FileDialog dlg=new FileDialog(Administrator.INSTANCE,
+                                         "PIDs Output File",
+                                         FileDialog.SAVE);
+           if (Administrator.batchtoolLastDir!=null) {
+               dlg.setDirectory(Administrator.batchtoolLastDir.getPath());
+           }
+           dlg.setVisible(true);
+           String temp=dlg.getFile();
+           if (temp != null) {
+               File dir=new File(dlg.getDirectory());
+               m_pidsField.setText(new File(dir, temp).getPath());
+               Administrator.batchtoolLastDir=dir;
+           }
+    } catch (Exception e) {
+               m_pidsField.setText("");
+    }
     }
 
 }
