@@ -790,22 +790,22 @@ public class FedoraAccessServlet extends HttpServlet
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
                 + " http://" + fedoraServerHost + ":" + fedoraServerPort
-                + "/objectProfile.xsd\"" + " pid=\"" + PID + "\" >");
+                + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" >");
           } else
           {
             pw.write("<objectProfile "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + fedoraServerHost + ":" + fedoraServerPort
-                + "/objectProfile.xsd\"" + " pid=\"" + PID + "\""
+                + " http://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
           }
 
           // PROFILE FIELDS SERIALIZATION
-          pw.write("<objLabel>" + objProfile.objectLabel + "</objLabel>");
-          pw.write("<objContentModel>" + objProfile.objectContentModel + "</objContentModel>");
+          pw.write("<objLabel>" + StreamUtility.enc(objProfile.objectLabel) + "</objLabel>");
+          pw.write("<objContentModel>" + StreamUtility.enc(objProfile.objectContentModel) + "</objContentModel>");
           String cDate = DateUtility.convertDateToString(objProfile.objectCreateDate);
           pw.write("<objCreateDate>" + cDate + "</objCreateDate>");
           String mDate = DateUtility.convertDateToString(objProfile.objectLastModDate);
@@ -825,8 +825,8 @@ public class FedoraAccessServlet extends HttpServlet
             pw.write("Fedora Behavior Mechanism Object");
           }
           pw.write("</objType>");
-          pw.write("<objDissIndexViewURL>" + objProfile.dissIndexViewURL + "</objDissIndexViewURL>");
-          pw.write("<objItemIndexViewURL>" + objProfile.itemIndexViewURL + "</objItemIndexViewURL>");
+          pw.write("<objDissIndexViewURL>" + StreamUtility.enc(objProfile.dissIndexViewURL) + "</objDissIndexViewURL>");
+          pw.write("<objItemIndexViewURL>" + StreamUtility.enc(objProfile.itemIndexViewURL) + "</objItemIndexViewURL>");
           pw.write("</objectProfile>");
           pw.flush();
           pw.close();
