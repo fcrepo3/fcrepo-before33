@@ -1,5 +1,6 @@
 package fedora.server.resourceIndex;
 
+import fedora.common.PID;
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ResourceIndexException;
@@ -87,15 +88,16 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                              TriplestoreConnector connector, 
                              ConnectionPool cPool, 
                              Logging target) throws ResourceIndexException {
-        super(target);
+        super(target);  
         m_indexLevel = indexLevel;
         namespaces = new HashMap();
-        namespaces.put("dc", NS_DC);
-        namespaces.put("fedora", NS_FEDORA);
-        namespaces.put("fedora-model", NS_FEDORA_MODEL);
-        namespaces.put("fedora-view", NS_FEDORA_VIEW);
-        namespaces.put("rdf", NS_RDF);
-        namespaces.put("xml-schema", NS_XSD);
+        
+        namespaces.put("fedora", FEDORA.uri);
+        namespaces.put("dc", DC.uri);
+        namespaces.put("fedora-model", MODEL.uri);
+        namespaces.put("fedora-view", VIEW.uri);
+        namespaces.put("rdf", RDF.uri);
+        namespaces.put("xml-schema", XSD.uri);
         m_connector = connector;
         m_reader = m_connector.getReader();
         m_writer = m_connector.getWriter();
@@ -110,10 +112,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         try {
             m_conn = m_cPool.getConnection();
         } catch (SQLException e) {
+            if (m_cPool != null && m_conn != null) {
+                try {
+                    m_cPool.free(m_conn);
+                } catch (Exception e2) {}
+            }
             throw new ResourceIndexException("ResourceIndex Connection Pool " +
                                              "was unable to get a connection", e);
-        } finally {
-            m_cPool.free(m_conn);
         }
     }
 
@@ -137,15 +142,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		String doIdentifier = getDOURI(digitalObject);
 		
 		// Insert basic system metadata
-        queuePlainLiteralTriple(doIdentifier, MODEL_LABEL, digitalObject.getLabel());
-        queueTypedLiteralTriple(doIdentifier, MODEL_DATE_CREATED, getDate(digitalObject.getCreateDate()), XSD_DATETIME);
-        queueTypedLiteralTriple(doIdentifier, VIEW_DATE_MODIFIED, getDate(digitalObject.getLastModDate()), XSD_DATETIME);
+        queueLabel(doIdentifier, digitalObject.getLabel());
+        queueCreatedDate(doIdentifier, digitalObject.getCreateDate());
+        queueLastModifiedDate(doIdentifier, digitalObject.getLastModDate());
 		
 		if (digitalObject.getOwnerId() != null) {
-		    queuePlainLiteralTriple(doIdentifier, MODEL_OWNER, digitalObject.getOwnerId());
+		    queueOwner(doIdentifier, digitalObject.getOwnerId());
 		}
-		queuePlainLiteralTriple(doIdentifier, MODEL_CMODEL, digitalObject.getContentModelId());
-		queueTriple(doIdentifier, MODEL_STATE, getStateURI(digitalObject.getState()));
+		queueContentModel(doIdentifier, digitalObject.getContentModelId());
+		queueState(doIdentifier, digitalObject.getState());
 		
         // Insert ExtProperties
         Map extProps = digitalObject.getExtProperties();
@@ -153,7 +158,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         String epKey;
         while (epIt.hasNext()) {
             epKey = (String)epIt.next();
-            queuePlainLiteralTriple(doIdentifier, epKey, (String)extProps.get(epKey));
+            queueExternalProperty(doIdentifier, epKey, (String)extProps.get(epKey));
         }
         
         addQueue(false);
@@ -219,8 +224,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         //queuePlainLiteralTriple(datastreamURI, VIEW_DIRECT, "true");
         //queuePlainLiteralTriple(datastreamURI, VIEW_VOLATILE, isVolatile);
 
-        queueTriple(doURI, VIEW_DISSEMINATES, datastreamURI);
-        queueTypedLiteralTriple(datastreamURI, VIEW_DATE_MODIFIED, getDate(ds.DSCreateDT), XSD_DATETIME);
+        queueDissemination(doURI, datastreamURI);
+        queueCreatedDate(datastreamURI, ds.DSCreateDT);
         addQueue(false);
         
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
@@ -248,10 +253,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    String doIdentifier = getDOURI(digitalObject);
         String bMechPID = diss.bMechID;
         
-        queueTriple(doIdentifier, MODEL_USES_BMECH, getDOURI(bMechPID));
+        queueUsesBMech(doIdentifier, getDOURI(bMechPID));
 	    String bDefPID = diss.bDefID;
         String dissState = getStateURI(diss.dissState);
-	    String dissCreateDT = getDate(diss.dissCreateDT);
         
 	    // insert representations
 	    if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_OBJECT) {
@@ -270,18 +274,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                      permutation = rs.getString("permutation");
                      mimeType = rs.getString("mimeType");
                      rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                     queueTriple(doIdentifier, VIEW_DISSEMINATES, rep);
-                     queueTriple(rep, VIEW_TYPE, getRepType(bDefPID, permutation));
-                     queuePlainLiteralTriple(rep, 
-                                             VIEW_MEDIATYPE, 
-                                             mimeType);
+                     queueDissemination(doIdentifier, rep);
+                     queueDisseminationType(rep, getDisseminationType(bDefPID, permutation));
+                     queueMimeType(rep, mimeType);
                      //queuePlainLiteralTriple(rep, 
                      //                        VIEW_DIRECT, 
                      //                        "false"); 
-                     queueTypedLiteralTriple(rep, 
-                                             VIEW_DATE_MODIFIED, 
-                                             dissCreateDT,
-                                             XSD_DATETIME); 
+                     queueLastModifiedDate(rep, diss.dissCreateDT); 
                  }
             } catch (SQLException e) {
                 try {
@@ -423,7 +422,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // delete bMech reference: 
         try {
             m_writer.delete(m_reader.findTriples(TripleMaker.createResource(doIdentifier), 
-                                                 TripleMaker.createResource(MODEL_USES_BMECH), 
+                                                 MODEL.USES_BMECH, 
                                                  TripleMaker.createResource(getDOURI(bMechPID)), 
                                                  0), 
                             false);
@@ -505,29 +504,28 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 
 	private void addBDef(DigitalObject bDef) throws ResourceIndexException {
 		String doURI = getDOURI(bDef);
-        queueTriple(doURI, RDF_TYPE, MODEL_BDEF);
+        queueRDFType(doURI, MODEL.BDEF_OBJECT.uri);
 		
 		Datastream ds = getLatestDatastream(bDef.datastreams("METHODMAP"));
 		MethodDef[] mdef = getMethodDefs(bDef.getPid(), ds);
 		for (int i = 0; i < mdef.length; i++) {
-            queuePlainLiteralTriple(doURI, MODEL_DEFINES_METHOD, mdef[i].methodName);
-	        // m_store.insertLiteral(doIdentifier, "foo:methodLabel", mdef[i].methodLabel);
+            queueDefinesMethod(doURI, mdef[i].methodName);
 	    }
         addQueue(false);
 	}
 	
 	private void addBMech(DigitalObject bMech) throws ResourceIndexException {
 		String doURI = getDOURI(bMech);
-        queueTriple(doURI, RDF_TYPE, MODEL_BMECH);
+        queueRDFType(doURI, MODEL.BMECH_OBJECT.uri);
 	
 		String bDefPid = getBDefPid(bMech);
-		queueTriple(doURI, MODEL_IMPLEMENTS, getDOURI(bDefPid));
+		queueImplements(doURI, getDOURI(bDefPid));
 		addQueue(false);	
 	}
 	
 	private void addDataObject(DigitalObject digitalObject) throws ResourceIndexException {
 		String identifier = getDOURI(digitalObject);
-        queueTriple(identifier, RDF_TYPE, MODEL_DATAOBJECT);	
+        queueRDFType(identifier, MODEL.DATA_OBJECT.uri);	
         addQueue(false);
 	}
 	
@@ -544,63 +542,63 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		Iterator it;
 		it = dcf.titles().iterator();
 		while (it.hasNext()) {
-            queuePlainLiteralTriple(doURI, NS_DC + "title", (String)it.next());
+            queueDC(doURI, DC.TITLE.uri, (String)it.next());
 		}
 		it = dcf.creators().iterator();
 		while (it.hasNext()) {
-            queuePlainLiteralTriple(doURI, NS_DC + "creator", (String)it.next());
+            queueDC(doURI, DC.CREATOR.uri, (String)it.next());
 		}
 		it = dcf.subjects().iterator();
 		while (it.hasNext()) {
-            queuePlainLiteralTriple(doURI, NS_DC + "subject", (String)it.next());
+            queueDC(doURI, DC.SUBJECT.uri, (String)it.next());
 		}
 		it = dcf.descriptions().iterator();
 		while (it.hasNext()) {
-            queuePlainLiteralTriple(doURI, NS_DC + "description", (String)it.next());
+            queueDC(doURI, DC.DESCRIPTION.uri, (String)it.next());
 		}
 		it = dcf.publishers().iterator();
 		while (it.hasNext()) {
-            queuePlainLiteralTriple(doURI, NS_DC + "publisher", (String)it.next());
+            queueDC(doURI, DC.PUBLISHER.uri, (String)it.next());
 		}
 		it = dcf.contributors().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, NS_DC + "contributor", (String)it.next());
+            queueDC(doURI, DC.CONTRIBUTOR.uri, (String)it.next());
 		}
 		it = dcf.dates().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, NS_DC + "date", (String)it.next());
+            queueDC(doURI, DC.DATE.uri, (String)it.next());
 		}
 		it = dcf.types().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, NS_DC + "type", (String)it.next());
+            queueDC(doURI, DC.TYPE.uri, (String)it.next());
 		}
 		it = dcf.formats().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, NS_DC + "format", (String)it.next());
+            queueDC(doURI, DC.FORMAT.uri, (String)it.next());
 		}
 		it = dcf.identifiers().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, NS_DC + "identifier", (String)it.next());
+            queueDC(doURI, DC.IDENTIFIER.uri, (String)it.next());
 		}
 		it = dcf.sources().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, NS_DC + "source", (String)it.next());
+            queueDC(doURI, DC.SOURCE.uri, (String)it.next());
 		}
 		it = dcf.languages().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, NS_DC + "language", (String)it.next());
+            queueDC(doURI, DC.LANGUAGE.uri, (String)it.next());
 		}
 		it = dcf.relations().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, NS_DC + "relation", (String)it.next());
+            queueDC(doURI, DC.RELATION.uri, (String)it.next());
 		}
 		it = dcf.coverages().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, NS_DC + "coverage", (String)it.next());
+            queueDC(doURI, DC.COVERAGE.uri, (String)it.next());
 		}
 		it = dcf.rights().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, NS_DC + "rights", (String)it.next());
+            queueDC(doURI, DC.RIGHTS.uri, (String)it.next());
 		}
         addQueue(false);
 	}
@@ -703,7 +701,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                     if (insertPermutation != null) {
                         insertPermutation.close();
                     }
-                m_cPool.free(m_conn);
+                    m_cPool.free(m_conn);
                 } catch(SQLException e2) {
                     throw new ResourceIndexException(e2.getMessage(), e2);
                 } finally {
@@ -991,6 +989,35 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
     }
 
+    private String getBDefPid(DigitalObject bMech) throws ResourceIndexException {
+        if (bMech.getFedoraObjectType() != DigitalObject.FEDORA_BMECH_OBJECT) {
+            throw new ResourceIndexException("Illegal argument: object is not a bMech");
+        }
+        Datastream ds;
+        ds = getLatestDatastream(bMech.datastreams("DSINPUTSPEC"));
+        BMechDSBindSpec dsBindSpec = getDSBindSpec(bMech.getPid(), ds);
+        return dsBindSpec.bDefPID;
+    }
+    
+    /**
+     * 
+     * @param date
+     * @return UTC Date as ISO 8601 formatted string (e.g. 2004-04-20T16:20:00Z)
+     */
+    private static String getDate(Date date) {
+        if (date == null) {
+            return null;
+        } else {
+    	    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    	    df.setTimeZone(TimeZone.getTimeZone("GMT"));
+    	    return df.format(date);
+        }
+    }
+
+    private String getDisseminationType(String bDefPID, String permutation) {
+        return FEDORA.uri + "*" + "/" + bDefPID + "/" + permutation;
+    }
+
     private BMechDSBindSpec getDSBindSpec(String pid, Datastream ds) throws ResourceIndexException {
         DatastreamXMLMetadata dsInSpecDS = (DatastreamXMLMetadata)ds;
         ServiceMapper serviceMapper = new ServiceMapper(pid);
@@ -1001,8 +1028,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             throw new ResourceIndexException(t.getMessage());
         }
     }
-    
-	private String getDOURI(DigitalObject digitalObject) {
+
+    private String getDOURI(DigitalObject digitalObject) {
         if (digitalObject.getURI() != null && !digitalObject.getURI().equals("")) {
             return digitalObject.getURI();
         } else {
@@ -1011,7 +1038,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     }
 
     private String getDOURI(String pid) {
-        return NS_FEDORA + pid;
+        return PID.toURI(pid);
     }
 
     private Datastream getLatestDatastream(List datastreams) {
@@ -1049,96 +1076,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	        throw new ResourceIndexException(t.getMessage());
 	    }
 	}
-    
-    private String getRepType(String bDefPID, String permutation) {
-        return NS_FEDORA + "*" + "/" + bDefPID + "/" + permutation;
-    }
-    
-    private String getStateURI(String state) throws ResourceIndexException {
-        if (state.equalsIgnoreCase("A")) {
-            return MODEL_ACTIVE;
-        } else if (state.equalsIgnoreCase("I")) {
-            return MODEL_INACTIVE;
-        } else if (state.equalsIgnoreCase("D")) {
-            return MODEL_DELETED;
-        } else {
-            throw new ResourceIndexException("Unknown state: " + state);
-        }
-    }
 
-    private void queueTriple(String subject, 
-                             String predicate, 
-                             String object) throws ResourceIndexException {
-        try {
-            m_tQueue.add(TripleMaker.create(subject, predicate, object));
-        } catch (TrippiException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        }
-    }
-    
-    private void queuePlainLiteralTriple(String subject, 
-                                         String predicate, 
-                                         String object) throws ResourceIndexException {
-        try {
-            if (object == null) {
-                object = "";
-            }
-            m_tQueue.add(TripleMaker.createPlain(subject, predicate, object));
-        } catch (TrippiException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        }
-    }
-    
-    private void queueLocalLiteralTriple(String subject, 
-                                         String predicate, 
-                                         String object, 
-                                         String language) throws ResourceIndexException {
-        try {
-            if (object == null) {
-                object = "";
-            }
-            m_tQueue.add(TripleMaker.createLocal(subject, predicate, object, language));
-        } catch (TrippiException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        }
-    }
-    
-    private void queueTypedLiteralTriple(String subject, 
-                                         String predicate, 
-                                         String object, 
-                                         String datatype) throws ResourceIndexException {
-        try {
-            if (object == null) {
-                object = "";
-            }
-            m_tQueue.add(TripleMaker.createTyped(subject, predicate, object, datatype));
-        } catch (TrippiException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        }
-}
-    
-    private void addQueue(boolean flush) throws ResourceIndexException {
-        try {
-            m_writer.add(m_tQueue, flush);
-        } catch (IOException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        } catch (TrippiException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        }
-        m_tQueue.clear();
-    }
-	
-	/**
-	 * 
-	 * @param date
-	 * @return UTC Date as ISO 8601 formatted string (e.g. 2004-04-20T16:20:00Z)
-	 */
-	private static String getDate(Date date) {
-	    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-	    df.setTimeZone(TimeZone.getTimeZone("GMT"));
-	    return df.format(date);
-	}
-    
     /**
      * Returns a List of Strings, representing the cross product of possible
      * method parameters and their values, e.g. 
@@ -1181,7 +1119,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
         return combinations;
     }
-    
+
     /**
      * If we could rely on support for JDBC 3.0's Statement.getGeneratedKeys(),
      * we could use an auto-increment field for the primary key.
@@ -1197,22 +1135,218 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     private String getRIMethodPrimaryKey(String bDefPid, String methodName) {
         return (bDefPid + "/" + methodName);
     }
-    
+
     private String getRIMethodImplPrimaryKey(String bMechPid, String methodName) {
         return (bMechPid + "/" + methodName);
     }
     
-    private String getBDefPid(DigitalObject bMech) throws ResourceIndexException {
-        if (bMech.getFedoraObjectType() != DigitalObject.FEDORA_BMECH_OBJECT) {
-            throw new ResourceIndexException("Illegal argument: object is not a bMech");
+    private String getStateURI(String state) throws ResourceIndexException {
+        if (state == null) {
+            throw new ResourceIndexException("State cannot be null");
+        } else if (state.equalsIgnoreCase("A")) {
+            return MODEL.ACTIVE.uri;
+        } else if (state.equalsIgnoreCase("I")) {
+            return MODEL.INACTIVE.uri;
+        } else if (state.equalsIgnoreCase("D")) {
+            return MODEL.DELETED.uri;
+        } else {
+            throw new ResourceIndexException("Unknown state: " + state);
         }
-        Datastream ds;
-        ds = getLatestDatastream(bMech.datastreams("DSINPUTSPEC"));
-        BMechDSBindSpec dsBindSpec = getDSBindSpec(bMech.getPid(), ds);
-        return dsBindSpec.bDefPID;
     }
 
-    /* (non-Javadoc)
+    /**
+     * Note: Silently drops the Triple if cModel is null or empty.
+     * @param digitalObjectURI
+     * @param cModel
+     * @throws ResourceIndexException
+     */
+    private void queueContentModel(String digitalObjectURI, String cModel) throws ResourceIndexException {
+        if (cModel == null || cModel.equals("")) {
+            return;
+        }
+        
+        try {
+            m_tQueue.add(TripleMaker.createPlain(digitalObjectURI, 
+                                                 MODEL.CONTENT_MODEL.uri, 
+                                                 cModel));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueCreatedDate(String subject, Date date) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.createTyped(subject, 
+                                                 MODEL.CREATED_DATE.uri, 
+                                                 getDate(date), 
+                                                 XSD.DATE_TIME.uri));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueDC(String digitalObjectURI, String property, String value) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.createPlain(digitalObjectURI, 
+                                                 property, 
+                                                 value));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueDefinesMethod(String bDefURI, String method) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.createPlain(bDefURI, 
+                                                 MODEL.DEFINES_METHOD.uri, 
+                                                 method));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueDissemination(String digitalObjectURI, String dissemination) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.create(digitalObjectURI, 
+                                            VIEW.DISSEMINATES.uri, 
+                                            dissemination));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueDisseminationType(String dissemination, String dType) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.create(dissemination, 
+                                            VIEW.DISSEMINATION_TYPE.uri, 
+                                            dType));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+
+    private void queueImplements(String bMechURI, String bDefURI) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.createPlain(bMechURI, 
+                                                 MODEL.IMPLEMENTS_BDEF.uri, 
+                                                 bDefURI));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Note: Silently drops the Triple if label is null or empty.
+     * @param subject
+     * @param label
+     * @throws ResourceIndexException
+     */
+    private void queueLabel(String subject, String label) throws ResourceIndexException {
+        if (label == null || label.equals("")) {
+            return;
+        }
+        try {
+            m_tQueue.add(TripleMaker.createPlain(subject, 
+                                                 MODEL.LABEL.uri, 
+                                                 label));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Note: Silently drops the Triple if date is null or empty.
+     * @param subject
+     * @param date
+     * @throws ResourceIndexException
+     */
+    private void queueLastModifiedDate(String subject, Date date) throws ResourceIndexException {
+        String dateTime = getDate(date);
+        if (dateTime == null || dateTime.equals("")) {
+            return;
+        }
+        try {
+            m_tQueue.add(TripleMaker.createTyped(subject, 
+                                                 VIEW.LAST_MODIFIED_DATE.uri, 
+                                                 dateTime, 
+                                                 XSD.DATE_TIME.uri));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueMimeType(String dissemination, String mimeType) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.createPlain(dissemination, 
+                                                 VIEW.MIME_TYPE.uri, 
+                                                 mimeType));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueExternalProperty(String digitalObjectURI, String property, String value) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.createPlain(digitalObjectURI, 
+                                                 property, 
+                                                 value));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueOwner(String subject, String owner) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.createPlain(subject, 
+                                                 MODEL.OWNER.uri, 
+                                                 owner));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueRDFType(String digitalObjectURI, String rdfType) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.create(digitalObjectURI, 
+                                            RDF.TYPE.uri, 
+                                            rdfType));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueState(String subject, String state) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.create(subject, 
+                                            MODEL.STATE.uri, 
+                                            getStateURI(state)));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+
+    private void queueUsesBMech(String dataObjectURI, String bMechURI) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleMaker.create(dataObjectURI, 
+                                            MODEL.USES_BMECH.uri, 
+                                            bMechURI));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+   
+    private void addQueue(boolean flush) throws ResourceIndexException {
+        try {
+            m_writer.add(m_tQueue, flush);
+        } catch (IOException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+        m_tQueue.clear();
+    }
+	
+	/* (non-Javadoc)
      * @see org.trippi.TriplestoreReader#setAliasMap(java.util.Map)
      */
     public void setAliasMap(Map aliasToPrefix) throws TrippiException {
