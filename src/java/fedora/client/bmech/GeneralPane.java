@@ -51,7 +51,9 @@ public class GeneralPane extends JPanel
     private JTextField bObjectLabel;
     private JTextField bObjectName;
     private JTable dcTable;
-    protected DefaultTableModel model;
+    protected DefaultTableModel dcTableModel;
+	protected DCElementDialog dcDialog;
+	private boolean editDCMode = false;
 
     public GeneralPane(BMechBuilder parent)
     {
@@ -206,46 +208,59 @@ public class GeneralPane extends JPanel
 	}
 	
     private JPanel setDCPanel()
-    {
-        // Table Panel
-        model = new DefaultTableModel();
-        dcTable = new JTable(model);
+    {   	
+        // DC Table Panel
+        dcTableModel = new DefaultTableModel();
+		// Create a JTable that disallow edits (edits done via dialog box only)
+		dcTable = new JTable(dcTableModel) {
+		  public boolean isCellEditable(int rowIndex, int vColIndex) {
+		  	if (vColIndex == 0){
+		  		return false;
+		  	}
+		  	else{ 
+		  		return true;
+		  	}
+		  }
+		};
+        
         dcTable.setColumnSelectionAllowed(false);
         dcTable.setRowSelectionAllowed(true);
-        model.addColumn("DC Element Name");
-        model.addColumn("Value");
-        model.addRow(new Object[]{"title", ""});
-        model.addRow(new Object[]{"creator", ""});
-        model.addRow(new Object[]{"subject", ""});
-        model.addRow(new Object[]{"publisher", ""});
-        model.addRow(new Object[]{"contributor", ""});
-        model.addRow(new Object[]{"date", ""});
-        model.addRow(new Object[]{"type", ""});
-        model.addRow(new Object[]{"format", ""});
-        model.addRow(new Object[]{"identifier", ""});
-        model.addRow(new Object[]{"source", ""});
-        model.addRow(new Object[]{"language", ""});
-        model.addRow(new Object[]{"relation", ""});
-        model.addRow(new Object[]{"coverage", ""});
-        model.addRow(new Object[]{"rights", ""});
-        JScrollPane scrollpane = new JScrollPane(dcTable);
+        
+        dcTableModel.addColumn("Element Name");
+        dcTableModel.addColumn("Value");
+               
+        dcTableModel.addRow(new Object[]{"title", ""});
+        dcTableModel.addRow(new Object[]{"creator", ""});
+        dcTableModel.addRow(new Object[]{"subject", ""});
+        dcTableModel.addRow(new Object[]{"publisher", ""});
+        dcTableModel.addRow(new Object[]{"contributor", ""});
+        dcTableModel.addRow(new Object[]{"date", ""});
+        dcTableModel.addRow(new Object[]{"type", ""});
+        dcTableModel.addRow(new Object[]{"format", ""});
+        dcTableModel.addRow(new Object[]{"identifier", ""});
+        dcTableModel.addRow(new Object[]{"source", ""});
+        dcTableModel.addRow(new Object[]{"language", ""});
+        dcTableModel.addRow(new Object[]{"relation", ""});
+        dcTableModel.addRow(new Object[]{"coverage", ""});
+        dcTableModel.addRow(new Object[]{"rights", ""});
+		JScrollPane scrollpane = new JScrollPane(dcTable);
+		scrollpane.getViewport().setBackground(Color.white);
 
         // Table Buttons Panel
-        JButton jb1 = new JButton("New");
+        JButton jb1 = new JButton("Add");
         jb1.setMinimumSize(new Dimension(100,30));
         jb1.setMaximumSize(new Dimension(100,30));
         jb1.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            addTableRow();
+            addDCElement();
           }
         } );
-        JButton jb2 = new JButton("Insert");
+        JButton jb2 = new JButton("Edit");
         jb2.setMinimumSize(new Dimension(100,30));
         jb2.setMaximumSize(new Dimension(100,30));
         jb2.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            insertTableRow();
-            //insertTableRow(model);
+            editDCElement();
           }
         } );
         JButton jb3 = new JButton("Delete");
@@ -253,7 +268,7 @@ public class GeneralPane extends JPanel
         jb3.setMaximumSize(new Dimension(100,30));
         jb3.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            deleteTableRow();
+            deleteDCElement();
           }
         } );
         JPanel t_buttonPanel = new JPanel();
@@ -324,21 +339,51 @@ public class GeneralPane extends JPanel
       return (DCElement[])elements.toArray(new DCElement[0]);
     }
 
-    private void addTableRow()
-    {
-      // Append a row
-      model.addRow(new Object[]{"", ""});
-    }
+	public void setDCElement(String dcName, String dcValue)
+	{
+	  if (editDCMode)
+	  {
+		int currentRowIndex = dcTable.getSelectedRow();
+		dcTable.setValueAt(dcName, currentRowIndex,0);
+		dcTable.setValueAt(dcValue, currentRowIndex,1);
+	  }
+	  else
+	  {
+		dcTableModel.addRow(new Object[]{dcName, dcValue});
+	  }
+	}
+	
+	private void addDCElement()
+	{
+	  dcDialog = new DCElementDialog(this, "Add DC Element", true);
+	}
 
-    private void insertTableRow()
-    {
-      model.insertRow((dcTable.getSelectedRow() + 1), new Object[]{"",""});
-    }
+	private void editDCElement()
+	{
+	  editDCMode = true;
+	  if (dcTable.isEditing())
+	  {
+		dcTable.getCellEditor().stopCellEditing();
+	  }
+	  int currentRowIndex = dcTable.getSelectedRow();
+	  dcDialog = new DCElementDialog(
+		this, "Edit DC Element", true,
+		(String)dcTable.getValueAt(currentRowIndex,0),
+		(String)dcTable.getValueAt(currentRowIndex,1));
+	  editDCMode = false;
+	}
 
-    private void deleteTableRow()
+    private void deleteDCElement()
     {
-      model.removeRow(dcTable.getSelectedRow());
+      dcTableModel.removeRow(dcTable.getSelectedRow());
     }
+    
+	protected void assertInvalidDCMsg(String msg)
+	{
+	  JOptionPane.showMessageDialog(
+		this, new String(msg), "Invalid DC Element",
+		JOptionPane.INFORMATION_MESSAGE);
+	}
 	
     // Action Listener for button group
     class PIDActionListener implements ActionListener
