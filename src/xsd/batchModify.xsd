@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://www.fedora.info/definitions/" xmlns="http://www.fedora.info/definitions/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+<xsd:schema targetNamespace="http://www.fedora.info/definitions/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.fedora.info/definitions/" elementFormDefault="qualified">
 	<xsd:element name="batchModify">
 		<xsd:complexType>
 			<xsd:sequence>
 				<xsd:element ref="addDatastream" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="purgeDatastream" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="modifyDatastream" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="purgeDatastream" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="setDatastreamState" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="setDatastreamHarvestable" minOccurs="0" maxOccurs="unbounded"/>
 				<!--
 				<xsd:element ref="addDisseminator" minOccurs="0" maxOccurs="unbounded"/>
-				<xsd:element ref="purgeDisseminator" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="modifyDisseminator" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="purgeDisseminator" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="setDisseminatorState" minOccurs="0" maxOccurs="unbounded"/>
 				-->
 			</xsd:sequence>
@@ -103,7 +103,7 @@
 				<xsd:any namespace="##any" processContents="skip" maxOccurs="unbounded"/>
 			</xsd:sequence>
 		</xsd:complexType>
-	</xsd:element>	
+	</xsd:element>
 	<!--
 	<xsd:element name="addDisseminator">
 		<xsd:complexType>
