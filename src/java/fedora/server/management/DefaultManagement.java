@@ -215,7 +215,7 @@ public class DefaultManagement
 
     public void modifyDatastreamByReference(Context context, String pid,
             String datastreamId, String dsLabel, String logMessage,
-            String dsLocation)
+            String dsLocation, String dsState)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
@@ -224,7 +224,7 @@ public class DefaultManagement
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
             if (orig.DSControlGrp.equals("M")) {
                     // copy the original datastream, replacing its DSLocation with
-                    // the new location (or the old datastream's default dissemination location, if empty or null), 
+                    // the new location (or the old datastream's default dissemination location, if empty or null),
                     // triggering to doCommit that it needs to
                     // be loaded from a new remote location
                     DatastreamManagedContent newds=new DatastreamManagedContent();
@@ -239,12 +239,13 @@ public class DefaultManagement
                     //newds.DSSize will be computed later
                     newds.DSControlGrp="M";
                     newds.DSInfoType=orig.DSInfoType;
-                    newds.DSState=orig.DSState;
+                    newds.DSState=dsState;
+                    //newds.DSState=orig.DSState;
                     if (dsLocation==null || dsLocation.equals("")) {
                         // if location unspecified, use the location of
                         // the datastream on the system, thus making a copy
-                        newds.DSLocation="http://" + m_fedoraServerHost + ":" 
-                                + m_fedoraServerPort 
+                        newds.DSLocation="http://" + m_fedoraServerHost + ":"
+                                + m_fedoraServerPort
                                 + "/fedora/get/" + pid + "/fedora-system:3/getItem?itemID="
                                 + datastreamId;
                     } else {
@@ -279,12 +280,13 @@ public class DefaultManagement
                 newds.DSCreateDT=nowUTC;
                 newds.DSControlGrp=orig.DSControlGrp;
                 newds.DSInfoType=orig.DSInfoType;
-                newds.DSState=orig.DSState;
+                newds.DSState=dsState;
+                //newds.DSState=orig.DSState;
                 if (dsLocation==null || dsLocation.equals("")) {
                     // if location unspecified, use the location of
                     // the datastream on the system, thus making a copy
-                    newds.DSLocation="http://" + m_fedoraServerHost + ":" 
-                            + m_fedoraServerPort 
+                    newds.DSLocation="http://" + m_fedoraServerHost + ":"
+                            + m_fedoraServerPort
                             + "/fedora/get/" + pid + "/fedora-system:3/getItem?itemID="
                             + datastreamId;
                 } else {
@@ -477,7 +479,7 @@ public class DefaultManagement
 
     public void modifyDatastreamByValue(Context context, String pid,
             String datastreamId, String dsLabel, String logMessage,
-            InputStream dsContent) throws ServerException {
+            InputStream dsContent, String dsState) throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
@@ -508,7 +510,7 @@ public class DefaultManagement
             newds.DSCreateDT=nowUTC;
             newds.DSControlGrp=orig.DSControlGrp;
             newds.DSInfoType=orig.DSInfoType;
-            newds.DSState=orig.DSState;
+            newds.DSState=dsState;
             newds.auditRecordIdList().addAll(orig.auditRecordIdList());
             // just add the datastream
             w.addDatastream(newds);
@@ -542,9 +544,9 @@ public class DefaultManagement
     public void deleteDatastream(Context context, String pid, String datastreamID) { }
 
 */
-    public Calendar[] purgeDatastream(Context context, String pid, 
-            String datastreamID, Calendar startDT, Calendar endDT) 
-            throws ServerException { 
+    public Calendar[] purgeDatastream(Context context, String pid,
+            String datastreamID, Calendar startDT, Calendar endDT)
+            throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
@@ -568,7 +570,7 @@ public class DefaultManagement
                         + "of the datastream.");
             }
             // make a log messsage explaining what happened
-            String logMessage=getPurgeLogMessage("datastream", datastreamID, 
+            String logMessage=getPurgeLogMessage("datastream", datastreamID,
                     start, end, deletedDates);
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
@@ -603,7 +605,7 @@ public class DefaultManagement
         return response;
     }
 
-    private String getPurgeLogMessage(String kindaThing, String id, Date start, 
+    private String getPurgeLogMessage(String kindaThing, String id, Date start,
             Date end, Date[] deletedDates) {
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
         StringBuffer buf=new StringBuffer();
@@ -657,8 +659,8 @@ public class DefaultManagement
         return r.ListDatastreamIDs(state);
     }
 
-    public Calendar[] getDatastreamHistory(Context context, String pid, String datastreamID) 
-            throws ServerException { 
+    public Calendar[] getDatastreamHistory(Context context, String pid, String datastreamID)
+            throws ServerException {
         m_ipRestriction.enforce(context);
         DOReader r=m_manager.getReader(context, pid);
         return dateArrayToCalendarArray(r.getDatastreamVersions(datastreamID));

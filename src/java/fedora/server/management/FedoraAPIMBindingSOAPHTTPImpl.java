@@ -260,23 +260,23 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 */
     public void modifyDatastreamByReference(String PID, String datastreamID,
-            String dsLabel, String logMessage, String dsLocation)
+            String dsLabel, String logMessage, String dsLocation, String dsState)
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
             s_management.modifyDatastreamByReference(getContext(), PID,
-                    datastreamID, dsLabel, logMessage, dsLocation);
+                    datastreamID, dsLabel, logMessage, dsLocation, dsState);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
         }
     }
 
-    public void modifyDatastreamByValue(String PID, String datastreamID, String dsLabel, String logMessage, byte[] dsContent) throws java.rmi.RemoteException {
+    public void modifyDatastreamByValue(String PID, String datastreamID, String dsLabel, String logMessage, byte[] dsContent, String dsState) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             s_management.modifyDatastreamByValue(getContext(), PID,
-                    datastreamID, dsLabel, logMessage, new ByteArrayInputStream(dsContent));
+                    datastreamID, dsLabel, logMessage, new ByteArrayInputStream(dsContent), dsState);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -370,7 +370,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
     }
-    public Calendar[] getDatastreamHistory(String PID, String datastreamID) 
+    public Calendar[] getDatastreamHistory(String PID, String datastreamID)
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
