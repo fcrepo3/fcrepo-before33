@@ -82,12 +82,15 @@ public class ReadOnlyContext
         if (m_subjectAttributes==null) {
             m_subjectAttributes=new MultiValueMap();
         }
-        m_subjectAttributes.lock();        
+        m_subjectAttributes.lock();   
+        if (password == null) {
+        	password = "";
+        }
         this.password = password;
     }
     
     private ReadOnlyContext(Map parameters) {
-        this(parameters, null, null, null);
+        this(parameters, null, null, "");
     }
 
     public static ReadOnlyContext getCopy(Context source) {
@@ -314,40 +317,25 @@ public class ReadOnlyContext
   	if (subjectId == null) {
   		subjectId = "";
   	}
+  	String password = "";
   	String roles[] = null;
-  	if ((request.getUserPrincipal() != null) && (request.getUserPrincipal() instanceof GenericPrincipal)) {		
-  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
-  		log("request=" + request); 
-  		log("request.getUserPrincipal()=" + request.getUserPrincipal());  		
-  		log("((GenericPrincipal) request.getUserPrincipal())=" + ((GenericPrincipal) request.getUserPrincipal()));  		
-  		log("((GenericPrincipal) request.getUserPrincipal()).getPassword()=" + ((GenericPrincipal) request.getUserPrincipal()).getPassword());  		
+  	if (request.getUserPrincipal() != null) {
+  	  	log("request.getUserPrincipal().getName()=" + request.getUserPrincipal().getName());
   	}
-	String password = ((GenericPrincipal) request.getUserPrincipal()).getPassword();
+  	if ((request.getUserPrincipal() != null) && (request.getUserPrincipal() instanceof GenericPrincipal)) {		
+  	  	if (((GenericPrincipal) request.getUserPrincipal()).getPassword() != null ) {
+  	  		password = ((GenericPrincipal) request.getUserPrincipal()).getPassword();
+  	  	}
+  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
+  	}
   	try {		
-  		log("1");
   		subjectMap.set(Authorization.SUBJECT_ID_URI_STRING, subjectId);
-  		//subjectMap.set(Constants.POLICY_SUBJECT.PASSWORD.uri, password);	  		
-  		log("2");
   		for (int i = 0; (roles != null) && (i < roles.length); i++) {
-  			log("2a");
-  			log("2b roles["+i+"].length=" + roles[i].length());
   			String[] parts = parseRole(roles[i]);
- 			log("2c");
- 	  		for (int j = 0; (parts != null) && (j < parts.length); j++) {
- 	  			log("parts[" + j + "]=" + parts[j]);
- 	  		}
- 			log("2d");
  			if ((parts != null) && parts.length == 2) {
- 				if ("password".equals(parts[0])) {
- 		 	  		//subjectMap.set(Constants.POLICY_SUBJECT.PASSWORD.uri, parts[1]);
- 		 			//log("password from parts[1]=" + password);
- 				} else {
- 					subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
- 				}
+				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
  			}
- 			log("2e");
   		}
-  		log("3");
   	} catch (Exception e) {	
   		log("caught exception building subjectMap " + e.getMessage());
   		if (e.getCause() != null) {
@@ -356,44 +344,33 @@ public class ReadOnlyContext
   	} finally {
   		subjectMap.lock();
   	}
-  	log("4");
-	log("password=" + password);
 
   	HashMap commonParams = new HashMap();
   	commonParams.put("useCachedObject", "" + useCachedObject);    
   	commonParams.put("userId", subjectMap.getString(Authorization.SUBJECT_ID_URI_STRING)); //to do: change referring code to access Authorization.SUBJECT_ID, then delete this line   
   	commonParams.put("host", environmentMap.getString(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_IP_ADDRESS.uri)); //to do:  as above, vis-a-vis Authorization.ENVIRONMENT_CLIENT_IP
       ReadOnlyContext temp = new ReadOnlyContext(commonParams, environmentMap, subjectMap, password);
-      log("5 returning null? " + (temp == null));
       return temp;
     }
 
   	public static final String[] parseRole (String role) {
-  		log("parseRole() " + role);
   		String[] parts = null;
   		if ((role == null) || (role.length() == 0)) {
-  			log("parseRole (role == null) || (role.length() == 0)");
   		} else {
   			int i = role.indexOf('=');
   			if (i == 0) {
-  				log("parseRole i==0");
   			} else {
-  				log("parseRole i==" + i);
   				parts = new String[2];	
   				if (i < 0) {
   					parts[0] = role;
   					parts[1] = ""; //Boolean.toString(true);
-					log("parseRole i<0 ==" + i);	 
   				} else {
-					log("parseRole i>=0 ==" + i);
   					parts[0] = role.substring(0,i);
-  					log("parseRole parts[0]="+parts[0]);
   					if (i == (role.length()-1)) {
   						parts[1] = ""; //Boolean.toString(true);
   					} else {
   						parts[1] = role.substring(i+1);
   					}
-					log("parts[1]="+parts[1]);	 
   				}
   			}
   		}
