@@ -600,7 +600,7 @@ public class DatastreamsPane
                         location=m_referenceTextField.getText();
                     }
                     String newID=Administrator.APIM.addDatastream(pid, label, 
-                            mimeType, location, m_controlGroup, mdClass, mdType);
+                            mimeType, location, m_controlGroup, mdClass, mdType, "I");
                     addDatastreamTab(newID);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(Administrator.getDesktop(),
