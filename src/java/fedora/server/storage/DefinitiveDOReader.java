@@ -3,14 +3,16 @@ package fedora.server.storage;
 /**
  * <p>Title: DefinitiveDOReader.java </p>
  * <p>Description: Digital Object Reader. Uses SAX parser on METS. </p>
- * <p>COMPONENT VERSIONING NOT SUPPORTED AT THIS TIME!! </p>
+ * <p>COMPONENT VERSIONING NOT SUPPORTED IN THIS READER!! </p>
+ * <p>ASSUMES THAT NO VERSIONING IS IN THE OBJECT XML. </p>
+ * <p>MUST FIX THIS TO LOOK FOR CURRENT VERSIONS OF COMPONENTS. </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
  * @author Sandy Payette
  * @version 1.0
  */
 
-import fedora.server.storage.abstraction.*;
+import fedora.server.storage.types.*;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -61,6 +63,7 @@ public class DefinitiveDOReader implements DOReader
   protected DOReaderSAXErrorHandler doErrorHandler;
   protected XMLReader xmlreader;
   private String PID = null;
+  private String doLabel = null;
   protected Hashtable datastreamTbl = new Hashtable();
   private Hashtable disseminatorTbl = new Hashtable();
   private Hashtable dissbDefTobMechTbl = new Hashtable();
@@ -79,15 +82,16 @@ public class DefinitiveDOReader implements DOReader
     // FOR TESTING...
     DefinitiveDOReader doReader = new DefinitiveDOReader(args[1]);
     doReader.GetObjectPID();
+    doReader.GetObjectLabel();
     doReader.ListDatastreamIDs("A");
     doReader.ListDisseminatorIDs("A");
     doReader.GetDatastreams(null);
     doReader.GetDatastream("DS1", null);
     doReader.GetDisseminators(null);
-    doReader.GetDisseminator("DISS1", null);
     doReader.GetBehaviorDefs(null);
-    // be sure to put a behavior def that's in the test object being run!!!
-    doReader.GetBMechMethods("uva-bdef-stdimg:8", null);
+    Disseminator d = doReader.GetDisseminator("DISS4", null);
+    doReader.GetBMechMethods(d.bDefID, null);
+    doReader.GetDSBindingMaps(null);
 
   }
 
@@ -144,6 +148,12 @@ public class DefinitiveDOReader implements DOReader
     {
       if (debug) System.out.println("GetObjectPID = " + PID);
       return(PID);
+    }
+
+    public String GetObjectLabel()
+    {
+      if (debug) System.out.println("GetObjectLabel = " + doLabel);
+      return(doLabel);
     }
 
     public String[] ListDatastreamIDs(String state)
@@ -304,8 +314,18 @@ public class DefinitiveDOReader implements DOReader
     public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
     {
       // TODO! dateTime filter not implemented in this release!!
+
+      // FIXIT! Put some code in to catch the case of the bootstrap mechanisms
+      // which are not stored as digital objects!!
+      if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
+      {
+        System.out.println("Suppressing report of methods for bootstrap mechanism!");
+        return null;
+      }
+
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
       MethodDef[] methods = mechRead.GetBehaviorMethods(null);
+      /*
       if (debug)
       {
         System.out.println("Methods for mechanism that implements: " + bDefPID);
@@ -315,13 +335,18 @@ public class DefinitiveDOReader implements DOReader
         }
 
       }
+      */
       return(methods);
-      //return(mechRead.GetBehaviorMethods(null));
     }
 
     // Overloaded method: returns InputStream as alternative
     public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
     {
+      if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
+      {
+        System.out.println("Suppressing report of WSDL for bootstrap mechanism!");
+        return null;
+      }
       // TODO! dateTime filter not implemented in this release!!
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
       InputStream instream = mechRead.GetBehaviorMethodsWSDL(null);
@@ -329,6 +354,66 @@ public class DefinitiveDOReader implements DOReader
       return(instream);
     }
 
+    public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
+    {
+      Collection disseminators = disseminatorTbl.values();
+      DSBindingMapAugmented[] allBindingMaps = new DSBindingMapAugmented[disseminators.size()];
+
+      Iterator it = disseminators.iterator();
+      for (int i = 0; i < disseminators.size(); i++)
+      {
+        DSBindingMapAugmented map = new DSBindingMapAugmented();
+        Disseminator diss = (Disseminator) it.next();
+        map.dsBindMapID = diss.dsBindMap.dsBindMapID;
+        map.dsBindMapLabel = diss.dsBindMap.dsBindMapLabel;
+        map.dsBindMechanismPID = diss.dsBindMap.dsBindMechanismPID;
+
+        // Denormalize the relationship between DSBinding and the Datastream
+        // to which it refers.  Retrieve the associated Datastream object
+        // via the datastreamID that's recorded in the DSBinding object.
+        // Instantiate an augmented DSBinding object (DSBindingAugmented).
+        DSBinding[] dsbindings = diss.dsBindMap.dsBindings;
+        DSBindingAugmented[] augmentedBindings = new DSBindingAugmented[dsbindings.length];
+        for (int j=0; j < dsbindings.length; j++)
+        {
+          DSBindingAugmented augmentedBinding = new DSBindingAugmented();
+          augmentedBinding.bindKeyName = dsbindings[j].bindKeyName;
+          augmentedBinding.bindLabel = dsbindings[j].bindLabel;
+          augmentedBinding.datastreamID = dsbindings[j].datastreamID;
+          augmentedBinding.seqNo = dsbindings[j].seqNo;
+          // variables from the Datastream itself...
+          Datastream ds = (Datastream)datastreamTbl.get(dsbindings[j].datastreamID);
+          augmentedBinding.DSLabel = ds.DSLabel;
+          augmentedBinding.DSMIME = ds.DSMIME;
+          augmentedBinding.DSLocation = ds.DSLocation;
+          augmentedBindings[j] = augmentedBinding;
+        }
+        map.dsBindingsAugmented = augmentedBindings;
+        allBindingMaps[i] = map;
+      }
+
+      if (debug)
+      {
+          System.out.println("AUGMENTED BINDING MAPS:");
+          for (int k = 0; k < allBindingMaps.length; k++)
+          {
+            System.out.println("  >>dsBindMapID[" + k + "]= " + allBindingMaps[k].dsBindMapID);
+            System.out.println("  >>dsBindMapLabel[" + k + "]= " + allBindingMaps[k].dsBindMapLabel);
+            System.out.println("  >>dsBindMechanismPID[" + k + "]= " + allBindingMaps[k].dsBindMechanismPID);
+
+            for (int m = 0; m < allBindingMaps[k].dsBindingsAugmented.length; m++)
+            {
+              System.out.println("  >>>>>>>dsbinding-dsid[" + m + "]= "
+                + allBindingMaps[k].dsBindingsAugmented[m].datastreamID);
+              System.out.println("  >>>>>>>dsbinding-mime[" + m + "]= "
+                + allBindingMaps[k].dsBindingsAugmented[m].DSMIME);
+              System.out.println("  >>>>>>>dsbinding-location[" + m + "]= "
+                + allBindingMaps[k].dsBindingsAugmented[m].DSLocation);
+            }
+          }
+      }
+      return allBindingMaps;
+    }
 
     // private methods
 
@@ -383,6 +468,7 @@ public class DefinitiveDOReader implements DOReader
       private boolean inMechanism = false;
 
       private String h_PID;
+      private String h_doLabel;
       private Vector h_vDatastream;
       private Vector h_vDisseminator;
       private Vector h_vDsBinding;
@@ -414,6 +500,7 @@ public class DefinitiveDOReader implements DOReader
 
           // OBJECT PID
           PID = h_PID;
+          doLabel = h_doLabel;
 
           // DATASTREAMS
           int dsCount = h_vDatastream.size();
@@ -430,7 +517,6 @@ public class DefinitiveDOReader implements DOReader
           {
               Disseminator diss = (Disseminator) h_vDisseminator.get(i);
               diss.dsBindMap = (DSBindingMap)h_dsBindMapTbl.get(diss.dsBindMapID);
-              //disseminators[i] = diss;
               dissbDefTobMechTbl.put(diss.bDefID, diss.bMechID);
               disseminatorTbl.put(diss.dissID, diss);
           }
@@ -489,7 +575,9 @@ public class DefinitiveDOReader implements DOReader
         {
           inMETS = true;
           h_PID = attrs.getValue("OBJID");
+          h_doLabel = attrs.getValue("LABEL");
           if (debug) System.out.println("the OBJID attr = " + h_PID);
+          if (debug) System.out.println("the LABEL attr = " + h_doLabel);
         }
         else if (qName.equalsIgnoreCase("METS:dmdSec"))
         {
@@ -503,7 +591,7 @@ public class DefinitiveDOReader implements DOReader
 
           // FIXIT! This does not properly deal with picking up
           // datastreamID vs. datastream version ID (dmdSec issue)
-          h_datastream.DatastreamID = attrs.getValue("GROUPID");
+          h_datastream.DatastreamID = attrs.getValue("ID");
         }
         else if (qName.equalsIgnoreCase("METS:amdSec"))
         {
