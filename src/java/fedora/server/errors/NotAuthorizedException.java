@@ -16,7 +16,7 @@ package fedora.server.errors;
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.</p>
  *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
+ * <p>The entire file consists of original code.  Copyright &copy; 2002-2004 by The
  * Rector and Visitors of the University of Virginia and Cornell University.
  * All rights reserved.</p>
  *
@@ -25,7 +25,7 @@ package fedora.server.errors;
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
-public class FailedAuthzException
+public class NotAuthorizedException
         extends ServerException {
 
     /**
@@ -34,11 +34,11 @@ public class FailedAuthzException
      * @param message An informative message explaining what happened and
      *                (possibly) how to fix it.
      */
-    public FailedAuthzException(String message) {
+    public NotAuthorizedException(String message) {
         super(null, message, null, null, null);
     }
 
-    public FailedAuthzException(String bundleName, String code,
+    public NotAuthorizedException(String bundleName, String code,
             String[] replacements, String[] details, Throwable cause) {
         super(bundleName, code, replacements, details, cause);
     }
