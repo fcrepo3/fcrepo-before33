@@ -49,7 +49,14 @@
 			<itemizedlist>
 				<listitem>
 					<para>
-						<emphasis>MySQL, v3.2.3.</emphasis>  The Fedora server is backed in part by a relational database.  If you decide not to use the included pure java database, McKoi v0.94 (more about that later), you should download and install MySQL v3.2.3 for your platform (or see the "Other Databases" section below).  You can download MySQL at http://www.mysql.com/.  Note that later releases of MySQL might work, but they have not been tested. </para>
+						<emphasis>MySQL, v3.2.3., MySQL 4.x, or Oracle 9i</emphasis>  
+						The Fedora server is backed in part by a relational database.  
+						If you decide not to use the included pure java database, McKoi v0.94 
+						(more about that later), you should download and install 
+						one of the known, working databases for your platform 
+						(or see the "Other Databases" section below).  
+						You can download MySQL at http://www.mysql.com/.  
+						</para>
 				</listitem>
 			</itemizedlist>
 		</section>
@@ -159,7 +166,8 @@
 		<title>Setting up the Server</title>
 		<section>
 			<title>Initialize the Database</title>
-			<para>Fedora is designed to be RDBMS-independent, but comes with a pure java database called McKoi.  It has been tested and works with both McKoi and MySQL.  If you choose to use MySQL, we assume here that it is already installed.</para>
+			<para>Fedora is designed to be RDBMS-independent, but comes with a pure java database called McKoi.  It has been tested and works with McKoi, MySQL and Oracle 9i.  
+			If you choose to use any database but McKoi, we assume here that it is already installed.</para>
 			<para>Follow the below instructions for the RDBMS of your choice in order to create the user and tablespace so that the Fedora software can use the database.</para>
 			<section>
 				<title>McKoi</title>
@@ -206,7 +214,35 @@
 					</listitem>
 				</itemizedlist>
 				<para>Note: This command resolves to a batch file (mysql-config.bat) in Windows, and a shell script (mysql-config.sh) in Unix.  These reside in the server's bin directory.</para>
+				<para><emphasis>Important:</emphasis> Fedora comes installed with a JDBC driver that works with MySQL v3.2.3. 
+				If you wish to use MySQL 4.*, you must replace that driver.  Detailed instructions
+				can be found <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/MySQLVersion4">on this page of the Fedora wiki</ulink>.
+				</para>
 			</section>
+			<section>
+				<title>Oracle 9i</title>
+				<para>With Oracle 9i, you will need to use an administrative
+				account to manually create 1) the fedora user on the db, and
+				2) the tablespace on which that user has complete control.</para>
+				<para>Then you'll need to make sure the Fedora server
+				has the JDBC driver necessary to connect to the database.
+				You can download the appropriate Oracle JDBC driver from
+				<ulink url="http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html">
+http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
+                This will come with a file called <emphasis>ojdbc14.jar</emphasis>.
+				You will need to put that file on your Fedora server, in the
+				directory: <emphasis>FEDORA_HOME/server/tomcat41/common/lib</emphasis>.
+                </para>
+				<para>Then you should modify the FEDORA_HOME/server/config/fedora.fcfg file
+				and ensure that the datastore entry (near the bottom) for Oracle
+				points to the right host and database.  The fedora.fcfg file
+				that comes with the distribution uses a database on the local host
+				called "Fedora".
+                </para>
+				<para>When you start fedora, be sure to use the parameter "oracle", as in
+				<emphasis>fedora-start oracle</emphasis>.  Starting the server is more
+				fully explained later.</para>
+</section>
 			<section>
 				<title>Other Databases</title>
 				<para>If you want to use a different database, it's an option, but it will take some extra work.  Here's how it can be done:</para>
@@ -228,7 +264,7 @@
 			</section>
 		</section>
 		<section>
-			<title>Modify Fedora’s Configuration</title>
+			<title>Modify Fedora's Configuration</title>
 			<para>Before starting for the first time, you will want to make some changes in Fedora’s main configuration file, server/config/fedora.cfg.</para>
 			<section>
 				<title>Introducing fedora.fcfg</title>
