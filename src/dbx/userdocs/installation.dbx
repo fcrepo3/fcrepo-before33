@@ -56,7 +56,7 @@
 						(more about that later), you should download and install 
 						one of the known, working databases for your platform 
 						(or see the "Other Databases" section below).  
-						You can download MySQL at <ulink url="http://www.mysql.com/">http://www.mysql.com/</ulink>.  (Please note that MySQL v3.23.56 will not work with Fedora in a Windows implementation.  For more information please see <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/PoolWasntFoundMessage">http://www.fedora.info/wiki/bin/view/Fedora/PoolWasntFoundMessage</ulink>)
+						You can download MySQL at <ulink url="http://www.mysql.com/">http://www.mysql.com/</ulink>.  (Please note that issues have been reported when using older versions of the Windows implementation of MySQL v3.23.53 - v3.23.58 with Fedora.  For running under Windows, we recommend using the current production version of MySQL for Windows.  For more information on using earlier versions of MySQL, please see <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/PoolWasntFoundMessage">this page on the Fedora wiki.</ulink>)
 						</para>
 				</listitem>
 			</itemizedlist>
@@ -142,7 +142,7 @@
 					<para>FEDORA_DEV should contain the directory under which the source was unpacked, including the version part of the path.  For instance, if you installed the source in C:\ and it unpacked into C:\fedora-src-1.1.1\, FEDORA_DEV should be C:\fedora-src-1.1.1</para>
 				</listitem>
 				<listitem>
-					<para>PATH should contain the bin directory of Ant.  If you don't already have Ant installed, or you have a version before v1.4.1, you can use the version that comes with the Fedora source distribution in under %FEDORA_DEV%\res\ant\bin (in Windows) or $FEDORA_DEV/res/ant/bin (in Unix).  IMPORTANT: If you use your own version of Ant, be sure it's v1.4.1+ or the build may not work. You can verify this by typing "ant -version" at the command prompt.  Note: If you opt to use the ant binaries included with the source, and you're in Unix, be sure to change the permissions on the files in the bin directory so that you can execute ant.  This can be done with the command: <emphasis>EDORA_DEV/res/ant/bin/*</emphasis>
+					<para>PATH should contain the bin directory of Ant.  If you don't already have Ant installed, or you have a version before v1.4.1, you can use the version that comes with the Fedora source distribution in under %FEDORA_DEV%\res\ant\bin (in Windows) or $FEDORA_DEV/res/ant/bin (in Unix).  IMPORTANT: If you use your own version of Ant, be sure it's v1.4.1+ or the build may not work. You can verify this by typing "ant -version" at the command prompt.  Note: If you opt to use the ant binaries included with the source, and you're in Unix, be sure to change the permissions on the files in the bin directory so that you can execute ant.  This can be done with the command: <emphasis>FEDORA_DEV/res/ant/bin/*</emphasis>
 					</para>
 				</listitem>
 			</itemizedlist>
@@ -221,6 +221,9 @@
 				If you wish to use MySQL 4.*, you must replace that driver.  Detailed instructions
 				can be found <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/MySQLVersion4">on this page of the Fedora wiki</ulink>.
 				</para>
+				<para>
+					<emphasis>Important:</emphasis> If you are installing Fedora under Windows and plan to use an earlier version of MYSQL (e.g., 3.23.53 thru 3.23.58), you should use all lower case characters when specifiying the Fedora database name when running the mysql-config.bat script (e.g., "fedoraobjects" instead of "FedoraObjects"). Additional information regarding the use of earlier versions of Windows MYSQL can be found <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/PoolWasntFoundMessage">on this page of the Fedora wiki</ulink>.
+				</para>				
 			</section>
 			<section>
 				<title>Oracle 9i</title>
