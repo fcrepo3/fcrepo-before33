@@ -1,9 +1,5 @@
 package fedora.server.access;
 
-import java.util.Calendar;
-import java.util.Vector;
-import fedora.server.storage.types.MIMETypedStream;
-
 /**
  * <p>Title: </p>
  * <p>Description: </p>
@@ -12,6 +8,11 @@ import fedora.server.storage.types.MIMETypedStream;
  * @author Ross Wayland
  * @version 1.0
  */
+
+import java.util.Calendar;
+import java.util.Vector;
+import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.Property;
 
 public interface FedoraAccess
 {
@@ -47,6 +48,6 @@ public interface FedoraAccess
      */
     public MIMETypedStream GetDissemination ( String PID, String bDefPID,
         String method,
-        Vector userParms, Calendar asOfDate );
+        Property[] userParms, Calendar asOfDate );
 
 }
