@@ -386,13 +386,13 @@ public abstract class DOTranslationUtility {
 					ds.DSLocation = s_localServerDissemUrlStart
 							+ PID
 							+ "/"
-                                                        + ds.DatastreamID;
+							+ ds.DatastreamID;
 				} else {
 					ds.DSLocation = s_localServerDissemUrlStart
 						+ PID
 						+ "/"
-                                                + ds.DatastreamID
-                                                + "/"
+						+ ds.DatastreamID
+						+ "/"
 						+ DateUtility.convertDateToString(ds.DSCreateDT);
 				}
 			}
@@ -406,14 +406,14 @@ public abstract class DOTranslationUtility {
 					ds.DSLocation = s_localServerDissemUrlStart
 							+ PID
 							+ "/"
-                                                        + ds.DatastreamID;
+							+ ds.DatastreamID;
 				} else {
 					ds.DSLocation = s_localServerDissemUrlStart
 						+ PID
 						+ "/"
-                                                + ds.DatastreamID
-                                                + "/"
-                                                + DateUtility.convertDateToString(ds.DSCreateDT);
+						+ ds.DatastreamID
+						+ "/"
+						+ DateUtility.convertDateToString(ds.DSCreateDT);
 				}
 			}
 		} else if (transContext==DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL) {
@@ -481,36 +481,13 @@ public abstract class DOTranslationUtility {
 	public static Datastream setDatastreamDefaults(Datastream ds)
 		throws ObjectIntegrityException {
 
-		// FIXME:  Can we get rid of these checks?  Trace validation code at ingest
-		// and API-M to see which of these cases can never happen due to other checks.
-		/*
-		if (ds.DatastreamID==null) {
-			ds.DatastreamID="";
-		}
-		if (ds.DatastreamURI==null) {
-			ds.DatastreamURI="";
-		}
-		*/
 		if ((ds.DSMIME==null || ds.DSMIME.equals(""))
 			&& ds.DSControlGrp.equalsIgnoreCase("X")) {
 				ds.DSMIME="text/xml";
 		}
-		/*
-		} else if (ds.DSMIME==null || ds.DSMIME.equals("")) {
-			ds.DSMIME="";
-		}
-		if (ds.DSFormatURI==null) {
-			ds.DSFormatURI="";
-		}
-		*/
 		if (ds.DSVersionable==null || ds.DSVersionable.equals("")) {
 			ds.DSVersionable="YES";
 		}
-		/*
-		if (ds.DSLabel==null) {
-			ds.DSLabel="";
-		}
-		*/
 		// For METS backward compatibility
 		if (ds.DSInfoType==null || ds.DSInfoType.equals("")
 				|| ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
@@ -552,28 +529,6 @@ public abstract class DOTranslationUtility {
 
 	public static Disseminator setDisseminatorDefaults(Disseminator diss) throws ObjectIntegrityException {
 
-		// FIXME:  Can we get rid of these checks?  Trace validation code at ingest
-		// and API-M to see which of these cases can never happen due to other checks.
-		/*
-		if (diss.dissID==null) {
-			diss.dissID="";
-		}
-		if (diss.dissVersionID==null) {
-			diss.dissVersionID="";
-		}
-		if (diss.bDefID==null) {
-			diss.bDefID="";
-		}
-		if (diss.bMechID==null) {
-			diss.bMechID="";
-		}
-		if (diss.dissLabel==null) {
-			diss.dissLabel="";
-		}
-		if (diss.dsBindMapID==null) {
-			diss.dsBindMapID="";
-		}
-		*/
 		// Until future when we implement selective versioning,
 		// set default to YES.
 		if (diss.dissVersionable==null || diss.dissVersionable.equals("")) {
