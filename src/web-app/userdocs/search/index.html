@@ -18,21 +18,21 @@
 <p><b>Introduction</b></p>
 <p>The Search Interface provides a mechanism for searching and browsing the Fedora 
   repository. Upon ingestion, metadata from the Fedora System Metadata section 
-  and the Dublin Core Metadata section of the object are indexed in a relational 
-  database . System Metadata contains metadata maintained by the Fedora repository 
-  that consists of items such as object PID, object label, object creation date, 
-  etc. Dublin Core Metadata is an optional Implementor-Defined XML Metadata datastream 
-  in the object that contains Dublin Core elements describing the object.. If 
-  no Dublin Core record is provided, the system will attempt to construct a minimal 
-  Dublin Core record based on information in the System Metadata consisting of 
-  dc:title corresponding to the object's label and dc:identifier corresponding 
-  to the object's persistent identifier (PID). This bare minimum Dublin Core record 
-  is required for the OAI Provider service to disseminate metadata about each 
-  object in the repository.</p>
-<p> The search tool interface provides both simple and advanced searching. Simple 
-  search enables searching across all metadata files. Advanced Search enables 
-  fielded searching across any combination of metadata elements using Boolean 
-  operators. Wildcard features are supported in both search types. </p>
+  and the Dublin Core (DC) Metadata section of the object are indexed in a relational 
+  database, and may be searched using this interface. The DC Metadata section 
+  is an optional Implementor-Defined XML Metadata datastream in the object, where 
+  the &quot;Datastream ID&quot; is DC, and the XML conforms to the schema at: 
+  <a href="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</a>. 
+  If such a datastream is not provided, only the System Metadata will be indexed 
+  for that object. </p>
+<p>The search interface provides both simple and advanced searching via a web 
+  page included with the repository software. All queries are case insensitive. 
+  Simple search enables queries of words and phrases occurring anywhere in an 
+  object s indexed metadata fields. Advanced Search enables fielded searching 
+  across any combination of metadata elements using string comparison operators 
+  (= and ~) for string fields, and value comparison operators (=, &gt;, &gt;=, 
+  &lt;, &lt;=) for date fields (dc:date fields may be treated as both). The wildcards, 
+  * and ? may be used in any string-based query. </p>
 <p>More info coming soon...</p>
 </body>
 </html>
