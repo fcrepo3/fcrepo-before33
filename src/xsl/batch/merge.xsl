@@ -31,6 +31,7 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 		</xsl:copy>
 	</xsl:template>
 	
+	<!-- add per-object comment -->
 	<xsl:template match="/" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" >
 		<xsl:copy>
 			<xsl:if test="$substitutions/input/comment">
@@ -60,8 +61,9 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>
 	
-	<!-- substitute xform param data for @CREATEDATE and @LASTMODDATE -->
-	<xsl:template match="/METS:mets/METS:metsHdr" xmlns:METS="http://www.loc.gov/METS/" >
+	<!-- substitute xform param date for @CREATEDATE and @LASTMODDATE -->
+	<!-- /METS:mets/METS:metsHdr -->
+	<xsl:template match="METS:metsHdr" xmlns:METS="http://www.loc.gov/METS/" >
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
 			<xsl:if test="$date">
@@ -76,7 +78,7 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>
 
-	<!-- substitute xform param data for @CREATED -->
+	<!-- substitute xform param date for @CREATED -->
 	<xsl:template match="METS:techMD|METS:rightsMD|METS:sourceMD|METS:digiprovMD|METS:descMD|METS:file|METS:serviceBinding" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
@@ -89,14 +91,15 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>
 
-	<!-- substitute per-datastream metadata -->
-	<xsl:template match="/METS:mets/METS:dmdSecFedora/*/METS:mdWrap/METS:xmlData|/METS:mets/METS:amdSec/*/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
+	<!-- substitute metadata -->
+	<!-- /METS:mets/METS:dmdSecFedora/*/METS:mdWrap/METS:xmlData|/METS:mets/METS:amdSec/*/METS:mdWrap/METS:xmlData -->
+	<xsl:template match="METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
 			<xsl:variable name="metadataID" select="../../../@ID" /><!-- e.g., DIGIPROV1, from amdSec element -->			
 			<xsl:choose>
 				<xsl:when test="$substitutions/input/metadata/metadata[@ID=$metadataID]">
-					<xsl:apply-templates select="$substitutions/input/metadata/metadata[@ID=$metadataID]/*" />
+					<xsl:apply-templates select="$substitutions/input/metadata/metadata[@ID=$metadataID]/node()" />
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:apply-templates select="node()"/>
@@ -105,8 +108,9 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>
 
-	<!-- substitute per-datastream metadata labels -->
-	<xsl:template match="/METS:mets/METS:dmdSecFedora/*/METS:mdWrap|/METS:mets/METS:amdSec/*/METS:mdWrap" 
+	<!-- substitute metadata labels -->
+	<!-- /METS:mets/METS:dmdSecFedora/*/METS:mdWrap|/METS:mets/METS:amdSec/*/METS:mdWrap -->
+	<xsl:template match="METS:mdWrap" 
 		xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
@@ -121,12 +125,11 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 	</xsl:template>	
 
 	<!-- substitute per-datastream @xlink:title and @xlink:href -->
- 	<xsl:template match="/METS:mets/METS:fileSec/METS:fileGrp/METS:fileGrp/METS:file/METS:FLocat" xmlns:METS="http://www.loc.gov/METS/">
+	<!-- /METS:mets/METS:fileSec/METS:fileGrp/METS:fileGrp/METS:file/METS:FLocat -->
+ 	<xsl:template match="METS:FLocat" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:variable name="datastream" select="../../@ID" />
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
-
-			<!-- xsl:variable name="datastream" select="../../@ID" / -->
 			<xsl:variable name="prefix" select="concat('$substitutions/input/datastreams/datastream[@id=&quot;',
 				$datastream,
 				'&quot;]/')" />
