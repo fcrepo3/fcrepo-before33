@@ -261,23 +261,12 @@ public class Administrator extends JFrame {
         //     [O]ne Object...
         //     [M]ultiple Objects
         //   -----------
-        //   [A]dvanced
-        //     [P]urge Object
-        //     [V]iew Object XML
+        //   [P]urge Object
+        //   [V]iew Object XML
         //     ---------------------
-        //     [A]ccess Console
-        //     [M]anagement Console
-        //     ---------------------
-        //     [S]tdout/Stderr
         //   -----------
         //   [L]ogin
         //   E[x]it
-        // [S]earch
-        //   [L]ist all
-        //     [O]bjects
-        //     Behavior [M]echanisms
-        //     Behavior [D]efinitions
-        //   [C]ustom...
         JMenu fileMenu=new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
@@ -291,8 +280,22 @@ public class Administrator extends JFrame {
             }
         });
         JMenuItem fileNewBMech=new JMenuItem("Behavior Mechanism", KeyEvent.VK_M);
+        fileNewBMech.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createBMechBuilder();
+            }
+        });
+        
         JMenuItem fileNewBDef=new JMenuItem("Behavior Definition", KeyEvent.VK_D);
+        fileNewBDef.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createBDefBuilder();
+            }
+        });
+        
         fileNew.add(fileNewObject);
+        fileNew.add(fileNewBMech);
+        fileNew.add(fileNewBDef);
 
         //   [O]pen
         JMenuItem fileOpen=new JMenuItem(new ViewObject());
@@ -341,14 +344,20 @@ public class Administrator extends JFrame {
         fileIngest.add(fileIngestMultiple);
 
         //   [E]xport
-        JMenuItem fileExport=new JMenuItem(new ExportObject());
+        JMenu fileExport=new JMenu("Export");
         fileExport.setMnemonic(KeyEvent.VK_E);
-        fileExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+        
+        JMenuItem fileExportObject=new JMenuItem(new ExportObject());
+        fileExportObject.setMnemonic(KeyEvent.VK_O);
+        fileExportObject.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
                 ActionEvent.CTRL_MASK));
-        fileExport.setToolTipText("Exports a serialized Digitial Object to disk.");
+        fileExportObject.setToolTipText("Exports a serialized Digitial Object to disk.");
+        
+        JMenuItem fileExportMultiple=new JMenuItem("Multiple Objects...");
+        fileExportMultiple.setMnemonic(KeyEvent.VK_M);
+        fileExport.add(fileExportObject);
+        fileExport.add(fileExportMultiple);
 
-        //   [A]dvanced
-        JMenu fileAdvanced=new JMenu("Advanced");
         //     [V]iew Object XML
         JMenuItem fileViewXML=new JMenuItem(new ViewObjectXML());
         fileViewXML.setMnemonic(KeyEvent.VK_V);
@@ -361,46 +370,13 @@ public class Administrator extends JFrame {
         filePurge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
                 ActionEvent.CTRL_MASK));
         filePurge.setToolTipText("Permanently removes a Digitial Object from the repository.");
-        //     [A]ccess Console
-        JMenuItem fileAccess=new JMenuItem("Access Console",KeyEvent.VK_A);
-        fileAccess.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                createAccessConsole();
-            }
-        });
-        //     [M]anagement Console
-        JMenuItem fileManagement=new JMenuItem("Management Console",KeyEvent.VK_M);
-        fileManagement.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                createManagementConsole();
-            }
-        });
-        JMenuItem fileWatch=new JMenuItem("Stdout/Stderr Window", KeyEvent.VK_S);
-        fileWatch.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JInternalFrame viewFrame=new JInternalFrame("STDOUT/STDERR", true, true, true, true);
-                viewFrame.getContentPane().add(new JScrollPane(WATCH_AREA));
-                viewFrame.setSize(720,300);
-                viewFrame.setVisible(true);
-                Administrator.getDesktop().add(viewFrame);
-                try {
-                    viewFrame.setSelected(true);
-                } catch (java.beans.PropertyVetoException pve) {}    
-            }
-        });
-        fileAdvanced.add(fileViewXML);
-        fileAdvanced.add(filePurge);
-        fileAdvanced.addSeparator();
-        fileAdvanced.add(fileAccess);
-        fileAdvanced.add(fileManagement);
-        fileAdvanced.addSeparator();
-        fileAdvanced.add(fileWatch);
+
 
         //   [L]ogin
         JMenuItem fileLogin=new JMenuItem(new Login());
-        fileLogin.setMnemonic(KeyEvent.VK_L);
+        fileLogin.setMnemonic(KeyEvent.VK_R);
         fileLogin.setToolTipText("Changes the working repository.");
-        fileLogin.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
+        fileLogin.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ActionEvent.CTRL_MASK));
 
         //   E[x]it
         JMenuItem fileExit=new JMenuItem("Exit",KeyEvent.VK_X);
@@ -418,7 +394,8 @@ public class Administrator extends JFrame {
         fileMenu.add(fileIngest);
         fileMenu.add(fileExport);
         fileMenu.addSeparator();
-        fileMenu.add(fileAdvanced);
+        fileMenu.add(filePurge);
+        fileMenu.add(fileViewXML);
         fileMenu.addSeparator();
         fileMenu.add(fileLogin);
         fileMenu.add(fileExit);
@@ -439,6 +416,7 @@ public class Administrator extends JFrame {
         toolsMenu.setMnemonic(KeyEvent.VK_T);
 
         JMenuItem toolsSearch=new JMenuItem("Search/Browse Repository",KeyEvent.VK_S);
+        toolsSearch.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
         toolsSearch.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 createSearchRepository();
@@ -476,6 +454,40 @@ public class Administrator extends JFrame {
         toolsMenu.add(toolsBatchSubMenu);
         // < wdn
 
+        //     [A]ccess Console
+        JMenuItem toolsAccess=new JMenuItem("Access API",KeyEvent.VK_A);
+        toolsAccess.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createAccessConsole();
+            }
+        });
+        //     [M]anagement Console
+        JMenuItem toolsManagement=new JMenuItem("Management API",KeyEvent.VK_M);
+        toolsManagement.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createManagementConsole();
+            }
+        });
+        JMenuItem toolsWatch=new JMenuItem("Stdout/Stderr", KeyEvent.VK_S);
+        toolsWatch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JInternalFrame viewFrame=new JInternalFrame("STDOUT/STDERR", true, true, true, true);
+                viewFrame.getContentPane().add(new JScrollPane(WATCH_AREA));
+                viewFrame.setSize(720,300);
+                viewFrame.setVisible(true);
+                Administrator.getDesktop().add(viewFrame);
+                try {
+                    viewFrame.setSelected(true);
+                } catch (java.beans.PropertyVetoException pve) {}    
+            }
+        });
+        
+        JMenu toolsConsole=new JMenu("Console");
+        toolsConsole.setMnemonic(KeyEvent.VK_C);
+        toolsConsole.add(toolsAccess);
+        toolsConsole.add(toolsManagement);
+        toolsConsole.add(toolsWatch);
+        toolsMenu.add(toolsConsole);
 
         menuBar.add(toolsMenu);
 

@@ -45,12 +45,12 @@ public class ExportObject
     private boolean m_prompt;
 
     public ExportObject() {
-        super("Export Object...");
+        super("One Object...");
         m_prompt=true;
     }
 
     public ExportObject(String pid) {
-        super("Export Object...");
+        super("Export...");
         m_pids=new HashSet();
         m_pids.add(pid);
     }

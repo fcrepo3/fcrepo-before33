@@ -37,7 +37,7 @@ public class Login
         extends AbstractAction {
 
     public Login() {
-        super("Change working repository...");
+        super("Change Repository...");
     }
 
     public void actionPerformed(ActionEvent ae) {

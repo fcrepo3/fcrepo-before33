@@ -119,8 +119,8 @@ public class NewObjectDialog
                                  "Custom PID should be of the form \"namespace:1234\"",
                                  "Error",
                                  JOptionPane.ERROR_MESSAGE);
+                            ok=false;
                         }
-                        ok=false;
                     }
 
                     if (ok) {
