@@ -188,11 +188,9 @@ public class GeneralPane extends JPanel
 					if (parts.length==1) {
 						bDefPID=null;
 						bDefLabel=null;
-						//openBDefButton.setEnabled(false);
 					} else {
 						bDefPID=parts[0];
 						bDefLabel=parts[1];
-						//openBDefButton.setEnabled(true);
 					}
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(
@@ -201,12 +199,17 @@ public class GeneralPane extends JPanel
 							"Error getting behavior definition",
 							JOptionPane.ERROR_MESSAGE);
 				}
-				//if (!(bDefPID.equals(null)))
 				if (bDefPID != null)
 				{
 				  MethodsPane mp =
 					(MethodsPane)((BMechBuilder)parent).tabpane.getComponentAt(2);
 				  mp.renderContractMethods(bDefPID);
+				}
+				else
+				{
+					MethodsPane mp =
+					  (MethodsPane)((BMechBuilder)parent).tabpane.getComponentAt(2);
+					mp.clearContractMethods();
 				}
 			}
 		});	
