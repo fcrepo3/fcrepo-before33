@@ -129,9 +129,13 @@ public class DefaultManagement
         logFinest("Entered DefaultManagement.purgeObject");
         m_ipRestriction.enforce(context);
         // FIXME: This should get a writer and call remove, then commit instead...but this works for now
-        fedora.server.storage.types.BasicDigitalObject obj=new fedora.server.storage.types.BasicDigitalObject();
-        obj.setPid(pid);
-        ((fedora.server.storage.DefaultDOManager) m_manager).doCommit(context, obj, logMessage, true);
+        // fedora.server.storage.types.BasicDigitalObject obj=new fedora.server.storage.types.BasicDigitalObject();
+        // obj.setPid(pid);
+        // ((fedora.server.storage.DefaultDOManager) m_manager).doCommit(context, obj, logMessage, true);
+        DOWriter w=m_manager.getWriter(context, pid);
+        w.remove();
+        w.commit(logMessage);
+        m_manager.releaseWriter(w);
         logFinest("Exiting DefaultManagement.purgeObject");
     }
 
