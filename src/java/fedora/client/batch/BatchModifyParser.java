@@ -369,6 +369,17 @@ public class BatchModifyParser extends DefaultHandler
                         return;
                     }
                 }
+                // Check that MIME type is text/xml if datastream is XMLMetadata datastream
+                if (m_ds.DSControlGrp.equalsIgnoreCase("X") &&
+                        !m_ds.DSMIME.equalsIgnoreCase("text/xml") ) {
+                    failedCount++;
+                    addDatastream = false;
+                    logFailedDirective(m_ds.objectPID, localName, null,
+                    "Datastream dsMIME attribute must be \"text/xml\" when"
+                    + " adding datastreams of type \"X\". dsMIME type is: "
+                    + " \""+m_ds.DSMIME+"\".");
+                    return;
+                }
 
                 addDatastream = true;
 
