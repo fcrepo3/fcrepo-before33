@@ -50,25 +50,25 @@
 			<METS:fileGrp ID="DS1" STATUS="">
 				<!--This is the thumbnail resolution image -->
 				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" OWNERID="M" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" xlink:title="Thorny's Coliseum thumbnail jpg image"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://local.fedora.server/demo/simple-image-demo/coliseum-thumb.jpg" xlink:title="Thorny's Coliseum thumbnail jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS2" STATUS="">
 				<!-- This is the medium resoluion image -->
 				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" OWNERID="M" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg" xlink:title="Thorny's Coliseum medium jpg image"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://local.fedora.server/demo/simple-image-demo/coliseum-medium.jpg" xlink:title="Thorny's Coliseum medium jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS3">
 				<!--This is the high resolution image -->
 				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" OWNERID="M" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" xlink:title="Thorny's Coliseum high jpg image"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://local.fedora.server/demo/simple-image-demo/coliseum-high.jpg" xlink:title="Thorny's Coliseum high jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS4">
 				<!--This is the very high resolution image -->
 				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" OWNERID="M" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg" xlink:title="Thorny's Coliseum veryhigh jpg image"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://local.fedora.server/demo/simple-image-demo/coliseum-veryhigh.jpg" xlink:title="Thorny's Coliseum veryhigh jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>

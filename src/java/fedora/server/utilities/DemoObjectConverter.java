@@ -126,15 +126,16 @@ public class DemoObjectConverter
     {
       BufferedReader in=new BufferedReader(new FileReader(demoObject));
       String tempFile = demoObject.toString()+"-temp";
-      FileWriter out=new FileWriter(new File(tempFile));
+      //FileWriter out=new FileWriter(new File(tempFile));
+      OutputStream os = new FileOutputStream(new File(tempFile));
+      OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
       String nextLine="";
       while (nextLine!=null)
       {
         nextLine=in.readLine();
         if (nextLine!=null)
         {
-           nextLine = nextLine.replaceAll("localhost:", host+":");
-           nextLine = nextLine.replaceAll(":8080", ":"+new Integer(port).toString());
+           nextLine = nextLine.replaceAll("localhost:8080", "local.fedora.server");
            out.write(nextLine+"\n");
         }
       }

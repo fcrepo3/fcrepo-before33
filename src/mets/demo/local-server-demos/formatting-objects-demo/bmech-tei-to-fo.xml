@@ -47,7 +47,7 @@
 								<fsvp:tool name="tomcat" version="4.1" type="software application"/>
 								<fsvp:tool name="fedora" version="0.9" type="software application"/>
 							</fsvp:serviceImplDependencies>
-							<fsvp:serviceLiveTestURL>http://localhost:8080/saxon/</fsvp:serviceLiveTestURL>
+							<fsvp:serviceLiveTestURL>http://local.fedora.server/saxon/</fsvp:serviceLiveTestURL>
 						</fsvp:serviceImplementation>
 					</fsvp:serviceProfile>
 				</METS:xmlData>
@@ -146,7 +146,7 @@
 						<wsdl:service name="FedoraSaxon">
 							<!-- THIS IS THE HTTP PORT -->
 							<wsdl:port name="FedoraSaxon_port" binding="this:FedoraSaxon_http">
-								<http:address location="http://localhost:8080/saxon/"/>
+								<http:address location="http://local.fedora.server/saxon/"/>
 							</wsdl:port>
 						</wsdl:service>
 						<!-- ******************************************************************************************************************** -->
@@ -180,7 +180,7 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="">
 				<METS:file ID="DS1.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/html" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/saxon/" xlink:title="Programmer documentation"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://local.fedora.server/saxon/" xlink:title="Programmer documentation"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>
