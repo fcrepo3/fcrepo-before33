@@ -40,6 +40,7 @@ import edu.cornell.dlrg.swing.jhelp.SimpleContentViewerUI;
 import edu.cornell.dlrg.swing.mdi.MDIDesktopPane;
 import edu.cornell.dlrg.swing.mdi.WindowMenu;
 
+import fedora.client.actions.ViewObjectXML;
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
 import fedora.client.export.AutoExporter;
@@ -48,7 +49,7 @@ import fedora.client.purge.AutoPurger;
 
 public class Administrator extends JFrame {
 
-    private MDIDesktopPane m_desktop;
+    private static MDIDesktopPane s_desktop;
     
     private JDialog m_aboutDialog;
     
@@ -61,8 +62,8 @@ public class Administrator extends JFrame {
     
     private JLabel m_aboutPic;
     private JLabel m_aboutText;
-    private String m_host;
-    private int m_port;
+    private static String s_host;
+    private static int s_port;
 
     public Administrator(String host, int port) {
         super("Fedora Administrator - Server at " + host + ":" + port);
@@ -72,8 +73,8 @@ public class Administrator extends JFrame {
                 s_lastDir=f;
             }
         }
-        m_host=host;
-        m_port=port;
+        s_host=host;
+        s_port=port;
         
         cl=this.getClass().getClassLoader();
 
@@ -105,9 +106,9 @@ public class Administrator extends JFrame {
         setIconImage(new ImageIcon(cl.getResource("images/fedora/fedora-icon16.gif")).getImage());
         JPanel mainPanel=new JPanel();
         mainPanel.setLayout(new BorderLayout());
-        m_desktop=new MDIDesktopPane();
-        m_desktop.setVisible(true);
-        mainPanel.add(new JScrollPane(m_desktop), BorderLayout.CENTER);
+        s_desktop=new MDIDesktopPane();
+        s_desktop.setVisible(true);
+        mainPanel.add(new JScrollPane(s_desktop), BorderLayout.CENTER);
 //        JToolBar toolBar=new JToolBar("Toolbar");
 //        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/New24.gif"))));
 //        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/Open24.gif"))));
@@ -122,7 +123,7 @@ public class Administrator extends JFrame {
         
 
         //Make dragging faster:
-        //m_desktop.putClientProperty("JDesktopPane.dragMode", "outline");
+        //s_desktop.putClientProperty("JDesktopPane.dragMode", "outline");
         
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -132,6 +133,10 @@ public class Administrator extends JFrame {
         });
         
         splashScreen.setVisible(false);
+    }
+    
+    public static JDesktopPane getDesktop() {
+        return s_desktop;
     }
 
     protected JMenuBar createMenuBar() {
@@ -176,15 +181,11 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
 
 
 */
-        JMenuItem fileView=new JMenuItem("View...",KeyEvent.VK_V);
-        fileView.setToolTipText("Views an existing Digital Object");
+        JMenuItem fileView=new JMenuItem(new ViewObjectXML());
+        fileView.setMnemonic(KeyEvent.VK_V);
+        fileView.setToolTipText("Launches an XML viewer for an object.");
         fileView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, 
                 ActionEvent.CTRL_MASK));
-        fileView.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fileViewAction();
-            }
-        });
                 
 //        JMenuItem fileClose=new JMenuItem("Close",KeyEvent.VK_C);
 //        fileClose.setToolTipText("Closes the current Digital Object");
@@ -290,7 +291,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         menuBar.add(toolsMenu);
         
         
-        WindowMenu windowMenu=new WindowMenu(m_desktop, "Window");
+        WindowMenu windowMenu=new WindowMenu(s_desktop, "Window");
         windowMenu.setMnemonic(KeyEvent.VK_W);
         menuBar.add(windowMenu);
        
@@ -375,9 +376,9 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
     protected void fileNewAction() {
         // The below code opens a not-even-close-to-implemented GUI window for editing an object
         /*
-        DigitalObjectEditor frame = new DigitalObjectEditor(new DigitalObject(), m_desktop);
+        DigitalObjectEditor frame = new DigitalObjectEditor(new DigitalObject(), s_desktop);
         frame.setVisible(true);
-        m_desktop.add(frame);
+        s_desktop.add(frame);
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
@@ -400,8 +401,8 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                 String host;
                 int port;
                 String logMessage;
-                host=m_host;
-                port=m_port;
+                host=s_host;
+                port=s_port;
                 logMessage="First import.";
                 AutoIngestor ingestor=new AutoIngestor(host, port);
                 String pid=ingestor.ingestAndCommit(in, logMessage);
@@ -412,32 +413,6 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             JOptionPane.showMessageDialog(this,
                     e.getClass().getName() + ": " + e.getMessage(),
                     "Ingest Failure",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    protected void fileViewAction() {
-        try {
-            String pid=JOptionPane.showInputDialog("Enter the PID."); 
-            AutoExporter exporter=new AutoExporter(m_host, m_port);
-            ByteArrayOutputStream out=new ByteArrayOutputStream();
-            exporter.export(pid, out);
-            JInternalFrame viewFrame=new JInternalFrame("Viewing " + pid, true, true, true, true);
-            viewFrame.setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Edit16.gif")));
-            JTextComponent textEditor=new JTextArea();
-            textEditor.setFont(new Font("monospaced", Font.PLAIN, 12));
-            textEditor.setText(new String(out.toByteArray()));
-            viewFrame.getContentPane().add(new JScrollPane(textEditor));
-            viewFrame.setSize(300,300);
-            viewFrame.setVisible(true);
-            m_desktop.add(viewFrame);
-            try {
-                viewFrame.setSelected(true);
-            } catch (java.beans.PropertyVetoException pve) {}
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    e.getClass().getName() + ": " + e.getMessage(),
-                    "View Failure",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -461,8 +436,8 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                 s_lastDir=file.getParentFile(); // remember the dir for next time
                 String host;
                 int port;
-                host=m_host;
-                port=m_port;
+                host=s_host;
+                port=s_port;
                 AutoExporter exporter=new AutoExporter(host, port);
                 exporter.export(pid, new FileOutputStream(file));
                 JOptionPane.showMessageDialog(this,
@@ -484,8 +459,8 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             if (reason!=null) {
             String host;
             int port;
-            host=m_host;
-            port=m_port;
+            host=s_host;
+            port=s_port;
             AutoPurger purger=new AutoPurger(host, port);
             purger.purge(pid, reason);
             JOptionPane.showMessageDialog(this,
@@ -500,9 +475,9 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
     }
     
     protected void createRepositoryBrowser() {
-        RepositoryBrowser frame=new RepositoryBrowser(this);
+        RepositoryBrowser frame=new RepositoryBrowser();
         frame.setVisible(true);
-        m_desktop.add(frame);
+        s_desktop.add(frame);
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
@@ -511,7 +486,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
     protected void createManagementConsole() {
         ManagementConsole frame=new ManagementConsole(this);
         frame.setVisible(true);
-        m_desktop.add(frame);
+        s_desktop.add(frame);
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
@@ -520,7 +495,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
     protected void createAccessConsole() {
         AccessConsole frame=new AccessConsole(this);
         frame.setVisible(true);
-        m_desktop.add(frame);
+        s_desktop.add(frame);
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
@@ -541,12 +516,12 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         return new Point(prefXPos, prefYPos);
     }
     
-    public String getHost() {
-        return m_host;
+    public static String getHost() {
+        return s_host;
     }
 
-    public int getPort() {
-        return m_port;
+    public static int getPort() {
+        return s_port;
     }
 
     public static void main(String[] args) {
