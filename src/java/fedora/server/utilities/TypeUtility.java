@@ -237,6 +237,7 @@ public abstract class TypeUtility
       genMethodParmDef.setParmName(methodParmDef.parmName);
       genMethodParmDef.setParmLabel(methodParmDef.parmLabel);
       genMethodParmDef.setParmDefaultValue(methodParmDef.parmDefaultValue);
+      genMethodParmDef.setParmDomainValues(methodParmDef.parmDomainValues);
       genMethodParmDef.setParmRequired(methodParmDef.parmRequired);
       genMethodParmDef.setParmType(methodParmDef.parmType);
       return genMethodParmDef;
@@ -384,6 +385,22 @@ public abstract class TypeUtility
         objectMethodDef.PID = genObjectMethodDefs[i].getPID();
         objectMethodDef.bDefPID = genObjectMethodDefs[i].getBDefPID();
         objectMethodDef.methodName = genObjectMethodDefs[i].getMethodName();
+
+        fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
+            genObjectMethodDefs[i].getMethodParmDefs();
+        fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
+        if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
+        {
+          methodParmDefs =
+              new fedora.server.storage.types.MethodParmDef[
+              genMethodParmDefs.length];
+          for (int j=0; j<genMethodParmDefs.length; j++)
+          {
+            methodParmDefs[j] = convertGenMethodParmDefToMethodParmDef(
+            genMethodParmDefs[j]);
+          }
+        }
+        objectMethodDef.methodParmDefs = methodParmDefs;
         objectMethodDefs[i] = objectMethodDef;
       }
       return objectMethodDefs;
@@ -415,6 +432,15 @@ public abstract class TypeUtility
       objectMethodDef.PID = genObjectMethodDef.getPID();
       objectMethodDef.bDefPID = genObjectMethodDef.getBDefPID();
       objectMethodDef.methodName = genObjectMethodDef.getMethodName();
+      fedora.server.types.gen.MethodParmDef[] genMethodParmDefs =
+          genObjectMethodDef.getMethodParmDefs();
+      fedora.server.storage.types.MethodParmDef[] methodParmDefs = null;
+      if (genMethodParmDefs != null && genMethodParmDefs.length > 0)
+      {
+        methodParmDefs = convertGenMethodParmDefArrayToMethodParmDefArray(
+            genMethodParmDefs);
+      }
+      objectMethodDef.methodParmDefs = methodParmDefs;
       return objectMethodDef;
 
     } else
@@ -446,6 +472,20 @@ public abstract class TypeUtility
         genObjectMethodDef.setPID(objectMethodDefs[i].PID);
         genObjectMethodDef.setBDefPID(objectMethodDefs[i].bDefPID);
         genObjectMethodDef.setMethodName(objectMethodDefs[i].methodName);
+        fedora.server.storage.types.MethodParmDef[] methodParmDefs =
+            objectMethodDefs[i].methodParmDefs;
+        fedora.server.types.gen.MethodParmDef[] genMethodParmDefs = null;
+        if (methodParmDefs != null && methodParmDefs.length > 0)
+        {
+          genMethodParmDefs =
+              new fedora.server.types.gen.MethodParmDef[methodParmDefs.length];
+          for (int j=0; j<methodParmDefs.length; j++)
+          {
+            genMethodParmDefs[j] =
+                     convertMethodParmDefToGenMethodParmDef(methodParmDefs[j]);
+          }
+        }
+        genObjectMethodDef.setMethodParmDefs(genMethodParmDefs);
         genObjectMethodDefs[i] = genObjectMethodDef;
       }
       return genObjectMethodDefs;
