@@ -333,7 +333,6 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   {
     Date versDate = DateUtility.convertCalendarToDate(asOfDateTime);
     Datastream ds = reader.GetDatastream(itemID, versDate);
-    ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
     InputStream in = null;
     if (ds.DSControlGrp.equalsIgnoreCase("R"))
     {
@@ -432,7 +431,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       {
         // Can never occur since Java fully supports UTF-8
       }
-        return new MIMETypedStream("text/html",in);
+      return new MIMETypedStream("text/html",in);
 
     } else
     {
@@ -440,14 +439,8 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       try
       {
         in = ds.getContentStream();
-        byte[] buffer = new byte[4096];
-        while ((byteStream = in.read(buffer)) >= 0)
-        {
-          out.write(buffer, 0, byteStream);
-        }
-        buffer = null;
-        in.close();
-        } catch (Exception e)
+
+      } catch (Exception e)
         {
           StringBuffer errorText = new StringBuffer();
           errorText.append("<html><title>Datastream Flagged For Deletion</title>");
@@ -488,8 +481,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
           }
           return new MIMETypedStream("text/html",in);
         }
-        InputStream is = new ByteArrayInputStream(out.toByteArray());
-        return new MIMETypedStream(ds.DSMIME, is);
+        return new MIMETypedStream(ds.DSMIME, in);
     }
   }
 
