@@ -43,13 +43,14 @@ public class DateTimeInputPanel
         JPanel nullPanel=new JPanel();
         nullPanel.setLayout(new BorderLayout());
         m_nullRadioButton=new JRadioButton("Use null");
+        m_nullRadioButton.setSelected(true);
         nullPanel.add(m_nullRadioButton, BorderLayout.WEST);
         add(nullPanel);
 
         JPanel textPanel=new JPanel();
         textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.X_AXIS));
         JRadioButton textRadioButton=new JRadioButton("Use text: ");
-        textRadioButton.setSelected(true);
+        textRadioButton.setSelected(false);
         textPanel.add(textRadioButton);
         m_textField=new JTextField(10);
         textPanel.add(m_textField);
