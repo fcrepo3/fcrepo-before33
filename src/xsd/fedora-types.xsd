@@ -148,7 +148,7 @@
 			<documentation>content stream of a digital object</documentation>
 		</annotation>
 		<sequence>
-			<element name="controlGroup" type="fedora-types:DatastreamControlGroupType"/>
+			<element name="controlGroup" type="fedora-types:DatastreamControlGroup"/>
 			<element name="ID" type="string"/>
 			<element name="versionID" type="string"/>
 			<element name="label" type="string"/>
@@ -157,17 +157,45 @@
 			<element name="size" type="long"/>
 			<element name="infoType" type="string">
                <annotation>
-                   <documentation>if inline xml, any mets-defined mdtype or anything else.  else unspecified.</documentation>
+                   <documentation>If inline xml, may be any string.
+                   this is intended to identify the schema to which the
+                   datastream conforms, by label.  It's based on
+                   the mets "mdType" attribute.
+                   </documentation>
                </annotation>
            </element>
 			<element name="class" type="string">
                <annotation>
-                   <documentation>if inline xml, digiprov, rights, technical, source, or descriptive.  else unspecified.</documentation>
+                   <documentation>if inline xml, digiprov, rights, technical, 
+                   source, or descriptive.  else unspecified.</documentation>
                </annotation>
            </element>
-			<element name="role" type="string">
+           <element name="role" type="fedora-types:DatastreamRole" minOccurs="0">
                <annotation>
-                   <documentation>see fedora-development archives, oct 11 2002</documentation>
+                   <documentation>A string indicating, for an inline technical 
+                   xml metatdata datastream inside a behavior definition or
+                   mechanism object, what role it plays.  Valid roles are
+                   "METHOD_DEFINITIONS" (for a behavior definition object), 
+                   "DATASTREAM_BINDING_SPEC" or "SERVICE_BINDING" (for a 
+                   behavior mechanism object).  This element has the following 
+                   validity constraints:
+                   1) When the Datastream is not XMLMetadata: 
+                      must not be specified
+                   2) When the Datastream is XMLMetadata:
+                        i) When the fedoraObjectType is "O": 
+                           must not be specified
+                       ii) When the fedoraObjectType is "D"
+                           a) When the class is "technical": 
+                           "METHOD_DEFINITIONS" or unspecified
+                           b) When the class is not "technical": 
+                           must not be specified
+                      iii) When the fedoraObjectType is "M"
+                           a) when the class is "technical": 
+                           "DATASTREAM_BINDING_SPEC" or "SERVICE_BINDING"
+                           or unspecified.
+                           b) When the class is not "technical": 
+                           must not be specified
+                 </documentation>
                </annotation>
            </element>
 			<element name="state" type="string"/>
@@ -198,13 +226,20 @@
 			<element name="dsBindings" type="fedora-types:ArrayOfDatastreamBinding"/>
 		</sequence>
 	</complexType>
-	<simpleType name="DatastreamControlGroupType">
+	<simpleType name="DatastreamControlGroup">
 		<restriction base="xsd:string">
 			<enumeration value="MANAGED_CONTENT"/>
 			<enumeration value="XML_METADATA"/>
 			<enumeration value="EXTERNAL_REF"/>
 		</restriction>
 	</simpleType>
+    <simpleType name="DatastreamRole">
+        <restriction base="xsd:string">
+            <enumeration value="METHOD_DEFINITIONS"/>
+            <enumeration value="DATASTREAM_BINDING_SPEC"/>
+            <enumeration value="SERVICE_BINDING"/>
+        </restriction>
+    </simpleType>
 	<complexType name="Disseminator">
 		<annotation>
 			<documentation>content stream of a digital object</documentation>
