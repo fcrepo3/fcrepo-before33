@@ -95,8 +95,8 @@ public class Administrator extends JFrame {
         cl=this.getClass().getClassLoader();
 
         m_aboutPic=new JLabel(new ImageIcon(cl.getResource("images/fedora/aboutadmin.gif")));
-        m_aboutText=new JLabel("<html>Copyright 2003<p>- The Rector and Visitors "
-                + "of the University of Virginia<p>- Cornell University<p><p>"
+        m_aboutText=new JLabel("<html>Copyright 2003, The Rector and Visitors of the<p>"
+                + "University of Virginia and Cornell University<p><p>"
                 + "Version: 1.0<p>Release Date: "
                 + "May 16, 2003<p>"
                 + "See http://www.fedora.info/ for "
