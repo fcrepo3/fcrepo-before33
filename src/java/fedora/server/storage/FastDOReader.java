@@ -540,7 +540,7 @@ public class FastDOReader implements DisseminatingDOReader
    * method definitions from WSDL in assocaited Behavior Mechanism object.
    */
   public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
-      throws GeneralException
+      throws GeneralException, ServerException
   {
     try
     {
