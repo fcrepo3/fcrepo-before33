@@ -31,14 +31,32 @@
             $Id$ 
         </releaseinfo>
 	</articleinfo>
-		<sect1>
+	<sect1>
 		<title>Release 1.2 - December 15, 2003</title>
 		<para>This new release contains a number of significant new features, including content versioning, the complete implementation of the Fedora Management interface, and major additions to the Fedora Administrator client to enable object creation and editing.  With the advent of content versioning, the Fedora Access interfaces now support date-time stamped requests, so that a client can "go back in time" and see a digital object as it looked in the past.  Additionally, this release provides a migration utility for mass export and mass ingest of objects from either directories or other repositories.  The migration utility enables the moving of objects from older versions of Fedora repositories into the lastest version.  It also is of general utility for moving objects among repositories, for unloading repositories, and for bulk ingest of objects.</para>
 		<sect2>
-			<title>IMPORTANT!  UPGRADING FROM A PREVIOUS RELEASE</title>
-			<para>This new release is backward compatible with Fedora 1.1 and Fedora 1.1.1, however the digital objects from the old repository must be migrated into the new Fedora 1.2 repository.  DO NOT install Fedora 1.2 on top of a previous Fedora installation if you want to migrate digital objects from an old repository to the new Fedora 1.2 repository.  </para>
-			<para>A repository migration utility is provided with Fedora 1.2 to easily perform a mass export and mass ingest of objects from the old repository to the new repository.  The repository migration utility can move objects among Fedora 1.1, Fedora 1.1.1, and Fedora 1.2 repositories.  If you are upgrading from Fedora 1.0, please first upgrade to Fedora 1.1 before installing Fedora 1.2 so that you can migrate your digital objects.  </para>
-			<para> MIGRATION: </para>
+			<title>IMPORTANT!!! Upgrading From a Previous Release of Fedora</title>
+			<para>This release is backward compatible with Fedora 1.1 and Fedora 1.1.1, however the digital objects from the old repository must be migrated into the new Fedora 1.2 repository.   If you want to migrate digital objects from an old repository to the new Fedora 1.2 repository, DO NOT INSTALL FEDORA 1.2 ON TOP OF THE PREVIOUS RELEASE.  To upgrade from a previous release and migrate digital objects into the new repository follow these steps: </para>
+			<sect3>
+				<title><emphasis>STEP 1 - INSTALLATION: </emphasis></title>
+				<para>Follow the steps outlined in the <ulink url="../distribution/installation.html">Fedora Installation Guide.</ulink>  If you plan to migrate digital objects from a repository that is a 	previous version of Fedora, be sure to configure the new Fedora 1.2 installation to run in parallel to the existing installation.  After the new Fedora 1.2 is installed, you will run a migration 	utility that will unload all objects from your old repository and ingest them into your new repository. <emphasis>If you are installing Fedora 1.2 on the same machine as a previous version, 	make sure to set the following configurations for the Fedora 1.2 installation:</emphasis></para>
+				<sect4>
+					<para>1. install Fedora 1.2 into a different directory than the previous installation (set FEDORA_HOME environment variable accordingly)</para>
+					<para>2. initialize the Fedora 1.2 database with a database name for Fedora 1.2 (via mysql-config or mckoi-init command line scripts) </para>
+					<para>3. set a different port for Fedora 1.2 to run on (fedoraServerPort in the Fedora config file fedora.fcfg)</para>
+					<para>4. set a different shutdown port for Fedora 1.2 (fedoraShutdownPort)</para>
+					<para>5. set a different redirect port for Fedora 1.2 (fedoraRedirectPort)</para>
+					<para>6. set a different storage path for digital objects (object_store_base)</para>
+					<para>7. set a different storage path for datastreams (datastream_store_base) </para>
+					<para>8. set a different storage path for temporary files (temp_store_base) </para>
+					<para>9. set the Fedora 1.2 repository to allow the PIDs from the old repository to be accepted (add namspaces to retainPIDs in fedora.fcfg)</para>
+					<para>10. if the OLD Fedora installation is running on <emphasis>a different machine</emphasis>, modify the fedora configuration file of the OLD Fedora installation to 	requests to be made by the new Fedora 1.2 repository. (Add IP address of Fedora 1.2 repository to allowHosts in fedora.fcfg of OLD repository.)</para>
+				</sect4>
+			</sect3>
+			<sect3>
+				<title><emphasis>STEP 2 - MIGRATION:</emphasis></title>
+				<para>Follow the instructions in the  <ulink url="../distribution/migration.html">Fedora Migration Utility Guide.</ulink> to migrate digital objects from your previous Fedora 	installation to the new Fedora 1.2 repository.  The new repository migration utility is provided with Fedora 1.2 to easily perform a mass export and mass ingest of objects from the old 	repository to the new repository.  The repository migration utility can copy or move objects among Fedora 1.1, Fedora 1.1.1, and Fedora 1.2 repositories. <emphasis> If you are upgrading from Fedora 1.0, please first upgrade to Fedora 1.1 before installing Fedora 1.2 since the migration utility does not work with Fedora 1.0. </emphasis></para>
+			</sect3>
 		</sect2>
 		<sect2>
 			<title>NEW FEATURES:</title>
@@ -52,16 +70,16 @@
 			</sect3>
 			<sect3>
 				<title>3.  Fedora Administrator – Object Editor and Version Viewer.</title>
-				<para>The new content versioning features can be easily accessed via new menu items in the Fedora Administrator client (also known as Admin GUI).  The new object editor features (i.e., File/New, File/Open) provides the ability to create and maintain digital objects through a graphical user interface.  Using these menu items, the user can create a new digital object, as well as add/modify/delete Datastreams and Disseminators.  , and view the different versions of these components.   For details see the Fedora Administrator guide and Fedora Versioning guide.</para>
+				<para>The new content versioning features can be easily accessed via new menu items in the Fedora Administrator client (also known as Admin GUI).  The new object editor features (i.e., File/New, File/Open) provides the ability to create and maintain digital objects through a graphical user interface.  Using these menu items, the user can create a new digital object, as well as add/modify/delete Datastreams and Disseminators, and view the different versions of these components.   For details see the  <ulink url="../client/admin-gui/index.html">Fedora Administrator Client documentation</ulink> and the <ulink url="../distribution/versioning.html"> Fedora Content Versioning documentation.</ulink></para>
 			</sect3>
 			<sect3>
 				<title>4.  Date-Time-stamped Access Requests.</title>
-				<para>Building on the capabilities of the new content versioning features, the Fedora repository will now support time-stamped disseminations and API-A requests.  This enables a client accessing Fedora to be able to request a view of a digital object as it looked at a particular point in time.  The syntax for using date-time in access requests is documented in the Client Documentation for API-A and API-A-Lite as well as in the WSDL API documents.</para>
+				<para>Building on the capabilities of the new content versioning features, the Fedora repository will now support time-stamped disseminations and API-A requests.  This enables a client accessing Fedora to be able to request a view of a digital object as it looked at a particular point in time.  The syntax for using date-time in access requests is documented in the <ulink url="../client/servlet/soapclient/index.html">Client Documentation for API-A </ulink> and  <ulink url="../client/browser/apialite/index.html">API-A-Lite</ulink>  as well as in the <ulink url="http://www.fedora.info/definitions/1/0/api/">WSDL API documents.</ulink></para>
 				<para>The algorithm Fedora uses to evaluate date-time-stamped requests is an “as of date” approach, meaning that the repository will return a view of content as it looked “as of” a particular date-time.  The date-time stamp provided by the client is interpreted by Fedora as a “ceiling” threshold.  As such, the repository will evaluate the version dates on Datastreams and Disseminators and return the view of content that is as close to the requested date-time without being greater than the requested date-time.</para>
 			</sect3>
 			<sect3>
 				<title>5.  Migration Utility.</title>
-				<para>New utility to mass export objects from one repository and ingest them into another repository.</para>
+				<para>A new migration utility is provided to perform mass export and mass ingest of objects.   At the core, the migration utility is built upon two newly enhanced command-line functions:  fedora-export and fedora-import.  Used together, these two command line functions can support a variety of scenarios involving moving or copying objects between repositories. The utility is general-purpose in that it can be used to copy or move objects among repositories for many reasons including upgrading from previous releases of Fedora.  Client access to the migration comes in two forms: (1) run fedora-export and fedora-import at the command line, or (2) use the Fedora Administrator client to invoke these functions (see menu items File/Ingest and File/Export).  Please consult the <ulink url="../distribution/migration.html">Fedora Migration Utility Guide.</ulink> to learn how to use the new migration functionality.</para>
 			</sect3>
 			<sect3>
 				<title>6.	 Externally-generated PIDs Accepted by Repository.</title>
@@ -69,22 +87,19 @@
 			</sect3>
 			<sect3>
 				<title>7.	 PID Generation via Management Interface (getNextPID).</title>
-				<para>In Fedora 1.2 the PID generation module has been exposed in the Fedora Management web service.  Formerly, the PID generator was an internal module accessible only by other modules in the Fedora code base.  Now, client can use the getNextID operation to request new PIDs from the repository.   This is helpful in certain workflows where it is necessary to know ahead of time the PIDs of  digital objects that are yet to be ingested into the repository, and there is a desire to have Fedora generate these PIDs.  The getNextPID operation is part of the Fedora Management interface.  At this time, the operation is exposed exclusively as a REST-oriented binding, meaning there is a specific URL syntax for requesting PIDs.  See the WSDL API Documentation for API-M-Lite.</para>
+				<para>In Fedora 1.2 the PID generation module has been exposed in the Fedora Management web service.  Formerly, the PID generator was an internal module accessible only by other modules in the Fedora code base.  Now, client can use the getNextID operation to request new PIDs from the repository.   This is helpful in certain workflows where it is necessary to know ahead of time the PIDs of  digital objects that are yet to be ingested into the repository, and there is a desire to have Fedora generate these PIDs.  The getNextPID operation is part of the Fedora Management interface.  At this time, the operation is exposed exclusively as a REST-oriented binding, meaning there is a specific URL syntax for requesting PIDs.  See the <ulink url="http://www.fedora.info/definitions/1/0/api/#apimlite"> WSDL API Documentation for API-M-Lite.</ulink></para>
 			</sect3>
 			<sect3>
 				<title>8.	Fedora Administrator – Behavior Definition/Mechanism Builders.</title>
-				<para>A number of enhancements have been made to the Behavior Definition and Behavior Mechanism builders (see the Builders menu).</para>
+				<para>A number of enhancements have been made to the Behavior Definition and Behavior Mechanism builders that are found within the Fedora Administrator client application (see the Builders menu).</para>
 				<sect4>
-					<title>a.	Service profile for Behavior Mechanism Objects.</title>
-				<para>A tab pane for entering metadata about the service that is represented by a Behavior Mechanism object.  The service profile metadata consists of information about the technologies that underlie the service, the valid input and output formats of the service, and other technical metadata.</para>
+					<para><emphasis>a.  Service profile for Behavior Mechanism Objects. </emphasis>  A tab pane for entering metadata about the service that is represented by a Behavior Mechanism object.  The service profile metadata consists of information about the technologies that underlie the service, the valid input and output formats of the service, and other technical metadata.</para>
 				</sect4>
 				<sect4>
-					<title>b.	Selection of behavior contract for a Behavior Mechanism Objects</title>
-				<para>A drop-down list of all the Behavior Definition objects in the connected repository is provided in the Behavior Mechanism builder.  The user can select a Behavior Definition as the behavior contract when building Behavior Mechanism objects.  The methods defined by the Behavior Definition objects are pre-loaded into the builder tool to assist in building a Behavior Mechanism object.</para>
+					<para><emphasis>b.  Selection of behavior contract for a Behavior Mechanism Objects.  </emphasis>  A drop-down list of all the Behavior Definition objects in the connected repository is provided in the Behavior Mechanism builder.  The user can select a Behavior Definition as the behavior contract when building Behavior Mechanism objects.  The methods defined by the Behavior Definition objects are pre-loaded into the builder tool to assist in building a Behavior Mechanism object.</para>
 				</sect4>
 				<sect4>
-					<title>c.	Various enhancements.</title>
-				<para>Help buttons, better table entry for Dublin Core records, better management of dialog windows (e.g., no lost windows outside of main frame), minor bug fixes, and cosmetics.</para>
+					<para><emphasis>c. Various enhancements. </emphasis>  Help buttons, better table entry for Dublin Core records, better management of dialog windows (e.g., no lost windows outside of main frame), minor bug fixes, and cosmetics.</para>
 				</sect4>
 			</sect3>
 			<sect3>
@@ -127,19 +142,19 @@
 				<para>If a Datastream had a non-active state, they were still able to be disseminated via API-A and API-A-Lite.  Inactive or deleted datastreams are not intended to be seen via the Fedora access interfaces.  However, they can be seen via the management interface.  In this new release, only active (state=”A”) datastreams will be accessible via API-A and API-A-Lite.  If a dissemination is run that involved a non-active datastream, the repository will throw an exception and provide a meaningful message. </para>
 			</sect3>
 			<sect3>
-				<title>7.	Dissemination of Inactive or Deleted Datastreams.</title>
-				<para>If a Datastream had a non-active state, they were still able to be disseminated via API-A and API-A-Lite.  Inactive or deleted datastreams are not intended to be seen via the Fedora access interfaces.  However, they can be seen via the management interface.  In this new release, only active (state=”A”) datastreams will be accessible via API-A and API-A-Lite.  If a dissemination is run that involved a non-active datastream, the repository will throw an exception and provide a meaningful message. </para>
+				<title>8.	Possible Database Corruption as Result of Purging Objects.</title>
+				<para>Due to the way the relational database for the object cache was normalized, there was the potential for database corruption to occur in certain cases of purging objects.  During purge, rows in the datastream binding map table could be inadvertently deleted during purge object when there were still other objects depending on those rows.   New referential integrity checks have been put into the database replication module that ensures that this will not occur. </para>
 			</sect3>
 		</sect2>
 		<sect2>
-			<title>KNOWN ISSUES:</title>
+			<title>KNOWN ISSUES (and ways to avoid them):</title>
 			<sect3>
 				<title>1. Object State on Ingest submission package.</title>
 				<para>In a METS XML file used for ingest, object state is encoded on the RECORDSTATUS attribute of the METS header element.  If this value is populated on the ingest file, the Fedora repository will accept it as is.  This implication of this is that if the value of RECORDSTATUS is set to anything other than “A” (Active), the object will not be accessible via the Fedora Access interface.  In other words, the object will not be considered active, and it will not be able to be disseminated.  If objects are ingested in the inactive state,  the state can be modified via the new object editor in the Fedora Administrator client (see menu item File/Open Object). </para>
 			</sect3>
 			<sect3>
 				<title>2.	Bug in MySQL v4.0.12 on Linux causes database corruption.</title>
-				<para>The problem shows up only in Linux when running MySQL v4.0.12.  Specifically, if a purgeDisseminator operation is run in the Fedora repository the problem is provoked.  The purgeDisseminator operation removes a disseminator from a Fedora object XML store, and also initiates a replication process to make sure the disseminator is removed from the relational database object cache.  Internal to the Fedora code, an SQL delete query is run via JDBC.  The offending query uses a where clause that should dependably evaluate to FALSE (i.e., “WHERE 1=2”), but in this particular version of MySQL under Linux, the query curiously and erroneously evaluates to TRUE.  This particular query is intended to prevent certain rows from being deleted from the database.  Instead rows are deleted resulting in referential integrity problems in the database.  The solution to this problem is to upgrade to MySQL v4.0.14 or later which does not have this bug.</para>
+				<para>The problem shows up only in Linux when running MySQL v4.0.12.  Specifically, if a purgeDisseminator operation is run in the Fedora repository the problem is provoked.  The purgeDisseminator operation removes a disseminator from a Fedora object XML store, and also initiates a replication process to make sure the disseminator is removed from the relational database object cache.  Internal to the Fedora code, an SQL delete query is run via JDBC.  The offending query uses a where clause that should dependably evaluate to FALSE (i.e., “WHERE 1=2”), but in this particular version of MySQL under Linux, the query curiously and erroneously evaluates to TRUE.  This particular query is intended to prevent certain rows from being deleted from the database.  Instead rows are deleted resulting in referential integrity problems in the database.  The solution to this problem is to upgrade to MySQL v4.0.14 or higher which does not have this bug.</para>
 			</sect3>
 			<sect3>
 				<title>3.	Field Search via API-A (SOAP binding) not backwards compatible.</title>
@@ -151,7 +166,7 @@
 			</sect3>
 		</sect2>
 	</sect1>
-<!-- old releases -->
+	<!-- old releases -->
 	<sect1>
 		<title>Release 1.1.1 (Bug Fix Release) - September 5, 2003</title>
 		<para>Fedora 1.1.1 provides a fix for bugs detected by users of Fedora 1.1.</para>
