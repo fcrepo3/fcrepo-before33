@@ -345,7 +345,7 @@ public class MethodPropertiesDialog extends JDialog
     {
       if (mp.protocolType.equalsIgnoreCase(mp.HTTP_MESSAGE_PROTOCOL))
       {
-        if (mp.methodFullURL.equalsIgnoreCase("") || mp.methodFullURL == null)
+        if (mp.methodFullURL == null || mp.methodFullURL.trim().equals(""))
         {
           assertMethodPropertiesMsg("You must enter an HTTP binding URL for method!");
           return false;
@@ -384,19 +384,19 @@ public class MethodPropertiesDialog extends JDialog
 
     private boolean validMethodParm(MethodParm parm)
     {
-      if ((parm.parmType == null) || (parm.parmType.equalsIgnoreCase("")))
+      if (parm.parmType == null || parm.parmType.trim().equals(""))
       {
         assertMethodPropertiesMsg("A value for 'Parm Type' must be selected for parm "
           + parm.parmName);
         return false;
       }
-      else if ((parm.parmRequired == null) || (parm.parmRequired.equals("")))
+      else if (parm.parmRequired == null || parm.parmRequired.trim().equals(""))
       {
         assertMethodPropertiesMsg("A value for 'Required?' must be selected for parm "
           + parm.parmName);
         return false;
       }
-      else if ((parm.parmPassBy == null) || (parm.parmPassBy.equalsIgnoreCase("")))
+      else if (parm.parmPassBy == null || parm.parmPassBy.trim().equals(""))
       {
         assertMethodPropertiesMsg("A value for 'Pass By' must be selected for parm "
           + parm.parmName);
@@ -470,7 +470,19 @@ public class MethodPropertiesDialog extends JDialog
           parm.parmPassBy = ((String)passByTbl.get(parmTable.getValueAt(i,3)));
           parm.parmDefaultValue = ((String)parmTable.getValueAt(i,4));
           parm.parmLabel = ((String)parmTable.getValueAt(i,5));
-          parm.parmDomainValues = new String[0];
+
+          Vector domainValues = new Vector();
+          String values;
+          if ((values = (String)parmTable.getValueAt(i,6)) != null)
+          {
+            StringTokenizer st = new StringTokenizer(values, ",");
+            System.out.println("count domain parms = " + st.countTokens());
+            while (st.hasMoreElements())
+            {
+              domainValues.add(((String)st.nextElement()).trim());
+            }
+            parm.parmDomainValues = (String[])domainValues.toArray(new String[0]);
+          }
           parmMap.put(parm.parmName, parm);
         }
       }
@@ -558,6 +570,20 @@ public class MethodPropertiesDialog extends JDialog
 
         parmTable.setValueAt(parms[i].parmDefaultValue, i, 4);
         parmTable.setValueAt(parms[i].parmLabel, i, 5);
+
+        // render the existing domain values
+        StringBuffer sb2 = new StringBuffer();
+        System.out.println("count values: " + parms[i].parmDomainValues.length);
+        for (int i2=0; i2<parms[i].parmDomainValues.length; i2++)
+        {
+          sb2.append(parms[i].parmDomainValues[i2]);
+          int j = i+1;
+          if (!(j == parms[i].parmDomainValues.length))
+          {
+            sb2.append(",");
+          }
+        }
+        parmTable.setValueAt(sb2.toString(), i, 6);
       }
     }
 
