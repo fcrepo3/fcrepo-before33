@@ -9,7 +9,7 @@ public interface FieldSearch {
     
     public void delete(String pid) throws ServerException;
 
-    public Object[][] search(String[] resultFields, String condition) throws ServerException;
+    public Object[][] search(String[] resultFields, String condition, int firstResultIndex, int lastResultIndex) throws ServerException;
     
     public int count(String condition) throws ServerException;
 }
