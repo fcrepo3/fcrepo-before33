@@ -6,13 +6,12 @@ goto checkEnv
 
 set TOMCAT_DIR=@tomcat.basename@
 set TC=%FEDORA_HOME%\server\%TOMCAT_DIR%
+set TC_COMMON=%TC%\common\lib
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 set SERVER_CONTROLLER_LIBS=@ServerController.windows.libs@
 
 :undeploy
-
-set TC_COMMON=%TC%\common\lib
 
 echo Shutting down Fedora Servers and associated Modules...
 "%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;%SERVER_CONTROLLER_LIBS% -Dfedora.home=%FEDORA_HOME% fedora.server.ServerController shutdown
