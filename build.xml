@@ -815,6 +815,7 @@
 		<copy file="src/xsd/xlink.xsd" todir="dist/server/xsd"/>
 		<!-- ObjectMethods Schema used by API-A-LITE: local copy packaged with the repository distribution -->
 		<copy file="src/xsd/objectMethods.xsd" todir="dist/server/xsd"/>
+		<copy file="src/xsd/behaviorDefs.xsd" todir="dist/server/xsd"/>
 		<!-- Schematron:  Fedora rules schema and schematron preprocessor -->
 		<mkdir dir="dist/server/schematron"/>
 		<copy file="src/xml/schematron/fedoraRulesExt.xml" todir="dist/server/schematron"/>
@@ -915,7 +916,7 @@
 		<copy file="src/xsl/soapclient/objectMethods.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/viewObjectProfile.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/viewRepositoryInfo.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
-		<copy file="src/xsl/soapclient/behaviordefs.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
+		<copy file="src/xsl/soapclient/behaviorDefs.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
 		<copy file="src/web-app/userdocs/WEB-INF/web.xml" todir="dist/server/tomcat41/webapps/userdocs/WEB-INF"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/server/tomcat41/webapps/soapclient/images/"/>
