@@ -124,7 +124,9 @@ public class DBIDLookup {
 		query += "BDEF_DBID = " + bDefDBID + " AND ";
 		query += "BMECH_DBID = " + bMechDBID + " AND ";
 		query += "DISS_ID = '" + dissID + "';";
-System.out.println("lookupDisseminator, query = " + query);
+
+		// Debug statement
+		// System.out.println("lookupDisseminator, query = " + query);
 
 		statement = connection.createStatement();
 		rs = statement.executeQuery(query); 
@@ -176,7 +178,9 @@ System.out.println("lookupDisseminator, query = " + query);
 
 		query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
 		query += lookupColumnName + " = '" + lookupColumnValue + "';";
-System.out.println("lookupDBID1, query = " + query);
+
+		// Debug statement
+		// System.out.println("lookupDBID1, query = " + query);
 
 		statement = connection.createStatement();
 		rs = statement.executeQuery(query); 
@@ -215,7 +219,9 @@ System.out.println("lookupDBID1, query = " + query);
 		query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
 		query += lookupColumnName1 + " = '" + lookupColumnValue1 + "' AND ";
 		query += lookupColumnName2 + " = '" + lookupColumnValue2 + "';";
-System.out.println("lookupDBID2, query = " + query);
+
+		// Debug statement
+		// System.out.println("lookupDBID2, query = " + query);
 
 		statement = connection.createStatement();
 		rs = statement.executeQuery(query); 
@@ -246,12 +252,6 @@ System.out.println("lookupDBID2, query = " + query);
 		connection = db.getConnection();
 
 		DBIDLookup dl = new DBIDLookup();
-		/*
-		returnString = lookupDBID("DO_DBID", "DigitalObject", "DO_PID", "1007.lib.dl.test/image/iva/archerp01");
-
-		returnString = dl.lookupDBID(connection, args[0], args[1], args[2], args[3]);
-		System.out.println("lookupDBID returns: " + returnString);
-		*/
 
 		returnString = dl.lookupDigitalObjectDBID(connection, args[0]);
 		System.out.println("lookupDigitalObjectDBID returns: " + returnString);

@@ -33,7 +33,8 @@ public class DbmsConnection {
 
 	public DbmsConnection() throws Exception {
 		initDB();
-System.out.println("connectionPool: " + connectionPool);
+		// Debug statement
+		System.out.println("connectionPool: " + connectionPool);
 	}
 
 	public Connection getConnection() throws Exception {

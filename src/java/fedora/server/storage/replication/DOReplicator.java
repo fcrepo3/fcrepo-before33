@@ -165,8 +165,8 @@ public class DOReplicator {
 
 		if (!behaviorBindingsEntry.protocolType.equals("HTTP")) {
 
-System.out.println("Ignoring non HTTP protocol: " + behaviorBindingsEntry.protocolType
-	+ "i=" + i);
+			// Debug statement
+			// System.out.println("Ignoring non HTTP protocol: " + behaviorBindingsEntry.protocolType + "i=" + i);
 			// For the time being, ignore bindings other than HTTP.
 			continue;
 		}

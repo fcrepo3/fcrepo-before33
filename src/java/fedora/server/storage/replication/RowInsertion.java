@@ -245,9 +245,9 @@ public class RowInsertion {
 
 		statement = connection.createStatement();
 
-System.out.println("insertGen: insertionStatement = " + insertionStatement);
+		// Debug statement
+		//System.out.println("insertGen: insertionStatement = " + insertionStatement);
 		rowCount = statement.executeUpdate(insertionStatement); 
-System.out.println("rowCount = " + rowCount);
 		statement.close();
 	}
 
