@@ -203,7 +203,7 @@
 		<copy file="inc/server/xsd/wsdl.xsd" todir="temp/wsdl2java"/>
 		<copy file="inc/server/xsd/soapenc.xsd" todir="temp/wsdl2java"/>
 		<copy file="src/xsd/fedora-types.xsd" todir="temp/wsdl2java"/>
-		<copy file="src/xsd/fedora-binding.xsd" todir="temp/wsdl2java"/>
+		<copy file="src/xsd/fedora-behavior-bind.xsd" todir="temp/wsdl2java"/>
 		<echo message="API-M..."/>
 		<copy file="src/xsd/fedora-auditing.xsd" todir="temp/wsdl2java"/>
 		<copy file="src/wsdl/Fedora-API-M.wsdl" todir="temp/wsdl2java"/>
@@ -279,6 +279,7 @@
 		</copy>
 		<copy file="src/xsd/fedora-types.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/fedora-auditing.xsd" todir="dist/server/xsd"/>
+		<copy file="src/xsd/fedora-behavior-bind.xsd" todir="dist/server/xsd"/>
 		<!-- Fedora extension of the METS XML Schema:  local copy packaged with the repository distribution -->
 		<copy file="src/xsd/mets-fedora.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/xlink.xsd" todir="dist/server/xsd"/>
@@ -356,6 +357,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.49  2002/12/03 18:10:00  payette
+  minor changes to include new fedora-behavior-bind.xsd in distribution targets.
+
   Revision 1.48  2002/11/11 20:15:03  cwilper
   added classpathing of gnu getopt during client compilation
   and copying of the jar to the lib dir in the client distribution
