@@ -106,7 +106,7 @@ public class DefaultDOReplicator
             }
             hostPattern = Pattern.compile("http://"+fedoraServerHost+"/");
             hostPortPattern = Pattern.compile("http://"+fedoraServerHost+":"+fedoraServerPort+"/");
-            serializedLocalURLPattern = Pattern.compile("local.fedora.server");
+            serializedLocalURLPattern = Pattern.compile("http://local.fedora.server/");
             //System.out.println("Replicator: hostPattern is " + hostPattern.pattern());
             //System.out.println("Replicator: hostPortPattern is " + hostPortPattern.pattern());
             //
@@ -1836,13 +1836,13 @@ public class DefaultDOReplicator
           {
               //System.out.println("port is 80 and host-only pattern found - convert to l.f.s");
               return hostPattern.matcher(
-                locationString).replaceAll("local.fedora.server");
+                locationString).replaceAll("http://local.fedora.server/");
           }
           else
           {
               //System.out.println("looking for hostPort pattern to convert to l.f.s");
               return hostPortPattern.matcher(
-                locationString).replaceAll("local.fedora.server");
+                locationString).replaceAll("http://local.fedora.server/");
           }
         }
 
