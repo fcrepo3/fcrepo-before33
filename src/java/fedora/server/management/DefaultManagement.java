@@ -230,7 +230,7 @@ public class DefaultManagement
                     newds.DatastreamID=orig.DatastreamID;
                     newds.DSVersionID=orig.DSVersionID;
                     newds.DSLabel=dsLabel;
-                    //newds.DSMIME will be computed later
+                    newds.DSMIME=orig.DSMIME;
                     Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                     newds.DSCreateDT=nowUTC;
                     //newds.DSSize will be computed later
