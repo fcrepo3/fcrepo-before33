@@ -300,7 +300,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               response.setContentType(CONTENT_TYPE_HTML);
               out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
               TransformerFactory factory = TransformerFactory.newInstance();
-              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/behaviordefs.xslt")));
+              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/behaviorDefs.xslt")));
               Transformer transformer = template.newTransformer();
               Properties details = template.getOutputProperties();
               transformer.setParameter("title_", new StringValue("Fedora Digital Object"));
@@ -1336,22 +1336,22 @@ public class FedoraAccessSoapServlet extends HttpServlet
           if (versDateTime == null || DateUtility.
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
-            pw.write("<objectMethods "
+            pw.write("<behaviorDefs "
                 + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " pid=\"" + PID + "\" >");
             pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectMethods.xsd\"/>");
+                + " location=\"behaviorDefs.xsd\"/>");
           } else
           {
-            pw.write("<objectMethods "
+            pw.write("<behaviorDefs "
                 + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " pid=\"" + PID + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
             pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectMethods.xsd\"/>");
+                + " location=\"behaviorDefs.xsd\"/>");
           }
           String nextBdef = "null";
           String currentBdef = "";
@@ -1367,7 +1367,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                   + versDateTime + "\" />");
             }
           }
-          pw.write("</objectMethods>");
+          pw.write("</behaviorDefs>");
           pw.flush();
           pw.close();
         } catch (IOException ioe) {
