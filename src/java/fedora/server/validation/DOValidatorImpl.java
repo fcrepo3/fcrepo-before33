@@ -302,14 +302,24 @@ public class DOValidatorImpl implements DOValidator
       {
       // ALL forms of validation
       case 0:
-        validate_L1(objectAsFile, xmlSchemaLocalPath);
+        // FIXME: The order is swapped here as a temporary fix to the 
+        // xsd schemaLocation problem.  The schemaLocation problem manifests
+        // itself when a remote server hangs as a result of a request that
+        // the W3C Schema validation code makes as a result of seeing a
+        // schemaLocation element.  Here, level 1 is run *after* L2,
+        // so that L1 won't load schemas from schemaLocation attributes.
+        // (L2 ensures that there are no non-root schemaLocation elements)
         validate_L2(objectAsFile, schematronSchemaID, schematronPreprocessorID,
                    schematronValidatingXslID, workFlowPhase);
+        validate_L1(objectAsFile, xmlSchemaLocalPath);
         validate_L3(objectAsFile);
         break;
 
       // XML Schema Validation only
       case 1:
+        // FIXME: For the time being, this shouldn't be run without having
+        // first run L2 validation, or you risk hanging the running thread.
+        // This is due to the schemaLocation problem mentioned above.
         validate_L1(objectAsFile, xmlSchemaLocalPath);
         break;
 

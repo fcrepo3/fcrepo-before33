@@ -46,9 +46,9 @@ public class RandomDCMetadataFactory {
         out.append("<oai_dc:dc\n"
                 + "    xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\"\n"
                 + "    xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n"
-                + "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-                + "    xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/\n"
-                + "    http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">\n");
+                + "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
+//                + "    xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/\n"
+//                + "    http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">\n");
         for (int x=0; x<s_dcElements.length; x++) {
             String dcElement=s_dcElements[x];
             int num=1+getRandom(repeatMax);
