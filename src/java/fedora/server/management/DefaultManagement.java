@@ -465,7 +465,7 @@ public class DefaultManagement
                     fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                     audit.id="AUDIT" + w.getAuditRecords().size() + 1;
                     audit.processType="Fedora API-M";
-                    audit.action="modifyDatastreamByReference";
+                    audit.action="modifyDisseminator";
                     audit.responsibility=context.get("userId");
                     audit.date=nowUTC;
                     audit.justification=logMessage;
