@@ -1,11 +1,22 @@
 package fedora.server.storage;
 
+import java.sql.SQLException;
+import java.util.Hashtable;
+import java.util.Map;
+import java.util.regex.PatternSyntaxException;
+
+import fedora.server.errors.ConnectionPoolNotFoundException;
+import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.InitializationException;
+import fedora.server.Module;
+import fedora.server.Server;
+
 /**
  * <p>Title: ConnectionPoolManagerImpl.java</p>
  * <p>Description: Implements ConnectionPoolManager to facilitate obtaining
- * ConnectionPools. This class initializes the ConnectionPools specified
- * by parameters in the Fedora <code>fedora.fcfg</code> configuration file.
- * The Fedora server must be instantiated in order for this class to
+ * database connection pools. This class initializes the connection pools
+ * specified by parameters in the Fedora <code>fedora.fcfg</code> configuration
+ * file. The Fedora server must be instantiated in order for this class to
  * function properly.</p>
  *
  * <p>Copyright: Copyright (c) 2002</p>
@@ -13,38 +24,25 @@ package fedora.server.storage;
  * @author Ross Wayland
  * @version 1.0
  */
-
-// java imports
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.regex.PatternSyntaxException;
-import java.sql.SQLException;
-
-// Fedora imports
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.InitializationException;
-import fedora.server.Module;
-import fedora.server.Server;
-
 public class ConnectionPoolManagerImpl extends Module
     implements ConnectionPoolManager
 {
 
-  private static Hashtable h_ConnectionPools = null;
+  private static Hashtable h_ConnectionPools = new Hashtable();
+  private static String defaultPoolName = null;
+  private int minConnections = 0;
+  private int maxConnections = 0;
   private String jdbcDriverClass = null;
   private String dbUsername = null;
   private String dbPassword = null;
   private String jdbcURL = null;
-  private int initConnections = 0;
-  private int maxConnections = 0;
-  private static String defaultPoolName = null;
 
   /**
-   * <p>Creates a new ConnectionPoolManager</p>
+   * <p>Constructs a new ConnectionPoolManagerImpl</p>
    *
-   * @param moduleParameters The name and value pair map of module parameters
-   * @param server The server instance
-   * @param role The module role name
+   * @param moduleParameters The name/value pair map of module parameters.
+   * @param server The server instance.
+   * @param role The module role name.
    * @throws ModuleInitializationException If initialization values are
    *         invalid or initialization fails for some other reason.
    */
@@ -68,22 +66,21 @@ public class ConnectionPoolManagerImpl extends Module
   {
     try
     {
-      h_ConnectionPools = new Hashtable();
       Server s_server = this.getServer();
-      // Get default pool name
       defaultPoolName = this.getParameter("defaultPoolName");
       if (defaultPoolName == null || defaultPoolName.equalsIgnoreCase(""))
       {
-        String message = "Default Connection Pool Name Not Specified";
-        throw new ModuleInitializationException(message,
+        throw new ModuleInitializationException("Default Connection Pool " +
+            "Name Not Specified",
             "fedora.server.storage.ConnectionPoolManagerImpl");
       }
       System.out.println("DefaultPoolName: "+defaultPoolName);
-      // Get list of pool names from fedora.fcfg config file
       String poolList = this.getParameter("poolNames");
-      // Names should be comma delimted so parse out names
+
+      // Pool names should be comma delimited
       String[] poolNames = poolList.split(",");
-      // Initialize each pool found
+
+      // Initialize each connection pool
       for (int i=0; i<poolNames.length; i++)
       {
         System.out.println("poolName["+i+"] = "+poolNames[i]);
@@ -100,39 +97,40 @@ public class ConnectionPoolManagerImpl extends Module
                   getParameter("jdbcURL");
         System.out.println("URL: "+jdbcURL);
         Integer i1 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
-                                 getParameter("minPoolSize"));
-        int initConnections = i1.intValue();
-        System.out.println("min: "+initConnections);
+                  getParameter("minPoolSize"));
+        int minConnections = i1.intValue();
+        System.out.println("min: "+minConnections);
         Integer i2 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
-                                 getParameter("maxPoolSize"));
+                  getParameter("maxPoolSize"));
         int maxConnections = i2.intValue();
         System.out.println("max: "+maxConnections);
-        System.out.flush();
+
         // Create connection pool
-        ConnectionPool connectionPool = new ConnectionPool(jdbcDriverClass,
-            jdbcURL, dbUsername, dbPassword, initConnections, maxConnections,
-            true);
-        // Add ConnectionPool to hashtable
-        System.out.println("Initialized Pool: "+connectionPool);
-        h_ConnectionPools.put(poolNames[i],connectionPool);
-        System.out.println("putPoolInHash: "+h_ConnectionPools.size());
+        try
+        {
+          ConnectionPool connectionPool = new ConnectionPool(jdbcDriverClass,
+              jdbcURL, dbUsername, dbPassword, minConnections,
+              maxConnections, true);
+          System.out.println("Initialized Pool: "+connectionPool);
+          h_ConnectionPools.put(poolNames[i],connectionPool);
+          System.out.println("putPoolInHash: "+h_ConnectionPools.size());
+        } catch (SQLException sqle)
+        {
+          System.out.println("Unable to initialize connection pool: " +
+                             poolNames[i]);
+          s_server.logWarning("Unable to initialize connection pool: " +
+                              poolNames[i]);
+        }
       }
-    } catch (SQLException sqe)
-    {
-      throw new ModuleInitializationException(
-          sqe.getMessage(),"fedora.server.storage.ConnectionPoolManagerImpl");
+
     } catch (PatternSyntaxException pse)
     {
       throw new ModuleInitializationException(
-          pse.getMessage(),"fedora.server.storage.ConnectionPoolManagerImpl");
+          pse.getMessage(),"fedora.server.storage.ConnectionPoolManager");
     } catch (NullPointerException npe)
     {
       throw new ModuleInitializationException(
-          npe.getMessage(),"fedora.server.storage.ConnectionPoolManagerImpl");
-    } catch (Exception e)
-    {
-      throw new ModuleInitializationException(
-          e.getMessage(),"fedora.server.storage.ConnectionPoolManagerImpl");
+          npe.getMessage(),"fedora.server.storage.ConnectionPoolManager");
     }
   }
 
@@ -141,30 +139,32 @@ public class ConnectionPoolManagerImpl extends Module
    *
    * @param poolName The name of the connection pool.
    * @return The named connection pool.
+   * @throws ConnectionPoolNotFoundException If the specified connection pool
+   * cannot be found.
    */
   public ConnectionPool getPool(String poolName)
-      throws ModuleInitializationException
+      throws ConnectionPoolNotFoundException
   {
     ConnectionPool connectionPool = null;
+
     try
     {
       if (h_ConnectionPools.containsKey(poolName))
       {
-        // Pool exists
         connectionPool = (ConnectionPool)h_ConnectionPools.get(poolName);
         System.out.println("PoolFound: "+connectionPool);
       } else
       {
-        // Error pool was never initialized or name could not be found
-        String message = "CONNECTION POOL NOT INITIALIZED: "+poolName;
-        throw new ModuleInitializationException(message,
-            "fedora.server.storage.ConnectionPoolManagerImpl");
+        // Error: pool was never initialized or name could not be found
+        throw new ConnectionPoolNotFoundException("Connection pool " +
+            "not found: " + poolName);
       }
     } catch (Exception e)
     {
-      throw new ModuleInitializationException(
-          e.getMessage(),"fedora.server.storage.ConnectionPoolManagerImpl");
+      throw new ConnectionPoolNotFoundException("Connection pool " +
+          "not found: " + poolName + "\n" + e.getMessage());
     }
+
     return connectionPool;
   }
 
@@ -173,30 +173,33 @@ public class ConnectionPoolManagerImpl extends Module
    * getPool(String poolName)</code>.</p>
    *
    * @return The default connection pool.
+   * @throws ConnectionPoolNotfoundException If the default connection pool
+   * cannot be found.
    */
   public ConnectionPool getPool()
-      throws ModuleInitializationException
+      throws ConnectionPoolNotFoundException
   {
     ConnectionPool connectionPool = null;
+
     try
     {
       if (h_ConnectionPools.containsKey(defaultPoolName))
       {
-        // Pool exists
         connectionPool = (ConnectionPool)h_ConnectionPools.get(defaultPoolName);
         System.out.println("PoolFound: "+connectionPool);
       } else
       {
-        // Error pool was never initialized or name could not be found
-        String message = "CONNECTION POOL NOT INITIALIZED: "+defaultPoolName;
-        throw new ModuleInitializationException(message,
-            "fedora.server.storage.ConnectionPoolManagerImpl");
+        // Error: default pool was never initialized or could not be found
+        throw new ConnectionPoolNotFoundException("Default connection pool " +
+            "not found: " + defaultPoolName);
       }
+
     } catch (Exception e)
     {
-      throw new ModuleInitializationException(
-          e.getMessage(),"fedora.server.storage.ConnectionPoolManagerImpl");
+      throw new ConnectionPoolNotFoundException("Default connection pool " +
+          "not found: "+defaultPoolName + "\n" + e.getMessage());
     }
+
     return connectionPool;
   }
 }
