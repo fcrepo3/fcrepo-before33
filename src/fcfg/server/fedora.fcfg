@@ -20,33 +20,28 @@
 	<param name="pool_min" value="20"/>
 	<param name="disseminationCacheSize" value="100"/>
 	<param name="debug" value="true"/>	
-	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
-		<comment>This one comes with Fedora.  It's best not to change
-        these values unless you know what you're doing.</comment>
-		<param name="reader_fast" value="fedora.server.storage.FastDOReader"/>
-		<param name="writer_fast" value="fedora.server.storage.FastDOWriter"/>
-		<param name="fast_db" value="mysql1#test1fast"/>
-		<param name="fast_fallback_reader" value="definitive"/>
-		<param name="reader_definitive" value="fedora.server.storage.DefinitiveDOReader"/>
-		<param name="writer_definitive" value="fedora.server.storage.DefinitiveDOWriter"/>
-		<param name="definitive_registry_class" value="fedora.server.storage.DBRegistry"/>
-		<param name="definitive_registry_dbtable" value="mysql1#test1dreg"/>
-	</module>
+	<module role="fedora.server.storage.DOManager" 
+            class="fedora.server.storage.DefaultDOManager">
+		<comment>The interface to the storage subsystem.  This provides
+        context-appropriate DOReaders and DOWriters for reflecting on and 
+        writing to the objects stored in the repository.  It also
+        provides methods for reflecting on the contents of the repository 
+        as a whole.</comment>
+        <param name="object_state_registry" value="poolOne#State"/>
+    </module>
+    <module role="fedora.server.management.Management" 
+            class="fedora.server.management.DefaultManagement">
+        <comment>The management subsystem, which implements the methods 
+        necessary to fulfill API-M requests without regard to how the 
+        service is exposed, or how bytestreams and java types might be
+        marshalled/demarshalled over the wire.</comment>
+        <param name="testName" value="testValue"/>
+    </module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
 		<param name="defaultPoolName" value="poolOne"/>
 		<param name="poolNames" value="poolOne"/>
 	</module>
-	<datastore id="mysql1">
-		<comment>This one's kind of slow, but it's all
-      we've got.</comment>
-		<param name="dbuser" value="fedoraAdmin"/>
-		<param name="dbpass" value="fedoraAdmin"/>
-		<param name="connect_string" value="jdbc:mysql://icarus.lib.virginia.edu:3306/FedoraObjects"/>
-		<param name="jdbc_driver_class" value="org.gjt.mm.mysql.Driver"/>
-		<param name="pool_max" value="100"/>
-		<param name="pool_min" value="20"/>
-	</datastore>
 	<datastore id="poolOne">
 		<comment>Config parameters for ConnectionPool number one</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
