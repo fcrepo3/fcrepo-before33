@@ -58,22 +58,46 @@ public class AutoPurger {
         skeleton.purgeObject(pid, logMessage);
     }
 
-    public static void showUsage(String errMessage) {
-        System.out.println("Error: " + errMessage);
-        System.out.println("");
-        System.out.println("Usage: AutoPurger host port username password pid logMessage");
-    }
+	/**
+	 * Print error message and show usage for command-line interface.
+	 */
+	public static void showUsage(String msg) {
+		System.err.println("Command: fedora-purge");
+		System.err.println();
+		System.err.println("Summary: Purges an object from the Fedora repository.");
+		System.err.println();
+		System.err.println("Syntax:");
+		System.err.println("  fedora-purge HST:PRT USR PSS PID [LOG]");
+		System.err.println();
+		System.err.println("Where:");
+		System.err.println("  HST  is the target repository hostname.");
+		System.err.println("  PRT  is the target repository port number.");
+		System.err.println("  USR  is the id of the target repository user.");
+		System.err.println("  PSS  is the password of the target repository user.");
+		System.err.println("  PID  is the id of the object to purge from the target repository.");
+		System.err.println("  LOG  is a log message.");
+		System.err.println();
+		System.err.println("Example:");
+		System.err.println("fedora-purge myrepo.com:80 jane janepw demo:5 \"my message\"");
+		System.err.println();
+		System.err.println("  Purges the object whose PID is demo:5 from the");
+		System.err.println("  target repository at myrepo.com:80");
+		System.err.println();
+		System.err.println("ERROR  : " + msg);
+		System.exit(1);
+	}
 
     public static void main(String[] args) {
         try {
-            if (args.length!=6) {
-                AutoPurger.showUsage("You must provide six arguments.");
+            if (args.length!=5) {
+                AutoPurger.showUsage("You must provide five arguments.");
             } else {
-                String hostName=args[0];
-                int portNum=Integer.parseInt(args[1]);
-                String pid=args[4];
-                String logMessage=args[5];
-                AutoPurger a=new AutoPurger(hostName, portNum, args[2], args[3]);
+				String[] hp=args[0].split(":");
+                String hostName=hp[0];
+                int portNum=Integer.parseInt(hp[1]);
+                String pid=args[3];
+                String logMessage=args[4];
+                AutoPurger a=new AutoPurger(hostName, portNum, args[1], args[2]);
                 a.purge(pid, logMessage);
             }
         } catch (Exception e) {
