@@ -8,15 +8,19 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
+import java.util.StringTokenizer;
 
+import fedora.client.APIAStubFactory;
 import fedora.client.APIMStubFactory;
 import fedora.server.management.FedoraAPIM;
+import fedora.server.access.FedoraAPIA;
 import fedora.server.utilities.StreamUtility;
+import fedora.server.types.gen.RepositoryInfo;
 
 /**
  *
  * <p><b>Title:</b> AutoIngestor.java</p>
- * <p><b>Description:</b> </p>
+ * <p><b>Description:  Utility class to make API-M ingest calls to a repository.</b> </p>
  *
  * -----------------------------------------------------------------------------
  *
@@ -40,40 +44,62 @@ import fedora.server.utilities.StreamUtility;
  */
 public class AutoIngestor {
 
+	private FedoraAPIA m_apia;
     private FedoraAPIM m_apim;
 
     public AutoIngestor(String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
+		m_apia=APIAStubFactory.getStub(host, port, user, pass);
         m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
 
+	// DEPRECATED.
+	// This assumes the ingest format is 'metslikefedora1' for pre-2.0 repositories.
     public String ingestAndCommit(InputStream in, String logMessage)
             throws RemoteException, IOException {
-        return ingestAndCommit(m_apim, in, logMessage);
+        return ingestAndCommit(m_apia, m_apim, in, logMessage);
     }
     
-	public String ingestAndCommit(InputStream in, String format, String logMessage)
-			throws RemoteException, IOException {
-		return ingestAndCommit(m_apim, in, format, logMessage);
+	// DEPRECATED.
+	// This assumes the ingest format is 'metslikefedora1' for pre-2.0 repositories.
+	public static String ingestAndCommit(FedoraAPIA apia, FedoraAPIM apim, InputStream in, String logMessage)
+				throws RemoteException, IOException {
+		ByteArrayOutputStream out=new ByteArrayOutputStream();
+		StreamUtility.pipeStream(in, out, 4096);
+		String pid=apim.ingestObject(out.toByteArray(), logMessage);
+		return pid;
 	}
-
-    public static String ingestAndCommit(FedoraAPIM skeleton, InputStream in, String logMessage)
-            	throws RemoteException, IOException {
-        ByteArrayOutputStream out=new ByteArrayOutputStream();
-        StreamUtility.pipeStream(in, out, 4096);
-        String pid=skeleton.ingestObject(out.toByteArray(), logMessage);
-        return pid;
-    }
     
-	public static String ingestAndCommit(FedoraAPIM skeleton, InputStream in, String format, 
-		String logMessage)
+	public String ingestAndCommit(InputStream in, String ingestFormat, String logMessage)
+			throws RemoteException, IOException {
+		return ingestAndCommit(m_apia, m_apim, in, ingestFormat, logMessage);
+	}
+    
+	public static String ingestAndCommit(FedoraAPIA apia, FedoraAPIM apim, InputStream in, 
+		String ingestFormat, String logMessage)
 			throws RemoteException, IOException {
 		ByteArrayOutputStream out=new ByteArrayOutputStream();
 		StreamUtility.pipeStream(in, out, 4096);
-		String pid=skeleton.ingest(out.toByteArray(), format, logMessage);
-		return pid;
+		
+		// For backward compatibility:
+		// For pre-2.0 repositories, the only valid ingest format is "metslikefedora1"
+		// and there only exists the 'ingestObject' APIM method which assumes this format.
+		RepositoryInfo repoinfo=apia.describeRepository();
+		StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
+		if (new Integer(stoken.nextToken()).intValue() < 2) {
+			if (!ingestFormat.equals("metslikefedora1")){
+				throw new IOException("You are connected to a pre-2.0 Fedora repository " +
+					"which will only accept the format \"metslikefedora1\" for ingest.");
+			} else {
+				return apim.ingestObject(out.toByteArray(), logMessage);				
+			}
+
+		} else {
+			return apim.ingest(out.toByteArray(), ingestFormat, logMessage);
+		}
 	}
 
+/*
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");
@@ -110,5 +136,5 @@ public class AutoIngestor {
                 + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
         }
     }
-
+*/
 }

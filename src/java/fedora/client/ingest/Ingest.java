@@ -16,6 +16,7 @@ import fedora.client.export.AutoExporter;
 import fedora.client.search.AutoFinder;
 
 import fedora.server.management.FedoraAPIM;
+import fedora.server.access.FedoraAPIA;
 import fedora.server.utilities.StreamUtility;
 
 import fedora.server.types.gen.Condition;
@@ -24,6 +25,8 @@ import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ListSession;
 import fedora.server.types.gen.ObjectFields;
+import fedora.server.access.FedoraAPIA;
+import fedora.server.types.gen.RepositoryInfo;
 
 /**
  * Ingests from filesystem or repository.
@@ -58,8 +61,7 @@ public class Ingest {
     private static PrintStream s_log;
     private static int s_failedCount;
 
-    // launch interactively
-    //public Ingest(int kind, String format) {
+    // launch interactively via Administrator.java
 	public Ingest(int kind) {
         s_failedCount=0;
         boolean wasMultiple=false;
@@ -70,10 +72,12 @@ public class Ingest {
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = browse.getSelectedFile();
                     Administrator.setLastDir(file.getParentFile());
-					ObjectFormatDialog fmtDialog = new ObjectFormatDialog();
+					ObjectFormatDialog fmtDialog = 
+						new ObjectFormatDialog("Select XML Format of Ingest File(s)");
 					if (fmtDialog.getSelection()!=null) {
-						String format=fmtDialog.getSelection(); 
-	                    String pid=oneFromFile(file, format, Administrator.APIM, null);
+						String ingestFormat=fmtDialog.getSelection(); 
+	                    String pid=oneFromFile(file, ingestFormat, 
+	                    	Administrator.APIA, Administrator.APIM, null);
 	                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
 	                        "Ingest succeeded.  PID='" + pid + "'.");
 					}
@@ -91,10 +95,12 @@ public class Ingest {
                         String fTypes=dlg.getResult();
                         openLog("ingest-from-dir");
                         long st=System.currentTimeMillis();
-						ObjectFormatDialog fmtDialog = new ObjectFormatDialog();
+						ObjectFormatDialog fmtDialog = 
+							new ObjectFormatDialog("Select XML Format of Ingest File(s)");
 						if (fmtDialog.getSelection()!=null) {
-							String format=fmtDialog.getSelection(); 
-	                        String[] pids=multiFromDirectory(file, format, fTypes, Administrator.APIM, null);
+							String ingestFormat=fmtDialog.getSelection(); 
+	                        String[] pids=multiFromDirectory(file, ingestFormat, fTypes, 
+	                        	Administrator.APIA, Administrator.APIM, null);
 	                        long et=System.currentTimeMillis();
 	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
 	                            pids.length + " objects successfully ingested.\n"
@@ -106,13 +112,27 @@ public class Ingest {
                 }
             } else if (kind==ONE_FROM_REPOS) {
                 SourceRepoDialog sdlg=new SourceRepoDialog();
+				// First, determine the default export format of the source repo.
+				// For backward compatibility with pre-2.0 repositories, 
+				// assume the "metslikefedora1" format.
+				RepositoryInfo repoinfo = sdlg.getAPIA().describeRepository();
+				String sourceExportFormat = null;
+				StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
+				if (new Integer(stoken.nextToken()).intValue() < 2){
+					sourceExportFormat = "metslikefedora1";
+				} else {
+					sourceExportFormat = repoinfo.getDefaultExportFormat();
+				}
                 if (sdlg.getAPIA()!=null) {
                     String pid=JOptionPane.showInputDialog("Enter the PID of the object to ingest.");
                     if (pid!=null && !pid.equals("")) {
                        pid=oneFromRepository(sdlg.getHost(),
                                              sdlg.getPort(),
+                                             sdlg.getAPIA(),
                                              sdlg.getAPIM(),
+											 sourceExportFormat,
                                              pid,
+											 Administrator.APIA,
                                              Administrator.APIM,
                                              null);
                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
@@ -122,6 +142,17 @@ public class Ingest {
             } else if (kind==MULTI_FROM_REPOS) {
                 wasMultiple=true;
                 SourceRepoDialog sdlg=new SourceRepoDialog();
+				// First, determine the default export format of the source repo.
+				// For backward compatibility with pre-2.0 repositories, 
+				// assume the "metslikefedora1" format.
+				RepositoryInfo repoinfo = sdlg.getAPIA().describeRepository();
+				String sourceExportFormat = null;
+				StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
+				if (new Integer(stoken.nextToken()).intValue() < 2){
+					sourceExportFormat = "metslikefedora1";
+				} else {
+					sourceExportFormat = repoinfo.getDefaultExportFormat();
+				}
                 if (sdlg.getAPIA()!=null) {
                     FTypeDialog dlg=new FTypeDialog();
                     if (dlg.getResult()!=null) {
@@ -131,8 +162,11 @@ public class Ingest {
                         openLog("ingest-from-repos");
                         String[] pids=multiFromRepository(sdlg.getHost(),
                                                           sdlg.getPort(),
+														  sdlg.getAPIA(),
                                                           sdlg.getAPIM(),
+                                                          sourceExportFormat,
                                                           fTypes,
+														  Administrator.APIA,
                                                           Administrator.APIM,
                                                           null);
                         long et=System.currentTimeMillis();
@@ -227,21 +261,25 @@ public class Ingest {
     }
 
     // if logMessage is null, will use original path in logMessage
-    public static String oneFromFile(File file, String format, FedoraAPIM targetRepository,
-                                     String logMessage)
+    public static String oneFromFile(File file, 
+    								 String ingestFormat, 
+    								 FedoraAPIA targetRepoAPIA, 
+    								 FedoraAPIM targetRepoAPIM, 
+    								 String logMessage)
             throws Exception {
         System.out.println("Ingesting from file " + file.getPath());
         LAST_PATH=file.getPath();
-        String pid=AutoIngestor.ingestAndCommit(targetRepository,
-                                            new FileInputStream(file),
-                                            format,
-                                            getMessage(logMessage, file));
+        String pid=AutoIngestor.ingestAndCommit(targetRepoAPIA, 
+        									    targetRepoAPIM,
+                                                new FileInputStream(file),
+                                                ingestFormat,
+                                                getMessage(logMessage, file));
         return pid;
     }
 
     // if logMessage is null, will use original path in logMessage
-    public static String[] multiFromDirectory(File dir, String format, String fTypes,
-                                              FedoraAPIM targetRepository,
+    public static String[] multiFromDirectory(File dir, String ingestFormat, String fTypes,
+                                              FedoraAPIA targetRepoAPIA, FedoraAPIM targetRepoAPIM,
                                               String logMessage)
             throws Exception {
         String tps=fTypes.toUpperCase();
@@ -250,17 +288,20 @@ public class Ingest {
         if (tps.indexOf("D")!=-1) {
             toIngest=getFiles(dir, "FedoraBDefObject");
             System.out.println("Found " + toIngest.size() + " behavior definitions.");
-            pidSet.addAll(ingestAll("D", toIngest, format, targetRepository, logMessage));
+            pidSet.addAll(
+            	ingestAll("D", toIngest, ingestFormat, targetRepoAPIA, targetRepoAPIM, logMessage));
         }
         if (tps.indexOf("M")!=-1) {
             toIngest=getFiles(dir, "FedoraBMechObject");
             System.out.println("Found " + toIngest.size() + " behavior mechanisms.");
-            pidSet.addAll(ingestAll("M", toIngest, format, targetRepository, logMessage));
+            pidSet.addAll(
+            	ingestAll("M", toIngest, ingestFormat, targetRepoAPIA, targetRepoAPIM, logMessage));
         }
         if (tps.indexOf("O")!=-1) {
             toIngest=getFiles(dir, "FedoraObject");
             System.out.println("Found " + toIngest.size() + " data objects.");
-            pidSet.addAll(ingestAll("O", toIngest, format, targetRepository, logMessage));
+            pidSet.addAll(
+            	ingestAll("O", toIngest, ingestFormat, targetRepoAPIA, targetRepoAPIM, logMessage));
         }
         Iterator iter=pidSet.iterator();
         String[] pids=new String[pidSet.size()];
@@ -270,11 +311,144 @@ public class Ingest {
         }
         return pids;
     }
+    
+	// if logMessage is null, will make informative one up
+	public static String oneFromRepository(String sourceHost,
+										   int sourcePort,
+										   FedoraAPIA sourceRepoAPIA,
+										   FedoraAPIM sourceRepoAPIM,
+										   String sourceExportFormat,
+										   String pid,
+										   FedoraAPIA targetRepoAPIA,
+										   FedoraAPIM targetRepoAPIM,
+										   String logMessage)
+			throws Exception {
+		System.out.println("Ingesting " + pid + " from source repository.");
+
+		// EXPORT from source repository
+		ByteArrayOutputStream out=new ByteArrayOutputStream();
+		AutoExporter.export(sourceRepoAPIA, sourceRepoAPIM,
+							pid,
+							null, // take the default export format of source repo
+							out,
+							false);
+		
+		// fix the host-specific references before ingesting (except "M" datastreams)
+		StringBuffer fixed=new StringBuffer();
+		BufferedReader in=new BufferedReader(
+			new InputStreamReader(new ByteArrayInputStream(out.toByteArray())));
+		String line;
+		while ( (line=in.readLine()) != null ) {
+			if (line.indexOf("fedora-system:3")==-1) {
+				// if the line doesn't have a managed datastream reference,
+				// replace all occurances of sourceHost:sourcePort with
+				// local.fedora.server
+				fixed.append(line.replaceAll(
+						sourceHost + ":" + sourcePort, "local.fedora.server"));
+			} else {
+				fixed.append(line);
+			}
+			fixed.append("\n");
+		}
+		in.close();
+
+		// INGEST into target repository		
+		String realLogMessage=logMessage;
+		if (realLogMessage==null) {
+			realLogMessage="Ingested from source repository with pid " + pid;
+		}
+		return AutoIngestor.ingestAndCommit(targetRepoAPIA,
+											targetRepoAPIM,
+											new ByteArrayInputStream(
+											 fixed.toString().getBytes("UTF-8")),
+											sourceExportFormat,
+											realLogMessage);
+	}
+
+/*
+	public static String[] multiFromRepository(String sourceHost,
+											   int sourcePort,
+											   String sourceUser,
+											   String sourcePass,
+											   String fTypes,
+											   FedoraAPIM targetRepos,
+											   String logMessage)
+			throws Exception {
+		FedoraAPIA sourceRepoAPIA=APIAStubFactory.getStub(sourceHost,
+														sourcePort,
+														sourceUser,
+														sourcePass);
+		FedoraAPIM sourceRepoAPIM=APIMStubFactory.getStub(sourceHost,
+														sourcePort,
+														sourceUser,
+														sourcePass);
+		return multiFromRepository(sourceHost, sourcePort, 
+			sourceRepoAPIA, sourceRepoAPIM, fTypes, targetRepos, logMessage);
+   }
+*/
+
+   public static String[] multiFromRepository(String sourceHost,
+											  int sourcePort,
+											  FedoraAPIA sourceRepoAPIA,
+											  FedoraAPIM sourceRepoAPIM,
+											  String sourceExportFormat,
+											  String fTypes,
+											  FedoraAPIA targetRepoAPIA,
+											  FedoraAPIM targetRepoAPIM,
+											  String logMessage)
+			throws Exception {
+		String tps=fTypes.toUpperCase();
+		Set pidSet=new HashSet();
+		if (tps.indexOf("D")!=-1) {
+			pidSet.addAll(ingestAllFromRepository(
+								sourceHost,
+								sourcePort,
+								sourceRepoAPIA,
+								sourceRepoAPIM,
+								sourceExportFormat,
+								"D",
+								targetRepoAPIA,
+								targetRepoAPIM,
+								logMessage));
+		}
+		if (tps.indexOf("M")!=-1) {
+			pidSet.addAll(ingestAllFromRepository(
+								sourceHost,
+								sourcePort,
+								sourceRepoAPIA,
+								sourceRepoAPIM,
+								sourceExportFormat,
+								"M",
+								targetRepoAPIA,
+								targetRepoAPIM,
+								logMessage));
+		}
+		if (tps.indexOf("O")!=-1) {
+			pidSet.addAll(ingestAllFromRepository(
+								sourceHost,
+								sourcePort,
+								sourceRepoAPIA,
+								sourceRepoAPIM,
+								sourceExportFormat,
+								"O",
+								targetRepoAPIA,
+								targetRepoAPIM,
+								logMessage));
+		}
+		Iterator iter=pidSet.iterator();
+		String[] pids=new String[pidSet.size()];
+		int i=0;
+		while (iter.hasNext()) {
+			pids[i++]=(String) iter.next();
+		}
+		return pids;
+	}
 
     private static Set ingestAll(String fType,
                                  Set fileSet,
-                                 String format,
-                                 FedoraAPIM targetRepository,
+                                 String ingestFormat,
+								 FedoraAPIA targetRepoAPIA,
+                                 FedoraAPIM targetRepoAPIM,
                                  String logMessage)
             throws Exception {
         HashSet set=new HashSet();
@@ -282,7 +456,7 @@ public class Ingest {
         while (iter.hasNext()) {
             File f=(File) iter.next();
             try {
-                String pid=oneFromFile(f, format, targetRepository, logMessage);
+                String pid=oneFromFile(f, ingestFormat, targetRepoAPIA, targetRepoAPIM, logMessage);
                 // success...log it
                 logFromFile(f, fType, pid);
                 set.add(pid);
@@ -294,6 +468,52 @@ public class Ingest {
         }
         return set;
     }
+    
+	private static Set ingestAllFromRepository(String sourceHost,
+								 int sourcePort,
+								 FedoraAPIA sourceRepoAPIA,
+								 FedoraAPIM sourceRepoAPIM,
+								 String sourceExportFormat,
+								 String fType,
+								 FedoraAPIA targetRepoAPIA,
+								 FedoraAPIM targetRepoAPIM,
+								 String logMessage)
+			throws Exception {
+		// get pids with fType='$fType', adding all to set at once,
+		// then singleFromRepository(sourceRepos, pid, targetRepos, logMessage)
+		// for each, then return the set
+		HashSet set=new HashSet();
+		String[] res=AutoFinder.getPIDs(sourceHost, sourcePort, "fType=" + fType);
+		for (int i=0; i<res.length; i++) set.add(res[i]);
+		String friendlyName="data objects";
+		if (fType.equals("D"))
+			friendlyName="behavior definitions";
+		if (fType.equals("M"))
+			friendlyName="behavior mechanisms";
+		System.out.println("Found " + set.size() + " " + friendlyName + " to ingest.");
+		Iterator iter=set.iterator();
+		HashSet successSet=new HashSet();
+		while (iter.hasNext()) {
+			String pid=(String) iter.next();
+			try {
+				String newPID=oneFromRepository(sourceHost,
+												sourcePort,
+												sourceRepoAPIA,
+												sourceRepoAPIM,
+											    sourceExportFormat,
+												pid,
+												targetRepoAPIA,
+												targetRepoAPIM,
+												logMessage);
+				successSet.add(newPID);
+				logFromRepos(pid, fType, newPID);
+			} catch (Exception e) {
+				s_failedCount++;
+				logFailedFromRepos(pid, fType, e);
+			}
+		}
+		return successSet;
+	}
 
     private static void openLog(String rootName) throws Exception {
         s_rootName=rootName;
@@ -365,151 +585,6 @@ public class Ingest {
         return set;
     }
 
-    // if logMessage is null, will make informative one up
-    public static String oneFromRepository(String sourceHost,
-                                           int sourcePort,
-                                           FedoraAPIM sourceRepository,
-                                           String pid,
-                                           FedoraAPIM targetRepository,
-                                           String logMessage)
-            throws Exception {
-        System.out.println("Ingesting " + pid + " from source repository.");
-
-        // export it first
-        ByteArrayOutputStream out=new ByteArrayOutputStream();
-        AutoExporter.export(sourceRepository,
-                            pid,
-                            null, // take whatever the default export format is
-                            out,
-                            false);
-
-        // fix the host-specific references before ingesting (except "M" datastreams)
-        StringBuffer fixed=new StringBuffer();
-        BufferedReader in=new BufferedReader(new InputStreamReader(new ByteArrayInputStream(out.toByteArray())));
-        String line;
-        while ( (line=in.readLine()) != null ) {
-            if (line.indexOf("fedora-system:3")==-1) {
-                // if the line doesn't have a managed datastream reference,
-                // replace all occurances of sourceHost:sourcePort with
-                // local.fedora.server
-                fixed.append(line.replaceAll(
-                        sourceHost + ":" + sourcePort, "local.fedora.server"));
-            } else {
-                fixed.append(line);
-            }
-            fixed.append("\n");
-        }
-        in.close();
-
-        // finally, ingest the fixed xml
-        String realLogMessage=logMessage;
-        if (realLogMessage==null) {
-            realLogMessage="Ingested from source repository with pid " + pid;
-        }
-        return AutoIngestor.ingestAndCommit(targetRepository,
-                                            new ByteArrayInputStream(
-                                             fixed.toString().getBytes("UTF-8")),
-                                            realLogMessage);
-    }
-
-    // if logMessage is null, will make informative one up
-    public static String[] multiFromRepository(String sourceHost,
-                                               int sourcePort,
-                                               String sourceUser,
-                                               String sourcePass,
-                                               String fTypes,
-                                               FedoraAPIM targetRepos,
-                                               String logMessage)
-            throws Exception {
-        FedoraAPIM sourceRepos=APIMStubFactory.getStub(sourceHost,
-                                                        sourcePort,
-                                                        sourceUser,
-                                                        sourcePass);
-        return multiFromRepository(sourceHost, sourcePort, sourceRepos, fTypes, targetRepos, logMessage);
-   }
-
-   public static String[] multiFromRepository(String sourceHost,
-                                              int sourcePort,
-                                              FedoraAPIM sourceRepos,
-                                              String fTypes,
-                                              FedoraAPIM targetRepos,
-                                              String logMessage)
-            throws Exception {
-        String tps=fTypes.toUpperCase();
-        Set pidSet=new HashSet();
-        if (tps.indexOf("D")!=-1) {
-            pidSet.addAll(ingestAll(sourceHost,
-                                    sourcePort,
-                                    sourceRepos,
-                                      "D",
-                                      targetRepos,
-                                      logMessage));
-        }
-        if (tps.indexOf("M")!=-1) {
-            pidSet.addAll(ingestAll(sourceHost,
-                                    sourcePort,
-                                      sourceRepos,
-                                      "M",
-                                      targetRepos,
-                                      logMessage));
-        }
-        if (tps.indexOf("O")!=-1) {
-            pidSet.addAll(ingestAll(sourceHost,
-                                    sourcePort,
-                                      sourceRepos,
-                                      "O",
-                                      targetRepos,
-                                      logMessage));
-        }
-        Iterator iter=pidSet.iterator();
-        String[] pids=new String[pidSet.size()];
-        int i=0;
-        while (iter.hasNext()) {
-            pids[i++]=(String) iter.next();
-        }
-        return pids;
-    }
-
-    private static Set ingestAll(String sourceHost,
-                                 int sourcePort,
-                                 FedoraAPIM sourceRepos,
-                                 String fType,
-                                 FedoraAPIM targetRepos,
-                                 String logMessage)
-            throws Exception {
-        // get pids with fType='$fType', adding all to set at once,
-        // then singleFromRepository(sourceRepos, pid, targetRepos, logMessage)
-        // for each, then return the set
-        HashSet set=new HashSet();
-        String[] res=AutoFinder.getPIDs(sourceHost, sourcePort, "fType=" + fType);
-        for (int i=0; i<res.length; i++) set.add(res[i]);
-        String friendlyName="data objects";
-        if (fType.equals("D"))
-            friendlyName="behavior definitions";
-        if (fType.equals("M"))
-            friendlyName="behavior mechanisms";
-        System.out.println("Found " + set.size() + " " + friendlyName + " to ingest.");
-        Iterator iter=set.iterator();
-        HashSet successSet=new HashSet();
-        while (iter.hasNext()) {
-            String pid=(String) iter.next();
-            try {
-                String newPID=oneFromRepository(sourceHost,
-                                                sourcePort,
-                                                sourceRepos,
-                                                pid,
-                                                targetRepos,
-                                                logMessage);
-                successSet.add(newPID);
-                logFromRepos(pid, fType, newPID);
-            } catch (Exception e) {
-                s_failedCount++;
-                logFailedFromRepos(pid, fType, e);
-            }
-        }
-        return successSet;
-    }
-
     private static void logFromRepos(String sourcePID, String fType, String targetPID) throws Exception {
         s_log.println("  <ingested sourcePID=\"" + sourcePID + "\" fType=\"" + fType + "\" targetPID=\"" + targetPID + "\" />");
     }
@@ -531,20 +606,20 @@ public class Ingest {
      * Print error message and show usage for command-line interface.
      */
     public static void badArgs(String msg) {
-        System.err.println("Error  : " + msg);
-        System.err.println();
         System.err.println("Command: fedora-ingest");
         System.err.println();
         System.err.println("Summary: Ingests one or more objects into a Fedora repository, from either");
         System.err.println("         the local filesystem or another Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-ingest f[ile] INPATH THST:TPRT TUSR TPSS [LOG]");
-        System.err.println("  fedora-ingest d[ir] INPATH FTYPS THST:TPRT TUSR TPSS [LOG]");
+        System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS [LOG]");
+        System.err.println("  fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]");
         System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS [LOG]");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  INPATH     is the local file or directory name that is ingest source.");
+		System.err.println("  FORMAT     is a string value (either 'foxml1.0' or 'metslikefedora1')");
+		System.err.println("             which indicates the XML format of the ingest file(s)");
         System.err.println("  FTYPS      is any combination of the characters O, D, and M, specifying");
         System.err.println("             which Fedora object type(s) should be ingested. O=data objects,");
         System.err.println("             D=behavior definitions, and M=behavior mechanisms.");
@@ -557,21 +632,32 @@ public class Ingest {
         System.err.println("             will indicate the source filename or repository of the object(s).");
         System.err.println();
         System.err.println("Examples:");
-        System.err.println("fedora-ingest file obj1.xml example.com:80 fedoraAdmin fedoraAdmin");
+        System.err.println("fedora-ingest file obj1.xml foxml1.0 myrepo.com:80 fedoraAdmin fedoraAdmin");
         System.err.println();
-        System.err.println("  Ingests obj1.xml from the current directory into the repository at ");
-        System.err.println("  example.com:80 as fedoraAdmin, using 'fedoraAdmin' as the password,");
+        System.err.println("  Ingests obj1.xml (which is encoded in foxml1.0 format) from the");
+        System.err.println("  current directory into the repository at myrepo.com:80");
+        System.err.println("  as user 'fedoraAdmin' with password 'fedoraAdmin'.");
         System.err.println("  The logmessage will be system-generated, indicating the source path+filename.");
         System.err.println();
-        System.err.println("fedora-ingest dir c:\\archive M example.com:80 fedoraAdmin fedoraAdmin \"\"");
+        System.err.println("fedora-ingest dir metslikefedora1 c:\\archive M myrepo.com:80 fedoraAdmin fedoraAdmin \"\"");
         System.err.println();
         System.err.println("  Traverses entire directory structure of c:\\archive, and ingests any file that");
-        System.err.println("  looks like a behavior mechanism object.  All log messages will be empty.");
+        System.err.println("  looks like a behavior mechanism object ('M'). It assumes all files will be in the");
+        System.err.println("  XML format 'metslikefedora1' and will fail on ingests of files that are not");
+        System.err.println("  of this format. All log messages will be empty.");
         System.err.println();
-        System.err.println("fedora-ingest dir c:\\archive ODM example.com:80 fedoraAdmin fedoraAdmin \"\"");
+        System.err.println("fedora-ingest dir metslikefedora1 c:\\archive ODM myrepo.com:80 fedoraAdmin fedoraAdmin \"\"");
         System.err.println();
         System.err.println("  Same as above, but ingests all data and behavior definition objects, too.");
         System.err.println();
+		System.err.println("fedora-ingest repos sourcerepo.com:8081 john jpass demo:1 myrepo.com:80 fedoraAdmin fedoraAdmin \"\"");
+		System.err.println();
+		System.err.println("  Exports the object whose pid is 'demo:1' from the source repository 'sourcerepo.com:8081'");
+		System.err.println("  and ingests it into the target repository 'myrepo.com:80'.  The object will be exported");
+		System.err.println("  from the source repository in whatever the source has configured as its default export format.");
+		System.err.println("  All log messages will be empty.");
+		System.err.println();
+		System.err.println("ERROR  : " + msg);
         System.exit(1);
     }
 
@@ -593,20 +679,24 @@ public class Ingest {
 					"USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS [LOG]");
                 }
                 File f=new File(args[1]);
-                String format = args[2];
+                String ingestFormat = args[2];
                 String logMessage=null;
                 if (args.length==7) {
                     logMessage=args[6];
                 }
-				System.out.println("Just about to get stub for target repo.");
                 String[] hp=args[3].split(":");
-                FedoraAPIM targetRepos=
+				FedoraAPIA targetRepoAPIA=
+						APIAStubFactory.getStub(hp[0],
+												Integer.parseInt(hp[1]),
+												args[4],
+												args[5]);
+                FedoraAPIM targetRepoAPIM=
                         APIMStubFactory.getStub(hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[4],
                                                 args[5]);
-				System.out.println("Got stub for target repo");
-                String pid = Ingest.oneFromFile(f, format, targetRepos, logMessage);
+				Ingest.openLog("ingest-from-file");
+                String pid = Ingest.oneFromFile(f, ingestFormat, targetRepoAPIA, targetRepoAPIM, logMessage);
                 System.out.println("Ingested PID: " + pid);
             } else if (kind=='d') {
 				// USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]
@@ -616,22 +706,28 @@ public class Ingest {
 						"USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]");
                 }
                 File d=new File(args[1]);
-                String format = args[2];
+                String ingestFormat = args[2];
                 String logMessage=null;
                 if (args.length==8) {
                     logMessage=args[7];
                 }
                 String[] hp=args[4].split(":");
-                FedoraAPIM targetRepos=
+				FedoraAPIA targetRepoAPIA=
+						APIAStubFactory.getStub(hp[0],
+												Integer.parseInt(hp[1]),
+												args[5],
+												args[6]);
+                FedoraAPIM targetRepoAPIM=
                         APIMStubFactory.getStub(hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[5],
                                                 args[6]);
                 Ingest.openLog("ingest-from-dir");
                 String[] pids=Ingest.multiFromDirectory(d,
-                										format,
+                										ingestFormat,
                                                         args[3],
-                                                        targetRepos,
+                                                        targetRepoAPIA,
+                                                        targetRepoAPIM,
                                                         logMessage);
                 System.out.println("Ingested PID(s):");
                 if (pids.length>0) {
@@ -653,37 +749,68 @@ public class Ingest {
                     logMessage=args[8];
                 }
                 String[] hp=args[1].split(":");
-                FedoraAPIM sourceRepos=
+				FedoraAPIA sourceRepoAPIA=
+						APIAStubFactory.getStub(hp[0],
+												Integer.parseInt(hp[1]),
+												args[2],
+												args[3]);
+                FedoraAPIM sourceRepoAPIM=
                         APIMStubFactory.getStub(hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[2],
                                                 args[3]);
                 hp=args[5].split(":");
-                FedoraAPIM targetRepos=
+				FedoraAPIA targetRepoAPIA=
+						APIAStubFactory.getStub(hp[0],
+												Integer.parseInt(hp[1]),
+												args[6],
+												args[7]);
+                FedoraAPIM targetRepoAPIM=
                         APIMStubFactory.getStub(hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[6],
                                                 args[7]);
+				// First, determine the default export format of the source repo.
+				// For backward compatibility with pre-2.0 repositories, 
+				// assume the "metslikefedora1" format.
+				RepositoryInfo repoinfo = sourceRepoAPIA.describeRepository();
+				System.out.println("Ingest: exporting from a source repo version " + repoinfo.getRepositoryVersion());
+				String sourceExportFormat = null;
+				StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
+				if (new Integer(stoken.nextToken()).intValue() < 2){
+					sourceExportFormat = "metslikefedora1";
+					System.out.println("Ingest: source repos is using 'metslikefedora1' as export.");
+				} else {
+					sourceExportFormat = repoinfo.getDefaultExportFormat();
+					System.out.println("Ingest: source repos default export format is " + sourceExportFormat);
+				}
+				
                 if (args[4].indexOf(":")!=-1) {
                     // single object
+					Ingest.openLog("ingest-from-repository");
                     System.out.println("Ingested PID: "
                             + Ingest.oneFromRepository(hp[0],
                                                        Integer.parseInt(hp[1]),
-                                                       sourceRepos,
+													   sourceRepoAPIA,
+                                                       sourceRepoAPIM,
+													   sourceExportFormat,
                                                        args[4],
-                                                       targetRepos,
+                                                       targetRepoAPIA,
+                                                       targetRepoAPIM,
                                                        logMessage));
                 } else {
                     // multi-object
                     hp=args[1].split(":");
-                    Ingest.openLog("ingest-from-dir");
-                    String[] pids=Ingest.multiFromRepository(hp[0],
-                                                             Integer.parseInt(hp[1]),
-                                                             args[2],
-                                                             args[3],
-                                                             args[4],
-                                                             targetRepos,
-                                                             logMessage);
+                    Ingest.openLog("ingest-from-repository");
+					String[] pids=Ingest.multiFromRepository(hp[0],
+													  Integer.parseInt(hp[1]),
+													  sourceRepoAPIA,
+													  sourceRepoAPIM,
+													  sourceExportFormat,
+													  args[4],
+													  targetRepoAPIA,
+													  targetRepoAPIM,
+													  logMessage);
                     System.out.println("Ingested PID(s):");
                     if (pids.length>0) {
                         for (int i=0; i<pids.length; i++) {
