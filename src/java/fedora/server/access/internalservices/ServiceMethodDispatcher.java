@@ -20,17 +20,21 @@ import fedora.server.storage.types.Property;
 
 public class ServiceMethodDispatcher {
 
-    /**
-      *  Invoke a method on an internal service.  This is done using
-      *  Java reflection where the service is the target object of a dynamic
-      *  method request.
-     **/
+   /**
+    *  Invoke a method on an internal service.  This is done using
+    *  Java reflection where the service is the target object of a dynamic
+    *  method request.
+    * @param service_object  the target object of the service request
+    * @param methodName  the method to invoke on the target object
+    * @param userParms   parameters to the method to invoke on target object
+    * @return
+    * @throws ServerException
+    */
     public Object invokeMethod(Object service_object, String methodName,
         Property[] userParms) throws ServerException
     {
         System.out.println("invokeMethod: composing method request...");
         Method method = null;
-        //Object method_result = null;
         if (userParms == null)
         {
           userParms = new Property[0];

@@ -17,6 +17,7 @@ import fedora.server.access.internalservices.DefaultBehavior;
 import fedora.server.access.internalservices.DefaultBehaviorImpl;
 import fedora.server.access.internalservices.ServiceMethodDispatcher;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 import fedora.server.security.IPRestriction;
@@ -31,8 +32,22 @@ import fedora.server.storage.types.Property;
 
 /**
  * <p>Title: DynamicAccessImpl.java</p>
- * <p>Description:
- * processing.</p>
+ * <p>Description:  The implementation of the Dynamic Access module.
+ * The Dynamic Access module will associate dynamic disseminators with
+ * the a digital object.  It will look to the Fedora repository configuration
+ * file to obtain a list of dynamic disseminators.  Currently, the system
+ * supports two types of dynamic disseminators:
+ *  - Default (BDefPID=fedora-system:3 and BMechPID=fedora-system:4)
+ *  - Bootstrap (BDefPID=fedora-system:1 and BMechPID=fedora-system:2).
+ * The Default disseminator that is associated with every object
+ * in the repository.  The Default Disseminator endows the objects with a
+ * set of basic generic behaviors that enable a simplistic view of the object
+ * contents (the Item Index) and a list of all disseminations available on
+ * the object (the Dissemination Index).
+ * The Bootstrap disseminator is associated with every behavior definition and
+ * behavior mechanism object.  It defines methods to get the special metadata
+ * datastreams out of them, and some other methods.  (NOTE: The Bootstrap
+ * Disseminator functionality is NOT YET IMPLEMENTED.</p>
  *
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
@@ -48,17 +63,6 @@ public class DynamicAccessImpl
   private File reposHomeDir = null;
   private Hashtable dynamicBDefToMech = null;
 
-  /**
-   * <p>Creates and initializes the Access Module. When the server is starting
-   * up, this is invoked as part of the initialization process.</p>
-   *
-   * @param moduleParameters A pre-loaded Map of name-value pairs comprising
-   *        the intended configuration of this Module.
-   * @param server The <code>Server</code> instance.
-   * @param role The role this module fulfills, a java class name.
-   * @throws ModuleInitializationException If initilization values are
-   *         invalid or initialization fails for some other reason.
-   */
   public DynamicAccessImpl(Access m_access, String reposBaseURL,
     File reposHomeDir, Hashtable dynamicBDefToMech)
   {
@@ -70,21 +74,24 @@ public class DynamicAccessImpl
   }
 
   /**
+   * Get a list of behavior definition identifiers for dynamic disseminators
+   * associated with the digital object.
+   * @param context
+   * @param PID   identifier of digital object being reflected upon
+   * @param asOfDateTime
+   * @return
+   * @throws ServerException
    */
   public String[] getBehaviorDefinitions(Context context, String PID,
       Calendar asOfDateTime) throws ServerException
   {
-
     // FIXIT! In FUTURE this method might consult some source that tells
     // what behavior definitions are appropriate to dynamically associate
     // with the object.  The rules for association might be based on the
     // context or based on something about the particular object (PID).
     // There is one rule that is always true - associate the Default
-    // behavior definition with EVERY object.
-
-    // For now we will just take the dynamic behavior definitions that were
-    // loaded from the server configuration file (fedora.fcfg)
-    // via DynamicAccessModule.
+    // behavior definition with EVERY object. For now we will just take the
+    // dynamic behavior definitions that were loaded by DynamicAccessModule.
     // NOTE: AT THIS TIME THERE THERE IS JUST ONE LOADED, NAMELY,
     // THE DEFAULT DISSEMINATOR BDEF (bDefPID = fedora-system:3)
 
@@ -95,14 +102,18 @@ public class DynamicAccessImpl
       bdefs.add(iter.next());
     }
     return (String[])bdefs.toArray(new String[0]);
-
-    //String[] bdefs = new String[1];
-    //bdefs[0] = "fedora-system:3";
-    //return bdefs;
   }
 
-
   /**
+   * Get the behavior method defintions for a given dynamic disseminator that
+   * is associated with the digital object. The dynamic disseminator is
+   * identified by the bDefPID.
+   * @param context
+   * @param PID   identifier of digital object being reflected upon
+   * @param bDefPID identifier of dynamic behavior definition
+   * @param asOfDateTime
+   * @return
+   * @throws ServerException
    */
   public MethodDef[] getBehaviorMethods(Context context, String PID,
       String bDefPID, Calendar asOfDateTime) throws ServerException
@@ -124,23 +135,20 @@ public class DynamicAccessImpl
             + "was \"" + e.getMessage() + "\"");
       }
     }
-    // FIXIT!! Is this what we want to do or throw an error?
-    // This means that the bDefPID is not listed in the dynamicBDefToMech
-    // table as one of the supported dynamic behavior definitions.
-    // We can quietly return no methods, but we need to look at this!!
-    return new MethodDef[0];
-
-    /*
-    if (bDefPID.equalsIgnoreCase("fedora-system:3"))
-    {
-      return DefaultBehaviorImpl.reflectMethods();
-    }
-    return new MethodDef[0];
-    */
-
+    throw new MethodNotFoundException("[DynamicAccessImpl] The object, "
+          + PID + " does not have the dynamic behavior definition " + bDefPID);
   }
 
   /**
+   * Get an XML encoding of the behavior defintions for a given dynamic
+   * disseminator that is associated with the digital object.  The dynamic
+   * disseminator is identified by the bDefPID.
+   * @param context
+   * @param PID  identifier of digital object being reflected upon
+   * @param bDefPID  identifier of dynamic behavior definition
+   * @param asOfDateTime
+   * @return
+   * @throws ServerException
    */
   public MIMETypedStream getBehaviorMethodsXML(Context context, String PID,
       String bDefPID, Calendar asOfDateTime) throws ServerException
@@ -149,7 +157,19 @@ public class DynamicAccessImpl
   }
 
   /**
-   *
+   * Perform a dissemination for a behavior method that belongs to a
+   * dynamic disseminator that is associate with the digital object.  The
+   * method belongs to the dynamic behavior definition and is implemented
+   * by a dynamic behavior mechanism (which is an internal service in the
+   * repository access subsystem).
+   * @param context
+   * @param PID  identifier of the digital object being disseminated
+   * @param bDefPID  identifier of dynamic behavior definition
+   * @param methodName
+   * @param userParms
+   * @param asOfDateTime
+   * @return
+   * @throws ServerException
    */
   public MIMETypedStream getDissemination(Context context, String PID,
       String bDefPID, String methodName, Property[] userParms,
@@ -157,6 +177,8 @@ public class DynamicAccessImpl
   {
     if (bDefPID.equalsIgnoreCase("fedora-system:3"))
     {
+      // FIXIT!! Use lookup to dynamicBDefToMech table to get class for
+      // DefaultBehaviorImpl and construct via Java reflection.
       Object result = dispatcher.invokeMethod(
           new DefaultBehaviorImpl(context, asOfDateTime,
             reader, m_access, reposBaseURL, reposHomeDir), methodName, userParms);
@@ -167,8 +189,8 @@ public class DynamicAccessImpl
       }
       else
       {
-          throw new GeneralException("DynamicAccess returned error. "
-            + "DefaultBehaviorImpl must return a MIME typed stream. "
+          throw new GeneralException("[DynamicAccessImpl] returned error. "
+            + "Internal service must return a MIME typed stream. "
             + "(see fedora.server.storage.types.MIMETypedStream)");
       }
     }
@@ -176,26 +198,25 @@ public class DynamicAccessImpl
     {
       // FIXIT! (FUTURE) Open up the possibility of there being other
       // kinds of dynamic behaviors.  Use the bDefPID to locate the
-      // appropriate mechanism for the dynamic behavior.
-      // Maybe lookup to some registry table:
-      // bDefPID | bMechPID | internal/external
-
-      /*
-      String bMechPID = getBehaviorMechanismPID(bDefPID);
-      if (isInternalService(bMechPID))
-      {
-
-      }
-      else
-      {
-        // Figure out something brilliant in the future...
-      }
-      */
+      // appropriate mechanism for the dynamic behavior.  In future
+      // we want the mechanism for a dynamic behavior def intion to
+      // be able to be either an internal services, a local services,
+      // or a distributed service.  We'll have to rework some things to
+      // be able to see what kind of mechanism we have, and to do the
+      // request dispatching appropriately.
     }
     return null;
   }
 
   /**
+   * Get the definitions for all dynamic disseminations on the object. This will
+   * return the method definitions for all methods for all of the dynamic
+   * disseminators associated with the object.
+   * @param context
+   * @param PID  identifier of digital object being reflected upon
+   * @param asOfDateTime
+   * @return
+   * @throws ServerException
    */
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
       Calendar asOfDateTime) throws ServerException
@@ -217,18 +238,28 @@ public class DynamicAccessImpl
         method.methodParmDefs = methodDefs[j].methodParms;
         objectMethods.add(method);
       }
-
     }
     return (ObjectMethodsDef[])objectMethods.toArray(new ObjectMethodsDef[0]);
   }
 
+  /**
+   * Get the profile information for the digital object.  This contain key
+   * metadata and URLs for the Dissemination Index and Item Index of the
+   * object.
+   * @param context
+   * @param PID  identifier of digital object being reflected upon
+   * @param asOfDateTime
+   * @return
+   * @throws ServerException
+   */
   public ObjectProfile getObjectProfile(Context context, String PID,
     Calendar asOfDateTime) throws ServerException
   {
+    // FIXIT! Return something here.
     return null;
   }
 
-  // FIXIT! What do these serach methods mean in dynamic access context???
+  // FIXIT! What do these search methods mean in dynamic access context??
   // Maybe they can be taken out of the Access interface and put in a
   // Search interface and then only DefaultAccess will implement them!!
   public List search(Context context, String[] resultFields,
@@ -245,23 +276,13 @@ public class DynamicAccessImpl
     return null;
   }
 
-  /**
-   */
   public boolean isDynamicBehaviorDefinition(Context context, String PID,
         String bDefPID)
         throws ServerException
   {
-    // We want to have some registry to determine whether a particular
-    // behavior definition should be dynamically associated with an object.
-    // This determination would be based on the same rules embodied within
-    // the getBehaviorDefinitions implementation of the DynamicAccess class.
-
-    // FIXIT!! For now, HACK a return of true for the Default Disseminator
-    // behavior definition.
-
-    if (bDefPID.equalsIgnoreCase("fedora-system:3"))
+    if (dynamicBDefToMech.containsKey(bDefPID))
     {
-      System.out.println("DETECTED A DYNAMIC BEHAVIOR DEF: fedora-system:3");
+      System.out.println("DETECTED A DYNAMIC BEHAVIOR DEF: " + bDefPID);
       return true;
     }
     return false;
