@@ -2,15 +2,7 @@
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS    -->
 <!---************************************************************************-->
-<METS:mets 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:METS="http://www.loc.gov/METS/" 
-	xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" 
-	xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" 
-	xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/" 
-	xmlns:xlink="http://www.w3.org/TR/xlink" 
-	xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" 
-	OBJID="uva-lib:3" TYPE="FedoraObject" LABEL="IVA Image Collection - University of Virginia" PROFILE="UVA_MRSID_IMAGE">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="test:7" TYPE="FedoraObject" LABEL="IVA Image Collection - University of Virginia" PROFILE="UVA_MRSID_IMAGE">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
@@ -35,7 +27,7 @@
 		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata for MRSID image">
 			<METS:xmlData>
 				<uvalibdesc:desc>
-					<uvalibdesc:identifier scheme="URN">uva-lib:3</uvalibdesc:identifier>
+					<uvalibdesc:identifier scheme="URN">test:7</uvalibdesc:identifier>
 					<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
 					<uvalibdesc:subject scheme="other" othertype="keyword">Pavillion III</uvalibdesc:subject>
 					<uvalibdesc:subject scheme="other" othertype="keyword">lawn</uvalibdesc:subject>
@@ -43,16 +35,20 @@
 					<uvalibdesc:subject scheme="other" othertype="keyword">Jefferson</uvalibdesc:subject>
 					<uvalibdesc:subject scheme="other" othertype="keyword">Jeffersonian architecture</uvalibdesc:subject>
 					<uvalibdesc:title type="main">Pavillion III, University of Virginia</uvalibdesc:title>
-               <uvalibdesc:form>architecture</uvalibdesc:form>
-               <uvalibdesc:mediatype type="image"><uvalibdesc:form>digital</uvalibdesc:form></uvalibdesc:mediatype>
+					<uvalibdesc:form>architecture</uvalibdesc:form>
+					<uvalibdesc:mediatype type="image">
+						<uvalibdesc:form>digital</uvalibdesc:form>
+					</uvalibdesc:mediatype>
 					<uvalibdesc:agent type="corpname" role="publisher">IVA</uvalibdesc:agent>
 					<uvalibdesc:agent type="persname" role="architect">Thomas Jefferson</uvalibdesc:agent>
 					<uvalibdesc:culture>Early American</uvalibdesc:culture>
-					<uvalibdesc:place type="original"><uvalibdesc:geogname>Charlottesville, Virginia USA</uvalibdesc:geogname></uvalibdesc:place>
+					<uvalibdesc:place type="original">
+						<uvalibdesc:geogname>Charlottesville, Virginia USA</uvalibdesc:geogname>
+					</uvalibdesc:place>
 				</uvalibdesc:desc>
 			</METS:xmlData>
 		</METS:mdWrap>
-	</METS:dmdSec>	
+	</METS:dmdSec>
 	<METS:amdSec ID="TECH1">
 		<METS:techMD ID="TECH1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for MRSID image">
@@ -74,10 +70,10 @@
 	<METS:amdSec ID="SOURCE1">
 		<METS:techMD ID="SOURCE1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for MRSID image">
-				<METS:xmlData>	
+				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:source>
-						   <uvalibadmin:identifier>IVA-4</uvalibadmin:identifier>
+							<uvalibadmin:identifier>IVA-4</uvalibadmin:identifier>
 							<uvalibadmin:mediatype type="image">
 								<uvalibadmin:form>slide</uvalibadmin:form>
 							</uvalibadmin:mediatype>
@@ -90,14 +86,14 @@
 	<METS:amdSec ID="DIGIPROV1">
 		<METS:techMD ID="DIGIPROV1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for MRSID image">
-				<METS:xmlData>	
+				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:digiprov>
 							<uvalibadmin:date>2001-09-01:06:32:00</uvalibadmin:date>
 							<uvalibadmin:agent type="corpname">IVA</uvalibadmin:agent>
 							<uvalibadmin:description>creation</uvalibadmin:description>
-						</uvalibadmin:digiprov>		
-					</uvalibadmin:admin>			
+						</uvalibadmin:digiprov>
+					</uvalibadmin:admin>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -108,16 +104,16 @@
 				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:adminrights>
-						   <uvalibadmin:policy>
-						      <uvalibadmin:access>unrestricted</uvalibadmin:access>
-						      <uvalibadmin:use>educational</uvalibadmin:use>
-						   </uvalibadmin:policy>
+							<uvalibadmin:policy>
+								<uvalibadmin:access>unrestricted</uvalibadmin:access>
+								<uvalibadmin:use>educational</uvalibadmin:use>
+							</uvalibadmin:policy>
 						</uvalibadmin:adminrights>
 					</uvalibadmin:admin>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:rightsMD>
-	</METS:amdSec>			
+	</METS:amdSec>
 	<!---*******************************************************************************************************************************************-->
 	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
 	<!---*******************************************************************************************************************************************-->
@@ -136,7 +132,7 @@
 	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
-		<METS:div TYPE="uva-bmech-mrsid:15" LABEL="DS Binding Map for MrSID Image mechanism">
+		<METS:div TYPE="test:5" LABEL="DS Binding Map for MrSID Image mechanism">
 			<METS:div TYPE="MRSID" LABEL="MrSID file from which different image resolutions will be derived" ORDER="0">
 				<METS:fptr FILEID="DS1"/>
 			</METS:div>
@@ -151,13 +147,13 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR USING MrSID Mechanism -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="uva-bdef-stdimg:8" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors" GROUPID="DISS1" STATUS="">
+	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors" GROUPID="DISS1" STATUS="">
 		<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 		<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 		<!-- the disseminator subscribes -->
-		<METS:interfaceDef LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="uva-bdef-stdimg:8"/>
+		<METS:interfaceDef LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
 		<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
 		<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
-		<METS:mechanism LABEL="MrSID Behavior Mechanism" LOCTYPE="URN" xlink:href="uva-bmech-mrsid:15"/>
+		<METS:mechanism LABEL="MrSID Behavior Mechanism" LOCTYPE="URN" xlink:href="test:5"/>
 	</METS:behaviorSec>
 </METS:mets>

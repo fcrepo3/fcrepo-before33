@@ -2,15 +2,7 @@
 <!---************************************************************************-->
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
 <!---************************************************************************-->
-<METS:mets 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:METS="http://www.loc.gov/METS/" 
-	xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" 
-	xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" 
-	xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" 
-	xmlns:xlink="http://www.w3.org/TR/xlink" 
-	xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" 
-	OBJID="uva-lib:2" TYPE="FedoraObject" LABEL="AICT Image Collection - Palace of Minos" PROFILE="UVA_STD_IMAGE">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="test:6" TYPE="FedoraObject" LABEL="AICT Image Collection - Palace of Minos" PROFILE="UVA_STD_IMAGE">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
@@ -35,25 +27,31 @@
 		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
 			<METS:xmlData>
 				<uvalibdesc:desc>
- 				     <uvalibdesc:time><uvalibdesc:date type="created" certainty="ca." era="bc">16th century [20th century reconstruction by  Sir Arthur Evans]</uvalibdesc:date></uvalibdesc:time>
- 				     <uvalibdesc:identifier scheme="URN">uva-lib:2</uvalibdesc:identifier>
- 				     <uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
- 				     <uvalibdesc:subject scheme="other" type="keyword">palace</uvalibdesc:subject>
-				     <uvalibdesc:subject scheme="other" type="keyword">pillar</uvalibdesc:subject>
-				     <uvalibdesc:title type="main">Palace of Minos, Knossos</uvalibdesc:title>
-                 <uvalibdesc:form>architecture</uvalibdesc:form>
-                 <uvalibdesc:mediatype type="image"><uvalibdesc:form>digital</uvalibdesc:form></uvalibdesc:mediatype>
-                 <uvalibdesc:agent role="publisher">Art Images for College Teaching</uvalibdesc:agent>				
-				     <uvalibdesc:covplace>
-				      	<uvalibdesc:geometry>
-				      		<uvalibdesc:point>
-				      			<uvalibdesc:lat>35.300</uvalibdesc:lat>
-				      			<uvalibdesc:long>25.167</uvalibdesc:long>
-				      		</uvalibdesc:point>
-				      	</uvalibdesc:geometry>
-				      </uvalibdesc:covplace>
+					<uvalibdesc:time>
+						<uvalibdesc:date type="created" certainty="ca." era="bc">16th century [20th century reconstruction by  Sir Arthur Evans]</uvalibdesc:date>
+					</uvalibdesc:time>
+					<uvalibdesc:identifier scheme="URN">test:6</uvalibdesc:identifier>
+					<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
+					<uvalibdesc:subject scheme="other" type="keyword">palace</uvalibdesc:subject>
+					<uvalibdesc:subject scheme="other" type="keyword">pillar</uvalibdesc:subject>
+					<uvalibdesc:title type="main">Palace of Minos, Knossos</uvalibdesc:title>
+					<uvalibdesc:form>architecture</uvalibdesc:form>
+					<uvalibdesc:mediatype type="image">
+						<uvalibdesc:form>digital</uvalibdesc:form>
+					</uvalibdesc:mediatype>
+					<uvalibdesc:agent role="publisher">Art Images for College Teaching</uvalibdesc:agent>
+					<uvalibdesc:covplace>
+						<uvalibdesc:geometry>
+							<uvalibdesc:point>
+								<uvalibdesc:lat>35.300</uvalibdesc:lat>
+								<uvalibdesc:long>25.167</uvalibdesc:long>
+							</uvalibdesc:point>
+						</uvalibdesc:geometry>
+					</uvalibdesc:covplace>
 					<uvalibdesc:culture>Crete, Minoan</uvalibdesc:culture>
-					<uvalibdesc:place type="original"><uvalibdesc:geogname>Greece, Crete, Knossos</uvalibdesc:geogname></uvalibdesc:place>
+					<uvalibdesc:place type="original">
+						<uvalibdesc:geogname>Greece, Crete, Knossos</uvalibdesc:geogname>
+					</uvalibdesc:place>
 					<uvalibdesc:style>Minoan</uvalibdesc:style>
 				</uvalibdesc:desc>
 			</METS:xmlData>
@@ -134,10 +132,10 @@
 	<METS:amdSec ID="SOURCE1">
 		<METS:techMD ID="SOURCE1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for THUMBNAIL res image">
-				<METS:xmlData>	
+				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:source>
-						   <uvalibadmin:identifier>006-001</uvalibadmin:identifier>
+							<uvalibadmin:identifier>006-001</uvalibadmin:identifier>
 							<uvalibadmin:mediatype type="image">
 								<uvalibadmin:form>slide</uvalibadmin:form>
 							</uvalibadmin:mediatype>
@@ -146,14 +144,14 @@
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
-	</METS:amdSec>	
+	</METS:amdSec>
 	<METS:amdSec ID="SOURCE2">
 		<METS:techMD ID="SOURCE2.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for MEDRES res image">
-				<METS:xmlData>	
+				<METS:xmlData>
 					<uvalibadmin:admin>
-						<uvalibadmin:source>				
-						   <uvalibadmin:identifier>006-001</uvalibadmin:identifier>
+						<uvalibadmin:source>
+							<uvalibadmin:identifier>006-001</uvalibadmin:identifier>
 							<uvalibadmin:mediatype type="image">
 								<uvalibadmin:form>slide</uvalibadmin:form>
 							</uvalibadmin:mediatype>
@@ -162,14 +160,14 @@
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
-	</METS:amdSec>		
+	</METS:amdSec>
 	<METS:amdSec ID="SOURCE3">
 		<METS:techMD ID="SOURCE3.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for HIGH res image">
-				<METS:xmlData>	
+				<METS:xmlData>
 					<uvalibadmin:admin>
-						<uvalibadmin:source>				
-						   <uvalibadmin:identifier>006-001</uvalibadmin:identifier>
+						<uvalibadmin:source>
+							<uvalibadmin:identifier>006-001</uvalibadmin:identifier>
 							<uvalibadmin:mediatype type="image">
 								<uvalibadmin:form>slide</uvalibadmin:form>
 							</uvalibadmin:mediatype>
@@ -178,14 +176,14 @@
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
-	</METS:amdSec>		
+	</METS:amdSec>
 	<METS:amdSec ID="SOURCE4">
 		<METS:techMD ID="SOURCE4.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for VERYHIGH res image">
-				<METS:xmlData>	
+				<METS:xmlData>
 					<uvalibadmin:admin>
-						<uvalibadmin:source>				
-						   <uvalibadmin:identifier>006-001</uvalibadmin:identifier>
+						<uvalibadmin:source>
+							<uvalibadmin:identifier>006-001</uvalibadmin:identifier>
 							<uvalibadmin:mediatype type="image">
 								<uvalibadmin:form>slide</uvalibadmin:form>
 							</uvalibadmin:mediatype>
@@ -194,17 +192,17 @@
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
-	</METS:amdSec>	
+	</METS:amdSec>
 	<METS:amdSec ID="DIGIPROV1">
 		<METS:techMD ID="DIGIPROV1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for THUMBNAIL res image">
-				<METS:xmlData>	
-					<uvalibadmin:admin>			
+				<METS:xmlData>
+					<uvalibadmin:admin>
 						<uvalibadmin:digiprov>
 							<uvalibadmin:date>2001-09-01:06:32:00</uvalibadmin:date>
 							<uvalibadmin:agent type="corpname">Art Images for College Teaching</uvalibadmin:agent>
 							<uvalibadmin:description>creation</uvalibadmin:description>
-						</uvalibadmin:digiprov>					
+						</uvalibadmin:digiprov>
 					</uvalibadmin:admin>
 				</METS:xmlData>
 			</METS:mdWrap>
@@ -213,14 +211,14 @@
 	<METS:amdSec ID="DIGIPROV2">
 		<METS:techMD ID="DIGIPROV2.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for MEDRES res image">
-				<METS:xmlData>	
+				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:digiprov>
 							<uvalibadmin:date>2001-09-01:06:32:00</uvalibadmin:date>
 							<uvalibadmin:agent type="corpname">Art Images for College Teaching</uvalibadmin:agent>
 							<uvalibadmin:description>creation</uvalibadmin:description>
-						</uvalibadmin:digiprov>					
-					</uvalibadmin:admin>						
+						</uvalibadmin:digiprov>
+					</uvalibadmin:admin>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -228,14 +226,14 @@
 	<METS:amdSec ID="DIGIPROV3">
 		<METS:techMD ID="DIGIPROV3.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for HIGH res image">
-				<METS:xmlData>	
-					<uvalibadmin:admin>				
+				<METS:xmlData>
+					<uvalibadmin:admin>
 						<uvalibadmin:digiprov>
 							<uvalibadmin:date>2001-09-01:06:32:00</uvalibadmin:date>
 							<uvalibadmin:agent type="corpname">Art Images for College Teaching</uvalibadmin:agent>
 							<uvalibadmin:description>creation</uvalibadmin:description>
-						</uvalibadmin:digiprov>					
-					</uvalibadmin:admin>						
+						</uvalibadmin:digiprov>
+					</uvalibadmin:admin>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -243,28 +241,28 @@
 	<METS:amdSec ID="DIGIPROV4">
 		<METS:techMD ID="DIGIPROV4.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for VERYHIGH res image">
-				<METS:xmlData>	
-					<uvalibadmin:admin>				
+				<METS:xmlData>
+					<uvalibadmin:admin>
 						<uvalibadmin:digiprov>
 							<uvalibadmin:date>2001-09-01:06:32:00</uvalibadmin:date>
 							<uvalibadmin:agent type="corpname">Art Images for College Teaching</uvalibadmin:agent>
 							<uvalibadmin:description>creation</uvalibadmin:description>
-						</uvalibadmin:digiprov>					
-					</uvalibadmin:admin>						
+						</uvalibadmin:digiprov>
+					</uvalibadmin:admin>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
-	</METS:amdSec>			
+	</METS:amdSec>
 	<METS:amdSec ID="RIGHTS1">
 		<METS:rightsMD ID="RIGHTS1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for THUMBNAIL res image">
 				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:adminrights>
-						   <uvalibadmin:policy>
-						      <uvalibadmin:access>unrestricted</uvalibadmin:access>
-						      <uvalibadmin:use>educational</uvalibadmin:use>
-						   </uvalibadmin:policy>
+							<uvalibadmin:policy>
+								<uvalibadmin:access>unrestricted</uvalibadmin:access>
+								<uvalibadmin:use>educational</uvalibadmin:use>
+							</uvalibadmin:policy>
 						</uvalibadmin:adminrights>
 					</uvalibadmin:admin>
 				</METS:xmlData>
@@ -275,12 +273,12 @@
 		<METS:rightsMD ID="RIGHTS2.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for MEDRES res image">
 				<METS:xmlData>
-					<uvalibadmin:admin>				
+					<uvalibadmin:admin>
 						<uvalibadmin:adminrights>
-						   <uvalibadmin:policy>
-						      <uvalibadmin:access>unrestricted</uvalibadmin:access>
-						      <uvalibadmin:use>educational</uvalibadmin:use>
-						   </uvalibadmin:policy>
+							<uvalibadmin:policy>
+								<uvalibadmin:access>unrestricted</uvalibadmin:access>
+								<uvalibadmin:use>educational</uvalibadmin:use>
+							</uvalibadmin:policy>
 						</uvalibadmin:adminrights>
 					</uvalibadmin:admin>
 				</METS:xmlData>
@@ -293,10 +291,10 @@
 				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:adminrights>
-						   <uvalibadmin:policy>
-						      <uvalibadmin:access>unrestricted</uvalibadmin:access>
-						      <uvalibadmin:use>educational</uvalibadmin:use>
-						   </uvalibadmin:policy>
+							<uvalibadmin:policy>
+								<uvalibadmin:access>unrestricted</uvalibadmin:access>
+								<uvalibadmin:use>educational</uvalibadmin:use>
+							</uvalibadmin:policy>
 						</uvalibadmin:adminrights>
 					</uvalibadmin:admin>
 				</METS:xmlData>
@@ -309,10 +307,10 @@
 				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:adminrights>
-						   <uvalibadmin:policy>
-						      <uvalibadmin:access>unrestricted</uvalibadmin:access>
-						      <uvalibadmin:use>educational</uvalibadmin:use>
-						   </uvalibadmin:policy>
+							<uvalibadmin:policy>
+								<uvalibadmin:access>unrestricted</uvalibadmin:access>
+								<uvalibadmin:use>educational</uvalibadmin:use>
+							</uvalibadmin:policy>
 						</uvalibadmin:adminrights>
 					</uvalibadmin:admin>
 				</METS:xmlData>
@@ -354,7 +352,7 @@
 	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
-		<METS:div TYPE="uva-bmech-sizedimg:20" LABEL="DS Binding Map for UVA  Image Sizer mechanism">
+		<METS:div TYPE="test:4" LABEL="DS Binding Map for UVA  Image Sizer mechanism">
 			<METS:div TYPE="THUMBRES_IMG" LABEL="current thumbnail photo of Palace of Minos" ORDER="0">
 				<METS:fptr FILEID="DS1"/>
 			</METS:div>
@@ -378,13 +376,13 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="uva-bdef-stdimg:8" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors" GROUPID="DISS1" STATUS="">
+	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="test:1" CREATED="2002-05-20T06:32:00" LABEL="UVA Std Image Behaviors" GROUPID="DISS1" STATUS="">
 		<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 		<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->
 		<!-- the disseminator subscribes -->
-		<METS:interfaceDef LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="uva-bdef-stdimg:8"/>
+		<METS:interfaceDef LABEL="UVA Std Image Behavior Definition" LOCTYPE="URN" xlink:href="test:1"/>
 		<!--Use xlink  to point to the Behavior Mechanism object which will be stored as a separate METS object.-->
 		<!--The Behavior Mechanism object stores WSDL bindings to run methods described in Behavior Definition object.-->
-		<METS:mechanism LABEL="UVA Image Sizer Behavior Mechanism" LOCTYPE="URN" xlink:href="uva-bmech-sizedimg:20"/>
+		<METS:mechanism LABEL="UVA Image Sizer Behavior Mechanism" LOCTYPE="URN" xlink:href="test:4"/>
 	</METS:behaviorSec>
 </METS:mets>

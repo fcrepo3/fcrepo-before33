@@ -2,7 +2,7 @@
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR MECHANISM OBJECT ENCODED USING METS -->
 <!---********************************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvadesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/" xmlns:uvadigiprov="http://dl.lib.virginia.edu/bin/admin/digiprov/" xmlns:uvasource="http://dl.lib.virginia.edu/bin/admin/source/" xmlns:uvarights="http://dl.lib.virginia.edu/bin/admin/rights/" xmlns:uvatech="http://dl.lib.virginia.edu/bin/admin/tech/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="uva-bmech-mrsid:15" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object for UVA Standard Image" PROFILE="fedora:BMECH">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="test:5" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object for UVA Standard Image" PROFILE="fedora:BMECH">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
@@ -27,7 +27,7 @@
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Binding Specification for MrSID mechanism">
 				<METS:xmlData>
 					<fbs:DSBindingSpec>
-						<fbs:mechanismID scheme="URN">uva-bmech-mrsid:15</fbs:mechanismID>
+						<fbs:mechanismID scheme="URN">test:5</fbs:mechanismID>
 						<fbs:behaviorDefID scheme="URN">uva-bdef-stdimg:8</fbs:behaviorDefID>
 						<fbs:DSBinding BindingKeyName="MRSID" DSMin="1" DSMax="1" DSOrdinality="false">
 							<fbs:DSBindingLabel>MrSid file</fbs:DSBindingLabel>
@@ -47,13 +47,13 @@
 		<METS:techMD ID="TECH2.0" CREATED="2002-02-17T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL service definitions for Std Image Behaviors using MrSid mechanism">
 				<METS:xmlData>
-					<wsdl:definitions name="image-std" targetNamespace="uva-bmech-mrsid:15" xmlns="uva-bmech-mrsid:15" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
+					<wsdl:definitions name="image-std" targetNamespace="test:5" xmlns="test:5" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
 						<!-- ************************************************************************************************************************************** -->
 						<!-- WSDL: SCHEMA TYPE DEFINITIONS -->
 						<!-- Here are all data types needed by the mechanism.  These could also be imported from a separate file.  -->
 						<!-- *************************************************************************************************************************************-->
 						<wsdl:types>
-							<xsd:schema targetNamespace="uva-bmech-mrsid:15" xmlns:pa="uva-bmech-mrsid:15" xmlns:fedora="http://fedora.comm.nsdlib.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+							<xsd:schema targetNamespace="test:5" xmlns:pa="test:5" xmlns:fedora="http://fedora.comm.nsdlib.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 								<!-- ********************************************************************************************************************************* -->
 								<xsd:import namespace="http://fedora.comm.nsdlib.org/" schemaLocation="fedora-dsbind.xsd"/>
 								<!-- **************************************************************************************************************** -->
