@@ -355,12 +355,6 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
               + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
               + " http://" + fedoraServerHost + ":" + fedoraServerPort
               + "/fedoraRepository.xsd\">");
-          //pw.write("<fedoraRepository "
-          //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-          //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-          //    + ">");
-          //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-          //    + " location=\"fedoraRepository.xsd\"/>");
 
           // REPOSITORY INFO FIELDS SERIALIZATION
           pw.write("<repositoryName>" + repositoryInfo.repositoryName + "</repositoryName>");

@@ -97,13 +97,6 @@ public class ObjectInfoAsXML
             + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
             + " http://" + fedoraServerHost + ":" + fedoraServerPort
             + "/objectProfile.xsd\"" + " pid=\"" + objProfile.PID + "\" >");
-        //out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        //out.append("<objectProfile "
-        //      + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-        //      + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-        //      + " pid=\"" + objProfile.PID + "\" >");
-        //out.append("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-        //      + " location=\"objectProfile.xsd\"/>");
 
         // PROFILE FIELDS SERIALIZATION
         out.append("<objLabel>" + objProfile.objectLabel + "</objLabel>");
@@ -144,13 +137,6 @@ public class ObjectInfoAsXML
             + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
             + " http://" + fedoraServerHost + ":" + fedoraServerPort
             + "/objectMethods.xsd\"" + " pid=\"" + PID + "\">");
-        //out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        //out.append("<objectMethods "
-        //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-        //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-        //    + " pid=\"" + PID + "\" >");
-        //out.append("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-        //    + " location=\"objectMethods.xsd\"/>");
 
         String nextBdef = "null";
         String currentBdef = "";

@@ -942,12 +942,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectMethods.xsd\""
                 + " pid=\"" + PID + "\" >");
-            //pw.write("<objectMethods "
-            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-            //    + " pid=\"" + PID + "\" >");
-            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " location=\"objectMethods.xsd\"/>");
           } else
           {
             pw.write("<objectMethods "
@@ -959,14 +953,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
-            //pw.write("<objectMethods "
-            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-            //    + " pid=\"" + PID + "\""
-            //    + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
-            //    + "\" >");
-            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " location=\"objectMethods.xsd\"/>");
           }
           String nextBdef = "null";
           String currentBdef = "";
@@ -1071,12 +1057,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectProfile.xsd\""
                 + " pid=\"" + PID + "\" >");
-            //pw.write("<objectProfile "
-            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-            //    + " pid=\"" + PID + "\" >");
-            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " location=\"objectProfile.xsd\"/>");
           } else
           {
             pw.write("<objectProfile "
@@ -1088,14 +1068,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
-            //pw.write("<objectProfile "
-            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-            //    + " pid=\"" + PID + "\""
-            //    + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
-            //    + "\" >");
-            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " location=\"objectProfile.xsd\"/>");
           }
 
           // PROFILE FIELDS SERIALIZATION
@@ -1178,12 +1150,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
               + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
               + " http://" + fedoraServerHost + ":" + fedoraServerPort
               + "/fedoraRepository.xsd\">");
-          //pw.write("<fedoraRepository "
-          //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-          //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-          //    + ">");
-          //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-          //    + " location=\"fedoraRepository.xsd\"/>");
 
           // REPOSITORY INFO FIELDS SERIALIZATION
           pw.write("<repositoryName>" + repositoryInfo.getRepositoryName() + "</repositoryName>");
@@ -1281,12 +1247,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectMethods.xsd\""
                 + " pid=\"" + PID + "\" >");
-            //pw.write("<objectMethods "
-            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-            //    + " pid=\"" + PID + "\" >");
-            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " location=\"objectMethods.xsd\"/>");
           } else
           {
             pw.write("<objectMethods "
@@ -1298,14 +1258,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
-            //pw.write("<objectMethods "
-            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-            //    + " pid=\"" + PID + "\""
-            //    + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
-            //    + "\" >");
-            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " location=\"objectMethods.xsd\"/>");
           }
           String nextBdef = "null";
           String currentBdef = "";
@@ -1410,12 +1362,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/behaviorDefs.xsd\""
                 + " pid=\"" + PID + "\" >");
-            //pw.write("<behaviorDefs "
-            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-            //    + " pid=\"" + PID + "\" >");
-            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " location=\"behaviorDefs.xsd\"/>");
           } else
           {
             pw.write("<behaviorDefs "
@@ -1427,14 +1373,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
-            //pw.write("<behaviorDefs "
-            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-            //    + " pid=\"" + PID + "\""
-            //    + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
-            //    + "\" >");
-            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            //    + " location=\"behaviorDefs.xsd\"/>");
           }
           String nextBdef = "null";
           String currentBdef = "";
