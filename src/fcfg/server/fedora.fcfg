@@ -115,25 +115,19 @@
           The named connection pool from which read/write
           database connections are to be provided for the storage
           subsystem (see the ConnectionPoolManager module)
-        - storageFormat (required)
-          The DEFAULT format in which internal serializations of digital objects
-          are to be written.  There must exist a correspondingly
-          named serializer-deserializer pair in the DOTranslator module.
         - storageCharacterEncoding [default=UTF-8]
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
-        - exportFormat (required)
+        - defaultExportFormat (required)
           The DEFAULT format in which external serializations of digital objects
           are to be written.  There must exist a correspondingly
           named serializer-deserializer pair in the DOTranslator module.
+          Valid values are: "foxml1.0" and "metslikefedora1"
 		<param name="pidNamespace" value="changeme"/>
 		<param name="retainPIDs" value="demo test changeme fedora-bdef fedora-bmech tutorial"/>
 		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
-		<param name="storageFormat" value="foxml1.0"/>
-		<param name="exportFormat" value="foxml1.0"/>
-		<!--<param name="storageFormat" value="metslikefedora1"/>-->
-		<!--<param name="exportFormat" value="metslikefedora1"/>-->
 		<param name="storageCharacterEncoding" value="UTF-8"/>
+		<param name="defaultExportFormat" value="foxml1.0"/>
 	</module>
 	<module role="fedora.server.management.Management" class="fedora.server.management.DefaultManagement">
 		<comment>
