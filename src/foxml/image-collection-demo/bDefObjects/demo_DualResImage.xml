@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <foxml:digitalObject PID="demo:DualResImage" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
   <foxml:objectProperties>
-    <foxml:property NAME="info:fedora/fedora-system:def/fType" VALUE="FedoraBDefObject"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/state" VALUE="A"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/label" VALUE="Dual Resolution Image"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/cDate" VALUE="2004-12-12T09:59:13Z"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/mDate" VALUE="2004-12-12T09:59:13Z"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/cModel" VALUE="fedora:BDEF"/>
+    <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraBDefObject"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Dual Resolution Image"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BDEF"/>
   </foxml:objectProperties>
-  <foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
-    <foxml:datastreamVersion ID="DC1.0" CREATED="2004-12-12T09:59:13Z" LABEL="Dublin Core Metadata for Service">
+  <foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml">
+    <foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Metadata for Service">
       <foxml:xmlContent>
         <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
           <dc:title>Dual Resolution Image</dc:title>
@@ -18,8 +16,8 @@
       </foxml:xmlContent>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
-    <foxml:datastreamVersion ID="METHODMAP1.0" LABEL="Abstract Method Definitions" CREATED="2004-12-12T09:59:13Z">
+  <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP" MIMETYPE="text/xml">
+    <foxml:datastreamVersion ID="METHODMAP1.0" LABEL="Abstract Method Definitions">
       <foxml:xmlContent>
         <fmm:MethodMap name="MethodMap - Dual Resolution Image" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
           <fmm:Method label="A full-size image" operationName="fullSize"/>

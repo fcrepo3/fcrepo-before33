@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <foxml:digitalObject PID="demo:DualResImageCollection" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
   <foxml:objectProperties>
-    <foxml:property NAME="info:fedora/fedora-system:def/fType" VALUE="FedoraBMechObject"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/state" VALUE="A"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/label" VALUE="Collection of DualResImage Objects"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/cDate" VALUE="2004-12-13T01:06:42Z"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/mDate" VALUE="2004-12-13T01:06:43Z"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/cModel" VALUE="fedora:BMECH"/>
+    <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraBMechObject"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Collection of DualResImage Objects"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
   </foxml:objectProperties>
-  <foxml:datastream CONTROL_GROUP="X" ID="WSDL" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
-    <foxml:datastreamVersion CREATED="2004-12-13T01:06:42Z" ID="WSDL1.0" LABEL="WSDL definition of service" SIZE="4104">
+  <foxml:datastream CONTROL_GROUP="X" ID="WSDL" MIMETYPE="text/xml">
+    <foxml:datastreamVersion ID="WSDL1.0" LABEL="WSDL definition of service">
       <foxml:xmlContent>
         <wsdl:definitions name="Collection of DualResImage Objects" targetNamespace="bmech"
           xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
@@ -79,9 +77,8 @@
       </foxml:xmlContent>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="X" ID="SERVICE-PROFILE" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
-    <foxml:datastreamVersion CREATED="2004-12-13T01:06:42Z" ID="SERVICE-PROFILE1.0"
-      LABEL="Service Profile - Technical description of the service" SIZE="895">
+  <foxml:datastream CONTROL_GROUP="X" ID="SERVICE-PROFILE" MIMETYPE="text/xml">
+    <foxml:datastreamVersion ID="SERVICE-PROFILE1.0" LABEL="Service Profile - Technical description of the service">
       <foxml:xmlContent>
         <fsvp:serviceProfile bDefPID="demo:Collection" name="" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
           <fsvp:serviceDescription/>
@@ -99,8 +96,8 @@
       </foxml:xmlContent>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="X" ID="DC" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
-    <foxml:datastreamVersion CREATED="2004-12-13T01:06:42Z" ID="DC1.0" LABEL="Dublin Core Metadata for Service" SIZE="260">
+  <foxml:datastream CONTROL_GROUP="X" ID="DC" MIMETYPE="text/xml">
+    <foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Metadata for Service">
       <foxml:xmlContent>
         <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
           <dc:title>Collection of DualResImage Objects</dc:title>
@@ -109,9 +106,8 @@
       </foxml:xmlContent>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="X" ID="DSINPUTSPEC" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
-    <foxml:datastreamVersion CREATED="2004-12-13T01:06:42Z" ID="DSINPUTSPEC1.0"
-      LABEL="Datastream Input Specification for Service" SIZE="578">
+  <foxml:datastream CONTROL_GROUP="X" ID="DSINPUTSPEC" MIMETYPE="text/xml">
+    <foxml:datastreamVersion ID="DSINPUTSPEC1.0" LABEL="Datastream Input Specification for Service">
       <foxml:xmlContent>
         <fbs:DSInputSpec bDefPID="demo:Collection" label="Datastream Input Specification for Collection of DualResImage Objects" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
           <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="IMAGE_LIST">
@@ -128,8 +124,8 @@
       </foxml:xmlContent>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
-    <foxml:datastreamVersion CREATED="2004-12-13T01:06:42Z" ID="METHODMAP1.0" LABEL="Mapping of WSDL to Fedora notion of Method Definitions" SIZE="1219">
+  <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP" MIMETYPE="text/xml">
+    <foxml:datastreamVersion ID="METHODMAP1.0" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
       <foxml:xmlContent>
         <fmm:MethodMap bDefPID="demo:Collection" name="MethodMap - Collection of DualResImage Objects" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
           <fmm:Method operationLabel="An html representation of the collection" operationName="view"
