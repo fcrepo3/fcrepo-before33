@@ -406,6 +406,7 @@ public class DefaultDOManager
     public void doCommit(Context context, DigitalObject obj, String logMessage, boolean remove)
             throws ServerException {
         if (remove) {
+            logFinest("Entered doCommit (remove)");
             // Before removing an object, verify that there are no other objects
             // in the repository that depend on the object being deleted.
             FieldSearchResult result = findObjects(context,
@@ -513,6 +514,7 @@ public class DefaultDOManager
             }
             */
         } else {
+            logFinest("Entered doCommit (add/modify)");
             try {
                 // copy and store any datastreams of type Managed Content
                 Iterator dsIDIter = obj.datastreamIdIterator();
@@ -609,8 +611,10 @@ public class DefaultDOManager
                 // set last mod date, in UTC
                 obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
+                logFinest("Serializing for validation...");
                     m_translator.serialize(obj, out, m_defaultStorageFormat, m_storageCharacterEncoding, false);
                     ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
+                logFinest("Validating...");
                     m_validator.validate(inV, m_defaultStorageFormat, 0, "store");
                     // TODO: DELTA-MODULE:
                     // After validating for storage, but before saving to definitive store, 
@@ -626,12 +630,14 @@ public class DefaultDOManager
                     }
                     */
                     // if ok, write change to perm store here...right before db stuff
+                    logFinest("Passed validation.  Storing...");
                     if (obj.isNew()) {
                         getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                     } else {
                         getObjectStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                     }
 
+                logFinest("Updating registry...");
                 // update systemVersion in doRegistry (add one)
                 Connection conn=null;
                 Statement s = null;
@@ -670,27 +676,25 @@ public class DefaultDOManager
                     }
                 }
                 // add to replication jobs table
+                logFinest("Adding replication job...");
                 addReplicationJob(obj.getPid(), false);
                 // replicate
                 try {
                     if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
                         logInfo("Attempting replication as bdef object: " + obj.getPid());
                         BDefReader reader=getBDefReader(context, obj.getPid());
-                        logInfo("Got a BDefReader...");
                         m_replicator.replicate(reader);
                         logInfo("Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
                     } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
                         logInfo("Attempting replication as bmech object: " + obj.getPid());
                         BMechReader reader=getBMechReader(context, obj.getPid());
-                        logInfo("Got a BMechReader...");
                         m_replicator.replicate(reader);
                         logInfo("Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
                     } else {
                         logInfo("Attempting replication as normal object: " + obj.getPid());
                         DOReader reader=getReader(context, obj.getPid());
-                        logInfo("Got a DOReader...");
                         m_replicator.replicate(reader);
                         logInfo("Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
@@ -823,13 +827,16 @@ public class DefaultDOManager
         } else {
             try {
                 // write it to temp, as "tempHandle"
+                logFinest("Adding and retrieving from temp store...");
                 getTempStore().add(tempHandle, in);
                 wroteTempIngest=true;
                 InputStream in2=getTempStore().retrieve(tempHandle);
 
                 // perform initial validation of the ingest submission format
+                logFinest("Getting another handle from temp store for validation...");
                 InputStream inV=getTempStore().retrieve(tempHandle);
                 //m_validator.validate(inV, format, 0, "ingest");
+                logFinest("Validating (ingest)...");
 				m_validator.validate(inV, format, 0, "ingest");
 
                 // deserialize it first
@@ -838,9 +845,11 @@ public class DefaultDOManager
 				obj.setOwnerId("fedoraAdmin");
 				// deserialize the input stream, specifying its client-supplied format
 				System.out.println("LOOK! just about to deserialize format of: " + format);
+                logFinest("Deserializing from format: " + format);
                 m_translator.deserialize(in2, obj, format, encoding);
                 // then, before doing anything, set object and component states
                 // to "A" if they're unspecified
+                logFinest("Setting object/component states to A if unset...");
 				if (obj.getState()==null || obj.getState().equals("")) {
                     obj.setState("A");
 				}
@@ -917,6 +926,7 @@ public class DefaultDOManager
 
                 permPid=obj.getPid();
                 inPermanentStore=true; // signifies successful perm store addition
+                logFinest("Retrieving temporary copy from permanent store to add to temp store with real PID...");
                 InputStream in4=getTempStore().retrieve(tempHandle);
 
                 // now add it to the working area with the *known* pid
@@ -929,6 +939,7 @@ public class DefaultDOManager
                 // then get a digital object writer configured with
                 // the DEFAULT export format.
 				System.out.println("LOOK! get new writer with default export format: " + m_defaultExportFormat);
+                logFinest("Instantiating a SimpleDOWriter...");
                 DOWriter w=new SimpleDOWriter(context, this, m_translator,
                         m_defaultExportFormat,
                         m_storageCharacterEncoding, obj, this);
@@ -941,6 +952,7 @@ public class DefaultDOManager
                 obj.setLastModDate(nowUTC);
 
 
+                logFinest("Adding/Checking initial DC record...");
                 // if there's no DC record, add one using PID for identifier.
                 // and Label for dc:title
                 //
@@ -999,6 +1011,7 @@ public class DefaultDOManager
                 throw se; // re-throw it so the client knows what's up
             } finally {
                 if (wroteTempIngest) {
+                    logFinest("Finally, removing temp copy from temp store...");
                     // remove this in any case
                     getTempStore().remove(tempHandle);
                 }
@@ -1174,6 +1187,7 @@ public class DefaultDOManager
      */
     public boolean objectExists(String pid)
             throws StorageDeviceException {
+        logFinest("Checking if " + pid + " already exists...");
         Connection conn=null;
         Statement s = null;
         ResultSet results=null;
@@ -1199,6 +1213,7 @@ public class DefaultDOManager
           } finally {
               results=null;
               s=null;
+              logFinest("Finished checking if " + pid + " already exists...");
           }
         }
     }
