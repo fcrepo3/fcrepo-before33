@@ -113,7 +113,7 @@
 					<para><emphasis role="bold">dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
 				</listitem>
 				<listitem>
-					<para><emphasis role="bold">xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;yes&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;no&quot; indicates format is to be text/html.</para>
+					<para><emphasis role="bold">xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;true&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;false&quot; indicates format is to be text/html.</para>
 				</listitem>
 			</itemizedlist>
 		</blockquote>
