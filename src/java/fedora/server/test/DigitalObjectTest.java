@@ -172,15 +172,15 @@ public class DigitalObjectTest
 
     public void testDatastreamComposition() {
         m_obj.getAuditRecords().add(m_audit2);
-        m_ds1_0.auditRecordIdList().add(m_audit2.id);
+        //m_ds1_0.auditRecordIdList().add(m_audit2.id);
         m_obj.datastreams("DS1").add(m_ds1_0);
 
         m_obj.getAuditRecords().add(m_audit3);
-        m_ds1_1.auditRecordIdList().add(m_audit3.id);
+        //m_ds1_1.auditRecordIdList().add(m_audit3.id);
         m_obj.datastreams("DS1").add(m_ds1_1);
 
         m_obj.getAuditRecords().add(m_audit4);
-        m_ds2_0.auditRecordIdList().add(m_audit4.id);
+        //m_ds2_0.auditRecordIdList().add(m_audit4.id);
         m_obj.datastreams("DS2").add(m_ds2_0);
     }
 
