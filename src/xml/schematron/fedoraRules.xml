@@ -65,32 +65,32 @@
 			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element file: STATUS)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:behaviorSec">
-			<sch:assert test="@CREATEDATE">Disseminator must have a date of creation (element behaviorSec: CREATEDATE missing)</sch:assert>
+			<sch:assert test="@CREATED">Disseminator must have a date of creation (element behaviorSec: CREATED missing)</sch:assert>
 			<sch:assert test="string(@STATUS)">Disseminator state must be recorded (element behaviorSec: STATUS missing or empty)</sch:assert>
 			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Disseminator state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element behaviorSec: STATUS)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:dmdSec">
-			<sch:assert test="@CREATEDATE">Inline Metadata Datastream must have a date of creation (element dmdSec: CREATEDATE missing)</sch:assert>
+			<sch:assert test="@CREATED">Inline Metadata Datastream must have a date of creation (element dmdSec: CREATED missing)</sch:assert>
 			<sch:assert test="string(@STATUS)">Inline Metadata Datastream state must be recorded (element dmdSec: STATUS missing or empty)</sch:assert>
 			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Inline Metadata Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element dmdSec: STATUS)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:techMD">
-			<sch:assert test="@CREATEDATE">Inline Metadata Datastream must have a date of creation (element techMD: CREATEDATE missing)</sch:assert>
+			<sch:assert test="@CREATED">Inline Metadata Datastream must have a date of creation (element techMD: CREATED missing)</sch:assert>
 			<sch:assert test="string(@STATUS)">Inline Metadata Datastream state must be recorded (element techMD: STATUS missing or empty)</sch:assert>
 			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Inline Metadata Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element techMD: STATUS)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:rightsMD">
-			<sch:assert test="@CREATEDATE">Inline Metadata Datastream must have a date of creation (element rightsMD: CREATEDATE missing)</sch:assert>
+			<sch:assert test="@CREATED">Inline Metadata Datastream must have a date of creation (element rightsMD: CREATED missing)</sch:assert>
 			<sch:assert test="string(@STATUS)">Inline Metadata Datastream state must be recorded (element rightsMD: STATUS missing or empty)</sch:assert>
 			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Inline Metadata Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element rightsMD: STATUS)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:sourceMD">
-			<sch:assert test="@CREATEDATE">Inline Metadata Datastream must have a date of creation (element sourceMD: CREATEDATE missing)</sch:assert>
+			<sch:assert test="@CREATED">Inline Metadata Datastream must have a date of creation (element sourceMD: CREATED missing)</sch:assert>
 			<sch:assert test="string(@STATUS)">Inline Metadata Datastream state must be recorded (element sourceMD: STATUS missing or empty)</sch:assert>
 			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Inline Metadata Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element sourceMD: STATUS)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:digiprovMD">
-			<sch:assert test="@CREATEDATE">Inline Metadata Datastream must have a date of creation (element digiprovMD: CREATEDATE missing)</sch:assert>
+			<sch:assert test="@CREATED">Inline Metadata Datastream must have a date of creation (element digiprovMD: CREATED missing)</sch:assert>
 			<sch:assert test="string(@STATUS)">Inline Metadata Datastream state must be recorded (element digiprovMD: STATUS missing or empty)</sch:assert>
 			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Inline Metadata Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element digiprovMD: STATUS)</sch:assert>
 		</sch:rule>
