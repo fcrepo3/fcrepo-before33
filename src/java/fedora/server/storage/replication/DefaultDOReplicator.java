@@ -781,7 +781,7 @@ System.out.println("insert dsbinding");
               logFinest("Getting occurrences of dissDbID(s) in "
                     + "doDissAssoc table...");
               results=logAndExecuteQuery(st, "SELECT COUNT(*) from "
-                    + "DigitalOBjectDissAssoc WHERE dissDbID=" + id);
+                    + "doDissAssoc WHERE dissDbID=" + id);
               while (results.next())
               {
                 Integer i1 = new Integer(results.getInt("COUNT(*)"));
