@@ -247,13 +247,17 @@ public class DefaultDOReplicator
               if (!diss.dissLabel.equals(dissLabel)
                   || !diss.bMechID.equals(bMechPID)
                   || !diss.dissState.equals(dissState)) {
+                if (!diss.dissLabel.equals(dissLabel)) 
+                    logFinest("dissLabel changed from '" + dissLabel + "' to '" + diss.dissLabel + "'");
+                if (!diss.dissState.equals(dissState)) 
+                    logFinest("dissState changed from '" + dissState + "' to '" + diss.dissState + "'");
                 // we might need to set the bMechDbID to the id for the new one,
                 // if the mechanism changed
                 int newBMechDbID; 
                 if (diss.bMechID.equals(bMechPID)) {
                   newBMechDbID=bMechDbID; 
                 } else {
-                  logFinest("Since the BMech changed, the diss table's bMechDbID will be changed.");
+                  logFinest("bMechPID changed from '" + bMechPID + "' to '" + diss.bMechID + "'");
                   results=logAndExecuteQuery(st, "SELECT bMechDbID "
                                                + "FROM bMech "
                                                + "WHERE bMechPID='" 
@@ -271,7 +275,7 @@ public class DefaultDOReplicator
                 logAndExecuteUpdate(st, "UPDATE diss SET dissLabel='"
                     + SQLUtility.aposEscape(diss.dissLabel)
                     + "', bMechDbID=" + newBMechDbID + ", "
-                    + "', dissID='" + diss.dissID + "', "
+                    + "dissID='" + diss.dissID + "', "
                     + "dissState='" + diss.dissState + "' "
                     + " WHERE dissDbID=" + dissDbID + " AND bDefDbID=" + bDefDbID + " AND bMechDbID=" + bMechDbID);
               }
