@@ -76,7 +76,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         HttpServletRequest req=(HttpServletRequest) MessageContext.
                 getCurrentContext().getProperty(
                 HTTPConstants.MC_HTTP_SERVLETREQUEST);
-                System.out.println("HOST:" + req.getRemoteAddr());
         h.put("host", req.getRemoteAddr());
         return new ReadOnlyContext(h);
     }

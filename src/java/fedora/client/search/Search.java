@@ -3,6 +3,7 @@ package fedora.client.search;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -164,15 +165,95 @@ public class Search
     public class SelectFieldsDialog
             extends JDialog {
         
-        public SelectFieldsDialog() {
+        public SelectFieldsDialog(List fieldList) {
             super(Administrator.getInstance(), "Select Fields to Display", true);
-            JButton cancelButton=new JButton("Cancel");
-            cancelButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    setVisible(false);
-                }
-            });
-            getContentPane().add(cancelButton);
+            
+            // mainPanel(northPanel, southPanel)
+
+                // NORTH: northPanel(bunch of JCheckBoxes)
+
+                    JCheckBox pidBox=new JCheckBox("pid");
+                    JCheckBox bDefBox=new JCheckBox("bDef");
+                    JCheckBox typeBox=new JCheckBox("type");
+                    JCheckBox labelBox=new JCheckBox("label");
+                    JCheckBox bMechBox=new JCheckBox("bMech");
+                    JCheckBox formatBox=new JCheckBox("format");
+                    JCheckBox fTypeBox=new JCheckBox("fType");
+                    JCheckBox titleBox=new JCheckBox("title");
+                    JCheckBox identifierBox=new JCheckBox("identifier");
+                    JCheckBox cModelBox=new JCheckBox("cModel");
+                    JCheckBox creatorBox=new JCheckBox("creator");
+                    JCheckBox sourceBox=new JCheckBox("source");
+                    JCheckBox stateBox=new JCheckBox("state");
+                    JCheckBox subjectBox=new JCheckBox("subject");
+                    JCheckBox languageBox=new JCheckBox("language");
+                    JCheckBox lockerBox=new JCheckBox("locker");
+                    JCheckBox descriptionBox=new JCheckBox("description");
+                    JCheckBox relationBox=new JCheckBox("relation");
+                    JCheckBox cDateBox=new JCheckBox("cDate");
+                    JCheckBox publisherBox=new JCheckBox("publisher");
+                    JCheckBox coverageBox=new JCheckBox("coverage");
+                    JCheckBox mDateBox=new JCheckBox("mDate");
+                    JCheckBox contributorBox=new JCheckBox("contributor");
+                    JCheckBox rightsBox=new JCheckBox("rights");
+                    JCheckBox dcmDateBox=new JCheckBox("dcmDate");
+                    JCheckBox dateBox=new JCheckBox("date");
+
+                JPanel northPanel=new JPanel();
+                northPanel.setLayout(new GridLayout(9,3));
+                northPanel.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
+                northPanel.add(pidBox);
+                northPanel.add(bDefBox);
+                northPanel.add(typeBox);
+                northPanel.add(labelBox);
+                northPanel.add(bMechBox);
+                northPanel.add(formatBox);
+                northPanel.add(fTypeBox);
+                northPanel.add(titleBox);
+                northPanel.add(identifierBox);
+                northPanel.add(cModelBox);
+                northPanel.add(creatorBox);
+                northPanel.add(sourceBox);
+                northPanel.add(stateBox);
+                northPanel.add(subjectBox);
+                northPanel.add(languageBox);
+                northPanel.add(lockerBox);
+                northPanel.add(descriptionBox);
+                northPanel.add(relationBox);
+                northPanel.add(cDateBox);
+                northPanel.add(publisherBox);
+                northPanel.add(coverageBox);
+                northPanel.add(mDateBox);
+                northPanel.add(contributorBox);
+                northPanel.add(rightsBox);
+                northPanel.add(dcmDateBox);
+                northPanel.add(dateBox);
+
+                // SOUTH: southPanel(cancelButton, okButton)
+
+                    JButton cancelButton=new JButton("Cancel");
+                    cancelButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            setVisible(false);
+                        }
+                    });
+                    JButton okButton=new JButton("Ok");
+                    okButton.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            setVisible(false);
+                        }
+                    });
+                
+                JPanel southPanel=new JPanel();
+                southPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+                southPanel.add(cancelButton);
+                southPanel.add(okButton);
+
+            getContentPane().setLayout(new BorderLayout());
+            getContentPane().add(northPanel, BorderLayout.NORTH);
+            getContentPane().add(southPanel, BorderLayout.SOUTH);
+            pack();
+            setLocation(Administrator.getInstance().getCenteredPos(getSize().width, getSize().height));
         }
         
     }
@@ -228,7 +309,7 @@ public class Search
             // - the fieldList
             
             // first, construct the dialog with the values from fieldList
-            SelectFieldsDialog dialog=new SelectFieldsDialog();
+            SelectFieldsDialog dialog=new SelectFieldsDialog(m_fieldList);
             dialog.setVisible(true);
             
             // if they clicked cancel, just exit.
