@@ -18,9 +18,13 @@ public interface BMechReader extends DOReader
 {
   public MethodDef[] getServiceMethods(Date versDateTime) throws ServerException;
 
-  public MethodDefOperationBind[] getServiceMethodBindings(Date versDateTime) throws ServerException;
+  public MethodDefOperationBind[] getServiceMethodBindings(Date versDateTime)
+      throws ServerException;
 
   public InputStream getServiceMethodsXML(Date versDateTime) throws ServerException;
 
   public BMechDSBindSpec getServiceDSInputSpec(Date versDateTime) throws ServerException;
+
+  public MethodParmDef[] getServiceMethodParms(String bDefPID, String methodName,
+      Date versDateTime) throws ServerException;
 }
