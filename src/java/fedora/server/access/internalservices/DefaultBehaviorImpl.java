@@ -63,12 +63,14 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
 {
   private DOReader reader;
   private String reposBaseURL;
+  private File reposHomeDir;
 
-  public DefaultBehaviorImpl(DOReader objectReader, String repositoryBaseURL)
-    throws ServerException
+  public DefaultBehaviorImpl(DOReader objectReader, String repositoryBaseURL,
+    File repositoryHomeDir) throws ServerException
   {
     reader = objectReader;
     reposBaseURL = repositoryBaseURL;
+    reposHomeDir = repositoryHomeDir;
   }
 
   /**
@@ -79,7 +81,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   public MIMETypedStream getObjectProfile() throws ServerException
   {
     return new MIMETypedStream("text/xml",
-      new ObjectInfoAsXML().getObjectProfile(reader).getBytes());
+      new ObjectInfoAsXML().getObjectProfile(reposBaseURL, reader).getBytes());
   }
 
   /**
@@ -87,26 +89,30 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    * is returned as HTML in a presentation-oriented format.</p>
    *
    */
-  public MIMETypedStream viewObjectInfo() throws ServerException
+  public MIMETypedStream viewObjectProfile() throws ServerException
   {
-    // DO XSLT transform on infoXML;
-/*
-    String infoXML = new ObjectInfoAsXML().getObjectProfile(reader);
-    ByteArrayInputStream in = new ByteArrayInputStream(infoXML.getBytes());
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    File xslFile = new File(s_server.getHomeDir(), "access/objectinfo.xslt");
-    TransformerFactory factory = TransformerFactory.newInstance();
-    Templates template = factory.newTemplates(new StreamSource(xslFile));
-    Transformer transformer = template.newTransformer();
-    Properties details = template.getOutputProperties();
-    transformer.setParameter("serverURI", new StringValue(serverURI));
-    transformer.setParameter("dummy", new StringValue("dummy"));
-    transformer.transform(new StreamSource(in), new StreamResult(out));
-    return new MIMETypedStream("text/html", out.toByteArray());
-    */
-    String temp = new String("<html><head><title>FedoraServlet</title></head>" +
-      " <body><br></br>DefaultBehaviorImpl: HTML Presentation COMING SOON!</body></html>");
-    return new MIMETypedStream("text/html", temp.getBytes());
+    // DO XSLT transform on object info;
+    try
+    {
+      ByteArrayInputStream in = new ByteArrayInputStream(getObjectProfile().stream);
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      File xslFile = new File(reposHomeDir, "access/viewObjectProfile.xslt");
+      TransformerFactory factory = TransformerFactory.newInstance();
+      Templates template = factory.newTemplates(new StreamSource(xslFile));
+      Transformer transformer = template.newTransformer();
+      Properties details = template.getOutputProperties();
+      transformer.transform(new StreamSource(in), new StreamResult(out));
+      return new MIMETypedStream("text/html", out.toByteArray());
+    } catch (TransformerException e)
+    {
+      throw new DisseminationException("[DefaultBehaviorImpl] had an error "
+          + "in transforming xml for viewObjectProfile. "
+          + "Underlying exception was: "
+          + e.getMessage());
+    }
+    //String temp = new String("<html><head><title>FedoraServlet</title></head>" +
+    //  " <body><br></br>DefaultBehaviorImpl: HTML Presentation COMING SOON!</body></html>");
+    //return new MIMETypedStream("text/html", temp.getBytes());
   }
 
   /**
@@ -136,9 +142,28 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    */
   public MIMETypedStream viewItemList() throws ServerException
   {
-    String temp = new String("<html><head><title>FedoraServlet</title></head>" +
-      " <body><br></br>DefaultBehaviorImpl: HTML Presentation COMING SOON!</body></html>");
-    return new MIMETypedStream("text/html", temp.getBytes());
+    //String temp = new String("<html><head><title>FedoraServlet</title></head>" +
+    //  " <body><br></br>DefaultBehaviorImpl: HTML Presentation COMING SOON!</body></html>");
+    //return new MIMETypedStream("text/html", temp.getBytes());
+    /// Transform results into an html table
+    try
+    {
+      ByteArrayInputStream in = new ByteArrayInputStream(getItemList().stream);
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      File xslFile = new File(reposHomeDir, "access/viewItemList.xslt");
+      TransformerFactory factory = TransformerFactory.newInstance();
+      Templates template = factory.newTemplates(new StreamSource(xslFile));
+      Transformer transformer = template.newTransformer();
+      Properties details = template.getOutputProperties();
+      transformer.transform(new StreamSource(in), new StreamResult(out));
+      return new MIMETypedStream("text/html", out.toByteArray());
+    } catch (TransformerException e)
+    {
+      throw new DisseminationException("[DefaultBehaviorImpl] had an error "
+          + "in transforming xml for viewItemList. "
+          + "Underlying exception was: "
+          + e.getMessage());
+    }
   }
 
   /**
@@ -233,7 +258,7 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     methodList.add(method);
 
     method = new MethodDef();
-    method.methodName = "viewObjectInfo";
+    method.methodName = "viewObjectProfile";
     method.methodLabel = "View description of the object";
     method.methodParms = new MethodParmDef[0];
     methodList.add(method);
