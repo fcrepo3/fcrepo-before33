@@ -34,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 
 import fedora.swing.jhelp.SimpleHelpBroker;
@@ -109,6 +110,8 @@ public class Administrator extends JFrame {
     private static String s_pass;
 
     public static JProgressBar PROGRESS;
+    public static Downloader DOWNLOADER;
+    public static Uploader UPLOADER;
 
     public static FedoraAPIA APIA=null;
     public static FedoraAPIM APIM=null;
@@ -218,6 +221,10 @@ public class Administrator extends JFrame {
         s_port=port;
         s_user=user;
         s_pass=pass;
+        try {
+        DOWNLOADER=new Downloader(host, port, user, pass);
+        UPLOADER=new Uploader(host, port, user, pass);
+        } catch (IOException ioe) { }
         doTitle();
     }
 

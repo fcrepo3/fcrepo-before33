@@ -75,6 +75,7 @@ public class TextContentEditor
     public void setContent(InputStream data) 
             throws IOException {
         // get a string from the inputstream, assume it's UTF-8
+        String content;
         boolean formattedXML=true;
         if (m_xml) {
             try {
@@ -91,9 +92,9 @@ public class TextContentEditor
                 DocumentBuilder builder=factory.newDocumentBuilder();
                 Document doc=builder.parse(data);
                 ser.serialize(doc);
-                m_origContent=new String(buf.toByteArray(), "UTF-8");
+                content=new String(buf.toByteArray(), "UTF-8");
             } catch (Exception e) {
-                System.out.println("ERROR: " + e.getClass().getName() + " : " + e.getMessage());
+                throw new IOException("Error parsing as XML: " + e.getMessage());
             }
         } else {
             StringBuffer out=new StringBuffer();
@@ -103,10 +104,13 @@ public class TextContentEditor
                 out.append(thisLine + "\n");
             }
             in.close();
-            m_origContent=out.toString();
+            content=out.toString();
         }
-        m_editor.setText(m_origContent);
+        m_editor.setText(content);
         m_editor.setCaretPosition(0);
+        // if this is being called upon construction, set it to the original
+        // content.  else, let it be different.
+        if (m_origContent==null) m_origContent=content;
     }
 
     public JComponent getComponent() {
