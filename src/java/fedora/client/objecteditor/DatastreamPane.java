@@ -46,13 +46,13 @@ public class DatastreamPane
 
     private Hashtable[] m_labelTables;
     private JComboBox m_stateComboBox;
-    private JTextField m_mimeTextField;
+    //private JTextField m_mimeTextField;
 
     //private JTextField m_formatURITextField;
     //private String m_origFormatURI;
 
-    private JTextField m_altIDsTextField;
-    private String m_origAltIDs;
+    //private JTextField m_altIDsTextField;
+    //private String m_origAltIDs;
 
     private JSlider m_versionSlider;
     private JPanel m_valuePane;
@@ -88,15 +88,15 @@ public class DatastreamPane
 
                     // LEFT: labels
                     JLabel stateLabel=new JLabel("State");
-                    JLabel mimeLabel = new JLabel("MIME Type");
+                    //JLabel mimeLabel = new JLabel("MIME Type");
                     //JLabel formatURILabel = new JLabel("Format URI");
-                    JLabel altIDsLabel = new JLabel("Alternate IDs");
+                    //JLabel altIDsLabel = new JLabel("Alternate IDs");
                     JLabel controlGroupLabel=new JLabel("Control Group");
                     JLabel[] leftCommonLabels=new JLabel[] { 
                             stateLabel, 
-                            mimeLabel, 
+                            //mimeLabel, 
                             //formatURILabel,
-                            altIDsLabel,
+                            //altIDsLabel,
                             controlGroupLabel};
 
                     // RIGHT: values
@@ -131,9 +131,9 @@ public class DatastreamPane
                         }
                     });
 
-                    m_mimeTextField = new JTextField(m_mostRecent.getMIMEType());
-                    m_mimeTextField.getDocument().addDocumentListener(
-                            dataChangeListener);
+                    //m_mimeTextField = new JTextField(m_mostRecent.getMIMEType());
+                    //m_mimeTextField.getDocument().addDocumentListener(
+                    //        dataChangeListener);
 
                     //m_origFormatURI = m_mostRecent.getFormatURI();
                     //if (m_origFormatURI == null) m_origFormatURI = "";
@@ -141,17 +141,17 @@ public class DatastreamPane
                     //m_formatURITextField.getDocument().addDocumentListener(
                     //        dataChangeListener);
 
-                    m_origAltIDs = "";
-                    String[] altIDs = m_mostRecent.getAltIDs();
-                    if (altIDs != null) {
-                        for (int z = 0; z < altIDs.length; z++) {
-                            if (z > 0) m_origAltIDs += " ";
-                            m_origAltIDs += altIDs[z];
-                        }
-                    }
-                    m_altIDsTextField = new JTextField(m_origAltIDs);
-                    m_altIDsTextField.getDocument().addDocumentListener(
-                            dataChangeListener);
+                    //m_origAltIDs = "";
+                    //String[] altIDs = m_mostRecent.getAltIDs();
+                    //if (altIDs != null) {
+                    //    for (int z = 0; z < altIDs.length; z++) {
+                    //        if (z > 0) m_origAltIDs += " ";
+                    //        m_origAltIDs += altIDs[z];
+                    //    }
+                    //}
+                    //m_altIDsTextField = new JTextField(m_origAltIDs);
+                    //m_altIDsTextField.getDocument().addDocumentListener(
+                    //        dataChangeListener);
 
                     JTextArea controlGroupValueLabel=new JTextArea(
                             getControlGroupString(
@@ -161,9 +161,9 @@ public class DatastreamPane
                     controlGroupValueLabel.setEditable(false);
                     JComponent[] leftCommonValues = 
                             new JComponent[] { m_stateComboBox, 
-                                               m_mimeTextField, 
+                                               //m_mimeTextField, 
                                                //m_formatURITextField,
-                                               m_altIDsTextField,
+                                               //m_altIDsTextField,
                                                controlGroupValueLabel};
     
                 JPanel leftCommonPane=new JPanel();
@@ -301,20 +301,20 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
            state="I";
         if (i==2)
            state="D";
-        String oldMime = m_mostRecent.getMIMEType();
-        String newMime = m_mimeTextField.getText().trim();
-		if (m_currentVersionPane.isDirty() 
-		        || !newMime.equals(oldMime)
+        //String oldMime = m_mostRecent.getMIMEType();
+        //String newMime = m_mimeTextField.getText().trim();
+		if (m_currentVersionPane.isDirty()) { 
+		        //|| !newMime.equals(oldMime)) {
 		        //|| !m_origFormatURI.equals(m_formatURITextField.getText())
-		        || !m_origAltIDs.equals(m_altIDsTextField.getText())) {
-            String[] altIDs = m_altIDsTextField.getText().trim().split(" ");
+		        //|| !m_origAltIDs.equals(m_altIDsTextField.getText())) {
+            //String[] altIDs = m_altIDsTextField.getText().trim().split(" ");
             //String formatURI = m_formatURITextField.getText().trim();
 		    // defer to the currentVersionPane if anything else changed
             try {
      		    m_currentVersionPane.saveChanges(state, 
-     		                                     newMime, 
+     		                                     //newMime, 
      		                                     //formatURI, 
-     		                                     altIDs, 
+     		                                     //altIDs, 
      		                                     logMessage, 
      		                                     false);
             } catch (Exception e) {
@@ -330,9 +330,9 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
                         JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 if (selected==0) {
      		        m_currentVersionPane.saveChanges(state, 
-     		                                         newMime, 
+     		                                         //newMime, 
      		                                         //formatURI, 
-     		                                         altIDs, 
+     		                                         //altIDs, 
      		                                         logMessage, 
      		                                         true);
                 }
@@ -360,9 +360,9 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
             m_stateComboBox.setSelectedIndex(2);
             m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
         }
-        m_mimeTextField.setText(m_mostRecent.getMIMEType());
+        //m_mimeTextField.setText(m_mostRecent.getMIMEType());
         //m_formatURITextField.setText(m_origFormatURI);
-        m_altIDsTextField.setText(m_origAltIDs);
+        //m_altIDsTextField.setText(m_origAltIDs);
         m_owner.colorTabForState(m_mostRecent.getID(), m_mostRecent.getState());
         m_currentVersionPane.undoChanges();
     }
@@ -393,8 +393,13 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
         private Datastream m_ds;
         private JTextField m_locationTextField;
         private JTextField m_labelTextField;
+		private String m_origLabel;
+		private JTextField m_MIMETextField;
+		private String m_origMIME;
         private JTextField m_formatURITextField;
 		private String m_origFormatURI;
+		private JTextField m_altIDsTextField;
+		private String m_origAltIDs;
         private JButton m_editButton;
         private JButton m_viewButton;
         private JButton m_importButton;
@@ -415,8 +420,25 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
 
         public CurrentVersionPane(Datastream ds) {
             m_ds=ds;
+            // clean up attribute values for presentation in text boxes...
+			// set a null ds label to ""
+			m_origLabel=m_ds.getLabel();
+			if (m_origLabel==null) m_origLabel="";
+			// set a null mime type to ""
+			m_origMIME=m_ds.getMIMEType();
+			if (m_origMIME==null) m_origMIME="";
+            // set a null format_uri to ""
             m_origFormatURI=m_ds.getFormatURI();
             if (m_origFormatURI==null) m_origFormatURI="";
+            // create a string from alt ids array 
+			m_origAltIDs = "";
+			String[] altIDs = m_ds.getAltIDs();
+			if (altIDs != null) {
+				for (int z = 0; z < altIDs.length; z++) {
+					if (z > 0) m_origAltIDs += " ";
+					m_origAltIDs += altIDs[z];
+				}
+			}
             
             if (ds.getControlGroup().toString().equals("X")) {
                 X=true;
@@ -457,8 +479,12 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
             // do the field panel (NORTH)
             JLabel labelLabel=new JLabel("Label");
             labelLabel.setPreferredSize(m_labelDims);
+			JLabel MIMELabel=new JLabel("MIME Type");
+			MIMELabel.setPreferredSize(m_labelDims);
 			JLabel formatURILabel=new JLabel("Format URI");
 			formatURILabel.setPreferredSize(m_labelDims);
+			JLabel altIDsLabel=new JLabel("Alternate IDs");
+			altIDsLabel.setPreferredSize(m_labelDims);
             JLabel urlLabel=new JLabel("Fedora URL");
             urlLabel.setPreferredSize(m_labelDims);
             JLabel[] labels;
@@ -467,49 +493,63 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
                 locationLabel.setPreferredSize(m_labelDims);
                 if (m_versionSlider!=null) {
                     labels=new JLabel[] {labelLabel, 
-                    					 formatURILabel, 
+                    					 MIMELabel,
+                    					 formatURILabel,
+										 altIDsLabel, 
                     					 locationLabel, 
                     					 urlLabel};
                 } else {
                     labels=new JLabel[] {new JLabel("Created"), 
-                    					 labelLabel, 
-                    					 formatURILabel, 
+                    					 labelLabel,
+										 MIMELabel, 
+                    					 formatURILabel,
+                    					 altIDsLabel, 
                     					 locationLabel, 
                     					 urlLabel};
                 }
             } else {
                 if (m_versionSlider!=null) {
                     labels=new JLabel[] {labelLabel, 
-                    					 formatURILabel, 
+										 MIMELabel,
+										 formatURILabel,
+                    					 altIDsLabel, 
                     					 urlLabel};
                 } else {
                     labels=new JLabel[] {new JLabel("Created"), 
-                    					 labelLabel, 
-                    					 formatURILabel, 
+                    					 labelLabel,
+                    					 MIMELabel, 
+                    					 formatURILabel,
+                    					 altIDsLabel, 
                     					 urlLabel};
                 }
             }
             // set up text fields for ds attributes at version level
 			JComponent[] values;
             // ds label text field
-            m_labelTextField=new JTextField(ds.getLabel());
+            m_labelTextField=new JTextField(m_origLabel);
             m_labelTextField.getDocument().addDocumentListener(
                     dataChangeListener);
-            if (ds.getID().equals("METHODMAP")
-                    || ds.getID().equals("DSINPUTSPEC")
-                    || ds.getID().equals("WSDL") || noEdits) {
-                // disable label changes for special datastreams
-                m_labelTextField.setEnabled(false);
-            }
+			// ds MIME text field
+			m_MIMETextField=new JTextField(m_origMIME);
+			m_MIMETextField.getDocument().addDocumentListener(
+					dataChangeListener);
             // ds format URI text field
 			m_formatURITextField=new JTextField(m_origFormatURI);
 			m_formatURITextField.getDocument().addDocumentListener(
 					dataChangeListener);
+			// ds alternate ids text field
+			m_altIDsTextField = new JTextField(m_origAltIDs);
+			m_altIDsTextField.getDocument().addDocumentListener(
+					dataChangeListener);
+			// disable text fields for special datastreams that cannot be edited
 			if (ds.getID().equals("METHODMAP")
 					|| ds.getID().equals("DSINPUTSPEC")
 					|| ds.getID().equals("WSDL") || noEdits) {
 				// disable formatURI changes for special datastreams
+				m_labelTextField.setEnabled(false);
+				m_MIMETextField.setEnabled(false);
 				m_formatURITextField.setEnabled(false);
+				m_altIDsTextField.setEnabled(false);
 			}
             // Fedora URL text field
             JTextField urlTextField=new JTextField(getFedoraURL(m_ds, false));
@@ -524,7 +564,9 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
                 }
                 if (m_versionSlider!=null) {
                     values=new JComponent[] {m_labelTextField,
-                    						 m_formatURITextField, 
+                    						 m_MIMETextField,
+                    						 m_formatURITextField,
+                    						 m_altIDsTextField, 
                                              m_locationTextField, 
                                              urlTextField};
                                              
@@ -534,14 +576,18 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
                     cDateTextArea.setEditable(false);
                     values=new JComponent[] {cDateTextArea,
                                              m_labelTextField,
-                                             m_formatURITextField, 
+											 m_MIMETextField,
+                                             m_formatURITextField,
+											 m_altIDsTextField,  
                                              m_locationTextField, 
                                              urlTextField};
                 }
             } else {
                 if (m_versionSlider!=null) {
                     values=new JComponent[] {m_labelTextField,
-                    						 m_formatURITextField, 
+											 m_MIMETextField,
+                    						 m_formatURITextField,
+											 m_altIDsTextField, 
                                              urlTextField};
                 } else {
                     JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
@@ -549,7 +595,9 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
                     cDateTextArea.setEditable(false);
                     values=new JComponent[] {cDateTextArea,
                                              m_labelTextField,
-                                             m_formatURITextField, 
+											 m_MIMETextField,
+                                             m_formatURITextField,
+											 m_altIDsTextField,  
                                              urlTextField};
                 }
             }
@@ -760,14 +808,16 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
         }
 
 		public void saveChanges(String state, 
-		                        String mimeType, 
+		                        //String mimeType, 
 		                        //String formatURI,
-		                        String[] altIDs,
+		                        //String[] altIDs,
 		                        String logMessage,
 		                        boolean force)
 	            throws Exception {
-	        String label=m_labelTextField.getText();
-	        String formatURI=m_formatURITextField.getText();
+	        String label=m_labelTextField.getText().trim();
+			String mimeType=m_MIMETextField.getText().trim();
+	        String formatURI=m_formatURITextField.getText().trim();
+			String[] altIDs = m_altIDsTextField.getText().trim().split(" ");
 			if (X) {
 			    byte[] content=new byte[0];
 			    if (m_editor!=null && m_editor.isDirty()) {
@@ -845,7 +895,13 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
             if (!m_ds.getLabel().equals(m_labelTextField.getText())) {
                  return true;
             }
-			if (!m_origFormatURI.equals(m_formatURITextField)) {
+			if (!m_origMIME.equals(m_MIMETextField.getText())) {
+				return true;
+			}
+			if (!m_origFormatURI.equals(m_formatURITextField.getText())) {
+				return true;
+			}
+			if (!m_origAltIDs.equals(m_altIDsTextField.getText())) {
 				return true;
 			}
             if (m_locationTextField!=null 
@@ -857,8 +913,10 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
         }
 
         public void undoChanges() {
-            m_labelTextField.setText(m_ds.getLabel());
-			m_formatURITextField.setText(m_ds.getFormatURI());
+            m_labelTextField.setText(m_origLabel);
+			m_MIMETextField.setText(m_origMIME);
+			m_formatURITextField.setText(m_origFormatURI);
+			m_altIDsTextField.setText(m_origAltIDs);
             if (m_locationTextField!=null) m_locationTextField.setText(m_ds.getLocation());
             if (m_editor!=null) m_editor.undoChanges();
             if (m_importFile!=null) {
@@ -890,9 +948,33 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
 
         private ContentViewer v;
         private Datastream m_ds;
+		private String m_priorLabel;
+		private String m_priorMIME;
+        private String m_priorFormatURI;
+        private String m_priorAltIDs;
 
         public PriorVersionPane(Datastream ds) {
             m_ds=ds;
+			// clean up attribute values for presentation in text boxes...
+			// set a null ds label to ""
+			m_priorLabel=m_ds.getLabel();
+			if (m_priorLabel==null) m_priorLabel="";
+			// set a null MIME type to ""
+			m_priorMIME=m_ds.getMIMEType();
+			if (m_priorMIME==null) m_priorMIME="";
+			// set a null format_uri to ""
+			m_priorFormatURI=m_ds.getFormatURI();
+			if (m_priorFormatURI==null) m_priorFormatURI="";
+			// create a string from alt ids array 
+			m_priorAltIDs = "";
+			String[] altIDs = m_ds.getAltIDs();
+			if (altIDs != null) {
+				for (int z = 0; z < altIDs.length; z++) {
+					if (z > 0) m_priorAltIDs += " ";
+					m_priorAltIDs += altIDs[z];
+				}
+			}
+            
             if (ds.getControlGroup().toString().equals("X")) {
                 X=true;
             } else if (ds.getControlGroup().toString().equals("M")) {
@@ -909,14 +991,26 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
             JLabel labelLabel=new JLabel("Label");
             labelLabel.setMinimumSize(m_labelDims);
             JTextField labelValue=new JTextField();
-            labelValue.setText(ds.getLabel());
+            labelValue.setText(m_priorLabel);
             labelValue.setEditable(false);
+			// ds MIME type...
+			JLabel MIMELabel=new JLabel("MIME Type");
+			MIMELabel.setMinimumSize(m_labelDims);
+			JTextField MIMEValue=new JTextField();
+			MIMEValue.setText(m_priorMIME);
+			MIMEValue.setEditable(false);
             // ds format URI...
 			JLabel formatURILabel=new JLabel("Format URI");
 			formatURILabel.setMinimumSize(m_labelDims);
 			JTextField formatURIValue=new JTextField();
-			formatURIValue.setText(ds.getFormatURI());
+			formatURIValue.setText(m_priorFormatURI);
 			formatURIValue.setEditable(false);
+			// ds alternate ids...
+			JLabel altIDsLabel=new JLabel("Alternate IDs");
+			altIDsLabel.setMinimumSize(m_labelDims);
+			JTextField altIDsValue=new JTextField();
+			altIDsValue.setText(m_priorAltIDs);
+			altIDsValue.setEditable(false);
 			// ds Fedora URL...
             JLabel urlLabel=new JLabel("Fedora URL");
             urlLabel.setPreferredSize(m_labelDims);
@@ -926,14 +1020,14 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
             JLabel[] labels;
             JComponent[] values;
             if (E || R) {
-                labels=new JLabel[] {labelLabel, formatURILabel, new JLabel("Location"), urlLabel};
+                labels=new JLabel[] {labelLabel, MIMELabel, formatURILabel, altIDsLabel, new JLabel("Location"), urlLabel};
                 JTextField refValue=new JTextField();
                 refValue.setText(ds.getLocation());
                 refValue.setEditable(false);
-                values=new JComponent[] {labelValue, formatURIValue, refValue, urlTextField};
+                values=new JComponent[] {labelValue, MIMEValue, formatURIValue, altIDsValue, refValue, urlTextField};
             } else {
-                labels=new JLabel[] {labelLabel, formatURILabel, urlLabel};
-                values=new JComponent[] {labelValue, formatURIValue, urlTextField};
+                labels=new JLabel[] {labelLabel, MIMELabel, formatURILabel, altIDsLabel, urlLabel};
+                values=new JComponent[] {labelValue, MIMEValue, formatURIValue, altIDsValue, urlTextField};
             }
 
             JPanel fieldPanel=new JPanel();
