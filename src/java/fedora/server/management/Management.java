@@ -13,7 +13,29 @@ import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.ObjectInfo;
 
 /**
- * The management subsystem interface.
+ *
+ * <p><b>Title:</b> Management.java</p>
+ * <p><b>Description:</b> The management subsystem interface.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
 public interface Management {
 
@@ -39,11 +61,11 @@ public interface Management {
 
 //    public AuditRecord[] getObjectAuditTrail(Context context, String pid) throws ServerException;
 
-    public String[] listObjectPIDs(Context context, String pidPattern, 
-            String foType, String lockedByPattern, String state, 
-            String labelPattern, String contentModelIdPattern, 
-            Calendar createDateMin, Calendar createDateMax, 
-            Calendar lastModDateMin, Calendar lastModDateMax) 
+    public String[] listObjectPIDs(Context context, String pidPattern,
+            String foType, String lockedByPattern, String state,
+            String labelPattern, String contentModelIdPattern,
+            Calendar createDateMin, Calendar createDateMax,
+            Calendar lastModDateMin, Calendar lastModDateMax)
             throws ServerException;
 
 //    public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) throws ServerException;

@@ -26,14 +26,33 @@ import fedora.server.types.gen.ObjectInfo;
 import fedora.server.utilities.DateUtility;
 
 /**
- * The Management Module, providing support for API-M.
+ *
+ * <p><b>Title:</b> DefaultManagement.java</p>
+ * <p><b>Description:</b> The Management Module, providing support for API-M.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version $Id$
+ * @version 1.0
  */
-public class DefaultManagement 
+public class DefaultManagement
         extends Module implements Management {
-        
+
     private DOManager m_manager;
     private IPRestriction m_ipRestriction;
 
@@ -42,7 +61,7 @@ public class DefaultManagement
      * <p></p>
      * When the server is starting up, this is invoked as part of the
      * initialization process.
-     * 
+     *
      * @param moduleParameters A pre-loaded Map of name-value pairs comprising
      *        the intended configuration of this Module.
      * @param server The <code>Server</code> instance.
@@ -54,7 +73,7 @@ public class DefaultManagement
             throws ModuleInitializationException {
         super(moduleParameters, server, role);
     }
-    
+
     public void initModule()
             throws ModuleInitializationException {
         String allowHosts=getParameter("allowHosts");
@@ -65,7 +84,7 @@ public class DefaultManagement
             throw new ModuleInitializationException("Error setting IP restriction "
                     + "for Access subsystem: " + se.getClass().getName() + ": "
                     + se.getMessage(), getRole());
-        }        
+        }
     }
 
     public void postInitModule()
@@ -79,7 +98,7 @@ public class DefaultManagement
     }
 
 /*
-    public String createObject(Context context) 
+    public String createObject(Context context)
             throws ServerException {
         getServer().logFinest("Entered DefaultManagement.createObject");
         m_ipRestriction.enforce(context);
@@ -91,7 +110,7 @@ public class DefaultManagement
     }
 */
 
-    public String ingestObject(Context context, InputStream serialization, String logMessage, String format, String encoding, boolean newPid) 
+    public String ingestObject(Context context, InputStream serialization, String logMessage, String format, String encoding, boolean newPid)
             throws ServerException {
         getServer().logFinest("Entered DefaultManagement.ingestObject");
         m_ipRestriction.enforce(context);
@@ -113,11 +132,11 @@ public class DefaultManagement
         }
     }
 
-    public InputStream getObjectXML(Context context, String pid, String format, String encoding) throws ServerException { 
+    public InputStream getObjectXML(Context context, String pid, String format, String encoding) throws ServerException {
         logFinest("Entered DefaultManagement.getObjectXML");
         m_ipRestriction.enforce(context);
         DOReader reader=m_manager.getReader(context, pid);
-        InputStream instream=reader.GetObjectXML(); 
+        InputStream instream=reader.GetObjectXML();
         logFinest("Exiting DefaultManagement.getObjectXML");
         return instream;
     }
@@ -129,8 +148,8 @@ public class DefaultManagement
 
     public void deleteObject(Context context, String pid, String logMessage) { }
 */
-    public void purgeObject(Context context, String pid, String logMessage) 
-            throws ServerException { 
+    public void purgeObject(Context context, String pid, String logMessage)
+            throws ServerException {
         logFinest("Entered DefaultManagement.purgeObject");
         m_ipRestriction.enforce(context);
         // FIXME: This should get a writer and call remove, then commit instead...but this works for now
@@ -147,13 +166,13 @@ public class DefaultManagement
 // obsolete: methods that require a lock will create one automatically
 // if one doesn't already exist... it's easier that way.
 /*    public void obtainLock(Context context, String pid) {
-        
+
     }
 */
 /*
-    public void releaseLock(Context context, String pid, String logMessage, 
-            boolean commit) 
-            throws ServerException { 
+    public void releaseLock(Context context, String pid, String logMessage,
+            boolean commit)
+            throws ServerException {
         getServer().logFinest("Entered DefaultManagement.releaseLock");
         m_ipRestriction.enforce(context);
         DOWriter w=m_manager.getWriter(context, pid);
@@ -166,8 +185,8 @@ public class DefaultManagement
         getServer().logFinest("Exiting DefaultManagement.releaseLock");
     }
 */
-    public ObjectInfo getObjectInfo(Context context, String pid) 
-            throws ServerException { 
+    public ObjectInfo getObjectInfo(Context context, String pid)
+            throws ServerException {
         getServer().logFinest("Entered DefaultManagement.getObjectInfo");
         m_ipRestriction.enforce(context);
         ObjectInfo inf=new ObjectInfo();
@@ -194,16 +213,16 @@ public class DefaultManagement
 /*
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
 */
-    public String[] listObjectPIDs(Context context, String pidPattern, 
-            String foType, String lockedByPattern, String state, 
-            String labelPattern, String contentModelIdPattern, 
-            Calendar createDateMin, Calendar createDateMax, 
-            Calendar lastModDateMin, Calendar lastModDateMax) 
+    public String[] listObjectPIDs(Context context, String pidPattern,
+            String foType, String lockedByPattern, String state,
+            String labelPattern, String contentModelIdPattern,
+            Calendar createDateMin, Calendar createDateMax,
+            Calendar lastModDateMin, Calendar lastModDateMax)
             throws ServerException {
         m_ipRestriction.enforce(context);
         return m_manager.listObjectPIDs(context, pidPattern,
                 foType, lockedByPattern, state, labelPattern,
-                contentModelIdPattern, createDateMin, createDateMax, 
+                contentModelIdPattern, createDateMin, createDateMax,
                 lastModDateMin, lastModDateMax);
     }
 
@@ -214,10 +233,10 @@ public class DefaultManagement
 
     public String addDatastreamXMLMetadata(Context context, String pid, String dsLabel, String MdType, InputStream dsInlineMetadata) { return null; }
 */
-    public void modifyDatastreamByReference(Context context, String pid, 
-            String datastreamId, String dsLabel, String logMessage, 
-            String dsLocation) 
-            throws ServerException { 
+    public void modifyDatastreamByReference(Context context, String pid,
+            String datastreamId, String dsLabel, String logMessage,
+            String dsLocation)
+            throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
@@ -265,9 +284,9 @@ public class DefaultManagement
         }
     }
 
-    public void modifyDatastreamByValue(Context context, String pid, 
-            String datastreamId, String dsLabel, String logMessage, 
-            InputStream dsContent) throws ServerException { 
+    public void modifyDatastreamByValue(Context context, String pid,
+            String datastreamId, String dsLabel, String logMessage,
+            InputStream dsContent) throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=m_manager.getWriter(context, pid);
         // Replace the datastream.
@@ -300,14 +319,14 @@ modifyByValue
       it was already in lowlevel store...
       just needs its content replaced.
       should be able to trigger thi
-      
+
       */
-        
-        
+
+
     }
 /*
-    public void withdrawDatastream(Context context, String pid, 
-            String datastreamId) throws ServerException { 
+    public void withdrawDatastream(Context context, String pid,
+            String datastreamId) throws ServerException {
         m_ipRestriction.enforce(context);
     }
 
@@ -340,5 +359,5 @@ modifyByValue
     public String[] listDisseminatorIDs(Context context, String pid, String state) { return null; }
 
     public ComponentInfo[] getDisseminatorHistory(Context context, String pid, String disseminatorId) { return null; }
- */   
+ */
 }

@@ -1,12 +1,3 @@
-/**
- * <p>Title: PIDGeneration.java</p>
- * <p>Description: Generates Fedora PIDs</p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Paul Charlton
- * @version 1.0
- */
-
 package fedora.server.management;
 
 import java.io.*;
@@ -15,13 +6,31 @@ import java.util.*;
 import java.text.*;
 
 /**
-* <p>
-* Provides a mechanism to generate Persistent Identifiers (PIDs).  A PID uniquely
-* identifies an object within Fedora.
-*
-* @version 1.0
-*
-*/
+ *
+ * <p><b>Title:</b> PIDGeneration.java</p>
+ * <p><b>Description:</b> Provides a mechanism to generate Persistent
+ * Identifiers (PIDs).  A PID uniquely identifies an object within Fedora.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author Paul Charlton
+ * @version 1.0
+ */
 public class PIDGeneration implements PIDGenerator {
         private Class classRef;
    private static String logsDirectory;
@@ -32,9 +41,9 @@ public class PIDGeneration implements PIDGenerator {
    * Constructor -  the class reference is retrieved for synchronization.  In order
    * to ensure file and data structure integrity, only one thread per class
    * (class, not object) can run at a time.
-   *   When the first object is instantiated (lastObjectID == null), the logs 
-   * directory pathname is determined and the last generated PID is retrieved from 
-   * the most recent log file.  These values are stored in static variables for use by 
+   *   When the first object is instantiated (lastObjectID == null), the logs
+   * directory pathname is determined and the last generated PID is retrieved from
+   * the most recent log file.  These values are stored in static variables for use by
    * this object and later object instantiations.
    *
    * @param pidLogDir
@@ -92,7 +101,7 @@ try{               // Retrieve the last PID generated from the
                         // Increment lastObjectID by one.
                         lastObjectID = lastObjectID.add(BigInteger.ONE);
 
-           // Format the new PID from the namespace ID and the object ID. 
+           // Format the new PID from the namespace ID and the object ID.
                         newPID = NamespaceID + ":" + lastObjectID;
 
            // Write the new PID to the log file.
@@ -121,7 +130,7 @@ try{               // Retrieve the last PID generated from the
    * <p>
    * Returns the last generated PID.  Internal version (private) that provides
    * an unsynchronized implementation for calling by getLastPID and the
-   * PIDGeneration constructor. 
+   * PIDGeneration constructor.
    *
    * @return the retrieved PID string
    *
@@ -137,7 +146,7 @@ try{               // Retrieve the last PID generated from the
        int index;
        String pid;
 
-       // Determine the most recent log file. 
+       // Determine the most recent log file.
         	dir = new File(logsDirectory);
         	files = dir.list();
         	Arrays.sort(files);
@@ -150,7 +159,7 @@ try{               // Retrieve the last PID generated from the
 
        // Read the last line from this file.
        lastLine = null;
-       while ((line = in.readLine()) != null) 
+       while ((line = in.readLine()) != null)
            lastLine = line;
 
        // Close the file.
@@ -174,7 +183,7 @@ try{               // Retrieve the last PID generated from the
        String dateString;
        String pathName;
        PrintWriter out;
-       
+
        // Determine file name from the date.
        date = new Date();
       		dateString = new SimpleDateFormat("yyyy_MM_dd").format(date);
@@ -204,7 +213,7 @@ try{               // Retrieve the last PID generated from the
        PIDGeneration pidg = new PIDGeneration(".");
        int repetitions = 1;
 
-       if (args.length > 0) 
+       if (args.length > 0)
            repetitions = Integer.parseInt(args[0]);
 
        System.out.println("Calling generatePID " + repetitions + " time(s).");
