@@ -103,6 +103,14 @@
           This should be unique for a repository.
           It can be from 1 to 17 characters, and may only contain
           A-Z, a-z, 0-9, and '-' (dash).
+        - retainPIDs [default="demo test"]
+          Namespaces of PIDs to retain during the ingest process.
+          When an object is ingested, Fedora normally allocates a unique PID
+          within pidNamespace for it regardless of what the object says its 
+          PID is.  This option provides a way to override that behavior on
+          a per-pid-namespace basis.  If specified, this should be a 
+          space-delimited list of pid namespaces that will be accepted in the 
+          object as-is.
         - storagePool [default=default provided by the ConnectionPoolManager]
           The named connection pool from which read/write
           database connections are to be provided for the storage
@@ -119,6 +127,7 @@
           are to be written.  There must exist a correspondingly
           named serializer-deserializer pair in the DOTranslator module.
 		<param name="pidNamespace" value="changeme"/>
+		<param name="retainPIDs" value="demo test changeme"/>
 		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
 		<param name="storageFormat" value="metslikefedora1"/>
 		<param name="exportFormat" value="metslikefedora1export"/>

@@ -189,10 +189,7 @@ public class DefaultDOManager
         }
         // retainPIDs (optional, default=demo,test)
         String retainPIDs=null;
-        // FIXME: Uncomment the following line and add comments to install.dbx
-        //        and update default fedora.fcfg to make this user-configurable
-        //        if the team gives the "ok".
-        // retainPIDs=getParameter("retainPIDs");
+        retainPIDs=getParameter("retainPIDs");
         m_retainPIDs=new HashSet();
         retainPIDs=getParameter("retainPIDs");
         if (retainPIDs==null) {
@@ -203,8 +200,8 @@ public class DefaultDOManager
                 // when m_retainPIDS is set to null, that means "all"
                 m_retainPIDs=null;
             } else {
-                // add to list
-                String[] ns=retainPIDs.replaceAll(" ", "").split(",");
+                // add to list (accept space and/or comma-separated)
+                String[] ns=retainPIDs.trim().replaceAll(" +", ",").replaceAll(",+", ",").split(",");
                 for (int i=0; i<ns.length; i++) {
                     if (ns[i].length()>0) {
                         m_retainPIDs.add(ns[i]);
