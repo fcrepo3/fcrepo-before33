@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions targetNamespace="http://www.fedora.info/definitions/1/0/api/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"  xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" name="Fedora-API-A-WSDL">
+<definitions targetNamespace="http://www.fedora.info/definitions/1/0/api/" 
+	xmlns="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" 
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:apachesoap="http://xml.apache.org/xml-soap/"
+	xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" 
+	xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" name="Fedora-API-A-WSDL">
 	<import namespace="http://www.fedora.info/definitions/1/0/types/" location="fedora-types.xsd"/>
 	<types>
 		<documentation>
@@ -9,6 +19,7 @@
 			<wsdldoc:type name="fedora-types:ArrayOfString" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfString"/>
 			<wsdldoc:type name="fedora-types:ArrayOfProperty" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfProperty"/>
 			<wsdldoc:type name="fedora-types:MIMETypedStream" url="http://www.fedora.info/definitions/1/0/types/#MIMETypedStream"/>
+			<wsdldoc:type name="apachesoap:Vector" url="http://xml.apache.org/xml-soap/#Vector"/>
 		</documentation>
 	</types>
 	<message name="GetBehaviorDefinitionsRequest">
@@ -71,6 +82,24 @@
 			<documentation>the desired view of the object as a mime-typed stream.</documentation>
 		</part>
 	</message>
+	<message name="ViewObjectRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:dateTime">
+			<documentation>the date/time stamp specifying the desired view of the 
+      object.  If null, the current view of the object (the most recent time) 
+      is assumed.</documentation>
+		</part>
+	</message>
+	<message name="ViewObjectResponse">
+		<part name="response" type="fedora-types:Vector">
+			<documentation>A list of object components that includes: IDs of Disseminators, 
+			PIDs of Behavior Definitons, PIDs of Behavior Mechanisms, and methodNames
+			of each method implemented by the mechanism. This information provides a
+			"view" of the object and what behaviors it can perform.</documentation>
+		</part>
+	</message>
 	<portType name="Fedora-API-A">
 		<documentation>The Fedora Access service defines an open interface for
     accessing digital objects.  The access operations include methods to do
@@ -110,6 +139,14 @@
 			<input message="fedora-api:GetDisseminationRequest"/>
 			<output message="fedora-api:GetDisseminationResponse"/>
 		</operation>
+		<operation name="ViewObject">
+			<documentation>Gets a list of Disseminator IDs, Behavior Definition PIDs,
+			BehaviorMechanism PIDs, and methodNames supported by a digital object.
+			This is a set of methodNames, one for each behavior mechanism type associated with 
+			each of the object's disseminator(s).</documentation>
+			<input message="fedora-api:ViewObjectRequest"/>
+			<output message="fedora-api:ViewObjectResponse"/>
+		</operation>
 	</portType>
 	<binding name="Fedora-API-A-Binding-HTTPGET" type="fedora-api:Fedora-API-A">
 		<http:binding verb="GET"/>
@@ -148,6 +185,15 @@
 				<mime:content type="*/*"/>
 			</output>
 		</operation>
+		<operation name="ViewObject">
+			<http:operation location="ViewObject"/>
+			<input>
+				<http:urlEncoded/>
+			</input>
+			<output>
+				<mime:mimeXml part="response"/>
+			</output>
+		</operation>
 	</binding>
 	<binding name="Fedora-API-A-Binding-SOAPHTTP" type="fedora-api:Fedora-API-A">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -171,6 +217,15 @@
 		</operation>
 		<operation name="GetDissemination">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#GetDissemination"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="ViewObject">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#ViewObject"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
