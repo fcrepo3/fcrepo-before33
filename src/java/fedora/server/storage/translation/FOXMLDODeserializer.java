@@ -303,7 +303,8 @@ public class FOXMLDODeserializer
         // there METS-specific logic here?
 
         if (!m_rootElementFound) {
-            throw new ObjectIntegrityException("digitalObject root element not found in namespace " + F + " .");
+            throw new ObjectIntegrityException("FOXMLDODeserializer: Input stream is not valid FOXML." +
+            	" The digitalObject root element was not detected.");
         }
         
         obj.setNamespaceMapping(m_prefixes);
