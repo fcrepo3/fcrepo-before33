@@ -200,6 +200,18 @@
 	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
 		<comment>This module facilitates obtaining external content via HTTP</comment>
 	</module>
+	<module role="fedora.server.utilities.ThreadMonitor"
+               class="fedora.server.utilities.ThreadMonitorModule">
+	    <comment>Prints basic information about the running threads to the 
+            log periodically for diagnostic purposes.
+
+            Parameters:
+             - active (optional, default=no): whether to activate this module.  "yes" or "true" activates it.
+             - pollInterval (optional, default=10000): how many milliseconds to wait between each polling.
+            </comment>
+            <param name="active" value="false"/>
+            <param name="pollInterval" value="5000"/>
+	</module>
 	<datastore id="remoteMySQLPool">
 		<comment>MySQL database on UVA test host (known to work)</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
