@@ -378,17 +378,17 @@
 		<param name="pollInterval" value="5000"/>
 	</module>
 	<datastore id="localMySQLPool">
-		<comment>MySQL database on localhost</comment>
+		<comment>MySQL database on localhost with db name of fedora12</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
-		<param name="jdbcURL" value="jdbc:mysql://localhost/FedoraObjects?useUnicode=true&amp;characterEncoding=UTF-8"/>
+		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora12?useUnicode=true&amp;characterEncoding=UTF-8"/>
 		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
 		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
 	<datastore id="localMcKoiPool">
-		<comment>McKoi database on localhost</comment>
+		<comment>McKoi database on localhost running on default port 9157</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mckoi://localhost/"/>
@@ -398,10 +398,10 @@
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
 	<datastore id="localOracle9iPool">
-		<comment>Oracle9i database on localhost with SID=Fedora</comment>
+		<comment>Oracle9i database on localhost with SID=fedora12</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
-		<param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:Fedora"/>
+		<param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora12"/>
 		<param name="jdbcDriverClass" value="oracle.jdbc.driver.OracleDriver"/>
 		<param name="ddlConverter" value="fedora.server.utilities.OracleDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
