@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foxml:digitalObject PID="demo:10" xmlns:METS="http://www.loc.gov/METS/"
+<foxml:digitalObject PID="demo:ri10" xmlns:METS="http://www.loc.gov/METS/"
   xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit"
   xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/"
   xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
   <foxml:objectProperties>
-    <foxml:property NAME="info:fedora/fedora-system:def/fType" VALUE="FedoraObject"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/state" VALUE="A"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/label" VALUE="Column Detail, Pavillion III, IVA Image Collection - University of Virginia"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/cDate" VALUE="2004-09-22T19:35:26Z"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/mDate" VALUE="2004-09-22T19:35:27Z"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/cModel" VALUE="UVA_MRSID_IMAGE"/>
+    <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="DataObject"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Column Detail, Pavillion III, IVA Image Collection - University of Virginia"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-09-22T19:35:26Z"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#lastModifiedDate" VALUE="2004-09-22T19:35:27Z"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_MRSID_IMAGE"/>
   </foxml:objectProperties>
   <foxml:datastream CONTROL_GROUP="X" FORMAT_URI="info:fedora/fedora-system:format/xml.mets.descMD.OTHER.UNSPECIFIED"
     ID="DESC1" MIMETYPE="text/xml" STATE="A" VERSIONABLE="YES">
@@ -18,7 +18,7 @@
       LABEL="UVA descriptive metadata for MRSID image" SIZE="1519">
       <foxml:xmlContent>
         <uvalibdesc:desc xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
-          <uvalibdesc:identifier scheme="URN">demo:10</uvalibdesc:identifier>
+          <uvalibdesc:identifier scheme="URN">demo:ri10</uvalibdesc:identifier>
           <uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
           <uvalibdesc:subject othertype="keyword" scheme="other">Pavilion III</uvalibdesc:subject>
           <uvalibdesc:subject othertype="keyword" scheme="other">column</uvalibdesc:subject>
@@ -100,7 +100,7 @@
           <dc:description>Image of column detail of Pavillion III on the lawn at University of Virginia</dc:description>
           <dc:publisher>IVA</dc:publisher>
           <dc:format>image/jpeg</dc:format>
-          <dc:identifier>demo:10</dc:identifier>
+          <dc:identifier>demo:ri10</dc:identifier>
           <dc:rights>unrestricted</dc:rights>
         </oai_dc:dc>
       </foxml:xmlContent>
@@ -148,7 +148,7 @@
             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
             xmlns:nsdl="http://www.nsdl.org/ontologies/relationships#" 
             xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-            <rdf:Description rdf:about="info:fedora/demo:10">
+            <rdf:Description rdf:about="info:fedora/demo:ri10">
                 <nsdl:nsdlHasMetadata rdf:resource="info:fedora/nsdl:foo"/>
                 <nsdl:nsdlHasContent rdf:resource="info:fedora/nsdl:bar"/>
             </rdf:Description>
@@ -157,8 +157,8 @@
       <foxml:contentDigest DIGEST="future: hash of content goes here" TYPE="MD5"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
-  <foxml:disseminator BDEF_CONTRACT_PID="demo:8" ID="DISS1" STATE="A" VERSIONABLE="YES">
-    <foxml:disseminatorVersion BMECH_SERVICE_PID="demo:9" CREATED="2002-05-20T06:32:00Z" ID="DISS1.0" LABEL="UserInput Image Behaviors">
+  <foxml:disseminator BDEF_CONTRACT_PID="demo:ri8" ID="DISS1" STATE="A" VERSIONABLE="YES">
+    <foxml:disseminatorVersion BMECH_SERVICE_PID="demo:ri9" CREATED="2002-05-20T06:32:00Z" ID="DISS1.0" LABEL="UserInput Image Behaviors">
       <foxml:serviceInputMap>
         <foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="MRSID"
           LABEL="Binding to MrSID file from which different image resolutions will be derived" ORDER="0"/>

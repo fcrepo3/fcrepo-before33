@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foxml:digitalObject PID="demo:9" xmlns:METS="http://www.loc.gov/METS/"
+<foxml:digitalObject PID="demo:ri9" xmlns:METS="http://www.loc.gov/METS/"
   xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit"
   xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd"
   xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
   <foxml:objectProperties>
-    <foxml:property NAME="info:fedora/fedora-system:def/fType" VALUE="FedoraBMechObject"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/state" VALUE="A"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/label" VALUE="Behavior Mechanism Object implementing the UserInput Image BDEF contract using the UVA MrSID Service."/>
-    <foxml:property NAME="info:fedora/fedora-system:def/cDate" VALUE="2004-09-22T19:35:16Z"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/mDate" VALUE="2004-09-22T19:35:17Z"/>
-    <foxml:property NAME="info:fedora/fedora-system:def/cModel" VALUE="fedora:BMECH"/>
+    <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraBMechObject"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Behavior Mechanism Object implementing the UserInput Image BDEF contract using the UVA MrSID Service."/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-09-22T19:35:16Z"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#lastModifiedDate" VALUE="2004-09-22T19:35:17Z"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
   </foxml:objectProperties>
   <foxml:datastream CONTROL_GROUP="E" FORMAT_URI="" ID="DS1" MIMETYPE="text/html" STATE="A" VERSIONABLE="YES">
     <foxml:datastreamVersion CREATED="2000-08-22T06:32:00Z" ID="DS1.0" LABEL="Programmer documentation" SIZE="0">
@@ -105,7 +105,7 @@
     <foxml:datastreamVersion CREATED="2003-12-03T13:40:12Z" ID="SERVICE-PROFILE1.0"
       LABEL="Service Profile - Technical description of the service" SIZE="1333">
       <foxml:xmlContent>
-        <fsvp:serviceProfile bDefPID="demo:8" name="MrSID Service" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+        <fsvp:serviceProfile bDefPID="demo:ri8" name="MrSID Service" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
           <fsvp:serviceDescription>MrSID service for providing different image resolutions from a wavelet encoded file,
             along with zoom capability </fsvp:serviceDescription>
           <fsvp:serviceImplementation>
@@ -135,7 +135,7 @@
     <foxml:datastreamVersion CREATED="2002-02-17T06:32:00Z" ID="DSINPUTSPEC1.0"
       LABEL="Datastream Input Specification for UVA MrSID service" SIZE="490">
       <foxml:xmlContent>
-        <fbs:DSInputSpec bDefPID="demo:8" label="MrSID Service Datastream Input Specification" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+        <fbs:DSInputSpec bDefPID="demo:ri8" label="MrSID Service Datastream Input Specification" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
           <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="MRSID">
             <fbs:DSInputLabel>MrSid file</fbs:DSInputLabel>
             <fbs:DSMIME>image/x-mrsid-image</fbs:DSMIME>
@@ -152,7 +152,7 @@
       <foxml:xmlContent>
         <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
           <dc:title>Behavior Mechanism Object implementing the UserInput Image BDEF contract using the UVA MrSID Service.</dc:title>
-          <dc:identifier>demo:9</dc:identifier>
+          <dc:identifier>demo:ri9</dc:identifier>
         </oai_dc:dc>
       </foxml:xmlContent>
       <foxml:contentDigest DIGEST="future: hash of content goes here" TYPE="MD5"/>

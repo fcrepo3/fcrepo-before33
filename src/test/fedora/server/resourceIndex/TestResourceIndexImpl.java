@@ -1,48 +1,23 @@
 package fedora.server.resourceIndex;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.util.Map;
 
 import fedora.common.PID;
-import fedora.server.Parameterized;
-import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.BasicDigitalObject;
-import fedora.server.utilities.ConfigurationLoader;
-import fedora.server.utilities.DDLConverter;
-import fedora.server.utilities.SQLUtility;
-import fedora.server.TestLogging;
 
 import org.jrdf.graph.Triple;
 
 import org.trippi.RDFFormat;
 import org.trippi.TripleIterator;
-import org.trippi.TriplestoreConnector;
 import org.trippi.TripleMaker;
-
-import junit.framework.TestCase;
 
 /**
  * @author Edwin Shin
  *  
  */
-public class TestResourceIndexImpl extends TestCase {
-    
-    private static final String DEMO_OBJECTS_ROOT_DIR = "src/test/fedora/server/resourceIndex/foxmlTestObjects";
-    
-    private static String tsPath;
-    private static String fedoraHome = System.getProperty("fedora.home");
-    private ResourceIndex m_ri;
-    private ConnectionPool m_cPool;
-    private TriplestoreConnector m_conn;
+public class TestResourceIndexImpl extends TestResourceIndex {
+    private DigitalObject bdef, bmech, dataobject;
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestResourceIndexImpl.class);
@@ -52,81 +27,14 @@ public class TestResourceIndexImpl extends TestCase {
      * @see TestCase#setUp()
      */
     protected void setUp() throws Exception {
-        if (fedoraHome == null || fedoraHome.equals("")) {
-            fedoraHome = "dist";
-        }
+        super.setUp();
         
-        ConfigurationLoader cl = new ConfigurationLoader(fedoraHome, "test.fcfg"); 
-        
-        Map riMP = cl.getModuleParameters("fedora.server.resourceIndex.ResourceIndex");
-        int level = Integer.parseInt((String)riMP.get("level"));
-        String datastoreId = (String)riMP.get("datastoreId");
-        
-        Map cpMP = cl.getModuleParameters("fedora.server.storage.ConnectionPoolManager");
-        String cPoolName = (String)cpMP.get("defaultPoolName");
-        
-        Parameterized cpConf = cl.getDatastoreConfig(cPoolName);
-        Map cpP = cpConf.getParameters();
-        String cpUserName = (String)cpP.get("dbUsername");
-        String cpPassword = (String)cpP.get("dbPassword");
-        String cpURL = (String)cpP.get("jdbcURL");
-        String cpDriver = (String)cpP.get("jdbcDriverClass");
-        String cpDDLConverter = (String)cpP.get("ddlConverter");
-        int cpIConn = Integer.parseInt((String)cpP.get("minPoolSize"));
-        int cpMaxConn = Integer.parseInt((String)cpP.get("maxPoolSize"));
-        DDLConverter ddlConverter=null;
-        if (cpDDLConverter != null) {
-            ddlConverter=(DDLConverter) Class.forName(cpDDLConverter).newInstance();
-        }
-        
-        m_cPool = new ConnectionPool(cpDriver, cpURL, cpUserName, 
-                                     cpPassword, cpIConn, cpMaxConn, true, ddlConverter);
-        
-        String dbSpec="src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec";
-        InputStream specIn = new FileInputStream(dbSpec);
-        if (specIn==null) {
-            throw new IOException("Cannot find required "
-                + "resource: " + dbSpec);
-        }
-        SQLUtility.createNonExistingTables(m_cPool, specIn, new TestLogging());
-        
-        Parameterized tsConf = cl.getDatastoreConfig(datastoreId);
-        Map tsP = tsConf.getParameters();
-        String connectorClassName = (String) tsP.get("connectorClassName");
-        tsPath = (String)tsP.get("path");
-        
-        m_conn = TriplestoreConnector.init(connectorClassName, tsP);
-        
-        m_ri = new ResourceIndexImpl(level, m_conn, m_cPool, null);
-
-        // needed by the deserializer
-        System.setProperty("fedoraServerHost", "localhost");
-        System.setProperty("fedoraServerPort", "8080");
-        
-        //
-        DigitalObject bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bdefs/demo_8.xml"));
-        DigitalObject bmech = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bmechs/demo_9.xml"));
-        DigitalObject dataobject = getDigitalObject(new File(
-                DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_10.xml"));
-    }
-
-    /*
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() throws Exception {
-        if (m_conn != null) {
-            m_conn.close();
-            m_conn = null;
-        }
-        if (m_cPool != null) {
-            deleteRITables();
-            m_cPool.closeAllConnections();
-            m_cPool = null;
-        }
-        m_ri = null;
-        deleteDirectory(tsPath);
+        bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/bdefs/demo_ri8.xml"));
+        bmech = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/bmechs/demo_ri9.xml"));
+        dataobject = getDigitalObject(new File(
+                DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_ri10.xml"));
     }
 
     public void testAddDigitalObject() throws Exception {
@@ -134,24 +42,19 @@ public class TestResourceIndexImpl extends TestCase {
                 + "/dataobjects/demo_ri1000.xml"));
         m_ri.addDigitalObject(obj);
         m_ri.commit();
-        assertEquals(3, m_ri.countTriples(null, null, null, 0));
+        assertEquals(4, m_ri.countTriples(null, null, null, 0));
         TripleIterator it = m_ri.findTriples(TripleMaker.createResource(PID.toURI(obj.getPid())), 
                                              null, null, 0);
         Triple t;
         while (it.hasNext()) {
             t = (Triple)it.next();
             assertEquals(PID.toURI(obj.getPid()), t.getSubject().toString());
+            assertNotNull(t.getPredicate());
+            assertNotNull(t.getObject());
         }
     }
         
-    public void testAddAndDelete() throws Exception {
-        DigitalObject bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bdefs/demo_8.xml"));
-        DigitalObject bmech = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bmechs/demo_9.xml"));
-        DigitalObject dataobject = getDigitalObject(new File(
-                DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_10.xml"));
-    
+    public void testAddAndDelete() throws Exception {    
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
         int a = m_ri.countTriples(null, null, null, 0);
@@ -167,7 +70,7 @@ public class TestResourceIndexImpl extends TestCase {
         int c = m_ri.countTriples(null, null, null, 0);
         assertTrue(c > b);
         
-        //m_ri.export(new FileOutputStream("/tmp/out.rdf"), RDFFormat.RDF_XML);
+        m_ri.export(new FileOutputStream("/tmp/out.rdf"), RDFFormat.RDF_XML);
         
         m_ri.deleteDigitalObject(dataobject);
         m_ri.commit();
@@ -187,13 +90,6 @@ public class TestResourceIndexImpl extends TestCase {
     }
     
     public void testDoubleAdd() throws Exception {
-        DigitalObject bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bdefs/demo_8.xml"));
-        DigitalObject bmech = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bmechs/demo_9.xml"));
-        DigitalObject dataobject = getDigitalObject(new File(
-                DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_10.xml"));
-    
         m_ri.addDigitalObject(bdef);
         m_ri.addDigitalObject(bmech);
         m_ri.addDigitalObject(dataobject);
@@ -204,99 +100,5 @@ public class TestResourceIndexImpl extends TestCase {
         m_ri.commit();
         int b = m_ri.countTriples(null, null, null, 0);
         assertEquals(a, b);
-        
-//        m_ri.addDigitalObject(bdef);
-//        m_ri.addDigitalObject(bmech);
-//        m_ri.commit();
-//        int c = m_ri.countTriples(null, null, null, 0);
-//        assertEquals(a, c);
     }
-
-    private void addDigitalObjects(File dir) throws Exception {
-        FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File file, String name) {
-                return (!name.startsWith(".") && name.endsWith(".xml"));
-            }
-        };
-        File[] files = dir.listFiles(filter);
-        for (int i = 0; i < files.length; i++) {
-            addDigitalObject(files[i]);
-        }
-    }
-
-    private void addDigitalObject(File file) throws Exception {
-        FileInputStream in;
-        DigitalObject obj = new BasicDigitalObject();
-
-        in = new FileInputStream(file);
-        FOXMLDODeserializer deser = new FOXMLDODeserializer();
-        deser.deserialize(in, obj, "UTF-8", 0);
-        addDigitalObject(obj);
-    }
-
-    private void addDigitalObject(DigitalObject digitalObject) throws Exception {
-        m_ri.addDigitalObject(digitalObject);
-    }
-
-    private void addBDefs() throws Exception {
-        File dir = new File(DEMO_OBJECTS_ROOT_DIR + "/bdefs");
-        addDigitalObjects(dir);
-    }
-
-    private void addBMechs() throws Exception {
-        File dir = new File(DEMO_OBJECTS_ROOT_DIR + "/bmechs");
-        addDigitalObjects(dir);
-    }
-
-    private void addDataObjects() throws Exception {
-        File dir = new File(DEMO_OBJECTS_ROOT_DIR + "/dataobjects");
-        addDigitalObjects(dir);
-    }
-
-    private DigitalObject getDigitalObject(File file) throws Exception {
-        FileInputStream in;
-        DigitalObject obj = new BasicDigitalObject();
-
-        in = new FileInputStream(file);
-        FOXMLDODeserializer deser = new FOXMLDODeserializer();
-        deser.deserialize(in, obj, "UTF-8", 0);
-        return obj;
-    }
-
-    private void deleteRITables() throws Exception {
-        Connection conn = m_cPool.getConnection();
-        Statement stmt = conn.createStatement();
-        String[] drop = {"DROP TABLE riMethodMimeType", "DROP TABLE riMethodImpl", 
-                         "DROP TABLE riMethodPermutation", "DROP TABLE riMethod"};
-        for (int i = 0; i < drop.length; i++) {
-            stmt.execute(drop[i]);
-        }
-    }
-    
-    private boolean deleteDirectory(String directory) {
-        boolean result = false;
-
-        if (directory != null) {
-            File file = new File(directory);
-            if (file.exists() && file.isDirectory()) {
-                // 1. delete content of directory:
-                File[] files = file.listFiles();
-                result = true; //init result flag
-                int count = files.length;
-                for (int i = 0; i < count; i++) { //for each file:
-                    File f = files[i];
-                    if (f.isFile()) {
-                        result = result && f.delete();
-                    } else if (f.isDirectory()) {
-                        result = result && deleteDirectory(f.getAbsolutePath());
-                    }
-                }//next file
-
-                file.delete(); //finally delete (empty) input directory
-            }//else: input directory does not exist or is not a directory
-        }//else: no input value
-
-        return result;
-    }//deleteDirectory()
-
 }

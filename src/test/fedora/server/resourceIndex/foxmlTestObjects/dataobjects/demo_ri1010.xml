@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- A minimal foxml representation of a data object -->
+<!-- A Collection Demo Object -->
 <foxml:digitalObject PID="demo:ri1010"
                      xmlns:foxml="info:fedora/fedora-system:def/foxml#" 
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
                      xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
     <foxml:objectProperties>
-        <foxml:property NAME="info:fedora/fedora-system:def/cDate" VALUE="2004-12-15T10:21:17Z"/>
-        <foxml:property NAME="info:fedora/fedora-system:def/fType" VALUE="FedoraObject"/>
-        <foxml:property NAME="info:fedora/fedora-system:def/state" VALUE="A"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-05-05T11:22:33Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="FedoraObject"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
     </foxml:objectProperties>
     <foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A" VERSIONABLE="YES">
         <foxml:datastreamVersion ID="RELS-EXT1.0" CREATED="2004-12-07T19:32:00Z" LABEL="Relationships">
@@ -16,8 +16,7 @@
                          xmlns:nsdl="http://www.nsdl.org/ontologies/relationships#" 
                          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
                     <rdf:Description rdf:about="info:fedora/demo:ri1010">
-                        <nsdl:hasMetadata rdf:resource="info:fedora/demo:ri1011"/>
-                        <nsdl:hasContent rdf:resource="info:fedora/demo:ri1012"/>
+                        <nsdl:hasMetadata rdf:resource="info:fedora/demo:ri2010"/>
                     </rdf:Description>
                 </rdf:RDF>
             </foxml:xmlContent>

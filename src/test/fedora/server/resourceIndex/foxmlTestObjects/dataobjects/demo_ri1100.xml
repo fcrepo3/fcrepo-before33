@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- A Collection Demo Object -->
-<foxml:digitalObject PID="demo:ri1011"
+<!-- A Resource Demo Object -->
+<foxml:digitalObject PID="demo:ri1100"
                      xmlns:foxml="info:fedora/fedora-system:def/foxml#" 
                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
                      xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
@@ -15,8 +15,9 @@
                 <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
                          xmlns:nsdl="http://www.nsdl.org/ontologies/relationships#" 
                          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-                    <rdf:Description rdf:about="info:fedora/demo:ri1011">
-                        <nsdl:hasMetadata rdf:resource="info:fedora/demo:ri2011"/>
+                    <rdf:Description rdf:about="info:fedora/demo:ri1100">
+                        <nsdl:hasMetadata rdf:resource="info:fedora/demo:ri2100"/>
+                        <nsdl:isMemberOf rdf:resource="info:fedora/demo:ri1010"/>
                     </rdf:Description>
                 </rdf:RDF>
             </foxml:xmlContent>
