@@ -165,5 +165,8 @@ public interface Authorization {
 
 	public void enforceListMethods(Context context, String pid, Date ofAsDate) 
 	throws NotAuthorizedException;
+	
+	public void enforceAdminPing(Context context) 
+	throws NotAuthorizedException;	
 
 }

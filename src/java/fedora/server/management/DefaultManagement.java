@@ -1589,5 +1589,12 @@ public class DefaultManagement
 			throw new GeneralException("RELS-EXT validation failed: " + message);
 		}
     }
+    
+    public boolean adminPing(Context context)
+		throws ServerException {	
+        m_fedoraXACMLModule.enforceAdminPing(context);  
+        return true;
+    }
+
 
 }

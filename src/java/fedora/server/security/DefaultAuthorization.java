@@ -769,7 +769,16 @@ public class DefaultAuthorization extends Module implements Authorization {
 		context.setResourceAttributes(resourceAttributes);
 		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
-
+	
+	public void enforceAdminPing(Context context)
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.ADMIN_PING.uri;
+		log("enforcing " + target);
+		context.setActionAttributes(null);
+		context.setResourceAttributes(null);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, "", "", context);
+	}
+	
 	  private static final String pad(int n, int length) throws Exception {
 	  	String asString = Integer.toString(n);
 	  	if (asString.length() > length) {

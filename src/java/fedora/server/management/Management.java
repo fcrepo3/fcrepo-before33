@@ -178,7 +178,7 @@ public interface Management {
                                    String dsState, 
                                    String logMessage) throws ServerException;
 
-    public Date setDisseminatorState(Context context, 
+    public Date setDisseminatorState(Context context,
                                      String pid, 
                                      String dsID, 
                                      String dsState, 
@@ -188,4 +188,6 @@ public interface Management {
                                int numPIDs, 
                                String namespace) throws ServerException;
 
+    public boolean adminPing(Context context) throws ServerException;
+    
 }

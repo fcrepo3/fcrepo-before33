@@ -183,11 +183,21 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public fedora.server.types.gen.UserInfo describeUser(String id)
             throws RemoteException {
+    	Context context = getContext();
+    	try {
+			s_management.adminPing(context);
+		} catch (ServerException e) {
+            throw AxisUtility.getFault(new GeneralException("Unrecognized user: " + id));			
+		}
+    	/*
         if (id==null || !id.equals("fedoraAdmin")) {
             throw AxisUtility.getFault(new GeneralException("Unrecognized user: " + id));
         }
+        */
         fedora.server.types.gen.UserInfo inf=new fedora.server.types.gen.UserInfo();
         inf.setId(id);
+        //so, for the purposes of this method, an administrator is whoever is permitted action "adminPing"
+        //and only administrators can be "described"
         inf.setAdministrator(true);
         return inf;
     }
