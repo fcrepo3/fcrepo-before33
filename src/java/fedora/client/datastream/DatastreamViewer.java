@@ -24,6 +24,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
@@ -108,7 +109,8 @@ public class DatastreamViewer
             } else {
                 for (int i=0; i<dsIDs.length; i++) {
                     tabbedPane.addTab(dsIDs[i], new DatastreamPanel(pid,
-                            CONDUIT.getDatastream(pid, dsIDs[i], null)));
+                            CONDUIT.getDatastream(pid, dsIDs[i], null), 
+                            CONDUIT.getDatastreamHistory(pid, dsIDs[i])));
                 }
             }
             tabbedPane.setSelectedIndex(0);
@@ -145,7 +147,7 @@ public class DatastreamViewer
     public class DatastreamPanel
             extends JPanel {
 
-        public DatastreamPanel(String pid, Datastream ds) {
+        public DatastreamPanel(String pid, Datastream ds, Calendar[] versionDates) {
             boolean xml=false;
             if (ds.getControlGroup().toString().equals("X")) {
                 xml=true;
@@ -162,6 +164,7 @@ public class DatastreamViewer
                         JLabel mimeTypeLabel=new JLabel("MIME Type");
                         JLabel infoTypeLabel=new JLabel("Info Type");
                         JLabel controlGroupLabel=new JLabel("Control Group");
+                        JLabel versionsLabel=new JLabel("Versions");
                         JLabel labelLabel=new JLabel("Label");
                         JLabel contentLabel;
                         if (xml) {
@@ -172,12 +175,13 @@ public class DatastreamViewer
                         JLabel stateLabel=new JLabel("State");
 
                     JPanel labelPanel=new JPanel();
-                    labelPanel.setLayout(new GridLayout(7, 1, 0, 3));
+                    labelPanel.setLayout(new GridLayout(8, 1, 0, 3));
                     labelPanel.setBorder(BorderFactory.createEmptyBorder(0,6,0,12));
                     labelPanel.add(modifiedLabel);
                     labelPanel.add(mimeTypeLabel);
                     labelPanel.add(infoTypeLabel);
                     labelPanel.add(controlGroupLabel);
+					labelPanel.add(versionsLabel);
                     labelPanel.add(labelLabel);
 
                 JPanel outerLabelPanel=new JPanel();
@@ -198,9 +202,9 @@ public class DatastreamViewer
                         if (group.equals("X")) {
                             controlGroupString="Internal XML";
                         } else if (group.equals("M")) {
-                            controlGroupString="Internal";
+                            controlGroupString="Managed Content";
                         } else if (group.equals("E")) {
-                            controlGroupString="External";
+                            controlGroupString="Externally Referenced";
                         } else if (group.equals("R")) {
                             controlGroupString="Redirect";
                         } else {
@@ -208,12 +212,22 @@ public class DatastreamViewer
                         }
                         JLabel controlGroupValueLabel=new JLabel(controlGroupString);
 
+                        JComponent versionsValueComponent;
+						if (versionDates.length==1) {
+						    versionsValueComponent=new JLabel("1");
+						} else {
+						    versionsValueComponent=new JButton(versionDates.length + ", View/Revert/Purge...");
+							versionsValueComponent.setPreferredSize(new Dimension(150, 
+							        (int) controlGroupValueLabel.getPreferredSize().getHeight()));
+						}
+
                     JPanel singleLineValuePanel=new JPanel();
-                    singleLineValuePanel.setLayout(new GridLayout(4, 1, 0, 3));
+                    singleLineValuePanel.setLayout(new GridLayout(5, 1, 0, 3));
                     singleLineValuePanel.add(modifiedValueLabel);
                     singleLineValuePanel.add(mimeTypeValueLabel);
                     singleLineValuePanel.add(infoTypeValueLabel);
                     singleLineValuePanel.add(controlGroupValueLabel);
+                    singleLineValuePanel.add(versionsValueComponent);
 
                     // CENTER: multiLineValuePanel(fieldGrid [, xmlEditor])
 
