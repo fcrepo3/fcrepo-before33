@@ -920,34 +920,16 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
         String bMechPid = digitalObject.getPid();
         
-        // Delete bMech associated records from the database.
-        // If we could count on sub-select support (e.g. if/when
-        // Fedora requires MySQL 4.1 or better), we could do
-        // this with a single SQL statement.
-        String select = "SELECT riMethodMimeType.mimeTypeId " +
-                        "FROM riMethodImpl, riMethodMimeType " +
-                        "WHERE riMethodImpl.methodImplId = riMethodMimeType.methodImplId " +
-                        "AND riMethodImpl.bMechPid = '" + bMechPid + "'";
-        
-        String delete = "DELETE FROM riMethodImpl " +
-                        "WHERE riMethodImpl.bMechPid = '" + bMechPid + "'";
+        String deleteMMT = "DELETE FROM riMethodMimeType " +
+                           "WHERE methodImplId LIKE '" + bMechPid + "/%'";
+        String deleteMI = "DELETE FROM riMethodImpl " +
+                          "WHERE riMethodImpl.bMechPid = '" + bMechPid + "'";
         
         Statement stmt = null;
         try {
-            stmt = m_conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_UPDATABLE);
-            ResultSet rs = stmt.executeQuery(select);
-            int row;
-            while (rs.next()) {
-                row = rs.getRow();
-                rs.deleteRow();
-                // This is to catch odd behavior in MySQL:
-                // rs.deleteRow() followed by rs.next() skips a row!  
-                if (row == rs.getRow()) {
-                    rs.previous();
-                }
-            }
-            stmt.execute(delete);   
+            stmt = m_conn.createStatement();
+            stmt.execute(deleteMMT);
+            stmt.execute(deleteMI);
         } catch (SQLException e) {
             try {
                 if (stmt != null) {
