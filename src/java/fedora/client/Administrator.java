@@ -19,6 +19,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.text.JTextComponent;
 import javax.swing.JToolBar;
 import javax.swing.JWindow;
 import javax.swing.KeyStroke;
@@ -27,8 +29,10 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import java.awt.event.*;
 import java.awt.*;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.URL;
 
 import edu.cornell.dlrg.swing.jhelp.SimpleHelpBroker;
@@ -38,7 +42,9 @@ import edu.cornell.dlrg.swing.mdi.WindowMenu;
 
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
+import fedora.client.export.AutoExporter;
 import fedora.client.ingest.AutoIngestor;
+import fedora.client.purge.AutoPurger;
 
 public class Administrator extends JFrame {
 
@@ -75,9 +81,9 @@ public class Administrator extends JFrame {
         m_aboutText=new JLabel("<html>Copyright 2002 University of "
                 + "Virginia and Cornell University.<p>This software was "
                 + "made possible by a grant from the<p>Andrew W. Mellon "
-                + "Foundation.<p><p>Version: N/A<p>Release Date: "
+                + "Foundation.<p><p>Version: Alpha 1<p>Release Date: "
                 + "Unreleased.<p><p>Note: This is a pre-release version "
-                + "of Fedora.<P>See http://www.fedora.info/ for "
+                + "of Fedora<P>See http://www.fedora.info/ for "
                 + "more information.");
         m_aboutText.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JPanel splashPicAndText=new JPanel();
@@ -102,14 +108,14 @@ public class Administrator extends JFrame {
         m_desktop=new MDIDesktopPane();
         m_desktop.setVisible(true);
         mainPanel.add(new JScrollPane(m_desktop), BorderLayout.CENTER);
-        JToolBar toolBar=new JToolBar("Toolbar");
-        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/New24.gif"))));
-        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/Open24.gif"))));
-        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/Save24.gif"))));
-        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/SaveAs24.gif"))));
-        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/SaveAll24.gif"))));
-        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/Help24.gif"))));
-        mainPanel.add(toolBar, BorderLayout.NORTH);
+//        JToolBar toolBar=new JToolBar("Toolbar");
+//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/New24.gif"))));
+//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/Open24.gif"))));
+//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/Save24.gif"))));
+//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/SaveAs24.gif"))));
+//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/SaveAll24.gif"))));
+//        toolBar.add(new JButton(new ImageIcon(cl.getResource("images/standard/general/Help24.gif"))));
+//        mainPanel.add(toolBar, BorderLayout.NORTH);
 
         getContentPane().add(mainPanel);
         setJMenuBar(createMenuBar());
@@ -159,15 +165,52 @@ public class Administrator extends JFrame {
                 fileIngestAction();
             }
         });
-        JMenuItem fileOpen=new JMenuItem("Open...",KeyEvent.VK_O);
-        fileOpen.setToolTipText("Opens an existing Digital Object");
-        fileOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, 
+        
+/*
+
+Google example:
+
+http://images.google.com/images?q=mycenae
+fake user-agent with servlet:
+try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&oe=UTF8");URLConnection con = urlObject.openConnection();con.setRequestProperty( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0; H010818)" );System.out.println( "length: "+con.getContentLength() );System.out.println( "content: "+con.getContent() );System.out.println( "type"+con.getContentType() );InputStream st = con.getInputStream();int c;while( (c=st.read()) != -1 ) {    System.out.print( (char)c );}//System.out.println("urlObject.getContent :"+urlObject.getContent());//System.out.println("urlObject.getFile :"+urlObject.getFile());}catch (java.net.MalformedURLException exception){exception.printStackTrace();}catch (java.io.IOException exception){exception.printStackTrace();}
+
+
+*/
+        JMenuItem fileView=new JMenuItem("View...",KeyEvent.VK_V);
+        fileView.setToolTipText("Views an existing Digital Object");
+        fileView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, 
                 ActionEvent.CTRL_MASK));
-        JMenuItem fileClose=new JMenuItem("Close",KeyEvent.VK_C);
-        fileClose.setToolTipText("Closes the current Digital Object");
-        fileClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, 
-                ActionEvent.CTRL_MASK));
+        fileView.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fileViewAction();
+            }
+        });
+                
+//        JMenuItem fileClose=new JMenuItem("Close",KeyEvent.VK_C);
+//        fileClose.setToolTipText("Closes the current Digital Object");
+//        fileClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, 
+//                ActionEvent.CTRL_MASK));
+                
 //        ImageIcon BLANK_16x16_ICON=new ImageIcon("blank16x16.gif");
+        JMenuItem fileExport=new JMenuItem("Export...",KeyEvent.VK_E);
+        fileExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
+                ActionEvent.CTRL_MASK));
+        fileExport.setToolTipText("Exports a serialized Digitial Object to disk.");
+        fileExport.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fileExportAction();
+            }
+        });
+        JMenuItem filePurge=new JMenuItem("Purge...",KeyEvent.VK_P);
+        filePurge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
+                ActionEvent.CTRL_MASK));
+        filePurge.setToolTipText("Permanently removes a Digitial Object from the repository.");
+        filePurge.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                filePurgeAction();
+            }
+        });
+        
         JMenuItem fileSave=new JMenuItem("Save",KeyEvent.VK_S);
         fileSave.setToolTipText("Saves the current Digital Object to the Repository it was opened from");
         fileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, 
@@ -186,14 +229,16 @@ public class Administrator extends JFrame {
             }
         });
         
-        fileMenu.add(fileNew); 
+//        fileMenu.add(fileNew); 
         fileMenu.add(fileIngest); 
-        fileMenu.add(fileOpen); 
-        fileMenu.add(fileClose); 
-        fileMenu.addSeparator();
-        fileMenu.add(fileSave); 
-        fileMenu.add(fileSaveTo); 
-        fileMenu.add(fileSaveAll); 
+        fileMenu.add(fileView); 
+//        fileMenu.add(fileClose); 
+//        fileMenu.addSeparator();
+        fileMenu.add(fileExport); 
+        fileMenu.add(filePurge); 
+//        fileMenu.add(fileSave); 
+//        fileMenu.add(fileSaveTo); 
+//        fileMenu.add(fileSaveAll); 
         fileMenu.addSeparator();
 //        fileMenu.add(filePreferences);
 //        fileMenu.addSeparator();
@@ -201,19 +246,19 @@ public class Administrator extends JFrame {
 
         menuBar.add(fileMenu);
         
-        JMenu editMenu=new JMenu("Edit");
-        editMenu.setMnemonic(KeyEvent.VK_E);
-        JMenuItem editDelete=new JMenuItem("Delete",KeyEvent.VK_D);
-        editMenu.add(editDelete);
-        menuBar.add(editMenu);
+//        JMenu editMenu=new JMenu("Edit");
+//        editMenu.setMnemonic(KeyEvent.VK_E);
+//        JMenuItem editDelete=new JMenuItem("Delete",KeyEvent.VK_D);
+//        editMenu.add(editDelete);
+//        menuBar.add(editMenu);
         
-        JMenu viewMenu=new JMenu("View");
-        viewMenu.setMnemonic(KeyEvent.VK_V);
-        JMenuItem viewToolbar=new JMenuItem("Toolbar",KeyEvent.VK_T);
-        viewMenu.add(viewToolbar);
-        JMenuItem viewTooltips=new JMenuItem("Tooltips",KeyEvent.VK_I);
-        viewMenu.add(viewTooltips);
-        menuBar.add(viewMenu);
+//        JMenu viewMenu=new JMenu("View");
+//        viewMenu.setMnemonic(KeyEvent.VK_V);
+//        JMenuItem viewToolbar=new JMenuItem("Toolbar",KeyEvent.VK_T);
+//        viewMenu.add(viewToolbar);
+//        JMenuItem viewTooltips=new JMenuItem("Tooltips",KeyEvent.VK_I);
+//        viewMenu.add(viewTooltips);
+//        menuBar.add(viewMenu);
         
         JMenu toolsMenu=new JMenu("Tools");
         toolsMenu.setMnemonic(KeyEvent.VK_T);
@@ -358,7 +403,90 @@ public class Administrator extends JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                     e.getClass().getName() + ": " + e.getMessage(),
-                    "Ingest Error",
+                    "Ingest Failure",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    protected void fileViewAction() {
+        try {
+            String pid=JOptionPane.showInputDialog("Enter the PID."); 
+            AutoExporter exporter=new AutoExporter(m_host, m_port);
+            ByteArrayOutputStream out=new ByteArrayOutputStream();
+            exporter.export(pid, out);
+            JInternalFrame viewFrame=new JInternalFrame("Viewing " + pid, true, true, true, true);
+            viewFrame.setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/Edit16.gif")));
+            JTextComponent textEditor=new JTextArea();
+            textEditor.setFont(new Font("monospaced", Font.PLAIN, 12));
+            textEditor.setText(new String(out.toByteArray()));
+            viewFrame.getContentPane().add(new JScrollPane(textEditor));
+            viewFrame.setSize(300,300);
+            viewFrame.setVisible(true);
+            m_desktop.add(viewFrame);
+            try {
+                viewFrame.setSelected(true);
+            } catch (java.beans.PropertyVetoException pve) {}
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    e.getClass().getName() + ": " + e.getMessage(),
+                    "View Failure",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    protected void fileExportAction() {
+        try {
+            String pid=JOptionPane.showInputDialog("Enter the PID."); 
+            JFileChooser browse;
+            if (s_lastDir==null) {
+                browse=new JFileChooser();
+            } else {
+                browse=new JFileChooser(s_lastDir);
+            }
+            browse.setApproveButtonText("Export");
+            browse.setApproveButtonMnemonic('E');
+            browse.setApproveButtonToolTipText("Exports to the selected file.");
+            browse.setDialogTitle("Export to...");
+            int returnVal = browse.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = browse.getSelectedFile();
+                s_lastDir=file.getParentFile(); // remember the dir for next time
+                String host;
+                int port;
+                host=m_host;
+                port=m_port;
+                AutoExporter exporter=new AutoExporter(host, port);
+                exporter.export(pid, new FileOutputStream(file));
+                JOptionPane.showMessageDialog(this,
+                        "Export succeeded.");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    e.getClass().getName() + ": " + e.getMessage(),
+                    "Export Failure",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    protected void filePurgeAction() {
+        try {
+            String pid=JOptionPane.showInputDialog("Enter the PID."); 
+            if (pid!=null) {
+            String reason=JOptionPane.showInputDialog("Why are you permanently removing this object?"); 
+            if (reason!=null) {
+            String host;
+            int port;
+            host=m_host;
+            port=m_port;
+            AutoPurger purger=new AutoPurger(host, port);
+            purger.purge(pid, reason);
+            JOptionPane.showMessageDialog(this,
+                        "Purge succeeded.");
+            } }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    e.getClass().getName() + ": " + e.getMessage(),
+                    "Purge Failure",
                     JOptionPane.ERROR_MESSAGE);
         }
     }
