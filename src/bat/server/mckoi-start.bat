@@ -45,7 +45,6 @@ if not exist %THIS_JAVA_HOME%\bin\java.exe goto noJavaBin
 goto envOk
 
 :tryJavaHome
-echo Warning: FEDORA_JAVA_HOME not set, falling back to JAVA_HOME
 if "%JAVA_HOME%" == "" goto noJavaHome
 set THIS_JAVA_HOME=%JAVA_HOME%
 goto checkJava

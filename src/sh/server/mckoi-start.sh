@@ -12,7 +12,6 @@ if [ ! -f "$FEDORA_HOME/server/config/fedora.fcfg" ]; then
 fi
 
 if [ "$FEDORA_JAVA_HOME" = "" ]; then
-  echo "Warning: FEDORA_JAVA_HOME not set, falling back to JAVA_HOME"
   if [ "$JAVA_HOME" = "" ]; then
     echo "ERROR: FEDORA_JAVA_HOME was not defined, nor was (the fallback) JAVA_HOME."
     exit 1
