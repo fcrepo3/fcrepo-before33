@@ -2,9 +2,12 @@ package fedora.server.utilities;
 
 import fedora.server.errors.ServerException;
 
+import java.io.IOException;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.HttpURLConnection;
+import java.util.Date;
 import javax.xml.namespace.QName;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
@@ -69,6 +72,33 @@ public abstract class AxisUtility {
         System.out.println("    AxisUtility deploy wsdd_file admin_url timeout_seconds");
     }
     
+    public static boolean serverActive(URL url, int timeoutSeconds) {
+        long startms=new Date().getTime();
+        long timeoutms=startms+(1000*timeoutSeconds);
+        long endms=0;
+        while (endms<timeoutms) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ie) {
+                return false;
+            }
+            try {
+                HttpURLConnection conn=(HttpURLConnection) url.openConnection();
+                if (conn.getResponseCode()==200) {
+                    endms=new Date().getTime();
+                    long total=endms-startms;
+                    return true;
+                }
+            } catch (IOException ioe) {
+                System.out.println("Waiting for server to start...");
+            } catch (ClassCastException cce) {
+            }
+            endms=new Date().getTime();
+        }
+        long total=endms-startms;
+        return false;
+    }
+    
     public static void main(String args[]) {
         if (args.length>0) {
            if (args[0].equals("deploy")) {
@@ -90,7 +120,12 @@ public abstract class AxisUtility {
                            URL mainUrl=new URL("http", host, port, "/");
                            String[] parms=new String[] {"-l" + args[2], wsddFile.toString()};
                            int timeoutSeconds=Integer.parseInt(args[3]);
-                           // see openConnection... try to config timeout for connect
+                           if (serverActive(mainUrl, timeoutSeconds)) {
+                               AdminClient.main(parms); 
+                           } else {
+                               System.out.println("Giving up deployment... no response from server after " + timeoutSeconds + " seconds.");
+                               System.exit(1);
+                           }
                        } catch (MalformedURLException murle) {
                            System.out.println("Error: admin_url " + args[2] + " is malformed.");
                            showDeployUsage();
@@ -104,6 +139,8 @@ public abstract class AxisUtility {
                System.out.println("Error: Unrecognized command: " + args[0]);
                System.out.println("The only valid command is deploy.");
            }
+        } else {
+           showDeployUsage();
         }
     }
 
