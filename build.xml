@@ -237,6 +237,9 @@
 			<arg path="src/dbx/userdocs/manual.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<copy todir="dist/server/tomcat41/webapps/userdocs/server">
+			<fileset dir="dist/userdocs"/>
+		</copy>		
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
@@ -470,9 +473,6 @@
 		<copy todir="dist/server/tomcat41/webapps/userdocs">
 			<fileset dir="src/web-app/userdocs"/>
 		</copy>
-		<copy todir="dist/server/tomcat41/webapps/userdocs/server">
-			<fileset dir="dist/userdocs"/>
-		</copy>
 	</target>
 	<target name="servertest" description="run a test on the server">
 		<exec executable="java">
@@ -579,6 +579,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.96  2003/03/07 02:15:15  rlw
+  moved copy of userdocs webapp to userdocs target
+
   Revision 1.95  2003/03/07 02:02:46  payette
   added copy of demos.dbx to new server/doc area
 
