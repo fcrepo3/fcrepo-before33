@@ -229,7 +229,7 @@
 	<target name="testdeployA">
 		<exec executable="java">
 			<arg value="-classpath"/>
-			<arg value="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
+			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
 			<arg value="org.apache.axis.client.AdminClient"/>
 			<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
 			<arg value="dist/server/config/deployAPI-A.wsdd"/>
@@ -298,6 +298,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.28  2002/09/09 16:29:08  rlw
+  fixed typo in testdeployA
+
   Revision 1.27  2002/09/09 15:34:45  rlw
   added new libraires to testdeployA target so works with axis1rc1
 
