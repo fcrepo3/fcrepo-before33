@@ -5,7 +5,7 @@
 <xsl:param name="subtitle_">Dissemination Index View</xsl:param>
 <xsl:param name="soapClientServletPath_">/soapclient/apia</xsl:param>
 <xsl:param name="soapClientMethodParmResolverServletPath_">/soapclient/getAccessParmResolver</xsl:param>
-<xsl:template match="/">
+<xsl:template match="objectMethods">
 	<html>
 		<head>
 			<title><xsl:value-of select="$title_"/>&#160;-&#160;<xsl:value-of select="$subtitle_"/></title>
