@@ -1,6 +1,5 @@
 package fedora.server.storage.translation;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,10 +10,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-import fedora.server.Server;
-import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StreamWriteException;
@@ -30,7 +26,16 @@ import fedora.server.utilities.StreamUtility;
 /**
  *
  * <p><b>Title:</b> METSLikeDOSerializer.java</p>
- * <p><b>Description:</b> </p>
+ * <p><b>Description: Creates an XML serialization of a Fedora digital object 
+ *       in accordance with the Fedora extension of the METS XML Schema 
+ *       defined at: http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd.
+ * 
+ *       The serializer uses the currently instantiated digital object
+ *       as input (see fedora.server.storage.types.DigitalObject). 
+ * 
+ *       The serializer will adapt its output to a specific translation contexts.
+ *       See the static definitions of different translation contexts in 
+ *       fedora.server.storage.translation.DOTranslationUtility. </b></p>
  *
  * -----------------------------------------------------------------------------
  *
@@ -50,6 +55,7 @@ import fedora.server.utilities.StreamUtility;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @author payette@cs.cornell.edu
  * @version $Id$
  */
 public class METSLikeDOSerializer
@@ -67,30 +73,8 @@ public class METSLikeDOSerializer
     private String m_fedoraAuditPrefix="audit";
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
-	// Pattern for URLs that contain the placeholder string indicating the URL is
-	// based at the local repository server.  When we serialized for EXPORT, we
-	// will detect this pattern and replace it with the actual host name.
-	private static Pattern s_localPattern = Pattern.compile("http://local.fedora.server/");
-	
-	// The actual host and port of the repository server		
-	private static String s_hostInfo = null; 
-
-	// Patterns of the various ways that the local repository server address may be 
-	// encoded.  When we serialized for STORAGE, we want to replace the actual host:port
-	// of URLs to the local repository with the placeholder string "http://local.fedora.server/"
-	// to virtualize the local host:port.  This is to allow the repository host:port to 
-	// be reconfigured after an object has been stored, and be able to recreate the proper
-	// URL based on the new configuration. 	
-    private static Pattern s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
-    private static Pattern s_localServerUrlStartWithoutPort; // "http://actual.hostname/"
-    private static Pattern s_localhostUrlStartWithPort; // "http://localhost:8080/"
-    private static Pattern s_localhostUrlStartWithoutPort; // "http://localhost/"
     
-	private static String s_localServerDissemUrlStart; // "http://actual.hostname:8080/fedora/get/"
-
-    private boolean m_onPort80=false;
-    private boolean m_encodeForExport=false;
+    private int m_transContext;
 
     public METSLikeDOSerializer() {
     }
@@ -99,59 +83,11 @@ public class METSLikeDOSerializer
         return new METSLikeDOSerializer();
     }
 
-    public void serialize(DigitalObject obj, OutputStream out, String encoding,
-		boolean encodeForExport)
+    public void serialize(DigitalObject obj, OutputStream out, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
 		System.out.println("Serializing using METSLike...");
-		m_encodeForExport=encodeForExport;
-        // get the host info in a static var so search/replaces are quicker later
-        if (s_hostInfo==null) {
-            String fedoraHome=System.getProperty("fedora.home");
-            String fedoraServerHost=null;
-            String fedoraServerPort=null;
-            if (fedoraHome==null || fedoraHome.equals("")) {
-                // if fedora.home is undefined or empty, assume we're testing,
-                // in which case the host and port will be taken from system
-                // properties
-                fedoraServerHost=System.getProperty("fedoraServerHost");
-                fedoraServerPort=System.getProperty("fedoraServerPort");
-            } else {
-                try {
-                    Server s=Server.getInstance(new File(fedoraHome));
-                    fedoraServerHost=s.getParameter("fedoraServerHost");
-                    fedoraServerPort=s.getParameter("fedoraServerPort");
-					if (fedoraServerPort.equals("80")) {
-					    m_onPort80=true;
-					}
-                } catch (InitializationException ie) {
-                    // can only possibly happen during failed testing, in which
-                    // case it's ok to do a System.exit
-                    System.err.println("STARTUP ERROR: " + ie.getMessage());
-                    System.exit(1);
-                }
-            }
-			// set the currently configured host:port of the repository
-			s_hostInfo="http://" + fedoraServerHost;
-			if (!fedoraServerPort.equals("80")) {
-				s_hostInfo=s_hostInfo + ":" + fedoraServerPort;
-			}
-			s_hostInfo=s_hostInfo + "/";
-			
-			// set the pattern for public dissemination URLs at local server
-			s_localServerDissemUrlStart= s_hostInfo + "fedora/get/";
-
-			// set other patterns using the configured host and port
-            s_localServerUrlStartWithPort=Pattern.compile("http://"
-                    + fedoraServerHost + ":" + fedoraServerPort + "/");
-            s_localServerUrlStartWithoutPort=Pattern.compile("http://"
-                    + fedoraServerHost + "/");
-            s_localhostUrlStartWithoutPort=Pattern.compile("http://localhost/");
-            s_localhostUrlStartWithPort=Pattern.compile("http://localhost:" + fedoraServerPort + "/");
-            
-        }
-        
-        // now do serialization stuff
+		m_transContext=transContext;
         StringBuffer buf=new StringBuffer();
         appendXMLDeclaration(obj, encoding, buf);
         appendRootElementStart(obj, buf);
@@ -281,75 +217,42 @@ public class METSLikeDOSerializer
             throws ObjectIntegrityException, UnsupportedEncodingException,
             StreamIOException {
         DatastreamXMLMetadata first=
-        	(DatastreamXMLMetadata)setDatastreamDefaults(
+        	(DatastreamXMLMetadata)DOTranslationUtility.setDatastreamDefaults(
         		(DatastreamXMLMetadata) XMLMetadata.get(0));
-        /*
-        if (first.DatastreamID==null) {
-            throw new ObjectIntegrityException("Datastream must have an id.");
-        }
-        if (first.DSState==null) {
-            throw new ObjectIntegrityException("Datastream must have a state.");
-        }
-        */
         buf.append("  <" + METS_PREFIX + ":" + outerName + " ID=\""
                 + first.DatastreamID + "\" STATUS=\"" + first.DSState 
                 + "\">\n");
         for (int i=0; i<XMLMetadata.size(); i++) {
-            //DatastreamXMLMetadata ds=(DatastreamXMLMetadata) XMLMetadata.get(i);
 			DatastreamXMLMetadata ds=
-				(DatastreamXMLMetadata)setDatastreamDefaults(
+				(DatastreamXMLMetadata)DOTranslationUtility.setDatastreamDefaults(
 					(DatastreamXMLMetadata)XMLMetadata.get(i));
-            /*
-            if (ds.DSVersionID==null) {
-                throw new ObjectIntegrityException("Datastream must have a version id.");
-            }
-            if (ds.DSCreateDT==null) {
-                throw new ObjectIntegrityException("Datastream must have a creation date.");
-            }
-            */
-			String dateString="";
+			String dateAttr="";
 			if (ds.DSCreateDT!=null) {
-				dateString=" CREATED=\"" + m_formatter.format(ds.DSCreateDT) + "\"";
+				dateAttr=" CREATED=\"" + m_formatter.format(ds.DSCreateDT) + "\"";
 			}
 			buf.append("    <" + METS_PREFIX + ":" + innerName 
 				+ " ID=\""	+ ds.DSVersionID + "\""
-				+ dateString 
+				+ dateAttr 
 				+ ">\n");
-			/*
-            buf.append("    <" + METS_PREFIX + ":" + innerName + " ID=\""
-                    + ds.DSVersionID + "\" CREATED=\"" + m_formatter.format(
-                    ds.DSCreateDT) + "\">\n");
-            */
-            // set some default values...
-            /*
-            if (ds.DSMIME==null) {
-				ds.DSMIME="text/html";
-                //ds.DSMIME="text/xml";
-            }
-            if (ds.DSInfoType==null || ds.DSInfoType.equals("")
-                    || ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
-                ds.DSInfoType="UNSPECIFIED";
-            }
-            */
             String mdType=ds.DSInfoType;
-            String otherString="";
+            String otherAttr="";
             if ( !mdType.equals("MARC") && !mdType.equals("EAD")
                     && !mdType.equals("DC") && !mdType.equals("NISOIMG")
                     && !mdType.equals("LC-AV") && !mdType.equals("VRA")
                     && !mdType.equals("TEIHDR") && !mdType.equals("DDI")
                     && !mdType.equals("FGDC") ) {
                 mdType="OTHER";
-                otherString=" OTHERMDTYPE=\"" + StreamUtility.enc(ds.DSInfoType)
+                otherAttr=" OTHERMDTYPE=\"" + StreamUtility.enc(ds.DSInfoType)
                         + "\" ";
             }
-            String labelString="";
+            String labelAttr="";
             if ( ds.DSLabel!=null && !ds.DSLabel.equals("") ) {
-                labelString=" LABEL=\"" + StreamUtility.enc(ds.DSLabel) + "\"";
+                labelAttr=" LABEL=\"" + StreamUtility.enc(ds.DSLabel) + "\"";
             }
             buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + ds.DSMIME + "\""
                     + " MDTYPE=\"" + mdType + "\"" 
-                    + otherString
-                    + labelString 
+                    + otherAttr
+                    + labelAttr 
                     + ">\n");
             buf.append("        <" + METS_PREFIX + ":xmlData>\n");
             
@@ -359,7 +262,8 @@ public class METSLikeDOSerializer
             if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT
                     && (ds.DatastreamID.equals("SERVICE-PROFILE")) 
                     || (ds.DatastreamID.equals("WSDL")) ) {
-                buf.append(normalizeDSInlineXML(ds));
+				buf.append(DOTranslationUtility.normalizeInlineXML(
+					new String(ds.xmlContent, "UTF-8"), m_transContext));
             } else {
                 appendStream(ds.getContentStream(), buf, encoding);
             }
@@ -472,6 +376,8 @@ public class METSLikeDOSerializer
         while (iter.hasNext()) {
             String id=(String) iter.next();
             Datastream firstDS=(Datastream) obj.datastreams(id).get(0);
+            // First, work with the first version to get the mdClass set to
+            // a proper value required in the METS XML Schema.
             if ((firstDS.DSControlGrp.equals("X"))
                     && (((DatastreamXMLMetadata) firstDS).DSMDClass!=
                     DatastreamXMLMetadata.DESCRIPTIVE)) {
@@ -491,6 +397,7 @@ public class METSLikeDOSerializer
                 	// to techMD, since it's the most generic category.
                 	mdClass="techMD";
                 }
+                // Then, pass everything along to do the actual serialization
                 appendMDSec(obj, "amdSec", mdClass, obj.datastreams(id),
                         buf, encoding);
             }
@@ -503,7 +410,7 @@ public class METSLikeDOSerializer
         boolean didFileSec=false;
         while (iter.hasNext()) {
             Datastream ds=
-            	setDatastreamDefaults(
+            	DOTranslationUtility.setDatastreamDefaults(
             		(Datastream)obj.datastreams((String)iter.next()).get(0));
             if (!ds.DSControlGrp.equals("X")) {
                 if (!didFileSec) {
@@ -511,44 +418,42 @@ public class METSLikeDOSerializer
                     buf.append("  <" + METS_PREFIX + ":fileSec>\n");
                     buf.append("    <" + METS_PREFIX + ":fileGrp ID=\"DATASTREAMS\">\n");
                 }
-                /*
-                if (ds.DatastreamID==null || ds.DatastreamID.equals("")) {
-					throw new ObjectIntegrityException("Missing datastream ID in object: " + obj.getPid());
-                }
-                */
-                //if (ds.DSState==null) ds.DSState="";
                 buf.append("      <" + METS_PREFIX + ":fileGrp ID=\""
-                        + ds.DatastreamID + "\" STATUS=\"" + ds.DSState 
+                        + ds.DatastreamID 
+                        + "\" STATUS=\"" + ds.DSState 
                         + "\">\n");
                 Iterator contentIter=obj.datastreams(ds.DatastreamID).iterator();
                 while (contentIter.hasNext()) {
-                    //Datastream dsc=validateDatastream((Datastream) contentIter.next());
-					Datastream dsc=setDatastreamDefaults((Datastream) contentIter.next());                   
-                    String labelString="";
+					Datastream dsc=DOTranslationUtility.setDatastreamDefaults(
+						(Datastream)contentIter.next());                   
+                    String labelAttr="";
                     if (dsc.DSLabel!=null && !dsc.DSLabel.equals("")) {
-                        labelString=" " + m_XLinkPrefix + ":title=\""
+                        labelAttr=" " + m_XLinkPrefix + ":title=\""
                                 + StreamUtility.enc(dsc.DSLabel) + "\"";
                     }
-					String dateString="";
+					String dateAttr="";
 					if (dsc.DSCreateDT!=null) {
-						dateString=" CREATED=\"" + m_formatter.format(dsc.DSCreateDT) + "\"";
+						dateAttr=" CREATED=\"" + m_formatter.format(dsc.DSCreateDT) + "\"";
 					}
 					//if (dsc.DSMIME==null) dsc.DSMIME="";
-                    String sizeString=" SIZE=\"" + dsc.DSSize + "\"";
-                    String admIDString=getIdString(obj, (DatastreamContent)dsc, true);
-                    String dmdIDString=getIdString(obj, (DatastreamContent)dsc, false);
+                    String sizeAttr=" SIZE=\"" + dsc.DSSize + "\"";
+                    String admIDAttr=getIdString(obj, (DatastreamContent)dsc, true);
+                    String dmdIDAttr=getIdString(obj, (DatastreamContent)dsc, false);
 
                     buf.append("        <" + METS_PREFIX + ":file ID=\"" + dsc.DSVersionID + "\"" 
-                    		+ dateString
+                    		+ dateAttr
                             + " MIMETYPE=\"" + dsc.DSMIME + "\"" 
-                            + sizeString
-                            + admIDString 
-                            + dmdIDString 
-                            + " OWNERID=\"" + dsc.DSControlGrp + "\">\n");
-                    buf.append("          <" + METS_PREFIX + ":FLocat" + labelString
+                            + sizeAttr
+                            + admIDAttr 
+                            + dmdIDAttr 
+                            + " OWNERID=\"" + dsc.DSControlGrp 
+                            + "\">\n");
+                    buf.append("          <" + METS_PREFIX + ":FLocat" + labelAttr
                             + " LOCTYPE=\"URL\" " 
-                            + m_XLinkPrefix + ":href=\"" 
-                            + StreamUtility.enc(normalizeDSLocat(obj.getPid(), dsc)) 
+                            + m_XLinkPrefix + ":href=\""
+							+ StreamUtility.enc(
+								DOTranslationUtility.normalizeDSLocationURLs(
+									obj.getPid(), dsc, m_transContext).DSLocation)
 					        + "\"/>\n");
                     buf.append("        </" + METS_PREFIX + ":file>\n");
                 }
@@ -615,30 +520,25 @@ public class METSLikeDOSerializer
             String did=(String) dissIdIter.next();
             Iterator dissIter=obj.disseminators(did).iterator();
             while (dissIter.hasNext()) {
-                Disseminator diss=(Disseminator) dissIter.next();
-                if (diss.dsBindMapID==null) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a binding map id.");
-                }
-                if (diss.bMechID==null) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a bmech id.");
-                }
-                if (diss.dsBindMap==null) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a binding map.");
-                }
-                String labelString="";
+                Disseminator diss=
+                	DOTranslationUtility.setDisseminatorDefaults(
+                		(Disseminator) dissIter.next());
+                String labelAttr="";
                 if ( diss.dsBindMap.dsBindMapLabel!=null
                         && !diss.dsBindMap.dsBindMapLabel.equals("") ) {
-                    labelString=" LABEL=\"" + StreamUtility.enc(diss.dsBindMap.dsBindMapLabel) + "\"";
+                    labelAttr=" LABEL=\"" + StreamUtility.enc(diss.dsBindMap.dsBindMapLabel) + "\"";
                 }
                 buf.append("  <" + METS_PREFIX + ":structMap ID=\""
                         + diss.dsBindMapID + "\" TYPE=\"fedora:dsBindingMap\">\n");
                 buf.append("    <" + METS_PREFIX + ":div TYPE=\"" + diss.bMechID
-                        + "\"" + labelString + ">\n");
+                        + "\"" + labelAttr 
+                        + ">\n");
                 DSBinding[] bindings=diss.dsBindMap.dsBindings;
                 for (int i=0; i<bindings.length; i++) {
                     if (bindings[i].bindKeyName==null
                             || bindings[i].bindKeyName.equals("")) {
-                        throw new ObjectIntegrityException("Object's disseminator binding map binding must have a binding key name.");
+                        throw new ObjectIntegrityException("Object's disseminator"
+                        	+ " binding map binding must have a binding key name.");
                     }
                     buf.append("      <" + METS_PREFIX + ":div TYPE=\"");
                     buf.append(bindings[i].bindKeyName);
@@ -653,11 +553,12 @@ public class METSLikeDOSerializer
                     }
                     if (bindings[i].datastreamID==null
                             || bindings[i].datastreamID.equals("")) {
-                        throw new ObjectIntegrityException("Object's disseminator binding map binding must point to a datastream.");
+                        throw new ObjectIntegrityException("Object's disseminator"
+                        	+ " binding map binding must point to a datastream.");
                     }
                     buf.append("\">\n        <" + METS_PREFIX + ":fptr FILEID=\""
-                            + bindings[i].datastreamID + "\"/>\n" + "      </"
-                            + METS_PREFIX + ":div>\n");
+                            + bindings[i].datastreamID + "\"/>\n" 
+                            + "      </"  + METS_PREFIX + ":div>\n");
                 }
                 buf.append("    </" + METS_PREFIX + ":div>\n");
                 buf.append("  </" + METS_PREFIX + ":structMap>\n");
@@ -671,47 +572,35 @@ public class METSLikeDOSerializer
         while (dissIdIter.hasNext()) {
             String did=(String) dissIdIter.next();
             Iterator dissIter=obj.disseminators(did).iterator();
-            Disseminator diss=(Disseminator) obj.disseminators(did).get(0);
-            if (diss.dissState==null || diss.dissState.equals("")) {
-                throw new ObjectIntegrityException("Object's disseminator must have a state.");
-            }
+            Disseminator diss=
+				DOTranslationUtility.setDisseminatorDefaults(
+            		(Disseminator) obj.disseminators(did).get(0));
             buf.append("  <" + METS_PREFIX + ":behaviorSec ID=\"" + did
                     + "\" STATUS=\"" + diss.dissState + "\">\n");
             for (int i=0; i<obj.disseminators(did).size(); i++) {
-                diss=(Disseminator) obj.disseminators(did).get(i);
-                if (diss.dissVersionID==null || diss.dissVersionID.equals("")) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a version id.");
-                }
-                if (diss.bDefID==null || diss.bDefID.equals("")) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a bdef id.");
-                }
-                if (diss.dissCreateDT==null) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a create date.");
-                }
-                if (diss.dissState==null || diss.dissState.equals("")) {
-                    throw new ObjectIntegrityException("Object's disseminator must have a state.");
-                }
-                String dissLabelString="";
+                diss=DOTranslationUtility.setDisseminatorDefaults(
+                	(Disseminator) obj.disseminators(did).get(i));
+                String dissLabelAttr="";
                 if (diss.dissLabel!=null && !diss.dissLabel.equals("")) {
-                    dissLabelString=" LABEL=\"" + StreamUtility.enc(diss.dissLabel) + "\"";
+                    dissLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.dissLabel) + "\"";
                 }
-                String bDefLabelString="";
+                String bDefLabelAttr="";
                 if (diss.bDefLabel!=null && !diss.bDefLabel.equals("")) {
-                    bDefLabelString=" LABEL=\"" + StreamUtility.enc(diss.bDefLabel) + "\"";
+                    bDefLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.bDefLabel) + "\"";
                 }
-                String bMechLabelString="";
+                String bMechLabelAttr="";
                 if (diss.bMechLabel!=null && !diss.bMechLabel.equals("")) {
-                    bMechLabelString=" LABEL=\"" + StreamUtility.enc(diss.bMechLabel) + "\"";
+                    bMechLabelAttr=" LABEL=\"" + StreamUtility.enc(diss.bMechLabel) + "\"";
                 }
                 buf.append("    <" + METS_PREFIX + ":serviceBinding ID=\""
                         + diss.dissVersionID + "\" STRUCTID=\"" + diss.dsBindMapID
                         + "\" BTYPE=\"" + diss.bDefID + "\" CREATED=\""
                         + m_formatter.format(diss.dissCreateDT) + "\""
-                        + dissLabelString + ">\n");
-                buf.append("      <" + METS_PREFIX + ":interfaceMD" + bDefLabelString
+                        + dissLabelAttr + ">\n");
+                buf.append("      <" + METS_PREFIX + ":interfaceMD" + bDefLabelAttr
                         + " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
                         + diss.bDefID + "\"/>\n");
-                buf.append("      <" + METS_PREFIX + ":serviceBindMD" + bMechLabelString
+                buf.append("      <" + METS_PREFIX + ":serviceBindMD" + bMechLabelAttr
                         + " LOCTYPE=\"URN\" " + m_XLinkPrefix + ":href=\""
                         + diss.bMechID + "\"/>\n");
 
@@ -724,134 +613,6 @@ public class METSLikeDOSerializer
     private void appendRootElementEnd(StringBuffer buf) {
         buf.append("</" + METS_PREFIX + ":mets>");
     }
-
-	//private Datastream validateDatastream(Datastream ds)
-	private Datastream setDatastreamDefaults(Datastream ds)
-		throws ObjectIntegrityException {
-		// check on some essentials
-		/*
-		if (ds.DSVersionID==null || ds.DSVersionID.equals("")) {
-			throw new ObjectIntegrityException("Datastream must have a version id.");
-		}			
-		if (ds.DSCreateDT==null) {
-			throw new ObjectIntegrityException("Object's content datastream must have a create date.");
-		}
-		if (ds.DSLocation==null || ds.DSLocation.equals("")) {
-			throw new ObjectIntegrityException("Object's content datastream must have a location.");
-		}
-		*/
-		if (ds.DSMIME==null && ds.DSControlGrp.equalsIgnoreCase("X")) {
-			ds.DSMIME="text/xml";
-		} else if (ds.DSMIME==null) {
-			ds.DSMIME="";
-		}
-		if (ds.DatastreamID==null) {
-			ds.DatastreamID="";
-		}
-		if (ds.DSState==null) {
-			ds.DSState="";
-		}
-		if (ds.DSInfoType==null || ds.DSInfoType.equals("")
-				|| ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
-			ds.DSInfoType="UNSPECIFIED";
-		}
-		/* 
-		if ((ds.DSMIME==null || ds.DSVersionID.equals("")) && ds.DSControlGrp.equalsIgnoreCase("X")) {
-			ds.DSMIME="text/xml";
-		}
-		*/
-		return ds;
-	}
-	
-	private String normalizeDSLocat(String PID, Datastream ds) {
-		// SERIALIZE FOR EXPORT: Ensure that ds location is appropriate for export (public usage)
-		if (m_encodeForExport){
-			String publicLoc=ds.DSLocation;
-			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")){
-				// make sure ACTUAL host:port is on ds location for localized content URLs
-				if (ds.DSLocation!=null && 
-					ds.DSLocation.startsWith("http://local.fedora.server/")) {
-					// That's our cue.. make it a proper URL with the server's host:port
-					publicLoc=s_hostInfo + ds.DSLocation.substring(27);
-				}
-				return publicLoc;
-			} else if (ds.DSControlGrp.equals("M")) {
-				// make sure internal ids are converted to public dissemination URLs
-				if (ds.DSCreateDT==null) {
-					publicLoc=s_localServerDissemUrlStart 
-							+ PID 
-							+ "/fedora-system:3/getItem/"
-							+ "?itemID=" + ds.DatastreamID;					
-				} else {
-				publicLoc=s_localServerDissemUrlStart 
-						+ PID 
-						+ "/fedora-system:3/getItem/"
-						+ m_formatter.format(ds.DSCreateDT)
-						+ "?itemID=" + ds.DatastreamID;
-				}
-				return publicLoc;
-			} else {
-				return publicLoc;
-			}
-		}
-		// SERIALIZE FOR INTERNAL STORAGE (or for GetObjectXML requests): 
-		// Ensure that ds location contains the internal storage identifiers
-		else {
-			String newLoc=ds.DSLocation;
-			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
-				// When ds location makes reference to the LOCAL machine and port
-				// (i.e., the one that the repository is running on), then we want to put 
-				// a "localizer" string in the ds location.  This is to prevent breakage if the 
-				// repository host:port is reconfigured after an object has been ingested.
-				newLoc=s_localServerUrlStartWithPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
-				newLoc=s_localhostUrlStartWithPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
-				if (m_onPort80) {
-					newLoc=s_localServerUrlStartWithoutPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
-					newLoc=s_localhostUrlStartWithoutPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
-				}
-				return newLoc;
-			} else if (ds.DSControlGrp.equals("M")) {
-				// make sure ds location is an internal identifier (PID+DSID+DSVersionID)
-				if (!ds.DSLocation.startsWith(PID)) {
-					newLoc = PID + "+" + ds.DatastreamID + "+" + ds.DSVersionID;
-				}
-				return newLoc;
-			} else {
-				return newLoc;
-			}
-		}
-	}
-	
-	private String normalizeDSInlineXML(DatastreamXMLMetadata ds) {
-		String xml = null;
-		try {
-			xml = new String(ds.xmlContent, "UTF-8");
-		} catch (UnsupportedEncodingException uee) {
-			// wont happen, java always supports UTF-8
-		}
-		if (m_encodeForExport) {
-			// Make appropriate for EXPORT:
-			// detect any "localized" placeholders ("local.fedora.server")
-			// and replace with host:port of the local server.
-			xml=s_localPattern.matcher(xml).replaceAll(s_hostInfo);
-		} else {
-			// Make appropriate for INTERNAL STORE (and for GetObjectXML):
-			// detect host:port pattern that is the local server and
-			// "localize" URLs with the internal placeholder "local.fedora.server"
-			xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
-					"http://local.fedora.server/");
-			xml=s_localhostUrlStartWithPort.matcher(xml).replaceAll(
-					"http://local.fedora.server/");
-			if (m_onPort80) {
-				xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
-						"http://local.fedora.server/");
-				xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
-						"http://local.fedora.server/");
-			}
-		}
-		return xml;
-		
-	}
 
     private void writeToStream(StringBuffer buf, OutputStream out,
             String encoding, boolean closeWhenFinished)

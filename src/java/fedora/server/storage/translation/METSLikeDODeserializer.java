@@ -1,9 +1,7 @@
 package fedora.server.storage.translation;
 
-import fedora.server.Server;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
-import fedora.server.errors.InitializationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
@@ -18,7 +16,6 @@ import fedora.server.storage.types.DSBinding;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -29,7 +26,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -41,7 +37,13 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  *
  * <p><b>Title:</b> METSLikeDODeserializer.java</p>
- * <p><b>Description:</b> </p>
+ * <p><b>Description:</b> 
+ *       Deserializes XML encoded in accordance with the Fedora extension of
+ *       the METS XML Schema defined at: 
+ *       http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd.
+ * 
+ *       The METS XML is parsed using SAX and is instantiated into a Fedora
+ *       digital object in memory (see fedora.server.types.DigitalObject). </p>
  *
  * -----------------------------------------------------------------------------
  *
@@ -61,6 +63,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @author payette@cs.cornell.edu
  * @version $Id$
  */
 public class METSLikeDODeserializer
@@ -74,7 +77,6 @@ public class METSLikeDODeserializer
     private final static String XLINK_NAMESPACE="http://www.w3.org/TR/xlink";
     // Mets says the above, but the spec at http://www.w3.org/TR/xlink/
     // says it's http://www.w3.org/1999/xlink
-
 
     private SAXParser m_parser;
     private String m_characterEncoding;
@@ -96,10 +98,13 @@ public class METSLikeDODeserializer
     private String m_dissemState;
     private String m_dsState;
     private String m_dsInfoType;
+	private String m_dsOtherInfoType;
     private String m_dsLabel;
     private int m_dsMDClass;
     private long m_dsSize;
-    private URL m_dsLocation;
+	private URL m_dsLocationURL;
+	private String m_dsLocation;
+	private String m_dsLocationType;
     private String m_dsMimeType;
     private String m_dsControlGrp;
 
@@ -176,8 +181,7 @@ public class METSLikeDODeserializer
 
     private int m_queryBehavior;
 
-    private static Pattern s_localPattern; // "http://local.fedora.server/"
-    private static String s_hostInfo; // "http://actual.hostname:8080/"
+    private int m_transContext;
 
     public METSLikeDODeserializer()
             throws FactoryConfigurationError, ParserConfigurationException,
@@ -235,25 +239,12 @@ public class METSLikeDODeserializer
         }
     }
 
-    public void deserialize(InputStream in, DigitalObject obj, String encoding)
+    public void deserialize(InputStream in, DigitalObject obj, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
 		System.out.println("Deserializing using METSLike...");
         m_obj=obj;
-        m_rootElementFound=false;
-        m_dsId=null;
-        m_dsVersId=null;
-        m_dsCreateDate=null;
-        m_dsState=null;
-        m_dsInfoType=null;
-        m_dsLabel=null;
-        m_dsXMLBuffer=null;
-        m_prefixes=new HashMap();
-        m_prefixUris=new HashMap();
-        m_dsAdmIds=new HashMap();
-        m_dsDmdIds=null;
-        m_dissems=new HashMap();
-        this.m_auditIdToComponentId=new HashMap();
-        
+		m_transContext=transContext;
+		initialize();       
         try {
             m_parser.parse(in, this);
         } catch (IOException ioe) {
@@ -330,81 +321,6 @@ public class METSLikeDODeserializer
             Disseminator diss=(Disseminator) dissemIter.next();
             obj.disseminators(diss.dissID).add(diss);
         }
-        
-
-        
-
-        // Lastly, if any urls user fedora.local.server, change them
-        // to the ACTUAL fedoraServerHost and fedoraServerPort
-        if (s_hostInfo==null) {
-            String fedoraHome=System.getProperty("fedora.home");
-            String fedoraServerHost=null;
-            String fedoraServerPort=null;
-            if (fedoraHome==null || fedoraHome.equals("")) {
-                // if fedora.home is undefined or empty, assume we're testing,
-                // in which case the host and port will be taken from system
-                // properties
-                fedoraServerHost=System.getProperty("fedoraServerHost");
-                fedoraServerPort=System.getProperty("fedoraServerPort");
-            } else {
-                try {
-                    Server s=Server.getInstance(new File(fedoraHome));
-                    fedoraServerHost=s.getParameter("fedoraServerHost");
-                    fedoraServerPort=s.getParameter("fedoraServerPort");
-                } catch (InitializationException ie) {
-                    // can only possibly happen during failed testing, in which 
-                    // case it's ok to do a System.exit
-                    System.err.println("STARTUP ERROR: " + ie.getMessage());
-                    System.exit(1);
-                }
-            }
-            s_hostInfo="http://" + fedoraServerHost;
-            if (!fedoraServerPort.equals("80")) {
-                s_hostInfo=s_hostInfo + ":" + fedoraServerPort;
-            }
-            s_hostInfo=s_hostInfo + "/";
-            s_localPattern=Pattern.compile("http://local.fedora.server/");
-        }
-        // There are two places where these need to be replaced.
-        // 1) In datastream that are references, and
-        dsIdIter=obj.datastreamIdIterator();
-        while (dsIdIter.hasNext()) {
-            String dsid=(String) dsIdIter.next();
-            List datastreams=obj.datastreams(dsid);
-            for (int i=0; i<datastreams.size(); i++) {
-                Datastream ds=(Datastream) datastreams.get(i);
-                if (ds.DSLocation!=null && 
-                        ds.DSLocation.startsWith("http://local.fedora.server/")) {
-                    // That's our cue.. do the change
-                    ds.DSLocation=s_hostInfo + ds.DSLocation.substring(27);
-                }
-            }
-        }
-        // 2) In the SERVICE-PROFILE and WSDL of bMech objects
-        if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
-            List datastreams=obj.datastreams("SERVICE-PROFILE");
-            for (int i=0; i<datastreams.size(); i++) {
-                DatastreamXMLMetadata ds=(DatastreamXMLMetadata) datastreams.get(i);
-                try {
-                    String xml=new String(ds.xmlContent, "UTF-8");
-                    xml=s_localPattern.matcher(xml).replaceAll(s_hostInfo);
-                    ds.xmlContent=xml.getBytes("UTF-8");
-                } catch (UnsupportedEncodingException uee) {
-                    // wont happen, java always supports UTF-8
-                }
-            }
-            datastreams=obj.datastreams("WSDL");
-            for (int i=0; i<datastreams.size(); i++) {
-                DatastreamXMLMetadata ds=(DatastreamXMLMetadata) datastreams.get(i);
-                try {
-                    String xml=new String(ds.xmlContent, "UTF-8");
-                    xml=s_localPattern.matcher(xml).replaceAll(s_hostInfo);
-                    ds.xmlContent=xml.getBytes("UTF-8");
-                } catch (UnsupportedEncodingException uee) {
-                    // wont happen, java always supports UTF-8
-                }
-            }
-        }
 		// FIXME: this should somehow be gathered from the serialization, ideally.
 		obj.setOwnerId("fedoraAdmin");
     }
@@ -419,9 +335,7 @@ public class METSLikeDODeserializer
 
         if (m_inXMLMetadata) {
             if (!m_dsPrefixes.contains(prefix)) {
-//                if (!"".equals(prefix)) {
                     m_dsPrefixes.add(prefix);
-//                }
             }
         }
     }
@@ -481,10 +395,9 @@ public class METSLikeDODeserializer
 					m_dsCreateDate=
 						DateUtility.convertStringToDate(dateString);
                 }
-                //m_dsCreateDate=DateUtility.convertStringToDate(
-                //        grab(a, M, "CREATED"));
             } else if (localName.equals("mdWrap")) {
                 m_dsInfoType=grab(a, M, "MDTYPE");
+				m_dsOtherInfoType=grab(a, M, "OTHERMDTYPE");
                 m_dsLabel=grab(a, M, "LABEL");
                 m_dsMimeType=grab(a, M, "MIMETYPE");
             } else if (localName.equals("xmlData")) {
@@ -505,21 +418,12 @@ public class METSLikeDODeserializer
                 m_dsState=grab(a,M,"STATUS");
                 m_dsSize=-1;
             } else if (localName.equals("file")) {
-                // ID="DS3.0"
-                // CREATED="2002-05-20T06:32:00"
-                // MIMETYPE="image/jpg"
-                // ADMID="TECH3"
-                // OWNERID="E" // ignored this is determinable otherwise
-                // STATUS=""
-                // SIZE="bytes"
                 m_dsVersId=grab(a, M, "ID");
 				String dateString=grab(a, M, "CREATED");
 				if (dateString!=null && !dateString.equals("")){
 					m_dsCreateDate=
 						DateUtility.convertStringToDate(dateString);
 				}
-                //m_dsCreateDate=DateUtility.convertStringToDate(
-                //        grab(a,M,"CREATED"));
                 m_dsMimeType=grab(a,M,"MIMETYPE");
                 m_dsControlGrp=grab(a,M,"OWNERID");
                 String ADMID=grab(a,M,"ADMID");
@@ -560,94 +464,66 @@ public class METSLikeDODeserializer
                 // inside a "file" element, it's either going to be
                 // FLocat (a reference) or FContent (inline)
             } else if (localName.equals("FLocat")) {
-                // xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg"
-                // xlink:title="Saskia high jpg image"/>
                 m_dsLabel=grab(a,XLINK_NAMESPACE,"title");
                 String dsLocation=grab(a,XLINK_NAMESPACE,"href");
                 if (dsLocation==null || dsLocation.equals("")) {
                     throw new SAXException("xlink:href must be specified in FLocat element");
                 }
-                // rlw begin changes
-                // check if datastream is ExternalReferencedContent or
-                // ManagedContent
+
                 if (m_dsControlGrp.equalsIgnoreCase("E") ||
-                    m_dsControlGrp.equalsIgnoreCase("R") )
-                {
+                    m_dsControlGrp.equalsIgnoreCase("R") ) {
+                    	
+				  // URL FORMAT VALIDATION for dsLocation:
+				  // make sure we have a properly formed URL (must have protocol)
                   try {
-                    m_dsLocation=new URL(dsLocation);
-                  } catch (MalformedURLException murle) {
-                    throw new SAXException("xlink:href specifies malformed url: " + dsLocation);
-                  }
-                  DatastreamReferencedContent drc=new DatastreamReferencedContent();
-                  drc.DatastreamID=m_dsId;
-                  drc.DSVersionID=m_dsVersId;
-                  drc.DSLabel=m_dsLabel;
-                  drc.DSCreateDT=m_dsCreateDate;
-                  drc.DSMIME=m_dsMimeType;
-                  drc.DSControlGrp=m_dsControlGrp;
-                  //d.DSControlGrp=Datastream.EXTERNAL_REF;
-                  drc.DSInfoType="DATA";
-                  drc.DSState=m_dsState;
-                  drc.DSLocation=dsLocation;
-                  if (m_queryBehavior!=QUERY_NEVER) {
-                    if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null)
-                        || (m_dsSize==-1)) {
-                      try {
-                        InputStream in=drc.getContentStream();
-                      } catch (StreamIOException sioe) {
-                        throw new SAXException(sioe.getMessage());
-                      }
-                    }
-                  }
-                  if (m_dsDmdIds!=null) {
-                    for (int idi=0; idi<m_dsDmdIds.length; idi++) {
-                      drc.metadataIdList().add(m_dsDmdIds[idi]);
-                    }
-                  }
-                  m_obj.datastreams(m_dsId).add(drc);
-                } else if (m_dsControlGrp.equalsIgnoreCase("M"))
-                {
-                  // Validate ManagedContent dsLocation URL only if this
-                  // is initial creation of this object; upon subsequent
-                  // invocations, initial URL will have been replaced with
-                  // internal reference to ManagedContent dsLocation and will
-                  // no longer be a URL.
+                  	  m_dsLocationURL=new URL(dsLocation);
+				  } catch (MalformedURLException murle) {
+					 // or else it must be a Fedora relative repository URL
+					  if (!dsLocation.startsWith(
+							DOTranslationUtility.s_relativeGetPattern.pattern()) &&
+						  !dsLocation.startsWith(
+							DOTranslationUtility.s_relativeSearchPattern.pattern())) {
+						  throw new SAXException("Datastream's xlink:href is malformed URL."
+							  + " Missing protocol or invalid relative URL."
+							  + " Relative repository URLs must start with 'fedora/get'"
+							  + " or 'fedora/search' with NO leading slash.\n " 
+							  + " URL is: " + dsLocation);
+					  }
+				  }
+				  // system will set dsLocationType for E and R datastreams...
+				  m_dsLocationType="URL";
+				  m_dsInfoType="DATA";
+				  m_dsLocation=dsLocation;
+				  instantiateDatastream(new DatastreamReferencedContent());
+                } else if (m_dsControlGrp.equalsIgnoreCase("M")) {
+				  // URL FORMAT VALIDATION for dsLocation:
+				  // For Managed Content the URL is only checked when we are parsing a
+				  // a NEW ingest file because the URL is replaced with an internal identifier
+				  // once the repository has sucked in the content for storage.
                   if (m_obj.isNew())
                   {
-                    try {
-                      m_dsLocation=new URL(dsLocation);
-                    } catch (MalformedURLException murle) {
-                      throw new SAXException("xlink:href specifies malformed url: " + dsLocation);
-                    }
-                  }
-                  DatastreamManagedContent dmc=new DatastreamManagedContent();
-                  dmc.DatastreamID=m_dsId;
-                  dmc.DSVersionID=m_dsVersId;
-                  dmc.DSLabel=m_dsLabel;
-                  dmc.DSCreateDT=m_dsCreateDate;
-                  dmc.DSMIME=m_dsMimeType;
-                  dmc.DSControlGrp=m_dsControlGrp;
-                  dmc.DSInfoType="DATA";
-                  dmc.DSState=m_dsState;
-                  dmc.DSLocation=dsLocation;
-                  if (m_queryBehavior!=QUERY_NEVER) {
-                    if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null)
-                        || (m_dsSize==-1)) {
                       try {
-                        InputStream in=dmc.getContentStream();
-                      } catch (StreamIOException sioe) {
-                        throw new SAXException(sioe.getMessage());
-                      }
-                    }
+						  // it must have a protocol
+                      	  m_dsLocationURL=new URL(dsLocation);
+					  } catch (MalformedURLException murle) {
+						 // or else it must be a Fedora relative repository URL
+						  if (!dsLocation.startsWith(
+								DOTranslationUtility.s_relativeGetPattern.pattern()) &&
+							  !dsLocation.startsWith(
+								DOTranslationUtility.s_relativeSearchPattern.pattern())) {
+							  throw new SAXException("Datastream's xlink:href is malformed URL."
+								+ " Missing protocol or invalid relative URL."
+								+ " Relative repository URLs must start with 'fedora/get'"
+								+ " or 'fedora/search' with NO leading slash.\n " 
+								+ " URL is: " + dsLocation);
+						  }
+					  }
                   }
-                  if (m_dsDmdIds!=null) {
-                    for (int idi=0; idi<m_dsDmdIds.length; idi++) {
-                      dmc.metadataIdList().add(m_dsDmdIds[idi]);
-                    }
-                  }
-                  m_obj.datastreams(m_dsId).add(dmc);
+				  m_dsLocationType="INTERNAL_ID";
+				  m_dsInfoType="DATA";
+				  m_dsLocation=dsLocation;
+				  instantiateDatastream(new DatastreamManagedContent());
                 }
-                // rlw end changes
             } else if (localName.equals("FContent")) {
                 // signal that we want to suck it in
                 m_readingContent=true;
@@ -866,6 +742,9 @@ public class METSLikeDODeserializer
                     System.out.println("Adding Audit records to object in METS deserializer...");
                     System.out.println("Audit id = " + a.id);
                     m_obj.getAuditRecords().add(a);
+					m_inXMLMetadata=false; // other stuff is re-initted upon
+										   // startElement for next xml metadata
+										   // element
                 } else {
                     // create the right kind of datastream and add it to m_obj
                     for (int i=0; i<m_dsPrefixes.size(); i++) {
@@ -883,40 +762,12 @@ public class METSLikeDODeserializer
                         m_dsFirstElementBuffer.append(pfxUri);
                         m_dsFirstElementBuffer.append("\"");
                     }
-                    DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
-                    try {
-                        String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
-                        ds.xmlContent=combined.getBytes(
-                                m_characterEncoding);
-                    } catch (UnsupportedEncodingException uee) {
-                      System.out.println("oops..encoding not supported, this could have been caught earlier.");
-                    }
-                    // set the attrs common to all datastreams
-                    ds.DatastreamID=m_dsId;
-                    ds.DSVersionID=m_dsVersId;
-                    ds.DSLabel=m_dsLabel;
-                    if (m_dsMimeType==null) {
-                        ds.DSMIME="text/xml";
-                    } else {
-                        ds.DSMIME=m_dsMimeType;
-                    }
-                    ds.DSCreateDT=m_dsCreateDate;
-                    ds.DSSize=ds.xmlContent.length; // bytes, not chars, but
-                                                    // probably N/A anyway
-                    //ds.DSControlGrp=Datastream.XML_METADATA;
-                    ds.DSControlGrp="X";
-                    ds.DSInfoType=m_dsInfoType;
-                    ds.DSMDClass=m_dsMDClass;
-                    ds.DSState=m_dsState;
-                    ds.DSLocation=m_obj.getPid() + "+" + m_dsId + "+"
-                        + m_dsVersId;
-                    // add it to the digitalObject
-                    m_obj.datastreams(m_dsId).add(ds);
+					DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
+					instantiateXMLDatastream(ds);
+					m_inXMLMetadata=false; // other stuff is re-initted upon
+										   // startElement for next xml metadata
+										   // element
                 }
-                m_inXMLMetadata=false; // other stuff is re-initted upon
-                                       // startElement for next xml metadata
-                                       // element
-
             } else {
                 // finished an element in xml metadata... print end tag,
                 // subtracting the level of METS:xmlData elements we're at
@@ -950,12 +801,120 @@ public class METSLikeDODeserializer
                         m_auditBuffer=null;
                     }
                 }
-
-
             }
         }
     }
+    
+	private void instantiateDatastream(Datastream ds) throws SAXException {
 
+		// set datastream variables with values grabbed from the SAX parse     	  	
+		ds.DatastreamID=m_dsId;
+		ds.DatastreamURI=null; // FOXML only. In METS it's null;
+		ds.DSVersionable=null; // FOXML only. In METS it's null;
+		ds.DSFormatURI=null;   // FOXML only. In METS it's null;
+		ds.DSVersionID=m_dsVersId;
+		ds.DSLabel=m_dsLabel;
+		ds.DSCreateDT=m_dsCreateDate;
+		ds.DSMIME=m_dsMimeType;
+		ds.DSControlGrp=m_dsControlGrp;
+		ds.DSState=m_dsState;
+		ds.DSLocation=m_dsLocation;
+		ds.DSLocationType=m_dsLocationType;
+		ds.DSInfoType=m_dsInfoType;
+		
+		// Normalize the dsLocation for the deserialization context
+		ds.DSLocation=
+			(DOTranslationUtility.normalizeDSLocationURLs(
+				m_obj.getPid(), ds, m_transContext)).DSLocation;
+		
+		
+		// LOOK! if the query behavior this deserializer instance was activated 
+		// in the constructor,  then we will obtain the datastreams's
+		// content stream to obtain its size and set the ds size attribute
+		// (done within the ds.getContentStream method implementation).
+		if (m_queryBehavior!=QUERY_NEVER) {
+			if ((m_queryBehavior==QUERY_ALWAYS)	
+				|| (m_dsMimeType==null)
+				|| (m_dsSize==-1)) {
+				try {
+					InputStream in=ds.getContentStream();
+				} catch (StreamIOException e) {
+					throw new SAXException("Error getting datastream content"
+						+ " for setting ds size (ds.getContentStream)"
+						+ " during SAX parse.");
+				}
+		  }
+		}
+		
+		// LOOK! METS SPECIFIC: 
+		// For E or R datastreams, collect the list of other 
+		// datastream ids that are descriptive metadata about this datastream.  
+		// This is supported in METS via an attribute on METS
+		// file element that allows IDREFS for "about" relationships
+		// on the file element.
+		if (m_dsControlGrp.equalsIgnoreCase("E") ||
+			m_dsControlGrp.equalsIgnoreCase("R") )
+		{
+			if (m_dsDmdIds!=null) {
+			  for (int idi=0; idi<m_dsDmdIds.length; idi++) {
+				((DatastreamReferencedContent)ds).metadataIdList().add(m_dsDmdIds[idi]);
+			  }
+			}
+		}
+		
+		// FINALLY! add the datastream to the digital object instantiation
+		m_obj.datastreams(m_dsId).add(ds);	
+	}
+
+	private void instantiateXMLDatastream(DatastreamXMLMetadata ds) {
+		
+		// set the attrs common to all datastream versions
+		ds.DatastreamID=m_dsId;
+		ds.DatastreamURI=null; // FOXML only. In METS it's null;
+		ds.DSVersionable=null; // FOXML only. In METS it's null;
+		ds.DSFormatURI=null;   // FOXML only. In METS it's null;
+		ds.DSVersionID=m_dsVersId;
+		ds.DSLabel=m_dsLabel;
+		ds.DSCreateDT=m_dsCreateDate;
+		if (m_dsMimeType==null) {
+			ds.DSMIME="text/xml";
+		} else {
+			ds.DSMIME=m_dsMimeType;
+		}
+		// set the attrs specific to datastream version
+		ds.DSControlGrp="X";
+		ds.DSState=m_dsState;
+		ds.DSLocation=m_obj.getPid() + "+" + m_dsId + "+" + m_dsVersId;
+		ds.DSLocationType=m_dsLocationType;
+		ds.DSInfoType=m_dsInfoType; // METS only
+		ds.DSMDClass=m_dsMDClass;   // METS only
+		
+		// now set the xml content stream itself...
+		try {
+			String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
+		
+			// Relative Repository URL processing... 
+			// For selected inline XML datastreams look for relative repository URLs
+			// and make them absolute.
+			if ( m_obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT &&
+				 (m_dsId.equals("SERVICE-PROFILE") || m_dsId.equals("WSDL")) ) {
+					ds.xmlContent=
+						(DOTranslationUtility.normalizeInlineXML(
+							combined, m_transContext))
+							.getBytes(m_characterEncoding);
+			} else {
+				ds.xmlContent=combined.getBytes(m_characterEncoding);
+			}
+			//LOOK! this sets bytes, not characters.  Do we want to set this?
+			ds.DSSize=ds.xmlContent.length;
+		} catch (Exception uee) {
+			System.out.println("Error processing inline xml content in SAX parse: " 
+				+ uee.getMessage());
+		}				
+		// FINALLY! add the xml datastream to the digitalObject
+		m_obj.datastreams(m_dsId).add(ds);  	
+	}
+	
     private static String grab(Attributes a, String namespace,
             String elementName) {
         String ret=a.getValue(namespace, elementName);
@@ -964,5 +923,54 @@ public class METSLikeDODeserializer
         }
         return ret;
     }
+    
+	private void initialize(){		
+		//NOTE: variables that are commented out exist in FOXML but not METS
+		
+		// temporary variables and state variables
+		m_rootElementFound=false;
+		//m_objPropertyName=null;
+		//m_readingBinaryContent=false; // indicates reading base64-encoded content
+		m_firstInlineXMLElement=false;
+		m_inXMLMetadata=false;
+
+		// temporary variables for processing datastreams		
+		m_dsId=null;
+		//m_dsURI=null;
+		//m_dsVersionable=null;
+		m_dsVersId=null;
+		m_dsCreateDate=null;
+		m_dsState=null;
+		//m_dsFormatURI=null;
+		m_dsSize=-1;
+		m_dsLocationType=null;
+		m_dsLocationURL=null;
+		m_dsLocation=null;
+		m_dsMimeType=null;
+		m_dsControlGrp=null;
+		m_dsInfoType=null;
+		m_dsOtherInfoType=null;
+		m_dsMDClass=0;
+		m_dsLabel=null;
+		m_dsXMLBuffer=null;
+		m_prefixes=new HashMap();
+		m_prefixUris=new HashMap();
+		m_dsAdmIds=new HashMap();
+		m_dsDmdIds=null;
+		
+		// temporary variables for processing disseminators
+		m_diss=null;
+		m_dissems=new HashMap();
+	
+		// temporary variables for processing audit records
+		m_auditBuffer=null;
+		m_auditComponentID=null;
+		m_auditProcessType=null;
+		m_auditAction=null;
+		m_auditResponsibility=null;
+		m_auditDate=null;
+		m_auditJustification=null;
+		m_auditIdToComponentId=new HashMap();
+	}
 
 }

@@ -1,6 +1,5 @@
 package fedora.server.storage.translation;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,10 +9,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-import fedora.server.Server;
-import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.StreamWriteException;
@@ -28,7 +24,16 @@ import fedora.server.utilities.StreamUtility;
 /**
  *
  * <p><b>Title:</b> FOXMLDOSerializer.java</p>
- * <p><b>Description:</b> </p>
+ * <p><b>Description: Creates an XML serialization of a Fedora digital object 
+ *       in accordance with the Fedora Object XML (FOXML) XML Schema defined at:
+ *       http://www.fedora.info/definitions/1/0/foxml1-0.xsd.
+ * 
+ *       The serializer uses the currently instantiated digital object
+ *       as input (see fedora.server.storage.types.DigitalObject). 
+ * 
+ *       The serializer will adapt its output to a specific translation contexts.
+ *       See the static definitions of different translation contexts in 
+ *       fedora.server.storage.translation.DOTranslationUtility. </b></p>
  *
  * -----------------------------------------------------------------------------
  *
@@ -64,29 +69,7 @@ public class FOXMLDOSerializer
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-	// Pattern for URLs that contain the placeholder string indicating the URL is
-	// based at the local repository server.  When we serialized for EXPORT, we
-	// will detect this pattern and replace it with the actual host name.
-	private static Pattern s_localPattern = Pattern.compile("http://local.fedora.server/");
-	
-	// The actual host and port of the repository server		
-	private static String s_hostInfo = null; 
-
-	// Patterns of the various ways that the local repository server address may be 
-  	// encoded.  When we serialized for STORAGE, we want to replace the actual host:port
-  	// of URLs to the local repository with the placeholder string "http://local.fedora.server/"
-  	// to virtualize the local host:port.  This is to allow the repository host:port to 
-  	// be reconfigured after an object has been stored, and be able to recreate the proper
-  	// URL based on the new configuration. 	
-  	private static Pattern s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
-  	private static Pattern s_localServerUrlStartWithoutPort; // "http://actual.hostname/"
-  	private static Pattern s_localhostUrlStartWithPort; // "http://localhost:8080/"
-  	private static Pattern s_localhostUrlStartWithoutPort; // "http://localhost/"
-    
-  	private static String s_localServerDissemUrlStart; // "http://actual.hostname:8080/fedora/get/"
-
-    private boolean m_onPort80=false;
-    private boolean m_encodeForExport=false;
+    private int m_transContext;
 
     public FOXMLDOSerializer() {
     }
@@ -95,57 +78,11 @@ public class FOXMLDOSerializer
         return new FOXMLDOSerializer();
     }
 
-    public void serialize(DigitalObject obj, OutputStream out, String encoding, boolean encodeForExport)
+	public void serialize(DigitalObject obj, OutputStream out, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
-		System.out.println("Serializing using FOXMLDOSerializer...");
-		m_encodeForExport=encodeForExport;
-        // get the host info in a static var so search/replaces are quicker later
-        if (s_hostInfo==null) {
-            String fedoraHome=System.getProperty("fedora.home");
-            String fedoraServerHost=null;
-            String fedoraServerPort=null;
-            if (fedoraHome==null || fedoraHome.equals("")) {
-                // if fedora.home is undefined or empty, assume we're testing,
-                // in which case the host and port will be taken from system
-                // properties
-                fedoraServerHost=System.getProperty("fedoraServerHost");
-                fedoraServerPort=System.getProperty("fedoraServerPort");
-            } else {
-                try {
-                    Server s=Server.getInstance(new File(fedoraHome));
-                    fedoraServerHost=s.getParameter("fedoraServerHost");
-                    fedoraServerPort=s.getParameter("fedoraServerPort");
-					if (fedoraServerPort.equals("80")) {
-					    m_onPort80=true;
-					}
-                } catch (InitializationException ie) {
-                    // can only possibly happen during failed testing, in which
-                    // case it's ok to do a System.exit
-                    System.err.println("STARTUP ERROR: " + ie.getMessage());
-                    System.exit(1);
-                }
-            }
-            // set the configured host:port of the repository
-			s_hostInfo="http://" + fedoraServerHost;
-			if (!fedoraServerPort.equals("80")) {
-				s_hostInfo=s_hostInfo + ":" + fedoraServerPort;
-			}
-			s_hostInfo=s_hostInfo + "/";
-			
-			// set the pattern for public dissemination URLs at local server
-			s_localServerDissemUrlStart= s_hostInfo + "fedora/get/";
-			
-			// set other patterns using the configured host and port
-            s_localServerUrlStartWithPort=Pattern.compile("http://"
-                    + fedoraServerHost + ":" + fedoraServerPort + "/");
-            s_localServerUrlStartWithoutPort=Pattern.compile("http://"
-                    + fedoraServerHost + "/");
-            s_localhostUrlStartWithoutPort=Pattern.compile("http://localhost/");
-            s_localhostUrlStartWithPort=Pattern.compile("http://localhost:" + fedoraServerPort + "/");
-            
-        }
-        // now do serialization stuff
+		System.out.println("Serializing using FOXMLDOSerializer for transContext: " + transContext);
+		m_transContext=transContext;
         StringBuffer buf=new StringBuffer();
         appendXMLDeclaration(obj, encoding, buf);
         appendRootElementStart(obj, buf);
@@ -174,7 +111,7 @@ public class FOXMLDOSerializer
             obj.getNamespaceMapping().put(XSI_NS, "fedoraxsi"); // 99.999999999% chance this is unique
         }
         appendNamespaceDeclarations(indent,obj.getNamespaceMapping(),buf);
-        // hardcode xsi:schemaLocation to definitive location for such.
+        // set schemaLocation to point to the official schema for FOXML.
         buf.append(indent + xsiPrefix + ":schemaLocation=\"" + 
         	StreamUtility.enc(FOXML_NS) + " "  + 
         	StreamUtility.enc(FOXML_XSD_LOCATION) + "\"\n");
@@ -193,10 +130,7 @@ public class FOXMLDOSerializer
         Iterator iter=URIToPrefix.keySet().iterator();
         while (iter.hasNext()) {
             String URI=(String) iter.next();
-            String prefix=(String) URIToPrefix.get(URI);
-            System.out.println("NS stuff; URI=" + URI);
-			System.out.println("NS stuff; prefix=" + prefix);
-            
+            String prefix=(String) URIToPrefix.get(URI);           
             if (prefix!=null && !prefix.equals("")) {
                 if (URI.equals(FEDORA_AUDIT_NS)) {
                     m_fedoraAuditPrefix=prefix;
@@ -261,9 +195,6 @@ public class FOXMLDOSerializer
 		Iterator iter=obj.datastreamIdIterator();
 		while (iter.hasNext()) {
 			String dsid = (String) iter.next();
-			if (dsid==null || dsid.equals("")) {
-				throw new ObjectIntegrityException("Missing datastream ID in object: " + obj.getPid());
-			}
 			// AUDIT datastream is rebuilt from the latest in-memory audit trail
 			// which is a separate array list in the DigitalObject class.
 			// So, ignore it here.
@@ -275,7 +206,7 @@ public class FOXMLDOSerializer
 			List dsList = obj.datastreams(dsid);
 			for (int i=0; i<dsList.size(); i++) {
 				//Datastream vds = validateDatastream((Datastream) dsList.get(i));
-				Datastream vds = setDatastreamDefaults((Datastream) dsList.get(i));
+				Datastream vds = DOTranslationUtility.setDatastreamDefaults((Datastream) dsList.get(i));
 				// insert the ds elements common to all versions.
 				if (i==0) {
 					buf.append("    <" + FOXML_PREFIX 
@@ -288,10 +219,14 @@ public class FOXMLDOSerializer
 						+ " VERSIONABLE=\"" + vds.DSVersionable + "\">\n");
 				}
 				// insert the ds version-level elements
+				String dateAttr="";
+				if (vds.DSCreateDT!=null) {
+					dateAttr=" CREATED=\"" + m_formatter.format(vds.DSCreateDT) + "\"";
+				}
 				buf.append("        <" + FOXML_PREFIX 
 					+ ":datastreamVersion ID=\"" + vds.DSVersionID + "\"" 
 					+ " LABEL=\"" + StreamUtility.enc(vds.DSLabel) + "\""
-					+ " CREATED=\"" + m_formatter.format(vds.DSCreateDT) + "\""
+					+ dateAttr
 					+ " SIZE=\"" + vds.DSSize +  "\">\n");
 			
 				// if E or R insert ds content location as URL
@@ -300,14 +235,18 @@ public class FOXMLDOSerializer
 						buf.append("            <" + FOXML_PREFIX 
 							+ ":contentLocation TYPE=\"" + "URL\""
 							+ " REF=\"" 
-							+ StreamUtility.enc(normalizeDSLocat(obj.getPid(), vds)) 
+							+ StreamUtility.enc(
+								DOTranslationUtility.normalizeDSLocationURLs(
+									obj.getPid(), vds, m_transContext).DSLocation) 
 							+ "\"/>\n");	
 				// if M insert ds content location as an internal identifier				
 				} else if (vds.DSControlGrp.equalsIgnoreCase("M")) {
 					buf.append("            <" + FOXML_PREFIX 
 						+ ":contentLocation TYPE=\"" + "INTERNAL_ID\""
 						+ " REF=\"" 
-						+ StreamUtility.enc(normalizeDSLocat(obj.getPid(), vds)) 
+						+ StreamUtility.enc(
+							DOTranslationUtility.normalizeDSLocationURLs(
+								obj.getPid(), vds, m_transContext).DSLocation) 
 						+ "\"/>\n");	
 				// if X insert inline XML
 				} else if (vds.DSControlGrp.equalsIgnoreCase("X")) {
@@ -388,13 +327,19 @@ public class FOXMLDOSerializer
 		throws ObjectIntegrityException, UnsupportedEncodingException, StreamIOException {
 			
 		buf.append("            <" + FOXML_PREFIX + ":xmlContent>\n");
+				
+		// Relative Repository URLs: If it's a WSDL or SERVICE-PROFILE datastream 
+		// in a BMech object search for any embedded URLs that are relative to
+		// the local repository (like internal service URLs) and make sure they
+		// are converted appropriately for the translation context.
         if ( fedoraObjectType==DigitalObject.FEDORA_BMECH_OBJECT &&
              (ds.DatastreamID.equals("SERVICE-PROFILE") || 
 			  ds.DatastreamID.equals("WSDL")) ) {
-	            // If WSDL or SERVICE-PROFILE datastream (in BMech) 
-	            // make sure that any embedded URLs are encoded 
-	            // appropriately for either EXPORT or STORE.
-	            buf.append(normalizeDSInlineXML(ds));
+			  	// FIXME! We need a more efficient way than to search
+			  	// the whole block of inline XML. We really only want to 
+			  	// look at service URLs in the XML.
+	            buf.append(DOTranslationUtility.normalizeInlineXML(
+	            	new String(ds.xmlContent, "UTF-8"), m_transContext));
         } else {
             appendXMLStream(ds.getContentStream(), buf, encoding);
         }
@@ -438,12 +383,7 @@ public class FOXMLDOSerializer
             
             for (int i=0; i<dissList.size(); i++) {
                 Disseminator vdiss = 
-                	validateDisseminator((Disseminator) obj.disseminators(did).get(i));
-                                
-				// If dissVersionable is null or missing, default to YES.
-				if (vdiss.dissVersionable==null || vdiss.dissVersionable.equals("")) {
-					vdiss.dissVersionable="YES";
-				}                
+					DOTranslationUtility.setDisseminatorDefaults((Disseminator) obj.disseminators(did).get(i));              
 				// insert the disseminator elements common to all versions.
 				if (i==0) {
 					buf.append("    <" + FOXML_PREFIX + ":disseminator ID=\"" + did
@@ -452,15 +392,20 @@ public class FOXMLDOSerializer
 							+ "\" VERSIONABLE=\"" + vdiss.dissVersionable +"\">\n");
 				}
 				// insert the disseminator version-level elements
-				String dissLabelString="";
+				String dissLabelAttr="";
 				if (vdiss.dissLabel!=null && !vdiss.dissLabel.equals("")) {
-					dissLabelString=" LABEL=\"" + StreamUtility.enc(vdiss.dissLabel) + "\"";
+					dissLabelAttr=" LABEL=\"" + StreamUtility.enc(vdiss.dissLabel) + "\"";
+				}
+				String dateAttr="";
+				if (vdiss.dissCreateDT!=null) {
+					dateAttr=" CREATED=\"" + m_formatter.format(vdiss.dissCreateDT) + "\"";
 				}
 				buf.append("        <" + FOXML_PREFIX 
 					+ ":disseminatorVersion ID=\"" + vdiss.dissVersionID + "\"" 
-					+ dissLabelString
+					+ dissLabelAttr
 					+ " BMECH_SERVICE_PID=\"" + vdiss.bMechID + "\""
-					+ " CREATED=\"" + m_formatter.format(vdiss.dissCreateDT) +  "\">\n");
+					+ dateAttr 
+					+  ">\n");
 				
 				// datastream bindings...	
 				DSBinding[] bindings = vdiss.dsBindMap.dsBindings;
@@ -468,12 +413,20 @@ public class FOXMLDOSerializer
 				for (int j=0; j<bindings.length; j++){
 					if (bindings[j].seqNo==null) { 
 						bindings[j].seqNo = "";
+					}
+					String labelAttr="";
+					if (bindings[j].bindLabel!=null && !bindings[j].bindLabel.equals("")) {
+						labelAttr=" LABEL=\"" + StreamUtility.enc(bindings[j].bindLabel) + "\"";
+					}
+					String orderAttr="";
+					if (bindings[j].seqNo!=null && !bindings[j].seqNo.equals("")) {
+						orderAttr=" ORDER=\"" + bindings[j].seqNo + "\"";
 					}				
 	                buf.append("                <" + FOXML_PREFIX + ":datastreamBinding KEY=\""
 	                        + bindings[j].bindKeyName + "\""
 							+ " DATASTREAM_ID=\"" + bindings[j].datastreamID + "\""
-							+ " LABEL=\"" + StreamUtility.enc(bindings[j].bindLabel) + "\""
-	                        + " ORDER=\"" + bindings[j].seqNo + "\""
+							+ labelAttr
+	                        + orderAttr
 							+ "/>\n");
 				}
 				buf.append("            </" + FOXML_PREFIX + ":serviceInputMap>\n");
@@ -486,103 +439,6 @@ public class FOXMLDOSerializer
     private void appendRootElementEnd(StringBuffer buf) {
         buf.append("</" + FOXML_PREFIX + ":digitalObject>");
     }
-
-	private Datastream setDatastreamDefaults(Datastream ds) throws ObjectIntegrityException {
-	//private Datastream validateDatastream(Datastream ds) throws ObjectIntegrityException {
-		// check on some essentials
-		/*
-		if (ds.DatastreamID==null || ds.DatastreamID.equals("")) {
-			throw new ObjectIntegrityException("Datastream must have an id.");
-		}
-		if (ds.DSState==null || ds.DSState.equals("")) {
-			throw new ObjectIntegrityException("Datastream must have a state indicator.");
-		}
-		if (ds.DSVersionID==null || ds.DSVersionID.equals("")) {
-			throw new ObjectIntegrityException("Datastream must have a version id.");
-		}
-		if (!ds.DSControlGrp.equalsIgnoreCase("E") &&
-			!ds.DSControlGrp.equalsIgnoreCase("R") &&
-			!ds.DSControlGrp.equalsIgnoreCase("M") &&
-			!ds.DSControlGrp.equalsIgnoreCase("X")) {
-			throw new ObjectIntegrityException("Datastream control group must be E,R,M or X.");
-		}
-		if (ds.DSCreateDT==null) {
-			throw new ObjectIntegrityException("Datastream must have a create date.");
-		}
-		if (!ds.DSControlGrp.equalsIgnoreCase("X") && 
-			(ds.DSLocation==null || ds.DSLocation.equals(""))) {
-			throw new ObjectIntegrityException("Content datastream must have a location.");
-		}
-		*/
-		if ((ds.DSMIME==null || ds.DSVersionID.equals("")) && ds.DSControlGrp.equalsIgnoreCase("X")) {
-			ds.DSMIME="text/xml";
-		}
-		if (ds.DSInfoType==null || ds.DSInfoType.equals("")
-				|| ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
-			ds.DSInfoType="UNSPECIFIED";
-		}
-		if ( ds.DSLabel==null && ds.DSLabel.equals("") ) {
-			ds.DSLabel = "Datastream known as: " + ds.DatastreamURI;
-		}
-		if (ds.DSFormatURI==null) {
-			ds.DSFormatURI="";
-		}		
-		// Until future when we implement selective versioning,
-		// set default to YES.
-		if (ds.DSVersionable==null || ds.DSVersionable.equals("")) {
-			ds.DSVersionable="YES";
-		}
-		// For METS backward compatibility:
-		// If we have a METS MDClass value, preserve MDClass and MDType in a format URI
-		if (ds.DSControlGrp.equalsIgnoreCase("X")) {
-			if ( ((DatastreamXMLMetadata)ds).DSMDClass !=0 ) {
-				String mdClassName = "";
-				String mdType=ds.DSInfoType;
-				String otherType="";
-				if (((DatastreamXMLMetadata)ds).DSMDClass==1) {mdClassName = "techMD";
-				} else if (((DatastreamXMLMetadata)ds).DSMDClass==2) {mdClassName = "sourceMD";
-				} else if (((DatastreamXMLMetadata)ds).DSMDClass==3) {mdClassName = "rightsMD";
-				} else if (((DatastreamXMLMetadata)ds).DSMDClass==4) {mdClassName = "digiprovMD";
-				} else if (((DatastreamXMLMetadata)ds).DSMDClass==5) {mdClassName = "descMD";}			
-				if ( !mdType.equals("MARC") && !mdType.equals("EAD")
-						&& !mdType.equals("DC") && !mdType.equals("NISOIMG")
-						&& !mdType.equals("LC-AV") && !mdType.equals("VRA")
-						&& !mdType.equals("TEIHDR") && !mdType.equals("DDI")
-						&& !mdType.equals("FGDC") ) {
-					mdType="OTHER";
-					otherType=ds.DSInfoType;
-				}
-				ds.DSFormatURI = 
-					"info:fedora/format:xml:mets:" 
-					+ mdClassName + ":" + mdType + ":" + otherType;
-			}
-		}
-		return ds;
-	}
-
-	private Disseminator validateDisseminator(Disseminator dissVersion) throws ObjectIntegrityException {
-		if (dissVersion.dissVersionID==null || dissVersion.dissVersionID.equals("")) {
-			throw new ObjectIntegrityException("Object's disseminator must have a version id.");
-		}
-		if (dissVersion.dissState==null || dissVersion.dissState.equals("")) {
-			throw new ObjectIntegrityException("Object's disseminator must have a state.");
-		}
-		if (dissVersion.bDefID==null || dissVersion.bDefID.equals("")) {
-			throw new ObjectIntegrityException("Object's disseminator must have a bdef id.");
-		}
-		if (dissVersion.bMechID==null || dissVersion.bMechID.equals("")) {
-			throw new ObjectIntegrityException("Object's disseminator must have a bdef id.");
-		}
-		if (dissVersion.dissCreateDT==null) {
-			throw new ObjectIntegrityException("Object's disseminator must have a create date.");
-		}
-		// Until future when we implement selective versioning,
-		// set default to YES.
-		if (dissVersion.dissVersionable==null || dissVersion.dissVersionable.equals("")) {
-			dissVersion.dissVersionable="YES";
-		}
-		return dissVersion;
-	}
 	
 	private void validateAudit(AuditRecord audit) throws ObjectIntegrityException {
 		if (audit.id==null) {
@@ -607,88 +463,6 @@ public class FOXMLDOSerializer
 		if (audit.justification==null) {
 			throw new ObjectIntegrityException("Audit record must have justification.");
 		}
-	}
-	private String normalizeDSLocat(String PID, Datastream ds) {
-		// SERIALIZE FOR EXPORT: Ensure that ds location is appropriate for export (public usage)
-		if (m_encodeForExport){
-			String publicLoc=ds.DSLocation;
-			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")){
-				// make sure ACTUAL host:port is on ds location for localized content URLs
-				if (ds.DSLocation!=null && 
-					ds.DSLocation.startsWith("http://local.fedora.server/")) {
-					// That's our cue.. make it a proper URL with the server's host:port
-					publicLoc=s_hostInfo + ds.DSLocation.substring(27);
-				}
-				return publicLoc;
-			} else if (ds.DSControlGrp.equals("M")) {
-				// make sure internal ids are converted to public dissemination URLs
-				publicLoc=s_localServerDissemUrlStart 
-						+ PID 
-						+ "/fedora-system:3/getItem/"
-						+ m_formatter.format(ds.DSCreateDT)
-						+ "?itemID=" + ds.DatastreamID;
-				return publicLoc;
-			} else {
-				return publicLoc;
-			}
-		}
-		// SERIALIZE FOR INTERNAL STORAGE (or for GetObjectXML requests): 
-		// Ensure that ds location contains the internal storage identifiers
-		else {
-			String newLoc=ds.DSLocation;
-			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
-				// When ds location makes reference to the LOCAL machine and port
-				// (i.e., the one that the repository is running on), then we want to put 
-				// a "localizer" string in the ds location.  This is to prevent breakage if the 
-				// repository host:port is reconfigured after an object has been ingested.
-				newLoc=s_localServerUrlStartWithPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
-				newLoc=s_localhostUrlStartWithPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
-			  	if (m_onPort80) {
-					newLoc=s_localServerUrlStartWithoutPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
-					newLoc=s_localhostUrlStartWithoutPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
-			  	}
-			  	return newLoc;
-			} else if (ds.DSControlGrp.equals("M")) {
-				// make sure ds location is an internal identifier (PID+DSID+DSVersionID)
-				if (!ds.DSLocation.startsWith(PID)) {
-					newLoc = PID + "+" + ds.DatastreamID + "+" + ds.DSVersionID;
-				}
-				return newLoc;
-			} else {
-				return newLoc;
-			}
-		}
-	}
-	
-	private String normalizeDSInlineXML(DatastreamXMLMetadata ds) {
-		String xml = null;
-		try {
-			xml = new String(ds.xmlContent, "UTF-8");
-		} catch (UnsupportedEncodingException uee) {
-			// wont happen, java always supports UTF-8
-		}
-		if (m_encodeForExport) {
-			// Make appropriate for EXPORT:
-			// detect any "localized" placeholders ("local.fedora.server")
-			// and replace with host:port of the local server.
-			xml=s_localPattern.matcher(xml).replaceAll(s_hostInfo);
-		} else {
-			// Make appropriate for INTERNAL STORE (and for GetObjectXML):
-			// detect host:port pattern that is the local server and
-			// "localize" URLs with the internal placeholder "local.fedora.server"
-			xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
-					"http://local.fedora.server/");
-			xml=s_localhostUrlStartWithPort.matcher(xml).replaceAll(
-					"http://local.fedora.server/");
-			if (m_onPort80) {
-				xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
-						"http://local.fedora.server/");
-				xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
-						"http://local.fedora.server/");
-			}
-		}
-		return xml;
-		
 	}
 	
 	private String getTypeAttribute(DigitalObject obj)

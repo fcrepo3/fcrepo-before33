@@ -6,7 +6,6 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -48,9 +47,12 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  *
  * <p><b>Title:</b> FOXMLDODeserializer.java</p>
- * <p><b>Description:</b> Deserializes the XML of a FOXML-encoded Fedora 
- * digital object into a java object (DigitalObject.class).  Based on the
- * pattern established in METSLikeDODeserializer by Chris Wilper.</p>
+ * <p><b>Description:</b> 
+ *       Deserializes XML encoded in accordance with the FOXML XML Schema 
+ *       defined at: http://www.fedora.info/definitions/1/0/foxml1-0.xsd.
+ * 
+ *       The FOXML XML is parsed using SAX and is instantiated into a Fedora
+ *       digital object in memory (see fedora.server.types.DigitalObject). </p>
  *
  * -----------------------------------------------------------------------------
  *
@@ -78,9 +80,15 @@ public class FOXMLDODeserializer
     /** The namespace for FOXML */
     private final static String F="info:fedora/def:foxml/";
 	//private final static String F="http://www.fedora.info/";
+	
+	/** The deserializer context. See definitions of contexts in 
+	 *  fedora.server.storage.translation.DOTranslationUtility.
+	 */
+	private int m_transContext; 
     
 	/** The object to deserialize to. */
 	private DigitalObject m_obj;
+	private String m_objType;
     
 	/** SAX parser */
     private SAXParser m_parser;
@@ -218,11 +226,13 @@ public class FOXMLDODeserializer
         }
     }
 
-    public void deserialize(InputStream in, DigitalObject obj, String encoding)
+    public void deserialize(InputStream in, DigitalObject obj, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
             	
-        System.out.println("Deserializing using FOXMLDODeserializer...");
+        System.out.println("Deserializing using FOXMLDODeserializer for transContext: " + transContext);
+		System.out.println("Object NEW status is: " + obj.isNew());
         m_obj=obj;
+        m_transContext=transContext;
         initialize();
         try {
             m_parser.parse(in, this);
@@ -230,15 +240,14 @@ public class FOXMLDODeserializer
             throw new StreamIOException("low-level stream io problem occurred "
                     + "while sax was parsing this object.");
         } catch (SAXException se) {
-            throw new ObjectIntegrityException("FOXML stream was bad : " + se.getMessage());
+            throw new ObjectIntegrityException("FOXML IO stream was bad : " + se.getMessage());
         }
         System.out.println("Just finished parse.");
 
         if (!m_rootElementFound) {
             throw new ObjectIntegrityException("FOXMLDODeserializer: Input stream is not valid FOXML." +
             	" The digitalObject root element was not detected.");
-        }
-        
+        }       
         obj.setNamespaceMapping(m_prefixes);
     }
 
@@ -288,11 +297,11 @@ public class FOXMLDODeserializer
 				} else if (m_objPropertyName.equals("info:fedora/def:dobj:mDate")){
 					m_obj.setLastModDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
 				} else if (m_objPropertyName.equals("info:fedora/def:dobj:fType")){
-					String objType = grab(a, F, "VALUE");
-					if (objType==null) { objType="FedoraObject"; }
-					if (objType.equalsIgnoreCase("FedoraBDefObject")) {
+					m_objType = grab(a, F, "VALUE");
+					if (m_objType==null) { m_objType="FedoraObject"; }
+					if (m_objType.equalsIgnoreCase("FedoraBDefObject")) {
 						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-					} else if (objType.equalsIgnoreCase("FedoraBMechObject")) {
+					} else if (m_objType.equalsIgnoreCase("FedoraBMechObject")) {
 						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
 					} else {
 						m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
@@ -338,6 +347,8 @@ public class FOXMLDODeserializer
 						throw new SAXException("If specified, a datastream's "
 								+ "SIZE attribute must be an xsd:long.");
 					}
+				} else {
+					m_dsSize=-1;
 				}
 				if (m_dsVersId.equals("AUDIT.0")) {
 					m_gotAudit=true;
@@ -361,35 +372,57 @@ public class FOXMLDODeserializer
                 }
                 // check if datastream is ExternalReferenced
                 if (m_dsControlGrp.equalsIgnoreCase("E") ||
-                    m_dsControlGrp.equalsIgnoreCase("R") )
-                {
+                    m_dsControlGrp.equalsIgnoreCase("R") ) {
+                    	
+				  // URL FORMAT VALIDATION for dsLocation:
+				  // make sure we have a properly formed URL
                   try {
-                    m_dsLocationURL=new URL(dsLocation);
-                  } catch (MalformedURLException murle) {
-                    throw new SAXException("REF specifies malformed url: " + dsLocation);
-                  }
-                  // system will take control of dsLocationType...
+                 	  // it must have a protocol
+                  	  m_dsLocationURL=new URL(dsLocation);
+				  } catch (MalformedURLException murle) {
+					 // or else it must be a Fedora relative repository URL
+				  	  if (!dsLocation.startsWith(
+				  	  		DOTranslationUtility.s_relativeGetPattern.pattern()) &&
+				  	  	  !dsLocation.startsWith(
+				  	  	  	DOTranslationUtility.s_relativeSearchPattern.pattern())) {
+						  throw new SAXException("Datastream's contentLocation REF is malformed URL."
+							  + " Missing protocol or invalid relative URL."
+							  + " Relative repository URLs must start with 'fedora/get'"
+							  + " or 'fedora/search' with NO leading slash.\n " 
+							  + " URL is: " + dsLocation);
+					  }
+				  }
+                  // system will set dsLocationType for E and R datastreams...
                   m_dsLocationType="URL";
                   m_dsLocation=dsLocation;
-                  populateDatastream(new DatastreamReferencedContent());
+                  instantiateDatastream(new DatastreamReferencedContent());
 				  // check if datastream is ManagedContent
                 } else if (m_dsControlGrp.equalsIgnoreCase("M")) {
-                  // Validate ManagedContent dsLocation URL only if this
-                  // is initial creation of this object; upon subsequent
-                  // invocations, initial URL will have been replaced with
-                  // an internal identifier for the dsLocation and will
-                  // no longer be a URL.
-                  if (m_obj.isNew())
-                  {
-                    try {
-                      m_dsLocationURL=new URL(dsLocation);
-                    } catch (MalformedURLException murle) {
-                      throw new SAXException("REF specifies malformed url: " + dsLocation);
-                    }
+				  // URL FORMAT VALIDATION for dsLocation:
+				  // For Managed Content the URL is only checked when we are parsing a
+				  // a NEW ingest file because the URL is replaced with an internal identifier
+				  // once the repository has sucked in the content for storage.
+                  if (m_obj.isNew()) {
+                  	  try {
+						// it must have a protocol
+                  		  m_dsLocationURL=new URL(dsLocation);
+					  } catch (MalformedURLException murle) {
+						 // or else it must be a Fedora relative repository URL
+						  if (!dsLocation.startsWith(
+								DOTranslationUtility.s_relativeGetPattern.pattern()) &&
+							  !dsLocation.startsWith(
+								DOTranslationUtility.s_relativeSearchPattern.pattern())) {
+							  throw new SAXException("Datastream's contentLocation REF is malformed URL."
+								+ " Missing protocol or invalid relative URL."
+								+ " Relative repository URLs must start with 'fedora/get'"
+								+ " or 'fedora/search' with NO leading slash.\n " 
+								+ " URL is: " + dsLocation);
+						  }
+					  }
                   }                 
                   m_dsLocationType="INTERNAL_ID";
 				  m_dsLocation=dsLocation;
-				  populateDatastream(new DatastreamManagedContent());
+				  instantiateDatastream(new DatastreamManagedContent());
                 }
             } else if (localName.equals("binaryContent")) {
 				// FIXME: implement support for this in Fedora 1.2
@@ -543,7 +576,7 @@ public class FOXMLDODeserializer
 			//=====================
 			if (m_gotAudit) {
 				// Pick up audit records from the current ds version
-				// and populate audit records array in digital object.
+				// and instantiate audit records array in digital object.
 				if (localName.equals("action")) {
 					m_auditAction=m_elementContent.toString();
 				//} else if (localName.equals("recordID")) {
@@ -584,13 +617,15 @@ public class FOXMLDODeserializer
 				if (m_dsId.equals("AUDIT")) {
 					// if we are in the inline XML of the AUDIT datastream just 
 					// end processing and move on.  Audit datastream handled elsewhere.
-					m_inXMLMetadata=false;
+					m_inXMLMetadata=false; // other stuff is re-initted upon
+										   // startElement for next xml metadata
+										   // element
 				//========================
 				// ALL OTHER INLINE XML...
 				//========================
 				} else {
 					// for ALL other inline xml datastreams...
-					// populate the appropriate class of datastream and add it to m_obj
+					// instantiate the appropriate class of datastream and add it to m_obj
 					for (int i=0; i<m_dsPrefixes.size(); i++) {
 						// now finish writing to m_dsFirstElementBuffer, a series of strings like
 						// ' xmlns:PREFIX="URI"'
@@ -607,16 +642,10 @@ public class FOXMLDODeserializer
 						m_dsFirstElementBuffer.append("\"");
 					}
 					DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
-
-					try {
-						String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
-						ds.xmlContent=combined.getBytes(
-								m_characterEncoding);
-					} catch (UnsupportedEncodingException uee) {
-					  System.out.println("oops..encoding not supported, this could have been caught earlier.");
-					}
-					populateXMLDatastream(ds);
-					m_inXMLMetadata=false; 
+					instantiateXMLDatastream(ds);
+					m_inXMLMetadata=false; // other stuff is re-initted upon
+										   // startElement for next xml metadata
+										   // element
 				}
             } else {
                 // finish an element within the inline xml metadata... print end tag,
@@ -681,8 +710,9 @@ public class FOXMLDODeserializer
         return ret;
     }
     
-    private void populateDatastream(Datastream ds) {
-    	
+    private void instantiateDatastream(Datastream ds) throws SAXException {
+
+		// set datastream variables with values grabbed from the SAX parse    	  	
 		ds.DatastreamID=m_dsId;
 		ds.DatastreamURI=m_dsURI;
 		ds.DSVersionable=m_dsVersionable;
@@ -696,20 +726,29 @@ public class FOXMLDODeserializer
 		ds.DSLocation=m_dsLocation;
 		ds.DSLocationType=m_dsLocationType;
 		ds.DSInfoType=null; // METS legacy
-		// SDP: what is this about?  It does not set mime and size anyhow?
-		/*
-		if (m_queryBehavior!=QUERY_NEVER) {
-		  if ((m_queryBehavior==QUERY_ALWAYS) || (m_dsMimeType==null)
-			  || (m_dsSize==-1)) {
-			try {
-			  InputStream in=ds.getContentStream();
-			} catch (StreamIOException sioe) {
-			  throw new SAXException(sioe.getMessage());
-			}
-		  }
-		}
-		*/
 		
+		// Normalize the dsLocation for the deserialization context
+		ds.DSLocation=
+			(DOTranslationUtility.normalizeDSLocationURLs(
+				m_obj.getPid(), ds, m_transContext)).DSLocation;
+				
+		// LOOK! if the query behavior this deserializer instance was activated 
+		// in the constructor,  then we will obtain the datastreams's
+		// content stream to obtain its size and set the ds size attribute
+		// (done within the ds.getContentStream method implementation).
+		if (m_queryBehavior!=QUERY_NEVER) {
+			if ((m_queryBehavior==QUERY_ALWAYS)	
+				|| (m_dsMimeType==null)
+				|| (m_dsSize==-1)) {
+				try {
+					InputStream in=ds.getContentStream();
+				} catch (StreamIOException e) {
+					throw new SAXException("Error getting datastream content"
+						+ " for setting ds size (ds.getContentStream)"
+						+ " during SAX parse.");
+				}
+		  }
+		}		
 		// SDP: this is METS specific stuff.  What to do?
 		/*
 		if (m_dsDmdIds!=null) {
@@ -718,18 +757,14 @@ public class FOXMLDODeserializer
 		  }
 		}
 		*/
+		
+		// FINALLLY! add the datastream to the digital object instantiation
 		m_obj.datastreams(m_dsId).add(ds);
-		//reinitDS(); 	
+ 	
     }
     
-	private void populateXMLDatastream(DatastreamXMLMetadata ds) {   	
-		try {
-			String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
-			ds.xmlContent=combined.getBytes(
-					m_characterEncoding);
-		} catch (UnsupportedEncodingException uee) {
-		  System.out.println("oops..encoding not supported, this could have been caught earlier.");
-		}
+	private void instantiateXMLDatastream(DatastreamXMLMetadata ds) {
+		
 		// set the attrs common to all datastream versions
 		ds.DatastreamID=m_dsId;
 		ds.DatastreamURI=m_dsURI;
@@ -744,16 +779,37 @@ public class FOXMLDODeserializer
 			ds.DSMIME=m_dsMimeType;
 		}
 		// set the attrs specific to datastream version
-		ds.DSSize=ds.xmlContent.length; // bytes, not chars, but probably N/A anyway
 		ds.DSControlGrp="X";
 		ds.DSState=m_dsState;
 		ds.DSLocation=m_obj.getPid() + "+" + m_dsId + "+" + m_dsVersId;
 		ds.DSLocationType=m_dsLocationType;
 		ds.DSInfoType=m_dsInfoType; // METS legacy
 		ds.DSMDClass=m_dsMDClass;   // METS legacy
-		// add it to the digitalObject
-		m_obj.datastreams(m_dsId).add(ds);
-		//reinitDS();   	
+		
+		// now set the xml content stream itself...
+		try {
+			String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
+		
+			// Relative Repository URL processing... 
+			// For selected inline XML datastreams look for relative repository URLs
+			// and make them absolute.
+			if ( m_obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT &&
+				 (m_dsId.equals("SERVICE-PROFILE") || m_dsId.equals("WSDL")) ) {
+					ds.xmlContent=
+						(DOTranslationUtility.normalizeInlineXML(
+							combined, m_transContext))
+							.getBytes(m_characterEncoding);
+			} else {
+				ds.xmlContent=combined.getBytes(m_characterEncoding);
+			}
+			//LOOK! this sets bytes, not characters.  Do we want to set this?
+			ds.DSSize=ds.xmlContent.length;
+		} catch (Exception uee) {
+			System.out.println("Error processing inline xml content in SAX parse: " 
+				+ uee.getMessage());
+		}				
+		// FINALLY! add the xml datastream to the digitalObject
+		m_obj.datastreams(m_dsId).add(ds);  	
 	}	
 	
 	private void checkMETSFormat(String formatURI) {
