@@ -294,7 +294,7 @@ public class ReadOnlyContext
 
   	String subjectId = request.getRemoteUser();
 
-  	//roles are available through xacml "attribute finder" callback and so are not stored here
+  	//roles are available through xacml "attribute finder" callback and so are not stored here as subject attrs
   	
   	MultiValueMap subjectMap = new MultiValueMap();
   	//authn might not have been required by web.xml
@@ -312,13 +312,25 @@ public class ReadOnlyContext
   		subjectMap.set(Authorization.SUBJECT_ID_URI_STRING, subjectId);
   		log("2");
   		for (int i = 0; (roles != null) && (i < roles.length); i++) {
+  			log("2a");
+  			log("2b roles["+i+"].length=" + roles[i].length());
   			String[] parts = parseRole(roles[i]);
-  			log(parts[0] + "][" + parts[1]);
-  			subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
+ 			log("2c");
+ 	  		for (int j = 0; (parts != null) && (j < parts.length); j++) {
+ 	  			log("parts[" + j + "]=" + parts[j]);
+ 	  		}
+ 			log("2d");
+ 			if ((parts != null) && parts.length == 2) {
+ 				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
+ 			}
+ 			log("2e");
   		}
   		log("3");
   	} catch (Exception e) {	
-  		log("caught exception building subjectMap");
+  		log("caught exception building subjectMap " + e.getMessage());
+  		if (e.getCause() != null) {
+  			log(e.getCause().getMessage());
+  		}
   	} finally {
   		subjectMap.lock();
   	}
@@ -334,32 +346,32 @@ public class ReadOnlyContext
     }
 
   	public static final String[] parseRole (String role) {
-  		//System.out.println("parseRole() "+role);
+  		log("parseRole() " + role);
   		String[] parts = null;
   		if ((role == null) || (role.length() == 0)) {
-  			//System.out.println("(role == null) || (role.length() == 0)");
+  			log("parseRole (role == null) || (role.length() == 0)");
   		} else {
   			int i = role.indexOf('=');
   			if (i == 0) {
-  				//System.out.println("i==0");
+  				log("parseRole i==0");
   			} else {
+  				log("parseRole i==" + i);
   				parts = new String[2];	
   				if (i < 0) {
   					parts[0] = role;
   					parts[1] = ""; //Boolean.toString(true);
-//  System.out.println("Boolean.toString(true)="+parts[1]);
+					log("parseRole i<0 ==" + i);	 
   				} else {
+					log("parseRole i>=0 ==" + i);
   					parts[0] = role.substring(0,i);
-  					//System.out.println("parts[0]="+parts[0]);
+  					log("parseRole parts[0]="+parts[0]);
   					if (i == (role.length()-1)) {
   						parts[1] = ""; //Boolean.toString(true);
-//  System.out.println("Boolean.toString(true)="+parts[1]);
   					} else {
   						parts[1] = role.substring(i+1);
-  						//System.out.println("parts[1]="+parts[1]);
   					}
+					log("parts[1]="+parts[1]);	 
   				}
-  				//System.out.println("parts[0]="+parts[0]+" parts[1]="+parts[1]);
   			}
   		}
   		return parts; 
