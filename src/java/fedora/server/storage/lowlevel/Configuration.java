@@ -97,6 +97,8 @@ class Configuration {
 		if (tempStoreBaseTemp == null) {
 			throw new LowlevelStorageException(true,"must configure temp_store_base");
 		}
+        
+        // FIXME: thinks c:\temp and c:\temp2 overlap
 		if (tempStoreBaseTemp.startsWith(permanentStoreBaseTemp)
 		|| permanentStoreBaseTemp.startsWith(tempStoreBaseTemp)) {
 			throw new LowlevelStorageException(true,"permanent_store_base and temp_store_base cannot overlap");
