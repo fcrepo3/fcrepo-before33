@@ -385,12 +385,12 @@ public class DefaultDOManager
      * This should be called from DOWriter.save()...bleh
      */
     public void doDefinitiveSave(DigitalObject obj) {
-        // save to definitive store... 
+        // save to definitive store...
     }
 
     /**
      * This could be in response to update *or* delete
-     * makes a new audit record in the object, 
+     * makes a new audit record in the object,
      * saves object to definitive store, and replicates.
      */
     public void doCommit(Context context, DigitalObject obj, String logMessage, boolean remove)
@@ -398,11 +398,11 @@ public class DefaultDOManager
         // make audit record
         AuditRecord a=new AuditRecord();
         a.id="REC1024";  // FIXME: id should be auto-gen'd somehow
-        a.processType="API-M"; 
-        a.action="Don't know"; 
-        a.responsibility=getUserId(context); 
+        a.processType="API-M";
+        a.action="Don't know";
+        a.responsibility=getUserId(context);
         a.date=new Date();
-        a.justification=logMessage; 
+        a.justification=logMessage;
         obj.getAuditRecords().add(a);
         if (remove) {
             // remove from temp *and* definitive store
@@ -410,7 +410,7 @@ public class DefaultDOManager
                 getTempStore().remove(obj.getPid());
             } catch (ObjectNotInLowlevelStorageException onilse) {
                 // ignore... it might not be in temp storage so this is ok.
-                // FIXME: could check modification state with reg table to 
+                // FIXME: could check modification state with reg table to
                 // deal with this better, but for now this works
             }
             getPermanentStore().remove(obj.getPid());
@@ -421,9 +421,21 @@ public class DefaultDOManager
             removeReplicationJob(obj.getPid());
         } else {
             // save to definitive store, validating beforehand
-            // FIXME: insert validator call here
             // FIXME: definitive save skipped for testing..
             // update the system version (add one) and reflect that the object is no longer locked
+
+            // Validation:
+            // Perform FINAL validation before saving the object to persistent storage.
+            // For now, we'll request all levels of validation (level=0), but we can
+            // consider whether there is too much redundancy in requesting full validation
+            // at time of ingest, then again, here, at time of storage.
+            // We'll just be conservative for now and call all levels both times.
+            // First, serialize the digital object into an Inputstream to be passed to validator.
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
+            ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
+            m_validator.validate(inV, 0, "store");
+
             Connection conn=null;
             try {
                 conn=m_connectionPool.getConnection();
@@ -437,7 +449,7 @@ public class DefaultDOManager
                 }
                 int systemVersion=results.getInt("SystemVersion");
                 systemVersion++;
-                s.executeUpdate("UPDATE ObjectRegistry SET SystemVersion=" 
+                s.executeUpdate("UPDATE ObjectRegistry SET SystemVersion="
                         + systemVersion + ", LockingUser=NULL "
                         + "WHERE DO_PID='" + obj.getPid() + "'");
             } catch (SQLException sqle) {
@@ -455,19 +467,19 @@ public class DefaultDOManager
                     logInfo("Attempting replication as bdef object: " + obj.getPid());
                     DefinitiveBDefReader reader=new DefinitiveBDefReader(obj.getPid());
                     logInfo("Got a definitiveBDefReader...");
-                    m_replicator.replicate(reader); 
+                    m_replicator.replicate(reader);
                     logInfo("Finished replication as bdef object: " + obj.getPid());
                 } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
                     logInfo("Attempting replication as bmech object: " + obj.getPid());
                     DefinitiveBMechReader reader=new DefinitiveBMechReader(obj.getPid());
                     logInfo("Got a definitiveBMechReader...");
-                    m_replicator.replicate(reader); 
+                    m_replicator.replicate(reader);
                     logInfo("Finished replication as bmech object: " + obj.getPid());
                 } else {
                     logInfo("Attempting replication as normal object: " + obj.getPid());
                     DefinitiveDOReader reader=new DefinitiveDOReader(obj.getPid());
                     logInfo("Got a definitiveDOReader...");
-                    m_replicator.replicate(reader); 
+                    m_replicator.replicate(reader);
                     logInfo("Finished replication as normal object: " + obj.getPid());
                 }
                 removeReplicationJob(obj.getPid());
@@ -482,7 +494,7 @@ public class DefaultDOManager
     /**
      * Add an entry to the replication jobs table.
      */
-    private void addReplicationJob(String pid, boolean deleted) 
+    private void addReplicationJob(String pid, boolean deleted)
             throws StorageDeviceException {
         Connection conn=null;
         String[] columns=new String[] {"DO_PID", "Action"};
@@ -503,8 +515,8 @@ public class DefaultDOManager
             }
         }
     }
-    
-    private void removeReplicationJob(String pid) 
+
+    private void removeReplicationJob(String pid)
             throws StorageDeviceException {
         Connection conn=null;
         try {
@@ -606,6 +618,10 @@ public class DefaultDOManager
             // write it to temp, as "temp-ingest": FIXME: temp-ingest stuff is temporary, and not threadsafe
             getTempStore().add("temp-ingest", in);
             InputStream in2=getTempStore().retrieve("temp-ingest");
+
+            // perform initial validation of the ingest submission format
+            InputStream inV=getTempStore().retrieve("temp-ingest");
+            m_validator.validate(inV, 0, "ingest");
 
             // deserialize it first
             BasicDigitalObject obj=new BasicDigitalObject();
