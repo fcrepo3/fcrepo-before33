@@ -15,7 +15,7 @@
 			</inlinemediaobject>
 		</title>
 		<title>Fedora Client Command-Line Utilities</title>
-		<subtitle>Software Release 1.11</subtitle>
+		<subtitle>Software Release 1.1.1</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -234,7 +234,7 @@
 		</itemizedlist>
 		<para>Example:</para>
 		<blockquote>
-			<para>fedora-convert-demos localhost 8080 www.fedora.info 80 c:\fedora-1.11</para>
+			<para>fedora-convert-demos localhost 8080 www.fedora.info 80 c:\fedora-1.1.1</para>
 		</blockquote>
 		<para>
            Converts URLs in the demo objects from one host/port combination to another.

@@ -15,7 +15,7 @@
 			</inlinemediaobject>
 		</title>
 		<title>Features</title>
-		<subtitle>Software Release 1.11</subtitle>
+		<subtitle>Software Release 1.1.1</subtitle>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
@@ -106,12 +106,12 @@
 			<listitem>
 				<para>
 					<emphasis role="bold">Versioning</emphasis>
-							 - Although not fully implemented in release 1.11, the Fedora repository system includes the infrastructure to support versioning of digital objects and their components.										</para>
+							 - Although not fully implemented in release 1.1.1, the Fedora repository system includes the infrastructure to support versioning of digital objects and their components.										</para>
 			</listitem>
 			<listitem>
 				<para>
 					<emphasis role="bold">Access Control and Authentication</emphasis>
-							 - Release 1.11 includes a simple form of access control to provide access restrictions based on IP address. IP range restriction is supported in both the Management and Access APIs. In addition, the Management API is protected by HTTP Basic Authentication. Access Policy and Authentication will be a major focus in Phase II of the Fedora project.
+							 - Release 1.1.1 includes a simple form of access control to provide access restrictions based on IP address. IP range restriction is supported in both the Management and Access APIs. In addition, the Management API is protected by HTTP Basic Authentication. Access Policy and Authentication will be a major focus in Phase II of the Fedora project.
 				</para>
 			</listitem>
 			<listitem>

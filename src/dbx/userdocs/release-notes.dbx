@@ -31,8 +31,8 @@
         </releaseinfo>
 	</articleinfo>
 	<sect1>
-		<title>Release 1.11 (Bug Fix Release) - September 5, 2003</title>
-		<para>Fedora 1.11 provides a fix for bugs detected by users of Fedora 1.1.</para>
+		<title>Release 1.1.1 (Bug Fix Release) - September 5, 2003</title>
+		<para>Fedora 1.1.1 provides a fix for bugs detected by users of Fedora 1.1.</para>
 		<para>The new release is backward compatible with Fedora 1.1. If you are updating from an earlier release, please refer to the release notes for Fedora 1.1 regarding backward compatibility issues and new features introduced in Fedora 1.1</para>
 		<sect2>
 		    <title>BUG FIXES:</title>
