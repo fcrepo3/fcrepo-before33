@@ -453,7 +453,7 @@
 					<para>Inline XML Datastreams:</para>
 					<itemizedlist>
 						<listitem>
-							<para>a. Fedora Method Map: There MUST be an inline xml datastream containing Fedora Method Map metadata.  This must be encoded within a METS:amdSec whose ID attribute MUST “METHODMAP” as its value.  The following elements and attribute must have referential integrity with the WSDL datastream described below:</para>
+							<para>a. Fedora Method Map: There MUST be an inline xml datastream containing Fedora Method Map metadata.  This must be encoded within a METS:amdSec whose ID attribute MUST have “METHODMAP” as its value.  The following elements and attribute must have referential integrity with the WSDL datastream described below:</para>
 							<itemizedlist>
 								<listitem>
 									<para>i.  On Method element, the value of attribute operationName must match the value of the name attribute on a wsdl:operation element.</para>
