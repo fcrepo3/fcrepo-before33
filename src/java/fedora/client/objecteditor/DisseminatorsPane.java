@@ -1,8 +1,10 @@
 package fedora.client.objecteditor;
 
-import java.awt.BorderLayout;
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
+import java.awt.*;
+import javax.swing.*;
+
+import fedora.client.Administrator;
+import fedora.server.types.gen.Disseminator;
 
 /**
  * Shows a tabbed pane, one for each disseminator in the object.
@@ -32,6 +34,7 @@ public class DisseminatorsPane
         implements PotentiallyDirty {
 
     private String m_pid;
+    private JTabbedPane m_tabbedPane;
 
     /**
      * Build the pane.
@@ -40,14 +43,18 @@ public class DisseminatorsPane
             throws Exception {
         m_pid=pid;
 
-        // this(tabbedPane)
+        m_tabbedPane=new JTabbedPane(SwingConstants.LEFT);
+        Disseminator[] currentVersions=Administrator.APIM.
+                    getDisseminators(pid, null, null);
+        for (int i=0; i<currentVersions.length; i++) {
+            JLabel a=new JLabel(currentVersions[i].getDissLabel());
+            m_tabbedPane.add(currentVersions[i].getDissID(), a);
+        }
+        m_tabbedPane.add("New...", new JLabel("not implemented"));
 
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
-        add(new javax.swing.JLabel(pid));
- //       add(tabbedPane, BorderLayout.CENTER);
- //       add(savePane, BorderLayout.SOUTH);
-
+        add(m_tabbedPane, BorderLayout.CENTER);
     }
 
     public boolean isDirty() {

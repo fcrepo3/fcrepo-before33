@@ -346,7 +346,9 @@ public class DatastreamPane
             }
             // editing is possible if it's XML or Managed content and 
             // not a special datastream and hasEditor(mimeType)
-            if ((X || M) 
+            // AND the initial state wasn't "D"
+            boolean noEdits=ds.getState().equals("D");
+            if ((X || M) && (!noEdits)
                     && ( !ds.getID().equals("METHODMAP") 
                             && !ds.getID().equals("DSINPUTSPEC") 
                             && !ds.getID().equals("WSDL") 
@@ -388,7 +390,7 @@ public class DatastreamPane
                     dataChangeListener);
             if (ds.getID().equals("METHODMAP")
                     || ds.getID().equals("DSINPUTSPEC")
-                    || ds.getID().equals("WSDL")) {
+                    || ds.getID().equals("WSDL") || noEdits) {
                 // disable label changes for special datastreams
                 m_labelTextField.setEnabled(false);
             }
@@ -402,6 +404,9 @@ public class DatastreamPane
                 m_locationTextField=new JTextField(m_ds.getLocation());
                 m_locationTextField.getDocument().addDocumentListener(
                     dataChangeListener);
+                if (noEdits) {
+                    m_locationTextField.setEnabled(false);
+                }
                 if (m_versionSlider!=null) {
                     values=new JComponent[] {m_labelTextField, m_locationTextField, urlTextField};
                 } else {
@@ -480,7 +485,7 @@ public class DatastreamPane
                 actionPane.add(m_viewButton);                 
             }
             // should we add the Import button?  If we can set content, yes.
-            if ((X || M) 
+            if ((X || M) && (!noEdits)
                     && ( !ds.getID().equals("METHODMAP") 
                         && !ds.getID().equals("DSINPUTSPEC") 
                         && !ds.getID().equals("WSDL") 

@@ -252,6 +252,9 @@ public class DatastreamsPane
 
         String m_controlGroup;
         String m_lastSelectedMimeType;
+        File m_managedFile;
+        JComponent m_mCenter;
+        JPanel m_mPane;
 
         static final String X_DESCRIPTION="Metadata that is stored and managed inside the "
                 + "repository.  This must be well-formed XML and will be "
@@ -391,9 +394,58 @@ public class DatastreamsPane
             xPane.add(m_xEditor.getComponent(), BorderLayout.CENTER);
             xPane.add(xBottomPane, BorderLayout.SOUTH);
 
-            JPanel mPane=new JPanel();
-            mPane.add(new JLabel("mPane"));
+            // Managed Content Datastream....
+            // SOUTH: [Import]
+            JPanel mBottomPane=new JPanel(new FlowLayout());
+            JButton mImportButton=new JButton("Import...");
+            mImportButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    ImportDialog imp=new ImportDialog();
+                    if (imp.file!=null) {
+                        try {
+                            // see if we should put a viewer up, or just
+                            // a label that says they're importing.
+                            JComponent newCenter;
+                            String curMime=(String) m_mimeComboBox.getSelectedItem();
+                            if (ContentHandlerFactory.hasViewer(curMime)) {
+                                ContentViewer viewer=ContentHandlerFactory.
+                                        getViewer(curMime, 
+                                        new FileInputStream(imp.file));
+                                newCenter=viewer.getComponent();
+                            } else {
+                                String importString;
+                                if (imp.url!=null) {
+                                    importString="Will import " + imp.url;
+                                } else {
+                                    importString="Will import " + imp.file.getPath();
+                                }
+                                newCenter=new JLabel(importString);
+                            }
+                            // now remove the old center component (if needed),
+                            // and add newCenter, then validate
+                            if (m_mCenter!=null) {
+                                m_mPane.remove(m_mCenter);
+                            }
+                            m_mCenter=newCenter;
+                            m_mPane.add(m_mCenter, BorderLayout.CENTER);
+                            m_mPane.validate();
+                            // lastly, set the file we're importing
+                            m_managedFile=imp.file;
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                                    e.getMessage(), "Import Error",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            });
+            mBottomPane.add(mImportButton);
 
+            m_mPane=new JPanel(new BorderLayout());
+            m_mPane.add(mBottomPane, BorderLayout.SOUTH);
+
+            // External Referenced or Redirect Datastream....
+            // 
             // NORTH: Location  __________________
             // SOUTH:        [View]
             // preview button's actionlistener will only pull up a viewer
@@ -435,7 +487,7 @@ public class DatastreamsPane
             m_contentCard=new CardLayout();
             m_specificPane.setLayout(m_contentCard);
             m_specificPane.add(xPane, "X");
-            m_specificPane.add(mPane, "M");
+            m_specificPane.add(m_mPane, "M");
             m_specificPane.add(m_erPane, "ER");
 
             JPanel entryPane=new JPanel();
@@ -496,7 +548,11 @@ public class DatastreamsPane
                         // m_xEditor
                         location=Administrator.UPLOADER.upload(m_xEditor.getContent());
                     } else if (m_controlGroup.equals("M")) {
-                        throw new IOException("Not implemented for M");
+                        // get the imported file
+                        if (m_managedFile==null) {
+                            throw new IOException("Content must be specified first.");
+                        }
+                        location=Administrator.UPLOADER.upload(m_managedFile);
                     } else { // must be E/R
                         location=m_referenceTextField.getText();
                     }
