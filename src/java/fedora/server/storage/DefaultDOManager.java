@@ -903,13 +903,13 @@ public class DefaultDOManager
 				}                     	
                     
                 // RESOURCE INDEX:
-                // FIXME for now, for testing, only this single hook into
-                // the ResourceIndex
-                if (m_resourceIndex != null) {
-                    logFinest("COMMIT: Adding to ResourceIndex...");
+                logFinest("COMMIT: Adding to ResourceIndex...");
+                if (obj.isNew()) {
                     m_resourceIndex.addDigitalObject(obj);
-                    logFinest("COMMIT: Finished adding to ResourceIndex.");
+                } else {
+                    m_resourceIndex.modifyDigitalObject(obj);
                 }
+                logFinest("COMMIT: Finished adding to ResourceIndex.");
                 
                 // STORAGE: 
                 // write XML serialization of object to persistent storage
