@@ -336,16 +336,20 @@
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+			<arg value="-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+           <arg value="-Djavax.xml.transform.TransformerFactory=com.icl.saxon.TransformerFactoryImpl"/>
 			<arg value="-classpath"/>
-			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/saxon6.5.jar"/>
 			<arg value="fedora.server.test.METSInOutTest"/>
 			<arg value="src/mets/test/demo/std-img-bdef.xml"/>
 		</exec>
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+			<arg value="-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+           <arg value="-Djavax.xml.transform.TransformerFactory=com.icl.saxon.TransformerFactoryImpl"/>
 			<arg value="-classpath"/>
-			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/saxon6.5.jar"/>
 			<arg value="fedora.server.test.METSInOutTest"/>
 			<arg value="src/mets/test/demo/std-img-bdef.xml"/>
 			<arg value="1"/>
@@ -353,8 +357,10 @@
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
+			<arg value="-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
+           <arg value="-Djavax.xml.transform.TransformerFactory=com.icl.saxon.TransformerFactoryImpl"/>
 			<arg value="-classpath"/>
-			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/saxon6.5.jar"/>
 			<arg value="fedora.server.test.METSInOutTest"/>
 			<arg value="src/mets/test/demo/std-img-bdef.xml"/>
 			<arg value="2"/>
@@ -376,6 +382,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.52  2002/12/11 18:12:41  cwilper
+  metstest target explicitly uses saxon6.5 (via prop and classpath)
+
   Revision 1.51  2002/12/11 16:47:01  cwilper
   metstest target also does level 1 and level 2 validation.
 
