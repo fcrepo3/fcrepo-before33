@@ -1530,29 +1530,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * digital object by invoking the appropriate Fedora Access SOAP service.</p>
    *
    * @param PID The persistent identifier of the digital object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return An array of Behavior Definition PIDs.
-   * @throws Exception If an error occurs in communicating with the Fedora
-   *         Access SOAP service.
-   */
-  /*public String[] getBehaviorDefinitions(String PID, Date asOfDateTime)
-      throws Exception
-  {
-    Date versDateTime = asOfDateTime;
-    Service service = new Service();
-    Call call = (Call) service.createCall();
-    call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
-    call.setOperationName(new QName(FEDORA_API_URI, GET_BEHAVIOR_DEFINITIONS) );
-    String[] behaviorDefs = (String[]) call.invoke(new Object[] { PID,
-          versDateTime });
-    return behaviorDefs;
-  }*/
-
-  /**
-   * <p>Gets a list of Behavior Definition object PIDs for the specified
-   * digital object by invoking the appropriate Fedora Access SOAP service.</p>
-   *
-   * @param PID The persistent identifier of the digital object.
    * @return An array of timestamps indicating when an object component changed.
    * @throws Exception If an error occurs in communicating with the Fedora
    *         Access SOAP service.
@@ -1971,8 +1948,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     {
       if (PID == null || dsID == null)
       {
-        // GetBehaviorDefinitions and GetObjectMethods require PID;
-        // asOfDateTime is optional.
+
         response.setContentType(CONTENT_TYPE_HTML);
         html.append("<html>");
         html.append("<head>");
@@ -2038,8 +2014,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     {
       if (PID == null)
       {
-        // GetBehaviorDefinitions and GetObjectMethods require PID;
-        // asOfDateTime is optional.
+
         response.setContentType(CONTENT_TYPE_HTML);
         html.append("<html>");
         html.append("<head>");
