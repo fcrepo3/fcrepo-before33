@@ -146,7 +146,7 @@ public class ImportDialog
                 dispose();
             }
         });
-        cancelButton.setLabel("Cancel");
+        cancelButton.setText("Cancel");
         Administrator.constrainHeight(cancelButton);
 
         JPanel buttonPane=new JPanel();
