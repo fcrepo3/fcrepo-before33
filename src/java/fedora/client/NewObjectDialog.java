@@ -45,12 +45,13 @@ import fedora.server.utilities.StreamUtility;
 public class NewObjectDialog
         extends JDialog
         implements ItemListener {
-        
+
     private JTextField m_labelField;
     private JTextField m_cModelField;
     private JCheckBox m_customPIDCheckBox;
     private JTextField m_customPIDField;
-    
+    private JButton m_okButton;
+
     private FedoraAPIM m_apim;
 
     // for the checkbox
@@ -63,7 +64,7 @@ public class NewObjectDialog
             m_customPIDField.setEditable(true);
         }
     }
-    
+
     public NewObjectDialog() {
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "New Object", true);
 
@@ -75,7 +76,7 @@ public class NewObjectDialog
                 ),
                 BorderFactory.createEmptyBorder(6,6,6,6)
                 ));
-                
+
         GridBagLayout gridBag=new GridBagLayout();
         inputPane.setLayout(gridBag);
 
@@ -88,77 +89,22 @@ public class NewObjectDialog
         m_cModelField=new JTextField("");
         m_customPIDField=new JTextField();
         m_customPIDField.setEditable(false);
-         
+
         addLabelValueRows(new JComponent[] { labelLabel,
                                              cModelLabel,
-                                             m_customPIDCheckBox }, 
+                                             m_customPIDCheckBox },
                           new JComponent[] { m_labelField,
                                              m_cModelField,
-                                             m_customPIDField }, 
-                          gridBag, 
+                                             m_customPIDField },
+                          gridBag,
                           inputPane);
 
-        JButton okButton=new JButton(new AbstractAction() {
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    String pid="";
-                    String label=m_labelField.getText();
-                    String cModel=m_cModelField.getText();
-                    boolean ok=true;
-                    if ( m_labelField.getText().equals("") ) {
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            "Label must be non-empty",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                        ok=false;
-                    }
-                    if ( m_customPIDCheckBox.isSelected() ) {
-                        pid=m_customPIDField.getText();
-                        if (m_customPIDField.getText().indexOf(":")<1) {
-                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                 "Custom PID should be of the form \"namespace:1234\"",
-                                 "Error",
-                                 JOptionPane.ERROR_MESSAGE);
-                            ok=false;
-                        }
-                    }
-
-                    if (ok) {
-                        dispose();
-                        // now that things look ok, give it a try
-                        StringBuffer xml=new StringBuffer();
-                        xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-                        xml.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
-                        xml.append("           xmlns:METS=\"http://www.loc.gov/METS/\"\n");
-                        xml.append("           xmlns:fedoraAudit=\"http://fedora.comm.nsdlib.org/audit\"\n");
-                        xml.append("           xmlns:xlink=\"http://www.w3.org/TR/xlink\"\n");
-                        xml.append("           xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
-                        xml.append("           TYPE=\"FedoraObject\"\n"); 
-                        xml.append("           OBJID=\"" + StreamUtility.enc(pid) + "\"\n"); 
-                        xml.append("           LABEL=\"" + StreamUtility.enc(label) + "\"\n");
-                        xml.append("           PROFILE=\"" + StreamUtility.enc(cModel) + "\">\n");
-                        xml.append("</METS:mets>");
-                        String objXML=xml.toString();
-                        System.out.println("Ingesting new object:");
-                        System.out.println(objXML);
-                        ByteArrayInputStream in=new ByteArrayInputStream(
-                                objXML.getBytes("UTF-8"));
-                        String newPID=AutoIngestor.ingestAndCommit(
-                                Administrator.APIM,
-                                in,
-                                "Created with Admin GUI \"New Object\" command");
-                        new ViewObject(newPID).launch();
-                    }
-                } catch (Exception e) {
-                    String msg=e.getMessage();
-                    if (msg==null) msg=e.getClass().getName();
-                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                        msg,
-                        "Error Creating Object",
-                        JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
+        CreateAction createAction = new CreateAction();
+        CreateListener createListener = new CreateListener(createAction);
+        JButton okButton=new JButton(createAction);
+        okButton.registerKeyboardAction(createListener,
+            KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0, false),
+            JButton.WHEN_IN_FOCUSED_WINDOW);
         okButton.setText("Create");
         JButton cancelButton=new JButton(new AbstractAction() {
             public void actionPerformed(ActionEvent evt) {
@@ -173,7 +119,7 @@ public class NewObjectDialog
         contentPane.setLayout(new BorderLayout());
         contentPane.add(inputPane, BorderLayout.CENTER);
         contentPane.add(buttonPane, BorderLayout.SOUTH);
-        
+
         pack();
         setLocation(Administrator.INSTANCE.getCenteredPos(getWidth(), getHeight()));
         setVisible(true);
@@ -204,6 +150,89 @@ public class NewObjectDialog
             container.add(values[i]);
         }
 
-    }    
-    
+    }
+
+    public class CreateAction extends AbstractAction
+    {
+
+      public void actionPerformed(ActionEvent evt) {
+          try {
+              String pid="";
+              String label=m_labelField.getText();
+              String cModel=m_cModelField.getText();
+              boolean ok=true;
+              if ( m_labelField.getText().equals("") ) {
+                  JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                      "Label must be non-empty",
+                      "Error",
+                      JOptionPane.ERROR_MESSAGE);
+                  ok=false;
+              }
+              if ( m_customPIDCheckBox.isSelected() ) {
+                  pid=m_customPIDField.getText();
+                  if (m_customPIDField.getText().indexOf(":")<1) {
+                      JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                           "Custom PID should be of the form \"namespace:1234\"",
+                           "Error",
+                           JOptionPane.ERROR_MESSAGE);
+                      ok=false;
+                  }
+              }
+
+              if (ok) {
+                  dispose();
+                  // now that things look ok, give it a try
+                  StringBuffer xml=new StringBuffer();
+                  xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                  xml.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+                  xml.append("           xmlns:METS=\"http://www.loc.gov/METS/\"\n");
+                  xml.append("           xmlns:fedoraAudit=\"http://fedora.comm.nsdlib.org/audit\"\n");
+                  xml.append("           xmlns:xlink=\"http://www.w3.org/TR/xlink\"\n");
+                  xml.append("           xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
+                  xml.append("           TYPE=\"FedoraObject\"\n");
+                  xml.append("           OBJID=\"" + StreamUtility.enc(pid) + "\"\n");
+                  xml.append("           LABEL=\"" + StreamUtility.enc(label) + "\"\n");
+                  xml.append("           PROFILE=\"" + StreamUtility.enc(cModel) + "\">\n");
+                  xml.append("</METS:mets>");
+                  String objXML=xml.toString();
+                  System.out.println("Ingesting new object:");
+                  System.out.println(objXML);
+                  ByteArrayInputStream in=new ByteArrayInputStream(
+                          objXML.getBytes("UTF-8"));
+                  String newPID=AutoIngestor.ingestAndCommit(
+                          Administrator.APIM,
+                          in,
+                          "Created with Admin GUI \"New Object\" command");
+                  new ViewObject(newPID).launch();
+              }
+          } catch (Exception e) {
+              String msg=e.getMessage();
+              if (msg==null) msg=e.getClass().getName();
+              JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                  msg,
+                  "Error Creating Object",
+                  JOptionPane.ERROR_MESSAGE);
+          }
+      }
+
+    }
+
+
+
+    public class CreateListener implements ActionListener
+    {
+
+        private CreateAction m_createAction;
+
+        public CreateListener(CreateAction createAction)
+        {
+            this.m_createAction = createAction;
+        }
+
+        public void actionPerformed(ActionEvent e)
+        {
+            m_createAction.actionPerformed(e);
+        }
+    }
+
 }
