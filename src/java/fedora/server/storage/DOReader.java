@@ -10,6 +10,7 @@ package fedora.server.storage;
  */
 
 import fedora.server.storage.types.*;
+import fedora.server.errors.ServerException;
 import java.util.Date;
 import java.io.InputStream;
 
@@ -20,31 +21,31 @@ public interface DOReader
    * Methods that pertain to the digital object as a whole
    */
 
-    public String GetObjectXML();
+    public String GetObjectXML() throws ServerException;
 
-    public String ExportObject();
+    public String ExportObject() throws ServerException;
 
   /**
    * Methods that pertain to getting the digital object components
    */
 
-    public String GetObjectPID();
+    public String GetObjectPID() throws ServerException;
 
-    public String GetObjectLabel();
+    public String GetObjectLabel() throws ServerException;
 
-    public String GetObjectState();
+    public String GetObjectState() throws ServerException;
 
-    public String[] ListDatastreamIDs(String state);
+    public String[] ListDatastreamIDs(String state) throws ServerException;
 
-    public Datastream[] GetDatastreams(Date versDateTime);
+    public Datastream[] GetDatastreams(Date versDateTime) throws ServerException;
 
-    public Datastream GetDatastream(String datastreamID, Date versDateTime);
+    public Datastream GetDatastream(String datastreamID, Date versDateTime) throws ServerException;
 
-    public Disseminator[] GetDisseminators(Date versDateTime);
+    public Disseminator[] GetDisseminators(Date versDateTime) throws ServerException;
 
-    public String[] ListDisseminatorIDs(String state);
+    public String[] ListDisseminatorIDs(String state) throws ServerException;
 
-    public Disseminator GetDisseminator(String disseminatorID, Date versDateTime);
+    public Disseminator GetDisseminator(String disseminatorID, Date versDateTime) throws ServerException;
 
   /**
    *  Methods to obtain information stored in the Behavior Definition and
@@ -53,12 +54,12 @@ public interface DOReader
    */
 
     // Returns PIDs of Behavior Definitions to which object subscribes
-    public String[] GetBehaviorDefs(Date versDateTime);
+    public String[] GetBehaviorDefs(Date versDateTime) throws ServerException;
 
     // Returns list of methods that Behavior Mechanism implements for a BDef
-    public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime);
+    public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime) throws ServerException;
 
     // Overloaded method: returns InputStream as alternative
-    public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime);
+    public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime) throws ServerException;
 
 }
