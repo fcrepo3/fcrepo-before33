@@ -1,7 +1,6 @@
 package fedora.server.oai;
 
 import fedora.oai.*;
-import fedora.server.storage.ConnectionPool;
 
 /**
  * An extension to OAIProvider that does Fedora-specific stuff.
@@ -28,6 +27,6 @@ import fedora.server.storage.ConnectionPool;
 public interface IFedoraOAIProvider
         extends OAIProvider {
 
-    public OAIReplicator getReplicator(ConnectionPool pool);
+    public OAIReplicator getReplicator();
 
 }

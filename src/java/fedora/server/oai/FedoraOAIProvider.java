@@ -1,32 +1,18 @@
 package fedora.server.oai;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import fedora.oai.*;
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
-import fedora.server.errors.ServerException;
-import fedora.server.errors.UnknownSessionTokenException;
-import fedora.server.search.DCFields;
-import fedora.server.search.ObjectFields;
-import fedora.server.search.Condition;
-import fedora.server.search.FieldSearch;
-import fedora.server.search.FieldSearchQuery;
-import fedora.server.search.FieldSearchResult;
+import fedora.server.errors.*;
+import fedora.server.search.*;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.utilities.StreamUtility;
 
 /**
- *
- * <p><b>Title:</b> FedoraOAIProvider.java</p>
- * <p><b>Description:</b> </p>
- *
+ * Implements the IFedoraOAIProvider interface to make Fedora an OAI provider.
  * -----------------------------------------------------------------------------
  *
  * <p><b>License and Copyright: </b>The contents of this file are subject to the
@@ -74,8 +60,9 @@ public class FedoraOAIProvider
     public FedoraOAIProvider(String repositoryName, String repositoryDomainName,
             String baseURL, Set adminEmails, Set friendBaseURLs, 
             String namespaceID, long maxSets, long maxRecords, long maxHeaders,
-            FieldSearch fieldSearch, Logging logTarget) {
+            FieldSearch fieldSearch, ConnectionPool cPool, Logging logTarget) {
         super(logTarget);
+        s_replicator=new OAIReplicator(cPool, this);
         m_repositoryName=repositoryName;
         m_repositoryDomainName=repositoryDomainName;
         m_baseURL=baseURL;
@@ -119,10 +106,7 @@ public class FedoraOAIProvider
         m_setInfos.add(new SimpleSetInfo("Behavior Definition Objects", "bdefs", s_emptySet));
     }
 
-    public OAIReplicator getReplicator(ConnectionPool pool) {
-        if (s_replicator==null) {
-            s_replicator=new OAIReplicator(pool, this);
-        }
+    public OAIReplicator getReplicator() {
         return s_replicator;
     }
 

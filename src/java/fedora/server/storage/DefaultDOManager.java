@@ -513,7 +513,7 @@ public class DefaultDOManager
             }
             try {
                 logInfo("Deleting from oai tables...");
-                m_oaiProvider.getReplicator(m_connectionPool).purgedObject(obj.getPid());
+                m_oaiProvider.getReplicator().purgedObject(obj.getPid());
             } catch (ServerException se) {
                 logWarning("Object couldn't be removed from oai tables (" + se.getMessage() + "), but that might be ok.");
             }
@@ -619,10 +619,10 @@ public class DefaultDOManager
                     m_validator.validate(inV, 0, "store");
                     // before saving to definitive store, tell the OAIReplicator about new or modified objects
                     if (obj.isNew()) {
-                        m_oaiProvider.getReplicator(m_connectionPool).newObject(obj);
+                        m_oaiProvider.getReplicator().newObject(obj);
                     } else {
                         // must be a mod
-                        m_oaiProvider.getReplicator(m_connectionPool).modifiedObject(getReader(context, obj.getPid()), obj);
+                        m_oaiProvider.getReplicator().modifiedObject(getReader(context, obj.getPid()), obj);
                     }
                     // if ok, write change to perm store here...right before db stuff
                     if (obj.isNew()) {

@@ -261,23 +261,154 @@
 		</column>
 	</table>
     <table name="format">
-        <column name="formatDbID" type="int(11)" autoIncrement="true"/>
-        <column name="formatURI" type="varchar(128)"/>
+        <comment>
+            A mapping between formatURIs and formatDbIDs.
+        </comment>
+        <column name="formatDbID" type="int(11)" autoIncrement="true">
+            <comment>
+                A unique, auto-incremented value for referring to a formatURI
+                from other tables.
+            </comment>
+        </column>
+        <column name="formatURI" type="varchar(128)">
+            <comment>
+                A URI identifying the structural form of data.
+            </comment>
+        </column>
     </table>
     <table name="oItem">
-        <column name="itemDbID" type="int(11)" autoIncrement="true"/>
-        <column name="itemID" type="varchar(128)"/>
-        <column name="pid" type="varchar(32)"/>
-        <column name="status" type="tinyint"/>
-        <column name="vDate" type="bigint"/>
+        <comment>
+Information about all Items that ever existed in the repository.
+Every Fedora object has a row.  Rows are never deleted, but may
+be replaced if a previously purged object is re-created.
+
+This table is used along with oRecord and format to get results
+for OAI queries.  The following gives records that have been added/changed/deleted
+(in OAI-speak) up to the date 1074430815551 and have format 1, which maps to formatURI
+http://www.openarchives.org/OAI/2.0/oai_dc/ in the format table, which maps to oai_dc 
+in the fmtreg.xml file.
+
+SELECT pid, itemID, repID, status, vDate, cDate, eDate, iDate 
+FROM   oItem, oRecord 
+WHERE  oItem.itemDbID = oRecord.itemDbID 
+  AND  formatDbID     = 1
+  AND  (      (    ( eDate &gt; iDate AND status = 2 )
+          AND (    ( cDate BETWEEN 0 AND 1074430815551 AND cDate &gt;= eDate AND cDate &gt;= vDate )
+                OR ( eDate BETWEEN 0 AND 1074430815551 AND eDate &gt;= cDate AND eDate &gt;= vDate )
+                OR ( vDate BETWEEN 0 AND 1074430815551 AND vDate &gt;= cDate AND vDate &gt;= eDate ) ) ) 
+       OR
+              (    ( iDate > eDate OR status &lt; 2)
+          AND (    ( vDate BETWEEN 0 and 1074430815551 AND vDate &gt;= iDate ) 
+                OR ( iDate BETWEEN 0 and 1074430815551 AND iDate &gt;= vDate ) ) ) )
+
+For each result returned, we can do the following to determine whether
+the record should be flagged as "deleted" in the response and what the
+date in the header should be.
+
+If (eDate &gt; iDate &amp;&amp; status==2) {
+    // it's been added or modified from the OAI perspective
+    if (cDate &gt;= 0 &amp;&amp; cDate &lt;= 1074430815551 &amp;&amp; cDate &gt;= eDate &amp;&amp; cDate &gt;= vDate) {
+        // use cDate
+    } else if (eDate &gt;= 0 &amp;&amp; eDate &lt;= 1074430815551 &amp;&amp; eDate &gt;=cDate &amp;&amp; eDate &gt;=vDate) {
+        // use eDate
+    } else {
+        // use vDate
+    }
+} else {
+    // it's been deleted from the OAI perspective
+    if (vDate &gt;= 0 &amp;&amp; vDate &lt;= 1074430815551 &amp;&amp; vDate &gt;= iDate) {
+        // use vDate
+    } else {
+        // use iDate
+    }
+}
+
+        </comment>
+        <column name="itemDbID" type="int(11)" autoIncrement="true">
+            <comment>
+                A unique, auto-incremented value for referring to a particular
+                Item from other tables.
+            </comment>
+        </column>
+        <column name="itemID" type="varchar(128)">
+            <comment>
+                The external identifier of the Item, minus the oai:domain.name:
+                part.  In many cases, this will be the same as the pid.  However,
+                if a different identifier needs to be used for the OAI Item, it
+                may be indicated by the first dc:identifier in the object's "DC"
+                datastream.
+            </comment>
+        </column>
+        <column name="pid" type="varchar(32)">
+            <comment>
+                The identifier of the associated Fedora object.
+            </comment>
+        </column>
+        <column name="status" type="tinyint">
+            <comment>
+                Different, but related to the associated object's "state", this
+                indicates the Item's visibility and existence.  A value of 2
+                indicates "visible/active", 1 indicates "deleted/inactive", 
+                and 0 indicates "purged".
+            </comment>
+        </column>
+        <column name="vDate" type="bigint">
+            <comment>
+                The date the Item's visibility last changed.  That is, the
+                last date the status changed from 2 to not 2, or from not 2
+                to 2.
+            </comment>
+        </column>
     </table>
     <table name="oRecord">
-        <column name="itemDbID" type="int(11)"/>
-        <column name="repID" type="varchar(32)"/>
-        <column name="formatDbID" type="int(11)"/>
-        <column name="cDate" type="bigint"/>
-        <column name="eDate" type="bigint"/>
-        <column name="iDate" type="bigint"/>
+        <comment>
+            Information about all Records that have ever had harvestable content
+            available via the repository.
+        </comment>
+        <column name="itemDbID" type="int(11)">
+            <comment>
+                The Item this record belongs to.
+            </comment>
+        </column>
+        <column name="repID" type="varchar(32)">
+            <comment>
+                Representation id, identifying the representation of the
+                object that serves as the record data.  Datastream ID
+                is a valid repID.
+            </comment>
+        </column>
+        <column name="formatDbID" type="int(11)">
+            <comment>
+                The format of the record.
+            </comment>
+        </column>
+        <column name="cDate" type="bigint">
+            <comment>
+                The date the Record was first made eligible or its
+                contents were last changed while being eligible,
+                whichever is greater.
+            </comment>
+        </column>
+        <column name="eDate" type="bigint">
+            <comment>
+                The date the Record was most recently considered
+                eligible for publishing via OAI by virtue of its
+                associated component's state and its harvestable
+                attribute.
+            </comment>
+        </column>
+        <column name="iDate" type="bigint">
+            <comment>
+                The date the Record was most recently considered
+                INeligible for publishing ("deleted" status) by
+                virtue of its associate component's state, its
+                harvestable attribute, or its having been permanently
+                removed (purged) from the repository.  Since items
+                are only inserted into this table the first time
+                they are harvestable and active, the first value
+                will always be zero.
+            </comment>
+        </column>
     </table>
 	<table name="doRepJob">
 		<comment>Used as a queue for replication jobs.</comment>
