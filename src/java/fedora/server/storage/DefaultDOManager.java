@@ -1,11 +1,15 @@
 package fedora.server.storage;
 
 import java.io.InputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -16,25 +20,18 @@ import fedora.server.Module;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
+import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.errors.InvalidContextException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
+import fedora.server.utilities.TableCreatingConnection;
+import fedora.server.utilities.TableSpec;
 
 /**
  * Provides access to digital object readers and writers.
- * <p></p>
- * Object states are: A,L,R,N,W,C,D, documented at:
- * http://www.fedora.info/documents/master-spec.html#_Toc11835716
- * <p></p>
- * object_state_registry<br>
- * DO_PID varchar(255) NOT NULL, State char(1) NOT NULL, LockingUser varchar(16)
- * <p></p>
- * This impl gets a connection from the connection pool and keeps a hold on
- * it until the Module is shut down.  Calls to query the table are synchronized
- * because they share the same connection.
  *
  * @author cwilper@cs.cornell.edu
  */
@@ -59,7 +56,7 @@ public class DefaultDOManager
     }
 
     /**
-     * Sets initial param values.
+     * Gets initial param values.
      */
     public void initModule() {
         // storagePool (optional, default=ConnectionPoolManager's default pool)
@@ -85,7 +82,108 @@ public class DefaultDOManager
     }
     
     public void postInitModule() 
-  {/*          throws ModuleInitializationException {
+            throws ModuleInitializationException {
+        ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().getModule("fedora.server.storage.ConnectionPoolManager");
+        if (cpm==null) {
+            throw new ModuleInitializationException("ConnectionPoolManager not loaded.", getRole());
+        }
+        try {
+            if (m_storagePool==null) {
+                m_connectionPool=cpm.getPool();
+            } else {
+                m_connectionPool=cpm.getPool(m_storagePool);
+            }
+        } catch (ConnectionPoolNotFoundException cpnfe) {
+            throw new ModuleInitializationException("Couldn't get required connection pool...wasn't found", getRole());
+        }
+        String dbSpec="fedora/server/storage/resources/DefaultDOManager.dbspec";
+        InputStream specIn=this.getClass().getClassLoader().getResourceAsStream(
+                dbSpec);
+        if (specIn==null) {
+            throw new ModuleInitializationException("Cannot find required "
+                    + "resource: " + dbSpec, getRole());
+        }
+        List tSpecs=null;
+        try {
+            tSpecs=TableSpec.getTableSpecs(specIn);
+        } catch (IOException ioe) {
+            throw new ModuleInitializationException("Couldn't read dbspec :"
+                    + ioe.getMessage(), getRole());
+        } catch (InconsistentTableSpecException itse) {
+            throw new ModuleInitializationException("Inconsistent table spec :"
+                    + itse.getMessage(), getRole());
+        }
+
+        // Look at the database tables and construct a list of
+        // TableSpec objects for tables that don't exist.
+        ArrayList nonExisting=new ArrayList();
+        Connection conn=null;
+        try {
+            conn=m_connectionPool.getConnection();
+            DatabaseMetaData dbMeta=conn.getMetaData();
+            Iterator tSpecIter=tSpecs.iterator();
+            // Get a list of tables that don't exist, if any
+            ResultSet r=dbMeta.getTables(null, null, "%", null);
+            HashSet existingTableSet=new HashSet();
+            while (r.next()) {
+                existingTableSet.add(r.getString("TABLE_NAME"));
+            }
+            r.close();
+            while (tSpecIter.hasNext()) {
+                TableSpec spec=(TableSpec) tSpecIter.next();
+                if (!existingTableSet.contains(spec.getName())) {
+                    nonExisting.add(spec);
+                }
+            }
+        } catch (SQLException sqle) {
+            throw new ModuleInitializationException("Error while attempting to "
+                    + "inspect database tables: " + sqle.getMessage(), 
+                    getRole());
+        } finally {
+            if (conn!=null) {
+                m_connectionPool.free(conn);
+            }
+        }
+        
+        if (nonExisting.size()>0) {
+            Iterator nii=nonExisting.iterator();
+            int i=0;
+            StringBuffer msg=new StringBuffer();
+            msg.append("One or more required tables did not exist (");
+            while (nii.hasNext()) {
+                if (i>0) {
+                    msg.append(", ");
+                }
+                msg.append(((TableSpec) nii.next()).getName());
+                i++;
+            }
+            msg.append(")");
+            System.out.println(msg.toString());
+            TableCreatingConnection tcConn=null;
+            try {
+                tcConn=m_connectionPool.getTableCreatingConnection();
+                if (tcConn==null) {
+                    throw new SQLException("Unable to construct CREATE TABLE "
+                        + "statement(s) because there is no DDLConverter "
+                        + "registered for this connection type.");
+                }
+            } catch (SQLException sqle) {
+                throw new ModuleInitializationException("Error while attempting"
+                    + " to create non-existing table(s): " + sqle.getMessage(), 
+                    getRole());
+            } finally {
+                if (tcConn!=null) {
+                    m_connectionPool.free(tcConn);
+                }
+            }
+        }
+/*        
+        
+        TableCreatingConnection connection=m_connectionPool.
+                getTableCreatingConnection();
+        if (connection==null) {
+            boolean 
+        }
         ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().getModule("fedora.server.storage.ConnectionPoolManager");
         try {
             if (m_osrPoolName.length()==0) {
@@ -312,12 +410,4 @@ public class DefaultDOManager
     public void dropObject(String pid) {
     }
 
-    // consider this more...should i really lock a connection?
-    // maybe that's not actually faster, since it has to be synch'd.
-    public void shutdownModule() {
-        if (m_connectionPool!=null) {
-            m_connectionPool.free(m_connection);
-        }
-    }
-    
 }
