@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
+import java.util.HashMap;
 
 
 // TrAX classes
@@ -55,6 +56,8 @@ public class DOValidatorSchematron
   private StreamSource preprocessorSource;
   private StreamSource validatingStyleSheet;
   private StringBuffer string = new StringBuffer();
+
+  private static HashMap generatedStyleSheets = new HashMap();
 
   /**
    * Constructs a DOValidatorSchematron instance with a Schematron preprocessor
@@ -159,9 +162,15 @@ public class DOValidatorSchematron
   private StreamSource setUp(String preprocessorPath, String fedoraschemaPath, String phase)
     throws ObjectValidityException
   {
-    rulesSource = fileToStreamSource(fedoraschemaPath);
-    preprocessorSource = fileToStreamSource(preprocessorPath);
-    return(createValidatingStyleSheet(rulesSource, preprocessorSource, phase));
+    String key = fedoraschemaPath + "#" + phase;
+    ByteArrayOutputStream out = (ByteArrayOutputStream) generatedStyleSheets.get(key);
+    if ( out == null ) {
+        rulesSource = fileToStreamSource(fedoraschemaPath);
+        preprocessorSource = fileToStreamSource(preprocessorPath);
+        out = createValidatingStyleSheet(rulesSource, preprocessorSource, phase);
+        generatedStyleSheets.put(key, out);
+    }
+    return new StreamSource(new ByteArrayInputStream(out.toByteArray()));
   }
 
   /**
@@ -179,10 +188,10 @@ public class DOValidatorSchematron
    * @param phase the phase in the fedora object lifecycle to which
    *                      validation should pertain.  (Currently options are
    *                      "ingest" and "store"
-   * @return StreamSource
+   * @return A ByteArrayOutputStream containing the stylesheet
    * @throws ObjectValidityException
    */
-  private StreamSource createValidatingStyleSheet(
+  private ByteArrayOutputStream createValidatingStyleSheet(
     StreamSource rulesSource, StreamSource preprocessorSource, String phase)
     throws ObjectValidityException
   {
@@ -201,7 +210,7 @@ public class DOValidatorSchematron
        System.err.println("Schematron validation: " + e.getMessage()) ;
        throw new ObjectValidityException(e.getMessage());
     }
-    return(new StreamSource(new ByteArrayInputStream(out.toByteArray())));
+    return out;
   }
 
   /** Code based on com.jclark.xsl.sax.Driver: **/
