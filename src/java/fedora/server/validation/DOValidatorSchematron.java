@@ -16,6 +16,7 @@ import java.io.Writer;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.Properties;
+import java.net.URL;
 
 // DOM classes
 import org.w3c.dom.Document;
@@ -66,96 +67,28 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class DOValidatorSchematron
 {
-  /**
-   * preprocessorID: Configuration variable for Schematron Validation
-   * (This is normally set via Server configuration and provided in constructors.)
-   * This value are used for stand-alone testing via main();
-   */
-  private static final String preprocessorID = "schematron/preprocessor.xslt";
 
   private StreamSource rulesSource;
   private StreamSource preprocessorSource;
   private StreamSource validatingStyleSheet;
   private StringBuffer string = new StringBuffer();
 
-  public static void main(String[] args)
-  {
-    if (args.length < 2)
-    {
-      System.err.println("usage: java DOValidatorSchematron schemaLocation objectLocation workFlowPhase" + "\n" +
-        "  schemaLocation: the file path of the Schematron schema to validate against" + "\n" +
-        "  objectLocation: the file path of the object to be validated" + "\n" +
-        "  workFlowPhase: {ingest|store} the phase of the object lifecycle to which validation pertains");
-      System.exit(1);
-    }
-
-    try
-    {
-      DOValidatorSchematron dovs = new DOValidatorSchematron(args[0], args[2]);
-      dovs.validate(new File(args[1]));
-    }
-    catch (ServerException e)
-    {
-      System.out.println("DOValidatorSchematraon caught ServerException in main().");
-      System.out.println("Suppressing message since not attached to Server.");
-    }
-    catch (Throwable th)
-    {
-      System.out.println("DOValidatorSchematron returned error in main(). "
-                + "The underlying error was a " + th.getClass().getName()
-                + "The message was "  + "\"" + th.getMessage() + "\"");
-    }
-  }
-
   /**
    * Constructs a DOValidatorSchematron instance with a Schematron preprocessor
    * that is provided by the calling class.  This will allow the DOValidator module
    * to pass in the preprocessor that is configured with the Fedora repository.
    *
-   * @param schemaID  the URL of the Schematron schema
-   * @param preprocessorID the location of the Schematron preprocessor
+   * @param schemaPath  the URL of the Schematron schema
+   * @param preprocessorPath the location of the Schematron preprocessor
    * @param workFlowPhase the phase in the fedora object lifecycle to which
    *                      validation should pertain.  (Currently options are
    *                      "ingest" and "store"
    * @throws ObjectValidityException
    */
-  public DOValidatorSchematron(String schemaID, String preprocessorID, String workFlowPhase)
+  public DOValidatorSchematron(String schemaPath, String preprocessorPath, String workFlowPhase)
       throws ObjectValidityException
   {
-    validatingStyleSheet = setUp(preprocessorID, schemaID, workFlowPhase);
-  }
-
-  /**
-   * Constructs a DOValidatorSchematron instance and use the Schematron preprocessor
-   * that is set as default in this class.
-   *
-   * @param schemaID  the URL of the Schematron schema
-   * @param workFlowPhase the phase in the fedora object lifecycle to which
-   *                      validation should pertain.  (Currently options are
-   *                      "ingest" and "store"
-   * @throws ObjectValidityException
-   */
-  public DOValidatorSchematron(String schemaID, String workFlowPhase)
-      throws ObjectValidityException
-  {
-    validatingStyleSheet = setUp(preprocessorID, schemaID, workFlowPhase);
-  }
-
-   /**
-   * Constructs a DOValidatorSchematron instance and use the Schematron preprocessor
-   * that is set as default in this class.  Constructor also allows
-   * the Schematron schema to be passed in as InputStream.
-   *
-   * @param schema  the URL of the Schematron schema
-   * @param workFlowPhase the phase in the fedora object lifecycle to which
-   *                      validation should pertain.  (Currently options are
-   *                      "ingest" and "store"
-   * @throws ObjectValidityException
-   */
-  public DOValidatorSchematron(InputStream schema, String workFlowPhase)
-      throws ObjectValidityException
-  {
-    validatingStyleSheet = setUp(preprocessorID, schema, workFlowPhase);
+    validatingStyleSheet = setUp(preprocessorPath, schemaPath, workFlowPhase);
   }
 
   /**
@@ -232,38 +165,19 @@ public class DOValidatorSchematron
    * Run setup to prepare for Schematron validation.  This entails dynamically
    * creating the validating stylesheet using the preprocessor and the schema.
    *
-   * @param preprocessorID the location of the Schematron preprocessor
-   * @param fedoraSchemaID the URL of the Schematron schema
+   * @param preprocessorPath the location of the Schematron preprocessor
+   * @param fedoraschemaPath the URL of the Schematron schema
    * @param workFlowPhase the phase in the fedora object lifecycle to which
    *                      validation should pertain.  (Currently options are
    *                      "ingest" and "store"
    * @return StreamSource
    * @throws ObjectValidityException
    */
-  private StreamSource setUp(String preprocessorID, String fedoraSchemaID, String workFlowPhase)
+  private StreamSource setUp(String preprocessorPath, String fedoraschemaPath, String workFlowPhase)
     throws ObjectValidityException
   {
-    rulesSource = new StreamSource(fedoraSchemaID);
-    preprocessorSource = new StreamSource(preprocessorID);
-    return(createValidatingStyleSheet(rulesSource, preprocessorSource, workFlowPhase));
-  }
-
-  /**
-   * Run setup to prepare for Schematron validation.  This entails dynamically
-   * creating the validating stylesheet using the preprocessor and the schema.
-   * @param preprocessorID the location of the Schematron preprocessor
-   * @param fedoraSchema the URL of the Schematron schema
-   * @param workFlowPhase the phase in the fedora object lifecycle to which
-   *                      validation should pertain.  (Currently options are
-   *                      "ingest" and "store"
-   * @return StreamSource
-   * @throws ObjectValidityException
-   */
-  private StreamSource setUp(String preprocessorID, InputStream fedoraSchema, String workFlowPhase)
-    throws ObjectValidityException
-  {
-    rulesSource = new StreamSource(fedoraSchema);
-    preprocessorSource = new StreamSource(preprocessorID);
+    rulesSource = fileToStreamSource(fedoraschemaPath);
+    preprocessorSource = fileToStreamSource(preprocessorPath);
     return(createValidatingStyleSheet(rulesSource, preprocessorSource, workFlowPhase));
   }
 
@@ -305,5 +219,32 @@ public class DOValidatorSchematron
        throw new ObjectValidityException(e.getMessage());
     }
     return(new StreamSource(new ByteArrayInputStream(out.toByteArray())));
+  }
+
+  /** Code based on com.jclark.xsl.sax.Driver: **/
+  /**
+   * Generates a StreamSource from a file name.
+   */
+  static public StreamSource fileToStreamSource(String str) {
+    return fileToStreamSource(new File(str));
+  }
+
+  static public StreamSource fileToStreamSource(File file) {
+    String path = file.getAbsolutePath();
+    String fSep = System.getProperty("file.separator");
+    if (fSep != null && fSep.length() == 1)
+      path = path.replace(fSep.charAt(0), '/');
+    if (path.length() > 0 && path.charAt(0) != '/')
+      path = '/' + path;
+    try {
+      String url = new URL("file", null, path).toString();
+      System.out.println("file to URL for StreamSource: " + url);
+      return new StreamSource(url);
+    }
+    catch (java.net.MalformedURLException e) {
+      /* According to the spec this could only happen if the file
+  protocol were not recognized. */
+      throw new Error("unexpected MalformedURLException");
+    }
   }
 }
