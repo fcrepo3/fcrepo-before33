@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 /**
  * Tests the METS deserializer and serializer by opening a METS
- * file (supplied at command-line), deserializing it, re-serializing it, 
+ * file (supplied at command-line), deserializing it, re-serializing it,
  * and sending it to STDOUT.
  *
  * @author cwilper@cs.cornell.edu
@@ -56,7 +56,8 @@ public class METSInOutTest {
             System.out.println("Done.");
             if (args.length>1) {
                 ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
-                DOValidatorImpl v=new DOValidatorImpl(null, null, "dist/server/xsd/fedora-mets.xsd",
+                DOValidatorImpl v=new DOValidatorImpl(
+                        null, "http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora-ext.xsd",
                         "dist/server/schematron/preprocessor.xslt",
                         "dist/server/schematron/fedoraRules.xml",
                         "dist/server/schematron/fedoraValidator.xslt", null);
@@ -75,7 +76,7 @@ public class METSInOutTest {
                 System.out.println("Here it is:");
                 System.out.println(out.toString("UTF-8"));
             }
-            
+
         } catch (Exception e) {
             System.out.println("Error: (" + e.getClass().getName() + "):" + e.getMessage());
             e.printStackTrace();
