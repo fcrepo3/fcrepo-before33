@@ -210,7 +210,7 @@ public class DefaultDOReplicator
             
             if (dissDbIDs.size()==0) {
                 logFinest("DefaultDOReplication.updateComponents: Object "
-                        + "has no disseminators; component's dont need updating.");
+                        + "has no disseminators; components dont need updating.");
                 return false;
             }
             results.close();
@@ -247,8 +247,30 @@ public class DefaultDOReplicator
               if (!diss.dissLabel.equals(dissLabel)
                   || !diss.bMechID.equals(bMechPID)
                   || !diss.dissState.equals(dissState)) {
+                // we might need to set the bMechDbID to the id for the new one,
+                // if the mechanism changed
+                int newBMechDbID; 
+                if (diss.bMechID.equals(bMechPID)) {
+                  newBMechDbID=bMechDbID; 
+                } else {
+                  logFinest("Since the BMech changed, the diss table's bMechDbID will be changed.");
+                  results=logAndExecuteQuery(st, "SELECT bMechDbID "
+                                               + "FROM bMech "
+                                               + "WHERE bMechPID='" 
+                                                       + diss.bMechID + "'");
+                  if (!results.next()) {
+                    // shouldn't have gotten this far, but if so...
+                    throw new ReplicationException("The behavior mechanism "
+                        + "changed to " + diss.bMechID + ", but there is no "
+                        + "record of that object in the dissemination db.");
+                  }
+                  newBMechDbID=results.getInt("bMechDbID");
+                  results.close();
+                }
+                // update the diss table with all new, correct values
                 logAndExecuteUpdate(st, "UPDATE diss SET dissLabel='"
                     + SQLUtility.aposEscape(diss.dissLabel)
+                    + "', bMechDbID=" + newBMechDbID + ", "
                     + "', dissID='" + diss.dissID + "', "
                     + "dissState='" + diss.dissState + "' "
                     + " WHERE dissDbID=" + dissDbID + " AND bDefDbID=" + bDefDbID + " AND bMechDbID=" + bMechDbID);
@@ -907,7 +929,12 @@ public class DefaultDOReplicator
      */
     public void replicate(DOReader doReader)
             throws ReplicationException, SQLException {
-        if (!updateComponents(doReader) && !addNewComponents(doReader)) {
+        // do updates if the object already existed
+        boolean componentsUpdated=updateComponents(doReader);
+        // and do adds if the object already existed
+        boolean componentsAdded=addNewComponents(doReader);
+        // ...if neither returned true, assume the object never existed
+        if (!componentsUpdated && !componentsAdded) {
             Connection connection=null;
             try 
             {
