@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+
+<head>
+  <title>Fedora Performance Testing and Tuning</title>
+  <meta name="robots" content="all"/>
+  <link href="../docstyle.css" rel="stylesheet" type="text/css"/>
+  <script language="Javascript">
+    
+  </script>
+</head>
+
+<body>
+  <div id="header">
+    <div id="logo">
+      <a href="../index.html"><img src="../images/logo_44x60.gif"
+      alt="Fedora logo" /></a>
+    </div>
+
+    <div id="title">
+      <h1>Fedora Performance Testing and Tuning</h1>
+
+      <h2>Fedora Release 2.0</h2>
+    </div>
+  </div>
+ <div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+      <ol>
+        <li> <a href="#intro">Introduction</a></li>
+        <li> <a href="#graphs">Graphs</a></li>
+      </ol>
+    </div>
+  </div>
+  
+  
+<div class="sec1"> 
+  <p><a name="intro"></a>A variety of concerns led the core Fedora developers 
+    to consider removing the SQL dissemination index from Fedora. These include: 
+    eliminating possibly unneeded complexity and accompanying software maintenance; 
+    support for multiple DBMS implementations; expected scaling issues with the 
+    index with growth in the number of objects in a repository.</p>
+  <p>In October, 2004, we acquired a new test host and ran a series of performance 
+    tests to compare dissemination times with and without the SQL dissemination 
+    index. (With the index, reading and parsing an object as XML is not required 
+    for a dissemination; without the index, reading and parsing an object as XML 
+    is required.) The SQL dissemination index is included by driving the test 
+    with a URL excluding a version date; in this case, current Fedora software 
+    1.0-2.0 will utilize the SQL dissemination index. The SQL dissemination index 
+    is excluded with a URL including a version date.</p>
+  <p>Test objects of varying size were modeled by objects with 1, 2, or 4 datastreams. 
+    Each of these object sizes were also instanced as E, M, or X type objects. 
+    JMeter was used to drive a Fedora 1.x repository, at four levels of simulated 
+    user load: with 1, 10, 25, and 50 users. Each of these 36 combinations were 
+    run for 5 minutes, with a 300-millisecond imposed lag in a thread (i.e., per 
+    simulated user) after results received and before the next request was sent. 
+    Each combination was run independently and alone, with no other significant 
+    load on the server. After each combination's run, a 5-minute wait was imposed 
+    to allow the server to achieve a &quot;quiet&quot; state before the next test.</p>
+  <p>The included graphs compare these tests. Even in the extreme case of &quot;large&quot; 
+    (4-datastream) objects driven by 50 users, the penalty for not using the SQL 
+    disseminator index is only roughly 50-100% (i.e., the average response times 
+    are at most doubled). Though no decision has been made to remove the index 
+    (or make it optional in Fedora configuration), we feel that the penalty is 
+    not so harsh as to prevent eliminating it. Also, other optimizations might 
+    be implemented to help the situation.</p>
+  <p><a name="graphs"></a></p>
+</div>
+<div class="sec1">
+ <img src="images/1xdatastreams.jpg">
+</div>
+<div class="sec1">
+  <img src="images/2xdatastreams.jpg">
+</div>
+<div class="sec1">
+  <img src="images/4xdatastreams.jpg">
+</div>  
+  <div id="footer">
+    <div id="copyright">
+      Copyright &copy; 2005 Fedora Project
+    </div>
+
+    <div id="lastModified">
+      Last Modified <script type="text/javascript">
+      //<![CDATA[
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+      //]]>
+      </script>
+    </div>
+  </div>
+</body>
+</html>
