@@ -86,16 +86,20 @@ public class KowariRIStore extends StdoutLogging implements RIStore {
     public RIResultIterator executeQuery(RIQuery query) throws ResourceIndexException {
         String queryLanguage = query.getQueryLanguage();
         if (m_supportedQueryLanguages.contains(queryLanguage) && queryLanguage.equals("rdql")) {
-            logFinest("Started pre-query flush (rdql)");
-            flush();
-            logFinest("Finished pre-query flush (rdql)");
+            if (query.getRequiresCommitBeforeQuery()) {
+                logFinest("Started pre-query flush (rdql)");
+                flush();
+                logFinest("Finished pre-query flush (rdql)");
+            }
             // start query + iteration
             logFinest("Started query to resource index (rdql).");
             return executeQuery((RDQLQuery)query);
         } else if (m_supportedQueryLanguages.contains(queryLanguage) && queryLanguage.equals("itql")) {
-            logFinest("Started pre-query flush (itql)");
-            flush();
-            logFinest("Finished pre-query flush (itql)");
+            if (query.getRequiresCommitBeforeQuery()) {
+                logFinest("Started pre-query flush (rdql)");
+                flush();
+                logFinest("Finished pre-query flush (rdql)");
+            }
             logFinest("Started query to resource index (itql).");
             return executeQuery((ITQLQuery)query);
         } else {
@@ -156,6 +160,10 @@ public class KowariRIStore extends StdoutLogging implements RIStore {
         flush();
 		m_model.write(rdfxml);
 	}
+    
+    public void commit() {
+        flush();
+    }
     
     private JenaResultIterator executeQuery(RDQLQuery query) {
 	    RdqlQuery q = new RdqlQuery(query.getQuery());

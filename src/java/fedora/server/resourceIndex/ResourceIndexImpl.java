@@ -406,6 +406,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 //	            System.out.println(methodName + " *parmType: " + mparms[j].parmType);
 //	        }
 	    }
+        
+        // Performance hack:
+        // To ensure that bDef methods are available when inserting a data object
+        // (which queries the graph for the methods) we force a commit (flush) now
+        // TODO ensure this is taken care whenever a bdef's mmap is modified/deleted/etc
+        m_store.commit();
 	}
 	
     private void addRelsDatastream(Datastream ds) {
@@ -463,7 +469,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	
 	private List getMethodNames(String bdefPID) throws ResourceIndexException {
 		RDQLQuery query = new RDQLQuery("SELECT ?o WHERE (<" + getDOURI(bdefPID) + "> <" + DEFINES_METHOD_URI + "> ?o)");
-		JenaResultIterator results = (JenaResultIterator)executeQuery(query);
+		query.setRequiresCommitBeforeQuery(false);
+        JenaResultIterator results = (JenaResultIterator)executeQuery(query);
 		
 		Value v;
 		List methods = new ArrayList();

@@ -7,6 +7,7 @@ package fedora.server.resourceIndex;
 public abstract class RIQuery {
     private String queryLanguage;
     private String query;
+    private boolean requiresCommitBeforeQuery = true;
     
     protected RIQuery(String queryString, String queryLanguage) {
         setQuery(queryString);
@@ -31,6 +32,15 @@ public abstract class RIQuery {
     public String getQueryLanguage() {
         return queryLanguage;
     }
+    
+    public void setRequiresCommitBeforeQuery(boolean b) {
+        requiresCommitBeforeQuery = b;
+    }
+    
+    public boolean getRequiresCommitBeforeQuery() {
+        return requiresCommitBeforeQuery;
+    }
+    
     /**
      * @param queryLanguage The queryLanguage to set.
      */

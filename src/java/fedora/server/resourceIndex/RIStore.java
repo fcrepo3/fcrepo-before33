@@ -39,4 +39,6 @@ public interface RIStore {
 	public void insertTypedLiteral(String subject, String predicate, String object, String datatype);
 	
 	public void insertLocalLiteral(String subject, String predicate, String object, String language);
+    
+    public void commit();
 }
