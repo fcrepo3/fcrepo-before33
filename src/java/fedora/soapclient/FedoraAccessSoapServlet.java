@@ -3,6 +3,7 @@ package fedora.soapclient;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PipedReader;
@@ -107,10 +108,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private static final String FEDORA_TYPE_URI =
       "http://www.fedora.info/definitions/1/0/types/";
 
-  /** URI of Fedora Access SOAP service. */
-  private static final String FEDORA_ACCESS_ENDPOINT =
-      "http://localhost:8080/fedora/access/soap";
-
   /** GetBehaviorDefinitions service name. */
   private static final String GET_BEHAVIOR_DEFINITIONS =
       "GetBehaviorDefinitions";
@@ -135,7 +132,13 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private static final String GET_OBJECT_PROFILE =
       "GetObjectProfile";
 
-  private static final String SERVLET_PATH = "/soapclient/apia?";
+  private static final String soapClientPropertiesFile =
+      "WEB-INF/soapclient.properties";
+
+  /** URI of Fedora Access SOAP service. */
+  private static String FEDORA_ACCESS_ENDPOINT = null;
+
+  private static String SERVLET_PATH = null;
 
   /** User-supplied method parameters from servlet URL. */
   private Hashtable h_userParms = null;
@@ -267,7 +270,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               {
                 html.append("<td><font color='blue'><a href='"
                     + SERVLET_PATH
-                    + "action_=GetObjectMethods&PID_=" + PID+ "'>" + PID
+                    + "?action_=GetObjectMethods&PID_=" + PID+ "'>" + PID
                     + "</a></font></td>");
                 html.append("<td><font color='green'>"
                     + DateUtility.convertDateToString(versDateTime)
@@ -369,7 +372,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               {
                 html.append("<td><font color=\"blue\"> " + "<a href=\""
                     + SERVLET_PATH
-                    + "action_=GetObjectMethods&PID_="
+                    + "?action_=GetObjectMethods&PID_="
                     + PID + "\"> " + PID + " </a></font></td>");
                 html.append("<td><font color=\"green\"> " + bDefPID
                     + " </font></td>");
@@ -378,7 +381,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                     + "</font></td>");
                 html.append("<td><font color=\"red\"> " + "<a href=\""
                     + SERVLET_PATH
-                    + "action_=GetDissemination&PID_="
+                    + "?action_=GetDissemination&PID_="
                     + PID + "&bDefPID_=" + bDefPID + "&methodName_="
                     + results.getMethodName() + "\"> "
                     + results.getMethodName()
@@ -388,7 +391,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 html.append("<td colspan='3' rowspan='" + rows + "'></td>");
                 html.append("<td><font color=\"red\"> " + "<a href=\""
                     + SERVLET_PATH
-                    + "action_=GetDissemination&PID_="
+                    + "?action_=GetDissemination&PID_="
                     + PID + "&bDefPID_=" + bDefPID + "&methodName_="
                     + results.getMethodName() + "\"> "
                     + results.getMethodName()
@@ -397,7 +400,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               {
                 html.append("<td><font color=\"red\"> " + "<a href=\""
                     + SERVLET_PATH
-                    + "action_=GetDissemination&PID_="
+                    + "?action_=GetDissemination&PID_="
                     + PID + "&bDefPID_=" + bDefPID + "&methodName_="
                     + results.getMethodName() + "\"> "
                     + results.getMethodName()
@@ -603,7 +606,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               //File xslFile = new File("dist/server/access/objectmethods.xslt");
               TransformerFactory factory = TransformerFactory.newInstance();
               //Templates template = factory.newTemplates(new StreamSource(xslFile));
-              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("xsl/objectmethods.xslt")));
+              Templates template = factory.newTemplates(new StreamSource(this.getServletContext().getRealPath("WEB-INF/xsl/objectmethods.xslt")));
               Transformer transformer = template.newTransformer();
               Properties details = template.getOutputProperties();
               transformer.transform(new StreamSource(pr), new StreamResult(out));
@@ -669,7 +672,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               // Transform results into an html table
               response.setContentType(CONTENT_TYPE_HTML);
-              File xslFile = new File("dist/server/access/viewObjectProfile.xslt");
+              //File xslFile = new File("dist/server/access/viewObjectProfile.xslt");
+              File xslFile = new File(this.getServletContext().getRealPath("WEB-INF/xsl/viewObjectProfile.xslt"));
               TransformerFactory factory = TransformerFactory.newInstance();
               Templates template = factory.newTemplates(new StreamSource(xslFile));
               Transformer transformer = template.newTransformer();
@@ -1161,6 +1165,24 @@ public class FedoraAccessSoapServlet extends HttpServlet
    */
   public void init() throws ServletException
   {
+    try
+    {
+      System.out.println("realpath: "+this.getServletContext().getRealPath(soapClientPropertiesFile));
+      FileInputStream fis = new FileInputStream(this.getServletContext().getRealPath(soapClientPropertiesFile));
+      Properties p = new Properties();
+      p.load(fis);
+      FEDORA_ACCESS_ENDPOINT = p.getProperty("fedoraEndpoint");
+      SERVLET_PATH = p.getProperty("soapClientServletPath");
+      System.out.println("Endpoint: "+this.FEDORA_ACCESS_ENDPOINT);
+      System.out.println("ServletPath: "+this.SERVLET_PATH);
+
+    } catch (Throwable th)
+    {
+      String message = "[FedoraSOAPServlet] An error has occurred. "
+          + "The error was a \"" + th.getClass().getName() + "\"  . The "
+          + "Reason: \"" + th.getMessage() + "\"  .";
+      throw new ServletException(message);
+    }
   }
 
   /**
