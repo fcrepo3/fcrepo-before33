@@ -4,17 +4,22 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
-import java.util.HashMap;
 
+import fedora.server.Parameterized;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.utilities.ConfigurationLoader;
+import fedora.server.utilities.DDLConverter;
+import fedora.server.utilities.SQLUtility;
+import fedora.server.TestLogging;
 
 import org.trippi.RDFFormat;
 import org.trippi.TriplestoreConnector;
-import org.trippi.TriplestoreWriter;
 
 import junit.framework.TestCase;
 
@@ -23,25 +28,16 @@ import junit.framework.TestCase;
  *  
  */
 public class TestResourceIndexImpl extends TestCase {
-    private static final String LOCAL_SERVER_PATH = "/tmp/fedoraTest";
-    private static final String MODEL_NAME = "testResourceIndex";
-    private static final String SERVER_NAME = "testFedora";
+    
     private static final String DEMO_OBJECTS_ROOT_DIR = "src/test/fedora/server/resourceIndex/foxmlTestObjects";
-
-    private static final String CP_DRIVER = "com.mysql.jdbc.Driver";
-    private static final String CP_URL = "jdbc:mysql://localhost/fedora20?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true";
-    private static final String CP_USERNAME = "fedoraAdmin";
-    private static final String CP_PASSWORD = "fedoraAdmin";
-    private static final int CP_ICONN = 1;
-    private static final int CP_MAXCONN = 1;
-    private static final boolean CP_WAIT = true;
-
-    private static final String TRIPPI_CONNECTOR_CLASSNAME = "org.trippi.impl.kowari.KowariConnector";
-
+    
+    private static String tsPath;
+    private static String fedoraHome = System.getProperty("fedora.home");
     private ResourceIndex m_ri;
     private ConnectionPool m_cPool;
     private TriplestoreConnector m_conn;
-    private TriplestoreWriter m_writer;
+    
+    private int tc = 0;
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestResourceIndexImpl.class);
@@ -51,44 +47,71 @@ public class TestResourceIndexImpl extends TestCase {
      * @see TestCase#setUp()
      */
     protected void setUp() throws Exception {
-        // the database connection pool
-        m_cPool = new ConnectionPool(CP_DRIVER, CP_URL, CP_USERNAME, CP_PASSWORD,
-                CP_ICONN, CP_MAXCONN, CP_WAIT);
-
-        // trippi
-        Map config = new HashMap();
-        config.put("modelName", MODEL_NAME);
-        config.put("poolMaxGrowth", "-1");
-        config.put("path", LOCAL_SERVER_PATH);
-        config.put("bufferFlushBatchSize", "20000");
-        config.put("autoCreate", "true");
-        config.put("bufferSafeCapacity", "40000");
-        config.put("autoFlushDormantSeconds", "15");
-        config.put("poolInitialSize", "3");
-        config.put("serverName", SERVER_NAME);
-        config.put("readOnly", "false");
-        config.put("autoTextIndex", "false");
-        config.put("autoFlushBufferSize", "20000");
-        config.put("remote", "false");
-        config.put("memoryBuffer", "true");
-
-        m_conn = TriplestoreConnector.init(TRIPPI_CONNECTOR_CLASSNAME, config);
-        m_writer = m_conn.getWriter();
-        m_ri = new ResourceIndexImpl(3, m_conn, m_cPool, null);
+        if (fedoraHome == null || fedoraHome.equals("")) {
+            fedoraHome = "dist";
+        }
+        
+        ConfigurationLoader cl = new ConfigurationLoader(fedoraHome, "test.fcfg"); 
+        
+        Map riMP = cl.getModuleParameters("fedora.server.resourceIndex.ResourceIndex");
+        String level = (String)riMP.get("level");
+        String datastoreId = (String)riMP.get("datastoreId");
+        
+        Map cpMP = cl.getModuleParameters("fedora.server.storage.ConnectionPoolManager");
+        String cPoolName = (String)cpMP.get("defaultPoolName");
+        
+        Parameterized cpConf = cl.getDatastoreConfig(cPoolName);
+        Map cpP = cpConf.getParameters();
+        String cpUserName = (String)cpP.get("dbUsername");
+        String cpPassword = (String)cpP.get("dbPassword");
+        String cpURL = (String)cpP.get("jdbcURL");
+        String cpDriver = (String)cpP.get("jdbcDriverClass");
+        String cpDDLConverter = (String)cpP.get("ddlConverter");
+        int cpIConn = Integer.parseInt((String)cpP.get("minPoolSize"));
+        int cpMaxConn = Integer.parseInt((String)cpP.get("maxPoolSize"));
+        DDLConverter ddlConverter=null;
+        if (cpDDLConverter != null) {
+            ddlConverter=(DDLConverter) Class.forName(cpDDLConverter).newInstance();
+        }
+        
+        ConnectionPool m_cPool = new ConnectionPool(cpDriver, cpURL, cpUserName, 
+                                                    cpPassword, cpIConn, cpMaxConn, true, ddlConverter);
+        
+        String dbSpec="src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec";
+        InputStream specIn = new FileInputStream(dbSpec);
+        if (specIn==null) {
+            throw new IOException("Cannot find required "
+                + "resource: " + dbSpec);
+        }
+        SQLUtility.createNonExistingTables(m_cPool, specIn, new TestLogging());
+        
+        
+        Parameterized tsConf = cl.getDatastoreConfig(datastoreId);
+        Map tsP = tsConf.getParameters();
+        String connectorClassName = (String) tsP.get("connectorClassName");
+        tsPath = (String)tsP.get("path");
+        
+        m_conn = TriplestoreConnector.init(connectorClassName, tsP);
+        
+        m_ri = new ResourceIndexImpl(1, m_conn, m_cPool, null);
 
         // needed by the deserializer
         System.setProperty("fedoraServerHost", "localhost");
         System.setProperty("fedoraServerPort", "8080");
+        
+        //
+        DigitalObject bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/bdefs/demo_8.xml"));
+        DigitalObject bmech = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/bmechs/demo_9.xml"));
+        DigitalObject dataobject = getDigitalObject(new File(
+                DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_10.xml"));
     }
 
     /*
      * @see TestCase#tearDown()
      */
     protected void tearDown() throws Exception {
-        if (m_writer != null) {
-            m_writer.close();
-            m_writer = null;
-        }
         if (m_conn != null) {
             m_conn.close();
             m_conn = null;
@@ -98,23 +121,43 @@ public class TestResourceIndexImpl extends TestCase {
             m_cPool = null;
         }
         m_ri = null;
-        deleteDirectory(LOCAL_SERVER_PATH);
+        deleteDirectory(tsPath);
     }
 
-    //    public void testAddDigitalObjects() throws Exception {
-    //        addBDefs();
-    //        addBMechs();
-    //        addDataObjects();
-    //    	
-    //    	m_writer.write(new FileOutputStream("/tmp/out.rdf"));
-    //    }
+    public void testAddDigitalObject() throws Exception {
+        DigitalObject obj = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/dataobjects/demo_10.xml"));
+        m_ri.addDigitalObject(obj);
+    }
 
-//    public void testAddDigitalObject() throws Exception {
-//        DigitalObject obj = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-//                + "/dataobjects/demo_10.xml"));
-//        m_ri.addDigitalObject(obj);
-//    }
+    public void testAddDatastream() {
+        
+    }
 
+    public void testAddDisseminator() {
+    }
+
+    public void testModifyDigitalObject() {
+    }
+
+    public void testModifyDatastream() {
+    }
+
+    public void testModifyDissemination() {
+    }
+
+    public void testDeleteDigitalObject() throws Exception {
+        DigitalObject obj = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR +
+ "/dataobjects/demo_10.xml"));
+        m_ri.deleteDigitalObject(obj);
+    }
+
+    public void testDeleteDatastream() {
+    }
+
+    public void testDeleteDissemination() {
+    }
+        
     public void testAddAndDelete() throws Exception {
         DigitalObject bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/bdefs/demo_8.xml"));
@@ -122,66 +165,40 @@ public class TestResourceIndexImpl extends TestCase {
                 + "/bmechs/demo_9.xml"));
         DigitalObject dataobject = getDigitalObject(new File(
                 DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_10.xml"));
-
+    
         m_ri.addDigitalObject(bdef);
-        m_writer.flushBuffer();
+        m_ri.commit();
         int a = m_ri.countTriples(null, null, null, 0);
         assertTrue(m_ri.countTriples(null, null, null, 0) > 0);
         
         m_ri.addDigitalObject(bmech);
-        m_writer.flushBuffer();
+        m_ri.commit();
         int b = m_ri.countTriples(null, null, null, 0);
         assertTrue(b > a);
         
         m_ri.addDigitalObject(dataobject);
-        m_writer.flushBuffer();
+        m_ri.commit();
         int c = m_ri.countTriples(null, null, null, 0);
         assertTrue(c > b);
         
         m_ri.export(new FileOutputStream("/tmp/out.rdf"), RDFFormat.RDF_XML);
         
         m_ri.deleteDigitalObject(dataobject);
-        m_writer.flushBuffer();
+        m_ri.commit();
         int d = m_ri.countTriples(null, null, null, 0);
         assertTrue(d == b);
         
         m_ri.deleteDigitalObject(bmech);
-        m_writer.flushBuffer();
+        m_ri.commit();
+        
         int e = m_ri.countTriples(null, null, null, 0);
         assertTrue(e == a);
         
         m_ri.deleteDigitalObject(bdef);
-        m_writer.flushBuffer();
+        m_ri.commit();
         int f = m_ri.countTriples(null, null, null, 0);
         assertEquals(m_ri.countTriples(null, null, null, 0), 0);
     }
-
-    //    public void testAddDatastream() {
-    //    }
-    //
-    //    public void testAddDissemination() {
-    //    }
-    //
-    //    public void testModifyDigitalObject() {
-    //    }
-    //
-    //    public void testModifyDatastream() {
-    //    }
-    //
-    //    public void testModifyDissemination() {
-    //    }
-    //
-    //    public void testDeleteDigitalObject() throws Exception {
-    //        DigitalObject obj = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR +
-    // "/dataobjects/demo_10.xml"));
-    //        m_ri.deleteDigitalObject(obj);
-    //    }
-    //
-    //    public void testDeleteDatastream() {
-    //    }
-    //
-    //    public void testDeleteDissemination() {
-    //    }
 
     private void addDigitalObjects(File dir) throws Exception {
         FilenameFilter filter = new FilenameFilter() {
