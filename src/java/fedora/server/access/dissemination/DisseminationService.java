@@ -104,7 +104,8 @@ public class DisseminationService
           s_server.logFinest("[DisseminationService] datastreamExpirationLimit: "
               + datastreamExpirationLimit);
         }
-        String dsMediation = s_server.getParameter("doDatastreamMediation");
+        String dsMediation =
+            s_server.getModule("fedora.server.access.Access").getParameter("doMediateDatastreams");
         if (dsMediation == null || dsMediation.equalsIgnoreCase(""))
         {
           s_server.logWarning("[DisseminationService] Unable to resolve "
