@@ -9,6 +9,14 @@
 	<param name="log_max_days" value="7"/>
 	<param name="log_dir" value="logs"/>
 	<param name="log_level" value="finest"/>
+	<param name="store_base" value="C:\temp"/>
+	<param name="pid_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
+	<param name="backslash_is_escape" value="yes"/>
+	<param name="dbuser" value="fred"/>
+	<param name="dbpass" value="fredspass"/>
+	<param name="connect_string" value="jdbc://db.somecollege.edu/here"/>
+	<param name="pool_max" value="100"/>
+	<param name="pool_min" value="20"/>
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
 		<comment>This one comes with Fedora.  It's best not to change
         these values unless you know what you're doing.</comment>
