@@ -262,8 +262,13 @@ public class FedoraAccessSoapServlet extends HttpServlet
           response.setContentType(CONTENT_TYPE_HTML);
           // Return HTML table containing results; include links to digital
           // object PID to further explore object.
-          out.println("<br><center><table border='1' cellspacing='1' "+
-                      "cellpadding='1'>");
+          out.println("<html>");
+          out.println("<head>");
+          out.println("<title>Behavior Definitions</title>");
+          out.println("</head>");
+          out.println("<br></br>");
+          out.println("<center>");
+          out.println("<table border='1' cellpadding='5'>");
           out.println("<tr>");
           out.println("<td><b><font size='+2'><b>PID</font></td></b>");
           out.println("<td><b><font size='+2'>Version Date</font></b></td>");
@@ -280,27 +285,28 @@ public class FedoraAccessSoapServlet extends HttpServlet
               out.println("<td><font color='blue'><a href='" + requestURL +
                           "action_=GetObjectMethods&PID_=" + PID+ "'>" + PID +
                           "</a></font></td>");
-              out.println("<td><font color='blue'>" +
+              out.println("<td><font color='green'>" +
                           DateUtility.convertDateToString(versDateTime) +
                           "</font></td>");
               out.println("<td><font color='red'>" + behaviorDefs[i] +
                           "</font></td>");
-              out.println("</tr>");
             } else if (i == 1)
             {
               out.println("<td colspan='2' rowspan='" + rows +
                           "'></td><td><font color='red'>" + behaviorDefs[i] +
                           "</font></td>");
-              out.println("</tr>");
             } else
             {
               out.println("<td><font color='red'>" + behaviorDefs[i] +
                           "</font></td>");
-              out.println("</tr>");
             }
+            out.println("</tr>");
           }
-          out.println("</table></center><br>");
-          out.println("</body></html>");
+          out.println("</table>");
+          out.println("</center>");
+          out.println("<br></br>");
+          out.println("</body>");
+          out.println("</html>");
           // FIXME!! Decide on Exception handling
         } catch (Exception e)
         {
@@ -324,67 +330,76 @@ public class FedoraAccessSoapServlet extends HttpServlet
            System.out.println("GetBehaviorMethods: NO METHODS FOUND");
           } else
           {
-             response.setContentType(CONTENT_TYPE_HTML);
-             out.println("<center><table border='1' cellspacing='1' "+
-                         "cellpadding='2'>");
-             out.println("<tr>");
-             out.println("<td><font color=\"blue\"> Object PID " +
-                         " </font></td>");
-             out.println("<td><font color=\"green\"> BDEF PID" +
-                         " </font></td>");
-             out.println("<td><font color=\"green\"> Version Date" +
-                         " </font></td>");
-             out.println("<td><font color=\"red\"> Method Name" +
-                         " </font></td>");
-             out.println("</tr>");
-             // Format table such that repeating fields display only once
-             int rows = methodDefs.length - 1;
-             for (int i=0; i<methodDefs.length; i++)
-             {
-               fedora.server.types.gen.MethodDef results = methodDefs[i];
-               out.println("<tr>");
-               if (i == 0)
-               {
-               out.println("<tr>");
-               out.println("<td><font color=\"blue\"> " + "<a href=\""+
-                           requestURL + "action_=GetObjectMethods&PID_=" +
-                           PID + "\"> " + PID + " </a></font></td>");
-               out.println("<td><font color=\"green\"> " + bDefPID +
-                           " </font></td>"+
-                           "<td><font color=\"green\"> " +
-                           DateUtility.convertDateToString(versDateTime) +
-                           "</font></td>");
-               out.println("<td><font color=\"red\"> " + "<a href=\""+
-                           requestURL + "action_=GetDissemination&PID_=" +
-                           PID + "&bDefPID_=" + bDefPID + "&methodName_=" +
-                           results.getMethodName() + "\"> " +
-                           results.getMethodName() +
-                           " </a> </td>");
-               out.println("</tr>");
-               } else if (i == 1)
-               {
-                 out.println("<td colspan='3' rowspan='"+rows+"'></td>"+
-                             "<td><font color=\"red\"> " + "<a href=\""+
-                           requestURL + "action_=GetDissemination&PID_=" +
-                           PID + "&bDefPID_=" + bDefPID + "&methodName_=" +
-                           results.getMethodName() + "\"> " +
-                           results.getMethodName() +
-                           " </a> </td>");
-                 out.println("</tr>");
-               } else
-               {
-                 out.println("<td><font color=\"red\"> " + "<a href=\""+
-                           requestURL + "action_=GetDissemination&PID_=" +
-                           PID + "&bDefPID_=" + bDefPID + "&methodName_=" +
-                           results.getMethodName() + "\"> " +
-                           results.getMethodName() +
-                           " </a> </td>");
-                 out.println("</tr>");
-               }
-             }
-             out.println("</table></center>");
+            // Behavior Definitions found; output HTML table of results
+            // with links to each method enabling dissemination of the
+            // method and a link to the object PID enabling further
+            // discovery about the object.
+            response.setContentType(CONTENT_TYPE_HTML);
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Behavior Methods</title>");
+            out.println("</head>");
+            out.println("<br></br>");
+            out.println("<center>");
+            out.println("<table border='1' cellpadding='5'>");
+            out.println("<tr>");
+            out.println("<td><b><font size='+2'> Object PID " +
+                        " </font></b></td>");
+            out.println("<td><b><font size='+2'> BDEF PID" +
+                        " </font></b></td>");
+            out.println("<td><b><font size='+2'> Version Date" +
+                        " </font></b></td>");
+            out.println("<td><b><font size='+2'> Method Name" +
+                        " </font></b></td>");
+            out.println("</tr>");
+            // Format table such that repeating fields display only once
+            int rows = methodDefs.length - 1;
+            for (int i=0; i<methodDefs.length; i++)
+            {
+              fedora.server.types.gen.MethodDef results = methodDefs[i];
+              out.println("<tr>");
+              if (i == 0)
+              {
+                out.println("<td><font color=\"blue\"> " + "<a href=\""+
+                            requestURL + "action_=GetObjectMethods&PID_=" +
+                            PID + "\"> " + PID + " </a></font></td>");
+                out.println("<td><font color=\"green\"> " + bDefPID +
+                            " </font></td>");
+                out.println("<td><font color=\"green\"> " +
+                            DateUtility.convertDateToString(versDateTime) +
+                            "</font></td>");
+                out.println("<td><font color=\"red\"> " + "<a href=\""+
+                            requestURL + "action_=GetDissemination&PID_=" +
+                            PID + "&bDefPID_=" + bDefPID + "&methodName_=" +
+                            results.getMethodName() + "\"> " +
+                            results.getMethodName() +
+                            " </a></td>");
+              } else if (i == 1)
+              {
+                out.println("<td colspan='3' rowspan='"+rows+"'></td>");
+                out.println("<td><font color=\"red\"> " + "<a href=\""+
+                            requestURL + "action_=GetDissemination&PID_=" +
+                            PID + "&bDefPID_=" + bDefPID + "&methodName_=" +
+                            results.getMethodName() + "\"> " +
+                            results.getMethodName() +
+                            " </a></td>");
+              } else
+              {
+                out.println("<td><font color=\"red\"> " + "<a href=\""+
+                            requestURL + "action_=GetDissemination&PID_=" +
+                            PID + "&bDefPID_=" + bDefPID + "&methodName_=" +
+                            results.getMethodName() + "\"> " +
+                            results.getMethodName() +
+                            " </a></td>");
+              }
+              out.println("</tr>");
+            }
+            out.println("</table>");
+            out.println("</center>");
+            out.println("</body>");
+            out.println("</html>");
           }
-        // FIXME!! Need to decide on Exception handling
+          // FIXME!! Need to decide on Exception handling
         } catch (Exception e)
         {
           System.out.println(e.getMessage());
@@ -458,19 +473,22 @@ public class FedoraAccessSoapServlet extends HttpServlet
             // methods with links on each method enabling dissemination of
             // that particular method.
             response.setContentType(CONTENT_TYPE_HTML);
-            out.println("<br><br><center><b><font color=\"purple\">" +
-                        "DIGITAL OBJECT:</font><font color=\"blue\"> " +
-                        PID + " </font></b></center>\n");
-            out.println("<br><center><table border>\n");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Object Methods</title>");
+            out.println("</head>");
+            out.println("<br></br>");
+            out.println("<center>");
+            out.println("<table border='1' cellpadding='5' >");
             out.println("<tr>");
-            out.println("<td><font color=\"blue\"> Object PID "+
-                                    " </font></td>");
-            out.println("<td><font color=\"green\"> BDEF PID"+
-                                    " </font></td>");
-            out.println("<td><font color=\"green\"> Version Date"+
-                                    " </font></td>");
-            out.println("<td><font color=\"red\"> Method Name"+
-                                    " </font></td>");
+            out.println("<td><b><font size='+2'> Object PID "+
+                                    " </font></b></td>");
+            out.println("<td><b><font size='+2'> BDEF PID"+
+                                    " </font></b></td>");
+            out.println("<td><b><font size='+2'> Version Date"+
+                                    " </font></b></td>");
+            out.println("<td><b><font size='+2'> Method Name"+
+                                    " </font></b></td>");
             out.println("</tr>");
             // Format table such that repeating fields only display once
             int rows = objMethDefArray.length-1;
@@ -481,6 +499,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               {
                 out.println("<td><font color=\"blue\"> " +
                             objMethDefArray[i].getPID() + "</font></td>");
+                out.flush();
                 out.println("<td><font color=\"green\"> " +
                             objMethDefArray[i].getBDefPID() + " </font></td>");
                 out.println("<td><font color=\"green\"> " +
@@ -491,19 +510,18 @@ public class FedoraAccessSoapServlet extends HttpServlet
                             objMethDefArray[i].getPID() + "&bDefPID_=" +
                             objMethDefArray[i].getBDefPID() + "&methodName_=" +
                             objMethDefArray[i].getMethodName() + "\"> " +
-                            objMethDefArray[i].getMethodName() + " </a> </td>");
-                out.println("</tr>");
+                            objMethDefArray[i].getMethodName() + " </a></td>");
+                //out.flush();
               } else if (i == 1)
               {
-                out.println("<td colspan='3' rowspan='" + rows +
-                            "'></td><td><font color=\"red\"> " +
+                out.println("<td colspan='3' rowspan='" + rows + "'></td>");
+                out.println("<td><font color=\"red\"> " +
                             "<a href=\""+requestURL+
                             "action_=GetDissemination&PID_=" +
                             objMethDefArray[i].getPID() + "&bDefPID_=" +
                             objMethDefArray[i].getBDefPID() + "&methodName_=" +
                             objMethDefArray[i].getMethodName() + "\"> " +
-                            objMethDefArray[i].getMethodName() + " </a> </td>");
-                out.println("</tr>");
+                            objMethDefArray[i].getMethodName() + " </a></td>");
               } else
               {
                 out.println("<td><font color=\"red\"> " +
@@ -512,9 +530,14 @@ public class FedoraAccessSoapServlet extends HttpServlet
                             objMethDefArray[i].getPID() + "&bDefPID_=" +
                             objMethDefArray[i].getBDefPID() + "&methodName_=" +
                             objMethDefArray[i].getMethodName() + "\"> " +
-                            objMethDefArray[i].getMethodName() + " </a> </td>");
+                            objMethDefArray[i].getMethodName() + " </a></td>");
               }
+              out.println("</tr>");
             }
+            out.println("</table>");
+            out.println("</center>");
+            out.println("</body>");
+            out.println("</html>");
           }
         } catch (Exception e)
         {
@@ -941,32 +964,62 @@ public class FedoraAccessSoapServlet extends HttpServlet
     response.setContentType(CONTENT_TYPE_HTML);
     // Display servlet input parameters
     out.println("<html>");
-    out.println("<head><title>FedoraServlet</title></head>");
+    out.println("<head>");
+    out.println("<title>FedoraServlet</title>");
+    out.println("</head>");
     out.println("<body>");
-    out.println("<br></br><h3>REQUEST Returned NO Data</h3>");
-    out.println("<br></br><font color='red'>Request Parameters</font>"+
-                "<br></br>");
-    out.println("<center><table>"+
-                "<tr><td><font color='red'>action_</td><td> = </td><td>"+
-                action+"</td></tr>"+
-                "<tr><td><font color='red'>PID_</td><td> = <td>"+PID+
-                "</td></tr></font><tr><td><font color='red'>bDefPID_</td>"+
-                "<td> = </td><td>"+bDefPID+"</td></tr></font>"+
-                "<tr><td><font color='red'>methodName_</td><td> = </td>"+
-                "<td>"+methodName+"</td></tr></font><tr><td><font color='red'>"+
-                "AsOfDate_</td><td> = </td><td>"+versDate+"</td></tr></font>"+
-                "<tr><td><font color='red'>clearCache_</td><td> = </td>"+
-                "<td>"+clearCache+"</td></tr>");
-    out.println("<tr></tr><tr><td colspan='5'><font color='blue'>"+
-                "Other-Parameters:</font></td></tr><tr></tr>");
-    if (userParms != null)
-    {
+    out.println("<br></br><font size='+3' REQUEST Returned NO Data</font>");
+    out.println("<br></br><font color='red'>Request Parameters</font>");
+    out.println("<br></br>");
+    out.println("<table cellpadding='5'>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>action_</td>");
+    out.println("<td> = </td>");
+    out.println("<td>"+action+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>PID_</td>");
+    out.println("<td> = <td>"+PID+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>bDefPID_</td>");
+    out.println("<td> = </td>");
+    out.println("<td>"+bDefPID+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>methodName_</td>");
+    out.println("<td> = </td>");
+    out.println("<td>"+methodName+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>AsOfDate_</td>");
+    out.println("<td> = </td>");
+    out.println("<td>"+versDate+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td><font color='red'>clearCache_</td>");
+    out.println("<td> = </td>");
+    out.println("<td>"+clearCache+"</td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("<td colspan='5'><font size='+1' color='blue'>"+
+                "Other Parameters Found:</font></td>");
+    out.println("</tr>");
+    out.println("<tr>");
+    out.println("</tr>");
+    //if (userParms != null)
+    //{
       // List user-supplied parameters if any
       for (int i=0; i<userParms.length; i++)
       {
-        out.println("<tr><td><font color='red'>"+userParms[i].Name+" </td>"+
-        "<td>= </td><td>"+userParms[i].Value+"</td></tr></font>");
-      }
+        out.println("<tr>");
+        out.println("<td><font color='red'>"+userParms[i].Name+"</font></td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+userParms[i].Value+"</td>");
+        out.println("</tr>");
+     // }
     }
     out.println("</table></center></font>");
     out.println("</body></html>");
@@ -1020,51 +1073,84 @@ public class FedoraAccessSoapServlet extends HttpServlet
         // asOfDate is optional
         response.setContentType(CONTENT_TYPE_HTML);
         out.println("<html>");
-        out.println("<head><title>FedoraServlet</title></head>");
+        out.println("<head>");
+        out.println("<title>FedoraServlet</title>");
+        out.println("</head>");
         out.println("<body>");
-        out.println("<br></br><font color='red'>Required parameter missing "+
-                    "in Dissemination Request:</font>");
-        out.println("<center><table>"+
-                    "<tr><td><font color='red'>action_</td><td> = </td><td>"+
-                    action+"</td><td><font color='blue'>(REQUIRED)</font></td>"+
-                    "</tr>"+
-                    "<tr><td><font color='red'>PID_</td><td> = </td><td>"+PID+
-                    "</td><td><font color='blue'>(REQUIRED)</font></td></tr>"+
-                    "</font><tr><td><font color='red'>bDefPID_</td>"+
-                    "<td> = </td><td>"+bDefPID+"</td><td><font color='blue'>"+
-                    "(REQUIRED)</font></td></tr></font><tr><td>"+
-                    "<font color='red'>methodName_</td><td> = </td><td>"+
-                    methodName+
-                    "</td><td><font color='blue'>(REQUIRED)</font></td></tr>"+
-                    "</font><tr><td><font color='red'>AsOfDate_</td>"+
-                    "<td> = </td><td>"+versDate+"</td><td>"+
-                    "<font color='green'>(OPTIONAL)</font></td></tr></font>"+
-                    "<tr><td><font color='red'>clearCache_</td><td> = </td>"+
-                    "<td>"+clearCache+"</td><td><font color='green'>"+
-                    "(OPTIONAL)</font></td></tr></font>");
-        out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td>"+
-                    "</tr><tr></tr>");
+        out.println("<p><font size='+1' color='red'>"+
+                    "Required parameter missing "+
+                    "in Dissemination Request:</font></p>");
+        out.println("<table cellpadding='5'>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>action_</font></td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+action+"</td>");
+        out.println("<td><font color='blue'>(REQUIRED)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>PID_</font></td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+PID+"</td>");
+        out.println("<td><font color='blue'>(REQUIRED)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>bDefPID_</font></td>");
+        out.println("<td> = </td><td>"+bDefPID+"</td>");
+        out.println("<td><font color='blue'>(REQUIRED)</font></td>");
+        out.println("</tr>");
+        out.println("</font><tr>");
+        out.println("<td><font color='red'>methodName_</font></td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+methodName+"</td>");
+        out.println("<td><font color='blue'>(REQUIRED)</font></td>");
+        out.println("</tr>");
+        out.println("</font><tr>");
+        out.println("<td><font color='red'>AsOfDate_</font></td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+versDate+"</td>");
+        out.println("<td><font color='green'>(OPTIONAL)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>clearCache_</font></td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+clearCache+"</td>");
+        out.println("<td><font color='green'>(OPTIONAL)</font></td>");
+        out.println("</tr></font>");
+        out.println("<tr>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td colspan='5'><font size='+1' color='blue'>"+
+                    "Other Parameters Found:</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("</tr>");
         for (Enumeration e = h_userParms.keys() ; e.hasMoreElements(); )
         {
           String name = (String)e.nextElement();
-          out.println("<tr><td><font color='red'>"+name+
-          " </td><td>= </td><td>"+h_userParms.get(name)+"</td></tr>");
+          out.println("<tr>");
+          out.println("<td><font color='red'>"+name+"</font></td>");
+          out.println("<td>= </td>");
+          out.println("<td>"+h_userParms.get(name)+"</td>");
+          out.println("</tr>");
         }
-        out.println("</table></center></font>");
-        out.println("</body></html>");
+        out.println("</table>");
+        out.println("</body>");
+        out.println("</html>");
         checkOK = false;
-      }
-      // Check user supplied method parms:
-      //   1) For all parameters required by the method
-      //   2) For any parameters with null values for which the method
-      //      defines default values
-      //   3) For any parameters not definined by the method
-      if(!isValidUserParms(PID, bDefPID, methodName, h_userParms,
-                            versDateTime, response))
+      } else
       {
-        checkOK = false;
+        // Required parameters are present;
+        // Check user supplied method parms:
+        //   1) For all parameters required by the method
+        //   2) For any parameters with null values for which the method
+        //      defines default values
+        //   3) For any parameters not definined by the method
+        if(!isValidUserParms(PID, bDefPID, methodName, h_userParms,
+                              versDateTime, response))
+        {
+          checkOK = false;
+        }
       }
-
     } else if (action != null &&
                (action.equals(GET_BEHAVIOR_DEFINITIONS) ||
                action.equals(GET_OBJECT_METHODS)))
@@ -1075,40 +1161,70 @@ public class FedoraAccessSoapServlet extends HttpServlet
         // asOfDate is optional
         response.setContentType(CONTENT_TYPE_HTML);
         out.println("<html>");
-        out.println("<head><title>FedoraServlet</title></head>");
+        out.println("<head>");
+        out.println("<title>FedoraServlet</title>");
+        out.println("</head>");
         out.println("<body>");
-        out.println("<tr><td colspan='5'><font color='red'>Required "+
-                    "parameter missing in Behavior Definition Request:"+
-                    "</td></tr></font>");
-        out.println("<center><table>"+
-                    "<tr><td><font color='red'>action_</td><td> = </td><td>"+
-                    action+"</td><td><font color='blue'>(REQUIRED)</font></td>"+
-                    "</tr>"+
-                    "<tr><td><font color='red'>PID_</td><td> = <td>"+PID+
-                    "</td><td><font color='blue'>(REQUIRED)"+
-                    "</font></td></tr></font><tr><td><font color='red'>"+
-                    "bDefPID_</td><td> = </td><td>"+bDefPID+"</td>"+
-                    "<td><font color='green'>(OPTIONAL)</font></td>"+
-                    "</tr></font><tr><td><font color='red'>methodName_</td>"+
-                    "<td> = </td><td>"+methodName+
-                    "</td><td><font color='green'>"+
-                    "(OPTIONAL)</font></td></tr></font><tr><td>"+
-                    "<font color='red'>AsOfDate_</td><td> = </td><td>"+
-                    versDate+"</td><td><font color='green'>(OPTIONAL)"+
-                    "</font></td></tr></font><tr><td><font color='red'>"+
-                    "clearCache_</td><td> = </td><td>"+clearCache+
-                    "</td><td><font color='green'>(OPTIONAL)"+
-                    "</font></td></tr></font>");
-        out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td>"+
-                    "</tr><tr></tr>");
+        out.println("<p><font size='+1' color='red'>"+
+                    "Required parameter missing in Behavior "+
+                    "Definition Request:</font></p>");
+        out.println("<table cellpadding='5'>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>action_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+action+"</td>");
+        out.println("<td><font color='blue'>(REQUIRED)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>PID_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+PID+"</td>");
+        out.println("<td><font color='blue'>(REQUIRED)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>bDefPID_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+bDefPID+"</td>");
+        out.println("<td><font color='green'>(OPTIONAL)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>methodName_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+methodName+"</td>");
+        out.println("<td><font color='green'>(OPTIONAL)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>AsOfDate_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+versDate+"</td>");
+        out.println("<td><font color='green'>(OPTIONAL)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>clearCache_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+clearCache+"</td>");
+        out.println("<td><font color='green'>(OPTIONAL)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td colspan='5'><font size='+1' color='blue'>"+
+                    "Other Parameters Found:</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("</tr>");
         for (Enumeration e = h_userParms.keys() ; e.hasMoreElements(); )
         {
           String name = (String)e.nextElement();
-          out.println("<tr><td><font color='red'>"+name+
-          " </td><td>= </td><td>"+h_userParms.get(name)+"</td></tr></font>");
+          out.println("<tr>");
+          out.println("<td><font color='red'>"+name+"</font></td>");
+          out.println("<td>= </td>");
+          out.println("<td>"+h_userParms.get(name)+"</td>");
+          out.println("</tr>");
         }
-        out.println("</table></center></font>");
-        out.println("</body></html>");
+        out.println("</table>");
+        out.println("</body>");
+        out.println("</html>");
         checkOK = false;
       }
     } else if (action != null &&
@@ -1121,39 +1237,70 @@ public class FedoraAccessSoapServlet extends HttpServlet
         // asOfDate is optional
         response.setContentType(CONTENT_TYPE_HTML);
         out.println("<html>");
-        out.println("<head><title>FedoraServlet</title></head>");
+        out.println("<head>");
+        out.println("<title>FedoraServlet</title>");
+        out.println("</head>");
         out.println("<body>");
-        out.println("<br></br><font color='red'>Required parameter "+
-                    "missing in Behavior Methods Request:</font>");
-        out.println("<center><table>"+
-                    "<tr><td><font color='red'>action_</td><td> = </td><td>"+
-                    action+"</td><td><font color='blue'>(REQUIRED)</font></td>"+
-                    "</tr>"+
-                    "<tr><td><font color='red'>PID_</td><td> = </td><td>"+PID+
-                    "</td><td><font color='blue'>(REQUIRED)</font></td></tr>"+
-                    "</font><tr><td><font color='red'>bDefPID_</td>"+
-                    "<td> = </td><td>"+bDefPID+"</td><td><font color='blue'>"+
-                    "(REQUIRED)</font></td></tr></font><tr><td>"+
-                    "<font color='red'>methodName_</td><td> = </td><td>"+
-                    methodName+
-                    "</td><td><font color='green'>(OPTIONAL)</font></td>"+
-                    "</tr></font><tr><td><font color='red'>AsOfDate_</td>"+
-                    "<td> = </td><td>"+versDate+"</td><td>"+
-                    "<font color='green'>(OPTIONAL)</font></td></tr></font>"+
-                    "<tr><td><font color='red'>clearCache_</td><td> = </td>"+
-                    "<td>"+clearCache+"</td><td><font color='green'>"+
-                    "(OPTIONAL)</font></td></tr></font>");
-        out.println("<tr></tr><tr><td colspan='5'>Other-Parameters:</td></tr>"+
-                    "<tr></tr>");
+        out.println("<p>><font size='+1' color='red'>"+
+                    "Required parameter missing in Behavior "+
+                    "Methods Request:</font></p>");
+        out.println("<table cellpadding='5'>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>action_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+action+"</td>");
+        out.println("<td><font color='blue'>(REQUIRED)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>PID_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+PID+"</td>");
+        out.println("<td><font color='blue'>(REQUIRED)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>bDefPID_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+bDefPID+"</td>");
+        out.println("<td><font color='blue'>(REQUIRED)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>methodName_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+methodName+"</td>");
+        out.println("<td><font color='green'>(OPTIONAL)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>AsOfDate_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+versDate+"</td>");
+        out.println("<td><font color='green'>(OPTIONAL)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>clearCache_</td>");
+        out.println("<td> = </td>");
+        out.println("<td>"+clearCache+"</td>");
+        out.println("<td><font color='green'>(OPTIONAL)</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("<td colspan='5'><font size='+1' color='blue'>"+
+                    "Other Parameters Found:</font></td>");
+        out.println("</tr>");
+        out.println("<tr>");
+        out.println("</tr>");
         for (Enumeration e = h_userParms.keys() ; e.hasMoreElements(); )
         {
           String name = (String)e.nextElement();
-          out.println("<tr><td><font color='red'>"+name+
-          " <td>= <td>"+h_userParms.get(name)+"<td><font color='green'>"+
-          "(OPTIONAL)</font></tr></font>");
+          out.println("<tr>");
+          out.println("<td><font color='red'>"+name+"</font></td>");
+          out.println("<td>= </td>");
+          out.println("<td>"+h_userParms.get(name)+"</td>");
+          out.println("</tr>");
         }
-        out.println("</table></center></font>");
-        out.println("</body></html>");
+        out.println("</table>");
+        out.println("</body>");
+        out.println("</html>");
         checkOK = false;
       }
     } else
@@ -1161,35 +1308,66 @@ public class FedoraAccessSoapServlet extends HttpServlet
       // Unknown Fedora service has been requested
       response.setContentType(CONTENT_TYPE_HTML);
       out.println("<html>");
-      out.println("<head><title>FedoraServlet</title></head>");
+      out.println("<head>");
+      out.println("<title>FedoraServlet</title>");
+      out.println("</head>");
       out.println("<body>");
-      out.println("<br><font color='red'>Invalid action parameter"+
-                 " specified in Servlet Request:action= "+action+"<br></br>");
+      out.println("<p><font size='+1' color='red'>Invalid 'action' "+
+                  "parameter specified in Servlet Request: action= "+
+                  action+"<p>");
       out.println("<br></br><font color='blue'>Reserved parameters "+
-          "in Request:</td></tr></font>");
-      out.println("<center><table>"+
-                  "<tr><td><font color='red'>action_</td><td> = </td><td>"+
-                   action+"</td></tr>"+
-                    "<tr><td><font color='red'>PID_</td><td> = <td>"+PID+
-                    "</td></tr></font><tr><td><font color='red'>bDefPID_</td>"+
-                    "<td> = </td><td>"+bDefPID+"</td></tr></font>"+
-                    "<tr><td><font color='red'>methodName_</td><td> = </td>"+
-                    "<td>"+methodName+
-                    "</td></tr></font><tr><td><font color='red'>"+
-                    "AsOfDate_</td><td> = </td><td>"+versDate+"</td></tr>"+
-                    "</font><tr><td><font color='red'>clearCache_</td>"+
-                    "<td> = </td><td>"+clearCache+"</td></tr></font>");
-      out.println("<tr></tr><tr><td colspan='5'><font color='blue'>"+
-                  "Other-Parameters:</font></td></tr><tr></tr>");
-
-      for ( Enumeration e = h_userParms.keys(); e.hasMoreElements(); )
+                  "in Request:</font>");
+      out.println("<table cellpadding='5'>");
+      out.println("<tr>");
+      out.println("<td><font color='red'>action_</td>");
+      out.println("<td> = </td>");
+      out.println("<td>"+action+"</td>");
+      out.println("</tr>");
+      out.println("<tr>");
+      out.println("<td><font color='red'>PID_</td>");
+      out.println("<td> = </td>");
+      out.println("<td>"+PID+"</td>");
+      out.println("</tr>");
+      out.println("<tr>");
+      out.println("<td><font color='red'>bDefPID_</td>");
+      out.println("<td> = </td>");
+      out.println("<td>"+bDefPID+"</td>");
+      out.println("</tr>");
+      out.println("<tr>");
+      out.println("<td><font color='red'>methodName_</td>");
+      out.println("<td> = </td>");
+      out.println("<td>"+methodName+"</td>");
+      out.println("</tr>");
+      out.println("<tr>");
+      out.println("<td><font color='red'>AsOfDate_</td>");
+      out.println("<td> = </td>");
+      out.println("<td>"+versDate+"</td>");
+      out.println("</tr>");
+      out.println("<tr>");
+      out.println("<td><font color='red'>clearCache_</td>");
+      out.println("<td> = </td>");
+      out.println("<td>"+clearCache+"</td>");
+      out.println("</tr>");
+      out.println("<tr>");
+      out.println("</tr>");
+      out.println("<tr>");
+      out.println("<td colspan='5'><font size='+1' color='blue'>"+
+                  "Other Parameters Found:</font></td>");
+      out.println("</tr>");
+      out.println("<tr>");
+      out.println("</tr>");
+      for (Enumeration e = h_userParms.keys() ; e.hasMoreElements(); )
       {
         String name = (String)e.nextElement();
-        out.println("<tr><td><font color='red'>"+name+" </td>"+
-        "<td>= </td><td>"+h_userParms.get(name)+"</td></tr></font>");
+        out.println("<tr>");
+        out.println("<td><font color='red'>"+name+"</font></td>");
+        out.println("<td>= </td>");
+        out.println("<td>"+h_userParms.get(name)+"</td>");
+        out.println("</tr>");
       }
-      out.println("</table></center></font>");
-      out.println("</body></html>");
+      out.println("</table>");
+      out.println("</body>");
+      out.println("</html>");
       checkOK = false;
     }
 
@@ -1202,7 +1380,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       {
         String name = (String)e.nextElement();
         System.out.println("<p>userParm: "+name+
-        " userValue: "+h_userParms.get(name));
+                           " userValue: "+h_userParms.get(name));
       }
     }
     return checkOK;
