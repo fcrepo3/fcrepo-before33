@@ -1,0 +1,259 @@
+<database>
+  <table name="BehaviorDefinition" type="MyISAM" primaryKey="BDEF_DBID">
+    <column name="BDEF_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="BDEF_PID" type="varchar(32)" notNull="true" default="" unique="true"/>
+    <column name="BDEF_Label" type="varchar(255)" notNull="true" default="" index="BDEF_Label"/>
+  </table>
+  <table name="BehaviorMechanism" type="MyISAM" primaryKey="BMECH_DBID">
+    <column name="BMECH_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
+    <column name="BDEF_DBID" type="int(11)" notNull="true" default="0" index="BDEF_ID"/>
+    <column name="SMType_DBID" type="int(11)" notNull="true" default="0" index="SMType_ID"/>
+    <column name="BMECH_PID" type="varchar(255)" notNull="true" default="" unique="true"/>
+    <column name="BMECH_Label" type="varchar(255)" notNull="true" default="" index="BMECH_Label"/>
+  </table>
+</database>
+
+THIS FILE ISN'T VALID YET... but the above will convert to MySQL and McKoi DDL
+using the appropriate fedora.utilities.[...]DDLConverter class
+
+Here are fairly safe types to use across db impls:
+
+BIGINT
+CHAR
+DATE
+DECIMAL
+DOUBLE
+FLOAT
+INTEGER
+NUMERIC
+REAL
+TEXT
+TIMESTAMP
+SMALLINT
+TIME
+TINYINT
+VARCHAR
+
+Some URLS regarding interoperable DDL:
+
+http://www.ss64.demon.co.uk/orasyntax/datatypes.html
+http://www.contrib.andrew.cmu.edu/~shadow/sql/sql1992.txt
+
+
+
+
+
+
+The following still need conversion to the above format:
+
+#
+# Table structure for table `DataStreamBinding`
+#
+
+CREATE TABLE DataStreamBinding (
+  DO_DBID int(11) NOT NULL default '0',
+  DSBindingKey_DBID int(11) NOT NULL default '0',
+  BindingMap_DBID int(11) NOT NULL default '0',
+  DSBinding_DS_BindingKey_Seq int(11) NOT NULL default '0',
+  DSBinding_DS_ID varchar(32) NOT NULL default '',
+  DSBinding_DS_Label varchar(255) NOT NULL default '',
+  DSBinding_DS_MIME varchar(32) NOT NULL default '',
+  DSBinding_DS_Location varchar(255) NOT NULL default '',
+  POLICY_DBID int(11) NOT NULL default '0',
+  KEY DOBindingMap_DSBindingKey_Seq (DSBinding_DS_BindingKey_Seq),
+  KEY DOBindingMap_DS_ID (DSBinding_DS_ID),
+  KEY DOBindingMap_DS_Label (DSBinding_DS_Label),
+  KEY DOBindingMap_DS_MIME (DSBinding_DS_MIME),
+  KEY DOBindingMap_DS_URL (DSBinding_DS_Location),
+  KEY POLICY_ID (POLICY_DBID),
+  KEY DO_DBID (DO_DBID),
+  KEY DSBindingKey_DBID (DSBindingKey_DBID)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `DataStreamBindingMap`
+#
+
+CREATE TABLE DataStreamBindingMap (
+  BindingMap_DBID int(11) NOT NULL auto_increment,
+  BMECH_DBID int(11) NOT NULL default '0',
+  DSBindingMap_ID varchar(32) NOT NULL default '',
+  DSBindingMap_Label varchar(255) NOT NULL default '',
+  UNIQUE KEY BindingMap_DBID (BindingMap_DBID)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `DataStreamBindingSpec`
+#
+
+CREATE TABLE DataStreamBindingSpec (
+  DSBindingKey_DBID int(11) NOT NULL auto_increment,
+  BMECH_DBID int(11) NOT NULL default '0',
+  DSBindingSpec_Name varchar(32) NOT NULL default '',
+  DSBindingSpec_Ordinality_Flag char(1) NOT NULL default 'N',
+  DSBindingSpec_Cardinality smallint(6) NOT NULL default '1',
+  DSBindingSpec_Label varchar(255) NOT NULL default '',
+  PRIMARY KEY  (DSBindingKey_DBID),
+  KEY BMECH_DBID (BMECH_DBID),
+  KEY DSBindingSpec_Name (DSBindingSpec_Name),
+  KEY DSBindingSpec_Ordinality_Flag (DSBindingSpec_Ordinality_Flag),
+  KEY DSBindingSpec_Cardinality (DSBindingSpec_Cardinality),
+  KEY DSBindingSpec_Label (DSBindingSpec_Label)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `DataStreamMIME`
+#
+
+CREATE TABLE DataStreamMIME (
+  DSBindingKey_DBID int(11) NOT NULL default '0',
+  DSMIME_Name varchar(32) NOT NULL default '',
+  KEY DSBindingKey_DBID (DSBindingKey_DBID),
+  KEY DSBindingKeyMIME_Name (DSMIME_Name)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `DigitalObject`
+#
+
+CREATE TABLE DigitalObject (
+  DO_DBID int(11) NOT NULL auto_increment,
+  DO_PID varchar(255) NOT NULL default '',
+  DO_Label varchar(255) NOT NULL default '',
+  PRIMARY KEY  (DO_DBID),
+  UNIQUE KEY DO_PID (DO_PID),
+  KEY DO_Label (DO_Label)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `DigitalObjectDissAssoc`
+#
+
+CREATE TABLE DigitalObjectDissAssoc (
+  DO_DBID int(11) NOT NULL default '0',
+  DISS_DBID int(11) NOT NULL default '0',
+  PRIMARY KEY  (DO_DBID,DISS_DBID)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `Disseminator`
+#
+
+CREATE TABLE Disseminator (
+  DISS_DBID int(11) NOT NULL auto_increment,
+  BDEF_DBID int(11) NOT NULL default '0',
+  BMECH_DBID int(11) NOT NULL default '0',
+  DISS_ID varchar(32) NOT NULL default '',
+  DISS_Label varchar(255) NOT NULL default '',
+  PRIMARY KEY  (DISS_DBID),
+  KEY BDEF_ID (BDEF_DBID),
+  KEY BMECH_ID (BMECH_DBID),
+  KEY DISS_Name (DISS_ID),
+  KEY DISS_Label (DISS_Label)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `MechanismImpl`
+#
+
+CREATE TABLE MechanismImpl (
+  BMECH_DBID int(11) NOT NULL default '0',
+  BDEF_DBID int(11) NOT NULL default '0',
+  METH_DBID int(11) NOT NULL default '0',
+  DSBindingKey_DBID int(11) NOT NULL default '0',
+  MECHImpl_Protocol_Type varchar(32) NOT NULL default '',
+  MECHImpl_Return_Type varchar(32) NOT NULL default '',
+  MECHImpl_Address_Location varchar(255) NOT NULL default '',
+  MECHImpl_Operation_Location varchar(255) NOT NULL default '',
+  POLICY_DBID int(11) NOT NULL default '0',
+  PRIMARY KEY  (BMECH_DBID,BDEF_DBID,METH_DBID,DSBindingKey_DBID),
+  KEY MI_Protocol_Type (MECHImpl_Protocol_Type),
+  KEY MI_Return_Type (MECHImpl_Return_Type),
+  KEY MI_Address_Location (MECHImpl_Address_Location),
+  KEY MI_Operation_Location (MECHImpl_Operation_Location),
+  KEY POLICY_ID (POLICY_DBID)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `Method`
+#
+
+CREATE TABLE Method (
+  METH_DBID int(11) NOT NULL auto_increment,
+  BDEF_DBID int(11) NOT NULL default '0',
+  METH_Name varchar(32) NOT NULL default '',
+  METH_Label varchar(255) NOT NULL default '',
+  PRIMARY KEY  (METH_DBID,BDEF_DBID),
+  KEY METH_Name (METH_Name),
+  KEY METH_Label (METH_Label)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `PIDRegistry`
+#
+
+CREATE TABLE PIDRegistry (
+  PID_DBID int(11) NOT NULL auto_increment,
+  PID varchar(32) NOT NULL default '',
+  Location varchar(255) NOT NULL default '',
+  PRIMARY KEY  (PID_DBID),
+  UNIQUE KEY PID (PID)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `Parameter`
+#
+
+CREATE TABLE Parameter (
+  METH_DBID int(11) NOT NULL default '0',
+  BDEF_DBID int(11) NOT NULL default '0',
+  PARM_Name varchar(32) NOT NULL default '',
+  PARM_Default_Value varchar(32) default NULL,
+  PARM_Required_Flag varchar(5) NOT NULL default 'false',
+  PARM_Label varchar(255) NOT NULL default '',
+  KEY METH_DBID (METH_DBID),
+  KEY BDEF_DBID (BDEF_DBID),
+  KEY PARM_Name (PARM_Name),
+  KEY PARM_Default_Value (PARM_Default_Value),
+  KEY PARM_Required_Flag (PARM_Required_Flag),
+  KEY PARM_Label (PARM_Label)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `Policy`
+#
+
+CREATE TABLE Policy (
+  POLICY_ID int(11) NOT NULL auto_increment,
+  POLICY_Name varchar(32) NOT NULL default '',
+  POLICY_Rule varchar(255) NOT NULL default '',
+  POLICY_Label varchar(255) NOT NULL default '0',
+  PRIMARY KEY  (POLICY_ID),
+  KEY POLICY_Name (POLICY_Name),
+  KEY POLICY_Rule (POLICY_Rule)
+) TYPE=MyISAM;
+# --------------------------------------------------------
+
+#
+# Table structure for table `StructureMapType`
+#
+
+CREATE TABLE StructureMapType (
+  SMType_DBID int(11) NOT NULL auto_increment,
+  SMType_Name varchar(32) NOT NULL default '',
+  SMType_Label varchar(255) NOT NULL default '',
+  PRIMARY KEY  (SMType_DBID),
+  KEY SMType_Name (SMType_Name),
+  KEY SMType_Label (SMType_Label)
+) TYPE=MyISAM;
