@@ -17,12 +17,15 @@ import java.util.Set;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.Calendar;
+import java.util.Date;
 import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.BMechBuilderException;
@@ -81,11 +84,13 @@ public abstract class BObjMETSSerializer
   protected Element bObjStructMap;
   protected Element bObjBehaviorSec;
   protected BObjTemplate bObjData;
+  protected String now;
 
   public BObjMETSSerializer(BObjTemplate bObjData)
     throws BMechBuilderException
   {
     this.bObjData = bObjData;
+    this.now = convertDateToString(getCurrentDate());
   }
 
   // The BDefMETSSerializer and BMechMETSSerializer will implement this to
@@ -216,6 +221,7 @@ public abstract class BObjMETSSerializer
       dsFileGrp.setAttribute("STATUS", "A");
       Element dsFile = document.createElementNS(METS, "METS:file");
       dsFile.setAttribute("ID", (dsid + ".0"));
+      dsFile.setAttribute("CREATED", now);
       dsFile.setAttribute("SEQ", "0");
       dsFile.setAttribute("MIMETYPE", docs[i].dsMIMEType);
       dsFile.setAttribute("OWNERID", docs[i].dsControlGrpType);
@@ -276,6 +282,7 @@ public abstract class BObjMETSSerializer
     // METS behaviorSec element for the Bootstrap Disseminator on the bMech
     Element serviceBinding = document.createElementNS(METS, "METS:serviceBinding");
     serviceBinding.setAttribute("ID", "DISS1.0");
+    serviceBinding.setAttribute("CREATED", now);
     serviceBinding.setAttribute("STRUCTID", "S1");
     serviceBinding.setAttribute("BTYPE", "fedora-system:1");
     serviceBinding.setAttribute("LABEL", "Bootstrap Behaviors for a behavior object");
@@ -301,6 +308,7 @@ public abstract class BObjMETSSerializer
     dcNode.setAttribute("ID", "DC");
     Element descMD = document.createElementNS(METS, "METS:descMD");
     descMD.setAttribute("ID", "DC1.0");
+    descMD.setAttribute("CREATED", now);
     descMD.setAttribute("STATUS", "A");
     Element mdWrap = document.createElementNS(METS, "METS:mdWrap");
     mdWrap.setAttribute("MIMETYPE", "text/xml");
@@ -313,6 +321,24 @@ public abstract class BObjMETSSerializer
     descMD.appendChild(mdWrap);
     dcNode.appendChild(descMD);
     return dcNode;
+  }
+
+  public Date getCurrentDate()
+  {
+    //Calendar cal = Calendar.getInstance(TimeZone.getDefault());
+    Calendar cal = Calendar.getInstance();
+    return cal.getTime();
+  }
+
+  public String convertDateToString(Date date)
+  {
+    String dateTime = null;
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    if (!(date == null))
+    {
+      dateTime = formatter.format(date);
+    }
+    return(dateTime);
   }
 
   public void printMETS()

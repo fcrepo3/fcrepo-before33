@@ -45,7 +45,7 @@ import fedora.client.bmech.BMechBuilderException;
  */
 public class WSDLGenerator
 {
-  private static final String THIS = "this";
+  private static final String THIS = "bmech";
 
   private static final String WSDL = "http://schemas.xmlsoap.org/wsdl/";
 
@@ -53,9 +53,9 @@ public class WSDLGenerator
 
   private static final String SOAPENC = "http://schemas.xmlsoap.org/wsdl/soap/encoding";
 
-  private static final String HTTP = "http://schemas.xmlsoap.org/wsdl/http";
+  private static final String HTTP = "http://schemas.xmlsoap.org/wsdl/http/";
 
-  private static final String MIME = "http://schemas.xmlsoap.org/wsdl/mime";
+  private static final String MIME = "http://schemas.xmlsoap.org/wsdl/mime/";
 
   private static final String XSD = "http://www.w3.org/2001/XMLSchema";
 
@@ -130,6 +130,7 @@ public class WSDLGenerator
     String name = (bMechLabel == null) ? "" : bMechLabel;
     root.setAttribute("name", name);
     root.setAttribute("targetNamespace", THIS);
+    root.setAttributeNS(XMLNS, "xmlns:this", THIS);
     root.setAttributeNS(XMLNS, "xmlns:wsdl", WSDL);
     root.setAttributeNS(XMLNS, "xmlns:soap", SOAP);
     root.setAttributeNS(XMLNS, "xmlns:soapenc", SOAPENC);
@@ -137,7 +138,7 @@ public class WSDLGenerator
     root.setAttributeNS(XMLNS, "xmlns:mime", MIME);
     root.setAttributeNS(XMLNS, "xmlns:xsd", XSD);
     createService(bMechName, hasBaseURL, baseURL);
-    processMethods(hasBaseURL, methods);
+    processMethods(bMechName, hasBaseURL, methods);
   }
 
   private void createService(String bMechName, boolean hasBaseURL, String baseURL)
@@ -167,9 +168,10 @@ public class WSDLGenerator
     binding.setAttribute("type", ("this:" + bMechName + "PortType"));
   }
 
-  private void processMethods(boolean hasBaseURL, Method[] methods)
+  private void processMethods(String bMechName, boolean hasBaseURL, Method[] methods)
   {
     Element schema = (Element)document.createElementNS(XSD, "xsd:schema");
+    schema.setAttribute("targetNamespace", THIS);
     HashMap parmUnion = new HashMap();
     for (int m=0; m<methods.length; m++)
     {
@@ -221,7 +223,7 @@ public class WSDLGenerator
       messageElements.add(message);
 
       // create wsdl:portType with one or more wsdl:operation elements
-      portType.setAttribute("name", (methods[m].methodName + "PortType"));
+      portType.setAttribute("name", (bMechName + "PortType"));
       Element operation = document.createElementNS(WSDL, "wsdl:operation");
       operation.setAttribute("name", methods[m].methodName);
       Element input = document.createElementNS(WSDL, "wsdl:input");

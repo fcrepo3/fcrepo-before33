@@ -84,6 +84,7 @@ public class BDefMETSSerializer extends BObjMETSSerializer
     mmapNode.setAttribute("ID", "METHODMAP");
     Element techMD = document.createElementNS(METS, "METS:techMD");
     techMD.setAttribute("ID", "METHODMAP1.0");
+    techMD.setAttribute("CREATED", now);
     techMD.setAttribute("STATUS", "A");
     Element mdWrap = document.createElementNS(METS, "METS:mdWrap");
     mdWrap.setAttribute("MIMETYPE", "text/xml");
