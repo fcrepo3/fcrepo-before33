@@ -60,6 +60,8 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           h.put("useCachedObject", "true");
           h.put("userId", "fedoraAdmin");
           s_context=new ReadOnlyContext(h);
+          s_server.logFinest("got server instance: context: "+s_context+
+                             "s_init: "+s_initialized);
       }
     } catch (InitializationException ie) {
         System.err.println(ie.getMessage());
@@ -81,11 +83,14 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       java.util.Calendar asOfDateTime) throws java.rmi.RemoteException
   {
     assertInitialized();
+    s_server.logFinest("server init'd");
     try
     {
+      s_server.logFinest("about to invoke DefaultAccess");
       String[] bDefs =
           s_access.getBehaviorDefinitions(s_context, PID, asOfDateTime);
-      if (debug)
+      s_server.logFinest("bDefs: "+bDefs);
+      if (bDefs != null && debug)
       {
         for (int i=0; i<bDefs.length; i++)
         {
@@ -95,13 +100,17 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       return bDefs;
     } catch (ServerException se)
     {
+      s_server.logFinest("ServerException: " + se.getMessage());
       logStackTrace(se);
       AxisUtility.throwFault(se);
+      //return null;
     } catch (Exception e) {
+      s_server.logFinest("Exception: " + e.getMessage());
       logStackTrace(e);
       AxisUtility.throwFault(
           new ServerInitializationException(e.getClass().getName() + ": "
           + e.getMessage()));
+      //return null;
     }
     return null;
   }

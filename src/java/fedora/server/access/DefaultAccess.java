@@ -1,6 +1,7 @@
 package fedora.server.access;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,6 +11,7 @@ import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DisseminatingDOReader;
@@ -33,7 +35,6 @@ import fedora.server.utilities.DateUtility;
 public class DefaultAccess extends Module implements Access
 {
   private final static String CONTENT_TYPE_XML = "text/xml";
-  private final static String LOCAL_ADDRESS_LOCATION = "LOCAL";
   private DOManager m_manager;
 
   /**
@@ -80,19 +81,18 @@ public class DefaultAccess extends Module implements Access
       Calendar asOfDateTime) throws ServerException
   {
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
-    String[] behaviorDefs = null;
-    try
-    {
-      String[] behaviorDefinitions = null;
+    //try
+    //{
+      String[] behaviorDefs = null;
       DisseminatingDOReader reader =
           m_manager.getDisseminatingReader(context, PID);
       behaviorDefs = reader.GetBehaviorDefs(versDateTime);
       return behaviorDefs;
-    } catch (Exception e)
-    {
-      getServer().logWarning(e.getMessage());
-    }
-    return null;
+    //} catch (Exception e)
+    //{
+    //  getServer().logWarning("Failed to get BDefs" + e.getMessage());
+    //}
+    //return null;
   }
 
   /**
@@ -108,19 +108,19 @@ public class DefaultAccess extends Module implements Access
                                         String bDefPID, Calendar asOfDateTime)
       throws ServerException
   {
-    try
-    {
+    //try
+    //{
       Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
       DisseminatingDOReader reader =
           m_manager.getDisseminatingReader(context, PID);
       MethodDef[] methodResults =
           reader.GetBMechMethods(bDefPID, versDateTime);
       return methodResults;
-    } catch (Exception e)
-    {
-      getServer().logWarning(e.getMessage());
-    }
-    return null;
+    //} catch (Exception e)
+    //{
+    //  getServer().logWarning(e.getMessage());
+    //}
+    //return null;
   }
 
   /**
@@ -157,9 +157,13 @@ public class DefaultAccess extends Module implements Access
         MIMETypedStream methodDefs = new MIMETypedStream(CONTENT_TYPE_XML, baos.toByteArray());
         return methodDefs;
       }
-    } catch (Exception e)
+    } catch (IOException ioe)
     {
-      getServer().logWarning(e.getMessage());
+      getServer().logWarning(ioe.getMessage());
+      throw new GeneralException("DefaultAccess returned error. The "
+                                 + "underlying error was a "
+                                 + ioe.getClass().getName() + "The message "
+                                 + "was \"" + ioe.getMessage() + "\"");
     }
     return null;
   }
@@ -181,8 +185,8 @@ public class DefaultAccess extends Module implements Access
       String bDefPID, String methodName, Property[] userParms,
       Calendar asOfDateTime) throws ServerException
   {
-    try
-    {
+    //try
+    //{
       Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
 
       // Get the dissemination binding info by reading from Fast store
@@ -196,11 +200,11 @@ public class DefaultAccess extends Module implements Access
       MIMETypedStream dissemination =
           dissService.assembleDissemination(userParms, dissResults);
       return dissemination;
-    } catch (Exception e)
-    {
-      getServer().logWarning(e.getMessage());
-    }
-   return null;
+    //} catch (Exception e)
+    //{
+    //  getServer().logWarning(e.getMessage());
+    //}
+   //return null;
   }
 
   /**
@@ -215,18 +219,18 @@ public class DefaultAccess extends Module implements Access
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
       Calendar asOfDateTime) throws ServerException
   {
-    try
-    {
+    //try
+    //{
       Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
       DisseminatingDOReader reader =
           m_manager.getDisseminatingReader(context, PID);
       ObjectMethodsDef[] methodDefs =
           reader.getObjectMethods(PID, versDateTime);
       return methodDefs;
-    } catch (Exception e)
-    {
-      getServer().logWarning(e.getMessage());
-    }
-    return null;
+    //} catch (Exception e)
+    //{
+    //  getServer().logWarning(e.getMessage());
+    //}
+    //return null;
   }
 }
