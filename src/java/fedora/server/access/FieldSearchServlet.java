@@ -360,7 +360,7 @@ public class FieldSearchServlet
                 out.print("<html><head><title>Search Repository</title></head>");
                 out.print("<body><center>");
                 out.println("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
-                out.println("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"http://www.fedora.info/assets/newlogo2.jpg\" width=\"141\" height=\"134\"></td>");
+                out.println("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"/images/newlogo2.jpg\" width=\"141\" height=\"134\"></td>");
                 out.println("<td width=\"643\" valign=\"top\">");
                 out.println("<center><h2>Fedora Repository</h2>");
                 out.println("<h3>Find Objects</h3>");
