@@ -389,6 +389,13 @@ public class DisseminatorPane
             dsBindingsLabelPane.add(datastreamBindingsLabel, BorderLayout.NORTH);
             middlePanel.add(dsBindingsLabelPane, BorderLayout.WEST);
 
+// initialize one of these panels for each bmech implementing the bdef...
+// later, undoChanges will undo each... similarly, isDirty() will use
+// the list of them to check whether the currently displayed one is dirty
+
+
+
+
             HashMap hash=new HashMap();
             hash.put("itemID", "DSINPUTSPEC");
             DatastreamInputSpec spec=DatastreamInputSpec.parse(
@@ -429,7 +436,7 @@ public class DisseminatorPane
             }
             // is the bmech the same?
 
-            // is the binding map array the same as the original?
+                // if so, is the datastreambindingpane dirty?
             return false;
         }
 

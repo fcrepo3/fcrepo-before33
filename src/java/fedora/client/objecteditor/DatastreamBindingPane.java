@@ -2,6 +2,7 @@ package fedora.client.objecteditor;
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.event.*;
 import javax.swing.table.*;
 import java.util.*;
 
@@ -15,7 +16,8 @@ import fedora.server.types.gen.Disseminator;
 
 public class DatastreamBindingPane
         extends JPanel
-        implements DatastreamListener {
+        implements DatastreamListener, 
+                   TableModelListener {
 
     private Disseminator m_diss;
     private Datastream[] m_datastreams;
@@ -57,7 +59,8 @@ public class DatastreamBindingPane
             SingleKeyBindingPanel p=new SingleKeyBindingPanel(
                     key, 
                     values, 
-                    (DatastreamBindingRule) m_ruleForKey.get(key));
+                    (DatastreamBindingRule) m_ruleForKey.get(key),
+                    this);
             bindingTabbedPane.add(key, p);
             bindingTabbedPane.setBackgroundAt(tabNum, Administrator.DEFAULT_COLOR);
             if (tabNum==0) {
@@ -68,6 +71,16 @@ public class DatastreamBindingPane
         }
         setLayout(new BorderLayout());
         add(bindingTabbedPane, BorderLayout.CENTER);
+
+    }
+
+    // called when one of the tab's table models changed
+    public void tableChanged(TableModelEvent e) {
+        DatastreamBindingTableModel model=(DatastreamBindingTableModel) e.getSource();
+        String key=model.getBindingKey();
+		// update fulfilled indicator on tabs,
+
+        // then notify parent component that this on
 
     }
 
@@ -128,7 +141,8 @@ public class DatastreamBindingPane
     }
 
     class SingleKeyBindingPanel
-            extends JPanel {
+            extends JPanel
+            implements TableModelListener {
 
         private DatastreamBindingTableModel m_tableModel;
         private JTable m_table;
@@ -141,7 +155,8 @@ public class DatastreamBindingPane
 
         public SingleKeyBindingPanel(String bindingKey, 
                                      Set dsBindings, 
-                                     DatastreamBindingRule rule) {
+                                     DatastreamBindingRule rule,
+                                     TableModelListener listener) {
             // TODO: create a copy of dsBindings here so we can impl isDirty()
             JTextArea topTextArea=createTopTextArea(rule);
             topTextArea.setBackground(getBackground());
@@ -151,7 +166,7 @@ public class DatastreamBindingPane
             m_statusLabel=new JLabel("2 more datastreams needed.", notFulfilledIcon, SwingConstants.TRAILING);
             statusPane.add(m_statusLabel);
 
-            m_tableModel=new DatastreamBindingTableModel(dsBindings);
+            m_tableModel=new DatastreamBindingTableModel(dsBindings, bindingKey);
             m_table=new JTable(m_tableModel);
             m_table.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
             m_table.setRowSelectionAllowed(true);
@@ -159,6 +174,8 @@ public class DatastreamBindingPane
             m_table.setShowVerticalLines(false);
             m_table.getColumnModel().getColumn(0).setMinWidth(90);
             m_table.getColumnModel().getColumn(0).setMaxWidth(90);            
+			m_tableModel.addTableModelListener(this);
+			if (listener!=null) m_tableModel.addTableModelListener(listener);
 
             JPanel middlePane=new JPanel(new BorderLayout());
             middlePane.add(new JScrollPane(m_table), BorderLayout.CENTER);
@@ -219,6 +236,14 @@ public class DatastreamBindingPane
             add(topTextArea, BorderLayout.NORTH);
             add(bottomPane, BorderLayout.CENTER);
         }
+
+        public void tableChanged(TableModelEvent e) {
+		    DatastreamBindingTableModel model=(DatastreamBindingTableModel) e.getSource();
+			// update button visibility based on the state of the table
+			if (model.isDirty()) {
+			} else {
+			}
+		}
 
         private JTextArea createTopTextArea(
                 DatastreamBindingRule rule) {
@@ -292,25 +317,56 @@ public class DatastreamBindingPane
             extends AbstractTableModel {
 
         public DatastreamBinding[] m_bindings;        
+        public DatastreamBinding[] m_originalBindings;        
+        public String m_bindingKey;
 
-        public DatastreamBindingTableModel(Set values) {
-            m_bindings=new DatastreamBinding[values.size()*10];
+        public DatastreamBindingTableModel(Set values, String bindingKey) {
+		    m_bindingKey=bindingKey;
+            m_bindings=new DatastreamBinding[values.size()];
+            m_originalBindings=new DatastreamBinding[values.size()];
             Iterator iter=values.iterator();
             int i=0;
             while (iter.hasNext()) {
                 DatastreamBinding n=(DatastreamBinding) iter.next();
-                m_bindings[i++]=n;
-                m_bindings[i++]=n;
-                m_bindings[i++]=n;
-                m_bindings[i++]=n;
-                m_bindings[i++]=n;
-                m_bindings[i++]=n;
-                m_bindings[i++]=n;
-                m_bindings[i++]=n;
-                m_bindings[i++]=n;
-                m_bindings[i++]=n;
+                m_bindings[i]=n;
+                m_originalBindings[i]=new DatastreamBinding();
+				m_originalBindings[i].setBindKeyName(new String(n.getBindKeyName()));
+				m_originalBindings[i].setBindLabel(new String(n.getBindLabel()));
+				m_originalBindings[i].setDatastreamID(new String(n.getDatastreamID()));
+				m_originalBindings[i].setSeqNo(new String(n.getSeqNo()));
+				i++;
             }
         }
+
+        public String getBindingKey() {
+		    return m_bindingKey;
+		}
+
+        /**
+		 * Get a new table model, initialized with the initial values given
+		 * in the constructor of this table model.
+		 *
+		 * Used to implement undo.
+		 */
+        public DatastreamBindingTableModel getOriginal() {
+		    LinkedHashSet origSet=new LinkedHashSet();
+			for (int i=0; i<m_originalBindings.length; i++) {
+			    origSet.add(m_originalBindings[i]);
+			}
+			return new DatastreamBindingTableModel(origSet, getBindingKey());
+		}
+
+        /**
+		 * Are the underlying values in this table model different than
+		 * those it was initialized with?
+		 */
+        public boolean isDirty() {
+		    if (m_bindings.length!=m_originalBindings.length) return true;
+			for (int i=0; i<m_bindings.length; i++) {
+			    if (!m_bindings[i].equals(m_originalBindings[i])) return true;
+			}
+			return false;
+		}
 
         public int getRowCount() {
             return m_bindings.length;
