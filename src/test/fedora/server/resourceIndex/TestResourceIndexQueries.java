@@ -1,7 +1,6 @@
 package fedora.server.resourceIndex;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,32 +9,24 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Map;
 
-import fedora.common.PID;
+import org.trippi.RDFFormat;
+import org.trippi.TriplestoreConnector;
+
 import fedora.server.Parameterized;
+import fedora.server.TestLogging;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.translation.FOXMLDODeserializer;
-import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.ConfigurationLoader;
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.SQLUtility;
-import fedora.server.TestLogging;
-
-import org.jrdf.graph.Triple;
-
-import org.trippi.RDFFormat;
-import org.trippi.TripleIterator;
-import org.trippi.TriplestoreConnector;
-import org.trippi.TripleMaker;
-
 import junit.framework.TestCase;
 
 /**
  * @author Edwin Shin
- *  
  */
-public class TestResourceIndexImpl extends TestCase {
-    
+public class TestResourceIndexQueries extends TestCase {
     private static final String DEMO_OBJECTS_ROOT_DIR = "src/test/fedora/server/resourceIndex/foxmlTestObjects";
     
     private static String tsPath;
@@ -43,9 +34,9 @@ public class TestResourceIndexImpl extends TestCase {
     private ResourceIndex m_ri;
     private ConnectionPool m_cPool;
     private TriplestoreConnector m_conn;
-
+    
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(TestResourceIndexImpl.class);
+        junit.textui.TestRunner.run(TestResourceIndexQueries.class);
     }
 
     /*
@@ -104,12 +95,32 @@ public class TestResourceIndexImpl extends TestCase {
         System.setProperty("fedoraServerPort", "8080");
         
         //
-        DigitalObject bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bdefs/demo_8.xml"));
-        DigitalObject bmech = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bmechs/demo_9.xml"));
-        DigitalObject dataobject = getDigitalObject(new File(
-                DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_10.xml"));
+        DigitalObject ri1010 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/dataobjects/demo_ri1010.xml"));
+        DigitalObject ri1011 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/dataobjects/demo_ri1011.xml"));
+        DigitalObject ri1012 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/dataobjects/demo_ri1012.xml"));
+        DigitalObject ri1013 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/dataobjects/demo_ri1013.xml"));
+        DigitalObject ri1014 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/dataobjects/demo_ri1014.xml"));
+        DigitalObject ri1015 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/dataobjects/demo_ri1015.xml"));
+        DigitalObject ri1016 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/dataobjects/demo_ri1016.xml"));
+        DigitalObject ri1017 = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
+                + "/dataobjects/demo_ri1017.xml"));
+        
+        m_ri.addDigitalObject(ri1010);
+        m_ri.addDigitalObject(ri1011);
+        m_ri.addDigitalObject(ri1012);
+        m_ri.addDigitalObject(ri1013);
+        m_ri.addDigitalObject(ri1014);
+        m_ri.addDigitalObject(ri1015);
+        m_ri.addDigitalObject(ri1016);
+        m_ri.addDigitalObject(ri1017);
+        m_ri.commit();
     }
 
     /*
@@ -128,131 +139,22 @@ public class TestResourceIndexImpl extends TestCase {
         m_ri = null;
         deleteDirectory(tsPath);
     }
-
-    public void testAddDigitalObject() throws Exception {
-        DigitalObject obj = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/dataobjects/demo_ri1000.xml"));
-        m_ri.addDigitalObject(obj);
-        m_ri.commit();
-        assertEquals(3, m_ri.countTriples(null, null, null, 0));
-        TripleIterator it = m_ri.findTriples(TripleMaker.createResource(PID.toURI(obj.getPid())), 
-                                             null, null, 0);
-        Triple t;
-        while (it.hasNext()) {
-            t = (Triple)it.next();
-            assertEquals(PID.toURI(obj.getPid()), t.getSubject().toString());
-        }
-    }
-        
-    public void testAddAndDelete() throws Exception {
-        DigitalObject bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bdefs/demo_8.xml"));
-        DigitalObject bmech = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bmechs/demo_9.xml"));
-        DigitalObject dataobject = getDigitalObject(new File(
-                DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_10.xml"));
     
-        m_ri.addDigitalObject(bdef);
-        m_ri.commit();
-        int a = m_ri.countTriples(null, null, null, 0);
-        assertTrue(m_ri.countTriples(null, null, null, 0) > 0);
-        
-        m_ri.addDigitalObject(bmech);
-        m_ri.commit();
-        int b = m_ri.countTriples(null, null, null, 0);
-        assertTrue(b > a);
-        
-        m_ri.addDigitalObject(dataobject);
-        m_ri.commit();
-        int c = m_ri.countTriples(null, null, null, 0);
-        assertTrue(c > b);
-        
+    public void testCount() throws Exception {
+        assertEquals(36, m_ri.countTriples(null, null, null, 0));
         //m_ri.export(new FileOutputStream("/tmp/out.rdf"), RDFFormat.RDF_XML);
-        
-        m_ri.deleteDigitalObject(dataobject);
-        m_ri.commit();
-        int d = m_ri.countTriples(null, null, null, 0);
-        assertTrue(d == b);
-        
-        m_ri.deleteDigitalObject(bmech);
-        m_ri.commit();
-        
-        int e = m_ri.countTriples(null, null, null, 0);
-        assertTrue(e == a);
-        
-        m_ri.deleteDigitalObject(bdef);
-        m_ri.commit();
-        int f = m_ri.countTriples(null, null, null, 0);
-        assertEquals(0, m_ri.countTriples(null, null, null, 0));
     }
     
-    public void testDoubleAdd() throws Exception {
-        DigitalObject bdef = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bdefs/demo_8.xml"));
-        DigitalObject bmech = getDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR
-                + "/bmechs/demo_9.xml"));
-        DigitalObject dataobject = getDigitalObject(new File(
-                DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_10.xml"));
+    public void testQuery1() throws Exception {
+        // TODO
+    }
     
-        m_ri.addDigitalObject(bdef);
-        m_ri.addDigitalObject(bmech);
-        m_ri.addDigitalObject(dataobject);
-        m_ri.commit();
-        int a = m_ri.countTriples(null, null, null, 0);
-        
-        m_ri.addDigitalObject(dataobject);
-        m_ri.commit();
-        int b = m_ri.countTriples(null, null, null, 0);
-        assertEquals(a, b);
-        
-//        m_ri.addDigitalObject(bdef);
-//        m_ri.addDigitalObject(bmech);
-//        m_ri.commit();
-//        int c = m_ri.countTriples(null, null, null, 0);
-//        assertEquals(a, c);
+    public void testQuery2() throws Exception {
+        // TODO
     }
-
-    private void addDigitalObjects(File dir) throws Exception {
-        FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File file, String name) {
-                return (!name.startsWith(".") && name.endsWith(".xml"));
-            }
-        };
-        File[] files = dir.listFiles(filter);
-        for (int i = 0; i < files.length; i++) {
-            addDigitalObject(files[i]);
-        }
-    }
-
-    private void addDigitalObject(File file) throws Exception {
-        FileInputStream in;
-        DigitalObject obj = new BasicDigitalObject();
-
-        in = new FileInputStream(file);
-        FOXMLDODeserializer deser = new FOXMLDODeserializer();
-        deser.deserialize(in, obj, "UTF-8", 0);
-        addDigitalObject(obj);
-    }
-
-    private void addDigitalObject(DigitalObject digitalObject) throws Exception {
-        m_ri.addDigitalObject(digitalObject);
-    }
-
-    private void addBDefs() throws Exception {
-        File dir = new File(DEMO_OBJECTS_ROOT_DIR + "/bdefs");
-        addDigitalObjects(dir);
-    }
-
-    private void addBMechs() throws Exception {
-        File dir = new File(DEMO_OBJECTS_ROOT_DIR + "/bmechs");
-        addDigitalObjects(dir);
-    }
-
-    private void addDataObjects() throws Exception {
-        File dir = new File(DEMO_OBJECTS_ROOT_DIR + "/dataobjects");
-        addDigitalObjects(dir);
-    }
-
+    
+    ///////////////////////////////////////////////////////////////////
+    
     private DigitalObject getDigitalObject(File file) throws Exception {
         FileInputStream in;
         DigitalObject obj = new BasicDigitalObject();
@@ -298,5 +200,4 @@ public class TestResourceIndexImpl extends TestCase {
 
         return result;
     }//deleteDirectory()
-
 }

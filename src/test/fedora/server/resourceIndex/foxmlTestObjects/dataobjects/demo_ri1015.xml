@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A minimal foxml representation of a data object -->
+<foxml:digitalObject PID="demo:ri1015"
+                     xmlns:foxml="info:fedora/fedora-system:def/foxml#" 
+                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                     xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+    <foxml:objectProperties>
+        <foxml:property NAME="info:fedora/fedora-system:def/cDate" VALUE="2004-12-15T10:21:17Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/fType" VALUE="FedoraObject"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/state" VALUE="I"/>
+    </foxml:objectProperties>
+</foxml:digitalObject>
