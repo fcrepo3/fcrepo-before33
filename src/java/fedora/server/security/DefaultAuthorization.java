@@ -4,6 +4,8 @@ package fedora.server.security;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import fedora.server.Context;
@@ -125,11 +127,24 @@ public class DefaultAuthorization extends Module implements Authorization {
           throws ModuleInitializationException
   {
     super(moduleParameters, server, role);
+	String serverHome = null;
+    try {
+		serverHome = server.getHomeDir().getCanonicalPath() + File.separator;
+	} catch (IOException e1) {
+		throw new ModuleInitializationException("couldn't get server home", role, e1);
+	}
+    
     if (moduleParameters.containsKey(REPOSITORY_POLICIES_DIRECTORY)) {
-    	repositoryPoliciesDirectory = (String) moduleParameters.get(REPOSITORY_POLICIES_DIRECTORY);
+    	repositoryPoliciesDirectory = 
+    		((String) moduleParameters.get(REPOSITORY_POLICIES_DIRECTORY)).startsWith(File.separator) ? "" : serverHome 
+		+ (String) moduleParameters.get(REPOSITORY_POLICIES_DIRECTORY);
+    	System.err.println("repositoryPoliciesDirectory=" + repositoryPoliciesDirectory);
     }
     if (moduleParameters.containsKey(OBJECT_POLICIES_DIRECTORY)) {
-    	objectPoliciesDirectory = (String) moduleParameters.get(OBJECT_POLICIES_DIRECTORY);
+    	objectPoliciesDirectory =
+    		((String) moduleParameters.get(OBJECT_POLICIES_DIRECTORY)).startsWith(File.separator) ? "" : serverHome 
+    	+ (String) moduleParameters.get(OBJECT_POLICIES_DIRECTORY);
+    	System.err.println("objectPoliciesDirectory=" + objectPoliciesDirectory);
     }
     if (moduleParameters.containsKey(COMBINING_ALGORITHM)) {
     	combiningAlgorithm = (String) moduleParameters.get(COMBINING_ALGORITHM);
@@ -139,7 +154,6 @@ public class DefaultAuthorization extends Module implements Authorization {
     }
  
 	try {
-
 		ACTION_NEW_STATE_URI = new URI(ACTION_NEW_STATE_URI_STRING);		
 		ACTION_DATASTREAM_NEW_STATE_URI = new URI(ACTION_DATASTREAM_NEW_STATE_URI_STRING);		
 		ACTION_DISSEMINATOR_NEW_STATE_URI = new URI(ACTION_DISSEMINATOR_NEW_STATE_URI_STRING);	
