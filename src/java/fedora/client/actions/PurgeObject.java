@@ -99,24 +99,24 @@ public class PurgeObject
                 }
             } else {
                 // purge multiple
-                while (pidIter.hasNext()) {
-                    try {
-                        String pid=(String) pidIter.next();
-                        String reason=JOptionPane.showInputDialog("Why are you permanently removing " + pid + "?");
-                        if (reason!=null) {
-                                purger.purge(pid, reason);
+                String reason=JOptionPane.showInputDialog("Why are you permanently removing these objects?");
+                if (reason!=null) {
+                    while (pidIter.hasNext()) {
+                        try {
+                            String pid=(String) pidIter.next();
+                            purger.purge(pid, reason);
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                                    e.getClass().getName() + ": " + e.getMessage(),
+                                    "Purge Failure",
+                                    JOptionPane.ERROR_MESSAGE);
+                            failed=true;
                         }
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                e.getClass().getName() + ": " + e.getMessage(),
-                                "Purge Failure",
-                                JOptionPane.ERROR_MESSAGE);
-                        failed=true;
                     }
-                }
-                if (!failed) {
-                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            "Purge succeeded.");
+                    if (!failed) {
+                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                                "Purge of " + m_pids.size() + " objects succeeded.");
+                    }
                 }
             }
         }
