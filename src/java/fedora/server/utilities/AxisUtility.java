@@ -45,4 +45,19 @@ public abstract class AxisUtility {
         throw fault;
     }
 
+    public static AxisFault getFault(ServerException se) {
+        String[] details=se.getDetails();
+        StringBuffer buf=new StringBuffer();
+        for (int i=0; i<details.length; i++) {
+            buf.append("<detail>");
+            buf.append(details[i]);
+            buf.append("</detail>\n");
+        }
+        AxisFault fault=new AxisFault(new QName(SOAP_FAULT_CODE_NAMESPACE,
+                se.getCode()), se.getMessage(), SOAP_ULTIMATE_RECEIVER,
+                null);
+        fault.setFaultDetailString(buf.toString());
+        return fault;
+    }
+
 }
