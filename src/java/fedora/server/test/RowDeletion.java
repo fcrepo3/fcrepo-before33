@@ -2,9 +2,9 @@ package fedora.server.test;
 
 /**
  * Title: RowDeletion.java
- * Description: Methods to delete Fedora object database rows. 
+ * Description: Methods to delete Fedora object database rows.
  * Copyright: Copyright (c) 2002
- * Company: 
+ * Company:
  * @author Paul Charlton
  * @version 1.0
  */
@@ -23,7 +23,7 @@ import fedora.server.storage.replication.*;
 * @version 1.0
 *
 */
-public class RowDeletion {   
+public class RowDeletion {
 
         /**
         *
@@ -35,7 +35,7 @@ public class RowDeletion {
         * @exception SQLException JDBC, SQL error
         */
 	public void deleteBehaviorDefinitionRow(Connection connection, String bDefDBID) throws SQLException {
-		String deletionStatement = "DELETE FROM BehaviorDefinition WHERE BDEF_DBID = " + bDefDBID + " LIMIT 1;";
+		String deletionStatement = "DELETE FROM bDef WHERE bDefDbID = " + bDefDBID + " LIMIT 1;";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -50,14 +50,14 @@ public class RowDeletion {
         * @exception SQLException JDBC, SQL error
         */
 	public void deleteBehaviorMechanismRow(Connection connection, String bMechDBID) throws SQLException {
-		String deletionStatement = "DELETE FROM BehaviorMechanism WHERE BMECH_DBID = " + bMechDBID + " LIMIT 1;";
+		String deletionStatement = "DELETE FROM bMech WHERE bMechDbID = " + bMechDBID + " LIMIT 1;";
 
 		deleteGen(connection, deletionStatement);
 	}
 
         /**
         *
-        * Deletes DataStreamBinding database rows.
+        * Deletes dsBind database rows.
         *
         * @param connection JDBC DBMS connection
         * @param doDBID DigitalObject DBID
@@ -67,14 +67,14 @@ public class RowDeletion {
 	public void deleteDataStreamBindingRow(Connection connection, String doDBID) throws SQLException {
 
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM DataStreamBinding WHERE DO_DBID = " +  doDBID + ";";
+		String deletionStatement = "DELETE FROM dsBind WHERE doDbID = " +  doDBID + ";";
 
 		deleteGen(connection, deletionStatement);
 	}
 
         /**
         *
-        * Deletes DataStreamBindingMap database rows.
+        * Deletes dsBindMap database rows.
         *
         * @param connection JDBC DBMS connection
         * @param bMechDBID BehaviorMechanism DBID
@@ -83,14 +83,14 @@ public class RowDeletion {
         */
 	public void deleteDataStreamBindingMapRow(Connection connection, String bMechDBID) throws SQLException {
 
-		String deletionStatement = "DELETE FROM DataStreamBindingMap WHERE BMECH_DBID = " + bMechDBID + ";";
+		String deletionStatement = "DELETE FROM dsBindMap WHERE bMechDbID = " + bMechDBID + ";";
 
 		deleteGen(connection, deletionStatement);
 	}
 
         /**
         *
-        * Deletes DataStreamBindingSpec database rows.
+        * Deletes dsBindSpec database rows.
         *
         * @param connection JDBC DBMS connection
         * @param bMechDBID BehaviorMechanism DBID
@@ -100,16 +100,16 @@ public class RowDeletion {
 	public void deleteDataStreamBindingSpecRow(Connection connection, String bMechDBID) throws SQLException {
 
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM DataStreamBindingSpec WHERE BMECH_DBID = " + bMechDBID + ";";
+		String deletionStatement = "DELETE FROM dsBindSpec WHERE bMechDbID = " + bMechDBID + ";";
 
 		deleteGen(connection, deletionStatement);
 	}
 
         /**
         *
-        * Deletes DataStreamMIME database rows.
+        * Deletes dsMIME database rows.
 	* Note that this needs to be called before deleteDataStreamBindingSpecRow
-	* in order to get the set of DSBindingKey_DBID values to delete with.
+	* in order to get the set of dsBindKeyDbID values to delete with.
         *
         * @param connection JDBC DBMS connection
         * @param bMechDBID BehaviorMechanism DBID
@@ -118,21 +118,21 @@ public class RowDeletion {
         */
 	public void deleteDataStreamMIMERow(Connection connection, String bMechDBID) throws SQLException {
                 String query;
-                String dsbindingkey_dbid;
+                String dsBindKeyDbID;
                 Statement statement;
 		String deletionStatement;
                 ResultSet rs;
 
-                query = "SELECT DSBindingKey_DBID FROM DataStreamBindingSpec WHERE ";
-                query += "BMECH_DBID = " + bMechDBID + ";";
+                query = "SELECT dsBindKeyDbID FROM dsBindSpec WHERE ";
+                query += "bMechDbID = " + bMechDBID + ";";
 System.out.println("deleteDataStream, query = " + query);
 
                 statement = connection.createStatement();
                 rs = statement.executeQuery(query);
 
                 while (rs.next()) {
-                        dsbindingkey_dbid = rs.getString(1);
-			deletionStatement = "DELETE FROM DataStreamMIME WHERE DSBindingKey_DBID = " + dsbindingkey_dbid + ";";
+                        dsBindKeyDbID = rs.getString(1);
+			deletionStatement = "DELETE FROM dsMIME WHERE dsBindKeyDbID = " + dsBindKeyDbID + ";";
 
 			deleteGen(connection, deletionStatement);
 		}
@@ -152,14 +152,14 @@ System.out.println("deleteDataStream, query = " + query);
         */
 	public void deleteDigitalObjectRow(Connection connection, String doDBID) throws SQLException {
 
-		String deletionStatement = "DELETE FROM DigitalObject WHERE DO_DBID = " +  doDBID + " LIMIT 1;";
+		String deletionStatement = "DELETE FROM do WHERE doDbID = " +  doDBID + " LIMIT 1;";
 
 		deleteGen(connection, deletionStatement);
 	}
 
         /**
         *
-        * Deletes DigitalObjectDissAssoc database rows.
+        * Deletes doDissAssoc database rows.
         *
         * @param connection JDBC DBMS connection
         * @param doDBID DigitalObject DBID
@@ -169,7 +169,7 @@ System.out.println("deleteDataStream, query = " + query);
 	public void deleteDigitalObjectDissAssocRow(Connection connection, String doDBID) throws SQLException {
 
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM DigitalObjectDissAssoc WHERE DO_DBID = " +  doDBID + ";";
+		String deletionStatement = "DELETE FROM doDissAssoc WHERE doDbID = " +  doDBID + ";";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -181,18 +181,18 @@ System.out.println("deleteDataStream, query = " + query);
         *   The way Disseminator rows are being deleted for the test case is different
         * from how they were inserted.  They are inserted by processing the Data Object.
         * Here they are deleted by bMechDBID.  Another way to delete would be to
-        * delete the Disseminator rows by gathering the Disseminator.DISS_DBID values 
-        * from the DigitalObjectDissAssoc table and using these values for the deletes.
-        * Both ways work properly for the test case, but may cause problems with more 
+        * delete the Disseminator rows by gathering the Disseminator.dissDbID values
+        * from the doDissAssoc table and using these values for the deletes.
+        * Both ways work properly for the test case, but may cause problems with more
         * general use.
-        * 
+        *
         * The problems for unrestricted general use:
-        *   1) delete by bMechDBID: Disseminator rows are deleted for all objects that 
+        *   1) delete by bMechDBID: Disseminator rows are deleted for all objects that
         * refer to bMechDBID, not just for the related Data Object.
-        *   2) delete with DISS_DBIDs from DigitalObjectDissAssoc:  this would remove 
-        * Disseminator rows that are associated with a particular Data Object.  
-        * However, it would also have the side effect of breaking any 'links' that 
-        * other Data Objects would have that also used this DISS_DBID, BMECH_DBID 
+        *   2) delete with dissDbIDs from doDissAssoc:  this would remove
+        * Disseminator rows that are associated with a particular Data Object.
+        * However, it would also have the side effect of breaking any 'links' that
+        * other Data Objects would have that also used this dissDbID, bMechDbID
         * combination.
         *
         * @param connection JDBC DBMS connection
@@ -203,14 +203,14 @@ System.out.println("deleteDataStream, query = " + query);
 	public void deleteDisseminatorRow(Connection connection, String bMechDBID) throws SQLException {
 
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM Disseminator WHERE BMECH_DBID = " +  bMechDBID + "1;";
+		String deletionStatement = "DELETE FROM diss WHERE bMechDbID = " +  bMechDBID + "1;";
 
 		deleteGen(connection, deletionStatement);
 	}
 
         /**
         *
-        * Deletes MechanismImpl database rows.
+        * Deletes mechImpl database rows.
         *
         * @param connection JDBC DBMS connection
         * @param bMechDBID BehaviorMechanism DBID
@@ -219,14 +219,14 @@ System.out.println("deleteDataStream, query = " + query);
         */
 	public void deleteMechanismImplRow(Connection connection, String bMechDBID) throws SQLException {
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM MechanismImpl WHERE BMECH_DBID = " +  bMechDBID + ";";
+		String deletionStatement = "DELETE FROM mechImpl WHERE bMechDbID = " +  bMechDBID + ";";
 
 		deleteGen(connection, deletionStatement);
 	}
 
         /**
         *
-        * Deletes Method database rows.
+        * Deletes method database rows.
         *
         * @param connection JDBC DBMS connection
         * @param bDefDBID BehaviorDefinition DBID
@@ -236,7 +236,7 @@ System.out.println("deleteDataStream, query = " + query);
 	public void deleteMethodRow(Connection connection, String bDefDBID) throws SQLException {
 
 		// Not limited to single row deletes.
-		String deletionStatement = "DELETE FROM Method WHERE BDEF_DBID = " + bDefDBID + ";";
+		String deletionStatement = "DELETE FROM method WHERE bDefDbID = " + bDefDBID + ";";
 
 		deleteGen(connection, deletionStatement);
 	}
@@ -258,7 +258,7 @@ System.out.println("deleteDataStream, query = " + query);
 		statement = connection.createStatement();
 
 System.out.println("deleteGen: deletionStatement = " + deletionStatement);
-		rowCount = statement.executeUpdate(deletionStatement); 
+		rowCount = statement.executeUpdate(deletionStatement);
 System.out.println("rowCount = " + rowCount);
 		statement.close();
 	}
@@ -277,7 +277,7 @@ System.out.println("rowCount = " + rowCount);
 		String returnString;
 
 		String pid;
-		String usage = "Usage (deletes a DigitalObject row): java rowDeletion pid";
+		String usage = "Usage (deletes a do row): java rowDeletion pid";
 
     		if (args.length != 1) {
 			System.out.println(usage);

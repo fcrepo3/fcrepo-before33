@@ -211,6 +211,7 @@ public class DefaultAccess extends Module implements Access
       String bDefPID, String methodName, Property[] userParms,
       Calendar asOfDateTime) throws ServerException
   {
+    long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     Hashtable h_userParms = new Hashtable();
@@ -251,6 +252,10 @@ public class DefaultAccess extends Module implements Access
     DisseminationService dissService = new DisseminationService();
     dissemination =
         dissService.assembleDissemination(PID, h_userParms, dissBindInfo);
+    long stopTime = new Date().getTime();
+    long interval = stopTime - startTime;
+    System.out.println("[DefaultAccess] Roundtrip GetDissemination: "
+              + interval + " milliseconds.");
     return dissemination;
   }
 
@@ -269,12 +274,17 @@ public class DefaultAccess extends Module implements Access
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
       Calendar asOfDateTime) throws ServerException
   {
+    long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     DOReader reader =
         m_manager.getReader(context, PID);
     ObjectMethodsDef[] methodDefs =
         reader.getObjectMethodsDef(versDateTime);
+    long stopTime = new Date().getTime();
+    long interval = stopTime - startTime;
+    System.out.println("[DefaultAccess] Roundtrip GetObjectMethods: "
+              + interval + " milliseconds.");
     return methodDefs;
   }
 

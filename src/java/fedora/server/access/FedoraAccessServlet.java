@@ -20,6 +20,7 @@ import java.util.Hashtable;
 
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -63,6 +64,9 @@ import fedora.server.utilities.DateUtility;
  *     implemented in current version.)
  * <li>parmArray - optional array of method parameters consisting of
  *     name/value pairs in the form parm1=value1&parm2=value2...</li>
+ * <li>clearCache_ - optional parameter that signals whether the dissemination
+ *     cache is to be cleared; value of "yes" clears cache; value of "no" or
+ *     omission does not clear cache.</li>
  * </ul>
  * <li>http://hostname:port/PID[/dateTime][?xmlEncode_=BOOLEAN] - this syntax
  *     requests a list all methods associated with the specified digital
@@ -82,16 +86,19 @@ import fedora.server.utilities.DateUtility;
  *     Value of "yes" indicates raw xml; the absence of the xmlEncode parameter
  *     or a value of "no" indicates format is to be html.</li>
  * </ul>
- * <i><b>Note that the xmlEncode_ parameter name ends with the underscore
+ * <i><b>Note that the clearCache_ parameter name ends with the underscore
  * character ("_"). This is done to avoid possible name clashes with
- * user-supplied method parameter names. As a general rule, user-supplied
- * parameters should never contain names that end with the underscore character
- * to prevent possible name clashes with the servlet.</b></i>
+ * user-supplied method parameter names that may be in the dissemination
+ * request. As a general rule, user-supplied parameters should never contain
+ * names that end with the underscore character to prevent possible name
+ * clashes with the servlet.</b></i>
  * <p>If a dissemination request is successful, it is placed into the
  * dissemination cache which has a default size of 100. This default can be
  * changed by setting the <code>disseminationCacheSize</code> parameter in
  * the <code>fedora.fcfg</code> configuration file. If this parameter is not
- * present or cannot be parsed, the cache size will default to 100.</p>
+ * present or cannot be parsed, the cache size will default to 100.</p><p>This
+ * is a crude form of caching. A more robust cache will be needed to enhance
+ * performance as the number of dissemination requests becomes very large.</p>
  * </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
@@ -191,11 +198,12 @@ public class FedoraAccessServlet extends HttpServlet
     String action = null;
     String clearCache = null;
     Property[] userParms = null;
+    long servletStartTime = new Date().getTime();
     boolean isGetObjectMethodsRequest = false;
     boolean isGetDisseminationRequest = false;
     PARAMETER_RESOLVER_URL = "http://" + request.getServerName()
         + ":" + request.getServerPort() + PARAMETER_RESOLVER_SERVLET_PATH;
-        
+
     HashMap h=new HashMap();
     h.put("application", "apia");
     h.put("useCachedObject", "true");
@@ -203,14 +211,8 @@ public class FedoraAccessServlet extends HttpServlet
     h.put("host", request.getRemoteAddr());
     ReadOnlyContext context = new ReadOnlyContext(h);
 
-    // getRequestURL only available in Servlet API 2.3.
-    // Use following for earlier releases servlet API:
-    // requestURL = "http://" + request.getServerName() + ":"
-    //     + request.getServerPort() + request.getRequestURI()+"?";
     requestURL = request.getRequestURL().toString()+"?";
     requestURI = requestURL+request.getQueryString();
-    if (debug) System.out.println("RequestURL: " + requestURL
-        + "RequestURI: "+requestURI);
 
     // Parse servlet URL.
     StringBuffer servletURL = request.getRequestURL();
@@ -249,7 +251,7 @@ public class FedoraAccessServlet extends HttpServlet
       out.println("<br>Dissemination Request Syntax Error: Required fields "
           + "are missing in the Dissemination Request. The expected syntax "
           + "is:<br>"+URIArray[0]+"//"+URIArray[2]+URIArray[3]+URIArray[4]
-          + "/PID/bDefPID/Method[/dateTime][?ParmArray]<br>"
+          + "/PID/bDefPID/methodName[/dateTime][?ParmArray]<br>"
           + "Submitted request was: " + requestURI);
       return;
     }
@@ -260,10 +262,9 @@ public class FedoraAccessServlet extends HttpServlet
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
     {
       String name = (String)e.nextElement();
-      if (name.equalsIgnoreCase("xmlEncode_"))
+      if (name.equalsIgnoreCase("xmlEncode"))
       {
         xmlEncode = request.getParameter(name);
-        System.out.println("\nname: "+name+"\nvalue: "+xmlEncode);
       } else if (name.equalsIgnoreCase("clearCache_"))
       {
         clearCache = request.getParameter(name);
@@ -271,7 +272,6 @@ public class FedoraAccessServlet extends HttpServlet
       {
         String value = request.getParameter(name);
         h_userParms.put(name,value);
-        System.out.println("\nname: "+name+"\nvalue: "+value);
       }
     }
 
@@ -290,18 +290,44 @@ public class FedoraAccessServlet extends HttpServlet
 
     if (isGetObjectMethodsRequest)
     {
-      getObjectMethods(context, PID, asOfDate, xmlEncode, userParms, request, 
+      getObjectMethods(context, PID, asOfDate, xmlEncode, request,
               response);
+      long stopTime = new Date().getTime();
+      long interval = stopTime - servletStartTime;
+      System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
+          + "GetObjectMethods: " + interval + " milliseconds.");
     } else if (isGetDisseminationRequest)
     {
       getDissemination(context, PID, bDefPID, methodName, userParms, asOfDate,
                        clearCache, response);
+      long stopTime = new Date().getTime();
+      long interval = stopTime - servletStartTime;
+      System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
+          + "GetDissemination: " + interval + " milliseconds.");
     }
 
   }
 
+  /**
+   * <p>This method calls the Fedora Access Subsystem to retrieve an array
+   * of object method definitions for the digital object with the specified PID.
+   * The array is then deserialized into XML. If the value of the xmlEncode
+   * variable is set to "yes", the raw XML is returned. If the value of the
+   * xmlEncode variable is   * set to "no" or is omitted in the URL request,
+   * the XML is transformed by an XLT stylesheet into a web form.</p>
+   *
+   * @param context The read only context of the request.
+   * @param PID The persistent identifier of the Digital Object.
+   * @param asOfDateTime The version datetime stamp of the digital object.
+   * @param xmlEncode The control flag that signals output format; Value of
+   *        "yes" signals output is of MIME type text/xml; Value of "no" or
+   *        omitted signals output as MIME type text/html.
+   * @param request The servlet request.
+   * @param response The servlet response.
+   * @throws IOException If an error occurrs with an input or output operation.
+   */
   public void getObjectMethods(Context context, String PID, Calendar asOfDateTime,
-      String xmlEncode, Property[] userParms, HttpServletRequest request,
+      String xmlEncode, HttpServletRequest request,
       HttpServletResponse response) throws IOException
   {
 
@@ -383,7 +409,7 @@ public class FedoraAccessServlet extends HttpServlet
         if (xmlEncode.equalsIgnoreCase(YES))
         {
           // Return results as raw XML
-          response.setContentType("text/xml");
+          response.setContentType(CONTENT_TYPE_XML);
           int c = 0;
           while ( (c = pr.read()) >= 0)
           {
@@ -400,6 +426,7 @@ public class FedoraAccessServlet extends HttpServlet
           Transformer transformer = template.newTransformer();
           Properties details = template.getOutputProperties();
           transformer.setParameter("serverURI", new StringValue(serverURI));
+          transformer.setParameter("dummy", new StringValue("dummy"));
           transformer.transform(new StreamSource(pr), new StreamResult(out));
           pr.close();
         }
@@ -414,204 +441,48 @@ public class FedoraAccessServlet extends HttpServlet
         showURLParms(PID, "", "", asOfDateTime,
                      new Property[0], "", response, message);
       }
-    } catch (Exception e)
+    } catch (TransformerException e)
     {
       // FIXME!! Needs more refined Exception handling
-      String message = "[FedoraAccessServlet] An error has occured. The "
+      String message = "[FedoraAccessServlet] An error has occured in "
+                     + "transforming the deserialized XML from getObjectMethods"
+                     + " into html. The "
                      + "error was \" "
                      + e.getClass().getName()
                      + " \". Reason: "  + e.getMessage();
-      System.err.println(message);
-      if (debug) e.printStackTrace();
+      s_server.logWarning(message);
+      e.printStackTrace();
       showURLParms(PID, "", "", asOfDateTime,
-                   userParms, "", response, message);
+                   new Property[0], "", response, message);
+    } catch (ServerException se)
+    {
+      String message = "[FedoraAccessServlet] An error has occured in accessing"
+                     + " the Fedora Access Subsystem. The error was \" "
+                     + se.getClass().getName()
+                     + " \". Reason: "  + se.getMessage();
+      s_server.logWarning(message);
+      se.printStackTrace();
+      showURLParms(PID, "", "", asOfDateTime,
+                   new Property[0], "", response, message);
     }
   }
 
-/*
-        if (xmlEncode.equalsIgnoreCase("yes"))
-        {
-          response.setContentType("text/xml");
-          out.println("<?xml version=\"1.0\"?>");
-          System.out.println("dateTime: "+DateUtility.convertDateToString(versDateTime));
-          if (versDateTime == null || DateUtility.
-              convertDateToString(versDateTime).equalsIgnoreCase(""))
-          {
-            out.println("<object pid=\""+PID+"\""
-                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:noNamespaceSchemaLocation=\"C:\\objectmethods.xsd\">");
-          } else
-          {
-            out.println("<object"
-                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:noNamespaceSchemaLocation=\"C:\\objectmethods.xsd\">"
-                + " pid=\""+PID+"\" dateTime=\""
-                + DateUtility.convertDateToString(versDateTime)
-                + "\" >");
-            //out.println("<pid>"+PID+"</pid>");
-          }
-          String nextBdef = "null";
-          String currentBdef = "";
-          for (int i=0; i<objMethDefArray.length; i++)
-          {
-
-            currentBdef = objMethDefArray[i].bDefPID;
-            if (!currentBdef.equalsIgnoreCase(nextBdef))
-            {
-              if (i != 0) out.println("</bdef>");
-              out.println("<bdef pid=\"" + objMethDefArray[i].bDefPID + "\" >");
-              //out.println("<pid>"+objMethDefArray[i].bDefPID+"</pid>");
-            }
-            out.println("<method name=\"" + objMethDefArray[i].methodName
-                + "\" >");
-            //out.println("<name>"+objMethDefArray[i].methodName+"</name>");
-            MethodParmDef[] methodParms = objMethDefArray[i].methodParmDefs;
-            //out.println("<parm>");
-            for (int j=0; j<methodParms.length; j++)
-            {
-              out.println("<parm parmName=\"" + methodParms[j].parmName
-                  + "\" parmDefaultValue=\"" + methodParms[j].parmDefaultValue
-                  + "\" parmRequired=\"" + methodParms[j].parmRequired
-                  + "\" parmType=\"" + methodParms[j].parmType
-                  + "\" parmLabel=\"" + methodParms[j].parmLabel + "\" >");
-              //out.println("<name>"+methodParms[j].parmName+"</name>");
-              //out.println("<defaultValue>"+methodParms[j].parmDefaultValue+"</defaultValue>");
-              //out.println("<parmRequired>"+methodParms[j].parmRequired+"</parmRequired>");
-              //out.println("<parmType>"+methodParms[j].parmType+"</parmType>");
-              //out.println("parmLabel>"+methodParms[j].parmLabel+"</parmLabel>");
-              if (!methodParms[j].parmDomainValues[0].equalsIgnoreCase("null"))
-              {
-                out.println("<parmDomainValues>");
-                for (int k=0; k<methodParms[j].parmDomainValues.length; k++)
-                {
-                  out.println("<value>"+methodParms[j].parmDomainValues[k]+"</value>");
-                }
-                out.println("</parmDomainValues>");
-              }
-              out.println("</parm>");
-            }
-
-            out.println("</method>");
-            nextBdef = currentBdef;
-          }
-          out.println("</bdef>");
-          out.println("</object>");
-        } else
-        {
-        response.setContentType(CONTENT_TYPE_HTML);
-        out.println("<html>");
-        out.println("<head>");
-        out.println("<title>Object Methods</title>");
-        out.println("</head>");
-        out.println("<br></br>");
-        out.println("<center>");
-        out.println("<table border='1' cellpadding='5' >");
-        out.println("<tr>");
-        out.println("<td><b><font size='+2'> Object PID "
-                    + " </font></b></td>");
-        out.println("<td><b><font size='+2'> Version Date"
-                    + " </font></b></td>");
-        out.println("<td><b><font size='+2'> BDEF PID"
-                    + " </font></b></td>");
-        out.println("<td><b><font size='+2'> Method Name"
-                    + " </font></b></td>");
-        out.println("<td>&nbsp;</td><td><b><font size='+2'> Parm Name"
-                    + " </font></b></td>");
-        out.println("<td colspan=\"100%\"><b><font size='+2'> Allowed Parm Values<br>(Select a value for each Parameter)"
-                    + " </font></b></td>");
-        out.println("</tr>");
-
-        // Format table such that repeating fields only display once.
-        int rows = objMethDefArray.length-1;
-        for (int i=0; i<objMethDefArray.length; i++)
-        {
-          if (debug)
-          {
-            MethodParmDef[] methodParms = null;
-            methodParms = objMethDefArray[i].methodParmDefs;
-            if (methodParms != null)
-            {
-              for(int j=0; j<methodParms.length; j++)
-              {
-                System.out.println("ParmName: "+methodParms[j].parmName);
-                String[] values = methodParms[j].parmDomainValues;
-                if(values != null)
-                {
-                  for(int k=0; k<values.length; k++)
-                  {
-                    System.out.println("parmValue: "+values[k]);
-                  }
-                }
-              }
-            }
-          }
-          out.println("<form name=\"parmResolverForm\" "
-              + "method=\"post\" action=\""
-              + PARAMETER_RESOLVER_URL + "\"><tr>");
-          if (i == 0)
-          {
-            out.println("<td><font color=\"blue\"> "
-                        + objMethDefArray[i].PID + "</font></td>");
-            out.flush();
-            out.println("<td><font color=\"green\"> "
-                        + versDateTime + " </font></td>");
-            out.println("<td><font color=\"green\"> "
-                        + objMethDefArray[i].bDefPID
-                        + " </font></td>");
-            out.println("<td><font color=\"red\"> "
-                        + objMethDefArray[i].methodName
-                        + " </font></td>");
-
-            // Setup special formatting if there are any method parameters
-            StringBuffer sb = createParmForm(PID, objMethDefArray[i].bDefPID,
-                objMethDefArray[i].methodName,
-                objMethDefArray[i].methodParmDefs, serverURI);
-            out.println(sb.toString());
-            out.println("</form>");
-          } else if (i == 1)
-          {
-            out.println("<td colspan='2' rowspan='" + rows + "'></td>");
-            out.println("<td><font color=\"green\"> "
-                        + objMethDefArray[i].bDefPID
-                        + " </font></td>");
-            out.println("<td><font color=\"red\"> "
-                        + objMethDefArray[i].methodName
-                        + " </font></td>");
-
-            // Setup special formatting if there are any method parameters
-            StringBuffer sb = createParmForm(PID, objMethDefArray[i].bDefPID,
-                objMethDefArray[i].methodName,
-                objMethDefArray[i].methodParmDefs, serverURI);
-            out.println(sb.toString());
-            out.println("</form>");
-          } else
-          {
-            out.println("<td><font color=\"green\"> "
-                        + objMethDefArray[i].bDefPID
-                        + " </font></td>");
-            out.println("<td><font color=\"red\"> "
-                        + objMethDefArray[i].methodName
-                        + " </font></td>");
-
-            // Setup special formatting if there are any method parameters
-            StringBuffer sb = createParmForm(PID, objMethDefArray[i].bDefPID,
-                objMethDefArray[i].methodName,
-                objMethDefArray[i].methodParmDefs, serverURI);
-            out.println(sb.toString());
-            out.println("</form>");
-          }
-          //out.println("</tr>");
-        }
-        out.println("</table>");
-        out.println("</center>");
-        out.println("</body>");
-        out.println("</html>");
-        }
-*/
-
-
+  /**
+   * <p>This method calls the Fedora Access Subsystem to retrieve a MIME-typed
+   * stream corresponding to the dissemination request.</p>
+   *
+   * @param context The read only context of the request.
+   * @param PID The persistent identifier of the Digital Object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName The method name.
+   * @param userParms An array of user-supplied method parameters.
+   * @param asOfDateTime The version datetime stamp of the digital object.
+   * @param clearCache The dissemination cache flag.
+   * @param response The servlet response.
+   * @throws IOException If an error occurrs with an input or output operation.
+   */
   public void getDissemination(Context context, String PID, String bDefPID, String methodName,
-      Property[] userParms, Calendar asOfDate, String clearCache,
+      Property[] userParms, Calendar asOfDateTime, String clearCache,
       HttpServletResponse response) throws IOException
   {
     PrintWriter out = response.getWriter();
@@ -620,7 +491,7 @@ public class FedoraAccessServlet extends HttpServlet
       // See if dissemination request is in local cache
       MIMETypedStream dissemination = null;
       dissemination = getDisseminationFromCache(context, PID, bDefPID,
-          methodName, userParms, asOfDate, clearCache, response);
+          methodName, userParms, asOfDateTime, clearCache, response);
       if (dissemination != null)
       {
         // Dissemination was successful;
@@ -638,16 +509,23 @@ public class FedoraAccessServlet extends HttpServlet
       // Dissemination request failed; echo back request parameter.
       String message = "[FedoraAccessServlet] No Dissemination Result "
           + " was returned.";
-      showURLParms(PID, bDefPID, methodName, asOfDate, userParms,
+      showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms,
                   clearCache, response, message);
       System.out.println(message);
-      s_server.logFinest(message);
+      s_server.logWarning(message);
     }
     // FIXME!! Decide on exception handling
     } catch (Exception e)
     {
-      System.err.println(e.getMessage());
-      }
+      String message = "[FedoraAccessServlet] An error has occured in "
+                     + "getting a dissemination from cache. The error was \" "
+                     + e.getClass().getName()
+                     + " \". Reason: "  + e.getMessage();
+      s_server.logWarning(message);
+      e.printStackTrace();
+      showURLParms(PID, bDefPID, methodName, asOfDateTime,
+                   userParms, clearCache, response, message);
+    }
   }
 
   /**
@@ -696,70 +574,63 @@ public class FedoraAccessServlet extends HttpServlet
    * of "yes". The cache is also flushed when it reaches the limit
    * specified by <code>DISS_CACHE_SIZE</code>.</p>
    *
+   * @param context The read only context of the request.
    * @param PID The persistent identifier of the Digital Object.
    * @param bDefPID The persistent identifier of the Behavior Definition object.
    * @param methodName The method name.
    * @param userParms An array of user-supplied method parameters.
-   * @param asOfDate The version datetime stamp of the digital object.
+   * @param asOfDateTime The version datetime stamp of the digital object.
    * @param clearCache The dissemination cache flag.
    * @param response The servlet response.
    * @return The MIME-typed stream containing dissemination result.
    * @throws IOException If an error occurrs with an input or output operation.
    */
-  private synchronized MIMETypedStream getDisseminationFromCache(Context context,
-      String PID, String bDefPID, String methodName,
-      Property[] userParms, Calendar asOfDate, String clearCache,
+  private synchronized MIMETypedStream getDisseminationFromCache(
+      Context context, String PID, String bDefPID, String methodName,
+      Property[] userParms, Calendar asOfDateTime, String clearCache,
       HttpServletResponse response) throws IOException
   {
     // Clear cache if size gets larger than DISS_CACHE_SIZE
-    // FIXME!! This needs to part of the Fedora server config parameters
-    if (disseminationCache.size() > DISS_CACHE_SIZE ||
-        (clearCache != null && clearCache.equalsIgnoreCase(YES)))
+    if ( (disseminationCache.size() > DISS_CACHE_SIZE) ||
+         (clearCache != null && clearCache.equalsIgnoreCase(YES)) )
     {
       clearDisseminationCache();
     }
     MIMETypedStream disseminationResult = null;
     // See if dissemination request is in local cache
-    disseminationResult =
-        (MIMETypedStream)disseminationCache.get(requestURI);
+    disseminationResult = (MIMETypedStream)disseminationCache.get(requestURI);
     if (disseminationResult == null)
     {
       // Dissemination request NOT in local cache.
       // Try reading from relational database
-      try {
-      //disseminationResult = GetDissemination(PID, bDefPID, methodName,
-      //    userParms, asOfDate);
-      System.out.println("calling access");
-      disseminationResult = s_access.getDissemination(context, PID, bDefPID, methodName, userParms, asOfDate);
-      System.out.println("returned from access");
+      try
+      {
+        disseminationResult =
+            s_access.getDissemination(context, PID, bDefPID, methodName,
+                                      userParms, asOfDateTime);
       } catch (ServerException se)
       {
-        try{
+
         response.setStatus(404);
-          response.sendError(404, "Dissemination Error: "+
-                             se.getMessage());
-          //response.sendError(404, this.requestURL);
-          PrintWriter out = response.getWriter();
-          out.println(se.getMessage());
-          se.printStackTrace(out);
-        } catch (IOException ioe)
-        {}
+        String message = "[FedoraAccessServlet] An error has occured in "
+            + "accessing the Fedora Access Subsystem. The error was \" "
+            + se.getClass().getName()
+            + " \". Reason: "  + se.getMessage();
+        response.sendError(404, message);
+        s_server.logWarning(message);
+        se.printStackTrace();
+        showURLParms(PID, bDefPID, methodName, asOfDateTime,
+                   userParms, clearCache, response, message);
       }
       if (disseminationResult != null)
       {
         // Dissemination request succeeded, so add to local cache
+        // FIXME!! This is a crude cache. More robust caching will be needed
+        // to achieve optimum performance as the number of requests gets large.
         disseminationCache.put(requestURI, disseminationResult);
-         if (debug) System.out.println("ADDED to CACHE: "+requestURI);
-      } /* else
-      {
-        // Dissemination request failed
-        // FIXME!! need to decide on exception handling
-        showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
-                    clearCache, response);
-        System.out.println("Dissemination Result: NULL");
-        this.getServletContext().log("Dissemination Result: NULL");
-      } */
-      if (debug) System.out.println("CACHE SIZE: "+disseminationCache.size());
+        if (debug) s_server.logFinest("ADDED to CACHE: "+requestURI);
+      }
+      if (debug) s_server.logFinest("CACHE SIZE: "+disseminationCache.size());
     }
     return disseminationResult;
   }
@@ -869,128 +740,3 @@ public class FedoraAccessServlet extends HttpServlet
     }
   }
 }
-  /**
-   * <p>Creates a web form that allows one to select the values of method
-   * parameters to be used for method specified in a dissemination request.
-   * If the method has no parameters, this is noted in the form output.</p>
-   *
-   * @param PID The persistent idenitifer for the digital object.
-   * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param methodName The name of the method.
-   * @param methodParms An array of method parameter definitions.
-   * @param requestURI The URI of the calling servlet.
-   * @return A string buffer containing the generated html form information.
-   */
-/*
-  public StringBuffer createParmForm(String PID, String bDefPID,
-         String methodName, MethodParmDef[] methodParms, String requestURI)
-  {
-    StringBuffer sb = new StringBuffer();
-    if (methodParms == null || methodParms.length == 0)
-    {
-      // The method has no parameters.
-      sb.append("<td><input type=\"hidden\" name=\"PID\" value=\""
-          + PID + "\">"
-          + "<input type=\"hidden\" name=\"bDefPID\" value=\""
-          + bDefPID + "\">"
-          + "<input type=\"hidden\" name=\"methodName\" value=\""
-          + methodName + "\">"
-          + "<input type=\"hidden\" name=\"serverURI\" value=\""
-          + requestURI + "\">"
-          + "<input type=\"submit\" name=\"Submit\" "
-          + "value=\"RunDissemination\"></td>"
-          + "<td colspan=\"100%\"><font color=\"purple\">"
-          + "No Parameters Defined</font></td>");
-      return sb;
-    }
-
-    // Format table such that repeating fields only display once.
-    int rows = methodParms.length-1;
-    for (int i=0; i<methodParms.length; i++)
-    {
-      String parmName = methodParms[i].parmName;
-      String[] parmValues = methodParms[i].parmDomainValues;
-      if (i == 0)
-      {
-        sb.append(
-            "<td><input type=\"submit\" name=\"Submit\" "
-            + "value=\"RunDissemination\">"
-            + "<input type=\"hidden\" name=\"PID\" value=\""
-            + PID + "\">"
-            + "<input type=\"hidden\" name=\"bDefPID\" value=\""
-            + bDefPID + "\">"
-            + "<input type=\"hidden\" name=\"methodName\" value=\""
-            + methodName + "\">"
-            + "<input type=\"hidden\" name=\"serverURI\" value=\""
-            + requestURI + "\">"
-            + "<td><b><font color=\"purple\">"
-            + parmName + "</font></b></td>");
-        if(parmValues != null)
-        {
-          for (int j=0; j<parmValues.length; j++)
-          {
-            if (parmValues[j].equalsIgnoreCase("null"))
-            {
-              sb.append("<td>"
-                  + "<input type=\"text\"  size=\"10\" maxlength=\"32\" "
-                  + "name=\"" + parmName + "\" value=\"\"></td>");
-            } else
-            {
-              sb.append("<td>" + parmValues[j] + "</td>"
-                  + "<td>"
-                  + "<input type=\"radio\" name=\""
-                  + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
-            }
-          }
-        }
-      } else if (i == 1)
-      {
-        sb.append("</tr><tr><td colspan=\"5\" rowspan=\"" + rows + "\"></td>"
-            + "<td><b><font color=\"purple\">" + parmName + "</font></b></td>");
-        if(parmValues != null)
-        {
-          for (int j=0; j<parmValues.length; j++)
-          {
-            if (parmValues[j].equalsIgnoreCase("null"))
-            {
-              sb.append("<td>"
-                  + "<input type=\"text\"  size=\"10\" maxlength=\"32\" "
-                  + "name=\"" + parmName + "\" value=\"\"></td>");
-            } else
-            {
-              sb.append("<td>" + parmValues[j] + "</td>"
-                  + "<td>"
-                  + "<input type=\"radio\" name=\""
-                  + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
-            }
-          }
-        }
-      } else
-      {
-        sb.append("</tr><tr><td><b><font color=\"purple\">"
-            + parmName + "</font></b></td>");
-        if(parmValues != null)
-        {
-          for (int j=0; j<parmValues.length; j++)
-          {
-            if (parmValues[j].equalsIgnoreCase("null"))
-            {
-              sb.append("<td>"
-                  + "<input type=\"text\"  size=\"10\" maxlength=\"32\" "
-                  + "name=\"" + parmName + "\" value=\"\"></td>");
-            } else
-            {
-              sb.append("<td>" + parmValues[j] + "</td>"
-                  + "<td>"
-                  + "<input type=\"radio\" name=\""
-                  + parmName +"\" value=\"" + parmValues[j] + "\"></td>");
-            }
-          }
-        }
-      }
-    }
-    //sb.append("</form></td></tr>");
-    //sb.append("</td></tr>");
-    return sb;
-  }
-*/
