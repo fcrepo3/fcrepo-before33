@@ -31,7 +31,7 @@ echo Starting Kowari Server...
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 
-%JAVA_HOME%\bin\java -jar %KOWARI_HOME%\%KOWARI_JAR% --serverhost %SERVERHOST% --path %KOWARI_HOME% --servername fedoraResourceIndex --port KOWARI_HTTP_PORT --rmiport KOWARI_RMI_PORT
+%JAVA_HOME%\bin\java -jar %KOWARI_HOME%\%KOWARI_JAR% --serverhost %KOWARI_HOSTNAME% --path %KOWARI_HOME% --servername fedoraResourceIndex --port %KOWARI_HTTP_PORT% --rmiport %KOWARI_RMI_PORT%
 
 :doneRunning
 set JAVA_HOME=%OLD_JAVA_HOME%
