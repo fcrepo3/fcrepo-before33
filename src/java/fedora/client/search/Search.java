@@ -113,6 +113,7 @@ public class Search
         Calendar createDateMax=null;
         Calendar lastModDateMin=null;
         Calendar lastModDateMax=null;
+        /*
         RepositoryBrowser frame=new RepositoryBrowser(pidPattern, foType, 
                 lockedByPattern, state, labelPattern, contentModelIdPattern, 
                 createDateMin, createDateMax, lastModDateMin, lastModDateMax);
@@ -121,6 +122,7 @@ public class Search
         try {
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
+        */
     }
 
 }
