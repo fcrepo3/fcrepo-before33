@@ -11,6 +11,7 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.RepositoryReader;
@@ -19,60 +20,57 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.MethodDefOperationBind;
+import fedora.server.storage.service.ServiceMapper;
+import org.xml.sax.InputSource;
 
 public class SimpleBMechReader
-        extends SimpleWSDLAwareReader
+        extends SimpleServiceAwareReader
         implements BMechReader {
-        
-    public SimpleBMechReader(Context context, RepositoryReader repoReader, 
-            DOTranslator translator, String shortExportFormat, 
+
+    private ServiceMapper serviceMapper;
+
+    public SimpleBMechReader(Context context, RepositoryReader repoReader,
+            DOTranslator translator, String shortExportFormat,
             String longExportFormat, String currentFormat,
-            String encoding, InputStream serializedObject, Logging logTarget) 
+            String encoding, InputStream serializedObject, Logging logTarget)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
-        super(context, repoReader, translator, shortExportFormat, 
+        super(context, repoReader, translator, shortExportFormat,
                 longExportFormat, currentFormat, encoding, serializedObject,
                 logTarget);
-    }
-    
-    public MethodDef[] GetBehaviorMethods(Date versDateTime) 
-            throws DatastreamNotFoundException, ObjectIntegrityException,
-            RepositoryConfigurationException {
-        return getDeserializedWSDL(versDateTime).methodDefBind;
-    }
-    
-    public InputStream GetBehaviorMethodsWSDL(Date versDateTime)
-            throws DatastreamNotFoundException, ObjectIntegrityException {
-        return new ByteArrayInputStream(
-                getWSDLDatastream(versDateTime).xmlContent);
+        serviceMapper = new ServiceMapper();
     }
 
-    private DatastreamXMLMetadata getBindSpecDatastream(Date versDateTime) 
-            throws DatastreamNotFoundException, ObjectIntegrityException {
-        Datastream ds=GetDatastream("DSBIND", versDateTime);
-        if (ds==null) {
-            throw new DatastreamNotFoundException("The object, " 
-                    + GetObjectPID() + " does not have a DSBIND datastream"
-                    + " existing at " + getWhenString(versDateTime));
-        }
-        DatastreamXMLMetadata bindSpecDS=null;
-        try {
-            bindSpecDS=(DatastreamXMLMetadata) ds;
-        } catch (Throwable th) {
-            throw new ObjectIntegrityException("The object, "
-                    + GetObjectPID() + " has a DSBIND datastream existing at "
-                    + getWhenString(versDateTime) + ", but it's not an "
-                    + "XML metadata datastream");
-        }
-        return bindSpecDS;
-    }
-    
-    public BMechDSBindSpec GetDSBindingSpec(Date versDateTime) 
+    public MethodDef[] getServiceMethods(Date versDateTime)
             throws DatastreamNotFoundException, ObjectIntegrityException,
-            RepositoryConfigurationException {
-        return new DSBindSpecDeserializer(new ByteArrayInputStream(
-                getBindSpecDatastream(versDateTime).xmlContent), 
-                GetObjectPID()).getDSBindSpec();
+            RepositoryConfigurationException, GeneralException {
+        return serviceMapper.getMethodDefs(
+          new InputSource(new ByteArrayInputStream(
+              getMethodMapDatastream(versDateTime).xmlContent)));
     }
-    
+
+    public MethodDefOperationBind[] getServiceMethodBindings(Date versDateTime)
+            throws DatastreamNotFoundException, ObjectIntegrityException,
+            RepositoryConfigurationException, GeneralException {
+        return serviceMapper.getMethodDefBindings(
+          new InputSource(new ByteArrayInputStream(
+              getWSDLDatastream(versDateTime).xmlContent)),
+          new InputSource(new ByteArrayInputStream(
+              getMethodMapDatastream(versDateTime).xmlContent)));
+    }
+
+    public BMechDSBindSpec getServiceDSInputSpec(Date versDateTime)
+            throws DatastreamNotFoundException, ObjectIntegrityException,
+            RepositoryConfigurationException, GeneralException {
+        return serviceMapper.getDSInputSpec(
+          new InputSource(new ByteArrayInputStream(
+              getDSInputSpecDatastream(versDateTime).xmlContent)));
+    }
+
+    public InputStream getServiceMethodsXML(Date versDateTime)
+            throws DatastreamNotFoundException, ObjectIntegrityException {
+        return new ByteArrayInputStream(
+              getMethodMapDatastream(versDateTime).xmlContent);
+    }
 }
