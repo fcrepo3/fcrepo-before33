@@ -22,7 +22,8 @@ import fedora.server.errors.ModuleShutdownException;
  * @version $Id$
  */
 public abstract class Module 
-        extends Pluggable {
+        extends Pluggable 
+        implements Logging {
 
     private String m_role;
     private Server m_server;
@@ -123,6 +124,10 @@ public abstract class Module
         getServer().logSevere(m.toString());
     }
     
+    public final boolean loggingSevere() {
+        return getServer().loggingSevere();
+    }
+    
     /**
      * Logs a WARNING message, indicating that an undesired (but non-fatal)
      * condition occured.
@@ -135,6 +140,10 @@ public abstract class Module
         m.append(": ");
         m.append(message);
         getServer().logWarning(m.toString());
+    }
+    
+    public final boolean loggingWarning() {
+        return getServer().loggingWarning();
     }
     
     /**
@@ -152,6 +161,10 @@ public abstract class Module
         getServer().logInfo(m.toString());
     }
     
+    public final boolean loggingInfo() {
+        return getServer().loggingInfo();
+    }
+    
     /**
      * Logs a CONFIG message, indicating what occurred during the server's
      * (or a module's) configuration phase.
@@ -166,6 +179,10 @@ public abstract class Module
         getServer().logConfig(m.toString());
     }
     
+    public final boolean loggingConfig() {
+        return getServer().loggingConfig();
+    }
+    
     /**
      * Logs a FINE message, indicating basic information about a request to
      * the server (like hostname, operation name, and success or failure).
@@ -178,6 +195,10 @@ public abstract class Module
         m.append(": ");
         m.append(message);
         getServer().logFine(m.toString());
+    }
+    
+    public final boolean loggingFine() {
+        return getServer().loggingFine();
     }
     
     /**
@@ -195,6 +216,10 @@ public abstract class Module
         getServer().logFiner(m.toString());
     }
     
+    public final boolean loggingFiner() {
+        return getServer().loggingFiner();
+    }
+    
     /**
      * Logs a FINEST message, indicating method entry/exit or extremely
      * verbose information intended to aid in debugging.
@@ -209,4 +234,8 @@ public abstract class Module
         getServer().logFinest(m.toString());
     }
 
+    public final boolean loggingFinest() {
+        return getServer().loggingFinest();
+    }
+    
 }
