@@ -17,7 +17,7 @@ import java.util.Date;
 public abstract class DateUtility
 {
   private static final boolean debug = true; //Testing
-  private static final SimpleDateFormat formatter =
+  private SimpleDateFormat formatter =
       new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
   /**
@@ -31,6 +31,8 @@ public abstract class DateUtility
   public static Calendar convertStringToCalendar(String dateTime)
   {
     Calendar calendar = null;
+    SimpleDateFormat formatter =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     if (!(dateTime == null) && !dateTime.equalsIgnoreCase(""))
     {
       calendar = Calendar.getInstance();
@@ -53,6 +55,8 @@ public abstract class DateUtility
   public static Date convertStringToDate(String dateTime)
   {
     Date date = null;
+    SimpleDateFormat formatter =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     if (!(dateTime == null) && !dateTime.equalsIgnoreCase(""))
     {
       ParsePosition pos = new ParsePosition(0);
@@ -72,6 +76,8 @@ public abstract class DateUtility
   public static String convertCalendarToString(Calendar calendar)
   {
     String dateTime = null;
+    SimpleDateFormat formatter =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     if (!(calendar == null))
     {
       Date date = calendar.getTime();
@@ -91,6 +97,8 @@ public abstract class DateUtility
   public static String convertDateToString(Date date)
   {
     String dateTime = null;
+    SimpleDateFormat formatter =
+      new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     if (!(date == null))
     {
       dateTime = formatter.format(date);
