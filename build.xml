@@ -853,6 +853,12 @@
 		<copy file="src/xsl/access/viewDublinCore.xslt" todir="dist/server/access"/>
 		<!--Repository Info xsl stylesheet used by API-A-LITE  -->
 		<copy file="src/xsl/access/viewRepositoryInfo.xslt" todir="dist/server/access"/>
+		<!--Report xsl stylesheet to format html form for report request  -->
+		<copy file="src/xsl/access/reportRequestHtml.xslt" todir="dist/server/access"/>
+		<!--Report xsl stylesheet to format report as html  -->
+		<copy file="src/xsl/access/reportHtml.xslt" todir="dist/server/access"/>
+		<!--Report xsl stylesheet to copy xml intact  -->
+		<copy file="src/xsl/access/reportXml.xslt" todir="dist/server/access"/>
 		<echo message="Finished building server distribution in dist/server"/>
 		<mkdir dir="dist/server/management"/>
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
