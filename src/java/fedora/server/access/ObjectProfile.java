@@ -22,8 +22,8 @@ public class ObjectProfile
   public String objectLabel = null;
   public String objectType = null;
   public String objectContentModel = null;
-  public String objectCreateDate = null;
-  public String objectLastModDate = null;
+  public Date objectCreateDate = null;
+  public Date objectLastModDate = null;
   public String dissIndexViewURL = null;
   public String itemIndexViewURL = null;
 }
