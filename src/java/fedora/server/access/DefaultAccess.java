@@ -31,6 +31,7 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOManager;
+import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MethodDef;
@@ -443,7 +444,7 @@ public class DefaultAccess extends Module implements Access
     // Assemble and execute the dissemination request from the binding info.
     DisseminationService dissService = new DisseminationService();
     dissemination =
-        dissService.assembleDissemination(PID, h_userParms, dissBindInfo);
+        dissService.assembleDissemination(context, PID, h_userParms, dissBindInfo);
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
