@@ -178,26 +178,8 @@ public class DefaultAccess extends Module implements Access
         m_manager.getReader(context, PID);
     behaviorDefs = reader.GetBehaviorDefs(versDateTime);
 
-    // Check Object State
-    String state = reader.GetObjectState();
-    if ( state.equalsIgnoreCase("D")  &&
-         ( context.get("canUseDeletedObject")==null
-           || (!context.get("canUseDeletedObject").equals("true")) )
-      )
-    {
-      throw new GeneralException("The requested digital object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged for DELETION "
-          + "by the repository administrator. ");
-
-    } else if ( state.equalsIgnoreCase("I")  &&
-                ( context.get("canUseInactiveObject")==null
-                  || (!context.get("canUseInactiveObject").equals("true")) )
-                )
-    {
-      throw new GeneralException("The requested digital object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged as INACTIVE "
-          + "by the repository administrator. ");
-    }
+    // Check data object state
+    checkState(context, "Data", reader.GetObjectState(), PID);
 
     // DYNAMIC!! Grab any dynamic behavior definitions and merge them with
     // the statically bound behavior definitions
@@ -246,26 +228,12 @@ public class DefaultAccess extends Module implements Access
     DOReader reader =
         m_manager.getReader(context, PID);
 
-    // Check Object State
-    String state = reader.GetObjectState();
-    if ( state.equalsIgnoreCase("D")  &&
-         ( context.get("canUseDeletedObject")==null
-           || (!context.get("canUseDeletedObject").equals("true")) )
-      )
-    {
-      throw new GeneralException("The requested digital object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged for DELETION "
-          + "by the repository administrator. ");
+    // Check data object state
+    checkState(context, "Data", reader.GetObjectState(), PID);
 
-    } else if ( state.equalsIgnoreCase("I")  &&
-                ( context.get("canUseInactiveObject")==null
-                  || (!context.get("canUseInactiveObject").equals("true")) )
-              )
-    {
-      throw new GeneralException("The requested digital object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged as INACTIVE "
-          + "by the repository administrator. ");
-    }
+    // Check associated bdef object state
+    BDefReader bDefReader = m_manager.getBDefReader(context, bDefPID);
+    checkState(context, "Behavior Definition", bDefReader.GetObjectState(), bDefPID);
 
     MethodDef[] methods =
         reader.getObjectMethods(bDefPID, versDateTime);
@@ -299,26 +267,12 @@ public class DefaultAccess extends Module implements Access
       DOReader reader =
           m_manager.getReader(context, PID);
 
-      // Check Object State
-      String state = reader.GetObjectState();
-      if ( state.equalsIgnoreCase("D")  &&
-           ( context.get("canUseDeletedObject")==null
-             || (!context.get("canUseDeletedObject").equals("true")) )
-        )
-      {
-        throw new GeneralException("The requested digital object \""+PID+"\" is no "
-            + "longer available for dissemination. It has been flagged for DELETION "
-            + "by the repository administrator. ");
+      // Check data object state
+      checkState(context, "Data", reader.GetObjectState(), PID);
 
-      } else if ( state.equalsIgnoreCase("I")  &&
-                  ( context.get("canUseInactiveObject")==null
-                    || (!context.get("canUseInactiveObject").equals("true")) )
-                )
-      {
-        throw new GeneralException("The requested digital object \""+PID+"\" is no "
-            + "longer available for dissemination. It has been flagged as INACTIVE "
-            + "by the repository administrator. ");
-    }
+      // Check associated bdef object state
+      BDefReader bDefReader = m_manager.getBDefReader(context, bDefPID);
+      checkState(context, "Behavior Definition", bDefReader.GetObjectState(), bDefPID);
 
       methodResults = reader.getObjectMethodsXML(bDefPID, versDateTime);
       if (methodResults != null)
@@ -524,25 +478,8 @@ public class DefaultAccess extends Module implements Access
     DOReader reader =
         m_manager.getReader(context, PID);
 
-    // Check Object State
-    String state = reader.GetObjectState();
-    if ( state.equalsIgnoreCase("D")  &&
-         ( context.get("canUseDeletedObject")==null
-           || (!context.get("canUseDeletedObject").equals("true")) )
-      )
-    {
-      throw new GeneralException("The requested digital object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged for DELETION "
-          + "by the repository administrator. ");
-    } else if ( state.equalsIgnoreCase("I")  &&
-                ( context.get("canUseInactiveObject")==null
-                  || (!context.get("canUseInactiveObject").equals("true")) )
-              )
-    {
-      throw new GeneralException("The requested digital object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged as INACTIVE "
-          + "by the repository administrator. ");
-    }
+    // Check data object state
+    checkState(context, "Data", reader.GetObjectState(), PID);
 
     ObjectMethodsDef[] methodDefs =
         reader.getObjectMethods(versDateTime);
@@ -572,26 +509,8 @@ public class DefaultAccess extends Module implements Access
   {
     DOReader reader = m_manager.getReader(context, PID);
 
-    // Check Object State
-    String state = reader.GetObjectState();
-    if ( state.equalsIgnoreCase("D") &&
-         ( context.get("canUseDeletedObject")==null
-           || (!context.get("canUseDeletedObject").equals("true")) )
-       )
-    {
-      throw new GeneralException("The requested digital object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged for DELETION "
-          + "by the repository administrator. ");
-
-    } else if ( state.equalsIgnoreCase("I")  &&
-                ( context.get("canUseInactiveObject")==null
-                  || (!context.get("canUseInactiveObject").equals("true")) )
-              )
-    {
-      throw new GeneralException("The requested digital object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged as INACTIVE "
-          + "by the repository administrator. ");
-    }
+    // Check data object state
+    checkState(context, "Data", reader.GetObjectState(), PID);
 
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectProfile profile = new ObjectProfile();
