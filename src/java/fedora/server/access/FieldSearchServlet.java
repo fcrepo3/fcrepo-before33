@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.servlet.http.HttpServlet;
@@ -42,52 +43,61 @@ public class FieldSearchServlet
             String[] fieldsArray=request.getParameterValues("fields");
             String terms=request.getParameter("terms");
             String query=request.getParameter("query");
-            
+            String xmlOutput=request.getParameter("xml");
+            boolean xml=false;
+            if ( (xmlOutput!=null) 
+                    && (xmlOutput.toLowerCase().startsWith("t")
+                    || xmlOutput.toLowerCase().startsWith("y")) ) {
+                xml=true;
+            }
+            StringBuffer xmlBuf=new StringBuffer(); 
             StringBuffer html=new StringBuffer();
-            html.append("<form method=\"get\" action=\"/fedora/search\">");
-            html.append("<center><table border=0 cellpadding=8>\n");
-            html.append("<tr><td width=18% valign=top>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"pid\"> Pid<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"label\"> Label<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"fType\"> Fedora Object Type<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"cModel\"> Content Model<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"state\"> State<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"locker\"> Locking User<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"cDate\"> Creation Date<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"mDate\"> Last Modified Date<br>");
-            html.append("</td><td width=18% valign=top>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"title\"> Title<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"creator\"> Creator<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"subject\"> Subject<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"description\"> Description<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"publisher\"> Publisher<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"contributor\"> Contributor<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"date\"> Date<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"type\"> Type<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"format\"> Format<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"identifier\"> Identifier<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"source\"> Source<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"language\"> Language<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"relation\"> Relation<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"coverage\"> Coverage<br>");
-            html.append("<input type=\"checkbox\" name=\"fields\" value=\"rights\"> Rights<br>");
-            //html.append("Fields: <input type=\"text\" name=\"fields\" size=\"15\"> ");
-            html.append("</td><td width=64% valign=top>");
-            html.append("Simple Query: <input type=\"text\" name=\"terms\" size=\"15\"><p> ");
-            html.append("Advanced Query: <input type=\"text\" name=\"query\" size=\"15\"><p>&nbsp;<p> ");
-            html.append("<input type=\"submit\" value=\"Search\"><p> ");
-            html.append("<font size=-1>Choose the fields you want returned by checking the appropriate boxes.");
-            html.append(" For simple queries, fill in the Simple Query box and press Search.  ");
-            html.append("A simple query consists of one or more keywords, where keywords can contain the * and ? wildcards.");
-            html.append("For advanced queries, fill in the Advanced Query box and press Search.");
-            html.append(" An advanced query is a space-delimited set of conditions.  A condition is of the form <i>propertyOPERATORvalue</i>.");
-            html.append("Valid operators are =, ~ (meaning 'contains' -- this can take wildcards), <, <=, >, or >=.  Conditions may not contain spaces, ");
-            html.append("unless the value is enclosed in single quotes.  For date-based fields, you may use any operator, but if you use the ");
-            html.append("<, <=, >, or >= operators, you must format your date like: <i>yyyy-DD-MMTHH:MM:SS</i>.  Note that the ");
-            html.append("letter T acts as a delimiter between the date and time parts of the string.</font>");
-            html.append("</td></tr></table></center>");
-            html.append("</form>");
-            html.append("<hr size=\"1\">");
+            if (!xml) {
+                html.append("<form method=\"get\" action=\"/fedora/search\">");
+                html.append("<center><table border=0 cellpadding=8>\n");
+                html.append("<tr><td width=18% valign=top>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"pid\"> Pid<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"label\"> Label<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"fType\"> Fedora Object Type<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"cModel\"> Content Model<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"state\"> State<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"locker\"> Locking User<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"cDate\"> Creation Date<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"mDate\"> Last Modified Date<br>");
+                html.append("</td><td width=18% valign=top>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"title\"> Title<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"creator\"> Creator<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"subject\"> Subject<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"description\"> Description<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"publisher\"> Publisher<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"contributor\"> Contributor<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"date\"> Date<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"type\"> Type<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"format\"> Format<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"identifier\"> Identifier<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"source\"> Source<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"language\"> Language<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"relation\"> Relation<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"coverage\"> Coverage<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"rights\"> Rights<br>");
+                //html.append("Fields: <input type=\"text\" name=\"fields\" size=\"15\"> ");
+                html.append("</td><td width=64% valign=top>");
+                html.append("Simple Query: <input type=\"text\" name=\"terms\" size=\"15\"><p> ");
+                html.append("Advanced Query: <input type=\"text\" name=\"query\" size=\"15\"><p>&nbsp;<p> ");
+                html.append("<input type=\"submit\" value=\"Search\"><p> ");
+                html.append("<font size=-1>Choose the fields you want returned by checking the appropriate boxes.");
+                html.append(" For simple queries, fill in the Simple Query box and press Search.  ");
+                html.append("A simple query consists of one or more keywords, where keywords can contain the * and ? wildcards.");
+                html.append("For advanced queries, fill in the Advanced Query box and press Search.");
+                html.append(" An advanced query is a space-delimited set of conditions.  A condition is of the form <i>propertyOPERATORvalue</i>.");
+                html.append("Valid operators are =, ~ (meaning 'contains' -- this can take wildcards), <, <=, >, or >=.  Conditions may not contain spaces, ");
+                html.append("unless the value is enclosed in single quotes.  For date-based fields, you may use any operator, but if you use the ");
+                html.append("<, <=, >, or >= operators, you must format your date like: <i>yyyy-DD-MMTHH:MM:SS</i>.  Note that the ");
+                html.append("letter T acts as a delimiter between the date and time parts of the string.</font>");
+                html.append("</td></tr></table></center>");
+                html.append("</form>");
+                html.append("<hr size=\"1\">");
+            }
             if (fieldsArray!=null && fieldsArray.length>0) {
                 List searchResults;
                 if ((terms!=null) && (terms.length()!=0)) {
@@ -95,88 +105,155 @@ public class FieldSearchServlet
                 } else {
                     searchResults=s_access.search(context, fieldsArray, Condition.getConditions(query));
                 }
-                html.append("<center><table width=\"90%\" border=\"0\" cellpadding=\"4\">\n");
-                html.append("<tr>");
-                for (int i=0; i<fieldsArray.length; i++) {
-                    html.append("<td bgcolor=\"#333399\" valign=\"top\"><font color=\"#ffffff\"><b>");
-                    html.append(fieldsArray[i]);
-                    html.append("</b></font></td>");
+                if (!xml) {
+                    html.append("<center><table width=\"90%\" border=\"0\" cellpadding=\"4\">\n");
+                    html.append("<tr>");
+                    for (int i=0; i<fieldsArray.length; i++) {
+                        html.append("<td bgcolor=\"#333399\" valign=\"top\"><font color=\"#ffffff\"><b>");
+                        html.append(fieldsArray[i]);
+                        html.append("</b></font></td>");
+                    }
+                    html.append("</tr>");
                 }
-                html.append("</tr>");
                 SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
                 for (int i=0; i<searchResults.size(); i++) {
                     ObjectFields f=(ObjectFields) searchResults.get(i);
-                    html.append("<tr>");
-                    for (int j=0; j<fieldsArray.length; j++) {
-                        String l=fieldsArray[j];
-                        html.append("<td valign=\"top\">");
-                        if (l.equalsIgnoreCase("pid")) {
-                            html.append("<a href=\"/fedora/get/");
-                            html.append(f.getPid());
-                            html.append("\">");
-                            html.append(f.getPid());
-                            html.append("</a>");
-                        } else if (l.equalsIgnoreCase("label")) {
-                            html.append(f.getLabel());
-                        } else if (l.equalsIgnoreCase("fType")) {
-                            html.append(f.getFType());
-                        } else if (l.equalsIgnoreCase("cModel")) {
-                            html.append(f.getCModel());
-                        } else if (l.equalsIgnoreCase("state")) {
-                            html.append(f.getState());
-                        } else if (l.equalsIgnoreCase("locker")) {
-                            html.append(f.getLocker());
-                        } else if (l.equalsIgnoreCase("cDate")) {
-                            html.append(formatter.format(f.getCDate()));
-                        } else if (l.equalsIgnoreCase("mDate")) {
-                            html.append(formatter.format(f.getMDate()));
-                        } else if (l.equalsIgnoreCase("title")) {
-                            html.append(getList(f.titles()));
-                        } else if (l.equalsIgnoreCase("creator")) {
-                            html.append(getList(f.creators()));
-                        } else if (l.equalsIgnoreCase("subject")) {
-                            html.append(getList(f.subjects()));
-                        } else if (l.equalsIgnoreCase("description")) {
-                            html.append(getList(f.descriptions()));
-                        } else if (l.equalsIgnoreCase("publisher")) {
-                            html.append(getList(f.publishers()));
-                        } else if (l.equalsIgnoreCase("contributor")) {
-                            html.append(getList(f.contributors()));
-                        } else if (l.equalsIgnoreCase("date")) {
-                            html.append(getList(f.dates()));
-                        } else if (l.equalsIgnoreCase("type")) {
-                            html.append(getList(f.types()));
-                        } else if (l.equalsIgnoreCase("format")) {
-                            html.append(getList(f.formats()));
-                        } else if (l.equalsIgnoreCase("identifier")) {
-                            html.append(getList(f.identifiers()));
-                        } else if (l.equalsIgnoreCase("source")) {
-                            html.append(getList(f.sources()));
-                        } else if (l.equalsIgnoreCase("language")) {
-                            html.append(getList(f.languages()));
-                        } else if (l.equalsIgnoreCase("relation")) {
-                            html.append(getList(f.relations()));
-                        } else if (l.equalsIgnoreCase("coverage")) {
-                            html.append(getList(f.coverages()));
-                        } else if (l.equalsIgnoreCase("rights")) {
-                            html.append(getList(f.rights()));
-                        }                        
-                        html.append("</td>");
+                    if (xml) {
+		        xmlBuf.append("  <result>\n");
+                        for (int j=0; j<fieldsArray.length; j++) {
+                            String l=fieldsArray[j];
+                            if (l.equalsIgnoreCase("pid")) {
+                                appendXML(l, f.getPid(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("label")) {
+                                appendXML(l, f.getLabel(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("fType")) {
+			        appendXML(l, f.getFType(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("cModel")) {
+			        appendXML(l, f.getCModel(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("state")) {
+			        appendXML(l, f.getState(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("locker")) {
+			        appendXML(l, f.getLocker(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("cDate")) {
+			        appendXML(l, f.getCDate(), formatter, xmlBuf);
+                            } else if (l.equalsIgnoreCase("mDate")) {
+			        appendXML(l, f.getMDate(), formatter, xmlBuf);
+                            } else if (l.equalsIgnoreCase("title")) {
+			        appendXML(l, f.titles(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("creator")) {
+			        appendXML(l, f.creators(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("subject")) {
+			        appendXML(l, f.subjects(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("description")) {
+			        appendXML(l, f.descriptions(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("publisher")) {
+			        appendXML(l, f.publishers(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("contributor")) {
+			        appendXML(l, f.contributors(), xmlBuf); 
+			    } else if (l.equalsIgnoreCase("date")) {
+			        appendXML(l, f.dates(), xmlBuf); 
+                            } else if (l.equalsIgnoreCase("type")) {
+			        appendXML(l, f.types(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("format")) {
+			        appendXML(l, f.formats(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("identifier")) {
+			        appendXML(l, f.identifiers(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("source")) {
+			        appendXML(l, f.sources(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("language")) {
+			        appendXML(l, f.languages(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("relation")) {
+			        appendXML(l, f.relations(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("coverage")) {
+			        appendXML(l, f.coverages(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("rights")) {
+			        appendXML(l, f.rights(), xmlBuf);
+                            }                        
+			 }
+		         xmlBuf.append("  </result>\n");
+		    } else {
+                        html.append("<tr>");
+                        for (int j=0; j<fieldsArray.length; j++) {
+                            String l=fieldsArray[j];
+                            html.append("<td valign=\"top\">");
+                            if (l.equalsIgnoreCase("pid")) {
+                                html.append("<a href=\"/fedora/get/");
+                                html.append(f.getPid());
+                                html.append("\">");
+                                html.append(f.getPid());
+                                html.append("</a>");
+                            } else if (l.equalsIgnoreCase("label")) {
+                                html.append(f.getLabel());
+                            } else if (l.equalsIgnoreCase("fType")) {
+                                html.append(f.getFType());
+                            } else if (l.equalsIgnoreCase("cModel")) {
+                                html.append(f.getCModel());
+                            } else if (l.equalsIgnoreCase("state")) {
+                                html.append(f.getState());
+                            } else if (l.equalsIgnoreCase("locker")) {
+                                html.append(f.getLocker());
+                            } else if (l.equalsIgnoreCase("cDate")) {
+                                html.append(formatter.format(f.getCDate()));
+                            } else if (l.equalsIgnoreCase("mDate")) {
+                                html.append(formatter.format(f.getMDate()));
+                            } else if (l.equalsIgnoreCase("title")) {
+                                html.append(getList(f.titles()));
+                            } else if (l.equalsIgnoreCase("creator")) {
+                                html.append(getList(f.creators()));
+                            } else if (l.equalsIgnoreCase("subject")) {
+                                html.append(getList(f.subjects()));
+                            } else if (l.equalsIgnoreCase("description")) {
+                                html.append(getList(f.descriptions()));
+                            } else if (l.equalsIgnoreCase("publisher")) {
+                                html.append(getList(f.publishers()));
+                            } else if (l.equalsIgnoreCase("contributor")) {
+                                html.append(getList(f.contributors()));
+                            } else if (l.equalsIgnoreCase("date")) {
+                                html.append(getList(f.dates()));
+                            } else if (l.equalsIgnoreCase("type")) {
+                                html.append(getList(f.types()));
+                            } else if (l.equalsIgnoreCase("format")) {
+                                html.append(getList(f.formats()));
+                            } else if (l.equalsIgnoreCase("identifier")) {
+                                html.append(getList(f.identifiers()));
+                            } else if (l.equalsIgnoreCase("source")) {
+                                html.append(getList(f.sources()));
+                            } else if (l.equalsIgnoreCase("language")) {
+                                html.append(getList(f.languages()));
+                            } else if (l.equalsIgnoreCase("relation")) {
+                                html.append(getList(f.relations()));
+                            } else if (l.equalsIgnoreCase("coverage")) {
+                                html.append(getList(f.coverages()));
+                            } else if (l.equalsIgnoreCase("rights")) {
+                                html.append(getList(f.rights()));
+                            }                        
+                            html.append("</td>");
+                        }
+                        html.append("</tr>");
+                        html.append("<tr><td colspan=\"");
+                        html.append(fieldsArray.length);
+                        html.append("\"><hr size=\"1\"></td></tr>");
                     }
-                    html.append("</tr>");
-                    html.append("<tr><td colspan=\"");
-                    html.append(fieldsArray.length);
-                    html.append("\"><hr size=\"1\"></td></tr>");
                 }
-                html.append("</table></center>\n");
+                if (!xml) {
+                    html.append("</table></center>\n");
+                }
             }
-            
-            response.setContentType("text/html");
-            PrintWriter out=response.getWriter();
-            out.print("<html><head><title>Search Repository</title></head>");
-            out.print("<body><h2>Search Repository</h2>");
-            out.print(html.toString());
-            out.print("</body>");
+            if (!xml) {
+                response.setContentType("text/html");
+                PrintWriter out=response.getWriter();
+                out.print("<html><head><title>Search Repository</title></head>");
+                out.print("<body><h2>Search Repository</h2>");
+                out.print(html.toString());
+                out.print("</body>");
+            } else {
+                response.setContentType("text/xml");
+                PrintWriter out=response.getWriter();
+		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+		out.println("<results>");
+		out.println(xmlBuf.toString());
+		out.println("</results>");
+            }
         } catch (ServerException se) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.setContentType("text/html");
@@ -189,6 +266,21 @@ public class FieldSearchServlet
             out.print(se.getMessage());
             out.print("</body>");
         }
+    }
+
+    private void appendXML(String name, String value, StringBuffer out) {
+        out.append("      <" + name + ">" + value + "</" + name + ">\n");
+    }
+    
+    private void appendXML(String name, List values, StringBuffer out) {
+        for (int i=0; i<values.size(); i++) {
+	    appendXML(name, (String) values.get(i), out);
+	}
+    }
+
+    private void appendXML(String name, Date dt, SimpleDateFormat formatter, 
+            StringBuffer out) {
+        appendXML(name, formatter.format(dt), out);
     }
     
     private String getList(List l) {
