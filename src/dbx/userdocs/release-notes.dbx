@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <!--<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
@@ -31,7 +31,7 @@
         </releaseinfo>
 	</articleinfo>
 	<sect1>
-		<title>Release 1.1 (Bug Fix Release) - July 31, 2004</title>
+		<title>Release 1.1 (Bug Fix Release) - August 1, 2003</title>
 		<para>Fedora 1.1 provides fixes to several bugs that were detected by users of Fedora 1.0.   It also provides a new API-A method (“describeRepository”) that enables a client to obtain information about the repository server.</para>
 		<para>The new release is backward compatible with Fedora 1.0, with the exception of the Fedora server configuration file.  If you are upgrading from Fedora 1.0, use you will need to enter your configuration values from the old Fedora 1.0 configuration file into the new configuration file provided with Fedora 1.1.  </para>
 		<para>Aside from this, the Fedora 1.1 software is compatible with pre-existing digital objects created in Fedora 1.0.  There is no need to re-create or convert existing digital objects.  Fedora 1.1 can be configured to point at the existing file system location where Fedora 1.0 objects are stored, and to the existing relational database that contains information about the digital objects. </para>
