@@ -72,20 +72,9 @@ public class DynamicAccessModule extends Module implements Access
     super(moduleParameters, server, role);
   }
 
-  /**
-   * <p>Initializes the module.</p>
-   *
-   * @throws ModuleInitializationException If the module cannot be initialized.
-   */
-  public void initModule() throws ModuleInitializationException
+  public void postInitModule()
+      throws ModuleInitializationException
   {
-    m_manager = (DOManager)
-        getServer().getModule("fedora.server.storage.DOManager");
-    if (m_manager == null)
-    {
-      throw new ModuleInitializationException("Can't get a DOManager "
-          + "from Server.getModule", getRole());
-    }
     // FIXIT! NOT DOING IP restriction in DynamicAccess because it is done
     // already by DefaultAccess.  Consider possible cases where we
     // may want to do it here.
@@ -100,10 +89,13 @@ public class DynamicAccessModule extends Module implements Access
                 + se.getMessage(), getRole());
     }
     */
-  }
-  public void postInitModule()
-      throws ModuleInitializationException
-  {
+      m_manager = (DOManager)
+          getServer().getModule("fedora.server.storage.DOManager");
+      if (m_manager == null)
+      {
+        throw new ModuleInitializationException("Can't get a DOManager "
+            + "from Server.getModule", getRole());
+      }
       // Get the repository Base URL
       InetAddress hostIP = null;
       try
