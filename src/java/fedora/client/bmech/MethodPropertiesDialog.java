@@ -201,21 +201,21 @@ public class MethodPropertiesDialog extends JDialog
           }
         } );
 
-        // http just binding key
+        // http - just binding key
         rb_httpDS = new JRadioButton("Fedora LOCAL HTTP Resolver: (enter datastream parm name)", false);
         rb_httpDS.setActionCommand("http");
         URL_textDS = new JTextField(30);
         URL_textDS.setToolTipText("Enter the datastream parameter name in parentheses."
           + "  See Help button for more details on syntax.");
 
-        // http full URL
+        // http - full URL
         rb_httpFull = new JRadioButton("Multi-Server Service: (enter full URL for method)", false);
         rb_httpFull.setActionCommand("httpFull");
         URL_textFull = new JTextField(30);
         URL_textFull.setToolTipText("Enter the full URL for the service method." +
           " The URL should use the replacement syntax described in the Help button.");
 
-        // http relative URL
+        // http - relative URL
         String rLabel = "HTTP URL (relative):       " + baseURL;
         rb_httpRelative = new JRadioButton(rLabel, false);
         rb_httpRelative.setActionCommand("httprel");
