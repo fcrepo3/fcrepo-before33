@@ -205,13 +205,7 @@ public class BatchBuildGUI
 		&& !m_objectsField.getText().equals("")
 		&& !m_pidsField.getText().equals("")		
 	) {
-	    Properties properties; {
-		    Properties defaults = new Properties(); {
-			    String defaultsPath = System.getProperty("fedora.home") + "\\..\\batch\\default.properties";
-			    defaults.load(new FileInputStream(defaultsPath));
-		    }
-		    properties = new Properties(defaults);
-	    }
+	    Properties properties = new Properties();
 	    properties.setProperty("merge-objects","yes");
 	    properties.setProperty("template",m_templateField.getText());
 	    properties.setProperty("specifics",m_specsField.getText());

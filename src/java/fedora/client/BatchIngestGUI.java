@@ -179,23 +179,15 @@ public class BatchIngestGUI
         if (!m_objectsField.getText().equals("")
 		&& !m_pidsField.getText().equals("")		
 	) {
-	    Properties properties; {
-		    Properties defaults = new Properties(); {
-			    String defaultsPath = System.getProperty("fedora.home") + "\\..\\batch\\default.properties";
-			    defaults.load(new FileInputStream(defaultsPath));
-		    }
-		    properties = new Properties(defaults);
-	    }
+	    Properties properties = new Properties();
 	    properties.setProperty("ingest","yes");
 	    properties.setProperty("objects",m_objectsField.getText());
 	    properties.setProperty("ingested-pids",m_pidsField.getText());
 	    properties.setProperty("pids-format",m_xmlMap.isSelected()? "xml" : "text");
-	    
 	    properties.setProperty("server-fqdn",host);
 	    properties.setProperty("server-port",port);
 	    properties.setProperty("username",user);
 	    properties.setProperty("password",pass);	    
-
 	    try {
 		    mdiDesktopPane.add(batchOutput);
 	    } catch (Exception eee) {  //illegal component position occurs ~ every other time ?!?
