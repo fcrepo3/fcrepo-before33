@@ -174,11 +174,11 @@ public class ObjectEditorFrame
         } else {
             m_tabbedPane.setTitleAt(1, "Datastreams");
         }
-        if (m_disseminatorsPane.isDirty()) {
+        if (m_disseminatorsPane!=null && m_disseminatorsPane.isDirty()) {
             dirtyCount++;
             m_tabbedPane.setTitleAt(2, "Disseminators*");
         } else {
-            m_tabbedPane.setTitleAt(2, "Disseminators");
+            if (m_disseminatorsPane!=null) m_tabbedPane.setTitleAt(2, "Disseminators");
         }
         if (dirtyCount>0) {
             doTitle(true);

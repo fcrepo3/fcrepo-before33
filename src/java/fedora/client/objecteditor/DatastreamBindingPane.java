@@ -386,18 +386,17 @@ public class DatastreamBindingPane
                         JOptionPane.INFORMATION_MESSAGE);
                 return null;
             } else {
-                String instr="";
-                if (m_rule.getInputInstruction()!=null) {
-                    instr=" " + m_rule.getInputInstruction();
-                }
-                String bLabel="";
-                if (m_rule.getInputLabel()!=null) {
-                    bLabel=" (" + m_rule.getInputLabel() + ")";
-                }
+                StringBuffer instr=new StringBuffer();
+                instr.append("Choose a datastream:");
+                if (m_rule.getInputInstruction()!=null && m_rule.getInputInstruction().length()>0) {
+                    instr.append("\n(");
+                    instr.append(m_rule.getInputInstruction());
+                    instr.append(')');
+                } 
                 return (String) JOptionPane.showInputDialog(
                         Administrator.getDesktop(),
-                        "Choose one." + instr + bLabel, 
-                        "Candidate Datastreams",
+                        instr.toString(),
+                        "New Binding",
                         JOptionPane.QUESTION_MESSAGE, null,
                         options, options[0]);
             }
@@ -446,9 +445,9 @@ public class DatastreamBindingPane
             boolean isValid=updateButtonsAndReturnValidity();
             // do the appropriate completeness text updates
             if (isValid && !m_wasValid) {
-                m_instructionPane.setText(m_instructionPane.getText().replaceAll("Binding is incomplete", "Binding is complete")); 
+                m_instructionPane.setText(m_instructionPane.getText().replaceAll("incomplete</b>.", "complete</b>.")); 
             } else if (!isValid && m_wasValid) {
-                m_instructionPane.setText(m_instructionPane.getText().replaceAll("Binding is complete", "Binding is incomplete")); 
+                m_instructionPane.setText(m_instructionPane.getText().replaceAll("complete</b>.", "incomplete</b>.")); 
             }
            
             // remember this for next time so we don't have to do too much work
@@ -518,8 +517,13 @@ public class DatastreamBindingPane
                                             DatastreamBindingRule rule) {
             StringBuffer buf=new StringBuffer();
             // requires x to y datastreams...
-            buf.append("<b>Binding is incomplete.</b> ");
-            buf.append("Requires ");
+            buf.append("Binding of ");
+            if (rule.getInputLabel()!=null && rule.getInputLabel().length()>0) {
+                buf.append(rule.getInputLabel());
+            } else {
+                buf.append(rule.getKey());
+            }
+            buf.append(" is <b>incomplete</b>. Requires ");
             if (rule.orderMatters() && (rule.getMax()==-1) || (rule.getMax()>1)) {
                 buf.append("<i>an ordered list</i> of ");
             }
@@ -593,10 +597,10 @@ public class DatastreamBindingPane
                 }
             }
             // add inputLabel if available
-            if (rule.getInputLabel()!=null 
-                    && rule.getInputLabel().length()>0) {
+            if (rule.getInputInstruction()!=null 
+                    && rule.getInputInstruction().length()>0) {
                 buf.append(" (");
-                buf.append(rule.getInputLabel());
+                buf.append(rule.getInputInstruction());
                 buf.append(")");
             } else {
                 buf.append(".");
