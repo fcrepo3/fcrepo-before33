@@ -36,6 +36,7 @@
 		<copy file="lib/client/jhbasic.jar" todir="dist/client/client/lib"/>
 		<copy file="lib/client/rms.jar" todir="dist/client/client/lib"/>
 		<copy file="lib/client/gnu-getopt-1.0.9.jar" todir="dist/client/client/lib"/>
+		<copy file="lib/common/saxon6.5.jar" todir="dist/client/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/client/lib"/>
 		<copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/client/lib"/>
@@ -59,7 +60,7 @@
 		<mkdir dir="temp/client"/>
 	</target>
 	<target name="clientclasses" depends="clientprep,wsdl2java" description="Compile client java code into temp/client">
-		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/rms.jar;lib/client/gnu-getopt-1.0.9.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/client" classpath="lib/client/jhbasic.jar;lib/client/rms.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar" includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
 		<mkdir dir="temp/client/help"/>
@@ -331,14 +332,14 @@
 			<arg value="test"/>
 		</exec>
 	</target>
-	<target name="metstest" description="run fedora.server.test.METSInOutTest on dist/server/tomcat41/image-test.xml">
+	<target name="metstest" description="run fedora.server.test.METSInOutTest on src/mets/test/demo/std-img-bdef.xml">
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
 			<arg value="-classpath"/>
 			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
 			<arg value="fedora.server.test.METSInOutTest"/>
-			<arg value="dist/server/tomcat41/image-test.xml"/>
+			<arg value="src/mets/test/demo/std-img-bdef.xml"/>
 		</exec>
 	</target>
 	<target name="serverclasses" depends="serverprep,wsdl2java" description="Compile server java code into temp/server/classes">
@@ -357,6 +358,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.50  2002/12/10 18:58:01  cwilper
+  client now uses saxon6.5 in compile classpath, and saxon6.5.jar is
+  copied to client dist lib/ dir
+
   Revision 1.49  2002/12/03 18:10:00  payette
   minor changes to include new fedora-behavior-bind.xsd in distribution targets.
 
