@@ -157,7 +157,7 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
         response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
         return;
       }
-      id=id.replaceAll("T", " ").replaceAll("/", "");
+      id=id.replaceAll("T", " ").replaceAll("/", "").trim();
 
       // Get in-memory hashtable of mappings from Fedora server.
       ds = new DisseminationService();
