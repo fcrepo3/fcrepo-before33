@@ -42,7 +42,8 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
     doReader.ListDatastreamIDs("A");
     doReader.ListDisseminatorIDs("A");
     doReader.GetDatastreams(null);
-    doReader.GetDatastream("DS1", null);
+    Datastream[] dsArray = doReader.GetDatastreams(null);
+    doReader.GetDatastream(dsArray[0].DatastreamID, null);
     doReader.GetDisseminators(null);
     doReader.GetBehaviorDefs(null);
     doReader.GetBehaviorMethods(null);
@@ -140,6 +141,7 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
     public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
       throws SAXException
     {
+      // FIXIT!! Deal with method parms (input in WSDL)
       if (qName.equalsIgnoreCase("wsdl:definitions"))
       {
         inDefinitions = true;
