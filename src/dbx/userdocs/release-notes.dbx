@@ -35,10 +35,36 @@
 		<title>Release 1.2.1 (Bug Fix Release) - April 19, 2004</title>
 		<para>Fedora 1.2.1 provides fixes to several bugs that were reported by users of Fedora 1.2.   The new release is backward compatible with Fedora 1.2 and contains no changes to the underlying database schema. 
 		</para>
-		<sect2>
+        <sect2>
 			<title>IMPORTANT!! - Migrating From Fedora Releases Prior to Fedora 1.2</title>
 			<para>Users wishing to migrate from releases prior to Fedora 1.2 need to follow the steps outlined in <xref linkend="rel1.2" endterm="rel1.2.title"/> and migrate to version 1.2 BEFORE attempting migration to Fedora 1.2.1.</para>
 		</sect2>
+		<sect2>
+            <title>Migrating From Fedora 1.2 to Fedora 1.2.1</title>
+            <para>
+              If you are upgrading from Fedora 1.2:
+            </para>
+			<itemizedlist>
+				<listitem>
+					<para>Shut down your existing repository using the fedora-stop command.</para>
+                </listitem>
+                <listitem>
+					<para>If you are using mysql, look at the new installation's config/fedora.fcfg file.  Find the line that contains the word "autoReconnect".  Open your old config/fedora.fcfg file and edit the jdbcURL parameter so it ends similarly (with "&amp;amp;autoReconnect=true").</para>
+                </listitem>
+                <listitem>
+					<para>Copy your old config/fedora.fcfg over the new one.</para>
+                </listitem>
+                <listitem>
+					<para>Update your FEDORA_HOME environment variable to point to the new installation's location.</para>
+                </listitem>
+                <listitem>
+					<para>Update your PATH to point to the new FEDORA_HOME/client/bin and FEDORA_HOME/server/bin directories.</para>
+                </listitem>
+                <listitem>
+					<para>Start the server as you normally would, with fedora-start.</para>
+				</listitem>
+            </itemizedlist>
+        </sect2>
 		<sect2>
 			<title>BUG FIXES:</title>
 			<sect3>
