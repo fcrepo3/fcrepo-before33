@@ -1,0 +1,89 @@
+<html>
+<head>
+<title>Fedora API-A Sample SOAP Client</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body bgcolor="#CCCCCC" text="#000000">
+<h3>Welcome to the Fedora API-A Sample SOAP Client</h3>
+<p>The Fedora API-A interface is implemented as a SOAP service that consists of 
+  the following methods: 
+<ul>
+  <li>GetBehaviorDefinitions - gets list of Behavior Defintions.</li>
+  <li>GetBehaviorMethods - gets list of Behavior Methods. </li>
+  <li>GetBehaviorMethodsXML - gets Behavior Methods as XML. </li>
+  <li>GetDissemination - gets a dissemination result.</li>
+  <li>GetObjectmethods - gets a list of all Behavior Methods of an object. </li>
+  <li>GetObjectProfile - gets object profile. </li>
+</ul>
+<p>For more information on the method definitions, refer to the API descriptions 
+  located at <a href="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</a> 
+  . 
+<p>The Fedora API-A sample SOAP client is an example of a java servlet-based client 
+  that provides a front end to the Fedora Access API-A SOAP service. The sample 
+  client is designed to provide a <i>browser centric</i> view of the Fedora Access 
+  interface. Return types from the Fedora Access SOAP service are translated into 
+  a form suitable for viewing with a web browser; i.e., MIME-typed streams. Applications 
+  that can readily handle SOAP requests and responses would most likely communicate 
+  directly with the Fedora Access SOAP service rather than use a java servlet 
+  as an intermediary. This servlet is provided as an example of how to construct 
+  a client that uses the Fedora Access API via SOAP.
+<p><b>Client Syntax</b> Input parameters for the servlet include:<br>
+	
+<ul>
+  <li><font color="#33802F"><b>action_</b></font> - name of Fedora service which 
+    must be one of the following: 
+    <ul>
+      <li><b>GetBehaviorDefinitions</b> - Gets list of Behavior Defintions </li>
+      <li><b>GetBehaviorMethods</b> - Gets list of Behavior Methods </li>
+      <li><b>GetBehaviorMethodsXML</b> - Gets Behavior Methods as XML </li>
+      <li><b>GetDissemination</b> - Gets a dissemination result </li>
+      <li><b>GetObjectmethods</b> - Gets a list of all Behavior Methods of an 
+        object.</li>
+      <li><b>GetObjectProfile</b> - Gets object profile.</li>
+    </ul>
+  <li><b><font color="#33802F">PID_</font></b> - persistent identifier of the 
+    digital object 
+  <li><b><font color="#33802F">bDefPID_</font></b> - persistent identifier of 
+    the Behavior Definiton object 
+  <li><font color="#33802F"><b>methodName_</b></font> - name of the method 
+  <li><font color="#33802F"><b>asOfDateTime_</b></font> - versioning datetime 
+    stamp 
+  <li><font color="#33802F"><b>xmlEncode_</b></font> - boolean switch used in 
+    conjunction with GetObjectMethods that determines whether output is formatted 
+    as XML or as HTML; value of &quot;true&quot; indicates XML format; value of 
+    false or omission indicates HTML format. 
+  <li><font color="#33802F"><b>userParms</b></font> - behavior methods may require 
+    or provide optional parameters that may be input as arguments to the method; 
+    these method parameters are entered as name/value pairs like the other serlvet 
+    parameters.(optional) 
+</ul>
+<p> Note that all servlet parameter names that are implementation specific end 
+  with the underscore character (&quot;_&quot;). This is done to avoid possible 
+  name clashes with user-supplied method parameter names. As a general rule, user-supplied 
+  parameters should never contain names that end with the underscore character 
+  to prevent possible name conflicts. 
+<p>Examples
+<p>Get the ObjectProfile for a data object with a PID of test:3:
+<p><a href="http://localhost:8080/soapclient/apia?action_=GetObjectProfile&amp;PID_=test:3"> 
+  http://localhost:8080/soapclient/apia?action_=GetObjectProfile&amp;PID_=test:3</a>
+<p>Get the ObjectMethods for a data object with a PID of test:3:
+<p><a href="http://localhost:8080/soapclient/apia?action_=GetObjectMethods&amp;PID_=test:3"> 
+  http://localhost:8080/soapclient/apia?action_=GetObjectMethods&amp;PID_=test:3</a>
+<p>Get the BehaviorMethods for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1
+<p><a href="http://localhost:8080/soapclient/apia?action_=GetBehaviorMethods&amp;PID_=test:3&amp;bDefPID_=test:1"> 
+  http://localhost:8080/soapclient/apia?action_=GetBehaviorMethods&amp;PID_=test:3&amp;bDefPID_=test:1</a>
+<p>Get the BehaviorMethodsXML for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1
+<p><a href="http://localhost:8080/soapclient/apia?action_=GetBehaviorMethodsXML&amp;PID_=test:3&amp;bDefPID_=test:1"> 
+  http://localhost:8080/soapclient/apia?action_=GetBehaviorMethodsXML&amp;PID_=test:3&amp;bDefPID_=test:1</a>
+<p>Get the BehaviorDefinitions for a data object with a PID of test:3
+<p><a href="http://localhost:8080/soapclient/apia?action_=GetBehaviorDefinitions&amp;PID_=test:3"> 
+  http://localhost:8080/soapclient/apia?action_=GetBehaviorDefinitions&amp;PID_=test:3</a>
+<p>Get the Dissemination for a data object with a PID of test:3 and associated behavior definition object with a PID of test:1 and methodName of getThumbnail
+<p><a href="http://localhost:8080/soapclient/apia?action_=GetDissemination&amp;PID_=test:3&amp;bDefPID_=test:1&amp;methodName_=getThumbnail">
+http://localhost:8080/soapclient/apia?action_=GetDissemination&amp;PID_=test:3&amp;bDefPID_=test:1&amp;methodName_=getThumbnail</a> 
+<p>&nbsp;
+<p>&nbsp;
+<p>&nbsp;
+</body>
+</html>
