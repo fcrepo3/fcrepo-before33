@@ -13,8 +13,16 @@ import fedora.server.storage.DOReader;
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.SQLUtility;
 
+/**
+ * The start of a traditional (SQL) database-based implementation
+ * of the FieldSearch interface.
+ * <p></p>
+ * This currently on hold and may be scrapped entirely in favor of 
+ * FieldSearchExistImpl.
+ */ 
 public class FieldSearchDBImpl
         extends StdoutLogging {
+        // implements FieldSearch {
         
     private ConnectionPool m_cPool;
 
