@@ -42,12 +42,18 @@ public class FieldSearchSQLImpl
 
     private ConnectionPool m_cPool;
     private RepositoryReader m_repoReader;
-    private static long s_maxResults=200;
+    private int m_maxResults;
     private static String[] s_dbColumnNames=new String[] {"pid", "label", 
             "fType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate",
             "dcTitle", "dcCreator", "dcSubject", "dcDescription", "dcPublisher",
             "dcContributor", "dcDate", "dcType", "dcFormat", "dcIdentifier",
             "dcSource", "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
+    private static boolean[] s_dbColumnNumeric=new boolean[] {false, false,
+            false, false, false, false, true, true, true,
+            false, false, false, false, false,
+            false, false, false, false, false,
+            false, false, false, false, false};
+            
             
     private static ReadOnlyContext s_nonCachedContext;
     static {
@@ -57,11 +63,12 @@ public class FieldSearchSQLImpl
     }
         
     public FieldSearchSQLImpl(ConnectionPool cPool, RepositoryReader repoReader, 
-            Logging logTarget) {
+            int maxResults, Logging logTarget) {
         super(logTarget);
         logFinest("Entering constructor");
         m_cPool=cPool;
         m_repoReader=repoReader;
+        m_maxResults=maxResults;
         logFinest("Exiting constructor");
     }
     
@@ -83,7 +90,6 @@ public class FieldSearchSQLImpl
         Connection conn=null;
         Statement st=null;
         try {
-            SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             conn=m_cPool.getConnection();
             String[] dbRowValues=new String[24];
             dbRowValues[0]=reader.GetObjectPID();
@@ -103,12 +109,12 @@ public class FieldSearchSQLImpl
             if (date==null) {  // should never happen, but if it does, don't die
                 date=new Date();
             }
-            dbRowValues[6]=formatter.format(date);
+            dbRowValues[6]="" + date.getTime();
             date=reader.getLastModDate();
             if (date==null) {  // should never happen, but if it does, don't die
                 date=new Date();
             }
-            dbRowValues[7]=formatter.format(date);
+            dbRowValues[7]="" + date.getTime();
             DatastreamXMLMetadata dcmd=null;
             try {
                 dcmd=(DatastreamXMLMetadata) reader.GetDatastream("DC", null);
@@ -122,7 +128,7 @@ public class FieldSearchSQLImpl
                 logFine("Had DC Metadata datastream for this object.");
                 InputStream in=dcmd.getContentStream();
                 DCFields dc=new DCFields(in);
-                dbRowValues[8]=formatter.format(dcmd.DSCreateDT);
+                dbRowValues[8]="" + dcmd.DSCreateDT.getTime();
                 dbRowValues[9]=getDbValue(dc.titles()); 
                 dbRowValues[10]=getDbValue(dc.creators()); 
                 dbRowValues[11]=getDbValue(dc.subjects()); 
@@ -151,8 +157,8 @@ public class FieldSearchSQLImpl
                     for (int i=0; i<wellFormedDates.size(); i++) {
                         Date dt=(Date) wellFormedDates.get(i);
                         st.executeUpdate("INSERT INTO dcDates (pid, dcDate) "
-                                + "values ('" + pid + "', '" 
-                                + formatter.format(dt) + "')");
+                                + "values ('" + pid + "', " 
+                                + dt.getTime() + ")");
                     }
                 }
                 dbRowValues[16]=getDbValue(dc.types()); 
@@ -166,7 +172,7 @@ public class FieldSearchSQLImpl
             }
             logFine("Formulating SQL and inserting/updating...");
             SQLUtility.replaceInto(conn, "doFields", s_dbColumnNames,
-                    dbRowValues, "pid", this);
+                    dbRowValues, "pid", s_dbColumnNumeric, this);
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting update of " 
                     + "object with pid '" + pid + ": " + sqle.getMessage());
@@ -281,7 +287,6 @@ public class FieldSearchSQLImpl
     public List search(String[] resultFields, List conditions) 
             throws ServerException {
         Connection conn=null;
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         try {
             logFinest("Entering search(String[], List)");
             StringBuffer whereClause=new StringBuffer();
@@ -326,7 +331,6 @@ public class FieldSearchSQLImpl
                                         + "must be in yyyy-MM-DD[Thh:mm:ss[Z]] "
                                         + "form.");
                             }
-                            String formattedDate=formatter.format(dt);
                             if (prop.equals("date")) {
                                 // do a left join on the dcDates table...dcDate
                                 // query will be of form: 
@@ -339,11 +343,11 @@ public class FieldSearchSQLImpl
                                     whereClause.insert(0, " LEFT JOIN dcDates "
                                             + "ON doFields.pid=dcDates.pid");
                                 }
-                                whereClause.append(" dcDates.dcDate" + op + "'"
-                                        + formattedDate + "'");
+                                whereClause.append(" dcDates.dcDate" + op 
+                                        + dt.getTime() );
                             } else {
-                                whereClause.append(" doFields." + prop + op + "'"
-                                        + formattedDate + "'");
+                                whereClause.append(" doFields." + prop + op
+                                        + dt.getTime() );
                             }
                         }
                     } else {
@@ -396,7 +400,7 @@ public class FieldSearchSQLImpl
             logFinest("Doing field search using whereClause: '" 
                     + whereClause.toString() + "'");
             conn=m_cPool.getConnection();
-            List ret=getObjectFields(conn, "SELECT pid FROM doFields" 
+            List ret=getObjectFields(conn, "SELECT doFields.pid FROM doFields" 
                     + whereClause.toString(), resultFields);
             return ret;
         } catch (SQLException sqle) {
@@ -432,7 +436,8 @@ public class FieldSearchSQLImpl
     /**
      * Perform the given query for 'pid' using the given connection
      * and return the result as a List of ObjectFields objects
-     * with resultFields populated.
+     * with resultFields populated.  The list will have a maximum size
+     * of m_maxResults.
      */
     private List getObjectFields(Connection conn, String query,
             String[] resultFields) 
@@ -443,9 +448,15 @@ public class FieldSearchSQLImpl
             ArrayList fields=new ArrayList();
             st=conn.createStatement();
             ResultSet results=st.executeQuery(query);
-            while (results.next()) {
+            boolean tooMany=false;
+            int numResults=0;
+            while (results.next() && !tooMany) {
                 String pid=results.getString("pid");
                 fields.add(getObjectFields(pid, resultFields));
+                numResults++;
+                if (numResults>m_maxResults) {
+                    tooMany=true;
+                }
             }
             return fields;
         } finally {
@@ -477,7 +488,6 @@ public class FieldSearchSQLImpl
                     + " has a DC datastream, but it's not inline XML.");
         }
         if (dcmd!=null) {
-            logFinest("");
             f=new ObjectFields(resultFields, dcmd.getContentStream());
             // add dcmDate if wanted
             for (int i=0; i<resultFields.length; i++) {
