@@ -65,7 +65,7 @@ class BatchXforms {
     if(optValues.getProperty(BatchTool.TEMPLATEFORMAT).equalsIgnoreCase("foxml1.0")) {
         xformPath = System.getProperty("fedora.home") + "/client/lib/foxml-merge.xsl";
     } else if (optValues.getProperty(BatchTool.TEMPLATEFORMAT).equalsIgnoreCase("metslikefedora1")) {
-        xformPath = System.getProperty("fedora.home") + "/client/lib/merge.xsl";
+        xformPath = System.getProperty("fedora.home") + "/client/lib/mets-merge.xsl";
     } else {
         System.err.println("Unknown template format: "+optValues.getProperty(BatchTool.TEMPLATEFORMAT));
   			throw new Exception();
