@@ -15,6 +15,7 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
 import fedora.server.search.FieldSearch;
+import fedora.server.storage.ConnectionPool;
 
 /**
  *
@@ -44,7 +45,7 @@ import fedora.server.search.FieldSearch;
  */
 public class FedoraOAIProviderModule
         extends Module
-        implements OAIProvider {
+        implements IFedoraOAIProvider {
 
     private FedoraOAIProvider m_wrappedOAIProvider;
 
@@ -166,6 +167,10 @@ public class FedoraOAIProviderModule
                 repositoryDomainName, "http://" + host + ":" + port 
                 + "/fedora/oai", adminEmails, friends, pidNamespace, maxSets, 
                 maxRecords, maxHeaders, fieldSearch, this);
+    }
+
+    public OAIReplicator getReplicator(ConnectionPool pool) {
+        return m_wrappedOAIProvider.getReplicator(pool);
     }
 
     public String getRepositoryName() {

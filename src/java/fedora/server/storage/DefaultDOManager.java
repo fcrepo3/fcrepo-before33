@@ -44,6 +44,8 @@ import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.management.Management;
 import fedora.server.management.PIDGenerator;
+import fedora.server.oai.OAIReplicator;
+import fedora.server.oai.FedoraOAIProviderModule;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
 import fedora.server.search.FieldSearchResult;
@@ -110,6 +112,7 @@ public class DefaultDOManager
     private ExternalContentManager m_contentManager;
     private Management m_management;
     private HashSet m_retainPIDs;
+    private FedoraOAIProviderModule m_oaiProvider;
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
@@ -267,6 +270,14 @@ public class DefaultDOManager
         } catch (ConnectionPoolNotFoundException cpnfe) {
             throw new ModuleInitializationException("Couldn't get required "
                     + "connection pool...wasn't found", getRole());
+        }
+        try {
+            m_oaiProvider=(FedoraOAIProviderModule) getServer().getModule("fedora.oai.OAIProvider");
+            if (m_oaiProvider==null) {
+                throw new ModuleInitializationException("The OAIProvider module must be loaded.", getRole());
+            }
+        } catch (ClassCastException cce) {
+            throw new ModuleInitializationException("OAIProvider must be a FedoraOAIProviderModule instance.", getRole());
         }
         try {
             String dbSpec="fedora/server/storage/resources/DefaultDOManager.dbspec";
@@ -480,7 +491,7 @@ public class DefaultDOManager
                 unregisterObject(obj.getPid());
                 wasInRegistry=true;
             } catch (ServerException se) {
-                logWarning("Object couldn't be removed from fieldsearch indexes, but that might be ok...continuing with purge.");
+                logWarning("Object couldn't be removed from registry, but that might be ok...continuing with purge.");
             }
             if (wasInRegistry) {
                 try {
@@ -499,6 +510,12 @@ public class DefaultDOManager
                 m_fieldSearch.delete(obj.getPid());
             } catch (ServerException se) {
                 logWarning("Object couldn't be removed from fieldsearch indexes (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+            }
+            try {
+                logInfo("Deleting from oai tables...");
+                m_oaiProvider.getReplicator(m_connectionPool).purgedObject(obj.getPid());
+            } catch (ServerException se) {
+                logWarning("Object couldn't be removed from oai tables (" + se.getMessage() + "), but that might be ok.");
             }
         } else {
             try {
@@ -596,22 +613,24 @@ public class DefaultDOManager
 
                 // set last mod date, in UTC
                 obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
-                // Set useSerializer to false to disable the serializer (for debugging/testing).
-                boolean useSerializer=true;
-                if (useSerializer) {
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
                     m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
                     ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
                     m_validator.validate(inV, 0, "store");
+                    // before saving to definitive store, tell the OAIReplicator about new or modified objects
+                    if (obj.isNew()) {
+                        m_oaiProvider.getReplicator(m_connectionPool).newObject(obj);
+                    } else {
+                        // must be a mod
+                        m_oaiProvider.getReplicator(m_connectionPool).modifiedObject(getReader(context, obj.getPid()), obj);
+                    }
                     // if ok, write change to perm store here...right before db stuff
                     if (obj.isNew()) {
                         getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                     } else {
                         getObjectStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                     }
-                } else {
-                    m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
-                }
+
                 // update systemVersion in doRegistry (add one)
                 Connection conn=null;
                 Statement s = null;

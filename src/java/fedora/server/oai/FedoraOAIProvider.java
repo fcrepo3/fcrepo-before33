@@ -19,6 +19,7 @@ import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
+import fedora.server.storage.ConnectionPool;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -48,7 +49,7 @@ import fedora.server.utilities.StreamUtility;
  */
 public class FedoraOAIProvider
         extends StdoutLogging
-        implements OAIProvider {
+        implements IFedoraOAIProvider {
 
     private String m_repositoryName;
     private String m_repositoryDomainName;
@@ -68,6 +69,7 @@ public class FedoraOAIProvider
             "fType", "title", "creator", "subject", "description", "publisher",
             "contributor", "date", "type", "format", "identifier", "source",
             "language", "relation", "coverage", "rights"};
+    private static OAIReplicator s_replicator;
 
     public FedoraOAIProvider(String repositoryName, String repositoryDomainName,
             String baseURL, Set adminEmails, Set friendBaseURLs, 
@@ -115,6 +117,13 @@ public class FedoraOAIProvider
         m_setInfos.add(new SimpleSetInfo("Data Objects", "objects", s_emptySet));
         m_setInfos.add(new SimpleSetInfo("Behavior Mechanism Objects", "bmechs", s_emptySet));
         m_setInfos.add(new SimpleSetInfo("Behavior Definition Objects", "bdefs", s_emptySet));
+    }
+
+    public OAIReplicator getReplicator(ConnectionPool pool) {
+        if (s_replicator==null) {
+            s_replicator=new OAIReplicator(pool, this);
+        }
+        return s_replicator;
     }
 
     public String getRepositoryName() {
