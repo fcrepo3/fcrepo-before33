@@ -1,338 +1,710 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--FEDORA API-M:   WSDL with Service Bindings -->
-<wsdl:definitions name="Fedora-API-M" targetNamespace="http://comm.nsdlib.org/projects/fedora/" xmlns:fedora="http://comm.nsdlib.org/projects/fedora/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-	<!--DATA TYPE  DEFINITIONS.  -->
-	<!--NOTE: this section could be pulled out of here and stored separately as a fedora xml schema.  Then we can import that Fedora schema into this WSDL.  -->
-	<!--However, this may not be necessary if the defined types are not used outside the context of this API-M  WSDL definition.  -->
-	<wsdl:types>
-		<xsd:schema targetNamespace="http://comm.nsdlib.org/projects/fedora/" xmlns:fedora="http://comm.nsdlib.org/projects/fedora/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding/">
-			<xsd:annotation>
-				<xsd:documentation>These are the schema type definitions to support API-M </xsd:documentation>
-			</xsd:annotation>
-			<xsd:simpleType name="URISyntaxType">
-				<xsd:restriction base="xsd:string">
-					<xsd:enumeration value="URN"/>
-					<xsd:enumeration value="URL"/>
-					<xsd:enumeration value="OTHER"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-			<xsd:complexType name="PIDType">
-				<xsd:sequence>
-					<xsd:element name="pid" type="xsd:anyURI"/>
-				</xsd:sequence>
-				<xsd:attribute name="idType" type="fedora:URISyntaxType"/>
-			</xsd:complexType>
-			<xsd:complexType name="ArrayOfPIDType">
-				<xsd:complexContent>
-					<xsd:restriction base="soapenc:Array">
-						<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora:PIDType[]"/>
-					</xsd:restriction>
-				</xsd:complexContent>
-			</xsd:complexType>
-			<xsd:complexType name="contentType">
-				<xsd:choice>
-					<xsd:element name="url" type="xsd:anyURI"/>
-					<xsd:element name="contentstream" type="xsd:base64Binary"/>
-				</xsd:choice>
-			</xsd:complexType>
-			<xsd:complexType name="dsBindingType">
-				<xsd:sequence>
-					<xsd:element name="keyName" type="xsd:string"/>
-					<xsd:element name="datastreamID" type="xsd:string"/>
-					<xsd:element name="seqNo" type="xsd:string" minOccurs="0"/>
-				</xsd:sequence>
-				<!-- TO DO: Allow the option for nested bindings-->
-			</xsd:complexType>
-			<xsd:complexType name="dsBindingMapType">
-				<xsd:sequence>
-					<xsd:element name="dsBinding" type="fedora:dsBindingType" minOccurs="0" maxOccurs="unbounded"/>
-				</xsd:sequence>
-			</xsd:complexType>
-			<xsd:simpleType name="DSControlGroupType">
-				<xsd:restriction base="xsd:string">
-					<xsd:enumeration value="INTERNAL"/>
-					<xsd:enumeration value="EXTERNAL"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-			<xsd:simpleType name="DatastreamInfoType">
-				<xsd:restriction base="xsd:string">
-					<xsd:enumeration value="BASIS"/>
-					<xsd:enumeration value="DIGIPROV"/>
-					<xsd:enumeration value="RIGHTS"/>
-					<xsd:enumeration value="TECHNICAL"/>
-					<xsd:enumeration value="SOURCE"/>
-					<xsd:enumeration value="DESCRIPTIVE"/>
-				</xsd:restriction>
-			</xsd:simpleType>
-			<xsd:complexType name="DatastreamType">
-				<xsd:sequence>
-					<xsd:element name="mimeType" type="xsd:string"/>
-					<xsd:element name="controlGroup" type="fedora:DSControlGroupType"/>
-					<xsd:element name="infoType" type="fedora:DatastreamInfoType"/>
-					<xsd:element name="content" type="fedora:contentType"/>
-				</xsd:sequence>
-				<xsd:attribute name="datastreamID" type="xsd:ID"/>
-			</xsd:complexType>
-			<xsd:complexType name="DisseminatorType">
-				<xsd:sequence>
-					<xsd:element name="bDefID" type="fedora:PIDType"/>
-					<xsd:element name="bMechID" type="fedora:PIDType"/>
-					<xsd:element name="dissLabel" type="xsd:string"/>
-					<xsd:element name="dsBindingMap" type="fedora:dsBindingMapType"/>
-				</xsd:sequence>
-				<xsd:attribute name="disseminatorID" type="xsd:ID"/>
-			</xsd:complexType>
-			<xsd:complexType name="ArrayOfDatastreamType">
-				<xsd:complexContent>
-					<xsd:restriction base="soapenc:Array">
-						<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora:DatastreamType[]"/>
-					</xsd:restriction>
-				</xsd:complexContent>
-			</xsd:complexType>
-			<xsd:complexType name="ArrayOfDisseminatorType">
-				<xsd:complexContent>
-					<xsd:restriction base="soapenc:Array">
-						<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora:DisseminatorType[]"/>
-					</xsd:restriction>
-				</xsd:complexContent>
-			</xsd:complexType>
-		</xsd:schema>
-	</wsdl:types>
-	<!--   Message Definitions for API-M  -->
-	<wsdl:message name="DigitalObjectID">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-	</wsdl:message>
-	<wsdl:message name="DatastreamID">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="datastreamID" type="xsd:ID"/>
-	</wsdl:message>
-	<wsdl:message name="DisseminatorID">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="disseminatorID" type="xsd:ID"/>
-	</wsdl:message>
-	<wsdl:message name="PIDNamespace">
-		<wsdl:part name="ns" type="xsd:string"/>
-	</wsdl:message>
-	<wsdl:message name="ListOfDigitalObjectID">
-		<wsdl:part name="pids" type="fedora:ArrayOfPIDType"/>
-	</wsdl:message>
-	<!-- ISSUE:  What is best way to type a message that is an XML file?  Should it be type base64 or maybe xsd:any ?-->
-	<wsdl:message name="METS">
-		<wsdl:part name="metsXML" type="xsd:base64Binary"/>
-	</wsdl:message>
-	<wsdl:message name="DigitalObjectCreateRequest">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="descriptor" type="xsd:string"/>
-		<wsdl:part name="contentTypeID" type="xsd:string"/>
-	</wsdl:message>
-	<wsdl:message name="DatastreamCreateRequest1">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="controlGroup" type="fedora:DSControlGroup"/>
-		<wsdl:part name="url" type="xsd:anyURI"/>
-	</wsdl:message>
-	<wsdl:message name="DatastreamCreateRequest2">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="content" type="xsd:base64Binary"/>
-	</wsdl:message>
-	<wsdl:message name="MetadataCreateRequest1">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="infoType" type="fedora:DatastreamInfoType"/>
-		<wsdl:part name="xmlurl" type="xsd:anyURI"/>
-	</wsdl:message>
-	<wsdl:message name="MetadataCreateRequest2">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="infoType" type="fedora:DatastreamInfoType"/>
-		<wsdl:part name="xmlstream" type="xsd:base64Binary"/>
-	</wsdl:message>
-	<wsdl:message name="DisseminatorCreateRequest">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="bDefID" type="fedora:PIDType"/>
-		<wsdl:part name="bMechID" type="fedora:PIDType"/>
-		<wsdl:part name="descriptor" type="xsd:string"/>
-		<wsdl:part name="dsBindMap" type="fedora:dsBindingMapType"/>
-	</wsdl:message>
-	<wsdl:message name="DatastreamModifyRequest1">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="datastreamID" type="xsd:ID"/>
-		<wsdl:part name="controlGroup" type="fedora:DSControlGroup"/>
-		<wsdl:part name="url" type="xsd:anyURI"/>
-	</wsdl:message>
-	<wsdl:message name="DatastreamModifyRequest2">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="datastreamID" type="xsd:ID"/>
-		<wsdl:part name="content" type="xsd:base64Binary"/>
-	</wsdl:message>
-	<wsdl:message name="MetadataModifyRequest1">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="datastreamID" type="xsd:ID"/>
-		<wsdl:part name="infoType" type="fedora:DatastreamInfoType"/>
-		<wsdl:part name="xmlurl" type="xsd:anyURI"/>
-	</wsdl:message>
-	<wsdl:message name="MetadataModifyRequest2">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="datastreamID" type="xsd:ID"/>
-		<wsdl:part name="infoType" type="fedora:DatastreamInfoType"/>
-		<wsdl:part name="xmlstream" type="xsd:base64Binary"/>
-	</wsdl:message>
-	<wsdl:message name="DisseminatorModifyRequest">
-		<wsdl:part name="pid" type="fedora:PIDType"/>
-		<wsdl:part name="disseminatorID" type="xsd:ID"/>
-		<wsdl:part name="bDefID" type="fedora:PIDType"/>
-		<wsdl:part name="bMechID" type="fedora:PIDType"/>
-		<wsdl:part name="descriptor" type="xsd:string"/>
-		<wsdl:part name="dsBindMap" type="fedora:dsBindingMapType"/>
-	</wsdl:message>
-	<wsdl:message name="DatastreamsGetResponse">
-		<wsdl:part name="datastreams" type="fedora:ArrayOfDatastreamType"/>
-	</wsdl:message>
-	<wsdl:message name="DisseminatorsGetResponse">
-		<wsdl:part name="disseminators" type="fedora:ArrayOfDisseminatorType"/>
-	</wsdl:message>
-	<wsdl:message name="BooleanResponse">
-		<wsdl:part name="response" type="xsd:boolean"/>
-	</wsdl:message>
-	<!-- DEFINITION OF ABSTRACT OPERATIONS for API-M -->
-	<wsdl:portType name="Fedora_API1">
-		<wsdl:operation name="IngestObject">
-			<wsdl:input message="METS"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="GetObject">
-			<wsdl:input message="DigitalObjectID"/>
-			<wsdl:output message="METS"/>
-		</wsdl:operation>
-		<wsdl:operation name="DeleteObject">
-			<wsdl:input message="DigitalObjectID"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="ListObjectPIDs">
-			<wsdl:input message="PIDNamespace"/>
-			<wsdl:output message="ListOfDigitalObjectID"/>
-		</wsdl:operation>
-		<wsdl:operation name="CreateObject">
-			<wsdl:input message="DigitalObjectCreateRequest"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="CreateDatastream1">
-			<wsdl:input message="DatastreamCreateRequest1"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="CreateDatastream2">
-			<wsdl:input message="DatastreamCreateRequest2"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="CreateMDstream1">
-			<wsdl:input message="MetadataCreateRequest1"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="CreateMDstream2">
-			<wsdl:input message="MetadataCreateRequest2"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="CreateDisseminator">
-			<wsdl:input message="DisseminatorCreateRequest"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="ModifyDatastream1">
-			<wsdl:input message="DatastreamModifyRequest1"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="ModifyDatastream2">
-			<wsdl:input message="DatastreamModifyRequest2"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="ModifyMDstream1">
-			<wsdl:input message="MetadataModifyRequest1"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="ModifyMDstream2">
-			<wsdl:input message="MetadataModifyRequest2"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="ModifyDisseminator">
-			<wsdl:input message="DisseminatorCreateRequest"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="DeleteDatastream">
-			<wsdl:input message="DatastreamID"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="DeleteDisseminator">
-			<wsdl:input message="DisseminatorID"/>
-			<wsdl:output message="BooleanResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="GetDatastreams">
-			<wsdl:input message="DigitalObjectID"/>
-			<wsdl:output message="DatastreamsGetResponse"/>
-		</wsdl:operation>
-		<wsdl:operation name="GetDisseminators">
-			<wsdl:input message="DigitalObjectID"/>
-			<wsdl:output message="DisseminatorsGetResponse"/>
-		</wsdl:operation>
-	</wsdl:portType>
-	<!-- SERVICE SPECIFICATION FOR API-M -->
-	<wsdl:service name="UVA_Fedora_API-M">
-		<wsdl:port name="UVA_Fedora_API-M_port1" binding="SOAP_API-M">
-			<http:address location="http://iris.lib.virginia.edu/fedora"/>
-		</wsdl:port>
-	</wsdl:service>
-	<!--The SOAP BINDINGS for API-M   -->
-	<wsdl:binding name="SOAP_API-M" type="Fedora_API-M">
-		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-		<wsdl:operation name="IngestObject">
-			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/IngestObject"/>
-			<wsdl:input>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="GetObject">
-			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/GetObject"/>
-			<wsdl:input>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="DeleteObject">
-			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/DeleteObject"/>
-			<wsdl:input>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="ListObjectPIDs">
-			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/ListObjectPIDs"/>
-			<wsdl:input>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="CreateObject">
-			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/CreateObject"/>
-			<wsdl:input>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:output>
-		</wsdl:operation>
-		<wsdl:operation name="CreateDatastream1">
-			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/CreateDatastream1"/>
-			<wsdl:input>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:input>
-			<wsdl:output>
-				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
-			</wsdl:output>
-		</wsdl:operation>
-		<!-- Rest of operations go here -->
-	</wsdl:binding>
-</wsdl:definitions>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+  xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/"
+  xmlns:fedora-audit="http://www.fedora.info/definitions/1/0/audit/"
+  name="Fedora-API-M">
+  <message name="CreateObjectResponse">
+    <part name="response" type="xsd:string">
+	  <documentation>the PID of the newly created object.</documentation>
+     </part>
+  </message>
+  <message name="IngestObjectRequest">
+    <part name="METSXML" type="xsd:base64Binary">
+      <documentation>the digital object in METS format.</documentation>
+    </part>
+  </message>
+  <message name="IngestObjectResponse">
+    <part name="response" type="xsd:string">
+      <documentation>the PID of the newly created object.</documentation>
+    </part>
+  </message>
+  <message name="GetObjectXMLRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="GetObjectXMLResponse">
+    <part name="response" type="xsd:base64Binary">
+      <documentation>the digital object in METS format.</documentation>
+    </part>
+  </message>
+  <message name="ExportObjectRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="ExportObjectResponse">
+    <part name="response" type="xsd:base64Binary">
+      <documentation>the digital object in METS format.</documentation>
+    </part>
+  </message>
+  <message name="WithdrawObjectRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="DeleteObjectRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="PurgeObjectRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="ObtainLockRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="ReleaseLockRequest">
+    <part name="PID" type="xsd:string">
+      <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="logMessage" type="xsd:string">
+      <documentation>an explanation of the change.  If commit is true, this message is used in the audit record describing the modification.</documentation>
+	 </part>
+    <part name="commit" type="xsd:boolean">
+      <documentation>whether the change(s) should be committed.</documentation>
+    </part>
+  </message>
+  <message name="GetLockingUserRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="GetLockingUserResponse">
+    <part name="response" type="xsd:string">
+	  <documentation>the userID of the user with the lock.</documentation>
+    </part>
+  </message>
+  <message name="GetObjectStateRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="GetObjectStateResponse">
+    <part name="response" type="xsd:string">
+	  <documentation>the state of the object.</documentation>
+	</part>
+  </message>
+  <message name="GetObjectCreateDateRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="GetObjectCreateDateResponse">
+    <part name="response" type="xsd:dateTime">
+	  <documentation>the date/time of the creation of the object.</documentation>
+	</part>
+  </message>
+  <message name="GetObjectLastModDateRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="GetObjectLastModDateResponse">
+    <part name="response" type="xsd:dateTime">
+	  <documentation>the date/time of the last modification of the object.</documentation>
+	</part>
+  </message>
+  <message name="GetObjectAuditTrailRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+	</part>
+  </message>
+  <message name="GetObjectAuditTrailResponse">
+    <part name="response" type="fedora-audit:ArrayOfAuditRecord">
+	  <documentation>the ordered audit records for the object.</documentation>
+	</part>
+  </message>
+  <message name="ListObjectPIDsRequest">
+    <part name="state" type="xsd:string">
+      <documentation>the state of the objects to list.  If null, objects in any 
+      state will be listed.</documentation>
+    </part>
+  </message>
+  <message name="ListObjectPIDsResponse">
+    <part name="response" type="fedora-types:ArrayOfString">
+      <documentation>the PIDs of the objects.</documentation>
+    </part>
+  </message>
+  <message name="AddDatastreamExternalRequest">
+    <part name="PID" type="xsd:string">
+      <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="dsLabel" type="xsd:string">
+      <documentation>the label for the datastream.</documentation>
+    </part>
+    <part name="dsLocation" type="xsd:string">
+      <documentation>the url to the datastream.</documentation>
+    </part>
+  </message>
+  <message name="AddDatastreamExternalResponse">
+    <part name="response" type="xsd:string">
+      <documentation>the datastreamID of the newly added datastream.
+      </documentation>
+    </part>
+  </message>
+  <message name="AddDatastreamManagedContentRequest">
+    <part name="PID" type="xsd:string">
+      <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="dsLabel" type="xsd:string">
+      <documentation>the label for the datastream.</documentation>
+    </part>
+    <part name="MIMEType" type="xsd:string">
+      <documentation>the url to the datastream.</documentation>
+    </part>
+    <part name="dsContent" type="xsd:base64Binary">
+      <documentation>the content of the datastream.</documentation>
+    </part>
+  </message>
+  <message name="AddDatastreamManagedContentResponse">
+    <part name="response" type="xsd:string">
+      <documentation>the datastreamID of the newly added datastream.
+      </documentation>
+    </part>
+  </message>
+  <message name="AddDatastreamXMLMetadataRequest">
+    <part name="PID" type="xsd:string">
+      <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="dsLabel" type="xsd:string">
+      <documentation>the label for the datastream.</documentation>
+    </part>
+    <part name="MDType" type="xsd:string">
+      <documentation>the type of metadata.  This may be digiprov, rights, 
+      technical, source, or descriptive.</documentation>
+    </part>
+    <part name="dsInlineMetadata" type="xsd:base64Binary">
+      <documentation>the XML metadata.  This must be well-formed XML.
+      </documentation>
+    </part>
+  </message>
+  <message name="AddDatastreamXMLMetadataResponse">
+    <part name="response" type="xsd:string">
+      <documentation>the datastreamID of the newly added datastream.
+      </documentation>
+    </part>
+  </message>
+  <message name="ModifyDatastreamExternalRequest">
+    <part name="PID" type="xsd:string">
+      <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="datastreamID" type="xsd:string">
+      <documentation>the ID of the datastream.</documentation>
+    </part>
+    <part name="dsLabel" type="xsd:string">
+      <documentation>the label for the datastream.</documentation>
+    </part>
+    <part name="dsLocation" type="xsd:string">
+      <documentation>the url to the datastream.</documentation>
+    </part>
+  </message>
+  <message name="ModifyDatastreamManagedContentRequest">
+    <part name="PID" type="xsd:string">
+      <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="datastreamID" type="xsd:string">
+      <documentation>the ID of the datastream.</documentation>
+    </part>
+    <part name="dsLabel" type="xsd:string">
+      <documentation>the label for the datastream.</documentation>
+    </part>
+    <part name="MIMEType" type="xsd:string">
+      <documentation>the url to the datastream.</documentation>
+    </part>
+    <part name="dsContent" type="xsd:base64Binary">
+      <documentation>the content of the datastream.</documentation>
+    </part>
+  </message>
+  <message name="ModifyDatastreamXMLMetadataRequest">
+    <part name="PID" type="xsd:string">
+      <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="datastreamID" type="xsd:string">
+      <documentation>the ID of the datastream.</documentation>
+    </part>
+    <part name="dsLabel" type="xsd:string">
+      <documentation>the label for the datastream.</documentation>
+    </part>
+    <part name="MDType" type="xsd:string">
+      <documentation>the type of metadata.  This may be digiprov, rights, 
+      technical, source, or descriptive.</documentation>
+    </part>
+    <part name="dsInlineMetadata" type="xsd:base64Binary">
+      <documentation>the XML metadata.</documentation>
+    </part>
+  </message>
+  <message name="WithdrawDatastreamRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="datastreamID" type="xsd:string">
+	  <documentation>the ID of the datastream.</documentation>
+    </part>
+  </message>
+  <message name="DeleteDatastreamRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="datastreamID" type="xsd:string">
+	  <documentation>the ID of the datastream.</documentation>
+    </part>
+  </message>
+  <message name="PurgeDatastreamRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="datastreamID" type="xsd:string">
+	  <documentation>the ID of the datastream.</documentation>
+    </part>
+    <part name="startDT" type="xsd:dateTime">
+	  <documentation>the (inclusive) starting date-time stamp of the range. If 
+     null, this is taken to be the smallest possible value.</documentation>
+    </part>
+    <part name="endDT" type="xsd:dateTime">
+	  <documentation>the (inclusive) ending date-time stamp of the range. If 
+     null, this is taken to be the greatest possible value.</documentation>
+    </part>
+  </message>
+  <message name="PurgeDatastreamResponse">
+    <part name="response" type="fedora-types:ArrayOfDateTime">
+      <documentation>the creation date/time of each deleted datastream.
+      </documentation>
+    </part>
+  </message>
+  <message name="GetDatastreamRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="datastreamID" type="xsd:string">
+	  <documentation>the ID of the datastream.</documentation>
+    </part>
+    <part name="asOfDateTime" type="xsd:dateTime">
+      <documentation>the date/time stamp specifying the desired view of the 
+      object.  If null, the current view of the object (the most recent time) 
+      is assumed.</documentation>
+    </part>
+  </message>
+  <message name="GetDatastreamResponse">
+    <part name="response" type="fedora-types:Datastream">
+	  <documentation>the datastream.</documentation>
+    </part>
+  </message>
+  <message name="GetDatastreamsRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="asOfDateTime" type="xsd:dateTime">
+      <documentation>the date/time stamp specifying the desired view of the 
+      object.  If null, the current view of the object (the most recent time) 
+      is assumed.</documentation>
+    </part>
+  </message>
+  <message name="GetDatastreamsResponse">
+    <part name="response" type="fedora-types:ArrayOfDatastream">
+	  <documentation>the datastreams.</documentation>
+    </part>
+  </message>
+  <message name="ListDatastreamIDsRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="state" type="xsd:string">
+	  <documentation>the state of the datastreams to list.</documentation>
+    </part>
+  </message>
+  <message name="ListDatastreamIDsResponse">
+    <part name="response" type="fedora-types:ArrayOfString">
+	  <documentation>the IDs of the datastreams.</documentation>
+    </part>
+  </message>
+  <message name="GetDatastreamHistoryRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="datastreamID" type="xsd:string">
+	  <documentation>the ID of the datastream.</documentation>
+    </part>
+  </message>
+  <message name="GetDatastreamHistoryResponse">
+    <part name="response" type="fedora-types:ArrayOfComponentInfo">
+	  <documentation>component information for each version of the datastream,
+      ordered earliest first.</documentation>
+    </part>
+  </message>
+  <message name="AddDisseminatorRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="bMechPID" type="xsd:string">
+	  <documentation>the PID of the behavior mechanism object.</documentation>
+    </part>
+    <part name="dissLabel" type="xsd:string">
+	  <documentation>the label of the disseminator.</documentation>
+    </part>
+    <part name="bindingMap" type="fedora-types:dsBindingMap">
+	  <documentation>the binding map.</documentation>
+    </part>
+  </message>
+  <message name="AddDisseminatorResponse">
+    <part name="response" type="xsd:string">
+	  <documentation>the ID of the newly created disseminator.</documentation>
+    </part>
+  </message>
+  <message name="ModifyDisseminatorRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="disseminatorID" type="xsd:string">
+	  <documentation>the ID of the disseminator.</documentation>
+    </part>
+    <part name="bMechPID" type="xsd:string">
+	  <documentation>the PID of the behavior mechanism object.</documentation>
+    </part>
+    <part name="dissLabel" type="xsd:string">
+	  <documentation>the label of the disseminator.</documentation>
+    </part>
+    <part name="bindingMap" type="fedora-types:dsBindingMap">
+	  <documentation>the binding map.</documentation>
+    </part>
+  </message>
+  <message name="WithdrawDisseminatorRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="disseminatorID" type="xsd:string">
+	  <documentation>the ID of the disseminator.</documentation>
+    </part>
+  </message>
+  <message name="DeleteDisseminatorRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="disseminatorID" type="xsd:string">
+	  <documentation>the ID of the disseminator.</documentation>
+    </part>
+  </message>
+  <message name="PurgeDisseminatorRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="disseminatorID" type="xsd:string">
+	  <documentation>the ID of the disseminator.</documentation>
+    </part>
+    <part name="startDT" type="xsd:dateTime">
+	  <documentation>the (inclusive) starting date-time stamp of the range. If 
+     null, this is taken to be the smallest possible value.</documentation>
+    </part>
+    <part name="endDT" type="xsd:dateTime">
+	  <documentation>the (inclusive) ending date-time stamp of the range. If 
+     null, this is taken to be the greatest possible value.</documentation>
+    </part>
+  </message>
+  <message name="PurgeDisseminatorResponse">
+    <part name="response" type="fedora-types:ArrayOfDateTime">
+      <documentation>the creation date/time of each deleted disseminator, 
+      earliest first.</documentation>
+    </part>
+  </message>
+  <message name="GetDisseminatorRequest">
+    <part name="PID" type="xsd:string">
+      <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="disseminatorID" type="xsd:string">
+      <documentation>the ID of the disseminator.</documentation>
+    </part>
+    <part name="asOfDateTime" type="xsd:dateTime">
+      <documentation>the date/time stamp specifying the desired view of the 
+      object.  If null, the current view of the object (the most recent time) 
+      is assumed.</documentation>
+    </part>
+  </message>
+  <message name="GetDisseminatorResponse">
+    <part name="response" type="fedora-types:Disseminator"/>
+  </message>
+  <message name="GetDisseminatorsRequest">
+    <part name="PID" type="xsd:string">
+      <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="asOfDateTime" type="xsd:dateTime">
+      <documentation>the date/time stamp specifying the desired view of the 
+      object.  If null, the current view of the object (the most recent time) 
+      is assumed.</documentation>
+    </part>
+  </message>
+  <message name="GetDisseminatorsResponse">
+    <part name="response" type="fedora-types:ArrayOfDisseminator">
+      <documentation>the disseminators.</documentation>
+    </part>
+  </message>  
+  <message name="ListDisseminatorIDsRequest">
+    <part name="PID" type="xsd:string">
+      <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="state" type="xsd:string">
+      <documentation>the state of the disseminators to list.</documentation>
+    </part>
+  </message>
+  <message name="ListDisseminatorIDsResponse">
+    <part name="response" type="fedora-types:ArrayOfString">
+      <documentation>the disseminator ids.</documentation>
+    </part>
+  </message>
+  <message name="GetDisseminatorHistoryRequest">
+    <part name="PID" type="xsd:string">
+	  <documentation>the PID of the object.</documentation>
+    </part>
+    <part name="disseminatorID" type="xsd:string">
+	  <documentation>the ID of the disseminator.</documentation>
+    </part>
+  </message>
+  <message name="GetDisseminatorHistoryResponse">
+    <part name="response" type="fedora-types:ArrayOfComponentInfo">
+	  <documentation>component information for each version of the disseminator,
+      ordered earliest first.</documentation>
+    </part>
+  </message>
+  <portType name="Fedora-API-M-PortType">
+    <operation name="CreateObject">
+      <documentation>creates a new, empty digital object in the repository. The 
+      object's initial state will be N.  The repository will generate and return 
+      a new PID for the object resulting from this request.  The PID will have 
+      the namespace of the repository.</documentation>
+	  <output message="CreateObjectResponse"/>
+    </operation>
+    <operation name="IngestObject">
+      <documentation>creates a new digital object in the repository, given the 
+      data in the provided METS document.  The object's initial state will be N.  
+      If the METS document does not specify a PID in the OBJID attribute of the 
+      root element, the repository will generate and return a new PID for the 
+      object resulting from this request.  That PID will have the namespace of 
+      the repository.  If the METS document specifies a PID, it will be assigned 
+      to the digital object provided that 1) it conforms to the Fedora PID 
+      Syntax, 2) it does not specify the namespace of the repository, and 3) 
+      it does not collide with an existing PID of an object in the repository.
+      </documentation>
+	  <input message="IngestObjectRequest"/>
+	  <output message="IngestObjectResponse"/>
+    </operation>
+    <operation name="GetObjectXML">
+      <documentation>gets the XML portion of the entire METS-encoded 
+      digital object for external use (viewing, editing, moving to another 
+      repository).  XML metadata datastreams will be included inline, content 
+      datastreams will not be included, and external datastreams will be 
+      referenced by url.</documentation>
+      <input message="GetObjectXMLRequest"/>
+      <output message="GetObjectXMLResponse"/>
+    </operation>
+    <operation name="ExportObject">
+      <documentation>gets the entire METS-encoded digital object for 
+      external use (viewing, editing, moving to another repository).  XML 
+      metadata datastreams will be included inline, content datastreams will 
+      be included inline (base64-encoded), and external datastreams will be 
+      referenced by url.</documentation>
+      <input message="ExportObjectRequest"/>
+      <output message="ExportObjectResponse"/>
+    </operation>
+    <operation name="WithdrawObject">
+      <documentation>changes the object's state to W, making it inaccessible 
+      from API-A.</documentation>
+	  <input message="WithdrawObjectRequest"/>
+    </operation>
+    <operation name="DeleteObject">
+      <documentation>marks an object as deleted, changing its state to D.  
+      This makes it inaccessible from API-A, and eligible for purging by the 
+      cleanup process.</documentation>
+      <input message="DeleteObjectRequest"/>
+    </operation>
+    <operation name="PurgeObject">
+      <documentation>permanently removes an object from the repository.
+      </documentation>
+      <input message="PurgeObjectRequest"/>
+    </operation>
+    <operation name="ObtainLock">
+      <documentation>locks an object for writing.  Upon obtaining a lock, a 
+      user may execute write methods on an object.</documentation>
+      <input message="ObtainLockRequest"/>
+	 </operation>
+    <operation name="ReleaseLock">
+      <documentation>unlocks an object for writing.</documentation>
+      <input message="ReleaseLockRequest"/>
+    </operation>
+    <operation name="GetLockingUser">
+      <documentation>tells who has a write lock on an object.</documentation>
+      <input message="GetLockingUserRequest"/>
+      <output message="GetLockingUserResponse"/>
+    </operation>
+    <operation name="GetObjectState">
+      <documentation>gets the state of the object.</documentation>
+      <input message="GetObjectStateRequest"/>
+      <output message="GetObjectStateResponse"/>
+    </operation>
+    <operation name="GetObjectCreateDate">
+      <documentation>gets the date/time of the object's creation in this 
+      repository.</documentation>
+      <input message="GetObjectCreateDateRequest"/>
+      <output message="GetObjectCreateDateResponse"/>
+    </operation>
+    <operation name="GetObjectLastModDate">
+      <documentation>gets the date/time of the object's most recent modification 
+      in this repository.  The modification date of an object is set when changes
+      to an object are committed via the ReleaseLock method.
+      </documentation>
+      <input message="GetObjectLastModDateRequest"/>
+      <output message="GetObjectLastModDateResponse"/>
+    </operation>
+    <operation name="GetObjectAuditTrail">
+      <documentation>gets all audit trail records for the object.</documentation>
+      <input message="GetObjectAuditTrailRequest"/>
+      <output message="GetObjectAuditTrailResponse"/>
+    </operation>
+    <operation name="PurgeObject">
+      <documentation>permanently removes the object.</documentation>
+      <input message="PurgeObjectRequest"/>
+    </operation>
+    <operation name="ListObjectPIDs">
+      <documentation>gets a list of the PIDs of the objects in the 
+      repository.</documentation>
+      <input message="ListObjectPIDsRequest"/>
+      <output message="ListObjectPIDsResponse"/>
+    </operation>
+    <operation name="AddDatastreamExternal">
+      <documentation>creates a Referenced External Content Datastream in the 
+      object.  The MIME type is determined by the repository, which uses the 
+      value of the Content-Type HTTP response header provided by an HTTP GET 
+      request of the URL.</documentation>
+      <input message="AddDatastreamExternalRequest"/>
+      <output message="AddDatastreamExternalResponse"/>
+    </operation>
+    <operation name="AddDatastreamManagedContent">
+      <documentation>creates a Repository-Managed Content Datastream in the 
+      object.  The repository uses the value of dsContent as the content of 
+      the datastream.</documentation>
+      <input message="AddDatastreamManagedContentRequest"/>
+      <output message="AddDatastreamManagedContentResponse"/>
+    </operation>
+    <operation name="AddDatastreamXMLMetadata">
+      <documentation>creates an Implementor-Defined XML Metadata Datastream in 
+      the object.</documentation>
+      <input message="AddDatastreamXMLMetadataRequest"/>
+      <output message="AddDatastreamXMLMetadataResponse"/>
+    </operation>
+    <operation name="AddDisseminator">
+      <documentation>creates a disseminator in the object.</documentation>
+      <input message="AddDisseminatorRequest"/>
+      <output message="AddDisseminatorResponse"/>
+    </operation>
+    <operation name="ModifyDisseminator">
+      <documentation>modifies a disseminator in the object.</documentation>
+      <input message="ModifyDisseminatorRequest"/>
+    </operation>
+    <operation name="ModifyDatastreamExternal">
+      <documentation>modifies a Referenced External Content Datastream in the 
+      object.</documentation>
+      <input message="ModifyDatastreamExternalRequest"/>
+    </operation>
+    <operation name="ModifyDatastreamManagedContent">
+      <documentation>modifies a Repository-Managed Content Datastream in the 
+      object.</documentation>
+      <input message="ModifyDatastreamManagedContentRequest"/>
+    </operation>
+    <operation name="ModifyDatastreamXMLMetadata">
+      <documentation>modifies an Implementor-Defined XML Metadata Datastream in 
+      the object.</documentation>
+      <input message="ModifyDatastreamXMLMetadataRequest"/>
+    </operation>
+    <operation name="WithdrawDatastream">
+      <documentation>changes a datastream's state to W, making it inaccessible 
+      from API-A.</documentation>
+      <input message="WithdrawDatastreamRequest"/>
+    </operation>
+    <operation name="DeleteDatastream">
+      <documentation>marks a datastream as deleted, changing its state to D.  
+      This makes it inaccessible from API-A, and eligible for purging by the 
+      cleanup process.</documentation>
+      <input message="DeleteDatastreamRequest"/>
+    </operation>
+    <operation name="PurgeDatastream">
+      <documentation>permanently removes one or more versions of a datastream 
+      from an object.</documentation>
+      <input message="PurgeDatastreamRequest"/>
+      <output message="PurgeDatastreamResponse"/>
+    </operation>
+    <operation name="WithdrawDisseminator">
+      <documentation>changes a disseminator's state to W, making it inaccessible 
+      from API-A.</documentation>
+      <input message="WithdrawDisseminatorRequest"/>
+    </operation>
+    <operation name="DeleteDisseminator">
+      <documentation>marks a disseminator as deleted, changing its state to D.  
+      This makes it inaccessible from API-A, and eligible for purging by the 
+      cleanup process.</documentation>
+      <input message="DeleteDisseminatorRequest"/>
+    </operation>
+    <operation name="PurgeDisseminator">
+      <documentation>permanently removes one or more versions of a disseminator 
+      from an object.</documentation>
+      <input message="PurgeDisseminatorRequest"/>
+      <output message="PurgeDisseminatorResponse"/>
+    </operation>
+    <operation name="GetDatastream">
+      <documentation>gets a datastream in an object.</documentation>
+      <input message="GetDatastreamRequest"/>
+      <input message="GetDatastreamResponse"/>
+    </operation>
+    <operation name="GetDatastreams">
+      <documentation>gets all datastreams in an object.</documentation>
+      <input message="GetDatastreamsRequest"/>
+      <input message="GetDatastreamsResponse"/>
+	</operation>
+	<operation name="ListDatastreamIDs">
+      <documentation>gets a list of datastreams in an object.</documentation>
+	  <input message="ListDatastreamIDsRequest"/>
+	  <input message="ListDatastreamIDsResponse"/>
+	</operation>
+	<operation name="GetDatastreamHistory">
+      <documentation>gets the componentID, createDT, state, and label history
+      of a datastream.</documentation>
+	  <input message="GetDatastreamHistoryRequest"/>
+	  <input message="GetDatastreamHistoryResponse"/>
+	</operation>
+	<operation name="GetDisseminator">
+      <documentation>gets a disseminator in an object.</documentation>
+	  <input message="GetDisseminatorRequest"/>
+	  <input message="GetDisseminatorResponse"/>
+	</operation>
+	<operation name="GetDisseminators">
+      <documentation>gets all disseminators in an object.</documentation>
+	  <input message="GetDisseminatorsRequest"/>
+	  <input message="GetDisseminatorsResponse"/>
+	</operation>
+	<operation name="ListDisseminatorIDs">
+      <documentation>gets a list of disseminators in an object.</documentation>
+	  <input message="ListDisseminatorIDsRequest"/>
+	  <input message="ListDisseminatorIDsResponse"/>
+	</operation>
+	<operation name="GetDisseminatorHistory">
+      <documentation>gets the componentID, createDT, state, and label history
+      of a disseminator.</documentation>
+	  <input message="GetDisseminatorHistoryRequest"/>
+	  <input message="GetDisseminatorHistoryResponse"/>
+	</operation>
+  </portType>
+  <binding name="Fedora-API-M-Binding-SOAPHTTP" type="Fedora-API-M-PortType">
+  </binding>
+  <service name="Fedora-API-M-Service">
+    <port name="Fedora-API-M-Port-HTTPGET" binding="Fedora-API-M-Binding-HTTPGET">
+      <http:address location="http://$$HOSTNAME$$:$$PORT$$/$$MOUNTPOINT$$management/"/>
+    </port>
+    <port name="Fedora-API-M-Port-SOAPHTTP" binding="Fedora-API-M-Binding-SOAPHTTP">
+      <soap:address location="http://$$HOSTNAME$$:$$PORT$$/$$MOUNTPOINT$$management/"/>
+    </port>
+  </service>
+</definitions>
