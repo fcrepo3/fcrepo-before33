@@ -209,6 +209,21 @@
     </exec>
   </target>
   
+  <target name="wsdl2java"
+      depends="serverprep"
+      description="Generate java classes for API-M and API-A in temp/server/java">
+    <mkdir dir="temp/server/java"/>
+    <exec executable="java">
+      <arg value="-classpath"/>
+      <arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar"/>
+      <arg value="org.apache.axis.wsdl.WSDL2Java"/>
+      <arg value="-s"/>
+      <arg path="src/wsdl/Fedora-API-M.wsdl"/>
+    </exec>
+  </target>
+    
+      
+  
   <target name="server"
           depends="serverclasses"
           description="Server distribution">
@@ -253,6 +268,9 @@
 
 <!--
   $Log$
+  Revision 1.11  2002/07/18 14:22:44  cwilper
+  added wsdl2java target, even though it doesn't work yet
+
   Revision 1.10  2002/07/17 21:23:25  cwilper
   Added API-A to document-wsdl target
 
