@@ -39,10 +39,6 @@ import fedora.server.security.Authorization;
 public class ReadOnlyContext
         extends Parameterized implements Context {
 
-	public static final String REST = "rest";
-
-	public static final String SOAP = "soap";
-
 	public static final boolean USE_CACHED_OBJECT = true;
 
 	public static final boolean DO_NOT_USE_CACHED_OBJECT = false;
