@@ -9,6 +9,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
@@ -56,8 +58,27 @@ public class BMechBuilder extends JInternalFrame
         tabpane.addTab("General", createGeneralPane());
         tabpane.addTab("Service Methods", createMethodsPane());
         tabpane.addTab("Datastream Input", createDSInputPane());
-        tabpane.addTab("Service Profile", createProfilePane());
         tabpane.addTab("Documentation", createDocPane());
+        tabpane.addTab("Service Profile", createProfilePane());
+        // set up listener for JTabbedPane object
+        tabpane.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                int index = tabpane.getSelectedIndex();
+                String title = tabpane.getTitleAt(index);
+                System.out.println("index = " +
+                                        index);
+                System.out.println("title = " +
+                                        title);
+
+                if (index == 2)
+                {
+                  DatastreamInputPane dsip =
+                    (DatastreamInputPane)tabpane.getComponentAt(2);
+                  dsip.setDSBindingKeys(newBMech.getDSBindingKeys());
+                }
+            }
+        });
+
 
         // General Buttons Panel
         JButton save = new JButton("Save");
@@ -94,6 +115,11 @@ public class BMechBuilder extends JInternalFrame
         getContentPane().add(tabpane, BorderLayout.CENTER);
         getContentPane().add(gbuttonPanel, BorderLayout.SOUTH);
         setVisible(true);
+    }
+
+    public BMechTemplate getBMechTemplate()
+    {
+      return newBMech;
     }
 
     public void savePanelInfo()
@@ -142,8 +168,34 @@ public class BMechBuilder extends JInternalFrame
             return;
           }
         }
+        else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
+        {
+          if (validDSInputTab((DatastreamInputPane)tabs[i]))
+          {
+            DatastreamInputPane dsp = (DatastreamInputPane)tabs[i];
+            newBMech.setDSInputSpec(dsp.getDSInputRules());
+          }
+          else
+          {
+            return;
+          }
+        }
+        else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
+        {
+          if (validDocsTab((DocumentsPane)tabs[i]))
+          {
+            DocumentsPane docp = (DocumentsPane)tabs[i];
+            newBMech.setDocDatastreams(docp.getDocDatastreams());
+          }
+          else
+          {
+            return;
+          }
+        }
       }
       printBMech();
+      DSInputSpecGenerator dsg = new DSInputSpecGenerator(newBMech);
+      dsg.printDSInputSpec();
       MethodMapGenerator mmg = new MethodMapGenerator(newBMech);
       mmg.printMethodMap();
       WSDLGenerator wsdlg = new WSDLGenerator(newBMech);
@@ -151,8 +203,8 @@ public class BMechBuilder extends JInternalFrame
       BMechMETSSerializer mets = null;
       try
       {
-        mets = new BMechMETSSerializer(
-          newBMech, mmg.getRootElement(), wsdlg.getRootElement());
+        mets = new BMechMETSSerializer(newBMech, dsg.getRootElement(),
+          mmg.getRootElement(), wsdlg.getRootElement());
       }
       catch (Exception e)
       {
@@ -181,24 +233,24 @@ public class BMechBuilder extends JInternalFrame
     }
     private JComponent createGeneralPane()
     {
-      GeneralPane gp = new GeneralPane();
-      gp.setName("GeneralTab");
-      return gp;
+      GeneralPane gpane = new GeneralPane();
+      gpane.setName("GeneralTab");
+      return gpane;
       //return new JLabel("Insert general stuff here.");
     }
 
     private JComponent createMethodsPane()
     {
-      MethodsPane mp = new MethodsPane();
-      mp.setName("MethodsTab");
-      return mp;
+      MethodsPane mpane = new MethodsPane(this);
+      mpane.setName("MethodsTab");
+      return mpane;
     }
 
     private JComponent createDSInputPane()
     {
-      JLabel jl = new JLabel("Insert Datastream Input Spec stuff here.");
-      jl.setName("DSInputTab");
-      return jl;
+      DatastreamInputPane dspane = new DatastreamInputPane(this);
+      dspane.setName("DSInputTab");
+      return dspane;
     }
 
     private JComponent createProfilePane()
@@ -210,9 +262,9 @@ public class BMechBuilder extends JInternalFrame
 
     private JComponent createDocPane()
     {
-      JLabel jl = new JLabel("Insert Documentation stuff here.");
-      jl.setName("DocTab");
-      return jl;
+      DocumentsPane docpane = new DocumentsPane();
+      docpane.setName("DocumentsTab");
+      return docpane;
     }
 
     private void printBMech()
@@ -254,6 +306,18 @@ public class BMechBuilder extends JInternalFrame
             + ">>>parmRequired: " + mp.parmRequired + "\n"
             + ">>>parmDomainValues: " + mp.parmDomainValues + "\n");
         }
+      }
+      System.out.println("FROM DSINPUT TAB===============================");
+      DSInputRule[] rules = newBMech.getDSInputSpec();
+      for (int i=0; i<rules.length; i++)
+      {
+        System.out.println(">>>name= " + rules[i].bindingKeyName + "\n"
+          + ">>>mime= " + rules[i].bindingMIMEType + "\n"
+          + ">>>min= " + rules[i].minNumBindings + "\n"
+          + ">>>max= " + rules[i].maxNumBindings + "\n"
+          + ">>>order= " + rules[i].ordinality + "\n"
+          + ">>>label= " + rules[i].bindingLabel + "\n"
+          + ">>>instruct= " + rules[i].bindingInstruction + "\n");
       }
     }
 
@@ -310,6 +374,91 @@ public class BMechBuilder extends JInternalFrame
       }
     }
 
+    private boolean validDSInputTab(DatastreamInputPane dsp)
+    {
+      DSInputRule[] rules = dsp.getDSInputRules();
+      for (int i=0; i<rules.length; i++)
+      {
+        if (rules[i].bindingKeyName == null)
+        {
+          assertTabPaneMsg(new String("A Datastream parm name is missing"
+            + " from column 1 of the table on the Datastream Input Tab"),
+            dsp.getName());
+          return false;
+        }
+        else if (rules[i].bindingMIMEType == null)
+        {
+          assertTabPaneMsg(new String("You must enter MIMEType for"
+            + " datastream input parm " + rules[i].bindingKeyName), dsp.getName());
+          return false;
+        }
+        else if (rules[i].minNumBindings == null)
+        {
+          assertTabPaneMsg(new String("You must enter Min Occurs for"
+            + " datastream input parm " + rules[i].bindingKeyName
+            + " on Datastream Input Tab."), dsp.getName());
+          return false;
+        }
+        else if (rules[i].maxNumBindings == null)
+        {
+          assertTabPaneMsg(new String("You must enter Max Occurs for"
+            + " datastream input parm " + rules[i].bindingKeyName
+            + " on Datastream Input Tab."), dsp.getName());
+          return false;
+        }
+        else if (rules[i].ordinality == null)
+        {
+          assertTabPaneMsg(new String("You must enter Order Matters for"
+            + " datastream input parm " + rules[i].bindingKeyName
+            + " on Datastream Input Tab."), dsp.getName());
+          return false;
+        }
+        else if (rules[i].bindingLabel == null)
+        {
+          assertTabPaneMsg(new String("You must enter Pretty Label for"
+            + " datastream input parm " + rules[i].bindingKeyName
+            + " on Datastream Input Tab."), dsp.getName());
+          return false;
+        }
+        else if (rules[i].bindingInstruction == null)
+        {
+          assertTabPaneMsg(new String("You must enter Binding Instruction for"
+            + " datastream input parm " + rules[i].bindingKeyName
+            + " on Datastream Input Tab."), dsp.getName());
+          return false;
+        }
+      }
+      return true;
+    }
+
+    private boolean validDocsTab(DocumentsPane docp)
+    {
+      Datastream[] docs = docp.getDocDatastreams();
+      if (docs.length < 1)
+      {
+          assertTabPaneMsg(new String("You must enter at least one document"
+            + " that describes the service in the Documents Tab."),
+            docp.getName());
+          return false;
+      }
+
+      for (int i=0; i<docs.length; i++)
+      {
+        if (docs[i].dsLabel == null)
+        {
+          assertTabPaneMsg(new String("You must enter a Label for all documents"
+            + "listed on the Documents Tab."), docp.getName());
+          return false;
+        }
+        else if (docs[i].dsMIMEType == null)
+        {
+          assertTabPaneMsg(new String("You must enter a MIME type for all documents"
+            + "listed on the Documents Tab."), docp.getName());
+          return false;
+        }
+      }
+      return true;
+    }
 
     private void assertTabPaneMsg(String msg, String tabpane)
     {
