@@ -172,10 +172,10 @@ public class FieldSearchServlet
                 }
                 List searchResults=fsr.objectFieldsList();
                 if (!xml) {
-                    html.append("<center><table width=\"90%\" border=\"0\" cellpadding=\"4\">\n");
+                    html.append("<center><table width=\"90%\" border=\"1\" cellpadding=\"5\" cellspacing=\"5\" bgcolor=\"silver\">\n");
                     html.append("<tr>");
                     for (int i=0; i<fieldsArray.length; i++) {
-                        html.append("<td bgcolor=\"#333399\" valign=\"top\"><font color=\"#ffffff\"><b>");
+                        html.append("<td valign=\"top\"><font color=\"blue\"><b>");
                         html.append(fieldsArray[i]);
                         html.append("</b></font></td>");
                     }
@@ -286,7 +286,7 @@ public class FieldSearchServlet
                         html.append("</tr>");
                         html.append("<tr><td colspan=\"");
                         html.append(fieldsArray.length);
-                        html.append("\"><hr size=\"1\"></td></tr>");
+                        html.append("\"></td></tr>");
                     }
                 }
                 if (!xml) {
@@ -338,8 +338,15 @@ public class FieldSearchServlet
                 response.setContentType("text/html");
                 PrintWriter out=response.getWriter();
                 out.print("<html><head><title>Search Repository</title></head>");
-                out.print("<body><h2>Search Repository</h2>");
+                out.print("<body><center>");
+                out.println("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
+                out.println("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"http://www.fedora.info/assets/newlogo2.jpg\" width=\"141\" height=\"134\"></td>");
+                out.println("<td width=\"643\" valign=\"top\">");
+                out.println("<center><h2>Fedora Repository</h2>");
+                out.println("<h3>Find Objects</h3>");
+                out.println("</center></td></tr></table>");
                 out.print(html.toString());
+                out.print("</center>");
                 out.print("</body>");
             } else {
                 response.setContentType("text/xml");
