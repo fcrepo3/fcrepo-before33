@@ -24,8 +24,16 @@ public class Make {
     public static String getTitle(String in) {
         StringBuffer out = new StringBuffer();
         for (int i = 0; i < in.length(); i++) {
-            String uc = in.substring(i, i+1).toUpperCase();
-            out.append(uc);
+            if (i == 0) {
+                out.append(in.charAt(i));
+            } else {
+                String ch = in.substring(i, i+1);
+                String uc = ch.toUpperCase();
+                if (ch == uc) {
+                    out.append(' ');
+                }
+                out.append(ch);
+            }
         }
         return out.toString();
     }
