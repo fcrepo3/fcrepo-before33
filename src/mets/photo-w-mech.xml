@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- METS: A FEDORA BEHAVIOR MECHANISM OBJECT -->
+<!-- This is a METS encoding of a Fedora Behavior Mechanism Object for a hypothetical Photo Watermarking Mechanism -->
+<METS:mets xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedora="http://fedora.comm.nsdlib.org/bindspec" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.loc.gov/standards/mets/mets.xsd" OBJID="cornell.cs:fedora/bmech/photo-w-1.0" TYPE="fedora:behaviorMechanism" LABEL="Behavior Mechanism Object for Photo Watermarking">
+	<!-- ******************************************************************************************************************** -->
+	<!-- METS: INLINE METADATA DATASTREAM 1  - THE FEDORA DATASTREAM BINDING SPECIFICATION  FOR THIS MECHANISM -->
+	<!-- This is encoded in XML using a Fedora binding spec schema. -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:dmdSec ID="DESC1">
+		<METS:mdWrap MDTYPE="OTHER">
+			<METS:xmlData>
+				<fedora:DSBindingSpec>
+					<fedora:mechanismID scheme="URN">cornell.cs:fedora/bmech/photo-w-1.0</fedora:mechanismID>
+					<fedora:behaviorDefID scheme="URN">cornell.cs:fedora/bdef/photo-w</fedora:behaviorDefID>
+					<fedora:DSBinding BindingKeyName="PHOTO" DSMin="1" DSMax="1" DSOrdinality="false">
+						<fedora:DSBindingLabel>A photographic image</fedora:DSBindingLabel>
+						<fedora:DSBindingInstructions>photo in image/gif or image/jpg format at 600 dpi</fedora:DSBindingInstructions>
+						<fedora:DSMIME>image/gif image/jpg</fedora:DSMIME>
+					</fedora:DSBinding>
+					<fedora:DSBinding BindingKeyName="PHOTOSET" DSMin="1" DSMax="10" DSOrdinality="true">
+						<fedora:DSBindingLabel>A set of photographic images</fedora:DSBindingLabel>
+						<fedora:DSBindingInstructions>photos in image/gif or image/jpg format at 600 dpi</fedora:DSBindingInstructions>
+						<fedora:DSMIME>image/gif image/jpg</fedora:DSMIME>
+					</fedora:DSBinding>
+					<fedora:DSBinding BindingKeyName="WATERMARK" DSMin="1" DSMax="1" DSOrdinality="false">
+						<fedora:DSBindingLabel>watermark file</fedora:DSBindingLabel>
+						<fedora:DSBindingInstructions>a watermark file in image/gif format at 300 dpii</fedora:DSBindingInstructions>
+						<fedora:DSMIME>image/gif</fedora:DSMIME>
+					</fedora:DSBinding>
+				</fedora:DSBindingSpec>
+			</METS:xmlData>
+		</METS:mdWrap>
+	</METS:dmdSec>
+	<!-- **************************************************************************************************************************** -->
+	<!--  METS: INLINE METADATA DATASTREAM 2 -  WSDL SPECIFICATION FOR THE BEHAVIOR MECHANISM -->
+	<!--  Here we store a WSDL file inline as a form of metadata about the mechanism. -->
+	<!-- *************************************************************************************************************************** -->
+	<METS:dmdSec ID="DESC2">
+		<METS:mdWrap MDTYPE="OTHER">
+			<METS:xmlData>
+				<wsdl:definitions name="photo-w" targetNamespace="http:/cornell.cs.edu/fedora/bmech/photo-w-1.0" xmlns="http:/cornell.cs.edu/fedora/bmech/photo-w-1.0" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
+					<!-- ******************************************************************************************************************** -->
+					<!-- WSDL: SCHEMA TYPE DEFINITIONS FOR THE PHOTO-W MECHANISM-->
+					<!-- Here is the XML Schema that defines all data types needed by the photo-w mechanism.  -->
+					<!-- These could also be imported from a separate file.  -->
+					<!-- *******************************************************************************************************************-->
+					<!-- NOTE:  The schema also provides an alternative way to express the Binding Specification using -->
+					<!--            XML Schema language restrictions !!!  This is currently a work in progress.                        -->
+					<!-- ******************************************************************************************************************** -->
+					<wsdl:types>
+						<xsd:schema targetNamespace="http:/cornell.cs.edu/fedora/bmech/photo-w-1.0" xmlns:pa="http:/cornell.cs.edu/fedora/bmech/photo-w-1.0" xmlns:fedora="http://fedora.comm.nsdlib.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+							<!-- ********************************************************************************************************************************* -->
+							<xsd:import namespace="http://fedora.comm.nsdlib.org/" schemaLocation="fedora-dsbind.xsd"/>
+							<!-- ********************************************************************************************************************************** -->
+							<!-- ALT. EXPRESSION OF MECHANISM BINDING SPEC USING XML SCHEMA LANGUAGE INSIDE WSDL -->
+							<!-- This is an alternative way of expressing a Datastream Binding Specification using XML Schema Language. -->
+							<!-- Generally, the idea is that there is a generic XML schema for fedora-binding schema that defines an abstract  -->
+							<!-- data structure for binding datastreams.-->
+							<!-- Each mechanism, will define its own XML schema that defines RESTRICTIONS on the abstract fedora datastream binding type -->
+							<!-- Fedora datastream binding data structures can be instantiated in XML documents, and converted to and from METS structmaps -->
+							<!-- using XSLT.  This is still being designed and worked out by Sandy and Chris at this time. -->
+							<!--This should be used by Fedora builder clients to facilitate the creation of the mechanism's datastream binding map -->
+							<!-- ************************************************************************************************************************************ -->
+							<xsd:element name="photoBindingSpec" type="pa:PhotoBindSpecType" substitutionGroup="fedora:dsBindingSpec"/>
+							<xsd:element name="photo" type="pa:PhotoBindType" substitutionGroup="fedora:dsBinding"/>
+							<xsd:element name="photoset" type="pa:PhotoSetBindType" substitutionGroup="fedora:dsBinding"/>
+							<xsd:element name="watermark" type="pa:WatermarkBindType" substitutionGroup="fedora:dsBinding"/>
+							<xsd:complexType name="PhotoBindSpecType">
+								<xsd:complexContent>
+									<xsd:extension base="fedora:dsBindingSpecType">
+										<xsd:sequence>
+											<!--These define the TYPES of bindings and the CARDINALITY of each.  -->
+											<xsd:element ref="pa:photo" minOccurs="1" maxOccurs="1"/>
+											<xsd:element ref="pa:photoset" minOccurs="0" maxOccurs="1"/>
+											<xsd:element ref="pa:watermark" minOccurs="1" maxOccurs="1"/>
+										</xsd:sequence>
+									</xsd:extension>
+								</xsd:complexContent>
+							</xsd:complexType>
+							<!-- The datastream binding requirements are specified as schema restrictions on generic dsBindBaseType type -->
+							<xsd:complexType name="PhotoBindType">
+								<xsd:complexContent>
+									<xsd:restriction base="fedora:dsBindBaseType">
+										<xsd:sequence>
+											<xsd:element name="keyName" type="xsd:string" fixed="PHOTO"/>
+											<xsd:element name="bindingInstructions" type="xsd:string" fixed="photo in image/gif or image/jpg format at 600 dpi"/>
+											<xsd:element name="seqNo" type="xsd:string"/>
+											<xsd:element name="MIME">
+												<xsd:simpleType>
+													<xsd:restriction base="xsd:string">
+														<xsd:enumeration value="image/gif"/>
+														<xsd:enumeration value="image/jpg"/>
+													</xsd:restriction>
+												</xsd:simpleType>
+											</xsd:element>
+										</xsd:sequence>
+									</xsd:restriction>
+								</xsd:complexContent>
+							</xsd:complexType>
+							<xsd:complexType name="PhotoSetBindType">
+								<xsd:complexContent>
+									<xsd:restriction base="fedora:dsBindBaseType">
+										<xsd:sequence>
+											<xsd:element ref="pa:photo" maxOccurs="10"/>
+										</xsd:sequence>
+									</xsd:restriction>
+								</xsd:complexContent>
+							</xsd:complexType>
+							<xsd:complexType name="WatermarkBindType">
+								<xsd:complexContent>
+									<xsd:restriction base="fedora:dsBindBaseType">
+										<xsd:sequence>
+											<xsd:element name="keyName" type="xsd:string" fixed="WATERMARK"/>
+											<xsd:element name="bindingInstructions" type="xsd:string" fixed="image/gif watermark file"/>
+											<xsd:element name="MIME">
+												<xsd:simpleType>
+													<xsd:restriction base="xsd:string">
+														<xsd:enumeration value="image/gif"/>
+													</xsd:restriction>
+												</xsd:simpleType>
+											</xsd:element>
+										</xsd:sequence>
+									</xsd:restriction>
+								</xsd:complexContent>
+							</xsd:complexType>
+							<!-- **************************************************************************************************************** -->
+							<!-- OTHER TYPES DEFINITIONS TO SUPPORT MECHANISM OPERATIONS (when using SOAP) -->
+							<!-- These are restrictions on the abstract fedora datastream binding type. -->
+							<!-- They specifiy a base64Binary format for transmitting datastreams from Fedora repository  -->
+							<!--  to the mechanism using a SOAP message.  (This is when a behavior is being run to fulfill -->
+							<!-- a dissemination.) -->
+							<!-- ************************************************************************************************************** -->
+							<xsd:complexType name="PhotoTransmitType">
+								<xsd:complexContent>
+									<xsd:restriction base="fedora:dsBindBaseType">
+										<xsd:sequence>
+											<xsd:element name="keyName" type="xsd:string" fixed="PHOTO"/>
+											<xsd:element name="MIME">
+												<xsd:simpleType>
+													<xsd:restriction base="xsd:string">
+														<xsd:enumeration value="image/gif"/>
+													</xsd:restriction>
+												</xsd:simpleType>
+											</xsd:element>
+											<xsd:element name="content" type="xsd:base64Binary"/>
+										</xsd:sequence>
+									</xsd:restriction>
+								</xsd:complexContent>
+							</xsd:complexType>
+							<xsd:complexType name="PhotoSetTransmitType">
+								<xsd:complexContent>
+									<xsd:restriction base="fedora:dsBindBaseType">
+										<xsd:sequence>
+											<xsd:element name="photo" type="pa:PhotoTransmitType" maxOccurs="10"/>
+										</xsd:sequence>
+									</xsd:restriction>
+								</xsd:complexContent>
+							</xsd:complexType>
+							<xsd:complexType name="WatermarkTransmitType">
+								<xsd:complexContent>
+									<xsd:restriction base="fedora:dsBindBaseType">
+										<xsd:sequence>
+											<xsd:element name="keyName" type="xsd:string" fixed="WATERMARK"/>
+											<xsd:element name="MIME">
+												<xsd:simpleType>
+													<xsd:restriction base="xsd:string">
+														<xsd:enumeration value="image/gif"/>
+													</xsd:restriction>
+												</xsd:simpleType>
+											</xsd:element>
+											<xsd:element name="content" type="xsd:base64Binary"/>
+										</xsd:sequence>
+									</xsd:restriction>
+								</xsd:complexContent>
+							</xsd:complexType>
+							<!-- ******************************************************************************************************************** -->
+							<!-- WSDL:  FEDORA UTILITY TYPE DEFINITIONS REQUIRED OF ALL MECHANISMS -->
+							<!-- ******************************************************************************************************************** -->
+							<xsd:complexType name="MIMEStream">
+								<xsd:sequence>
+									<xsd:element name="MIME" type="xsd:string"/>
+									<xsd:element name="stream" type="xsd:base64Binary" minOccurs="1" maxOccurs="1"/>
+								</xsd:sequence>
+							</xsd:complexType>
+							<xsd:complexType name="ArrayOfMIMEStream">
+								<xsd:complexContent>
+									<xsd:restriction base="soapenc:Array">
+										<xsd:sequence>
+											<xsd:element name="mimestream" type="pa:MIMEStream" minOccurs="0" maxOccurs="unbounded"/>
+										</xsd:sequence>
+										<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="pa:MIMEStream[]"/>
+									</xsd:restriction>
+								</xsd:complexContent>
+							</xsd:complexType>
+						</xsd:schema>
+					</wsdl:types>
+					<!-- ******************************************************************************************************************** -->
+					<!-- WSDL: MESSAGE DEFINITIONS  -->
+					<!-- Here we define the messages that will be used by the WSDL operations, defined below.      -->
+					<!-- ******************************************************************************************************************** -->
+					<wsdl:message name="photo_input">
+						<wsdl:part name="PHOTO-URL" type="xsd:string"/>
+						<wsdl:part name="WATERMARK-URL" type="xsd:string"/>
+						<wsdl:part name="PHOTO" type="pa:PhotoTransmitType"/>
+						<wsdl:part name="WATERMARK" type="pa:WatermarkTransmitType"/>
+					</wsdl:message>
+					<wsdl:message name="photoset_input">
+						<wsdl:part name="PHOTOSET-URLS" type="xsd:string"/>
+						<wsdl:part name="WATERMARK-URL" type="xsd:string"/>
+						<wsdl:part name="PHOTOSET" type="pa:PhotoSetTransmitType"/>
+						<wsdl:part name="WATERMARK" type="pa:WatermarkTransmitType"/>
+					</wsdl:message>
+					<wsdl:message name="singlestream_response">
+						<wsdl:part name="result" type="pa:MIMEStream"/>
+					</wsdl:message>
+					<wsdl:message name="multistream_response">
+						<wsdl:part name="resultSet" type="pa:ArrayOfMIMEStream"/>
+					</wsdl:message>
+					<!-- ******************************************************************************************************************** -->
+					<!-- WSDL: ABSTRACT OPERATION  DEFINITIONS (Behavior Definitions) -->
+					<!-- Here we define the behaviors that the mechanism  implements -->
+					<!-- ******************************************************************************************************************** -->
+					<wsdl:portType name="photoWatermarker">
+						<wsdl:operation name="getPhoto">
+							<wsdl:input message="photo_input"/>
+							<wsdl:output message="singlestream_response"/>
+						</wsdl:operation>
+						<wsdl:operation name="getPhotoSet">
+							<wsdl:input message="photoset_input"/>
+							<wsdl:output message="multistream_response"/>
+						</wsdl:operation>
+					</wsdl:portType>
+					<!-- ******************************************************************************************************************** -->
+					<!-- WSDL: THE BEHAVIOR SERVICE DEFINITION -->
+					<!-- Here we define how to invoke operations of the Behavior Mechanism Service -->
+					<!-- ******************************************************************************************************************** -->
+					<wsdl:service name="WatermarkPhoto">
+						<!-- THIS IS THE HTTP PORT -->
+						<wsdl:port name="photo-w-impl" binding="HTTP-photo-w">
+							<http:address location="http://cu.edu/watermarker/"/>
+						</wsdl:port>
+						<!-- THIS IS THE SOAP PORT -->
+						<wsdl:port name="photo-w-impl-soap" binding="SOAP-photo-w">
+							<http:address location="http://cu.edu/watermarker2/"/>
+						</wsdl:port>
+					</wsdl:service>
+					<!-- ******************************************************************************************************************** -->
+					<!--The HTTP Binding:  to run the behavior methods over HTTP-->
+					<!-- ******************************************************************************************************************** -->
+					<wsdl:binding name="HTTP-photo-w" type="photoWatermarker">
+						<http:binding verb="GET"/>
+						<wsdl:operation name="getPhoto">
+							<http:operation location="bin/doWatermark.pl?image=(PHOTO-URL)&amp;watermark=(WATERMARK-URL)&amp;dpi=300"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="image/gif"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getPhotoSet">
+							<http:operation location="bin/doWatermark.pl?image=(PHOTOSET-URLS)&amp;watermark=(WATERMARK-URL)&amp;dpi=300"/>
+							<wsdl:input>
+								<http:urlReplacement/>
+							</wsdl:input>
+							<wsdl:output>
+								<mime:content type="multipart"/>
+							</wsdl:output>
+						</wsdl:operation>
+					</wsdl:binding>
+					<!-- ******************************************************************************************************************** -->
+					<!--FUTURE:  The SOAP binding : to run the behavior methods using SOAP-->
+					<!-- ******************************************************************************************************************** -->
+					<wsdl:binding name="SOAP-photo-w" type="photoWatermarker">
+						<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+						<wsdl:operation name="getPhoto">
+							<soap:operation soapAction="http://cu.edu/watermarker2/getPhoto"/>
+							<wsdl:input>
+								<soap:body use="encoded" namespace="http:/cornell.cs.edu/fedora/bmech/photo-w-1.0" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+							</wsdl:input>
+							<wsdl:output>
+								<soap:body use="encoded" namespace="http:/cornell.cs.edu/fedora/bmech/photo-w-1.0" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+							</wsdl:output>
+						</wsdl:operation>
+						<wsdl:operation name="getPhotoSet">
+							<soap:operation soapAction="http://cu.edu/watermarker2/getPhotoSet"/>
+							<wsdl:input>
+								<soap:body use="encoded" namespace="http:/cornell.cs.edu/fedora/bmech/photo-w-1.0" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+							</wsdl:input>
+							<wsdl:output>
+								<soap:body use="encoded" namespace="http:/cornell.cs.edu/fedora/bmech/photo-w-1.0" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+							</wsdl:output>
+						</wsdl:operation>
+					</wsdl:binding>
+				</wsdl:definitions>
+			</METS:xmlData>
+		</METS:mdWrap>
+	</METS:dmdSec>
+	<!-- ******************************************************************************************************************** -->
+	<!-- METS:  BASIS DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT -->
+	<!-- Here we aggregate file(s) that relate to the photo-w mechanism.  -->
+	<!-- These can be schema definitions, executables or documentation. -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:fileSec>
+		<METS:fileGrp ID="BASIS">
+			<METS:fileGrp ID="DS1">
+				<METS:file ID="DS1.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/xml">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://cu.edu/watermarker/schema/photo-w.xsd" xlink:title="XML schema for Photo-w"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS2">
+				<METS:file ID="DS2.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="application/perl">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://cu.edu/watermarker/bin/doWatermark.pl" xlink:title="Perl script to run watermarker app"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DS3">
+				<METS:file ID="DS3.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/plain">
+					<METS:FLocat LOCTYPE="URL" xlink:href=" http://cu.edu/watermarker/doc/readme.txt" xlink:title="User Readme guide for watermarker app"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!-- ******************************************************************************************************************************* -->
+	<!-- METS:  DATASTREAM BINDING MAP FOR FEDORA BOOTSTRAP MECHANISM (Fedora Behavior Service) -->
+	<!-- ****************************************************************************************************************************** -->
+	<!-- The structMap to support the use of the Fedora Bootstrap Mechanism (Behavior Manager Service) that disseminates behavior metadata. -->
+	<!--  Each Fedora community can create its own servlet type vocabulary.  We are still working on this. -->
+	<METS:structMap ID="BOOT1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="FEDORA-BOOT-MECH" LABEL="DS Binding Map for Fedora Bootstrap Mechanism">
+			<METS:div TYPE="mechBindSpec" LABEL="XML Schema that serves as Binding Specification for CU Watermarking mechanism">
+				<METS:fptr FILEID="DESC1"/>
+			</METS:div>
+			<METS:div TYPE="mechBindSchema" LABEL="XML Schema that serves as Binding Specification for CU Watermarking mechanism">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+			<METS:div TYPE="mechWSDL" LABEL="CU Watermarking web service definition">
+				<METS:fptr FILEID="DESC2"/>
+			</METS:div>
+			<METS:div TYPE="progGuide" LABEL="The Readme file for the CU Watermarking application">
+				<METS:fptr FILEID="DS3"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!--- DISSEMINATOR-->
+	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition which is the interface to the Fedora Behavior Manager Service -->
+	<!--- The Disseminator mechanism is  the Bootstrap Behavior Mechanism.  The Bootstrap behaviors of the Fedora Behavior Manager Service -->
+	<!--  enable a client to get disseminations of the behavior metadata (Inline Metadata Datastreams) and other Basis Datastreams that are in this Behavior Mechanism Object.   -->
+	<METS:behaviorSec ID="DISS1.0" STRUCTID="BOOT1" BTYPE="uva.edu:fedora/bdef/bootstrap" CREATED="2000-08-22T06:32:00" LABEL="Behavior Manager" GROUPID="DISS1">
+		<METS:interfaceDef LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="uva.edu:fedora/bdef/bootstrap"/>
+		<METS:mechanism LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="uva.edu:fedora/mech/bootstrap-1.0"/>
+	</METS:behaviorSec>
+</METS:mets>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--FEDORA API-A: WSDL with Service Bindings -->
+<wsdl:definitions name="Fedora-API-A" targetNamespace="http://comm.nsdlib.org/projects/fedora/" xmlns:fedora="http://comm.nsdlib.org/projects/fedora/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+	<!--DATA TYPE  DEFINITIONS for Fedora API-A.  -->
+	<!--NOTE: this section could be pulled out of here and stored just as a fedora xml schema.  Then we can import that schema into this WSDL.  -->
+	<!--This may not be necessary if the defined types are not used outside the context of this API-A WSDL definition.  -->
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://comm.nsdlib.org/projects/fedora/" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fedora="http://comm.nsdlib.org/projects/fedora/">
+			<xsd:annotation>
+				<xsd:documentation>These are the type definitions to support Fedora API-A </xsd:documentation>
+			</xsd:annotation>
+			<xsd:complexType name="ParmType">
+				<xsd:all>
+					<xsd:element name="name" type="xsd:string"/>
+					<xsd:element name="value" type="xsd:string"/>
+				</xsd:all>
+			</xsd:complexType>
+			<xsd:complexType name="BehaviorDefType">
+				<xsd:all>
+					<xsd:element name="behaviorDefID" type="xsd:string"/>
+					<xsd:element name="behaviorDefDescriptor" type="xsd:string"/>
+				</xsd:all>
+			</xsd:complexType>
+			<xsd:complexType name="ArrayOfParmType">
+				<xsd:complexContent>
+					<xsd:restriction base="soapenc:Array">
+						<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora:ParmType[]"/>
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+			<xsd:complexType name="ArrayOfBehaviorDefType">
+				<xsd:complexContent>
+					<xsd:restriction base="soapenc:Array">
+						<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora:BehaviorDefType[]"/>
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+			<xsd:complexType name="ArrayOfStreams">
+				<xsd:complexContent>
+					<xsd:restriction base="soapenc:Array">
+						<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:base64Binary[]"/>
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+			<xsd:complexType name="DisseminationType">
+				<xsd:choice>
+					<xsd:element name="booleanResponse" type="xsd:boolean"/>
+					<xsd:element name="integerResponse" type="xsd:integer"/>
+					<xsd:element name="binaryResponse" type="xsd:base64Binary"/>
+					<xsd:element name="multiStreamResponse" type="fedora:ArrayOfStreams"/>
+				</xsd:choice>
+			</xsd:complexType>
+		</xsd:schema>
+	</wsdl:types>
+	<!--   Message Definitions for API-A  -->
+	<wsdl:message name="GetBehaviorDefsRequest">
+		<wsdl:part name="pid" type="xsd:string"/>
+	</wsdl:message>
+	<wsdl:message name="GetBehaviorDefsResponse">
+		<wsdl:part name="behaviorDefList" type="fedora:ArrayOfBehaviorDefType"/>
+	</wsdl:message>
+	<wsdl:message name="GetBehaviorMethodsRequest">
+		<wsdl:part name="pid" type="xsd:string"/>
+		<wsdl:part name="bdefID" type="xsd:string"/>
+	</wsdl:message>
+	<!-- NOTE:  The use of xsd:any in the next message may be a cop out.  Not sure how we want to return these.  -->
+	<!--The idea is that this method would return xml that is a piece of WSDL that expresses a set behavior methods.   -->
+	<wsdl:message name="GetBehaviorMethodsResponse">
+		<wsdl:part name="methodDefs" type="xsd:any"/>
+	</wsdl:message>
+	<wsdl:message name="GetDisseminationRequest">
+		<wsdl:part name="pid" type="string"/>
+		<wsdl:part name="bdefID" type="string"/>
+		<wsdl:part name="methodName" type="string"/>
+		<wsdl:part name="parms" type="fedora:ArrayOfParmType"/>
+	</wsdl:message>
+	<wsdl:message name="GetDisseminationResponse">
+		<wsdl:part name="dissemResult" type="fedora:DisseminationType"/>
+	</wsdl:message>
+	<!-- ABSTRACT OPERATIONS for API-A -->
+	<wsdl:portType name="Fedora_API-M">
+		<wsdl:operation name="GetBehaviorDefs">
+			<wsdl:input message="GetBehaviorDefsRequest"/>
+			<wsdl:output message="GetBehaviorDefsResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetBehaviorMethods">
+			<wsdl:input message="GetBehaviorMethodsRequest"/>
+			<wsdl:output message="GetBehaviorMethodsResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetDissemination">
+			<wsdl:input message="GetDisseminationRequest"/>
+			<wsdl:output message="GetDisseminationResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<!-- SERVICE BINDING SPECIFICATION FOR API-A OPERATIONS-->
+	<wsdl:service name="UVA_Fedora_API-A">
+		<wsdl:port name="UVA_Fedora_API-A_port1" binding="HTTP_API-A">
+			<http:address location="http://iris.lib.virginia.edu/fedoraservlet/"/>
+		</wsdl:port>
+		<wsdl:port name="UVA_Fedora_API-A_port2" binding="SOAP_API-A">
+			<http:address location="http://iris.lib.virginia.edu/fedora"/>
+		</wsdl:port>
+	</wsdl:service>
+	<!--HTTP BINDING:  This is a sample HTTP binding for the API-A abstract interface definition.  -->
+	<!--This represents how an API-A request can be sent to a java servlet. -->
+	<!-- Other client programs could use these bindings to launch Fedora requests too.-->
+	<!-- ISSUE: the operation URL's contain placeholders for input parms that reflect the name of a message part defined above.-->
+	<!-- Note that there is no standard URL replacement scheme defined for HTTP bindings.  -->
+	<wsdl:binding name="HTTP_API-A" type="Fedora_API-A">
+		<http:binding verb="GET"/>
+		<wsdl:operation name="GetBehaviorDefs">
+			<http:operation location="getBDefinitions?pid=(pid)&amp;outputformat=XML"/>
+			<wsdl:input>
+				<http:urlReplacement/>
+			</wsdl:input>
+			<wsdl:output>
+				<mime:mimeXml part="behaviorDefList"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetBehaviorMethods">
+			<http:operation location="getBDefMethods?pid=(pid)&amp;bdefID=(bdefID)&amp;outputformat=XML"/>
+			<wsdl:input>
+				<http:urlReplacement/>
+			</wsdl:input>
+			<wsdl:output>
+				<mime:mimeXml part="methodDefs"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<!-- ISSUE:: It is not clear how to specify the output for the GetDissemination operation.  We note that the abstract definition of the -->
+		<!-- GetDissemination operation indicates that the message part for the output is of type fedora:dissemResult (defined as a -->
+		<!-- choice of either  boolean, integer, binary stream, or array of binary streams).  -->
+		<!-- Now we get  here to the actual HTTP binding and what happens?  Since GetDissemination is a generic operation, we don't -->
+		<!-- know ahead of time what  exactly will be returned.  How do we specify this here?  Options are: -->
+		<!-- 1)  One easy way out is to define output of mime type */* as done below.  However, this does not support the notion of -->
+		<!--       a dissemination returning  a primitive type like boolean or integer, nor an array of binary streams.  -->
+		<!-- 2)  Another way is that each HTTP binding winds up returning a pre-determined wrapper mime type. -->
+		<!--      So, for example, the UVA implementation of API-A would wrap any kind of dissemination result in html, thus the -->
+		<!--      operation output would  be defined as mime content of mime type text/html. -->
+		<!-- 3)  In the WSDL for API-A,  there are Fedora schema types defined.  It seems  that the UVA implementation -->
+		<!--      of GetDissemination could return a dissemination result wrapped in XML in accordance with the schema -->
+		<!--      type definition for dissemResult.  The operation output (see below) could then be specified as   -->
+		<!--     <mime:mimeXml part="dissemResult"/>.   This may be the best way to accomodate disseminations that -->
+		<!--     return multiple content streams.  -->
+		<wsdl:operation name="GetDissemination">
+			<http:operation location="getDissem?pid=(pid)&amp;bdefID=(bdefID)&amp;method=(methodName)&amp;parms=(parms)"/>
+			<wsdl:input>
+				<http:urlReplacement/>
+			</wsdl:input>
+			<wsdl:output>
+				<mime:content part="dissemResult" type="*/*"/>
+				<mime:content part="dissemResult" type="text/html"/>
+				<mime:mimeXml part="dissemResult"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<!--FUTURE:  The SOAP binding for the API-A abstract interface definition.  -->
+	<wsdl:binding name="SOAP_API-A" type="Fedora_API-A">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="GetBehaviorDefs">
+			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/GetBehaviorDefs"/>
+			<wsdl:input>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetBehaviorMethods">
+			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/GetBehaviorMethods"/>
+			<wsdl:input>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetDissemination">
+			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/GetDissemination"/>
+			<wsdl:input>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+</wsdl:definitions>

@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--FEDORA API-M:   WSDL with Service Bindings -->
+<wsdl:definitions name="Fedora-API-M" targetNamespace="http://comm.nsdlib.org/projects/fedora/" xmlns:fedora="http://comm.nsdlib.org/projects/fedora/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+	<!--DATA TYPE  DEFINITIONS.  -->
+	<!--NOTE: this section could be pulled out of here and stored separately as a fedora xml schema.  Then we can import that Fedora schema into this WSDL.  -->
+	<!--However, this may not be necessary if the defined types are not used outside the context of this API-M  WSDL definition.  -->
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://comm.nsdlib.org/projects/fedora/" xmlns:fedora="http://comm.nsdlib.org/projects/fedora/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding/">
+			<xsd:annotation>
+				<xsd:documentation>These are the schema type definitions to support API-M </xsd:documentation>
+			</xsd:annotation>
+			<xsd:simpleType name="URISyntaxType">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="URN"/>
+					<xsd:enumeration value="URL"/>
+					<xsd:enumeration value="OTHER"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:complexType name="PIDType">
+				<xsd:sequence>
+					<xsd:element name="pid" type="xsd:anyURI"/>
+				</xsd:sequence>
+				<xsd:attribute name="idType" type="fedora:URISyntaxType"/>
+			</xsd:complexType>
+			<xsd:complexType name="ArrayOfPIDType">
+				<xsd:complexContent>
+					<xsd:restriction base="soapenc:Array">
+						<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora:PIDType[]"/>
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+			<xsd:complexType name="contentType">
+				<xsd:choice>
+					<xsd:element name="url" type="xsd:anyURI"/>
+					<xsd:element name="contentstream" type="xsd:base64Binary"/>
+				</xsd:choice>
+			</xsd:complexType>
+			<xsd:complexType name="dsBindingType">
+				<xsd:sequence>
+					<xsd:element name="keyName" type="xsd:string"/>
+					<xsd:element name="datastreamID" type="xsd:string"/>
+					<xsd:element name="seqNo" type="xsd:string" minOccurs="0"/>
+				</xsd:sequence>
+				<!-- TO DO: Allow the option for nested bindings-->
+			</xsd:complexType>
+			<xsd:complexType name="dsBindingMapType">
+				<xsd:sequence>
+					<xsd:element name="dsBinding" type="fedora:dsBindingType" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:simpleType name="DSControlGroupType">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="INTERNAL"/>
+					<xsd:enumeration value="EXTERNAL"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:simpleType name="DatastreamInfoType">
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="BASIS"/>
+					<xsd:enumeration value="DIGIPROV"/>
+					<xsd:enumeration value="RIGHTS"/>
+					<xsd:enumeration value="TECHNICAL"/>
+					<xsd:enumeration value="SOURCE"/>
+					<xsd:enumeration value="DESCRIPTIVE"/>
+				</xsd:restriction>
+			</xsd:simpleType>
+			<xsd:complexType name="DatastreamType">
+				<xsd:sequence>
+					<xsd:element name="mimeType" type="xsd:string"/>
+					<xsd:element name="controlGroup" type="fedora:DSControlGroupType"/>
+					<xsd:element name="infoType" type="fedora:DatastreamInfoType"/>
+					<xsd:element name="content" type="fedora:contentType"/>
+				</xsd:sequence>
+				<xsd:attribute name="datastreamID" type="xsd:ID"/>
+			</xsd:complexType>
+			<xsd:complexType name="DisseminatorType">
+				<xsd:sequence>
+					<xsd:element name="bDefID" type="fedora:PIDType"/>
+					<xsd:element name="bMechID" type="fedora:PIDType"/>
+					<xsd:element name="dissLabel" type="xsd:string"/>
+					<xsd:element name="dsBindingMap" type="fedora:dsBindingMapType"/>
+				</xsd:sequence>
+				<xsd:attribute name="disseminatorID" type="xsd:ID"/>
+			</xsd:complexType>
+			<xsd:complexType name="ArrayOfDatastreamType">
+				<xsd:complexContent>
+					<xsd:restriction base="soapenc:Array">
+						<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora:DatastreamType[]"/>
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+			<xsd:complexType name="ArrayOfDisseminatorType">
+				<xsd:complexContent>
+					<xsd:restriction base="soapenc:Array">
+						<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora:DisseminatorType[]"/>
+					</xsd:restriction>
+				</xsd:complexContent>
+			</xsd:complexType>
+		</xsd:schema>
+	</wsdl:types>
+	<!--   Message Definitions for API-M  -->
+	<wsdl:message name="DigitalObjectID">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+	</wsdl:message>
+	<wsdl:message name="DatastreamID">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="datastreamID" type="xsd:ID"/>
+	</wsdl:message>
+	<wsdl:message name="DisseminatorID">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="disseminatorID" type="xsd:ID"/>
+	</wsdl:message>
+	<wsdl:message name="PIDNamespace">
+		<wsdl:part name="ns" type="xsd:string"/>
+	</wsdl:message>
+	<wsdl:message name="ListOfDigitalObjectID">
+		<wsdl:part name="pids" type="fedora:ArrayOfPIDType"/>
+	</wsdl:message>
+	<!-- ISSUE:  What is best way to type a message that is an XML file?  Should it be type base64 or maybe xsd:any ?-->
+	<wsdl:message name="METS">
+		<wsdl:part name="metsXML" type="xsd:base64Binary"/>
+	</wsdl:message>
+	<wsdl:message name="DigitalObjectCreateRequest">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="descriptor" type="xsd:string"/>
+		<wsdl:part name="contentTypeID" type="xsd:string"/>
+	</wsdl:message>
+	<wsdl:message name="DatastreamCreateRequest1">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="controlGroup" type="fedora:DSControlGroup"/>
+		<wsdl:part name="url" type="xsd:anyURI"/>
+	</wsdl:message>
+	<wsdl:message name="DatastreamCreateRequest2">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="content" type="xsd:base64Binary"/>
+	</wsdl:message>
+	<wsdl:message name="MetadataCreateRequest1">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="infoType" type="fedora:DatastreamInfoType"/>
+		<wsdl:part name="xmlurl" type="xsd:anyURI"/>
+	</wsdl:message>
+	<wsdl:message name="MetadataCreateRequest2">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="infoType" type="fedora:DatastreamInfoType"/>
+		<wsdl:part name="xmlstream" type="xsd:base64Binary"/>
+	</wsdl:message>
+	<wsdl:message name="DisseminatorCreateRequest">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="bDefID" type="fedora:PIDType"/>
+		<wsdl:part name="bMechID" type="fedora:PIDType"/>
+		<wsdl:part name="descriptor" type="xsd:string"/>
+		<wsdl:part name="dsBindMap" type="fedora:dsBindingMapType"/>
+	</wsdl:message>
+	<wsdl:message name="DatastreamModifyRequest1">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="datastreamID" type="xsd:ID"/>
+		<wsdl:part name="controlGroup" type="fedora:DSControlGroup"/>
+		<wsdl:part name="url" type="xsd:anyURI"/>
+	</wsdl:message>
+	<wsdl:message name="DatastreamModifyRequest2">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="datastreamID" type="xsd:ID"/>
+		<wsdl:part name="content" type="xsd:base64Binary"/>
+	</wsdl:message>
+	<wsdl:message name="MetadataModifyRequest1">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="datastreamID" type="xsd:ID"/>
+		<wsdl:part name="infoType" type="fedora:DatastreamInfoType"/>
+		<wsdl:part name="xmlurl" type="xsd:anyURI"/>
+	</wsdl:message>
+	<wsdl:message name="MetadataModifyRequest2">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="datastreamID" type="xsd:ID"/>
+		<wsdl:part name="infoType" type="fedora:DatastreamInfoType"/>
+		<wsdl:part name="xmlstream" type="xsd:base64Binary"/>
+	</wsdl:message>
+	<wsdl:message name="DisseminatorModifyRequest">
+		<wsdl:part name="pid" type="fedora:PIDType"/>
+		<wsdl:part name="disseminatorID" type="xsd:ID"/>
+		<wsdl:part name="bDefID" type="fedora:PIDType"/>
+		<wsdl:part name="bMechID" type="fedora:PIDType"/>
+		<wsdl:part name="descriptor" type="xsd:string"/>
+		<wsdl:part name="dsBindMap" type="fedora:dsBindingMapType"/>
+	</wsdl:message>
+	<wsdl:message name="DatastreamsGetResponse">
+		<wsdl:part name="datastreams" type="fedora:ArrayOfDatastreamType"/>
+	</wsdl:message>
+	<wsdl:message name="DisseminatorsGetResponse">
+		<wsdl:part name="disseminators" type="fedora:ArrayOfDisseminatorType"/>
+	</wsdl:message>
+	<wsdl:message name="BooleanResponse">
+		<wsdl:part name="response" type="xsd:boolean"/>
+	</wsdl:message>
+	<!-- DEFINITION OF ABSTRACT OPERATIONS for API-M -->
+	<wsdl:portType name="Fedora_API1">
+		<wsdl:operation name="IngestObject">
+			<wsdl:input message="METS"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetObject">
+			<wsdl:input message="DigitalObjectID"/>
+			<wsdl:output message="METS"/>
+		</wsdl:operation>
+		<wsdl:operation name="DeleteObject">
+			<wsdl:input message="DigitalObjectID"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="ListObjectPIDs">
+			<wsdl:input message="PIDNamespace"/>
+			<wsdl:output message="ListOfDigitalObjectID"/>
+		</wsdl:operation>
+		<wsdl:operation name="CreateObject">
+			<wsdl:input message="DigitalObjectCreateRequest"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="CreateDatastream1">
+			<wsdl:input message="DatastreamCreateRequest1"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="CreateDatastream2">
+			<wsdl:input message="DatastreamCreateRequest2"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="CreateMDstream1">
+			<wsdl:input message="MetadataCreateRequest1"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="CreateMDstream2">
+			<wsdl:input message="MetadataCreateRequest2"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="CreateDisseminator">
+			<wsdl:input message="DisseminatorCreateRequest"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="ModifyDatastream1">
+			<wsdl:input message="DatastreamModifyRequest1"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="ModifyDatastream2">
+			<wsdl:input message="DatastreamModifyRequest2"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="ModifyMDstream1">
+			<wsdl:input message="MetadataModifyRequest1"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="ModifyMDstream2">
+			<wsdl:input message="MetadataModifyRequest2"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="ModifyDisseminator">
+			<wsdl:input message="DisseminatorCreateRequest"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="DeleteDatastream">
+			<wsdl:input message="DatastreamID"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="DeleteDisseminator">
+			<wsdl:input message="DisseminatorID"/>
+			<wsdl:output message="BooleanResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetDatastreams">
+			<wsdl:input message="DigitalObjectID"/>
+			<wsdl:output message="DatastreamsGetResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetDisseminators">
+			<wsdl:input message="DigitalObjectID"/>
+			<wsdl:output message="DisseminatorsGetResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<!-- SERVICE SPECIFICATION FOR API-M -->
+	<wsdl:service name="UVA_Fedora_API-M">
+		<wsdl:port name="UVA_Fedora_API-M_port1" binding="SOAP_API-M">
+			<http:address location="http://iris.lib.virginia.edu/fedora"/>
+		</wsdl:port>
+	</wsdl:service>
+	<!--The SOAP BINDINGS for API-M   -->
+	<wsdl:binding name="SOAP_API-M" type="Fedora_API-M">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="IngestObject">
+			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/IngestObject"/>
+			<wsdl:input>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="GetObject">
+			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/GetObject"/>
+			<wsdl:input>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="DeleteObject">
+			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/DeleteObject"/>
+			<wsdl:input>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="ListObjectPIDs">
+			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/ListObjectPIDs"/>
+			<wsdl:input>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="CreateObject">
+			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/CreateObject"/>
+			<wsdl:input>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="CreateDatastream1">
+			<soap:operation soapAction="http://iris.lib.virginia.edu/fedora2/CreateDatastream1"/>
+			<wsdl:input>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="encoded" namespace="http://comm.nsdlib.org/projects/fedora/" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<!-- Rest of operations go here -->
+	</wsdl:binding>
+</wsdl:definitions>

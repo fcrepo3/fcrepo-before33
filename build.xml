@@ -1,0 +1,79 @@
+<project name="Fedora" default="full" basedir=".">
+
+    <property name="javaClassDebug" value="on"/>
+    <property name="javaClassOptimize" value="off"/>
+
+    <property name="javaSourceDir" value="src/java"/>
+    <property name="docDir" value="apidoc"/>
+    
+    <target name="full"
+        depends="client,server,apidoc"
+        description="Build all">
+    </target>
+    
+    <target name="client" 
+        depends="clientclasses"
+        description="Build the client in dist/">
+        <mkdir dir="dist"/>
+        <jar jarfile="dist/client.jar"
+            basedir="temp"
+            manifest="res/client.mfs"/>
+        <copy todir="dist">
+            <fileset dir="inc/client"/>
+        </copy>
+        <mkdir dir="dist/lib"/>
+        <copy file="lib/jhbasic.jar" todir="dist/lib"/>
+        <copy file="lib/rms.jar" todir="dist/lib"/>
+    </target>
+
+    <target name="runclient"
+	    depends="client"
+		description="run the client">
+      <exec dir="dist" executable="java">
+	      <arg line="-jar client.jar"/>
+	  </exec>
+	</target>
+    
+    <target name="server"
+        depends="serverclasses"
+        description="Build the server in dist/">
+    </target>
+        
+
+    <target name="clientclasses" 
+        description="Compile client java code (.java to .class) into temp/">
+        <mkdir dir="temp"/>
+        <javac srcdir="${javaSourceDir}"
+            destdir="temp"
+            classpath="lib/jhbasic.jar;lib/rms.jar"
+            includes="edu/cornell/dlrg/swing/mdi/**,edu/cornell/dlrg/swing/jhelp/**,fedora/client/**"
+            optimize="${javaClassOptimize}"
+            debug="${javaClassDebug}"/>
+        <copy todir="temp">
+            <fileset dir="inc/clientjar"/>
+        </copy>
+    </target>
+
+    <target name="serverclasses" 
+        description="Compile server java code (.java to .class) into temp/">
+    </target>
+    
+    <target name="apidoc"
+        description="Build the javadocs">
+        <mkdir dir="apidoc"/>
+        <javadoc packagenames="edu.cornell.dlrg.swing.mdi.*,edu.cornell.dlrg.swing.jhelp.*,fedora.client.*,fedora.common.*"
+            sourcepath="${javaSourceDir}"
+            destdir="apidoc"
+            author="true"
+            version="true"
+            use="true"/>
+    </target>
+    
+    <target name="clean"
+        description="Clean up everything (classes, javadocs, distributions)">
+        <delete dir="temp"/>
+        <delete dir="apidoc"/>
+        <delete dir="dist"/>
+    </target>
+    
+</project>

@@ -1,0 +1,3 @@
+Main-Class: fedora.client.Administrator
+Class-Path: lib/jhbasic.jar lib/rms.jar
+

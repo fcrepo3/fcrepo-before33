@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book SYSTEM "/docbook/dtd/\docbookx.dtd">
+<?xml-stylesheet type="text/xsl" href="C:\docbook\xsl\html\docbook.xsl"?>
+<book xmlns="http://www.oasis.org/docbook" xmlns:lp="http://www.xmLP.org/2001/ns/xmLP/">
+  <title>Fedora Manual</title>
+  <part>
+    <title>User Guide</title>
+    <chapter>
+      <title>Overview</title>
+      <abstract>
+        <para>overview abstract text</para>
+      </abstract>
+    </chapter>
+    <chapter>
+      <title>Fedora Repository Server</title>
+      <abstract>
+        <para>rep srv <link linkend="tguide">abst</link> text</para>
+      </abstract>
+      <section>
+        <title>First Section Title</title>
+        <para>This is the content for this chapter.  It's neat.</para>
+        <para>And here's another paragraph</para>
+        <para>
+          <inlinemediaobject>
+            <imageobject>
+              <imagedata fileref="toolbar.jpg" format="JPG"/>
+            </imageobject>
+          </inlinemediaobject>
+        </para>
+        <para>Here is the class:</para>
+        <lp:file lp:filename="MyClass.java">
+          <lp:text>public class MyClass {
+    public static void main(String[] args) {
+        if (args!=null) {
+            for (int i=0; i&lt;args.length; i++) {
+                System.out.println("Arg " + i + "=" + arg[i]);
+            }
+        } else {
+            <lp:invoke>
+              <lp:name>Print no arguments</lp:name>
+            </lp:invoke>
+        }
+        System.out.println("Done.");
+    }
+}</lp:text>
+        </lp:file>
+        <para>Here is the no arguments code</para>
+        <lp:macro>
+          <lp:name>Print no arguments</lp:name>
+          <lp:text><![CDATA[System.out.println("No arguments given.");]]></lp:text>
+        </lp:macro>
+      </section>
+    </chapter>
+    <chapter>
+      <title>Fedora Administrator</title>
+      <abstract>
+        <para>fedadmin abst text</para>
+      </abstract>
+    </chapter>
+  </part>
+  <part>
+    <title id="tguide">Technical Guide</title>
+    <chapter>
+      <title>Architecture</title>
+      <abstract>
+        <para>arch abst text</para>
+      </abstract>
+    </chapter>
+    <chapter>
+      <title>Extending Fedora Administrator</title>
+      <abstract>
+        <para>ext abst text</para>
+      </abstract>
+    </chapter>
+    <chapter>
+      <title>Writing a Client</title>
+      <abstract>
+        <para>write abst text</para>
+      </abstract>
+    </chapter>
+  </part>
+  <part>
+    <title>Appendices</title>
+    <appendix>
+      <title>Standards</title>
+      <abstract>
+        <para>std abstract text</para>
+      </abstract>
+    </appendix>
+    <appendix>
+      <title>References</title>
+      <abstract>
+        <para>references abstract text</para>
+      </abstract>
+    </appendix>
+    <appendix>
+      <title>Release Notes</title>
+      <abstract>
+        <para>relnotez abstract text</para>
+      </abstract>
+    </appendix>
+    <appendix>
+      <title>Legal Information</title>
+      <abstract>
+        <para>legal abstract notes</para>
+      </abstract>
+    </appendix>
+  </part>
+  <glossary>
+    <glossentry>
+      <glossterm>Term</glossterm>
+      <glossdef>
+        <para>Def</para>
+      </glossdef>
+    </glossentry>
+  </glossary>
+</book>
