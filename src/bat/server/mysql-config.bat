@@ -82,10 +82,10 @@ echo MySQL 4.1 flag is ON.
 echo Adding default character set and collation changes for MySQL 4.1.x databases:
 echo.
 echo Fedora database %fedora_db_name% DEFAULT CHARACTER SET: utf8;
-echo Fedora database %fedora_db_name% DEFAULT COLLATION: utf8_general_ci;
+echo Fedora database %fedora_db_name% DEFAULT COLLATION: utf8_bin;
 echo.
 echo >>mysqlConfig.sql alter database %fedora_db_name% default character set utf8;
-echo >>mysqlConfig.sql alter database %fedora_db_name% default collate utf8_general_ci;
+echo >>mysqlConfig.sql alter database %fedora_db_name% default collate utf8_bin;
 echo >>mysqlConfig.sql show create database %fedora_db_name%;
 
 :finish

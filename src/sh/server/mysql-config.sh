@@ -21,7 +21,7 @@
 #
 # 3) NOTE: If using MySQL 4.1.x, you must also specify the default character
 #    set for the Fedora database as "utf8" and the default collation as
-#    "utf8_general_ci". To set these parameters with the script, you must
+#    "utf8_bin". To set these parameters with the script, you must
 #    include the MySQL 4.1 flag which is the 7th optional argument. Any
 #    value may be used since the script just checks to see if there are
 #    six or seven arguments present.
@@ -102,16 +102,16 @@ if [ "$mysql_version" != "" ]; then
   echo "Adding default character set and collation changes for MySQL 4.1.x databases:"
   echo
   echo "Fedora database $6 DEFAULT CHARACTER SET: utf8"
-  echo "Fedora database $6 DEFAULT COLLATION: utf8_general_ci"
+  echo "Fedora database $6 DEFAULT COLLATION: utf8_bin"
   echo
   echo "#" >>mysqlConfig.sql
   echo "# Adding default character set and collation changes for MySQL 4.1.x databases:" >>mysqlConfig.sql
   echo "#" >>mysqlConfig.sql
   echo "# Fedora database $6 DEFAULT CHARACTER SET: utf8" >>mysqlConfig.sql
-  echo "# Fedora database $6 DEFAULT COLLATION: utf8_general_ci" >>mysqlConfig.sql
+  echo "# Fedora database $6 DEFAULT COLLATION: utf8_bin" >>mysqlConfig.sql
   echo "#" >>mysqlConfig.sql
   echo "alter database $6 default character set utf8;" >>mysqlConfig.sql
-  echo "alter database $6 default collate utf8_general_ci;" >>mysqlConfig.sql
+  echo "alter database $6 default collate utf8_bin;" >>mysqlConfig.sql
   echo "#" >>mysqlConfig.sql
   echo "# Show Fedora database character set" >>mysqlConfig.sql
   echo "show create database $6;" >>mysqlConfig.sql
