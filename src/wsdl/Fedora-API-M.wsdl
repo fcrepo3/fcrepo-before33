@@ -18,16 +18,20 @@
 			<wsdldoc:type name="fedora-auditing:ArrayOfAuditRecord" url="http://www.fedora.info/definitions/1/0/auditing/#ArrayOfAuditRecord"/>
 		</documentation>
 	</types>
-	<!--
-  <message name="createObjectResponse">
-    <part name="response" type="xsd:string">
-      <documentation>the PID of the newly created object.</documentation>
-    </part>
-  </message>
--->
+	<message name="ingestRequest">
+		<part name="XML" type="xsd:base64Binary">
+			<documentation>the digital object in an XML submission format.</documentation>
+		</part>
+		<part name="format" type="xsd:string">
+			<documentation>the XML format of the submission</documentation>
+		</part>
+		<part name="logMessage" type="xsd:string">
+			<documentation>a log message.</documentation>
+		</part>
+	</message>
 	<message name="ingestObjectRequest">
 		<part name="METSXML" type="xsd:base64Binary">
-			<documentation>the digital object in METS format.</documentation>
+			<documentation>the digital object in an XML submission format.</documentation>
 		</part>
 		<part name="logMessage" type="xsd:string">
 			<documentation>a log message.</documentation>
@@ -59,7 +63,15 @@
 	</message>
 	<message name="getObjectXMLResponse">
 		<part name="response" type="xsd:base64Binary">
-			<documentation>the digital object in METS format.</documentation>
+			<documentation>the digital object in the Fedora XML internal storage format.</documentation>
+		</part>
+	</message>
+	<message name="exportRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="format" type="xsd:string">
+			<documentation>the XML format to export</documentation>
 		</part>
 	</message>
 	<message name="exportObjectRequest">
@@ -69,7 +81,7 @@
 	</message>
 	<message name="exportObjectResponse">
 		<part name="response" type="xsd:base64Binary">
-			<documentation>the digital object in METS format.</documentation>
+			<documentation>the digital object in the requested XML format.</documentation>
 		</part>
 	</message>
 	<message name="purgeObjectRequest">
@@ -158,57 +170,12 @@
 		<part name="id" type="xsd:string">
 			<documentation>the id of the user.</documentation>
 		</part>
-    </message>
+	</message>
 	<message name="describeUserResponse">
 		<part name="response" type="fedora-types:UserInfo">
 			<documentation>information about the user.</documentation>
 		</part>
 	</message>
-
-	<!--
-  <message name="addDatastreamManagedContentRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="dsLabel" type="xsd:string">
-      <documentation>the label for the datastream.</documentation>
-    </part>
-    <part name="MIMEType" type="xsd:string">
-      <documentation>the MIME type of the datastream.</documentation>
-    </part>
-    <part name="dsContent" type="xsd:base64Binary">
-      <documentation>the content of the datastream.</documentation>
-    </part>
-  </message>
-  <message name="addDatastreamManagedContentResponse">
-    <part name="response" type="xsd:string">
-      <documentation>the datastreamID of the newly added datastream.
-      </documentation>
-    </part>
-  </message>
-  <message name="addDatastreamXMLMetadataRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="dsLabel" type="xsd:string">
-      <documentation>the label for the datastream.</documentation>
-    </part>
-    <part name="MDType" type="xsd:string">
-      <documentation>the type of metadata.  This may be digiprov, rights, 
-      technical, source, or descriptive.</documentation>
-    </part>
-    <part name="dsInlineMetadata" type="xsd:base64Binary">
-      <documentation>the XML metadata.  This must be well-formed XML.
-      </documentation>
-    </part>
-  </message>
-  <message name="addDatastreamXMLMetadataResponse">
-    <part name="response" type="xsd:string">
-      <documentation>the datastreamID of the newly added datastream.
-      </documentation>
-    </part>
-  </message>
--->
 	<message name="modifyDatastreamByReferenceRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -451,7 +418,7 @@
 		<part name="response" type="fedora-types:ArrayOfString">
 			<documentation>an array of the requested next available PID(s).</documentation>
 		</part>
-	</message>	
+	</message>
 	<portType name="Fedora-API-M">
 		<documentation>The Fedora Management service defines an open interface for
     administering the repository, including creating, modifying, and deleting
@@ -465,23 +432,29 @@
     underlying repository system handles the details of storing datastream
     content within the repository, as well as mediating connectivity for
     datastreams that reference external content.</documentation>
-		<!--
-    <operation name="createObject">
-      <documentation>Creates a new, empty digital object in the repository. The 
-      object's initial state will be A.  The repository will generate and return 
-      a new PID for the object resulting from this request.  The PID will have 
-      the namespace of the repository.</documentation>
-      <input message="null"/>
-      <output message="fedora-api:createObjectResponse"/>
-    </operation>
--->
-		<operation name="ingestObject">
+		<operation name="ingest">
 			<documentation>Creates a new digital object in the repository, given the 
-      data in the provided METS document.  The object's initial state will be A.  
-      If the METS document does not specify a PID in the OBJID attribute of the 
-      root element, the repository will generate and return a new PID for the 
-      object resulting from this request.  That PID will have the namespace of 
-      the repository.  If the METS document specifies a PID, it will be assigned 
+      data in the provided XML document, and a format indentifier for the XML document format.  
+      The valid formats are currently: "foxml" and "metslikefedora1".  The object's initial 
+      state will be A (active).   If the XML document does not specify a PID in the 
+      OBJID attribute of the  root element, the repository will generate and return a new PID 
+      for the object resulting from this request.  That PID will have the namespace of 
+      the repository.  If the XML document specifies a PID, it will be assigned 
+      to the digital object provided that 1) it conforms to the Fedora PID 
+      Syntax, 2) it does not specify the namespace of the repository, and 3) 
+      it does not collide with an existing PID of an object in the repository.
+      </documentation>
+			<input message="fedora-api:ingestRequest"/>
+			<output message="fedora-api:ingestObjectResponse"/>
+		</operation>
+		<operation name="ingestObject">
+			<documentation>TO BE DEPRECATED IN FEDORA 2.0. Creates a new 
+	digital object in the repository, given the data in the provided XML document, 
+	and a format indentifier for the METS document format.   The object's initial 
+      state will be A (active).   If the XML document does not specify a PID in the 
+      OBJID attribute of the  root element, the repository will generate and return a new PID 
+      for the object resulting from this request.  That PID will have the namespace of 
+      the repository.  If the XML document specifies a PID, it will be assigned 
       to the digital object provided that 1) it conforms to the Fedora PID 
       Syntax, 2) it does not specify the namespace of the repository, and 3) 
       it does not collide with an existing PID of an object in the repository.
@@ -490,7 +463,7 @@
 			<output message="fedora-api:ingestObjectResponse"/>
 		</operation>
 		<operation name="describeUser">
-            <documentation>Gets key information about the named user.</documentation>
+			<documentation>Gets key information about the named user.</documentation>
 			<input message="fedora-api:describeUserRequest"/>
 			<output message="fedora-api:describeUserResponse"/>
 		</operation>
@@ -506,6 +479,15 @@
       referenced by url.</documentation>
 			<input message="fedora-api:getObjectXMLRequest"/>
 			<output message="fedora-api:getObjectXMLResponse"/>
+		</operation>
+		<operation name="export">
+			<documentation>Gets the entire METS-encoded digital object for 
+      external use (viewing, editing, moving to another repository).  XML 
+      metadata datastreams will be included inline, content datastreams will 
+      be included inline (base64-encoded), and external datastreams will be 
+      referenced by url.</documentation>
+			<input message="fedora-api:exportRequest"/>
+			<output message="fedora-api:exportObjectResponse"/>
 		</operation>
 		<operation name="exportObject">
 			<documentation>Gets the entire METS-encoded digital object for 
@@ -526,19 +508,6 @@
       <documentation>Gets all audit trail records for the object.</documentation>
       <input message="fedora-api:getObjectAuditTrailRequest"/>
       <output message="fedora-api:getObjectAuditTrailResponse"/>
-    </operation>
-    <operation name="addDatastreamManagedContent">
-      <documentation>Creates a Repository-Managed Content Datastream in the 
-      object.  The repository uses the value of dsContent as the content of 
-      the datastream.</documentation>
-      <input message="fedora-api:addDatastreamManagedContentRequest"/>
-      <output message="fedora-api:addDatastreamManagedContentResponse"/>
-    </operation>
-    <operation name="addDatastreamXMLMetadata">
-      <documentation>Creates an Implementor-Defined XML Metadata Datastream in 
-      the object.</documentation>
-      <input message="fedora-api:addDatastreamXMLMetadataRequest"/>
-      <output message="fedora-api:addDatastreamXMLMetadataResponse"/>
     </operation>
 -->
 		<operation name="addDatastream">
@@ -616,26 +585,19 @@
 			<documentation>Retrieves the specified number of next available PID(s) for a given PID namespace.</documentation>
 			<input message="fedora-api:getNextPIDRequest"/>
 			<output message="fedora-api:getNextPIDResponse"/>
-		</operation>		
+		</operation>
 	</portType>
 	<binding name="Fedora-API-M-Binding-SOAPHTTP" type="fedora-api:Fedora-API-M">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-		<!--
-    <operation name="createObject">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#createObject"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
--->
+		<operation name="ingest">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#ingest"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
 		<operation name="ingestObject">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#ingestObject"/>
 			<input>
@@ -669,6 +631,15 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
+		<operation name="export">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#export"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
 		<operation name="exportObject">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#exportObject"/>
 			<input>
@@ -688,34 +659,6 @@
     <operation name="getObjectAuditTrail">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectAuditTrail"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-    <operation name="addDatastreamManagedContent">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastreamManagedContent"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-    <operation name="addDatastreamXMLMetadata">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastreamXMLMetadata"/>
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
@@ -856,7 +799,7 @@
 			<output>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
-		</operation>		
+		</operation>
 	</binding>
 	<service name="Fedora-API-M-Service">
 		<port name="Fedora-API-M-Port-SOAPHTTP" binding="fedora-api:Fedora-API-M-Binding-SOAPHTTP">
