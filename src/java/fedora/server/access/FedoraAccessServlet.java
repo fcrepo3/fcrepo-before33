@@ -365,7 +365,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                 + "\" parmRequired=\"" + methodParms[j].parmRequired
                 + "\" parmType=\"" + methodParms[j].parmType
                 + "\" parmLabel=\"" + methodParms[j].parmLabel + "\" >");
-            if (!methodParms[j].parmDomainValues[0].equalsIgnoreCase("null"))
+            if (methodParms[j].parmDomainValues.length >0)
             {
               pw.write("<parmDomainValues>");
               for (int k=0; k<methodParms[j].parmDomainValues.length; k++)
