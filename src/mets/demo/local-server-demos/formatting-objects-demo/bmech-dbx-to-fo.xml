@@ -175,7 +175,7 @@
 						<wsdl:binding name="FedoraSaxon_http" type="this:FedoraSaxonPortType">
 							<http:binding verb="GET"/>
 							<wsdl:operation name="getFO">
-								<http:operation location="SaxonServlet?source=(DBX_SOURCE)&amp;style=http://www.altova.com/stylesheets/docbook/fo/docbook.xsl"/>
+								<http:operation location="SaxonServlet?source=(DBX_SOURCE)&amp;style=http://www.fedora.info/services/docbook/fo/docbook.xsl"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
