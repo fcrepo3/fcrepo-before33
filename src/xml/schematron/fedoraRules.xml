@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- **********************************************************************************************************-->
 <!-- SCHEMATRON  SCHEMA FOR FEDORA DIGITAL OBJECTS-->
-<!-- This schema expresses validation rules for Fedora digital objects that are NOT ALREADY EXPRESSED in the METS XML Schema.-->
+<!-- TITLE:  fedoraRules.xml -->
+<!-- DESCRIPTION:  This schema expresses validation rules for Fedora digital objects that -->
+<!-- are NOT ALREADY EXPRESSED in the METS XML Schema.-->
+<!-- AUTHOR:  Sandy Payette,  payette@cs.cornell.edu -->
+<!-- *********************************************************************************************************-->
 <sch:schema xmlns:sch="http://www.ascc.net/xml/schematron">
 	<!-- FIGURE OUT: how to best deal with validation and namespace prefix declaration-->
 	<sch:ns prefix="METS" uri="http://www.loc.gov/METS/"/>
+	<sch:ns prefix="xlink" uri="http://www.w3.org/TR/xlink"/>
 	<!-- RULES FOR OBJECT INGEST PHASE:  These rules apply to a digital object in its "submission" format for ingest into the repository-->
 	<!-- These rules are to be applied upon initial receipt of the object by the repository, before the repository has done any processing of the input.-->
 	<sch:phase id="ingest">
@@ -36,8 +42,14 @@
 		<sch:rule context="METS:fileGrp">
 			<sch:assert test="@ID">Every Datastream must have a DatastreamID (element fileGrp: ID is missing)</sch:assert>
 		</sch:rule>
+		<sch:rule context="METS:file">
+			<sch:assert test="string(@OWNERID)">Datastream control group must be recorded (element file: OWNERID missing or empty)</sch:assert>
+			<sch:assert test="@OWNERID = 'P' or @OWNERID = 'E' or @OWNERID = 'M' or @OWNERID = 'X'">Datastream control group must be "P" for Protected-External-Ref, "E" for External-Ref, "M" for Managed-Internal, or "X" for Inline-XML-User-Metadata.  (element file: OWNERID)</sch:assert>
+		</sch:rule>
 		<sch:rule context="METS:behaviorSec">
 			<sch:assert test="string(@GROUPID)">Every Disseminator must have a DisseminatorID (element behaviorSec: GROUPID is missing or empty)</sch:assert>
+			<sch:assert test="METS:interfaceDef[string(@xlink:href)]">Disseminator must point to a Behavior Definition Object (element behaviorSec/interfaceDef: xlink:href is missing or empty)</sch:assert>
+			<sch:assert test="METS:mechanism[string(@xlink:href)]">Disseminator must point to a Behavior Mechanism Object (element behaviorSec/mechanism: xlink:href is missing or empty)</sch:assert>
 		</sch:rule>
 	</sch:pattern>
 	<!-- COMPLETED PATTERN: -->
@@ -45,8 +57,42 @@
 	<sch:pattern name="Completed Object Checks" id="completed">
 		<sch:rule context="METS:metsHdr">
 			<sch:assert test="@CREATEDATE">Object must have a date of creation (element header: CREATEDATE missing)</sch:assert>
-<!--			<sch:assert test="string(@RECORDSTATUS)">Object state must be recorded (element header: RECORDSTATUS missing or empty)</sch:assert>
+			<!--			<sch:assert test="string(@RECORDSTATUS)">Object state must be recorded (element header: RECORDSTATUS missing or empty)</sch:assert>
 			<sch:assert test="@RECORDSTATUS ='A' or @RECORDSTATUS ='W' or @RECORDSTATUS ='C' or @RECORDSTATUS ='D'">Object state value is invalid  (element header: RECORDSTATUS must be "A|W|C|D")</sch:assert> -->
+		</sch:rule>
+		<sch:rule context="METS:file">
+			<sch:assert test="string(@STATUS)">Datastream state must be recorded (element file: STATUS missing or empty)</sch:assert>
+			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element file: STATUS)</sch:assert>
+		</sch:rule>
+		<sch:rule context="METS:behaviorSec">
+			<sch:assert test="@CREATEDATE">Disseminator must have a date of creation (element behaviorSec: CREATEDATE missing)</sch:assert>
+			<sch:assert test="string(@STATUS)">Disseminator state must be recorded (element behaviorSec: STATUS missing or empty)</sch:assert>
+			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Disseminator state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element behaviorSec: STATUS)</sch:assert>
+		</sch:rule>
+		<sch:rule context="METS:dmdSec">
+			<sch:assert test="@CREATEDATE">Inline Metadata Datastream must have a date of creation (element dmdSec: CREATEDATE missing)</sch:assert>
+			<sch:assert test="string(@STATUS)">Inline Metadata Datastream state must be recorded (element dmdSec: STATUS missing or empty)</sch:assert>
+			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Inline Metadata Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element dmdSec: STATUS)</sch:assert>
+		</sch:rule>
+		<sch:rule context="METS:techMD">
+			<sch:assert test="@CREATEDATE">Inline Metadata Datastream must have a date of creation (element techMD: CREATEDATE missing)</sch:assert>
+			<sch:assert test="string(@STATUS)">Inline Metadata Datastream state must be recorded (element techMD: STATUS missing or empty)</sch:assert>
+			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Inline Metadata Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element techMD: STATUS)</sch:assert>
+		</sch:rule>
+		<sch:rule context="METS:rightsMD">
+			<sch:assert test="@CREATEDATE">Inline Metadata Datastream must have a date of creation (element rightsMD: CREATEDATE missing)</sch:assert>
+			<sch:assert test="string(@STATUS)">Inline Metadata Datastream state must be recorded (element rightsMD: STATUS missing or empty)</sch:assert>
+			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Inline Metadata Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element rightsMD: STATUS)</sch:assert>
+		</sch:rule>
+		<sch:rule context="METS:sourceMD">
+			<sch:assert test="@CREATEDATE">Inline Metadata Datastream must have a date of creation (element sourceMD: CREATEDATE missing)</sch:assert>
+			<sch:assert test="string(@STATUS)">Inline Metadata Datastream state must be recorded (element sourceMD: STATUS missing or empty)</sch:assert>
+			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Inline Metadata Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element sourceMD: STATUS)</sch:assert>
+		</sch:rule>
+		<sch:rule context="METS:digiprovMD">
+			<sch:assert test="@CREATEDATE">Inline Metadata Datastream must have a date of creation (element digiprovMD: CREATEDATE missing)</sch:assert>
+			<sch:assert test="string(@STATUS)">Inline Metadata Datastream state must be recorded (element digiprovMD: STATUS missing or empty)</sch:assert>
+			<sch:assert test="@STATUS= 'A' or @STATUS= 'W' or @STATUS= 'C' or @STATUS= 'D'">Inline Metadata Datastream state must be "A" for Active, "W" for Withdrawn, "C" for Pending Deletion, or "D" for Deleted.  (element digiprovMD: STATUS)</sch:assert>
 		</sch:rule>
 	</sch:pattern>
 </sch:schema>
