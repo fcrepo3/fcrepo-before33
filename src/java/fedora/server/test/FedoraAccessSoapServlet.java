@@ -170,7 +170,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     String methodName = null;
     String PID = null;
     Property[] userParms = null;
-    long servletStartTime = 0;
+    long servletStartTime = new Date().getTime();
     h_userParms = new Hashtable();
     PARAMETER_RESOLVER_URL = "http://" + request.getServerName()
         + ":" + request.getServerPort() + PARAMETER_RESOLVER_SERVLET_PATH;
@@ -250,7 +250,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
       if (action.equals(GET_BEHAVIOR_DEFINITIONS))
       {
         String[] behaviorDefs = null;
-        long startTime = new Date().getTime();
         try
         {
           // Call Fedora Access SOAP service to request Behavior Definitons.
@@ -343,7 +342,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
       } else if (action.equals(GET_BEHAVIOR_METHODS))
       {
         MethodDef[] methodDefs = null;
-        long startTime = new Date().getTime();
         try
         {
           // Call Fedora Access SOAP service to request Method Definitions.
@@ -453,7 +451,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
       } else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML))
       {
         MIMETypedStream methodDefs = null;
-        long startTime = new Date().getTime();
         try
         {
           // Call Fedora Access SOAP service to request Method Definitions
@@ -514,7 +511,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
             + "GetBehaviorMethodsAsWSDL: " + interval + " milliseconds.");
       } else if (action.equals(GET_DISSEMINATION))
         {
-          long startTime = new Date().getTime();
           try
           {
             // Call Fedora Access SOAP service to request dissemination.
@@ -571,7 +567,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
       {
         ObjectMethodsDef[] objMethDefArray = null;
         String serverURI = request.getRequestURL().toString()+"?";
-        long startTime = new Date().getTime();
         try
         {
           // Call Fedora Access SOAP service to request Object Methods.
