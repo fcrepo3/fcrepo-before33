@@ -583,7 +583,7 @@
 		<!--<copy todir="dist/server/tomcat41/webapps/userdocs">
 			<fileset dir="src/web-app/userdocs"/>
 		</copy>-->
-		<copy file="src/web-app/userdocs/WEB-INF/web.xml" todir="dist/server/toomcat41/webapps/userdocs/WEB-INF"/>
+		<copy file="src/web-app/userdocs/WEB-INF/web.xml" todir="dist/server/tomcat41/webapps/userdocs/WEB-INF"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
 		<exec executable="java">
@@ -690,7 +690,11 @@
 </project>
 <!--
   $Log$
+  Revision 1.106  2003/05/07 23:28:27  rlw
+  fixed typo
+
   Revision 1.105  2003/05/07 20:56:13  rlw
+
   first cut at adding conversion code that transforms *.dbx files into html and
   placing in the appropriate place in webapps/userdocs.
 
