@@ -1136,7 +1136,7 @@ public class DefaultDOManager
                                                    + "contentModelID, createDate, "
                                                    + "lastModifiedDate) "
                        + "VALUES ('" + pid + "', '" + foType +"', '"
-                                     + userId +"', '" + theLabel + "', '"
+                                     + userId +"', '" + SQLUtility.aposEscape(theLabel) + "', '"
                                      + theContentModelId + "', '"
                                      + formattedCreateDate + "', '"
                                      + formattedLastModDate + "')";
