@@ -152,6 +152,7 @@ public class BMechBuilder extends JInternalFrame
 				currentTabName = tabpane.getTitleAt(currentTabIndex);
 				// pre-populate the MethodsPane with valid methods 
 				// associated with the behavior definition contract
+				/*
 				if (currentTabIndex == 2)
 				{
 				  String bDefPID = newBMech.getbDefContractPID();
@@ -164,6 +165,7 @@ public class BMechBuilder extends JInternalFrame
 				  }
 
 				}
+				*/
 				// pre-populate the DatastreamInputPane with valid datastream 
 				// input parms that were defined in the MethodsPane
 				if (currentTabIndex == 3)
