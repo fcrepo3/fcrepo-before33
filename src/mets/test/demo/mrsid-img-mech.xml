@@ -28,7 +28,7 @@
 				<METS:xmlData>
 					<fbs:DSBindingSpec>
 						<fbs:mechanismID scheme="URN">test:5</fbs:mechanismID>
-						<fbs:behaviorDefID scheme="URN">uva-bdef-stdimg:8</fbs:behaviorDefID>
+						<fbs:behaviorDefID scheme="URN">test:1</fbs:behaviorDefID>
 						<fbs:DSBinding BindingKeyName="MRSID" DSMin="1" DSMax="1" DSOrdinality="false">
 							<fbs:DSBindingLabel>MrSid file</fbs:DSBindingLabel>
 							<fbs:DSBindingInstructions>MrSid wavelet encoded image file</fbs:DSBindingInstructions>

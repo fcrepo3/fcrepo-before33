@@ -28,7 +28,7 @@
 				<METS:xmlData>
 					<fbs:DSBindingSpec>
 						<fbs:mechanismID scheme="URN">test:4</fbs:mechanismID>
-						<fbs:behaviorDefID scheme="URN">uva-bdef-stdimg:8</fbs:behaviorDefID>
+						<fbs:behaviorDefID scheme="URN">test:1</fbs:behaviorDefID>
 						<fbs:DSBinding BindingKeyName="THUMBRES_IMG" DSMin="1" DSMax="1" DSOrdinality="false">
 							<fbs:DSBindingLabel>thumbnail image</fbs:DSBindingLabel>
 							<fbs:DSBindingInstructions>image of type image/jpg at 100 dpi</fbs:DSBindingInstructions>
