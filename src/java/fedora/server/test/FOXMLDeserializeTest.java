@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.net.URI;
@@ -46,10 +47,12 @@ public class FOXMLDeserializeTest
 	extends TestCase {
 
 	protected File inFile = null;
+	protected File outFile = null;
 	protected DigitalObject obj = null;
 		
 	protected void setUp() {
 		inFile=new File("foxml-reference-example.xml");
+		outFile=new File("OUT-foxml-reference-example.xml");
 		System.setProperty("fedoraServerHost", "localhost");
 		System.setProperty("fedoraServerPort", "80");
 		
@@ -60,15 +63,28 @@ public class FOXMLDeserializeTest
 				System.out.println("Error on FOXML file inputstream: " + ioe.getMessage());
 				ioe.printStackTrace();
 		}
-		try {		
+		try {	
+			// deserialize	
 			FOXMLDODeserializer deser=new FOXMLDODeserializer();
-			HashMap desers=new HashMap();
-			desers.put("foxml10", deser);
-			DOTranslatorImpl trans=new DOTranslatorImpl(null, desers, null);
+			FOXMLDOSerializer ser=new FOXMLDOSerializer();
+			HashMap desermap=new HashMap();
+			HashMap sermap=new HashMap();
+			desermap.put("foxml", deser);
+			DOTranslatorImpl trans=new DOTranslatorImpl(sermap, desermap, null);
 			obj=new BasicDigitalObject();
 			System.out.println("Deserializing...");
-			trans.deserialize(in, obj, "foxml10", "UTF-8");
+			trans.deserialize(in, obj, "foxml", "UTF-8");
+			System.out.println("Digital Object PID= " + obj.getPid());
+			// serialize
+			sermap.put("foxml", ser);
+			System.out.println("Re-serializing...");
+			System.out.println("Writing file to... " + outFile.getPath());
+			FileOutputStream out = new FileOutputStream(outFile);
+			//ByteArrayOutputStream out=new ByteArrayOutputStream();
+			trans.serialize(obj, out, "foxml", "UTF-8");
 			System.out.println("Done.");
+			//System.out.println("Here it is:");
+			//System.out.println(out.toString("UTF-8"));
 		} catch (Exception e) {
 			System.out.println("Error: (" + e.getClass().getName() + "):" + e.getMessage());
 			e.printStackTrace();
