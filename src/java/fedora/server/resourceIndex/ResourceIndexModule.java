@@ -33,12 +33,12 @@ public class ResourceIndexModule extends Module
         } else {
         	try {
                 level = Integer.parseInt(getParameter("level"));
-                if (level < 0 || level > 3) {
+                if (level < 0 || level > 2) {
                 	throw new NumberFormatException();
                 }
     		} catch (NumberFormatException nfe) {
     			throw new ModuleInitializationException(
-                        "level parameter must have value 0, 1, 2, or 3.", getRole());
+                        "level parameter must have value 0, 1, or 2.", getRole());
     		}
         }
         
@@ -112,10 +112,38 @@ public class ResourceIndexModule extends Module
                     + "connector", getRole(), e);
         }
     }
+    
+    /* from ResourceIndex interface */
+    public int getIndexLevel() {
+        return m_resourceIndex.getIndexLevel();   // do this, it's easy!!!
+    }
+    
+    /* (non-Javadoc)
+     * @see fedora.server.resourceIndex.ResourceIndex#addDigitalObject(fedora.server.storage.types.DigitalObject)
+     */
+    public void addDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
+        m_resourceIndex.addDigitalObject(digitalObject);
+    }
 
-//// from TriplestoreReader interface
+    /* (non-Javadoc)
+     * @see fedora.server.resourceIndex.ResourceIndex#modifyDigitalObject(fedora.server.storage.types.DigitalObject)
+     */
+    public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
+        m_resourceIndex.modifyDigitalObject(digitalObject);
+    }
 
+    /* (non-Javadoc)
+     * @see fedora.server.resourceIndex.ResourceIndex#deleteDigitalObject(java.lang.String)
+     */
+    public void deleteDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
+        m_resourceIndex.deleteDigitalObject(digitalObject);
+    }
+    
+    public void export(OutputStream out, RDFFormat format) throws ResourceIndexException {
+        m_resourceIndex.export(out, format);
+    }
 
+    /* from TriplestoreReader interface */
     public void setAliasMap(Map aliasToPrefix) throws TrippiException {
         m_resourceIndex.setAliasMap(aliasToPrefix);
     }
@@ -193,78 +221,4 @@ public class ResourceIndexModule extends Module
     public void close() throws TrippiException {
         // nope
     }
-
-///////////////////////////////////////////////////// 
-
-	public int getIndexLevel() {
-        return m_resourceIndex.getIndexLevel();   // do this, it's easy!!!
-    }
-	
-	/* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#addDigitalObject(fedora.server.storage.types.DigitalObject)
-     */
-    public void addDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-        m_resourceIndex.addDigitalObject(digitalObject);
-    }
-
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#addDatastream(fedora.server.storage.types.DigitalObject, java.lang.String)
-     */
-    public void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
-        m_resourceIndex.addDatastream(digitalObject, datastreamID);
-    }
-
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#addDisseminator(fedora.server.storage.types.DigitalObject, java.lang.String)
-     */
-    public void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
-        m_resourceIndex.addDisseminator(digitalObject, disseminatorID);
-    }
-
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#modifyDigitalObject(fedora.server.storage.types.DigitalObject)
-     */
-    public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-        m_resourceIndex.modifyDigitalObject(digitalObject);
-    }
-
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#modifyDatastream(fedora.server.storage.types.Datastream)
-     */
-    public void modifyDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
-        m_resourceIndex.modifyDatastream(digitalObject, datastreamID);
-    }
-
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#modifyDisseminator(fedora.server.storage.types.Disseminator)
-     */
-    public void modifyDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
-        m_resourceIndex.modifyDisseminator(digitalObject, disseminatorID);
-    }
-
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#deleteDigitalObject(java.lang.String)
-     */
-    public void deleteDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-        m_resourceIndex.deleteDigitalObject(digitalObject);
-    }
-
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#deleteDatastream(fedora.server.storage.types.Datastream)
-     */
-    public void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
-        m_resourceIndex.deleteDatastream(digitalObject, datastreamID);
-    }
-
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#deleteDisseminator(fedora.server.storage.types.Disseminator)
-     */
-    public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
-        m_resourceIndex.deleteDisseminator(digitalObject, disseminatorID);
-    }
-    
-    public void export(OutputStream out, RDFFormat format) throws ResourceIndexException {
-        m_resourceIndex.export(out, format);
-    }
-
 }

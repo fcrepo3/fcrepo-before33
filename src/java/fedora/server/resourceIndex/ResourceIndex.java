@@ -17,14 +17,13 @@ import java.io.OutputStream;
  */
 public interface ResourceIndex extends TriplestoreReader {
     // Index Levels
-    public static final int INDEX_LEVEL_OFF = 0;
-    public static final int INDEX_LEVEL_OBJECT_FIELDS = 1;
-    public static final int INDEX_LEVEL_DISSEMINATIONS = 2;
-    public static final int INDEX_LEVEL_DEPENDENCIES = 3;
+    public static final int INDEX_LEVEL_OFF             = 0;
+    public static final int INDEX_LEVEL_ON              = 1;
+    public static final int INDEX_LEVEL_PERMUTATIONS    = 2;
     
     // RDF Namespaces
     public static final String NS_DC            = "http://purl.org/dc/elements/1.1/";
-    public static final String NS_FEDORA        = "info:/fedora/";
+    public static final String NS_FEDORA        = "info:fedora/";
     public static final String NS_FEDORA_ONT    = NS_FEDORA + "fedora-system:def/ontology#";
     public static final String NS_RDF           = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     
@@ -55,23 +54,20 @@ public interface ResourceIndex extends TriplestoreReader {
 	
 	public void addDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
 	
-	public void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
-	
-	public void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
-	
 	public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
-	
-	public void modifyDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
-	
-	public void modifyDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
 	
 	public void deleteDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
 	
-	public void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
-	
-	public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
-
 	public void export(OutputStream out, RDFFormat format) throws ResourceIndexException;
+    
+    /*
+	public void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
+	public void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
+	public void modifyDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
+	public void modifyDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
+	public void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
+	public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
+	*/
 }
 
 

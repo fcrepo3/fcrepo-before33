@@ -138,7 +138,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#addDigitalObject(fedora.server.storage.types.DigitalObject)
 	 */
 	public void addDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-	    if (m_indexLevel == 0) {
+	    if (m_indexLevel == INDEX_LEVEL_OFF) {
 	        return;
         }
         
@@ -201,7 +201,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#addDatastream(fedora.server.storage.types.Datastream)
 	 */
 	public void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
-	    if (m_indexLevel == 0) {
+	    if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
         
@@ -250,7 +250,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#addDisseminator(fedora.server.storage.types.Dissemination)
 	 */
 	public void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
-	    if (m_indexLevel == 0) {
+	    if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
         
@@ -323,7 +323,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDigitalObject(fedora.server.storage.types.DigitalObject)
 	 */
 	public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-        if (m_indexLevel == 0) {
+        if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
 
@@ -335,7 +335,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDatastream(fedora.server.storage.types.Datastream)
 	 */
 	public void modifyDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
-        if (m_indexLevel == 0) {
+        if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
         
@@ -347,7 +347,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDissemination(fedora.server.storage.types.Dissemination)
 	 */
 	public void modifyDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
-        if (m_indexLevel == 0) {
+        if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
         
@@ -359,7 +359,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDigitalObject(java.lang.String)
 	 */
 	public void deleteDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-        if (m_indexLevel == 0) {
+        if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
         
@@ -390,7 +390,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDatastream(fedora.server.storage.types.Datastream)
 	 */
 	public void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
-	    if (m_indexLevel == 0) {
+	    if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
         
@@ -432,7 +432,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDissemination(fedora.server.storage.types.Dissemination)
 	 */
 	public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
-        if (m_indexLevel == 0) {
+        if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
         
@@ -659,7 +659,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    for (int i = 0; i < mdef.length; i++) {
 	    	methodName = mdef[i].methodName;
 	    	MethodParmDef[] mparms = mdef[i].methodParms;
-	    	if (mparms.length == 0) { // no method parameters
+	    	if (m_indexLevel != INDEX_LEVEL_PERMUTATIONS || mparms.length == 0) { // no method parameters
                 permutations.add(methodName);
 	    	} else {
 	    		noRequiredParms = true;
