@@ -345,16 +345,16 @@
 			<arg path="src/dbx/userdocs/installation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-		<!--<echo message="Translating known-issues.dbx to html"/>
+		<echo message="Translating migration.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/userdocs/distribution/known-issues.html"/>
-			<arg path="src/dbx/userdocs/known-issues.dbx"/>
+			<arg path="dist/userdocs/distribution/migration.html"/>
+			<arg path="src/dbx/userdocs/migration.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>-->
+		</exec>
 		<echo message="Translating apialite.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -385,28 +385,6 @@
 			<arg path="src/dbx/userdocs/apimadmingui.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-		<!--
-		<echo message="Translating builder.dbx to html"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/client/admin-gui/builder/index.html"/>
-			<arg path="src/dbx/userdocs/builder.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<echo message="Translating batchclient.dbx to html"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/client/admin-gui/batch/index.html"/>
-			<arg path="src/dbx/userdocs/batchclient.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		-->
 		<echo message="Translating versioning.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -416,7 +394,7 @@
 			<arg path="dist/userdocs/server/versioning.html"/>
 			<arg path="src/dbx/userdocs/versioning.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>		
+		</exec>
 		<copy todir="dist/userdocs/client/admin-gui/images">
 			<fileset dir="src/jpg/client/file"/>
 		</copy>
@@ -429,14 +407,6 @@
 		<copy todir="dist/userdocs/client/admin-gui/images">
 			<fileset dir="src/jpg/client/window"/>
 		</copy>
-		<!--
-		<copy file="src/jpg/client/tools/build.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
-		<copy file="src/jpg/client/tools/build-ingest.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
-		<copy file="src/jpg/client/tools/build-ingest-output.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
-		<copy file="src/jpg/client/tools/build-output.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
-		<copy file="src/jpg/client/tools/ingest.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
-		<copy file="src/jpg/client/tools/ingest-output.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
-		-->
 		<echo message="Translating documentation.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -447,18 +417,6 @@
 			<arg path="src/dbx/userdocs/documentation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-		<!-- commented out for now... this is currently sourced in html
-		<echo message="Translating license.dbx to html"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/distribution/license.html"/>
-			<arg path="src/dbx/userdocs/license.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-       -->
 		<echo message="Translating oaiprovider.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -586,18 +544,6 @@
 			<arg path="src/dbx/userdocs/do-const.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-		<!--
-		<echo message="Translating builder.dbx to html"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/client/admin-gui/builder/builder.html"/>
-			<arg path="src/dbx/userdocs/builder.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		-->
 		<echo message="Translating webexp.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -612,11 +558,6 @@
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/cmd-line/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/images/"/>
-		<!--
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/apim/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/batch/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/builder/images/"/>
-		-->
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/apialite/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/apimlite/images/"/>
