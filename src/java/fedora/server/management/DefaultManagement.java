@@ -1,66 +1,30 @@
 package fedora.server.management;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
+import java.io.*;
+import java.sql.*;
+import java.text.*;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import javax.xml.parsers.*;
+import org.w3c.dom.*;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import org.apache.xml.serialize.*;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.XMLSerializer;
-
-import fedora.server.Context;
-import fedora.server.Module;
-import fedora.server.Server;
-import fedora.server.errors.GeneralException;
-import fedora.server.errors.InvalidStateException;
-import fedora.server.errors.ObjectValidityException;
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ModuleShutdownException;
-import fedora.server.errors.ServerException;
-import fedora.server.errors.StreamReadException;
-import fedora.server.errors.StreamWriteException;
-import fedora.server.security.IPRestriction;
-import fedora.server.storage.DOReader;
-import fedora.server.storage.DOManager;
-import fedora.server.storage.DOWriter;
-import fedora.server.storage.ExternalContentManager;
-import fedora.server.storage.types.AuditRecord;
-import fedora.server.storage.types.DSBindingMap;
-import fedora.server.storage.types.DSBinding;
-import fedora.server.storage.types.DatastreamManagedContent;
-import fedora.server.storage.types.DatastreamReferencedContent;
-import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Disseminator;
-import fedora.server.storage.types.Property;
-import fedora.server.utilities.DateUtility;
-import fedora.server.utilities.StreamUtility;
+import fedora.server.*;
+import fedora.server.errors.*;
+import fedora.server.security.*;
+import fedora.server.storage.*;
+import fedora.server.storage.types.*;
+import fedora.server.utilities.*;
 
 /**
- *
- * <p><b>Title:</b> DefaultManagement.java</p>
- * <p><b>Description:</b> The Management Module, providing support for API-M.</p>
+ * Implements API-M without regard to the transport/messaging protocol.
  *
  * -----------------------------------------------------------------------------
  *
@@ -324,8 +288,13 @@ public class DefaultManagement
 
     public Date purgeObject(Context context, 
                             String pid, 
-                            String logMessage)
+                            String logMessage,
+                            boolean force)
             throws ServerException {
+        if (force) {
+            throw new GeneralException("Forced object removal is not "
+                    + "yet supported.");
+        }
         DOWriter w = null;
         try {
             logFinest("Entered DefaultManagement.purgeObject");
@@ -343,13 +312,15 @@ public class DefaultManagement
     public String addDatastream(Context context,
                                 String pid,
                                 String dsID,
+                                String[] altIDs,
                                 String dsLabel,
                                 boolean versionable,
                                 String MIMEType,
                                 String formatURI,
                                 String dsLocation,
                                 String controlGroup,
-                                String dsState) throws ServerException {
+                                String dsState,
+                                String logMessage) throws ServerException {
                                    	
         if (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL")) {
 			throw new GeneralException("Creation of a datastream with an"
@@ -405,14 +376,16 @@ public class DefaultManagement
             } else {
                 throw new GeneralException("Invalid control group: " + controlGroup);
             }
-            //
-            // FIXME: Also need to take versionable and formatURI values
-            //        into consideration here.
-            //
             ds.isNew=true;
             ds.DSControlGrp=controlGroup;
             ds.DSLabel=dsLabel;
             ds.DSLocation=dsLocation;
+            ds.DSFormatURI=formatURI;
+            if (versionable) {
+                ds.DSVersionable = "YES";
+            } else {
+                ds.DSVersionable = "NO";
+            }
             ds.DSMIME=MIMEType;
             if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
                 throw new InvalidStateException("The datastream state of \"" + dsState
@@ -438,6 +411,7 @@ public class DefaultManagement
                 }
             }
             ds.DSVersionID=ds.DatastreamID + ".0";
+            ds.DatastreamAltIDs = altIDs;
             AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
@@ -445,7 +419,7 @@ public class DefaultManagement
             audit.componentID=ds.DatastreamID;
             audit.responsibility=context.get("userId");
             audit.date=nowUTC;
-            audit.justification="Added a new datastream";
+            audit.justification=logMessage;
             w.getAuditRecords().add(audit);
             w.addDatastream(ds);
             w.commit("Added a new datastream");
@@ -466,7 +440,8 @@ public class DefaultManagement
 									String bDefLabel,
 									String bMechLabel,
 									DSBindingMap bindingMap,
-									String dissState) throws ServerException {
+									String dissState,
+									String logMessage) throws ServerException {
 
 			DOWriter w=null;
 			try {
@@ -504,7 +479,7 @@ public class DefaultManagement
 				audit.componentID=diss.dissID;
 				audit.responsibility=context.get("userId");
 				audit.date=nowUTC;
-				audit.justification="Added a new disseminator";
+				audit.justification=logMessage;
 				w.getAuditRecords().add(audit);
 				w.addDisseminator(diss);
 				w.commit("Added a new disseminator");
@@ -520,21 +495,40 @@ public class DefaultManagement
     public Date modifyDatastreamByReference(Context context, 
                                             String pid,
                                             String datastreamId, 
+                                            String[] altIDs,
                                             String dsLabel, 
-                                            String logMessage,
+                                            boolean versionable,
+                                            String mimeType,
+                                            String formatURI,
                                             String dsLocation, 
-                                            String dsState)
+                                            String dsState,
+                                            String logMessage,
+                                            boolean force)
             throws ServerException {
 		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
 			throw new GeneralException("Modification of the system-controlled AUDIT"
 				+ " datastream is not permitted.");
 		}
-        DOWriter w=null;
+
+        DOWriter w = null;
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByReference");
             m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
+
+            // If force is false and the mime type changed, validate the
+            // original datastream with respect to any disseminators it is
+            // involved in, and keep a record of that information for later
+            // (so we can determine whether the mime type change would cause
+            // data contract invalidation)
+            Map oldValidationReports = null;
+            if (mimeType == null) mimeType = orig.DSMIME;
+            if ( !mimeType.equals(orig.DSMIME) && !force) {
+                oldValidationReports = getAllBindingMapValidationReports(
+                                           context, w, datastreamId);
+            }
+
             if (orig.DSState.equals("D")) {
                 throw new GeneralException("Can only change state on deleted datastreams.");
             }
@@ -548,8 +542,15 @@ public class DefaultManagement
                     newds.DatastreamID=orig.DatastreamID;
                     // make sure it has a different id
                     newds.DSVersionID=w.newDatastreamID(datastreamId);
+                    newds.DatastreamAltIDs = altIDs;
                     newds.DSLabel=dsLabel;
-                    newds.DSMIME=orig.DSMIME;
+                    if (versionable) {
+                        newds.DSVersionable = "YES";
+                    } else {
+                        newds.DSVersionable = "NO";
+                    }
+                    newds.DSMIME = mimeType;
+                    newds.DSFormatURI=formatURI;
                     nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                     newds.DSCreateDT=nowUTC;
                     //newds.DSSize will be computed later
@@ -599,7 +600,14 @@ public class DefaultManagement
                 // make sure it has a different id
                 newds.DSVersionID=w.newDatastreamID(datastreamId);
                 newds.DSLabel=dsLabel;
-                newds.DSMIME=orig.DSMIME;
+                newds.DatastreamAltIDs = altIDs;
+                if (versionable) {
+                    newds.DSVersionable = "YES";
+                } else {
+                    newds.DSVersionable = "NO";
+                }
+                newds.DSMIME = mimeType;
+                newds.DSFormatURI=formatURI;
                 nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                 newds.DSCreateDT=nowUTC;
                 newds.DSControlGrp=orig.DSControlGrp;
@@ -639,7 +647,14 @@ public class DefaultManagement
                 audit.justification=logMessage;
                 w.getAuditRecords().add(audit);
             }
-            // if all went ok, commit
+            // if all went ok, check if we need to validate, then commit.
+            if (oldValidationReports != null) { // mime changed and force=false
+                rejectMimeChangeIfCausedInvalidation(
+                        oldValidationReports,
+                        getAllBindingMapValidationReports(context, 
+                                                          w, 
+                                                          datastreamId));
+            }
             w.commit(logMessage);
             return nowUTC;
         } finally {
@@ -653,21 +668,40 @@ public class DefaultManagement
     public Date modifyDatastreamByValue(Context context, 
                                         String pid,
                                         String datastreamId, 
+                                        String[] altIDs,
                                         String dsLabel, 
+                                        boolean versionable,
+                                        String mimeType,
+                                        String formatURI,
+                                        InputStream dsContent,
+                                        String dsState,
                                         String logMessage,
-                                        InputStream dsContent, 
-                                        String dsState) 
+                                        boolean force)
             throws ServerException {
 		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
 			throw new GeneralException("Modification of the system-controlled AUDIT"
 				+ " datastream is not permitted.");
 		}
         DOWriter w=null;
+        boolean mimeChanged = false;
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByValue");
             m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
+
+            // If force is false and the mime type changed, validate the
+            // original datastream with respect to any disseminators it is
+            // involved in, and keep a record of that information for later
+            // (so we can determine whether the mime type change would cause
+            // data contract invalidation)
+            Map oldValidationReports = null;
+            if (mimeType == null) mimeType = orig.DSMIME;
+            if ( !mimeType.equals(orig.DSMIME) && !force) {
+                oldValidationReports = getAllBindingMapValidationReports(
+                                           context, w, datastreamId);
+            }
+
             if (orig.DSState.equals("D")) {
                 throw new GeneralException("Can only change state on deleted datastreams.");
             }
@@ -699,7 +733,14 @@ public class DefaultManagement
             // make sure it has a different id
             newds.DSVersionID=w.newDatastreamID(datastreamId);
             newds.DSLabel=dsLabel;
-            newds.DSMIME=orig.DSMIME;
+            newds.DatastreamAltIDs = altIDs;
+            if (versionable) {
+                newds.DSVersionable = "YES";
+            } else {
+                newds.DSVersionable = "NO";
+            }
+            newds.DSMIME = mimeType;
+            newds.DSFormatURI = formatURI;
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             newds.DSCreateDT=nowUTC;
             newds.DSControlGrp=orig.DSControlGrp;
@@ -731,7 +772,14 @@ public class DefaultManagement
             audit.date=nowUTC;
             audit.justification=logMessage;
             w.getAuditRecords().add(audit);
-            // if all went ok, commit
+            // if all went ok, check if we need to validate, then commit.
+            if (oldValidationReports != null) { // mime changed and force=false
+                rejectMimeChangeIfCausedInvalidation(
+                        oldValidationReports,
+                        getAllBindingMapValidationReports(context, 
+                                                          w, 
+                                                          datastreamId));
+            }
             w.commit(logMessage);
             return nowUTC;
         } finally {
@@ -742,7 +790,6 @@ public class DefaultManagement
         }
     }
 
-
     public Date modifyDisseminator(Context context, 
                                    String pid,
                                    String disseminatorId, 
@@ -751,17 +798,26 @@ public class DefaultManagement
                                    String bDefLabel, 
                                    String bMechLabel, 
                                    DSBindingMap dsBindingMap,
-                                   String logMessage, 
-                                   String dissState)
+                                   String dissState,
+                                   String logMessage,
+                                   boolean force)
             throws ServerException {
         DOWriter w=null;
         DOReader r=null;
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDisseminator");
             m_ipRestriction.enforce(context);
-            w=m_manager.getWriter(context, pid);
+            w = m_manager.getWriter(context, pid);
             fedora.server.storage.types.Disseminator orig=w.GetDisseminator(disseminatorId, null);
-            r=m_manager.getReader(context,pid);
+            String oldValidationReport = null;
+            if (!force) {
+                oldValidationReport = getBindingMapValidationReport(context,
+                                                                    w,
+                                                                    orig.bMechID);
+            }
+            r=m_manager.getReader(context,pid);  // FIXME: Unnecessary?  Is 
+                                                 // there a reason "w" isn't 
+                                                 // used for the call below?
             Date[] d=r.getDisseminatorVersions(disseminatorId);
             // copy the original disseminator, replacing any modified fiELDS
             Disseminator newdiss=new Disseminator();
@@ -832,7 +888,16 @@ public class DefaultManagement
             audit.date=nowUTC;
             audit.justification=logMessage;
             w.getAuditRecords().add(audit);
-            // if all went ok, commit
+            // if all went ok, check if we need to validate, then commit.
+            if (!force && oldValidationReport == null) {
+                String cause = getBindingMapValidationReport(context,
+                                                             w,
+                                                             newdiss.bMechID);
+                if (cause != null) {
+                    throw new GeneralException("That change would invalidate "
+                            + "the disseminator: " + cause);
+                }
+            }
             w.commit(logMessage);
             return nowUTC;
         } finally {
@@ -847,8 +912,14 @@ public class DefaultManagement
     public Date[] purgeDatastream(Context context, 
                                   String pid,
                                   String datastreamID, 
-                                  Date endDT)
+                                  Date endDT,
+                                  String logMessage,
+                                  boolean force)
             throws ServerException {
+        if (force) {
+            throw new GeneralException("Forced datastream removal is not "
+                    + "yet supported.");
+        }
         DOWriter w=null;
         try {
             getServer().logFinest("Entered DefaultManagement.purgeDatastream");
@@ -897,9 +968,17 @@ public class DefaultManagement
                     throw new GeneralException(msg.toString());
                 }
             }
-            // make a log messsage explaining what happened
-            String logMessage=getPurgeLogMessage("datastream", datastreamID,
-                    start, endDT, deletedDates);
+            // add an explanation of what happened to the user-supplied message.
+            if (logMessage == null) {
+                logMessage = "";
+            } else {
+                logMessage += " . . . ";
+            }
+            logMessage += getPurgeLogMessage("datastream", 
+                                             datastreamID,
+                                             start, 
+                                             endDT, 
+                                             deletedDates);
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -1034,7 +1113,8 @@ public class DefaultManagement
     public Date[] purgeDisseminator(Context context, 
                                     String pid,
                                     String disseminatorID, 
-                                    Date endDT)
+                                    Date endDT,
+                                    String logMessage)
             throws ServerException {
         DOWriter w=null;
         try {
@@ -1043,9 +1123,17 @@ public class DefaultManagement
             w=m_manager.getWriter(context, pid);
             Date start=null;
             Date[] deletedDates=w.removeDisseminator(disseminatorID, start, endDT);
-            // make a log messsage explaining what happened
-            String logMessage=getPurgeLogMessage("disseminator", disseminatorID,
-                    start, endDT, deletedDates);
+            // add an explanation of what happened to the user-supplied message.
+            if (logMessage == null) {
+                logMessage = "";
+            } else {
+                logMessage += " . . . ";
+            }
+            logMessage += getPurgeLogMessage("disseminator", 
+                                             disseminatorID,
+                                             start, 
+                                             endDT, 
+                                             deletedDates);
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -1303,4 +1391,115 @@ public class DefaultManagement
           getServer().logFinest("Exiting DefaultManagement.setDisseminatorState");
       }
    }
+
+    /**
+     * Get a string indicating whether the associated binding map (or an empty
+     * binding map, if none is found) is valid or invalid according to the 
+     * data contract defined by the indicated behavior mechanism.
+     *
+     * Returns null if valid, otherwise returns a String explaining why not.
+     *
+     * This assumes the indicated bMech actually exists, and the binding
+     * map, if it exists and specifies any datastreams, refers to existing 
+     * datastreams within the object.  If these conditions are not met, an 
+     * exception is thrown.
+     */
+    private String getBindingMapValidationReport(Context context,
+                                                 DOReader doReader,
+                                                 String bMechPID)
+            throws ServerException {
+
+        // find the associated datastream binding map, else use an empty one.
+        DSBindingMapAugmented augMap = new DSBindingMapAugmented();
+        DSBindingMapAugmented[] augMaps = doReader.GetDSBindingMaps(null);
+        for (int i = 0; i < augMaps.length; i++) {
+            if (augMaps[i].dsBindMechanismPID.equals(bMechPID)) {
+                augMap = augMaps[i];
+            }
+        }
+
+        // load the bmech, then validate the bindings
+        BMechReader mReader = m_manager.getBMechReader(context, bMechPID);
+        BMechDSBindSpec spec = mReader.getServiceDSInputSpec(null);
+        return spec.validate(augMap.dsBindingsAugmented);
+    }
+
+    /**
+     * Get a combined report indicating failure or success of data contract 
+     * validation for every disseminator in the given object that the indicated 
+     * datastream is bound to.
+     *
+     * The returned map's keys will be Disseminator objects.
+     * The values will be null in the case of successful validation,
+     * or Strings (explaining why) in the case of failure.
+     *
+     * This assumes that all bMechs specified in the binding maps of the
+     * disseminators that use the indicated datastream actually exist, and 
+     * the binding map, if it exists and specifies any datastreams, refers to 
+     * existing datastreams within the object.  If these conditions are not 
+     * met, an exception is thrown.
+     */
+    private Map getAllBindingMapValidationReports(Context context,
+                                                  DOReader doReader,
+                                                  String dsID)
+            throws ServerException {
+        HashMap map = new HashMap();
+        // for all disseminators in the object,
+        Disseminator[] disses = doReader.GetDisseminators(null, null);
+        for (int i = 0; i < disses.length; i++) {
+            DSBinding[] bindings = disses[i].dsBindMap.dsBindings; 
+            boolean isUsed = false;
+            // check each binding to see if it's the indicated datastream
+            for (int j = 0; j < bindings.length && !isUsed; j++) {
+                if (bindings[j].datastreamID.equals(dsID)) isUsed = true;
+            }
+            if (isUsed) {
+                // if it's used, add it's validation information to the map.
+                map.put(disses[i], 
+                        getBindingMapValidationReport(context,
+                                                      doReader,
+                                                      disses[i].bMechID));
+            }
+        }
+        return map;
+    }
+
+    private Map getNewFailedValidationReports(Map oldReport,
+                                              Map newReport) {
+        HashMap map = new HashMap();
+        Iterator newIter = newReport.keySet().iterator();
+        // For each disseminator in the new report:
+        while (newIter.hasNext()) {
+            Disseminator diss = (Disseminator) newIter.next();
+            String failedMessage = (String) newReport.get(diss);
+            // Did it fail in the new report . . .
+            if (failedMessage != null) {
+                // . . . but not in the old one?
+                if (oldReport.get(diss) == null) {
+                    map.put(diss, failedMessage);
+                }
+            }
+        }
+        return map;
+    }
+
+    private void rejectMimeChangeIfCausedInvalidation(Map oldReports,
+                                                      Map newReports)
+            throws ServerException {
+        Map causedFailures = getNewFailedValidationReports(oldReports, 
+                                                           newReports);
+        int numFailures = causedFailures.keySet().size();
+        if (numFailures > 0) {
+            StringBuffer buf = new StringBuffer();
+            buf.append("This mime type change would invalidate " 
+                    + numFailures + " disseminator(s):");
+            Iterator iter = causedFailures.keySet().iterator();
+            while (iter.hasNext()) {
+                Disseminator diss = (Disseminator) iter.next();
+                String reason = (String) causedFailures.get(diss);
+                buf.append("\n" + diss.dissID + ": " + reason);
+            }
+            throw new GeneralException(buf.toString());
+        }
+    }
 }

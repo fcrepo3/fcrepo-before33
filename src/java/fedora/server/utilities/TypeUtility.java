@@ -49,9 +49,11 @@ public abstract class TypeUtility
 		}
         out.setCreateDate(DateUtility.convertDateToString(in.DSCreateDT));
         out.setID(in.DatastreamID);
-        out.setInfoType(in.DSInfoType);
+        out.setAltIDs(in.DatastreamAltIDs);
         out.setLabel(in.DSLabel);
+        out.setVersionable(in.DSVersionable == null || in.DSVersionable.equalsIgnoreCase("NO"));
         out.setMIMEType(in.DSMIME);
+        out.setFormatURI(in.DSFormatURI);
         out.setSize(in.DSSize);
         out.setState(in.DSState);
         out.setVersionID(in.DSVersionID);

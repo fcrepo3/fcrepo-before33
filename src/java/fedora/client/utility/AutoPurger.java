@@ -42,13 +42,18 @@ public class AutoPurger {
         m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
 
-    public void purge(String pid, String logMessage) throws RemoteException, IOException {
-        purge(m_apim, pid, logMessage);
+    public void purge(String pid, 
+                      String logMessage,
+                      boolean force) throws RemoteException, IOException {
+        purge(m_apim, pid, logMessage, force);
     }
 
-    public static void purge(FedoraAPIM skeleton, String pid, String logMessage)
+    public static void purge(FedoraAPIM skeleton, 
+                             String pid, 
+                             String logMessage,
+                             boolean force)
             throws RemoteException, IOException {
-        skeleton.purgeObject(pid, logMessage);
+        skeleton.purgeObject(pid, logMessage, force);
     }
 
 	/**
@@ -91,7 +96,7 @@ public class AutoPurger {
                 String pid=args[3];
                 String logMessage=args[4];
                 AutoPurger a=new AutoPurger(hostName, portNum, args[1], args[2]);
-                a.purge(pid, logMessage);
+                a.purge(pid, logMessage, false); // DEFAULT_FORCE_PURGE
             }
         } catch (Exception e) {
             AutoPurger.showUsage(e.getClass().getName() + " - "

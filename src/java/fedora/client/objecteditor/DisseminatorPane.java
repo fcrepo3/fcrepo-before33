@@ -521,8 +521,9 @@ public class DisseminatorPane
                     m_bDefLabelTextField.getText(),
                     m_bMechLabelTextField.getText(),
                     bindingMap,
+                    state,
                     logMessage,
-                    state);
+                    false); // DEFAULT_FORCE
         }
 
         public void undoChanges() {
@@ -704,7 +705,8 @@ public class DisseminatorPane
                     try {
                         Administrator.APIM.purgeDisseminator(m_pid,
                                 m_versions[sIndex].getID(),
-                                m_versions[sIndex].getCreateDate());
+                                m_versions[sIndex].getCreateDate(),
+                                "DisseminatorPane generated this logMessage.");
                         if (removeAll) {
                             m_owner.remove(m_versions[0].getID());
                             m_owner.doNew(false);

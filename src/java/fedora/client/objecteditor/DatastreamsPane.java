@@ -389,7 +389,7 @@ public class DatastreamsPane
             commonPane.setLayout(grid);
             addRows(left, right, grid, commonPane);
 
-            // XPANE: need metadata class and mdType
+            // XPANE: need metadata class and mdType:  DEFAULT_FIXME: Remove this... it's unused now!
             left=new JComponent[] { new JLabel("METS Classification (FIXME: remove this for v2.0?)"),
                                     new JLabel("METS Metadata Type (FIXME: remove this for v2.0?)") };
             m_mdClassComboBox=new JComboBox(new String[] { "UNSPECIFIED",
@@ -651,10 +651,18 @@ public class DatastreamsPane
                     } else { // must be E/R
                         location=m_referenceTextField.getText();
                     }
-                    String newID=Administrator.APIM.addDatastream(pid, dsID, label,
-                            true/** FIXME: make 'versionable' enterable in the UI */, mimeType, 
-                            null/** FIXME: make 'formatURI' enterable in the UIR */, 
-                            location, m_controlGroup, m_initialState);
+                    String newID = Administrator.APIM.addDatastream(
+                                       pid, 
+                                       dsID, 
+                                       new String[0], // DEFAULT_ALTIDS
+                                       label,
+                                       true, // DEFAULT_VERSIONABLE
+                                       mimeType, 
+                                       null, // DEFAULT_FORMATURI
+                                       location, 
+                                       m_controlGroup, 
+                                       m_initialState,
+                                       "DatastreamsPane generated this logMessage."); // DEFAULT_LOGMESSAGE
                     addDatastreamTab(newID);
                 } catch (Exception e) {
                     String msg = e.getMessage();

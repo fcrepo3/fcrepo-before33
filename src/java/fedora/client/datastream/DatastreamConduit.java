@@ -73,44 +73,126 @@ public class DatastreamConduit {
     }
 
     public static void modifyDatastreamByReference(FedoraAPIM skeleton,
-            String pid, String dsId, String dsLabel, String logMessage,
-            String location, String state)
+                                                   String pid, 
+                                                   String dsId, 
+                                                   String[] altIDs, 
+                                                   String dsLabel, 
+                                                   boolean versionable, 
+                                                   String mimeType, 
+                                                   String formatURI,
+                                                   String location, 
+                                                   String state, 
+                                                   String logMessage,
+                                                   boolean force)
             throws RemoteException {
-        skeleton.modifyDatastreamByReference(pid, dsId, dsLabel, logMessage,
-                location, state);
+        skeleton.modifyDatastreamByReference(pid, 
+                                             dsId, 
+                                             altIDs,
+                                             dsLabel, 
+                                             versionable,
+                                             mimeType,
+                                             formatURI,
+                                             location, 
+                                             state,
+                                             logMessage,
+                                             force);
     }
 
-    public void modifyDatastreamByReference(String pid, String dsId,
-            String dsLabel, String logMessage, String location, String state)
+    public void modifyDatastreamByReference(String pid, 
+                                            String dsId, 
+                                            String[] altIDs, 
+                                            String dsLabel, 
+                                            boolean versionable, 
+                                            String mimeType, 
+                                            String formatURI,
+                                            String location, 
+                                            String state, 
+                                            String logMessage,
+                                            boolean force)
             throws RemoteException {
-        modifyDatastreamByReference(m_apim, pid, dsId, dsLabel, logMessage,
-                location, state);
+        modifyDatastreamByReference(m_apim, 
+                                    pid, 
+                                    dsId, 
+                                    altIDs,
+                                    dsLabel, 
+                                    versionable,
+                                    mimeType,
+                                    formatURI,
+                                    location, 
+                                    state,
+                                    logMessage,
+                                    force);
     }
 
     public static void modifyDatastreamByValue(FedoraAPIM skeleton,
-            String pid, String dsId, String dsLabel, String logMessage,
-            byte[] content, String state)
+                                               String pid, 
+                                               String dsId, 
+                                               String[] altIDs,
+                                               String dsLabel, 
+                                               boolean versionable,
+                                               String mimeType,
+                                               String formatURI,
+                                               byte[] content, 
+                                               String state,
+                                               String logMessage,
+                                               boolean force)
             throws RemoteException {
-        skeleton.modifyDatastreamByValue(pid, dsId, dsLabel, logMessage,
-                content, state);
+        skeleton.modifyDatastreamByValue(pid, 
+                                         dsId, 
+                                         altIDs,
+                                         dsLabel, 
+                                         versionable,
+                                         mimeType,
+                                         formatURI,
+                                         content, 
+                                         state,
+                                         logMessage,
+                                         force);
     }
 
-    public void modifyDatastreamByValue(String pid, String dsId,
-            String dsLabel, String logMessage, byte[] content, String state)
+    public void modifyDatastreamByValue(String pid, 
+                                        String dsId, 
+                                        String[] altIDs,
+                                        String dsLabel, 
+                                        boolean versionable,
+                                        String mimeType,
+                                        String formatURI,
+                                        byte[] content, 
+                                        String state,
+                                        String logMessage,
+                                        boolean force)
             throws RemoteException {
-        modifyDatastreamByValue(m_apim, pid, dsId, dsLabel, logMessage,
-                content, state);
+        modifyDatastreamByValue(m_apim,
+                                pid, 
+                                dsId, 
+                                altIDs,
+                                dsLabel, 
+                                versionable,
+                                mimeType,
+                                formatURI,
+                                content, 
+                                state,
+                                logMessage,
+                                force);
     }
 
     public static String[] purgeDatastream(FedoraAPIM skeleton,
-            String pid, String dsId, String endDT)
+                                           String pid, 
+                                           String dsId, 
+                                           String endDT, 
+                                           String logMessage, 
+                                           boolean force)
             throws RemoteException {
-        return skeleton.purgeDatastream(pid, dsId, endDT);
+        return skeleton.purgeDatastream(pid, dsId, endDT, logMessage, force);
     }
 
-    public String[] purgeDatastream(String pid, String dsId, String endDT)
+    public String[] purgeDatastream(String pid, 
+                                    String dsId, 
+                                    String endDT, 
+                                    String logMessage, 
+                                    boolean force)
             throws RemoteException {
-        return purgeDatastream(m_apim, pid, dsId, endDT);
+        return purgeDatastream(m_apim, pid, dsId, endDT, logMessage, force);
     }
 
     public static Datastream[] getDatastreamHistory(FedoraAPIM skeleton,
@@ -145,15 +227,22 @@ public class DatastreamConduit {
                 for (int i=0; i<datastreams.length; i++) {
                     System.out.println("   Datastream : " + datastreams[i].getID());
                     Datastream ds=datastreams[i];
-                    System.out.println("        State : " + ds.getState());
                     System.out.println("Control Group : " + ds.getControlGroup().toString());
-                    System.out.println("    Info Type : " + ds.getInfoType());
+                    System.out.println("  Versionable : " + ds.isVersionable());
                     System.out.println("    Mime Type : " + ds.getMIMEType());
+                    System.out.println("   Format URI : " + ds.getFormatURI());
+                    String[] altIDs = ds.getAltIDs();
+                    if (altIDs != null) {
+                        for (int idNum = 0; idNum < altIDs.length; idNum++) {
+                            System.out.println(" Alternate ID : " + altIDs[idNum]);
+                        }
+                    }
+                    System.out.println("        State : " + ds.getState());
                     // print version id, create date, and label for each version
                     Datastream[] versions=c.getDatastreamHistory(pid, datastreams[i].getID());
                     for (int j=0; j<versions.length; j++) {
                         Datastream ver=versions[j];
-                        System.out.println("      Version : " + ver.getVersionID());
+                        System.out.println("      VERSION : " + ver.getVersionID());
                         System.out.println("        Created : " + ver.getCreateDate());
                         System.out.println("          Label : " + ver.getLabel());
                         System.out.println("       Location : " + ver.getLocation());

@@ -187,53 +187,13 @@
 			<xsd:element name="controlGroup" type="fedora-types:DatastreamControlGroup"/>
 			<xsd:element name="ID" type="string"/>
 			<xsd:element name="versionID" type="string"/>
+      <xsd:element name="altIDs" type="fedora-types:ArrayOfString"/>
 			<xsd:element name="label" type="string"/>
+			<xsd:element name="versionable" type="boolean"/>
 			<xsd:element name="MIMEType" type="string"/>
+			<xsd:element name="formatURI" type="string"/>
 			<xsd:element name="createDate" type="string"/>
 			<xsd:element name="size" type="long"/>
-			<xsd:element name="infoType" type="string">
-				<xsd:annotation>
-					<xsd:documentation>If inline xml, may be any string.
-                   this is intended to loosely identify the "kind" of metadata
-                   the datastream is, by label.  It's based on
-                   the mets "mdType" attribute.
-                   </xsd:documentation>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="class" type="string">
-				<xsd:annotation>
-					<xsd:documentation>if inline xml, digiprov, rights, technical, 
-                   source, or descriptive.  else unspecified.</xsd:documentation>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="role" type="fedora-types:DatastreamRole" minOccurs="0">
-				<xsd:annotation>
-					<xsd:documentation>A string indicating, for an inline technical 
-                   xml metatdata datastream inside a behavior definition or
-                   mechanism object, what role it plays.  Valid roles are
-                   "METHOD_DEFINITIONS" (for a behavior definition object), 
-                   "DATASTREAM_BINDING_SPEC" or "SERVICE_BINDING" (for a 
-                   behavior mechanism object).  This element has the following 
-                   validity constraints:
-                   1) When the Datastream is not XMLMetadata: 
-                      must not be specified
-                   2) When the Datastream is XMLMetadata:
-                        i) When the fedoraObjectType is "O": 
-                           must not be specified
-                       ii) When the fedoraObjectType is "D"
-                           a) When the class is "technical": 
-                           "METHOD_DEFINITIONS" or unspecified
-                           b) When the class is not "technical": 
-                           must not be specified
-                      iii) When the fedoraObjectType is "M"
-                           a) when the class is "technical": 
-                           "DATASTREAM_BINDING_SPEC" or "SERVICE_BINDING"
-                           or unspecified.
-                           b) When the class is not "technical": 
-                           must not be specified
-                 </xsd:documentation>
-				</xsd:annotation>
-			</xsd:element>
 			<xsd:element name="state" type="string"/>
 			<xsd:element name="location" type="string"/>
 		</xsd:sequence>
@@ -298,13 +258,6 @@
 			<xsd:enumeration value="M"/>
 			<xsd:enumeration value="X"/>
 			<xsd:enumeration value="R"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="DatastreamRole">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="METHOD_DEFINITIONS"/>
-			<xsd:enumeration value="DATASTREAM_BINDING_SPEC"/>
-			<xsd:enumeration value="SERVICE_BINDING"/>
 		</xsd:restriction>
 	</xsd:simpleType>
 	<xsd:complexType name="Disseminator">

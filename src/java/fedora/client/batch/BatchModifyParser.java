@@ -76,6 +76,14 @@ import fedora.server.types.gen.ObjectFields;
 public class BatchModifyParser extends DefaultHandler
 {
 
+    public static final String[] DEFAULT_ALTIDS      = new String[0];
+    public static final String   DEFAULT_LOGMESSAGE  = "BatchModifyParser generated this logMessage.";
+    public static final boolean  DEFAULT_VERSIONABLE = true;
+    public static final String   DEFAULT_MIMETYPE    = null;
+    public static final String   DEFAULT_FORMATURI   = null;
+    public static final boolean  DEFAULT_FORCE       = true;
+    public static final boolean  DEFAULT_FORCE_PURGE = false;
+
     /** Instance of Uploader */
     private static Uploader UPLOADER;
 
@@ -484,6 +492,18 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                     } else {
                         m_ds.dsLocation = dsOrig.getLocation();
                     }
+                    //
+                    // Ross,
+                    //
+                    // You can insert code here to parse/set DEFAULT_s for:
+                    //
+                    //   m_ds.altIDs (default from dsOrig.getAltIDs())
+                    //   m_ds.versionable (default from dsOrig.isVersionable())
+                    //   m_ds.mimeType (default from dsOrig.getMIMEType())
+                    //   m_ds.formatURI (default from dsOrig.getFormatURI())
+                    //
+                    // - Chris
+                    //
 
                     modifyDatastream = true;
 
@@ -982,24 +1002,27 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
                         InputStream xmlMetadata = new ByteArrayInputStream(m_ds.xmlContent);
                         m_ds.dsLocation=UPLOADER.upload(xmlMetadata);
-                        datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsID,
-                        		m_ds.dsLabel,m_ds.versionable,
+                        datastreamID = APIM.addDatastream(m_ds.objectPID, 
+                                m_ds.dsID, DEFAULT_ALTIDS,
+                        		m_ds.dsLabel, m_ds.versionable,
                         		m_ds.dsMIME, m_ds.formatURI,
                         		m_ds.dsLocation, m_ds.dsControlGrp, 
-                        		m_ds.dsState);
+                        		m_ds.dsState, DEFAULT_LOGMESSAGE);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("M")) {
-                        datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsID,
+                        datastreamID = APIM.addDatastream(m_ds.objectPID, 
+                                m_ds.dsID, DEFAULT_ALTIDS,
                                 m_ds.dsLabel,m_ds.versionable,
                                 m_ds.dsMIME, m_ds.formatURI,
                                 m_ds.dsLocation, m_ds.dsControlGrp, 
-                                m_ds.dsState);
+                                m_ds.dsState, DEFAULT_LOGMESSAGE);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
                             m_ds.dsControlGrp.equalsIgnoreCase("R")) {
-                        datastreamID = APIM.addDatastream(m_ds.objectPID, m_ds.dsID,
+                        datastreamID = APIM.addDatastream(m_ds.objectPID, 
+                                m_ds.dsID, DEFAULT_ALTIDS,
                                 m_ds.dsLabel,m_ds.versionable,
                                 m_ds.dsMIME, m_ds.formatURI,
                                 m_ds.dsLocation, m_ds.dsControlGrp, 
-                                m_ds.dsState);
+                                m_ds.dsState, DEFAULT_LOGMESSAGE);
                     }
                     if (datastreamID!=null) {
                         succeededCount++;
@@ -1028,7 +1051,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 if (purgeDatastream) {
                     String[] versionsPurged = null;
                     versionsPurged = APIM.purgeDatastream(m_ds.objectPID,
-                        m_ds.dsID, m_ds.asOfDate);
+                        m_ds.dsID, m_ds.asOfDate, DEFAULT_LOGMESSAGE, DEFAULT_FORCE_PURGE);
                     if (versionsPurged.length > 0) {
                         succeededCount++;
                         if (m_ds.asOfDate!=null) {
@@ -1068,15 +1091,39 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 // Process modifyDatastream only if no previous errors encountered
                 if(modifyDatastream) {
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
-                        APIM.modifyDatastreamByValue(m_ds.objectPID, m_ds.dsID, m_ds.dsLabel,
-                                "ModifyDatastreamByValue", m_ds.xmlContent, m_ds.dsState);
+                        APIM.modifyDatastreamByValue(m_ds.objectPID, m_ds.dsID, 
+                                DEFAULT_ALTIDS, m_ds.dsLabel,
+                                DEFAULT_VERSIONABLE,
+                                DEFAULT_MIMETYPE,
+                                DEFAULT_FORMATURI,
+                                m_ds.xmlContent, 
+                                m_ds.dsState,
+                                "ModifyDatastreamByValue", 
+                                DEFAULT_FORCE);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("M")) {
-                        APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, m_ds.dsLabel,
-                                "ModifyDatastreamByReference", m_ds.dsLocation, m_ds.dsState);
+                        APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, 
+                                DEFAULT_ALTIDS, m_ds.dsLabel,
+                                DEFAULT_VERSIONABLE,
+                                DEFAULT_MIMETYPE,
+                                DEFAULT_FORMATURI,
+                                m_ds.dsLocation, 
+                                m_ds.dsState,
+                                "ModifyDatastreamByReference",
+                                DEFAULT_FORCE);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
                                m_ds.dsControlGrp.equalsIgnoreCase("R")) {
-                        APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, m_ds.dsLabel,
-                                "ModifyDatastreamByReference", m_ds.dsLocation, m_ds.dsState);
+                        // Ross - I noticed this did the same thing as the 
+                        //        above block, but I didn't consolidate in case
+                        //        you wanted it like that. - Chris
+                        APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, 
+                                DEFAULT_ALTIDS, m_ds.dsLabel,
+                                DEFAULT_VERSIONABLE,
+                                DEFAULT_MIMETYPE,
+                                DEFAULT_FORMATURI,
+                                m_ds.dsLocation, 
+                                m_ds.dsState,
+                                "ModifyDatastreamByReference",
+                                DEFAULT_FORCE);
                     }
                     succeededCount++;
                     logSucceededDirective(m_ds.objectPID, localName,
@@ -1140,7 +1187,8 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                     m_dsBindingMap.setDsBindings(bindings);
                     dissID = APIM.addDisseminator(m_diss.parentPID, m_diss.bDefID,
                             m_diss.bMechID, m_diss.dissLabel, m_diss.bDefLabel,
-                            m_diss.bMechLabel, m_dsBindingMap, m_diss.dissState);
+                            m_diss.bMechLabel, m_dsBindingMap, m_diss.dissState,
+                            DEFAULT_LOGMESSAGE);
                     if (dissID!=null) {
                         succeededCount++;
                         logSucceededDirective(m_diss.parentPID, localName,
@@ -1186,7 +1234,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                     APIM.modifyDisseminator(m_diss.parentPID, m_diss.dissID,
                             m_diss.bMechID, m_diss.dissLabel, m_diss.bDefLabel,
                             m_diss.bMechLabel, m_dsBindingMap,
-                            "ModifyDisseminator", m_diss.dissState);
+                            m_diss.dissState, "ModifyDisseminator", DEFAULT_FORCE);
                     succeededCount++;
                     logSucceededDirective(m_diss.parentPID, localName,
                         "disseminatorID: " + m_diss.dissID + " Modified.");
@@ -1209,7 +1257,7 @@ REMOVE THIS BLOCK : This uses the old signature of addDatastream
                 if (purgeDisseminator) {
                     String[] versionsPurged = null;
                     versionsPurged = APIM.purgeDisseminator(m_diss.parentPID,
-                        m_diss.dissID, m_diss.asOfDate);
+                        m_diss.dissID, m_diss.asOfDate, DEFAULT_LOGMESSAGE);
                     if (versionsPurged.length > 0) {
                         succeededCount++;
                         if (m_diss.asOfDate!= null) {

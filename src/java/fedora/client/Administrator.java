@@ -89,6 +89,7 @@ public class Administrator extends JFrame {
     public static Color INACTIVE_COLOR=new Color(210, 210, 180);
     public static Color DELETED_COLOR=new Color(210, 180, 180);
     public static Color DEFAULT_COLOR=new Color(185, 185, 185);
+    public static Color DESKTOP_COLOR=new Color(46, 97, 116); // from website
     public static Color BACKGROUND_COLOR;
 
     public static FedoraAPIA APIA=null;
@@ -161,7 +162,7 @@ public class Administrator extends JFrame {
         JPanel mainPanel=new JPanel();
         mainPanel.setLayout(new BorderLayout());
         s_desktop=new MDIDesktopPane();
-        //s_desktop.setBackground(ACTIVE_COLOR);
+        s_desktop.setBackground(DESKTOP_COLOR);
         s_desktop.setVisible(true);
         mainPanel.add(new JScrollPane(s_desktop), BorderLayout.CENTER);
         PROGRESS=new JProgressBar(0, 2000);

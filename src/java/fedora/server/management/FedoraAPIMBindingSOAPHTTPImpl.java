@@ -72,8 +72,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     private static Management s_management;
 
-    private static ILowlevelStorage s_st;
-
     /** Before fulfilling any requests, make sure we have a server instance. */
     static {
         try {
@@ -88,7 +86,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 s_initialized=true;
                 s_management=(Management) s_server.getModule("fedora.server.management.Management");
             }
-            s_st=FileSystemLowlevelStorage.getObjectStore();  // FIXME: Move this
         } catch (InitializationException ie) {
             System.err.println(ie.getMessage());
             s_initialized=false;
@@ -273,92 +270,154 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public String purgeObject(String PID, String logMessage) throws java.rmi.RemoteException {
+    public String purgeObject(String PID, 
+                              String logMessage,
+                              boolean force) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
-                    s_management.purgeObject(getContext(), PID, logMessage));
+                    s_management.purgeObject(getContext(), 
+                                             PID, 
+                                             logMessage,
+                                             force));
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
         }
     }
 
-    public String addDatastream(String PID,
-                                   String dsID,
-                                   String label,
-                                   boolean versionable,
-                                   String MIMEType,
-                                   String formatURI,
-                                   String location,
-                                   String controlGroup,
-                                   String dsState) throws RemoteException {
+    public String addDatastream(String pid,
+                                String dsID,
+                                String[] altIds,
+                                String label,
+                                boolean versionable,
+                                String MIMEType,
+                                String formatURI,
+                                String location,
+                                String controlGroup,
+                                String dsState,
+                                String logMessage) throws RemoteException {
         assertInitialized();
         try {
             return s_management.addDatastream(getContext(), 
-                                                 PID, 
+                                                 pid, 
                                                  dsID,
+                                                 altIds,
                                                  label, 
                                                  versionable,
                                                  MIMEType,
                                                  formatURI,
                                                  location,
                                                  controlGroup,
-                                                 dsState);
+                                                 dsState,
+                                                 logMessage);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
         }
     }
 
-    public String modifyDatastreamByReference(String PID, String datastreamID,
-            String dsLabel, String logMessage, String dsLocation, String dsState)
+    public String modifyDatastreamByReference(String PID, 
+                                              String datastreamID,
+                                              String[] altIDs,
+                                              String dsLabel, 
+                                              boolean versionable,
+                                              String mimeType,
+                                              String formatURI,
+                                              String dsLocation, 
+                                              String dsState,
+                                              String logMessage, 
+                                              boolean force)
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
-                    s_management.modifyDatastreamByReference(getContext(), PID,
-                    datastreamID, dsLabel, logMessage, dsLocation, dsState));
+                    s_management.modifyDatastreamByReference(
+                            getContext(), 
+                            PID,
+                            datastreamID, 
+                            altIDs,
+                            dsLabel, 
+                            versionable,
+                            mimeType,
+                            formatURI,
+                            dsLocation, 
+                            dsState,
+                            logMessage, 
+                            force));
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
         }
     }
 
-    public String modifyDatastreamByValue(String PID, String datastreamID, String dsLabel, String logMessage, byte[] dsContent, String dsState) throws java.rmi.RemoteException {
+    public String modifyDatastreamByValue(String PID, 
+                                          String datastreamID, 
+                                          String[] altIDs,
+                                          String dsLabel, 
+                                          boolean versionable,
+                                          String mimeType,
+                                          String formatURI,
+                                          byte[] dsContent, 
+                                          String dsState,
+                                          String logMessage, 
+                                          boolean force) 
+                throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            ByteArrayInputStream byteStream=null;
+            ByteArrayInputStream byteStream = null;
             if (dsContent!=null && dsContent.length>0) {
-                byteStream=new ByteArrayInputStream(dsContent);
+                byteStream = new ByteArrayInputStream(dsContent);
             }
             return DateUtility.convertDateToString(
-                    s_management.modifyDatastreamByValue(getContext(), PID,
-                    datastreamID, dsLabel, logMessage, byteStream, dsState));
+                    s_management.modifyDatastreamByValue(getContext(), 
+                                                         PID,
+                                                         datastreamID, 
+                                                         altIDs,
+                                                         dsLabel, 
+                                                         versionable,
+                                                         mimeType,
+                                                         formatURI,
+                                                         byteStream, 
+                                                         dsState,
+                                                         logMessage, 
+                                                         force));
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
         }
     }
 
-    public String setDatastreamState(String PID, String datastreamID, String dsState, String logMessage) throws java.rmi.RemoteException {
+    public String setDatastreamState(String PID, 
+                                     String datastreamID, 
+                                     String dsState, 
+                                     String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
-                    s_management.setDatastreamState(getContext(), PID,
-                    datastreamID, dsState, logMessage));
+                    s_management.setDatastreamState(getContext(), 
+                                                    PID,
+                                                    datastreamID, 
+                                                    dsState, 
+                                                    logMessage));
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
         }
     }
 
-    public String setDisseminatorState(String PID, String disseminatorID, String dissState, String logMessage) throws java.rmi.RemoteException {
+    public String setDisseminatorState(String PID, 
+                                       String disseminatorID, 
+                                       String dissState, 
+                                       String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
-                    s_management.setDisseminatorState(getContext(), PID,
-                    disseminatorID, dissState, logMessage));
+                    s_management.setDisseminatorState(getContext(), 
+                                                      PID,
+                                                      disseminatorID, 
+                                                      dissState, 
+                                                      logMessage));
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -367,7 +426,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public String[] purgeDatastream(String PID, 
                                     String datastreamID, 
-                                    String endDT) 
+                                    String endDT,
+                                    String logMessage,
+                                    boolean force) 
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
@@ -376,7 +437,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             getContext(), 
                             PID, 
                             datastreamID,
-                            DateUtility.convertStringToDate(endDT)));
+                            DateUtility.convertStringToDate(endDT),
+                            logMessage,
+                            force));
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -475,11 +538,29 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-	public String addDisseminator(String PID, String bDefPID, String bMechPID, String dissLabel, String bDefLabel, String bMechLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap, String dissState) throws java.rmi.RemoteException {
+	public String addDisseminator(String PID, 
+	                              String bDefPID, 
+	                              String bMechPID, 
+	                              String dissLabel, 
+	                              String bDefLabel, 
+	                              String bMechLabel, 
+	                              fedora.server.types.gen.DatastreamBindingMap bindingMap, 
+	                              String dissState,
+	                              String logMessage) 
+            throws java.rmi.RemoteException {
 		assertInitialized();
 		try {
-			return s_management.addDisseminator(getContext(), PID, bDefPID, bMechPID, dissLabel, bDefLabel, bMechLabel,
-					TypeUtility.convertGenDatastreamBindingMapToDSBindingMap(bindingMap), dissState);
+			return s_management.addDisseminator(
+			        getContext(), 
+		            PID, 
+	                bDefPID, 
+                    bMechPID, 
+                    dissLabel, 
+                    bDefLabel, 
+                    bMechLabel,
+                    TypeUtility.convertGenDatastreamBindingMapToDSBindingMap(bindingMap), 
+                    dissState,
+                    logMessage);
 		} catch (ServerException se) {
 			logStackTrace(se);
 			throw AxisUtility.getFault(se);
@@ -488,7 +569,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public String[] purgeDisseminator(String PID,
                                       String disseminatorID, 
-                                      String endDT)
+                                      String endDT,
+                                      String logMessage)
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
@@ -497,7 +579,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             getContext(), 
                             PID, 
                             disseminatorID, 
-                            DateUtility.convertStringToDate(endDT)));
+                            DateUtility.convertStringToDate(endDT),
+                            logMessage));
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -567,14 +650,32 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public String modifyDisseminator(String PID, String disseminatorID, String bMechPID, String dissLabel, String bDefLabel, String bMechLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap, String logMessage, String dissState) throws java.rmi.RemoteException {
+    public String modifyDisseminator(String PID, 
+                                     String disseminatorID, 
+                                     String bMechPID, 
+                                     String dissLabel, 
+                                     String bDefLabel, 
+                                     String bMechLabel, 
+                                     fedora.server.types.gen.DatastreamBindingMap bindingMap, 
+                                     String dissState,
+                                     String logMessage,
+                                     boolean force)
+            throws java.rmi.RemoteException {
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
-                    s_management.modifyDisseminator(getContext(), PID,
-                    disseminatorID, bMechPID, dissLabel, bDefLabel, bMechLabel,
-                    TypeUtility.convertGenDatastreamBindingMapToDSBindingMap(bindingMap),
-                    logMessage, dissState));
+                    s_management.modifyDisseminator(
+                            getContext(), 
+                            PID,
+                            disseminatorID, 
+                            bMechPID, 
+                            dissLabel, 
+                            bDefLabel, 
+                            bMechLabel,
+                            TypeUtility.convertGenDatastreamBindingMapToDSBindingMap(bindingMap),
+                            dissState,
+                            logMessage,
+                            force));
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);

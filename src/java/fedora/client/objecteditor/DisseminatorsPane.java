@@ -403,7 +403,8 @@ public class DisseminatorsPane
                                                                    m_bDefLabel,
                                                                    bMechLabel,
                                                                    bindingMap,
-                                                                   state);
+                                                                   state,
+                                                                   "DisseminatorsPane generated this logMessage.");
                         addDisseminatorTab(newID);
                     } catch (Exception e) {
                         e.printStackTrace();

@@ -66,39 +66,54 @@ public interface Management {
 
     public Date purgeObject(Context context, 
                             String pid, 
-                            String logMessage) throws ServerException;
+                            String logMessage,
+                            boolean force) throws ServerException;
 
     public String addDatastream(Context context,
                                    String pid,
                                    String dsID,
+                                   String[] altIDs,
                                    String dsLabel,
                                    boolean versionable,
                                    String MIMEType,
                                    String formatURI,
                                    String location,
                                    String controlGroup,
-                                   String dsState) throws ServerException;
+                                   String dsState,
+                                   String logMessage) throws ServerException;
 
     public Date modifyDatastreamByReference(Context context, 
                                             String pid, 
                                             String datastreamID, 
+                                            String[] altIDs,
                                             String dsLabel, 
-                                            String logMessage, 
+                                            boolean versionable,
+                                            String mimeType,
+                                            String formatURI,
                                             String dsLocation, 
-                                            String dsState) throws ServerException;
+                                            String dsState,
+                                            String logMessage, 
+                                            boolean force) throws ServerException;
 
     public Date modifyDatastreamByValue(Context context, 
                                         String pid, 
                                         String datastreamID, 
+                                        String[] altIDs,
                                         String dsLabel, 
-                                        String logMessage, 
+                                        boolean versionable,
+                                        String mimeType,
+                                        String formatURI,
                                         InputStream dsContent, 
-                                        String dsState) throws ServerException;
+                                        String dsState,
+                                        String logMessage,
+                                        boolean force) throws ServerException;
 
     public Date[] purgeDatastream(Context context, 
                                   String pid, 
                                   String datastreamID, 
-                                  Date endDT) throws ServerException;
+                                  Date endDT,
+                                  String logMessage,
+                                  boolean force) throws ServerException;
 
     public Datastream getDatastream(Context context, 
                                     String pid, 
@@ -122,7 +137,8 @@ public interface Management {
 								  String bDefLabel,
 								  String bMechLabel,
 								  DSBindingMap bindingMap,
-								  String dissState) throws ServerException;
+								  String dissState,
+								  String logMessage) throws ServerException;
 
     public Date modifyDisseminator(Context context, 
                                    String pid, 
@@ -132,13 +148,15 @@ public interface Management {
                                    String bDefLabel, 
                                    String bMechLabel, 
                                    DSBindingMap bindingMap, 
-                                   String logMessage, 
-                                   String dissState) throws ServerException;
+                                   String dissState,
+                                   String logMessage,
+                                   boolean force) throws ServerException;
 
     public Date[] purgeDisseminator(Context context, 
                                     String pid, 
                                     String disseminatorID, 
-                                    Date endDT) throws ServerException;
+                                    Date endDT,
+                                    String logMessage) throws ServerException;
 
     public Disseminator getDisseminator(Context context, 
                                         String pid, 

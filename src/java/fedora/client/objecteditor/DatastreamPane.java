@@ -125,7 +125,7 @@ public class DatastreamPane
                             );
                     controlGroupValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     controlGroupValueLabel.setEditable(false);
-                    JTextArea infoTypeValueLabel=new JTextArea(mostRecent.getInfoType());
+                    JTextArea infoTypeValueLabel=new JTextArea("DEFAULT_REMOVEME");
                     infoTypeValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     infoTypeValueLabel.setEditable(false);
                     JComponent[] leftCommonValues=new JComponent[] {m_stateComboBox, mimeTypeValueLabel, controlGroupValueLabel, infoTypeValueLabel};
@@ -653,8 +653,17 @@ public class DatastreamPane
 				StreamUtility.pipeStream(in, out, 4096);
 				content=out.toByteArray();
 			}
-		    Administrator.APIM.modifyDatastreamByValue(m_pid, m_ds.getID(), 
-		            label, logMessage, content, state);
+		    Administrator.APIM.modifyDatastreamByValue(m_pid, 
+		                                               m_ds.getID(), 
+                                                       new String[0], // DEFAULT_ALTIDS
+		                                               label, 
+                                                       true, // DEFAULT_VERSIONABLE
+                                                       null, // DEFAULT_MIMETYPE
+                                                       null, // DEFAULT_FORMATURI
+		                                               content, 
+		                                               state,
+		                                               logMessage, 
+                                                       false); // DEFAULT_FORCE
 		} else if (M) {
             String loc=null; // if not set, server will not change content
             if (m_importFile!=null) {
@@ -665,12 +674,30 @@ public class DatastreamPane
                 // use its content
                 loc=Administrator.UPLOADER.upload(m_editor.getContent());
             }
-            Administrator.APIM.modifyDatastreamByReference(m_pid, m_ds.getID(),
-                    label, logMessage, loc, state);
+            Administrator.APIM.modifyDatastreamByReference(m_pid, 
+                                                           m_ds.getID(),
+                                                           new String[0], // DEFAULT_ALTIDS
+                                                           label, 
+                                                           true, // DEFAULT_VERSIONABLE
+                                                           null, // DEFAULT_MIMETYPE
+                                                           null, // DEFAULT_FORMATURI
+                                                           loc, 
+                                                           state,
+                                                           logMessage, 
+                                                           false); // DEFAULT_FORCE
         } else {
 		    // external ref or redirect
-            Administrator.APIM.modifyDatastreamByReference(m_pid, m_ds.getID(),
-                    label, logMessage, m_locationTextField.getText(), state);
+            Administrator.APIM.modifyDatastreamByReference(m_pid, 
+                                                           m_ds.getID(),
+                                                           new String[0], // DEFAULT_ALTIDS
+                                                           label, 
+                                                           true, // DEFAULT_VERSIONABLE
+                                                           null, // DEFAULT_MIMETYPE
+                                                           null, // DEFAULT_FORMATURI
+                                                           m_locationTextField.getText(), 
+                                                           state,
+                                                           logMessage, 
+                                                           false); // DEFAULT_FORCE
 		}
     }
         public boolean isDirty() {
@@ -890,7 +917,9 @@ public class DatastreamPane
                     try {
                         Administrator.APIM.purgeDatastream(m_pid, 
                                 m_versions[sIndex].getID(),
-                                m_versions[sIndex].getCreateDate());
+                                m_versions[sIndex].getCreateDate(),
+                                "DatastreamPane generated this logMessage.", // DEFAULT_LOGMESSAGE
+                                false); // DEFAULT_FORCE_PURGE
                         if (removeAll) {
                             m_owner.remove(m_versions[0].getID());
                             m_done=true;

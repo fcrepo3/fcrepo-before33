@@ -95,7 +95,7 @@ public class PurgeObject
                 String reason=JOptionPane.showInputDialog("Why are you permanently removing " + pid + "?");
                 if (reason!=null) {
                     try {
-                        purger.purge(pid, reason);
+                        purger.purge(pid, reason, false); // DEFAULT_FORCE_PURGE
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
                                 StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null),
@@ -117,7 +117,7 @@ public class PurgeObject
                     while (pidIter.hasNext()) {
                         try {
                             String pid=(String) pidIter.next();
-                            purger.purge(pid, reason);
+                            purger.purge(pid, reason, false); // DEFAULT_FORCE_PURGE
                         } catch (Exception e) {
                             JOptionPane.showMessageDialog(Administrator.getDesktop(),
                                     StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null),
