@@ -25,6 +25,7 @@ import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
 import java.awt.*;
 import java.awt.event.*;
@@ -34,6 +35,8 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.Vector;
 import java.util.StringTokenizer;
+import java.util.Iterator;
+import java.util.HashMap;
 
 import fedora.client.bmech.data.*;
 
@@ -75,6 +78,7 @@ public class MethodPropertiesDialog extends JDialog
     private JTextField rb_httpRelative_URL;
     private JRadioButton rb_soap;
     private JTextField returnMIMES;
+    private JButton helpURL;
 
     // The data structure that is populated by this dialog.
     private MethodProperties mp;
@@ -135,7 +139,7 @@ public class MethodPropertiesDialog extends JDialog
         this.methodName = methodName;
 
         setTitle("Method Properties for: " + methodName);
-        setSize(800, 400);
+        setSize(850, 400);
         setModal(true);
         getContentPane().setLayout(new BorderLayout());
 
@@ -197,13 +201,19 @@ public class MethodPropertiesDialog extends JDialog
     {
         // Method Binding Panel
         // http full URL
-        rb_http = new JRadioButton("HTTP URL: ", false);
+        rb_http = new JRadioButton("Fedora LOCAL HTTP Resolver: (just encode datastream parm)", false);
         rb_http.setActionCommand("http");
         rb_http_URL = new JTextField(30);
         rb_http_URL.setToolTipText("Enter the full URL for the service method." +
-          "The URL should use the replacement syntax described in Help.");
+          " The URL should use the replacement syntax described in the Help button.");
+        helpURL = new JButton("Help");
+        helpURL.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            showURLHelp();
+          }
+        } );
         // http relative URL
-        String rLabel = "HTTP URL (relative):     " + baseURL;
+        String rLabel = "HTTP URL (relative):       " + baseURL;
         rb_httpRelative = new JRadioButton(rLabel, false);
         rb_httpRelative.setActionCommand("httprel");
         // soap checkbox
@@ -240,6 +250,8 @@ public class MethodPropertiesDialog extends JDialog
         }
         gbc.gridx = 1;
         bindingPanel.add(rb_http_URL, gbc);
+        gbc.gridx = 2;
+        bindingPanel.add(helpURL, gbc);
         gbc.insets = new Insets(2,2,15,2);
         gbc.gridy = 1;
         gbc.gridx = 0;
@@ -291,14 +303,14 @@ public class MethodPropertiesDialog extends JDialog
         TableColumn tc5 = parmTable.getColumnModel().getColumn(5);
         tc5.setHeaderValue("Description");
         TableColumn tc6 = parmTable.getColumnModel().getColumn(6);
-        tc6.setHeaderValue("Valid Values");
+        tc6.setHeaderValue("Valid Values (a,b)");
 
         JScrollPane scrollpane = new JScrollPane(parmTable);
         scrollpane.setColumnHeaderView(parmTable.getTableHeader());
         scrollpane.getViewport().setBackground(Color.white);
 
         // Table Buttons Panel
-        JButton jb1 = new JButton("Add");
+        JButton jb1 = new JButton("AddRow");
         jb1.setMinimumSize(new Dimension(100,30));
         jb1.setMaximumSize(new Dimension(100,30));
         jb1.addActionListener(new ActionListener() {
@@ -370,6 +382,53 @@ public class MethodPropertiesDialog extends JDialog
       return;
     }
 
+    private void showURLHelp()
+    {
+        JTextArea helptxt = new JTextArea();
+        helptxt.setLineWrap(true);
+        helptxt.setWrapStyleWord(true);
+        helptxt.setBounds(0,0,550,20);
+        helptxt.append("The HTTP method binding URL must represent the exact"
+          + " URL syntax necessary to run the method on the target service. "
+          + " Fedora uses the URL replacement syntax defined in the WSDL 1.1"
+          + " specification (see http://www.w3.org/TR/wsdl) to encode "
+          + " placeholders in the URL for parameter values.\n\n");
+        helptxt.append("A placeholder is"
+          + " created by putting the Fedora-specific parameter name"
+          + " (defined in table below) inside parentheses, and inserting this"
+          + " within the URL at the spot where a parameter value should be. "
+          + " At runtime, Fedora will insert actual values in the URL where"
+          + " the placeholders exist.  The values will either be obtained from a user"
+          + " or acquired by the system.  In the case of Datastream inputs to"
+          + " a method at runtime, Fedora determined which datastream in an"
+          + " object is tagged with the Fedora-specific parameter name,"
+          + " and will insert a value (i.e., the Fedora callback URL for the"
+          + " datastream) into the parameter value.\n\n");
+        helptxt.append("Use the following syntax to encode your parameters"
+          + " within the method binding URL:\n\n");
+        helptxt.append("http://myserver.com/myservice/mymethod?myparm1=(parmname1)&myparm2=(parmname2)\n\n");
+        helptxt.append("For example:\n");
+        helptxt.append("http://localhost:8080/imgsizer/resize_image?image=(IMGDATASTREAM)&size=(USERSIZE)\n\n");
+        helptxt.append("SPECIAL CASE:\n");
+        helptxt.append("When the option to use Fedora LOCAL HTTP Resolver"
+          + " is selected, you do not need to enter a URL.  This option"
+          + " means that there is no independent service being called to"
+          + " run the method, instead, Fedora will just resolve a URL for"
+          + " a datastream that is bound to the method.  In this case, all"
+          + " that is required is that a parameter representing a datastream"
+          + " be entered in parentheses.  The same parameter should be entered"
+          + " in the method parameters table.\n\n");
+        helptxt.append("Use the following syntax to encode your parameter"
+          + " within the method binding URL box:\n\n");
+        helptxt.append("(parmname1)\n\n");
+        helptxt.append("For example:\n");
+        helptxt.append("(HIGHRESIMAGE)\n\n");
+
+        JOptionPane.showMessageDialog(
+          this, helptxt, "Help for Method Binding URL",
+          JOptionPane.OK_OPTION);
+    }
+
     private void saveProperties()
     {
       setMethodProperties();
@@ -399,11 +458,69 @@ public class MethodPropertiesDialog extends JDialog
         String pattern = "\\(" + parms[i].parmName  + "\\)";
         if (!(foundInString(http_URL, pattern)))
         {
-          System.out.println("str: " + pattern + " not found in: " + http_URL);
+          if (parms[i].parmName.equalsIgnoreCase("NULLBIND"))
+          {
+            continue;
+          }
+          System.out.println("The parm named " + parms[i].parmName
+            + " is not found in the HTTP method binding URL: " + http_URL);
           return false;
         }
       }
-      System.out.println("All parms found within URL: " + http_URL);
+      System.out.println("All parms found within the"
+        + " HTTP method bindingURL: " + http_URL);
+      return true;
+    }
+
+    private boolean parmsFromURLMissing(String http_URL, MethodParm[] parms)
+    {
+      // set up
+      Vector firstPassTokens = new Vector();
+      Vector parmsInURL = new Vector();
+      Vector tableParms = new Vector();
+      for (int i=0; i<parms.length; i++)
+      {
+        tableParms.add(parms[i].parmName);
+        System.out.println("Parm name in table: " + parms[i].parmName);
+      }
+      // find the encoded parm names in the HTTP binding URL
+      StringTokenizer st1 = new StringTokenizer(http_URL, "(");
+      while (st1.hasMoreTokens())
+      {
+        String fpt = st1.nextToken();
+        System.out.println("First pass token " + fpt);
+        firstPassTokens.add(fpt);
+      }
+      Iterator it = firstPassTokens.iterator();
+      while (it.hasNext())
+      {
+        String token = (String)it.next();
+        // if the token contains a ")" do further tokenization.
+        // take just what's before the ")" and disgard the rest.
+        Pattern pattern = Pattern.compile("\\)");
+        Matcher m = pattern.matcher(token);
+        if (m.find())
+        {
+          StringTokenizer st2 = new StringTokenizer(token, ")");
+          while (st2.hasMoreTokens())
+          {
+              String s = st2.nextToken();
+              parmsInURL.add(s);
+              System.out.println("parm parsed out of HTTP method binding URL: " + s);
+              break;
+          }
+        }
+      }
+      // check if the parms in the URL are found in the parm table
+      Iterator allParmsInURL = parmsInURL.iterator();
+      while (allParmsInURL.hasNext())
+      {
+        String parmInURL = (String)allParmsInURL.next();
+        if (!(tableParms.contains(parmInURL)))
+        {
+          return false;
+        }
+      }
       return true;
     }
 
@@ -459,6 +576,14 @@ public class MethodPropertiesDialog extends JDialog
               + "encoded in the HTTP URL. See Help for URL replacement syntax.");
             return false;
           }
+          else if (!(this.parmsFromURLMissing(mp.methodFullURL, mp.methodParms)))
+          {
+            assertMethodPropertiesMsg("The HTTP method binding URL has a parm"
+              + " encoded within it that is not listed in the method parm table."
+              + " See Help for URL replacement syntax.");
+            return false;
+          }
+
         }
         else if (mp.protocolType.equalsIgnoreCase(mp.SOAP_MESSAGE_PROTOCOL))
         {
@@ -589,7 +714,8 @@ public class MethodPropertiesDialog extends JDialog
           String values;
           if ((values = (String)parmTable.getValueAt(i,6)) != null)
           {
-            StringTokenizer st = new StringTokenizer(values, ",");
+            String normalizedString = normalizeString(values);
+            StringTokenizer st = new StringTokenizer(normalizedString, ",");
             //System.out.println("count domain parms = " + st.countTokens());
             while (st.hasMoreElements())
             {
@@ -606,12 +732,26 @@ public class MethodPropertiesDialog extends JDialog
     private String[] unloadReturnTypes()
     {
       Vector mimeTypes = new Vector();
-      StringTokenizer st = new StringTokenizer(returnMIMES.getText(), ",");
+      String normalizedString = normalizeString(returnMIMES.getText());
+      StringTokenizer st = new StringTokenizer(normalizedString, ",");
       while (st.hasMoreElements())
       {
         mimeTypes.add(((String)st.nextElement()).trim());
       }
       return (String[])mimeTypes.toArray(new String[0]);
+    }
+
+    private String normalizeString(String values)
+    {
+      // make sure values are comma delimited
+      String original = values.trim();
+      Pattern spaces = Pattern.compile(" ++");
+      Matcher m = spaces.matcher(original);
+      String interim = m.replaceAll(",");
+      Pattern multcommas = Pattern.compile(",++");
+      Matcher m2 = multcommas.matcher(interim);
+      String normal = m2.replaceAll(",");
+      return normal;
     }
 
     private void renderCurrentProperties(MethodProperties properties)

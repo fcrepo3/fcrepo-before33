@@ -88,7 +88,7 @@ public class MethodsPane extends JPanel {
         rb_baseURL.setActionCommand("baseURL");
         rb_baseURL.addActionListener(rb_listen);
         rb_chosen = "baseURL";
-        rb_noBaseURL = new JRadioButton("No Base URL (Fedora Multi-server mechanism)", false);
+        rb_noBaseURL = new JRadioButton("No Base URL (Fedora LOCAL HTTP Resolver)", false);
         rb_noBaseURL.setActionCommand("noBaseURL");
         rb_noBaseURL.addActionListener(rb_listen);
         rb_buttonGroup.add(rb_baseURL);
@@ -200,6 +200,15 @@ public class MethodsPane extends JPanel {
       public void actionPerformed(ActionEvent e)
       {
         rb_chosen = rb_buttonGroup.getSelection().getActionCommand();
+        if (rb_chosen.equalsIgnoreCase("baseURL"))
+        {
+          baseURL.setEnabled(true);
+        }
+        else if (rb_chosen.equalsIgnoreCase("noBaseURL"))
+        {
+          baseURL.setEnabled(false);
+          baseURL.setText("");
+        }
       }
     }
 

@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
+import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -63,7 +64,8 @@ public class BMechBuilder extends JInternalFrame
     private String s_user = null;
     private String s_pass = null;
     private File s_lastDir = null;
-
+    private String currentTabName;
+    private int currentTabIndex;
 
     public static void main(String[] args)
     {
@@ -106,12 +108,12 @@ public class BMechBuilder extends JInternalFrame
         // set up listener for JTabbedPane object
         tabpane.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                int index = tabpane.getSelectedIndex();
-                String title = tabpane.getTitleAt(index);
-                //System.out.println("index = " + index);
-                //System.out.println("title = " + title);
+                currentTabIndex = tabpane.getSelectedIndex();
+                currentTabName = tabpane.getTitleAt(currentTabIndex);
+                //System.out.println("index = " + currentTabIndex);
+                //System.out.println("tabname = " + currentTabName);
 
-                if (index == 2)
+                if (currentTabIndex == 2)
                 {
                   DatastreamInputPane dsip =
                     (DatastreamInputPane)tabpane.getComponentAt(2);
@@ -235,7 +237,26 @@ public class BMechBuilder extends JInternalFrame
 
     public void showHelp()
     {
-      return;
+      if (currentTabIndex == 0)
+      {
+        showGeneralHelp();
+      }
+      else if (currentTabIndex == 1)
+      {
+        showMethodsHelp();
+      }
+      else if (currentTabIndex == 2)
+      {
+        showDatastreamsHelp();
+      }
+      else if (currentTabIndex == 3)
+      {
+        showDocumentsHelp();
+      }
+      else if (currentTabIndex == 4)
+      {
+        showProfileHelp();
+      }
     }
 
     public void cancelBMech()
@@ -281,14 +302,21 @@ public class BMechBuilder extends JInternalFrame
           {
             MethodsPane mp = (MethodsPane)tabs[i];
             newBMech.setHasBaseURL(mp.hasBaseURL());
-            String baseURL = mp.getBaseURL();
-            if (baseURL.endsWith("/"))
+            if (mp.hasBaseURL())
             {
-              newBMech.setServiceBaseURL(baseURL);
+              String baseURL = mp.getBaseURL();
+              if (baseURL.endsWith("/"))
+              {
+                newBMech.setServiceBaseURL(baseURL);
+              }
+              else
+              {
+                newBMech.setServiceBaseURL(baseURL + "/");
+              }
             }
             else
             {
-              newBMech.setServiceBaseURL(baseURL + "/");
+              newBMech.setServiceBaseURL("LOCAL");
             }
             newBMech.setMethodsHashMap(mp.getMethodMap());
             newBMech.setMethods(mp.getMethods());
@@ -617,6 +645,80 @@ public class BMechBuilder extends JInternalFrame
         }
       }
       return true;
+    }
+
+    private void showGeneralHelp()
+    {
+        JTextArea helptxt = new JTextArea();
+        helptxt.setLineWrap(true);
+        helptxt.setWrapStyleWord(true);
+        helptxt.setBounds(0,0,550,20);
+        helptxt.append("insert general help\n\n");
+        helptxt.append("\n\n");
+        helptxt.append("\n\n");
+
+        JOptionPane.showMessageDialog(
+          this, helptxt, "Help for General Tab",
+          JOptionPane.OK_OPTION);
+    }
+
+    private void showMethodsHelp()
+    {
+        JTextArea helptxt = new JTextArea();
+        helptxt.setLineWrap(true);
+        helptxt.setWrapStyleWord(true);
+        helptxt.setBounds(0,0,550,20);
+        helptxt.append("insert methods help\n\n");
+        helptxt.append("\n\n");
+        helptxt.append("\n\n");
+
+        JOptionPane.showMessageDialog(
+          this, helptxt, "Help for Service Methods Tab",
+          JOptionPane.OK_OPTION);
+    }
+
+    private void showDatastreamsHelp()
+    {
+        JTextArea helptxt = new JTextArea();
+        helptxt.setLineWrap(true);
+        helptxt.setWrapStyleWord(true);
+        helptxt.setBounds(0,0,550,20);
+        helptxt.append("insert datastream Input help\n\n");
+        helptxt.append("\n\n");
+        helptxt.append("\n\n");
+
+        JOptionPane.showMessageDialog(
+          this, helptxt, "Help for Datastream Input Tab",
+          JOptionPane.OK_OPTION);
+    }
+
+    private void showDocumentsHelp()
+    {
+        JTextArea helptxt = new JTextArea();
+        helptxt.setLineWrap(true);
+        helptxt.setWrapStyleWord(true);
+        helptxt.setBounds(0,0,550,20);
+        helptxt.append("insert documents help\n\n");
+        helptxt.append("\n\n");
+        helptxt.append("\n\n");
+
+        JOptionPane.showMessageDialog(
+          this, helptxt, "Help for Documents Tab",
+          JOptionPane.OK_OPTION);
+    }
+
+    private void showProfileHelp()
+    {
+        JTextArea helptxt = new JTextArea();
+        helptxt.setLineWrap(true);
+        helptxt.setWrapStyleWord(true);
+        helptxt.setBounds(0,0,550,20);
+        helptxt.append("The Service Profile data entry form will be available"
+        + " in the next release of Fedora.\n\n");
+
+        JOptionPane.showMessageDialog(
+          this, helptxt, "Help for Service Profile Tab",
+          JOptionPane.OK_OPTION);
     }
 
     private void assertTabPaneMsg(String msg, String tabpane)

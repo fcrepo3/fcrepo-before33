@@ -129,17 +129,23 @@ public class GeneralPane extends JPanel
         descriptionPanel.add(rb_testPID, gbc);
         gbc.gridx = 3;
         descriptionPanel.add(bObjectPID = new JTextField(10), gbc);
+        bObjectPID.setToolTipText("The repository will accept test PIDs"
+          + " with the prefixes 'test:' or 'demo:' (e.g., 'demo:1').");
         bObjectPID.setEnabled(false);
         gbc.gridy = 1;
         gbc.gridx = 0;
-        descriptionPanel.add(new JLabel("Behavior Object Label: "), gbc);
-        gbc.gridx = 1;
-        descriptionPanel.add(bObjectLabel = new JTextField(20), gbc);
-        gbc.gridy = 2;
-        gbc.gridx = 0;
-        descriptionPanel.add(new JLabel("Behavior Object Nickname (1 word): "), gbc);
+        descriptionPanel.add(new JLabel("Behavior Object Name (1 word): "), gbc);
         gbc.gridx = 1;
         descriptionPanel.add(bObjectName = new JTextField(20), gbc);
+        bObjectName.setToolTipText("This one-word name will be used in metadata"
+          + " within the behavior object (e.g., in WSDL as the service name).");
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        descriptionPanel.add(new JLabel("Behavior Object Description: "), gbc);
+        gbc.gridx = 1;
+        descriptionPanel.add(bObjectLabel = new JTextField(20), gbc);
+        bObjectLabel.setToolTipText("This is a free-form textual description of the"
+          + "behavior object.");
         gbc.gridy = 3;
         gbc.gridx = 0;
         descriptionPanel.add(new JLabel(" "), gbc);
