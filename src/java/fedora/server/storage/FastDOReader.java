@@ -795,6 +795,10 @@ public class FastDOReader implements DOReader
     {
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
+      String statePart="";
+      if (state!=null) {
+          statePart="dsBind.dsState = '" + state + "' AND ";
+      }
       String  query =
           "SELECT DISTINCT "
           + "dsBind.dsLabel,"
@@ -808,6 +812,7 @@ public class FastDOReader implements DOReader
           + "do,"
           + "dsBind "
           + "WHERE "
+          + statePart
           + "do.doDbID = dsBind.doDbID AND "
           + "do.doPID=\'" + PID + "\'";
 
@@ -1586,13 +1591,19 @@ public class FastDOReader implements DOReader
     {
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database.
+      String statePart="";
+      if (state!=null) {
+          statePart="dsBind.dsState = '" + state + "' AND ";
+      }
       String  query =
           "SELECT DISTINCT "
-          + "dsBind.dsID "
+          + "dsBind.dsID, "
+          + "dsBind.dsState "
           + "FROM "
           + "do,"
           + "dsBind "
           + "WHERE "
+          + statePart
           + "do.doDbID = dsBind.doDbID AND "
           + "do.doPID=\'" + PID + "\'";
 
@@ -1614,6 +1625,7 @@ public class FastDOReader implements DOReader
           }
           datastream = new Datastream();
           datastream.DatastreamID = results[0];
+          datastream.DSState = results[1];
           queryResults.addElement(datastream);
         }
         datastreamIDs = new String[queryResults.size()];
@@ -1687,14 +1699,20 @@ public class FastDOReader implements DOReader
     {
       // Requested object exists in Fast storage area and is NOT versioned;
       // query relational database
+      String statePart="";
+      if (state!=null) {
+        statePart="dsBind.dsState = '" + state + "' AND ";
+      }
       String  query =
           "SELECT DISTINCT "
-          + "diss.dissID "
+          + "diss.dissID, "
+          + "diss.dissState "
           + "FROM "
           + "diss,"
           + "do,"
           + "doDissAssoc "
           + "WHERE "
+          + statePart
           + "do.doDbID = doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
           + "do.doPID=\'" + PID + "\'";
@@ -1717,6 +1735,7 @@ public class FastDOReader implements DOReader
           }
           disseminator = new Disseminator();
           disseminator.dissID = results[0];
+          disseminator.dissState = results[1];
           queryResults.addElement(disseminator);
         }
         disseminatorIDs = new String[queryResults.size()];
