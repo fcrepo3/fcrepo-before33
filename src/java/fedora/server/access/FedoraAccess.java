@@ -2,6 +2,7 @@ package fedora.server.access;
 
 import java.util.Calendar;
 import java.util.Vector;
+import fedora.server.storage.types.MIMETypedStream;
 
 /**
  * <p>Title: </p>
