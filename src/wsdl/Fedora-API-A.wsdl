@@ -26,13 +26,13 @@
 		<part name="response" type="fedora-types:RepositoryInfo">
 			<documentation>A data structure that contains key metadata
 				describing the Fedora repository server including repository name, 
-				version, base URL, PID namespace, and sample request URLs.
+				version, base URL, pid namespace, and sample request URLs.
 			</documentation>
 		</part>
 	</message>
 	<message name="getObjectProfileRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
@@ -50,8 +50,8 @@
 		</part>
 	</message>
 	<message name="getObjectMethodsRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
@@ -68,11 +68,11 @@
 		</part>
 	</message>
 	<message name="getDisseminationRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="bDefPID" type="xsd:string">
-			<documentation>the PID of the behavior definition.</documentation>
+		<part name="bDefPid" type="xsd:string">
+			<documentation>the pid of the behavior definition.</documentation>
 		</part>
 		<part name="methodName" type="xsd:string">
 			<documentation>the name of the method to invoke.</documentation>
@@ -93,8 +93,8 @@
 		</part>
 	</message>
 	<message name="getBehaviorDefinitionsRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
@@ -105,15 +105,15 @@
 	</message>
 	<message name="getBehaviorDefinitionsResponse">
 		<part name="response" type="fedora-types:ArrayOfString">
-			<documentation>the PIDs of the behavior definitions, in no particular order.</documentation>
+			<documentation>the pids of the behavior definitions, in no particular order.</documentation>
 		</part>
 	</message>
 	<message name="getBehaviorMethodsRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="bDefPID" type="xsd:string">
-			<documentation>the PID of the behavior definition.</documentation>
+		<part name="bDefPid" type="xsd:string">
+			<documentation>the pid of the behavior definition.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
@@ -131,11 +131,11 @@
 		</part>
 	</message>
 	<message name="getBehaviorMethodsXMLRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="bDefPID" type="xsd:string">
-			<documentation>the PID of the behavior definition.</documentation>
+		<part name="bDefPid" type="xsd:string">
+			<documentation>the pid of the behavior definition.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
@@ -181,8 +181,8 @@
 		</part>
 	</message>
 	<message name="getObjectHistoryRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 	</message>	
 	<message name="getObjectHistoryResponse">
@@ -209,7 +209,7 @@
 		<operation name="describeRepository">
 			<documentation>Gets key metadata fields that describe the Fedora 
 				repository server including repository name, version, baseURL,
-				PID namespace, sample request URLs.
+				pid namespace, sample request URLs.
 			</documentation>
 			<input message="fedora-api:describeRepositoryRequest"/>
 			<output message="fedora-api:describeRepositoryResponse"/>
@@ -224,7 +224,7 @@
 			<output message="fedora-api:getObjectProfileResponse"/>
 		</operation>
 		<operation name="getObjectMethods">
-			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition PIDs,
+			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition pids,
 				and methodNames supported by a digital object.  This returns a set of method definitions
 				that represent all possible disseminations that can be run on the object.
 			</documentation>
@@ -248,7 +248,7 @@
 		</operation>
 		<operation name="getBehaviorDefinitions">
 			<documentation>Gets a list of behavior definitions supported by a
-				digital object.  This is a set of PIDs, one for each behavior
+				digital object.  This is a set of pids, one for each behavior
 				definition type associated with the object's disseminator(s).
 			</documentation>
 			<input message="fedora-api:getBehaviorDefinitionsRequest"/>

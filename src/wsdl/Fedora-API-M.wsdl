@@ -38,12 +38,12 @@
 	</message>
 	<message name="ingestObjectResponse">
 		<part name="response" type="xsd:string">
-			<documentation>the PID of the newly created object.</documentation>
+			<documentation>the pid of the newly created object.</documentation>
 		</part>
 	</message>
 	<message name="modifyObjectRequest">
 		<part name="pid" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+			<documentation>the pid of the object.</documentation>
 		</part>
 		<part name="state" type="xsd:string">
 			<documentation>the new state, A, I or D.  Null means leave unchanged.</documentation>
@@ -56,8 +56,8 @@
 		</part>
 	</message>
 	<message name="getObjectXMLRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 	</message>
 	<message name="getObjectXMLResponse">
@@ -66,16 +66,16 @@
 		</part>
 	</message>
 	<message name="exportRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 		<part name="format" type="xsd:string">
 			<documentation>the XML format to export</documentation>
 		</part>
 	</message>
 	<message name="exportObjectRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 	</message>
 	<message name="exportObjectResponse">
@@ -84,8 +84,8 @@
 		</part>
 	</message>
 	<message name="purgeObjectRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 		<part name="logMessage" type="xsd:string">
 			<documentation>an explanation of the purge.</documentation>
@@ -93,8 +93,8 @@
 	</message>
 	<!--
   <message name="getObjectAuditTrailRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
+    <part name="pid" type="xsd:string">
+      <documentation>the pid of the object.</documentation>
     </part>
   </message>
   <message name="getObjectAuditTrailResponse">
@@ -104,16 +104,16 @@
   </message>
   -->
 	<message name="addDatastreamRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="label" type="xsd:string">
+		<part name="dsLabel" type="xsd:string">
 			<documentation>the label for the datastream.</documentation>
 		</part>
 		<part name="MIMEType" type="xsd:string">
 			<documentation>the mime type.</documentation>
 		</part>
-		<part name="location" type="xsd:string">
+		<part name="dsLocation" type="xsd:string">
 			<documentation>the location of the datastream.  The content will be retrieved from this location.</documentation>
 		</part>
 		<part name="controlGroup" type="xsd:string">
@@ -135,14 +135,14 @@
 		</part>
 	</message>
 	<message name="createDatastreamRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 		<part name="dsID" type="xsd:string">
-			<documentation>the ID of the datastream (32 characters max).  
+			<documentation>the ID of the datastream (64 characters max).  
 			If given as null, Fedora will generate an id for you.</documentation>
 		</part>
-		<part name="label" type="xsd:string">
+		<part name="dsLabel" type="xsd:string">
 			<documentation>the label for the datastream.</documentation>
 		</part>
 		<part name="versionable" type="xsd:boolean">
@@ -155,7 +155,7 @@
 		<part name="formatURI" type="xsd:string">
 			<documentation>the format URI (a more granular format identifier than mime type).  Optional.</documentation>
 		</part>
-		<part name="location" type="xsd:string">
+		<part name="dsLocation" type="xsd:string">
 			<documentation>the location of the datastream.  The content will be retrieved from this location.</documentation>
 		</part>
 		<part name="controlGroup" type="xsd:string">
@@ -171,14 +171,14 @@
 		</part>
 	</message>
 	<message name="addDisseminatorRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="bDefPID" type="xsd:string">
-			<documentation>the PID of the behavior definition object.</documentation>
+		<part name="bDefPid" type="xsd:string">
+			<documentation>the pid of the behavior definition object.</documentation>
 		</part>
-		<part name="bMechPID" type="xsd:string">
-			<documentation>the PID of the behavior mechanism object.</documentation>
+		<part name="bMechPid" type="xsd:string">
+			<documentation>the pid of the behavior mechanism object.</documentation>
 		</part>
 		<part name="dissLabel" type="xsd:string">
 			<documentation>the label of the disseminator.</documentation>
@@ -212,10 +212,10 @@
 		</part>
 	</message>
 	<message name="modifyDatastreamByReferenceRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="datastreamID" type="xsd:string">
+		<part name="dsID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
 		<part name="dsLabel" type="xsd:string">
@@ -232,10 +232,10 @@
 		</part>
 	</message>
 	<message name="modifyDatastreamByValueRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="datastreamID" type="xsd:string">
+		<part name="dsID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
 		<part name="dsLabel" type="xsd:string">
@@ -252,14 +252,14 @@
 		</part>
 	</message>
 	<message name="modifyDisseminatorRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="disseminatorID" type="xsd:string">
+		<part name="dissID" type="xsd:string">
 			<documentation>the ID of the disseminator.</documentation>
 		</part>
-		<part name="bMechPID" type="xsd:string">
-			<documentation>the PID of the behavior mechanism object.</documentation>
+		<part name="bMechPid" type="xsd:string">
+			<documentation>the pid of the behavior mechanism object.</documentation>
 		</part>
 		<part name="dissLabel" type="xsd:string">
 			<documentation>the label of the disseminator.</documentation>
@@ -281,10 +281,10 @@
 		</part>
 	</message>
 	<message name="setDatastreamStateRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="datastreamID" type="xsd:string">
+		<part name="dsID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
 		<part name="dsState" type="xsd:string">
@@ -295,10 +295,10 @@
 		</part>
 	</message>
 	<message name="setDisseminatorStateRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="disseminatorID" type="xsd:string">
+		<part name="dissID" type="xsd:string">
 			<documentation>the ID of the disseminator.</documentation>
 		</part>
 		<part name="dissState" type="xsd:string">
@@ -309,10 +309,10 @@
 		</part>
 	</message>
 	<message name="getDatastreamRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="datastreamID" type="xsd:string">
+		<part name="dsID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:string">
@@ -327,15 +327,15 @@
 		</part>
 	</message>
 	<message name="getDatastreamsRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
       object.  If null, the current view of the object (the most recent time) 
       is assumed.</documentation>
 		</part>
-		<part name="state" type="xsd:string">
+		<part name="dsState" type="xsd:string">
 			<documentation>the state of the datastreams to get, null for all states.</documentation>
 		</part>
 	</message>
@@ -345,10 +345,10 @@
 		</part>
 	</message>
 	<message name="getDatastreamHistoryRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="datastreamID" type="xsd:string">
+		<part name="dsID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
 	</message>
@@ -358,10 +358,10 @@
 		</part>
 	</message>
 	<message name="getDisseminatorRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="disseminatorID" type="xsd:string">
+		<part name="dissID" type="xsd:string">
 			<documentation>the ID of the disseminator.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:string">
@@ -374,15 +374,15 @@
 		<part name="response" type="fedora-types:Disseminator"/>
 	</message>
 	<message name="getDisseminatorsRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
 		<part name="asOfDateTime" type="xsd:string">
 			<documentation>the date/time stamp specifying the desired view of the 
 				      object.  If null, the current view of the object (the most recent time) 
 			     	 is assumed.</documentation>
 		</part>
-		<part name="state" type="xsd:string">
+		<part name="dissState" type="xsd:string">
 			<documentation>the state of the disseminatorss to get, null for all states.</documentation>
 		</part>
 	</message>
@@ -392,10 +392,10 @@
 		</part>
 	</message>
 	<message name="getDisseminatorHistoryRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="disseminatorID" type="xsd:string">
+		<part name="dissID" type="xsd:string">
 			<documentation>the ID of the disseminator.</documentation>
 		</part>
 	</message>
@@ -405,10 +405,10 @@
 		</part>
 	</message>
 	<message name="purgeDatastreamRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="datastreamID" type="xsd:string">
+		<part name="dsID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
 		<part name="endDT" type="xsd:string">
@@ -424,10 +424,10 @@
 		</part>
 	</message>
 	<message name="purgeDisseminatorRequest">
-		<part name="PID" type="xsd:string">
-			<documentation>the PID of the object.</documentation>
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
 		</part>
-		<part name="disseminatorID" type="xsd:string">
+		<part name="dissID" type="xsd:string">
 			<documentation>the ID of the disseminator.</documentation>
 		</part>
 		<part name="endDT" type="xsd:string">
@@ -442,16 +442,16 @@
 		</part>
 	</message>
 	<message name="getNextPIDRequest">
-		<part name="numPIDs" type="xsd:nonNegativeInteger">
-			<documentation>the number of PIDs requested.</documentation>
+		<part name="numPids" type="xsd:nonNegativeInteger">
+			<documentation>the number of pids requested.</documentation>
 		</part>
 		<part name="pidNamespace" type="xsd:string">
-			<documentation>the namespace of the requested PID(s).</documentation>
+			<documentation>the namespace of the requested pid(s).</documentation>
 		</part>
 	</message>
 	<message name="getNextPIDResponse">
 		<part name="response" type="fedora-types:ArrayOfString">
-			<documentation>an array of the requested next available PID(s).</documentation>
+			<documentation>an array of the requested next available pid(s).</documentation>
 		</part>
 	</message>
 	<portType name="Fedora-API-M">
@@ -471,13 +471,13 @@
 			<documentation>Creates a new digital object in the repository, given the 
       data in the provided XML document, and a format indentifier for the XML document format.  
       The valid formats are currently: "foxml1.0" and "metslikefedora1".  The object's initial 
-      state will be A (active).   If the XML document does not specify a PID in the 
-      OBJID attribute of the  root element, the repository will generate and return a new PID 
-      for the object resulting from this request.  That PID will have the namespace of 
-      the repository.  If the XML document specifies a PID, it will be assigned 
-      to the digital object provided that 1) it conforms to the Fedora PID 
+      state will be A (active).   If the XML document does not specify a pid in the 
+      OBJID attribute of the  root element, the repository will generate and return a new pid 
+      for the object resulting from this request.  That pid will have the namespace of 
+      the repository.  If the XML document specifies a pid, it will be assigned 
+      to the digital object provided that 1) it conforms to the Fedora pid 
       Syntax, 2) it does not specify the namespace of the repository, and 3) 
-      it does not collide with an existing PID of an object in the repository.
+      it does not collide with an existing pid of an object in the repository.
       </documentation>
 			<input message="fedora-api:ingestRequest"/>
 			<output message="fedora-api:ingestObjectResponse"/>
@@ -486,13 +486,13 @@
 			<documentation>TO BE DEPRECATED IN FEDORA 2.0. Creates a new 
 	digital object in the repository, given the data in the provided XML document, 
 	and a format indentifier for the METS document format.   The object's initial 
-      state will be A (active).   If the XML document does not specify a PID in the 
-      OBJID attribute of the  root element, the repository will generate and return a new PID 
-      for the object resulting from this request.  That PID will have the namespace of 
-      the repository.  If the XML document specifies a PID, it will be assigned 
-      to the digital object provided that 1) it conforms to the Fedora PID 
+      state will be A (active).   If the XML document does not specify a pid in the 
+      OBJID attribute of the  root element, the repository will generate and return a new pid 
+      for the object resulting from this request.  That pid will have the namespace of 
+      the repository.  If the XML document specifies a pid, it will be assigned 
+      to the digital object provided that 1) it conforms to the Fedora pid 
       Syntax, 2) it does not specify the namespace of the repository, and 3) 
-      it does not collide with an existing PID of an object in the repository.
+      it does not collide with an existing pid of an object in the repository.
       </documentation>
 			<input message="fedora-api:ingestObjectRequest"/>
 			<output message="fedora-api:ingestObjectResponse"/>
@@ -623,7 +623,7 @@
 			<output message="fedora-api:purgeDisseminatorResponse"/>
 		</operation>
 		<operation name="getNextPID">
-			<documentation>Retrieves the specified number of next available PID(s) for a given PID namespace.</documentation>
+			<documentation>Retrieves the specified number of next available pid(s) for a given pid namespace.</documentation>
 			<input message="fedora-api:getNextPIDRequest"/>
 			<output message="fedora-api:getNextPIDResponse"/>
 		</operation>
