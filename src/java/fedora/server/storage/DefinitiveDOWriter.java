@@ -26,53 +26,41 @@ import fedora.server.errors.StreamWriteException;
 import fedora.server.errors.ValidationException;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.types.AuditRecord;
-import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.*;
 import fedora.server.utilities.MethodInvokerThread;
 
 /**
- * A <code>DOWriter</code> for working with the definitive copy of a
- * digital object in the reference implementation.
- * <p></p>
- * This implementation stores the entire digital object in a 
- * <code>ILowlevelStorage</code>.
- * <p></p>
- * The serialization and deserialization formats used by instances of this 
- * class are configured by means of the constructor's exportSerializer,
- * importDeserializer, and storageSerializer and storageDeserializer.
- * <pre>
- * method        serializer         deserializer   
- * ---------     -----------        ------------- 
- * set(...)      storageSerializer  importDeserializer 
- * commit(...)   storageSerializer  N/A
- * get(...)      exportSerializer   storageDeserializer
- * </pre>
- * In the case where storageSerializer is the same as exportSerializer
- * (compared via Object.equals()), no translation is done during get(...)
- * because it's not needed.
  * <p></p>
  * @author cwilper@cs.cornell.edu
  */
 public class DefinitiveDOWriter
         implements DOWriter {
 
-    private BasicDigitalObject m_obj;
+    private DigitalObject m_obj;
     private boolean m_pendingRemoval;
     private boolean m_pendingSave;
     private boolean m_pendingCommit;
     private boolean m_removed;
+    private boolean m_invalidated;
     
     private static ObjectIntegrityException ERROR_PENDING_REMOVAL =
-            new ObjectIntegrityException("that can't be done because you said "
+            new ObjectIntegrityException("That can't be done because you said "
                     + "i should remove the object and i assume that's what you "
                     + "want unless you call rollback()");
                     
     private static ObjectIntegrityException ERROR_REMOVED =
-            new ObjectIntegrityException("the handle is no longer valid "
+            new ObjectIntegrityException("The handle is no longer valid "
                     + "because the object has been removed and the change "
                     + "has been committed.");
+    
+    private static ObjectIntegrityException ERROR_INVALIDATED =
+            new ObjectIntegrityException("The handle is no longer valid "
+                    + "because it was explicitly invalidated, probably as "
+                    + "a result of having been release()d to the DOManager.");
     
     private ILowlevelStorage m_storage;
     private StreamValidator m_validator;
@@ -80,6 +68,14 @@ public class DefinitiveDOWriter
     private DOSerializer m_storageSerializer;
     private DODeserializer m_storageDeserializer;
     private DOSerializer m_exportSerializer;
+    
+    
+    private DefaultDOManager m_mgr;
+    
+    public DefinitiveDOWriter(DefaultDOManager mgr, DigitalObject obj) {
+        m_obj=obj;
+        m_mgr=mgr;
+    }
 
     /**
      * Constructs a DOWriter as a handle on an existing digital object.
@@ -179,6 +175,7 @@ public class DefinitiveDOWriter
             throws ObjectIntegrityException, StreamIOException, 
             StreamReadException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         try {
         m_importDeserializer.deserialize(content, m_obj, "UTF-8");
@@ -194,6 +191,7 @@ public class DefinitiveDOWriter
     public void setState(String state) 
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         m_obj.setState(state);
         makeDirty();
@@ -207,6 +205,7 @@ public class DefinitiveDOWriter
     public void setLabel(String label) 
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         m_obj.setLabel(label);
         makeDirty();
@@ -219,6 +218,7 @@ public class DefinitiveDOWriter
     public void remove() 
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         m_pendingRemoval=true;
         makeDirty();
@@ -233,6 +233,7 @@ public class DefinitiveDOWriter
     public String addDatastream(Datastream datastream) 
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         makeDirty();
         return null;
@@ -247,6 +248,7 @@ public class DefinitiveDOWriter
     public String addDisseminator(Disseminator disseminator) 
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         makeDirty();
         return null;
@@ -266,6 +268,7 @@ public class DefinitiveDOWriter
     public void removeDatastream(String id, Date start, Date end) 
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         makeDirty();
     }
@@ -284,6 +287,7 @@ public class DefinitiveDOWriter
     public void removeDisseminator(String id, Date start, Date end)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         makeDirty();
     }
@@ -296,6 +300,7 @@ public class DefinitiveDOWriter
     public void commit(String logMessage)
             throws StorageException {
         assertNotRemoved();
+        assertNotInvalidated();
         if (save()) {
             AuditRecord a=new AuditRecord();
             a.id="REC1024";
@@ -323,6 +328,7 @@ public class DefinitiveDOWriter
     public void rollBack()
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         m_pendingCommit=false;
         m_pendingSave=false; // i think
     }
@@ -330,6 +336,7 @@ public class DefinitiveDOWriter
     public InputStream GetObjectXML()
             throws ObjectIntegrityException, StreamIOException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
         try {
@@ -341,6 +348,7 @@ public class DefinitiveDOWriter
     public String GetObjectState()
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return m_obj.getState();
     }
@@ -348,6 +356,7 @@ public class DefinitiveDOWriter
     public InputStream ExportObject()
             throws ObjectIntegrityException, StreamIOException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return GetObjectXML();
     }
@@ -355,12 +364,14 @@ public class DefinitiveDOWriter
     public String GetObjectPID()
             throws ObjectIntegrityException {
         assertNotRemoved(); // be a little forgiving of pending removal
+        assertNotInvalidated();
         return m_obj.getPid();
     }
 
     public String GetObjectLabel()
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return m_obj.getLabel();
     }
@@ -368,6 +379,7 @@ public class DefinitiveDOWriter
     public String[] ListDatastreamIDs(String state)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         Iterator iter=m_obj.datastreamIdIterator();
         ArrayList al=new ArrayList();
@@ -387,6 +399,7 @@ public class DefinitiveDOWriter
     public Datastream[] GetDatastreams(Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return new Datastream[0]; 
     }
@@ -394,6 +407,7 @@ public class DefinitiveDOWriter
     public Datastream GetDatastream(String datastreamID, Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return new Datastream();
     }
@@ -401,6 +415,7 @@ public class DefinitiveDOWriter
     public Disseminator[] GetDisseminators(Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return new Disseminator[0];
     }
@@ -408,6 +423,7 @@ public class DefinitiveDOWriter
     public String[] ListDisseminatorIDs(String state)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         Iterator iter=m_obj.disseminatorIdIterator();
         ArrayList al=new ArrayList();
@@ -427,6 +443,7 @@ public class DefinitiveDOWriter
     public Disseminator GetDisseminator(String disseminatorID, Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return new Disseminator();
     }
@@ -435,6 +452,7 @@ public class DefinitiveDOWriter
     public String[] GetBehaviorDefs(Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return new String[0];
     }
@@ -443,6 +461,7 @@ public class DefinitiveDOWriter
     public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return new MethodDef[0];
     }
@@ -451,6 +470,7 @@ public class DefinitiveDOWriter
     public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return new ByteArrayInputStream(new byte[0]);
     }
@@ -458,6 +478,7 @@ public class DefinitiveDOWriter
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
             throws ObjectIntegrityException { 
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
         return new DSBindingMapAugmented[0];
     }
@@ -466,6 +487,7 @@ public class DefinitiveDOWriter
     public void validate(String validationType)
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         assertNotPendingRemoval();
     }
 
@@ -474,6 +496,7 @@ public class DefinitiveDOWriter
     public boolean pendingCommit()
             throws ObjectIntegrityException {
         assertNotRemoved();
+        assertNotInvalidated();
         return m_pendingCommit;
     }
     
@@ -486,6 +509,7 @@ public class DefinitiveDOWriter
     public boolean save()
             throws StorageException {
         assertNotRemoved();
+        assertNotInvalidated();
         if (m_pendingSave) {
            if (m_pendingRemoval) {
                // flag that removal is needed by removing the temp copy
@@ -547,6 +571,14 @@ public class DefinitiveDOWriter
         return false;
     }
     
+    public void invalidate() {
+        m_invalidated=true;
+    }
+    
+    public void cancel() {
+        // cleanup temp if exists, release lock, and invalidate
+    }
+    
     private void assertNotPendingRemoval()
             throws ObjectIntegrityException {
         if (m_pendingRemoval)
@@ -557,6 +589,12 @@ public class DefinitiveDOWriter
             throws ObjectIntegrityException {
         if (m_removed)
             throw ERROR_REMOVED;
+    }
+    
+    private void assertNotInvalidated() 
+            throws ObjectIntegrityException {
+        if (m_invalidated)
+            throw ERROR_INVALIDATED;
     }
     
     public void finalize() throws StorageException {
