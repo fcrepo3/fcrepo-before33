@@ -1,15 +1,12 @@
 package fedora.client.bmech;
 
-import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.JComponent;
 import java.awt.BorderLayout;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -54,7 +51,7 @@ public class GeneralPane extends JPanel
     private JTextField bDefPID;
     protected JTextField bObjectPID;
     private JRadioButton rb_sysPID;
-    private JRadioButton rb_testPID;
+    private JRadioButton rb_retainPID;
     private final ButtonGroup rb_buttonGroup = new ButtonGroup();
     protected String rb_chosen;
     private JTextField bObjectLabel;
@@ -68,7 +65,7 @@ public class GeneralPane extends JPanel
         setLayout(new BorderLayout());
         JPanel contractPanel = new JPanel();
         contractPanel.setLayout(new GridBagLayout());
-        contractPanel.setBorder(new TitledBorder("Behavior Contract"));
+        contractPanel.setBorder(new TitledBorder("Behavior Definition Contract"));
         GridBagConstraints gbc2 = new GridBagConstraints();
         gbc2.anchor = GridBagConstraints.WEST;
         gbc2.gridy = 0;
@@ -109,15 +106,15 @@ public class GeneralPane extends JPanel
         rb_sysPID.setActionCommand("sysPID");
         rb_sysPID.addActionListener(rb_listen);
         rb_chosen = "sysPID";
-        rb_testPID = new JRadioButton("test PID", false);
-        rb_testPID.setActionCommand("testPID");
-        rb_testPID.addActionListener(rb_listen);
+        rb_retainPID = new JRadioButton("use PID", false);
+        rb_retainPID.setActionCommand("retainPID");
+        rb_retainPID.addActionListener(rb_listen);
         //rb_buttonGroup = new ButtonGroup();
         rb_buttonGroup.add(rb_sysPID);
-        rb_buttonGroup.add(rb_testPID);
+        rb_buttonGroup.add(rb_retainPID);
         JPanel descriptionPanel = new JPanel();
         descriptionPanel.setLayout(new GridBagLayout());
-        descriptionPanel.setBorder(new TitledBorder("Object Description"));
+        descriptionPanel.setBorder(new TitledBorder("Behavior Mechanism Description"));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
         gbc.gridy = 0;
@@ -126,7 +123,7 @@ public class GeneralPane extends JPanel
         gbc.gridx = 1;
         descriptionPanel.add(rb_sysPID, gbc);
         gbc.gridx = 2;
-        descriptionPanel.add(rb_testPID, gbc);
+        descriptionPanel.add(rb_retainPID, gbc);
         gbc.gridx = 3;
         descriptionPanel.add(bObjectPID = new JTextField(10), gbc);
         bObjectPID.setToolTipText("The repository will accept test PIDs"
@@ -285,14 +282,14 @@ public class GeneralPane extends JPanel
     {
       model.removeRow(dcTable.getSelectedRow());
     }
-
+	
     // Action Listener for button group
     class PIDActionListener implements ActionListener
     {
       public void actionPerformed(ActionEvent e)
       {
         rb_chosen = rb_buttonGroup.getSelection().getActionCommand();
-        if (rb_chosen.equalsIgnoreCase("testPID"))
+        if (rb_chosen.equalsIgnoreCase("retainPID"))
         {
           bObjectPID.setEnabled(true);
         }
