@@ -154,7 +154,11 @@ public class DynamicAccessModule extends Module implements Access
             + "was \"" + uhe.getMessage() + "\"");
       }
       String fedoraServerPort = getServer().getParameter("fedoraServerPort");
-      reposBaseURL = "http://" + hostIP.getHostAddress() + ":" + fedoraServerPort;
+      String fedoraServerHost = getServer().getParameter("fedoraServerHost");
+      if (fedoraServerHost==null || fedoraServerHost.equals("")) {
+          fedoraServerHost=hostIP.getHostName();
+      }
+      reposBaseURL = "http://" + fedoraServerHost + ":" + fedoraServerPort;
       reposHomeDir = getServer().getHomeDir();
 
       // FIXIT!! In the future, we want to read the repository configuration

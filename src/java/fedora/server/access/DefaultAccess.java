@@ -736,7 +736,11 @@ public class DefaultAccess extends Module implements Access
           + "was \"" + uhe.getMessage() + "\"");
     }
     String fedoraServerPort = getServer().getParameter("fedoraServerPort");
-    reposBaseURL = "http://" + hostIP.getHostAddress() + ":" + fedoraServerPort;
+    String fedoraServerHost = getServer().getParameter("fedoraServerHost");
+    if (fedoraServerHost==null || fedoraServerHost.equals("")) {
+        fedoraServerHost=hostIP.getHostName();
+    }
+    reposBaseURL = "http://" + fedoraServerHost + ":" + fedoraServerPort;
     return reposBaseURL;
   }
 }

@@ -68,6 +68,11 @@ public class DisseminationService
    * fedora.fcfg config file.
    */
   private static String fedoraServerPort = null;
+  
+  /** Hostname of the Fedora server determined from
+   * fedora.fcfg config file, or (fallback) by hostIP.getHostName()
+   */
+  private static String fedoraServerHost = null;
 
   /** URL of the DatastreamResolverServlet; built dynamically.*/
   private static String datastreamResolverServletURL = null;
@@ -104,6 +109,10 @@ public class DisseminationService
         fedoraServerPort = s_server.getParameter("fedoraServerPort");
         s_server.logFinest("fedoraServerPort: " + fedoraServerPort);
         hostIP = InetAddress.getLocalHost();
+        fedoraServerHost = s_server.getParameter("fedoraServerHost");
+        if (fedoraServerHost==null || fedoraServerHost.equals("")) {
+            fedoraServerHost=hostIP.getHostName();
+        }
         s_server.logFinest("[DisseminationService] "
             + "datastreamResolverServletURL: " + datastreamResolverServletURL);
         String expireLimit = s_server.getParameter("datastreamExpirationLimit");
@@ -238,7 +247,7 @@ public class DisseminationService
           {
             dissURL = dissBindInfo.AddressLocation+dissBindInfo.OperationLocation;
           }
-          datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
+          datastreamResolverServletURL = "http://" + fedoraServerHost
             + ":" + fedoraServerPort + "/fedora/getDS?id=";
           protocolType = dissBindInfo.ProtocolType;
         }

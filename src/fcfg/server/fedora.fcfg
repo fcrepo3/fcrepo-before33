@@ -76,8 +76,8 @@
 	</comment>
 	<param name="fedoraServerPort" value="8080"/>
 	<comment>Defines the port number on which the Fedora server runs; default is 8080.</comment>
-	<param name="fedoraServerHost" value="www.fedora.info"/>
-	<comment>Defines the default host name for the Fedora server; default is www.fedora.info.</comment>
+	<param name="fedoraServerHost" value="localhost"/>
+	<comment>Defines the host name for the Fedora server, as seen from the outside world.</comment>
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
 		<comment>
         Description:
