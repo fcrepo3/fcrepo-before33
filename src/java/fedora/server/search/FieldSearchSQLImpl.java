@@ -8,12 +8,7 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
@@ -314,12 +309,17 @@ public class FieldSearchSQLImpl
     // erase and cleanup expired stuff
     private void closeAndForgetOldResults() {
         Iterator iter=m_currentResults.values().iterator();
+        ArrayList toRemove=new ArrayList();
         while (iter.hasNext()) {
             FieldSearchResultSQLImpl r=(FieldSearchResultSQLImpl) iter.next();
             if (r.isExpired()) {
                 logFine("listSession " + r.getToken() + " expired; will forget it.");
-                m_currentResults.remove(r.getToken());
+                toRemove.add(r.getToken());
             }
+        }
+        for (int i=0; i<toRemove.size(); i++) {
+            String token=(String) toRemove.get(i);
+            m_currentResults.remove(token);
         }
     }
 
