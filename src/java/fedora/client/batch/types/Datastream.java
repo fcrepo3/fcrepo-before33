@@ -46,17 +46,19 @@ public class Datastream
 
   public String dsLocation;
 
-  public String mdClass;
-
-  public String mdType;
-
   public String objectPID;
   
-  public boolean versionable;
+  public boolean versionable = true;
   
   public String formatURI;
 
   public byte[] xmlContent;
+  
+  public boolean force = false;
+  
+  public String[] altIDs = new String[0];
+  
+  public String logMessage;
 
 
 

@@ -30,6 +30,9 @@ public class DigitalObject {
     public String pid;
     public String label;
     public String cModel;
+    public boolean force = false;
+    public String state;
+    public String logMessage;
 
     public DigitalObject()
     {}

@@ -62,6 +62,10 @@ public class Disseminator
   public String dissState;
 
   public String asOfDate;
+  
+  public boolean force = false;
+  
+  public String logMessage;
 
   public Disseminator()
   {
