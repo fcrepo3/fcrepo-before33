@@ -9,7 +9,7 @@ package fedora.server.storage;
  * @version 1.0
  */
 
-import fedora.server.storage.abstraction.*;
+import fedora.server.storage.types.*;
 import java.util.Date;
 import java.io.InputStream;
 
@@ -29,6 +29,8 @@ public interface DOReader
    */
 
     public String GetObjectPID();
+
+    public String GetObjectLabel();
 
     public String[] ListDatastreamIDs(String state);
 
