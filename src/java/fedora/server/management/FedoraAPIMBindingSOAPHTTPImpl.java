@@ -313,6 +313,38 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(se);
         }
     }
+
+
+//
+    public void deleteDatastream(String PID, String datastreamID,
+            String logMessage)
+            throws java.rmi.RemoteException {
+        assertInitialized();
+        try {
+            s_management.deleteDatastream(getContext(), PID,
+                    datastreamID, logMessage);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        }
+    }
+//
+
+//
+    public void withdrawDatastream(String PID, String datastreamID,
+            String logMessage)
+            throws java.rmi.RemoteException {
+        assertInitialized();
+        try {
+            s_management.withdrawDatastream(getContext(), PID,
+                    datastreamID, logMessage);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        }
+    }
+//
+
 /*
     public void withdrawDatastream(String PID, String datastreamID) throws java.rmi.RemoteException {
         assertInitialized();

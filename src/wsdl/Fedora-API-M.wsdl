@@ -1,88 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions targetNamespace="http://www.fedora.info/definitions/1/0/api/"
-    xmlns="http://schemas.xmlsoap.org/wsdl/" 
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/"
-    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
-    xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
-    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
-    xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" 
-    xmlns:fedora-auditing="http://www.fedora.info/definitions/1/0/auditing/" 
-    xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" 
-    name="Fedora-API-M-WSDL">
-  <import namespace="http://www.fedora.info/definitions/1/0/types/"
-      location="fedora-types.xsd"/>
-  <import namespace="http://www.fedora.info/definitions/1/0/auditing/"
-      location="fedora-auditing.xsd"/>
-  <types>
-    <documentation>
-      <wsdldoc:type name="xsd:string" 
-          url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
-      <wsdldoc:type name="xsd:dateTime" 
-          url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#dateTime"/>
-      <wsdldoc:type name="xsd:base64Binary" 
-          url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#base64Binary"/>
-      <wsdldoc:type name="fedora-types:ArrayOfString" 
-          url="http://www.fedora.info/definitions/1/0/types/#ArrayOfString"/>
-      <wsdldoc:type name="fedora-types:ArrayOfDateTime" 
-          url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDateTime"/>
-      <wsdldoc:type name="fedora-types:Datastream" 
-          url="http://www.fedora.info/definitions/1/0/types/#Datastream"/>
-      <wsdldoc:type name="fedora-types:ArrayOfDatastream" 
-          url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDatastream"/>
-      <wsdldoc:type name="fedora-types:ArrayOfComponentInfo" 
-          url="http://www.fedora.info/definitions/1/0/types/#ArrayOfComponentInfo"/>
-      <wsdldoc:type name="fedora-types:DatastreamBindingMap" 
-          url="http://www.fedora.info/definitions/1/0/types/#DatastreamBindingMap"/>
-      <wsdldoc:type name="fedora-types:Disseminator" 
-          url="http://www.fedora.info/definitions/1/0/types/#Disseminator"/>
-      <wsdldoc:type name="fedora-types:ArrayOfDisseminator" 
-          url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDisseminator"/>
-      <wsdldoc:type name="fedora-auditing:ArrayOfAuditRecord" 
-          url="http://www.fedora.info/definitions/1/0/auditing/#ArrayOfAuditRecord"/>
-    </documentation>
-  </types>
-<!--
+<definitions targetNamespace="http://www.fedora.info/definitions/1/0/api/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" xmlns:fedora-auditing="http://www.fedora.info/definitions/1/0/auditing/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" name="Fedora-API-M-WSDL">
+	<import namespace="http://www.fedora.info/definitions/1/0/types/" location="fedora-types.xsd"/>
+	<import namespace="http://www.fedora.info/definitions/1/0/auditing/" location="fedora-auditing.xsd"/>
+	<types>
+		<documentation>
+			<wsdldoc:type name="xsd:string" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
+			<wsdldoc:type name="xsd:dateTime" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#dateTime"/>
+			<wsdldoc:type name="xsd:base64Binary" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#base64Binary"/>
+			<wsdldoc:type name="fedora-types:ArrayOfString" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfString"/>
+			<wsdldoc:type name="fedora-types:ArrayOfDateTime" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDateTime"/>
+			<wsdldoc:type name="fedora-types:Datastream" url="http://www.fedora.info/definitions/1/0/types/#Datastream"/>
+			<wsdldoc:type name="fedora-types:ArrayOfDatastream" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDatastream"/>
+			<wsdldoc:type name="fedora-types:ArrayOfComponentInfo" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfComponentInfo"/>
+			<wsdldoc:type name="fedora-types:DatastreamBindingMap" url="http://www.fedora.info/definitions/1/0/types/#DatastreamBindingMap"/>
+			<wsdldoc:type name="fedora-types:Disseminator" url="http://www.fedora.info/definitions/1/0/types/#Disseminator"/>
+			<wsdldoc:type name="fedora-types:ArrayOfDisseminator" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDisseminator"/>
+			<wsdldoc:type name="fedora-auditing:ArrayOfAuditRecord" url="http://www.fedora.info/definitions/1/0/auditing/#ArrayOfAuditRecord"/>
+		</documentation>
+	</types>
+	<!--
   <message name="createObjectResponse">
     <part name="response" type="xsd:string">
       <documentation>the PID of the newly created object.</documentation>
     </part>
   </message>
 -->
-  <message name="ingestObjectRequest">
-    <part name="METSXML" type="xsd:base64Binary">
-      <documentation>the digital object in METS format.</documentation>
-    </part>
-    <part name="logMessage" type="xsd:string">
-      <documentation>a log message.</documentation>
-    </part>
-  </message>
-  <message name="ingestObjectResponse">
-    <part name="response" type="xsd:string">
-      <documentation>the PID of the newly created object.</documentation>
-    </part>
-  </message>
-  <message name="getObjectXMLRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-  </message>
-  <message name="getObjectXMLResponse">
-    <part name="response" type="xsd:base64Binary">
-      <documentation>the digital object in METS format.</documentation>
-    </part>
-  </message>
-  <message name="exportObjectRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-  </message>
-  <message name="exportObjectResponse">
-    <part name="response" type="xsd:base64Binary">
-      <documentation>the digital object in METS format.</documentation>
-    </part>
-  </message>
-<!--
+	<message name="ingestObjectRequest">
+		<part name="METSXML" type="xsd:base64Binary">
+			<documentation>the digital object in METS format.</documentation>
+		</part>
+		<part name="logMessage" type="xsd:string">
+			<documentation>a log message.</documentation>
+		</part>
+	</message>
+	<message name="ingestObjectResponse">
+		<part name="response" type="xsd:string">
+			<documentation>the PID of the newly created object.</documentation>
+		</part>
+	</message>
+	<message name="getObjectXMLRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+	</message>
+	<message name="getObjectXMLResponse">
+		<part name="response" type="xsd:base64Binary">
+			<documentation>the digital object in METS format.</documentation>
+		</part>
+	</message>
+	<message name="exportObjectRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+	</message>
+	<message name="exportObjectResponse">
+		<part name="response" type="xsd:base64Binary">
+			<documentation>the digital object in METS format.</documentation>
+		</part>
+	</message>
+	<!--
   <message name="withdrawObjectRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -100,15 +76,15 @@
     </part>
   </message>
 -->
-  <message name="purgeObjectRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="logMessage" type="xsd:string">
-      <documentation>an explanation of the purge.</documentation>
-    </part>
-  </message>
-<!--
+	<message name="purgeObjectRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="logMessage" type="xsd:string">
+			<documentation>an explanation of the purge.</documentation>
+		</part>
+	</message>
+	<!--
   <message name="obtainLockRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -127,20 +103,20 @@
     </part>
   </message>
 -->
-  <message name="getObjectInfoRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-  </message>
-  <message name="getObjectInfoResponse">
-    <part name="response" type="fedora-types:ObjectInfo">
-      <documentation>Key information about the object, including
+	<message name="getObjectInfoRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+	</message>
+	<message name="getObjectInfoResponse">
+		<part name="response" type="fedora-types:ObjectInfo">
+			<documentation>Key information about the object, including
       an element for each of the following:
       label, foType, contentModelId, state and lockedBy (all xsd:strings),
       and createDate and lastModDate (both xsd:dateTimes)</documentation>
-    </part>
-  </message>
-<!--
+		</part>
+	</message>
+	<!--
   <message name="getObjectAuditTrailRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -152,46 +128,46 @@
     </part>
   </message>
 -->
-  <message name="listObjectPIDsRequest">
-    <part name="pidPattern" type="xsd:string">
-      <documentation>the pid of the object, with optional wildcards * and ?</documentation>
-    </part>
-    <part name="foType" type="xsd:string">
-      <documentation>the fedora object type for the object.  This may be D, M,
+	<message name="listObjectPIDsRequest">
+		<part name="pidPattern" type="xsd:string">
+			<documentation>the pid of the object, with optional wildcards * and ?</documentation>
+		</part>
+		<part name="foType" type="xsd:string">
+			<documentation>the fedora object type for the object.  This may be D, M,
       or O</documentation>
-    </part>
-    <part name="lockedByPattern" type="xsd:string">
-      <documentation>the userid of the locking user, with optional wildcards * and ?</documentation>
-    </part>
-    <part name="state" type="xsd:string">
-      <documentation>the state of the object.  This may be A, or any of
+		</part>
+		<part name="lockedByPattern" type="xsd:string">
+			<documentation>the userid of the locking user, with optional wildcards * and ?</documentation>
+		</part>
+		<part name="state" type="xsd:string">
+			<documentation>the state of the object.  This may be A, or any of
       the other possible states.</documentation>
-    </part>
-    <part name="labelPattern" type="xsd:string">
-      <documentation>the label of the object, with optional wildcards * and ?</documentation>
-    </part>
-    <part name="contentModelIdPattern" type="xsd:string">
-      <documentation>the content model of the object, with optional wildcards * and ?</documentation>
-    </part>
-    <part name="createDateMin" type="xsd:dateTime">
-      <documentation>the minimum create date of the object.</documentation>
-    </part>
-    <part name="createDateMax" type="xsd:dateTime">
-      <documentation>the maximum create date of the object.</documentation>
-    </part>
-    <part name="lastModDateMin" type="xsd:dateTime">
-      <documentation>the minimum modified date of the object.</documentation>
-    </part>
-    <part name="lastModDateMax" type="xsd:dateTime">
-      <documentation>the maximum modified date of the object.</documentation>
-    </part>
-  </message>
-  <message name="listObjectPIDsResponse">
-    <part name="response" type="fedora-types:ArrayOfString">
-      <documentation>the PIDs of the objects.</documentation>
-    </part>
-  </message>
-<!--
+		</part>
+		<part name="labelPattern" type="xsd:string">
+			<documentation>the label of the object, with optional wildcards * and ?</documentation>
+		</part>
+		<part name="contentModelIdPattern" type="xsd:string">
+			<documentation>the content model of the object, with optional wildcards * and ?</documentation>
+		</part>
+		<part name="createDateMin" type="xsd:dateTime">
+			<documentation>the minimum create date of the object.</documentation>
+		</part>
+		<part name="createDateMax" type="xsd:dateTime">
+			<documentation>the maximum create date of the object.</documentation>
+		</part>
+		<part name="lastModDateMin" type="xsd:dateTime">
+			<documentation>the minimum modified date of the object.</documentation>
+		</part>
+		<part name="lastModDateMax" type="xsd:dateTime">
+			<documentation>the maximum modified date of the object.</documentation>
+		</part>
+	</message>
+	<message name="listObjectPIDsResponse">
+		<part name="response" type="fedora-types:ArrayOfString">
+			<documentation>the PIDs of the objects.</documentation>
+		</part>
+	</message>
+	<!--
   <message name="addDatastreamExternalRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -252,58 +228,63 @@
     </part>
   </message>
 -->
-  <message name="modifyDatastreamByReferenceRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="datastreamID" type="xsd:string">
-      <documentation>the ID of the datastream.</documentation>
-    </part>
-    <part name="dsLabel" type="xsd:string">
-      <documentation>the label for the datastream.</documentation>
-    </part>
-    <part name="logMessage" type="xsd:string">
-      <documentation>a message about the change.</documentation>
-    </part>
-    <part name="dsLocation" type="xsd:string">
-      <documentation>the url to the datastream.</documentation>
-    </part>
-  </message>
-  <message name="modifyDatastreamByValueRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="datastreamID" type="xsd:string">
-      <documentation>the ID of the datastream.</documentation>
-    </part>
-    <part name="dsLabel" type="xsd:string">
-      <documentation>the label for the datastream.</documentation>
-    </part>
-    <part name="logMessage" type="xsd:string">
-      <documentation>a message about the change.</documentation>
-    </part>
-    <part name="dsContent" type="xsd:base64Binary">
-      <documentation>the content of the datastream.</documentation>
-    </part>
-  </message>
-<!--
-  <message name="withdrawDatastreamRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="datastreamID" type="xsd:string">
-      <documentation>the ID of the datastream.</documentation>
-    </part>
-  </message>
-  <message name="deleteDatastreamRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="datastreamID" type="xsd:string">
-      <documentation>the ID of the datastream.</documentation>
-    </part>
-  </message>
-  <message name="purgeDatastreamRequest">
+	<message name="modifyDatastreamByReferenceRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="datastreamID" type="xsd:string">
+			<documentation>the ID of the datastream.</documentation>
+		</part>
+		<part name="dsLabel" type="xsd:string">
+			<documentation>the label for the datastream.</documentation>
+		</part>
+		<part name="logMessage" type="xsd:string">
+			<documentation>a message about the change.</documentation>
+		</part>
+		<part name="dsLocation" type="xsd:string">
+			<documentation>the url to the datastream.</documentation>
+		</part>
+	</message>
+	<message name="modifyDatastreamByValueRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="datastreamID" type="xsd:string">
+			<documentation>the ID of the datastream.</documentation>
+		</part>
+		<part name="dsLabel" type="xsd:string">
+			<documentation>the label for the datastream.</documentation>
+		</part>
+		<part name="logMessage" type="xsd:string">
+			<documentation>a message about the change.</documentation>
+		</part>
+		<part name="dsContent" type="xsd:base64Binary">
+			<documentation>the content of the datastream.</documentation>
+		</part>
+	</message>
+	<message name="withdrawDatastreamRequest">
+    		<part name="PID" type="xsd:string">
+     		<documentation>the PID of the object.</documentation>
+    		</part>
+    		<part name="datastreamID" type="xsd:string">
+    			<documentation>the ID of the datastream.</documentation>
+    		</part>
+    		<part name="logMessage" type="xsd:string">
+			<documentation>a message about the change.</documentation>
+		</part>
+  	</message>
+	<message name="deleteDatastreamRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="datastreamID" type="xsd:string">
+			<documentation>the ID of the datastream.</documentation>
+		</part>
+		<part name="logMessage" type="xsd:string">
+			<documentation>a message about the change.</documentation>
+		</part>
+	</message>
+	<!--<message name="purgeDatastreamRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
     </part>
@@ -326,25 +307,25 @@
     </part>
   </message>
 -->
-  <message name="getDatastreamRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="datastreamID" type="xsd:string">
-      <documentation>the ID of the datastream.</documentation>
-    </part>
-    <part name="asOfDateTime" type="xsd:dateTime">
-      <documentation>the date/time stamp specifying the desired view of the 
+	<message name="getDatastreamRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="datastreamID" type="xsd:string">
+			<documentation>the ID of the datastream.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:dateTime">
+			<documentation>the date/time stamp specifying the desired view of the 
       object.  If null, the current view of the object (the most recent time) 
       is assumed.</documentation>
-    </part>
-  </message>
-  <message name="getDatastreamResponse">
-    <part name="response" type="fedora-types:Datastream">
-      <documentation>the datastream.</documentation>
-    </part>
-  </message>
-<!--
+		</part>
+	</message>
+	<message name="getDatastreamResponse">
+		<part name="response" type="fedora-types:Datastream">
+			<documentation>the datastream.</documentation>
+		</part>
+	</message>
+	<!--
   <message name="getDatastreamsRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -361,20 +342,20 @@
     </part>
   </message>
 -->
-  <message name="listDatastreamIDsRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="state" type="xsd:string">
-      <documentation>the state of the datastreams to list.</documentation>
-    </part>
-  </message>
-  <message name="listDatastreamIDsResponse">
-    <part name="response" type="fedora-types:ArrayOfString">
-      <documentation>the IDs of the datastreams.</documentation>
-    </part>
-  </message>
-<!--
+	<message name="listDatastreamIDsRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="state" type="xsd:string">
+			<documentation>the state of the datastreams to list.</documentation>
+		</part>
+	</message>
+	<message name="listDatastreamIDsResponse">
+		<part name="response" type="fedora-types:ArrayOfString">
+			<documentation>the IDs of the datastreams.</documentation>
+		</part>
+	</message>
+	<!--
   <message name="getDatastreamHistoryRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -522,8 +503,8 @@
     </part>
   </message>
 -->
-  <portType name="Fedora-API-M">
-    <documentation>The Fedora Management service defines an open interface for
+	<portType name="Fedora-API-M">
+		<documentation>The Fedora Management service defines an open interface for
     administering the repository, including creating, modifying, and deleting
     digital objects, or components within digital objects.  The Management
     service interacts with the underlying repository system to read content from
@@ -535,7 +516,7 @@
     underlying repository system handles the details of storing datastream
     content within the repository, as well as mediating connectivity for
     datastreams that reference external content.</documentation>
-<!--
+		<!--
     <operation name="createObject">
       <documentation>Creates a new, empty digital object in the repository. The 
       object's initial state will be N.  The repository will generate and return 
@@ -545,8 +526,8 @@
       <output message="fedora-api:createObjectResponse"/>
     </operation>
 -->
-    <operation name="ingestObject">
-      <documentation>Creates a new digital object in the repository, given the 
+		<operation name="ingestObject">
+			<documentation>Creates a new digital object in the repository, given the 
       data in the provided METS document.  The object's initial state will be N.  
       If the METS document does not specify a PID in the OBJID attribute of the 
       root element, the repository will generate and return a new PID for the 
@@ -556,28 +537,28 @@
       Syntax, 2) it does not specify the namespace of the repository, and 3) 
       it does not collide with an existing PID of an object in the repository.
       </documentation>
-      <input message="fedora-api:ingestObjectRequest"/>
-      <output message="fedora-api:ingestObjectResponse"/>
-    </operation>
-    <operation name="getObjectXML">
-      <documentation>Gets the XML portion of the entire METS-encoded 
+			<input message="fedora-api:ingestObjectRequest"/>
+			<output message="fedora-api:ingestObjectResponse"/>
+		</operation>
+		<operation name="getObjectXML">
+			<documentation>Gets the XML portion of the entire METS-encoded 
       digital object for external use (viewing, editing, moving to another 
       repository).  XML metadata datastreams will be included inline, content 
       datastreams will not be included, and external datastreams will be 
       referenced by url.</documentation>
-      <input message="fedora-api:getObjectXMLRequest"/>
-      <output message="fedora-api:getObjectXMLResponse"/>
-    </operation>
-    <operation name="exportObject">
-      <documentation>Gets the entire METS-encoded digital object for 
+			<input message="fedora-api:getObjectXMLRequest"/>
+			<output message="fedora-api:getObjectXMLResponse"/>
+		</operation>
+		<operation name="exportObject">
+			<documentation>Gets the entire METS-encoded digital object for 
       external use (viewing, editing, moving to another repository).  XML 
       metadata datastreams will be included inline, content datastreams will 
       be included inline (base64-encoded), and external datastreams will be 
       referenced by url.</documentation>
-      <input message="fedora-api:exportObjectRequest"/>
-      <output message="fedora-api:exportObjectResponse"/>
-    </operation>
-<!--
+			<input message="fedora-api:exportObjectRequest"/>
+			<output message="fedora-api:exportObjectResponse"/>
+		</operation>
+		<!--
     <operation name="withdrawObject">
       <documentation>Changes the object's state to W, making it inaccessible 
       from API-A.</documentation>
@@ -590,12 +571,12 @@
       <input message="fedora-api:deleteObjectRequest"/>
     </operation>
 -->
-    <operation name="purgeObject">
-      <documentation>Permanently removes an object from the repository.
+		<operation name="purgeObject">
+			<documentation>Permanently removes an object from the repository.
       </documentation>
-      <input message="fedora-api:purgeObjectRequest"/>
-    </operation>
-<!--
+			<input message="fedora-api:purgeObjectRequest"/>
+		</operation>
+		<!--
     <operation name="obtainLock">
       <documentation>Locks an object for writing.  Upon obtaining a lock, a 
       user may execute write methods on an object.</documentation>
@@ -606,27 +587,27 @@
       <input message="fedora-api:releaseLockRequest"/>
     </operation>
 -->
-    <operation name="getObjectInfo">
-      <documentation>Gets key information about the object.</documentation>
-      <input message="fedora-api:getObjectInfoRequest"/>
-      <output message="fedora-api:getObjectInfoResponse"/>
-    </operation>
-<!--
+		<operation name="getObjectInfo">
+			<documentation>Gets key information about the object.</documentation>
+			<input message="fedora-api:getObjectInfoRequest"/>
+			<output message="fedora-api:getObjectInfoResponse"/>
+		</operation>
+		<!--
     <operation name="getObjectAuditTrail">
       <documentation>Gets all audit trail records for the object.</documentation>
       <input message="fedora-api:getObjectAuditTrailRequest"/>
       <output message="fedora-api:getObjectAuditTrailResponse"/>
     </operation>
 -->
-    <operation name="listObjectPIDs">
-      <documentation>Gets a list of the PIDs of the objects in the 
+		<operation name="listObjectPIDs">
+			<documentation>Gets a list of the PIDs of the objects in the 
       repository matching all the criteria given.  This is a simple AND search.
       Strings can contain the simple * (0 or more characters) or ? (1 character) wildcards.
       A parameter that is given as null is treated as an "any" wildcard.</documentation>
-      <input message="fedora-api:listObjectPIDsRequest"/>
-      <output message="fedora-api:listObjectPIDsResponse"/>
-    </operation>
-<!--
+			<input message="fedora-api:listObjectPIDsRequest"/>
+			<output message="fedora-api:listObjectPIDsResponse"/>
+		</operation>
+		<!--
     <operation name="addDatastreamExternal">
       <documentation>Creates a Referenced External Content Datastream in the 
       object.  The MIME type is determined by the repository, which uses the 
@@ -658,27 +639,27 @@
       <input message="fedora-api:modifyDisseminatorRequest"/>
     </operation>
 -->
-    <operation name="modifyDatastreamByReference">
-      <documentation>Modifies an existing datastream in an object, by reference.
-      </documentation>
-      <input message="fedora-api:modifyDatastreamByReferenceRequest"/>
-    </operation>
-    <operation name="modifyDatastreamByValue">
-      <documentation>Modifies an existing datastream in an object, by value.</documentation>
-      <input message="fedora-api:modifyDatastreamByValueRequest"/>
-    </operation>
-<!--
-    <operation name="withdrawDatastream">
-      <documentation>Changes a datastream's state to W, making it inaccessible 
+		<operation name="modifyDatastreamByReference">
+			<documentation>Modifies an existing datastream in an object, by reference.
+			</documentation>
+			<input message="fedora-api:modifyDatastreamByReferenceRequest"/>
+		</operation>
+		<operation name="modifyDatastreamByValue">
+			<documentation>Modifies an existing datastream in an object, by value.</documentation>
+			<input message="fedora-api:modifyDatastreamByValueRequest"/>
+		</operation>
+    		<operation name="withdrawDatastream">
+    			<documentation>Changes a datastream's state to W, making it inaccessible 
       from API-A.</documentation>
-      <input message="fedora-api:withdrawDatastreamRequest"/>
-    </operation>
-    <operation name="deleteDatastream">
-      <documentation>Marks a datastream as deleted, changing its state to D.  
+    			<input message="fedora-api:withdrawDatastreamRequest"/>
+	    	</operation>
+		<operation name="deleteDatastream">
+			<documentation>Marks a datastream as deleted, changing its state to D.  
       This makes it inaccessible from API-A, and eligible for purging by the 
       cleanup process.</documentation>
-      <input message="fedora-api:deleteDatastreamRequest"/>
-    </operation>
+			<input message="fedora-api:deleteDatastreamRequest"/>
+		</operation>
+		<!--
     <operation name="purgeDatastream">
       <documentation>Permanently removes one or more versions of a datastream 
       from an object.</documentation>
@@ -703,24 +684,24 @@
       <output message="fedora-api:purgeDisseminatorResponse"/>
     </operation>
 -->
-    <operation name="getDatastream">
-      <documentation>Gets a datastream in an object.</documentation>
-      <input message="fedora-api:getDatastreamRequest"/>
-      <output message="fedora-api:getDatastreamResponse"/>
-    </operation>
-<!--
+		<operation name="getDatastream">
+			<documentation>Gets a datastream in an object.</documentation>
+			<input message="fedora-api:getDatastreamRequest"/>
+			<output message="fedora-api:getDatastreamResponse"/>
+		</operation>
+		<!--
     <operation name="getDatastreams">
       <documentation>Gets all datastreams in an object.</documentation>
       <input message="fedora-api:getDatastreamsRequest"/>
       <output message="fedora-api:getDatastreamsResponse"/>
     </operation>
 -->
-    <operation name="listDatastreamIDs">
-      <documentation>Gets a list of datastreams in an object.</documentation>
-      <input message="fedora-api:listDatastreamIDsRequest"/>
-      <output message="fedora-api:listDatastreamIDsResponse"/>
-    </operation>
-<!--
+		<operation name="listDatastreamIDs">
+			<documentation>Gets a list of datastreams in an object.</documentation>
+			<input message="fedora-api:listDatastreamIDsRequest"/>
+			<output message="fedora-api:listDatastreamIDsResponse"/>
+		</operation>
+		<!--
     <operation name="getDatastreamHistory">
       <documentation>Gets the componentID, createDT, state, and label history
       of a datastream.</documentation>
@@ -749,10 +730,10 @@
       <output message="fedora-api:getDisseminatorHistoryResponse"/>
     </operation>
 -->
-  </portType>
-  <binding name="Fedora-API-M-Binding-SOAPHTTP" type="fedora-api:Fedora-API-M">
-    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-<!--
+	</portType>
+	<binding name="Fedora-API-M-Binding-SOAPHTTP" type="fedora-api:Fedora-API-M">
+		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<!--
     <operation name="createObject">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#createObject"/>
@@ -768,49 +749,34 @@
       </output>
     </operation>
 -->
-    <operation name="ingestObject">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#ingestObject"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-    <operation name="getObjectXML">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectXML"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-    <operation name="exportObject">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#exportObject"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-<!--
+		<operation name="ingestObject">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#ingestObject"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="getObjectXML">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectXML"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="exportObject">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#exportObject"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<!--
     <operation name="withdrawObject">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#withdrawObject"/>
@@ -830,16 +796,13 @@
       </input>
     </operation>
 -->
-    <operation name="purgeObject">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#purgeObject"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
-<!--
+		<operation name="purgeObject">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeObject"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+		</operation>
+		<!--
     <operation name="obtainLock">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#obtainLock"/>
@@ -859,16 +822,13 @@
       </input>
     </operation>
 -->
-    <operation name="getObjectInfo">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectInfo"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
-<!--
+		<operation name="getObjectInfo">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectInfo"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+		</operation>
+		<!--
     <operation name="getObjectAuditTrail">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectAuditTrail"/>
@@ -884,21 +844,16 @@
       </output>
     </operation>
 -->
-    <operation name="listObjectPIDs">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#listObjectPIDs"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-<!--
+		<operation name="listObjectPIDs">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listObjectPIDs"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<!--
     <operation name="addDatastreamExternal">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastreamExternal"/>
@@ -942,82 +897,70 @@
       </output>
     </operation>
 -->
-    <operation name="modifyDatastreamByReference">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByReference"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
-    <operation name="modifyDatastreamByValue">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByValue"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
-<!--
-    <operation name="withdrawDatastream">
-      <soap:operation style="rpc" 
+		<operation name="modifyDatastreamByReference">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByReference"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+		</operation>
+		<operation name="modifyDatastreamByValue">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByValue"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+		</operation>
+		<operation name="withdrawDatastream">
+			<soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#withdrawDatastream"/>
-      <input>
-        <soap:body use="encoded" 
+          	<input>
+          		<soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
-    <operation name="withdrawDisseminator">
-      <soap:operation style="rpc" 
+           	</input>
+          </operation>
+          <!--
+    		<operation name="withdrawDisseminator">
+      		<soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#withdrawDisseminator"/>
-      <input>
-        <soap:body use="encoded" 
+      			<input>
+        				<soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
-    <operation name="deleteDatastream">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#deleteDatastream"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-    </operation>
-    <operation name="purgeDatastream">
-      <soap:operation style="rpc" 
+      			</input>
+    		</operation>
+    		-->
+		<operation name="deleteDatastream">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#deleteDatastream"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+		</operation>
+		<!--
+    		<operation name="purgeDatastream">
+      		<soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDatastream"/>
-      <input>
-        <soap:body use="encoded" 
+      			<input>
+        				<soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
+      			</input>
+      		<output>
+        			<soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
--->
-    <operation name="getDatastream">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastream"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-<!--
+      		</output>
+    		</operation>
+		-->
+		<operation name="getDatastream">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastream"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<!--
     <operation name="getDatastreams">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreams"/>
@@ -1033,21 +976,16 @@
       </output>
     </operation>
 -->
-    <operation name="listDatastreamIDs">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#listDatastreamIDs"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
-<!--
+		<operation name="listDatastreamIDs">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listDatastreamIDs"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<!--
     <operation name="getDatastreamHistory">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamHistory"/>
@@ -1165,10 +1103,10 @@
       </output>
     </operation>
 -->
-  </binding>
-  <service name="Fedora-API-M-Service">
-    <port name="Fedora-API-M-Port-SOAPHTTP" binding="fedora-api:Fedora-API-M-Binding-SOAPHTTP">
-      <soap:address location="http://localhost:8080/fedora/management/soap"/>
-    </port>
-  </service>
+	</binding>
+	<service name="Fedora-API-M-Service">
+		<port name="Fedora-API-M-Port-SOAPHTTP" binding="fedora-api:Fedora-API-M-Binding-SOAPHTTP">
+			<soap:address location="http://localhost:8080/fedora/management/soap"/>
+		</port>
+	</service>
 </definitions>

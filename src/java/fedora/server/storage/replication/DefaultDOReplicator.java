@@ -169,7 +169,17 @@ public class DefaultDOReplicator
                 // compare the latest version of the datastream to what's in the db...
                 // if different, add to update list
                 Datastream ds=reader.GetDatastream(dsID, null);
-                if (!ds.DSLabel.equals(dsLabel)
+                if (ds.DSState.equals("D")) {
+                    updates.add("DELETE FROM dsBind WHERE doDbID=" + doDbID
+                        + " AND dsID='" + ds.DatastreamID + "' AND dsCurrentVersionID='"
+                        + ds.DSVersionID + "';");
+                    System.out.println("Replicator: Datastream flagged for deletion: doDbID: "+doDbID+" dsID: "+ds.DatastreamID+" versionid: "+ds.DSVersionID);
+                } else if (ds.DSState.equals("W")) {
+                    updates.add("DELETE FROM dsBind WHERE doDbID=" + doDbID
+                        + " AND dsID='" + ds.DatastreamID + "' AND dsCurrentVersionID='"
+                        + ds.DSVersionID + "';");
+                    System.out.println("Replicator: Datastream withdrawn: doDbID: "+doDbID+" dsID: "+ds.DatastreamID+" versionid: "+ds.DSVersionID);
+                } else if (!ds.DSLabel.equals(dsLabel)
                         || !ds.DSLocation.equals(dsLocation)
                         || !ds.DSVersionID.equals(dsCurrentVersionID)) {
                     updates.add("UPDATE dsBind SET dsLabel='"

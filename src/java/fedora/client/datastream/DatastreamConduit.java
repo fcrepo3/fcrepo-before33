@@ -104,6 +104,34 @@ public class DatastreamConduit {
                 content);
     }
 
+//
+    public static void deleteDatastream(FedoraAPIM skeleton,
+            String pid, String dsId, String logMessage)
+            throws RemoteException {
+        skeleton.deleteDatastream(pid, dsId, logMessage);
+    }
+
+    public void deleteDatastream(String pid, String dsId,
+            String logMessage)
+            throws RemoteException {
+        deleteDatastream(m_apim, pid, dsId, logMessage);
+    }
+//
+
+//
+    public static void withdrawDatastream(FedoraAPIM skeleton,
+            String pid, String dsId, String logMessage)
+            throws RemoteException {
+        skeleton.withdrawDatastream(pid, dsId, logMessage);
+    }
+
+    public void withdrawDatastream(String pid, String dsId,
+            String logMessage)
+            throws RemoteException {
+        withdrawDatastream(m_apim, pid, dsId, logMessage);
+    }
+//
+
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");

@@ -345,6 +345,88 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
         // Can never occur since Java fully supports UTF-8
       }
       return new MIMETypedStream("application/fedora-redirect",in);
+    } else if (ds.DSState.equals("D"))
+    {
+      // Datastream has been flagged for deletion so it is no longer accessible.
+      StringBuffer deleteText = new StringBuffer();
+      deleteText.append("<html><title>Datastream Flagged For Deletion</title>");
+      deleteText.append("<body>");
+      deleteText.append("<center>");
+      deleteText.append("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
+      deleteText.append("<tr><td width=\"141\" height=\"134\" valign=\"top\">");
+      deleteText.append("<img src=\"/images/newlogo2.jpg\" width=\"141\" height=\"134\"></td>");
+      deleteText.append("<td width=\"643\" valign=\"top\">");
+      deleteText.append("<center>");
+      deleteText.append("<h2>Fedora Digital Object</h2>");
+      deleteText.append("<h3>Default Disseminator - <font color=\"red\">Error Page</font></h3>");
+      deleteText.append("<h4><font color=\"red\">");
+      deleteText.append("The requested Datastream has been flagged for DELETION by the Repository Administrator.<br>");
+      deleteText.append("This Datastream can no longer be disseminated: </font></h4>");
+      deleteText.append("</center>");
+      deleteText.append("</td></tr>");
+      deleteText.append("</table>");
+      deleteText.append("<hr><font size=\"+1\" color=\"blue\">Object Identifier (PID):</font>");
+      deleteText.append("<font size=\"+1\">" + reader.GetObjectPID() + "</font><hr>");
+      deleteText.append("<p></p>");
+      deleteText.append("<table width=\"784\" border=\"1\" cellspacing=\"5\" cellpadding=\"5\" bgcolor=\"silver\">");
+      deleteText.append("<tr><td><b>DatastreamID</b></td><td>" + ds.DatastreamID + "</td></tr>");
+      deleteText.append("<tr><td><b>DatastreamVersionID</b></td><td>" + ds.DSVersionID + "</td></tr>");
+      deleteText.append("<tr><td><b>DatastreamLabel</b></td><td>" + ds.DSLabel + "</td></tr>");
+      deleteText.append("<tr><td><b>DatastreamControlGroupType</b></td><td>" + ds.DSControlGrp + "</td></tr>");
+      deleteText.append("<tr><td><b>DatastreamState</td></b><td>" + ds.DSState + "</td></tr>");
+      deleteText.append("<tr><td><b>DatastreamMIMEType</b></td><td>" + ds.DSMIME + "</td></tr>");
+      deleteText.append("</center></table>");
+      deleteText.append("</body></html>");
+      try
+      {
+        in = new ByteArrayInputStream(deleteText.toString().getBytes("UTF-8"));
+      } catch (UnsupportedEncodingException uee)
+      {
+        // Can never occur since Java fully supports UTF-8
+      }
+      return new MIMETypedStream("text/html",in);
+
+    } else if (ds.DSState.equals("W"))
+    {
+      // Datastream has been withdrawn so it is no longer accessible.
+      StringBuffer withdrawText = new StringBuffer();
+      withdrawText.append("<html><title>Datastream Withdrawn</title>");
+      withdrawText.append("<body>");
+      withdrawText.append("<center>");
+      withdrawText.append("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
+      withdrawText.append("<tr><td width=\"141\" height=\"134\" valign=\"top\">");
+      withdrawText.append("<img src=\"/images/newlogo2.jpg\" width=\"141\" height=\"134\"></td>");
+      withdrawText.append("<td width=\"643\" valign=\"top\">");
+      withdrawText.append("<center>");
+      withdrawText.append("<h2>Fedora Digital Object</h2>");
+      withdrawText.append("<h3>Default Disseminator - <font color=\"red\">Error Page</font></h3>");
+      withdrawText.append("<h4><font color=\"red\">");
+      withdrawText.append("The requested Datastream has been WITHDRAWN by the Repository Administrator.<br>");
+      withdrawText.append("This Datastream can no longer be disseminated: </font></h4>");
+      withdrawText.append("</center>");
+      withdrawText.append("</td></tr>");
+      withdrawText.append("</table>");
+      withdrawText.append("<hr><font size=\"+1\" color=\"blue\">Object Identifier (PID):</font>");
+      withdrawText.append("<font size=\"+1\">" + reader.GetObjectPID() + "</font><hr>");
+      withdrawText.append("<p></p>");
+      withdrawText.append("<table width=\"784\" border=\"1\" cellspacing=\"5\" cellpadding=\"5\" bgcolor=\"silver\">");
+      withdrawText.append("<tr><td><b>DatastreamID</b></td><td>" + ds.DatastreamID + "</td></tr>");
+      withdrawText.append("<tr><td><b>DatastreamVersionID</b></td><td>" + ds.DSVersionID + "</td></tr>");
+      withdrawText.append("<tr><td><b>DatastreamLabel</b></td><td>" + ds.DSLabel + "</td></tr>");
+      withdrawText.append("<tr><td><b>DatastreamControlGroupType</b></td><td>" + ds.DSControlGrp + "</td></tr>");
+      withdrawText.append("<tr><td><b>DatastreamState</td></b><td>" + ds.DSState + "</td></tr>");
+      withdrawText.append("<tr><td><b>DatastreamMIMEType</b></td><td>" + ds.DSMIME + "</td></tr>");
+      withdrawText.append("</center></table>");
+      withdrawText.append("</body></html>");
+      try
+      {
+        in = new ByteArrayInputStream(withdrawText.toString().getBytes("UTF-8"));
+      } catch (UnsupportedEncodingException uee)
+      {
+        // Can never occur since Java fully supports UTF-8
+      }
+        return new MIMETypedStream("text/html",in);
+
     } else
     {
       in = ds.getContentStream();

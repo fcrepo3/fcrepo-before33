@@ -76,9 +76,13 @@ public interface Management {
 
 //    public void withdrawDatastream(Context context, String pid, String datastreamId) throws ServerException;
 
+    public void withdrawDatastream(Context context, String pid, String datastreamId, String logMessage) throws ServerException;
+
 //    public void withdrawDisseminator(Context context, String pid, String disseminatorId) throws ServerException;
 
 //    public void deleteDatastream(Context context, String pid, String datastreamID) throws ServerException;
+
+    public void deleteDatastream(Context context, String pid, String datastreamId, String logMessage) throws ServerException;
 
 //    public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar startDT, Calendar endDT) throws ServerException;
 
