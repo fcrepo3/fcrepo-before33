@@ -284,6 +284,8 @@ public class DatastreamPane
         public CurrentVersionPane(Datastream ds) {
             m_ds=ds;
             m_labelTextField=new JTextField(ds.getLabel());
+            m_labelTextField.getDocument().addDocumentListener(
+                    dataChangeListener);
             add(m_labelTextField);
         }
 
