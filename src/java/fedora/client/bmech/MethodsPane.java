@@ -396,16 +396,38 @@ public class MethodsPane extends JPanel {
     {
       editMethodMode = true;
       int currentRowIndex = methodTable.getSelectedRow();
-      methodDialog = new MethodDialog(
-        this, "Edit Method", true,
-        (String)methodTable.getValueAt(currentRowIndex,0),
-        (String)methodTable.getValueAt(currentRowIndex,1));
+	  if (methodTable.getRowCount() <= 0)
+	  {
+		editMethodMode = false;
+		assertNoMethodMsg("There are no rows to edit.");
+		return;
+	  }
+	  else if (currentRowIndex == -1)
+	  {
+		editMethodMode = false;
+		assertNoMethodMsg("You must select a method row before attempting editing.");
+		return;
+	  }
+	  methodDialog = new MethodDialog(
+		  this, "Edit Method", true,
+		  (String)methodTable.getValueAt(currentRowIndex,0),
+		  (String)methodTable.getValueAt(currentRowIndex,1));
       editMethodMode = false;
     }
 
     private void deleteMethod()
     {
       int currentRowIndex = methodTable.getSelectedRow();
+	  if (methodTable.getRowCount() <= 0)
+	  {
+		assertNoMethodMsg("There are no rows to delete.");
+		return;
+	  }
+      else if (currentRowIndex == -1)
+      {
+		assertNoMethodMsg("You must select a method row before attempting deletion.");
+		return;
+      }
       String methodName = (String)methodTable.getValueAt(currentRowIndex,0);
       methodTableModel.removeRow(currentRowIndex);
       if (methodMap.containsKey(methodName))
