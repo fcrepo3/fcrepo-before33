@@ -47,6 +47,10 @@ public class Parameter {
         return m_value;
     }
 
+    public void setValue(String newValue) {
+        m_value = newValue;
+    }
+
     public Map getProfileValues() {
         return m_profileValues;
     }
