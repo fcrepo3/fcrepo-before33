@@ -67,6 +67,38 @@
 		</part>
 	</message>
 	<message name="findObjectsRequest">
+		<part name="terms" type="xsd:string">
+			<documentation>a sequence of characters (including the ? and * wildcards) 
+           for the search.  If this sequence is found in any of the fields for an 
+           object, the object is considered a match.  This parameter cannot
+           be used in combination with the query parameter.</documentation>
+		</part>
+		<part name="query" type="xsd:string">
+			<documentation>a sequence of space-separated conditions.  A condition
+           consists of a field name followed directly by an operator, followed
+           directly be a value.  Valid field names are (pid, label, fType, cModel,
+           state, locker, cDate, mDate, dcmDate, bDef, bMech, title, creator, subject,
+           description, publisher, contributor, date, type, format, identifier,
+           source, language, relation, coverage, rights).
+           Valid operators are =, ~, &gt;, &gt;=, &lt;, &lt;=.  The contains (~) operator
+           may be used in combination with the ? and * wildcards to query for simple
+           string patterns.  The inequality operators should only be used with
+           date-based fields (cDate, mDate, dcmDate, date).
+           Values may be any string.  If the string contains a space, the
+           value should begin and end with a single quote character ('). If all conditions
+           are met for an object, the object is considered a match. This parameter
+           cannot be used in combination with the terms parameter.</documentation>
+		</part>
+		<part name="maxResults" type="xsd:string">
+			<documentation>the maximum number of results that the server should
+                provide at once.  If this is unspecified, the server will default
+                to a small value.</documentation>
+		</part>
+       <part name="xml" type="xsd:string">
+           <documentation>whether to return the result as an xml document.  If this is
+           given as true, the result will be in xml.  Otherwise, the result will be
+           provided in a simple html document.</documentation>
+       </part>
 		<part name="pid" type="xsd:string">
             <documentation>if true, the pids of matching objects will be included in the response.</documentation>
 		</part>
@@ -139,38 +171,6 @@
 		<part name="rights" type="xsd:string">
             <documentation>if true, the dc:rights of the objects will be included in the response.</documentation>
 		</part>
-		<part name="maxResults" type="xsd:string">
-			<documentation>the maximum number of results that the server should
-                provide at once.  If this is unspecified, the server will default
-                to a small value.</documentation>
-		</part>
-		<part name="terms" type="xsd:string">
-			<documentation>a sequence of characters (including the ? and * wildcards) 
-           for the search.  If this sequence is found in any of the fields for an 
-           object, the object is considered a match.  This parameter cannot
-           be used in combination with the query parameter.</documentation>
-		</part>
-		<part name="query" type="xsd:string">
-			<documentation>a sequence of space-separated conditions.  A condition
-           consists of a field name followed directly by an operator, followed
-           directly be a value.  Valid field names are (pid, label, fType, cModel,
-           state, locker, cDate, mDate, dcmDate, bDef, bMech, title, creator, subject,
-           description, publisher, contributor, date, type, format, identifier,
-           source, language, relation, coverage, rights).
-           Valid operators are =, ~, &gt;, &gt;=, &lt;, &lt;=.  The contains (~) operator
-           may be used in combination with the ? and * wildcards to query for simple
-           string patterns.  The inequality operators should only be used with
-           date-based fields (cDate, mDate, dcmDate, date).
-           Values may be any string.  If the string contains a space, the
-           value should begin and end with a single quote character ('). If all conditions
-           are met for an object, the object is considered a match. This parameter
-           cannot be used in combination with the terms parameter.</documentation>
-		</part>
-       <part name="xml" type="xsd:string">
-           <documentation>whether to return the result as an xml document.  If this is
-           given as true, the result will be in xml.  Otherwise, the result will be
-           provided in a simple html document.</documentation>
-       </part>
 	</message>
 	<message name="findObjectsResponse">
 		<part name="response" type="fedora-types:FieldSearchResult">
@@ -183,6 +183,11 @@
 			<documentation>the token of the session in which the next few
                 results can be found.</documentation>
 		</part>
+       <part name="xml" type="xsd:string">
+           <documentation>whether to return the result as an xml document.  If this is
+           given as true, the result will be in xml.  Otherwise, the result will be
+           provided in a simple html document.</documentation>
+       </part>
     </message>
 	<portType name="Fedora-API-A-LITE">
 		<documentation>  This is a simple URI-oriented service definition for the Access service 
@@ -216,6 +221,20 @@
 			</documentation>
 			<input message="fedora-api:getDisseminationRequest"/>
 			<output message="fedora-api:getDisseminationResponse"/>
+		</operation>
+		<operation name="findObjects">
+			<documentation>Gets the requested ObjectFields on all objects in the
+                repository matching the given criteria.
+			</documentation>
+			<input message="fedora-api:findObjectsRequest"/>
+			<output message="fedora-api:findObjectsResponse"/>
+		</operation>
+		<operation name="resumeFindObjects">
+			<documentation>Gets the next list of results from a truncated
+                findObjects response.
+			</documentation>
+			<input message="fedora-api:resumeFindObjectsRequest"/>
+			<output message="fedora-api:findObjectsResponse"/>
 		</operation>
 	</portType>
 	<service name="Fedora-API-A-LITE">
@@ -281,5 +300,44 @@
 				<mime:content type="*/*"/>
 			</output>
 		</operation>
+		<operation name="findObjects">
+			<http:operation location="search?{terms=(terms)|query=(query)}[&amp;maxResults=(maxResults)][&amp;xml=(xml)][&amp;pid=(pid)][&amp;label=(label)][&amp;fType=(fType)][&amp;cModel=(cModel)][&amp;state=(state)][&amp;locker=(locker)][&amp;cDate=(cDate)][&amp;mDate=(mDate)][&amp;dcmDate=(dcmDate)][&amp;bDef=(bDef)][&amp;bMech=(bMech)][&amp;title=(title)][&amp;creator=(creator)][&amp;subject=(subject)][&amp;description=(description)][&amp;publisher=(publisher)][&amp;contributor=(contributor)][&amp;date=(date)][&amp;type=(type)][&amp;format=(format)][&amp;identifier=(identifier)][&amp;source=(source)][&amp;language=(language)][&amp;relation=(relation)][&amp;coverage=(coverage)][&amp;rights=(rights)]"/>
+			<input>
+				<urlReplacement/>
+				<documentation>This URL replacement syntax is used to perform a search on the objects in the repository.
+               The brace ({ and }) characters are used to denote a choice between items separated by the pipe (|) character.
+               Parentheses around a string indicate that the value of that part of the url should be replaced with the
+               value of the named parameter.  Square brackets indicate optional text.
+               Descriptions of each named parameter can be found in the appropriate message part documentation above.
+               A couple complete example URLs conforming to this syntax, are:
+              
+               http://localhost:8080/fedora/search?terms=fedora&amp;pid=true
+                   This example requests that the server provide the pids of objects where any of the indexed fields contain the word fedora.
+                   Since maxResults and xml aren't specified, the maxResults the server uses will be a small number, and the result will
+                   be provided in html.
+
+               http://localhost:8080/fedora/search?query=pid~*1&amp;maxResults=50&amp;xml=true&amp;pid=true&amp;creator=true
+                   This example requests that the server provide the pids and dc:creators of objects where the pid ends with the number 1.
+                   It asks for up to 50 results at a time from the server, and requests that the result is provided in xml.
+				</documentation>
+			</input>
+			<output>
+				<mime:content type="text/xml"/>
+				<mime:content type="text/html"/>
+			</output>
+		</operation>
+       <operation name="resumeFindObjects">
+           <http:operation location="search?sessionToken=(sessionToken)[&amp;xml=(xml)]"/>
+           <input>
+               <urlReplacement/>
+               <documentation>This operation is used to resume a findObjects operation.  
+               The sessionToken value comes from the previous response.  The URL replacement 
+               uses the same syntax conventions as the findObjects operation.</documentation>
+           </input>
+			<output>
+				<mime:content type="text/xml"/>
+				<mime:content type="text/html"/>
+			</output>
+       </operation>
 	</binding>
 </definitions>
