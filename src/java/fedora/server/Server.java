@@ -21,6 +21,7 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -94,12 +95,12 @@ import org.w3c.dom.NodeList;
  * <p></p> 
  * Messages are named using the following convention:
  * <p></p> 
- * <code>execpoint.messagetype.mnemonic</code>
+ * <code>execpoint.messagetype.errname</code>
  * <p></p> 
  * where <code>execpoint</code> is composed of 
  * <code>phase[subphase.[subphase.(...)]]</code>
  * <p></p> 
- * Phase is a mnemonic intended to show (in very general terms) 
+ * Phase is a short string intended to show
  * at which point in the server's execution the condition described
  * by the message occurs. Subphase is a sub-categorization of a phase.  
  * For example, <code>init.config</code> and <code>init.server</code> are 
@@ -138,7 +139,7 @@ import org.w3c.dom.NodeList;
  * @author cwilper@cs.cornell.edu
  */
 public abstract class Server 
-        extends ParameterizedComponent {
+        extends Pluggable {
  
     /** 
      * The ResourceBundle that provides access to constants from
@@ -162,6 +163,12 @@ public abstract class Server
     /** The configuration filename. */
     public static String CONFIG_FILE=s_const.getString("config.file");
 
+    /** The directory where server extensions are stored, relative to home. */
+    public static String EXTENSION_DIR=s_const.getString("extension.dir");
+
+    /** The directory where server executables are stored, relative to home. */
+    public static String BIN_DIR=s_const.getString("bin.dir");
+
     /** 
      * The prefix to all fedora-defined namespaces for this version.
      * 0={version.major}, 1={version.minor}
@@ -183,9 +190,9 @@ public abstract class Server
     public static String CONFIG_ELEMENT_COMMENT=
             s_const.getString("config.element.comment");
 
-    /** The configuration file datasource element's name. */
-    public static String CONFIG_ELEMENT_DATASOURCE=
-            s_const.getString("config.element.datasource");
+    /** The configuration file datastore element's name. */
+    public static String CONFIG_ELEMENT_DATASTORE=
+            s_const.getString("config.element.datastore");
 
     /** The configuration file module element's name. */
     public static String CONFIG_ELEMENT_MODULE=
@@ -201,6 +208,14 @@ public abstract class Server
      */
     public static String CONFIG_ATTRIBUTE_CLASS=
             s_const.getString("config.attribute.class");
+
+    /** The configuration file param element's name attribute. */
+    public static String CONFIG_ATTRIBUTE_NAME=
+            s_const.getString("config.attribute.name");
+
+    /** The configuration file param element's value attribute. */
+    public static String CONFIG_ATTRIBUTE_VALUE=
+            s_const.getString("config.attribute.value");
 
     /** The required server constructor's first parameter's class. */
     public static String SERVER_CONSTRUCTOR_PARAM1_CLASS=
@@ -248,6 +263,16 @@ public abstract class Server
      */
     public static String INIT_CONFIG_FATAL_BADNAMESPACE=
             s_const.getString("init.config.fatal.badnamespace");
+
+    /**
+     * Indicates that a parameter element in the config file is missing
+     * a required element. 0=config file full path, 1={config.element.param},
+     * 2={config.attribute.name}, 3={config.attribute.value}
+     */
+    public static String INIT_CONFIG_FATAL_INCOMPLETEPARAM=MessageFormat.format(
+            s_const.getString("init.config.fatal.incompleteparam"),
+            new Object[] {"{0}",CONFIG_ELEMENT_PARAM,CONFIG_ATTRIBUTE_NAME,
+            CONFIG_ATTRIBUTE_VALUE});
 
     /**
      * Indicates that the server class could not be found. 0=server class 
@@ -323,20 +348,56 @@ public abstract class Server
             throws ServerInitializationException,
                    ModuleInitializationException {
         m_homeDir=homeDir;
-        for (int i=0; i<configNodes.getLength(); i++) {
-            Node n=configNodes.item(i);
+        File configFile=new File(homeDir + File.separator + CONFIG_DIR 
+                + File.separator + CONFIG_FILE);
+        HashMap serverParams=new HashMap();
+        for (int rootChildIndex=0; rootChildIndex<configNodes.getLength(); 
+                rootChildIndex++) {
+            Node n=configNodes.item(rootChildIndex);
             if (n.getNodeType()==Node.ELEMENT_NODE) {
                 if (n.getLocalName().equals(CONFIG_ELEMENT_PARAM)) {
-                } else if (n.getLocalName().equals(CONFIG_ELEMENT_DATASOURCE)) {
+                    // if name-value pair, save in the server's config HashMap
+                    NamedNodeMap attrs=n.getAttributes();
+                    Node nameNode=attrs.getNamedItemNS(CONFIG_NAMESPACE,
+                            CONFIG_ATTRIBUTE_NAME);
+                    if (nameNode==null) {
+                        nameNode=attrs.getNamedItem(CONFIG_ATTRIBUTE_NAME);
+                    }
+                    Node valueNode=attrs.getNamedItemNS(CONFIG_NAMESPACE,
+                            CONFIG_ATTRIBUTE_VALUE);
+                    if (valueNode==null) {
+                        valueNode=attrs.getNamedItem(CONFIG_ATTRIBUTE_VALUE);
+                    }
+                    if (nameNode==null || valueNode==null) {
+                        throw new ServerInitializationException(
+                                MessageFormat.format(
+                                INIT_CONFIG_FATAL_INCOMPLETEPARAM, new Object[]
+                                {configFile}));
+                    }
+                    serverParams.put(nameNode.getNodeValue(), 
+                            valueNode.getNodeValue());
+                } else if (n.getLocalName().equals(CONFIG_ELEMENT_DATASTORE)) {
+                    // instantiate the datasource
                 } else if (n.getLocalName().equals(CONFIG_ELEMENT_MODULE)) {
                 } else if (!n.getLocalName().equals(CONFIG_ELEMENT_COMMENT)) {
-                    // warning, unrec, ignored
+                    // warning, unrec element, ignored
                 }
                 System.out.println("found element: " + n.getLocalName());
+            } else {
+                // warning, unrec non-element, ignored
             }
         }
-        // call 
-        // do what this was gonna do: loadConfiguration(serverParams);
+        setParameters(serverParams);
+        
+        
+        // print em
+        Iterator i=parameterNames();
+        while (i.hasNext()) {
+            String n=(String) i.next();
+            System.out.println("name=\"" + n + "\", value=\"" + getParameter(n) + "\"");
+        }
+        
+        
         initServer();
         // foreach module, load an instance with the given
         // params
