@@ -48,7 +48,7 @@ public class Datastream
   public String DSState;
 
   public String DSLocation;
-
+  
   public InputStream getContentStream()
   {
     return null;

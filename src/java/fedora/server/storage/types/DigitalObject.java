@@ -1,8 +1,9 @@
 package fedora.server.storage.types;
 
-import java.util.List;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A holder of Fedora digital object information.
@@ -65,6 +66,20 @@ public interface DigitalObject {
     public void setLabel(String label);
     
     /**
+     * Gets the content model id.
+     *
+     * @return The content model id.
+     */
+    public String getContentModelId();
+    
+    /**
+     * Sets the content model id.
+     *
+     * @param id The content model id.
+     */
+    public void setContentModelId(String id);
+    
+    /**
      * Gets the date the object was created.
      *
      * @return The date, or null if it hasn't been set.
@@ -91,6 +106,22 @@ public interface DigitalObject {
      * @param date The date.
      */
     public void setLastModDate(Date lastModDate);
+    
+    /**
+     * Sets the preferred namespace uri-to-prefix map for XML renditions of
+     * this object or components.
+     * 
+     * @param mapping The uri-to-prefix mapping.
+     */
+    public void setNamespaceMapping(Map mapping);
+    
+    /**
+     * Gets the preferred namespace uri-to-prefix map for XML renditions of
+     * this object or components.
+     *
+     * @return The uri-to-prefix mapping.
+     */
+    public Map getNamespaceMapping();
 
     /**
      * Gets this object's mutable List of AuditRecord objects.
@@ -140,4 +171,5 @@ public interface DigitalObject {
      * @return The list, possibly of zero size but never null.
      */
     public List disseminators(String id);
+    
 }

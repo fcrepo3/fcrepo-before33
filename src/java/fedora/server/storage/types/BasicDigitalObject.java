@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -19,11 +20,13 @@ public class BasicDigitalObject
     private String m_pid;
     private String m_state;
     private String m_label;
+    private String m_contentModelId;
     private Date m_createDate;
     private Date m_lastModDate;
     private ArrayList m_auditRecords;
     private HashMap m_datastreams;
     private HashMap m_disseminators;
+    private Map m_prefixes;
 
     public BasicDigitalObject() { 
         m_auditRecords=new ArrayList();
@@ -55,6 +58,14 @@ public class BasicDigitalObject
         m_label=label;
     }
     
+    public String getContentModelId() {
+        return m_contentModelId;
+    }
+    
+    public void setContentModelId(String id) {
+        m_contentModelId=id;
+    }
+    
     public Date getCreateDate() {
         return m_createDate;
     }
@@ -69,6 +80,14 @@ public class BasicDigitalObject
     
     public void setLastModDate(Date lastModDate) {
         m_lastModDate=lastModDate;
+    }
+    
+    public void setNamespaceMapping(Map mapping) {
+        m_prefixes=mapping;
+    }
+    
+    public Map getNamespaceMapping() {
+        return m_prefixes;
     }
     
     public List getAuditRecords() {
