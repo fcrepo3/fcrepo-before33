@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Ronda A. Grizzle (University of Virginia) -->
-<!-- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+ <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> -->
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
@@ -94,7 +94,7 @@
 			<para>Users may also create behavior definition and behavior mechanism objects by selecting these submenu options. The complex task of building WSDL objects dictated the necessity of onscreen, context sensitive help screens for these builders. Clicking the <emphasis>Help</emphasis> button on any pane in the Behavior Definition Builder or Behavior Mechanism Builder will open a popup help screen defining each field in view.</para>
 			<sect3>
 				<title>Creating a New Data Object</title>
-				<para>This section will provide instructions for building a new data object using Fedora Administrator.</para>
+				<para>This section provides instructions for building a new data object using Fedora Administrator.</para>
 				<blockquote>
 					<para>On the File Menu, select <emphasis>New</emphasis>.</para>
 					<para>From the New submenu, select <emphasis>Data Object</emphasis>.</para>
@@ -260,9 +260,18 @@
 						<imagedata fileref="images/fileingestdirdialog.jpg"/>
 					</imageobject>
 				</mediaobject>
-				<para>Choosing Ingest One Object from File, the user is prompted to select the file name from a dialog box or browse on the local drive(s) for the file to be ingested. Clicking <emphasis>Open</emphasis> will cause the file to be ingested. If the repository has been set to retain PIDs on ingest in the fedora.fcfg file, the PID in the object XML will be maintained. Otherwise, the PID will be overwritten. <emphasis role="bold">If the PID of the new object matches the PID of an existing object, the existing object will be overwritten, unless the namespace in the PID is listed in the "retain PID" parameter in fedora.fcfg.</emphasis>
-				</para>
-				<para>Choosing Ingest One Object from Repository causes the Source Repository dialog box to appear. The user must fill in .... FINISH THIS!!</para>
+				<para>Choosing Ingest One Object from File, the user is prompted to select the file name from a dialog box or browse to the location of the file on the local drive(s) for the file to be ingested. Clicking <emphasis>Open</emphasis> will cause the file to be ingested. If the repository has been set to retain PIDs on ingest in fedora.fcfg, the PID in the object XML will be maintained. Otherwise, the PID will be overwritten.</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/ingest_repo.jpg"/>
+					</imageobject>
+				</mediaobject>
+				<para>Choosing Ingest One Object from Repository causes the Source Repository dialog box to appear. The user must fill in the hostname: port of the source repository, and enter a username and password. Clicking <emphasis>OK</emphasis> initiates the Input dialog, where the user is prompted for a PID value. Clicking <emphasis>OK</emphasis> on the Input dialog completes the object ingestion.</para>
+				<mediaobject>
+				<imageobject>
+					<imagedata fileref="images/input.jpg"/>
+				</imageobject>
+			</mediaobject>
 			</sect3>
 			<sect3>
 				<title>Objects by Type</title>
@@ -291,9 +300,19 @@
 					</listitem>
 				</orderedlist>
 				<para>Using the Ingest Objects by Type from File submenu allows users to place all objects in a single directory, and the Fedora software will ingest the objects in that directory in the proper order.</para>
-				<para>If the repository has been set to retain PIDs on ingest in the fedora.fcfg, the PID in the object XML will be maintained. Otherwise, the PID will be overwritten. <emphasis role="bold">If the PID of the new object matches the PID of an existing object, the existing object will be overwritten, unless the namespace in the PID is listed in the "retain PID" parameter in fedora.fcfg.</emphasis>
-				</para>
-				<para>Choosing Ingest Objects by Type from Repository ... FINISH THIS!!!</para>
+				<para>If the repository has been set to retain PIDs on ingest in fedora.fcfg, the PID in the object XML will be maintained. Otherwise, the PID will be overwritten.</para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/ingest_repo.jpg"/>
+					</imageobject>
+				</mediaobject>
+				<para>Choosing Ingest Objects by Type from Repository causes the Source Repository dialog box to appear. The user must fill in the hostname: port of the source repository, and enter a username and password. Clicking <emphasis>OK</emphasis> causes the Select Object Type dialog to appear. Selecting the types of objects to be ingested from the source repository--behavior definitions, behavior mechanisms, or data objects--and clicking <emphasis>OK</emphasis> initiates ingestion of <emphasis role="bold">all</emphasis> objects of that type from the source repository. </para>
+				<mediaobject>
+					<imageobject>
+						<imagedata fileref="images/selectbytype.jpg"/>
+					</imageobject>
+				</mediaobject>
+				<para>During ingest, the status bar at the bottom of the Fedora Administrator window shows the activities of the server. Once ingest is complete, a summary pane will appear giving counts of objects successfully ingested, objects failed, and time elapsed. Click <emphasis>OK</emphasis> to clear this message. The View Ingest Log dialog will then open. The user may click <emphasis>Yes</emphasis> and view the detailed log file or <emphasis>No</emphasis> to view the file at a later time. The log file is created in the $FEDORA_HOME/client/logs/ directory.</para>
 			</sect3>
 		</sect2>
 		<sect2>
@@ -349,7 +368,7 @@
 					<imagedata fileref="images/login.jpg"/>
 				</imageobject>
 			</mediaobject>
-			<para>The Change Repository option allows a repository administrator to login to a different Fedora repository.  When selected, this menu option causes the Login dialog to be displayed. The repository adminstrator may then select a different Fedora server with which to connect, entering the appropriate login name and password.</para>
+			<para>The Change Repository option allows a repository administrator to login to a different Fedora repository.  When selected, this menu option causes the Login dialog to be displayed. The repository administrator may then select a different Fedora server with which to connect, entering the appropriate login name and password.</para>
 		</sect2>
 		<sect2>
 			<title>Exit</title>
@@ -363,7 +382,7 @@
 				<imagedata fileref="images/tools_menu.jpg"/>
 			</imageobject>
 		</mediaobject>
-		<para>Commands on the Tools menu provide the user with the ability to search and retrieve objects from the repository, build and ingest batches of digital objects, and under the console menu, gain access directly to API-M and API-A methods for testing purposes. </para>
+		<para>Commands on the Tools menu provide the user with the ability to search and retrieve objects from the repository, build and ingest batches of digital objects, and under the console submenu, gain access directly to API-M and API-A methods for testing purposes. </para>
 		<sect2>
 			<title>Search/Browse Repository</title>
 			<para>The Search/Browse Repository menu option provides a mechanism for searching and retrieving objects from the Fedora repository.  Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using this menu option.  The DC Metadata section is an optional Implementer-Defined XML Metadata datastream in the object, where the <emphasis>Datastream ID</emphasis> is DC, and the XML conforms to the schema at <ulink url="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</ulink>.  If a Dublin Core metadata datastream is not provided, Fedora will construct a minimal DC datastream consisting of the elements dc:title and dc:identifier. The value for dc:title will be obtained from the object's label (if present in the object) and the value for dc:identifier will be assigned to the object's persistent identifier or PID.</para>
@@ -499,7 +518,7 @@
 				<para>This process builds a set of Fedora METS XML files from a common Fedora METS template and simple (non-METS) XML <emphasis>object-specs</emphasis>, then ingests the  resulting batch into Fedora.</para>
 			</sect3>
 			<sect3>
-				<title>Fedora Administrator instructions</title>
+				<title>Fedora Administrator Instructions</title>
 				<blockquote>
 					<para>Select <emphasis>Tools</emphasis> on the Fedora Administrator menu bar, and select item <emphasis>Build and Ingest Batch</emphasis>.</para>
 					<para>This will open a <emphasis>Batch Build</emphasis> and Ingest window.  You may need to adjust this window’s size to see its controls.  Use the <emphasis>browse</emphasis> buttons to enter the four required settings.  Clicking on a <emphasis>browse</emphasis> button opens a standard directory/file selection dialog.</para>
@@ -627,7 +646,7 @@ xmlns:uvalibadmin="http://www.lib.virginia.edu/uvalibadmin/" &gt;
 					<imagedata fileref="images/tools_console.jpg"/>
 				</imageobject>
 			</mediaobject>
-			<para>The menu options under the Console menu give developers direct access to the methods in the Fedora APIs and to the Stdout/Stderr window.  In this way, development tools calling  API methods can be more efficiently tested.</para>
+			<para>The options under the Console submenu give developers direct access to the methods in the Fedora APIs and to the Stdout/Stderr window.  In this way, development tools calling  API methods can be more efficiently tested.</para>
 			<para>These console windows are not intended for casual users or repository administrators, therefore they contain no guiding text to assist users in their function.  Developers should carefully read the Fedora Technical Specification to understand the parameters required for each method in the Fedora APIs.</para>
 		</sect2>
 	</sect1>
@@ -638,7 +657,7 @@ xmlns:uvalibadmin="http://www.lib.virginia.edu/uvalibadmin/" &gt;
 				<imagedata fileref="images/builders_menu.jpg"/>
 			</imageobject>
 		</mediaobject>
-		<para>The Builders menu gives users access to the Behavior Definition Builder and the Behavior Definition Builder. These WSDL objects are of such complex structure that it was necessary to create a wizard-like tool to enable users to construct custom Behavior Definitions and Behavior Mechanisms. </para>
+		<para>The Builders submenu gives users access to the Behavior Definition Builder and the Behavior Definition Builder. These WSDL objects are of such complex structure that it was necessary to create a wizard-like tool to enable users to construct custom Behavior Definitions and Behavior Mechanisms. </para>
 		<para>The complexity of the task requires that extensive help be available within the Fedora Administrator interface, so on every pane of these builders, users will find a Help button. Clicking this button, opens a help screen that guides the user through the data on that pane.</para>
 	</sect1>
 	<sect1>
