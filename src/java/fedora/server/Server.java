@@ -179,6 +179,9 @@ public abstract class Server
 
     /** The minor version of this release. */
     public static String VERSION_MINOR=s_const.getString("version.minor");
+    
+    /** The build number of this release. */
+    public static String BUILD_NUMBER=s_const.getString("version.buildNumber");
 
     /** The name of the property that tells the server where it's based. */
     public static String HOME_PROPERTY=s_const.getString("home.property");

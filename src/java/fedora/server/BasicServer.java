@@ -75,9 +75,13 @@ public class BasicServer
             throw new ServerInitializationException("Parameter fedoraServerPort "
                 + "not given, but it's required.");
         }
-        System.out.println("Fedora Version " + VERSION_MAJOR + "." + VERSION_MINOR);
+        System.out.println("Fedora Version: " + VERSION_MAJOR + "." + VERSION_MINOR);
+        System.out.println("Fedora Build: " + BUILD_NUMBER);
         System.out.println("Server Host Name: " + fedoraServerHost);
         System.out.println("Server Port: " + fedoraServerPort);
+        
+        logInfo("Fedora Version: " + VERSION_MAJOR + "." + VERSION_MINOR);
+        logInfo("Fedora Build: " + BUILD_NUMBER);
 
         // debug (optional, default = false)
         String debugString = getParameter("debug");
