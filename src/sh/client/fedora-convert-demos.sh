@@ -5,9 +5,9 @@ if [ "$FEDORA_HOME" = "" ]; then
   exit 1
 fi
 
-if [ ! -f "$FEDORA_HOME/server/config/fedora.fcfg" ]; then
+if [ ! -f "$FEDORA_HOME/client/client.jar" ]; then
   echo "ERROR: FEDORA_HOME does not appear correctly set."
-  echo "Configuration cannot be found at $FEDORA_HOME/server/config/fedora.fcfg"
+  echo "Client directory cannot be found at $FEDORA_HOME/client"
   exit 1
 fi
 

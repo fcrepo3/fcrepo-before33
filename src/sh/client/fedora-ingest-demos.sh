@@ -9,10 +9,10 @@ if [ -z "$FEDORA_HOME" ]; then
 	exit 1
 fi
 
-if [ -r "$FEDORA_HOME"/server/bin/set-env.sh ]; then
-  	. "$FEDORA_HOME"/server/bin/set-env.sh
+if [ -r "$FEDORA_HOME"/client/bin/set-env.sh ]; then
+  	. "$FEDORA_HOME"/client/bin/set-env.sh
 else
-	echo "ERROR: $FEDORA_HOME/server/bin/set-env.sh was not found."
+	echo "ERROR: $FEDORA_HOME/client/bin/set-env.sh was not found."
 	exit 1
 fi
 
