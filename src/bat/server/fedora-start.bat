@@ -8,18 +8,38 @@ echo Starting Fedora server...
 set TC=%FEDORA_HOME%\tomcat41
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
+
+if exist %FEDORA_HOME%\logs\startup.log goto logDirExists
+mkdir %FEDORA_HOME%\logs > NUL
+
+:logDirExists
+if "%OS%" == "" goto runMinimized
+
+:runInBackground
 start /B %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %TC%\bin\bootstrap.jar -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\bin -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp org.apache.catalina.startup.Bootstrap start
+goto deploy
+
+:runMinimized
+start /m %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %TC%\bin\bootstrap.jar -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\bin -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp org.apache.catalina.startup.Bootstrap start
+
+:deploy
+set C=%TC%\common\lib
+set CP=%C%\saaj.jar;%C%\commons-discovery.jar;%C%\axis.jar;%C%\commons-logging.jar;%C%\jaxrpc.jar;%C%\wsdl4j.jar;%C%\tt-bytecode.jar
+echo Deploying API-M and API-A...
+%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deployAPI-A.wsdd "http://localhost:8080/fedora/AdminService" 15
+if errorlevel 1 goto deployError
+
+%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deploy.wsdd "http://localhost:8080/fedora/AdminService" 15
+if errorlevel 1 goto deployError
+
+echo Finished.  To stop the server, use fedora-stop.
+goto finish
+
+:deployError
+echo Error deploying (see above)... to stop the server, use fedora-stop.
+
+:finish
 set JAVA_HOME=%OLD_JAVA_HOME%
-
-rem	<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
-rem	<arg value="org.apache.axis.client.AdminClient"/>
-rem	<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
-rem	<arg value="dist/server/config/deployAPI-A.wsdd"/>
-   
-echo FIXME: insert deployment here
-
-echo Standard output is being directed to %FEDORA_HOME%\mckoi094\stdout.log
-echo To stop the server, use fedora-stop.
 
 goto end
 

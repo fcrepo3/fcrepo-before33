@@ -10,10 +10,19 @@ echo Starting McKoi DB...
 
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
-start /B %JAVA_HOME%\bin\java -Xms32m -Xmx64m -cp %FEDORA_HOME%\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\mckoi094\db.conf > %FEDORA_HOME%\mckoi094\stdout.log
+
+if "%OS%" == "" goto runMinimized
+
+:runInBackground
+start /B %JAVA_HOME%\bin\java -Xms32m -Xmx64m -cp %FEDORA_HOME%\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\mckoi094\db.conf
+goto :doneRunning
+
+:runMinimized
+start /m %JAVA_HOME%\bin\java -Xms32m -Xmx64m -cp %FEDORA_HOME%\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\mckoi094\db.conf
+
+:doneRunning
 set JAVA_HOME=%OLD_JAVA_HOME%
 
-echo Standard output is being directed to %FEDORA_HOME%\mckoi094\stdout.log
 echo To stop the server, use mckoi-stop.
 
 goto end
