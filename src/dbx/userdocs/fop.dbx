@@ -6,10 +6,10 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
-		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<graphic fileref="images/newlogo2.jpg"/>
 		<title><inlinemediaobject>
 				<imageobject>
-					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
 			</inlinemediaobject></title>
 		<title>FOP webapp</title>
@@ -49,6 +49,8 @@
 		<blockquote>
 			<para>http://localhost:8080/fop/FOPServlet?source=http://www.fedora.info/services/fop/sample_fo.xml</para>
 		</blockquote>
-		<para><emphasis><footnote id="fnrex11"><para>This service uses the FOP formatter from Apache which is licensed under the Apache Software License v1.1 <ulink url="http://xml.apache.org/fop/license.html">(ASL)</ulink>. For additonal information regarding FOP formatter, please refer to the FOP project web site at: <ulink url="http://xml.apache.org/fop/">http://xml.apache.org/fop/</ulink>.</para></footnote></emphasis></para>
+		<para><emphasis><footnote id="fnrex11">
+					<para>This service uses the FOP formatter from Apache which is licensed under the Apache Software License v1.1 <ulink url="http://xml.apache.org/fop/license.html">(ASL)</ulink>. For additonal information regarding FOP formatter, please refer to the FOP project web site at: <ulink url="http://xml.apache.org/fop/">http://xml.apache.org/fop/</ulink>.</para>
+				</footnote></emphasis></para>
 	</sect1>
 </article>

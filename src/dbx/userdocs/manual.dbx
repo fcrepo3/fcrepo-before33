@@ -6,10 +6,10 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <book>
 	<bookinfo>
-		<graphic fileref="http://www/fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+		<graphic fileref="images/newlogo2.jpg" format="JPEG"/>
 		<title><inlinemediaobject>
 				<imageobject>
-					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
 			</inlinemediaobject></title>
 		<title>The Fedora Manual</title>
@@ -20,7 +20,7 @@
 		</copyright>
 		<publisher>
 			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
-		</publisher>		
+		</publisher>
 		<edition>$Revision$</edition>
 		<date>$Date$</date>
 		<releaseinfo>

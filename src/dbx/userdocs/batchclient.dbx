@@ -6,10 +6,10 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
-		<graphic fileref="../images/newlogo2.jpg"/>
+		<graphic fileref="images/newlogo2.jpg"/>
 		<title><inlinemediaobject>
 				<imageobject>
-					<imagedata fileref="../images/newlogo2.jpg" format="JPEG"/>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
 			</inlinemediaobject></title>
 		<title>Fedora Admin Client Batch Utility</title>
@@ -30,17 +30,17 @@
 	<sect1>
 		<title>Introduction</title>
 		<para>The <emphasis>fedora-admin</emphasis> client utility includes tools to create and ingest multiple Fedora objects, represented externally to Fedora in METS XML documents.</para>
-		<para>It&apos;s simple to ingest objects created by one-up edit or by custom scripting.</para> 
+		<para>It&apos;s simple to ingest objects created by one-up edit or by custom scripting.</para>
 		<para><emphasis>fedora-admin</emphasis> also supports building objects.  This takes a general template common to all objects in a batch and makes object-specific substitutions into the template.  It also substitutes a common datetime stamp for all date attributes.  The template is a Fedora METS XML document, with data common to the objects of the batch.  Separate XML documents hold the per-object substitution values.</para>
 		<para>The relatedness of objects in a batch is defined by what <emphasis>fedora-admin</emphasis> allows to be substituted and by which substitutions you choose to make.  Data from the template are retained, unless replaced per individual object, including XML comments.</para>
 		<para><emphasis>fedora-admin</emphasis> provides for three modes of object batch processing:  <emphasis>batch build</emphasis>, <emphasis>batch ingest</emphasis>, and a combined <emphasis>batch build and ingest</emphasis>. </para>
 		<para>This phased processing is shown in the following diagram.</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="images/table.jpg"></imagedata>
+				<imagedata fileref="images/table.jpg"/>
 			</imageobject>
 		</mediaobject>
-	</sect1>	
+	</sect1>
 	<sect1>
 		<title>Building Fedora objects in batch</title>
 		<para>Build a set of Fedora METS XML files from a common Fedora METS template and simple (non-METS) XML <emphasis>object-specs</emphasis>.  The resulting objects are then ready for ingesting into Fedora.</para>
@@ -52,13 +52,13 @@
 				<para>Then click the <emphasis>Build this batch</emphasis> button to build the batch of Fedora METS XML documents.</para>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="images/build.jpg"></imagedata>
+						<imagedata fileref="images/build.jpg"/>
 					</imageobject>
 				</mediaobject>
 				<para>A second (output-only) window will open to show progress.  You can build multiple different batches before closing the <emphasis>Batch Build</emphasis> window.</para>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="images/build-output.jpg"></imagedata>
+						<imagedata fileref="images/build-output.jpg"/>
 					</imageobject>
 				</mediaobject>
 				<para>You can then ingest the created batch as described elsewhere in this document.</para>
@@ -87,14 +87,14 @@
 				<para>This will open a <emphasis>Batch Ingest</emphasis> window.  You may need to adjust this window’s size to see its controls.  Use the <emphasis>browse</emphasis> buttons to enter the two required settings.  Clicking on a <emphasis>browse</emphasis> button opens a standard directory/file selection dialog.  </para>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="images/ingest.jpg"></imagedata>
+						<imagedata fileref="images/ingest.jpg"/>
 					</imageobject>
 				</mediaobject>
 				<para>Then click the <emphasis>Ingest this batch</emphasis> button to ingest the batch into your Fedora repository.</para>
 				<para>A second (output-only) window will open to show progress.  You can ingest multiple different batches before closing the <emphasis>Batch Ingest</emphasis> window.</para>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="images/ingest-output.jpg"></imagedata>
+						<imagedata fileref="images/ingest-output.jpg"/>
 					</imageobject>
 				</mediaobject>
 				<para>No subdirectories or files are deleted by <emphasis>fedora-admin</emphasis>.  Setup and cleanup is by using standard operating systems facilities.
@@ -125,14 +125,14 @@
 				<para>This will open a <emphasis>Batch Build</emphasis> and Ingest window.  You may need to adjust this window’s size to see its controls.  Use the <emphasis>browse</emphasis> buttons to enter the four required settings.  Clicking on a <emphasis>browse</emphasis> button opens a standard directory/file selection dialog.</para>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="images/build-ingest.jpg"></imagedata>
+						<imagedata fileref="images/build-ingest.jpg"/>
 					</imageobject>
 				</mediaobject>
 				<para>Then click the <emphasis>Build and Ingest this batch</emphasis> button to build the batch of Fedora METS XML documents and then ingest them into Fedora.</para>
 				<para>A second (<emphasis>output-only</emphasis>) window will open to show progress.  You can build and ingest multiple different batches before closing the <emphasis>Batch Build and Ingest</emphasis> window.</para>
 				<mediaobject>
 					<imageobject>
-						<imagedata fileref="images/build-ingest-output.jpg"></imagedata>
+						<imagedata fileref="images/build-ingest-output.jpg"/>
 					</imageobject>
 				</mediaobject>
 				<para>There is then no need to separately ingest the created batch.</para>

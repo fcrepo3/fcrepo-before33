@@ -6,14 +6,12 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
-		<graphic fileref="/userdocs/images/newlogo2.jpg"/>
-		<title>
-			<inlinemediaobject>
+		<graphic fileref="images/newlogo2.jpg"/>
+		<title><inlinemediaobject>
 				<imageobject>
-					<imagedata fileref="/userdocs/images/newlogo2.jpg" format="JPEG"/>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
+			</inlinemediaobject></title>
 		<title>Distribution Structure</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -35,86 +33,71 @@
           you should be aware of.<itemizedlist>
 				<title>Key directories:</title>
 				<listitem>
-					<para>
-						<emphasis>bin/</emphasis>
+					<para><emphasis>bin/</emphasis>
           - Contains executables for the server and client tools (.bat files
           for Windows and shell scripts for unix)</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>config/</emphasis>
+					<para><emphasis>config/</emphasis>
           - Contains the server configuration file, fedora.fcfg.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>demo/</emphasis>
+					<para><emphasis>demo/</emphasis>
           - Contains sample digital objects that can be used as examples.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>doc/</emphasis>
+					<para><emphasis>doc/</emphasis>
           - Contains the software documentation.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>logs/</emphasis>
+					<para><emphasis>logs/</emphasis>
           - Contains the logfiles that the server writes to while it&#39;s
           running.</para>
 				</listitem>
-			</itemizedlist>
-		</para>
+			</itemizedlist></para>
 		<para>Besides these key directories, you will notice several others.
           These are important to the server&#39;s operation, but their
           contents don&#39;t need to be understood in order to administer the
           server.<itemizedlist>
 				<title>Other directories:</title>
 				<listitem>
-					<para>
-						<emphasis>access/</emphasis>
+					<para><emphasis>access/</emphasis>
           - Stylesheets for the default disseminator. All objects in the
           repository automatically subscribe to this disseminator, which
           provides methods for listing and retrieving the components of the
           object.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>client/</emphasis>
+					<para><emphasis>client/</emphasis>
           - The java classes necessary to run the client applications.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>mckoi094/</emphasis>
+					<para><emphasis>mckoi094/</emphasis>
           - A bundled java-based database that can be used as the underlying
           RDBMS for the server.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>pidgen/</emphasis>
+					<para><emphasis>pidgen/</emphasis>
           - Files supporting the PID generator, the component of the server
           that provides unique ids for new objects.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>schematron/</emphasis>
+					<para><emphasis>schematron/</emphasis>
           - Files supporting the validation of serialized digital objects.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>tomcat41/</emphasis>
+					<para><emphasis>tomcat41/</emphasis>
           - The bundled web server, which makes the repository web-accessible.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>work/</emphasis>
+					<para><emphasis>work/</emphasis>
           - A temporary directory used by to support various server
           activities.</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis>xsd/</emphasis>
+					<para><emphasis>xsd/</emphasis>
           - W3 XML schemas, for reference and validation support.</para>
 				</listitem>
-			</itemizedlist>
-		</para>
+			</itemizedlist></para>
 	</sect1>
 </article>

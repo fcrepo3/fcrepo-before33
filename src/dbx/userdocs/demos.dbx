@@ -8,7 +8,7 @@
 	<bookinfo>
 		<title><inlinemediaobject>
 				<imageobject>
-					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
 			</inlinemediaobject></title>
 		<title>The Demo Manual - Description of Demonstration Objects</title>
@@ -24,7 +24,7 @@
 		<date>$Date$</date>
 		<releaseinfo>
             $Id$ 
-        </releaseinfo>		
+        </releaseinfo>
 	</bookinfo>
 	<preface>
 		<title>About This Manual</title>

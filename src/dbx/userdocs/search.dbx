@@ -6,10 +6,10 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
-		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<graphic fileref="images/newlogo2.jpg"/>
 		<title><inlinemediaobject>
 				<imageobject>
-					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
 			</inlinemediaobject></title>
 		<title>Fedora Search Interface User Documentation</title>
@@ -20,7 +20,7 @@
 		</copyright>
 		<publisher>
 			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
-		</publisher>			
+		</publisher>
 		<edition>$Revision$</edition>
 		<date>$Date$</date>
 		<releaseinfo>
@@ -67,7 +67,7 @@
 		</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="/userdocs/search/images/searchinterface.jpg" format="JPEG"/>
+				<imagedata fileref="images/searchinterface.jpg" format="JPEG"/>
 			</imageobject>
 		</mediaobject>
 	</sect1>
@@ -77,7 +77,7 @@
 		</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="/userdocs/search/images/imagesearchresult.jpg" format="JPEG"/>
+				<imagedata fileref="images/imagesearchresult.jpg" format="JPEG"/>
 			</imageobject>
 		</mediaobject>
 	</sect1>
@@ -87,7 +87,7 @@
 		</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="/userdocs/search/images/simplesearchhelp.jpg" format="JPEG"/>
+				<imagedata fileref="images/simplesearchhelp.jpg" format="JPEG"/>
 			</imageobject>
 		</mediaobject>
 	</sect1>
@@ -97,7 +97,7 @@
 		</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="/userdocs/search/images/advsearchhelp.jpg" format="JPEG"/>
+				<imagedata fileref="images/advsearchhelp.jpg" format="JPEG"/>
 			</imageobject>
 		</mediaobject>
 	</sect1>
@@ -107,7 +107,7 @@
 		</para>
 		<mediaobject>
 			<imageobject>
-				<imagedata fileref="/userdocs/search/images/fieldhelp.jpg" format="JPEG"/>
+				<imagedata fileref="images/fieldhelp.jpg" format="JPEG"/>
 			</imageobject>
 		</mediaobject>
 	</sect1>

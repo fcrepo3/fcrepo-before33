@@ -6,14 +6,12 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
-		<graphic fileref="/userdocs/images/newlogo2.jpg"/>
-		<title>
-			<inlinemediaobject>
+		<graphic fileref="images/newlogo2.jpg"/>
+		<title><inlinemediaobject>
 				<imageobject>
-					<imagedata fileref="/userdocs/images/newlogo2.jpg" format="JPEG"/>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
+			</inlinemediaobject></title>
 		<title>Features</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -34,16 +32,13 @@
 		<para>The Fedora repository system is open source software licensed under the <ulink url="http://www.mozilla.org/MPL/MPL-1.1.html">Mozilla Public License</ulink>. The interface to the system consists of three open APIs that are exposed as web services: </para>
 		<itemizedlist>
 			<listitem>
-				<para>
-				<emphasis role="bold">Management API</emphasis> (<ulink url="http://www.fedora.info/definitions/1/0/api#apim">API-M</ulink>) – defines an interface for administering the repository.  It includes operations necessary for clients to create and maintain digital objects and their components. API-M is implemented as a SOAP-enabled web service.				</para>
+				<para><emphasis role="bold">Management API</emphasis> (<ulink url="http://www.fedora.info/definitions/1/0/api#apim">API-M</ulink>) – defines an interface for administering the repository.  It includes operations necessary for clients to create and maintain digital objects and their components. API-M is implemented as a SOAP-enabled web service.				</para>
 			</listitem>
 			<listitem>
-				<para>
-				<emphasis role="bold">Access API</emphasis> (<ulink url="http://www.fedora.info/definitions/1/0/api#apia">API-A</ulink>) – defines an interface for accessing digital objects stored in the repository. It includes operations necessary for clients to perform disseminations on objects in the repository and to discover information about an object using object reflection. API-A is implemented as a SOAP-enabled web service.</para>
+				<para><emphasis role="bold">Access API</emphasis> (<ulink url="http://www.fedora.info/definitions/1/0/api#apia">API-A</ulink>) – defines an interface for accessing digital objects stored in the repository. It includes operations necessary for clients to perform disseminations on objects in the repository and to discover information about an object using object reflection. API-A is implemented as a SOAP-enabled web service.</para>
 			</listitem>
 			<listitem>
-				<para>
-			<emphasis role="bold">Access-Lite API</emphasis> (<ulink url="http://www.fedora.info/definitions/1/0/api#apialite">API-A-Lite</ulink>) – defines a streamlined version of the Fedora Access Service that is implemented as an HTTP-enabled web service.</para>
+				<para><emphasis role="bold">Access-Lite API</emphasis> (<ulink url="http://www.fedora.info/definitions/1/0/api#apialite">API-A-Lite</ulink>) – defines a streamlined version of the Fedora Access Service that is implemented as an HTTP-enabled web service.</para>
 			</listitem>
 		</itemizedlist>
 	</sect1>
@@ -51,88 +46,73 @@
 		<title>Major features:</title>
 		<itemizedlist>
 			<listitem>
-				<para>
-					<emphasis role="bold">Open Source</emphasis> - The Fedora repository system is open source software licensed under the GNU General Public License.	
+				<para><emphasis role="bold">Open Source</emphasis> - The Fedora repository system is open source software licensed under the GNU General Public License.	
 					</para>
 			</listitem>
 			<listitem>
-				<para>
-					<emphasis role="bold">Web Services</emphasis> - The interface to the Fedora repository system consists of three open APIs that are exposed as web services: Management API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apim">API-M</ulink>, Access API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apia">API-A</ulink>, and Access-Lite API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apialite">API-A-Lite</ulink>.	
+				<para><emphasis role="bold">Web Services</emphasis> - The interface to the Fedora repository system consists of three open APIs that are exposed as web services: Management API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apim">API-M</ulink>, Access API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apia">API-A</ulink>, and Access-Lite API known as <ulink url="http://www.fedora.info/definitions/1/0/api#apialite">API-A-Lite</ulink>.	
 					</para>
 			</listitem>
 			<listitem>
-				<para>
-					<emphasis role="bold">Datastreams</emphasis>
+				<para><emphasis role="bold">Datastreams</emphasis>
       					 - Objects in a repository may consist of content and metadata (datastreams) that physically reside inside the repository or outside the repository. The Fedora repository system supports content of any MIME type. Four datastream types are currently supported</para>
 			</listitem>
 		</itemizedlist>
 		<blockquote>
 			<orderedlist>
 				<listitem>
-					<para>
-							<emphasis>Referenced External Content</emphasis> (“E”) – referenced external content is remote content that exists outside the custodianship of the repository. Upon ingestion, datastreams defined as referenced content consist of pointers to the remote content.
+					<para><emphasis>Referenced External Content</emphasis> (“E”) – referenced external content is remote content that exists outside the custodianship of the repository. Upon ingestion, datastreams defined as referenced content consist of pointers to the remote content.
 							</para>
 				</listitem>
 				<listitem>
-					<para>
-							<emphasis>Repository-Managed Content</emphasis> (“M”) – managed content is content that the Fedora repository system maintains. Upon ingestion, datastreams defined as managed content will be copied from their remote location and henceforth be stored and managed within the Fedora repository system.									</para>
+					<para><emphasis>Repository-Managed Content</emphasis> (“M”) – managed content is content that the Fedora repository system maintains. Upon ingestion, datastreams defined as managed content will be copied from their remote location and henceforth be stored and managed within the Fedora repository system.									</para>
 				</listitem>
 				<listitem>
-					<para>
-							<emphasis>Implementor-Defined XML Metadata</emphasis> (“X”) – XML metadata content is XML-encoded data that is stored in-line in the Fedora-METS object. Even though it exists in-line in the object, it can be disseminated just as any other datastream in the object.	
+					<para><emphasis>Implementor-Defined XML Metadata</emphasis> (“X”) – XML metadata content is XML-encoded data that is stored in-line in the Fedora-METS object. Even though it exists in-line in the object, it can be disseminated just as any other datastream in the object.	
 							</para>
 				</listitem>
 				<listitem>
-					<para>
-							<emphasis>Redirected Content</emphasis> (“R”) – redirected content is a special type of datastream used for content that requires a direct connection between the content provider and the client. For example, streaming audio and video providers may provide special optimization and performance tuning designed to function with a direct connection between a web browser and the content provider. In these cases, Fedora permits a redirection of the datastream content directly to the client bypassing the internal proxying typically provided by Fedora. Using this type of datastream discloses the physical URL of the content datastream to the client because of the redirection performed. It is recommended that this type of datastream only be used in cases where redirection is necessary.	
+					<para><emphasis>Redirected Content</emphasis> (“R”) – redirected content is a special type of datastream used for content that requires a direct connection between the content provider and the client. For example, streaming audio and video providers may provide special optimization and performance tuning designed to function with a direct connection between a web browser and the content provider. In these cases, Fedora permits a redirection of the datastream content directly to the client bypassing the internal proxying typically provided by Fedora. Using this type of datastream discloses the physical URL of the content datastream to the client because of the redirection performed. It is recommended that this type of datastream only be used in cases where redirection is necessary.	
 							</para>
 				</listitem>
 			</orderedlist>
 		</blockquote>
 		<itemizedlist>
 			<listitem>
-				<para>
-					<emphasis role="bold">XML submission and storage</emphasis> 
+				<para><emphasis role="bold">XML submission and storage</emphasis> 
 							- Digital objects are stored as XML-encoded files that conform to an extension of the Metadata Encoding and Transmission Standard (<ulink url="http://www.loc.gov/mets/">METS</ulink>) schema. The schema for the extended version of METS used by Fedora can be found at <ulink url="http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd">http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd</ulink>.
 							</para>
 			</listitem>
 			<listitem>
-				<para>
-					<emphasis role="bold">Parameterized behaviors</emphasis>
+				<para><emphasis role="bold">Parameterized behaviors</emphasis>
 							 - Behaviors defined for an object support user-supplied options that are handled at dissemination time. 
 							</para>
 			</listitem>
 			<listitem>
-				<para>
-					<emphasis role="bold">Versioning</emphasis>
+				<para><emphasis role="bold">Versioning</emphasis>
 							 - Although not fully implemented in release 1.0, the Fedora repository system includes the infrastructure to support versioning of digital objects and their components.										</para>
 			</listitem>
 			<listitem>
-				<para>
-					<emphasis role="bold">Access Control and Authentication</emphasis>
+				<para><emphasis role="bold">Access Control and Authentication</emphasis>
 							 - Release 1.0 includes a simple form of access control to provide access restrictions based on IP address. IP range restriction is supported in both the Management and Access APIs. In addition, the Management API is protected by HTTP Basic Authentication. Access Policy and Authentication will be a major focus in Phase II of the Fedora project.
 							</para>
 			</listitem>
 			<listitem>
-				<para>
-					<emphasis role="bold">Default Disseminator</emphasis>
+				<para><emphasis role="bold">Default Disseminator</emphasis>
 							 - The Default Disseminator is a built-in internal disseminator on every object that provides a system-defined behavior mechanism for disseminating the basic contents of an object.									</para>
 			</listitem>
 			<listitem>
-				<para>
-					<emphasis role="bold">Searching</emphasis>
+				<para><emphasis role="bold">Searching</emphasis>
       - Selected system metadata fields are indexed along with the primary Dublin Core record for each object. The Fedora repository system provides a search interface for both full text and field-specific queries across these metadata fields.
 						</para>
 			</listitem>
 			<listitem>
-				<para>
-					<emphasis role="bold">OAI Metadata Harvesting Provider </emphasis> 
+				<para><emphasis role="bold">OAI Metadata Harvesting Provider </emphasis> 
 							- The <ulink url="http://www.openarchives.org/">OAI Protocol for Metadata Harvesting</ulink> is a standard for sharing metadata across repositories. Every Fedora digital object has a primary Dublin Core record that conforms to the schema at: <ulink url="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</ulink>.  This metadata is accessible using the OAI Protocol for Metadata Harvesting, v2.0.
 						</para>
 			</listitem>
 			<listitem>
-				<para>
-					<emphasis role="bold">Batch Utility</emphasis>
+				<para><emphasis role="bold">Batch Utility</emphasis>
       - The Fedora repository system includes a Batch Utility as part of the Management client that enables the mass creation and loading of data objects.
 						</para>
 			</listitem>

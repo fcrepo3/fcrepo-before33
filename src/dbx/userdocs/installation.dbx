@@ -6,10 +6,10 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
-		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<graphic fileref="images/newlogo2.jpg"/>
 		<title><inlinemediaobject>
 				<imageobject>
-					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
 			</inlinemediaobject></title>
 		<title>Fedora Installation and Configuration Guide</title>

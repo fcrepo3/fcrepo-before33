@@ -6,10 +6,10 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
-		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
+		<graphic fileref="images/newlogo2.jpg"/>
 		<title><inlinemediaobject>
 				<imageobject>
-					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
 			</inlinemediaobject></title>
 		<title>ImageManipulation webapp</title>
@@ -81,6 +81,8 @@ TConverts an image to another format. Currently supported formats are: gif, jpg,
 			<para>/imagemanip/ImageManipulation?url&equals;http://www.explore.cornell.edu/tour_landmarks/img/frosty_tower02.jpg&amp;op&equals;zoom&amp;zoomAmt&amp;equals;2.5</para>
 			<para>/imagemanip/ImageManipulation?url&equals;http://www.explore.cornell.edu/tour_landmarks/img/frosty_tower02.jpg&amp;op&equals;convert&amp;convertTo&equals;gif</para>
 		</blockquote>
-		<para><emphasis><footnote id="fnrex11"><para>This service uses the ImageJ API from Wayne Rasband which is free to use in the public domain. For additonal information regarding the ImageJ API, please refer to the ImageJ project web site at: <ulink url="http://rsb.info.nih.gov/ij/">http://rsb.info.nih.gov/ij/</ulink>.</para></footnote></emphasis></para>
+		<para><emphasis><footnote id="fnrex11">
+					<para>This service uses the ImageJ API from Wayne Rasband which is free to use in the public domain. For additonal information regarding the ImageJ API, please refer to the ImageJ project web site at: <ulink url="http://rsb.info.nih.gov/ij/">http://rsb.info.nih.gov/ij/</ulink>.</para>
+				</footnote></emphasis></para>
 	</sect1>
 </article>

@@ -6,14 +6,12 @@
     href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
-		<graphic fileref="/userdocs/images/newlogo2.jpg"/>
-		<title>
-			<inlinemediaobject>
+		<graphic fileref="images/newlogo2.jpg"/>
+		<title><inlinemediaobject>
 				<imageobject>
-					<imagedata fileref="/userdocs/images/newlogo2.jpg" format="JPEG"/>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
 				</imageobject>
-			</inlinemediaobject>
-		</title>
+			</inlinemediaobject></title>
 		<title>Web Exposure</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -30,418 +28,410 @@
         </releaseinfo>
 	</articleinfo>
 	<sect1>
-			<title>Web Exposure</title>
-			<para>The Fedora API-A-Lite interface is implemented as an HTTP-enabled web service that consists of the following methods: </para>
-			<itemizedlist>
-				<listitem>
-					<para>getDissemination - gets the specified dissemination request</para>
-				</listitem>
-				<listitem>
-					<para>getObjectProfile - gets the Object Profile of the specified object </para>
-				</listitem>
-			</itemizedlist>
-			<para>For more information on the method definitions, refer to the API descriptions located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink>. 					</para>
-			<sect2>
-				<title>Disseminations</title>
-				<variablelist>
-					<title>getDissemination syntax:</title>
-					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID/bDefPID/methodName<emphasis>[/dateTime][?parmArray]</emphasis>
-						</term>
-						<listitem>
-							<para>This syntax requests a dissemination of the specified object using the specified method of the associated behavior definition object. The result is returned as a MIME-typed stream. </para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<blockquote>
-					<itemizedlist>
-						<listitem>
-							<para>hostname - required hostname of the Fedora server. </para>
-						</listitem>
-						<listitem>
-							<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
-						</listitem>
-						<listitem>
-							<para>fedora - a required parameter specifying the Fedora servlet path.</para>
-						</listitem>
-						<listitem>
-							<para>get - a required parameter specifying the Fedora servlet path.</para>
-						</listitem>
-						<listitem>
-							<para>PID - required persistent identifier of the digital object.</para>
-						</listitem>
-						<listitem>
-							<para>bDefPID - required persistent identifier of the behavior definition object to which the digital object subscribes.</para>
-						</listitem>
-						<listitem>
-							<para>methodName - required name of the method to be executed. dateTime - optional.</para>
-						</listitem>
-						<listitem>
-							<para>
-								<emphasis>dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
-						</listitem>
-						<listitem>
-							<para>
-								<emphasis>parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1&equals;value1&amp;parm2&equals;value2...</para>
-						</listitem>
-					</itemizedlist>
-				</blockquote>
-				<variablelist>
-					<title>Example</title>
-					<varlistentry>
-						<term>Get the Dissemination for a data object with a PID of demo:5, an associated behavior definition object with a PID of demo:1, and a methodName of getThumbnail:</term>
-						<listitem>
-							<blockquote>
-								<para>http://localhost:8080/fedora/get/demo:5/demo:1/getThumbnail</para>
-							</blockquote>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-			</sect2>
-			<sect2>
-				<title>Object Profile</title>
-				<variablelist>
-					<title>GetObjectProfile syntax:</title>
-					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID<emphasis>[/dateTime][?xml=BOOLEAN]</emphasis>
-						</term>
-						<listitem>
-							<para>This syntax requests an object profile for the specified digital object. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of "no", a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is "yes", then a MIME-typed stream consisting of XML is returned.</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<blockquote>
-					<itemizedlist>
-						<listitem>
-							<para>hostname - a required parameter specifying the hostname of the Fedora server. </para>
-						</listitem>
-						<listitem>
-							<para>port - a required parameter specifying the port number on which the Fedora server is running.</para>
-						</listitem>
-						<listitem>
-							<para>fedora - a required parameter specifying the Fedora servlet path.</para>
-						</listitem>
-						<listitem>
-							<para>get - a required parameter specifying the Fedora servlet path.</para>
-						</listitem>
-						<listitem>
-							<para>PID - a required parameter specifying the persistent identifier of the digital object. </para>
-						</listitem>
-						<listitem>
-							<para>
-								<emphasis>dateTime</emphasis> - an optional dateTime parameter indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.).</para>
-						</listitem>
-						<listitem>
-							<para>
-								<emphasis>xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;true&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;false&quot; indicates format is to be text/html.</para>
-						</listitem>
-					</itemizedlist>
-				</blockquote>
-				<variablelist>
-					<title>Examples:</title>
-					<varlistentry>
-						<term>Get the ObjectProfile for a data object with a PID of demo:5 as HTML:</term>
-						<listitem>
-							<blockquote>
-								<para>http://localhost:8080/fedora/get/demo:5</para>
-							</blockquote>
-						</listitem>
-					</varlistentry>
-					<varlistentry>
-						<term>Get the ObjectProfile for a data object with a PID of demo:5 as XML:</term>
-						<listitem>
-							<blockquote>
-								<para>http://localhost:8080/fedora/get/demo:5?xml=yes</para>
-							</blockquote>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-			</sect2>
-			<sect2>
-				<title>Default Disseminator</title>
-				<para>Each Fedora data object has a default disseminator that provides a simple means of accessing the data object’s content without having to create a separate behavior definition and behavior mechanism object. Separate behavior definition and behavior mechanism objects can be added to extend the behaviors for an object beyond those behaviors provided by the default disseminator. </para>
-				<para>The default disseminator consists of a special internal behavior definition and behavior mechanism object that have the respective PIDs of fedora-system:3 and fedora-system:4. These special PIDs can be treated as ordinary behavior definition and behavior mechanism objects and used with both API-M, API-A, and API-A-Lite. The getObjectProfile method of API-A-Lite actually uses the getObjectProfile and viewObjectProfile methods of the default disseminator to retrieve an object’s profile. The default disseminator provides seven basic methods for accessing and viewing a data object’s content. Although all of the default disseminator’s methods can be accessed indirectly using the getObjectProfile method, they can also be disseminated using the special PID of fedora-system:3 for the default disseminator behavior definition object.</para>
-				<variablelist>
-					<title>getObjectProfile syntax:</title>
-					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID/fedora-system:3/getObjectProfile</term>
-						<listitem>
-							<para>This syntax returns the data object's profile in XML format.
+		<title>Web Exposure</title>
+		<para>The Fedora API-A-Lite interface is implemented as an HTTP-enabled web service that consists of the following methods: </para>
+		<itemizedlist>
+			<listitem>
+				<para>getDissemination - gets the specified dissemination request</para>
+			</listitem>
+			<listitem>
+				<para>getObjectProfile - gets the Object Profile of the specified object </para>
+			</listitem>
+		</itemizedlist>
+		<para>For more information on the method definitions, refer to the API descriptions located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink>. 					</para>
+		<sect2>
+			<title>Disseminations</title>
+			<variablelist>
+				<title>getDissemination syntax:</title>
+				<varlistentry>
+					<term>http://hostname:port/fedora/get/PID/bDefPID/methodName<emphasis>[/dateTime][?parmArray]</emphasis></term>
+					<listitem>
+						<para>This syntax requests a dissemination of the specified object using the specified method of the associated behavior definition object. The result is returned as a MIME-typed stream. </para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<blockquote>
+				<itemizedlist>
+					<listitem>
+						<para>hostname - required hostname of the Fedora server. </para>
+					</listitem>
+					<listitem>
+						<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+					</listitem>
+					<listitem>
+						<para>fedora - a required parameter specifying the Fedora servlet path.</para>
+					</listitem>
+					<listitem>
+						<para>get - a required parameter specifying the Fedora servlet path.</para>
+					</listitem>
+					<listitem>
+						<para>PID - required persistent identifier of the digital object.</para>
+					</listitem>
+					<listitem>
+						<para>bDefPID - required persistent identifier of the behavior definition object to which the digital object subscribes.</para>
+					</listitem>
+					<listitem>
+						<para>methodName - required name of the method to be executed. dateTime - optional.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>dateTime</emphasis> - value indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.)</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>parmArray</emphasis> - optional array of method parameters consisting of name/value pairs in the form parm1&equals;value1&amp;parm2&equals;value2...</para>
+					</listitem>
+				</itemizedlist>
+			</blockquote>
+			<variablelist>
+				<title>Example</title>
+				<varlistentry>
+					<term>Get the Dissemination for a data object with a PID of demo:5, an associated behavior definition object with a PID of demo:1, and a methodName of getThumbnail:</term>
+					<listitem>
+						<blockquote>
+							<para>http://localhost:8080/fedora/get/demo:5/demo:1/getThumbnail</para>
+						</blockquote>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</sect2>
+		<sect2>
+			<title>Object Profile</title>
+			<variablelist>
+				<title>GetObjectProfile syntax:</title>
+				<varlistentry>
+					<term>http://hostname:port/fedora/get/PID<emphasis>[/dateTime][?xml=BOOLEAN]</emphasis></term>
+					<listitem>
+						<para>This syntax requests an object profile for the specified digital object. The xml parameter determines the type of output returned. If the parameter is omitted or has a value of "no", a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is "yes", then a MIME-typed stream consisting of XML is returned.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<blockquote>
+				<itemizedlist>
+					<listitem>
+						<para>hostname - a required parameter specifying the hostname of the Fedora server. </para>
+					</listitem>
+					<listitem>
+						<para>port - a required parameter specifying the port number on which the Fedora server is running.</para>
+					</listitem>
+					<listitem>
+						<para>fedora - a required parameter specifying the Fedora servlet path.</para>
+					</listitem>
+					<listitem>
+						<para>get - a required parameter specifying the Fedora servlet path.</para>
+					</listitem>
+					<listitem>
+						<para>PID - a required parameter specifying the persistent identifier of the digital object. </para>
+					</listitem>
+					<listitem>
+						<para><emphasis>dateTime</emphasis> - an optional dateTime parameter indicating dissemination of a version of the digital object at the specified point in time. (NOT implemented in release 1.0.).</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;true&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;false&quot; indicates format is to be text/html.</para>
+					</listitem>
+				</itemizedlist>
+			</blockquote>
+			<variablelist>
+				<title>Examples:</title>
+				<varlistentry>
+					<term>Get the ObjectProfile for a data object with a PID of demo:5 as HTML:</term>
+					<listitem>
+						<blockquote>
+							<para>http://localhost:8080/fedora/get/demo:5</para>
+						</blockquote>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Get the ObjectProfile for a data object with a PID of demo:5 as XML:</term>
+					<listitem>
+						<blockquote>
+							<para>http://localhost:8080/fedora/get/demo:5?xml=yes</para>
+						</blockquote>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</sect2>
+		<sect2>
+			<title>Default Disseminator</title>
+			<para>Each Fedora data object has a default disseminator that provides a simple means of accessing the data object’s content without having to create a separate behavior definition and behavior mechanism object. Separate behavior definition and behavior mechanism objects can be added to extend the behaviors for an object beyond those behaviors provided by the default disseminator. </para>
+			<para>The default disseminator consists of a special internal behavior definition and behavior mechanism object that have the respective PIDs of fedora-system:3 and fedora-system:4. These special PIDs can be treated as ordinary behavior definition and behavior mechanism objects and used with both API-M, API-A, and API-A-Lite. The getObjectProfile method of API-A-Lite actually uses the getObjectProfile and viewObjectProfile methods of the default disseminator to retrieve an object’s profile. The default disseminator provides seven basic methods for accessing and viewing a data object’s content. Although all of the default disseminator’s methods can be accessed indirectly using the getObjectProfile method, they can also be disseminated using the special PID of fedora-system:3 for the default disseminator behavior definition object.</para>
+			<variablelist>
+				<title>getObjectProfile syntax:</title>
+				<varlistentry>
+					<term>http://hostname:port/fedora/get/PID/fedora-system:3/getObjectProfile</term>
+					<listitem>
+						<para>This syntax returns the data object's profile in XML format.
 							</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<blockquote>
-					<itemizedlist>
-						<listitem>
-							<para>hostname - required hostname of the Fedora server. </para>
-						</listitem>
-						<listitem>
-							<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
-						</listitem>
-						<listitem>
-							<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
-						</listitem>
-						<listitem>
-							<para>get - a required parameter specifying the Fedora servlet path </para>
-						</listitem>
-						<listitem>
-							<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
-						</listitem>
-						<listitem>
-							<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
-						</listitem>
-						<listitem>
-							<para>getObjectProfile – method name to retrieve an object’s profile in XML format. </para>
-						</listitem>
-					</itemizedlist>
-				</blockquote>
-				<variablelist>
-					<title>Examples:</title>
-					<varlistentry>
-						<term>Get the object profile of an object with a PID of demo:5 as XML:</term>
-						<listitem>
-							<para>http://localhost:8080/fedora/get/demo:5/fedora-system:3/getObjectProfile</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<variablelist>
-					<title>viewObjectprofile syntax:</title>
-					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID/fedora-system:3/viewObjectProfile</term>
-						<listitem>
-							<para>This syntax returns the data object's profile in HTML format.
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<blockquote>
+				<itemizedlist>
+					<listitem>
+						<para>hostname - required hostname of the Fedora server. </para>
+					</listitem>
+					<listitem>
+						<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+					</listitem>
+					<listitem>
+						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
+					</listitem>
+					<listitem>
+						<para>get - a required parameter specifying the Fedora servlet path </para>
+					</listitem>
+					<listitem>
+						<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
+					</listitem>
+					<listitem>
+						<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
+					</listitem>
+					<listitem>
+						<para>getObjectProfile – method name to retrieve an object’s profile in XML format. </para>
+					</listitem>
+				</itemizedlist>
+			</blockquote>
+			<variablelist>
+				<title>Examples:</title>
+				<varlistentry>
+					<term>Get the object profile of an object with a PID of demo:5 as XML:</term>
+					<listitem>
+						<para>http://localhost:8080/fedora/get/demo:5/fedora-system:3/getObjectProfile</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<variablelist>
+				<title>viewObjectprofile syntax:</title>
+				<varlistentry>
+					<term>http://hostname:port/fedora/get/PID/fedora-system:3/viewObjectProfile</term>
+					<listitem>
+						<para>This syntax returns the data object's profile in HTML format.
 							</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<blockquote>
-					<itemizedlist>
-						<listitem>
-							<para>hostname - required hostname of the Fedora server. </para>
-						</listitem>
-						<listitem>
-							<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
-						</listitem>
-						<listitem>
-							<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
-						</listitem>
-						<listitem>
-							<para>get - a required parameter specifying the Fedora servlet path </para>
-						</listitem>
-						<listitem>
-							<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
-						</listitem>
-						<listitem>
-							<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
-						</listitem>
-						<listitem>
-							<para>viewObjectProfile – method name to retrieve an object’s profile in HTML format. </para>
-						</listitem>
-					</itemizedlist>
-				</blockquote>
-				<variablelist>
-					<title>Examples:</title>
-					<varlistentry>
-						<term>Get the object profile of an object with a PID of demo:5 as HTML:</term>
-						<listitem>
-							<para>http://localhost:8080/fedora/get/demo:5/fedora-system:3/viewObjectProfile</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<variablelist>
-					<title>getMethodIndex syntax:</title>
-					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID/fedora-system:3/getMethodIndex</term>
-						<listitem>
-							<para>This syntax retrieves the data object’s method index in XML format.</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<blockquote>
-					<itemizedlist>
-						<listitem>
-							<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
-						</listitem>
-						<listitem>
-							<para>get - a required parameter specifying the Fedora servlet path </para>
-						</listitem>
-						<listitem>
-							<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
-						</listitem>
-						<listitem>
-							<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
-						</listitem>
-						<listitem>
-							<para>getMethodIndex – method name to retrieve an object’s method index in XML format.</para>
-						</listitem>
-					</itemizedlist>
-				</blockquote>
-				<variablelist>
-					<title>Examples:</title>
-					<varlistentry>
-						<term>Get the method index for an object with a PID of demo:5 as XML:</term>
-						<listitem>
-							<para>http://localhost:8080/fedora/get/demo:5/fedora-system:3/getMethodIndex</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<variablelist>
-					<title>viewMethodIndex syntax:</title>
-					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID/fedora-system:3/viewMethodIndex</term>
-						<listitem>
-							<para>This syntax retrieves the data object’s method index in HTML format.</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<blockquote>
-					<itemizedlist>
-						<listitem>
-							<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
-						</listitem>
-						<listitem>
-							<para>get - a required parameter specifying the Fedora servlet path </para>
-						</listitem>
-						<listitem>
-							<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
-						</listitem>
-						<listitem>
-							<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
-						</listitem>
-						<listitem>
-							<para>viewMethodIndex – method name to retrieve an object’s method index in HTML format.</para>
-						</listitem>
-					</itemizedlist>
-				</blockquote>
-				<variablelist>
-					<title>getItemIndex syntax:</title>
-					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID/fedora-system:3/getItemIndex</term>
-						<listitem>
-							<para>This syntax retrieves the data object’s item index in XML format.</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<blockquote>
-					<itemizedlist>
-						<listitem>
-							<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
-						</listitem>
-						<listitem>
-							<para>get - a required parameter specifying the Fedora servlet path </para>
-						</listitem>
-						<listitem>
-							<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
-						</listitem>
-						<listitem>
-							<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
-						</listitem>
-						<listitem>
-							<para>getItemIndex – method name to retrieve an object’s item index in XML format.</para>
-						</listitem>
-					</itemizedlist>
-				</blockquote>
-				<variablelist>
-					<title>viewItemIndex syntax:</title>
-					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID/fedora-system:3/viewItemIndex</term>
-						<listitem>
-							<para>This syntax retrieves the object’s item index in HTML format.</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<blockquote>
-					<itemizedlist>
-						<listitem>
-							<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
-						</listitem>
-						<listitem>
-							<para>get - a required parameter specifying the Fedora servlet path </para>
-						</listitem>
-						<listitem>
-							<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
-						</listitem>
-						<listitem>
-							<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
-						</listitem>
-						<listitem>
-							<para>viewItemIndex – method name to retrieve an object’s item index in HTML format.</para>
-						</listitem>
-					</itemizedlist>
-				</blockquote>
-				<variablelist>
-					<title>Examples:</title>
-					<varlistentry>
-						<term>Get the item index for an object with a PID of demo:5 as HTML:</term>
-						<listitem>
-							<para>http://localhost:8080/fedora/get/demo:5/fedora-system:3/viewItemIndex</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<variablelist>
-					<title>getItem syntax:</title>
-					<varlistentry>
-						<term>http://hostname:port/fedora/get/PID/fedora-system:3/getItem?itemID=DSID</term>
-						<listitem>
-							<para>This syntax retrieves the data object’s datastream using a specified datastream ID.</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-				<blockquote>
-					<itemizedlist>
-						<listitem>
-							<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
-						</listitem>
-						<listitem>
-							<para>get - a required parameter specifying the Fedora servlet path </para>
-						</listitem>
-						<listitem>
-							<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
-						</listitem>
-						<listitem>
-							<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
-						</listitem>
-						<listitem>
-							<para>getItem – method name to retrieve an object’s datastream using the specified datastream ID.</para>
-						</listitem>
-						<listitem>
-							<para>DSID – the datastream ID of the datastream you wish to retrieve.</para>
-						</listitem>
-					</itemizedlist>
-				</blockquote>
-				<variablelist>
-					<title>Examples:</title>
-					<varlistentry>
-						<term>Get the datastream with datastream ID of “DS1” from an object with a PID of demo:5: </term>
-						<listitem>
-							<para>http://localhost:8080/fedora/get/demo:5/fedora-system:3/getItem?itemID=DS1</para>
-						</listitem>
-					</varlistentry>
-				</variablelist>
-			</sect2>
-			<sect2>
-				<title>Search/Browse</title>
-				<para>The Fedora repository system also includes a search interface that enables searching across both System Metadata and user-defined Dublin Core metadata.Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using the search interface. The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the "Datastream ID" is DC, and the XML conforms to the schema at: http://www.openarchives.org/OAI/2.0/oai_dc.xsd. If such a datastream is not provided, Fedora will construct a default Dublin Core record using the label of the object as the dc:title value and the PID of the object as the dc:identifier value. The search interface provides both simple and advanced searching via a web page included with the repository software. All queries are case insensitive. Simple search enables queries of words and phrases occurring anywhere in an object s indexed metadata fields. Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (= and ~) for string fields, and value comparison operators (&equals;, &gt;, &ge;, &lt;, &le;) for date fields (dc:date fields may be treated as both). The wildcards, * and ? may be used in any string-based query.  The search interface can be accessed using the syntax:</para>
-				<para>
-					<emphasis role="bold">http://hostname:port/fedora/search</emphasis>
-				</para>
-				<blockquote>
-					<itemizedlist>
-						<listitem>
-							<para>hostname - required hostname of the Fedora server.</para>
-						</listitem>
-						<listitem>
-							<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
-						</listitem>
-						<listitem>
-							<para>fedora - a required parameter specifying the Fedora servlet path.</para>
-						</listitem>
-						<listitem>
-							<para>search - a required parameter specifying the Fedora servlet path</para>
-						</listitem>
-					</itemizedlist>
-				</blockquote>
-			</sect2>
-		</sect1>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<blockquote>
+				<itemizedlist>
+					<listitem>
+						<para>hostname - required hostname of the Fedora server. </para>
+					</listitem>
+					<listitem>
+						<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+					</listitem>
+					<listitem>
+						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
+					</listitem>
+					<listitem>
+						<para>get - a required parameter specifying the Fedora servlet path </para>
+					</listitem>
+					<listitem>
+						<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
+					</listitem>
+					<listitem>
+						<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
+					</listitem>
+					<listitem>
+						<para>viewObjectProfile – method name to retrieve an object’s profile in HTML format. </para>
+					</listitem>
+				</itemizedlist>
+			</blockquote>
+			<variablelist>
+				<title>Examples:</title>
+				<varlistentry>
+					<term>Get the object profile of an object with a PID of demo:5 as HTML:</term>
+					<listitem>
+						<para>http://localhost:8080/fedora/get/demo:5/fedora-system:3/viewObjectProfile</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<variablelist>
+				<title>getMethodIndex syntax:</title>
+				<varlistentry>
+					<term>http://hostname:port/fedora/get/PID/fedora-system:3/getMethodIndex</term>
+					<listitem>
+						<para>This syntax retrieves the data object’s method index in XML format.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<blockquote>
+				<itemizedlist>
+					<listitem>
+						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
+					</listitem>
+					<listitem>
+						<para>get - a required parameter specifying the Fedora servlet path </para>
+					</listitem>
+					<listitem>
+						<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
+					</listitem>
+					<listitem>
+						<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
+					</listitem>
+					<listitem>
+						<para>getMethodIndex – method name to retrieve an object’s method index in XML format.</para>
+					</listitem>
+				</itemizedlist>
+			</blockquote>
+			<variablelist>
+				<title>Examples:</title>
+				<varlistentry>
+					<term>Get the method index for an object with a PID of demo:5 as XML:</term>
+					<listitem>
+						<para>http://localhost:8080/fedora/get/demo:5/fedora-system:3/getMethodIndex</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<variablelist>
+				<title>viewMethodIndex syntax:</title>
+				<varlistentry>
+					<term>http://hostname:port/fedora/get/PID/fedora-system:3/viewMethodIndex</term>
+					<listitem>
+						<para>This syntax retrieves the data object’s method index in HTML format.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<blockquote>
+				<itemizedlist>
+					<listitem>
+						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
+					</listitem>
+					<listitem>
+						<para>get - a required parameter specifying the Fedora servlet path </para>
+					</listitem>
+					<listitem>
+						<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
+					</listitem>
+					<listitem>
+						<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
+					</listitem>
+					<listitem>
+						<para>viewMethodIndex – method name to retrieve an object’s method index in HTML format.</para>
+					</listitem>
+				</itemizedlist>
+			</blockquote>
+			<variablelist>
+				<title>getItemIndex syntax:</title>
+				<varlistentry>
+					<term>http://hostname:port/fedora/get/PID/fedora-system:3/getItemIndex</term>
+					<listitem>
+						<para>This syntax retrieves the data object’s item index in XML format.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<blockquote>
+				<itemizedlist>
+					<listitem>
+						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
+					</listitem>
+					<listitem>
+						<para>get - a required parameter specifying the Fedora servlet path </para>
+					</listitem>
+					<listitem>
+						<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
+					</listitem>
+					<listitem>
+						<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
+					</listitem>
+					<listitem>
+						<para>getItemIndex – method name to retrieve an object’s item index in XML format.</para>
+					</listitem>
+				</itemizedlist>
+			</blockquote>
+			<variablelist>
+				<title>viewItemIndex syntax:</title>
+				<varlistentry>
+					<term>http://hostname:port/fedora/get/PID/fedora-system:3/viewItemIndex</term>
+					<listitem>
+						<para>This syntax retrieves the object’s item index in HTML format.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<blockquote>
+				<itemizedlist>
+					<listitem>
+						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
+					</listitem>
+					<listitem>
+						<para>get - a required parameter specifying the Fedora servlet path </para>
+					</listitem>
+					<listitem>
+						<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
+					</listitem>
+					<listitem>
+						<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
+					</listitem>
+					<listitem>
+						<para>viewItemIndex – method name to retrieve an object’s item index in HTML format.</para>
+					</listitem>
+				</itemizedlist>
+			</blockquote>
+			<variablelist>
+				<title>Examples:</title>
+				<varlistentry>
+					<term>Get the item index for an object with a PID of demo:5 as HTML:</term>
+					<listitem>
+						<para>http://localhost:8080/fedora/get/demo:5/fedora-system:3/viewItemIndex</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<variablelist>
+				<title>getItem syntax:</title>
+				<varlistentry>
+					<term>http://hostname:port/fedora/get/PID/fedora-system:3/getItem?itemID=DSID</term>
+					<listitem>
+						<para>This syntax retrieves the data object’s datastream using a specified datastream ID.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<blockquote>
+				<itemizedlist>
+					<listitem>
+						<para>fedora  - a required parameter specifying the Fedora servlet path. </para>
+					</listitem>
+					<listitem>
+						<para>get - a required parameter specifying the Fedora servlet path </para>
+					</listitem>
+					<listitem>
+						<para>PID – PID of the object for which you wish to retrieve its object profile. </para>
+					</listitem>
+					<listitem>
+						<para>fedora-system:3 – PID of the behavior definition object for the default disseminator. </para>
+					</listitem>
+					<listitem>
+						<para>getItem – method name to retrieve an object’s datastream using the specified datastream ID.</para>
+					</listitem>
+					<listitem>
+						<para>DSID – the datastream ID of the datastream you wish to retrieve.</para>
+					</listitem>
+				</itemizedlist>
+			</blockquote>
+			<variablelist>
+				<title>Examples:</title>
+				<varlistentry>
+					<term>Get the datastream with datastream ID of “DS1” from an object with a PID of demo:5: </term>
+					<listitem>
+						<para>http://localhost:8080/fedora/get/demo:5/fedora-system:3/getItem?itemID=DS1</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</sect2>
+		<sect2>
+			<title>Search/Browse</title>
+			<para>The Fedora repository system also includes a search interface that enables searching across both System Metadata and user-defined Dublin Core metadata.Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using the search interface. The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the "Datastream ID" is DC, and the XML conforms to the schema at: http://www.openarchives.org/OAI/2.0/oai_dc.xsd. If such a datastream is not provided, Fedora will construct a default Dublin Core record using the label of the object as the dc:title value and the PID of the object as the dc:identifier value. The search interface provides both simple and advanced searching via a web page included with the repository software. All queries are case insensitive. Simple search enables queries of words and phrases occurring anywhere in an object s indexed metadata fields. Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (= and ~) for string fields, and value comparison operators (&equals;, &gt;, &ge;, &lt;, &le;) for date fields (dc:date fields may be treated as both). The wildcards, * and ? may be used in any string-based query.  The search interface can be accessed using the syntax:</para>
+			<para><emphasis role="bold">http://hostname:port/fedora/search</emphasis></para>
+			<blockquote>
+				<itemizedlist>
+					<listitem>
+						<para>hostname - required hostname of the Fedora server.</para>
+					</listitem>
+					<listitem>
+						<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+					</listitem>
+					<listitem>
+						<para>fedora - a required parameter specifying the Fedora servlet path.</para>
+					</listitem>
+					<listitem>
+						<para>search - a required parameter specifying the Fedora servlet path</para>
+					</listitem>
+				</itemizedlist>
+			</blockquote>
+		</sect2>
+	</sect1>
 </article>
