@@ -12,8 +12,8 @@ echo Ingesting Demonstration Objects...
 
 set DO_FORMAT=foxml1.0
 
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d %FEDORA_HOME%\client\demo\foxml\local-server-demos %DO_FORMAT% DMO %1:%2 %3 %4
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d %FEDORA_HOME%\client\demo\foxml\open-server-demos %DO_FORMAT% DMO %1:%2 %3 %4
+"%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d %FEDORA_HOME%\client\demo\foxml\local-server-demos %DO_FORMAT% DMO %1:%2 %3 %4
+"%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d %FEDORA_HOME%\client\demo\foxml\open-server-demos %DO_FORMAT% DMO %1:%2 %3 %4
 
 echo Finished.
 
@@ -28,8 +28,8 @@ if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 
 :checkJava
-if not exist %THIS_JAVA_HOME%\bin\java.exe goto noJavaBin
-if not exist %THIS_JAVA_HOME%\bin\orbd.exe goto badJavaVersion
+if not exist "%THIS_JAVA_HOME%\bin\java.exe" goto noJavaBin
+if not exist "%THIS_JAVA_HOME%\bin\orbd.exe" goto badJavaVersion
 goto envOk
 
 :tryJavaHome
