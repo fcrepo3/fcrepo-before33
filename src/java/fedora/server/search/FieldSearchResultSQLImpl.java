@@ -142,6 +142,7 @@ public class FieldSearchResultSQLImpl
         } else {
             queryText.append(getWhereClause(query.getConditions()));
         }
+        logFinest("Doing field search query: " + queryText.toString());
         return m_conn.createStatement().executeQuery(queryText.toString());
 
     }
