@@ -1010,6 +1010,12 @@ public class DefinitiveDOReader implements DOReader
             h_datastream.DSVersionID = attrs.getValue("ID");
             h_datastream.DSCreateDT = convertDate(attrs.getValue("CREATED"));
             h_datastream.DSState = attrs.getValue("STATUS");
+
+            // added for inlineXMLMetadata
+            h_datastream.DSLocation = h_PID + "+" + h_datastream.DatastreamID
+                + "+" + h_datastream.DSVersionID;
+            if (debug) System.out.println("ControlGroupType: X dsLocation: "
+              + h_datastream.DSLocation);
           }
         }
         else if (qName.equalsIgnoreCase("METS:mdWrap"))
