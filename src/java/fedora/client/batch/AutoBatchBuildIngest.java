@@ -70,10 +70,6 @@ public class AutoBatchBuildIngest {
                                    + args[2] + "\" is not a directory.");
                 errors = true;
             }
-            if (!new File(args[3]).exists()) {
-                System.out.println("Specified path for log file: \""
-                                   + args[3] + "\" does not exist.");
-            }
             if (!args[4].equals("xml") && !args[4].equals("text")) {
                 System.out.println("Format for log file must must be either: \""
                                    + "\"xml\"  or  \"txt\"");

@@ -32,7 +32,7 @@ public class AutoBatchBuild {
     private Properties batchProperties = new Properties();
 
     public AutoBatchBuild(String objectTemplate, String objectSpecificDir,
-        String objectDir, String logFormat, String logFile) throws Exception {
+        String objectDir, String logFile, String logFormat) throws Exception {
 
         this.batchProperties.setProperty("template", objectTemplate);
         this.batchProperties.setProperty("merge-objects", "yes");
@@ -63,10 +63,6 @@ public class AutoBatchBuild {
                 System.out.println("Specified object directory: \""
                                    + args[2] + "\" is not a directory.");
                 errors = true;
-            }
-            if (!new File(args[3]).exists()) {
-                System.out.println("Specified path for log file: \""
-                                   + args[3] + "\" does not exist.");
             }
             if (!args[4].equals("xml") && !args[4].equals("text")) {
                 System.out.println("Format for log file must must be either: \""
