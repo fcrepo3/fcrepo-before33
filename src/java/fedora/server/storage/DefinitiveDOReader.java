@@ -721,7 +721,12 @@ public class DefinitiveDOReader implements DOReader
             h_datastream.DSMIME = attrs.getValue("MIMETYPE");
             h_datastream.DSVersionID = attrs.getValue("ID");
             h_datastream.DSCreateDT = convertDate(attrs.getValue("CREATED"));
-            h_datastream.DSSize = attrs.getValue("SIZE");
+            try {
+            h_datastream.DSSize = Long.parseLong(attrs.getValue("SIZE"));
+            } catch (NumberFormatException nfe) {
+                throw new SAXException("If specified, a datastream's SIZE "
+                        + "attribute must be an xsd:long value.");
+            }
             h_datastream.DSState = attrs.getValue("STATUS");
 
             String owner = attrs.getValue("OWNERID");

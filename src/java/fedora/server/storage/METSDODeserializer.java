@@ -69,7 +69,7 @@ public class METSDODeserializer
     private String m_dsInfoType;
     private String m_dsLabel;
     private int m_dsMDClass;
-    private int m_dsSize;
+    private long m_dsSize;
     private URL m_dsLocation;
     private String m_dsMimeType;
     private String[] m_dsAdmIds;
@@ -251,9 +251,10 @@ public class METSDODeserializer
                 String sizeString=grab(a,M,"SIZE");
                 if (sizeString!=null && !sizeString.equals("")) {
                     try {
-                        m_dsSize=Integer.parseInt(sizeString);
+                        m_dsSize=Long.parseLong(sizeString);
                     } catch (NumberFormatException nfe) {
-                        throw new SAXException("Size must be a number.");
+                        throw new SAXException("If specified, a datastream's "
+                                + "SIZE attribute must be an xsd:long.");
                     }
                 }
                 // inside a "file" element, it's either going to be
@@ -271,27 +272,12 @@ public class METSDODeserializer
                 } catch (MalformedURLException murle) {
                     throw new SAXException("xlink:href specifies malformed url: " + dsLocation);
                 }
-                // grab the inputstream to ensure 1) it's a valid URL (in both
-                // syntax and resolvability), and that 2) the mime-type is
-                // set (check how it's returned by the server, and if that's
-                // the same as how it was given in the METS file, ok ... if
-                // it wasn't given in the mets file, take the server's word
-                // for it, and if the server reports something different
-                // than the file, take the file's word for it)
-                // The server also attempts to get the size (in bytes).
-                // If the server doesn't say (no content-length header) in
-                // a HEAD request, request the entire stream to get the
-                // size.  if the mets file specifies a size, make sure
-                // it matches whatever the server has given.
+
                 DatastreamReferencedContent d=new DatastreamReferencedContent();
                 d.DatastreamID=m_dsId;
                 d.DSVersionID=m_dsVersId;
                 d.DSLabel=m_dsLabel;
                 d.DSLocation=m_dsLocation;
-                
-                if (d.DSSize==null) {
-                    d.DSSize="" + m_dsSize; // fixme...i think, maybe
-                }
                 
             } else if (localName.equals("FContent")) {
                 // signal that we want to suck it in
@@ -412,8 +398,8 @@ public class METSDODeserializer
                     ds.DSLabel=m_dsLabel;
                     ds.DSMIME="text/xml";
                     ds.DSCreateDT=m_dsCreateDate;
-                    ds.DSSize="" + ds.xmlContent.length; // bytes, not chars, but
-                                                         // probably N/A anyway
+                    ds.DSSize=ds.xmlContent.length; // bytes, not chars, but
+                                                    // probably N/A anyway
                     ds.DSControlGrp=Datastream.XML_METADATA;
                     ds.DSInfoType=m_dsInfoType;
                     ds.DSMDClass=m_dsMDClass;

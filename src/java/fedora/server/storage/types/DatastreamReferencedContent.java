@@ -30,18 +30,29 @@ public class DatastreamReferencedContent
      * web server's response header.  If the web server doesn't send a
      * valid Content-type: header, as a last resort, the content-type
      * is guessed by using a map of common extensions to mime-types.
+     * <p></p>
+     * If the content-length header is present in the response, DSSize
+     * will be set accordingly.
      */
     public InputStream getContentStream() 
             throws StreamIOException {
         try {
-            HttpURLConnection conn=(HttpURLConnection) DSLocation.openConnection();
+            HttpURLConnection conn=(HttpURLConnection) 
+                    DSLocation.openConnection();
             if (conn.getResponseCode()!=HttpURLConnection.HTTP_OK) {
                 throw new StreamIOException(
-                        "Server returned a non-200 response code from URL: " 
+                        "Server returned a non-200 response code ("
+                        + conn.getResponseCode() + ") from GET request of URL: " 
                         + DSLocation.toString());
             }
-            // DSSize -- a String in Datastream.java?
+            // Ensure the stream is available before setting any fields.
             InputStream ret=conn.getInputStream();
+            // If content-length available, set DSSize.
+            int reportedLength=conn.getContentLength();
+            if (reportedLength>-1) {
+                DSSize=reportedLength;
+            }
+            // If Content-type available, set DSMIME.
             DSMIME=conn.getContentType();
             if (DSMIME==null) {
                 DSMIME=HttpURLConnection.guessContentTypeFromName(
@@ -52,7 +63,7 @@ public class DatastreamReferencedContent
             throw new StreamIOException("Can't get InputStream from URL: " 
                     + DSLocation.toString());
         } catch (ClassCastException cce) {
-            throw new StreamIOException("Non-http URLs not supported");
+            throw new StreamIOException("Non-http URLs not supported.");
         }
     }
 }

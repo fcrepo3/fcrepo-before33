@@ -39,7 +39,7 @@ public class Datastream
 
   public Date DSCreateDT;
 
-  public String DSSize;
+  public long DSSize;
 
   /** Control Group: MANAGED_CONTENT/XML_METADATA/EXTERNAL_REF */
   public int DSControlGrp;
