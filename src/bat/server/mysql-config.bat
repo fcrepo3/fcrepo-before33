@@ -14,7 +14,7 @@ rem ----- mysql_dba_user  - the name of the MySQL user with dba privileges (defa
 rem ----- mysql_dba_pass  - the password for the MySQL user with dba privileges (default" none)
 rem ----- fedoradba_user  - the name of MySQL user admin for Fedora database (default: fedoraAdmin)
 rem ----- fedora_dba_pass - the password of MySQL user admin for Fedora database (default: fedoraAdmin)
-rem ----- mysql_db_name   - the name of the Fedora database (default: FedoraObjects)
+rem ----- mysql_db_name   - the name of the Fedora database (default: fedora12)
 
 rem ----- check for input arguments
 
@@ -58,7 +58,7 @@ echo >mysqlConfig.sql #
 echo >>mysqlConfig.sql # Configure MySQL with the proper username and password for the Fedora database by 
 echo >>mysqlConfig.sql # 1) adding a username of %fedora_dba_user% with no global permissions
 echo >>mysqlConfig.sql # 2) assigning initial password of %fedora_dba_pass% for username %fedora_dba_user%
-echo >>mysqlConfig.sql # 3) granting the fedoraAdmin username DBA permissions on the Fedora Database named 'FedoraObjects'
+echo >>mysqlConfig.sql # 3) granting the fedoraAdmin username DBA permissions on the Fedora Database named 'fedora12'
 echo >>mysqlConfig.sql #
 echo >>mysqlConfig.sql grant all privileges on %fedora_db_name%.* to %fedora_dba_user%@localhost identified by '%fedora_dba_pass%' with grant option;
 echo >>mysqlConfig.sql grant all privileges on %fedora_db_name%.* to %fedora_dba_user%@'%%' identified by '%fedora_dba_pass%' with grant option;
@@ -90,7 +90,7 @@ echo mysqlDBAUser - mySQL username with DBA authority  (root if new install)
 echo mysqlDBAPass - mySQL password for DBA username    (none if new install)
 echo fedoraUser   - username for Fedora admin user (use fedoraAdmin as default)
 echo fedoraPass   - password for Fedora admin user (use fedoraAdmin as default)
-echo fedoraDbName - Fedora database name (use FedoraObjects as default)
+echo fedoraDbName - Fedora database name (use fedora12 as default)
 echo.
 goto end
 
