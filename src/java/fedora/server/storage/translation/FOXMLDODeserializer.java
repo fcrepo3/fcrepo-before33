@@ -4,6 +4,7 @@ import fedora.common.Constants;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
+import fedora.server.errors.ValidationException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
@@ -15,6 +16,7 @@ import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+import fedora.server.validation.ValidationUtility;
 
 import java.io.InputStream;
 import java.io.IOException;
@@ -396,21 +398,10 @@ public class FOXMLDODeserializer
 				  // URL FORMAT VALIDATION for dsLocation:
 				  // make sure we have a properly formed URL
                   try {
-                 	  // it must have a protocol
-                  	  m_dsLocationURL=new URL(dsLocation);
-				  } catch (MalformedURLException murle) {
-					 // or else it must be a Fedora relative repository URL
-				  	  if (!dsLocation.startsWith(
-				  	  		DOTranslationUtility.s_relativeGetPattern.pattern()) &&
-				  	  	  !dsLocation.startsWith(
-				  	  	  	DOTranslationUtility.s_relativeSearchPattern.pattern())) {
-						  throw new SAXException("Datastream's contentLocation REF is malformed URL."
-							  + " Missing protocol or invalid relative URL."
-							  + " Relative repository URLs must start with 'fedora/get'"
-							  + " or 'fedora/search' with NO leading slash.\n " 
-							  + " URL is: " + dsLocation);
-					  }
-				  }
+                      ValidationUtility.validateURL(dsLocation, true);
+                  } catch (ValidationException ve) {
+                      throw new SAXException(ve.getMessage());
+                  }
                   // system will set dsLocationType for E and R datastreams...
                   m_dsLocationType="URL";
                   m_dsLocation=dsLocation;
@@ -422,23 +413,12 @@ public class FOXMLDODeserializer
 				  // a NEW ingest file because the URL is replaced with an internal identifier
 				  // once the repository has sucked in the content for storage.
                   if (m_obj.isNew()) {
-                  	  try {
-						// it must have a protocol
-                  		  m_dsLocationURL=new URL(dsLocation);
-					  } catch (MalformedURLException murle) {
-						 // or else it must be a Fedora relative repository URL
-						  if (!dsLocation.startsWith(
-								DOTranslationUtility.s_relativeGetPattern.pattern()) &&
-							  !dsLocation.startsWith(
-								DOTranslationUtility.s_relativeSearchPattern.pattern())) {
-							  throw new SAXException("Datastream's contentLocation REF is malformed URL."
-								+ " Missing protocol or invalid relative URL."
-								+ " Relative repository URLs must start with 'fedora/get'"
-								+ " or 'fedora/search' with NO leading slash.\n " 
-								+ " URL is: " + dsLocation);
-						  }
-					  }
-                  }                 
+                    try {
+                        ValidationUtility.validateURL(dsLocation, true);
+                    } catch (ValidationException ve) {
+                        throw new SAXException(ve.getMessage());
+                    }
+                  }
                   m_dsLocationType="INTERNAL_ID";
 				  m_dsLocation=dsLocation;
 				  instantiateDatastream(new DatastreamManagedContent());

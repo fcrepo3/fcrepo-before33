@@ -37,6 +37,10 @@ public class ObjectValidityException extends ServerException {
         super(null, message, null, null, null);
     }
 
+    public ObjectValidityException(String message, Throwable cause) {
+        super(null, message, null, null, cause);
+    }
+
     public ObjectValidityException(String a, String message, String[] b, String[] c, Throwable th) {
         super(a, message, b, c, th);
     }

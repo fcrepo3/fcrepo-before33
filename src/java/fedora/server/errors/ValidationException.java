@@ -33,4 +33,12 @@ public class ValidationException
         super(bundleName, code, values, details, cause);
     }
 
+    public ValidationException(String message) {
+        super(message);
+    }
+
+    public ValidationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

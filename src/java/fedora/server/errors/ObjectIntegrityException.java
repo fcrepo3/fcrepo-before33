@@ -39,6 +39,10 @@ public class ObjectIntegrityException
         super(null, message, null, null, null);
     }
 
+    public ObjectIntegrityException(String message, Throwable th) {
+        super(null, message, null, null, th);
+    }
+
     public ObjectIntegrityException(String a, String message, String[] b, String[] c, Throwable th) {
         super(a, message, b, c, th);
     }

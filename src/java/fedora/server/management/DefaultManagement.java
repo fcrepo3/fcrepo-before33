@@ -21,7 +21,7 @@ import fedora.server.security.*;
 import fedora.server.storage.*;
 import fedora.server.storage.types.*;
 import fedora.server.utilities.*;
-import fedora.server.validation.RelsExtValidator;
+import fedora.server.validation.*;
 
 /**
  * Implements API-M without regard to the transport/messaging protocol.
@@ -396,6 +396,9 @@ public class DefaultManagement
             ds.DSVersionID=ds.DatastreamID + ".0";
 			ds.DSLabel=dsLabel;
 			ds.DSLocation=dsLocation;
+            if (dsLocation != null) {
+                ValidationUtility.validateURL(dsLocation, false);
+            }
 			ds.DSFormatURI=formatURI;
 			ds.DatastreamAltIDs = altIDs;
 			ds.DSMIME=MIMEType;
@@ -533,7 +536,9 @@ public class DefaultManagement
 				} else {
 					dsLocation=orig.DSLocation;
 				}
-			}
+			} else {
+                ValidationUtility.validateURL(dsLocation, false);
+            }
 			if (dsState==null || dsState.equals("")) {
 			  // If state unspecified leave state unchanged
 			  dsState = orig.DSState;
@@ -584,6 +589,9 @@ public class DefaultManagement
 			nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
 			newds.DSCreateDT=nowUTC;
 			//newds.DSSize will be computed later
+            if (dsLocation != null) {
+                ValidationUtility.validateURL(dsLocation, false);
+            }
 			newds.DSLocation=dsLocation;
 			
 			// next, add the datastream via the object writer
@@ -1559,4 +1567,5 @@ public class DefaultManagement
 			throw new GeneralException("RELS-EXT validation failed: " + message);
 		}
     }
+
 }
