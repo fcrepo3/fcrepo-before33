@@ -415,7 +415,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
             // Method Definitions request returned nothing.
             String message = "[FedoraAccessSoapServlet] No Behavior Methods "
                 + "returned.";
-            System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                          userParms, response, message);
           }
@@ -669,8 +668,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             System.out.println(message);
             showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
                          response, message);
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-            response.sendError(response.SC_NO_CONTENT, message);
+            //response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            //response.sendError(response.SC_NO_CONTENT, message);
           }
         } catch (Throwable th)
         {
@@ -680,8 +679,11 @@ public class FedoraAccessSoapServlet extends HttpServlet
               + " \". Reason: "  + th.getMessage();
           System.out.println(message);
           th.printStackTrace();
-          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-          response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+          System.out.println(message);
+          showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
+                         response, message);
+          //response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          //response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
         } finally
         {
           try
@@ -771,8 +773,11 @@ public class FedoraAccessSoapServlet extends HttpServlet
               + " \". Reason: "  + th.getMessage();
           System.out.println(message);
           th.printStackTrace();
-          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-          response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+          System.out.println(message);
+          showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
+                         response, message);
+          //response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          //response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
         } finally
         {
           try
@@ -856,8 +861,11 @@ public class FedoraAccessSoapServlet extends HttpServlet
               + " \". Reason: "  + th.getMessage();
           System.out.println(message);
           th.printStackTrace();
-          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-          response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+          System.out.println(message);
+          showURLParms(action, "", "", "", null, new Property[0],
+                         response, message);
+          //response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          //response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
         } finally
         {
           try
