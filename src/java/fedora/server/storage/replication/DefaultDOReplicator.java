@@ -70,7 +70,7 @@ public class DefaultDOReplicator
      *         ds=reader.getDatastream(id, null)
      *         update dsBind set dsLabel='mylabel', dsLocation='' where dsID='$id'
      */
-    private boolean updateComponents(DOReader reader) 
+    private boolean updateComponents(DOReader reader)
             throws ReplicationException {
         Connection connection=null;
         Statement st=null;
@@ -96,13 +96,13 @@ public class DefaultDOReplicator
                 String dsID=results.getString("dsID");
                 String dsLabel=results.getString("dsLabel");
                 String dsLocation=results.getString("dsLocation");
-                // compare the datastream to what's in the db... 
+                // compare the datastream to what's in the db...
                 // if different, add to update list
                 Datastream ds=reader.GetDatastream(dsID, null);
-                if (!ds.DSLabel.equals(dsLabel) 
+                if (!ds.DSLabel.equals(dsLabel)
                         || !ds.DSLocation.equals(dsLocation)) {
-                    updates.add("UPDATE dsBind SET dsLabel='" 
-                            + SQLUtility.aposEscape(ds.DSLabel) + "', dsLocation='" 
+                    updates.add("UPDATE dsBind SET dsLabel='"
+                            + SQLUtility.aposEscape(ds.DSLabel) + "', dsLocation='"
                             + SQLUtility.aposEscape(ds.DSLocation)
                             + "' WHERE dsID='" + dsID + "'");
                 }
@@ -135,7 +135,7 @@ public class DefaultDOReplicator
                 try {
                     if (triedUpdate && failed) connection.rollback();
                 } catch (Throwable th) {
-                    logWarning("While rolling back: " +  th.getClass().getName() 
+                    logWarning("While rolling back: " +  th.getClass().getName()
                             + ": " + th.getMessage());
                 } finally {
                     try {
@@ -143,7 +143,7 @@ public class DefaultDOReplicator
                         if (st!=null) st.close();
                         connection.setAutoCommit(true);
                     } catch (SQLException sqle) {
-                        logWarning("While cleaning up: " +  sqle.getClass().getName() 
+                        logWarning("While cleaning up: " +  sqle.getClass().getName()
                             + ": " + sqle.getMessage());
                     } finally {
                         m_pool.free(connection);
@@ -176,7 +176,7 @@ public class DefaultDOReplicator
                 String[] parmDomainValues;
                 connection = m_pool.getConnection();
                 connection.setAutoCommit(false);
-    
+
                 // Insert Behavior Definition row
                 bDefPID = bDefReader.GetObjectPID();
                 bDefLabel = bDefReader.GetObjectLabel();
@@ -279,47 +279,47 @@ public class DefaultDOReplicator
                 String cardinality;
                 String[] parmDomainValues;
                 String parmRequired;
-    
+
                 connection = m_pool.getConnection();
                 connection.setAutoCommit(false);
-    
+
                 // Insert Behavior Mechanism row
                 dsBindSpec = bMechReader.getServiceDSInputSpec(null);
                 bDefPID = dsBindSpec.bDefPID;
-    
+
                 bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection, bDefPID);
                 if (bDefDBID == null) {
                     throw new ReplicationException("BehaviorDefinition row doesn't "
                             + "exist for PID: " + bDefPID);
                 }
-    
+
                 bMechPID = bMechReader.GetObjectPID();
                 bMechLabel = bMechReader.GetObjectLabel();
-    
+
                 m_ri.insertBehaviorMechanismRow(connection, bDefDBID, bMechPID,
                         bMechLabel);
-    
+
                 // Insert dsBindSpec rows
                 bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection, bMechPID);
                 if (bMechDBID == null) {
                     throw new ReplicationException("BehaviorMechanism row doesn't "
                             + "exist for PID: " + bDefPID);
                 }
-    
+
                 for (int i=0; i<dsBindSpec.dsBindRules.length; ++i) {
-    
+
                   // Convert from type boolean to type String
                   ordinality_flag =
                            dsBindSpec.dsBindRules[i].ordinality ? "true" : "false";
                   // Convert from type int to type String
                   cardinality = Integer.toString(
                       dsBindSpec.dsBindRules[i].maxNumBindings);
-    
+
                   m_ri.insertDataStreamBindingSpecRow(connection,
                       bMechDBID, dsBindSpec.dsBindRules[i].bindingKeyName,
                       ordinality_flag, cardinality,
                       dsBindSpec.dsBindRules[i].bindingLabel);
-    
+
                   // Insert dsMIME rows
                   dsBindingKeyDBID =
                       m_dl.lookupDataStreamBindingSpecDBID(connection,
@@ -331,7 +331,7 @@ public class DefaultDOReplicator
                         + ", binding key name: "
                         + dsBindSpec.dsBindRules[i].bindingKeyName);
                   }
-    
+
                   for (int j=0;
                        j<dsBindSpec.dsBindRules[i].bindingMIMETypes.length;
                        ++j) {
@@ -340,21 +340,21 @@ public class DefaultDOReplicator
                         dsBindSpec.dsBindRules[i].bindingMIMETypes[j]);
                   }
                 }
-    
+
                 // Insert mechImpl rows
-    
+
                 behaviorBindings = bMechReader.getServiceMethodBindings(null);
-    
+
                 for (int i=0; i<behaviorBindings.length; ++i) {
                     behaviorBindingsEntry =
                             (MethodDefOperationBind)behaviorBindings[i];
-    
+
                     if (!behaviorBindingsEntry.protocolType.equals("HTTP")) {
-    
+
                       // For the time being, ignore bindings other than HTTP.
                       continue;
                     }
-    
+
                     // Insert mechDefParm rows
                     methodDBID = m_dl.lookupMethodDBID(connection, bDefDBID,
                             behaviorBindingsEntry.methodName);
@@ -391,7 +391,7 @@ public class DefaultDOReplicator
                       {
                         if (sb.length() == 0) sb.append("null");
                       }
-    
+
                       m_ri.insertMechDefaultMethodParmRow(connection, methodDBID, bMechDBID,
                               methodParmDefs[j].parmName,
                               methodParmDefs[j].parmDefaultValue,
@@ -481,17 +481,17 @@ public class DefaultDOReplicator
                 String doLabel;
                 String dsBindingKeyDBID;
                 int rc;
-    
+
                 doPID = doReader.GetObjectPID();
-    
+
                 connection = m_pool.getConnection();
                 connection.setAutoCommit(false);
                 // Insert Digital Object row
                 doPID = doReader.GetObjectPID();
                 doLabel = doReader.GetObjectLabel();
-    
+
                 m_ri.insertDigitalObjectRow(connection, doPID, doLabel);
-    
+
                 doDBID = m_dl.lookupDigitalObjectDBID(connection, doPID);
                 if (doDBID == null) {
                     throw new ReplicationException("do row doesn't "
@@ -543,7 +543,7 @@ public class DefaultDOReplicator
                                     + "doesn't exist for PID: "
                                     + allBindingMaps[i].dsBindMechanismPID);
                         }
-        
+
                         // Insert dsBindMap row if it doesn't exist.
                         bindingMapDBID = m_dl.lookupDataStreamBindingMapDBID(connection,
                                 bMechDBID, allBindingMaps[i].dsBindMapID);
@@ -591,7 +591,7 @@ public class DefaultDOReplicator
                                     allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
                                     allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
                                     "1");
-        
+
                         }
                     }
 //                    } catch(Exception e)
@@ -621,9 +621,9 @@ public class DefaultDOReplicator
                         }
                     }
                 }
-           }       
+           }
     }
-                
+
     private ResultSet logAndExecuteQuery(Statement statement, String sql)
             throws SQLException {
         logFinest("Executing query: " + sql);
@@ -870,6 +870,7 @@ public class DefaultDOReplicator
             logFinest("Getting dissDbID(s) from doDissAssoc "
                     + "table...");
             HashSet dissIds=new HashSet();
+            HashSet dissIdsInUse = new HashSet();
             results=logAndExecuteQuery(st, "SELECT dissDbID from "
                     + "doDissAssoc WHERE doDbID=" + dbid);
             while (results.next()) {
@@ -892,7 +893,12 @@ public class DefaultDOReplicator
                 Integer i1 = new Integer(results.getInt("COUNT(*)"));
                 if ( i1.intValue() > 1 )
                 {
-                  dissIds.remove(id);
+                  //dissIds.remove(id);
+                  // A dissDbID that occurs more than once indicates that the
+                  // disseminator is used by other objects. In this case, we
+                  // do not want to remove the disseminator from the diss
+                  // table so keep track of this dissDbID.
+                  dissIdsInUse.add(id);
                 } else
                 {
                   ResultSet rs = null;
@@ -910,6 +916,17 @@ public class DefaultDOReplicator
               results.close();
 
             }
+            iterator = dissIdsInUse.iterator();
+
+            // Remove disseminator ids of those disseminators that were in
+            // use by one or more other objects to prevent them from being
+            // removed from the disseminator table in following code section.
+            while (iterator.hasNext() )
+            {
+              Integer id = (Integer)iterator.next();
+              dissIds.remove(id);
+            }
+
             logFinest("Found " + dissIds.size() + " dissDbID(s).");
             logFinest("Getting bMechDbIDs matching dsBindMapDbID(s) from dsBind "
                     + "table...");
@@ -1002,5 +1019,5 @@ public class DefaultDOReplicator
             logFinest("Exiting DefaultDOReplicator.delete");
         }
     }
-    
+
 }
