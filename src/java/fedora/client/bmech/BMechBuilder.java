@@ -9,6 +9,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -18,9 +20,12 @@ import java.util.Set;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+import java.io.File;
+import java.io.InputStream;
 
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.xml.*;
+import fedora.client.ingest.AutoIngestor;
 
 public class BMechBuilder extends JInternalFrame
 {
@@ -28,6 +33,11 @@ public class BMechBuilder extends JInternalFrame
     private JTabbedPane tabpane;
     protected BMechTemplate newBMech;
     private int selectedTabPane;
+    private String s_host = null;
+    private int s_port = 0;
+    private String s_user = null;
+    private String s_pass = null;
+
 
     public static void main(String[] args)
     {
@@ -36,15 +46,20 @@ public class BMechBuilder extends JInternalFrame
           public void windowClosing(WindowEvent e) {System.exit(0);}
       });
 
-      frame.getContentPane().add(new BMechBuilder(),
-                                 BorderLayout.CENTER);
+      frame.getContentPane().add(
+        new BMechBuilder("http://localhost", 8080, "test", "test"),
+          BorderLayout.CENTER);
       frame.setSize(700, 500);
       frame.setVisible(true);
   }
 
-    public BMechBuilder()
+    public BMechBuilder(String host, int port, String user, String pass)
     {
         super("BMechBuilder");
+        s_host = host;
+        s_port = port;
+        s_user = user;
+        s_pass = pass;
         setClosable(true);
         setMaximizable(true);
         setSize(700, 500);
@@ -84,7 +99,7 @@ public class BMechBuilder extends JInternalFrame
         JButton save = new JButton("Save");
         save.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
-            savePanelInfo();
+            saveBMech();
           }
         } );
         JButton ingest = new JButton("Ingest");
@@ -122,7 +137,87 @@ public class BMechBuilder extends JInternalFrame
       return newBMech;
     }
 
-    public void savePanelInfo()
+    public void saveBMech()
+    {
+      BMechMETSSerializer mets = savePanelInfo();
+      File file = null;
+      if (mets != null)
+      {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        XMLFileChooserFilter filter = new XMLFileChooserFilter();
+        chooser.setFileFilter(filter);
+        if (chooser.showSaveDialog(tabpane) == JFileChooser.APPROVE_OPTION)
+        {
+          file = chooser.getSelectedFile();
+          String ext = filter.getExtension(file);
+          if (ext == null || !(ext.equalsIgnoreCase("xml")))
+          {
+            file = new File((file.getPath() + ".xml"));
+          }
+          try
+          {
+            mets.writeMETSFile(file);
+          }
+          catch (Exception e)
+          {
+            e.printStackTrace();
+            assertTabPaneMsg(("BMechBuilder: Error saving METS file for bmech: "
+              + e.getMessage()), "BMechBuilder");
+          }
+        }
+        else
+        {
+          assertTabPaneMsg("BMechBuilder: You did not specify a file to Save.",
+            "BMechBuilder");
+        }
+      }
+    }
+
+    public void ingestBMech()
+    {
+      InputStream in = null;
+      String pid = null;
+      BMechMETSSerializer mets = savePanelInfo();
+      if (mets != null)
+      {
+        try
+        {
+          in = mets.writeMETSStream();
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+          assertTabPaneMsg(("BMechBuilder: Error saving METS to stream for bmech: "
+            + e.getMessage()), "BMechBuilder");
+        }
+        try
+        {
+          AutoIngestor ingestor = new AutoIngestor(s_host, s_port, s_user, s_pass);
+          pid = ingestor.ingestAndCommit(in, "ingest bmech object via BMechBuilder tool");
+        }
+        catch (Exception e)
+        {
+          e.printStackTrace();
+          assertTabPaneMsg(("BMechBuilder: error ingesting bmech object: "
+            + e.getMessage()), null);
+        }
+        assertTabPaneMsg(("New PID = " + pid), "Successful Ingest");
+      }
+    }
+
+    public void showHelp()
+    {
+      return;
+    }
+
+    public void cancelBMech()
+    {
+      setVisible(false);
+      dispose();
+    }
+
+    public BMechMETSSerializer savePanelInfo()
     {
 
       Component[] tabs = tabpane.getComponents();
@@ -142,7 +237,7 @@ public class BMechBuilder extends JInternalFrame
           }
           else
           {
-            return;
+            return null;
           }
         }
         else if (tabs[i].getName().equalsIgnoreCase("MethodsTab"))
@@ -165,7 +260,7 @@ public class BMechBuilder extends JInternalFrame
           }
           else
           {
-            return;
+            return null;
           }
         }
         else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
@@ -177,7 +272,7 @@ public class BMechBuilder extends JInternalFrame
           }
           else
           {
-            return;
+            return null;
           }
         }
         else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
@@ -189,17 +284,17 @@ public class BMechBuilder extends JInternalFrame
           }
           else
           {
-            return;
+            return null;
           }
         }
       }
       printBMech();
       DSInputSpecGenerator dsg = new DSInputSpecGenerator(newBMech);
-      dsg.printDSInputSpec();
+      //dsg.printDSInputSpec();
       MethodMapGenerator mmg = new MethodMapGenerator(newBMech);
-      mmg.printMethodMap();
+      //mmg.printMethodMap();
       WSDLGenerator wsdlg = new WSDLGenerator(newBMech);
-      wsdlg.printWSDL();
+      //wsdlg.printWSDL();
       BMechMETSSerializer mets = null;
       try
       {
@@ -212,25 +307,9 @@ public class BMechBuilder extends JInternalFrame
         assertTabPaneMsg("BMechBuilder: error in creating METS for bmech.", null);
       }
       mets.printMETS();
-      return;
+      return mets;
     }
 
-    public void ingestBMech()
-    {
-      return;
-    }
-
-    public void showHelp()
-    {
-      return;
-    }
-
-    public void cancelBMech()
-    {
-      setVisible(false);
-      dispose();
-
-    }
     private JComponent createGeneralPane()
     {
       GeneralPane gpane = new GeneralPane();
