@@ -3,7 +3,7 @@ package fedora.server.test;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
+//import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServlet;
@@ -22,13 +22,13 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.Server;
-import fedora.server.storage.DefinitiveDOReader;
+//import fedora.server.storage.DefinitiveDOReader;
 import fedora.server.storage.FastDOReader;
-import fedora.server.storage.types.DisseminationBindingInfo;
-import fedora.server.storage.types.MethodDef;
+//import fedora.server.storage.types.DisseminationBindingInfo;
+//import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.storage.types.ObjectMethodsDef;
+//import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
 
@@ -206,8 +206,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     for ( Enumeration e = h_userParms.keys(); e.hasMoreElements();)
     {
       Property userParm = new Property();
-      userParm.Name = (String)e.nextElement();
-      userParm.Value = (String)h_userParms.get(userParm.Name);
+      userParm.name = (String)e.nextElement();
+      userParm.value = (String)h_userParms.get(userParm.name);
       userParms[userParmCounter] = userParm;
       userParmCounter++;
     }
@@ -1477,9 +1477,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
     for (int i=0; i<userParms.length; i++)
     {
       out.println("<tr>");
-      out.println("<td><font color='red'>"+userParms[i].Name+"</font></td>");
+      out.println("<td><font color='red'>"+userParms[i].name+"</font></td>");
       out.println("<td> = </td>");
-      out.println("<td>"+userParms[i].Value+"</td>");
+      out.println("<td>"+userParms[i].value+"</td>");
         out.println("</tr>");
     }
     out.println("</table></center></font>");
@@ -1493,8 +1493,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
       {
         for (int i=0; i<userParms.length; i++)
         {
-          System.out.println("<p>userParm: "+userParms[i].Name+
-          " userValue: "+userParms[i].Value);
+          System.out.println("<p>userParm: "+userParms[i].name+
+          " userValue: "+userParms[i].value);
         }
       }
     }
