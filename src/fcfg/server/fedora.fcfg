@@ -352,11 +352,13 @@
 		  - schematronPreprocessor:  this is the local path to the "skeleton" style sheet for schematron processing
 		  - schematronSchema:  this is the local path to the Fedora Schematron Schema used to do Fedora-specific validation of digital objects.
 		  This schema expresses integrity rules which are not covered by the Fedora-METS XML schema.
-        </comment>
+        	</comment>
+		<param name="xsd_metslikefedora1" value="xsd/mets-fedora-ext.xsd"/>
+		<param name="xsd_foxml1.0" value="xsd/foxml1-0.xsd"/>
+		<param name="rules_metslikefedora1" value="schematron/metsExtRules1-0.xml"/>
+		<param name="rules_foxml1.0" value="schematron/foxmlRules1-0.xml"/>
+		<param name="schtron_preprocessor" value="schematron/preprocessor.xslt"/>
 		<param name="tempDir" value="work"/>
-		<param name="xmlSchema" value="xsd/mets-fedora-ext.xsd"/>
-		<param name="schematronPreprocessor" value="schematron/preprocessor.xslt"/>
-		<param name="schematronSchema" value="schematron/fedoraRulesExt.xml"/>
 	</module>
 	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
 		<comment>This module facilitates obtaining external content via HTTP
