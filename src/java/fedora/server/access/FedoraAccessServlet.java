@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PipedReader;
 import java.io.PipedWriter;
+import java.io.PrintWriter;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +38,9 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.utilities.TypeUtility;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.StreamIOException;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
@@ -157,44 +160,95 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     String[] URIArray = request.getRequestURL().toString().split("/");
     if (URIArray.length == 6 || URIArray.length == 7)
     {
+      // Request appears to be an ObjectProfile request
       PID = decoder.decode(URIArray[5], "UTF-8");
-      if (URIArray.length > 6)
+      if (URIArray.length == 7)
       {
         versDateTime = DateUtility.convertStringToDate(URIArray[6]);
+        if (versDateTime == null)
+        {
+          String message = "ObjectProfile Request Syntax Error: DateTime value "
+              + "of \"" + URIArray[6] + "\" is not a valid DateTime format. "
+              + " ----- The expected format for DateTime is \""
+              + "YYYY-MM-DD HH:MM:SS\".  "
+              + " ----- The expected syntax for "
+              + "ObjectProfile requests is: \""
+              + URIArray[0] + "//" + URIArray[2] + "/"
+              + URIArray[3] + "/" + URIArray[4]
+              + "/PID[/dateTime] \"  ."
+              + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+          logWarning(message);
+          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+          return;
+        }
       }
       logFinest("[FedoraAccessServlet] GetObjectMethods Syntax "
           + "Encountered: "+ requestURI);
       logFinest("PID: " + PID + " bDefPID: "
           + " asOfDate: " + versDateTime);
-      //isGetObjectMethodsRequest = true;
       isGetObjectProfileRequest = true;
 
     } else if (URIArray.length > 7)
     {
+      // Request appears to be a Dissemination Request.
       PID = decoder.decode(URIArray[5],"UTF-8");
       bDefPID = decoder.decode(URIArray[6],"UTF-8");
       methodName = URIArray[7];
       if (URIArray.length > 8)
       {
         versDateTime = DateUtility.convertStringToDate(URIArray[8]);
+        if (versDateTime == null)
+        {
+          String message = "Dissemination Request Syntax Error: DateTime value "
+              + "of \"" + URIArray[8] + "\" is not a valid DateTime format. "
+              + " ----- The expected format for DateTime is \""
+              + "YYYY-MM-DD HH:MM:SS\".  "
+              + " ----- The expected syntax for Dissemination requests is: \""
+              + URIArray[0] + "//" + URIArray[2] + "/"
+              + URIArray[3] + "/" + URIArray[4]
+              + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+              + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+          logWarning(message);
+          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+          return;
+        }
+      }
+      if (URIArray.length > 9)
+      {
+        String message = "Dissemination Request Syntax Error: The expected "
+            + "syntax for Dissemination requests is: \""
+            + URIArray[0] + "//" + URIArray[2] + "/"
+            + URIArray[3] + "/" + URIArray[4]
+            + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+            + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+        logWarning(message);
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+        return;
       }
       logFinest("[FedoraAccessServlet] Dissemination Syntax "
           + "Encountered");
       logFinest("PID: " + PID + " bDefPID: " + bDefPID
           + " methodName: " + methodName + " asOfDate: " + versDateTime);
       isGetDisseminationRequest = true;
-
     } else
     {
-      String message = "Dissemination Request Syntax Error: Required fields "
-          + "are missing in the Dissemination Request. The expected syntax "
-          + "is: "+URIArray[0]+"//"+URIArray[2]+URIArray[3]+URIArray[4]
+      String message = "Request Syntax Error: The expected syntax "
+          + "for Dissemination requests is: \""
+          + URIArray[0] + "//" + URIArray[2] + "/"
+          + URIArray[3] + "/" + URIArray[4]
           + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
+          + " ----- The expected syntax for ObjectProfile requests is: \""
+          + URIArray[0] + "//" + URIArray[2] + "/"
+          + URIArray[3] + "/" + URIArray[4]
+          + "/PID[/dateTime] \"  ."
           + "Submitted request was: \"" + requestURI + "\"  .  ";
       logWarning(message);
       response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
-
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+      return;
     }
 
     // Separate out servlet parameters from method parameters
@@ -261,35 +315,33 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         logFiner("[FedoraAccessServlet] Servlet Roundtrip "
             + "GetDissemination: " + interval + " milliseconds.");
       }
-      } catch (ServerException se)
+    } catch (Throwable th)
       {
         String message = "[FedoraAccessServlet] An error has occured in "
             + "accessing the Fedora Access Subsystem. The error was \" "
-            + se.getClass().getName()
-            + " \". Reason: "  + se.getMessage();
+            + th.getClass().getName()
+            + " \". Reason: "  + th.getMessage();
         showURLParms(PID, bDefPID, methodName, asOfDateTime,
                      userParms, response, message);
-        //response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        //response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
         logWarning(message);
-        se.printStackTrace();
+        th.printStackTrace();
     }
   }
 
   public void getObjectProfile(Context context, String PID, Calendar asOfDateTime,
       String xmlEncode, HttpServletRequest request,
-      HttpServletResponse response) throws IOException, ServerException
+      HttpServletResponse response) throws ServerException
   {
 
-    ServletOutputStream out = response.getOutputStream();
+    PrintWriter out = null;
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectProfile objProfile = null;
-    PipedWriter pw = new PipedWriter();
-    PipedReader pr = new PipedReader(pw);
+    PipedWriter pw = null;
+    PipedReader pr = null;
 
     try
     {
-      out = response.getOutputStream();
+      //out = response.getWriter();
       pw = new PipedWriter();
       pr = new PipedReader(pw);
       objProfile = s_access.getObjectProfile(context, PID, asOfDateTime);
@@ -302,6 +354,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         {
           // Return results as raw XML
           response.setContentType(CONTENT_TYPE_XML);
+          out = response.getWriter();
           int bytestream = 0;
           while ( (bytestream = pr.read()) >= 0)
           {
@@ -311,6 +364,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         {
           // Transform results into an html table
           response.setContentType(CONTENT_TYPE_HTML);
+          out = response.getWriter();
           File xslFile = new File(s_server.getHomeDir(), "access/viewObjectProfile.xslt");
           TransformerFactory factory = TransformerFactory.newInstance();
           Templates template = factory.newTemplates(new StreamSource(xslFile));
@@ -326,8 +380,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         String message = "[FedoraAccessServlet] No Object Profile returned.";
         logInfo(message);
         showURLParms(PID, "", "", asOfDateTime, new Property[0], response, message);
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        response.sendError(response.SC_NO_CONTENT, message);
       }
     } catch (Throwable th)
     {
@@ -337,13 +389,21 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                      + " \". Reason: "  + th.getMessage();
       logWarning(message);
       th.printStackTrace();
-      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+      throw new GeneralException(message);
     } finally
     {
+      try
+      {
         if (pr != null) pr.close();
+      } catch (Throwable th)
+      {
+        String message = "[FedoraAccessServlet] An error has occured. "
+                       + " The error was a \" "
+                       + th.getClass().getName()
+                     + " \". Reason: "  + th.getMessage();
+        throw new StreamIOException(message);
+      }
     }
-    out.close();
   }
 
   /**
@@ -468,14 +528,14 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
    */
   public void getObjectMethods(Context context, String PID, Calendar asOfDateTime,
       String xmlEncode, HttpServletRequest request,
-      HttpServletResponse response) throws IOException, ServerException
+      HttpServletResponse response) throws ServerException
   {
 
-    ServletOutputStream out = response.getOutputStream();
+    PrintWriter out = null;
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectMethodsDef[] objMethDefArray = null;
-    PipedWriter pw = new PipedWriter();
-    PipedReader pr = new PipedReader(pw);
+    PipedWriter pw = null;
+    PipedReader pr = null;
 
     try
     {
@@ -491,6 +551,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         {
           // Return results as raw XML
           response.setContentType(CONTENT_TYPE_XML);
+          out = response.getWriter();
           int bytestream = 0;
           while ( (bytestream = pr.read()) >= 0)
           {
@@ -500,6 +561,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         {
           // Transform results into an html table
           response.setContentType(CONTENT_TYPE_HTML);
+          out = response.getWriter();
           File xslFile = new File(s_server.getHomeDir(), "access/objectmethods.xslt");
           TransformerFactory factory = TransformerFactory.newInstance();
           Templates template = factory.newTemplates(new StreamSource(xslFile));
@@ -516,8 +578,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
             + "returned.";
         logInfo(message);
         showURLParms(PID, "", "", asOfDateTime, new Property[0], response, message);
-        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        response.sendError(response.SC_NO_CONTENT, message);
       }
     } catch (Throwable th)
     {
@@ -527,13 +587,21 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                      + " \". Reason: "  + th.getMessage();
       logWarning(message);
       th.printStackTrace();
-      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+      throw new GeneralException(message);
     } finally
     {
+      try
+      {
         if (pr != null) pr.close();
+      } catch (Throwable th)
+      {
+        String message = "[FedoraAccessServlet] An error has occured. "
+                       + " The error was a \" "
+                       + th.getClass().getName()
+                     + " \". Reason: "  + th.getMessage();
+        throw new StreamIOException(message);
+      }
     }
-    out.close();
   }
 
   /**
@@ -667,7 +735,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       Property[] userParms, Calendar asOfDateTime, HttpServletResponse response)
       throws IOException, ServerException
   {
-    ServletOutputStream out = response.getOutputStream();
+    ServletOutputStream out = null;
     MIMETypedStream dissemination = null;
     dissemination =
         s_access.getDissemination(context, PID, bDefPID, methodName,
@@ -703,6 +771,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       } else
       {
         response.setContentType(dissemination.MIMEType);
+        out = response.getOutputStream();
         long startTime = new Date().getTime();
         int byteStream = 0;
         // RLW: change required by conversion fom byte[] to InputStream
@@ -737,10 +806,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms,
                   response, message);
       logInfo(message);
-      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-      response.sendError(response.SC_NO_CONTENT, message);
     }
-    out.close();
   }
 
   /**
@@ -806,10 +872,9 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
                            String message)
       throws IOException
   {
-
     String versDate = DateUtility.convertCalendarToString(asOfDateTime);
-    ServletOutputStream out = response.getOutputStream();
     response.setContentType(CONTENT_TYPE_HTML);
+    PrintWriter out = response.getWriter();
 
     // Display servlet input parameters
     StringBuffer html = new StringBuffer();
@@ -877,8 +942,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         + " userValue: "+userParms[i].value);
       }
     }
-
-    out.close();
     html = null;
   }
 
