@@ -1,16 +1,16 @@
 package fedora.client.search;
 
+import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import javax.xml.rpc.ServiceException;
+
 import org.apache.axis.types.NonNegativeInteger;
 
 import fedora.client.APIAStubFactory;
+import fedora.client.Downloader;
 import fedora.server.access.FedoraAPIA;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
@@ -18,7 +18,6 @@ import fedora.server.types.gen.ListSession;
 import fedora.server.types.gen.ObjectFields;
 
 /**
- *
  * <p><b>Title:</b> AutoFinder.java</p>
  * <p><b>Description:</b> </p>
  *
@@ -77,12 +76,38 @@ public class AutoFinder {
             throws RemoteException {
         return skeleton.resumeFindObjects(sessionToken);
     }
-/*
+
+    // fieldQuery is the syntax used by API-A-Lite,
+    // such as "fType=O pid~demo*".  Leave blank to match all.
     public static String[] getPIDs(String host, int port, String fieldQuery)
-            throws RemoteException {
-        String firstPart="http://" + host + ":" + port + "/fedora/search";
+            throws Exception {
+        String firstPart="http://" + host + ":" + port + "/fedora/search?xml=true";
+        Downloader dLoader=new Downloader(host, port, "na", "na");
+        String url=firstPart + "&pid=true&query=" + fieldQuery;
+        InputStream in=dLoader.get(url);
+        String token="";
+        SearchResultParser resultParser;
+        HashSet pids=new HashSet();
+        while (token!=null) {
+            resultParser=new SearchResultParser(in);
+            if (resultParser.getToken()!=null) {
+                // resumeFindObjects
+                token=resultParser.getToken();
+                in=dLoader.get(firstPart + "&sessionToken=" + token);
+            } else {
+                token=null;
+            }
+            pids.addAll(resultParser.getPIDs());
+        }
+        String[] result=new String[pids.size()];
+        int i=0;
+        Iterator iter=pids.iterator();
+        while (iter.hasNext()) {
+            result[i++]=(String) iter.next();
+        }
+        return result;
     }
-*/
+
     public static void showUsage(String message) {
         System.err.println(message);
         System.err.println("Usage: fedora-find host port fields phrase");
@@ -111,7 +136,18 @@ public class AutoFinder {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        if (args.length==3) {
+            // just list all pids
+            System.out.println("Doing query...");
+            String[] pids=AutoFinder.getPIDs(args[0], Integer.parseInt(args[1]), args[2]);
+            System.out.println("All PIDs in " + args[0] + ":" + Integer.parseInt(args[1]) + " with field query " + args[2]);
+            for (int i=0; i<pids.length; i++) {
+                System.out.println(pids[i]);
+            }
+            System.out.println(pids.length + " total.");
+            System.exit(0);
+        }
         if (args.length!=4) {
             AutoFinder.showUsage("Four arguments required.");
         }
