@@ -24,8 +24,8 @@
 	<datastore id="mysql1">
 		<comment>This one's kind of slow, but it's all
       we've got.</comment>
-		<param name="dbuser" value="public"/>
-		<param name="dbpass" value=""/>
+		<param name="dbuser" value="fedoraAdmin"/>
+		<param name="dbpass" value="fedoraAdmin"/>
 		<param name="connect_string" value="jdbc:mysql://icarus.lib.virginia.edu:3306/FedoraObjects"/>
 		<param name="jdbc_driver_class" value="org.gjt.mm.mysql.Driver"/>
 		<param name="pool_max" value="100"/>
