@@ -380,13 +380,6 @@ public class SimpleDOWriter
     }
 
     /**
-     * Generate a unique id for a datastreamBindingMap for the specified disseminator.
-     */
-    public String newDatastreamBindingMapID(String dissID) {
-        return m_obj.newDatastreamBindingMapID(dissID);
-    }
-
-    /**
      * Generate a unique id for an audit record.
      */
     public String newAuditRecordID() {

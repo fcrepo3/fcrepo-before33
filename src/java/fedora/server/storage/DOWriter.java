@@ -195,11 +195,6 @@ public interface DOWriter
     public String newDatastreamBindingMapID();
 
     /**
-     * Generate a unique id for a datastreamBindingMap for the specified disseminator.
-     */
-    public String newDatastreamBindingMapID(String dissID);
-
-    /**
      * Generate a unique id for an audit record.
      */
     public String newAuditRecordID();
