@@ -37,13 +37,6 @@
 		</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>FedoraRISearchServlet</servlet-name>
-		<display-name>Fedora Resource Index Search Servlet</display-name>
-		<servlet-class>
-			fedora.server.access.RISearchServlet
-		</servlet-class>
-	</servlet>
-	<servlet>
 		<servlet-name>FedoraReportServlet</servlet-name>
 		<display-name>Fedora Report Servlet</display-name>
 		<servlet-class>
@@ -138,10 +131,6 @@
 	<servlet-mapping>
 		<servlet-name>FedoraFieldSearchServlet</servlet-name>
 		<url-pattern>/search</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>FedoraRISearchServlet</servlet-name>
-		<url-pattern>/risearch</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>FedoraReportServlet</servlet-name>
