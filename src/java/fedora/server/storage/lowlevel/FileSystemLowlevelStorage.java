@@ -27,7 +27,7 @@ import java.io.InputStream; // for testing in main()
 				ObjectAlreadyInStoreException
 				ObjectNotInStoreException
 */
-class FileSystemLowlevelStorage implements ILowlevelStorage {
+public class FileSystemLowlevelStorage implements ILowlevelStorage {
 
 	//These three included objects provide configurable implementations of subfunctionality
 	private final IPathRegistry pathRegistry;
