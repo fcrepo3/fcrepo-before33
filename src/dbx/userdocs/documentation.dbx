@@ -63,8 +63,7 @@
 			<member><ulink url="client/admin-gui/batch/index.html">Java Application: Admin GUI -- Batch Utility for Object Creation</ulink></member>
 			<member><ulink url="client/admin-gui/builder/index.html">Java Application: Admin GUI -- Behavior Definition and Mechanism Builders</ulink></member>
 			<member><ulink url="client/servlet/soapclient/index.html">Java Servlet: SOAP Access via API-A</ulink></member>
-			<member><ulink url="client/cmd-line/index.html">Command Line: Object Ingest Script</ulink></member>
-			<member><ulink url="client/cmd-line/index.html">Command Line: Object Purge Script</ulink></member>
+			<member><ulink url="client/cmd-line/index.html">Command-Line Utilities</ulink></member>
 		</simplelist>
 	</sect1>
 	<sect1>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+<article>
+	<articleinfo>
+		<graphic fileref="images/newlogo2.jpg"/>
+		<title><inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="images/newlogo2.jpg" format="JPEG"/>
+				</imageobject>
+			</inlinemediaobject></title>
+		<title>Fedora Client Command-Line Utilities</title>
+		<corpauthor>Fedora Development Team</corpauthor>
+		<copyright>
+			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
+		</copyright>
+		<publisher>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
+		</publisher>
+		<edition>$Revision$</edition>
+		<date>$Date$</date>
+		<releaseinfo>
+            $Id$ 
+        </releaseinfo>
+	</articleinfo>
+	<sect1>
+		<title>Introduction</title>
+		<para>The Fedora client distribution comes with several command-line utilities that can be used
+             to run some common operations without bringing up the GUI or writing your own SOAP client.  
+             A description and usage instructions for each follows.</para>
+		<para>This guide assume you have correctly installed the Fedora client distribution as per the install guide,
+             including having set up your PATH and FEDORA_HOME appropriately.  The command-line scripts are
+             located in FEDORA_HOME/client/bin/.  In Windows, these commands resolve to batch files (.bat); in Unix, they
+             resolve to shell scripts (.sh).</para>
+   </sect1>
+   <sect1>
+       <title>fedora-dsinfo</title>
+		<blockquote>
+			<para><emphasis role="bold">fedora-dsinfo</emphasis> [hostname] [port-number] [user] [pass] [pid]</para>
+		</blockquote>
+		<para>Where:</para>
+		<itemizedlist>
+			<listitem>
+				<para>&lsqb;hostname&rsqb; - The hostname of the Fedora server; default is localhost.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;port-number&rsqb; - The port number on which the Fedora server is running; default 8080.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;user&rsqb; - The Fedora user (e.g. fedoraAdmin).</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;pass&rsqb; - The user's password.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;pid&rsqb; - The pid of the object whose datastream information should be shown.</para>
+			</listitem>
+		</itemizedlist>
+		<para>Example:</para>
+		<blockquote>
+			<para>fedora-dsinfo localhost 8080 fedoraAdmin fedoraAdmin demo:5</para>
+		</blockquote>
+		<para>
+           Displays key information about each of an object's datastreams.
+       </para>
+	</sect1>   
+   <sect1>
+       <title>fedora-export</title>
+		<blockquote>
+			<para><emphasis role="bold">fedora-export</emphasis> [hostname] [port-number] [user] [pass] [file] [pid]</para>
+		</blockquote>
+		<para>Where:</para>
+		<itemizedlist>
+			<listitem>
+				<para>&lsqb;hostname&rsqb; - The hostname of the Fedora server; default is localhost.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;port-number&rsqb; - The port number on which the Fedora server is running; default 8080.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;user&rsqb; - The Fedora user (e.g. fedoraAdmin).</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;pass&rsqb; - The user's password.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;file&rsqb; - The file to export to.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;pid&rsqb; - The PID of the object to export.</para>
+			</listitem>
+		</itemizedlist>
+		<para>Example:</para>
+		<blockquote>
+			<para>fedora-export localhost 8080 fedoraAdmin fedoraAdmin myfile.xml demo:6</para>
+		</blockquote>
+		<para>
+           Exports an object from the repository to a local file.
+       </para>
+	</sect1>   
+   <sect1>
+       <title>fedora-find</title>
+		<blockquote>
+			<para><emphasis role="bold">fedora-find</emphasis> [hostname] [port-number] [fieldList] [searchString]</para>
+		</blockquote>
+		<para>Where:</para>
+		<itemizedlist>
+			<listitem>
+				<para>&lsqb;hostname&rsqb; - The hostname of the Fedora server; default is localhost.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;port-number&rsqb; - The port number on which the Fedora server is running; default 8080.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;fieldList&rsqb; - A space-delimited list of fields.  These are the fields that will be displayed for each object that matches the searchString.  See http://host:port/fedora/search for a complete list of displayable fields and descriptions of each.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;searchString&rsqb; - A simple text string to search all fields for.  This may include wildcard characters and is case-insensitive.</para>
+			</listitem>
+		</itemizedlist>
+		<para>Example:</para>
+		<blockquote>
+			<para>fedora-find localhost 8080 "pid fType title description" "fedora"</para>
+           <para>(shows the pid, Fedora object type, title, and description fields of each object that has
+           the word fedora somewhere in it's indexed fields.)</para>
+		</blockquote>
+		<para>
+           A simple way to search a repository's indexed fields.  More advanced searches can be done with
+           the web-based search interface at http://host:port/fedora/search, or the Admin GUI's search
+           interface.
+       </para>
+	</sect1>   
+   <sect1>
+       <title>fedora-ingest</title>
+		<blockquote>
+			<para><emphasis role="bold">fedora-ingest</emphasis> [hostname] [port-number] [user] [pass] [file] [logMessage]</para>
+		</blockquote>
+		<para>Where:</para>
+		<itemizedlist>
+			<listitem>
+				<para>&lsqb;hostname&rsqb; - The hostname of the Fedora server; default is localhost.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;port-number&rsqb; - The port number on which the Fedora server is running; default 8080.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;user&rsqb; - The Fedora user (e.g. fedoraAdmin).</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;pass&rsqb; - The user's password.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;file&rsqb; - The METS file to ingest.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;logMessage&rsqb; - A log message regarding the ingest.</para>
+			</listitem>
+		</itemizedlist>
+		<para>Example:</para>
+		<blockquote>
+			<para>fedora-ingest localhost 8080 fedoraAdmin fedoraAdmin myfile.xml "My first ingest test"</para>
+		</blockquote>
+		<para>
+           Ingests a single METS file into the repository, and outputs the PID. 
+       </para>
+	</sect1>
+   <sect1>
+       <title>fedora-ingest-demos</title>
+		<blockquote>
+			<para><emphasis role="bold">fedora-ingest-demos</emphasis> [hostname] [port-number] [user] [pass]</para>
+		</blockquote>
+		<para>Where:</para>
+		<itemizedlist>
+			<listitem>
+				<para>&lsqb;hostname&rsqb; - The hostname of the Fedora server; default is localhost.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;port-number&rsqb; - The port number on which the Fedora server is running; default 8080.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;user&rsqb; - The Fedora user (e.g. fedoraAdmin).</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;pass&rsqb; - The user's password.</para>
+			</listitem>
+		</itemizedlist>
+		<para>Example:</para>
+		<blockquote>
+			<para>fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin</para>
+		</blockquote>
+		<para>
+           A convenient script to ingest all included demo objects for a new Fedora installation.
+           See the Demo guide for descriptions of these objects.
+       </para>
+	</sect1>
+   <sect1>
+       <title>fedora-purge</title>
+		<blockquote>
+			<para><emphasis role="bold">fedora-purge</emphasis> [hostname] [port-number] [user] [pass] [pid] [logMessage]</para>
+		</blockquote>
+		<para>Where:</para>
+		<itemizedlist>
+			<listitem>
+				<para>&lsqb;hostname&rsqb; - The hostname of the Fedora server; default is localhost.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;port-number&rsqb; - The port number on which the Fedora server is running; default 8080.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;user&rsqb; - The Fedora user (e.g. fedoraAdmin).</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;pass&rsqb; - The user's password.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;pid&rsqb; - The PID of the object to permanently remove.</para>
+			</listitem>
+			<listitem>
+				<para>&lsqb;logMessage&rsqb; - A log message explaining the removal.</para>
+			</listitem>
+		</itemizedlist>
+		<para>Example:</para>
+		<blockquote>
+			<para>fedora-purge localhost 8080 fedoraAdmin fedoraAdmin demo:6 "It was just a test object"</para>
+		</blockquote>
+		<para>
+           Permanently removes an object from the repository.  Note: Behavior Definition objects (BDefs) cannot be
+           removed if there are objects that depend on them.  When removing a BDef from the repository,
+           first the dependent object(s) should be removed, then the implementing Behavior Mechanism(s), then
+           the BDef itself.
+       </para>
+	</sect1>
+</article>

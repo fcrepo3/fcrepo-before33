@@ -260,6 +260,16 @@
 	<target name="userdocs" depends="prep" description="Assemble user documentation into dist/userdocs">
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/userdocs"/>
+		<echo message="Translating client-cmdline.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/client/cmd-line/index.html"/>
+			<arg path="src/dbx/userdocs/client-cmdline.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
 		<echo message="Translating release-notes.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -484,6 +494,7 @@
 		</exec>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/cmd-line/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/apim/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/batch/images/"/>
@@ -897,6 +908,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.130  2003/05/16 20:16:15  cwilper
+  added and linked to client command-line utility reference
+
   Revision 1.129  2003/05/16 19:38:07  cwilper
   removed manual.dbx conversion
 
