@@ -175,6 +175,39 @@ public class DefaultDOManager
             throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
         }
     }
+    
+    public DisseminatingDOReader getDisseminatingReader(Context context, String pid) 
+            throws ServerException {
+        if (context.get("application").equals("??")) {
+            return null;
+        } else if (context.get("application").equals("??")) {
+            return null;
+        } else {
+            throw new InvalidContextException("Error in context: 'application' must be ...??");
+        }
+    }
+
+    public BMechReader getBMechReader(Context context, String pid)
+            throws ServerException {
+        if (context.get("application").equals("??")) {
+            return null;
+        } else if (context.get("application").equals("??")) {
+            return null;
+        } else {
+            throw new InvalidContextException("Error in context: 'application' must be ...??");
+        }
+    }
+
+    public BDefReader getBDefReader(Context context, String pid)
+            throws ServerException {
+        if (context.get("application").equals("??")) {
+            return null;
+        } else if (context.get("application").equals("??")) {
+            return null;
+        } else {
+            throw new InvalidContextException("Error in context: 'application' must be ...??");
+        }
+    }
 
     /** nulls not allowed */
     public DOWriter getWriter(Context context, String pid)

@@ -23,7 +23,16 @@ public interface DOManager {
      */
     public abstract DOReader getReader(Context context, String pid)
             throws ServerException;
+            
+    public abstract DisseminatingDOReader getDisseminatingReader(
+            Context context, String pid) 
+            throws ServerException;
 
+    public abstract BMechReader getBMechReader(Context context, String pid)
+            throws ServerException;
+
+    public abstract BDefReader getBDefReader(Context context, String pid)
+            throws ServerException;
 
     /**
      * Gets a DOWriter for an existing digital object.
