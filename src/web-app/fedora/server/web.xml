@@ -60,6 +60,13 @@
 			fedora.server.access.MethodParameterResolverServlet
 		</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>DescribeRepositoryServlet</servlet-name>
+		<display-name>Fedora Repository Description Provider</display-name>
+		<servlet-class>
+			fedora.server.access.DescribeRepositoryServlet
+		</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>/*</url-pattern>
@@ -91,6 +98,10 @@
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>*.jws</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DescribeRepositoryServlet</servlet-name>
+		<url-pattern>/describe</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list id="WelcomeFileList_1">
 		<welcome-file>index.html</welcome-file>
