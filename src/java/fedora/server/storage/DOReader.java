@@ -198,11 +198,29 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime) throws ServerException;
+    //public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime) throws ServerException;
+    public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime) throws ServerException;
 
     /**
-     * Same as GetBMechMethods, except it's returned as XML encoded to the
-     * Fedora Method Map schema.
+     * Gets list of ALL method definitions that are available on a particular
+     * digital object. This is done by reflecting on EACH Disseminator
+     * and getting the PID of the behavior mechanism object for that disseminator.
+     * The methods are reflected via the behavior mechanism object, which is
+     * implementing the methods defined in a particular by a behavior definition.
+     *
+     * @param versDateTime The date-time stamp to get appropriate version.
+     *        If this is given as null, the most recent version is used.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    //public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime)
+    public ObjectMethodsDef[] getObjectMethods(Date versDateTime)
+          throws ServerException;
+
+    /**
+     * Same as getObjectMethods (filtered with bDefPID as argument), except that the method
+     * definitions are returned as an Inputstream which contains XML encoded
+     * to the Fedora Method Map schema.
      *
      * @param bDefPID The PID of a Behavior Definition to which the object
      *        subscribes.  If this is the special bootstrap bdef,
@@ -211,7 +229,8 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime) throws ServerException;
+    //public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime) throws ServerException;
+    public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime) throws ServerException;
 
     /**
      * Gets list of method parameter definitions that are available on a
@@ -230,35 +249,14 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public MethodParmDef[] GetBMechMethodParms(String bDefPID, String methodName,
+    //public MethodParmDef[] GetBMechMethodParms(String bDefPID, String methodName,
+    public MethodParmDef[] getObjectMethodParms(String bDefPID, String methodName,
         Date versDateTime) throws ServerException;
-
-    /**
-     * Gets list of default method parameters that are available on a particular
-     * method. This is done by reflecting on the Disseminator
-     * that subscribes to the Behavior Definition that is specified in the
-     * method input parameter.  Then, by reflecting on that Disseminator,
-     * the PID of the Behavior Mechanism object can be obtained.
-     * Finally, method implementation information can be found in the
-     * Behavior Mechanism object to which that Disseminator refers.
-     *
-     * @param bDefPID The PID of a Behavior Definition to which the object
-     *        subscribes
-     * @param methodName The name of the method.
-     * @param versDateTime The date-time stamp to get appropriate version
-     * @throws ServerException If any type of error occurred fulfilling the
-     *         request.
-     */
-    public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID,
-        String methodName, Date versDateTime) throws ServerException;
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
           throws ServerException;
 
     public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
           String methodName, Date versDateTime) throws ServerException;
-
-    public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime)
-          throws ServerException;
 
 }
