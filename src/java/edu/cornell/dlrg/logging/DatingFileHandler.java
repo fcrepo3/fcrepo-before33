@@ -65,7 +65,11 @@ public class DatingFileHandler
             boolean needNewFile=false;
             if (m_maxSize>0) {
                 if (m_currentSize>m_maxSize) {
-                    needNewFile=true;
+                    // if finish would happen in the same second as
+                    // start, wait till some more time has passed
+                    if (m_startMillis + 1000 < System.currentTimeMillis()) {
+                        needNewFile=true;
+                    }
                 }
             }
             if (m_maxMillis>0) {
@@ -80,6 +84,7 @@ public class DatingFileHandler
                     m_settingOutputStream=true;
                     setOutputStream(new FileOutputStream(new File(m_logDir,
                             m_nowFormatted + "-" + m_ext)));
+                    doRename();
                     m_settingOutputStream=false;
                     // set these for next time
                     m_fnStart=m_nowFormatted + "-";
@@ -94,10 +99,14 @@ public class DatingFileHandler
     
     public void close() {
         super.close();
-        File oldFile=new File(m_logDir, m_fnStart + m_ext);
+        doRename();
+    }
+    
+    private void doRename() {
         if (!m_settingOutputStream) {
             m_nowFormatted=getFormatted(new GregorianCalendar());
         }
+        File oldFile=new File(m_logDir, m_fnStart + m_ext);
         oldFile.renameTo(new File(m_logDir, m_fnStart 
                 + m_nowFormatted + m_ext));
     }
