@@ -224,9 +224,9 @@ public class BasicDigitalObject
         int highest=1;
         while (iter.hasNext()) {
             String id=(String) iter.next();
-            if (id.startsWith(start) && id.length()>2) {
+            if (id.startsWith(start) && id.length()>start.length()) {
                 try {
-                    int num=Integer.parseInt(id.substring(2));
+                    int num=Integer.parseInt(id.substring(start.length()));
                     if (num>highest) highest=num;
                 } catch (NumberFormatException ignored) { }
             }
