@@ -61,7 +61,7 @@ public class DefaultManagement
     public String createObject(Context context) 
             throws ServerException {
         DOWriter w=m_manager.getWriter(context);
-        return w.GetObjectPID();
+        return "hi"; //return w.GetObjectPID();
     }
 
     public String ingestObject(Context context, InputStream xml) { return null; }

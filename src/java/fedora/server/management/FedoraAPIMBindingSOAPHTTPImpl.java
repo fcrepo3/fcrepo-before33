@@ -1,13 +1,15 @@
 package fedora.server.management;
 
+import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.StorageDeviceException;
-import fedora.server.storage.METSDOSerializer;
+import fedora.server.management.Management;
 import fedora.server.storage.DefinitiveDOWriter;
+import fedora.server.storage.METSDOSerializer;
 import fedora.server.storage.METSDODeserializer;
 import fedora.server.storage.TestFileStreamStorage;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
@@ -20,6 +22,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.Iterator;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.MessageContext;
@@ -36,10 +40,14 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     /** The exception indicating that initialization failed. */
     private static InitializationException s_initException;
 
+    private static Management s_management;
+
     /** This is a temporary hack -- normally DOManager provides these */
     private static DefinitiveDOWriter w;
 
     private static ILowlevelStorage s_st;
+
+    private static ReadOnlyContext s_context;
     
     /** Before fulfilling any requests, make sure we have a server instance. */
     static {
@@ -53,8 +61,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             } else {
                 s_server=Server.getInstance(new File(fedoraHome));
                 s_initialized=true;
+                s_management=(Management) s_server.getModule("fedora.server.management.Management");
+                HashMap h=new HashMap();
+                h.put("application", "apim");
+                s_context=new ReadOnlyContext(h);
             }
-            s_st=FileSystemLowlevelStorage.getInstance();
+            s_st=FileSystemLowlevelStorage.getInstance();  // FIXME: Move this
         } catch (InitializationException ie) {
             System.err.println(ie.getMessage());
             s_initialized=false;
@@ -62,13 +74,14 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public String createObject() throws java.rmi.RemoteException {
+    public String createObject() 
+            throws RemoteException {
         assertInitialized();
-        return "This would be a PID if this operation implementation wasn't "
-                + "a stub.  BTW, the scope of this service (as defined by the "
-                + "scope property in the wsdd file) is '" 
-                + AxisEngine.getCurrentMessageContext().getStrProp("scope") + "'. Also, fedora.home=" + System.getProperty("fedora.home");
-        //return null;
+        try {
+            return s_management.createObject(s_context);
+        } catch (ServerException se) {
+            throw AxisUtility.getFault(se);
+        }
     }
 
     public String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
