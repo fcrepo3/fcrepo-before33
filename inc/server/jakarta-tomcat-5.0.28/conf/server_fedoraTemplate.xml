@@ -1,0 +1,39 @@
+<Server port="#2" shutdown="SHUTDOWN">
+  <!-- Global JNDI resources -->
+  <GlobalNamingResources>
+    <!-- Editable user database that can also be used by
+         UserDatabaseRealm to authenticate users -->
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+       description="User database that can be updated and saved">
+    </Resource>
+    <ResourceParams name="UserDatabase">
+      <parameter>
+        <name>factory</name>
+        <value>org.apache.catalina.users.MemoryUserDatabaseFactory</value>
+      </parameter>
+      <parameter>
+        <name>pathname</name>
+        <value>conf/tomcat-users.xml</value>
+      </parameter>
+    </ResourceParams>
+  </GlobalNamingResources>
+  
+  <Service name="Fedora-Server">
+    <Connector port="#1"
+               enableLookups="false" redirectPort="#3" acceptCount="10"
+               debug="0" disableUploadTimeout="true" />
+
+    <Engine name="Catalina" defaultHost="localhost" debug="0">
+      <Logger className="org.apache.catalina.logger.FileLogger" />
+      <Realm className="org.apache.catalina.realm.UserDatabaseRealm" />
+      
+      <Host name="localhost" appBase="webapps" debug="0"
+            unpackWARS="true" autoDeploy="true">
+          <Valve className="org.apache.catalina.valves.AccessLogValve"
+                 directory="logs"  prefix="localhost_access_log." suffix=".txt"
+                 pattern="common"/>
+      </Host>
+    </Engine>
+  </Service>
+</Server>
