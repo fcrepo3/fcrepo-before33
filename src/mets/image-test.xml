@@ -229,30 +229,30 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="A">
 				<!--This is the thumbnail sized image -->
-				<METS:file ID="DS1.0" SEQ="1" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH1 AUDREC1" OWNERID="E" STATUS="A">
+				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH1 AUDREC1" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/image/saskia/006-007a11.jpg" xlink:title="Saskia thumbnail jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS2" STATUS="A">
-				<METS:file ID="DS2.0" SEQ="1" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH2 AUDREC1" OWNERID="E" STATUS="A">
+				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH2 AUDREC1" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/image/saskia/006-007b1.jpg" xlink:title="Saskia medium jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS3">
 				<!--This is the high resolution image -->
-				<METS:file ID="DS3.0" SEQ="1" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH3 AUDREC1" OWNERID="E" STATUS="A">
+				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH3 AUDREC1" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/image/saskia/006-007c.jpg" xlink:title="Saskia high jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS4">
 				<!--This is the very high resolution image -->
-				<METS:file ID="DS4.0" SEQ="1" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH4 AUDREC1" OWNERID="E" STATUS="A">
+				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jgp" ADMID="TECH4 AUDREC1" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://dl.lib.virginia.edu/data/image/saskia/006-007d.jpg" xlink:title="Saskia vhigh jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS5">
 				<!-- Watermark image file-->
-				<METS:file ID="DS5.0" SEQ="1" CREATED="2002-05-25T08:32:00" MIMETYPE="image/gif" ADMID="TECH5 AUDREC3" OWNERID="E" STATUS="A">
+				<METS:file ID="DS5.0" CREATED="2002-05-25T08:32:00" MIMETYPE="image/gif" ADMID="TECH5 AUDREC3" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://www.cs.cornell.edu/payette/mellon/fedora/image/watermark1.gif" xlink:title="watermark"/>
 				</METS:file>
 			</METS:fileGrp>
@@ -264,65 +264,51 @@
 	<!---*******************************************************************************************************************************************-->
 	<METS:structMap ID="S0" TYPE="fedora:dsBindingMap">
 		<METS:div TYPE="uva-bmech-stdimg:10" LABEL="DS Binding Map for UVA Standard Image mechanism">
-			<METS:div TYPE="THUMBRES_IMG" LABEL="current thumbnail photo of Mycenae">
+			<METS:div TYPE="THUMBRES_IMG" LABEL="current thumbnail photo of Mycenae" ORDER="0">
 				<METS:fptr FILEID="DS1"/>
 			</METS:div>
-			<METS:div TYPE="MEDRES_IMG" LABEL="Photo of Mycenae">
-				<METS:div TYPE="MEDRES_IMG" LABEL="medium resolution photo of Mycenae">
-					<METS:fptr FILEID="DS2"/>
-				</METS:div>
+			<METS:div TYPE="MEDRES_IMG" LABEL="medium resolution photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS2"/>
 			</METS:div>
-			<METS:div TYPE="HIGHRES_IMG" LABEL="Photo of Mycenae">
-				<METS:div TYPE="HIGHRES_IMG" LABEL="high resolution photo of Mycenae">
-					<METS:fptr FILEID="DS3"/>
-				</METS:div>
+			<METS:div TYPE="HIGHRES_IMG" LABEL="high resolution photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS3"/>
 			</METS:div>
-			<METS:div TYPE="VERYHIGHRES_IMG" LABEL="Photo of Mycenae">
-				<METS:div TYPE="VERYHIGHRES_IMG" LABEL="very high resolution photo of Mycenae">
-					<METS:fptr FILEID="DS4"/>
-				</METS:div>
+			<METS:div TYPE="VERYHIGHRES_IMG" LABEL="very high resolution photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS4"/>
 			</METS:div>
 		</METS:div>
 	</METS:structMap>
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
 		<METS:div TYPE="uva-bmech-webimg:25" LABEL="DS Binding Map for UVA Web Default Image mechanism">
-			<METS:div TYPE="THUMBRES_IMG" LABEL="current thumbnail photo of Mycenae">
+			<METS:div TYPE="THUMBRES_IMG" LABEL="current thumbnail photo of Mycenae" ORDER="0">
 				<METS:fptr FILEID="DS1"/>
 			</METS:div>
-			<METS:div TYPE="MEDRES_IMG" LABEL="Photo of Mycenae">
-				<METS:div TYPE="MEDRES_IMG" LABEL="medium resolution photo of Mycenae">
-					<METS:fptr FILEID="DS2"/>
-				</METS:div>
+			<METS:div TYPE="MEDRES_IMG" LABEL="medium resolution photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS2"/>
 			</METS:div>
-			<METS:div TYPE="HIGHRES_IMG" LABEL="Photo of Mycenae">
-				<METS:div TYPE="HIGHRES_IMG" LABEL="high resolution photo of Mycenae">
-					<METS:fptr FILEID="DS3"/>
-				</METS:div>
+			<METS:div TYPE="HIGHRES_IMG" LABEL="high resolution photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS3"/>
 			</METS:div>
-			<METS:div TYPE="VERYHIGHRES_IMG" LABEL="Photo of Mycenae">
-				<METS:div TYPE="VERYHIGHRES_IMG" LABEL="very high resolution photo of Mycenae">
-					<METS:fptr FILEID="DS4"/>
-				</METS:div>
+			<METS:div TYPE="VERYHIGHRES_IMG" LABEL="very high resolution photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS4"/>
 			</METS:div>
 		</METS:div>
 	</METS:structMap>
 	<METS:structMap ID="S2" TYPE="fedora:dsBindingMap">
 		<METS:div TYPE="uva-bmech-uva-dc:50" LABEL="DS Binding Map for UVA to DC mechanism">
 			<!-- This is a model for how we might point to inline metadata datastreams as input to a disseminator. -->
-			<METS:div TYPE="UVA_IMAGE_DESCRIPTION" LABEL="UVA descriptive metadata for Mycenae">
+			<METS:div TYPE="UVA_IMAGE_DESCRIPTION" LABEL="UVA descriptive metadata for Mycenae" ORDER="0">
 				<METS:fptr FILEID="DESC1.0"/>
 			</METS:div>
 		</METS:div>
 	</METS:structMap>
 	<METS:structMap ID="S3" TYPE="fedora:dsBindingMap">
 		<METS:div TYPE="uva-bmech-image-w:112" LABEL="DS Binding Map for Image  Watermarking mechanism">
-			<METS:div TYPE="WATERMARK" LABEL="Watermark image of type image/gif">
+			<METS:div TYPE="WATERMARK" LABEL="Watermark image of type image/gif" ORDER="0">
 				<METS:fptr FILEID="DS5"/>
 			</METS:div>
-			<METS:div TYPE="PHOTO" LABEL="Photo of Mycenae">
-				<METS:div TYPE="HIGHRES_IMG" LABEL="high resolution photo of Mycenae">
-					<METS:fptr FILEID="DS3"/>
-				</METS:div>
+			<METS:div TYPE="PHOTO" LABEL="high resolution photo of Mycenae" ORDER="0">
+				<METS:fptr FILEID="DS3"/>
 			</METS:div>
 		</METS:div>
 	</METS:structMap>
@@ -361,7 +347,7 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--- THE IMAGE  WATERMARKING DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:behaviorSec ID="DISS4.0" STRUCTID="S3" BTYPE="uva-bdef-image-w:101" CREATED="2002-05-25T08:32:00" LABEL="CU Watermark Behaviors" GROUPID="DISS3" ADMID="AUDREC1 AUDREC4" STATUS="A">
+	<METS:behaviorSec ID="DISS4.0" STRUCTID="S3" BTYPE="uva-bdef-image-w:101" CREATED="2002-05-25T08:32:00" LABEL="CU Watermark Behaviors" GROUPID="DISS4" ADMID="AUDREC1 AUDREC4" STATUS="A">
 		<METS:interfaceDef LABEL="CU Photo Watermark Behavior Definition" LOCTYPE="URN" xlink:href="uva-bdef-image-w:101"/>
 		<METS:mechanism LABEL="Watermarking Behavior Mechanism for Images" LOCTYPE="URN" xlink:href="uva-bmech-image-w:112"/>
 	</METS:behaviorSec>
