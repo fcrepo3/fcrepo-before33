@@ -153,9 +153,9 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 				'&quot;]/')" />
 			<xsl:variable name="title_ptr" select="concat($prefix,'@title')" />
 			<xsl:variable name="href_ptr" select="concat($prefix,'@href')" />
-			<xsl:if test="$substitutions/input/datastreams/datastream[@id=$datastream]/@title" >
+			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastream]/@xlink:title" >
 				<xsl:attribute name="xlink:title">
-					<xsl:value-of select="$substitutions/input/datastreams/datastream[@id=$datastream]/@title" />
+					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastream]/@xlink:title" />
 				</xsl:attribute>
 			</xsl:if>
 			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastream]/@xlink:href" >
@@ -219,42 +219,26 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>	
 
-	 <!-- target substitution (per-object metadata) -->
-	 <!-- testing next line, changing for new schema -->
-	<!-- xsl:template match="/METS:mets/METS:dmdSec/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/" -->
-	<xsl:template match="/METS:mets/METS:dmdSecFedora/*/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
+	 <!-- 2/25 -->
+	<xsl:template match="/METS:mets/METS:dmdSecFedora/*/METS:mdWrap|/METS:mets/METS:amdSec/*/METS:mdWrap" 
+		xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
-			<!-- testing next line, changing for new schema -->
-			<!-- xsl:variable name="metadataID" select="../../@ID" / --><!-- e.g., DESC1.0, from dmdSec element -->
-			<xsl:variable name="metadataID" select="../../../@ID" /><!-- e.g., DESC1, from METS:dmdSecFedora element -->
-			
+			<xsl:variable name="metadataID" select="../../@ID" /><!-- e.g., DESC1, from METS:dmdSecFedora element -->
 			<xsl:if test="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" >
 				<xsl:attribute name="LABEL">
 					<xsl:value-of select="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" />
 				</xsl:attribute>
-			</xsl:if>			
-			<xsl:choose>
-				<xsl:when test="$substitutions/input/metadata/metadata[@ID=$metadataID]">
-					<xsl:apply-templates select="$substitutions/input/metadata/metadata[@ID=$metadataID]/*" />
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:apply-templates select="node()"/>
-				</xsl:otherwise>
-			</xsl:choose>		
+			</xsl:if>
+			<xsl:apply-templates select="node()"/>			
     		</xsl:copy>
-	</xsl:template>
+	</xsl:template>	
 
 	 <!-- target substitution (per-datastream metadata) -->
-	<xsl:template match="/METS:mets/METS:amdSec/*/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
+	<xsl:template match="/METS:mets/METS:dmdSecFedora/*/METS:mdWrap/METS:xmlData|/METS:mets/METS:amdSec/*/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
-			<xsl:variable name="metadataID" select="../../../@ID" /><!-- e.g., DIGIPROV1, from amdSec element -->
-			<xsl:if test="$substitutions/input/metadata/metadata[@id=$metadataID]/@LABEL" >
-				<xsl:attribute name="LABEL">
-					<xsl:value-of select="$substitutions/input/metadata/metadata[@id=$metadataID]/@LABEL" />
-				</xsl:attribute>
-			</xsl:if>			
+			<xsl:variable name="metadataID" select="../../../@ID" /><!-- e.g., DIGIPROV1, from amdSec element -->			
 			<xsl:choose>
 				<xsl:when test="$substitutions/input/metadata/metadata[@ID=$metadataID]">
 					<xsl:apply-templates select="$substitutions/input/metadata/metadata[@ID=$metadataID]/*" />
@@ -265,6 +249,26 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 			</xsl:choose>		
     		</xsl:copy>
 	</xsl:template>
+	
+	 <!-- 2/25 -->
+	<xsl:template match="/METS:mets/METS:structMap/METS:div/METS:div" xmlns:METS="http://www.loc.gov/METS/">
+		<xsl:copy>
+			<xsl:apply-templates select="@*"/>
+			<xsl:variable name="disseminatorID" select="../../@ID" />			
+			<xsl:variable name="datastreamID" select="METS:fptr/@FILEID" />
+			<xsl:choose>
+				<xsl:when test="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/disseminator[@ID=$disseminatorID]/@LABEL">
+					<xsl:apply-templates select="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/disseminator[@ID=$disseminatorID]/@LABEL" />
+				</xsl:when>
+				<xsl:when test="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@LABEL">
+					<xsl:apply-templates select="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@LABEL" />
+				</xsl:when>
+			</xsl:choose>		
+			
+
+			<xsl:apply-templates select="node()"/>			
+    		</xsl:copy>
+	</xsl:template>	
 
 	
 	 <!-- >>>>>>>>>>>>>> target substitution (per-datastream DESC metadata) <<<<<<<<<<<< -->
