@@ -31,13 +31,13 @@
 		</sch:rule>
 		<!-- RULE:  check that Behavior Mechanism objects have the proper kinds of datastreams (DSINPUTSPEC, METHODMAP, and WSDL).-->
 		<sch:rule context="foxml:property[@NAME='info:fedora/def:dobj:fType' and @VALUE='FedoraBMechObject']">
-			<sch:assert test="foxml:datastream[@ID='DSINPUTSPEC']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Input Spec (foxml:datastream with ID="DSINPUTSPEC" must exist).</sch:assert>
-			<sch:assert test="foxml:datastream[@ID='METHODMAP']">Behavior Mechanism Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
-			<sch:assert test="foxml:datastream[@ID='WSDL']">Behavior Mechanism Objects must have an inline Datastream representing WSDL service bindings (foxml:datastream with ID="WSDL" must exist).</sch:assert>
+			<sch:assert test="../../foxml:datastream[@ID='DSINPUTSPEC']">Behavior Mechanism Objects must have an inline Datastream representing a Datastream Input Spec (foxml:datastream with ID="DSINPUTSPEC" must exist).</sch:assert>
+			<sch:assert test="../../foxml:datastream[@ID='METHODMAP']">Behavior Mechanism Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
+			<sch:assert test="../../foxml:datastream[@ID='WSDL']">Behavior Mechanism Objects must have an inline Datastream representing WSDL service bindings (foxml:datastream with ID="WSDL" must exist).</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that Behavior Definition objects have the proper kinds of datastreams (METHODMAP).-->
 		<sch:rule context="foxml:property[@NAME='info:fedora/def:dobj:fType' and @VALUE='FedoraBDefObject']">
-			<sch:assert test="foxml:datastream[@ID='METHODMAP']">Behavior Definition Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
+			<sch:assert test="../../foxml:datastream[@ID='METHODMAP']">Behavior Definition Objects must have an inline Datastream representing a Fedora Method Map (foxml:datastream with ID="METHODMAP" must exist).</sch:assert>
 		</sch:rule>
 		<!-- RULE:  check that the Fedora object type (fType) contains a valid value (FedoraObject, FedoraBDefObject, or FedoraBMechObject).-->
 		<sch:rule context="foxml:property[@NAME='info:fedora/def:dobj:fType']">
@@ -56,22 +56,47 @@
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:mDate']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:mDate']) = 0">DUPLICATE object property: modification date (foxml:property NAME='info:fedora/def:dobj:mDate' )</sch:assert>
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/def:dobj:cModel']) = 1 or count(foxml:property[@NAME='info:fedora/def:dobj:cModel']) = 0">DUPLICATE object property: content model (foxml:property NAME='info:fedora/def:dobj:cModel')</sch:assert>
 		</sch:rule>
+		<!-- RULE:  check that required attributes are not missing. -->
+		<sch:rule context="foxml:datastream">
+			<sch:assert test="string(@ID)">Datastream must have  a datastream id.  (foxml:datastream: value of ID is missing)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream ID must not exceed length of 64 (foxml:datastream ID)</sch:assert>
+			<sch:assert test="@CONTROL_GROUP='R' or @CONTROL_GROUP= 'E' or @CONTROL_GROUP= 'M' or @CONTROL_GROUP= 'X' or @CONTROL_GROUP= 'B'">Datastream control group type must be "E" for External-Ref, "M" for Managed-Content, "R" for Redirected, or "X" for Inline-XML-Metadata.  (foxml:datastream: CONTROL_GROUP)</sch:assert>
+		</sch:rule>
+		<sch:rule context="foxml:contentLocation">
+			<sch:assert test="string(@REF)">Datastream content location must have a URL.   (foxml:contentLocation: value of REF is missing)</sch:assert>
+		</sch:rule>
+		<sch:rule context="foxml:datastreamVersion">
+			<sch:assert test="string(@ID)">Datastream version must have a datastream id.   (foxml:datastreamVersion: value of ID is missing)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Datastream version ID must not exceed length of 64 (foxml:datastreamVersion ID)</sch:assert>
+		</sch:rule>
+		<sch:rule context="foxml:disseminator">
+			<sch:assert test="string(@ID)">Disseminator must have a disseminator id.   (foxml:disseminator: value of ID is missing)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Disseminator ID must not exceed length of 64 (foxml:disseminator ID)</sch:assert>
+			<sch:assert test="string(@BDEF_CONTRACT_PID)">Disseminator must have a behavior definition id.   (foxml:disseminator: value of BDEF_CONTRACT_PID is missing)</sch:assert>
+		</sch:rule>
+		<sch:rule context="foxml:disseminatorVersion">
+			<sch:assert test="string(@ID)">Disseminator version must have a disseminator id.  (foxml:disseminatorVersion: value of ID is missing)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 64">Disseminator vesrion ID must not exceed length of 64 (foxml:disseminatorVersion ID)</sch:assert>
+			<sch:assert test="string(@BMECH_SERVICE_PID)">Disseminator must have a behavior mechanism id.   (foxml:disseminatorVersion: value of BMECH_SERVICE_PID is missing)</sch:assert>
+		</sch:rule>
 	</sch:pattern>
 	<!-- COMPLETED PATTERN: -->
 	<!-- These rules are to be applied to objects when they are considered completed and ready to be stored persistently in the repository.-->
 	<!-- These are attributes that are optional in the FOXML XML Schema (i.e., to support ingest files), but that ultimately must be assigned by the system. -->
 	<!-- This validation may be unnecessary if we accept that the Fedora server will ensure this programmatically. -->
 	<sch:pattern name="Completed Object Checks" id="completed">
+		<sch:rule context="foxml:digitalObject">
+			<sch:assert test="string(@PID)">The digital object must have a PID.  (foxml:digitalObject: value of PID is missing)</sch:assert>
+			<sch:assert test="string-length(@PID) &lt;= 64">Digital Object PID must not exceed length of 64 (foxml:digitalObject PID)</sch:assert>
+		</sch:rule>
 		<sch:rule context="foxml:objectProperties">
 			<sch:assert test="foxml:property[@NAME='info:fedora/def:dobj:cDate']">The system did not assign a creation date to the object! (foxml:property: NAME='info:fedora/def:dobj:cDate' is missing)</sch:assert>
 			<sch:assert test="foxml:property[@NAME='info:fedora/def:dobj:state']">The system did not assign a state to the object!  (foxml:property: NAME='info:fedora/def:dobj:state' is missing)</sch:assert>
 		</sch:rule>
 		<sch:rule context="foxml:datastream">
-			<sch:assert test="string(@ID)">The system did not assign a datastream id.  (foxml:datastream: value of ID is missing)</sch:assert>
 			<sch:assert test="string(@STATE)">The system did not assign a state to the datastream.  (foxml:datastream: value of STATE is missing)</sch:assert>
 		</sch:rule>
 		<sch:rule context="foxml:datastreamVersion">
-			<sch:assert test="string(@ID)">The system did not assign a datastream version id.  (foxml:datastreamVersion: value of ID is missing)</sch:assert>
 			<sch:assert test="string(@CREATED)">The system did not assign a creation date to the datastream version.  (foxml:datastreamVersion: value of CREATED is missing)</sch:assert>
 		</sch:rule>
 		<sch:rule context="foxml:disseminator">
