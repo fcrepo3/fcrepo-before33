@@ -141,7 +141,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 	public String ingest(byte[] XML, String format, String logMessage) throws java.rmi.RemoteException {
 		assertInitialized();
 		try {
-		  // always gens pid, unless pid in stream starts with "test: or demo:"
+		  // always gens pid, unless pid in stream starts with "test:" "demo:"
+		  // or other prefix that is configured in the retainPIDs parameter of fedora.fcfg
 			return s_management.ingestObject(getContext(),
 					new ByteArrayInputStream(XML), logMessage, format, "UTF-8", true);
 		} catch (ServerException se) {
