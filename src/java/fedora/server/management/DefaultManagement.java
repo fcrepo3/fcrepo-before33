@@ -683,8 +683,8 @@ public class DefaultManagement
                       newdiss.dsBindMap=orig.dsBindMap;
                     }
                     // make sure dsBindMapID has a different id
-                    newdiss.dsBindMapID=w.newDatastreamBindingMapID(disseminatorId);
-                    newdiss.dsBindMap.dsBindMapID=w.newDatastreamBindingMapID(disseminatorId);
+                    newdiss.dsBindMapID=w.newDatastreamBindingMapID();
+                    newdiss.dsBindMap.dsBindMapID=w.newDatastreamBindingMapID();
                     Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                     newdiss.dissCreateDT=nowUTC;
                     // changing bDefID and ParentPid not permitted; use original values

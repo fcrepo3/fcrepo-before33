@@ -67,38 +67,38 @@ public interface Management {
                                 String mdClass,
                                 String mdType) throws ServerException;
 
-    public void modifyDatastreamByReference(Context context, String pid, String datastreamId, String dsLabel, String logMessage, String dsLocation, String dsState) throws ServerException;
+    public void modifyDatastreamByReference(Context context, String pid, String datastreamID, String dsLabel, String logMessage, String dsLocation, String dsState) throws ServerException;
 
-    public void modifyDatastreamByValue(Context context, String pid, String datastreamId, String dsLabel, String logMessage, InputStream dsContent, String dsState) throws ServerException;
+    public void modifyDatastreamByValue(Context context, String pid, String datastreamID, String dsLabel, String logMessage, InputStream dsContent, String dsState) throws ServerException;
 
     public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar endDT) throws ServerException;
 
     public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime) throws ServerException;
 
-    public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime, String state) throws ServerException;
+    public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime, String dsState) throws ServerException;
 
     public Datastream[] getDatastreamHistory(Context context, String pid, String datastreamID) throws ServerException;
 
 //    public String addDisseminator(Context context, String pid, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) throws ServerException;
 
-    public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, String bDefLabel, String bMechLabel, DSBindingMap bindingMap, String logMessage, String dissState) throws ServerException;
+    public void modifyDisseminator(Context context, String pid, String disseminatorID, String bMechPid, String dissLabel, String bDefLabel, String bMechLabel, DSBindingMap bindingMap, String logMessage, String dissState) throws ServerException;
 
-//    public void deleteDisseminator(Context context, String pid, String disseminatorId) throws ServerException;
+//    public void deleteDisseminator(Context context, String pid, String disseminatorID) throws ServerException;
 
-//    public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorId, Calendar startDateTime, Calendar endDateTime) throws ServerException;
+//    public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorID, Calendar startDateTime, Calendar endDateTime) throws ServerException;
 
-    public Disseminator getDisseminator(Context context, String pid, String disseminatorId, Calendar asOfDateTime) throws ServerException;
+    public Disseminator getDisseminator(Context context, String pid, String disseminatorID, Calendar asOfDateTime) throws ServerException;
 
-    public Disseminator[] getDisseminators(Context context, String pid, Calendar asOfDateTime, String state) throws ServerException;
+    public Disseminator[] getDisseminators(Context context, String pid, Calendar asOfDateTime, String dissState) throws ServerException;
 
-    public Disseminator[] getDisseminatorHistory(Context context, String pid, String disseminatorId) throws ServerException;
+    public Disseminator[] getDisseminatorHistory(Context context, String pid, String disseminatorID) throws ServerException;
 
     public String putTempStream(InputStream in) throws ServerException;
 
     public InputStream getTempStream(String id) throws ServerException;
 
-    public void setDatastreamState(Context context, String pid, String id, String state, String logMessage) throws ServerException;
+    public void setDatastreamState(Context context, String pid, String dsID, String dsState, String logMessage) throws ServerException;
 
-    public void setDisseminatorState(Context context, String pid, String id, String state, String logMessage) throws ServerException;
+    public void setDisseminatorState(Context context, String pid, String dsID, String dsState, String logMessage) throws ServerException;
 
 }
