@@ -58,6 +58,7 @@ public class DOValidatorModule extends Module implements DOValidator
    * @param role The module role name.
    * @throws ModuleInitializationException If initialization values are
    *         invalid or initialization fails for some other reason.
+   * @throws ServerException
    */
     public DOValidatorModule(Map moduleParameters, Server server, String role)
           throws ModuleInitializationException, ServerException
@@ -102,7 +103,7 @@ public class DOValidatorModule extends Module implements DOValidator
   /**
    * <p>Validates a digital object.</p>
    *
-   * @param in The digital object provided as a bytestream.
+   * @param objectAsStream The digital object provided as a bytestream.
    * @param validationLevel The level of validation to perform on the digital object.
    *        This is an integer from 0-3 with the following meanings:
    *        0 = do all validation levels
@@ -125,7 +126,7 @@ public class DOValidatorModule extends Module implements DOValidator
   /**
    * <p>Validates a digital object.</p>
    *
-   * @param in The digital object provided as a file.
+   * @param objectAsFile The digital object provided as a file.
    * @param validationLevel The level of validation to perform on the digital object.
    *        This is an integer from 0-3 with the following meanings:
    *        0 = do all validation levels
