@@ -2,6 +2,9 @@ package fedora.client.console;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import javax.swing.BoxLayout;
@@ -99,6 +102,9 @@ public class ConsoleCommandInvoker
         } catch (Throwable th) {
             m_console.print("ERROR (" + th.getClass().getName() + ") : " 
                     + th.getMessage() + "\n");
+            StringWriter sw=new StringWriter();
+            th.printStackTrace(new PrintWriter(sw));
+            m_console.print(sw.toString());
         } finally {
             m_console.setBusy(false);
         }
@@ -106,6 +112,20 @@ public class ConsoleCommandInvoker
     
     private String stringify(Object obj) {
         if (obj==null) { return "<null>"; }
+        String nm=obj.getClass().getName();
+        if (nm.startsWith("[L")) {
+            // print array
+            StringBuffer buf=new StringBuffer();
+            buf.append("{");
+            for (int i=0; i<Array.getLength(obj); i++) {
+                if (i>0) {
+                    buf.append(",");
+                }
+                buf.append(Array.get(obj, i).toString());
+            }
+            buf.append("}");
+            return buf.toString();
+        }
         return obj.toString();
     }
     
