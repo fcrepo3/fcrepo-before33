@@ -7,7 +7,7 @@ import java.beans.*;
 
 /**
  * <p><b>Title:</b> SortHeaderRenderer.java</p>
- * <p><b>Description:</b> 
+ * <p><b>Description:</b>
  * An extension of WDesktopPane that supports often used MDI functionality. This
  * class also handles setting scroll bars for when windows move too far to the left or
  * bottom, providing the MDIDesktopPane is in a ScrollPane.
@@ -24,13 +24,16 @@ import java.beans.*;
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.</p>
  *
- * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of 
- * Virginia and Cornell University. All rights reserved.  
- * Portions created by Gerald Nunn are Copyright &copy; 
- * Gerald Nunn, originally made available at 
+ * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of
+ * Virginia and Cornell University. All rights reserved.
+ * Portions created by Gerald Nunn are Copyright &copy;
+ * Gerald Nunn, originally made available at
  * http://www.javaworld.com/javaworld/jw-05-2001/jw-0525-mdi.html</p>
  *
  * -----------------------------------------------------------------------------
+ *
+ * @author Gerald Nunn, cwilper@cs.cornell.edu
+ * @version $Id$
  */
 public class MDIDesktopPane extends JDesktopPane {
     private static int FRAME_OFFSET=20;
@@ -115,7 +118,7 @@ public class MDIDesktopPane extends JDesktopPane {
             y = y + frameHeight;
         }
     }
-    
+
     public void minimizeFrames() {
         JInternalFrame[] array = getAllFrames();
         for (int i=0; i<array.length; i++) {
@@ -124,7 +127,7 @@ public class MDIDesktopPane extends JDesktopPane {
             } catch (PropertyVetoException pve) { }
         }
     }
-    
+
     public void restoreFrames() {
         JInternalFrame[] array = getAllFrames();
         for (int i=0; i<array.length; i++) {
@@ -133,7 +136,7 @@ public class MDIDesktopPane extends JDesktopPane {
             } catch (PropertyVetoException pve) { }
         }
     }
-    
+
     public int deIconifiedFrames() {
         int c=0;
         JInternalFrame[] array = getAllFrames();
@@ -142,7 +145,7 @@ public class MDIDesktopPane extends JDesktopPane {
         }
         return c;
     }
-    
+
     public int iconifiedFrames() {
         int c=0;
         JInternalFrame[] array = getAllFrames();

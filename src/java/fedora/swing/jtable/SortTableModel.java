@@ -4,7 +4,7 @@ import javax.swing.table.*;
 
 /**
  * <p><b>Title:</b> SortTableModel.java</p>
- * <p><b>Description:</b> 
+ * <p><b>Description:</b>
  * <p>
  *
  * -----------------------------------------------------------------------------
@@ -18,15 +18,16 @@ import javax.swing.table.*;
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.</p>
  *
- * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of 
- * Virginia and Cornell University. All rights reserved.  
- * Portions created by Claude Duguay are Copyright &copy; 
- * Claude Duguay, originally made available at 
+ * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of
+ * Virginia and Cornell University. All rights reserved.
+ * Portions created by Claude Duguay are Copyright &copy;
+ * Claude Duguay, originally made available at
  * http://www.fawcette.com/javapro/2002_08/magazine/columns/visualcomponents/</p>
  *
  * -----------------------------------------------------------------------------
  *
- * @author cwilper
+ * @author Claude Duguay, cwilper@cs.cornell.edu
+ * @version $Id$
  */
 public interface SortTableModel
   extends TableModel

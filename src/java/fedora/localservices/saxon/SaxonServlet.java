@@ -42,7 +42,7 @@ import java.util.Properties;
  * -----------------------------------------------------------------------------
  *
  * @author Michael Kay
- * @version 6.5.2
+ * @version Saxon 6.5.2, $Id$
  */
 public class SaxonServlet extends HttpServlet {
 

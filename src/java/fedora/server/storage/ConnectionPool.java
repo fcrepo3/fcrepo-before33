@@ -39,7 +39,8 @@ import fedora.server.utilities.TableCreatingConnection;
  *
  * -----------------------------------------------------------------------------
  *
- * @author Marty Hall
+ * @author Marty Hall, rlw@virginia.edu, cwilper@cs.cornell.edu
+ * @version $Id$
  */
 public class ConnectionPool implements Runnable
 {

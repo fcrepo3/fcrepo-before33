@@ -28,7 +28,7 @@ import javax.help.Map.ID;
 
 /**
  * <p><b>Title:</b> SimpleContentViewerUI.java</p>
- * <p><b>Description:</b> 
+ * <p><b>Description:</b>
  * Based on SimpleContentViewerUI in javax.help.plaf.basic,
  * which comes with JavaHelp, which comes with Java1.4,
  * and is written by Sun Microsystems.
@@ -56,23 +56,24 @@ import javax.help.Map.ID;
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.</p>
  *
- * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of 
- * Virginia and Cornell University. All rights reserved.  
- * Portions created by Sun Microsystems are Copyright &copy; 
+ * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of
+ * Virginia and Cornell University. All rights reserved.
+ * Portions created by Sun Microsystems are Copyright &copy;
  * Sun Microsystems, originally made available at java.sun.com</p>
  *
  * -----------------------------------------------------------------------------
  *
- * @author Chris Wilper
+ * @author Sun Microsystems, cwilper@cs.cornell.edu
+ * @version $Id$
  */
 
 public class SimpleContentViewerUI extends HelpContentViewerUI
    implements HelpModelListener, TextHelpModelListener, HyperlinkListener, PropertyChangeListener, Serializable
 {
     // Suggestion: Refactor the class and remove the menu bar and the
-    //		HTML viewer into subclasses. This would allow easier 
+    //		HTML viewer into subclasses. This would allow easier
     //		replacement of both components to
-    // 
+    //
     // cwilper:note ^^^ haha, looks like they were thinking about making
     // replacement easier at some point... ahh well.
     protected JHelpContentViewer theViewer;
@@ -95,7 +96,7 @@ public class SimpleContentViewerUI extends HelpContentViewerUI
     public SimpleContentViewerUI(JHelpContentViewer b) {
 	debug("createUI - sort of");
     }
-    
+
     public void setEditorKit(String type, EditorKit kit) {
 	debug("setEditorKit("+type+", "+kit+")");
 	if (registry == null) {
@@ -150,7 +151,7 @@ public class SimpleContentViewerUI extends HelpContentViewerUI
 
 	// listen to property changes...
 	theViewer.addPropertyChangeListener(this);
-	
+
 	TextHelpModel model = theViewer.getModel();
 	if (model != null) {
 	    // listen to id changes...
@@ -169,19 +170,19 @@ public class SimpleContentViewerUI extends HelpContentViewerUI
 					   Color.gray));
 	vp = scroller.getViewport();
 	vp.add(html);
-    
+
     // here is the suspect line:
     //
-    // Interesting fact: It took about eight hours to come up with 
+    // Interesting fact: It took about eight hours to come up with
     // a solution which incorporated removal of this line while
     // keeping the base javahelp classes intact, and dealing with
     // miscellaneous errors that came up.
-    // 
+    //
     // But I won, see.  I won.  That's all that matters,
     // mister computer.  Bite me!! nyeh nyeh!!!!
     //
 	// vp.setBackingStoreEnabled(true);
-	    
+
 	theViewer.add ("Center", scroller);
 	loadingURL = false;
 	pendingHighlightsEvent = null;
@@ -221,7 +222,7 @@ public class SimpleContentViewerUI extends HelpContentViewerUI
 	debug("idChanged("+e+")");
 	debug("  = " + id + "--" + url);
 	debug("  my helpModel: "+model);
-	    
+
 	model.setDocumentTitle(null);
 
 	// HERE - REMIND - event should be generated after visit
@@ -267,7 +268,7 @@ public class SimpleContentViewerUI extends HelpContentViewerUI
 	    // ignore
 	}
 	debug("rebuld-end");
-    }	
+    }
 
     public void propertyChange(PropertyChangeEvent event) {
 	debug("propertyChange: " + event.getPropertyName() + "\n\toldValue:" + event.getOldValue() + "\n\tnewValue:" + event.getNewValue());
@@ -320,14 +321,14 @@ public class SimpleContentViewerUI extends HelpContentViewerUI
 		// Propogate this to property listeners of the ContentViewer.
 		// Can't acutally send the real thing because Objects and
 		// Strings aren't supported.
-		theViewer.firePropertyChange(event.getPropertyName(), 
+		theViewer.firePropertyChange(event.getPropertyName(),
 					     false, true);
 	    }
 	}
     }
 
     /**
-     * Notification of a change relative to a 
+     * Notification of a change relative to a
      * hyperlink.
      */
     public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -347,7 +348,7 @@ public class SimpleContentViewerUI extends HelpContentViewerUI
      * link.  The given url is the requested reference.
      * By default this calls <a href="#setPage">setPage</a>,
      * and if an exception is thrown the original previous
-     * document is restored and a beep sounded.  If an 
+     * document is restored and a beep sounded.  If an
      * attempt was made to follow a link, but it represented
      * a malformed url, this method will be called with a
      * null argument.
@@ -388,7 +389,7 @@ public class SimpleContentViewerUI extends HelpContentViewerUI
      * can be done).
      */
     class PageLoader implements Runnable {
-	
+
 	PageLoader(URL u, Cursor c) {
 	    url = u;
 	    cursor = c;
@@ -466,7 +467,7 @@ public class SimpleContentViewerUI extends HelpContentViewerUI
 	TextHelpModel m = (TextHelpModel) e.getSource();
 	TextHelpModel.Highlight highlights[] = m.getHighlights();
 
-	Highlighter.HighlightPainter p = 
+	Highlighter.HighlightPainter p =
 	    new DefaultHighlighter.DefaultHighlightPainter(html.getSelectionColor());
 	for (int i=0; i<highlights.length; i++) {
 	    int pos0 = highlights[i].getStartOffset();
@@ -491,7 +492,7 @@ public class SimpleContentViewerUI extends HelpContentViewerUI
     private class ScrollToPosition implements Runnable {
 	private int pos;
 	private JEditorPane html;
-	
+
 	public ScrollToPosition (JEditorPane html, int pos) {
 	    this.html = html;
 	    this.pos = pos;

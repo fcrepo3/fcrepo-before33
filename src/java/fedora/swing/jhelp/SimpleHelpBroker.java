@@ -23,11 +23,11 @@ import java.lang.reflect.*;
 
 /**
  * <p><b>Title:</b> SimpleHelpBroker.java</p>
- * <p><b>Description:</b> 
+ * <p><b>Description:</b>
  * An impelmentation of the HelpBroker interface.
  *
- * This is based on <code>DefaultHelpBroker</code> v1.33 (01/25/99) that 
- * comes with JavaHelp, originally written by Roger Brinkley and Eduardo 
+ * This is based on <code>DefaultHelpBroker</code> v1.33 (01/25/99) that
+ * comes with JavaHelp, originally written by Roger Brinkley and Eduardo
  * Pelegri-Llopart.
  * JavaHelp comes with Java, and is written by Sun Microsystems.
  * More information on JavaHelp can be found at
@@ -45,7 +45,7 @@ import java.lang.reflect.*;
  * as needed.
  *
  * Also, in createJHelp, this class configures the JHelp such that the content
- * viewer UI (the panel where the html is displayed) is a 
+ * viewer UI (the panel where the html is displayed) is a
  * <code>SimpleContentViewerUI</code> instead of a <code>BasicContentViewerUI</code>.
  * See SimpleContentViewerUI javadoc for why it's better.
  * <p>
@@ -61,14 +61,15 @@ import java.lang.reflect.*;
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.</p>
  *
- * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of 
- * Virginia and Cornell University. All rights reserved.  
- * Portions created by Sun Microsystems are Copyright &copy; 
+ * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of
+ * Virginia and Cornell University. All rights reserved.
+ * Portions created by Sun Microsystems are Copyright &copy;
  * Sun Microsystems, originally made available at java.sun.com</p>
  *
  * -----------------------------------------------------------------------------
  *
- * @author cwilper
+ * @author Sun Microsystems, cwilper@cs.cornell.edu
+ * @version $Id$
  */
 
 public class SimpleHelpBroker implements HelpBroker, KeyListener {
@@ -78,7 +79,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
     protected JHelp jhelp = null;
     protected Locale locale=null;
     protected Font font=null;
-    
+
     private SimpleContentViewerUI m_contentViewerUI;
 
     /**
@@ -99,7 +100,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
      * @since 1.1
      */
     protected boolean modallyActivated = false;
-    
+
     private Image m_iconImage=null;
 
     static boolean on1dot1;
@@ -109,7 +110,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
         on1dot1 = true;
         try {
             // Test if method introduced in 1.2 is available.
-	    Class types[] = {Dialog.class, boolean.class}; 
+	    Class types[] = {Dialog.class, boolean.class};
             Constructor k = JDialog.class.getConstructor(types);
             on1dot1 = (k == null);
         } catch (NoSuchMethodException e) {
@@ -146,7 +147,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 
     /**
      * Changes the HelpSet for this broker.
-     * @param hs The HelpSet to set for this broker. 
+     * @param hs The HelpSet to set for this broker.
      * A null hs is valid parameter.
      */
     public void setHelpSet(HelpSet hs) {
@@ -159,7 +160,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 		jhelp.setModel(model);
 	    }
 	    helpset = hs;
-            
+
 	}
     }
 
@@ -184,7 +185,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
      * is the same as the defaultLocale.
      * @see #getLocale
      */
-    public void setLocale(Locale l) { 
+    public void setLocale(Locale l) {
 	locale = l;
 	if (jhelp != null) {
 	    jhelp.setLocale(locale);
@@ -213,17 +214,17 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 	    jhelp.setFont(font);
 	}
     }
-    
+
     public void setPosition(Point p) {
     }
 
     /**
-     * Set the currentView to the navigator with the same 
+     * Set the currentView to the navigator with the same
      * name as the <tt>name</tt> parameter.
      *
-     * @param name The name of the navigator to set as the 
-     * current view. If nav is null or not a valid Navigator 
-     * in this HelpBroker then an 
+     * @param name The name of the navigator to set as the
+     * current view. If nav is null or not a valid Navigator
+     * in this HelpBroker then an
      * IllegalArgumentException is thrown.
      * @throws IllegalArgumentException if nav is null or not a valid Navigator.
      */
@@ -280,7 +281,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 	} else {
 	    frame.setVisible(b);
 
-	// We should be able to just 
+	// We should be able to just
 	// try {
 	// 	frame.setState(Frame.NORMAL)
 	// } catch (NoSuchMethodError ex) {
@@ -324,7 +325,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 		    return false;
 		}
 		else {
-		    // We should be able to just 
+		    // We should be able to just
 		    // try {
 		    // 	return (frame.getState() == Frame.NORMAL)
 		    // } catch (NoSuchMethodError ex) {
@@ -339,7 +340,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 			    int value =((Integer)(m.invoke(frame, null))).intValue();
 			    if (value == 0)
 				return true;
-			    else 
+			    else
 				return false;
 
 			}
@@ -378,9 +379,9 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 
     /**
      * Requests the location of the presentation.
-     * @throws UnsupportedOperationException If the underlying implementation 
+     * @throws UnsupportedOperationException If the underlying implementation
      * does not allow this.
-     * @throws IllegalComponentStateExcetpion If the presentation is not 
+     * @throws IllegalComponentStateExcetpion If the presentation is not
      * displayed.
      * @returns Point the location of the presentation.
      */
@@ -421,9 +422,9 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 
     /**
      * Requests the size of the presentation.
-     * @throws UnsupportedOperationException If the underlying implementation 
+     * @throws UnsupportedOperationException If the underlying implementation
      * does not allow this.
-     * @throws IllegalComponentStateExcetpion If the presentation is not 
+     * @throws IllegalComponentStateExcetpion If the presentation is not
      * displayed.
      * @returns Point the location of the presentation.
      */
@@ -543,7 +544,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
      * @param id the default HelpID to be displayed
      * @param hs the default HelpSet to be displayed. If hs is null the default HelpSet
      * will be assumed.
-     * 
+     *
      * @see getHelpKeyActionListener
      */
     public void enableHelpKey(Component comp, String id, HelpSet hs) {
@@ -596,12 +597,12 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 					       ActionEvent.ACTION_PERFORMED,
 					       null));
 	}
-	
+
     }
 
     /**
-     * Enables help for a Component. This method sets a 
-     * component's helpID and HelpSet. 
+     * Enables help for a Component. This method sets a
+     * component's helpID and HelpSet.
      *
      * @param comp the Component to set the id and hs on.
      * @param id the String value of an Map.ID.
@@ -610,7 +611,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
      * @see CSH.setHelpID
      * @see CSH.setHelpSet
      */
-    public void enableHelp(Component comp, String id, HelpSet hs) 
+    public void enableHelp(Component comp, String id, HelpSet hs)
     {
 	if (id == null) {
 	    throw new NullPointerException("id");
@@ -622,8 +623,8 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
     }
 
     /**
-     * Enables help for a MenuItem. This method sets a 
-     * component's helpID and HelpSet. 
+     * Enables help for a MenuItem. This method sets a
+     * component's helpID and HelpSet.
      *
      * @param comp the MenuItem to set the id and hs on.
      * @param id the String value of an Map.ID.
@@ -632,7 +633,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
      * @see CSH.setHelpID
      * @see CSH.setHelpSet
      */
-    public void enableHelp(MenuItem comp, String id, HelpSet hs) 
+    public void enableHelp(MenuItem comp, String id, HelpSet hs)
     {
 	if (id == null) {
 	    throw new NullPointerException("id");
@@ -644,13 +645,13 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
     }
 
     /**
-     * Enables help for a Component. This method sets a 
-     * Component's helpID and HelpSet and adds an ActionListener. 
+     * Enables help for a Component. This method sets a
+     * Component's helpID and HelpSet and adds an ActionListener.
      * When an action is performed
      * it displays the Component's helpID and HelpSet in the default viewer.
      *
-     * @param comp the Component to set the id and hs on. If the Component is not 
-     * a javax.swing.AbstractButton or a 
+     * @param comp the Component to set the id and hs on. If the Component is not
+     * a javax.swing.AbstractButton or a
      * java.awt.Button an IllegalArgumentException is thrown.
      * @param id the String value of an Map.ID.
      * @param hs the HelpSet the id is in. If hs is null the default HelpSet
@@ -662,7 +663,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
      * @see java.awt.Button
      * @throws IllegalArgumentException if comp is null.
      */
-    public void enableHelpOnButton(Component comp, String id, HelpSet hs) 
+    public void enableHelpOnButton(Component comp, String id, HelpSet hs)
     {
 	if (!(comp instanceof AbstractButton) && !(comp instanceof Button)) {
 	    throw new IllegalArgumentException("Invalid Component");
@@ -684,8 +685,8 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
     }
 
     /**
-     * Enables help for a MenuItem. This method sets a 
-     * Component's helpID and HelpSet and adds an ActionListener. 
+     * Enables help for a MenuItem. This method sets a
+     * Component's helpID and HelpSet and adds an ActionListener.
      * When an action is performed
      * it displays the Component's helpID and HelpSet in the default viewer.
      *
@@ -699,7 +700,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
      * @see java.awt.MenuItem
      * @throws IllegalArgumentException if comp is null.
      */
-    public void enableHelpOnButton(MenuItem comp, String id, HelpSet hs) 
+    public void enableHelpOnButton(MenuItem comp, String id, HelpSet hs)
     {
 	if (comp == null) {
 	    throw new IllegalArgumentException("Invalid Component");
@@ -740,8 +741,8 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 
     /**
      * Set the activation window. If the window is an instance of a
-     * Dialog and the is modal, modallyActivated help is set to true and 
-     * ownerDialog is set to the window. In all other instances 
+     * Dialog and the is modal, modallyActivated help is set to true and
+     * ownerDialog is set to the window. In all other instances
      * modallyActivated is set to false and ownerDialog is set to null.
      * @param window the activating window
      * @since 1.1
@@ -761,7 +762,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 	    modallyActivated = false;
 	}
     }
-    
+
     boolean displayedAtLeastOnce=false;
     public void ensureContentPanelDrawn(Map.ID id) {
         try {
@@ -778,7 +779,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
      */
     private int HELP_WIDTH = 645;
     private int HELP_HEIGHT = 495;
-    
+
     private synchronized void createJHelp() {
 	debug ("createJHelp");
 	if (jhelp == null) {
@@ -786,11 +787,11 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
         m_contentViewerUI=new SimpleContentViewerUI(jhelp.getContentViewer());
         jhelp.getContentViewer().setUI(m_contentViewerUI);
         /*
-        try { 
+        try {
           DefaultHelpModel md=(DefaultHelpModel) jhelp.getModel();
-          md.add 
+          md.add
         } catch (ClassCastException cce) { }
-       */ 
+       */
 	    if (font != null) {
 		jhelp.setFont(font);
 	    }
@@ -818,7 +819,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 	    Window owner=null;
 	    try {
 		Method m = Window.class.getMethod("getOwner", null);
-		
+
 		if (m != null && dialog != null) {
 		    owner = (Window) m.invoke(dialog, null);
 		}
@@ -831,7 +832,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 	    } catch (java.lang.IllegalAccessException ex) {
 		//
 	    }
-	    
+
 	    if (dialog == null || owner != ownerWindow || modalDeactivated) {
 		if (frame != null) {
 		    pos = frame.getLocation();
@@ -885,7 +886,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 		}
 	    }
 	} else {
-	    if (frame == null) { 
+	    if (frame == null) {
 		frame = new JFrame(helpTitle);
         if (m_iconImage!=null) {
             frame.setIconImage(m_iconImage);
@@ -901,7 +902,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
             HELP_WIDTH=e.getWindow().getWidth();
             HELP_HEIGHT=e.getWindow().getHeight();
 		    }
-            
+
 		};
 		frame.addWindowListener(l);
 	    }
@@ -924,7 +925,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
             frame.setTitle(helpset.getTitle());
 	}
 
-    }                 
+    }
 
     // the listeners.
     protected ActionListener displayHelpFromFocus;
@@ -947,6 +948,6 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 	    System.err.println("SimpleHelpBroker: "+msg);
 	}
     }
- 
+
 }
 

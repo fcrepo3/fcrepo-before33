@@ -7,7 +7,7 @@ import javax.swing.table.*;
 
 /**
  * <p><b>Title:</b> JSortTableTest.java</p>
- * <p><b>Description:</b> 
+ * <p><b>Description:</b>
  * <p>
  *
  * -----------------------------------------------------------------------------
@@ -21,15 +21,16 @@ import javax.swing.table.*;
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.</p>
  *
- * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of 
- * Virginia and Cornell University. All rights reserved.  
- * Portions created by Claude Duguay are Copyright &copy; 
- * Claude Duguay, originally made available at 
+ * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of
+ * Virginia and Cornell University. All rights reserved.
+ * Portions created by Claude Duguay are Copyright &copy;
+ * Claude Duguay, originally made available at
  * http://www.fawcette.com/javapro/2002_08/magazine/columns/visualcomponents/</p>
  *
  * -----------------------------------------------------------------------------
  *
- * @author cwilper
+ * @author Claude Duguay, cwilper@cs.cornell.edu
+ * @version $Id$
  */
 public class JSortTableTest
   extends JPanel
@@ -41,7 +42,7 @@ public class JSortTableTest
     setPreferredSize(new Dimension(400, 400));
     add(new JScrollPane(new JSortTable(makeModel())));
   }
-  
+
   protected SortTableModel makeModel()
   {
     Vector data = new Vector();
@@ -54,17 +55,17 @@ public class JSortTableTest
       }
       data.add(row);
     }
-    
+
     Vector names = new Vector();
     names.add("One");
     names.add("Two");
     names.add("Three");
     names.add("Four");
     names.add("Five");
-    
+
     return new DefaultSortTableModel(data, names);
   }
-  
+
   public static void main(String[] args)
   {
     JFrame frame = new JFrame("JSortTable Test");

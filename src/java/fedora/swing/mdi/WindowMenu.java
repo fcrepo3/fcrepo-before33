@@ -7,7 +7,7 @@ import java.beans.*;
 
 /**
  * <p><b>Title:</b> SortHeaderRenderer.java</p>
- * <p><b>Description:</b> 
+ * <p><b>Description:</b>
  * Menu component that handles the functionality expected of a standard
  * "Windows" menu for MDI applications.
  * <p>
@@ -23,13 +23,16 @@ import java.beans.*;
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.</p>
  *
- * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of 
- * Virginia and Cornell University. All rights reserved.  
- * Portions created by Gerald Nunn are Copyright &copy; 
- * Gerald Nunn, originally made available at 
+ * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of
+ * Virginia and Cornell University. All rights reserved.
+ * Portions created by Gerald Nunn are Copyright &copy;
+ * Gerald Nunn, originally made available at
  * http://www.javaworld.com/javaworld/jw-05-2001/jw-0525-mdi.html</p>
  *
  * -----------------------------------------------------------------------------
+ *
+ * @author Gerald Nunn, cwilper@cs.cornell.edu
+ * @version $Id$
  */
 public class WindowMenu extends JMenu {
     private MDIDesktopPane desktop;
@@ -41,7 +44,7 @@ public class WindowMenu extends JMenu {
     public WindowMenu(MDIDesktopPane desktop, String name) {
         super(name);
         this.desktop=desktop;
-        
+
         cascade.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 WindowMenu.this.desktop.cascadeFrames();
@@ -107,7 +110,7 @@ public class WindowMenu extends JMenu {
             });
             menu.setIcon(array[i].getFrameIcon());
             add(menu);
-        } 
+        }
     }
 
     /* This JCheckBoxMenuItem descendant is used to track the child frame that corresponds
