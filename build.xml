@@ -11,25 +11,25 @@
 	<property name="javaClassOptimize" value="off"/>
 	<property name="javaSourceDir" value="src/java"/>
 	<property name="docDir" value="apidoc"/>
-        <target name="serverdist" depends="server,client" description="builds both client and server in dist\server, in a package suitable for distribution">
-            <copy todir="dist/server">
-                <fileset dir="dist/client"/>
-            </copy>
-        </target>
+	<target name="serverdist" depends="server,client" description="builds both client and server in dist\server, in a package suitable for distribution">
+		<copy todir="dist/server">
+			<fileset dir="dist/client"/>
+		</copy>
+	</target>
 	<target name="client" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/client"/>
 		<mkdir dir="dist/client/bin"/>
-                <copy todir="dist/client/bin">
-                    <fileset dir="src/bat/client"/>
-                </copy>
-                <copy todir="dist/client/bin">
-                    <fileset dir="src/sh/client"/>
-                </copy>
-                <mkdir dir="dist/client/demo"/>     
-                <copy todir="dist/client/demo">
-                    <fileset dir="src/mets/test/demo"/>
-                </copy>
+		<copy todir="dist/client/bin">
+			<fileset dir="src/bat/client"/>
+		</copy>
+		<copy todir="dist/client/bin">
+			<fileset dir="src/sh/client"/>
+		</copy>
+		<mkdir dir="dist/client/demo"/>
+		<copy todir="dist/client/demo">
+			<fileset dir="src/mets/test/demo"/>
+		</copy>
 		<mkdir dir="dist/client/client"/>
 		<jar jarfile="dist/client/client/client.jar" basedir="temp/client" manifest="src/mfs/client.mfs"/>
 		<mkdir dir="dist/client/client/lib"/>
@@ -316,7 +316,7 @@
 		</copy>
 		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/server/tomcat41/common/lib"/>
 		<!-- Saxon for use with Schematron validation -->
-		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/fedora/web-inf/lib"/>
+		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/fedora/WEB-INF/lib"/>
 		<echo message="Finished building server distribution in dist/server"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
@@ -355,6 +355,14 @@
 </project>
 <!--
   $Log$
+  Revision 1.47  2002/11/06 12:50:42  rlw
+  fixed typo related to WEB-INF directory name.
+  It was lowercase which was putting saxon.jar file in web-inf/lib
+  instead of WEB-INF/lib. This doesn't matter under Windows, but
+  on Linux/Solaris causes Saxon libraries to not be found.
+
+  This appears to fix the problem of builds under Solaris/Linux
+
   Revision 1.46  2002/11/04 22:14:05  cwilper
   copying xsd files to tomcat/webapps/ROOT so they're available at localhost:8080/
 
