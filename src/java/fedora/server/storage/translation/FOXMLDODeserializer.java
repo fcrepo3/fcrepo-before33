@@ -76,7 +76,8 @@ public class FOXMLDODeserializer
         implements DODeserializer {
 
     /** The namespace for FOXML */
-    private final static String F="info:fedora/def:foxml1.0";
+    private final static String F="info:fedora/def:foxml/";
+	//private final static String F="http://www.fedora.info/";
     
 	/** The object to deserialize to. */
 	private DigitalObject m_obj;
