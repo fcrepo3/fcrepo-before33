@@ -149,16 +149,17 @@ public class DefaultDOManager
             m_storageCharacterEncoding="UTF-8";
         }
 
+    }
+
+    public void postInitModule()
+            throws ModuleInitializationException {
+        // get ref to contentmanager module
         m_contentManager = (ExternalContentManager)
           getServer().getModule("fedora.server.storage.ExternalContentManager");
         if (m_contentManager==null) {
             throw new ModuleInitializationException(
                     "ExternalContentManager not loaded.", getRole());
         }
-    }
-
-    public void postInitModule()
-            throws ModuleInitializationException {
         // get ref to fieldsearch module
         m_fieldSearch=(FieldSearch) getServer().
                 getModule("fedora.server.search.FieldSearch");
