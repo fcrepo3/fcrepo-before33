@@ -179,13 +179,15 @@
 			<element name="versionID" type="string"/>
 			<element name="label" type="string"/>
 			<element name="MIMEType" type="string"/>
+            <element name="formatURI" type="string"/>
+            <element name="harvestable" type="boolean"/>
 			<element name="createDate" type="dateTime"/>
 			<element name="size" type="long"/>
 			<element name="infoType" type="string">
 				<annotation>
 					<documentation>If inline xml, may be any string.
-                   this is intended to identify the schema to which the
-                   datastream conforms, by label.  It's based on
+                   this is intended to loosely identify the "kind" of metadata
+                   the datastream is, by label.  It's based on
                    the mets "mdType" attribute.
                    </documentation>
 				</annotation>

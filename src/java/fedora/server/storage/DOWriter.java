@@ -73,6 +73,16 @@ public interface DOWriter
     public void setDatastreamState(String id, String state) throws ServerException;
 
     /**
+     * Sets the harvestable flag for all versions of the specified datastream.
+     *
+     * @param id The datastream id.
+     * @param harvestable Whether it's harvestable
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    public void setDatastreamHarvestable(String id, boolean harvestable) throws ServerException;
+
+    /**
      * Sets the state for all versions of the specified disseminator.
      *
      * @param id The disseminator id.

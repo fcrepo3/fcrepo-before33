@@ -182,8 +182,16 @@ public class BuildAxisStubWrapper {
     }
 
     private void doParm(String t, String n, StringBuffer buf) throws Exception {
-        println("        PARMS.put(\"" + n + "\", " + n + ");");
-        buf.append("(" + t + ") parms.get(\"" + n + "\")");
+        if (t.equals("boolean")) {
+            println("        PARMS.put(\"" + n + "\", new Boolean(" + n + "));");
+            buf.append("((Boolean) parms.get(\"" + n + "\")).booleanValue()");
+        } else if (t.equals("int")) {
+            println("        PARMS.put(\"" + n + "\", new Integer(" + n + "));");
+            buf.append("((Integer) parms.get(\"" + n + "\")).intValue()");
+        } else {
+            println("        PARMS.put(\"" + n + "\", " + n + ");");
+            buf.append("(" + t + ") parms.get(\"" + n + "\")");
+        }
     }
 
     private void println(String line) throws Exception {

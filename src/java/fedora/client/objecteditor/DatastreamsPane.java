@@ -260,7 +260,9 @@ public class DatastreamsPane
             container.add(left[i]);
 
             c.gridwidth=GridBagConstraints.REMAINDER;     //end row
-            if (!(right[i] instanceof JComboBox)) {
+            if ((i==0) && !(right[i] instanceof JTextField)) {
+                c.anchor=GridBagConstraints.NORTHWEST;
+            } else if (!(right[i] instanceof JComboBox)) {
                 c.fill=GridBagConstraints.HORIZONTAL;
             } else {
                 c.anchor=GridBagConstraints.NORTHWEST;
@@ -314,13 +316,15 @@ public class DatastreamsPane
                 + "it from being proxied.";
 
         private JComboBox m_stateComboBox;
+        private JCheckBox m_harvestableCheckBox;
+        private JTextField m_formatURITextField;
         private String m_initialState;
 
         public NewDatastreamPane(String[] dropdownMimeTypes) {
 
-            JComponent[] left=new JComponent[] { new JLabel("State"),
+            JComponent[] left=new JComponent[] { new JLabel("State / Visibility"),
                                                  new JLabel("Label"),
-                                                 new JLabel("MIME Type"),
+                                                 new JLabel("Structure"),
                                                  new JLabel("Control Group") };
 
             m_stateComboBox=new JComboBox(new String[] {"Active",
@@ -378,7 +382,43 @@ public class DatastreamsPane
 
             controlGroupOuterPanel.add(m_controlGroupTextArea, BorderLayout.CENTER);
 
-            JComponent[] right=new JComponent[] { m_stateComboBox, m_labelTextField, m_mimeComboBox, controlGroupOuterPanel };
+            JPanel visPane=new JPanel(new FlowLayout());
+            visPane.add(m_stateComboBox);
+            m_harvestableCheckBox=new JCheckBox("Harvestable", false);
+            Administrator.constrainHeight(m_harvestableCheckBox);
+            visPane.add(m_harvestableCheckBox);
+
+            JPanel mimePane=new JPanel(new FlowLayout());
+            JLabel structMimeLabel=new JLabel("MIME Type");
+            Administrator.constrainHeight(structMimeLabel);
+            mimePane.add(structMimeLabel);
+            mimePane.add(m_mimeComboBox);
+
+            JLabel structFormatLabel=new JLabel("Format URI ");
+            Administrator.constrainHeight(structFormatLabel);
+            m_formatURITextField=new JTextField("");
+            Administrator.constrainHeight(m_formatURITextField);
+
+            JPanel formatPane=new JPanel(new BorderLayout());
+            formatPane.add(structFormatLabel, BorderLayout.WEST);
+            JPanel outerFormatPane=new JPanel(new BorderLayout());
+            outerFormatPane.add(m_formatURITextField, BorderLayout.NORTH);
+            formatPane.add(outerFormatPane, BorderLayout.CENTER);
+            Administrator.constrainHeight(formatPane);
+            
+/*            GridBagLayout formatGrid=new GridBagLayout();
+            formatPane.setLayout(formatGrid);
+            addRows(new JComponent[] {structFormatLabel}, 
+                    new JComponent[] {m_formatURITextField}, 
+                    formatGrid, 
+                    formatPane);
+*/
+
+            JPanel structPane=new JPanel(new BorderLayout());
+            structPane.add(mimePane, BorderLayout.WEST);
+            structPane.add(formatPane, BorderLayout.CENTER);
+
+            JComponent[] right=new JComponent[] { visPane, m_labelTextField, structPane, controlGroupOuterPanel };
 
             JPanel commonPane=new JPanel();
             GridBagLayout grid=new GridBagLayout();
@@ -640,8 +680,14 @@ public class DatastreamsPane
                     } else { // must be E/R
                         location=m_referenceTextField.getText();
                     }
+                    boolean hvstable=m_harvestableCheckBox.isSelected();
+                    String fmturi=m_formatURITextField.getText();
+                    if (hvstable && fmturi.length()==0) {
+                        throw new IOException("If the datastream should be harvestable, it must have a Format URI.");
+                    }
                     String newID=Administrator.APIM.addDatastream(pid, label,
-                            mimeType, location, m_controlGroup, mdClass, mdType, m_initialState);
+                            mimeType, fmturi, location, m_controlGroup, 
+                            mdClass, mdType, m_initialState, hvstable);
                     addDatastreamTab(newID);
                 } catch (Exception e) {
                     String msg = e.getMessage();

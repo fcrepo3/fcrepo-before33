@@ -59,6 +59,7 @@ public class DatastreamPane
     private boolean m_done;
     private Dimension m_labelDims;
     private JTextArea m_dtLabel;
+    private JCheckBox m_harvestableCheckBox;
     private JPanel m_dateLabelAndValue;
     private Datastream[] m_versions;
 
@@ -73,7 +74,7 @@ public class DatastreamPane
         Datastream mostRecent=versions[0];
         m_mostRecent=mostRecent;
         m_owner=owner;
-        m_labelDims=new JLabel("Control Group").getPreferredSize();
+        m_labelDims=new JLabel("State / Visibility").getPreferredSize();
         new TextContentEditor();  // causes it to be registered if not already
         new ImageContentViewer();  // causes it to be registered if not already
         new SVGContentViewer();  // causes it to be registered if not already
@@ -83,11 +84,14 @@ public class DatastreamPane
             // NORTH: commonPane(state, mimeType, controlGroup, infoType)
 
                     // LEFT: labels
-                    JLabel stateLabel=new JLabel("State");
-                    JLabel mimeTypeLabel=new JLabel("MIME Type");
+                    JLabel stateLabel=new JLabel("State / Visibility");
+                    JLabel mimeTypeLabel=new JLabel("Structure");
                     JLabel controlGroupLabel=new JLabel("Control Group");
                     JLabel infoTypeLabel=new JLabel("Info Type");
-                    JLabel[] leftCommonLabels=new JLabel[] {stateLabel, mimeTypeLabel, controlGroupLabel, infoTypeLabel};
+                    JLabel[] leftCommonLabels=new JLabel[] {stateLabel, 
+                                                            mimeTypeLabel, 
+                                                            controlGroupLabel, 
+                                                            infoTypeLabel};
 
                     // RIGHT: values
                     String[] comboBoxStrings={"Active", "Inactive", "Deleted"};
@@ -120,9 +124,28 @@ public class DatastreamPane
                             m_owner.colorTabForState(m_mostRecent.getID(), curState);
                         }
                     });
-                    JTextArea mimeTypeValueLabel=new JTextArea(mostRecent.getMIMEType());
+
+                    String formatURI=mostRecent.getFormatURI();
+                    if (formatURI==null || formatURI.length()==0) {
+                        formatURI="(none)";
+                    }
+
+                    boolean harvestable=mostRecent.isHarvestable();
+                    m_harvestableCheckBox=new JCheckBox("Harvestable", harvestable);
+                    m_harvestableCheckBox.addActionListener(dataChangeListener);
+                    if (formatURI.equals("(none)")) {
+                        m_harvestableCheckBox.setEnabled(false);
+                    }
+                    Administrator.constrainHeight(m_harvestableCheckBox);
+                    JPanel visPanel=new JPanel(new FlowLayout());
+                    visPanel.add(m_stateComboBox);
+                    visPanel.add(m_harvestableCheckBox);
+
+                    JTextArea mimeTypeValueLabel=new JTextArea("MIME Type=" + mostRecent.getMIMEType() + ", Format URI=" + formatURI);
                     mimeTypeValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     mimeTypeValueLabel.setEditable(false);
+
+
                     JTextArea controlGroupValueLabel=new JTextArea(
                             getControlGroupString(
                                     mostRecent.getControlGroup().toString())
@@ -132,7 +155,11 @@ public class DatastreamPane
                     JTextArea infoTypeValueLabel=new JTextArea(mostRecent.getInfoType());
                     infoTypeValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     infoTypeValueLabel.setEditable(false);
-                    JComponent[] leftCommonValues=new JComponent[] {m_stateComboBox, mimeTypeValueLabel, controlGroupValueLabel, infoTypeValueLabel};
+                    //JComponent[] leftCommonValues=new JComponent[] {m_stateComboBox, 
+                    JComponent[] leftCommonValues=new JComponent[] {visPanel, 
+                                                                    mimeTypeValueLabel, 
+                                                                    controlGroupValueLabel, 
+                                                                    infoTypeValueLabel};
     
                 JPanel leftCommonPane=new JPanel();
                 GridBagLayout leftCommonGridBag=new GridBagLayout();
@@ -231,6 +258,9 @@ public class DatastreamPane
         if (stateIndex!=m_stateComboBox.getSelectedIndex()) {
             return true;
         }
+        if (m_harvestableCheckBox.isSelected() != m_mostRecent.isHarvestable()) {
+            return true;
+        }
         if (m_currentVersionPane.isDirty()) {
             return true;
         }
@@ -261,11 +291,28 @@ public class DatastreamPane
            state="D";
 		if (m_currentVersionPane.isDirty()) {
 		    // defer to the currentVersionPane if anything else changed
-		    m_currentVersionPane.saveChanges(state, logMessage);
+		    m_currentVersionPane.saveChanges(state, m_harvestableCheckBox.isSelected(), logMessage);
 		} else {
-		    // since only state changed, we can take care of it here
-			Administrator.APIM.setDatastreamState(m_pid, m_mostRecent.getID(),
-			        state, logMessage);
+		    // since only state and/or harvestable changed, we can take care of it here
+            boolean harvestableChanged=m_mostRecent.isHarvestable()!=m_harvestableCheckBox.isSelected();
+            boolean stateChanged=!m_mostRecent.getState().equals(state);
+            if (harvestableChanged) {
+			    Administrator.APIM.setDatastreamHarvestable(m_pid, m_mostRecent.getID(),
+			            m_harvestableCheckBox.isSelected(), logMessage);
+            }
+            if (stateChanged) {
+                try {
+    			Administrator.APIM.setDatastreamState(m_pid, m_mostRecent.getID(),
+    			        state, logMessage);
+                } catch (Exception e) {
+                    // revert if harvestable change but state couldn't
+                    if (harvestableChanged) {
+			            Administrator.APIM.setDatastreamHarvestable(m_pid, m_mostRecent.getID(),
+			                    m_mostRecent.isHarvestable(), logMessage);
+                    }
+                    throw e;
+                }
+            }
 		}
     }
 
@@ -285,6 +332,7 @@ public class DatastreamPane
             m_stateComboBox.setSelectedIndex(2);
             m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
         }
+        m_harvestableCheckBox.setSelected(m_mostRecent.isHarvestable());
         m_owner.colorTabForState(m_mostRecent.getID(), m_mostRecent.getState());
         m_currentVersionPane.undoChanges();
     }
@@ -650,7 +698,7 @@ public class DatastreamPane
             viewFrame.toFront();
         }
 
-	public void saveChanges(String state, String logMessage)
+	public void saveChanges(String state, boolean harvestable, String logMessage)
             throws Exception {
         String label=m_labelTextField.getText();
 		if (X) {
@@ -662,7 +710,7 @@ public class DatastreamPane
 				content=out.toByteArray();
 			}
 		    Administrator.APIM.modifyDatastreamByValue(m_pid, m_ds.getID(), 
-		            label, logMessage, content, state);
+		            label, logMessage, content, state, harvestable);
 		} else if (M) {
             String loc=null; // if not set, server will not change content
             if (m_importFile!=null) {
@@ -674,11 +722,11 @@ public class DatastreamPane
                 loc=Administrator.UPLOADER.upload(m_editor.getContent());
             }
             Administrator.APIM.modifyDatastreamByReference(m_pid, m_ds.getID(),
-                    label, logMessage, loc, state);
+                    label, logMessage, loc, state, harvestable);
         } else {
 		    // external ref or redirect
             Administrator.APIM.modifyDatastreamByReference(m_pid, m_ds.getID(),
-                    label, logMessage, m_locationTextField.getText(), state);
+                    label, logMessage, m_locationTextField.getText(), state, harvestable);
 		}
     }
         public boolean isDirty() {
