@@ -25,8 +25,11 @@ import fedora.server.errors.ServerException;
  * will return a non-201 status code with a text/plain explanation.
  *
  * The submitted file must be named "file", must not be accompanied by any other
- * parameters, and cannot be over 2,047 MB in size (due to a trivially 
- * overcome cos.jar limitation).
+ * parameters.
+ *
+ * Note: This class relies on a patched version of cos.jar that provides
+ * an alternate constructor for MultiPartParser, allowing for the upload of 
+ * files over 2GB in size.
  *
  * -----------------------------------------------------------------------------
  *
@@ -68,7 +71,7 @@ public class UploadServlet
             throws IOException {
 		try {
             MultipartParser parser=new MultipartParser(request, 
-                Integer.MAX_VALUE, true, true);
+                Long.MAX_VALUE, true, null);
 			Part part=parser.readNextPart();
 			if (part!=null && part.isFile()) {
 			    if (part.getName().equals("file")) {
