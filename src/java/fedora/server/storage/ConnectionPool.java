@@ -59,7 +59,7 @@ public class ConnectionPool implements Runnable
    * @param driver The JDBC driver class name.
    * @param url The JDBC connection URL.
    * @param username The database user name.
-   * @param password The he database password.
+   * @param password The database password.
    * @param initialConnections The minimum number of connections possible.
    * @param maxConnections The maximum number of connections possible.
    * @param waitIfBusy Boolean flag that determines whether to wait if there
