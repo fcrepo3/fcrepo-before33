@@ -228,6 +228,9 @@
 			<listitem>
 				<para>&#091;toPortNum&#093; - The port number of the repository.</para>
 			</listitem>
+			<listitem>
+				<para>&#091;fedoraHomeDir&#093; - Fedora's install base directory.  This is the directory that contains the client directory.</para>
+			</listitem>
 		</itemizedlist>
 		<para>Example:</para>
 		<blockquote>
