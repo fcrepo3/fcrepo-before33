@@ -135,8 +135,19 @@ public class PolicyEnforcementPoint {
 		resourceAttributeFinder.setServletContext(servletContext);
 		resourceAttributeFinder.setDOManager(manager);
 		attrModules.add(resourceAttributeFinder);		
-
+		try {
+System.err.println("about to set contextAttributeFinder in original");
 		contextAttributeFinder = ContextAttributeFinderModule.getInstance();
+	} catch(Throwable t) {
+		System.err.println ("***caught throwable in initPep");	
+		System.err.println(t.getMessage());
+		if (t.getCause() != null) {
+			System.err.println(t.getCause().getMessage());		
+		}
+		System.err.println ("***that was it");
+	}
+
+System.err.println("just set contextAttributeFinder=" + contextAttributeFinder);
 		contextAttributeFinder.setServletContext(servletContext);
 		attrModules.add(contextAttributeFinder);		
 
@@ -164,9 +175,9 @@ System.err.println("***debugging CombinedPolicyModule");
 		System.err.println("before adding fedora policy finder module to policy finder hashset");
 		policyModules.add(combinedPolicyModule);
 		System.err.println("after adding fedora policy finder module to policy finder hashset");
-		System.err.println("before setting policy finder hashset into policy finder");
+		System.err.println("o before setting policy finder hashset into policy finder");
 		policyFinder.setModules(policyModules);
-		System.err.println("after setting policy finder hashset into policy finder");
+		System.err.println("o after setting policy finder hashset into policy finder");
 		
 		PDP pdp = null;
 		System.err.println(PolicyFinderModule.getClassErrors() + "class errors");
@@ -395,6 +406,7 @@ System.err.println("***debugging CombinedPolicyModule");
 				*/
 				Logger logger = Logger.getLogger("com.sun.xacml");
 				logger.setLevel(Level.ALL);
+System.err.println("about to ref contextAttributeFinder=" + contextAttributeFinder);
 				contextAttributeFinder.registerContext(contextIndex, context);
 				response = pdp.evaluate(request);
 				System.err.println("in pep, after evaluate() called");

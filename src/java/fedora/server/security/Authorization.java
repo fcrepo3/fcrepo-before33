@@ -172,6 +172,6 @@ public interface Authorization {
 	throws NotAuthorizedException;
 	
 	public void enforceAdminPing(Context context) 
-	throws NotAuthorizedException;	
+	throws NotAuthorizedException;
 
 }

@@ -124,7 +124,7 @@ import fedora.server.Context;
 	protected final Object getAttributeLocally(int designatorType, String attributeId, URI resourceCategory, EvaluationCtx ctx) {
 		log("getAttributeLocally context");
 		String contextId = getContextId(ctx);		
-		log("contextId=" + contextId);
+		log("contextId=" + contextId + " attributeId=" + attributeId);
 		Context context = (Context) contexts.get(contextId);
 		log("got context");
 		Object values = null;			
@@ -134,6 +134,7 @@ import fedora.server.Context;
 				if (0 > context.nSubjectValues(attributeId)) {
 					values = null;
 				} else {
+		    		System.err.println("getting n values for " + attributeId + "=" + context.nSubjectValues(attributeId));
 					switch(context.nSubjectValues(attributeId)) {
 						case 0: 
 							values = null;
@@ -227,6 +228,10 @@ import fedora.server.Context;
 			log("getAttributeLocally object value=" + values);			
 		}
 		return values;
+	}
+	
+	static {
+		AttributeFinderModule.log = true;
 	}
 	
 	/*package*/ final void registerContext(Object key, Context value) {
