@@ -177,26 +177,28 @@ public class KowariRIStore extends StdoutLogging implements RIStore {
 	}
 	
 	public void insertLiteralIntoFullTextModel(String subject, String predicate, String object) {
-		if (m_fullTextModelURI == null) {
-		    return;
-		}
-		
-		try {
-			URI s = new URI(subject);
-			URI p = new URI(predicate);			
-		    Triple t = new TripleImpl(new URIReferenceImpl(s),
-		            				  new URIReferenceImpl(p),
-		            				  new LiteralImpl(object));
-		    Set fullTextStatements = new HashSet();
-		    fullTextStatements.add(t);
-            m_session.insert(m_fullTextModelURI, fullTextStatements);
-		} catch (URISyntaxException ue) {
-		    // TODO Auto-generated catch block
-            ue.printStackTrace();
-        } catch (QueryException qe) {
-            // TODO Auto-generated catch block
-            qe.printStackTrace();
-        }
+
+//      Disabled until performance problems are addressed -eddie
+//		if (m_fullTextModelURI == null) {
+//		    return;
+//		}
+//		
+//		try {
+//			URI s = new URI(subject);
+//			URI p = new URI(predicate);			
+//		    Triple t = new TripleImpl(new URIReferenceImpl(s),
+//		            				  new URIReferenceImpl(p),
+//		            				  new LiteralImpl(object));
+//		    Set fullTextStatements = new HashSet();
+//		    fullTextStatements.add(t);
+//            m_session.insert(m_fullTextModelURI, fullTextStatements);
+//		} catch (URISyntaxException ue) {
+//		    // TODO Auto-generated catch block
+//            ue.printStackTrace();
+//        } catch (QueryException qe) {
+//            // TODO Auto-generated catch block
+//            qe.printStackTrace();
+//        }
 	}
 	
 	private void flushAtThreshold() {
