@@ -87,6 +87,7 @@ public class FOXMLDOSerializer
     public void serialize(DigitalObject obj, OutputStream out, String encoding)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
+		System.out.println("Serializing using FOXMLDOSerializer...");
         // get the host info in a static var so search/replaces are quicker later
         if (s_localServerUrlStartWithPort==null) {
             String fedoraHome=System.getProperty("fedora.home");
@@ -157,7 +158,8 @@ public class FOXMLDOSerializer
             throw new ObjectIntegrityException("Object must have a pid.");
         }
         buf.append(indent + "PID=\"" + obj.getPid() + "\" ");
-		buf.append(indent + "URI=\"" + obj.getURI()+ "\"");
+		buf.append(indent + "URI=\"" + "info:fedora/" + obj.getPid()+ "\"");
+		//buf.append(indent + "URI=\"" + obj.getURI()+ "\"");
 		/*
 		buf.append(indent + "STATE=\"" + obj.getState());
 		buf.append(indent + "TYPE=\"" + getTypeAttribute(obj));
@@ -194,7 +196,7 @@ public class FOXMLDOSerializer
 			throws ObjectIntegrityException {
 		buf.append("  <" + FOXML_PREFIX + ":objectProperties>\n");
 		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:type" + "\">" 
-			+ obj.getFedoraObjectType() + "</" + FOXML_PREFIX + ":property>\n");
+			+ getTypeAttribute(obj) + "</" + FOXML_PREFIX + ":property>\n");
 		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:state" + "\">" 
 			+ obj.getState() + "</" + FOXML_PREFIX + ":property>\n");
 		buf.append("    <" + FOXML_PREFIX + ":property NAME=\"" + "info:fedora/def:dobj:label" + "\">" 
@@ -223,7 +225,7 @@ public class FOXMLDOSerializer
 			// AUDIT datastream is rebuilt from the latest in-memory audit trail
 			// which is a separate array list in the DigitalObject class.
 			// So, ignore it here.
-			if (dsid.equalsIgnoreCase("AUDIT")) {
+			if (dsid.equals("AUDIT") || dsid.equals("FEDORA-AUDITTRAIL")) {
 				continue;
 			}
 			// Given a datastream ID, get all the datastream versions.
@@ -234,8 +236,8 @@ public class FOXMLDOSerializer
 				// insert the ds elements common to all versions.
 				if (i==0) {
 					buf.append("  <" + FOXML_PREFIX 
-						+ ":datastream ID=\"" + vds.DatastreamID + "\"" 
-						+ " URI=\"" + vds.DatastreamURI + "\""
+						+ ":datastream ID=\"" + vds.DatastreamID + "\""
+						+ " URI=\"" + "info:fedora/" + obj.getPid() + "/" + vds.DatastreamID + "\"" 
 						+ " STATE=\"" + vds.DSState + "\""
 						+ " MIMETYPE=\"" + vds.DSMIME + "\""
 						+ " FORMAT_URI=\"" + vds.DSFormatURI + "\""
@@ -283,12 +285,14 @@ public class FOXMLDOSerializer
 
 	private void appendAudit(DigitalObject obj, StringBuffer buf, String encoding) 
 			throws ObjectIntegrityException {
+		System.out.println("LOOK!: appending audit in FOXML serializer.");
+		System.out.println("LOOK! There are this many audit records in obj: " + obj.getAuditRecords().size());
 		if (obj.getAuditRecords().size()>0) {
 			// Audit trail datastream re-created from audit records.
 			// There is only ONE version of the audit trail datastream!
 			buf.append("  <" + FOXML_PREFIX 
 				+ ":datastream ID=\"" + "AUDIT" + "\"" 
-				+ " URI=\"" + "info:fedora/" + obj.getPid() + "AUDIT" + "\""
+				+ " URI=\"" + "info:fedora/" + obj.getPid() + "/AUDIT" + "\""
 				+ " STATE=\"" + "A" + "\""
 				+ " MIMETYPE=\"" + "text/xml" + "\""
 				+ " FORMAT_URI=\"" + "info:fedora/format:xml:audit" + "\""
@@ -299,34 +303,36 @@ public class FOXMLDOSerializer
 				+ ":datastreamVersion ID=\"" + "AUDIT.0" + "\"" 
 				+ " LABEL=\"" + "Fedora Object Audit Trail" + "\""
 				+ " CREATED=\"" + m_formatter.format(obj.getCreateDate()) +  "\">\n");
-			buf.append("      <" + m_fedoraAuditPrefix + ":auditTrail" + ">\n");
+			buf.append("      <" + FOXML_PREFIX + ":xmlContent>\n");
+			buf.append("        <" + m_fedoraAuditPrefix + ":auditTrail" + ">\n");
 			for (int i=0; i<obj.getAuditRecords().size(); i++) {
 				AuditRecord audit=(AuditRecord) obj.getAuditRecords().get(i);
 				validateAudit(audit);
-				buf.append("        <" + m_fedoraAuditPrefix + ":record>\n");
-				buf.append("          <" + m_fedoraAuditPrefix + ":recordID>"
+				buf.append("          <" + m_fedoraAuditPrefix + ":record>\n");
+				buf.append("            <" + m_fedoraAuditPrefix + ":recordID>"
 						+ StreamUtility.enc(audit.id)
 						+ "</" + m_fedoraAuditPrefix + ":recordID>\n");
-				buf.append("          <" + m_fedoraAuditPrefix + ":process type=\""
+				buf.append("            <" + m_fedoraAuditPrefix + ":process type=\""
 						+ StreamUtility.enc(audit.processType) + "\"/>\n");
-				buf.append("          <" + m_fedoraAuditPrefix + ":action>"
+				buf.append("            <" + m_fedoraAuditPrefix + ":action>"
 						+ StreamUtility.enc(audit.action)
 						+ "</" + m_fedoraAuditPrefix + ":action>\n");
-				buf.append("          <" + m_fedoraAuditPrefix + ":componentID>"
+				buf.append("            <" + m_fedoraAuditPrefix + ":componentID>"
 						+ StreamUtility.enc(audit.componentID)
 						+ "</" + m_fedoraAuditPrefix + ":componentID>\n");
-				buf.append("          <" + m_fedoraAuditPrefix + ":responsibility>"
+				buf.append("            <" + m_fedoraAuditPrefix + ":responsibility>"
 						+ StreamUtility.enc(audit.responsibility)
 						+ "</" + m_fedoraAuditPrefix + ":responsibility>\n");
-				buf.append("          <" + m_fedoraAuditPrefix + ":date>"
+				buf.append("            <" + m_fedoraAuditPrefix + ":date>"
 						+ m_formatter.format(audit.date)
 						+ "</" + m_fedoraAuditPrefix + ":date>\n");
-				buf.append("          <" + m_fedoraAuditPrefix + ":justification>"
+				buf.append("            <" + m_fedoraAuditPrefix + ":justification>"
 						+ StreamUtility.enc(audit.justification)
 						+ "</" + m_fedoraAuditPrefix + ":justification>\n");
-				buf.append("        </" + m_fedoraAuditPrefix + ":record>\n");
+				buf.append("          </" + m_fedoraAuditPrefix + ":record>\n");
 			}
-			buf.append("      </" + m_fedoraAuditPrefix + ":auditTrail" + ">\n");
+			buf.append("        </" + m_fedoraAuditPrefix + ":auditTrail" + ">\n");
+			buf.append("      </" + FOXML_PREFIX + ":xmlContent>\n");
 			// FUTURE: Add digest of datastream content (calc in DefaultManagement).
 			buf.append("      <" + FOXML_PREFIX + ":contentDigest TYPE=\"MD5\">"
 				+ "future: hash of content goes here" 
