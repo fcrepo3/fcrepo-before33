@@ -186,7 +186,7 @@ public class KowariRIStore extends StdoutLogging implements RIStore {
 	
 	public void insertLiteralIntoFullTextModel(String subject, String predicate, String object) {
 
-//      Disabled until performance problems are addressed -eddie
+//      FIXME Disabled until performance problems are addressed -eddie
 //		if (m_fullTextModelURI == null) {
 //		    return;
 //		}

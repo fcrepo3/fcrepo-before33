@@ -2,14 +2,12 @@ package fedora.server.resourceIndex;
 
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
-import fedora.server.errors.ServerException;
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.service.ServiceMapper;
 import fedora.server.storage.types.*;
 import fedora.server.utilities.DCFields;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
