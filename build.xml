@@ -144,7 +144,7 @@
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/common/junit.jar" destdir="dist/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,edu.cornell.dlrg.oai,edu.cornell.dlrg.oai.sample,edu.cornell.dlrg.logging" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/common/junit.jar" destdir="dist/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
 	</target>
 	<target name="devdocs" depends="prep" description="Assemble development/system documentation into dist/devdocs">
 		<mkdir dir="dist"/>
@@ -465,7 +465,7 @@
 		<javac srcdir="${javaSourceDir}:temp/server/java" 
                destdir="temp/server/classes" 
                classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar;lib/common/junit.jar"
-               includes="fedora/server/**,edu/cornell/dlrg/logging/**" 
+               includes="fedora/server/**,edu/cornell/dlrg/logging/**,edu/cornell/dlrg/oai/**" 
                optimize="${javaClassOptimize}" 
                debug="${javaClassDebug}"/>
 	</target>
@@ -479,6 +479,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.70  2003/02/10 15:32:06  cwilper
+  added oai library in serverclasses and serverdocs target..eventually
+  will probably move to fedora.something...
+
   Revision 1.69  2003/02/06 23:02:11  cwilper
   officially switches over to new ser/deser stuff
 
