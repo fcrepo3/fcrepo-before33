@@ -1,32 +1,24 @@
 package fedora.server.access;
 
 import java.util.Date;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Hashtable;
-import java.util.Map;
 import java.io.File;
 import java.lang.Class;
 import java.lang.reflect.*;
 
-import fedora.server.Server;
 import fedora.server.Context;
-import fedora.server.access.internalservices.DefaultBehavior;
-import fedora.server.access.internalservices.DefaultBehaviorImpl;
-import fedora.server.access.internalservices.ServiceMethodDispatcher;
-import fedora.server.errors.ModuleInitializationException;
+import fedora.server.access.defaultdisseminator.DefaultDisseminator;
+import fedora.server.access.defaultdisseminator.DefaultDisseminatorImpl;
+import fedora.server.access.defaultdisseminator.ServiceMethodDispatcher;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
-import fedora.server.security.IPRestriction;
-import fedora.server.utilities.DateUtility;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
-import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.MethodDef;
-import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.Property;
@@ -194,9 +186,9 @@ public class DynamicAccessImpl
     if (bDefPID.equalsIgnoreCase("fedora-system:3"))
     {
       // FIXIT!! Use lookup to dynamicBDefToMech table to get class for
-      // DefaultBehaviorImpl and construct via Java reflection.
+      // DefaultDisseminatorImpl and construct via Java reflection.
       Object result = dispatcher.invokeMethod(
-          new DefaultBehaviorImpl(context, asOfDateTime,
+          new DefaultDisseminatorImpl(context, asOfDateTime,
             reader, m_access, reposBaseURL, reposHomeDir), methodName, userParms);
       if (result.getClass().getName().equalsIgnoreCase(
         "fedora.server.storage.types.MIMETypedStream"))
