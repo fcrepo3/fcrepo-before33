@@ -3,15 +3,21 @@ package fedora.server.access;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fedora.server.Server;
+import fedora.server.ReadOnlyContext;
 import fedora.server.access.localservices.HttpService;
 import fedora.server.errors.HttpServiceNotFoundException;
+import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ServerInitializationException;
 import fedora.server.storage.FastDOReader;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.MethodDef;
@@ -31,10 +37,50 @@ import fedora.server.utilities.DateUtility;
 public class FedoraAPIABindingSOAPHTTPImpl implements
     fedora.server.access.FedoraAPIA
 {
+  /** The Fedora Server instance */
+  private static Server s_server;
+
+  /** Whether the service has initialized... true if we got a good Server instance. */
+  private static boolean s_initialized;
+
+  /** The exception indicating that initialization failed. */
+  private static InitializationException s_initException;
+
+  private static Access s_access;
+
+  private static ReadOnlyContext s_context;
+
   private static final String CONTENT_TYPE_XML = "text/xml";
   private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
   private static final boolean debug = true;
   private Hashtable h_userParms = new Hashtable();
+
+  /** Before fulfilling any requests, make sure we have a server instance. */
+  static
+  {
+    try
+    {
+      String fedoraHome=System.getProperty("fedora.home");
+      if (fedoraHome == null) {
+          s_initialized = false;
+          s_initException = new ServerInitializationException(
+              "Server failed to initialize: The 'fedora.home' "
+              + "system property was not set.");
+      } else {
+          s_server=Server.getInstance(new File(fedoraHome));
+          s_initialized = true;
+          s_access =
+              (Access) s_server.getModule("fedora.server.access.Access");
+          HashMap h=new HashMap();
+          h.put("application", "apia");
+          s_context=new ReadOnlyContext(h);
+      }
+    } catch (InitializationException ie) {
+        System.err.println(ie.getMessage());
+        s_initialized = false;
+        s_initException = ie;
+    }
+  }
 
   /**
    * <p>Gets a list of Behavior Definition object PIDs for the specified
@@ -53,14 +99,15 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     {
       FastDOReader fastReader = new FastDOReader(PID);
       Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+      //bDefs = s_access.getBehaviorDefinitions(s_context, PID, asOfDateTime);
       bDefs = fastReader.GetBehaviorDefs(versDateTime);
       for (int i=0; i<bDefs.length; i++)
       {
-        System.out.println("bDef["+i+"] = "+bDefs[i]);
+        System.err.println("bDef["+i+"] = "+bDefs[i]);
       }
-    } catch(ObjectNotFoundException onfe)
+    } catch(Exception e)
     {
-      System.out.println("BDEF FAILDED:"+onfe.getMessage());
+      System.err.println("BDEF FAILDED:"+e.getMessage());
       return bDefs;
     }
     return bDefs;
@@ -84,10 +131,11 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     fedora.server.types.gen.MethodDef[] behaviorDefs = null;
     try
     {
+      // behaviorDefs = s_access.getBehaviorMethods(s_context, PID, bDefPID, asOfDateTime);
       FastDOReader fastReader = new FastDOReader(PID);
       MethodDef[] methodResults = fastReader.GetBMechMethods(bDefPID,
           versDateTime);
-      System.out.println("size: "+methodResults.length);
+      System.err.println("size: "+methodResults.length);
       System.out.flush();
       behaviorDefs =
           new fedora.server.types.gen.MethodDef[methodResults.length];
@@ -118,10 +166,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       }
     //} catch (ObjectNotFoundException onfe)
     //{
-    //  System.out.println(onfe.getMessage());
+    //  System.err.println(onfe.getMessage());
     } catch (Exception e)
     {
-      System.out.println(e.getMessage());
+      System.err.println(e.getMessage());
     }
     return behaviorDefs;
   }
@@ -146,9 +194,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     InputStream methodResults = null;
     try
     {
+      //methodDefs = s_access.getBehaviorMethodsAsWSDL(s_context, PID, bDefPID, asOfDateTime);
       FastDOReader fastReader = new FastDOReader(PID);
       // FIXME!! versioning based on datetime not yet implemented
-      System.out.println("PID: "+PID+"FPID: "+fastReader.GetObjectPID());
+      System.err.println("PID: "+PID+"FPID: "+fastReader.GetObjectPID());
       System.out.flush();
       methodResults = fastReader.GetBMechMethodsWSDL(bDefPID, versDateTime);
       int byteStream = 0;
@@ -159,10 +208,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       methodResults.close();
     //} catch (IOException ioe)
     //{
-    //  System.out.println(ioe.getMessage());
+    //  System.err.println(ioe.getMessage());
     } catch (Exception e)
     {
-      System.out.println(e.getMessage());
+      System.err.println(e.getMessage());
       return methodDefs;
     }
     if (methodResults != null)
@@ -203,6 +252,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     FastDOReader fastReader = null;
     try
     {
+      //dissemination = s_access.getDissemination(s_context, PID, bDefPID, methodName, userparms, asOfDateTime);
       fastReader = new FastDOReader(PID);
       dissResults = fastReader.getDissemination(PID, bDefPID, methodName,
           versDateTime);
@@ -235,16 +285,16 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           dissURL = dissResult.AddressLocation+dissResult.OperationLocation;
           protocolType = dissResult.ProtocolType;
         }
-        if (debug) System.out.println("counter: "+i+" numelem: "+numElements);
+        if (debug) System.err.println("counter: "+i+" numelem: "+numElements);
         String currentKey = dissResult.DSBindKey;
         String nextKey = "";
         if (i != numElements-1)
         {
           // Except for last row, get the value of the next binding key
           // to compare with the value of the current binding key.
-          if (debug) System.out.println("currentKey: '"+currentKey+"'");
+          if (debug) System.err.println("currentKey: '"+currentKey+"'");
           nextKey = dissResults[i+1].DSBindKey;
-          if (debug) System.out.println("' nextKey: '"+nextKey+"'");
+          if (debug) System.err.println("' nextKey: '"+nextKey+"'");
         }
 
         // In most cases, there is only a single datastream that matches a given
@@ -281,9 +331,9 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
         {
           replaceString = dissResult.DSLocation;
         }
-        if (debug) System.out.println("replaceString: "+replaceString);
+        if (debug) System.err.println("replaceString: "+replaceString);
         dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
-        if (debug) System.out.println("replaced dissURL = "+
+        if (debug) System.err.println("replaced dissURL = "+
                                      dissURL.toString()+
                                      " counter = "+i);
       }
@@ -297,11 +347,11 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
         String value = (String)h_userParms.get(name);
         String pattern = "\\("+name+"\\)";
         dissURL = substituteString(dissURL, pattern, value);
-        if (debug) System.out.println("UserParmSubstitution dissURL: "+dissURL);
+        if (debug) System.err.println("UserParmSubstitution dissURL: "+dissURL);
       }
 
       // Resolve content referenced by dissemination result
-      if (debug) System.out.println("ProtocolType = "+protocolType);
+      if (debug) System.err.println("ProtocolType = "+protocolType);
       if (protocolType.equalsIgnoreCase("http"))
       {
         // FIXME!! need to implement Access Policy control.
@@ -319,23 +369,24 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
         } catch (HttpServiceNotFoundException onfe)
         {
           // FIXME!! -- Decide on Exception handling
-          System.out.println(onfe.getMessage());
+          System.err.println(onfe.getMessage());
         }
       } else if (protocolType.equalsIgnoreCase("soap"))
       {
         // FIXME!! future handling by soap interface
-        System.out.println("Protocol type specified: "+protocolType);
+        System.err.println("Protocol type specified: "+protocolType);
         dissemination = null;
       } else
       {
-        System.out.println("Unknown protocol type: "+protocolType);
+        System.err.println("Unknown protocol type: "+protocolType);
         dissemination = null;
       }
-    } catch (ObjectNotFoundException onfe)
+    } catch (Exception e)
     {
       // FIXME!! Decide on Exception handling
       // Object was not found in SQL database or in XML storage area
-      System.out.println("getdissem: ObjectNotFound");
+      System.err.println(e.getMessage());
+      System.err.println("getdissem: ObjectNotFound");
     }
    return dissemination;
   }
@@ -357,13 +408,14 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     FastDOReader fastReader = null;
     try
     {
+      //methodDefs = s_access.getObjectMethods(s_context, PID, asOfDateTime);
       Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
-      System.out.println("verDate: "+versDateTime+"\nPID: "+PID);
+      System.err.println("verDate: "+versDateTime+"\nPID: "+PID);
       fastReader = new FastDOReader(PID);
       ObjectMethodsDef[] methodResults = fastReader.getObjectMethods(PID,
           versDateTime);
       int size = methodResults.length;
-      System.out.println("count: "+size);
+      System.err.println("count: "+size);
       System.out.flush();
       methodDefs =
           new fedora.server.types.gen.ObjectMethodsDef[methodResults.length];
@@ -376,9 +428,9 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
         mdef.setMethodName(methodResults[i].methodName);
         methodDefs[i] = mdef;
       }
-    } catch (ObjectNotFoundException onfe)
+    } catch (Exception e)
     {
-      System.out.println(onfe.getMessage());
+      System.err.println(e.getMessage());
     }
     return methodDefs;
   }
