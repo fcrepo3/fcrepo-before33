@@ -1,25 +1,39 @@
 package fedora.server.search;
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import fedora.server.Logging;
 import fedora.server.StdoutLogging;
+import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.utilities.DDLConverter;
+import fedora.server.utilities.SQLUtility;
 
 public class FieldSearchDBImpl
         extends StdoutLogging {
         
     private ConnectionPool m_cPool;
 
-    public FieldSearchDBImpl(ConnectionPool cPool) {
+    // logTarget=null if stdout
+    public FieldSearchDBImpl(ConnectionPool cPool, Logging logTarget) 
+            throws IOException, InconsistentTableSpecException, SQLException {
+        super(logTarget);
+        // create required tables if they don't exist yet
         m_cPool=cPool;
         logFinest("Entering constructor");
-        // create required tables if they don't exist yet
+        String dbSpec="fedora/server/search/resources/FieldSearchDBImpl.dbspec";
+        InputStream specIn=this.getClass().getClassLoader().
+                getResourceAsStream(dbSpec);
+        if (specIn==null) {
+            throw new IOException("Cannot find required "
+                    + "resource: " + dbSpec);
+        }
+        SQLUtility.createNonExistingTables(cPool, specIn, this);
         // PID, INT, VARCHAR(255) . . . 
-        // Instead of putting this in DefaultDOManager.dbspec,
-        // put it in it's own.  Move DefaultDOManager's table
-        // creation code to a utility class and then call
-        // the utility class from here!
         logFinest("Exiting constructor");
     }
 
@@ -69,7 +83,8 @@ public class FieldSearchDBImpl
                         Class.forName(args[4]).newInstance();
                 ConnectionPool cPool=new ConnectionPool(args[3], args[2], 
                         args[0], args[1], 2, 5, true, ddlConverter);
-                FieldSearchDBImpl fs=new FieldSearchDBImpl(cPool);
+                FieldSearchDBImpl fs=new FieldSearchDBImpl(cPool, null);
+                fs.setLogLevel(StdoutLogging.FINEST);
             } catch (Exception e) {
                 printUsage(e.getClass().getName() + ": " + e.getMessage());
             }
