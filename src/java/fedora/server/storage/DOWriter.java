@@ -63,12 +63,16 @@ public interface DOWriter
      */
     public void setDatastreamState(String id, String state) throws ServerException;
 
-/*
-    public void setDatastreamMimeType(String id, String mimeType) throws ServerException;
-    public void setDatastreamAltIDs(String id, String[] altIDs) throws ServerException;
-    public void setDatastreamFormatURI(String id, String formatURI) throws ServerException;
-*/
-    
+	/**
+	 * Sets the indicator as to whether the datastream is subject to versioning.
+	 * In Fedora 2.0, the system will not operate on this indicator and all
+	 * datastreams will be versioned by default.  
+	 *
+	 * @param id The datastream id.
+	 * @param versionable a boolean indicating if versionable
+	 * @throws ServerException If any type of error occurred fulfilling the
+	 *         request.
+	 */    
     public void setDatastreamVersionable(String id, boolean versionable) throws ServerException;    
 
     /**

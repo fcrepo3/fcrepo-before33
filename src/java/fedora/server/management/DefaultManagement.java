@@ -566,16 +566,9 @@ public class DefaultManagement
                     }
                     // just add the datastream
                     w.addDatastream(newds);
-                    // if state was changed, set new state
+                    // if state was changed, set new state across all versions
                     if (!orig.DSState.equals(newds.DSState)) {
                         w.setDatastreamState(datastreamId, newds.DSState); }
-                    // if mimeType was changed, set new mimeType
-                    //if (!orig.DSMIME.equals(newds.DSMIME)) {
-                    //    w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
-                    // set new formatURI across all versions
-                    //w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
-                    // set new altIDs across all versions
-                    //w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
                     // set new versionable across all versions
                     w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
                     // add the audit record
@@ -632,15 +625,9 @@ public class DefaultManagement
                 // if state was changed, set new state
                 if (!orig.DSState.equals(newds.DSState)) {
                         w.setDatastreamState(datastreamId, newds.DSState); }
-                // if mimeType was changed, set new mimeType
-                //if (!orig.DSMIME.equals(newds.DSMIME)) {
-                //    w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
-                // set new formatURI across all versions
-                //w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
-                // set new altIDs across all versions
-                //w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
-                // add the audit record
+				// set new versionable across all versions
 				w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
+				// add the audit record
                 fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                 audit.id=w.newAuditRecordID();
                 audit.processType="Fedora API-M";
@@ -767,13 +754,6 @@ public class DefaultManagement
             // if state was changed, set new state
             if (!orig.DSState.equals(newds.DSState)) {
             	w.setDatastreamState(datastreamId, newds.DSState); }
-            // if mimeType was changed, set new mimeType
-            //if (!orig.DSMIME.equals(newds.DSMIME)) {
-            //    w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
-            // set new formatURI across all versions
-            //w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
-            // set new altIDs across all versions
-            //w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
             // set new versionable across all versions
             w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
             // add the audit record

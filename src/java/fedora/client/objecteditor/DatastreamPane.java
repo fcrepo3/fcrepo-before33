@@ -46,14 +46,6 @@ public class DatastreamPane
 
     private Hashtable[] m_labelTables;
     private JComboBox m_stateComboBox;
-    //private JTextField m_mimeTextField;
-
-    //private JTextField m_formatURITextField;
-    //private String m_origFormatURI;
-
-    //private JTextField m_altIDsTextField;
-    //private String m_origAltIDs;
-
     private JSlider m_versionSlider;
     private JPanel m_valuePane;
     private CardLayout m_versionCardLayout;
@@ -88,15 +80,9 @@ public class DatastreamPane
 
                     // LEFT: labels
                     JLabel stateLabel=new JLabel("State");
-                    //JLabel mimeLabel = new JLabel("MIME Type");
-                    //JLabel formatURILabel = new JLabel("Format URI");
-                    //JLabel altIDsLabel = new JLabel("Alternate IDs");
                     JLabel controlGroupLabel=new JLabel("Control Group");
                     JLabel[] leftCommonLabels=new JLabel[] { 
                             stateLabel, 
-                            //mimeLabel, 
-                            //formatURILabel,
-                            //altIDsLabel,
                             controlGroupLabel};
 
                     // RIGHT: values
@@ -131,28 +117,6 @@ public class DatastreamPane
                         }
                     });
 
-                    //m_mimeTextField = new JTextField(m_mostRecent.getMIMEType());
-                    //m_mimeTextField.getDocument().addDocumentListener(
-                    //        dataChangeListener);
-
-                    //m_origFormatURI = m_mostRecent.getFormatURI();
-                    //if (m_origFormatURI == null) m_origFormatURI = "";
-                    //m_formatURITextField = new JTextField(m_origFormatURI);
-                    //m_formatURITextField.getDocument().addDocumentListener(
-                    //        dataChangeListener);
-
-                    //m_origAltIDs = "";
-                    //String[] altIDs = m_mostRecent.getAltIDs();
-                    //if (altIDs != null) {
-                    //    for (int z = 0; z < altIDs.length; z++) {
-                    //        if (z > 0) m_origAltIDs += " ";
-                    //        m_origAltIDs += altIDs[z];
-                    //    }
-                    //}
-                    //m_altIDsTextField = new JTextField(m_origAltIDs);
-                    //m_altIDsTextField.getDocument().addDocumentListener(
-                    //        dataChangeListener);
-
                     JTextArea controlGroupValueLabel=new JTextArea(
                             getControlGroupString(
                                     mostRecent.getControlGroup().toString())
@@ -161,9 +125,6 @@ public class DatastreamPane
                     controlGroupValueLabel.setEditable(false);
                     JComponent[] leftCommonValues = 
                             new JComponent[] { m_stateComboBox, 
-                                               //m_mimeTextField, 
-                                               //m_formatURITextField,
-                                               //m_altIDsTextField,
                                                controlGroupValueLabel};
     
                 JPanel leftCommonPane=new JPanel();
@@ -263,17 +224,7 @@ public class DatastreamPane
         if (stateIndex!=m_stateComboBox.getSelectedIndex()) {
             return true;
         }
-        //if (!m_mostRecent.getMIMEType().equals(m_mimeTextField.getText())) {
-        //    return true;
-        //}
-        //if (!m_origFormatURI.equals(m_formatURITextField.getText())) {
-        //    return true;
-        //}
-        //if (!m_origAltIDs.equals(m_altIDsTextField.getText())) {
-        //    return true;
-        //}
         if (m_currentVersionPane.isDirty()) {
-System.out.println("In DatastreamPane and it says current version pane is dirty!");
             return true;
         }
         return false;
@@ -301,20 +252,10 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
            state="I";
         if (i==2)
            state="D";
-        //String oldMime = m_mostRecent.getMIMEType();
-        //String newMime = m_mimeTextField.getText().trim();
 		if (m_currentVersionPane.isDirty()) { 
-		        //|| !newMime.equals(oldMime)) {
-		        //|| !m_origFormatURI.equals(m_formatURITextField.getText())
-		        //|| !m_origAltIDs.equals(m_altIDsTextField.getText())) {
-            //String[] altIDs = m_altIDsTextField.getText().trim().split(" ");
-            //String formatURI = m_formatURITextField.getText().trim();
 		    // defer to the currentVersionPane if anything else changed
             try {
      		    m_currentVersionPane.saveChanges(state, 
-     		                                     //newMime, 
-     		                                     //formatURI, 
-     		                                     //altIDs, 
      		                                     logMessage, 
      		                                     false);
             } catch (Exception e) {
@@ -329,10 +270,7 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
                         "Warning", JOptionPane.DEFAULT_OPTION, 
                         JOptionPane.WARNING_MESSAGE, null, options, options[1]);
                 if (selected==0) {
-     		        m_currentVersionPane.saveChanges(state, 
-     		                                         //newMime, 
-     		                                         //formatURI, 
-     		                                         //altIDs, 
+     		        m_currentVersionPane.saveChanges(state,  
      		                                         logMessage, 
      		                                         true);
                 }
@@ -360,9 +298,6 @@ System.out.println("In DatastreamPane and it says current version pane is dirty!
             m_stateComboBox.setSelectedIndex(2);
             m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
         }
-        //m_mimeTextField.setText(m_mostRecent.getMIMEType());
-        //m_formatURITextField.setText(m_origFormatURI);
-        //m_altIDsTextField.setText(m_origAltIDs);
         m_owner.colorTabForState(m_mostRecent.getID(), m_mostRecent.getState());
         m_currentVersionPane.undoChanges();
     }

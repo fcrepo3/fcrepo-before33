@@ -325,19 +325,6 @@ public class FOXMLDODeserializer
 				// These are common for all versions of the datastream. 
 				m_dsId=grab(a, F, "ID");
 				m_dsState=grab(a, F, "STATE");
-				/*
-                String altIDsString = grab(a, F, "ALT_IDS");
-                if (altIDsString.length() == 0) {
-                    m_dsAltIds = new String[0];
-                } else {
-                    m_dsAltIds = altIDsString.split(" ");
-                }
-				m_dsFormatURI=grab(a, F, "FORMAT_URI");
-                if (m_dsFormatURI.length() == 0) {
-                    m_dsFormatURI = null;
-                }
-				m_dsMimeType=grab(a, F, "MIMETYPE");
-				*/
 				m_dsControlGrp=grab(a, F, "CONTROL_GROUP");
 				String versionable =grab(a, F, "VERSIONABLE");
 				// If dsVersionable is null or missing, default to true.
@@ -771,8 +758,6 @@ public class FOXMLDODeserializer
 			m_dsId="";
 			m_dsVersionable=true;
 			m_dsState="";
-			//m_dsAltIds=new String[0];
-			//m_dsFormatURI="";
 			m_dsInfoType="";
 			m_dsOtherInfoType="";
 			m_dsMDClass=0;

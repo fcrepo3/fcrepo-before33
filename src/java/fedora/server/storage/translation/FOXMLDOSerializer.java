@@ -211,17 +211,6 @@ public class FOXMLDOSerializer
 				Datastream vds = DOTranslationUtility.setDatastreamDefaults((Datastream) dsList.get(i));
 				// insert the ds attributes common to all versions.
 				if (i==0) {
-					/*
-					String altIdsAttr="";
-					String altIds=oneString(vds.DatastreamAltIDs);
-					if (altIds!=null && !altIds.equals("")) {
-						altIdsAttr=" ALT_IDS=\"" + altIds + "\"";
-					}
-					String formatURIAttr="";
-					if (vds.DSFormatURI!=null && !vds.DSFormatURI.equals("")) {
-						formatURIAttr=" FORMAT_URI=\"" + vds.DSFormatURI + "\"";
-					}
-					*/
 					String dsURIAttr="";
 					if (m_transContext==DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC){
 						dsURIAttr=" FEDORA_URI=\"" + "info:fedora/" 
@@ -230,10 +219,7 @@ public class FOXMLDOSerializer
 					buf.append("    <" + FOXML_PREFIX 
 						+ ":datastream ID=\"" + vds.DatastreamID + "\""
 						+ dsURIAttr 
-						//+ altIdsAttr
 						+ " STATE=\"" + vds.DSState + "\""
-						//+ " MIMETYPE=\"" + vds.DSMIME + "\""
-						//+ formatURIAttr
 						+ " CONTROL_GROUP=\"" + vds.DSControlGrp + "\""
 						+ " VERSIONABLE=\"" + vds.DSVersionable + "\">\n");
 				}
@@ -318,8 +304,6 @@ public class FOXMLDOSerializer
 				+ ":datastream ID=\"" + "AUDIT" + "\"" 
 				+ dsURIAttr
 				+ " STATE=\"" + "A" + "\""
-				//+ " MIMETYPE=\"" + "text/xml" + "\""
-				//+ " FORMAT_URI=\"" + "info:fedora/fedora-system:format/xml.fedora.audit" + "\""
 				+ " CONTROL_GROUP=\"" + "X" + "\""
 				+ " VERSIONABLE=\"" + "false" + "\">\n");
 			// insert the ds version-level elements
