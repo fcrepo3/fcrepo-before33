@@ -19,12 +19,12 @@
 		<mkdir dir="dist/client/lib"/>
 		<copy file="lib/client/jhbasic.jar" todir="dist/client/lib"/>
 		<copy file="lib/client/rms.jar" todir="dist/client/lib"/>
-                <copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/lib"/>
-                <copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/lib"/>
-                <copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/lib"/>
-                <copy file="inc/server/tomcat41/common/lib/commons-discovery.jar" todir="dist/client/lib"/>
-                <copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/lib"/>
-                <copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/commons-discovery.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/lib"/>
 		<!--<copy todir="temp/client">
       <fileset dir="inc/client/dist"/>
     </copy>-->
@@ -83,18 +83,18 @@
              use="true"/>
   </target>
 -->
-    <target name="definitions" depends="serverdocs" description="Generate the latest docs for each fedora-defined namespace.">
-        <mkdir dir="dist/definitions"/>
-        <mkdir dir="dist/definitions/1"/>
-        <mkdir dir="dist/definitions/1/0"/>
-        <mkdir dir="dist/definitions/1/0/javadoc"/>
-        <copy todir="dist/definitions/1/0/javadoc">
-            <fileset dir="dist/serverdocs"/>
-        </copy>
-    </target>
+	<target name="definitions" depends="serverdocs" description="Generate the latest docs for each fedora-defined namespace.">
+		<mkdir dir="dist/definitions"/>
+		<mkdir dir="dist/definitions/1"/>
+		<mkdir dir="dist/definitions/1/0"/>
+		<mkdir dir="dist/definitions/1/0/javadoc"/>
+		<copy todir="dist/definitions/1/0/javadoc">
+			<fileset dir="dist/serverdocs"/>
+		</copy>
+	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar" destdir="dist/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar" destdir="dist/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
 	</target>
 	<target name="devdocs" depends="prep" description="Assemble development/system documentation into dist/devdocs">
 		<mkdir dir="dist"/>
@@ -156,7 +156,7 @@
 		</exec>
 	</target>
 	<target name="document-wsdl" depends="prep" description="Produce html documentation of the API-A and API-M wsdl in dist/wsdldoc/">
-                <mkdir dir="dist"/>
+		<mkdir dir="dist"/>
 		<mkdir dir="dist/wsdldoc"/>
 		<echo message="Producing html reports on the validity of API-A and API-M..."/>
 		<echo message="Doing API-A..."/>
@@ -262,6 +262,13 @@
 		</copy>
 		<copy file="src/xsd/fedora-types.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/fedora-auditing.xsd" todir="dist/server/xsd"/>
+		<!-- Fedora extension of the METS XML Schema:  local copy packaged with the repository distribution -->
+		<copy file="src/xsd/mets-fedora.xsd" todir="dist/server/xsd"/>
+		<copy file="src/xsd/xlink.xsd" todir="dist/server/xsd"/>
+		<!-- Schematron:  Fedora rules schema and schematron preprocessor -->
+		<mkdir dir="dist/server/schematron"/>
+		<copy file="src/xml/schematron/fedoraRules.xml" todir="dist/server/schematron"/>
+		<copy file="src/xsl/schematron/preprocessor.xslt" todir="dist/server/schematron"/>
 		<mkdir dir="dist/server/config"/>
 		<copy file="temp/server/java/fedora/server/management/deploy.wsdd" todir="dist/server/config"/>
 		<copy file="temp/server/java/fedora/server/access/deploy.wsdd" tofile="dist/server/config/deployAPI-A.wsdd"/>
@@ -284,16 +291,18 @@
 		<!-- end testing -->
 		<mkdir dir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
 		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
-		    <fileset dir="src/properties/server"/>
-		    <fileset dir="src/dbspec/server"/>
-        </copy>
+			<fileset dir="src/properties/server"/>
+			<fileset dir="src/dbspec/server"/>
+		</copy>
 		<copy file="src/fcfg/server/fedora.fcfg" todir="dist/server/config"/>
 		<mkdir dir="dist/server/bin"/>
 		<copy todir="dist/server/bin">
 			<fileset dir="src/bat/server"/>
 			<fileset dir="src/sh/server"/>
-       </copy>
+		</copy>
 		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/server/tomcat41/common/lib"/>
+		<!-- Saxon for use with Schematron validation -->
+		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/common/lib"/>
 		<echo message="Finished building server distribution in dist/server"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
@@ -301,7 +310,7 @@
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
 			<arg value="-classpath"/>
-			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/mm.mysql-2.0.14-bin.jar;dist/server/tomcat41/common/lib/mkjdbc.jar"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/mm.mysql-2.0.14-bin.jar;dist/server/tomcat41/common/lib/mkjdbc.jar;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
 			<arg value="fedora.server.Server"/>
 			<arg value="test"/>
 		</exec>
@@ -311,7 +320,7 @@
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
 			<arg value="-classpath"/>
-			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
 			<arg value="fedora.server.test.METSInOutTest"/>
 			<arg value="dist/server/tomcat41/image-test.xml"/>
 		</exec>
@@ -332,6 +341,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.43  2002/10/23 19:00:32  payette
+  misc changes to docs and server targets to include the digital object validation module.
+
   Revision 1.42  2002/10/10 15:39:03  cwilper
   added StreamUtility in the same way as previous change re:MethodInvokerThread
 
