@@ -1,33 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:element name="bdef">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="method" maxOccurs="unbounded"/>
-			</xs:sequence>
-			<xs:attribute name="pid" use="required">
-				<xs:simpleType>
-					<xs:restriction base="xs:string"/>
-				</xs:simpleType>
-			</xs:attribute>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="parmDomainValues">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="value" maxOccurs="unbounded"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="method">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="parm" minOccurs="0" maxOccurs="unbounded"/>
-			</xs:sequence>
-			<xs:attribute name="name" type="xs:string" use="required"/>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="object">
+	<xs:element name="objectMethods">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="bdef" maxOccurs="unbounded"/>
@@ -42,6 +15,26 @@
 					<xs:restriction base="xs:string"/>
 				</xs:simpleType>
 			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="bdef">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="method" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="pid" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="method">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="parm" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:string" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="parm">
@@ -74,6 +67,13 @@
 					<xs:restriction base="xs:string"/>
 				</xs:simpleType>
 			</xs:attribute>
+		</xs:complexType>
+	</xs:element>		
+	<xs:element name="parmDomainValues">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="value" maxOccurs="unbounded"/>
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="value">
