@@ -47,7 +47,6 @@ import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.DSBinding;
-import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -384,7 +383,6 @@ public class DefaultManagement
             audit.date=nowUTC;
             audit.justification="Added a new datastream";
             w.getAuditRecords().add(audit);
-            ds.auditRecordIdList().add(audit.id);
             w.addDatastream(ds);
             w.commit("Added a new datastream");
             return ds.DatastreamID;
@@ -495,7 +493,6 @@ public class DefaultManagement
             audit.date=nowUTC;
             audit.justification="Added a new datastream";
             w.getAuditRecords().add(audit);
-            ds.auditRecordIdList().add(audit.id);
             w.addDatastream(ds);
             w.commit("Added a new datastream");
             return ds.DatastreamID;
@@ -550,7 +547,6 @@ public class DefaultManagement
 				audit.date=nowUTC;
 				audit.justification="Added a new disseminator";
 				w.getAuditRecords().add(audit);
-				diss.auditRecordIdList().add(audit.id);
 				w.addDisseminator(diss);
 				w.commit("Added a new disseminator");
 				return diss.dissID;
@@ -586,7 +582,6 @@ public class DefaultManagement
                     // triggering to doCommit that it needs to
                     // be loaded from a new remote location
                     DatastreamManagedContent newds=new DatastreamManagedContent();
-                    newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
                     newds.DatastreamID=orig.DatastreamID;
                     // make sure it has a different id
                     newds.DSVersionID=w.newDatastreamID(datastreamId);
@@ -606,7 +601,6 @@ public class DefaultManagement
                     } else {
                         newds.DSLocation=dsLocation;
                     }
-                    newds.auditRecordIdList().addAll(orig.auditRecordIdList());
                     // just add the datastream
                     w.addDatastream(newds);
                     // if state was changed, set new state
@@ -622,14 +616,12 @@ public class DefaultManagement
                     audit.date=nowUTC;
                     audit.justification=logMessage;
                     w.getAuditRecords().add(audit);
-                    newds.auditRecordIdList().add(audit.id);
             } else {
                 // Deal with other kinds, except xml (that must be passed in by value).
                 if (orig.DSControlGrp.equals("X")) {
                     throw new GeneralException("Inline XML datastreams must be modified by value, not by reference.");
                 }
                 DatastreamReferencedContent newds=new DatastreamReferencedContent();
-                newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
                 newds.DatastreamID=orig.DatastreamID;
                 // make sure it has a different id
                 newds.DSVersionID=w.newDatastreamID(datastreamId);
@@ -648,7 +640,6 @@ public class DefaultManagement
                 } else {
                     newds.DSLocation=dsLocation;
                 }
-                newds.auditRecordIdList().addAll(orig.auditRecordIdList());
                 // just add the datastream
                 w.addDatastream(newds);
                 // if state was changed, set new state
@@ -664,7 +655,6 @@ public class DefaultManagement
                 audit.date=nowUTC;
                 audit.justification=logMessage;
                 w.getAuditRecords().add(audit);
-                newds.auditRecordIdList().add(audit.id);
             }
             // if all went ok, commit
             w.commit(logMessage);
@@ -728,7 +718,6 @@ public class DefaultManagement
             newds.DSControlGrp=orig.DSControlGrp;
             newds.DSInfoType=orig.DSInfoType;
             newds.DSState=dsState;
-            newds.auditRecordIdList().addAll(orig.auditRecordIdList());
             // just add the datastream
             w.addDatastream(newds);
             // if state was changed, set new state
@@ -744,7 +733,6 @@ public class DefaultManagement
             audit.date=nowUTC;
             audit.justification=logMessage;
             w.getAuditRecords().add(audit);
-            newds.auditRecordIdList().add(audit.id);
             // if all went ok, commit
             w.commit(logMessage);
             return nowUTC;
@@ -825,7 +813,6 @@ public class DefaultManagement
             } else {
               newdiss.dissState=dissState;
             }
-            newdiss.auditRecordIdList().addAll(orig.auditRecordIdList());
             // just add the disseminator
             w.addDisseminator(newdiss);
             // add the audit record
@@ -838,7 +825,6 @@ public class DefaultManagement
             audit.date=nowUTC;
             audit.justification=logMessage;
             w.getAuditRecords().add(audit);
-            newdiss.auditRecordIdList().add(audit.id);
             // if all went ok, commit
             w.commit(logMessage);
             return nowUTC;
@@ -1252,7 +1238,6 @@ public class DefaultManagement
           audit.date=nowUTC;
           audit.justification=logMessage;
           w.getAuditRecords().add(audit);
-          ds.auditRecordIdList().add(audit.id);
 
           // if all went ok, commit
           w.commit(logMessage);
@@ -1290,7 +1275,6 @@ public class DefaultManagement
           audit.date=nowUTC;
           audit.justification=logMessage;
           w.getAuditRecords().add(audit);
-          diss.auditRecordIdList().add(audit.id);
 
           // if all went ok, commit
           w.commit(logMessage);
