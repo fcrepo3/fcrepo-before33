@@ -20,6 +20,7 @@ import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
+import fedora.server.security.Authorization;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
@@ -71,7 +72,6 @@ public class DatastreamResolverServlet extends HttpServlet
 
   private static Server s_server;
   private static DOManager m_manager;
-  private static Context m_context;
   private static Hashtable dsRegistry;
   private static int datastreamMediationLimit;
   private static final String HTML_CONTENT_TYPE = "text/html";
@@ -138,12 +138,7 @@ public class DatastreamResolverServlet extends HttpServlet
     PrintWriter out = null;
     ServletOutputStream outStream = null;
 
-    // Initialize context.
-    HashMap h = new HashMap();
-    h.put("application", "apia");
-    h.put("useCachedObject", "false");
-    h.put("userId", "fedoraAdmin");
-    m_context = new ReadOnlyContext(h);
+    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_REST, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
 
     id = request.getParameter("id").replaceAll("T"," ");
     logger.logFinest("[DatastreamResolverServlet] datastream tempID: " + id);
@@ -273,7 +268,7 @@ public class DatastreamResolverServlet extends HttpServlet
         dsVersionID = s[2];
         logger.logFinest("[DatastreamResolverServlet] PID: " + PID
             + " -- dsID: " + dsID + " -- dsVersionID: " + dsVersionID);
-        DOReader doReader =  m_manager.getReader(m_context, PID);
+        DOReader doReader =  m_manager.getReader(context, PID);
         Datastream d =
             (Datastream) doReader.getDatastream(dsID, dsVersionID);
         logger.logFinest("[DatastreamResolverServlet] Got datastream: "
