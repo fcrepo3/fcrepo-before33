@@ -721,3 +721,4 @@ reserved. The current project homepage for the original code may be found at: ht
  
 Portions created for the Fedora Repository System are Copyright © 2002, 2003 by The Rector and Visitors of the University of Virginia and Cornell University. All rights reserved.
 
+The source code, object code, and documentation in the com.oreilly.servlet package is copyright and owned by Jason Hunter.  
