@@ -186,24 +186,11 @@ public class DefaultManagement
         m_fedoraServerPort=getServer().getParameter("fedoraServerPort");
     }
 
-/*
-    public String createObject(Context context)
-            throws ServerException {
-        getServer().logFinest("Entered DefaultManagement.createObject");
-        m_ipRestriction.enforce(context);
-        DOWriter w=m_manager.newWriter(context);
-        String pid=w.GetObjectPID();
-        m_manager.releaseWriter(w);
-        getServer().logFinest("Exiting DefaultManagement.createObject");
-        return pid;
-    }
-*/
-
     public String ingestObject(Context context, InputStream serialization, String logMessage, String format, String encoding, boolean newPid)
             throws ServerException {
         getServer().logFinest("Entered DefaultManagement.ingestObject");
         m_ipRestriction.enforce(context);
-        DOWriter w=m_manager.newWriter(context, serialization, format, encoding, newPid);
+        DOWriter w=m_manager.getIngestWriter(context, serialization, format, encoding, newPid);
         String pid=w.GetObjectPID();
         try {
             w.commit(logMessage);
@@ -300,12 +287,14 @@ public class DefaultManagement
                 } else if (mdClass.equals("technical")) {
                     ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.TECHNICAL;
                 } else {
-                    throw new GeneralException("mdClass must be one of the following:\n"
-                            + " - descriptive\n"
-                            + " - digital provenance\n"
-                            + " - source\n"
-                            + " - rights\n"
-                            + " - technical");
+                	// if mdClass is not one of the above, default it to descriptive.
+					((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
+                    //throw new GeneralException("mdClass must be one of the following:\n"
+                    //        + " - descriptive\n"
+                    //        + " - digital provenance\n"
+                    //        + " - source\n"
+                    //        + " - rights\n"
+                    //        + " - technical");
                 }
                 // retrieve the content and set the xmlContent field appropriately
                 try {
