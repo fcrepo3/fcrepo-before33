@@ -149,21 +149,21 @@ public class GeneralPane extends JPanel
 		try
 		{
 			allBDefLabels=Util.getBDefLabelMap();
-		} 
-		catch (Exception e) 
+		}
+		catch (Exception e)
 		{
 			JOptionPane.showMessageDialog(Administrator.getDesktop(),
-					e.getMessage() + "\nError getting behavior definitions from repository!", 
+					e.getMessage() + "\nError getting behavior definitions from repository!",
 					"Contact system administrator.",
 					JOptionPane.ERROR_MESSAGE);
-		}		
+		}
 		Map bDefLabels=new HashMap();
 		Iterator iter=allBDefLabels.keySet().iterator();
 		while (iter.hasNext()) {
 			String pid=(String) iter.next();
 				bDefLabels.put(pid, (String) allBDefLabels.get(pid));
 		}
-		// set up the combobox 
+		// set up the combobox
 		bDefOptions=new String[bDefLabels.keySet().size() + 1];
 		if (bDefOptions.length==1) {
 			bDefOptions[0]="No behavior definitions in repository!";
@@ -177,8 +177,8 @@ public class GeneralPane extends JPanel
 			String label=(String) bDefLabels.get(pid);
 			bDefOptions[i++]=pid + " - " + label;
 		}
-		
-		bDefPIDComboBox=new JComboBox(bDefOptions);		
+
+		bDefPIDComboBox=new JComboBox(bDefOptions);
 		bDefPIDComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				try {
@@ -195,7 +195,7 @@ public class GeneralPane extends JPanel
 				} catch (Exception e) {
 					JOptionPane.showMessageDialog(
 							Administrator.getDesktop(),
-							e.getMessage(), 
+							e.getMessage(),
 							"Error getting behavior definition",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -212,14 +212,14 @@ public class GeneralPane extends JPanel
 					mp.clearContractMethods();
 				}
 			}
-		});	
+		});
 		gbc2.gridx = 1;
 		contractPanel.add(bDefPIDComboBox, gbc2);
 		return contractPanel;
 	}
-	
+
     private JPanel setDCPanel()
-    {   	
+    {
         // DC Table Panel
         dcTableModel = new DefaultTableModel();
 		// Create a JTable that disallow edits (edits done via dialog box only)
@@ -228,22 +228,23 @@ public class GeneralPane extends JPanel
 		  	if (vColIndex == 0){
 		  		return false;
 		  	}
-		  	else{ 
+		  	else{
 		  		return true;
 		  	}
 		  }
 		};
-        
+
         dcTable.setColumnSelectionAllowed(false);
         dcTable.setRowSelectionAllowed(true);
-        
+
         dcTableModel.addColumn("Element Name");
         dcTableModel.addColumn("Value");
-               
+
         dcTableModel.addRow(new Object[]{"title", ""});
         dcTableModel.addRow(new Object[]{"creator", ""});
         dcTableModel.addRow(new Object[]{"subject", ""});
         dcTableModel.addRow(new Object[]{"publisher", ""});
+        dcTableModel.addRow(new Object[]{"description", ""});
         dcTableModel.addRow(new Object[]{"contributor", ""});
         dcTableModel.addRow(new Object[]{"date", ""});
         dcTableModel.addRow(new Object[]{"type", ""});
@@ -363,7 +364,7 @@ public class GeneralPane extends JPanel
 		dcTableModel.addRow(new Object[]{dcName, dcValue});
 	  }
 	}
-	
+
 	private void addDCElement()
 	{
 	  dcDialog = new DCElementDialog(this, "Add DC Element", true);
@@ -388,14 +389,14 @@ public class GeneralPane extends JPanel
     {
       dcTableModel.removeRow(dcTable.getSelectedRow());
     }
-    
+
 	protected void assertInvalidDCMsg(String msg)
 	{
 	  JOptionPane.showMessageDialog(
 		this, new String(msg), "Invalid DC Element",
 		JOptionPane.INFORMATION_MESSAGE);
 	}
-	
+
     // Action Listener for button group
     class PIDActionListener implements ActionListener
     {
