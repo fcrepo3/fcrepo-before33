@@ -1,8 +1,14 @@
 Contents:
 
-  archdetail.sdr   - System architecture detailed picture (SmartDraw format)
-  doaccess.sdr     - Design of classes/interfaces for digital object read/writes, 
-                     based on discussion surrounding replicator process/code
+  archdetail.sdr/gif/pdf - System architecture detailed picture (SmartDraw format)
+  doaccess.sdr           - Design of classes/interfaces for digital object read/writes, 
+                           based on discussion surrounding replicator process/code
+  objectAbstraction.sdr/gif/pdf - An interface-based digital object design...
+                                  Intended as discussion material & a start for
+                                  the digital object "Model" part of the MVC-style
+                                  digital object editor part of the client.
+  dbschema.sdr/gif/pdf          - Underlying datastore schema for fast API-A request fulfillments 
+ 
   websvc-creation-deployment-with-jax-rpc.sdr - Some notes on which classes 
                      to use from Sun's web services development kit to write a
                      web services with jaxr.
