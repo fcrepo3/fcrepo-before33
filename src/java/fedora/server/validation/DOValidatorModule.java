@@ -70,10 +70,6 @@ public class DOValidatorModule extends Module implements DOValidator
       dov.schematronSchemaID = System.getProperty("fedora.home") + this.getParameter("schematronSchema");
       dov.schematronValidatingXslID = System.getProperty("fedora.home") + this.getParameter("schematronValidatingXsl");
 
-      // Get a connection pool manager for the validator module
-      ConnectionPoolManager poolManager = (ConnectionPoolManager)
-          s_server.getModule("fedora.server.storage.ConnectionPoolManager");
-      dov.connectionPool = poolManager.getPool();
     }
     catch(Exception e)
     {
@@ -85,6 +81,7 @@ public class DOValidatorModule extends Module implements DOValidator
   
   public void postInitModule() throws ModuleInitializationException
   {
+      // Get a connection pool manager for the validator module
     try
     {
         dov.connectionPool=((ConnectionPoolManager) getServer().getModule(
