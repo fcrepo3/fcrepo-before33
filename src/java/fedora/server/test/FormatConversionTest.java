@@ -108,7 +108,7 @@ public class FormatConversionTest
 			System.out.println("Re-serializing as format: " + outFormat + "...");
 			System.out.println("Writing file to... " + outFile.getPath());
 			FileOutputStream out = new FileOutputStream(outFile);
-			trans.serialize(obj, out, outFormat, "UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE);
+			trans.serialize(obj, out, outFormat, "UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE);
 			System.out.println("Done.");
 			//System.out.println("Here it is:");
 			//System.out.println(out.toString("UTF-8"));
