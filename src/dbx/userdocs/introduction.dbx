@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
+<article>
+	<articleinfo>
+		<graphic fileref="/userdocs/images/newlogo2.jpg"/>
+		<title>
+			<inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="/userdocs/images/newlogo2.jpg" format="JPEG"/>
+				</imageobject>
+			</inlinemediaobject>
+		</title>
+		<title>Introduction to Fedora</title>
+		<corpauthor>Fedora Development Team</corpauthor>
+		<copyright>
+			<year>2003</year>
+			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
+		</copyright>
+		<publisher>
+			<publishername>The Rector and Visitors of The University of Virginia and Cornell University</publishername>
+		</publisher>
+		<edition>$Revision$</edition>
+		<date>$Date$</date>
+		<releaseinfo>
+            $Id$ 
+        </releaseinfo>
+	</articleinfo>
+	<sect1>
+		<title>Introducing Fedora</title>
+		<para></para>
+		<sect2>
+		<title>Background</title>
+			<para>The Fedora software is based on an architecture known as FEDORA
+        (Flexible Extensible Digital Object and Repository Architecture) [<ulink url="http://www.cs.cornell.edu/payette/papers/ECDL98/FEDORA.html">view
+        paper</ulink>]. The Fedora architecture was developed by Carl Lagoze
+        and Sandy Payette at Cornell University, inspired by ideas of the
+        Kahn/Wilensky Framework [<ulink url="http://www.cnri.reston.va.us/cstr/arch/k-w.html">view paper</ulink>]
+        and the Warwick Framework [<ulink url="http://www.dlib.org/dlib/july96/lagoze/07lagoze.html">view paper</ulink>].</para>
+				<para>Since its inception, the architecture has seen multiple
+        implementations. Over the last several years, Cornell University and
+        The University of Virginia have created promising prototypes of their
+        own. This open-source implementation, indended for public release, is
+        the result of a collaborative effort between Cornell and UVA. The
+        project is funded by a grant from the Andrew W. Mellon foundation.</para>
+				<para>More information about the project and its history can be found
+        at <ulink url="http://www.fedora.info/">http://www.fedora.info/</ulink>.</para>
+	</sect2>
+	<sect2>
+				<title>Concepts</title>
+				<para>A good understanding of the ideas behind Fedora can be gathered
+        by reading the <ulink url="http://www.fedora.info/pubs.shtml">related
+        publications</ulink> and the <ulink url="http://www.fedora.info/techdoc.shtml">technical specification</ulink>.
+        Briefly:</para>
+				<para>In Fedora, a <emphasis>digital object</emphasis> is a data
+        structure with a <emphasis>PID</emphasis> (a unique, persistent
+        identifer), one or more <emphasis>datastreams</emphasis> (typed
+        sequences of bits), and one or more <emphasis>disseminators.</emphasis>
+        A disseminator maps an object&#39;s datastreams as input to a service,
+        enabling the repository to provide disseminations of the object. A
+        dissemination is simply a representation of an object.</para>
+				<para>A <emphasis>behavior mechanism</emphasis> represents a service
+        that performs functions on datastreams. It is the means by which a
+        disseminator binds to a service. A behavior mechanism specifies the
+        datastream input constraints of the service it describes. It also
+        adheres to a contract that is specified by its behavior definition.</para>
+				<para>A <emphasis>behavior definition</emphasis> specifies the names
+        of methods that subscribing mechanisms must implement. It also
+        specifies the user parameters that implementing services must accept.
+        These are the same user parameters that are used by the disseminating
+        party in the request to the Fedora repository.</para>
+	</sect2>
+	</sect1>
+</article>
