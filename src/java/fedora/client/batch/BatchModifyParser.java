@@ -75,7 +75,7 @@ import fedora.server.types.gen.ObjectFields;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version $Id $
+ * @version $Id$
  */
 public class BatchModifyParser extends DefaultHandler
 {
@@ -418,9 +418,7 @@ public class BatchModifyParser extends DefaultHandler
                     return;
                 }
 
-                addDatastream = true;
-                System.out.println("exited createDatastream");
-            	System.out.println("pid: "+m_ds.objectPID+" dsID: "+m_ds.dsID+" version: "+m_ds.versionable+" format: "+m_ds.formatURI);                
+                addDatastream = true;                
 
             } catch (Exception e) {
                 failedCount++;
@@ -1042,13 +1040,11 @@ public class BatchModifyParser extends DefaultHandler
 								m_ds.dsState);
                         } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
                                    m_ds.dsControlGrp.equalsIgnoreCase("R")) {
-                        	System.out.println("pid: "+m_ds.objectPID+" dsID: "+m_ds.dsID+" version: "+m_ds.versionable+" format: "+m_ds.formatURI);
                             datastreamID = APIM.createDatastream(m_ds.objectPID, m_ds.dsID,
                             		m_ds.dsLabel,m_ds.versionable,
 									m_ds.dsMIME, m_ds.formatURI,
 									m_ds.dsLocation, m_ds.dsControlGrp, 
 									m_ds.dsState);
-                            System.out.println("successful call createDS startDoc dsID: "+datastreamID);
                         }
                         if (datastreamID!=null) {
                             succeededCount++;
