@@ -33,7 +33,7 @@ public class ShutdownServlet
         System.out.println("ShutdownServlet: Got shutdown request.");
         if (request.getParameter("password")!=null 
                 && request.getParameter("password").equals(
-                s_server.getParameter("shutdownPassword")) {
+                s_server.getParameter("shutdownPassword"))) {
             System.out.println("Password correct...shutting down.");
             try {
                 s_server.shutdown();
