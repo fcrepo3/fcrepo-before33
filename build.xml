@@ -723,7 +723,7 @@
 				<exclude name="org/**"/>
 			</fileset>
 		</copy>
-		<copy todir="${tomcat.common.dir}/classes">
+		<copy todir="${tomcat.server.dir}/classes">
 			<fileset dir="temp/server/classes">
 				<include name="org/**"/>
 			</fileset>
