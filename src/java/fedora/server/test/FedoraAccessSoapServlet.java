@@ -594,6 +594,195 @@ public class FedoraAccessSoapServlet extends HttpServlet
 
         try
         {
+          out = response.getWriter();
+          pw = new PipedWriter();
+          pr = new PipedReader(pw);
+          objMethDefArray = getObjectMethods(PID, asOfDateTime);
+          if (objMethDefArray != null)
+          {
+            // Object Methods found.
+            // Deserialize ObjectmethodsDef datastructure into XML
+            new SerializerThread(PID, objMethDefArray, versDateTime, pw).start();
+            if (xmlEncode.equalsIgnoreCase(YES))
+            {
+              // Return results as raw XML
+              response.setContentType(CONTENT_TYPE_XML);
+              int bytestream = 0;
+              while ( (bytestream = pr.read()) >= 0)
+              {
+                out.write(bytestream);
+              }
+            } else
+            {
+              // Transform results into an html table
+              response.setContentType(CONTENT_TYPE_HTML);
+              File xslFile = new File("dist/server/access/objectmethods2.xslt");
+              TransformerFactory factory = TransformerFactory.newInstance();
+              Templates template = factory.newTemplates(new StreamSource(xslFile));
+              Transformer transformer = template.newTransformer();
+              Properties details = template.getOutputProperties();
+              transformer.transform(new StreamSource(pr), new StreamResult(out));
+            }
+            pr.close();
+
+          } else
+          {
+            // Object Methods Definition request returned nothing.
+            String message = "[FedoraAccessServlet] No Object Method Definitions "
+                + "returned.";
+            System.out.println(message);
+            showURLParms(action, PID, "", "", asOfDateTime, new Property[0], "", response, message);
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            response.sendError(response.SC_NO_CONTENT, message);
+          }
+        } catch (Throwable th)
+        {
+          String message = "[FedoraAccessServlet] An error has occured. "
+                         + " The error was a \" "
+                         + th.getClass().getName()
+                         + " \". Reason: "  + th.getMessage();
+          System.out.println(message);
+          th.printStackTrace();
+          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+        } finally
+        {
+            if (pr != null) pr.close();
+        }
+        out.close();
+      }
+    } else
+    {
+      // Object Methods Definition request returned nothing.
+      String message = "[FedoraAccessServlet] No Object Method Definitions "
+          + "returned.";
+      System.out.println(message);
+      showURLParms(action, PID, "", "", asOfDateTime, new Property[0], "", response, message);
+      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+      response.sendError(response.SC_NO_CONTENT, message);
+    }
+    long stopTime = new Date().getTime();
+    long interval = stopTime - servletStartTime;
+    System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+        + "GetObjectMethods: " + interval + " milliseconds.");
+  }
+
+  //
+
+  /**
+   * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
+   *
+   */
+  public class SerializerThread extends Thread
+  {
+    private PipedWriter pw = null;
+    private String PID = null;
+    private ObjectMethodsDef[] objMethDefArray = new ObjectMethodsDef[0];
+    private Date versDateTime = null;
+
+    /**
+     * <p> Constructor for SerializeThread.</p>
+     *
+     * @param PID The persistent identifier of the specified digital object.
+     * @param objMethDefArray An array of object mtehod definitions.
+     * @param versDateTime The version datetime stamp of the request.
+     * @param pw A PipedWriter to which the serialization info is written.
+     */
+    public SerializerThread(String PID, ObjectMethodsDef[] objMethDefArray,
+                        Date versDateTime, PipedWriter pw)
+    {
+      this.pw = pw;
+      this.PID = PID;
+      this.objMethDefArray = objMethDefArray;
+      this.versDateTime = versDateTime;
+    }
+
+    /**
+     * <p> This method executes the thread.</p>
+     */
+    public void run()
+    {
+      if (pw != null)
+      {
+        try
+        {
+          pw.write("<?xml version=\"1.0\"?>");
+          if (versDateTime == null || DateUtility.
+              convertDateToString(versDateTime).equalsIgnoreCase(""))
+          {
+            pw.write("<object "
+                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " pid=\"" + PID + "\" >");
+            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"objectmethods.xsd\"/>");
+          } else
+          {
+            pw.write("<object "
+                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " pid=\"" + PID + "\""
+                + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
+                + "\" >");
+            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"objectmethods.xsd\"/>");
+          }
+          String nextBdef = "null";
+          String currentBdef = "";
+          for (int i=0; i<objMethDefArray.length; i++)
+          {
+            currentBdef = objMethDefArray[i].getBDefPID();
+            if (!currentBdef.equalsIgnoreCase(nextBdef))
+            {
+              if (i != 0) pw.write("</bdef>");
+              pw.write("<bdef pid=\"" + objMethDefArray[i].getBDefPID() + "\" >");
+            }
+            pw.write("<method name=\"" + objMethDefArray[i].getMethodName() + "\" >");
+            MethodParmDef[] methodParms = objMethDefArray[i].getMethodParmDefs();
+            for (int j=0; j<methodParms.length; j++)
+            {
+              pw.write("<parm parmName=\"" + methodParms[j].getParmName()
+                  + "\" parmDefaultValue=\"" + methodParms[j].getParmDefaultValue()
+                  + "\" parmRequired=\"" + methodParms[j].isParmRequired()
+                  + "\" parmType=\"" + methodParms[j].getParmType()
+                  + "\" parmLabel=\"" + methodParms[j].getParmLabel() + "\" >");
+              if (methodParms[j].getParmDomainValues().length > 0 )
+              {
+                pw.write("<parmDomainValues>");
+                for (int k=0; k<methodParms[j].getParmDomainValues().length; k++)
+                {
+                  pw.write("<value>" + methodParms[j].getParmDomainValues()[k]
+                      + "</value>");
+                }
+                pw.write("</parmDomainValues>");
+              }
+              pw.write("</parm>");
+            }
+
+            pw.write("</method>");
+            nextBdef = currentBdef;
+          }
+          pw.write("</bdef>");
+          pw.write("</object>");
+          pw.flush();
+          pw.close();
+        } catch (IOException ioe) {
+          System.err.println("WriteThread IOException: " + ioe.getMessage());
+        } finally
+        {
+          try
+          {
+            if (pw != null) pw.close();
+          } catch (IOException ioe)
+          {
+            System.err.println("WriteThread IOException: " + ioe.getMessage());
+          }
+        }
+      }
+    }
+  }
+/*        try
+        {
           objMethDefArray = getObjectMethods(PID, asOfDateTime);
           if (objMethDefArray != null)
           {
@@ -726,7 +915,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         out.close();
       }
     }
-  }
+  }*/
 /*        try
         {
           // Call Fedora Access SOAP service to request Object Methods.
