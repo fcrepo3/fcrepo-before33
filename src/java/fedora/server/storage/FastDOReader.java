@@ -17,9 +17,12 @@ import java.util.Vector;
 
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
+import fedora.server.errors.ServerException;
+import fedora.server.errors.StreamIOException;
 import fedora.server.storage.ConnectionPoolManagerImpl;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
@@ -113,7 +116,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @param objectPID The persistent identifier of the digital object.
    * @throws ObjectNotFoundException If the digital object cannot be found.
    */
-  public FastDOReader(String objectPID) throws ObjectNotFoundException
+  public FastDOReader(String objectPID) throws ServerException
   {
     try
     {
@@ -149,9 +152,15 @@ public class FastDOReader implements DisseminatingDOReader
    * @return A stream of bytes consisting of the XML-encoded representation
    * of the digital object.
    */
-  public InputStream ExportObject()
+  public InputStream ExportObject() throws StreamIOException, GeneralException
   {
-    if (doReader == null) doReader = new DefinitiveDOReader(PID);
+    try
+    {
+      if (doReader == null) doReader = new DefinitiveDOReader(PID);
+    } catch (ServerException se)
+    {
+      System.err.println("ExportObject: Can't create DefinitiveDOReader");
+    }
     return(doReader.ExportObject());
   }
 
@@ -163,6 +172,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @return An array containing a list of Behavior Definition object PIDs.
    */
   public String[] GetBehaviorDefs(Date versDateTime)
+      throws GeneralException
   {
     Vector queryResults = new Vector();
     String[] behaviorDefs = null;
@@ -261,7 +271,8 @@ public class FastDOReader implements DisseminatingDOReader
    * be found.
    */
   public MethodParmDef[] GetBMechMethodParm(String bDefPID, String methodName,
-      Date versDateTime) throws MethodNotFoundException
+      Date versDateTime) throws GeneralException
+  //throws MethodNotFoundException
   {
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
@@ -364,7 +375,8 @@ public class FastDOReader implements DisseminatingDOReader
            "\n methodName: "+methodName +
            "\n asOfDate: " + DateUtility.convertDateToString(versDateTime) +
            "\n");
-        throw new MethodNotFoundException("Method parameter not found: " +
+        //throw new MethodNotFoundException("Method parameter not found: " +
+        throw new GeneralException("Method parameter not found: " +
            "\n bDefPID: " + bDefPID +
            "\n methodName: "+methodName +
            "\n asOfDate: " + DateUtility.convertDateToString(versDateTime) +
@@ -394,6 +406,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @return An array of method definitions.
    */
   public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
+      throws GeneralException
   {
     System.out.println("MethodPIDMech: "+PID);
     MethodDef[] methodDefs = null;
@@ -454,7 +467,8 @@ public class FastDOReader implements DisseminatingDOReader
           {
             methodDef.methodParms = this.GetBMechMethodParm(bDefPID,
                 methodDef.methodName, versDateTime);
-          } catch (MethodNotFoundException mpnfe)
+          //} catch (MethodNotFoundException mpnfe)
+          } catch (GeneralException ge)
           {
             // FIXME!! - Decide on Exception handling
             System.out.println("Method not found: " + methodDef.methodName);
@@ -526,8 +540,15 @@ public class FastDOReader implements DisseminatingDOReader
    * method definitions from WSDL in assocaited Behavior Mechanism object.
    */
   public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
+      throws GeneralException
   {
+    try
+    {
     if (doReader == null) doReader = new DefinitiveDOReader(PID);
+    } catch (ServerException se)
+    {
+      System.err.println("GetBMechMethodsWSDL: Can't create DefinitiveDOReader");
+    }
     return doReader.GetBMechMethodsWSDL(bDefPID, versDateTime);
   }
 
@@ -539,6 +560,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @return The specified datastream.
    */
   public Datastream GetDatastream(String datastreamID, Date versDateTime)
+      throws GeneralException
   {
     Vector queryResults = new Vector();
     Datastream[] datastreams = null;
@@ -639,6 +661,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @return An array of datastreams.
    */
   public Datastream[] GetDatastreams(Date versDateTime)
+      throws GeneralException
   {
     Vector queryResults = new Vector();
     Datastream[] datastreams = null;
@@ -822,7 +845,8 @@ public class FastDOReader implements DisseminatingDOReader
           {
             dissBindInfo.methodParms = this.GetBMechMethodParm(results[1],
                 results[2], versDateTime);
-          } catch (MethodNotFoundException mpnfe)
+          //} catch (MethodNotFoundException mpnfe)
+          } catch (GeneralException ge)
           {
             dissBindInfo.methodParms = null;
           }
@@ -890,6 +914,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @return Disseminator
    */
   public Disseminator GetDisseminator(String disseminatorID, Date versDateTime)
+      throws GeneralException
   {
     Disseminator disseminator = null;
     if (isFoundInFastStore && versDateTime == null)
@@ -990,6 +1015,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @return Disseminator[] array of disseminators
    */
   public Disseminator[] GetDisseminators(Date versDateTime)
+      throws GeneralException
   {
     Disseminator[] disseminators = null;
     Disseminator disseminator = null;
@@ -1099,6 +1125,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @return DSBindingMapAugmented[] array of datastream binding maps
    */
   public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
+      throws GeneralException
   {
     if (bMechReader == null) bMechReader = new DefinitiveBMechReader(PID);
     return bMechReader.GetDSBindingMaps(versDateTime);
@@ -1109,8 +1136,9 @@ public class FastDOReader implements DisseminatingDOReader
    *
    * @return String contining the object label
    */
-  public String GetObjectLabel()
+  public String GetObjectLabel() throws GeneralException
   {
+    if (debug) System.out.println("GetObjectLabel = " + doLabel);
     return doLabel;
   }
 
@@ -1260,8 +1288,9 @@ public class FastDOReader implements DisseminatingDOReader
    *
    * @return String containing the persistent identifier
    */
-  public String GetObjectPID()
+  public String GetObjectPID() throws GeneralException
   {
+    if (debug) System.out.println("GetObjectPID = " + PID);
     return this.PID;
   }
 
@@ -1270,9 +1299,15 @@ public class FastDOReader implements DisseminatingDOReader
    *
    * @return String state of the object
    */
-  public String GetObjectState()
+  public String GetObjectState() throws GeneralException
   {
-    if (doReader == null) doReader = new DefinitiveDOReader(PID);
+    try
+    {
+      if (doReader == null) doReader = new DefinitiveDOReader(PID);
+    } catch (ServerException se)
+    {
+      System.err.println("GetObjectState: Can't create DefinitiveDOReader");
+    }
     return doReader.GetObjectState();
     }
 
@@ -1285,8 +1320,15 @@ public class FastDOReader implements DisseminatingDOReader
    * @return String containing the XML representation of the object.
    */
   public InputStream GetObjectXML()
+      throws StreamIOException, GeneralException
   {
-    if (doReader == null) doReader = new DefinitiveDOReader(PID);
+    try
+    {
+      if (doReader == null) doReader = new DefinitiveDOReader(PID);
+    } catch (ServerException se)
+    {
+      System.err.println("GetObjectXML: Can't create DefinitiveDOReader");
+    }
     return(doReader.GetObjectXML());
   }
 
@@ -1301,6 +1343,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @return String[] containing the datastream IDs
    */
   public String[] ListDatastreamIDs(String state)
+      throws GeneralException
   {
     Vector queryResults = new Vector();
     String[] datastreamIDs = null;
@@ -1395,6 +1438,7 @@ public class FastDOReader implements DisseminatingDOReader
    * @return String[] listing disseminator IDs
    */
   public String[] ListDisseminatorIDs(String state)
+      throws GeneralException
   {
     Vector queryResults = new Vector();
     Disseminator disseminator = null;
@@ -1824,9 +1868,11 @@ public class FastDOReader implements DisseminatingDOReader
     } catch(ObjectNotFoundException onfe)
     {
       System.out.println("ObjNotFound"+onfe.getMessage());
-    } catch(MethodNotFoundException mnfe)
+    //} catch(MethodNotFoundException mnfe)
+    } catch (GeneralException ge)
     {
-      System.out.println("MethodNotFound"+mnfe.getMessage());
+      //System.out.println("MethodNotFound"+mnfe.getMessage());
+      System.out.println("ObjectIntegrityException"+ge.getMessage());
     }
   }
 }
