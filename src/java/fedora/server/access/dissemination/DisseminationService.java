@@ -1,10 +1,13 @@
 package fedora.server.access.dissemination;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.*;
 import java.net.InetAddress;
+import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
+import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -88,8 +91,6 @@ public class DisseminationService
         fedoraServerPort = s_server.getParameter("fedoraServerPort");
         s_server.logFinest("fedoraServerPort: " + fedoraServerPort);
         hostIP = InetAddress.getLocalHost();
-        datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
-            + ":" + fedoraServerPort + "/fedora/getDS?id=";
         s_server.logFinest("[DisseminationService] "
             + "datastreamResolverServletURL: " + datastreamResolverServletURL);
         String expireLimit = s_server.getParameter("datastreamExpirationLimit");
@@ -223,6 +224,19 @@ public class DisseminationService
           } else
           {
             dissURL = dissBindInfo.AddressLocation+dissBindInfo.OperationLocation;
+          }
+
+          // If parameter substitution is to occur in a servlet parameter
+          // escape special characters of "?" and "="; otherwise leave
+          // substitution string untouched.
+          if (dissURL.indexOf("=(") != -1 )
+          {
+            datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
+                + ":" + fedoraServerPort + "/fedora/getDS%3Fid%3D";
+          } else
+          {
+            datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
+                + ":" + fedoraServerPort + "/fedora/getDS?id=";
           }
           protocolType = dissBindInfo.ProtocolType;
         }
