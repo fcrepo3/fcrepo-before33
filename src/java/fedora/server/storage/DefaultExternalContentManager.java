@@ -114,7 +114,6 @@ public class DefaultExternalContentManager extends Module
     InputStream inStream = null;
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     MIMETypedStream httpContent = null;
-    URL = URL.replaceAll("local.fedora.server",fedoraServerHost+":"+fedoraServerPort);
     try
     {
       //URL url = new URL(java.net.URLDecoder.decode(URL, "utf-8"));
