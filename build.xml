@@ -119,6 +119,9 @@
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-massingest.sh fedora-massingest"/>
 		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-convert-demos.sh fedora-convert-demos"/>
+		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="u+x" includes="**/*"/>
 	</target>
@@ -955,6 +958,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.142  2003/07/24 19:59:41  rlw
+  adds fedora-convert-demos
+
   Revision 1.141  2003/07/17 19:39:49  payette
   removed reference to old schematron file fedoraRules.xml
 
