@@ -781,7 +781,7 @@ public class DefaultDOManager
             throws ServerException {
         getServer().logFinest("Entered DefaultDOManager.newWriter(Context, InputStream, String, String, boolean)");
         // temporary, unique handle for file storage of inputstream
-        String tempHandle="temp-ingest-" + System.currentTimeMillis() + "-" + in.hashCode();
+        String tempHandle="temp-ingest-" + in.hashCode();
         getServer().logFinest("Using temporary handle: " + tempHandle);
         
         String permPid=null;
