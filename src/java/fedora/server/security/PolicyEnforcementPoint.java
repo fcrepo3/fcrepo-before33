@@ -98,7 +98,7 @@ public class PolicyEnforcementPoint {
 		} else if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
 		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
 		} else {
-			log("configuration error -- bad enforceModeString parm, will enforce policies by default");
+			throw new NotAuthorizedException(log("invalid enforceMode from config"));
 		}
 
 		AttributeFinder attrFinder = new AttributeFinder();
@@ -321,9 +321,11 @@ System.err.println("***debugging CombinedPolicyModule");
 			log("permitting request because enforceMode==ENFORCE_MODE_PERMIT_ALL_REQUESTS");
 		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
 			log("denying request because enforceMode==ENFORCE_MODE_DENY_ALL_REQUESTS");
-			throw new NotAuthorizedException("all requests are currently denied");				
+			throw new NotAuthorizedException("all requests are currently denied");	
+		} else if (! ENFORCE_MODE_ENFORCE_POLICIES.equals(enforceMode)) {
+			log("denying request because enforceMode is invalid");
+			throw new NotAuthorizedException("invalid enforceMode from config");	
 		} else {
-			log("enforcing policies by default");
 			ResponseCtx response = null;
 			String contextIndex = null;
 			try {
@@ -422,13 +424,16 @@ System.err.println("***debugging CombinedPolicyModule");
 		return (nPermits >= 1) && (nDenies == 0) && (nIndeterminates == 0) && (nWrongs == 0); // don't care about NotApplicables
 	}
 
-	private final void log(String msg) {
+	private final String log(String msg) {
 		if (servletContext != null) {
 			servletContext.log(msg);
 		} else {
 			System.err.println(msg);			
 		}
+		return msg;
 	}
+	
+	
 
 	
 }
