@@ -431,12 +431,12 @@ public class MethodPropertiesDialog extends JDialog
         helptxt.setLineWrap(true);
         helptxt.setWrapStyleWord(true);
         helptxt.setBounds(0,0,550,20);
-        helptxt.append("The HTTP method binding URL must represent the exact"
+        helptxt.append("The HTTP method binding must represent an appropriate"
           + " URL syntax necessary to run the method on the target service. "
           + " Fedora uses the URL replacement syntax defined in the WSDL 1.1"
           + " specification (see http://www.w3.org/TR/wsdl) to encode "
-          + " placeholders in the URL for parameter values.\n\n");
-        helptxt.append("A placeholder is"
+          + " placeholders in the URL for parameter values.");
+        helptxt.append("  A placeholder is"
           + " created by putting the Fedora-specific parameter name"
           + " (defined in table below) inside parentheses, and inserting this"
           + " within the URL at the spot where a parameter value should be. "
@@ -446,13 +446,22 @@ public class MethodPropertiesDialog extends JDialog
           + " a method at runtime, Fedora determined which datastream in an"
           + " object is tagged with the Fedora-specific parameter name,"
           + " and will insert a value (i.e., the Fedora callback URL for the"
-          + " datastream) into the parameter value.\n\n");
-        helptxt.append("Use the following syntax to encode your parameters"
-          + " within the method binding URL:\n\n");
-        helptxt.append("http://myserver.com/myservice/mymethod?myparm1=(parmname1)&myparm2=(parmname2)\n\n");
+          + " datastream) into the parameter value.\n\n"
+          + " There are three different cases that can occur in:\n\n");
+        helptxt.append("CASE 1: Service with a common base URL (typical)\n\n"
+          + " The base URL will have been entered in the Service Methods Tab.\n"
+          + " Use the following syntax to encode your parameters"
+          + " within a relative URL for the method binding:\n\n");
+        helptxt.append("/mymethod?myparm1=(parmname1)&myparm2=(parmname2)\n");
+        helptxt.append("For example:\n");
+        helptxt.append("/resize_image?image=(IMGDATASTREAM)&size=(USERSIZE)\n\n");
+        helptxt.append("CASE 2: Multi-Server Service (fully qualified URL for each method)\n"
+          + " Use the following syntax to encode your parameters"
+          + " within a fully qualified URL for the method binding:\n\n");
+        helptxt.append("http://myserver.com/myservice/mymethod?myparm1=(parmname1)&myparm2=(parmname2)\n");
         helptxt.append("For example:\n");
         helptxt.append("http://localhost:8080/imgsizer/resize_image?image=(IMGDATASTREAM)&size=(USERSIZE)\n\n");
-        helptxt.append("SPECIAL CASE:\n");
+        helptxt.append("CASE 3: Fedora LOCAL HTTP Resolver\n");
         helptxt.append("When the option to use Fedora LOCAL HTTP Resolver"
           + " is selected, you do not need to enter a URL.  This option"
           + " means that there is no independent service being called to"
@@ -463,9 +472,9 @@ public class MethodPropertiesDialog extends JDialog
           + " in the method parameters table.\n\n");
         helptxt.append("Use the following syntax to encode your parameter"
           + " within the method binding URL box:\n\n");
-        helptxt.append("(parmname1)\n\n");
+        helptxt.append("(parmname1)\n");
         helptxt.append("For example:\n");
-        helptxt.append("(HIGHRESIMAGE)\n\n");
+        helptxt.append("(HIGHRESIMAGE)\n");
 
         JOptionPane.showMessageDialog(
           this, helptxt, "Help for Method Binding URL",
