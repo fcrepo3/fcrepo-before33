@@ -20,6 +20,8 @@
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
 		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
+		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
+		<chmod dir="dist/server/bin" perm="u+x" includes="**/*"/>
 	</target>
 	<target name="client" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
 		<mkdir dir="dist"/>
@@ -497,6 +499,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.79  2003/02/24 18:48:20  rlw
+  added fix to set file permissions for scripts in dist/server/bin to executable in unix environments.
+
   Revision 1.78  2003/02/24 02:43:32  cwilper
   added a couple packages to javadoc target
 
