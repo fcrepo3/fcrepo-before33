@@ -18,18 +18,43 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.types.DigitalObject;
 
+/**
+ *
+ * <p><b>Title:</b> DOTranslatorModule.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class DOTranslatorModule
         extends Module
         implements DOTranslator {
-        
+
     private DOTranslatorImpl m_wrappedTranslator;
 
-    public DOTranslatorModule(Map params, Server server, String role) 
+    public DOTranslatorModule(Map params, Server server, String role)
             throws ModuleInitializationException {
         super(params, server, role);
     }
-    
-    public void initModule() 
+
+    public void initModule()
             throws ModuleInitializationException {
         HashMap serMap=new HashMap();
         HashMap deserMap=new HashMap();
@@ -44,9 +69,9 @@ public class DOTranslatorModule
                     serMap.put(serName, ser);
                 } catch (Exception e) {
                     throw new ModuleInitializationException(
-                            "Can't instantiate serializer class for format=" 
-                            + serName + " : " + 
-                            e.getClass().getName() + ": " + e.getMessage(), 
+                            "Can't instantiate serializer class for format="
+                            + serName + " : " +
+                            e.getClass().getName() + ": " + e.getMessage(),
                             getRole());
                 }
             } else if (paramName.startsWith("deserializer_")) {
@@ -57,26 +82,26 @@ public class DOTranslatorModule
                     deserMap.put(deserName, deser);
                 } catch (Exception e) {
                     throw new ModuleInitializationException(
-                            "Can't instantiate deserializer class for format=" 
-                            + deserName + " : " + 
-                            e.getClass().getName() + ": " + e.getMessage(), 
+                            "Can't instantiate deserializer class for format="
+                            + deserName + " : " +
+                            e.getClass().getName() + ": " + e.getMessage(),
                             getRole());
                 }
             }
         }
         m_wrappedTranslator=new DOTranslatorImpl(serMap, deserMap, this);
     }
-    
-    public void deserialize(InputStream in, DigitalObject out, 
+
+    public void deserialize(InputStream in, DigitalObject out,
             String format, String encoding)
-            throws ObjectIntegrityException, StreamIOException, 
+            throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         m_wrappedTranslator.deserialize(in, out, format, encoding);
     }
-    
-    public void serialize(DigitalObject in, OutputStream out, 
+
+    public void serialize(DigitalObject in, OutputStream out,
             String format, String encoding)
-            throws ObjectIntegrityException, StreamIOException, 
+            throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         m_wrappedTranslator.serialize(in, out, format, encoding);
     }

@@ -1,21 +1,5 @@
 package fedora.server.storage.service;
 
-/**
- * <p>Title: WSDLParser.java</p>
- * <p>Description: Parses WSDL document into a Service object.  The Service object
- * encapsulates all information about the service:  the service name, the
- * PortType (with abstract operation definitions), and one or more Ports
- * (with operation binding information).  This parser will not yet handle
- * every pattern we may encounter in WSDL, therefore, it throws
- * exceptions for WSDL elements that it does not yet support.  The
- * goal is to evolve the WSDLParser to be able to handle any kind of WSDL,
- * and to have Fedora be able to play nicely with any kind of WSDL. </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Sandy Payette  payette@cs.cornell.edu
- * @version 1.0
- */
-
 import fedora.server.errors.*;
 import java.io.InputStream;
 import java.util.Vector;
@@ -27,6 +11,38 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ *
+ * <p><b>Title:</b> WSDLParser.java</p>
+ * <p><b>Description:</b> Parses WSDL document into a Service object.  The
+ * Service object encapsulates all information about the service:  the service
+ * name, the PortType (with abstract operation definitions), and one or more
+ * Ports (with operation binding information).  This parser will not yet handle
+ * every pattern we may encounter in WSDL, therefore, it throws
+ * exceptions for WSDL elements that it does not yet support.  The
+ * goal is to evolve the WSDLParser to be able to handle any kind of WSDL,
+ * and to have Fedora be able to play nicely with any kind of WSDL.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author payette@cs.cornell.edu
+ * @version 1.0
+ */
 class WSDLParser extends DefaultHandler
 {
 

@@ -1,20 +1,5 @@
 package fedora.server.storage.service;
 
-/**
- * <p>Title: MmapParser.java</p>
- * <p>Description: A class for parsing the special XML format in Fedora
- * for a Method Map. A DSInputSpec exists within a Behavior Mechanism
- * Object (bmech) and a Behavior Definition Object (bdef).  The Method Map
- * defines abstract methods definitions.  In a bdef these are the "behavior
- * contract."  In a bmech, these are abstract definitions that are then
- * implemented by the service represented by the bmech.</p>
- *
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Sandy Payette
- * @version 1.
- **/
-
 import fedora.server.errors.*;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
@@ -28,6 +13,36 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ *
+ * <p><b>Title:</b> MmapParser.java</p>
+ * <p><b>Description:</b> A class for parsing the special XML format in Fedora
+ * for a Method Map. A DSInputSpec exists within a Behavior Mechanism
+ * Object (bmech) and a Behavior Definition Object (bdef).  The Method Map
+ * defines abstract methods definitions.  In a bdef these are the "behavior
+ * contract."  In a bmech, these are abstract definitions that are then
+ * implemented by the service represented by the bmech.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author payette@cs.cornell.edu
+ * @version 1.0
+ */
 class MmapParser extends DefaultHandler
 {
 
