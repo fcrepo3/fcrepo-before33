@@ -24,15 +24,51 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * The 
+ * The starting point for working with a Fedora repository. This class 
+ * provides access to an appropriate <code>DOManager</code> for working with 
+ * digital objects, handles loading, starting, and stopping modules (the module 
+ * lifecycle), and provides access to core constants.
+ * <p></p>
+ * The <code>Server</code> class itself is abstract - it may not be 
+ * instantiated.  Instead, it provides an instance of the <code>Server</code>
+ * subclass specified in the configuration file. 
+ * (see <code>CONFIG_DIR</code> and <code>CONFIG_FILE</code>)
+ * <p></p>
+ * <h3>Example Use</h3>
+ * <p></p>
+ * The following program illustrates use of the <code>Server</code> class.
+ * <pre>
+ * import fedora.server.Server;
+ * import fedora.server.storage.DOManager;
+ * import fedora.server.storage.DOReader;
  *
+ * /**
+ *  * Prints the label of the objects whose PIDs are passed at the command line.
+ *  *&#47;
+ * public class PrintLabel {
+ *
+ *     public static void main(String[] args) {
+ *         try {
+ *             Server s=Server.getInstance(System.getProperty(
+ *                     Server.HOME_PROPERTY));
+ *             DOManager m=s.getManager("fast");
+ *             for (int i=0; i&lt;args.length; i++) 
+ *                 System.out.println(m.getReader(args[i]).getObjectLabel());
+ *             s.shutdown();
+ *         } catch (Exception e) {
+ *             System.out.println("Error: " + e.getMessage());
+ *         }
+ *     }
+ * }
+ * </pre>
+ * <p></p>
  * <h3>Core Constants</h3>
  * <p></p>
  * All constants for the core Fedora classes are set within the 
- * fedora/server/resources/Server.properties file*, and are available as static 
- * fields of this class.  Non-core and extension classes may use an entirely
- * different scheme for their own constants, and must at least use a different
- * file.
+ * <code>fedora/server/resources/Server.properties</code> file*, and are 
+ * available as static fields of this class.  Non-core and extension classes 
+ * may use an entirely different scheme for their own constants, and must at 
+ * least use a different file.
  * <p></p>
  * There are two types of core constants:
  * <ul>
@@ -45,7 +81,7 @@ import org.w3c.dom.NodeList;
  *        These constants' values will likely be different across locales.
  *        Locale-specific values are automatically made available to the server
  *        when an appropriate file of the form:
- *        fedora/server/resources/Server.properties_language[_country[_variant]]
+ *        <code>fedora/server/resources/Server.properties_language[_country[_variant]]</code>
  *        exists and the appropriate "locale.language", and (optionally) 
  *        "locale.country", and (optionally) "locale.variant" property values 
  *        are set.
@@ -54,69 +90,55 @@ import org.w3c.dom.NodeList;
  * <p></p>
  * * Or a locale-specific version thereof.  Note that only localizable constants
  *   (messages) may change across locales.
- 
-#
-# - Non-localizable
-#   Properties whose values 1) must be consistent across locales,
-#   and 2) may be referred to directly in all documentation.
-#
-# - Localizable
-#   Properties whose values 1) will likely differ across locales,
-#   and 2) may be referred to directly in locale-specific documentation.
-#
-# * NOTE *
-#
-# These property values are not intended to be modified by fedora server
-# administrators.  Non-localizable property names and values, and localizable
-# property *names* are to only be modified by fedora developers as they are 
-# tightly coupled with source code and documentation.  Localizable property 
-# *values* may be modified by translators or locale-knowledgeable developers.
-# 
-#
-# LOCALIZABLE (Messages)
-#
-# Messages are named using the following convention:
-#
-# execpoint.messagetype.mnemonic
-#
-# where execpoint is composed of phase[subphase.[subphase.(...)]]
-#
-# Phase is a mnemonic intended to show (in very general terms) 
-# at which point in the server's execution the condition described
-# by the message occurs. Subphase is a sub-categorization of a phase.  
-# For example, init.config and init.server are subphases of the init phase.
-#
-# Phase/Subphase       Description
-# --------------       -----------
-# init                 Server initialization
-# init.xmlparser       XML parser initialization
-# init.config          Reading and validating configuration file
-# init.server          Initializing the server implementation
-# init.module          Initializing a module
-# storage              In the storage subsystem
-# api                  Server front-end
-# shutdown.server      Shutting down the server
-# shutdown.module      Shutting down a module
-#
-# MessageType          Description
-# -----------          -----------
-#
-# fatal                Severe errors that cause the server to terminate 
-#                      prematurely.
-# error                Runtime errors or unexpected conditions that cannot
-#                      be recovered from on a per-incident basis, but don't
-#                      cause server shutdown.
-# warn                 Use of deprecated APIs or runtime conditions that are
-#                      undesirable but not by themselves unrecoverable.
-# info                 Interesting runtime events such as server or module 
-#                      startup, shutdown, and periodic server status messages.
-# debug                detailed information on flow through the system. 
-# trace                more detailed information.
-#
+ * <p></p> 
+ * Messages are named using the following convention:
+ * <p></p> 
+ * <code>execpoint.messagetype.mnemonic</code>
+ * <p></p> 
+ * where <code>execpoint</code> is composed of 
+ * <code>phase[subphase.[subphase.(...)]]</code>
+ * <p></p> 
+ * Phase is a mnemonic intended to show (in very general terms) 
+ * at which point in the server's execution the condition described
+ * by the message occurs. Subphase is a sub-categorization of a phase.  
+ * For example, <code>init.config</code> and <code>init.server</code> are 
+ * subphases of the init phase.
+ * <p></p> 
+ * <pre>
+ * Phase/Subphase       Description
+ * --------------       -----------
+ * init                 Server initialization
+ * init.xmlparser       XML parser initialization
+ * init.config          Reading and validating configuration file
+ * init.server          Initializing the server implementation
+ * init.module          Initializing a module
+ * storage              In the storage subsystem
+ * api                  Server front-end
+ * shutdown.server      Shutting down the server
+ * shutdown.module      Shutting down a module
+ * </pre>
+ * There are five possible message types, described below.
+ * <pre>
+ * MessageType          Description
+ * -----------          -----------
+ * fatal                Severe errors that cause the server to terminate 
+ *                      prematurely.
+ * error                Runtime errors or unexpected conditions that cannot
+ *                      be recovered from on a per-incident basis, but don't
+ *                      cause server shutdown.
+ * warn                 Use of deprecated APIs or runtime conditions that are
+ *                      undesirable but not by themselves unrecoverable.
+ * info                 Interesting runtime events such as server or module 
+ *                      startup, shutdown, and periodic server status messages.
+ * debug                detailed information on flow through the system. 
+ * trace                more detailed information.
+ * </pre>
+ *
+ * @author cwilper@cs.cornell.edu
  */
 public abstract class Server 
         extends ParameterizedComponent {
-
+ 
     /** 
      * The ResourceBundle that provides access to constants from
      * fedora/server/resources/Server.properties.
@@ -247,7 +269,8 @@ public abstract class Server
             s_const.getString("init.server.fatal.isabstract");
 
     /**
-     * Holds an instance for each server config file used in getInstance(...)
+     * Holds an instance of a <code>Server</code> for each distinct 
+     * <code>File</code> given as a parameter to <code>getInstance(...)</code>
      */
     private static HashMap s_instances=new HashMap();
     
@@ -262,19 +285,22 @@ public abstract class Server
     private HashMap m_loadedModules;
 
     /**
+     * Initializes the Server based on configuration.
+     * <p></p>
      * Reads and schema-validates the configuration items in the given
-     * DOM NodeList, validates required server params, initializes the 
-     * server, then initializes each module, validating its
-     * required params, then verifies that the server's required module
-     * roles have been met.
+     * DOM <code>NodeList</code>, validates required server params, 
+     * initializes the <code>Server</code>, then initializes each module, 
+     * validating its required params, then verifies that the server's 
+     * required module roles have been met.
      *
-     * @param homeDir FEDORA_HOME, used to interpret relative paths
-     *                      used in configuration.
+     * @param homeDir The home directory of the server, used to interpret 
+     *                relative paths used in configuration.
      */
     protected Server(NodeList configNodes, File homeDir) 
             throws ServerInitializationException,
                    ModuleInitializationException {
         m_homeDir=homeDir;
+        // call 
         // do what this was gonna do: loadConfiguration(serverParams);
         initServer();
         // foreach module, load an instance with the given
@@ -284,15 +310,15 @@ public abstract class Server
     
     /**
      * Provides an instance of the server specified in the configuration
-     * file at homeDir/{config.dir}/{config.file}, or {default.server.class}
+     * file at homeDir/CONFIG_DIR/CONFIG_FILE, or DEFAULT_SERVER_CLASS
      * if unspecified.
      *
      * @param homeDir The base directory for the server.
-     * @returns Server The instance.
+     * @return The instance.
      * @throws ServerInitializationException If there was an error starting
      *         the server.
      * @throws ModuleInitializationException If there was an error starting
-     *         a specified module.
+     *         a module.
      */
     public final static Server getInstance(File homeDir)
             throws ServerInitializationException,
@@ -403,38 +429,37 @@ public abstract class Server
     }
 
     /**
-     * Get the server's home directory.
+     * Gets the server's home directory.
      *
-     * @returns File The directory.
+     * @return The directory.
      */
     public final File getHomeDir() {
         return m_homeDir;
     }
     
     /**
-     * Gets the names of the roles that are required to be fulfilled by
-     * modules specified in this server's configuration file.
+     * Gets the names of the roles that are required by this <code>Server</code>.
      *
-     * @returns String[] The roles.
+     * @return The roles.
      */
     public String[] getRequiredModuleRoles() {
         return new String[] {DOMANAGER_CLASS};
     }
 
     /**
-     * Gets a loaded module.
+     * Gets a loaded <code>Module</code>.
      *
-     * @param role The role of the module to get.
-     * @returns Module The module, null if not found.
+     * @param role The role of the <code>Module</code> to get.
+     * @return The <code>Module</code>, <code>null</code> if not found.
      */
     public final Module getModule(String role) {
         return (Module) m_loadedModules.get(role);
     }
     
     /**
-     * Gets an iterator over the roles that have been loaded.
+     * Gets an <code>Iterator</code> over the roles that have been loaded.
      *
-     * @returns Iterator (Strings) The roles.
+     * @return (<code>String</code>s) The roles.
      */
     public final Iterator loadedModuleRoles() {
         return m_loadedModules.keySet().iterator();
@@ -442,18 +467,63 @@ public abstract class Server
     
     /**
      * Performs any server start-up tasks particular to this type of Server.
-     *
-     * @throws ServerInitializationException If a fatal startup-related error
-     *         occurred.
+     * <p></p>
+     * The default implementation does nothing.
+     * 
+     * @throws ServerInitializationException If a fatal server startup-related 
+     *         error occurred.
      */
     protected void initServer()
             throws ServerInitializationException {
         if (1==2)
             throw new ServerInitializationException(null);
     }
+
+    /**
+     * Gets the <code>DOManager</code> instance appropriate for this 
+     * <code>Server</code> instance, given the the interface (client program) 
+     * profile.
+     * <p></p>
+     * <h3>About The Interface Profile</h3>
+     * <p></p>
+     * The <code>Server</code> subclass implementing this method is responsible
+     * for defining the syntax and meaning of the interfaceProfile.
+     * Generally, an interface profile identifies aspect(s) of the client 
+     * program so that the <code>Server</code> can decide which DOManager 
+     * instance is appropriate to return.
+     * <p></p>
+     * The interface profile concept is intentionally generic so that this
+     * method may be overridden to encapsulate virtually any 
+     * <code>DOManager</code> selection logic.
+     *
+     * @param profile The interface profile. (see above discussion)
+     */
+    public abstract DOManager getManager(String interfaceProfile);
     
-    public abstract DOManager getManager(String name);
-    
+    /**
+     * Performs shutdown tasks for the modules and the server.
+     * <p></p>
+     * All loaded modules' shutdownModule() methods are called, then
+     * shutdownServer is called.
+     * <p></p>
+     * <h3>How to Ensure Clean Server Shutdown</h3>
+     * <p></p>
+     * After having used a <code>Server</code> instance,
+     * if you know your program is the only client of the <code>Server</code>
+     * in the VM instance, you should make an explicit call to this method
+     * so that you can catch and handle it's exceptions properly.
+     * If you are usure or know that there may be at least one other client
+     * of the <code>Server</code> in the VM instance, you should call
+     * <code>System.runFinalization()</code> after ensuring you no longer
+     * have a reference.  In this case, if there is no other reference
+     * to the object in the VM, finalization will be called (but you will
+     * be unable to catch <code>ShutdownException</code> variants, if thrown).
+     *
+     * @throws ServerShutdownException If a fatal server shutdown-related error
+     *         occurred.
+     * @throws ModuleShutdownException If a fatal module shutdown-related error
+     *         occurred.
+     */
     public final void shutdown()
             throws ServerShutdownException, ModuleShutdownException {
         Iterator roleIterator=loadedModuleRoles();
@@ -463,18 +533,45 @@ public abstract class Server
         }
         shutdownServer();
     }
-    
-    public void shutdownServer()
+
+    /**
+     * Performs shutdown tasks for the server itself.
+     * <p></p>
+     * The default implementation does nothing - it should be overridden
+     * in <code>Server</code> implementations that tie up system resources.
+     * <p></p>
+     * This should be written so that system resources are always freed,
+     * regardless of whether there is an error.  If an error occurs,
+     * it should be thrown as a <code>ServerShutdownException</code> after 
+     * attempts to free every resource have been made.
+     *
+     * @throws ServerShutdownException If a fatal server shutdown-related error
+     *         occurred.
+     */
+    protected void shutdownServer()
             throws ServerShutdownException {
         if (1==2)
             throw new ServerShutdownException(null);
     }
-    
+
+    /**
+     * Calls <code>shutdown()</code> when finalization occurs.
+     *
+     * @throws ServerShutdownException If a fatal server shutdown-related error
+     *         occurred.
+     * @throws ModuleShutdownException If a fatal module shutdown-related error
+     *         occurred.
+     */
     public final void finalize() 
             throws ServerShutdownException, ModuleShutdownException {
         shutdown();
     }
-    
+
+    /**
+     * Tests this class.
+     * 
+     * @param Command-line arguments.
+     */
     public static void main(String[] args) {
         // use the env var FEDORA_HOME
         // java -Dfedora.home=$FEDORA_HOME
