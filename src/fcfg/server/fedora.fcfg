@@ -93,8 +93,7 @@
 		<comment>The pid generator.</comment>
 		<param name="pidgen_log_dir" value="pidgen"/>
 	</module>
-	<module role="fedora.server.storage.replication.DOReplicator" 
-            class="fedora.server.storage.replication.DefaultDOReplicator">
+	<module role="fedora.server.storage.replication.DOReplicator" class="fedora.server.storage.replication.DefaultDOReplicator">
 		<comment>Supports synching data from definitive storage with 
         dissemination db.</comment>
 	</module>
@@ -128,6 +127,9 @@
 		<param name="schematronSchema" value="\schematron\fedoraRules.xml"/>
 		<param name="schematronValidatingXsl" value="\schematron\fedoraValidator.xslt"/>
 	</module>
+	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
+		<comment>This module facilitates obtaining external content via HTTP</comment>
+	</module>	
 	<datastore id="remoteMySQLPool">
 		<comment>MySQL database on UVA test host (known to work)</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
