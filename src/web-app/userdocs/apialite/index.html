@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>Fedora API-A-Lite Inteface</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body bgcolor="#DADADA" text="#000000">
+<h3><b>Welcome to the Fedora API-A-Lite Interface Client</b></h3>
+<p>The Fedora API-A-Lite interface is implemented as an HTTP service that consists 
+  of the following methods: </p>
+<ul>
+  <li>GetDissemination - gets thespecified dissemination request </li>
+  <li>Get ObjectProfile - gets the Object Profile of the specified object</li>
+</ul>
+
+<p>For more information on the method definitions, refer to the API descriptions 
+  located at <a href="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</a> 
+  . </p>
+<p><b>Client Syntax</b> </p>
+<ol>
+  <li>GetDissemination syntax: <br>
+    <br>
+    <b>http://<font color="#33802F">hostname</font>:<font color="#33802F">port</font>/<font color="#33802F">fedora</font>/<font color="#33802F">get</font>/<font color="#33802F">PID</font>/<font color="#33802F">bDefPID</font>/<font color="#33802F">methodName</font>[/<font color="#FF0000">dateTime</font>][?<font color="#FF0000">parmArray</font>] 
+    </b><br>
+    <br>
+    This syntax requests a dissemination of the specified object using the specified 
+    method of the associated behavior definition object. The result is returned 
+    as a MIME-typed stream. </li>
+</ol>
+<ul>
+  <ul>
+    <li><font color="#33802F"><b>hostname</b></font> - required hostname of the 
+      Fedora server. </li>
+    <li><font color="#33802F"><b>port</b></font> - required port number on which 
+      the Fedora server is running. fedora - required name of the Fedora access 
+      service. </li>
+    <li><font color="#33802F"><b>get</b></font> - required verb of the Fedora 
+      service. PID - required persistent idenitifer of the digital object. </li>
+    <li><font color="#33802F"><b>bDefPID</b></font> - required persistent identifier 
+      of the behavior definition object to which the digital object subscribes. 
+    </li>
+    <li><font color="#33802F"><b>methodName</b></font> - required name of the 
+      method to be executed. dateTime - optional </li>
+    <li><font color="#33802F"><b><font color="#FF0000">dateTime</font></b></font> 
+      value indicating dissemination of a version of the digital object at the 
+      specified point in time. (NOT implemented in release 1.0.) </li>
+    <li><b><font color="#FF0000">parmArray</font></b> - optional array of method 
+      parameters consisting of name/value pairs in the form parm1=value1&amp;parm2=value2... 
+    </li>
+  </ul>
+</ul>
+<ol>
+  <li value="2">GetObjectProfile syntax: <br>
+    <br>
+    <b>http://<font color="#33802F">hostname</font>:<font color="#33802F">port</font>/<font color="#33802F">fedora</font>/<font color="#33802F">get</font>/<font color="#33802F">PID</font>[/<font color="#FF0000">dateTime</font>][?<font color="#FF0000">xml</font>=BOOLEAN]</b> 
+    <br>
+    <br>
+    This syntax requests an object profile for the specified digital object. The 
+    xml parameter determines the type of output returned. If the parameter is 
+    omitted or has a value of &quot;no&quot;, a MIME-typed stream consisting of 
+    an html table is returned providing a browser-savvy means of viewing the object 
+    profile. If the value specified is &quot;yes&quot;, then a MIME-typed stream 
+    consisting of XML is returned. </li>
+</ol>
+<ul>
+  <ul>
+    <li><font color="#33802F"><b>hostname</b></font> - a required parameter specifying 
+      the hostname of the Fedora server. </li>
+    <li><font color="#33802F"><b>port</b></font> - a required parameter specifying 
+      the port number on which the Fedora server is running. </li>
+    <li><font color="#33802F"><b>fedora</b></font> - a required parameter specifying 
+      the Fedora servlet path</li>
+    <li><font color="#33802F"><b>get</b></font> - a required parameter specifying 
+      the Fedora servlet path</li>
+    <li><b><font color="#33802F">PID</font></b> - a required parameter specifying 
+      the persistent identifier of the digital object. </li>
+    <li><font color="#33802F"><b><font color="#FF0000">dateTime</font></b></font> 
+      - an optional dateTime parameter indicating dissemination of a version of 
+      the digital object at the specified point in time. (NOT implemented in release 
+      1.0.) </li>
+    <li><b><font color="#FF0000">xml</font></b> - an optional parameter indicating 
+      the requested output format. A value of &quot;yes&quot; indicates a return 
+      type of text/xml; the absence of the xml parameter or a value of &quot;no&quot; 
+      indicates format is to be text/html. </li>
+  </ul>
+</ul>
+
+<p><b>Examples</b> </p>
+<ul>
+  <li>Get the Dissemination for a data object with a PID of demo:5 and associated 
+    behavior definition object with a PID of demo:1and methodName of getThumbnail 
+    <br>
+    <a href="http://localhost:8080/fedora/get/demo:5/demo:1/getThumbnail">http://localhost:8080/fedora/get/demo:5/demo:1/getThumbnail</a> 
+  </li>
+  <li>Get the ObjectProfile for a data object with a PID of test:3 as HTML: <br>
+    <a href="http://localhost:8080//fedora/get/demo:5">http://localhost:8080/fedora/get/demo:5</a> 
+  </li>
+  <li>Get the ObjectProfile for a data object with a PID of test:3 as XML: <br>
+    <a href="http://localhost:8080//fedora/get/demo:5?xml=yes">http://localhost:8080/fedora/get/demo:5?xml=yes</a>
+  </li>
+</ul>
+<p>&nbsp; </p>
+</body>
+</html>
