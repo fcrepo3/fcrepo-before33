@@ -1,4 +1,8 @@
-.cvsignore
+doc
+classes
+bak
 temp
 dist
-mellon.jpx
+*.jpx
+*.properties
+*.library
