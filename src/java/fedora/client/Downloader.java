@@ -1,5 +1,6 @@
 package fedora.client;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -139,6 +140,14 @@ public class Downloader {
             get=new GetMethod(url);
             get.setDoAuthentication(true);
             get.setFollowRedirects(true);
+            Dimension d=null;
+            if (Administrator.INSTANCE!=null) {
+                d=Administrator.PROGRESS.getSize();
+                // if they're using Administrator, tell them we're downloading...
+                Administrator.PROGRESS.setString("Dowloading " + url + " . . .");
+                Administrator.PROGRESS.setValue(100);
+                Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+            }
             int resultCode=client.executeMethod(get);
             if (resultCode!=200) {
                 System.err.println(get.getResponseBodyAsString());
@@ -146,11 +155,58 @@ public class Downloader {
                         + resultCode + " " + HttpStatus.getStatusText(resultCode));
             }
             ok=true;
+            if (Administrator.INSTANCE!=null) {
+                // cache it to a file
+                File tempFile=File.createTempFile("fedora-client-download-", null);
+                tempFile.deleteOnExit();
+                HashMap PARMS=new HashMap();
+                PARMS.put("in", get.getResponseBodyAsStream());
+                PARMS.put("out", new FileOutputStream(tempFile));
+                // do the actual download in a safe thread
+                SwingWorker worker=new SwingWorker(PARMS) {
+                    public Object construct() {
+                        try {
+                            StreamUtility.pipeStream(
+                                    (InputStream) parms.get("in"), 
+                                    (OutputStream) parms.get("out"), 
+                                    8192);
+                        } catch (Exception e) {
+                            thrownException=e;
+                        }
+                        return "";
+                    }
+                };
+                worker.start();
+                // The following code will run in the (safe) 
+                // Swing event dispatcher thread.
+                int ms=200;
+                while (!worker.done) {
+                    try {
+                        Administrator.PROGRESS.setValue(ms);
+                        Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+                        Thread.sleep(100);
+                        ms=ms+100;
+                        if (ms>=2000) ms=200;
+                    } catch (InterruptedException ie) { }
+                }
+                if (worker.thrownException!=null)
+                    throw worker.thrownException;
+                Administrator.PROGRESS.setValue(2000);
+                Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ie) { }
+                return new FileInputStream(tempFile);
+            }
             return get.getResponseBodyAsStream();
         } catch (Exception e) {
             throw new IOException(e.getMessage());
         } finally {
             if (get!=null && !ok) get.releaseConnection();
+            if (Administrator.INSTANCE!=null) {
+                Administrator.PROGRESS.setValue(0);
+                Administrator.PROGRESS.setString("");
+            }
         }
 
     }

@@ -44,6 +44,7 @@ import fedora.swing.jtable.JSortTable;
 import fedora.client.Administrator;
 import fedora.client.actions.ExportObject;
 import fedora.client.actions.PurgeObject;
+import fedora.client.actions.ViewObject;
 import fedora.client.actions.ViewObjectXML;
 import fedora.client.console.Console;
 import fedora.client.console.ConsoleSendButtonListener;
@@ -253,6 +254,17 @@ public class ResultFrame
             extends BasicTableUI {
         protected MouseInputListener createMouseInputListener() {
             return new BasicTableUI.MouseInputHandler() {
+
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount()==2) {
+                        int rowNum=m_table.rowAtPoint(new Point(e.getX(), e.getY()));
+                        if (rowNum>=0) {
+                            // launch object viewer to view object
+                            new ViewObject(m_rowPids[rowNum]).launch();
+                        }
+                    }
+                }
+
                 public void mousePressed(MouseEvent e) {
                     if (SwingUtilities.isRightMouseButton(e) ) {
                         int rowNum=m_table.rowAtPoint(new Point(e.getX(), e.getY()));
@@ -301,6 +313,9 @@ public class ResultFrame
         public SingleSelectionPopup(String pid) {
             super();
             m_pid=pid;
+            JMenuItem i0=new JMenuItem(new ViewObject(pid));
+            i0.setMnemonic(KeyEvent.VK_O);
+            i0.setToolTipText("Launches a viewer for the selected object.");
             JMenuItem i1=new JMenuItem(new ViewObjectXML(pid));
             i1.setMnemonic(KeyEvent.VK_V);
             i1.setToolTipText("Launches an XML viewer for the selected object.");
@@ -310,6 +325,7 @@ public class ResultFrame
             JMenuItem i3=new JMenuItem(new PurgeObject(pid));
             i3.setMnemonic(KeyEvent.VK_P);
             i3.setToolTipText("Removes the selected object from the repository.");
+            add(i0);
             add(i1);
             add(i2);
             add(i3);
@@ -324,6 +340,9 @@ public class ResultFrame
         public MultiSelectionPopup(Set pids) {
             super();
             m_pids=pids;
+            JMenuItem i0=new JMenuItem(new ViewObject(pids));
+            i0.setMnemonic(KeyEvent.VK_O);
+            i0.setToolTipText("Launches a viewer for the selected objects.");
             JMenuItem i1=new JMenuItem(new ViewObjectXML(pids));
             i1.setMnemonic(KeyEvent.VK_V);
             i1.setToolTipText("Launches an XML viewer for the selected objects.");
@@ -333,6 +352,7 @@ public class ResultFrame
             JMenuItem i3=new JMenuItem(new PurgeObject(pids));
             i3.setMnemonic(KeyEvent.VK_P);
             i3.setToolTipText("Removes the selected objects from the repository.");
+            add(i0);
             add(i1);
             add(i2);
             add(i3);

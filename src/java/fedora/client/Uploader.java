@@ -1,10 +1,12 @@
 package fedora.client;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -68,6 +70,33 @@ public class Uploader {
     }
 
     /**
+     * Get a file's size, in bytes.  Return -1 if size can't be determined.
+     */
+    private long getFileSize(File f) {
+        long size=0;
+        InputStream in=null;
+        try {
+            in=new FileInputStream(f);
+            byte[] buf = new byte[8192];
+            int len;
+            while ( ( len = in.read( buf ) ) > 0 ) {
+                size+=len;
+            }
+        } catch (IOException e) {
+        } finally {
+            size=-1;
+            try {
+                if (in!=null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                System.err.println("WARNING: Could not close stream.");
+            }
+        }
+        return size;
+    }
+
+    /**
      * Send a file to the server, getting back the identifier.
      */
     public String upload(File in) throws IOException {
@@ -80,7 +109,62 @@ public class Uploader {
             post=new MultipartPostMethod(m_uploadURL);
             post.setDoAuthentication(true);
             post.addParameter("file", in);
-            int resultCode=client.executeMethod(post);
+            int resultCode=0;
+            if (Administrator.INSTANCE!=null) {
+                // do the work in a separate thread
+                // construct the message
+                long size=getFileSize(in); 
+                StringBuffer msg=new StringBuffer();
+                msg.append("Uploading ");
+                if (size!=-1) {
+                    msg.append(size);
+                    msg.append(" bytes ");
+                }
+                msg.append("to " + m_uploadURL);
+                // paint it to the progress bar
+                Dimension d=null;
+                d=Administrator.PROGRESS.getSize();
+                Administrator.PROGRESS.setString(msg.toString());
+                Administrator.PROGRESS.setValue(100);
+                Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+                // then start the thread, passing parms in
+                HashMap PARMS=new HashMap();
+                PARMS.put("client", client);
+                PARMS.put("post", post);
+                SwingWorker worker=new SwingWorker(PARMS) {
+                    public Object construct() {
+                        try {
+                            return new Integer(((HttpClient) parms.get("client")).executeMethod((MultipartPostMethod) parms.get("post")));
+                        } catch (Exception e) {
+                            thrownException=e;
+                            return "";
+                        }
+                    }
+                };
+                worker.start();
+                // The following code will run in the (safe) 
+                // Swing event dispatcher thread.
+                int ms=200;
+                while (!worker.done) {
+                    try {
+                        Administrator.PROGRESS.setValue(ms);
+                        Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+                        Thread.sleep(100);
+                        ms=ms+100;
+                        if (ms>=2000) ms=200;
+                    } catch (InterruptedException ie) { }
+                }
+                if (worker.thrownException!=null)
+                    throw worker.thrownException;
+                Administrator.PROGRESS.setValue(2000);
+                Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ie) { }
+                resultCode=((Integer) worker.getValue()).intValue();
+            } else {
+                resultCode=client.executeMethod(post);
+            }
             if (resultCode!=201) {
                 throw new IOException(HttpStatus.getStatusText(resultCode)
                         + ": " 

@@ -87,9 +87,10 @@ public class DatastreamPane
     /**
      * Build the pane.
      */
-    public DatastreamPane(String pid, Datastream mostRecent, DatastreamsPane owner)
+    public DatastreamPane(String pid, Datastream[] versions, DatastreamsPane owner)
             throws Exception {
 		m_pid=pid;
+        Datastream mostRecent=versions[0];
         m_mostRecent=mostRecent;
         m_owner=owner;
         new TextContentEditor();  // causes it to be registered if not already
@@ -149,9 +150,6 @@ public class DatastreamPane
 
                 // NORTH: m_versionSlider
 
-                Datastream[] versions=Administrator.APIM.getDatastreamHistory(
-                        pid, mostRecent.getID());
-     
                 // now that they're sorted, set up the shared button listener for purge
                 m_purgeButtonListener=new PurgeButtonListener(versions);
                 // do the slider if needed
@@ -288,6 +286,27 @@ public class DatastreamPane
         m_currentVersionPane.undoChanges();
     }
 
+    protected String getFedoraURL(Datastream ds, boolean withDate) {
+        StringBuffer buf=new StringBuffer();
+        buf.append("http://");
+        buf.append(Administrator.getHost());
+        if (Administrator.getPort()!=80) {
+            buf.append(':');
+            buf.append(Administrator.getPort());
+        }
+        buf.append("/fedora/get/");
+        buf.append(m_pid);
+        buf.append("/fedora-system:3/getItem");
+        if (withDate) {
+            buf.append('/');
+            SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+            buf.append(formatter.format(ds.getCreateDate().getTime()));
+        }
+        buf.append("?itemID=");
+        buf.append(ds.getID());
+        return buf.toString();
+    }
+
     public class CurrentVersionPane
             extends JPanel
             implements PotentiallyDirty {
@@ -347,19 +366,20 @@ public class DatastreamPane
 
             // do the field panel (NORTH)
             JLabel labelLabel=new JLabel("Label");
+            JLabel urlLabel=new JLabel("Fedora URL");
             JLabel[] labels;
             if (R || E) {
                 JLabel locationLabel=new JLabel("Reference");
                 if (m_versionSlider!=null) {
-                    labels=new JLabel[] {labelLabel, locationLabel};
+                    labels=new JLabel[] {labelLabel, locationLabel, urlLabel};
                 } else {
-                    labels=new JLabel[] {new JLabel("Created"), labelLabel, locationLabel};
+                    labels=new JLabel[] {new JLabel("Created"), labelLabel, locationLabel, urlLabel};
                 }
             } else {
                 if (m_versionSlider!=null) {
-                    labels=new JLabel[] {labelLabel};
+                    labels=new JLabel[] {labelLabel, urlLabel};
                 } else {
-                    labels=new JLabel[] {new JLabel("Created"), labelLabel};
+                    labels=new JLabel[] {new JLabel("Created"), labelLabel, urlLabel};
                 }
             }
             m_labelTextField=new JTextField(ds.getLabel());
@@ -372,25 +392,29 @@ public class DatastreamPane
                 m_labelTextField.setEnabled(false);
             }
 
+    
+            JTextField urlTextField=new JTextField(getFedoraURL(m_ds, false));
+            urlTextField.setEditable(false);  // so they can copy, but not modify
+
             JComponent[] values;
             if (R || E) {
                 m_locationTextField=new JTextField(m_ds.getLocation());
                 m_locationTextField.getDocument().addDocumentListener(
                     dataChangeListener);
                 if (m_versionSlider!=null) {
-                    values=new JComponent[] {m_labelTextField, m_locationTextField};
+                    values=new JComponent[] {m_labelTextField, m_locationTextField, urlTextField};
                 } else {
                     values=new JComponent[] {new JLabel(
                         s_formatter.format(m_ds.getCreateDate().getTime())), 
-                        m_labelTextField, m_locationTextField};
+                        m_labelTextField, m_locationTextField, urlTextField};
                 }
             } else {
                 if (m_versionSlider!=null) {
-                    values=new JComponent[] {m_labelTextField};
+                    values=new JComponent[] {m_labelTextField, urlTextField};
                 } else {
                     values=new JComponent[] {new JLabel(
                         s_formatter.format(m_ds.getCreateDate().getTime())), 
-                        m_labelTextField};
+                        m_labelTextField, urlTextField};
                 }
             }
 
@@ -737,17 +761,20 @@ public class DatastreamPane
             JTextField labelValue=new JTextField();
             labelValue.setText(ds.getLabel());
             labelValue.setEditable(false);
+            JLabel urlLabel=new JLabel("Fedora URL");
+            JTextField urlTextField=new JTextField(getFedoraURL(m_ds, true));
+            urlTextField.setEditable(false);  // so they can copy, but not modify
             JLabel[] labels;
             JComponent[] values;
             if (E || R) {
-                labels=new JLabel[] {labelLabel, new JLabel("Reference")};
+                labels=new JLabel[] {labelLabel, new JLabel("Reference"), urlLabel};
                 JTextField refValue=new JTextField();
                 refValue.setText(ds.getLocation());
                 refValue.setEditable(false);
-                values=new JComponent[] {labelValue, refValue};
+                values=new JComponent[] {labelValue, refValue, urlTextField};
             } else {
-                labels=new JLabel[] {labelLabel};
-                values=new JComponent[] {labelValue};
+                labels=new JLabel[] {labelLabel, urlLabel};
+                values=new JComponent[] {labelValue, urlTextField};
             }
 
             JPanel fieldPanel=new JPanel();

@@ -56,6 +56,10 @@ public class ViewObject
     }
 
     public void actionPerformed(ActionEvent ae) {
+        launch();
+    }
+    
+    public void launch() {
         boolean failed=false;
         if (m_prompt) {
             String pid=JOptionPane.showInputDialog("Enter the PID.");

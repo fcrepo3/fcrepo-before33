@@ -61,7 +61,12 @@ public class DatastreamsPane
                     getDatastreams(pid, null, null);
             m_datastreamPanes=new DatastreamPane[currentVersions.length];
             for (int i=0; i<currentVersions.length; i++) {
-                m_datastreamPanes[i]=new DatastreamPane(pid, currentVersions[i], this);
+                m_datastreamPanes[i]=new DatastreamPane(
+                        pid, 
+                        Administrator.APIM.getDatastreamHistory(
+                                pid,
+                                currentVersions[i].getID()),
+                        this);
                 m_tabbedPane.add(currentVersions[i].getID(), m_datastreamPanes[i]);
             }
 
@@ -78,8 +83,8 @@ public class DatastreamsPane
     protected void refresh(String dsID) {
         int i=m_tabbedPane.indexOfTab(dsID);
         try {
-            Datastream ds=Administrator.APIM.getDatastream(m_pid, dsID, null);
-            m_tabbedPane.setComponentAt(i, new DatastreamPane(m_pid, ds, this));
+            Datastream[] versions=Administrator.APIM.getDatastreamHistory(m_pid, dsID);
+            m_tabbedPane.setComponentAt(i, new DatastreamPane(m_pid, versions, this));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(Administrator.getDesktop(),
                     e.getMessage() + "\nTry re-opening the object viewer.", 
