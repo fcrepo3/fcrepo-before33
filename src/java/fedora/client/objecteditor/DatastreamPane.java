@@ -762,11 +762,11 @@ public class DatastreamPane
             }
             Administrator.APIM.modifyDatastreamByReference(m_pid, 
                                                            m_ds.getID(),
-                                                           new String[0], // DEFAULT_ALTIDS
+                                                           altIDs,
                                                            label, 
                                                            true, // DEFAULT_VERSIONABLE
                                                            mimeType,
-                                                           null, // DEFAULT_FORMATURI
+                                                           formatURI,
                                                            loc, 
                                                            state,
                                                            logMessage, 
@@ -775,11 +775,11 @@ public class DatastreamPane
 		    // external ref or redirect
             Administrator.APIM.modifyDatastreamByReference(m_pid, 
                                                            m_ds.getID(),
-                                                           new String[0], // DEFAULT_ALTIDS
+                                                           altIDs,
                                                            label, 
                                                            true, // DEFAULT_VERSIONABLE
                                                            mimeType,
-                                                           null, // DEFAULT_FORMATURI
+                                                           formatURI,
                                                            m_locationTextField.getText(), 
                                                            state,
                                                            logMessage, 
