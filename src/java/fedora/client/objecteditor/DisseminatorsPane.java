@@ -46,6 +46,7 @@ public class DisseminatorsPane
     private JTabbedPane m_tabbedPane;
     private ObjectEditorFrame m_owner;
     private DisseminatorPane[] m_disseminatorPanes;
+    private Map m_currentVersionMap;
 
     /**
      * Build the pane.
@@ -54,7 +55,7 @@ public class DisseminatorsPane
             throws Exception {
         m_pid=pid;
         m_owner=owner;
-
+        m_currentVersionMap=new HashMap();
         m_tabbedPane=new JTabbedPane(SwingConstants.LEFT);
         Disseminator[] currentVersions=Administrator.APIM.
                     getDisseminators(pid, null, null);
@@ -62,6 +63,7 @@ public class DisseminatorsPane
         for (int i=0; i<currentVersions.length; i++) {
             Disseminator[] versions=Administrator.APIM.getDisseminatorHistory(
                     pid, currentVersions[i].getID());
+            m_currentVersionMap.put(currentVersions[i].getBDefPID(), currentVersions[i]);
             m_disseminatorPanes[i]=new DisseminatorPane(owner, m_pid, versions, this);
             m_tabbedPane.add(currentVersions[i].getID(), m_disseminatorPanes[i]);
             m_tabbedPane.setToolTipTextAt(i, currentVersions[i].getBDefPID()
@@ -73,6 +75,11 @@ public class DisseminatorsPane
         setLayout(new BorderLayout());
         add(m_tabbedPane, BorderLayout.CENTER);
         doNew(false);
+    }
+
+    // unlike the datastream currentVersionMap, this one is keyed by bdefpid
+    public Map getCurrentVersionMap() {
+        return m_currentVersionMap;
     }
 
     public void setDirty(String id, boolean isDirty) {
@@ -90,6 +97,7 @@ public class DisseminatorsPane
         int i=getTabIndex(dissID);
         try {
             Disseminator[] versions=Administrator.APIM.getDisseminatorHistory(m_pid, dissID);
+            m_currentVersionMap.put(versions[0].getBDefPID(), versions[0]);
             DisseminatorPane replacement=new DisseminatorPane(m_owner, m_pid, versions, this);
             m_disseminatorPanes[i]=replacement;
             m_tabbedPane.setComponentAt(i, replacement);
@@ -131,6 +139,7 @@ public class DisseminatorsPane
             newArray[i]=m_disseminatorPanes[i];
         }
         Disseminator[] versions=Administrator.APIM.getDisseminatorHistory(m_pid, dissID);
+        m_currentVersionMap.put(versions[0].getBDefPID(), versions[0]);
         newArray[m_disseminatorPanes.length]=new DisseminatorPane(m_owner,
                         m_pid, versions, this);
         // swap the arrays
@@ -144,14 +153,20 @@ public class DisseminatorsPane
         colorTabForState(dissID, versions[0].getState());
         m_tabbedPane.setSelectedIndex(newIndex);
         doNew(false);
-
-// TODO: notify 
-
     }
 
     protected void remove(String dissID) {
         int i=getTabIndex(dissID);
         m_tabbedPane.remove(i);
+        String bDefPID=null;
+        Iterator iter=m_currentVersionMap.values().iterator();
+        while (iter.hasNext()) {
+            Disseminator diss=(Disseminator) iter.next();
+            if (diss.getID().equals(dissID)) {
+                bDefPID=diss.getBDefPID();
+            }
+        }
+        m_currentVersionMap.remove(bDefPID);
         // also remove it from the array
         DisseminatorPane[] newArray=new DisseminatorPane[m_disseminatorPanes.length-1];
         for (int x=0; x<m_disseminatorPanes.length; x++) {
@@ -252,21 +267,36 @@ public class DisseminatorsPane
                     new MechanismInputPanel(null, 
                                             this, 
                                             labelDims, 
-                                            m_owner.getInitialCurrentDatastreamVersions(),
+                                            m_owner.getCurrentDatastreamVersions(),
                                             m_owner,
                                             this);
-
-//
-// TODO: rework this so existing bDefs aren't options
-//
-            Map bDefLabels=Util.getBDefLabelMap();
+            //
+            // build dropdown of possible behaviors
+            //
+            boolean noDisseminators=(m_currentVersionMap.keySet().size()==0);
+            // get the full list of bDefs from the server
+            Map allBDefLabels=Util.getBDefLabelMap();
+            // then narrow it down to the unused ones
+            Map bDefLabels=new HashMap();
+            Iterator iter=allBDefLabels.keySet().iterator();
+            while (iter.hasNext()) {
+                String pid=(String) iter.next();
+                if (!m_currentVersionMap.containsKey(pid)) {
+                    bDefLabels.put(pid, (String) allBDefLabels.get(pid));
+                }
+            }
+            // set up the combobox 
             String[] bDefOptions=new String[bDefLabels.keySet().size() + 1];
             if (bDefOptions.length==1) {
-                bDefOptions[0]="No behavior definitions in repository!";
+                if (noDisseminators) {
+                    bDefOptions[0]="No behavior definitions in repository!";
+                } else {
+                    bDefOptions[0]="No additional behavior definitions in repository!";
+                }
             } else {
                 bDefOptions[0]="[Select a Behavior Definition]";
             }
-            Iterator iter=bDefLabels.keySet().iterator();
+            iter=bDefLabels.keySet().iterator();
             int i=1;
             while (iter.hasNext()) {
                 String pid=(String) iter.next();
@@ -274,8 +304,6 @@ public class DisseminatorsPane
                 bDefOptions[i++]=pid + " - " + label;
             }
             m_behaviorComboBox=new JComboBox(bDefOptions);
-//
-//
             m_behaviorComboBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     try {
@@ -327,7 +355,7 @@ public class DisseminatorsPane
             behaviorPane.add(bDefSelectionRow, BorderLayout.NORTH);
             behaviorPane.add(m_behaviorDescriptionPane, BorderLayout.SOUTH);
 
-            // finish layout stuff
+            // put the top layout stuff together
             JComponent[] right=new JComponent[] {m_stateComboBox,
                                                  m_labelTextField,
                                                  behaviorPane};
@@ -344,6 +372,9 @@ public class DisseminatorsPane
             topPane.add(entryPane, BorderLayout.NORTH);
             topPane.add(mechInputPanel, BorderLayout.CENTER);
 
+            //
+            // Save button
+            //
             m_saveButton=new JButton("Save Disseminator");
             setValid(false);
             Administrator.constrainHeight(m_saveButton);
@@ -362,10 +393,8 @@ public class DisseminatorsPane
                                 + bMechPID);
                         bindingMap.setState("A");  // unnecessary...
                         bindingMap.setDsBindings(mechInputPanel.getBindings());
-    
                         String state=((String) m_stateComboBox.
                                 getSelectedItem()).substring(0,1);
-    
                         String newID=
                                 Administrator.APIM.addDisseminator(m_pid,
                                                                    bDefPID,

@@ -135,8 +135,15 @@ public class ObjectEditorFrame
         show();
     }
 
-    public Datastream[] getInitialCurrentDatastreamVersions() {
-        return m_datastreamsPane.getInitialCurrentVersions();
+    public Datastream[] getCurrentDatastreamVersions() {
+        Collection vColl=m_datastreamsPane.getCurrentVersionMap().values();
+        Datastream[] versions=new Datastream[vColl.size()];
+        Iterator iter=vColl.iterator();
+        int i=0;
+        while (iter.hasNext()) {
+            versions[i++]=(Datastream) iter.next();
+        }
+        return versions;
     }
 
     public void addDatastreamListener(DatastreamListener dl) {

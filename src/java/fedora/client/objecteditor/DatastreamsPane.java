@@ -44,6 +44,7 @@ public class DatastreamsPane
     private ObjectEditorFrame m_owner;
     private ArrayList m_dsListeners;
     private Datastream[] m_currentVersions;
+    private Map m_currentVersionMap;
 
     public String[] ALL_KNOWN_MIMETYPES = new String[] {"text/xml", "text/xml",
             "text/plain", "text/html", "text/html+xml", "text/svg+xml",
@@ -60,6 +61,7 @@ public class DatastreamsPane
             throws Exception {
         m_pid=pid;
         m_owner=owner;
+        m_currentVersionMap=new HashMap();
         // this(m_tabbedPane)
         m_dsListeners=new ArrayList();
 
@@ -70,6 +72,7 @@ public class DatastreamsPane
                     getDatastreams(pid, null, null);
             m_datastreamPanes=new DatastreamPane[m_currentVersions.length];
             for (int i=0; i<m_currentVersions.length; i++) {
+                m_currentVersionMap.put(m_currentVersions[i].getID(), m_currentVersions[i]);
                 m_datastreamPanes[i]=new DatastreamPane(
                         owner,
                         pid, 
@@ -93,8 +96,8 @@ public class DatastreamsPane
         doNew(ALL_KNOWN_MIMETYPES, false);
     }
 
-    public Datastream[] getInitialCurrentVersions() {
-        return m_currentVersions;
+    public Map getCurrentVersionMap() {
+        return m_currentVersionMap;
     }
 
     public void colorTabForState(String id, String s) {
@@ -148,6 +151,7 @@ public class DatastreamsPane
         int i=getTabIndex(dsID);
         try {
             Datastream[] versions=Administrator.APIM.getDatastreamHistory(m_pid, dsID);
+            m_currentVersionMap.put(dsID, versions[0]);
             DatastreamPane replacement=new DatastreamPane(m_owner, m_pid, versions, this);
             m_datastreamPanes[i]=replacement;
             m_tabbedPane.setComponentAt(i, replacement);
@@ -199,6 +203,7 @@ public class DatastreamsPane
             newArray[i]=m_datastreamPanes[i];
         }
         Datastream[] versions=Administrator.APIM.getDatastreamHistory(m_pid, dsID);
+        m_currentVersionMap.put(dsID, versions[0]);
         newArray[m_datastreamPanes.length]=new DatastreamPane(m_owner,
                         m_pid, versions, this);
         // swap the arrays
@@ -218,6 +223,7 @@ public class DatastreamsPane
     protected void remove(String dsID) {
         int i=getTabIndex(dsID);
         m_tabbedPane.remove(i);
+        m_currentVersionMap.remove(dsID);
         // also remove it from the array
         DatastreamPane[] newArray=new DatastreamPane[m_datastreamPanes.length-1];
         for (int x=0; x<m_datastreamPanes.length; x++) {
