@@ -142,7 +142,10 @@ public class DescribeRepositoryServlet extends HttpServlet
             + th.getClass().getName()
             + " \". Reason: "  + th.getMessage()
             + "  Input Request was: \"" + request.getRequestURL().toString();
-        logger.logWarning(message);
+        //logger.logWarning(message);
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+        th.printStackTrace();
     }
   }
 
