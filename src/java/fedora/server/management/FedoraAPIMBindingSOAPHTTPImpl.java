@@ -29,7 +29,7 @@ import org.apache.axis.AxisEngine;
 import org.apache.axis.MessageContext;
 
 public class FedoraAPIMBindingSOAPHTTPImpl 
-        implements fedora.server.management.FedoraAPIM {
+        implements FedoraAPIM {
 
     /** The Fedora Server instance */
     private static Server s_server;
@@ -73,7 +73,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             s_initException=ie;
         }
     }
-
+    
     public String createObject() 
             throws RemoteException {
         assertInitialized();
