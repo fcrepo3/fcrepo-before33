@@ -270,8 +270,8 @@ public class FieldSearchTest
                     System.out.print("cModel='" + f.getCModel() + "' ");
                 } else if (l.equalsIgnoreCase("state")) {
                     System.out.print("state='" + f.getState() + "' ");
-                } else if (l.equalsIgnoreCase("locker")) {
-                    System.out.print("locker='" + f.getLocker() + "' ");
+                } else if (l.equalsIgnoreCase("ownerId")) {
+                    System.out.print("ownerId='" + f.getOwnerId() + "' ");
                 } else if (l.equalsIgnoreCase("cDate")) {
                     System.out.print("cDate='" + m_formatter.format(f.getCDate()) + "' ");
                 } else if (l.equalsIgnoreCase("mDate")) {

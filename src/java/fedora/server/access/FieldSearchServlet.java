@@ -68,7 +68,7 @@ public class FieldSearchServlet
         if ( (req.getParameter("fType")!=null) && (req.getParameter("fType").equalsIgnoreCase("true")) ) l.add("fType");
         if ( (req.getParameter("cModel")!=null) && (req.getParameter("cModel").equalsIgnoreCase("true")) ) l.add("cModel");
         if ( (req.getParameter("state")!=null) && (req.getParameter("state").equalsIgnoreCase("true")) ) l.add("state");
-        if ( (req.getParameter("locker")!=null) && (req.getParameter("locker").equalsIgnoreCase("true")) ) l.add("locker");
+        if ( (req.getParameter("ownerId")!=null) && (req.getParameter("ownerId").equalsIgnoreCase("true")) ) l.add("ownerId");
         if ( (req.getParameter("cDate")!=null) && (req.getParameter("cDate").equalsIgnoreCase("true")) ) l.add("cDate");
         if ( (req.getParameter("mDate")!=null) && (req.getParameter("mDate").equalsIgnoreCase("true")) ) l.add("mDate");
         if ( (req.getParameter("dcmDate")!=null) && (req.getParameter("dcmDate").equalsIgnoreCase("true")) ) l.add("dcmDate");
@@ -145,7 +145,7 @@ public class FieldSearchServlet
                 html.append("<input type=\"checkbox\" name=\"fType\" value=\"true\"" + (fieldHash.contains("fType") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Fedora Object Type\\n\\nThe type of Fedora object.\\nThis will be one of:\\n  D - Behavior Definition\\n  M - Behavior Mechanism\\n  O - Regular Object')\">fType</a><br>");
                 html.append("<input type=\"checkbox\" name=\"cModel\" value=\"true\"" + (fieldHash.contains("cModel") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Content Model\\n\\nIdentifies the template upon\\nwhich the object is based')\">cModel</a><br>");
                 html.append("<input type=\"checkbox\" name=\"state\" value=\"true\"" + (fieldHash.contains("state") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('State\\n\\nThe state of the object.\\nThis will be:\\n  A - Active')\">state</a><br>");
-                html.append("<input type=\"checkbox\" name=\"locker\" value=\"true\"" + (fieldHash.contains("locker") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Locking User\\n\\nThe userId of the user with a write lock on the object, if any')\">locker</a><br>");
+                html.append("<input type=\"checkbox\" name=\"ownerId\" value=\"true\"" + (fieldHash.contains("ownerId") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Owner Id\\n\\nThe userId of the user who owns the object.')\">ownerId</a><br>");
                 html.append("<input type=\"checkbox\" name=\"cDate\" value=\"true\"" + (fieldHash.contains("cDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Creation Date\\n\\nThe UTC date the object was created,\\nin YYYY-MM-DDTHH:MM:SS format')\">cDate</a><br>");
                 html.append("<input type=\"checkbox\" name=\"mDate\" value=\"true\"" + (fieldHash.contains("mDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Modified Date\\n\\nThe UTC date the object was last modified,\\nin YYYY-MM-DDTHH:MM:SS format')\">mDate</a><br>");
                 html.append("<input type=\"checkbox\" name=\"dcmDate\" value=\"true\"" + (fieldHash.contains("dcmDate") ? " checked" : "") + "> <a href=\"#\" onClick=\"javascript:alert('Dublin Core Modified Date\\n\\nThe UTC date the DC datastream was last modified,\\nin YYYY-MM-DDTHH:MM:SS format')\">dcmDate</a><br>");
@@ -211,7 +211,7 @@ public class FieldSearchServlet
                         appendXML("fType", f.getFType(), xmlBuf);
                         appendXML("cModel", f.getCModel(), xmlBuf);
                         appendXML("state", f.getState(), xmlBuf);
-                        appendXML("locker", f.getLocker(), xmlBuf);
+                        appendXML("ownerId", f.getOwnerId(), xmlBuf);
                         appendXML("cDate", f.getCDate(), formatter, xmlBuf);
                         appendXML("mDate", f.getMDate(), formatter, xmlBuf);
                         appendXML("dcmDate", f.getDCMDate(), formatter, xmlBuf);
@@ -256,9 +256,9 @@ public class FieldSearchServlet
                                 }
                             } else if (l.equalsIgnoreCase("state")) {
                                 html.append(f.getState());
-                            } else if (l.equalsIgnoreCase("locker")) {
-                                if (f.getLocker()!=null) {
-                                    html.append(f.getLocker());
+                            } else if (l.equalsIgnoreCase("ownerId")) {
+                                if (f.getOwnerId()!=null) {
+                                    html.append(f.getOwnerId());
                                 }
                             } else if (l.equalsIgnoreCase("cDate")) {
                                 html.append(formatter.format(f.getCDate()));
@@ -327,7 +327,7 @@ public class FieldSearchServlet
                         if (fieldHash.contains("fType")) html.append("<input type=\"hidden\" name=\"fType\" value=\"true\">");
                         if (fieldHash.contains("cModel")) html.append("<input type=\"hidden\" name=\"cModel\" value=\"true\">");
                         if (fieldHash.contains("state")) html.append("<input type=\"hidden\" name=\"state\" value=\"true\">");
-                        if (fieldHash.contains("locker")) html.append("<input type=\"hidden\" name=\"locker\" value=\"true\">");
+                        if (fieldHash.contains("ownerId")) html.append("<input type=\"hidden\" name=\"ownerId\" value=\"true\">");
                         if (fieldHash.contains("cDate")) html.append("<input type=\"hidden\" name=\"cDate\" value=\"true\">");
                         if (fieldHash.contains("mDate")) html.append("<input type=\"hidden\" name=\"mDate\" value=\"true\">");
                         if (fieldHash.contains("dcmDate")) html.append("<input type=\"hidden\" name=\"dcmDate\" value=\"true\">");

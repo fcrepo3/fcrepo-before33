@@ -327,7 +327,7 @@ public class SimpleDOWriter
     }
 
     public void cancel() {
-        // cleanup temp, release lock, and invalidate
+        // cleanup temp, release session lock, and invalidate
     }
 
     public void invalidate() {

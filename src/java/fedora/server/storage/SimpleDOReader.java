@@ -133,8 +133,8 @@ public class SimpleDOReader
         return m_obj.getLastModDate();
     }
 
-    public String getLockingUser() {
-        return m_obj.getLockingUser();
+    public String getOwnerId() {
+        return m_obj.getOwnerId();
     }
 
     public List getAuditRecords() {

@@ -374,6 +374,8 @@ public class METSLikeDODeserializer
                 }
             }
         }
+		// FIXME: this should somehow be gathered from the serialization, ideally.
+		obj.setOwnerId("fedoraAdmin");
     }
 
     public void startPrefixMapping(String prefix, String uri) {

@@ -260,9 +260,9 @@ public class ObjectInfoAsXML
         if (cModel==null) cModel="";
         out.append("<cModel>" + cModel + "</cModel>\n");
         out.append("<state>" + reader.GetObjectState() + "</state>\n");
-        String locker=reader.getLockingUser();
-        if (locker==null) locker="";
-        out.append("<locker>" + locker + "</locker>\n");
+        String ownerId=reader.getOwnerId();
+        if (ownerId==null) ownerId="";
+        out.append("<ownerId>" + ownerId + "</ownerId>\n");
         out.append("<cDate>" + formatter.format(reader.getCreateDate()) + "</cDate>\n");
         out.append("<cDateAsNum>" + reader.getCreateDate().getTime() + "</cDateAsNum>\n");
         out.append("<mDate>" + formatter.format(reader.getLastModDate()) + "</mDate>\n");

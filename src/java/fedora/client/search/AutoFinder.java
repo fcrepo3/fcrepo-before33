@@ -128,7 +128,7 @@ public class AutoFinder {
                     AutoFinder.printValue("fType      ", o.getFType());
                     AutoFinder.printValue("cModel     ", o.getCModel());
                     AutoFinder.printValue("state      ", o.getState());
-                    AutoFinder.printValue("locker     ", o.getLocker());
+                    AutoFinder.printValue("ownerId     ", o.getOwnerId());
                     AutoFinder.printValue("cDate      ", o.getCDate());
                     AutoFinder.printValue("mDate      ", o.getMDate());
                     AutoFinder.printValue("dcmDate    ", o.getDcmDate());

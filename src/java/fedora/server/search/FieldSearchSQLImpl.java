@@ -69,7 +69,7 @@ public class FieldSearchSQLImpl
     private int m_maxResults;
     private int m_maxSecondsPerSession;
     public static String[] DB_COLUMN_NAMES=new String[] {"pid", "label",
-            "fType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate",
+            "fType", "cModel", "state", "ownerId", "cDate", "mDate", "dcmDate",
             "bDef", "bMech", "dcTitle", "dcCreator", "dcSubject", "dcDescription",
             "dcPublisher", "dcContributor", "dcDate", "dcType", "dcFormat",
             "dcIdentifier", "dcSource", "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
@@ -130,7 +130,7 @@ public class FieldSearchSQLImpl
             if (v!=null) v=v.toLowerCase();
             dbRowValues[3]=v;
             dbRowValues[4]=reader.GetObjectState().toLowerCase();
-            v=reader.getLockingUser();
+            v=reader.getOwnerId();
             if (v!=null) v=v.toLowerCase();
             dbRowValues[5]=v;
             Date date=reader.getCreateDate();

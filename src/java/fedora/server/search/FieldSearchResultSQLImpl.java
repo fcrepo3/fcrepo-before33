@@ -430,8 +430,8 @@ public class FieldSearchResultSQLImpl
             if (n.equals("state")) {
                 f.setState(r.GetObjectState());
             }
-            if (n.equals("locker")) {
-                f.setLocker(r.getLockingUser());
+            if (n.equals("ownerId")) {
+                f.setOwnerId(r.getOwnerId());
             }
             if (n.equals("cDate")) {
                 f.setCDate(r.getCreateDate());

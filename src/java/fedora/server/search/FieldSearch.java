@@ -15,7 +15,7 @@ import fedora.server.storage.DOReader;
  * implementations of this interface.</p>
  *
  * <p>Key fields include:<dir>
- * <i>pid, label, cModel, state, locker, cDate, mDate, dcmDate</i></dir></p>
+ * <i>pid, label, cModel, state, ownerId, cDate, mDate, dcmDate</i></dir></p>
  *
  * <p>Dublin core fields include:<dir>
  * <i>title, creator, subject, description, publisher, contributor, date, type,

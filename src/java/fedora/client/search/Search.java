@@ -65,7 +65,7 @@ public class Search
     private JTabbedPane m_tabbedPane;
 
     protected static String[] s_fieldArray = {"pid", "label", "fType", "bDef",
-            "bMech", "cModel", "state", "locker", "cDate", "mDate",
+            "bMech", "cModel", "state", "ownerId", "cDate", "mDate",
             "dcmDate", "title", "creator", "subject", "description",
             "publisher", "contributor", "date", "type", "format",
             "identifier", "source", "language", "relation", "coverage",
@@ -317,7 +317,7 @@ public class Search
         private JCheckBox pidBox, bDefBox, typeBox, labelBox, bMechBox,
                           formatBox, fTypeBox, titleBox, identifierBox,
                           cModelBox, creatorBox, sourceBox, stateBox,
-                          subjectBox, languageBox, lockerBox, descriptionBox,
+                          subjectBox, languageBox, ownerIdBox, descriptionBox,
                           relationBox, cDateBox, publisherBox, coverageBox,
                           mDateBox, contributorBox, rightsBox, dcmDateBox,
                           dateBox;
@@ -359,8 +359,8 @@ public class Search
                     subjectBox.setToolTipText("a list of dc:subject values, indicating the topic of the resource");
                     languageBox=new JCheckBox("language", fieldList.contains("language"));
                     languageBox.setToolTipText("a list of dc:language values, language(s) of the intellectual content");
-                    lockerBox=new JCheckBox("locker", fieldList.contains("locker"));
-                    lockerBox.setToolTipText("locking user, the identity of the repository user with a write lock on the object");
+                    ownerIdBox=new JCheckBox("ownerId", fieldList.contains("ownerId"));
+                    ownerIdBox.setToolTipText("owner id, the identity of the repository user who owns the object");
                     descriptionBox=new JCheckBox("description", fieldList.contains("description"));
                     descriptionBox.setToolTipText("a list of description values; accounts of the content of the resouces");
                     relationBox=new JCheckBox("relation", fieldList.contains("relation"));
@@ -400,7 +400,7 @@ public class Search
                 northPanel.add(stateBox);
                 northPanel.add(subjectBox);
                 northPanel.add(languageBox);
-                northPanel.add(lockerBox);
+                northPanel.add(ownerIdBox);
                 northPanel.add(descriptionBox);
                 northPanel.add(relationBox);
                 northPanel.add(cDateBox);
@@ -456,7 +456,7 @@ public class Search
             if (bMechBox.isSelected()) m_selectedFields.add("bMech");
             if (cModelBox.isSelected()) m_selectedFields.add("cModel");
             if (stateBox.isSelected()) m_selectedFields.add("state");
-            if (lockerBox.isSelected()) m_selectedFields.add("locker");
+            if (ownerIdBox.isSelected()) m_selectedFields.add("ownerId");
             if (cDateBox.isSelected()) m_selectedFields.add("cDate");
             if (mDateBox.isSelected()) m_selectedFields.add("mDate");
             if (dcmDateBox.isSelected()) m_selectedFields.add("dcmDate");

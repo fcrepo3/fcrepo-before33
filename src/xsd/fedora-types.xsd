@@ -407,7 +407,7 @@
 			<xsd:element name="fType" type="string" minOccurs="0"/>
 			<xsd:element name="cModel" type="string" minOccurs="0"/>
 			<xsd:element name="state" type="string" minOccurs="0"/>
-			<xsd:element name="locker" type="string" minOccurs="0"/>
+			<xsd:element name="ownerId" type="string" minOccurs="0"/>
 			<xsd:element name="cDate" type="dateTime" minOccurs="0"/>
 			<xsd:element name="mDate" type="dateTime" minOccurs="0"/>
 			<xsd:element name="dcmDate" type="dateTime" minOccurs="0"/>

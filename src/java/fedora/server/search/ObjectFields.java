@@ -51,7 +51,7 @@ public class ObjectFields
     private String m_fType;
     private String m_cModel;
     private String m_state;
-    private String m_locker;
+    private String m_ownerId;
     private Date m_cDate;
     private Date m_mDate;
     private Date m_dcmDate;
@@ -68,7 +68,7 @@ public class ObjectFields
     public final static int FTYPE=2;
     public final static int CMODEL=3;
     public final static int STATE=4;
-    public final static int LOCKER=5;
+    public final static int OWNERID=5;
     public final static int CDATE=6;
     public final static int MDATE=7;
     public final static int TITLE=8;
@@ -107,8 +107,8 @@ public class ObjectFields
                 m_want[CMODEL]=true;
             } else if (s.equalsIgnoreCase("state")) {
                 m_want[STATE]=true;
-            } else if (s.equalsIgnoreCase("locker")) {
-                m_want[LOCKER]=true;
+            } else if (s.equalsIgnoreCase("ownerId")) {
+                m_want[OWNERID]=true;
             } else if (s.equalsIgnoreCase("cDate")) {
                 m_want[CDATE]=true;
             } else if (s.equalsIgnoreCase("mDate")) {
@@ -200,8 +200,8 @@ public class ObjectFields
             setCModel(m_currentContent.toString());
         } else if ( (m_want[STATE]) && (localName.equals("state")) ) {
             setState(m_currentContent.toString());
-        } else if ( (m_want[LOCKER]) && (localName.equals("locker")) ) {
-            setLocker(m_currentContent.toString());
+        } else if ( (m_want[OWNERID]) && (localName.equals("ownerId")) ) {
+            setOwnerId(m_currentContent.toString());
         } else if ( (m_want[CDATE]) && (localName.equals("cDate")) ) {
             try {
                 setCDate(m_formatter.parse(m_currentContent.toString()));
@@ -291,12 +291,12 @@ public class ObjectFields
         return m_state;
     }
 
-    public void setLocker(String locker) {
-        m_locker=locker;
+    public void setOwnerId(String ownerId) {
+        m_ownerId=ownerId;
     }
 
-    public String getLocker() {
-        return m_locker;
+    public String getOwnerId() {
+        return m_ownerId;
     }
 
     public void setCDate(Date cDate) {

@@ -66,7 +66,7 @@ public class DigitalObjectTest
         m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
         m_obj.setLabel("Test Object");
         m_obj.setLastModDate(m_startTime);
-        m_obj.setLockingUser("userId1");
+        m_obj.setOwnerId("userId1");
         m_obj.setNamespaceMapping(nsMap);
         m_obj.setPid("test:1");
         m_obj.setState("A");
@@ -119,7 +119,7 @@ public class DigitalObjectTest
         m_bdef.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
         m_bdef.setLabel("Test Behavior Definition Object");
         m_bdef.setLastModDate(m_startTime);
-        m_bdef.setLockingUser("userId2");
+        m_bdef.setOwnerId("userId2");
         m_bdef.setNamespaceMapping(nsMap);
         m_bdef.setPid("test:2");
         m_bdef.setState("W");
@@ -130,7 +130,7 @@ public class DigitalObjectTest
         m_bmech.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
         m_bmech.setLabel("Test Behavior Mechanism Object");
         m_bmech.setLastModDate(m_startTime);
-        m_bmech.setLockingUser("userId3");
+        m_bmech.setOwnerId("userId3");
         m_bmech.setNamespaceMapping(nsMap);
         m_bmech.setPid("test:3");
         m_bmech.setState("D");
@@ -152,9 +152,9 @@ public class DigitalObjectTest
         assertEquals(m_obj.getLastModDate(), m_startTime);
         assertEquals(m_bdef.getLastModDate(), m_startTime);
         assertEquals(m_bmech.getLastModDate(), m_startTime);
-        assertEquals(m_obj.getLockingUser(), "userId1");
-        assertEquals(m_bdef.getLockingUser(), "userId2");
-        assertEquals(m_bmech.getLockingUser(), "userId3");
+        assertEquals(m_obj.getOwnerId(), "userId1");
+        assertEquals(m_bdef.getOwnerId(), "userId2");
+        assertEquals(m_bmech.getOwnerId(), "userId3");
         assertEquals((String) m_obj.getNamespaceMapping().get(m_namespacePrefix), m_namespaceURI);
         assertEquals((String) m_bdef.getNamespaceMapping().get(m_namespacePrefix), m_namespaceURI);
         assertEquals((String) m_bmech.getNamespaceMapping().get(m_namespacePrefix), m_namespaceURI);

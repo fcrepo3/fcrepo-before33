@@ -139,7 +139,7 @@ public abstract class TypeUtility
             if (sf.getFType()!=null) gf.setFType(sf.getFType());
             if (sf.getCModel()!=null) gf.setCModel(sf.getCModel());
             if (sf.getState()!=null) gf.setState(sf.getState());
-            if (sf.getLocker()!=null) gf.setLocker(sf.getLocker());
+            if (sf.getOwnerId()!=null) gf.setOwnerId(sf.getOwnerId());
             if (sf.getCDate()!=null) {
                 java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
                 cal.setTime(sf.getCDate());

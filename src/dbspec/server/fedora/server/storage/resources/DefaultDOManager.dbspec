@@ -112,9 +112,8 @@
              has been assigned, and the object is written to the definitive
              store, an entry is created here.
              The entry will be: pid, 0, (userid from context), N
-             A write lock is indicated by a non-null lockingUser value.
-             As you can see above, when an object is created in the
-             repository, it is automatically locked.
+             As you can see above, an object is owned by the user who created
+			 or ingested it.
              Objects are only deleted from this table in the following two
              cases:  1) When modifiedFlag is 'D' and DOWriter.commit() is
              called.  2) When DOWriter.cancel() is called and systemVersion
@@ -134,10 +133,8 @@
                one each time a change is committed to the definitive store.
       </comment>
 		</column>
-		<column name="lockingUser" type="varchar(32)" notNull="false">
-			<comment>The userId of the user owning the write lock on the object.
-               If the object is not locked, this is NULL.
-      </comment>
+		<column name="ownerId" type="varchar(32)" notNull="false">
+			<comment>The userId of the user who owns the object.</comment>
 		</column>
 		<column name="modifiedFlag" type="char(1)" notNull="true" default="N">
 			<comment>Indicates the kind of pending modification to permanent storage.
@@ -185,8 +182,8 @@
 		<column name="state" type="char(1)" notNull="true" default="A">
 			<comment>The state of the object.</comment>
 		</column>
-		<column name="locker" type="varchar(32)" notNull="false">
-			<comment>The userId of the user having a lock on the object.</comment>
+		<column name="ownerId" type="varchar(32)" notNull="false">
+			<comment>The userId of the user who owns the object.</comment>
 		</column>
 		<column name="cDate" type="bigint" notNull="true">
 			<comment>The date the object was first ingested or created in the repository.</comment>

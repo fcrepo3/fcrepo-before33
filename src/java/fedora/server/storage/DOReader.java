@@ -73,13 +73,13 @@ public interface DOReader
     public Date getLastModDate() throws ServerException;
 
     /**
-     * Gets the userid of the user with a write lock on this object.
+     * Gets the userid of the user who owns the objects.
      *
-     * @return the userid of the user with a write lock on this object.
+     * @return the userid
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public String getLockingUser() throws ServerException;
+    public String getOwnerId() throws ServerException;
 
     /**
      * Gets the entire list of audit records for the object.

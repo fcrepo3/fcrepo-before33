@@ -41,7 +41,7 @@ public class BasicDigitalObject
     private int m_fedoraObjectType;
     private String m_pid;
     private String m_state;
-    private String m_lockingUser;
+    private String m_ownerId;
     private String m_label;
     private String m_contentModelId;
     private Date m_createDate;
@@ -81,12 +81,12 @@ public class BasicDigitalObject
         m_state=state;
     }
 
-    public String getLockingUser() {
-        return m_lockingUser;
+    public String getOwnerId() {
+        return m_ownerId;
     }
 
-    public void setLockingUser(String user) {
-        m_lockingUser=user;
+    public void setOwnerId(String user) {
+        m_ownerId=user;
     }
 
     public String getLabel() {

@@ -191,7 +191,7 @@ public class ResultFrame
         if (name.equals("fType")) return o.getFType();
         if (name.equals("cModel")) return o.getCModel();
         if (name.equals("state")) return o.getState();
-        if (name.equals("locker")) return o.getLocker();
+        if (name.equals("ownerId")) return o.getOwnerId();
         if (name.equals("cDate")) return FORMATTER.format(o.getCDate().getTime());
         if (name.equals("mDate")) return FORMATTER.format(o.getMDate().getTime());
         if (name.equals("dcmDate")) return FORMATTER.format(o.getDcmDate());

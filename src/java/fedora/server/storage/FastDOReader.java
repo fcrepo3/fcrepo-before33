@@ -1468,12 +1468,12 @@ public class FastDOReader implements DOReader
     }
   }
 
-  public String getLockingUser()
+  public String getOwnerId()
           throws ServerException, StorageDeviceException, ObjectNotFoundException {
       if (doReader==null) {
           doReader=m_manager.getReader(m_context, PID);
       }
-      return doReader.getLockingUser();
+      return doReader.getOwnerId();
   }
 
   public List getAuditRecords()

@@ -374,7 +374,7 @@ public class DefaultDOManager
      * makes a new audit record in the object,
      * saves object to definitive store, and replicates.
      *
-     * In the case where it is not a deletion, the lock is released, too.
+     * In the case where it is not a deletion, the session lock (TODO) is released, too.
      * This happens as the result of a writer.commit() call.
      */
     public void doCommit(Context context, DigitalObject obj, String logMessage, boolean remove)
@@ -571,7 +571,7 @@ public class DefaultDOManager
                 }
 
                 // save to definitive store, validating beforehand
-                // update the system version (add one) and reflect that the object is no longer locked
+                // update the system version (add one)
 
                 // Validation:
                 // Perform FINAL validation before saving the object to persistent storage.
@@ -627,7 +627,7 @@ public class DefaultDOManager
                 } else {
                     m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
                 }
-                // update lockinguser (set to NULL) and systemVersion (add one)
+                // update systemVersion in doRegistry (add one)
                 Connection conn=null;
                 Statement s = null;
                 ResultSet results=null;
@@ -646,7 +646,7 @@ public class DefaultDOManager
                     Date now=new Date();
 //                    String formattedLastModDate=m_formatter.format(now);
                     s.executeUpdate("UPDATE doRegistry SET systemVersion="
-                            + systemVersion + ", lockingUser=NULL "
+                            + systemVersion + " "
                             + "WHERE doPID='" + obj.getPid() + "'");
                 } catch (SQLException sqle) {
                     throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
@@ -760,74 +760,14 @@ public class DefaultDOManager
     }
 
     /**
-     * Requests a lock on the object.
-     *
-     * If the lock is already owned by the user in the context, that's ok.
-     *
-     * @param context The current context.
-     * @param pid The pid of the object.
-     * @throws ObjectNotFoundException If the object does not exist.
-     * @throws ObjectLockedException If the object is already locked by someone else.
-     */
-    protected void obtainLock(Context context, String pid)
-            throws ObjectLockedException, ObjectNotFoundException,
-            StorageDeviceException, InvalidContextException {
-        Connection conn=null;
-        Statement s = null;
-        ResultSet results=null;
-        try {
-            String query="SELECT lockingUser "
-                       + "FROM doRegistry "
-                       + "WHERE doPID='" + pid + "'";
-            conn=m_connectionPool.getConnection();
-            s=conn.createStatement();
-            results=s.executeQuery(query);
-            if (!results.next()) {
-                throw new ObjectNotFoundException("The requested object doesn't exist.");
-            }
-            String lockingUser=results.getString("lockingUser");
-            if (lockingUser==null) {
-                // get the lock
-                lockingUser=getUserId(context);
-                s.executeUpdate("UPDATE doRegistry SET lockingUser='"
-                    + lockingUser + "' WHERE doPID='" + pid + "'");
-            }
-            if (!lockingUser.equals(getUserId(context))) {
-                throw new ObjectLockedException("The object is locked by " + lockingUser);
-            }
-            // if we got here, the lock is already owned by current user, ok
-        } catch (SQLException sqle) {
-            throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
-        } finally {
-          try
-          {
-            if (results!=null) results.close();
-            if (s!= null) s.close();
-            m_connectionPool.free(conn);
-          } catch (SQLException sqle)
-          {
-            throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
-                }
-        }
-    }
-
-    /**
      * Gets a writer on an an existing object.
-     *
-     * If the object is locked, it must be by the current user.
-     * If the object is not locked, a lock is obtained automatically.
-     *
-     * The object must be locked by the user identified in the context.
      */
     public DOWriter getWriter(Context context, String pid)
             throws ServerException, ObjectLockedException {
         if (cachedObjectRequired(context)) {
             throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
         } else {
-            // ensure we've got a lock
-            obtainLock(context, pid);
-
-            // TODO: make sure there's no session lock on a writer for the pid
+            // TODO: make sure there's no SESSION lock on a writer for the pid
 
             BasicDigitalObject obj=new BasicDigitalObject();
             m_translator.deserialize(getObjectStore().retrieve(pid), obj,
@@ -875,6 +815,8 @@ public class DefaultDOManager
 
                 // deserialize it first
                 BasicDigitalObject obj=new BasicDigitalObject();
+				// FIXME: just setting ownerId manually for now...
+				obj.setOwnerId("fedoraAdmin");
                 m_translator.deserialize(in2, obj, format, encoding);
                 // then, before doing anything, change the object status to I,
                 // and all datastreams and disseminators' statuses to I.
@@ -1215,13 +1157,13 @@ public class DefaultDOManager
         }
     }
 
-    public String getLockingUser(String pid)
+    public String getOwnerId(String pid)
             throws StorageDeviceException, ObjectNotFoundException {
         Connection conn=null;
         Statement s = null;
         ResultSet results=null;
         try {
-            String query="SELECT lockingUser "
+            String query="SELECT ownerId "
                        + "FROM doRegistry "
                        + "WHERE doPID='" + pid + "'";
             conn=m_connectionPool.getConnection();
@@ -1248,7 +1190,7 @@ public class DefaultDOManager
     }
 
     /**
-     * Adds a new, locked object.
+     * Adds a new object.
      */
     private void registerObject(String pid, int fedoraObjectType, String userId,
             String label, String contentModelId, Date createDate, Date lastModDate)
@@ -1275,7 +1217,7 @@ public class DefaultDOManager
           //  String formattedCreateDate=m_formatter.format(createDate);
           //  String formattedLastModDate=m_formatter.format(lastModDate);
             String query="INSERT INTO doRegistry (doPID, foType, "
-                                                   + "lockingUser, label, "
+                                                   + "ownerId, label, "
                                                    + "contentModelID) "
                        + "VALUES ('" + pid + "', '" + foType +"', '"
                                      + userId +"', '" + SQLUtility.aposEscape(theLabel) + "', '"
@@ -1328,7 +1270,7 @@ public class DefaultDOManager
     }
 
     public String[] listObjectPIDs(Context context, String pidPattern,
-            String foType, String lockedByPattern, String state,
+            String foType, String ownerIdPattern, String state,
             String labelPattern, String contentModelIdPattern,
             Calendar createDateMin, Calendar createDateMax,
             Calendar lastModDateMin, Calendar lastModDateMax)
@@ -1356,8 +1298,8 @@ public class DefaultDOManager
             whereClause.append("AND ");
             whereClause.append(part);
         }
-        if (lockedByPattern!=null) {
-            String part=toSql("lockingUser", lockedByPattern);
+        if (ownerIdPattern!=null) {
+            String part=toSql("ownerId", ownerIdPattern);
             if (part.charAt(0)==' ') {
                 needEscape=true;
             } else {

@@ -95,7 +95,7 @@
 			<documentation>a sequence of space-separated conditions.  A condition
            consists of a field name followed directly by an operator, followed
            directly be a value.  Valid field names are (pid, label, fType, cModel,
-           state, locker, cDate, mDate, dcmDate, bDef, bMech, title, creator, subject,
+           state, ownerId, cDate, mDate, dcmDate, bDef, bMech, title, creator, subject,
            description, publisher, contributor, date, type, format, identifier,
            source, language, relation, coverage, rights).
            Valid operators are =, ~, &gt;, &gt;=, &lt;, &lt;=.  The contains (~) operator
@@ -132,8 +132,8 @@
 		<part name="state" type="xsd:string">
 			<documentation>if true, the states of matching objects will be included in the response.</documentation>
 		</part>
-		<part name="locker" type="xsd:string">
-			<documentation>if true, the userids of locking users of objects will be included in the response.</documentation>
+		<part name="ownerId" type="xsd:string">
+			<documentation>if true, the userids of users who own the objects will be included in the response.</documentation>
 		</part>
 		<part name="cDate" type="xsd:string">
 			<documentation>if true, the create date of objects will be included in the response.</documentation>
@@ -268,7 +268,7 @@
 				<p>URL Syntax:</p>
 				<p>
 					<b>http://<font color="#22cc22">host:port</font>/fedora/search?{<font color="#22cc22">terms=TERMS</font>|<font color="#22cc22">query=QUERY</font>}<font color="#cc2222">&amp;maxResults=MAXRESULTS<br/>
-&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;xml=true&amp;pid=true&amp;label=true&amp;fType=true&amp;cModel=true&amp;state=true&amp;locker=true<br/>
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;xml=true&amp;pid=true&amp;label=true&amp;fType=true&amp;cModel=true&amp;state=true&amp;ownerId=true<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;cDate=true&amp;mDate=true&amp;dcmDate=true&amp;bDef=true&amp;bMech=true&amp;title=true<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;creator=true&amp;subject=true&amp;description=true&amp;publisher=true&amp;contributor=true<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;date=true&amp;type=true&amp;format=true&amp;identifier=true&amp;source=true&amp;language=true<br/>
@@ -424,7 +424,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
 			</output>
 		</operation>
 		<operation name="findObjects">
-			<http:operation location="search?{terms=(terms)|query=(query)}[&amp;maxResults=(maxResults)][&amp;xml=(xml)][&amp;pid=(pid)][&amp;label=(label)][&amp;fType=(fType)][&amp;cModel=(cModel)][&amp;state=(state)][&amp;locker=(locker)][&amp;cDate=(cDate)][&amp;mDate=(mDate)][&amp;dcmDate=(dcmDate)][&amp;bDef=(bDef)][&amp;bMech=(bMech)][&amp;title=(title)][&amp;creator=(creator)][&amp;subject=(subject)][&amp;description=(description)][&amp;publisher=(publisher)][&amp;contributor=(contributor)][&amp;date=(date)][&amp;type=(type)][&amp;format=(format)][&amp;identifier=(identifier)][&amp;source=(source)][&amp;language=(language)][&amp;relation=(relation)][&amp;coverage=(coverage)][&amp;rights=(rights)]"/>
+			<http:operation location="search?{terms=(terms)|query=(query)}[&amp;maxResults=(maxResults)][&amp;xml=(xml)][&amp;pid=(pid)][&amp;label=(label)][&amp;fType=(fType)][&amp;cModel=(cModel)][&amp;state=(state)][&amp;ownerId=(ownerId)][&amp;cDate=(cDate)][&amp;mDate=(mDate)][&amp;dcmDate=(dcmDate)][&amp;bDef=(bDef)][&amp;bMech=(bMech)][&amp;title=(title)][&amp;creator=(creator)][&amp;subject=(subject)][&amp;description=(description)][&amp;publisher=(publisher)][&amp;contributor=(contributor)][&amp;date=(date)][&amp;type=(type)][&amp;format=(format)][&amp;identifier=(identifier)][&amp;source=(source)][&amp;language=(language)][&amp;relation=(relation)][&amp;coverage=(coverage)][&amp;rights=(rights)]"/>
 			<input>
 				<urlReplacement/>
 				<documentation>This URL replacement syntax is used to perform a search on the objects in the repository.

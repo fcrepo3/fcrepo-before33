@@ -80,18 +80,18 @@ public interface DigitalObject {
     public void setState(String state);
 
     /**
-     * Gets the userid of the user with a write lock on the object.
+     * Gets the userid of the user who owns the object.
      *
-     * @return The userid, or null if the object is not locked.
+     * @return The userid
      */
-    public String getLockingUser();
+    public String getOwnerId();
 
     /**
-     * Sets the userid of the user with a write lock on the object.
+     * Sets the owner of the object.
      *
      * @param user The userid.
      */
-    public void setLockingUser(String user);
+    public void setOwnerId(String user);
 
     /**
      * Gets the label.
