@@ -216,6 +216,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public void releaseLock(String PID, String logMessage, boolean commit) throws java.rmi.RemoteException {
         assertInitialized();
+/* needs rewrite to work with new "Management" instance
         try {
             if (commit=false) {
                 w.rollBack();
@@ -229,6 +230,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             logStackTrace(e);
             AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
+*/
     }
 
     public String getLockingUser(String PID) throws java.rmi.RemoteException {
