@@ -6,12 +6,7 @@
   <Description> </Description>
   <Target>
     <Subjects>
-      <Subject> 
-        <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <SubjectAttributeDesignator AttributeId="administrator" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">UNDEFINED</AttributeValue>
-        </SubjectMatch>
-      </Subject>
+      <AnySubject/> 
     </Subjects>
     <Actions>
       <AnyAction/>
@@ -19,11 +14,20 @@
     <Resources>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/policy-resource#datastreamId" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:datastream:id"
+            MustBePresent="false" 
+            DataType="http://www.w3.org/2001/XMLSchema#string"/>
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">POLICY</AttributeValue>
         </ResourceMatch>
       </Resource>
     </Resources>
   </Target>
-  <Rule RuleId="1" Effect="Deny"/>
+  <Rule RuleId="1" Effect="Deny">
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
+        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"/>          
+        <SubjectAttributeDesignator AttributeId="administrator" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+      </Apply>    
+    </Condition>
+  </Rule>
 </Policy>

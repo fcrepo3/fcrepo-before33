@@ -14,40 +14,49 @@
     <Resources>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#objectState" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:object:state" 
+            DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Inactive</AttributeValue>
         </ResourceMatch>
       </Resource>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#objectState" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:object:state" 
+            DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Deleted</AttributeValue>
         </ResourceMatch>
       </Resource>      
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#datastreamState" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:datastream:state" 
+            DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Inactive</AttributeValue>
         </ResourceMatch>
       </Resource>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#datastreamState" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:datastream:state" 
+            DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Deleted</AttributeValue>
         </ResourceMatch>
       </Resource>
     </Resources>
   </Target>
   <Rule RuleId="1" Effect="Deny">
-    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
-      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:or">
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">  
         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">UNDEFINED</AttributeValue>
-          <SubjectAttributeDesignator AttributeId="administrator" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <SubjectAttributeDesignator AttributeId="administrator"  MustBePresent="false" 
+            DataType="http://www.w3.org/2001/XMLSchema#string"/>
         </Apply>
+      </Apply>
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
-          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#owner" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-	      <SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:subject:subject-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:object:owner" 
+            DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
+          <SubjectAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:subject:subject-id" 
+            DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
         </Apply>
       </Apply>
     </Condition>

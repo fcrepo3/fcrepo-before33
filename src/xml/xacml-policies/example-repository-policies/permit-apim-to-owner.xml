@@ -12,8 +12,8 @@
       <Action>
         <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
           <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
-            AttributeId="info:fedora/fedora-system:def/policy-action#api"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">info:fedora/fedora-system:def/policy-action#apim</AttributeValue>
+            AttributeId="urn:fedora:names:fedora:2.1:action:api"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:apim</AttributeValue>
         </ActionMatch>
       </Action>
     </Actions>
@@ -23,8 +23,9 @@
   </Target>
   <Rule RuleId="1" Effect="Permit">
     <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
-      <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#owner" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-	  <SubjectAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:subject:subject-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+      <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:owner" MustBePresent="false"
+        DataType="http://www.w3.org/2001/XMLSchema#string"/>
+	  <SubjectAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:subject:login-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
     </Condition>
   </Rule>
 </Policy>
