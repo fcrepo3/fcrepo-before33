@@ -2,7 +2,7 @@ package fedora.client.bmech.data;
 
 /**
  *
- * <p><b>Title:</b> MethodProperties.java</p>
+ * <p><b>Title:</b> Datastream.java</p>
  * <p><b>Description:</b> </p>
  *
  * -----------------------------------------------------------------------------
@@ -25,21 +25,19 @@ package fedora.client.bmech.data;
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
-public class MethodProperties
+public class ServiceProfile
 {
-  public static final String HTTP_MESSAGE_PROTOCOL = "HTTP";
-  //public static final String SOAP_MESSAGE_PROTOCOL = "SOAP";
+	public String serviceName = null;
+	public String serviceLabel = null;
+	public String serviceTestURL = null;
 
-  // Data entered via MethodPropertiesDialog
-  public MethodParm[] methodParms = new MethodParm[0];
-  public String[] returnMIMETypes = new String[0];
-  public String[] dsBindingKeys = new String[0];
-  public String protocolType = null;
-  public String methodRelativeURL = null;
-  public String methodFullURL = null;
-  public boolean wasValidated = false;
+	public String transProtocol = null;
+	public String msgProtocol = null;
+	public String[] inputMIMETypes = new String[0];
+	public String[] outputMIMETypes = new String[0];
+	public ServiceSoftware[] software = new ServiceSoftware[0];
 
-  public MethodProperties()
+  public ServiceProfile()
   {
   }
 }

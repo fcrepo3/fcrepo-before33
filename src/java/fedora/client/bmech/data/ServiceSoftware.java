@@ -2,7 +2,7 @@ package fedora.client.bmech.data;
 
 /**
  *
- * <p><b>Title:</b> MethodProperties.java</p>
+ * <p><b>Title:</b> ServiceDependency</p>
  * <p><b>Description:</b> </p>
  *
  * -----------------------------------------------------------------------------
@@ -25,21 +25,33 @@ package fedora.client.bmech.data;
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
-public class MethodProperties
-{
-  public static final String HTTP_MESSAGE_PROTOCOL = "HTTP";
-  //public static final String SOAP_MESSAGE_PROTOCOL = "SOAP";
+public class ServiceSoftware {
 
-  // Data entered via MethodPropertiesDialog
-  public MethodParm[] methodParms = new MethodParm[0];
-  public String[] returnMIMETypes = new String[0];
-  public String[] dsBindingKeys = new String[0];
-  public String protocolType = null;
-  public String methodRelativeURL = null;
-  public String methodFullURL = null;
-  public boolean wasValidated = false;
+	public static final String SW_PROGLANG = "Programming_Language";
+	public static final String SW_OS = "Operating_System";
+	public static final String SW_UTILITY = "Utility_Program";
+	public static final String SW_APPLIC = "Application";
+	public static final String SW_OTHER = "OTHER";
+	
+	public static final String L_COM = "Commercial";
+	public static final String L_GPL = "GNU-GPL"; 
+	public static final String L_LGPL = "GNU-LGPL";
+	public static final String L_MPL = "MPL";
+	public static final String L_BSD = "BSD"; 
+	public static final String L_CPL = "Common Public License";
+	public static final String L_OTHER = "OTHER";
+	
+	public static final boolean YES = true;
+	public static final boolean NO = false;
+	
+    public String swName = null;
+    public String swVersion = null;
+    public String swType = null;
+    public String swLicenceType = null;
+    public boolean isOpenSource = false;
 
-  public MethodProperties()
-  {
-  }
+    public ServiceSoftware()
+    {
+
+    }
 }

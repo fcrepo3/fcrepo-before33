@@ -28,7 +28,7 @@ package fedora.client.bmech.data;
 public class Method
 {
   public static final String HTTP_MESSAGE_PROTOCOL = "HTTP";
-  public static final String SOAP_MESSAGE_PROTOCOL = "SOAP";
+  //public static final String SOAP_MESSAGE_PROTOCOL = "SOAP";
 
   public String methodName = null;
   public String methodLabel = null;

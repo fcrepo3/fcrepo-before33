@@ -32,10 +32,11 @@ public class BMechTemplate extends BObjTemplate
 {
     // variables specific to behavior mechanisms
     private String bDefContractPID = null;
-    private boolean hasBaseURL;
-    private String serviceBaseURL;
-    private DSInputRule[] dsInputSpec;
+    private boolean hasBaseURL = false;
+    private String serviceBaseURL = null;
+    private DSInputRule[] dsInputSpec = new DSInputRule[0];
     private Vector dsBindingKeys = new Vector();
+    private ServiceProfile profile = null;
 
     public BMechTemplate()
     {
@@ -90,4 +91,14 @@ public class BMechTemplate extends BObjTemplate
     {
         this.dsBindingKeys = dsBindingKeys;
     }
+    
+	public void setServiceProfile(ServiceProfile profile)
+	{
+		this.profile = profile;
+	}
+
+	public ServiceProfile getServiceProfile()
+	{
+		return profile;
+	}
   }
