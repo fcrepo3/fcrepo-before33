@@ -70,6 +70,8 @@ public interface Context {
     
     public void setResourceAttributes(MultiValueMap resourceAttributes);
     
+    public String getPassword();
+    
     public String toString();
     
     public Date now();

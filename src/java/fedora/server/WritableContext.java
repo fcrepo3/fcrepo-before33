@@ -42,6 +42,8 @@ public class WritableContext
     private MultiValueMap m_actionAttributes;
     
     private MultiValueMap m_resourceAttributes;
+    
+    private String password;
 
     /**
      * Creates and initializes the <code>WritableContext</code>.
@@ -49,7 +51,7 @@ public class WritableContext
      * @param parameters A pre-loaded Map of name-value pairs
      *        comprising the context.
      */
-    public WritableContext(Map parameters, MultiValueMap environmentAttributes, MultiValueMap subjectAttributes) {
+    public WritableContext(Map parameters, MultiValueMap environmentAttributes, MultiValueMap subjectAttributes, String password) {
         super(parameters);
         m_environmentAttributes=environmentAttributes;
         if (m_environmentAttributes==null) {
@@ -60,12 +62,13 @@ public class WritableContext
         if (m_subjectAttributes==null) {
             m_subjectAttributes=new MultiValueMap();
         }
+        this.password = password;
         m_subjectAttributes.lock();        
     }
     
     
     public WritableContext(Map parameters) {
-        this(parameters, null, null);
+        this(parameters, null, null, "");
     }
 
     public String get(String name) {
@@ -173,6 +176,10 @@ public class WritableContext
     
     public Date now() {
     	return now;
+    }
+    
+    public String getPassword() {
+    	return password;
     }
 
 

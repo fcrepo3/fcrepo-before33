@@ -1,7 +1,9 @@
 package fedora.server;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -45,7 +47,7 @@ public class ReadOnlyContext
 	public static final boolean DO_NOT_USE_CACHED_OBJECT = false;
 
 	
-    public static ReadOnlyContext EMPTY=new ReadOnlyContext(null, null, null);
+    public static ReadOnlyContext EMPTY=new ReadOnlyContext(null, null, null, "");
     static {
     	EMPTY.setActionAttributes(null);
     	EMPTY.setResourceAttributes(null);
@@ -60,6 +62,8 @@ public class ReadOnlyContext
     private MultiValueMap m_actionAttributes;
     
     private MultiValueMap m_resourceAttributes;
+    
+    private String password;
 
     /**
      * Creates and initializes the <code>Context</code>.
@@ -67,7 +71,7 @@ public class ReadOnlyContext
      * @param parameters A pre-loaded Map of name-value pairs
      *        comprising the context.
      */
-    public ReadOnlyContext(Map parameters, MultiValueMap environmentAttributes, MultiValueMap subjectAttributes) {
+    private ReadOnlyContext(Map parameters, MultiValueMap environmentAttributes, MultiValueMap subjectAttributes, String password) {
         super(parameters);
         m_environmentAttributes=environmentAttributes;
         if (m_environmentAttributes==null) {
@@ -79,10 +83,11 @@ public class ReadOnlyContext
             m_subjectAttributes=new MultiValueMap();
         }
         m_subjectAttributes.lock();        
+        this.password = password;
     }
     
-    public ReadOnlyContext(Map parameters) {
-        this(parameters, null, null);
+    private ReadOnlyContext(Map parameters) {
+        this(parameters, null, null, null);
     }
 
     public static ReadOnlyContext getCopy(Context source) {
@@ -94,7 +99,7 @@ public class ReadOnlyContext
             params.put(k, source.get(k));
         }
         //vvvvv this fixup to allow compilation; needs extension for new fields vvvvv
-        ReadOnlyContext temp = new ReadOnlyContext(params, null, null);
+        ReadOnlyContext temp = new ReadOnlyContext(params, null, null, source.getPassword());
         temp.setActionAttributes(null);
         temp.setResourceAttributes(null);
         return temp;
@@ -134,7 +139,7 @@ public class ReadOnlyContext
                     params.put(k, b.get(k));
                 }
                 //vvvvv this fixup to allow compilation; needs extension for new fields vvvvv
-                ReadOnlyContext temp = new ReadOnlyContext(params, null, null);
+                ReadOnlyContext temp = new ReadOnlyContext(params, null, null, a.getPassword());
                 temp.setActionAttributes(null);
                 temp.setResourceAttributes(null);
                 return temp;
@@ -247,11 +252,18 @@ public class ReadOnlyContext
     	return now;
     }
     
+    public static final ReadOnlyContext getContext(Map parameters) {
+    	if (parameters == null) {
+    		parameters = new Hashtable();
+    	}
+        return new ReadOnlyContext(parameters);
+    }
+    
     /*
      * Gets a Context appropriate for the request, and whether it is ok
      * to use the dissemination cache or not.
      */
-    public static final Context getContext(String soapOrRest, HttpServletRequest request, boolean useCachedObject) {
+    public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, boolean useCachedObject) {
       
   	MultiValueMap environmentMap = new MultiValueMap();
   	//h.put(Authorization.ENVIRONMENT_CURRENT_DATETIME_URI_STRING, "2005-01-26T16:42:00Z");  //does xacml engine provide this?
@@ -294,7 +306,8 @@ public class ReadOnlyContext
 
   	String subjectId = request.getRemoteUser();
 
-  	//roles are available through xacml "attribute finder" callback and so are not stored here as subject attrs
+  	//roles are available through xacml "attribute finder" callback and so are not stored here 
+  	//as subject attrs
   	
   	MultiValueMap subjectMap = new MultiValueMap();
   	//authn might not have been required by web.xml
@@ -302,14 +315,18 @@ public class ReadOnlyContext
   		subjectId = "";
   	}
   	String roles[] = null;
-  	if ((request.getUserPrincipal() != null)
-  	&&  (request.getUserPrincipal() instanceof GenericPrincipal)) {		
+  	if ((request.getUserPrincipal() != null) && (request.getUserPrincipal() instanceof GenericPrincipal)) {		
   		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
+  		log("request=" + request); 
+  		log("request.getUserPrincipal()=" + request.getUserPrincipal());  		
+  		log("((GenericPrincipal) request.getUserPrincipal())=" + ((GenericPrincipal) request.getUserPrincipal()));  		
+  		log("((GenericPrincipal) request.getUserPrincipal()).getPassword()=" + ((GenericPrincipal) request.getUserPrincipal()).getPassword());  		
   	}
-
+	String password = ((GenericPrincipal) request.getUserPrincipal()).getPassword();
   	try {		
   		log("1");
   		subjectMap.set(Authorization.SUBJECT_ID_URI_STRING, subjectId);
+  		//subjectMap.set(Constants.POLICY_SUBJECT.PASSWORD.uri, password);	  		
   		log("2");
   		for (int i = 0; (roles != null) && (i < roles.length); i++) {
   			log("2a");
@@ -321,7 +338,12 @@ public class ReadOnlyContext
  	  		}
  			log("2d");
  			if ((parts != null) && parts.length == 2) {
- 				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
+ 				if ("password".equals(parts[0])) {
+ 		 	  		//subjectMap.set(Constants.POLICY_SUBJECT.PASSWORD.uri, parts[1]);
+ 		 			//log("password from parts[1]=" + password);
+ 				} else {
+ 					subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
+ 				}
  			}
  			log("2e");
   		}
@@ -335,12 +357,13 @@ public class ReadOnlyContext
   		subjectMap.lock();
   	}
   	log("4");
+	log("password=" + password);
 
   	HashMap commonParams = new HashMap();
   	commonParams.put("useCachedObject", "" + useCachedObject);    
   	commonParams.put("userId", subjectMap.getString(Authorization.SUBJECT_ID_URI_STRING)); //to do: change referring code to access Authorization.SUBJECT_ID, then delete this line   
   	commonParams.put("host", environmentMap.getString(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_IP_ADDRESS.uri)); //to do:  as above, vis-a-vis Authorization.ENVIRONMENT_CLIENT_IP
-      ReadOnlyContext temp = new ReadOnlyContext(commonParams, environmentMap, subjectMap);
+      ReadOnlyContext temp = new ReadOnlyContext(commonParams, environmentMap, subjectMap, password);
       log("5 returning null? " + (temp == null));
       return temp;
     }
@@ -376,6 +399,10 @@ public class ReadOnlyContext
   		}
   		return parts; 
   	}
+  	
+    public String getPassword() {
+    	return password;
+    }
   	
 	public static boolean log = false; 
 	
