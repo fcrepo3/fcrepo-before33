@@ -170,6 +170,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     String methodName = null;
     String PID = null;
     Property[] userParms = null;
+    long servletStartTime = 0;
     h_userParms = new Hashtable();
     PARAMETER_RESOLVER_URL = "http://" + request.getServerName()
         + ":" + request.getServerPort() + PARAMETER_RESOLVER_SERVLET_PATH;
@@ -249,6 +250,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       if (action.equals(GET_BEHAVIOR_DEFINITIONS))
       {
         String[] behaviorDefs = null;
+        long startTime = new Date().getTime();
         try
         {
           // Call Fedora Access SOAP service to request Behavior Definitons.
@@ -334,9 +336,14 @@ public class FedoraAccessSoapServlet extends HttpServlet
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, clearCache, response, message);
         }
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+            + "GetBehaviorDefinitions: " + interval + " milliseconds.");
       } else if (action.equals(GET_BEHAVIOR_METHODS))
       {
         MethodDef[] methodDefs = null;
+        long startTime = new Date().getTime();
         try
         {
           // Call Fedora Access SOAP service to request Method Definitions.
@@ -439,9 +446,14 @@ public class FedoraAccessSoapServlet extends HttpServlet
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, clearCache, response, message);
         }
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+            + "GetBehaviorDefinitions: " + interval + " milliseconds.");
       } else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML))
       {
         MIMETypedStream methodDefs = null;
+        long startTime = new Date().getTime();
         try
         {
           // Call Fedora Access SOAP service to request Method Definitions
@@ -496,8 +508,13 @@ public class FedoraAccessSoapServlet extends HttpServlet
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, clearCache, response, message);
         }
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+            + "GetBehaviorMethodsAsWSDL: " + interval + " milliseconds.");
       } else if (action.equals(GET_DISSEMINATION))
         {
+          long startTime = new Date().getTime();
           try
           {
             // Call Fedora Access SOAP service to request dissemination.
@@ -546,11 +563,15 @@ public class FedoraAccessSoapServlet extends HttpServlet
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                          userParms, clearCache, response, message);
           }
+          long stopTime = new Date().getTime();
+          long interval = stopTime - servletStartTime;
+          System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+              + "GetDissemination: " + interval + " milliseconds.");
       } else if (action.equals(GET_OBJECT_METHODS))
       {
         ObjectMethodsDef[] objMethDefArray = null;
         String serverURI = request.getRequestURL().toString()+"?";
-
+        long startTime = new Date().getTime();
         try
         {
           // Call Fedora Access SOAP service to request Object Methods.
@@ -697,6 +718,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, clearCache, response, message);
         }
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+            + "GetObjectMethods: " + interval + " milliseconds.");
       }
     }
   }
