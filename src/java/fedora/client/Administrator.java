@@ -300,6 +300,14 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         });
         toolsMenu.add(toolsBatchBuild);
 	
+        JMenuItem toolsBatchBuildIngest=new JMenuItem("Build and Ingest Batch"/*, KeyEvent.VK_A*/);
+        toolsBatchBuildIngest.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createBatchBuildIngestConsole();
+            }
+        });
+        toolsMenu.add(toolsBatchBuildIngest);
+	
         JMenuItem toolsBatchIngest=new JMenuItem("Ingest Batch"/*, KeyEvent.VK_A*/);
         toolsBatchIngest.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -511,6 +519,14 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
     // wdn >
     protected void createBatchBuildConsole() {
         BatchBuildGUI frame=new BatchBuildGUI(this, s_desktop);
+        frame.setVisible(true);
+        s_desktop.add(frame);
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {}
+    }    
+    protected void createBatchBuildIngestConsole() {
+        BatchBuildIngestGUI frame=new BatchBuildIngestGUI(this, s_desktop);
         frame.setVisible(true);
         s_desktop.add(frame);
         try {
