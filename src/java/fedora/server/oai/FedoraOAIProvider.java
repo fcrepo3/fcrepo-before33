@@ -50,6 +50,7 @@ public class FedoraOAIProvider
         implements OAIProvider {
 
     private String m_repositoryName;
+    private String m_repositoryDomainName;
     private String m_baseURL;
     private Set m_adminEmails;
     private Set m_descriptions;
@@ -67,12 +68,13 @@ public class FedoraOAIProvider
             "contributor", "date", "type", "format", "identifier", "source",
             "language", "relation", "coverage", "rights"};
 
-    public FedoraOAIProvider(String repositoryName, String baseURL,
-            Set adminEmails, Set friendBaseURLs, String namespaceID,
-            long maxSets, long maxRecords, long maxHeaders,
+    public FedoraOAIProvider(String repositoryName, String repositoryDomainName,
+            String baseURL, Set adminEmails, Set friendBaseURLs, 
+            String namespaceID, long maxSets, long maxRecords, long maxHeaders,
             FieldSearch fieldSearch, Logging logTarget) {
         super(logTarget);
         m_repositoryName=repositoryName;
+        m_repositoryDomainName=repositoryDomainName;
         m_baseURL=baseURL;
         m_adminEmails=adminEmails;
         m_maxSets=maxSets;
@@ -86,9 +88,9 @@ public class FedoraOAIProvider
         buf.append("          xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai-identifier");
         buf.append("          http://www.openarchives.org/OAI/2.0/oai-identifier.xsd\">\n");
         buf.append("        <scheme>oai</scheme>\n");
-        buf.append("        <repositoryIdentifier>fedora.info</repositoryIdentifier>\n");
+        buf.append("        <repositoryIdentifier>" + m_repositoryDomainName + "</repositoryIdentifier>\n");
         buf.append("        <delimiter>:</delimiter>\n");
-        buf.append("        <sampleIdentifier>oai:fedora.info:" + namespaceID + ":7654</sampleIdentifier>\n");
+        buf.append("        <sampleIdentifier>oai:" + m_repositoryDomainName + ":" + namespaceID + ":7654</sampleIdentifier>\n");
         buf.append("      </oai-identifier>");
         m_descriptions.add(buf.toString());
         if (friendBaseURLs!=null && friendBaseURLs.size()>0) {
@@ -223,7 +225,7 @@ public class FedoraOAIProvider
     }
 
     private Header getHeader(ObjectFields f) {
-        String identifier="oai:fedora.info:" + f.getPid();
+        String identifier="oai:" + m_repositoryDomainName + ":" + f.getPid();
         Date datestamp=f.getDCMDate();
         HashSet setSpecs=new HashSet();
         String fType=f.getFType();
@@ -418,7 +420,7 @@ public class FedoraOAIProvider
         ArrayList ret=new ArrayList();
         for (int i=0; i<l.size(); i++) {
             ObjectFields f=(ObjectFields) l.get(i);
-            String identifier="oai:fedora.info:" + f.getPid();
+            String identifier="oai:" + m_repositoryDomainName + ":" + f.getPid();
             Date datestamp=f.getDCMDate();
             HashSet setSpecs=new HashSet();
             String fType=f.getFType();
@@ -462,7 +464,7 @@ public class FedoraOAIProvider
         ArrayList ret=new ArrayList();
         for (int i=0; i<l.size(); i++) {
             ObjectFields f=(ObjectFields) l.get(i);
-            String identifier="oai:fedora.info:" + f.getPid();
+            String identifier="oai:" + m_repositoryDomainName + ":" + f.getPid();
             Date datestamp=f.getDCMDate();
             HashSet setSpecs=new HashSet();
             String fType=f.getFType();
@@ -497,13 +499,13 @@ public class FedoraOAIProvider
 
     private String getPID(String id)
             throws IDDoesNotExistException {
-        if (!id.startsWith("oai:fedora.info:")) {
-            throw new IDDoesNotExistException("For this repository, all identifiers in OAI requests should begin with oai:fedora.info:");
+        if (!id.startsWith("oai:" + m_repositoryDomainName + ":")) {
+            throw new IDDoesNotExistException("For this repository, all identifiers in OAI requests should begin with oai:" + m_repositoryDomainName + ":");
         }
         if (id.indexOf("'")!=-1) {
             throw new IDDoesNotExistException("For this repository, no identifiers contain the apostrophe character.");
         }
-        return id.substring(16);
+        return id.substring(4 + m_repositoryDomainName.length() + 1);
     }
 
     public Set getMetadataFormats(String id)

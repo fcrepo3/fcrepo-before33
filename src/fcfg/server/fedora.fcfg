@@ -276,6 +276,12 @@
         Parameters:
           - repositoryName (required)
             The name of the repository, to be given to OAI harvesters.
+          - repositoryDomainName (required)
+            The domain name of the repository, which helps to uniquely identify
+			items from the repository in OAI-PMH requests.  This should just
+			be the domain name of the organization that exposes the objects.
+			More information on the OAI identifier syntax can be found at
+			http://www.openarchives.org/OAI/2.0/guidelines-oai-identifier.htm
           - adminEmails (required)
             One or more space-separated email addresses, to be given to OAI harvesters.
           - friends (optional)
@@ -286,6 +292,7 @@
           - maxHeaders (optional, default=FieldSearch:maxResults, imposed maximum=FieldSearch:maxResults)
             The maximum number of results to return at a time for ListIdentifiers requests.
 		<param name="repositoryName" value="Your Fedora Repository Name Here"/>
+		<param name="repositoryDomainName" value="example.org"/>
 		<param name="adminEmails" value="oai-admin@yourco.com bob@yourco.com"/>
 		<param name="friends" value="http://arXiv.org/oai2 http://memory.loc.gov/cgi-bin/oai2_0"/>
 		<param name="maxRecords" value="100"/>

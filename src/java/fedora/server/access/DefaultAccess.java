@@ -73,6 +73,9 @@ public class DefaultAccess extends Module implements Access
   /** Current DOManager of the Fedora server. */
   private DOManager m_manager;
 
+  /** OAI Provider domain name, for the describe request's identifier info. */
+  private String m_repositoryDomainName;
+
   /** IP Restriction for the Access subsystem. */
   private IPRestriction m_ipRestriction;
 
@@ -136,6 +139,18 @@ public class DefaultAccess extends Module implements Access
       // get ref to DynamicAccess module
       m_dynamicAccess = (DynamicAccessModule) getServer().
               getModule("fedora.server.access.DynamicAccess");
+    // get ref to OAIProvider, for repositoryDomainName param for oai info
+    Module oaiProvider=(Module) getServer().getModule("fedora.oai.OAIProvider");
+    if (oaiProvider==null) {
+      throw new ModuleInitializationException("DefaultAccess module requires that the server "
+          + "has an OAIProvider module configured so that it can get the repositoryDomainName parameter.", getRole());
+    }
+    m_repositoryDomainName=oaiProvider.getParameter("repositoryDomainName");
+    if (m_repositoryDomainName==null) {
+      throw new ModuleInitializationException("DefaultAccess module requires that the OAIProvider "
+          + "module has the repositoryDomainName parameter specified.", getRole());
+    }
+
   }
 
   /**
@@ -506,7 +521,7 @@ public class DefaultAccess extends Module implements Access
       getServer().VERSION_MAJOR + "." + getServer().VERSION_MINOR;
     Module domgr = getServer().getModule("fedora.server.storage.DOManager");
     repositoryInfo.repositoryPIDNamespace = domgr.getParameter("pidNamespace");
-    repositoryInfo.OAINamespace = "fedora.info";
+    repositoryInfo.OAINamespace = m_repositoryDomainName;
     repositoryInfo.adminEmailList = getAdminEmails();
     repositoryInfo.samplePID = repositoryInfo.repositoryPIDNamespace + ":100";
     repositoryInfo.sampleOAIIdentifer = "oai:" + repositoryInfo.OAINamespace

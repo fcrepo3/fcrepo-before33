@@ -59,6 +59,10 @@ public class FedoraOAIProviderModule
         if (repositoryName==null) {
             throw new ModuleInitializationException("repositoryName must be specified.", getRole());
         }
+        String repositoryDomainName=getParameter("repositoryDomainName");
+        if (repositoryDomainName==null) {
+            throw new ModuleInitializationException("repositoryDomainName must be specified.", getRole());
+        }
         String host=getServer().getParameter("fedoraServerHost");
         if (host==null) {
             throw new ModuleInitializationException("fedoraServerHost must be specified as primary server config element.", getRole());
@@ -158,10 +162,10 @@ public class FedoraOAIProviderModule
                 throw new ModuleInitializationException("maxHeaders value is invalid.", getRole());
             }
         }
-        m_wrappedOAIProvider=new FedoraOAIProvider(repositoryName,
-                "http://" + host + ":" + port + "/fedora/oai", adminEmails,
-                friends, pidNamespace, maxSets, maxRecords, maxHeaders,
-                fieldSearch, this);
+        m_wrappedOAIProvider=new FedoraOAIProvider(repositoryName, 
+                repositoryDomainName, "http://" + host + ":" + port 
+                + "/fedora/oai", adminEmails, friends, pidNamespace, maxSets, 
+                maxRecords, maxHeaders, fieldSearch, this);
     }
 
     public String getRepositoryName() {
