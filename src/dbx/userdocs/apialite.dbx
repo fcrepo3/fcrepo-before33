@@ -7,13 +7,11 @@
 <article>
 	<articleinfo>
 		<graphic fileref="http://www.fedora.info/assets/newlogo2.jpg"/>
-		<title>
-			<inlinemediaobject>
-    				<imageobject>
-      				<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
-    				</imageobject>
-    			</inlinemediaobject>
-		</title>		
+		<title><inlinemediaobject>
+				<imageobject>
+					<imagedata fileref="http://www.fedora.info/assets/newlogo2.jpg" format="JPEG"/>
+				</imageobject>
+			</inlinemediaobject></title>
 		<title>Fedora API-A-Lite Interface Client User Documentation</title>
 		<corpauthor>Fedora Development Team</corpauthor>
 		<copyright>
@@ -28,7 +26,7 @@
 		<para>The Fedora API-A-Lite interface is implemented as an HTTP service that consists of the following methods:</para>
 		<itemizedlist>
 			<listitem>
-				<para>GetDissemination - gets thespecified dissemination request</para>
+				<para>GetDissemination - gets the specified dissemination request</para>
 			</listitem>
 			<listitem>
 				<para>Get ObjectProfile - gets the Object Profile of the specified object</para>
@@ -116,21 +114,21 @@
 		<variablelist>
 			<title>Examples</title>
 			<varlistentry>
-				<term>Get the Dissemination for a data object with a PID of demo:5 and associated behavior definition object with a PID of demo:1and methodName of getThumbnail</term>
+				<term>Get the Dissemination for a data object with a PID of demo:5 and associated behavior definition object with a PID of demo:1 and methodName of getThumbnail</term>
 				<listitem>
 					<para>http://localhost:8080/fedora/get/demo:5/demo:1/getThumbnail</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>Get the ObjectProfile for a data object with a PID of test:3 as HTML:</term>
+				<term>Get the ObjectProfile for a data object with a PID of demo:5 as HTML:</term>
 				<listitem>
 					<para>http://localhost:8080/fedora/get/demo:5</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>Get the ObjectProfile for a data object with a PID of test:3 as XML:</term>
+				<term>Get the ObjectProfile for a data object with a PID of demo:5 as XML:</term>
 				<listitem>
-					<para>http://localhost:8080/fedora/get/demo:5?xml=yes</para>
+					<para>http://localhost:8080/fedora/get/demo:5?xml=true</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
