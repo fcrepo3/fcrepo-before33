@@ -725,8 +725,7 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
             <br /></li>
 
             <li>modifyDatastream now supports changing the mimeType
-            and<br />
-            formatURI, and altID.</li>
+            and formatURI, and altID.</li>
 
             <li>modifyDatastream and modifyDisseminator methods now
             support a "force" parameter, which indicates that even
@@ -746,6 +745,16 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
             disseminator ID). When "logMessage" is relevant, it
             occurs just after any data parameters. When "force" is
             relevant, it occurs last.</li>
+            
+            <li>The treatment of nulls versus empty strings in
+            arguments for the modifyDatastream and modifyDisseminator
+            methods of API-M is now more consistent. Arguments
+            specified as null indicate that the original attribute of
+            the component is to remain unchanged. Arguments specified
+            as the empty string indicate the original attribute is to
+            be set to the empty string. Arguments specified as
+            non-null or non-empty indicate the original attribute is
+            to be replaced by the specified value.</li>
           </ul>
 
           <p>Summary of API-M changes:</p>
