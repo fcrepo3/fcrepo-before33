@@ -334,8 +334,6 @@ public class FOXMLDOSerializer
 
 	private void appendAudit(DigitalObject obj, StringBuffer buf, String encoding) 
 			throws ObjectIntegrityException {
-		System.out.println("LOOK!: appending audit in FOXML serializer.");
-		System.out.println("LOOK! There are this many audit records in obj: " + obj.getAuditRecords().size());
 		if (obj.getAuditRecords().size()>0) {
 			// Audit trail datastream re-created from audit records.
 			// There is only ONE version of the audit trail datastream!
@@ -358,10 +356,8 @@ public class FOXMLDOSerializer
 			for (int i=0; i<obj.getAuditRecords().size(); i++) {
 				AuditRecord audit=(AuditRecord) obj.getAuditRecords().get(i);
 				validateAudit(audit);
-				buf.append("          <" + m_fedoraAuditPrefix + ":record>\n");
-				buf.append("            <" + m_fedoraAuditPrefix + ":recordID>"
-						+ StreamUtility.enc(audit.id)
-						+ "</" + m_fedoraAuditPrefix + ":recordID>\n");
+				buf.append("          <" + m_fedoraAuditPrefix + ":record ID=\""
+						+ StreamUtility.enc(audit.id) + "\">\n");
 				buf.append("            <" + m_fedoraAuditPrefix + ":process type=\""
 						+ StreamUtility.enc(audit.processType) + "\"/>\n");
 				buf.append("            <" + m_fedoraAuditPrefix + ":action>"
