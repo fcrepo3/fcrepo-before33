@@ -32,6 +32,7 @@ import edu.cornell.dlrg.swing.jhelp.SimpleContentViewerUI;
 import edu.cornell.dlrg.swing.mdi.MDIDesktopPane;
 import edu.cornell.dlrg.swing.mdi.WindowMenu;
 
+import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
 
 public class Administrator extends JFrame {
@@ -182,6 +183,7 @@ public class Administrator extends JFrame {
         
         JMenu toolsMenu=new JMenu("Tools");
         toolsMenu.setMnemonic(KeyEvent.VK_T);
+        
         JMenuItem toolsManagement=new JMenuItem("Management Console",KeyEvent.VK_M);
         toolsManagement.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -189,6 +191,15 @@ public class Administrator extends JFrame {
             }
         });
         toolsMenu.add(toolsManagement);
+        
+        JMenuItem toolsAccess=new JMenuItem("Access Console",KeyEvent.VK_A);
+        toolsAccess.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createAccessConsole();
+            }
+        });
+        toolsMenu.add(toolsAccess);
+        
         menuBar.add(toolsMenu);
         
         
@@ -285,6 +296,15 @@ public class Administrator extends JFrame {
     
     protected void createManagementConsole() {
         ManagementConsole frame=new ManagementConsole(this);
+        frame.setVisible(true);
+        m_desktop.add(frame);
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {}
+    }
+    
+    protected void createAccessConsole() {
+        AccessConsole frame=new AccessConsole(this);
         frame.setVisible(true);
         m_desktop.add(frame);
         try {
