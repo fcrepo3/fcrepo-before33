@@ -17,12 +17,12 @@ import java.io.OutputStream;
  */
 public interface ResourceIndex extends TriplestoreReader {
     /**
-     * The ResourceIndex will not index anything.
+     * At this level, the ResourceIndex will not index anything.
      */
     public static final int INDEX_LEVEL_OFF             = 0;
     
     /**
-     * The ResourceIndex will index:
+     * At this level the ResourceIndex will index:
      *  object properties
      *  datastreams
      *  disseminators
@@ -52,22 +52,17 @@ public interface ResourceIndex extends TriplestoreReader {
     public static final String NS_DC            = "http://purl.org/dc/elements/1.1/";
     public static final String NS_FEDORA        = "info:fedora/";
     public static final String NS_FEDORA_MODEL  = NS_FEDORA + "fedora-system:def/model#";
-    public static final String NS_FEDORA_REP    = NS_FEDORA + "fedora-system:def/service#";
+    public static final String NS_FEDORA_VIEW   = NS_FEDORA + "fedora-system:def/view#";
     public static final String NS_RDF           = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     public static final String NS_XSD           = "http://www.w3.org/2001/XMLSchema#";
     
 	public static final String RDF_TYPE                = NS_RDF + "type";
     public static final String XSD_DATETIME            = NS_XSD + "dateTime";
 	
-    public static final String MODEL_ALT_ID            = NS_FEDORA_MODEL + "alternateIdentifier";
-	public static final String MODEL_BDEF              = NS_FEDORA_MODEL + "bdef";
-    public static final String MODEL_BMECH             = NS_FEDORA_MODEL + "bmech";
+    //public static final String MODEL_ALT_ID            = NS_FEDORA_MODEL + "alternateIdentifier";
 	public static final String MODEL_CMODEL            = NS_FEDORA_MODEL + "contentModel";
-    public static final String MODEL_DATAOBJECT        = NS_FEDORA_MODEL + "dataobject";
-    public static final String MODEL_DATE_CREATED      = NS_FEDORA_MODEL + "dateCreated";
-    public static final String MODEL_DATE_MODIFIED     = NS_FEDORA_MODEL + "dateModified";
+    public static final String MODEL_DATE_CREATED      = NS_FEDORA_MODEL + "createdDate";
     public static final String MODEL_DEFINES_METHOD    = NS_FEDORA_MODEL + "definesMethod";
-    public static final String MODEL_DISS_TYPE         = NS_FEDORA_MODEL + "dissType";
     public static final String MODEL_IMPLEMENTS        = NS_FEDORA_MODEL + "implementsBDef";
 	public static final String MODEL_LABEL             = NS_FEDORA_MODEL + "label";
     public static final String MODEL_OWNER             = NS_FEDORA_MODEL + "owner";
@@ -75,14 +70,19 @@ public interface ResourceIndex extends TriplestoreReader {
     public static final String MODEL_USES_BMECH        = NS_FEDORA_MODEL + "usesBMech";
     
     public static final String MODEL_ACTIVE            = NS_FEDORA_MODEL + "Active";
+    public static final String MODEL_DELETED           = NS_FEDORA_MODEL + "Deleted";
     public static final String MODEL_INACTIVE          = NS_FEDORA_MODEL + "Inactive";
+    public static final String MODEL_BDEF              = NS_FEDORA_MODEL + "BDefObject";
+    public static final String MODEL_BMECH             = NS_FEDORA_MODEL + "BMechObject";
+    public static final String MODEL_DATAOBJECT        = NS_FEDORA_MODEL + "DataObject";
     
-    public static final String REP_DATE_MODIFIED       = NS_FEDORA_REP + "lastModified";
-    public static final String REP_DEPENDS             = NS_FEDORA_REP + "dependsOn";
-    public static final String REP_DIRECT              = NS_FEDORA_REP + "direct";
-    public static final String REP_MEDIATYPE           = NS_FEDORA_REP + "media-type";
-    public static final String REP_REPRESENTATION      = NS_FEDORA_REP + "hasRepresentation";
-    public static final String REP_VOLATILE            = NS_FEDORA_REP + "volatile";
+    public static final String VIEW_DATE_MODIFIED      = NS_FEDORA_VIEW + "lastModified";
+    //public static final String VIEW_DEPENDS             = NS_FEDORA_VIEW + "dependsOn";
+    public static final String VIEW_DIRECT             = NS_FEDORA_VIEW + "isDirect";
+    public static final String VIEW_DISSEMINATES       = NS_FEDORA_VIEW + "disseminates";
+    public static final String VIEW_MEDIATYPE          = NS_FEDORA_VIEW + "media-type";
+    public static final String VIEW_TYPE               = NS_FEDORA_VIEW + "viewType";
+    public static final String VIEW_VOLATILE           = NS_FEDORA_VIEW + "isVolatile";
 	
     /**
      * Returns the index level of the ResourceIndex.
