@@ -106,6 +106,7 @@ public class SimpleDOWriter
         }
     }
 
+/*
     public void setDatastreamMimeType(String datastreamID, String mimeType)
             throws ServerException {
       assertNotInvalidated();
@@ -119,7 +120,9 @@ public class SimpleDOWriter
           ds.DSMIME = mimeType;
         }
     }
+*/
 
+/*
     public void setDatastreamAltIDs(String datastreamID, String[] altIDs) 
             throws ServerException {
       assertNotInvalidated();
@@ -133,7 +136,8 @@ public class SimpleDOWriter
           ds.DatastreamAltIDs = altIDs;
       }
     }
-
+*/
+/*
     public void setDatastreamFormatURI(String datastreamID, String formatURI) 
             throws ServerException {
       assertNotInvalidated();
@@ -147,7 +151,7 @@ public class SimpleDOWriter
           ds.DSFormatURI = formatURI;
       }
     }
-
+*/
     public void setDatastreamVersionable(String datastreamID, boolean versionable)
     throws ServerException {
         assertNotInvalidated();
