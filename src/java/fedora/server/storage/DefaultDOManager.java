@@ -907,6 +907,30 @@ public class DefaultDOManager
             }
         }
     }
+    
+    public String getLockingUser(Context context, String pid)
+            throws StorageDeviceException, ObjectNotFoundException {
+        Connection conn=null;
+        try {
+            String query="SELECT LockingUser "
+                       + "FROM ObjectRegistry "
+                       + "WHERE DO_PID='" + pid + "'";
+            conn=m_connectionPool.getConnection();
+            Statement s=conn.createStatement();
+            ResultSet results=s.executeQuery(query);
+            if (results.next()) {
+                return results.getString(1);
+            } else {
+                throw new ObjectNotFoundException("Object " + pid + " not found in object registry.");
+            }
+        } catch (SQLException sqle) {
+            throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+        } finally {
+            if (conn!=null) {
+                m_connectionPool.free(conn);
+            }
+        }
+    }
 
     /**
      * Adds a new, locked object.
