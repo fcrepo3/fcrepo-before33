@@ -10,17 +10,13 @@
 	<param name="log_level" value="finest"/>
 	<param name="log_flush_threshold" value="1"/>
 
-
 	<param name="path_algorithm" value="fedora.server.storage.lowlevel.TimestampPathAlgorithm"/>
 	<param name="file_system" value="fedora.server.storage.lowlevel.GenericFileSystem"/>
-	<param name="backslash_is_escape" value="yes"/>
+	<param name="backslash_is_escape" value="yes" oraclevalue="no"/>
 	<param name="store_base" value="C:\fedora_perm"/>
 	<param name="temp_store_base" value="C:\fedora_temp"/>
 	<param name="pid_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
 	<param name="temp_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
-    
-    
-    
     
 	<param name="disseminationCacheSize" value="100"/>
 	<param name="debug" value="true"/>	
@@ -54,7 +50,10 @@
           If the serialization format is text-based, 
           this is the character encoding that should be used.</comment>
         <param name="pidNamespace" value="changeme"/>
-        <param name="storagePool" value="localMySQLPool"/>
+        <param name="storagePool" value="localMySQLPool" 
+                             mckoivalue="localMcKoiPool" 
+                            oraclevalue="localOracle9iPool"
+                            icarusvalue="remoteMySQLPool"/>
         <param name="storageFormat" value="mets11fedora1"/>
         <param name="storageCharacterEncoding" value="UTF-8"/>
     </module>
@@ -93,8 +92,14 @@
     </module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
-		<param name="defaultPoolName" value="localMySQLPool"/>
-		<param name="poolNames" value="localMySQLPool,localMcKoiPool,remoteMySQLPool"/>
+		<param name="defaultPoolName" value="localMySQLPool"
+                                      mckoivalue="localMcKoiPool"
+                                      oraclevalue="localOracle9iPool"
+                                      icarusvalue="remoteMySQLPool"/>
+		<param name="poolNames" value="localMySQLPool"
+                                mckoivalue="localMcKoiPool"
+                                oraclevalue="localOracle9iPool"
+                                icarusvalue="remoteMySQLPool"/>
 	</module>
 	<datastore id="remoteMySQLPool">
 		<comment>MySQL database on UVA test host (known to work)</comment>
