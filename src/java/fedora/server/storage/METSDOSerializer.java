@@ -6,6 +6,7 @@ import fedora.server.errors.StreamWriteException;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.utilities.DateUtility;
@@ -15,6 +16,7 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -328,25 +330,35 @@ public class METSDOSerializer
                     buf.append("  <fileGrp ID=\"");
                     buf.append(ds.DatastreamID);
                     buf.append(">\n");
-                    Iterator extIter=obj.datastreams(id).iterator();
-                    while (extIter.hasNext()) {
-                        DatastreamReferencedContent eds=
-                                (DatastreamReferencedContent) extIter.next();
+                    Iterator contentIter=obj.datastreams(id).iterator();
+                    while (contentIter.hasNext()) {
+                        DatastreamContent dsc=(DatastreamContent) contentIter.next();
                         buf.append("    <file ID=\"");
-                        buf.append(ds.DSVersionID);
+                        buf.append(dsc.DSVersionID);
                         buf.append("\" CREATED=\"");
-                        buf.append(DateUtility.convertDateToString(ds.DSCreateDT));
+                        buf.append(DateUtility.convertDateToString(dsc.DSCreateDT));
                         buf.append("\" MIMETYPE=\"");
-                        buf.append(ds.DSMIME);
+                        buf.append(dsc.DSMIME);
                         buf.append("\" STATUS=\"");
-                        buf.append(ds.DSState);
-                        buf.append("\" SIZE=\"" + ds.DSSize);
+                        buf.append(dsc.DSState);
+                        buf.append("\" SIZE=\"" + dsc.DSSize);
                         buf.append("\" ADMIDS=\"");
+                        Iterator admIdIter=getAdmIds(obj, dsc).iterator();
+                        int admNum=0;
+                        while (admIdIter.hasNext()) {
+                            String admId=(String) admIdIter.next();
+                            if (admNum>0) {
+                                buf.append(' ');
+                            }
+                            buf.append(admId);
+                            admNum++;
+                        }
                         //
                         // other attrs
                         //
                         buf.append("\">\n");
-                        if (ds.DSControlGrp==Datastream.EXTERNAL_REF) {
+                        if (dsc.DSControlGrp==Datastream.EXTERNAL_REF) {
+                        } else {
                         }
                         buf.append("    </file>\n");
                     } 
@@ -374,6 +386,27 @@ public class METSDOSerializer
             }
         }
         if (1==2) throw new ObjectIntegrityException("bad object");
+    }
+    
+    private List getAdmIds(DigitalObject obj, DatastreamContent content) {
+        ArrayList ret=new ArrayList(content.auditRecordIdList());
+        Iterator mdIdIter=content.metadataIdList().iterator();
+        while (mdIdIter.hasNext()) {
+            String mdId=(String) mdIdIter.next();
+            List datastreams=obj.datastreams(mdId);
+            if (datastreams!=null) {
+                Datastream ds=(Datastream) datastreams.get(0);
+                if (ds!=null) {
+                    if (ds.DSControlGrp==Datastream.XML_METADATA) {
+                        DatastreamXMLMetadata mds=(DatastreamXMLMetadata) ds;
+                        if (mds.DSMDClass != DatastreamXMLMetadata.DESCRIPTIVE) {
+                            ret.add(mdId);
+                        }
+                    }
+                }
+            }
+        }
+        return ret;
     }
 
     private void mdWrap(DatastreamXMLMetadata mds, StringBuffer buf) 
